@@ -9,7 +9,33 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
-import static com.jetbrains.lang.dart.DartTokenTypes.*;
+import static com.jetbrains.lang.dart.DartTokenTypes.ASYNC;
+import static com.jetbrains.lang.dart.DartTokenTypes.AWAIT;
+import static com.jetbrains.lang.dart.DartTokenTypes.COMMA;
+import static com.jetbrains.lang.dart.DartTokenTypes.COMPONENT_NAME;
+import static com.jetbrains.lang.dart.DartTokenTypes.CONST;
+import static com.jetbrains.lang.dart.DartTokenTypes.DOT;
+import static com.jetbrains.lang.dart.DartTokenTypes.EQ;
+import static com.jetbrains.lang.dart.DartTokenTypes.GT;
+import static com.jetbrains.lang.dart.DartTokenTypes.GT_EQ;
+import static com.jetbrains.lang.dart.DartTokenTypes.GT_GT;
+import static com.jetbrains.lang.dart.DartTokenTypes.GT_GT_EQ;
+import static com.jetbrains.lang.dart.DartTokenTypes.GT_GT_GT;
+import static com.jetbrains.lang.dart.DartTokenTypes.GT_GT_GT_EQ;
+import static com.jetbrains.lang.dart.DartTokenTypes.ID;
+import static com.jetbrains.lang.dart.DartTokenTypes.IDENTIFIER;
+import static com.jetbrains.lang.dart.DartTokenTypes.LBRACE;
+import static com.jetbrains.lang.dart.DartTokenTypes.LITERAL_EXPRESSION;
+import static com.jetbrains.lang.dart.DartTokenTypes.LPAREN;
+import static com.jetbrains.lang.dart.DartTokenTypes.LT;
+import static com.jetbrains.lang.dart.DartTokenTypes.OPERATOR;
+import static com.jetbrains.lang.dart.DartTokenTypes.PARENTHESIZED_EXPRESSION;
+import static com.jetbrains.lang.dart.DartTokenTypes.RBRACE;
+import static com.jetbrains.lang.dart.DartTokenTypes.RECORD;
+import static com.jetbrains.lang.dart.DartTokenTypes.RECORD_FIELD;
+import static com.jetbrains.lang.dart.DartTokenTypes.RPAREN;
+import static com.jetbrains.lang.dart.DartTokenTypes.SYNC;
+import static com.jetbrains.lang.dart.DartTokenTypes.YIELD;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.LAZY_PARSEABLE_BLOCK;
 
 public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {

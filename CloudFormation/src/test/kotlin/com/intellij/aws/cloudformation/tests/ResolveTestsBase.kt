@@ -16,7 +16,6 @@ import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.testFramework.LightPlatformTestCase
 import org.junit.Assert
 import java.io.File
-import java.util.ArrayList
 
 abstract class ResolveTestsBase protected constructor(private val myReferenceClass: Class<*>) : LightPlatformTestCase() {
 

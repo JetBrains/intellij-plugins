@@ -22,7 +22,7 @@ import com.intellij.protobuf.lang.stub.PbMessageDefinitionStub;
 import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 abstract class PbMessageDefinitionMixin extends PbStubbedSymbolOwnerBase<PbMessageDefinitionStub>
     implements PbMessageDefinition {

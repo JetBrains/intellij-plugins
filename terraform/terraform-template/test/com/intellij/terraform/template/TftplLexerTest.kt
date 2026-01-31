@@ -1,8 +1,8 @@
 package com.intellij.terraform.template
 
 import com.intellij.lexer.Lexer
-import com.intellij.testFramework.LexerTestCase
 import com.intellij.terraform.template.lexer.TerraformTemplateLexer
+import com.intellij.testFramework.LexerTestCase
 
 internal class TftplLexerTest : LexerTestCase() {
 

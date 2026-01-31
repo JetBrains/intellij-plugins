@@ -37,7 +37,14 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.*
+import com.intellij.ui.ColoredListCellRenderer
+import com.intellij.ui.DoubleClickListener
+import com.intellij.ui.EditorTextField
+import com.intellij.ui.ScrollPaneFactory
+import com.intellij.ui.SimpleTextAttributes
+import com.intellij.ui.SortedListModel
+import com.intellij.ui.TextFieldWithAutoCompletion
+import com.intellij.ui.TextFieldWithAutoCompletionListProvider
 import com.intellij.ui.components.JBList
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.ui.speedSearch.ListWithFilter

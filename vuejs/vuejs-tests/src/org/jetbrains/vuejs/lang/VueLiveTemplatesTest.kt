@@ -8,7 +8,11 @@ import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.codeInsight.template.impl.actions.ListTemplatesAction
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
-import org.jetbrains.vuejs.liveTemplate.*
+import org.jetbrains.vuejs.liveTemplate.VueComponentDescriptorLiveTemplateContextType
+import org.jetbrains.vuejs.liveTemplate.VueInsideTagLiveTemplateContextType
+import org.jetbrains.vuejs.liveTemplate.VueScriptLiveTemplateContextType
+import org.jetbrains.vuejs.liveTemplate.VueTemplateLiveTemplateContextType
+import org.jetbrains.vuejs.liveTemplate.VueTopLevelLiveTemplateContextType
 
 class VueLiveTemplatesTest : BasePlatformTestCase() {
   fun testTopLevelVueApplicable() {

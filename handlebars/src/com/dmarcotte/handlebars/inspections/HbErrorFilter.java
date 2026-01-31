@@ -6,7 +6,10 @@ import com.dmarcotte.handlebars.file.HbFileViewProvider;
 import com.intellij.codeInsight.highlighting.TemplateLanguageErrorFilter;
 import com.intellij.psi.tree.TokenSet;
 
-import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_BLOCK;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_INVERSE;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_PARTIAL;
 
 public final class HbErrorFilter extends TemplateLanguageErrorFilter {
 

@@ -2,15 +2,15 @@
 package org.angular2.web.references
 
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
-import com.intellij.polySymbols.js.symbols.asJSSymbol
-import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.asSafely
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.js.symbols.asJSSymbol
+import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
 import com.intellij.polySymbols.references.PsiPolySymbolReferenceProvider
+import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.entities.Angular2ClassBasedDirective

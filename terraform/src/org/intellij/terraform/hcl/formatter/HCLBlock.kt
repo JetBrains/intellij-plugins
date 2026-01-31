@@ -1,7 +1,14 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.formatter
 
-import com.intellij.formatting.*
+import com.intellij.formatting.Alignment
+import com.intellij.formatting.Block
+import com.intellij.formatting.ChildAttributes
+import com.intellij.formatting.Indent
+import com.intellij.formatting.Spacing
+import com.intellij.formatting.SpacingBuilder
+import com.intellij.formatting.Wrap
+import com.intellij.formatting.WrapType
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiComment
 import com.intellij.psi.TokenType
@@ -11,7 +18,29 @@ import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.elementType
 import com.intellij.util.text.CharArrayUtil
-import org.intellij.terraform.hcl.HCLElementTypes.*
+import org.intellij.terraform.hcl.HCLElementTypes.ARRAY
+import org.intellij.terraform.hcl.HCLElementTypes.BLOCK_OBJECT
+import org.intellij.terraform.hcl.HCLElementTypes.COMMA
+import org.intellij.terraform.hcl.HCLElementTypes.CONDITIONAL_EXPRESSION
+import org.intellij.terraform.hcl.HCLElementTypes.EQUALS
+import org.intellij.terraform.hcl.HCLElementTypes.FOR_ARRAY_EXPRESSION
+import org.intellij.terraform.hcl.HCLElementTypes.FOR_OBJECT_EXPRESSION
+import org.intellij.terraform.hcl.HCLElementTypes.HD_LINE
+import org.intellij.terraform.hcl.HCLElementTypes.HD_MARKER
+import org.intellij.terraform.hcl.HCLElementTypes.HD_START
+import org.intellij.terraform.hcl.HCLElementTypes.HEREDOC_CONTENT
+import org.intellij.terraform.hcl.HCLElementTypes.HEREDOC_LITERAL
+import org.intellij.terraform.hcl.HCLElementTypes.HEREDOC_MARKER
+import org.intellij.terraform.hcl.HCLElementTypes.L_BRACKET
+import org.intellij.terraform.hcl.HCLElementTypes.L_CURLY
+import org.intellij.terraform.hcl.HCLElementTypes.L_PAREN
+import org.intellij.terraform.hcl.HCLElementTypes.METHOD_CALL_EXPRESSION
+import org.intellij.terraform.hcl.HCLElementTypes.OBJECT
+import org.intellij.terraform.hcl.HCLElementTypes.PARAMETER_LIST
+import org.intellij.terraform.hcl.HCLElementTypes.PROPERTY
+import org.intellij.terraform.hcl.HCLElementTypes.R_BRACKET
+import org.intellij.terraform.hcl.HCLElementTypes.R_CURLY
+import org.intellij.terraform.hcl.HCLElementTypes.R_PAREN
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.hcl.psi.HCLPsiUtil.getNextSiblingNonWhiteSpace

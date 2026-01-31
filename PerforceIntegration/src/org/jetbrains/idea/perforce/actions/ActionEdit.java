@@ -21,7 +21,11 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vcs.*;
+import com.intellij.openapi.vcs.AbstractVcsHelper;
+import com.intellij.openapi.vcs.FileStatus;
+import com.intellij.openapi.vcs.FileStatusManager;
+import com.intellij.openapi.vcs.VcsDataKeys;
+import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,7 +35,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.CancelActionException;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
-import org.jetbrains.idea.perforce.perforce.*;
+import org.jetbrains.idea.perforce.perforce.FStat;
+import org.jetbrains.idea.perforce.perforce.P4File;
+import org.jetbrains.idea.perforce.perforce.PerforceRunner;
+import org.jetbrains.idea.perforce.perforce.PerforceRunnerI;
+import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
 import java.util.List;
 

@@ -14,12 +14,16 @@ import org.jetbrains.qodana.cloud.openBrowserWithCurrentQodanaCloudFrontend
 import org.jetbrains.qodana.extensions.ci.BitbucketCIConfigHandler
 import org.jetbrains.qodana.notifications.QodanaNotifications
 import org.jetbrains.qodana.report.BannerContentProvider
-import org.jetbrains.qodana.ui.*
+import org.jetbrains.qodana.ui.ProjectVcsDataProvider
 import org.jetbrains.qodana.ui.ci.BaseSetupCIViewModel
 import org.jetbrains.qodana.ui.ci.SetupCIFinishProvider
 import org.jetbrains.qodana.ui.ci.SetupCIViewModel
 import org.jetbrains.qodana.ui.ci.providers.CIConfigFileState
 import org.jetbrains.qodana.ui.ci.providers.getSarifBaseline
+import org.jetbrains.qodana.ui.ciRelevantBranches
+import org.jetbrains.qodana.ui.createInMemoryDocument
+import org.jetbrains.qodana.ui.getQodanaImageNameMatchingIDE
+import org.jetbrains.qodana.ui.originHost
 import java.nio.file.Path
 import kotlin.io.path.exists
 

@@ -4,7 +4,9 @@ package org.angular2.lang.selector
 import com.intellij.openapi.util.text.StringUtil
 import com.mscharhag.oleaster.matcher.Matchers
 import com.mscharhag.oleaster.runner.OleasterRunner
-import com.mscharhag.oleaster.runner.StaticRunnerSupport.*
+import com.mscharhag.oleaster.runner.StaticRunnerSupport.beforeEach
+import com.mscharhag.oleaster.runner.StaticRunnerSupport.describe
+import com.mscharhag.oleaster.runner.StaticRunnerSupport.it
 import org.angular2.lang.OleasterTestUtil.bootstrapLightPlatform
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.Companion.parse
 import org.junit.runner.RunWith

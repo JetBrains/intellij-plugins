@@ -10,8 +10,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbAware
 import com.intellij.ui.AnimatedIcon
-import org.jetbrains.qodana.inspectionKts.icons.InspectionKtsIcons
 import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
+import org.jetbrains.qodana.inspectionKts.icons.InspectionKtsIcons
 import javax.swing.Icon
 
 internal class RecompileAction(

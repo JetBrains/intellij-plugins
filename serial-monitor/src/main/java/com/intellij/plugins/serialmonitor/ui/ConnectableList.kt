@@ -1,7 +1,13 @@
 package com.intellij.plugins.serialmonitor.ui
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.ActionGroup
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonShortcuts
+import com.intellij.openapi.actionSystem.Separator
 import com.intellij.openapi.application.UI
 import com.intellij.openapi.components.service
 import com.intellij.openapi.components.serviceAsync
@@ -35,7 +41,11 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.Nls
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import javax.swing.*
+import javax.swing.DefaultListModel
+import javax.swing.DefaultListSelectionModel
+import javax.swing.Icon
+import javax.swing.JList
+import javax.swing.SwingUtilities
 
 internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
   abstract inner class Connectable(val entityName: @NlsSafe String, val status: PortStatus, val isUsed: Boolean) {

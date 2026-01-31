@@ -2,9 +2,9 @@
 package org.intellij.terraform.config.findUsages
 
 import com.intellij.lang.cacheBuilder.WordsScanner
+import org.intellij.terraform.config.TfParserDefinition
 import org.intellij.terraform.hcl.findUsages.HCLFindUsagesProvider
 import org.intellij.terraform.hcl.findUsages.HCLWordsScanner
-import org.intellij.terraform.config.TfParserDefinition
 
 class TfFindUsagesProvider : HCLFindUsagesProvider() {
   override fun getWordsScanner(): WordsScanner {

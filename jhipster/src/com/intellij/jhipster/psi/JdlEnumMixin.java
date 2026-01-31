@@ -15,7 +15,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public abstract class JdlEnumMixin extends ASTWrapperPsiElement implements JdlEnum {
   public JdlEnumMixin(@NotNull ASTNode node) {

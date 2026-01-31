@@ -3,7 +3,14 @@ package com.intellij.plugins.drools.lang.psi.searchers;
 
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.plugins.drools.DroolsFileType;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceService;
+import com.intellij.psi.ReferenceRange;
+import com.intellij.psi.ResolvingHint;
 import com.intellij.psi.impl.beanProperties.BeanPropertyElement;
 import com.intellij.psi.impl.light.LightVariableBuilder;
 import com.intellij.psi.search.GlobalSearchScope;

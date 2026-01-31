@@ -1,6 +1,11 @@
 package com.intellij.dts.util
 
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsNode
+import com.intellij.dts.lang.psi.DtsProperty
+import com.intellij.dts.lang.psi.DtsRefNode
+import com.intellij.dts.lang.psi.DtsRootNode
+import com.intellij.dts.lang.psi.DtsStatement
+import com.intellij.dts.lang.psi.getDtsReferenceTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 

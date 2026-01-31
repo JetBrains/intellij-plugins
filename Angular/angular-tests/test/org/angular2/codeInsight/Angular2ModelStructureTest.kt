@@ -3,13 +3,19 @@ package org.angular2.codeInsight
 
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.polySymbols.testFramework.DebugOutputPrinter
+import com.intellij.psi.util.PsiTreeUtil
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestUtil
-import org.angular2.entities.*
+import org.angular2.entities.Angular2Declaration
+import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider.getEntity
+import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2HostDirective
+import org.angular2.entities.Angular2ImportsOwner
+import org.angular2.entities.Angular2Module
+import org.angular2.entities.Angular2Pipe
 import org.angular2.web.Angular2Symbol
 
 class Angular2ModelStructureTest : Angular2TestCase("modelStructure", false) {

@@ -1,6 +1,9 @@
 package org.jetbrains.qodana.staticAnalysis.profile
 
-import com.intellij.codeInspection.ex.*
+import com.intellij.codeInspection.ex.InspectionToolRegistrar
+import com.intellij.codeInspection.ex.InspectionToolWrapper
+import com.intellij.codeInspection.ex.InspectionToolsSupplier
+import com.intellij.codeInspection.ex.ProjectInspectionToolRegistrar
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service

@@ -2,7 +2,16 @@ package org.jetbrains.qodana.inspectionKts
 
 import com.intellij.analysis.AnalysisScope
 import com.intellij.codeHighlighting.HighlightDisplayLevel
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.CommonProblemDescriptor
+import com.intellij.codeInspection.GlobalInspectionContext
+import com.intellij.codeInspection.GlobalInspectionTool
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.InspectionProfileEntry
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.LocalInspectionToolSession
+import com.intellij.codeInspection.ProblemDescriptionsProcessor
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.reference.RefEntity
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.logger

@@ -14,7 +14,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.FunctionUtil;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartFactoryConstructorDeclaration;
+import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBody;
+import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBodyOrNative;
+import com.jetbrains.lang.dart.psi.DartGetterDeclaration;
+import com.jetbrains.lang.dart.psi.DartIncompleteDeclaration;
+import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
+import com.jetbrains.lang.dart.psi.DartNamedConstructorDeclaration;
+import com.jetbrains.lang.dart.psi.DartSetterDeclaration;
 import com.jetbrains.lang.dart.psi.impl.AbstractDartMethodDeclarationImpl;
 import org.jetbrains.annotations.NotNull;
 

@@ -16,7 +16,11 @@ import org.intellij.terraform.hil.HILElementTypes
 import org.intellij.terraform.hil.HILElementTypes.IL_BINARY_EQUALITY_EXPRESSION
 import org.intellij.terraform.hil.HILTypes.ILBinaryBooleanOnlyOperations
 import org.intellij.terraform.hil.HILTypes.ILBinaryNumericOnlyOperations
-import org.intellij.terraform.hil.psi.*
+import org.intellij.terraform.hil.psi.ILBinaryExpression
+import org.intellij.terraform.hil.psi.ILConditionalExpression
+import org.intellij.terraform.hil.psi.ILElementVisitor
+import org.intellij.terraform.hil.psi.ILLiteralExpression
+import org.intellij.terraform.hil.psi.ILUnaryExpression
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import org.intellij.terraform.isTfOrTofuPsiFile
 

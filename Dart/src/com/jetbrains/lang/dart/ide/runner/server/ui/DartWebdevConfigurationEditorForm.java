@@ -18,7 +18,8 @@ import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevParameters;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 public class DartWebdevConfigurationEditorForm extends SettingsEditor<DartWebdevConfiguration> {
   private JPanel myMainPanel;

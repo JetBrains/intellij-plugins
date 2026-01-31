@@ -9,7 +9,25 @@ import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueComputedProperty
+import org.jetbrains.vuejs.model.VueContainer
+import org.jetbrains.vuejs.model.VueDataProperty
+import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueEmitCall
+import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueFilter
+import org.jetbrains.vuejs.model.VueGlobalImpl
+import org.jetbrains.vuejs.model.VueInject
+import org.jetbrains.vuejs.model.VueInputProperty
+import org.jetbrains.vuejs.model.VueMethod
+import org.jetbrains.vuejs.model.VueMixin
+import org.jetbrains.vuejs.model.VueModelDirectiveProperties
+import org.jetbrains.vuejs.model.VueNamedComponent
+import org.jetbrains.vuejs.model.VueProvide
+import org.jetbrains.vuejs.model.VueSlot
+import org.jetbrains.vuejs.model.VueSymbol
+import org.jetbrains.vuejs.model.VueTemplate
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 
 abstract class VueSourceContainer<T: PsiElement>(

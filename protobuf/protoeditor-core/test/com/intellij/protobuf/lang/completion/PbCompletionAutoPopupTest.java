@@ -16,9 +16,9 @@
 package com.intellij.protobuf.lang.completion;
 
 import com.intellij.codeInsight.lookup.Lookup;
+import com.intellij.protobuf.TestUtils;
 import com.intellij.testFramework.fixtures.CompletionAutoPopupTester;
 import com.intellij.util.ThrowableRunnable;
-import com.intellij.protobuf.TestUtils;
 import org.jetbrains.annotations.NotNull;
 
 import static com.google.common.truth.Truth.assertThat;

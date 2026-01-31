@@ -15,9 +15,13 @@ import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.ui.treeStructure.Tree
-import training.dsl.*
+import training.dsl.LessonContext
 import training.dsl.LessonUtil.highlightBreakpointGutter
 import training.dsl.LessonUtil.productName
+import training.dsl.checkToolWindowState
+import training.dsl.dropMnemonic
+import training.dsl.highlightButtonById
+import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 import training.learn.js.textOnLine
 import training.ui.LearningUiHighlightingManager

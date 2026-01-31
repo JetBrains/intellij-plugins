@@ -1,7 +1,11 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project
 
 import org.jetbrains.io.JsonReaderEx
-import java.util.*
+import java.util.Objects
+import java.util.SortedMap
+import java.util.SortedSet
+import java.util.TreeMap
+import java.util.TreeSet
 
 object BoardsJsonParser {
   /**

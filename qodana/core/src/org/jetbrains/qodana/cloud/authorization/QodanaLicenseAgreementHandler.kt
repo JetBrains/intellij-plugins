@@ -4,7 +4,11 @@ import com.google.gson.GsonBuilder
 import com.intellij.util.Urls
 import com.intellij.util.io.origin
 import io.netty.channel.ChannelHandlerContext
-import io.netty.handler.codec.http.*
+import io.netty.handler.codec.http.FullHttpRequest
+import io.netty.handler.codec.http.HttpMethod
+import io.netty.handler.codec.http.HttpRequest
+import io.netty.handler.codec.http.HttpResponseStatus
+import io.netty.handler.codec.http.QueryStringDecoder
 import kotlinx.coroutines.launch
 import org.jetbrains.ide.RestService
 import org.jetbrains.qodana.cloud.QodanaCloudStateService

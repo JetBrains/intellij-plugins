@@ -16,9 +16,14 @@ import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.i18n.OsmorcBundle;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
   private Workspace myWorkspace = null;

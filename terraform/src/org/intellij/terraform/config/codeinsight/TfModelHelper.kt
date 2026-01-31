@@ -14,7 +14,19 @@ import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.HclType
+import org.intellij.terraform.config.model.ListType
+import org.intellij.terraform.config.model.MapType
+import org.intellij.terraform.config.model.Module
+import org.intellij.terraform.config.model.ModuleType
+import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.TfTypeModel
+import org.intellij.terraform.config.model.TypeModelProvider
+import org.intellij.terraform.config.model.Types
+import org.intellij.terraform.config.model.Variable
+import org.intellij.terraform.config.model.getType
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLObject
@@ -27,7 +39,7 @@ import org.intellij.terraform.stack.component.TfComponentFileType
 import org.intellij.terraform.stack.component.TfComponentHelper
 import org.intellij.terraform.terragrunt.TerragruntFileType
 import org.intellij.terraform.terragrunt.codeinsight.TerragruntUnitHelper
-import java.util.*
+import java.util.Locale
 
 internal object TfModelHelper {
   private val LOG = Logger.getInstance(TfModelHelper::class.java)

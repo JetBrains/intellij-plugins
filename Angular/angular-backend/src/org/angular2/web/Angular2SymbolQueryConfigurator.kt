@@ -1,7 +1,13 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSArgumentList
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
@@ -19,7 +25,13 @@ import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.js.css.CssClassListInJSLiteralInHtmlAttributeScope
 import com.intellij.polySymbols.js.css.CssClassListInJSLiteralInHtmlAttributeScope.Companion.isJSLiteralContextFromEmbeddedContent
-import com.intellij.polySymbols.query.*
+import com.intellij.polySymbols.query.PolySymbolLocationQueryScopeProvider
+import com.intellij.polySymbols.query.PolySymbolNameConversionRules
+import com.intellij.polySymbols.query.PolySymbolNameConversionRulesProvider
+import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
+import com.intellij.polySymbols.query.PolySymbolQueryScopeContributor
+import com.intellij.polySymbols.query.PolySymbolQueryScopeProviderRegistrar
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.css.CssElement
@@ -32,7 +44,7 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
-import org.angular2.*
+import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2DecoratorUtil.HOST_BINDING_DEC
@@ -41,16 +53,24 @@ import org.angular2.Angular2DecoratorUtil.VIEW_CHILD_DEC
 import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter
 import org.angular2.Angular2DecoratorUtil.isHostBindingClassValueLiteral
 import org.angular2.Angular2DecoratorUtil.isHostListenerDecoratorEventLiteral
+import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.isNgClassOrAnimateAttribute
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompletionProvider
 import org.angular2.codeInsight.blocks.isDeferOnTriggerParameterReference
 import org.angular2.codeInsight.blocks.isDeferOnTriggerReference
 import org.angular2.codeInsight.blocks.isJSReferenceAfterEqInForBlockLetParameterAssignment
+import org.angular2.directiveInputToTemplateBindingVar
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.index.getFunctionNameFromIndex
-import org.angular2.lang.expr.psi.*
+import org.angular2.isTemplateBindingDirectiveInput
+import org.angular2.lang.expr.psi.Angular2Binding
+import org.angular2.lang.expr.psi.Angular2BlockParameter
+import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
+import org.angular2.lang.expr.psi.Angular2TemplateBinding
+import org.angular2.lang.expr.psi.Angular2TemplateBindingKey
+import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlBlock
@@ -58,7 +78,29 @@ import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.signals.Angular2SignalUtils.getPossibleSignalFunNameForLiteralParameter
 import org.angular2.signals.Angular2SignalUtils.isViewChildSignalCall
 import org.angular2.signals.Angular2SignalUtils.isViewChildrenSignalCall
-import org.angular2.web.scopes.*
+import org.angular2.templateBindingVarToDirectiveInput
+import org.angular2.web.scopes.Angular2CustomCssPropertiesScope
+import org.angular2.web.scopes.Angular2TemplateScope
+import org.angular2.web.scopes.AttributeWithInterpolationsScope
+import org.angular2.web.scopes.BINDINGS_PROP
+import org.angular2.web.scopes.CreateComponentDirectiveBindingScope
+import org.angular2.web.scopes.DeferOnTriggerParameterScope
+import org.angular2.web.scopes.DirectiveAttributeSelectorsScope
+import org.angular2.web.scopes.DirectiveElementSelectorsScope
+import org.angular2.web.scopes.DirectivePropertyMappingCompletionScope
+import org.angular2.web.scopes.HostBindingsScope
+import org.angular2.web.scopes.HtmlAttributesCustomCssPropertiesScope
+import org.angular2.web.scopes.I18NAttributesScope
+import org.angular2.web.scopes.INPUT_BINDING_FUN
+import org.angular2.web.scopes.MatchedDirectivesScope
+import org.angular2.web.scopes.NgContentSelectorsScope
+import org.angular2.web.scopes.OUTPUT_BINDING_FUN
+import org.angular2.web.scopes.OneTimeBindingsScope
+import org.angular2.web.scopes.StandardPropertyAndEventsScope
+import org.angular2.web.scopes.TWO_WAY_BINDING_FUN
+import org.angular2.web.scopes.TemplateBindingKeyScope
+import org.angular2.web.scopes.TemplateBindingKeywordsScope
+import org.angular2.web.scopes.ViewChildrenScope
 
 class Angular2SymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
 

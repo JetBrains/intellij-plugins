@@ -1,16 +1,16 @@
 package org.jetbrains.qodana.cpp
 
+import com.intellij.analysis.AnalysisScope
+import com.intellij.codeInspection.ex.GlobalInspectionContextBase
+import com.intellij.codeInspection.ex.JobDescriptor
+import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.analysis.AnalysisScope
-import com.intellij.codeInspection.ex.JobDescriptor
-import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.application.readAction
 import com.jetbrains.cidr.lang.workspace.OCResolveConfigurations
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
-import com.intellij.codeInspection.ex.GlobalInspectionContextBase
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolsConfigurationProvider
 import java.io.File
 import java.text.SimpleDateFormat

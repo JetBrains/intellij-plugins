@@ -10,7 +10,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
-import com.jetbrains.qodana.sarif.model.*
+import com.jetbrains.qodana.sarif.model.ArtifactLocation
+import com.jetbrains.qodana.sarif.model.Location
+import com.jetbrains.qodana.sarif.model.MultiformatMessageString
+import com.jetbrains.qodana.sarif.model.PhysicalLocation
+import com.jetbrains.qodana.sarif.model.Region
+import com.jetbrains.qodana.sarif.model.ReportingDescriptor
+import com.jetbrains.qodana.sarif.model.Result
+import com.jetbrains.qodana.sarif.model.Run
+import com.jetbrains.qodana.sarif.model.SarifReport
+import com.jetbrains.qodana.sarif.model.Tool
+import com.jetbrains.qodana.sarif.model.ToolComponent
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -21,9 +31,16 @@ import org.jetbrains.qodana.QodanaPluginLightTestBase
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.dispatchAllTasksOnUi
 import org.jetbrains.qodana.reinstansiateService
-import org.jetbrains.qodana.report.*
+import org.jetbrains.qodana.report.AggregatedReportMetadata
+import org.jetbrains.qodana.report.BannerContentProvider
+import org.jetbrains.qodana.report.BrowserViewProvider
+import org.jetbrains.qodana.report.LoadedReport
+import org.jetbrains.qodana.report.NoProblemsContentProvider
+import org.jetbrains.qodana.report.NotificationCallback
+import org.jetbrains.qodana.report.ReportDescriptor
+import org.jetbrains.qodana.report.ValidatedSarif
 import org.jetbrains.qodana.runDispatchingOnUi
-import java.util.*
+import java.util.UUID
 
 class SarifInspectionDescriptionLinkHandlerTest : QodanaPluginLightTestBase() {
   private lateinit var inspectionFromPlatformWithDescription: InspectionToolWrapper<*, *>

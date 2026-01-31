@@ -24,7 +24,6 @@ import org.jetbrains.astro.editor.AstroComponentSourceEdit
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.lang.psi.AstroFrontmatterScript
 import java.awt.datatransfer.DataFlavor
-import kotlin.Pair
 import com.intellij.openapi.util.Pair as OpenApiPair
 
 class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponentImportsTransferableData>() {

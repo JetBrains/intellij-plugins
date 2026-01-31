@@ -15,7 +15,12 @@
  */
 package com.intellij.protobuf.ide.formatter;
 
-import com.intellij.formatting.*;
+import com.intellij.formatting.FormattingContext;
+import com.intellij.formatting.FormattingModel;
+import com.intellij.formatting.FormattingModelBuilder;
+import com.intellij.formatting.SpacingBuilder;
+import com.intellij.formatting.Wrap;
+import com.intellij.formatting.WrapType;
 import com.intellij.protobuf.lang.PbLanguage;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.psi.PsiFile;

@@ -9,7 +9,11 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
-import com.intellij.polySymbols.js.*
+import com.intellij.polySymbols.js.JS_EVENTS
+import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.NAMESPACE_JS
+import com.intellij.polySymbols.js.decorateWithJsType
+import com.intellij.polySymbols.js.decorateWithSymbolType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag

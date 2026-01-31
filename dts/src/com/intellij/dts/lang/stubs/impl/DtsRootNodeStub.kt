@@ -3,7 +3,12 @@ package com.intellij.dts.lang.stubs.impl
 import com.intellij.dts.lang.psi.DtsRootNode
 import com.intellij.dts.lang.psi.impl.DtsRootNodeImpl
 import com.intellij.dts.lang.stubs.DtsStubElementType
-import com.intellij.psi.stubs.*
+import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubBase
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 
 class DtsRootNodeStub(
   parent: StubElement<*>?,

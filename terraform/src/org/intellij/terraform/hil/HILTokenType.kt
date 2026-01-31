@@ -4,7 +4,40 @@ package org.intellij.terraform.hil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
-import org.intellij.terraform.hil.HILElementTypes.*
+import org.intellij.terraform.hil.HILElementTypes.DOUBLE_QUOTED_STRING
+import org.intellij.terraform.hil.HILElementTypes.ELSE_KEYWORD
+import org.intellij.terraform.hil.HILElementTypes.ENDFOR_KEYWORD
+import org.intellij.terraform.hil.HILElementTypes.ENDIF_KEYWORD
+import org.intellij.terraform.hil.HILElementTypes.FALSE
+import org.intellij.terraform.hil.HILElementTypes.FOR_KEYWORD
+import org.intellij.terraform.hil.HILElementTypes.IF_KEYWORD
+import org.intellij.terraform.hil.HILElementTypes.IL_LITERAL_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.INTERPOLATION_START
+import org.intellij.terraform.hil.HILElementTypes.L_BRACKET
+import org.intellij.terraform.hil.HILElementTypes.L_CURLY
+import org.intellij.terraform.hil.HILElementTypes.L_PAREN
+import org.intellij.terraform.hil.HILElementTypes.NULL
+import org.intellij.terraform.hil.HILElementTypes.OP_AND_AND
+import org.intellij.terraform.hil.HILElementTypes.OP_COLON
+import org.intellij.terraform.hil.HILElementTypes.OP_DIV
+import org.intellij.terraform.hil.HILElementTypes.OP_EQUAL
+import org.intellij.terraform.hil.HILElementTypes.OP_GREATER
+import org.intellij.terraform.hil.HILElementTypes.OP_GREATER_OR_EQUAL
+import org.intellij.terraform.hil.HILElementTypes.OP_LESS
+import org.intellij.terraform.hil.HILElementTypes.OP_LESS_OR_EQUAL
+import org.intellij.terraform.hil.HILElementTypes.OP_MINUS
+import org.intellij.terraform.hil.HILElementTypes.OP_MOD
+import org.intellij.terraform.hil.HILElementTypes.OP_MUL
+import org.intellij.terraform.hil.HILElementTypes.OP_NOT
+import org.intellij.terraform.hil.HILElementTypes.OP_NOT_EQUAL
+import org.intellij.terraform.hil.HILElementTypes.OP_OR_OR
+import org.intellij.terraform.hil.HILElementTypes.OP_PLUS
+import org.intellij.terraform.hil.HILElementTypes.OP_QUEST
+import org.intellij.terraform.hil.HILElementTypes.R_BRACKET
+import org.intellij.terraform.hil.HILElementTypes.R_CURLY
+import org.intellij.terraform.hil.HILElementTypes.R_PAREN
+import org.intellij.terraform.hil.HILElementTypes.TEMPLATE_START
+import org.intellij.terraform.hil.HILElementTypes.TRUE
 
 open class HILTokenType(debugName: String) : IElementType(debugName, HILLanguage)
 

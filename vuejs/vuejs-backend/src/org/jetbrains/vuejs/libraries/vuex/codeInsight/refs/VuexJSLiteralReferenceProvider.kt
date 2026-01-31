@@ -1,7 +1,18 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex.codeInsight.refs
 
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSArgumentList
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSDestructuringShorthandedProperty
+import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSIndexedPropertyAccessExpression
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSLiteralExpressionKind
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSParameter
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.TextRange
@@ -33,7 +44,14 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE_DEC
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isActionContextParameter
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isVuexContext
-import org.jetbrains.vuejs.libraries.vuex.model.store.*
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainer
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexHelpersContextNamespace
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStaticNamespace
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreActionContextNamespace
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreNamespace
+import org.jetbrains.vuejs.libraries.vuex.model.store.getNamespaceForGettersOrState
+import org.jetbrains.vuejs.libraries.vuex.model.store.isPossiblyStoreActionContextParam
+import org.jetbrains.vuejs.libraries.vuex.model.store.isPossiblyStoreContext
 
 abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 

@@ -3,7 +3,7 @@ package org.angular2.entities
 
 import com.intellij.model.Pointer
 import org.angular2.entities.Angular2EntitiesProvider.getDeclarationToModuleMap
-import java.util.*
+import java.util.Collections
 
 /**
  * Also known as [Declarable](https://angular.io/guide/glossary#declarable).

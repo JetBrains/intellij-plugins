@@ -15,8 +15,8 @@
  */
 package com.intellij.protobuf.lang.psi;
 
-import com.intellij.psi.tree.IElementType;
 import com.intellij.protobuf.lang.PbTextLanguage;
+import com.intellij.psi.tree.IElementType;
 
 /** The {@link IElementType type} implemented by all prototext composite types. */
 public class PbTextElementType extends IElementType {

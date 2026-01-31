@@ -4,7 +4,11 @@ package com.jetbrains.lang.dart.coverage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class DartCoverageData {
   private @Nullable List<DartFileCoverageData> coverage;

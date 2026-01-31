@@ -7,7 +7,10 @@ import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.builder.schema
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
-import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.*
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.MONGODB
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.MYSQL
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.SQLITE
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.SQLSERVER
 import org.intellij.prisma.lang.PrismaConstants.FieldAttributes
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.intellij.prisma.lang.PrismaConstants.ParameterNames
@@ -17,7 +20,7 @@ import org.intellij.prisma.lang.psi.PrismaPsiPatterns
 import org.intellij.prisma.lang.psi.PrismaTableEntityDeclaration
 import org.intellij.prisma.lang.types.PrismaBooleanType
 import org.intellij.prisma.lang.types.PrismaPrimitiveType
-import java.util.*
+import java.util.EnumSet
 
 val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
   group(PrismaSchemaKind.FIELD_ATTRIBUTE) {

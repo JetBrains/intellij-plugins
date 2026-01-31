@@ -3,7 +3,8 @@ package com.jetbrains.cidr.cpp.embedded.platformio.project
 import com.intellij.openapi.util.NlsSafe
 import icons.ClionEmbeddedPlatformioIcons
 import org.jetbrains.annotations.TestOnly
-import java.util.*
+import java.util.Collections
+import java.util.Enumeration
 import javax.swing.Icon
 import javax.swing.tree.TreeNode
 

@@ -27,7 +27,12 @@ import org.intellij.prisma.ide.indexing.PRISMA_ENTITIES_INDEX_KEY
 import org.intellij.prisma.ide.indexing.PRISMA_KEY_VALUE_DECL_INDEX_KEY
 import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.PrismaFileType
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.PrismaArrayExpression
+import org.intellij.prisma.lang.psi.PrismaDatasourceDeclaration
+import org.intellij.prisma.lang.psi.PrismaEntityDeclaration
+import org.intellij.prisma.lang.psi.PrismaKeyValue
+import org.intellij.prisma.lang.psi.PrismaKeyValueDeclaration
+import org.intellij.prisma.lang.psi.PrismaLiteralExpression
 import java.util.concurrent.ConcurrentHashMap
 
 fun <T : Any> computeWithSchemaScopedCache(

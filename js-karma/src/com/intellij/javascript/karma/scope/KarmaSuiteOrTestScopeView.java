@@ -13,7 +13,8 @@ import com.intellij.util.ui.SwingHelper;
 import com.intellij.webcore.ui.PathShortener;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 public class KarmaSuiteOrTestScopeView extends KarmaScopeView {
   private final TestFullNameView myTestNameView;

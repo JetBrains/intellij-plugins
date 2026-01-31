@@ -15,7 +15,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.SystemIndependent
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.application.PerforceVcs
-import org.jetbrains.idea.perforce.perforce.connections.*
+import org.jetbrains.idea.perforce.perforce.connections.P4Connection
+import org.jetbrains.idea.perforce.perforce.connections.P4ConnectionParameters
+import org.jetbrains.idea.perforce.perforce.connections.P4ParametersConnection
+import org.jetbrains.idea.perforce.perforce.connections.P4ParamsCalculator
+import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager
+import org.jetbrains.idea.perforce.perforce.connections.PerforceExternalConfigTracker
+import org.jetbrains.idea.perforce.perforce.connections.PerforceLocalConnection
+import org.jetbrains.idea.perforce.perforce.connections.PerforceWorkspaceConfigurator
+import org.jetbrains.idea.perforce.perforce.connections.SingletonConnection
 
 internal class P4RootChecker : VcsRootChecker() {
   override fun getSupportedVcs(): VcsKey {

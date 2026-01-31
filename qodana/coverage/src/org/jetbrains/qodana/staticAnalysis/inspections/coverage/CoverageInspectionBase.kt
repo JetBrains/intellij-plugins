@@ -1,6 +1,10 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.GlobalInspectionContext
+import com.intellij.codeInspection.GlobalSimpleInspectionTool
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.ProblemDescriptionsProcessor
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.options.OptPane
 import com.intellij.codeInspection.options.OptPane.checkbox
 import com.intellij.codeInspection.options.OptPane.number
@@ -20,8 +24,8 @@ import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.coverage.CoverageLanguage
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.precomputedCoverageFiles
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
-import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.INPUT_COVERAGE_LOADED
 import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.COVERAGE_LANGUAGE_FIELD
+import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.INPUT_COVERAGE_LOADED
 import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.ExperimentalPathApi

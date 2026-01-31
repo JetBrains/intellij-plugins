@@ -2,7 +2,7 @@
 package org.intellij.terraform.config.model.version
 
 import org.intellij.lang.annotations.Language
-import java.util.*
+import java.util.Arrays
 import kotlin.math.sign
 
 

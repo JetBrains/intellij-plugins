@@ -3,7 +3,11 @@ package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.UI.CfmlLookUpItemUtil;
 import com.intellij.coldFusion.model.info.CfmlFunctionDescription;
-import com.intellij.coldFusion.model.psi.*;
+import com.intellij.coldFusion.model.psi.CfmlComponentType;
+import com.intellij.coldFusion.model.psi.CfmlFunction;
+import com.intellij.coldFusion.model.psi.CfmlParameter;
+import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
+import com.intellij.coldFusion.model.psi.CfmlRecursiveElementVisitor;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
@@ -15,7 +19,7 @@ import icons.CFMLIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunction, PlatformIcons {
   public static final String TAG_NAME = "cffunction";

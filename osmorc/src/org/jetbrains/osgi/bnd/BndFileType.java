@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.i18n.OsmorcBundle;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 /**
  * File type for Bnd/Bndtools files.

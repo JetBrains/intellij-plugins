@@ -17,8 +17,10 @@ import com.intellij.util.ui.UIUtil;
 import com.intellij.webcore.packaging.PackagesNotificationPanel;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.util.List;
 
 public class BowerPackagesView {

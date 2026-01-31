@@ -14,7 +14,14 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsData
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.TestLoggerFactory
-import com.intellij.testFramework.UsefulTestCase.*
+import com.intellij.testFramework.UsefulTestCase.assertEmpty
+import com.intellij.testFramework.UsefulTestCase.assertEquals
+import com.intellij.testFramework.UsefulTestCase.assertFalse
+import com.intellij.testFramework.UsefulTestCase.assertNotNull
+import com.intellij.testFramework.UsefulTestCase.assertNull
+import com.intellij.testFramework.UsefulTestCase.assertOneElement
+import com.intellij.testFramework.UsefulTestCase.assertOrderedCollection
+import com.intellij.testFramework.UsefulTestCase.assertTrue
 import com.intellij.util.Consumer
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.idea.perforce.application.PerforceFileRevision

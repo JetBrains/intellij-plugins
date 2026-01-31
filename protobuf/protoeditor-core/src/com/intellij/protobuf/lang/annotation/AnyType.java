@@ -15,9 +15,13 @@
  */
 package com.intellij.protobuf.lang.annotation;
 
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbMessageType;
+import com.intellij.protobuf.lang.psi.PbNamedTypeElement;
+import com.intellij.protobuf.lang.psi.PbNumberValue;
+import com.intellij.protobuf.lang.psi.PbTypeName;
 import com.intellij.protobuf.lang.util.BuiltInType;
+import com.intellij.psi.util.QualifiedName;
 
 import java.util.Objects;
 

@@ -17,8 +17,8 @@ package org.jetbrains.osgi.maven
 
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.testFramework.PerformanceUnitTest
-import com.intellij.tools.ide.metrics.benchmark.Benchmark
 import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase
+import com.intellij.tools.ide.metrics.benchmark.Benchmark
 import org.assertj.core.api.Assertions.assertThat
 import org.jdom.Element
 import org.osmorc.facet.OsmorcFacet

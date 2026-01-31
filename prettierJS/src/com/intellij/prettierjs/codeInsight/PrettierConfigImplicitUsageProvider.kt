@@ -2,7 +2,9 @@
 package com.intellij.prettierjs.codeInsight
 
 import com.intellij.lang.javascript.inspections.JSConfigImplicitUsageProvider
-import com.intellij.prettierjs.PrettierUtil.*
+import com.intellij.prettierjs.PrettierUtil.CONFIG_FILE_NAME
+import com.intellij.prettierjs.PrettierUtil.PACKAGE_NAME
+import com.intellij.prettierjs.PrettierUtil.RC_FILE_NAME
 
 
 class PrettierConfigImplicitUsageProvider : JSConfigImplicitUsageProvider() {

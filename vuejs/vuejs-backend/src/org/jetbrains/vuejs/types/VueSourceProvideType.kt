@@ -2,15 +2,26 @@
 package org.jetbrains.vuejs.types
 
 import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSInitializerOwner
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSTypeOwner
+import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
+import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSCodeBasedType
+import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeBaseImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
+import com.intellij.lang.javascript.psi.types.JSUnknownType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.contextOfType
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
-import java.util.*
+import java.util.Objects
 
 class VueSourceProvideType
 private constructor(

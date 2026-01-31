@@ -12,7 +12,12 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.isFile
 import com.intellij.openapi.vfs.newvfs.RefreshQueue
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runInterruptible
+import kotlinx.coroutines.withContext
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.opentofu.OpenTofuFileType
 

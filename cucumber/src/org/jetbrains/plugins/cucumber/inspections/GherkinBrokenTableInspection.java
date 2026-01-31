@@ -6,7 +6,12 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
+import org.jetbrains.plugins.cucumber.psi.GherkinExamplesBlock;
+import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
+import org.jetbrains.plugins.cucumber.psi.GherkinTable;
+import org.jetbrains.plugins.cucumber.psi.GherkinTableRow;
 
 import java.util.List;
 

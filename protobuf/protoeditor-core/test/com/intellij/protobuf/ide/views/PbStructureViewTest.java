@@ -18,7 +18,7 @@ package com.intellij.protobuf.ide.views;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
 
-import javax.swing.*;
+import javax.swing.JTree;
 
 
 /** Test structure view. */

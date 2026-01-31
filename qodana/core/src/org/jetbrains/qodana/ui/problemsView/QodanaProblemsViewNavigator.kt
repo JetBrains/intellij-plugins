@@ -14,7 +14,11 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.concurrency.asDeferred
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
-import org.jetbrains.qodana.ui.problemsView.tree.model.*
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreePathToProblemNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.findNextProblemNodePath
+import org.jetbrains.qodana.ui.problemsView.tree.model.findPreviousProblemNodePath
+import org.jetbrains.qodana.ui.problemsView.tree.model.navigatable
 import org.jetbrains.qodana.ui.problemsView.tree.ui.QodanaUiTreeNode
 import org.jetbrains.qodana.ui.problemsView.tree.ui.QodanaUiTreeVisitor
 import java.util.concurrent.atomic.AtomicReference

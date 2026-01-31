@@ -12,10 +12,14 @@ import com.intellij.psi.util.childrenOfType
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.HclType
 import org.intellij.terraform.config.model.ProviderType
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLElementGenerator
+import org.intellij.terraform.hcl.psi.HCLLiteral
+import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.hil.psi.ILLiteralExpression
-import java.util.*
+import java.util.Locale
 
 class TfElementGenerator(val project: Project) : HCLElementGenerator(project) {
 

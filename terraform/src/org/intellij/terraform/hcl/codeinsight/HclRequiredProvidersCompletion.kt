@@ -1,7 +1,12 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.codeinsight
 
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.CompletionContributor
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionProvider
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionSorter
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.patterns.PlatformPatterns
@@ -17,7 +22,11 @@ import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createPropertyOrBlockType
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createProviderLookupElement
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.ProviderTier
+import org.intellij.terraform.config.model.ProviderType
+import org.intellij.terraform.config.model.TypeModelProvider
+import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLElementTypes

@@ -13,13 +13,15 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.intellij.jhipster.JdlConstants.*;
+import static com.intellij.jhipster.JdlConstants.APPLICATION_UNNAMED;
+import static com.intellij.jhipster.JdlConstants.CONFIG_BLOCK_NAME;
+import static com.intellij.jhipster.JdlConstants.DEPLOYMENT_BLOCK_NAME;
 
 public final class JdlPsiUtils {
   private static final String ourEscapesTable = "\"\"\\\\//b\bf\fn\nr\rt\t";

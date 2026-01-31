@@ -17,7 +17,12 @@ package com.intellij.protobuf.jvm.names;
 
 import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbEnumDefinition;
+import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.protobuf.lang.psi.PbMessageType;
+import com.intellij.protobuf.lang.psi.PbNamedTypeElement;
+import com.intellij.protobuf.lang.psi.PbOneofDefinition;
+import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.psi.util.QualifiedName;
 import com.intellij.util.containers.ContainerUtil;

@@ -20,13 +20,23 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.PsiPolyVariantReference;
+import com.intellij.psi.PsiRecursiveElementVisitor;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
+import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.lang.javascript.psi.impl.JSPsiImplUtils.*;
+import static com.intellij.lang.javascript.psi.impl.JSPsiImplUtils.differentPackageName;
+import static com.intellij.lang.javascript.psi.impl.JSPsiImplUtils.findPackageStatement;
+import static com.intellij.lang.javascript.psi.impl.JSPsiImplUtils.findQualifiedElement;
+import static com.intellij.lang.javascript.psi.impl.JSPsiImplUtils.isEmpty;
 
 /**
  * @author Maxim.Mossienko

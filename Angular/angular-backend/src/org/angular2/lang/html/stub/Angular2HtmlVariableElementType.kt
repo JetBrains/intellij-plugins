@@ -3,7 +3,7 @@ package org.angular2.lang.html.stub
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.types.JSVariableElementType
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 import org.angular2.lang.html.psi.impl.Angular2HtmlAttrVariableImpl

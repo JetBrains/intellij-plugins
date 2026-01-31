@@ -5,13 +5,22 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.cloud.UserState
 import org.jetbrains.qodana.cloud.project.LinkState
 import org.jetbrains.qodana.cloud.project.LinkedCloudReportDescriptor
 import org.jetbrains.qodana.cloud.project.QodanaReportDownloader
-import org.jetbrains.qodana.report.*
+import org.jetbrains.qodana.report.BannerContentProvider
+import org.jetbrains.qodana.report.BrowserViewProvider
+import org.jetbrains.qodana.report.LoadedReport
+import org.jetbrains.qodana.report.NoProblemsContentProvider
+import org.jetbrains.qodana.report.NotificationCallback
+import org.jetbrains.qodana.report.ReportDescriptor
 import org.jetbrains.qodana.ui.problemsView.viewModel.QodanaProblemsViewModel
 
 

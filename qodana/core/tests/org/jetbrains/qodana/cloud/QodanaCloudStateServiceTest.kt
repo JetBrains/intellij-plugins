@@ -7,7 +7,8 @@ import com.intellij.util.application
 import kotlinx.coroutines.delay
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
-import org.jetbrains.qodana.*
+import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.jetbrains.qodana.allowExceptions
 import org.jetbrains.qodana.cloud.api.mockQDCloudHttpClient
 import org.jetbrains.qodana.cloud.api.respond
 import org.jetbrains.qodana.cloud.authorization.QodanaCloudOAuthRequest
@@ -21,7 +22,11 @@ import org.jetbrains.qodana.cloudclient.QDCloudResponse
 import org.jetbrains.qodana.cloudclient.asSuccess
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import org.jetbrains.qodana.cloudclient.v1.QDCloudSchema
+import org.jetbrains.qodana.dispatchAllTasksOnUi
+import org.jetbrains.qodana.notImplemented
 import org.jetbrains.qodana.registry.QodanaRegistry
+import org.jetbrains.qodana.reinstansiateService
+import org.jetbrains.qodana.runDispatchingOnUi
 import java.time.Instant
 import java.util.concurrent.CompletableFuture
 import kotlin.time.Duration.Companion.seconds

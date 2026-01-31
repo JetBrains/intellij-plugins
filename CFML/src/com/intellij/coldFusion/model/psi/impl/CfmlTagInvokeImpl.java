@@ -1,7 +1,11 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.impl;
 
-import com.intellij.coldFusion.model.psi.*;
+import com.intellij.coldFusion.model.psi.CfmlArgumentList;
+import com.intellij.coldFusion.model.psi.CfmlComponentReference;
+import com.intellij.coldFusion.model.psi.CfmlFunctionCall;
+import com.intellij.coldFusion.model.psi.CfmlReference;
+import com.intellij.coldFusion.model.psi.CfmlReferenceExpression;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;

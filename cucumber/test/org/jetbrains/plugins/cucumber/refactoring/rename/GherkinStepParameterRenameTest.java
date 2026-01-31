@@ -13,7 +13,10 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Path;
 
 import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightFixture;
-import static com.intellij.testFramework.junit5.fixture.FixturesKt.*;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.moduleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.testNameFixture;
 
 @RunInEdt(writeIntent = true)
 @TestDataPath("$PROJECT_ROOT/contrib/cucumber/testData/refactoring/rename")

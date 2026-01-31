@@ -3,7 +3,10 @@ package org.jetbrains.qodana.staticAnalysis.inspections.sanity
 import com.intellij.codeInsight.daemon.impl.HighlightVisitorBasedInspection
 import com.intellij.codeInsight.daemon.impl.PROBLEM_DESCRIPTOR_TAG
 import com.intellij.codeInsight.daemon.impl.withUserData
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.GlobalInspectionUtil
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.lang.LanguageUtil
 import com.intellij.lang.annotation.HighlightSeverity.ERROR
 import com.intellij.openapi.util.TextRange

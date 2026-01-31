@@ -19,7 +19,18 @@ import org.jetbrains.vuejs.codeInsight.collectMembers
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MODULES
-import org.jetbrains.vuejs.libraries.vuex.model.store.*
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexAction
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexActionImpl
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainer
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexGetter
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexGetterImpl
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModule
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModuleImpl
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexMutation
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexMutationImpl
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStateProperty
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStatePropertyImpl
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStore
 import org.jetbrains.vuejs.model.VueImplicitElement
 import java.util.concurrent.ConcurrentHashMap
 

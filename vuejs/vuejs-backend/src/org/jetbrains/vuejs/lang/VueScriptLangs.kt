@@ -17,7 +17,11 @@ import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.expr.highlighting.VueJSSyntaxHighlighter
 import org.jetbrains.vuejs.lang.expr.highlighting.VueTSSyntaxHighlighter
-import org.jetbrains.vuejs.lang.expr.parser.*
+import org.jetbrains.vuejs.lang.expr.parser.VueExprParser
+import org.jetbrains.vuejs.lang.expr.parser.VueJSParser
+import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
+import org.jetbrains.vuejs.lang.expr.parser.VueTSParser
+import org.jetbrains.vuejs.lang.expr.parser.VueTSParserDefinition
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.lexer.VueLangModeMarkerElementType
 import org.jetbrains.vuejs.lang.html.lexer.VueTagEmbeddedContentProvider

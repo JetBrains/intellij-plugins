@@ -8,11 +8,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.rt.coverage.data.ProjectData
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
-import org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageCloudArtifactsProcessor
 import org.jetbrains.qodana.coverage.CoverageMetaDataArtifact
 import org.jetbrains.qodana.registry.QodanaRegistry.openCoveragePackageLength
 import org.jetbrains.qodana.registry.QodanaRegistry.openCoverageSmartFilteringEnabled
 import org.jetbrains.qodana.report.ReportMetadata
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageCloudArtifactsProcessor
 
 class ICCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
   override suspend fun process(artifacts: Map<String, ReportMetadata>, project: Project): CoverageSuitesBundle? {

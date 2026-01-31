@@ -11,10 +11,21 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.ThreeState
-import com.intellij.xml.util.HtmlUtil.*
+import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
+import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
+import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
+import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.*
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.REF
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.SCRIPT_GENERIC
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.SCRIPT_ID
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.SCRIPT_SETUP
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.SCRIPT_SRC
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.SCRIPT_VAPOR
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.STYLE_MODULE
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.STYLE_SRC
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.TEMPLATE_SRC
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
@@ -24,7 +35,7 @@ import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SCRIPT_SETUP_JS_EMBEDDED_CONTENT
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SCRIPT_SETUP_TS_EMBEDDED_CONTENT
-import java.util.*
+import java.util.Locale
 
 class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   private val langMode: LangMode = builder.getUserData(VueScriptLangs.LANG_MODE) ?: LangMode.DEFAULT

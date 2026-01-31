@@ -1,6 +1,9 @@
 package org.jetbrains.idea.perforce.perforce.jobs;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PerforceJobSpecification {
   private final Map<Integer, PerforceJobField> myFields;

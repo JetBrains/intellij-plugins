@@ -1,9 +1,9 @@
 package com.intellij.terraform.template
 
 import com.intellij.openapi.application.PathManager
+import com.intellij.terraform.template.psi.TftplParserDefinition
 import com.intellij.testFramework.ParsingTestCase
 import org.intellij.terraform.hil.HILParserDefinition
-import com.intellij.terraform.template.psi.TftplParserDefinition
 
 class TftplParserTest : ParsingTestCase("", "tftpl", false, TftplParserDefinition(), HILParserDefinition()) {
   override fun getTestDataPath(): String {

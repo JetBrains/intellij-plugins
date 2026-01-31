@@ -1,7 +1,15 @@
 package com.jetbrains.lang.dart.generate;
 
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
-import com.jetbrains.lang.dart.ide.generation.*;
+import com.jetbrains.lang.dart.ide.generation.BaseDartGenerateHandler;
+import com.jetbrains.lang.dart.ide.generation.CreateGetterSetterFix;
+import com.jetbrains.lang.dart.ide.generation.DartGenerateAccessorHandler;
+import com.jetbrains.lang.dart.ide.generation.DartGenerateConstructorHandler;
+import com.jetbrains.lang.dart.ide.generation.DartGenerateEqualsAndHashcodeHandler;
+import com.jetbrains.lang.dart.ide.generation.DartGenerateNamedConstructorHandler;
+import com.jetbrains.lang.dart.ide.generation.DartGenerateToStringHandler;
+import com.jetbrains.lang.dart.ide.generation.DartImplementMethodHandler;
+import com.jetbrains.lang.dart.ide.generation.DartOverrideMethodHandler;
 import org.jetbrains.annotations.NotNull;
 
 abstract public class DartGenerateActionTestBase extends LightPlatformCodeInsightTestCase {

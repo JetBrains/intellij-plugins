@@ -5,7 +5,11 @@ import com.intellij.lang.ASTNode;
 import com.intellij.plugins.drools.lang.psi.DroolsLhsPatternBind;
 import com.intellij.plugins.drools.lang.psi.DroolsNameId;
 import com.intellij.plugins.drools.lang.psi.util.DroolsResolveUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiPrimitiveType;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;

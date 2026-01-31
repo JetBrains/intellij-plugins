@@ -2,7 +2,11 @@
 package com.intellij.javascript.flex.css;
 
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.ElementManipulators;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementResolveResult;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.CssPropertyDescriptor;

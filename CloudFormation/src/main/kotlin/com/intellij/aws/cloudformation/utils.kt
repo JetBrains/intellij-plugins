@@ -1,7 +1,7 @@
 package com.intellij.aws.cloudformation
 
 import com.intellij.aws.cloudformation.model.CfnNode
-import java.util.*
+import java.util.Optional
 
 inline fun <reified T> lookupSection(sections: Collection<CfnNode>): T? = sections.singleOrNull { it is T } as T?
 

@@ -1,6 +1,12 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.codeInspection.ex.*
+import com.intellij.codeInspection.ex.EnabledInspectionsProvider
+import com.intellij.codeInspection.ex.GlobalInspectionToolWrapper
+import com.intellij.codeInspection.ex.InspectionToolWrapper
+import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
+import com.intellij.codeInspection.ex.ScopeToolState
+import com.intellij.codeInspection.ex.Tools
+import com.intellij.codeInspection.ex.ToolsImpl
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.packageDependencies.DependencyValidationManager

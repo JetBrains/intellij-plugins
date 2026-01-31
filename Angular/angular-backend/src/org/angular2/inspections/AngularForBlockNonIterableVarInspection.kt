@@ -5,6 +5,7 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
+import com.intellij.lang.javascript.highlighting.JSTooltipWithHtmlHighlighter
 import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSType.TypeTextFormat.CODE
 import com.intellij.lang.javascript.psi.JSTypeUtils
@@ -14,7 +15,6 @@ import com.intellij.lang.javascript.psi.types.JSTupleType
 import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService.LOCATION
 import com.intellij.lang.javascript.psi.types.JSTypeContext
 import com.intellij.lang.javascript.psi.types.JSTypeSource
-import com.intellij.lang.javascript.highlighting.JSTooltipWithHtmlHighlighter
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely

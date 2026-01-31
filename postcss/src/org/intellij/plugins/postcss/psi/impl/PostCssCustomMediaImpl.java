@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class PostCssCustomMediaImpl extends CssNamedStubElement<CssNamedStub<PostCssCustomMedia>> implements PostCssCustomMedia {
   public PostCssCustomMediaImpl(@NotNull CssNamedStub<PostCssCustomMedia> stub, @NotNull CssNamedStubElementType nodeType) {

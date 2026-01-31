@@ -1,7 +1,13 @@
 package org.jetbrains.qodana.go
 
 import com.goide.execution.testing.coverage.GoCoverageEngine
-import com.goide.psi.*
+import com.goide.psi.GoFile
+import com.goide.psi.GoFunctionLit
+import com.goide.psi.GoFunctionOrMethodDeclaration
+import com.goide.psi.GoMethodDeclaration
+import com.goide.psi.GoNamedElement
+import com.goide.psi.GoStatement
+import com.goide.psi.GoVisitor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.options.OptPane
 import com.intellij.openapi.util.Key
@@ -12,7 +18,15 @@ import com.intellij.psi.PsiFile
 import com.intellij.rt.coverage.data.ClassData
 import com.intellij.rt.coverage.data.ProjectData
 import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.staticAnalysis.inspections.coverage.*
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageInspectionBase
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.issueWithCoverage
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.iterateContents
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadClassData
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadMissingData
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.normalizeFilePath
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.removePrefixFromCoverage
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportElement
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportProblemsNeeded
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 
 class GoCoverageInspection : CoverageInspectionBase() {

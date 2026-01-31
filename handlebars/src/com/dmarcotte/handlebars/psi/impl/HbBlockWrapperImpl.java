@@ -8,7 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class HbBlockWrapperImpl extends HbPsiElementImpl implements HbBlockWrapper {
   public HbBlockWrapperImpl(@NotNull ASTNode astNode) {

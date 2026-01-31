@@ -3,7 +3,16 @@ package com.intellij.plugins.drools.lang.psi.util;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.plugins.drools.DroolsFileType;
-import com.intellij.plugins.drools.lang.psi.*;
+import com.intellij.plugins.drools.lang.psi.DroolsDeclareStatement;
+import com.intellij.plugins.drools.lang.psi.DroolsField;
+import com.intellij.plugins.drools.lang.psi.DroolsFieldName;
+import com.intellij.plugins.drools.lang.psi.DroolsFile;
+import com.intellij.plugins.drools.lang.psi.DroolsIdentifier;
+import com.intellij.plugins.drools.lang.psi.DroolsImport;
+import com.intellij.plugins.drools.lang.psi.DroolsNameId;
+import com.intellij.plugins.drools.lang.psi.DroolsStringId;
+import com.intellij.plugins.drools.lang.psi.DroolsTypeDeclaration;
+import com.intellij.plugins.drools.lang.psi.DroolsTypeName;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;

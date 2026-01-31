@@ -21,7 +21,10 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.containers.addIfNotNull
 import com.intellij.xml.util.XmlUtil
-import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.*
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.ERROR
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_INPUT
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_TEMPLATE_VARIABLE
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.directiveInputToTemplateBindingVar
 import org.angular2.lang.expr.psi.Angular2TemplateBinding

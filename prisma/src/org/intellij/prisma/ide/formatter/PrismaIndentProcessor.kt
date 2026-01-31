@@ -4,7 +4,15 @@ import com.intellij.formatting.Indent
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiFile
 import com.intellij.psi.TokenType.WHITE_SPACE
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.DOC_COMMENT
+import org.intellij.prisma.lang.psi.DOC_COMMENT_END
+import org.intellij.prisma.lang.psi.DOC_COMMENT_LEADING_ASTERISK
+import org.intellij.prisma.lang.psi.PRISMA_BLOCKS
+import org.intellij.prisma.lang.psi.PRISMA_BRACES
+import org.intellij.prisma.lang.psi.PRISMA_COMMENTS
+import org.intellij.prisma.lang.psi.PrismaEnumDeclarationBlock
+import org.intellij.prisma.lang.psi.PrismaFieldDeclarationBlock
+import org.intellij.prisma.lang.psi.PrismaKeyValueBlock
 
 
 class PrismaIndentProcessor {

@@ -20,7 +20,7 @@ import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.stats.LearnMoreSource
 import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector
 import org.jetbrains.qodana.ui.QODANA_PROMO_URL
-import org.jetbrains.qodana.ui.problemsView.viewModel.*
+import org.jetbrains.qodana.ui.problemsView.viewModel.QodanaProblemsViewModel
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.JButton

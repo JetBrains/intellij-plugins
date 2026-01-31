@@ -8,7 +8,7 @@ import com.intellij.util.TimeoutUtil;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.List;
 
 public class DartServerImplementationsMarkerProviderTest extends CodeInsightFixtureTestCase {

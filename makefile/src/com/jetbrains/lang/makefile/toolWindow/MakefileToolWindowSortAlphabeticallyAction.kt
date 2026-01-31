@@ -1,9 +1,11 @@
 package com.jetbrains.lang.makefile.toolWindow
 
-import com.intellij.icons.*
-import com.intellij.openapi.actionSystem.*
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ToggleAction
 import com.jetbrains.lang.makefile.MakefileLangBundle
-import javax.swing.tree.*
+import javax.swing.tree.DefaultTreeModel
 
 class MakefileToolWindowSortAlphabeticallyAction(private val options: MakefileToolWindowOptions, private val model: DefaultTreeModel) :
     ToggleAction(MakefileLangBundle.message("action.sort.alphabetically.text"), null, AllIcons.ObjectBrowser.Sorted) {

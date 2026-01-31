@@ -10,7 +10,8 @@ import com.intellij.lang.ecmascript6.psi.impl.JSImportsCoroutineScope
 import com.intellij.lang.javascript.BaseJSCompletionTestCase
 import com.intellij.testFramework.utils.coroutines.waitCoroutinesBlocking
 import org.angular2.Angular2TestCase
-import org.angular2.codeInsight.Angular2LiveTemplateTest.TestMode.*
+import org.angular2.codeInsight.Angular2LiveTemplateTest.TestMode.NO_COMPLETION
+import org.angular2.codeInsight.Angular2LiveTemplateTest.TestMode.WITH_COMPLETION
 
 class Angular2LiveTemplateTest : Angular2TestCase("liveTemplate", false) {
   @Throws(Exception::class)

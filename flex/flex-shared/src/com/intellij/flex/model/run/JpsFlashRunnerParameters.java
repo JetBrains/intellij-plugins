@@ -2,7 +2,12 @@
 package com.intellij.flex.model.run;
 
 import com.intellij.flex.FlexCommonUtils;
-import com.intellij.flex.model.bc.*;
+import com.intellij.flex.model.bc.JpsAndroidPackagingOptions;
+import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
+import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
+import com.intellij.flex.model.bc.JpsFlexDependencyEntry;
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.OutputType;
 import com.intellij.openapi.util.io.FileUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

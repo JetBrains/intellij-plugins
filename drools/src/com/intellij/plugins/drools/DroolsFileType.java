@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class DroolsFileType extends LanguageFileType {
   public static final DroolsFileType DROOLS_FILE_TYPE = new DroolsFileType();

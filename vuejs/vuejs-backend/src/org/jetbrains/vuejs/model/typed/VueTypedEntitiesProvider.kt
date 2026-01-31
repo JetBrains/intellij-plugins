@@ -8,7 +8,14 @@ import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.JSField
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
-import com.intellij.lang.javascript.psi.ecma6.*
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterfaceClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeArgumentList
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptUnionOrIntersectionType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.stubs.JSFrameworkMarkersIndex
 import com.intellij.lang.javascript.psi.stubs.TypeScriptSingleTypeStub
@@ -17,7 +24,10 @@ import com.intellij.lang.javascript.psi.stubs.TypeScriptUnionOrIntersectionTypeS
 import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.modules.TypeScriptNodeSearchProcessor
-import com.intellij.psi.*
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiRecursiveVisitor
+import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.stubs.Stub
 import com.intellij.util.asSafely

@@ -31,7 +31,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.perforce.perforce.*;
+import org.jetbrains.idea.perforce.perforce.FStat;
+import org.jetbrains.idea.perforce.perforce.P4File;
+import org.jetbrains.idea.perforce.perforce.PerforceChangeList;
+import org.jetbrains.idea.perforce.perforce.PerforceContentRevision;
+import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 
 import java.util.ArrayList;
 import java.util.Collections;

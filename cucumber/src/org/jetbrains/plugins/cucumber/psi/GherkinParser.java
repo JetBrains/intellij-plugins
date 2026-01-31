@@ -10,7 +10,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.jetbrains.plugins.cucumber.psi.GherkinElementTypes.RULE;
-import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.*;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.BACKGROUND_KEYWORD;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.COLON;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.EXAMPLES_KEYWORD;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.FEATURE_KEYWORD;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.PIPE;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.PYSTRING;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.RULE_KEYWORD;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.SCENARIOS_KEYWORDS;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.SCENARIO_KEYWORD;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.STEP_KEYWORD;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.STEP_PARAMETER_BRACE;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.STEP_PARAMETER_TEXT;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.TABLE_CELL;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.TAG;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.TEXT;
 
 public class GherkinParser implements PsiParser {
   private static final TokenSet SCENARIO_END_TOKENS =

@@ -21,7 +21,9 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.templateLanguages.DefaultOuterLanguagePatcher
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.containers.Stack
-import java.util.*
+import java.util.ArrayDeque
+import java.util.Deque
+import java.util.EnumSet
 
 /**
  * @author Konstantin.Ulitin

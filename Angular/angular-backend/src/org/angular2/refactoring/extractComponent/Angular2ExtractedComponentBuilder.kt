@@ -27,7 +27,13 @@ import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.expr.psi.Angular2RecursiveVisitor
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.parser.Angular2AttributeType
-import org.angular2.lang.html.psi.*
+import org.angular2.lang.html.psi.Angular2HtmlBananaBoxBinding
+import org.angular2.lang.html.psi.Angular2HtmlEvent
+import org.angular2.lang.html.psi.Angular2HtmlExpansionForm
+import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
+import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor
+import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
+import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.web.ELEMENT_NG_CONTENT
 
 internal class Angular2ExtractedComponentBuilder(private val sourceFile: PsiFile, private val selectionStart: Int, private val selectionEnd: Int) {

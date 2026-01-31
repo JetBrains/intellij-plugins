@@ -7,7 +7,7 @@ import org.intellij.markdown.parser.constraints.MarkdownConstraints
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 import org.intellij.plugin.mdx.lang.parse.JsxBlockProvider.Companion.ATTRIBUTES_REGEX
 import org.intellij.plugin.mdx.lang.parse.JsxBlockProvider.Companion.TAG_REGEX
-import java.util.*
+import java.util.Stack
 
 object JsxBlockUtil {
   fun parseParenthesis(pos: LookaheadText.Position,

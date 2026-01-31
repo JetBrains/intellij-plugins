@@ -28,7 +28,16 @@ import org.intellij.terraform.config.refactoring.BaseIntroduceVariableHandler
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.common.BaseExpression
-import org.intellij.terraform.hil.psi.*
+import org.intellij.terraform.hil.psi.ILElementGenerator
+import org.intellij.terraform.hil.psi.ILExpression
+import org.intellij.terraform.hil.psi.ILExpressionHolder
+import org.intellij.terraform.hil.psi.ILLiteralExpression
+import org.intellij.terraform.hil.psi.ILMethodCallExpression
+import org.intellij.terraform.hil.psi.ILParameterList
+import org.intellij.terraform.hil.psi.ILParenthesizedExpression
+import org.intellij.terraform.hil.psi.ILPsiFile
+import org.intellij.terraform.hil.psi.ILSelectExpression
+import org.intellij.terraform.hil.psi.ILVariable
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import org.jetbrains.annotations.NonNls
 

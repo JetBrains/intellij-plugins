@@ -2,10 +2,10 @@ package org.angular2.web.declarations
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
-import com.intellij.psi.PsiElement
-import com.intellij.psi.xml.XmlAttribute
 import com.intellij.polySymbols.declarations.PolySymbolDeclaration
 import com.intellij.polySymbols.declarations.PolySymbolDeclarationProvider
+import com.intellij.psi.PsiElement
+import com.intellij.psi.xml.XmlAttribute
 import org.angular2.web.scopes.Angular2CustomCssPropertiesScope
 
 class Angular2CustomCssPropertyDeclarationProvider : PolySymbolDeclarationProvider {

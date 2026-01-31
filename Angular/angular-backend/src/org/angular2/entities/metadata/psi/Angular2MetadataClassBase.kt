@@ -7,13 +7,13 @@ import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.Pair.pair
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.PolySymbolKind
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.codeInsight.Angular2LibrariesHacks

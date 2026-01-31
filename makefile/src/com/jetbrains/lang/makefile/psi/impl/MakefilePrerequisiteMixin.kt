@@ -1,12 +1,12 @@
 package com.jetbrains.lang.makefile.psi.impl
 
-import com.intellij.extapi.psi.*
-import com.intellij.lang.*
-import com.intellij.psi.*
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.*
-import com.intellij.util.*
-import com.jetbrains.lang.makefile.*
-import com.jetbrains.lang.makefile.psi.*
+import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiReference
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet
+import com.intellij.util.ArrayUtil
+import com.jetbrains.lang.makefile.MakefileTargetReference
+import com.jetbrains.lang.makefile.psi.MakefilePrerequisite
 
 abstract class MakefilePrerequisiteMixin internal constructor(node: ASTNode) : ASTWrapperPsiElement(node), MakefilePrerequisite {
   override fun getReferences(): Array<PsiReference> {

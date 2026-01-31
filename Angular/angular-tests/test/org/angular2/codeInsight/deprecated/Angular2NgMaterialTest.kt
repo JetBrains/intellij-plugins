@@ -4,8 +4,8 @@ package org.angular2.codeInsight.deprecated
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.Angular2TestUtil
+import org.angular2.inspections.AngularUndefinedBindingInspection
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2NgMaterialTest : Angular2CodeInsightFixtureTestCase() {

@@ -4,7 +4,11 @@ import com.intellij.testFramework.HeavyPlatformTestCase
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
-import org.jetbrains.qodana.staticAnalysis.inspections.config.*
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileYamlConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
 import org.jetbrains.qodana.staticAnalysis.script.CHANGES_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
 import org.junit.Test
@@ -15,7 +19,13 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
-import kotlin.io.path.*
+import kotlin.io.path.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.invariantSeparatorsPathString
+import kotlin.io.path.pathString
+import kotlin.io.path.writeText
 
 @RunWith(JUnit4::class)
 class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {

@@ -1,8 +1,35 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata
 
-import org.angular2.entities.metadata.psi.*
-import org.angular2.entities.metadata.stubs.*
+import org.angular2.entities.metadata.psi.Angular2MetadataArray
+import org.angular2.entities.metadata.psi.Angular2MetadataCall
+import org.angular2.entities.metadata.psi.Angular2MetadataClass
+import org.angular2.entities.metadata.psi.Angular2MetadataComponent
+import org.angular2.entities.metadata.psi.Angular2MetadataDirective
+import org.angular2.entities.metadata.psi.Angular2MetadataFunction
+import org.angular2.entities.metadata.psi.Angular2MetadataModule
+import org.angular2.entities.metadata.psi.Angular2MetadataModuleExport
+import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule
+import org.angular2.entities.metadata.psi.Angular2MetadataObject
+import org.angular2.entities.metadata.psi.Angular2MetadataPipe
+import org.angular2.entities.metadata.psi.Angular2MetadataReference
+import org.angular2.entities.metadata.psi.Angular2MetadataSpread
+import org.angular2.entities.metadata.psi.Angular2MetadataString
+import org.angular2.entities.metadata.stubs.Angular2MetadataArrayStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataCallStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataClassStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataComponentStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataDirectiveStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataElementStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataFunctionStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataModuleExportStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataModuleStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataNodeModuleStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataObjectStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataPipeStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataReferenceStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataSpreadStub
+import org.angular2.entities.metadata.stubs.Angular2MetadataStringStub
 import org.angular2.lang.metadata.MetadataJsonLanguage
 import org.angular2.lang.metadata.psi.MetadataElementType
 import org.jetbrains.annotations.NonNls

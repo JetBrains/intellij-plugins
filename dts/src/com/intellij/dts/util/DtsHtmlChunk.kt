@@ -21,7 +21,11 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiRecursiveElementWalkingVisitor
+import com.intellij.psi.SyntaxTraverser
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.tree.CompositeElement
 import com.intellij.psi.util.endOffset

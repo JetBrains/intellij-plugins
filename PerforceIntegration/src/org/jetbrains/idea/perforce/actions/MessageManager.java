@@ -21,7 +21,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.util.WaitForProgressToShow;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 /**
  * @author AKireyev

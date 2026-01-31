@@ -9,8 +9,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.plugins.cucumber.CucumberUtil.*;
-import static org.junit.Assert.*;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.getCukexHighlightRanges;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.getCukexRanges;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.getTheBiggestWordToSearchByIndex;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.isCucumberExpression;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.replaceAlternativeTextWithRegex;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.replaceOptionalTextWithRegex;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.substituteTableReferences;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.textRangesOutsideToSubstrings;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class CucumberUtilTest {
   @Test

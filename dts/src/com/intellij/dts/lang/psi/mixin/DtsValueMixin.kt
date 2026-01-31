@@ -1,6 +1,10 @@
 package com.intellij.dts.lang.psi.mixin
 
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsByte
+import com.intellij.dts.lang.psi.DtsChar
+import com.intellij.dts.lang.psi.DtsExprValue
+import com.intellij.dts.lang.psi.DtsInt
+import com.intellij.dts.lang.psi.DtsString
 import com.intellij.dts.lang.resolve.DtsBindingReference
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.dts.util.DtsUtil

@@ -21,7 +21,12 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.protobuf.lang.PbLangBundle;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbElement;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbGroupDefinition;
+import com.intellij.protobuf.lang.psi.PbMapField;
+import com.intellij.protobuf.lang.psi.PbOneofDefinition;
+import com.intellij.protobuf.lang.psi.PbVisitor;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 

@@ -25,8 +25,12 @@ import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.ui.EditorComboBox;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Action;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 /**
  * @author Maxim.Mossienko

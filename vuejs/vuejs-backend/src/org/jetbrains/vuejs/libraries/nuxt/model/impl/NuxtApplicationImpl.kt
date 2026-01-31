@@ -27,7 +27,13 @@ import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.VUE_NOTIFICATIONS
 import org.jetbrains.vuejs.codeInsight.withoutPreRelease
-import org.jetbrains.vuejs.libraries.nuxt.*
+import org.jetbrains.vuejs.libraries.nuxt.NUXT3_PKG
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_2_15_0
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_2_9_0
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_3_0_0
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_PKG
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_PKG
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_TYPES_PKG
 import org.jetbrains.vuejs.libraries.nuxt.actions.InstallNuxtTypesAction
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtApplication
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtConfig

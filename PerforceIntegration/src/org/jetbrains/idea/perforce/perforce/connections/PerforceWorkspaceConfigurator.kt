@@ -10,7 +10,10 @@ import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
 import org.jetbrains.idea.perforce.perforce.connections.P4ClientParser.PerforceClient
-import org.jetbrains.idea.perforce.perforce.connections.P4ConfigFields.*
+import org.jetbrains.idea.perforce.perforce.connections.P4ConfigFields.P4CLIENT
+import org.jetbrains.idea.perforce.perforce.connections.P4ConfigFields.P4IGNORE
+import org.jetbrains.idea.perforce.perforce.connections.P4ConfigFields.P4PORT
+import org.jetbrains.idea.perforce.perforce.connections.P4ConfigFields.P4USER
 import java.io.File
 import java.io.IOException
 

@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.parsing.JavaScriptParserBase
 import com.intellij.lang.javascript.parsing.modifiers.JSModifiersStructure
 import com.intellij.lang.javascript.parsing.modifiers.JSModifiersStructure.JSModifiersParseResult
 import com.intellij.psi.tree.IElementType
-import java.util.*
+import java.util.EnumSet
 import java.util.function.Predicate
 
 /**

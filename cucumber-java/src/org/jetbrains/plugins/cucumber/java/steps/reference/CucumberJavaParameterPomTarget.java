@@ -4,7 +4,14 @@ package org.jetbrains.plugins.cucumber.java.steps.reference;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.PomRenameableTarget;
 import com.intellij.pom.PsiDeclaredTarget;
-import com.intellij.psi.*;
+import com.intellij.psi.DelegatePsiTarget;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiIdentifier;
+import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 

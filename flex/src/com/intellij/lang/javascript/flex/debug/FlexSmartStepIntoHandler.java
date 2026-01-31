@@ -4,7 +4,11 @@ package com.intellij.lang.javascript.flex.debug;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.presentable.JSFormatUtil;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSDefinitionExpression;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -21,7 +25,14 @@ import com.intellij.xdebugger.stepping.XSmartStepIntoHandler;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 final class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepIntoVariant> {
   private final FlexDebugProcess myDebugProcess;

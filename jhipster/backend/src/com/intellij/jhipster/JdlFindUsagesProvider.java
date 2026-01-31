@@ -2,7 +2,11 @@
 
 package com.intellij.jhipster;
 
-import com.intellij.jhipster.psi.*;
+import com.intellij.jhipster.psi.JdlConstant;
+import com.intellij.jhipster.psi.JdlEntity;
+import com.intellij.jhipster.psi.JdlEnum;
+import com.intellij.jhipster.psi.JdlTokenSets;
+import com.intellij.jhipster.psi.JdlTokenTypes;
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;

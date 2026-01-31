@@ -20,11 +20,16 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.protobuf.lang.annotation.OptionOccurrenceTracker;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbGroupDefinition;
+import com.intellij.protobuf.lang.psi.PbMapField;
+import com.intellij.protobuf.lang.psi.PbPackageName;
+import com.intellij.protobuf.lang.psi.PbSymbol;
+import com.intellij.protobuf.lang.psi.PbTypeName;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Objects;
 
 /**

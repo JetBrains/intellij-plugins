@@ -15,8 +15,8 @@
  */
 package com.intellij.protobuf.lang.psi;
 
-import com.intellij.psi.tree.IElementType;
 import com.intellij.protobuf.lang.PbLanguage;
+import com.intellij.psi.tree.IElementType;
 
 public class PbElementType extends IElementType {
 

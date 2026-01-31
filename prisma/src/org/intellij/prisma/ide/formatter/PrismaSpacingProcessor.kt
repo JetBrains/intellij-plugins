@@ -10,8 +10,37 @@ import com.intellij.psi.TokenType.WHITE_SPACE
 import com.intellij.psi.formatter.FormatterUtil
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.psi.tree.IElementType
-import org.intellij.prisma.lang.psi.*
-import org.intellij.prisma.lang.psi.PrismaElementTypes.*
+import org.intellij.prisma.lang.psi.PRISMA_BLOCKS
+import org.intellij.prisma.lang.psi.PRISMA_BLOCK_DECLARATIONS
+import org.intellij.prisma.lang.psi.PRISMA_COMMENTS
+import org.intellij.prisma.lang.psi.PRISMA_KEYWORDS
+import org.intellij.prisma.lang.psi.PRISMA_TOP_ELEMENTS
+import org.intellij.prisma.lang.psi.PRISMA_TYPES
+import org.intellij.prisma.lang.psi.PrismaElementTypes.ARGUMENTS_LIST
+import org.intellij.prisma.lang.psi.PrismaElementTypes.AT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.ATAT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.BLOCK_ATTRIBUTE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.COLON
+import org.intellij.prisma.lang.psi.PrismaElementTypes.COMMA
+import org.intellij.prisma.lang.psi.PrismaElementTypes.ENUM_VALUE_DECLARATION
+import org.intellij.prisma.lang.psi.PrismaElementTypes.EQ
+import org.intellij.prisma.lang.psi.PrismaElementTypes.FIELD_ATTRIBUTE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.FIELD_DECLARATION
+import org.intellij.prisma.lang.psi.PrismaElementTypes.IDENTIFIER
+import org.intellij.prisma.lang.psi.PrismaElementTypes.KEY_VALUE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.LBRACE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.LBRACKET
+import org.intellij.prisma.lang.psi.PrismaElementTypes.LPAREN
+import org.intellij.prisma.lang.psi.PrismaElementTypes.NAMED_ARGUMENT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.PATH_EXPRESSION
+import org.intellij.prisma.lang.psi.PrismaElementTypes.QUEST
+import org.intellij.prisma.lang.psi.PrismaElementTypes.RBRACE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.RBRACKET
+import org.intellij.prisma.lang.psi.PrismaElementTypes.RPAREN
+import org.intellij.prisma.lang.psi.PrismaElementTypes.TYPE_REFERENCE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.UNSUPPORTED
+import org.intellij.prisma.lang.psi.PrismaFileElementType
+import org.intellij.prisma.lang.psi.skipWhitespacesBackwardWithoutNewLines
 import com.intellij.psi.tree.TokenSet.create as ts
 
 private val ONE_LINE_SPACE_DECLARATIONS = ts(FIELD_DECLARATION, KEY_VALUE, ENUM_VALUE_DECLARATION)

@@ -5,10 +5,10 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.completion.XmlTagInsertHandler
 import com.intellij.codeInsight.editorActions.XmlTagNameSynchronizer
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import org.jetbrains.astro.inspections.quickfixes.AstroImportComponentQuickFix
 
 object AstroImportInsertHandler : XmlTagInsertHandler() {

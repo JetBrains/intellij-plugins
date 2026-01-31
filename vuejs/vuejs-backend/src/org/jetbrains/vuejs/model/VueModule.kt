@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.model.source.VueSourceGlobal
-import java.util.*
+import java.util.Objects
 
 /**
  * A wrapper around a regular global container, which provides only components.

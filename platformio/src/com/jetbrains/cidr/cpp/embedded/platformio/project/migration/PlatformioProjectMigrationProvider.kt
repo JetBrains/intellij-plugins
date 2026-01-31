@@ -1,6 +1,11 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project.migration
 
-import com.intellij.conversion.*
+import com.intellij.conversion.ConversionContext
+import com.intellij.conversion.ConversionProcessor
+import com.intellij.conversion.ConverterProvider
+import com.intellij.conversion.ProjectConverter
+import com.intellij.conversion.RunManagerSettings
+import com.intellij.conversion.WorkspaceSettings
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.delete
 import com.intellij.util.io.write

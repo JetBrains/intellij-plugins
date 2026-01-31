@@ -3,10 +3,24 @@ package org.intellij.terraform.config;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.LightPlatformTestCase;
-import org.intellij.terraform.config.model.*;
+import org.intellij.terraform.config.model.BlockType;
+import org.intellij.terraform.config.model.DataSourceType;
+import org.intellij.terraform.config.model.HclType;
+import org.intellij.terraform.config.model.PropertyOrBlockType;
+import org.intellij.terraform.config.model.PropertyType;
+import org.intellij.terraform.config.model.ProviderType;
+import org.intellij.terraform.config.model.ProvisionerType;
+import org.intellij.terraform.config.model.ResourceType;
+import org.intellij.terraform.config.model.TfTypeModel;
+import org.intellij.terraform.config.model.TypeModelProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class TfModelProviderTest extends LightPlatformTestCase {
   public void testModelIsLoaded() {

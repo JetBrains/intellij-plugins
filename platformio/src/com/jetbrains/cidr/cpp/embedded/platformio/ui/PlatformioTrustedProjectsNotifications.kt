@@ -2,8 +2,8 @@ package com.jetbrains.cidr.cpp.embedded.platformio.ui
 
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.trustedProjects.TrustedProjects
-import com.intellij.openapi.project.Project
 import com.intellij.ide.trustedProjects.TrustedProjectsDialog
+import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import java.util.concurrent.CancellationException
 

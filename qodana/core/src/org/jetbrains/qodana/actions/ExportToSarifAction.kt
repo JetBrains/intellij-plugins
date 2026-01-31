@@ -16,13 +16,26 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.project.stateStore
 import com.jetbrains.qodana.sarif.SarifUtil.writeReport
-import com.jetbrains.qodana.sarif.model.*
+import com.jetbrains.qodana.sarif.model.ArtifactContent
+import com.jetbrains.qodana.sarif.model.ArtifactLocation
+import com.jetbrains.qodana.sarif.model.Invocation
+import com.jetbrains.qodana.sarif.model.Level
+import com.jetbrains.qodana.sarif.model.Location
+import com.jetbrains.qodana.sarif.model.Message
+import com.jetbrains.qodana.sarif.model.PhysicalLocation
+import com.jetbrains.qodana.sarif.model.Region
+import com.jetbrains.qodana.sarif.model.ReportingDescriptor
+import com.jetbrains.qodana.sarif.model.Result
+import com.jetbrains.qodana.sarif.model.Run
+import com.jetbrains.qodana.sarif.model.SarifReport
+import com.jetbrains.qodana.sarif.model.Tool
+import com.jetbrains.qodana.sarif.model.ToolComponent
 import icons.QodanaIcons
 import java.io.File
 import java.net.URI
 import java.nio.file.Path
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import java.util.function.Supplier
 
 @Suppress("ComponentNotRegistered")

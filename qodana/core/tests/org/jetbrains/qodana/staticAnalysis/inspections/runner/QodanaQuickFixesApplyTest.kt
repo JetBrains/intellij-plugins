@@ -1,16 +1,22 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.GlobalInspectionContext
+import com.intellij.codeInspection.GlobalSimpleInspectionTool
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.ProblemDescriptionsProcessor
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.modcommand.ModPsiUpdater
 import com.intellij.modcommand.PsiUpdateModCommandQuickFix
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
-import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
 import org.jetbrains.qodana.staticAnalysis.inspections.incorrectFormatting.IncorrectFormattingResultHandlerProviderQodana.Companion.QODANA_ENABLE_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY
+import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Test
 import kotlin.io.path.absolutePathString
 

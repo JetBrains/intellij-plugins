@@ -6,7 +6,12 @@ import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartReturnType;
+import com.jetbrains.lang.dart.psi.DartType;
+import com.jetbrains.lang.dart.psi.DartVarAccessDeclaration;
+import com.jetbrains.lang.dart.psi.DartVarDeclarationListPart;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import org.jetbrains.annotations.NotNull;
 

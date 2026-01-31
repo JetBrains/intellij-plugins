@@ -2,9 +2,9 @@
 package com.intellij.tsr.psi;
 
 import com.intellij.psi.tree.IElementType;
+import com.intellij.tsr.TslLanguage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import com.intellij.tsr.TslLanguage;
 
 public final class TslElementType extends IElementType {
   TslElementType(@NotNull @NonNls String debugName) {

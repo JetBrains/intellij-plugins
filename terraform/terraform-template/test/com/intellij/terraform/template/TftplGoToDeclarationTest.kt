@@ -5,10 +5,10 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfType
+import com.intellij.terraform.template.editor.TftplVariableGoToDeclarationHandler
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hil.psi.ForVariable
-import com.intellij.terraform.template.editor.TftplVariableGoToDeclarationHandler
 import org.junit.Assert
 
 class TftplGoToDeclarationTest : BasePlatformTestCase() {

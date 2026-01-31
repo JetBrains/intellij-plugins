@@ -2,8 +2,21 @@
 
 package com.intellij.jhipster;
 
-import com.intellij.formatting.*;
-import com.intellij.jhipster.psi.*;
+import com.intellij.formatting.ASTBlock;
+import com.intellij.formatting.Alignment;
+import com.intellij.formatting.Block;
+import com.intellij.formatting.ChildAttributes;
+import com.intellij.formatting.Indent;
+import com.intellij.formatting.Spacing;
+import com.intellij.formatting.SpacingBuilder;
+import com.intellij.formatting.Wrap;
+import com.intellij.formatting.WrapType;
+import com.intellij.jhipster.psi.JdlEntityFieldMapping;
+import com.intellij.jhipster.psi.JdlFieldType;
+import com.intellij.jhipster.psi.JdlOptionNameValue;
+import com.intellij.jhipster.psi.JdlTokenSets;
+import com.intellij.jhipster.psi.JdlTokenTypes;
+import com.intellij.jhipster.psi.JdlValue;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -15,7 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.intellij.jhipster.JdlCodeStyleSettings.ALIGN_PROPERTY_ON_VALUE;
-import static com.intellij.jhipster.psi.JdlTokenSets.*;
+import static com.intellij.jhipster.psi.JdlTokenSets.BLOCK_IDENTIFIERS;
+import static com.intellij.jhipster.psi.JdlTokenSets.BLOCK_KEYWORDS;
+import static com.intellij.jhipster.psi.JdlTokenSets.COMMENTS;
+import static com.intellij.jhipster.psi.JdlTokenSets.TOP_LEVEL_BLOCKS;
 import static com.intellij.psi.formatter.FormatterUtil.isWhitespaceOrEmpty;
 
 final class JdlBlock implements ASTBlock {

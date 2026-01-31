@@ -31,7 +31,14 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 import java.util.Set;
 
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getCucumberMainClass;
-import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.*;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_1_2;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_2;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_3;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_4;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_5;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_6;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.getCucumberCoreVersion;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.isCucumber60orMore;
 
 public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfigurationProducerBase<CucumberJavaRunConfiguration> {
   private static final Logger LOG = Logger.getInstance(CucumberJavaRunConfigurationProducer.class);

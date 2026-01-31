@@ -16,7 +16,13 @@
 package com.intellij.protobuf.jvm.names;
 
 import com.intellij.protobuf.jvm.PbJavaGotoDeclarationContext;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbEnumDefinition;
+import com.intellij.protobuf.lang.psi.PbEnumValue;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.protobuf.lang.psi.PbMessageType;
+import com.intellij.protobuf.lang.psi.PbOneofDefinition;
+import com.intellij.protobuf.lang.psi.PbTypeName;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import org.jetbrains.annotations.Nullable;
 

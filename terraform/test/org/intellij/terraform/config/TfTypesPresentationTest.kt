@@ -7,7 +7,13 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
 import org.intellij.terraform.config.inspection.TypeSpecificationValidator
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.HclType
+import org.intellij.terraform.config.model.ListType
+import org.intellij.terraform.config.model.MapType
+import org.intellij.terraform.config.model.ObjectType
+import org.intellij.terraform.config.model.SetType
+import org.intellij.terraform.config.model.TupleType
+import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.junit.Assert

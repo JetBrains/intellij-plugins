@@ -15,11 +15,11 @@
  */
 package com.intellij.protobuf.ide.documentation;
 
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbStatement;
+import com.intellij.psi.util.QualifiedName;
 
 import java.util.Arrays;
 

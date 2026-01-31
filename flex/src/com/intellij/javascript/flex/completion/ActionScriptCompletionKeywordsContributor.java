@@ -1,6 +1,11 @@
 package com.intellij.javascript.flex.completion;
 
-import com.intellij.lang.javascript.completion.*;
+import com.intellij.lang.javascript.completion.JSCompletionContributor;
+import com.intellij.lang.javascript.completion.JSCompletionKeyword;
+import com.intellij.lang.javascript.completion.JSCompletionKeywordsContributor;
+import com.intellij.lang.javascript.completion.JSKeywordsCompletionProvider;
+import com.intellij.lang.javascript.completion.JSLookupPriority;
+import com.intellij.lang.javascript.completion.KeywordCompletionConsumer;
 import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -13,7 +18,32 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.lang.javascript.completion.JSCompletionKeyword.*;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.AS;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.CLASS;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.CONST;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.DYNAMIC;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.EXTENDS;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.FINAL;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.FUNCTION;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.IMPLEMENTS;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.IMPORT;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.INCLUDE;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.INT;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.INTERFACE;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.INTERNAL;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.IS;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.NAMESPACE;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.NATIVE;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.OVERRIDE;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.PACKAGE;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.PRIVATE;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.PROTECTED;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.PUBLIC;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.STATIC;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.SUPER;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.UINT;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.USE;
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.VAR;
 
 /**
  * @author Konstantin.Ulitin

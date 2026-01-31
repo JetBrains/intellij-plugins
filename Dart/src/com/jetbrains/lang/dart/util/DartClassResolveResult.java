@@ -3,7 +3,14 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.psi.DartClassResolveCache;
+import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartNewExpression;
+import com.jetbrains.lang.dart.psi.DartType;
+import com.jetbrains.lang.dart.psi.DartTypeArguments;
+import com.jetbrains.lang.dart.psi.DartTypeParameter;
+import com.jetbrains.lang.dart.psi.DartTypeParameters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

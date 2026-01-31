@@ -2,7 +2,12 @@
 package com.intellij.plugins.drools.lang.psi.util;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.plugins.drools.lang.psi.*;
+import com.intellij.plugins.drools.lang.psi.DroolsAttribute;
+import com.intellij.plugins.drools.lang.psi.DroolsExpression;
+import com.intellij.plugins.drools.lang.psi.DroolsFile;
+import com.intellij.plugins.drools.lang.psi.DroolsRuleAttributes;
+import com.intellij.plugins.drools.lang.psi.DroolsRuleStatement;
+import com.intellij.plugins.drools.lang.psi.DroolsStringLiteral;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;

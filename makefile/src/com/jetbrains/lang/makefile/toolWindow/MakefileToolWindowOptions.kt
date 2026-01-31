@@ -1,8 +1,9 @@
 package com.jetbrains.lang.makefile.toolWindow
 
-import com.intellij.openapi.project.*
-import com.jetbrains.lang.makefile.*
-import javax.swing.tree.*
+import com.intellij.openapi.project.Project
+import com.jetbrains.lang.makefile.MakefileProjectSettings
+import com.jetbrains.lang.makefile.MakefileTargetIndex
+import javax.swing.tree.TreeNode
 
 class MakefileToolWindowOptions(val project: Project) {
   private val settings = project.getService(MakefileProjectSettings::class.java)

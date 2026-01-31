@@ -15,7 +15,7 @@ import org.angular2.entities.metadata.psi.Angular2MetadataModuleExport
 import org.angular2.lang.metadata.MetadataUtils
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
-import java.util.*
+import java.util.Collections
 
 class Angular2MetadataModuleExportStub : Angular2MetadataElementStub<Angular2MetadataModuleExport> {
 

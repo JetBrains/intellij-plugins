@@ -30,7 +30,7 @@ import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 import org.osmorc.run.ui.GenericRunPropertiesEditor;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 public class CommonRunPropertiesEditor implements FrameworkRunPropertiesEditor {
   private JPanel myMainPanel;

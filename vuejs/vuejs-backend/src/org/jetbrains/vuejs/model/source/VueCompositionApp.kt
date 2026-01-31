@@ -9,7 +9,16 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueApp
+import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueContainer
+import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueGlobalImpl
+import org.jetbrains.vuejs.model.VueLibrary
+import org.jetbrains.vuejs.model.VueMode
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.VuePlugin
 import org.jetbrains.vuejs.model.source.VueComponents.getComponent
 
 data class VueCompositionApp(

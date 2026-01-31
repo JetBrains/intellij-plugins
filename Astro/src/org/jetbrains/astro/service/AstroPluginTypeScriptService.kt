@@ -8,9 +8,9 @@ import com.intellij.lang.typescript.compiler.languageService.frameworks.Pluggabl
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigurePluginRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigurePluginRequestArguments
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
-import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.astro.AstroIcons
 import org.jetbrains.astro.service.settings.AstroServiceConfigurable
 

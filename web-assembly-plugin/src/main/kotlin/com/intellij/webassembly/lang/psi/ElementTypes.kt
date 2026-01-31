@@ -2,8 +2,8 @@ package com.intellij.webassembly.lang.psi
 
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.psi.tree.IElementType
-import com.intellij.webassembly.lang.WebAssemblyLanguage
 import com.intellij.webassembly.WebassemblyIcons
+import com.intellij.webassembly.lang.WebAssemblyLanguage
 import javax.swing.Icon
 
 class WebAssemblyTokenType(debugName: String) : IElementType(debugName, WebAssemblyLanguage) {

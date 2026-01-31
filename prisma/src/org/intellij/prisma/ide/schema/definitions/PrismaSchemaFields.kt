@@ -5,7 +5,10 @@ import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.builder.schema
 import org.intellij.prisma.ide.schema.types.PRISMA_BINARY_TARGETS
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
-import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.*
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.COCKROACHDB
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.MONGODB
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.POSTGRESQL
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.SQLSERVER
 import org.intellij.prisma.ide.schema.types.PrismaPreviewFeature
 import org.intellij.prisma.lang.PrismaConstants.DatasourceFields
 import org.intellij.prisma.lang.PrismaConstants.Functions
@@ -13,7 +16,7 @@ import org.intellij.prisma.lang.PrismaConstants.GeneratorFields
 import org.intellij.prisma.lang.PrismaConstants.GeneratorProviderTypes
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
 import org.intellij.prisma.lang.psi.PrismaPsiPatterns
-import java.util.*
+import java.util.EnumSet
 
 val PRISMA_SCHEMA_FIELDS = schema {
   group(PrismaSchemaKind.DATASOURCE_FIELD) {

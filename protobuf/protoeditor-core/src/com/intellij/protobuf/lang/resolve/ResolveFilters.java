@@ -17,12 +17,18 @@ package com.intellij.protobuf.lang.resolve;
 
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbMessageType;
+import com.intellij.protobuf.lang.psi.PbNamedTypeElement;
+import com.intellij.protobuf.lang.psi.PbSymbol;
+import com.intellij.protobuf.lang.psi.PbSymbolOwner;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.protobuf.lang.psi.util.PbPsiUtil.*;
+import static com.intellij.protobuf.lang.psi.util.PbPsiUtil.isMessageElement;
+import static com.intellij.protobuf.lang.psi.util.PbPsiUtil.isPackageElement;
+import static com.intellij.protobuf.lang.psi.util.PbPsiUtil.isTypeElement;
 
 /** Conditions to restrict resolve results. */
 public final class ResolveFilters {

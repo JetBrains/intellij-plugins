@@ -8,8 +8,10 @@ import com.intellij.openapi.util.Disposer;
 import jetbrains.plugins.yeoman.projectGenerator.template.YeomanProjectGeneratorPanel;
 import jetbrains.plugins.yeoman.projectGenerator.template.YeomanProjectGeneratorRunPanel;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
 
 public class YeomanRunGeneratorWizardStep extends ModuleWizardStep implements StepWithSubSteps, Disposable {
   private final YeomanModuleBuilder myBuilder;

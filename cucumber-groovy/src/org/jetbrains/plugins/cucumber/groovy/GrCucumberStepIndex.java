@@ -16,7 +16,9 @@ import org.jetbrains.plugins.groovy.GroovyFileType;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.plugins.groovy.lang.psi.GroovyElementTypes.*;
+import static org.jetbrains.plugins.groovy.lang.psi.GroovyElementTypes.ARGUMENT_LIST;
+import static org.jetbrains.plugins.groovy.lang.psi.GroovyElementTypes.METHOD_CALL_EXPRESSION;
+import static org.jetbrains.plugins.groovy.lang.psi.GroovyElementTypes.UNARY_EXPRESSION;
 
 @NotNullByDefault
 public final class GrCucumberStepIndex extends CucumberStepIndex {

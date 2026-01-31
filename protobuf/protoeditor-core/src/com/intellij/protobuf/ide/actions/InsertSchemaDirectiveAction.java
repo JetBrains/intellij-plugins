@@ -25,13 +25,13 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.protobuf.lang.psi.PbTextFile;
+import com.intellij.protobuf.lang.resolve.directive.SchemaComment;
+import com.intellij.protobuf.lang.resolve.directive.SchemaDirective;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.protobuf.lang.psi.PbTextFile;
-import com.intellij.protobuf.lang.resolve.directive.SchemaComment;
-import com.intellij.protobuf.lang.resolve.directive.SchemaDirective;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

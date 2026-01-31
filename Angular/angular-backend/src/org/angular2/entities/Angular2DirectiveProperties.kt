@@ -8,7 +8,11 @@ import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolModifier
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
@@ -17,8 +21,12 @@ import com.intellij.psi.util.contextOfType
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
-import org.angular2.web.*
-import java.util.*
+import org.angular2.web.Angular2Symbol
+import org.angular2.web.Angular2SymbolDelegate
+import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_IN_OUTS
+import org.angular2.web.NG_DIRECTIVE_OUTPUTS
+import java.util.Collections
 
 class Angular2DirectiveProperties(
   rawInputs: Collection<Angular2DirectiveProperty>,

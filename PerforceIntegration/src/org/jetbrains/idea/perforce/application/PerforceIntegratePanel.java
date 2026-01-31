@@ -20,8 +20,9 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 

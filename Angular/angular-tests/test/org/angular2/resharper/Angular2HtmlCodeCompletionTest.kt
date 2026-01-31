@@ -4,9 +4,9 @@ package org.angular2.resharper
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.polySymbols.PolySymbol
 
 @TestDataPath("\$R#_COMPLETION_TEST_ROOT/Angular2Html")
 class Angular2HtmlCodeCompletionTest : Angular2ReSharperCompletionTestBase() {

@@ -20,7 +20,7 @@ import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 class DartComponentUsageGroup implements UsageGroup, UiDataProvider {
   private final VirtualFile myFile;

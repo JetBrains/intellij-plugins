@@ -1,7 +1,7 @@
 package org.intellij.prisma.ide.schema.types
 
 import org.intellij.prisma.lang.PrismaConstants.DatasourceTypes
-import java.util.*
+import java.util.EnumSet
 
 enum class PrismaDatasourceProviderType(val presentation: String) {
   MYSQL(DatasourceTypes.MYSQL),

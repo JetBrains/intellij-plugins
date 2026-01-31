@@ -3,7 +3,13 @@ package org.angular2.lang.html.lexer
 
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavaScriptHighlightingLexer
-import com.intellij.lexer.*
+import com.intellij.lexer.FlexAdapter
+import com.intellij.lexer.HtmlLexer
+import com.intellij.lexer.Lexer
+import com.intellij.lexer.LexerPosition
+import com.intellij.lexer.MergeFunction
+import com.intellij.lexer.MergingLexerAdapterBase
+import com.intellij.lexer.TokenIterator
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet

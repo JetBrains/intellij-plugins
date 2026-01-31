@@ -1,8 +1,9 @@
 package com.jetbrains.lang.makefile.psi
 
-import com.intellij.extapi.psi.*
-import com.intellij.lang.*
-import com.intellij.psi.*
+import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.lang.ASTNode
+import com.intellij.psi.LiteralTextEscaper
+import com.intellij.psi.PsiLanguageInjectionHost
 
 abstract class MakefileSubstitutionInjectionHost(node: ASTNode) : ASTWrapperPsiElement(node), MakefileSubstitution {
   override fun createLiteralTextEscaper(): LiteralTextEscaper<out PsiLanguageInjectionHost> {

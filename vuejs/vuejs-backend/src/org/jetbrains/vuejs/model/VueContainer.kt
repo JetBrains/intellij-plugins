@@ -5,7 +5,11 @@ import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.platform.backend.presentation.TargetPresentation
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolModifier
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.JS_EVENTS
@@ -14,14 +18,27 @@ import com.intellij.polySymbols.js.JsSymbolSymbolKind
 import com.intellij.polySymbols.js.PROP_JS_SYMBOL_KIND
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
-import com.intellij.polySymbols.query.*
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryExecutor
+import com.intellij.polySymbols.query.PolySymbolQueryStack
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
-import org.jetbrains.vuejs.web.*
+import org.jetbrains.vuejs.web.PROP_VUE_MODEL_EVENT
+import org.jetbrains.vuejs.web.PROP_VUE_MODEL_PROP
+import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
+import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
+import org.jetbrains.vuejs.web.VUE_COMPONENT_PROPS
+import org.jetbrains.vuejs.web.VUE_INJECTS
+import org.jetbrains.vuejs.web.VUE_METHODS
+import org.jetbrains.vuejs.web.VUE_MODEL
+import org.jetbrains.vuejs.web.VUE_MODEL_DECL
+import org.jetbrains.vuejs.web.VUE_PROVIDES
 
 const val EMIT_CALL_UPDATE_PREFIX: String = "update:"
 

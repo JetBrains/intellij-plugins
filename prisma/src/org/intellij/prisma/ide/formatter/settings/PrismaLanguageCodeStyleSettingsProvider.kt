@@ -1,13 +1,22 @@
 package org.intellij.prisma.ide.formatter.settings
 
-import com.intellij.application.options.*
+import com.intellij.application.options.CodeStyleAbstractConfigurable
+import com.intellij.application.options.CodeStyleAbstractPanel
+import com.intellij.application.options.GenerationCodeStylePanel
+import com.intellij.application.options.IndentOptionsEditor
+import com.intellij.application.options.TabbedLanguageCodeStylePanel
 import com.intellij.ide.highlighter.HighlighterFactory
 import com.intellij.lang.Language
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.openapi.editor.highlighter.EditorHighlighter
 import com.intellij.openapi.fileTypes.FileType
-import com.intellij.psi.codeStyle.*
+import com.intellij.psi.codeStyle.CodeStyleConfigurable
+import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable.CommenterOption
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import com.intellij.psi.codeStyle.CustomCodeStyleSettings
+import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider.SettingsType.COMMENTER_SETTINGS
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider.SettingsType.INDENT_SETTINGS
 import com.intellij.ui.dsl.builder.bindSelected

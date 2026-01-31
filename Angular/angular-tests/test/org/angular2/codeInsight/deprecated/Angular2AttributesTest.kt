@@ -20,7 +20,15 @@ import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspectio
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
-import com.intellij.polySymbols.testFramework.*
+import com.intellij.polySymbols.testFramework.checkListByFile
+import com.intellij.polySymbols.testFramework.doCompletionItemsTest
+import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.polySymbols.testFramework.multiResolvePolySymbolReference
+import com.intellij.polySymbols.testFramework.renderLookupItems
+import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
+import com.intellij.polySymbols.testFramework.resolveReference
+import com.intellij.polySymbols.testFramework.resolveToPolySymbolSource
 import com.intellij.polySymbols.utils.PolySymbolDelegate.Companion.unwrapAllDelegates
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -28,7 +36,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.xml.util.XmlInvalidIdInspection
-import junit.framework.TestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule

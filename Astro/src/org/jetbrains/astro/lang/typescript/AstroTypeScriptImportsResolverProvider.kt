@@ -2,8 +2,12 @@
 package org.jetbrains.astro.lang.typescript
 
 import com.intellij.lang.javascript.config.JSImportResolveContext
-import com.intellij.lang.typescript.tsconfig.*
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfig
+import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolver
 import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolver.JS_DEFAULT_PRIORITY
+import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolverImpl
+import com.intellij.lang.typescript.tsconfig.TypeScriptImportResolveContext
+import com.intellij.lang.typescript.tsconfig.TypeScriptImportsResolverProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.astro.lang.AstroFileType

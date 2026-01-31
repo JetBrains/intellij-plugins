@@ -8,11 +8,11 @@ import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ScopedRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ScopedScript
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ScopedScriptFactory
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.Test
 import org.junit.jupiter.api.fail
 import java.nio.file.Path

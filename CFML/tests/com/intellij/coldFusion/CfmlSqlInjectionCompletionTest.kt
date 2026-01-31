@@ -10,7 +10,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.FileContentUtil
 import com.intellij.util.containers.ContainerUtil
-import java.util.*
+import java.util.Arrays
 
 /**
  * SQL injection completion tests for CFML without using data from datasource. Assuming that it is necessary to test only one of dialects, so let's take SQL92 for example.  Original tests and data are got from {@link com.intellij.sql.completion.AllSqlCompletionTest}

@@ -13,7 +13,7 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.run.CucumberRunLineMarkerContributor;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Date;
 
 public class CucumberScenarioRunLineContributorTest extends BasePlatformTestCase {

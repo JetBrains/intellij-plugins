@@ -47,9 +47,11 @@ import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.util.FrameworkInstanceRenderer;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;

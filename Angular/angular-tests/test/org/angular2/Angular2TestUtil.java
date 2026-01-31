@@ -17,7 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.List;
 
-import static com.intellij.lang.javascript.completion.JSLookupPriority.*;
+import static com.intellij.lang.javascript.completion.JSLookupPriority.KEYWORDS_PRIORITY;
+import static com.intellij.lang.javascript.completion.JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY;
+import static com.intellij.lang.javascript.completion.JSLookupPriority.TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES;
 import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
 import static junit.framework.TestCase.assertEquals;
 import static org.angular2.web.Angular2SymbolQueryConfiguratorKt.PROP_ERROR_SYMBOL;

@@ -6,7 +6,13 @@ import com.intellij.psi.PsiFileSystemItem
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.getVueTestDataPath
-import org.jetbrains.vuejs.libraries.vuex.model.store.*
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexAction
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainer
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModelManager
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModule
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexNamedSymbol
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStore
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
 
 class VuexTestStructure : BasePlatformTestCase() {
 

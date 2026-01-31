@@ -2,7 +2,7 @@
 package org.angular2.lang.expr.psi.impl
 
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.IncorrectOperationException
 import org.angular2.entities.Angular2EntitiesProvider.isPipeTransformMethod

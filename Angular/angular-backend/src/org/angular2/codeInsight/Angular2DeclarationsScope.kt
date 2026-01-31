@@ -11,7 +11,14 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.MultiMap
-import org.angular2.entities.*
+import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2Declaration
+import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2EntityUtils
+import org.angular2.entities.Angular2FrameworkHandler
+import org.angular2.entities.Angular2ImportsOwner
+import org.angular2.entities.Angular2Module
 
 /**
  * Objects of this class should not be cached or stored. It is intended for single use.

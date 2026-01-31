@@ -12,7 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import icons.CFMLIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class CfmlUnitRunConfigurationType implements ConfigurationType {
   private final ConfigurationFactory myFactory;

@@ -2,15 +2,15 @@ package org.angular2.library.forms.quickFixes
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.psi.PsiElement
-import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.util.asSafely
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolNameSegment
 import com.intellij.polySymbols.inspections.PolySymbolProblemQuickFixProvider
 import com.intellij.polySymbols.references.PolySymbolReferenceProblem.ProblemKind
 import com.intellij.polySymbols.utils.nameSegments
+import com.intellij.psi.PsiElement
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlAttributeValue
+import com.intellij.util.asSafely
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.FORM_ANY_CONTROL_NAME_ATTRIBUTES
 import org.angular2.library.forms.findFormGroupForGetCallParameter

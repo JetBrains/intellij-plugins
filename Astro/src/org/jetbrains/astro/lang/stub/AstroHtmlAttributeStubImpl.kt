@@ -2,7 +2,11 @@
 package org.jetbrains.astro.lang.stub
 
 import com.intellij.psi.impl.source.xml.stub.XmlAttributeStub
-import com.intellij.psi.stubs.*
+import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.stubs.StubBase
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.astro.lang.psi.AstroHtmlAttributeImpl
 import java.io.IOException

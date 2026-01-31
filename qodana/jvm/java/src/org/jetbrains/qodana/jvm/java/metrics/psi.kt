@@ -1,7 +1,10 @@
 package org.jetbrains.qodana.jvm.java.metrics
 
 import com.intellij.openapi.editor.Document
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiImportList
+import com.intellij.psi.PsiPackageStatement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.siblings
 import com.intellij.psi.util.startOffset

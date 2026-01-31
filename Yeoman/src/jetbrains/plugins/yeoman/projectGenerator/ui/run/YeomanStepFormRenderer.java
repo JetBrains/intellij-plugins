@@ -6,7 +6,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.intellij.openapi.diagnostic.Logger;
-import jetbrains.plugins.yeoman.projectGenerator.ui.run.controls.*;
+import jetbrains.plugins.yeoman.projectGenerator.ui.run.controls.YeomanGeneratorCheckboxControl;
+import jetbrains.plugins.yeoman.projectGenerator.ui.run.controls.YeomanGeneratorConformControl;
+import jetbrains.plugins.yeoman.projectGenerator.ui.run.controls.YeomanGeneratorControl;
+import jetbrains.plugins.yeoman.projectGenerator.ui.run.controls.YeomanGeneratorInputControl;
+import jetbrains.plugins.yeoman.projectGenerator.ui.run.controls.YeomanGeneratorListControl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

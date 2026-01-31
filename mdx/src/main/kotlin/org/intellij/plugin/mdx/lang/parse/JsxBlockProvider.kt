@@ -8,7 +8,7 @@ import org.intellij.markdown.parser.constraints.MarkdownConstraints
 import org.intellij.markdown.parser.markerblocks.MarkerBlock
 import org.intellij.markdown.parser.markerblocks.MarkerBlockProvider
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
-import java.util.*
+import java.util.Stack
 
 class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
   override fun createMarkerBlocks(pos: LookaheadText.Position,

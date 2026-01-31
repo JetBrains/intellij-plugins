@@ -2,12 +2,20 @@ package org.intellij.prisma.lang.presentation
 
 import com.intellij.navigation.ItemPresentation
 import org.intellij.prisma.PrismaIcons
-import org.intellij.prisma.ide.schema.*
+import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaDeclaration
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameter
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaVariant
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.PrismaElement
+import org.intellij.prisma.lang.psi.PrismaEnumDeclaration
+import org.intellij.prisma.lang.psi.PrismaFieldDeclaration
+import org.intellij.prisma.lang.psi.PrismaKeyValue
+import org.intellij.prisma.lang.psi.PrismaKeyValueDeclaration
+import org.intellij.prisma.lang.psi.PrismaMemberDeclaration
+import org.intellij.prisma.lang.psi.PrismaNamedElement
+import org.intellij.prisma.lang.psi.PrismaTableEntityDeclaration
+import org.intellij.prisma.lang.psi.PrismaTypeAlias
 import org.intellij.prisma.lang.types.typeText
 import javax.swing.Icon
 

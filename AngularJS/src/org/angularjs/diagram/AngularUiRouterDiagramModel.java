@@ -10,7 +10,13 @@ import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
-import org.angularjs.codeInsight.router.*;
+import org.angularjs.codeInsight.router.AngularUiRouterDiagramBuilder;
+import org.angularjs.codeInsight.router.AngularUiRouterEdge;
+import org.angularjs.codeInsight.router.AngularUiRouterGraphBuilder;
+import org.angularjs.codeInsight.router.AngularUiRouterNode;
+import org.angularjs.codeInsight.router.DiagramObject;
+import org.angularjs.codeInsight.router.RootTemplate;
+import org.angularjs.codeInsight.router.UiRouterState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

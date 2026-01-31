@@ -19,7 +19,15 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.applyBaselineCalcu
 import org.jetbrains.qodana.staticAnalysis.sarif.SarifReportContributor
 import org.jetbrains.qodana.staticAnalysis.sarif.fillComponents
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
-import org.jetbrains.qodana.staticAnalysis.script.*
+import org.jetbrains.qodana.staticAnalysis.script.AnalysisKind
+import org.jetbrains.qodana.staticAnalysis.script.QodanaScript
+import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptResult
+import org.jetbrains.qodana.staticAnalysis.script.appendRunDetails
+import org.jetbrains.qodana.staticAnalysis.script.getResultsForInspectionGroup
+import org.jetbrains.qodana.staticAnalysis.script.runAnalysis
+import org.jetbrains.qodana.staticAnalysis.script.writeProfiles
+import org.jetbrains.qodana.staticAnalysis.script.writeProjectDescriptionAfterWork
+import org.jetbrains.qodana.staticAnalysis.script.writeProjectDescriptionBeforeWork
 import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector
 
 const val RUN_TIMESTAMP = "runTimestamp"

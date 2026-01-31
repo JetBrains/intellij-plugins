@@ -13,7 +13,6 @@ import org.jetbrains.idea.perforce.application.ConnectionKey
 import org.jetbrains.idea.perforce.application.PerforceNumberNameSynchronizer
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager
-import java.util.*
 
 fun getConnections(project: Project, list: LocalChangeList): Map<ConnectionKey, P4Connection> {
   val result = HashMap<ConnectionKey, P4Connection>()

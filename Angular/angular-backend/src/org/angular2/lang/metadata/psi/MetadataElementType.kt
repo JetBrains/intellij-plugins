@@ -3,9 +3,12 @@ package org.angular2.lang.metadata.psi
 
 import com.intellij.lang.Language
 import com.intellij.psi.PsiElement
-import com.intellij.psi.stubs.*
+import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import org.angular2.lang.metadata.stubs.MetadataElementStub
-
 import java.io.IOException
 
 open class MetadataElementType<Stub : MetadataElementStub<*>>(debugName: String,

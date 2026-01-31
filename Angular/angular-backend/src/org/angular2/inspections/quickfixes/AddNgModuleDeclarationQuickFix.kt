@@ -20,7 +20,7 @@ import org.angular2.entities.source.Angular2SourceDeclaration
 import org.angular2.inspections.actions.Angular2ActionFactory
 import org.angular2.lang.Angular2Bundle
 import org.jetbrains.annotations.Nls
-import java.util.*
+import java.util.ArrayDeque
 
 /**
  * Adds Component/Directive/Pipe to NgModule's declarations array.

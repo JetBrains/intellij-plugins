@@ -5,7 +5,11 @@ import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameterLocation
 import org.intellij.prisma.ide.schema.builder.schema
-import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.*
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.COCKROACHDB
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.MONGODB
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.MYSQL
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.POSTGRESQL
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.SQLSERVER
 import org.intellij.prisma.lang.PrismaConstants.BlockAttributes
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.intellij.prisma.lang.PrismaConstants.ParameterNames
@@ -13,7 +17,7 @@ import org.intellij.prisma.lang.PrismaConstants.Types
 import org.intellij.prisma.lang.psi.PrismaEnumDeclaration
 import org.intellij.prisma.lang.psi.PrismaModelDeclaration
 import org.intellij.prisma.lang.psi.PrismaPsiPatterns
-import java.util.*
+import java.util.EnumSet
 
 val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
   group(PrismaSchemaKind.BLOCK_ATTRIBUTE) {

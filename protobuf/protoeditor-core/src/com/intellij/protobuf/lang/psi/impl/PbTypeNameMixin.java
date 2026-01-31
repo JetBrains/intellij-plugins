@@ -17,7 +17,14 @@ package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbMapField;
+import com.intellij.protobuf.lang.psi.PbMessageTypeName;
+import com.intellij.protobuf.lang.psi.PbSymbol;
+import com.intellij.protobuf.lang.psi.PbSymbolOwner;
+import com.intellij.protobuf.lang.psi.PbTypeName;
+import com.intellij.protobuf.lang.psi.ProtoSymbolPath;
+import com.intellij.protobuf.lang.psi.ProtoSymbolPathDelegate;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.protobuf.lang.resolve.PbSymbolResolver;
 import com.intellij.protobuf.lang.resolve.ProtoSymbolPathReference;

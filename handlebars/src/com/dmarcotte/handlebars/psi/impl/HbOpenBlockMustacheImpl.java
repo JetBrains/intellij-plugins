@@ -9,7 +9,7 @@ import icons.HandlebarsIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class HbOpenBlockMustacheImpl extends HbBlockMustacheImpl implements HbOpenBlockMustache {
   public HbOpenBlockMustacheImpl(@NotNull ASTNode astNode) {

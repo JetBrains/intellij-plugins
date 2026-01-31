@@ -11,7 +11,12 @@ import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.QodanaIntelliJYamlService
 import org.jetbrains.qodana.cloud.UserState
 import org.jetbrains.qodana.cloud.api.getErrorNotification
-import org.jetbrains.qodana.cloud.project.*
+import org.jetbrains.qodana.cloud.project.CloudOrganizationPrimaryData
+import org.jetbrains.qodana.cloud.project.CloudProjectData
+import org.jetbrains.qodana.cloud.project.CloudProjectPrimaryData
+import org.jetbrains.qodana.cloud.project.CloudProjectProperties
+import org.jetbrains.qodana.cloud.project.LinkState
+import org.jetbrains.qodana.cloud.project.QodanaCloudProjectLinkService
 import org.jetbrains.qodana.cloud.userApi
 import org.jetbrains.qodana.cloudclient.QDCloudResponse
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
@@ -23,7 +28,11 @@ import org.jetbrains.qodana.notifications.QodanaNotifications
 import org.jetbrains.qodana.problem.SarifProblem
 import org.jetbrains.qodana.report.QodanaLocalReportsService
 import org.jetbrains.qodana.report.ReportDescriptor
-import org.jetbrains.qodana.stats.*
+import org.jetbrains.qodana.stats.OpenInIdeProtocol
+import org.jetbrains.qodana.stats.OpenInIdeResult
+import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector
+import org.jetbrains.qodana.stats.SourceHighlight
+import org.jetbrains.qodana.stats.toStatsReportType
 
 suspend fun highlightOpenInIdeOneMarker(project: Project, openInIdeProblemParameters: OpenInIdeProblemParameters) {
   val reportDescriptor = SingleMarkerReportDescriptorBuilder(project, openInIdeProblemParameters).createReportDescriptor()

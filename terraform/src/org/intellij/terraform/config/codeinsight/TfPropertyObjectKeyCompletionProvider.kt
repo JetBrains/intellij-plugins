@@ -12,8 +12,19 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import com.intellij.util.containers.tail
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getIncomplete
-import org.intellij.terraform.config.model.*
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.config.model.Module
+import org.intellij.terraform.config.model.ObjectType
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.Types
+import org.intellij.terraform.config.model.getTerraformModule
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLPsiUtil
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
+import org.intellij.terraform.hcl.psi.getParent
 
 object TfPropertyObjectKeyCompletionProvider : TfConfigCompletionContributor.TfCompletionProvider() {
   private val LOG = Logger.getInstance(TfPropertyObjectKeyCompletionProvider::class.java)

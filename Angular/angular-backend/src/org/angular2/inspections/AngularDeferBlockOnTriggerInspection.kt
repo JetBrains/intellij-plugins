@@ -8,7 +8,11 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.childrenOfType
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_DEFER_TRIGGER
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
-import org.angular2.codeInsight.blocks.*
+import org.angular2.codeInsight.blocks.BLOCK_DEFER
+import org.angular2.codeInsight.blocks.PARAMETER_ON
+import org.angular2.codeInsight.blocks.PROP_PARAMETER
+import org.angular2.codeInsight.blocks.PROP_PARAMETER_REQUIRED
+import org.angular2.codeInsight.blocks.getDeferOnTriggerDefinition
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2DeferredTimeLiteralExpression
 import org.angular2.lang.html.psi.Angular2HtmlBlock

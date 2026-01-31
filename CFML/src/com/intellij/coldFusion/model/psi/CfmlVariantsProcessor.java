@@ -6,7 +6,14 @@ import com.intellij.coldFusion.model.CfmlScopesInfo;
 import com.intellij.coldFusion.model.psi.impl.CfmlNamedAttributeImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagInvokeImpl;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifierListOwner;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.PsiSubstitutor;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.ResolveState;
 import com.intellij.psi.resolve.JavaMethodCandidateInfo;
 import com.intellij.psi.resolve.JavaMethodResolveHelper;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -16,7 +23,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static com.intellij.psi.PsiModifier.*;
+import static com.intellij.psi.PsiModifier.PACKAGE_LOCAL;
+import static com.intellij.psi.PsiModifier.PRIVATE;
+import static com.intellij.psi.PsiModifier.PROTECTED;
+import static com.intellij.psi.PsiModifier.STATIC;
 import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 
 public abstract class CfmlVariantsProcessor<T> implements PsiScopeProcessor {

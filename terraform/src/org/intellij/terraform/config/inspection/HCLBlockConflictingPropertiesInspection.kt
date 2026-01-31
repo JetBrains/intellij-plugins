@@ -13,7 +13,11 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElementVisitor
+import org.intellij.terraform.hcl.psi.HCLNullLiteral
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.isTfOrTofuPsiFile
 
 class HCLBlockConflictingPropertiesInspection : LocalInspectionTool() {

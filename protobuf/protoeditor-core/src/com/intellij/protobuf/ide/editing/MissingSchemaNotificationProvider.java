@@ -34,7 +34,7 @@ import com.intellij.util.containers.WeakList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 import javax.swing.event.HyperlinkListener;
 import java.util.Collection;
 import java.util.function.Function;

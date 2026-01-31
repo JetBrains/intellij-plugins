@@ -11,7 +11,12 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
 import org.intellij.prisma.lang.lexer.PrismaLexer
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.DOC_COMMENT
+import org.intellij.prisma.lang.psi.PRISMA_COMMENTS
+import org.intellij.prisma.lang.psi.PRISMA_STRINGS
+import org.intellij.prisma.lang.psi.PrismaElementTypes
+import org.intellij.prisma.lang.psi.PrismaFile
+import org.intellij.prisma.lang.psi.PrismaFileElementType
 import org.intellij.prisma.lang.psi.impl.PrismaDocCommentImpl
 
 class PrismaParserDefinition : ParserDefinition {

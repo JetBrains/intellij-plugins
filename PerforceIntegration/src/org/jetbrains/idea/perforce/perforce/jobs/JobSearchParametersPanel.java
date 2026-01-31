@@ -4,8 +4,13 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ui.NamedColorUtil;
 import org.jetbrains.idea.perforce.PerforceBundle;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.List;
 
 public class JobSearchParametersPanel {

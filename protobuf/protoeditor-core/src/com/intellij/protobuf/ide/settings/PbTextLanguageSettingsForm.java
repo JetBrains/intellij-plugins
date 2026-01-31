@@ -22,8 +22,10 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 /** The protobuf text format language settings panel. */
 public class PbTextLanguageSettingsForm implements ConfigurableUi<PbTextLanguageSettings> {

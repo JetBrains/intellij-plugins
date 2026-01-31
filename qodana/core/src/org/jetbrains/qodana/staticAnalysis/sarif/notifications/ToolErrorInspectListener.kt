@@ -7,7 +7,13 @@ import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.psi.PsiFile
-import com.jetbrains.qodana.sarif.model.*
+import com.jetbrains.qodana.sarif.model.ArtifactLocation
+import com.jetbrains.qodana.sarif.model.Exception
+import com.jetbrains.qodana.sarif.model.Location
+import com.jetbrains.qodana.sarif.model.Message
+import com.jetbrains.qodana.sarif.model.Notification
+import com.jetbrains.qodana.sarif.model.PhysicalLocation
+import com.jetbrains.qodana.sarif.model.PropertyBag
 import kotlinx.coroutines.CancellationException
 import org.jetbrains.qodana.staticAnalysis.sarif.withKind
 import java.nio.file.Path

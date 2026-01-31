@@ -4,7 +4,11 @@ package org.intellij.terraform.hil.psi.impl
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.tree.IElementType
 import org.intellij.terraform.hil.HILTokenTypes
-import org.intellij.terraform.hil.psi.*
+import org.intellij.terraform.hil.psi.ILExpression
+import org.intellij.terraform.hil.psi.ILLiteralExpression
+import org.intellij.terraform.hil.psi.ILMethodCallExpression
+import org.intellij.terraform.hil.psi.ILUnaryExpression
+import org.intellij.terraform.hil.psi.ILVariable
 
 object HILPsiImplUtils {
   

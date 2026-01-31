@@ -13,7 +13,13 @@ import com.intellij.javascript.testFramework.qunit.QUnitFileStructure
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder
 import com.intellij.javascript.testFramework.util.JSTestNamePattern
 import com.intellij.javascript.testing.JS_TEST_NAMES_INDEX_DELIMITER
-import com.intellij.javascript.testing.detection.*
+import com.intellij.javascript.testing.detection.CachingJsTestFileIndexDataCollector
+import com.intellij.javascript.testing.detection.JsTestFileIndexData
+import com.intellij.javascript.testing.detection.JsTestFrameworkApiDesign
+import com.intellij.javascript.testing.detection.JsTestFrameworkDetector
+import com.intellij.javascript.testing.detection.JsTestFrameworkDetectors
+import com.intellij.javascript.testing.detection.JsTestFrameworkPackageDescriptor
+import com.intellij.javascript.testing.detection.emptyJsTestFileIndexData
 import com.intellij.javascript.testing.findTestFilesByTestSelector
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.openapi.project.Project

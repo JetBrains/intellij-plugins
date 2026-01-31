@@ -1,10 +1,18 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.dialects
 
-import com.intellij.lang.*
+import com.intellij.lang.ASTFactory
+import com.intellij.lang.ASTNode
+import com.intellij.lang.LanguageUtil
+import com.intellij.lang.ParserDefinition
 import com.intellij.lang.ParserDefinition.SpaceRequirements
+import com.intellij.lang.PsiParser
 import com.intellij.lang.actionscript.parsing.ActionScriptParser
-import com.intellij.lang.javascript.*
+import com.intellij.lang.javascript.BasicJavaScriptElementFactory
+import com.intellij.lang.javascript.FlexFileElementTypes
+import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSFlexAdapter
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project

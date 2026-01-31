@@ -14,7 +14,11 @@ import org.angularjs.lang.psi.AngularJSElementVisitor;
 import org.angularjs.lang.psi.AngularJSMessageFormatExpression;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.angularjs.AngularJSBundle.message;
 

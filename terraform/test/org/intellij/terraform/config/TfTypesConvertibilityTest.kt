@@ -2,12 +2,18 @@
 package org.intellij.terraform.config
 
 import com.intellij.testFramework.UsefulTestCase
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.HclType
+import org.intellij.terraform.config.model.ListType
+import org.intellij.terraform.config.model.MapType
+import org.intellij.terraform.config.model.ObjectType
+import org.intellij.terraform.config.model.OptionalType
+import org.intellij.terraform.config.model.SetType
 import org.intellij.terraform.config.model.Types.Any
 import org.intellij.terraform.config.model.Types.Boolean
 import org.intellij.terraform.config.model.Types.Null
 import org.intellij.terraform.config.model.Types.Number
 import org.intellij.terraform.config.model.Types.String
+import org.intellij.terraform.config.model.isConvertibleTo
 
 class TfTypesConvertibilityTest : UsefulTestCase() {
   fun testPrimitiveTypes() {

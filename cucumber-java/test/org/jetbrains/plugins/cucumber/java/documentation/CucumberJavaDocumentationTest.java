@@ -13,8 +13,6 @@ import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-import java.util.List;
-
 /**
  * Tests that Quick Documentation (Ctrl+Q) shows Javadoc from Java step definitions
  * when invoked on Gherkin steps.

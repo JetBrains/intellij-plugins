@@ -2,7 +2,12 @@
 package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.lang.ecmascript6.psi.*
+import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.ecmascript6.psi.ES6ExportSpecifierAlias
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifier
+import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
+import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifierAlias
+import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
@@ -28,7 +33,12 @@ import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueGlobal
+import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.VueNamedComponent
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_DIRECTIVES
 import org.jetbrains.vuejs.web.VUE_GLOBAL_DIRECTIVES
@@ -36,7 +46,7 @@ import org.jetbrains.vuejs.web.VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
 import org.jetbrains.vuejs.web.symbols.VueComponentWithProximity
 import org.jetbrains.vuejs.web.symbols.VueDirectiveWithProximity
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
-import java.util.*
+import java.util.Locale
 
 class VueCodeModelSymbolScope<K>
 private constructor(

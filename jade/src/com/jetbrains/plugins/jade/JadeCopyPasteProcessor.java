@@ -3,7 +3,11 @@ package com.jetbrains.plugins.jade;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.editorActions.CopyPastePreProcessor;
-import com.intellij.openapi.editor.*;
+import com.intellij.openapi.editor.CaretModel;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.RawText;
+import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;

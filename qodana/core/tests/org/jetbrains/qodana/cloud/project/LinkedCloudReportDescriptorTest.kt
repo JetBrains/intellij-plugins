@@ -4,7 +4,10 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.qodana.sarif.SarifUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
-import org.jetbrains.qodana.*
+import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.jetbrains.qodana.assertNoNotifications
+import org.jetbrains.qodana.assertReportIsAvailableSignalsCount
+import org.jetbrains.qodana.assertSingleNotificationWithMessage
 import org.jetbrains.qodana.cloud.UserState
 import org.jetbrains.qodana.cloud.api.mockQDCloudHttpClient
 import org.jetbrains.qodana.cloud.api.respond
@@ -15,7 +18,9 @@ import org.jetbrains.qodana.cloudclient.MockQDCloudHttpClient
 import org.jetbrains.qodana.cloudclient.QDCloudException
 import org.jetbrains.qodana.cloudclient.QDCloudResponse
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
+import org.jetbrains.qodana.reinstansiateService
 import org.jetbrains.qodana.report.LoadedReport
+import org.jetbrains.qodana.runDispatchingOnUi
 import java.nio.file.Path
 import kotlin.io.path.invariantSeparatorsPathString
 

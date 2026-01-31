@@ -2,8 +2,8 @@ package org.jetbrains.qodana.staticAnalysis.testFramework
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMUtil
-import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManager
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
+import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManager
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider
 import org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmbeddedProfile
 import java.io.FileInputStream

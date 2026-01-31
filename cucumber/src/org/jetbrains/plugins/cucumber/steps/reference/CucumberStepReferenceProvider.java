@@ -14,7 +14,9 @@ import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepImpl;
 
 import static com.intellij.psi.tree.TokenSet.WHITE_SPACE;
 import static org.jetbrains.plugins.cucumber.psi.GherkinElementTypes.STEP_PARAMETER;
-import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.*;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.STEP_PARAMETER_BRACE;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.STEP_PARAMETER_TEXT;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.TEXT;
 
 /// Injects references to step definitions (aka "glue code") into step usages in Gherkin files.
 ///

@@ -6,13 +6,13 @@ import com.intellij.lang.javascript.completion.ml.JSMLTrackingCompletionProvider
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.polySymbols.testFramework.LookupElementInfo
 import com.intellij.polySymbols.testFramework.and
 import com.intellij.polySymbols.testFramework.findOffsetBySignature
 import com.intellij.polySymbols.testFramework.renderLookupItems
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.filterOutDollarPrefixedProperties

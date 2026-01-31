@@ -47,7 +47,12 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.jobs.PerforceCheckinComponent;
 import org.jetbrains.idea.perforce.perforce.jobs.PerforceJob;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class PerforceCheckinEnvironment implements CheckinEnvironment{
   private static final Logger LOG = Logger.getInstance(PerforceCheckinEnvironment.class);

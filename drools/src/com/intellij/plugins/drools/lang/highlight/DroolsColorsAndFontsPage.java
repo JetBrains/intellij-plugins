@@ -11,11 +11,31 @@ import com.intellij.plugins.drools.JbossDroolsIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.*;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.ATTRIBUTES;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.BAD_CHARACTER;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.BLOCK_COMMENT;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.BRACES;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.BRACKETS;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.COMMA;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.DOC_COMMENT;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.DOT;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.FUNCTION;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.KEYWORD;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.KEYWORD_OPERATIONS;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.LINE_COMMENT;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.LOCAL_VARIABLE;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.NUMBER;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.OPERATIONS;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.OPERATION_SIGN;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.PARENTHS;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.PUBLIC_STATIC_FIELD;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.RULE;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.SEMICOLON;
+import static com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighterColors.STRING;
 
 public final class DroolsColorsAndFontsPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRS;

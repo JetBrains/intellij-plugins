@@ -15,9 +15,9 @@
  */
 package com.intellij.protobuf.lang.resolve.directive;
 
-import com.intellij.psi.PsiFile;
 import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.psi.PsiFile;
 
 /** Tests for comment-based format directives in text format files. */
 public class PbTextDirectiveAnnotatorTest extends PbCodeInsightFixtureTestCase {

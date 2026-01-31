@@ -1,6 +1,10 @@
 package com.intellij.dts.lang.psi.mixin
 
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsByteArray
+import com.intellij.dts.lang.psi.DtsCellArray
+import com.intellij.dts.lang.psi.DtsCellArrayBits
+import com.intellij.dts.lang.psi.DtsInt
+import com.intellij.dts.lang.psi.DtsValue
 import com.intellij.dts.util.trim
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode

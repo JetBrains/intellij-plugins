@@ -3,7 +3,12 @@ package org.jetbrains.vuejs.libraries.nuxt.codeInsight
 
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSAssignmentExpression
+import com.intellij.lang.javascript.psi.JSDefinitionExpression
+import com.intellij.lang.javascript.psi.JSExpectedTypeKind
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_NAMES

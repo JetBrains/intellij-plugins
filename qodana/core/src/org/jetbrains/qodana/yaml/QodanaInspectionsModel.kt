@@ -3,7 +3,11 @@ package org.jetbrains.qodana.yaml
 import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.psi.util.childrenOfType
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProjectInspectionProfileManager
-import org.jetbrains.yaml.psi.*
+import org.jetbrains.yaml.psi.YAMLFile
+import org.jetbrains.yaml.psi.YAMLKeyValue
+import org.jetbrains.yaml.psi.YAMLMapping
+import org.jetbrains.yaml.psi.YAMLSequence
+import org.jetbrains.yaml.psi.YAMLSequenceItem
 
 internal typealias Inspection = InspectionToolWrapper<*, *>
 

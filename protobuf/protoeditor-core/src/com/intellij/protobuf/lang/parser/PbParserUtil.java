@@ -17,9 +17,9 @@ package com.intellij.protobuf.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.protobuf.lang.psi.ProtoKeywordTokenType;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
 /** Static parsing utility functions for parsing proto files. */

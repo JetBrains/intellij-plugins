@@ -2,7 +2,11 @@
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.psi.PsiElement;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartVarAccessDeclaration;
+import com.jetbrains.lang.dart.psi.DartVarDeclarationList;
+import com.jetbrains.lang.dart.psi.DartVarDeclarationListPart;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;

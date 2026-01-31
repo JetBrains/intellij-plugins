@@ -2,7 +2,19 @@
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.FlexCommonUtils;
-import com.intellij.flex.model.bc.*;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
+import com.intellij.flex.model.bc.InfoFromConfigFile;
+import com.intellij.flex.model.bc.JpsAirDesktopPackagingOptions;
+import com.intellij.flex.model.bc.JpsAndroidPackagingOptions;
+import com.intellij.flex.model.bc.JpsFlexBCReference;
+import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
+import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
+import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
+import com.intellij.flex.model.bc.JpsFlexDependencies;
+import com.intellij.flex.model.bc.JpsIosPackagingOptions;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +25,7 @@ import org.jetbrains.jps.model.ex.JpsNamedElementCollectionRole;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsTypedModule;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

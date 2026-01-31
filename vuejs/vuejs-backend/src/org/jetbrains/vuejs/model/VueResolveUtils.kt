@@ -4,7 +4,11 @@ package org.jetbrains.vuejs.model
 import com.intellij.lang.javascript.psi.StubSafe
 import com.intellij.lang.javascript.psi.util.stubSafeGetAttribute
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.AbstractElementManipulator
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiReference
+import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.FakePsiElement
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
 import com.intellij.psi.xml.XmlTag

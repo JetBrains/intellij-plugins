@@ -12,7 +12,10 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE
-import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.*
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.HTML_ATTRIBUTE
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_INPUT
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_IN_OUT
+import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.NG_OUTPUT
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
@@ -27,7 +30,14 @@ import org.angular2.lang.Angular2Bundle.Companion.BUNDLE
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo
-import org.angular2.lang.html.parser.Angular2AttributeType.*
+import org.angular2.lang.html.parser.Angular2AttributeType.BANANA_BOX_BINDING
+import org.angular2.lang.html.parser.Angular2AttributeType.EVENT
+import org.angular2.lang.html.parser.Angular2AttributeType.I18N
+import org.angular2.lang.html.parser.Angular2AttributeType.LET
+import org.angular2.lang.html.parser.Angular2AttributeType.PROPERTY_BINDING
+import org.angular2.lang.html.parser.Angular2AttributeType.REFERENCE
+import org.angular2.lang.html.parser.Angular2AttributeType.REGULAR
+import org.angular2.lang.html.parser.Angular2AttributeType.TEMPLATE_BINDINGS
 import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.signals.Angular2SignalUtils
 import org.jetbrains.annotations.PropertyKey

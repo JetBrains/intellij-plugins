@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class RemoteFlashRunConfigurationType implements ConfigurationType, DumbAware {
 

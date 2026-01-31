@@ -5,7 +5,7 @@ import com.intellij.openapi.fileTypes.LanguageFileType;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class DartFileType extends LanguageFileType {
   public static final LanguageFileType INSTANCE = new DartFileType();

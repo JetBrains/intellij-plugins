@@ -1,7 +1,11 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.lang.html.lexer
 
-import com.intellij.html.embedding.*
+import com.intellij.html.embedding.HtmlAttributeEmbeddedContentProvider
+import com.intellij.html.embedding.HtmlEmbeddedContentProvider
+import com.intellij.html.embedding.HtmlEmbeddedContentSupport
+import com.intellij.html.embedding.HtmlEmbedmentInfo
+import com.intellij.html.embedding.HtmlTokenEmbeddedContentProvider
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lexer.BaseHtmlLexer
 import com.intellij.lexer.Lexer
@@ -14,7 +18,7 @@ import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.Angular2BlockExprTokenType
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
-import java.util.*
+import java.util.EnumSet
 
 class Angular2HtmlEmbeddedContentSupport : HtmlEmbeddedContentSupport {
   object Holder {

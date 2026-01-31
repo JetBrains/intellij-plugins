@@ -6,7 +6,9 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.Nls;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 public class YeomanGeneratorConformControl implements YeomanGeneratorControl {
   @SerializedName("type")

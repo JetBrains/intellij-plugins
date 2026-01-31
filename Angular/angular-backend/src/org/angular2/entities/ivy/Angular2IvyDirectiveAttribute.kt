@@ -1,13 +1,13 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.ivy
 
-import com.intellij.polySymbols.js.apiStatus
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.js.apiStatus
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.angular2.entities.Angular2DirectiveAttribute

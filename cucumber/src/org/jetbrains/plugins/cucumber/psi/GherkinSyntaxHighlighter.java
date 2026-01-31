@@ -11,7 +11,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.*;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.COMMENT;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.KEYWORDS;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.PIPE;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.PYSTRING;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.PYSTRING_TEXT;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.TABLE_CELL;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.TAG;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.TEXT;
 
 
 public class GherkinSyntaxHighlighter extends SyntaxHighlighterBase {

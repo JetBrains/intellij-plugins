@@ -15,7 +15,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public abstract class JdlEntityMixin extends ASTWrapperPsiElement implements JdlEntity {
   public JdlEntityMixin(@NotNull ASTNode node) {

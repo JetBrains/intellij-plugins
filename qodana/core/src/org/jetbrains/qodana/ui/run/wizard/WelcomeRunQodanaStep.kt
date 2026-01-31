@@ -17,20 +17,30 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.run.QodanaRunInIdeService
 import org.jetbrains.qodana.run.QodanaRunState
-import org.jetbrains.qodana.util.isInDumbModeFlow
 import org.jetbrains.qodana.ui.wizard.QodanaWizardStep
 import org.jetbrains.qodana.ui.wizard.QodanaWizardStepViewModel
 import org.jetbrains.qodana.ui.wizard.QodanaWizardStepViewProvider
 import org.jetbrains.qodana.ui.wizard.QodanaWizardTransition
+import org.jetbrains.qodana.util.isInDumbModeFlow
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import javax.swing.*
+import javax.swing.Icon
+import javax.swing.JButton
+import javax.swing.JComponent
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.JSeparator
 
 class WelcomeRunQodanaStep(override val viewModel: WelcomeRunQodanaStepViewModel) : QodanaWizardStep {
   companion object {

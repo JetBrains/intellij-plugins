@@ -6,15 +6,31 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.LicensingFacade
-import org.jetbrains.qodana.license.QodanaLicenseType.*
+import org.jetbrains.qodana.license.QodanaLicenseType.COMMUNITY
+import org.jetbrains.qodana.license.QodanaLicenseType.NONE
+import org.jetbrains.qodana.license.QodanaLicenseType.PREMIUM
+import org.jetbrains.qodana.license.QodanaLicenseType.ULTIMATE
+import org.jetbrains.qodana.license.QodanaLicenseType.ULTIMATE_PLUS
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import java.security.Signature
-import java.security.cert.*
+import java.security.cert.CertPathBuilder
+import java.security.cert.CertPathValidator
+import java.security.cert.CertStore
+import java.security.cert.Certificate
+import java.security.cert.CertificateFactory
+import java.security.cert.CollectionCertStoreParameters
+import java.security.cert.PKIXBuilderParameters
+import java.security.cert.TrustAnchor
+import java.security.cert.X509CertSelector
+import java.security.cert.X509Certificate
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Base64
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import kotlin.system.exitProcess
 
 internal const val EAP_LICENSE_DURATION = 60

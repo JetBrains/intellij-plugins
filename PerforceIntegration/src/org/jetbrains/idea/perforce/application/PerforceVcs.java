@@ -30,7 +30,17 @@ import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vcs.*;
+import com.intellij.openapi.vcs.AbstractVcs;
+import com.intellij.openapi.vcs.EditFileProvider;
+import com.intellij.openapi.vcs.FilePath;
+import com.intellij.openapi.vcs.FileStatus;
+import com.intellij.openapi.vcs.ProjectLevelVcsManager;
+import com.intellij.openapi.vcs.ReadonlyStatusIsVisibleActivationCheck;
+import com.intellij.openapi.vcs.RemoteDifferenceStrategy;
+import com.intellij.openapi.vcs.TreeDiffProvider;
+import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.VcsExceptionsHotFixer;
+import com.intellij.openapi.vcs.VcsKey;
 import com.intellij.openapi.vcs.annotate.AnnotationProvider;
 import com.intellij.openapi.vcs.annotate.AnnotationsWriteableFilesVfsListener;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
@@ -69,7 +79,16 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 import org.jetbrains.idea.perforce.perforce.jobs.PerforceJob;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 

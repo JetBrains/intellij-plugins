@@ -2,8 +2,12 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.command.impl.DummyProject
-import com.jetbrains.qodana.sarif.model.*
+import com.jetbrains.qodana.sarif.model.Invocation
+import com.jetbrains.qodana.sarif.model.Notification
+import com.jetbrains.qodana.sarif.model.PropertyBag
+import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Result.BaselineState
+import com.jetbrains.qodana.sarif.model.Run
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.ObjectAssert
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions

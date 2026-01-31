@@ -1,15 +1,11 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.polySymbols.testFramework.checkGotoDeclaration
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.ComparisonFailure
-import junit.framework.TestCase
 
 class VueRefAttrsTest : BasePlatformTestCase() {
 

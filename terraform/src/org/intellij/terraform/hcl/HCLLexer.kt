@@ -2,7 +2,7 @@
 package org.intellij.terraform.hcl
 
 import com.intellij.lexer.FlexAdapter
-import java.util.*
+import java.util.EnumSet
 
 class HCLLexer(private val capabilities: EnumSet<HCLCapability> = EnumSet.noneOf(HCLCapability::class.java)) :
   FlexAdapter(_HCLLexer(capabilities)) {

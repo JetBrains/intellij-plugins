@@ -5,7 +5,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector
-import org.jetbrains.qodana.ui.problemsView.viewModel.*
+import org.jetbrains.qodana.ui.problemsView.viewModel.QodanaProblemsViewModel
+import org.jetbrains.qodana.ui.problemsView.viewModel.toUiStateStatsType
 import org.jetbrains.qodana.ui.run.wizard.RunQodanaWizard
 import org.jetbrains.qodana.ui.settings.QodanaCloudSettingsPanel
 

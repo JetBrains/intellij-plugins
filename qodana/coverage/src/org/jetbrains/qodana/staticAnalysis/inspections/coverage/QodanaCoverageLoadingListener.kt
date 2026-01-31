@@ -1,8 +1,8 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 
 import com.intellij.coverage.CoverageLoadingListener
-import com.intellij.coverage.FailedCoverageLoadingResult
 import com.intellij.coverage.CoverageLoadingResult
+import com.intellij.coverage.FailedCoverageLoadingResult
 import com.intellij.coverage.SuccessCoverageLoadingResult
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.File

@@ -37,7 +37,13 @@ import org.jetbrains.idea.perforce.perforce.View;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public final class PerforceUnversionedTracker {
   private static final Logger LOG = Logger.getInstance(PerforceUnversionedTracker.class);

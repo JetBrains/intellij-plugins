@@ -2,7 +2,11 @@ package org.jetbrains.qodana.report
 
 import com.google.gson.JsonParseException
 import com.jetbrains.qodana.sarif.SarifUtil
-import org.jetbrains.qodana.*
+import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.jetbrains.qodana.assertNoNotifications
+import org.jetbrains.qodana.assertReportIsAvailableSignalsCount
+import org.jetbrains.qodana.assertSingleNotificationWithMessage
+import org.jetbrains.qodana.runDispatchingOnUi
 
 class FileReportDescriptorTest : QodanaPluginLightTestBase() {
   override fun runInDispatchThread() = false

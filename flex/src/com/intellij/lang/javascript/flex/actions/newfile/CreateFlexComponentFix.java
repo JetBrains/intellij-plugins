@@ -3,9 +3,9 @@ package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;

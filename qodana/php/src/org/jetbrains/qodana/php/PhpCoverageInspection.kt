@@ -11,13 +11,25 @@ import com.intellij.psi.PsiFile
 import com.intellij.rt.coverage.data.ClassData
 import com.intellij.rt.coverage.data.ProjectData
 import com.jetbrains.php.lang.psi.PhpFile
-import com.jetbrains.php.lang.psi.elements.*
 import com.jetbrains.php.lang.psi.elements.Function
+import com.jetbrains.php.lang.psi.elements.GroupStatement
+import com.jetbrains.php.lang.psi.elements.Method
+import com.jetbrains.php.lang.psi.elements.PhpClass
+import com.jetbrains.php.lang.psi.elements.PhpExpression
+import com.jetbrains.php.lang.psi.elements.PhpNamedElement
 import com.jetbrains.php.lang.psi.elements.impl.FunctionImpl
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.jetbrains.php.phpunit.coverage.PhpUnitCoverageEngine
 import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.staticAnalysis.inspections.coverage.*
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageInspectionBase
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.issueWithCoverage
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.iterateContents
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadClassData
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadMissingData
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.normalizeFilePath
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.removePrefixFromCoverage
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportElement
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportProblemsNeeded
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 
 private class PhpCoverageInspection : CoverageInspectionBase() {

@@ -13,7 +13,11 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
 import com.intellij.testFramework.replaceService
 import com.intellij.util.application
-import kotlinx.coroutines.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.job
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.jetbrains.qodana.cloud.api.IjQDCloudClientProvider
 import org.jetbrains.qodana.cloud.api.IjQDCloudClientProviderTestImpl
 import org.jetbrains.qodana.coroutines.QodanaDispatchers

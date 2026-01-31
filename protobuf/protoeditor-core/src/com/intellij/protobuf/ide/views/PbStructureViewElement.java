@@ -17,7 +17,12 @@ package com.intellij.protobuf.ide.views;
 
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.structureView.impl.common.PsiTreeElementBase;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbDefinition;
+import com.intellij.protobuf.lang.psi.PbElement;
+import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.protobuf.lang.psi.PbNamedElement;
+import com.intellij.protobuf.lang.psi.PbStatement;
+import com.intellij.protobuf.lang.psi.PbStatementOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

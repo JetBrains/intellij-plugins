@@ -4,7 +4,10 @@ package com.intellij.javascript.flex
 import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.*
+import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.SyntheticLibrary
 import org.jetbrains.annotations.Unmodifiable
 
 class FlexCompositeSdkRootProvider : AdditionalLibraryRootsProvider() {

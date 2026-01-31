@@ -5,7 +5,7 @@ import com.intellij.diagram.DiagramProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class AngularUiRouterNode extends DiagramNodeBase<DiagramObject> {
   private final @NotNull DiagramObject myDiagramObject;

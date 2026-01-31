@@ -16,7 +16,7 @@ import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModelManager
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreNamespace
-import java.util.*
+import java.util.Objects
 import java.util.function.Function
 
 abstract class VuexContainerPropertyTypeBase(

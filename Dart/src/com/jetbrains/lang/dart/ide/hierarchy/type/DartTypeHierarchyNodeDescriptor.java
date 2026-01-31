@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Font;
 
 public final class DartTypeHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
   public DartTypeHierarchyNodeDescriptor(final @NotNull Project project,

@@ -9,7 +9,13 @@ import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.schema.PrismaSchemaPath
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.PrismaBlockAttribute
+import org.intellij.prisma.lang.psi.PrismaDeclaration
+import org.intellij.prisma.lang.psi.PrismaElementTypes
+import org.intellij.prisma.lang.psi.PrismaEntityDeclaration
+import org.intellij.prisma.lang.psi.PrismaFieldAttribute
+import org.intellij.prisma.lang.psi.PrismaFieldAttributeOwner
+import org.intellij.prisma.lang.psi.skipWhitespacesBackwardWithoutNewLines
 
 fun findAttributeOwner(position: PsiElement?): PrismaFieldAttributeOwner? {
   if (position is PsiWhiteSpace) {

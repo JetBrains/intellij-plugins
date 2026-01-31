@@ -16,7 +16,17 @@ import com.intellij.psi.StringEscapesTokenTypes
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import org.intellij.terraform.hcl.HCLSyntaxHighlighter
-import org.intellij.terraform.hil.HILElementTypes.*
+import org.intellij.terraform.hil.HILElementTypes.COMMA
+import org.intellij.terraform.hil.HILElementTypes.DOUBLE_QUOTED_STRING
+import org.intellij.terraform.hil.HILElementTypes.ELSE_KEYWORD
+import org.intellij.terraform.hil.HILElementTypes.ENDFOR_KEYWORD
+import org.intellij.terraform.hil.HILElementTypes.ENDIF_KEYWORD
+import org.intellij.terraform.hil.HILElementTypes.FOR_KEYWORD
+import org.intellij.terraform.hil.HILElementTypes.ID
+import org.intellij.terraform.hil.HILElementTypes.IF_KEYWORD
+import org.intellij.terraform.hil.HILElementTypes.IN_KEYWORD
+import org.intellij.terraform.hil.HILElementTypes.NUMBER
+import org.intellij.terraform.hil.HILElementTypes.OP_DOT
 
 open class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {

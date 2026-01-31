@@ -2,13 +2,13 @@
 package org.angular2.entities.source
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.polySymbols.js.apiStatus
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange
 import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.js.apiStatus
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer

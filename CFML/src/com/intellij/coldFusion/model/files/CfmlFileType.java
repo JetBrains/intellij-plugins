@@ -8,7 +8,7 @@ import icons.CFMLIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 /**
  * Created by Lera Nikolaenko

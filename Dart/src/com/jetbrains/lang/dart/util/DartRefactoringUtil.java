@@ -13,12 +13,23 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartCallExpression;
+import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartExpression;
+import com.jetbrains.lang.dart.psi.DartExpressionList;
+import com.jetbrains.lang.dart.psi.DartNamedArgument;
+import com.jetbrains.lang.dart.psi.DartRecursiveVisitor;
+import com.jetbrains.lang.dart.psi.DartReference;
+import com.jetbrains.lang.dart.psi.DartStatements;
 import com.jetbrains.lang.dart.resolve.ComponentNameScopeProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public final class DartRefactoringUtil {
   public static Set<String> collectUsedNames(PsiElement context) {

@@ -22,7 +22,7 @@ import com.thoughtworks.gauge.GaugeConstants;
 import icons.GaugeIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class SpecFileType extends LanguageFileType {
   public static final SpecFileType INSTANCE = new SpecFileType();

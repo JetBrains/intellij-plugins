@@ -14,7 +14,14 @@ import org.jetbrains.vuejs.index.GLOBAL_COMPONENTS
 import org.jetbrains.vuejs.index.GLOBAL_DIRECTIVES
 import org.jetbrains.vuejs.index.VUE_CORE_MODULES
 import org.jetbrains.vuejs.index.VUE_MODULE
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueApp
+import org.jetbrains.vuejs.model.VueDelegatedEntitiesContainer
+import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueGlobal
+import org.jetbrains.vuejs.model.VueLibrary
+import org.jetbrains.vuejs.model.VueNamedComponent
+import org.jetbrains.vuejs.model.VueScopeElement
 
 data class VueTypedGlobal(
   override val delegate: VueGlobal,

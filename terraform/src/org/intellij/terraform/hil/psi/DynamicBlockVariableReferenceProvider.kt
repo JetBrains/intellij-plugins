@@ -13,7 +13,15 @@ import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
 import org.intellij.terraform.config.patterns.TfPsiPatterns
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLArray
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLForArrayExpression
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLMethodCallExpression
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression

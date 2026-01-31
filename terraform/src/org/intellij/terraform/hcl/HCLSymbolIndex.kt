@@ -4,11 +4,20 @@ package org.intellij.terraform.hcl
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiRecursiveVisitor
-import com.intellij.util.indexing.*
+import com.intellij.util.indexing.DataIndexer
+import com.intellij.util.indexing.DefaultFileTypeSpecificInputFilter
+import com.intellij.util.indexing.FileBasedIndex
+import com.intellij.util.indexing.FileContent
+import com.intellij.util.indexing.ID
+import com.intellij.util.indexing.ScalarIndexExtension
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLElementVisitor
+import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.opentofu.OpenTofuFileType
 
 class HCLSymbolIndex : ScalarIndexExtension<String>() {

@@ -15,7 +15,20 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
-import org.jetbrains.plugins.cucumber.psi.impl.*;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinFeatureHeaderImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinFeatureImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinFileImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinPystringImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinRuleImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepParameterImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinTableHeaderRowImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinTableImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinTableRowImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinTagImpl;
 
 public final class GherkinParserDefinition implements ParserDefinition {
   public static final IFileElementType GHERKIN_FILE = new IFileElementType(GherkinLanguage.INSTANCE);

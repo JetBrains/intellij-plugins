@@ -1,19 +1,19 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project
 
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.externalSystem.model.task.*
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
 import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.util.asSafely
 import com.intellij.util.system.OS
 import com.jetbrains.cidr.cpp.CPPTestUtil
 import com.jetbrains.cidr.cpp.embedded.platformio.project.TestUtils.findExternalModule
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
-import com.jetbrains.cidr.external.system.model.ExternalModule
 import org.junit.Assume
 import org.junit.runner.RunWith
 import java.nio.file.Paths

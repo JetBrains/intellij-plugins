@@ -8,7 +8,11 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.hcl.HCLElementTypes
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
 
 class ResourceBlockNameInsertHandler(val type: BlockType) : BasicInsertHandler<LookupElement>() {
   override fun handleInsert(context: InsertionContext, item: LookupElement) {

@@ -14,10 +14,14 @@ import org.intellij.terraform.config.codeinsight.TfCompletionUtil.Scopes
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
 import org.intellij.terraform.hcl.HCLLanguage
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLForExpression
+import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
+import org.intellij.terraform.hcl.psi.withHCLHost
 import org.intellij.terraform.hil.HILLanguage
 import org.intellij.terraform.hil.codeinsight.withLanguages
 

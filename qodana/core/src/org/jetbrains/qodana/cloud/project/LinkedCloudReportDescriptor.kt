@@ -3,12 +3,21 @@ package org.jetbrains.qodana.cloud.project
 import com.google.common.base.Objects
 import com.intellij.openapi.project.Project
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.cloudclient.asSuccess
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
-import org.jetbrains.qodana.report.*
+import org.jetbrains.qodana.report.BannerContentProvider
+import org.jetbrains.qodana.report.BrowserViewProvider
+import org.jetbrains.qodana.report.LoadedReport
+import org.jetbrains.qodana.report.NoProblemsContentProvider
+import org.jetbrains.qodana.report.NotificationCallback
+import org.jetbrains.qodana.report.ReportDescriptor
 import org.jetbrains.qodana.ui.link.LinkCloudProjectDialog
 import org.jetbrains.qodana.ui.problemsView.viewModel.QodanaProblemsViewModel
 

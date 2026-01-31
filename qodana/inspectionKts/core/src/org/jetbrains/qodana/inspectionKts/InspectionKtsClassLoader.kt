@@ -9,7 +9,8 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.JBIterable
 import java.io.IOException
 import java.net.URL
-import java.util.*
+import java.util.Collections
+import java.util.Enumeration
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import kotlin.math.max

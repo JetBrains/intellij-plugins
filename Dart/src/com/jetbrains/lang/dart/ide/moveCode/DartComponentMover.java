@@ -16,7 +16,13 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartClassBody;
+import com.jetbrains.lang.dart.psi.DartClassMembers;
+import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartFile;
+import com.jetbrains.lang.dart.psi.DartLibraryStatement;
+import com.jetbrains.lang.dart.psi.DartUriBasedDirective;
+import com.jetbrains.lang.dart.psi.DartVarDeclarationList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

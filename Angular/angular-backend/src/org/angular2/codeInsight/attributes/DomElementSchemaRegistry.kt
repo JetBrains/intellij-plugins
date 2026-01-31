@@ -4,8 +4,7 @@ package org.angular2.codeInsight.attributes
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.annotations.NonNls
-
-import java.util.*
+import java.util.Collections
 
 object DomElementSchemaRegistry {
 

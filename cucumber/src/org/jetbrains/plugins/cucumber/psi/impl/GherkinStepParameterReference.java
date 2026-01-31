@@ -7,7 +7,11 @@ import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinExamplesBlock;
+import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
+import org.jetbrains.plugins.cucumber.psi.GherkinStepParameter;
+import org.jetbrains.plugins.cucumber.psi.GherkinTable;
+import org.jetbrains.plugins.cucumber.psi.GherkinTableCell;
 
 @NotNullByDefault
 public class GherkinStepParameterReference extends PsiReferenceBase<GherkinStepParameter> {

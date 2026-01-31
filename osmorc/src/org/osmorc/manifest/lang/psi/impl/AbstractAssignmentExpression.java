@@ -30,8 +30,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.lang.psi.AssignmentExpression;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
+import org.osmorc.manifest.lang.psi.AssignmentExpression;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>

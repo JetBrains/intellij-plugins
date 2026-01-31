@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
-import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.tree.IElementType
 import org.angular2.entities.Angular2DirectiveSelector
 import org.angular2.entities.Angular2DirectiveSelectorImpl

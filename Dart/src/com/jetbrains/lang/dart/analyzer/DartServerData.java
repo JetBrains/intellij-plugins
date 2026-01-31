@@ -19,10 +19,34 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
-import org.dartlang.analysis.server.protocol.*;
-import org.jetbrains.annotations.*;
+import org.dartlang.analysis.server.protocol.AnalysisError;
+import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
+import org.dartlang.analysis.server.protocol.AvailableSuggestionSet;
+import org.dartlang.analysis.server.protocol.ClosingLabel;
+import org.dartlang.analysis.server.protocol.DiagnosticMessage;
+import org.dartlang.analysis.server.protocol.HighlightRegion;
+import org.dartlang.analysis.server.protocol.ImplementedClass;
+import org.dartlang.analysis.server.protocol.ImplementedMember;
+import org.dartlang.analysis.server.protocol.NavigationRegion;
+import org.dartlang.analysis.server.protocol.NavigationTarget;
+import org.dartlang.analysis.server.protocol.Outline;
+import org.dartlang.analysis.server.protocol.OverriddenMember;
+import org.dartlang.analysis.server.protocol.OverrideMember;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EventListener;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class DartServerData {
   public interface OutlineListener extends EventListener {

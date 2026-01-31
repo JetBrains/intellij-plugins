@@ -20,7 +20,10 @@ import com.intellij.execution.ui.CommonProgramParametersPanel;
 import com.intellij.openapi.options.SettingsEditor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 final class GaugeExecutionConfigurationSettingsEditor extends SettingsEditor<GaugeRunConfiguration> {
   private JTextField specification;

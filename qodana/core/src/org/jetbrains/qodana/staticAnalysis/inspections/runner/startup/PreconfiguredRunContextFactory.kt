@@ -5,10 +5,10 @@ import com.intellij.openapi.project.Project
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
+import org.jetbrains.qodana.util.QodanaMessageReporter
 
 @VisibleForTesting
 class PreconfiguredRunContextFactory(

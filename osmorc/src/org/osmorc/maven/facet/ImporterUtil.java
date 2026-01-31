@@ -17,7 +17,12 @@ import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.osgi.jps.build.FakeAnalyzer;
 import org.osmorc.i18n.OsmorcBundle;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

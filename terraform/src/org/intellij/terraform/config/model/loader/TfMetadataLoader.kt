@@ -10,7 +10,14 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.SystemProperties
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.Hint
+import org.intellij.terraform.config.model.ReferenceHint
+import org.intellij.terraform.config.model.SimpleValueHint
+import org.intellij.terraform.config.model.TfTypeModel
+import org.intellij.terraform.config.model.boolean
+import org.intellij.terraform.config.model.ensureHavePrefix
+import org.intellij.terraform.config.model.obj
+import org.intellij.terraform.config.model.string
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream

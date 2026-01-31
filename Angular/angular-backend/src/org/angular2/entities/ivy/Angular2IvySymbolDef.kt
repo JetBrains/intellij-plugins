@@ -3,9 +3,23 @@ package org.angular2.entities.ivy
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.psi.ecma6.*
+import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptBooleanLiteralType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptObjectType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptStringLiteralType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTupleType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeofType
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
-import com.intellij.lang.javascript.psi.stubs.*
+import com.intellij.lang.javascript.psi.stubs.JSAttributeListStub
+import com.intellij.lang.javascript.psi.stubs.JSVarStatementStub
+import com.intellij.lang.javascript.psi.stubs.TypeScriptClassStub
+import com.intellij.lang.javascript.psi.stubs.TypeScriptFieldStub
+import com.intellij.lang.javascript.psi.stubs.TypeScriptSingleTypeStub
 import com.intellij.lang.typescript.TypeScriptElementTypes
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange

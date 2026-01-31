@@ -11,7 +11,12 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
-import org.jetbrains.vuejs.lang.expr.psi.impl.*
+import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSFilterArgumentsListImpl
+import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSFilterExpressionImpl
+import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSFilterLeftSideArgumentImpl
+import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSFilterReferenceExpressionImpl
+import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSSlotPropsExpressionImpl
+import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSVForExpressionImpl
 
 object VueJSElementTypes {
   const val EXTERNAL_ID_PREFIX: String = "VUE-JS:"

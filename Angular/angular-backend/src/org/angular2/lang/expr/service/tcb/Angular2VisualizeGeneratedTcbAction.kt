@@ -15,7 +15,6 @@ import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.angular2.Angular2InjectionUtils
-import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil
 
 private class Angular2VisualizeGeneratedTcbAction : AnAction() {

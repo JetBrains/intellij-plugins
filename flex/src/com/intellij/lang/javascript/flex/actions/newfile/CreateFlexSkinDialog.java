@@ -20,7 +20,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.util.ThreeState;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 public class CreateFlexSkinDialog extends DialogWrapper {
   private static final String SKINNABLE_COMPONENT_CLASS = "spark.components.supportClasses.SkinnableComponent";

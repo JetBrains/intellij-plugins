@@ -1,7 +1,7 @@
 package com.intellij.plugins.serialmonitor
 
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.plugins.serialmonitor.SerialProfileService.*
+import com.intellij.plugins.serialmonitor.SerialProfileService.NewLine
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
 import com.intellij.util.xmlb.annotations.Attribute
 import com.intellij.util.xmlb.annotations.Tag

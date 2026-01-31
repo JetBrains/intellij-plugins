@@ -15,8 +15,8 @@
  */
 package com.intellij.protobuf.lang.annotation;
 
-import com.intellij.psi.PsiFile;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.psi.PsiFile;
 
 /** Tests for {@link PbTextAnnotator} error annotations. */
 public class PbTextAnnotatorErrorTest extends PbCodeInsightFixtureTestCase {

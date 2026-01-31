@@ -6,7 +6,9 @@ import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.idea.maven.project.AdditionalMavenImportingSettings;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 public final class FlexmojosImportingSettings implements AdditionalMavenImportingSettings {
 

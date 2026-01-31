@@ -4,14 +4,19 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.objectTree.ThrowableInterner
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runInterruptible
 import java.io.FileWriter
 import java.io.PrintWriter
-import java.lang.Exception
 import java.nio.file.Path
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.io.path.*
+import kotlin.io.path.appendLines
+import kotlin.io.path.forEachLine
 
 class InspectionKtsErrorLogManager(scope: CoroutineScope) {
   private val logFile: Deferred<Path> = scope.async(Dispatchers.IO, start = CoroutineStart.LAZY) {

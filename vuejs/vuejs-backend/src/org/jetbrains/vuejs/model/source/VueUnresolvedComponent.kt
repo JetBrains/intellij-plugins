@@ -16,7 +16,23 @@ import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueComputedProperty
+import org.jetbrains.vuejs.model.VueContainer
+import org.jetbrains.vuejs.model.VueDataProperty
+import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueEmitCall
+import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueFilter
+import org.jetbrains.vuejs.model.VueInject
+import org.jetbrains.vuejs.model.VueInputProperty
+import org.jetbrains.vuejs.model.VueMethod
+import org.jetbrains.vuejs.model.VueMixin
+import org.jetbrains.vuejs.model.VueModelDirectiveProperties
+import org.jetbrains.vuejs.model.VueNamedComponent
+import org.jetbrains.vuejs.model.VueProvide
+import org.jetbrains.vuejs.model.VueSlot
+import org.jetbrains.vuejs.model.getDefaultVueComponentInstanceType
 import org.jetbrains.vuejs.web.symbols.VueAnySlot
 
 class VueUnresolvedComponent(

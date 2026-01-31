@@ -8,7 +8,7 @@ import com.intellij.plugins.drools.DroolsBundle;
 import com.intellij.plugins.drools.JbossDroolsIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class DroolsTemplatesFactory implements FileTemplateGroupDescriptorFactory {
   @Override

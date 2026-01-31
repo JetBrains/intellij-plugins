@@ -15,7 +15,8 @@ import com.jetbrains.plugins.meteor.ide.action.MeteorImportPackagesAsExternalLib
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import java.util.ArrayList;
 import java.util.Collection;
 

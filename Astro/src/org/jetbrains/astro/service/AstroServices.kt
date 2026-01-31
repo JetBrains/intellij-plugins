@@ -3,7 +3,13 @@ package org.jetbrains.astro.service
 
 import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
-import com.intellij.lang.typescript.lsp.*
+import com.intellij.lang.typescript.lsp.LspServerActivationRule
+import com.intellij.lang.typescript.lsp.LspServerLoader
+import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
+import com.intellij.lang.typescript.lsp.PackageVersion
+import com.intellij.lang.typescript.lsp.ServiceActivationHelper
+import com.intellij.lang.typescript.lsp.TSPluginActivationRule
+import com.intellij.lang.typescript.lsp.TSPluginLoader
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile

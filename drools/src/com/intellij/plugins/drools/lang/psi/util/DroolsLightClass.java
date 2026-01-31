@@ -2,7 +2,12 @@
 package com.intellij.plugins.drools.lang.psi.util;
 
 import com.intellij.openapi.util.Key;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.ResolveState;
 import com.intellij.psi.impl.beanProperties.BeanProperty;
 import com.intellij.psi.impl.light.LightClass;
 import com.intellij.psi.scope.DelegatingScopeProcessor;
@@ -13,7 +18,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class DroolsLightClass extends LightClass {
   private final PsiClass myResolve;

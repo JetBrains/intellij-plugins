@@ -6,8 +6,29 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.Argument
+import org.intellij.terraform.config.model.BackendType
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.DataSourceType
+import org.intellij.terraform.config.model.HclType
+import org.intellij.terraform.config.model.ListType
+import org.intellij.terraform.config.model.MapType
+import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.ProviderType
+import org.intellij.terraform.config.model.ProvisionerType
+import org.intellij.terraform.config.model.ResourceType
+import org.intellij.terraform.config.model.SetType
+import org.intellij.terraform.config.model.TfFunction
+import org.intellij.terraform.config.model.Types
+import org.intellij.terraform.config.model.VariadicArgument
+import org.intellij.terraform.config.model.array
+import org.intellij.terraform.config.model.boolean
+import org.intellij.terraform.config.model.isNotEmpty
 import org.intellij.terraform.config.model.loader.TfMetadataLoader.Companion.LOG
+import org.intellij.terraform.config.model.obj
+import org.intellij.terraform.config.model.string
+import org.intellij.terraform.config.model.toMap
 
 object BaseLoaderV1 : BaseLoader {
   override val version: String

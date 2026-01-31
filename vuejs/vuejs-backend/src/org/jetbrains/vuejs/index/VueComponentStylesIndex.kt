@@ -6,8 +6,12 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ThreeState
-import com.intellij.util.indexing.*
+import com.intellij.util.indexing.DataIndexer
 import com.intellij.util.indexing.FileBasedIndex.InputFilter
+import com.intellij.util.indexing.FileContent
+import com.intellij.util.indexing.ID
+import com.intellij.util.indexing.IndexedFile
+import com.intellij.util.indexing.ScalarIndexExtension
 import com.intellij.util.indexing.hints.BaseFileTypeInputFilter
 import com.intellij.util.indexing.hints.FileTypeSubstitutionStrategy.AFTER_SUBSTITUTION
 import com.intellij.util.io.EnumeratorStringDescriptor

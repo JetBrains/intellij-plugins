@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.TimeCookie
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.io.path.Path
 import kotlin.time.Duration.Companion.minutes

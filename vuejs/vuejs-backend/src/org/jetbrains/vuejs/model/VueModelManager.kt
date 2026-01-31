@@ -3,10 +3,17 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.javascript.web.js.WebJSResolveUtil
-import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSImplicitElementProvider
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -34,11 +41,21 @@ import org.jetbrains.vuejs.codeInsight.findDefaultExport
 import org.jetbrains.vuejs.codeInsight.getHostFile
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.index.*
+import org.jetbrains.vuejs.index.VUE_GLOBAL_FILTERS_INDEX_JS_KEY
+import org.jetbrains.vuejs.index.VUE_ID_INDEX_JS_KEY
+import org.jetbrains.vuejs.index.VUE_ID_INDEX_KEY
+import org.jetbrains.vuejs.index.VUE_URL_INDEX_JS_KEY
+import org.jetbrains.vuejs.index.VUE_URL_INDEX_KEY
+import org.jetbrains.vuejs.index.findModule
+import org.jetbrains.vuejs.index.getVueIndexData
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.isVueFile
-import org.jetbrains.vuejs.model.source.*
+import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueComponents.getSourceComponent
+import org.jetbrains.vuejs.model.source.VueSourceApp
+import org.jetbrains.vuejs.model.source.VueSourceComponent
+import org.jetbrains.vuejs.model.source.VueSourceEntity
+import org.jetbrains.vuejs.model.source.VueSourceFilter
 import org.jetbrains.vuejs.model.typed.VueTypedGlobal
 
 class VueModelManager {

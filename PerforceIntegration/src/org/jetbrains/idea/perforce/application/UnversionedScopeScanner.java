@@ -22,7 +22,11 @@ import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public abstract class UnversionedScopeScanner {
   private static final Logger LOG = Logger.getInstance(UnversionedScopeScanner.class);

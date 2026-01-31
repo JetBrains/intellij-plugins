@@ -28,7 +28,11 @@ import com.intellij.platform.util.progress.reportRawProgress
 import com.intellij.util.ArrayUtil
 import org.jetbrains.idea.maven.buildtool.MavenLogEventHandler
 import org.jetbrains.idea.maven.model.MavenWorkspaceMap
-import org.jetbrains.idea.maven.project.*
+import org.jetbrains.idea.maven.project.MavenEmbeddersManager
+import org.jetbrains.idea.maven.project.MavenProject
+import org.jetbrains.idea.maven.project.MavenProjectBundle
+import org.jetbrains.idea.maven.project.MavenProjectsProcessorBasicTask
+import org.jetbrains.idea.maven.project.MavenProjectsTree
 import org.jetbrains.idea.maven.server.MavenGoalExecutionRequest
 import org.jetbrains.idea.maven.utils.MavenLog
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException
@@ -37,7 +41,7 @@ import org.jetbrains.idea.maven.utils.MavenUtil.getBaseDir
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
-import java.util.*
+import java.util.Collections
 import kotlin.math.max
 
 private val EMBEDDER = Key.create<String>(Flexmojos3GenerateConfigTask::class.java.toString() + ".EMBEDDER")

@@ -4,9 +4,20 @@ package org.intellij.terraform.config.inspection
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.HclType
+import org.intellij.terraform.config.model.ListType
+import org.intellij.terraform.config.model.MapType
+import org.intellij.terraform.config.model.ObjectType
+import org.intellij.terraform.config.model.OptionalType
+import org.intellij.terraform.config.model.SetType
+import org.intellij.terraform.config.model.TupleType
+import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLArray
+import org.intellij.terraform.hcl.psi.HCLExpression
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLMethodCallExpression
+import org.intellij.terraform.hcl.psi.HCLObject
 import org.jetbrains.annotations.Nls
 
 // Beware: validator have recursive nature, must be called only on HCLExpression which is root of type specification

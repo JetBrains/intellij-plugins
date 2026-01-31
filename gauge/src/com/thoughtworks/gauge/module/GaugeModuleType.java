@@ -23,7 +23,7 @@ import com.intellij.openapi.module.ModuleTypeManager;
 import com.thoughtworks.gauge.GaugeBundle;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class GaugeModuleType extends ModuleType<JavaModuleBuilder> {
   // legacy module type, kept for compatibility with old projects

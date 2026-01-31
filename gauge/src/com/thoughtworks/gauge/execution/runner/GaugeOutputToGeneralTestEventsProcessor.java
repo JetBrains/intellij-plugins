@@ -25,7 +25,13 @@ import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsC
 import com.intellij.openapi.util.Key;
 import com.thoughtworks.gauge.execution.runner.event.ExecutionEvent;
 import com.thoughtworks.gauge.execution.runner.event.ExecutionResult;
-import com.thoughtworks.gauge.execution.runner.processors.*;
+import com.thoughtworks.gauge.execution.runner.processors.EventProcessor;
+import com.thoughtworks.gauge.execution.runner.processors.NotificationEventProcessor;
+import com.thoughtworks.gauge.execution.runner.processors.ScenarioEventProcessor;
+import com.thoughtworks.gauge.execution.runner.processors.SpecEventProcessor;
+import com.thoughtworks.gauge.execution.runner.processors.StandardOutputEventProcessor;
+import com.thoughtworks.gauge.execution.runner.processors.SuiteEventProcessor;
+import com.thoughtworks.gauge.execution.runner.processors.UnexpectedEndProcessor;
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

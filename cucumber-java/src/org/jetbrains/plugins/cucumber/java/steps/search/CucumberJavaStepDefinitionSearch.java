@@ -3,7 +3,11 @@ package org.jetbrains.plugins.cucumber.java.steps.search;
 
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.pom.PomTargetPsiElement;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;

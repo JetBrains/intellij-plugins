@@ -2,13 +2,21 @@
 
 package com.intellij.jhipster;
 
-import com.intellij.formatting.*;
+import com.intellij.formatting.FormattingContext;
+import com.intellij.formatting.FormattingModel;
+import com.intellij.formatting.FormattingModelBuilder;
+import com.intellij.formatting.Indent;
+import com.intellij.formatting.SpacingBuilder;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.formatting.FormattingModelProvider.createFormattingModelForPsiFile;
 import static com.intellij.jhipster.psi.JdlTokenSets.SPACING_TAIL_ELEMENTS;
-import static com.intellij.jhipster.psi.JdlTokenTypes.*;
+import static com.intellij.jhipster.psi.JdlTokenTypes.COMMA;
+import static com.intellij.jhipster.psi.JdlTokenTypes.LBRACE;
+import static com.intellij.jhipster.psi.JdlTokenTypes.LBRACKET;
+import static com.intellij.jhipster.psi.JdlTokenTypes.RBRACE;
+import static com.intellij.jhipster.psi.JdlTokenTypes.RBRACKET;
 
 final class JdlFormattingModelBuilder implements FormattingModelBuilder {
   @Override

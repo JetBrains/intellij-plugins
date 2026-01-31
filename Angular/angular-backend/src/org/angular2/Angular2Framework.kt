@@ -19,7 +19,12 @@ import icons.AngularIcons
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
 import org.angular2.lang.Angular2LangUtil
-import org.angular2.lang.html.*
+import org.angular2.lang.html.Angular17HtmlFileType
+import org.angular2.lang.html.Angular181HtmlFileType
+import org.angular2.lang.html.Angular20HtmlFileType
+import org.angular2.lang.html.Angular2HtmlDialect
+import org.angular2.lang.html.Angular2HtmlFileType
+import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.svg.Angular17SvgFileType
 import org.angular2.lang.svg.Angular181SvgFileType
 import org.angular2.lang.svg.Angular20SvgFileType

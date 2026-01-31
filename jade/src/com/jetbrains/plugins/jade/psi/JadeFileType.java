@@ -7,7 +7,7 @@ import com.jetbrains.plugins.jade.JadeBundle;
 import com.jetbrains.plugins.jade.JadeLanguage;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class JadeFileType extends LanguageFileType {
 

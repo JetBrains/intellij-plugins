@@ -3,7 +3,13 @@
 package com.intellij.jhipster;
 
 import com.intellij.jhipster.model.JdlOptionModel;
-import com.intellij.jhipster.psi.*;
+import com.intellij.jhipster.psi.JdlEntityId;
+import com.intellij.jhipster.psi.JdlEnumId;
+import com.intellij.jhipster.psi.JdlEnumKey;
+import com.intellij.jhipster.psi.JdlFieldName;
+import com.intellij.jhipster.psi.JdlId;
+import com.intellij.jhipster.psi.JdlOptionName;
+import com.intellij.jhipster.psi.JdlStringLiteral;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;

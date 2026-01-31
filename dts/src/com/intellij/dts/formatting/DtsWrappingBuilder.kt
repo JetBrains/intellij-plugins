@@ -1,9 +1,19 @@
 package com.intellij.dts.formatting
 
 import com.intellij.dts.lang.DtsTokenSets
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsArray
+import com.intellij.dts.lang.psi.DtsContainer
+import com.intellij.dts.lang.psi.DtsNodeContent
+import com.intellij.dts.lang.psi.DtsProperty
+import com.intellij.dts.lang.psi.DtsPropertyContent
+import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.lang.psi.DtsValue
 import com.intellij.dts.settings.DtsCodeStyleSettings
-import com.intellij.formatting.*
+import com.intellij.formatting.ASTBlock
+import com.intellij.formatting.Alignment
+import com.intellij.formatting.Block
+import com.intellij.formatting.Wrap
+import com.intellij.formatting.WrapType
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettings

@@ -15,7 +15,11 @@ import com.intellij.util.indexing.DumbModeAccessType
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FindSymbolParameters
 import com.intellij.util.indexing.IdFilter
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLElementVisitor
+import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.hcl.psi.HCLProperty
 
 class GoToSymbolContributor : ChooseByNameContributorEx, DumbAware {
 

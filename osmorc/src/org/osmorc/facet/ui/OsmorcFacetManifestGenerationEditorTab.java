@@ -41,8 +41,10 @@ import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ManifestEditor;
 import org.osmorc.util.OsgiPsiUtil;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
 
 /**
  * The facet editor tab which is used to set up Osmorc facet settings concerning the generation of the manifest file by

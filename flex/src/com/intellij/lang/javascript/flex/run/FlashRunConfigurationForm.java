@@ -43,13 +43,23 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.*;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.Emulator;
 
 public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfiguration> {
 

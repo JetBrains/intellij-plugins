@@ -22,7 +22,12 @@ import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
-import org.angular2.codeInsight.blocks.*
+import org.angular2.codeInsight.blocks.BLOCK_CASE
+import org.angular2.codeInsight.blocks.BLOCK_DEFAULT
+import org.angular2.codeInsight.blocks.BLOCK_ELSE
+import org.angular2.codeInsight.blocks.BLOCK_ELSE_IF
+import org.angular2.codeInsight.blocks.BLOCK_IF
+import org.angular2.codeInsight.blocks.BLOCK_SWITCH
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2TemplateGuard
 import org.angular2.entities.Angular2TemplateGuard.Kind
@@ -30,7 +35,11 @@ import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
-import org.angular2.lang.html.psi.*
+import org.angular2.lang.html.psi.Angular2HtmlBlock
+import org.angular2.lang.html.psi.Angular2HtmlBlockContents
+import org.angular2.lang.html.psi.Angular2HtmlBlockParameters
+import org.angular2.lang.html.psi.Angular2HtmlLet
+import org.angular2.lang.html.psi.PropertyBindingType
 
 /**
  * @see JSControlFlowBuilder

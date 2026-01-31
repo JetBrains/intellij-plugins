@@ -40,7 +40,10 @@ import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.i18n.OsmorcBundle;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
 /**

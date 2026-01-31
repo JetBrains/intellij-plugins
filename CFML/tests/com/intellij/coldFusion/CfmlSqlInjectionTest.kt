@@ -9,7 +9,6 @@ import com.intellij.database.psi.DbPsiFacadeImpl
 import com.intellij.database.util.DbImplUtil
 import com.intellij.database.util.DbSqlUtil
 import com.intellij.database.util.SqlDialects
-import com.intellij.injected.editor.DocumentWindow
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer

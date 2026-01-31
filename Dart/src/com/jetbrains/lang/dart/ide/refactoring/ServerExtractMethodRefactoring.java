@@ -8,7 +8,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtilRt;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import org.dartlang.analysis.server.protocol.*;
+import org.dartlang.analysis.server.protocol.ExtractMethodFeedback;
+import org.dartlang.analysis.server.protocol.ExtractMethodOptions;
+import org.dartlang.analysis.server.protocol.RefactoringFeedback;
+import org.dartlang.analysis.server.protocol.RefactoringKind;
+import org.dartlang.analysis.server.protocol.RefactoringMethodParameter;
+import org.dartlang.analysis.server.protocol.RefactoringOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

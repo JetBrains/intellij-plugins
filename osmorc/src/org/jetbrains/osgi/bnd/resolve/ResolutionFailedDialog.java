@@ -10,7 +10,9 @@ import org.jetbrains.annotations.NotNull;
 import org.osgi.resource.Requirement;
 import org.osgi.service.resolver.ResolutionException;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.SwingConstants;
 
 import static org.osmorc.i18n.OsmorcBundle.message;
 

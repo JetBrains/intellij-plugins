@@ -9,7 +9,10 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.intellij.testFramework.UsefulTestCase.*;
+import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
+import static com.intellij.testFramework.UsefulTestCase.assertEquals;
+import static com.intellij.testFramework.UsefulTestCase.assertNotNull;
+import static com.intellij.testFramework.UsefulTestCase.assertTrue;
 
 public class PerforceStreamTest extends PerforceTestCase {
 

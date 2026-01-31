@@ -1,6 +1,6 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.testFramework.fixtures.*
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class MakefileHighlightingTest : BasePlatformTestCase() {
   fun testTargetspecificvars() = doTest()

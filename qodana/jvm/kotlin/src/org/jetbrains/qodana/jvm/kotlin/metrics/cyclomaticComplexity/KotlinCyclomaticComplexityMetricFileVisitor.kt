@@ -2,7 +2,14 @@ package org.jetbrains.qodana.jvm.kotlin.metrics.cyclomaticComplexity
 
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parents
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassInitializer
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor
+import org.jetbrains.kotlin.psi.KtVariableDeclaration
+import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.inspections.VisitorLanguage
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.inspections.cyclomaticComplexity.CyclomaticComplexityMethodData
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.inspections.cyclomaticComplexity.CyclomaticComplexityMetricFileVisitor

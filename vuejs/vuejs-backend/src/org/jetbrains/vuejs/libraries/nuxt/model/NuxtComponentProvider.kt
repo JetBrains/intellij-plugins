@@ -8,7 +8,6 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.asSafely
-import com.intellij.util.containers.MultiMap
 import com.intellij.webpack.WebpackConfigManager
 import com.intellij.webpack.WebpackReferenceContributor
 import org.jetbrains.vuejs.codeInsight.fromAsset
@@ -16,7 +15,6 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_COMPONENTS_DEFS
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
 import org.jetbrains.vuejs.libraries.nuxt.model.impl.NuxtGlobalComponent
-import org.jetbrains.vuejs.model.VueNamedComponent
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 
 /**

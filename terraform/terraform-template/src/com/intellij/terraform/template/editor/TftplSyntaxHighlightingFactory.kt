@@ -7,9 +7,9 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.tree.IElementType
+import com.intellij.terraform.template.lexer.TerraformTemplateLexer
 import org.intellij.terraform.hil.HILSyntaxHighlighter
 import org.intellij.terraform.hil.HILSyntaxHighlighterFactory
-import com.intellij.terraform.template.lexer.TerraformTemplateLexer
 import org.intellij.terraform.hil.psi.template.TftplTokenTypes
 
 internal class TftplSyntaxHighlightingFactory : HILSyntaxHighlighterFactory() {

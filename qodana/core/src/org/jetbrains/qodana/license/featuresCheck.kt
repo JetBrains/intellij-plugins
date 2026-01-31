@@ -1,7 +1,10 @@
 package org.jetbrains.qodana.license
 
 import com.intellij.codeInspection.ex.ToolsImpl
-import org.jetbrains.qodana.license.QodanaLicenseType.*
+import org.jetbrains.qodana.license.QodanaLicenseType.NONE
+import org.jetbrains.qodana.license.QodanaLicenseType.PREMIUM
+import org.jetbrains.qodana.license.QodanaLicenseType.ULTIMATE
+import org.jetbrains.qodana.license.QodanaLicenseType.ULTIMATE_PLUS
 
 private val ULTIMATE_PLUS_PLUGINS: Set<String> = setOf(
   "com.intellij.plugins.dependencyAnalysis",

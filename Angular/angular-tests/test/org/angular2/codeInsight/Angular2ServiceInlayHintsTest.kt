@@ -3,7 +3,6 @@ package org.angular2.codeInsight
 import com.intellij.lang.typescript.editing.TypeScriptServiceInlayHintsService
 import com.intellij.lang.typescript.service.configureJSInlayHints
 import com.intellij.lang.typescript.service.testTSServiceInlayHints
-import com.intellij.openapi.util.registry.Registry
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile

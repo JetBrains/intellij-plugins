@@ -11,7 +11,11 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.modules.imports.JSSimpleImportDescriptor
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSExecutionScope
+import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory

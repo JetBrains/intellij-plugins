@@ -2,10 +2,18 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.flex.FlexCommonUtils;
-import com.intellij.flex.model.bc.*;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -29,7 +37,8 @@ import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

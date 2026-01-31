@@ -1,7 +1,11 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.lang.metadata.stubs
 
-import com.intellij.json.psi.*
+import com.intellij.json.psi.JsonArray
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonProperty
+import com.intellij.json.psi.JsonStringLiteral
+import com.intellij.json.psi.JsonValue
 import com.intellij.lang.javascript.index.flags.BooleanStructureElement
 import com.intellij.lang.javascript.index.flags.FlagsStructure
 import com.intellij.lang.javascript.index.flags.FlagsStructureElement
@@ -11,7 +15,11 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.io.DataInputOutputUtilRt
 import com.intellij.psi.PsiElement
-import com.intellij.psi.stubs.*
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubBase
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.ThrowableConsumer
 import com.intellij.util.io.DataInputOutputUtil
 import com.intellij.util.io.StringRef

@@ -8,7 +8,12 @@ import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isNamespaceChild
-import org.jetbrains.vuejs.libraries.vuex.model.store.*
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainer
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModule
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStaticNamespace
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreNamespace
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreStateElement
 
 class VuexContainerStateType
 private constructor(

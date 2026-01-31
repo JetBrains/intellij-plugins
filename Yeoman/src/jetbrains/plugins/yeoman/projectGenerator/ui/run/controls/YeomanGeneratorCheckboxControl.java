@@ -1,7 +1,12 @@
 package jetbrains.plugins.yeoman.projectGenerator.ui.run.controls;
 
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBCheckBox;
@@ -9,7 +14,7 @@ import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 import java.lang.reflect.Type;
 
 import static jetbrains.plugins.yeoman.projectGenerator.ui.run.controls.YeomanGeneratorControlUtil.buildSelectionTitle;

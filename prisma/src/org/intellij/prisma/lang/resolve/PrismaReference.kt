@@ -2,7 +2,11 @@ package org.intellij.prisma.lang.resolve
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementResolveResult
+import com.intellij.psi.PsiPolyVariantReferenceBase
+import com.intellij.psi.ResolveResult
+import com.intellij.psi.ResolveState
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.intellij.prisma.lang.psi.PrismaElementFactory
 import org.intellij.prisma.lang.psi.PrismaNamedElement

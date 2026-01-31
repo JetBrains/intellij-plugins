@@ -11,7 +11,6 @@ import org.angular2.codeInsight.blocks.BLOCK_IF
 import org.angular2.codeInsight.blocks.BLOCK_LET
 import org.angular2.lang.expr.lexer.Angular2Lexer
 import org.angular2.lang.html.Angular2TemplateSyntax
-import org.jetbrains.annotations.NonNls
 import java.io.File
 
 open class Angular2LexerTest : AngularLexerTestCase() {

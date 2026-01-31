@@ -3,7 +3,12 @@ package com.intellij.prettierjs
 
 import com.intellij.application.options.CodeStyleSchemesConfigurable
 import com.intellij.ide.DataManager
-import com.intellij.ide.actionsOnSave.*
+import com.intellij.ide.actionsOnSave.ActionOnSaveBackedByOwnConfigurable
+import com.intellij.ide.actionsOnSave.ActionOnSaveComment
+import com.intellij.ide.actionsOnSave.ActionOnSaveContext
+import com.intellij.ide.actionsOnSave.ActionOnSaveInfo
+import com.intellij.ide.actionsOnSave.ActionOnSaveInfoProvider
+import com.intellij.ide.actionsOnSave.ActionsOnSaveConfigurable
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.util.NodePackageField
 import com.intellij.lang.javascript.JavaScriptBundle

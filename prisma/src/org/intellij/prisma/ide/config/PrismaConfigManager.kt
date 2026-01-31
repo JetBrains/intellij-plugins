@@ -32,10 +32,16 @@ import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.EditorNotifications
 import com.intellij.util.asDisposable
 import com.intellij.util.concurrency.annotations.RequiresReadLock
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.intellij.prisma.PrismaBundle
 import org.intellij.prisma.ide.config.PrismaConfig.Companion.isPrismaConfig
 import org.intellij.prisma.lang.PrismaFileType

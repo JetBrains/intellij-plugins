@@ -16,7 +16,13 @@
 package com.intellij.protobuf.lang.findusages;
 
 import com.intellij.protobuf.lang.PbLangBundle;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbDefinition;
+import com.intellij.protobuf.lang.psi.PbExtendDefinition;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbOptionExpression;
+import com.intellij.protobuf.lang.psi.PbServiceDefinition;
+import com.intellij.protobuf.lang.psi.PbServiceMethod;
+import com.intellij.protobuf.lang.psi.PbTypeName;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usages.impl.rules.UsageType;

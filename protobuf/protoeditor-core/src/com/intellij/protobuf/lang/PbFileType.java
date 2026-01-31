@@ -20,7 +20,7 @@ import com.intellij.protobuf.ide.PbIdeBundle;
 import com.intellij.protobuf.ide.util.PbIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class PbFileType extends LanguageFileType {
 

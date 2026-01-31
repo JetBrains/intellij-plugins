@@ -3,14 +3,14 @@ package org.angular2.web.declarations
 
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.psi.PsiElement
 import com.intellij.polySymbols.declarations.PolySymbolDeclaration
 import com.intellij.polySymbols.declarations.PolySymbolDeclarationProvider
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
+import com.intellij.psi.PsiElement
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
-import org.angular2.signals.Angular2SignalUtils.MODEL_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.entities.Angular2EntityUtils.getPropertyDeclarationOrReferenceKindAndDirective
+import org.angular2.signals.Angular2SignalUtils.MODEL_FUN
 
 class Angular2DirectivePropertyDeclarationProvider : PolySymbolDeclarationProvider {
 

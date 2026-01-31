@@ -17,7 +17,12 @@ import com.intellij.util.io.KeyDescriptor;
 import com.intellij.util.text.StringSearcher;
 import org.jetbrains.annotations.NotNullByDefault;
 
-import java.io.*;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;

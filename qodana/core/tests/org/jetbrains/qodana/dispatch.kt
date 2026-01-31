@@ -3,7 +3,10 @@ package org.jetbrains.qodana
 import com.intellij.openapi.application.EDT
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndWait
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 
 /**
  * In tests, we override all dispatchers to [Dispatchers.EDT], and the tests themselves are run on EDT.

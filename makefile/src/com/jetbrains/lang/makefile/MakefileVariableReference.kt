@@ -1,10 +1,15 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.codeInsight.lookup.*
-import com.intellij.lang.*
-import com.intellij.openapi.util.*
-import com.intellij.psi.*
-import com.jetbrains.lang.makefile.psi.*
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementResolveResult
+import com.intellij.psi.PsiPolyVariantReferenceBase
+import com.intellij.psi.ResolveResult
+import com.jetbrains.lang.makefile.psi.MakefileTypes
+import com.jetbrains.lang.makefile.psi.MakefileVariable
+import com.jetbrains.lang.makefile.psi.MakefileVariableUsage
 
 class MakefileVariableReference(private val usage: MakefileVariableUsage) : PsiPolyVariantReferenceBase<MakefileVariableUsage>(usage, false) {
   override fun getRangeInElement(): TextRange {

@@ -6,7 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import icons.FlexSharedIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class BuildConfigurationNature {
   public final TargetPlatform targetPlatform;

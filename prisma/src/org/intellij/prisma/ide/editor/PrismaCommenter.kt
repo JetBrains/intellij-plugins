@@ -5,7 +5,9 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.tree.IElementType
 import org.intellij.prisma.ide.documentation.isDocComment
 import org.intellij.prisma.lang.psi.DOC_COMMENT
-import org.intellij.prisma.lang.psi.PrismaElementTypes.*
+import org.intellij.prisma.lang.psi.PrismaElementTypes.BLOCK_COMMENT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.DOUBLE_COMMENT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.TRIPLE_COMMENT
 import org.jetbrains.annotations.Unmodifiable
 
 class PrismaCommenter : CodeDocumentationAwareCommenter {

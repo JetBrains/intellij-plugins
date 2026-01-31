@@ -1,12 +1,13 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.execution.actions.*
-import com.intellij.execution.configurations.*
-import com.intellij.openapi.components.*
-import com.intellij.openapi.util.*
-import com.intellij.psi.*
-import com.jetbrains.lang.makefile.psi.*
-import java.io.*
+import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.actions.LazyRunConfigurationProducer
+import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.openapi.components.PathMacroManager
+import com.intellij.openapi.util.Ref
+import com.intellij.psi.PsiElement
+import com.jetbrains.lang.makefile.psi.MakefileTarget
+import java.io.File
 
 class MakefileRunConfigurationProducer : LazyRunConfigurationProducer<MakefileRunConfiguration>() {
   override fun setupConfigurationFromContext(configuration: MakefileRunConfiguration, context: ConfigurationContext, sourceElement: Ref<PsiElement>): Boolean {

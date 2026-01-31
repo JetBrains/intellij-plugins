@@ -30,7 +30,11 @@ import com.intellij.psi.css.descriptor.CssContextType;
 import com.intellij.psi.css.descriptor.value.CssValueDescriptor;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.descriptor.CssCommonDescriptorData;
-import com.intellij.psi.css.impl.descriptor.value.*;
+import com.intellij.psi.css.impl.descriptor.value.CssColorValue;
+import com.intellij.psi.css.impl.descriptor.value.CssGroupValue;
+import com.intellij.psi.css.impl.descriptor.value.CssLengthValue;
+import com.intellij.psi.css.impl.descriptor.value.CssNumberValue;
+import com.intellij.psi.css.impl.descriptor.value.CssValueDescriptorData;
 import com.intellij.psi.css.impl.util.completion.LengthUserLookup;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.css.impl.util.scheme.CssValueDescriptorModificator;
@@ -46,7 +50,15 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   private final @NotNull String myInherit;

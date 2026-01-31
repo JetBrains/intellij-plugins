@@ -34,7 +34,11 @@ import org.jetbrains.qodana.inspectionKts.InspectionKtsSettings
 import java.io.File
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
-import kotlin.io.path.*
+import kotlin.io.path.Path
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.name
+import kotlin.io.path.pathString
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
 private fun isInspectionKtsResolveDisabled(project: Project): Boolean {

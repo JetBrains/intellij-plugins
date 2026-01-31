@@ -1,7 +1,11 @@
 package org.intellij.plugins.postcss.references;
 
 import com.intellij.patterns.PatternCondition;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceContributor;
+import com.intellij.psi.PsiReferenceProvider;
+import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.psi.css.CssMediaFeature;
 import com.intellij.psi.css.CssPseudoClass;
 import com.intellij.psi.css.impl.CssElementTypes;

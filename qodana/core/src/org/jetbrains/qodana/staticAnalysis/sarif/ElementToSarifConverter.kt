@@ -10,7 +10,12 @@ import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.components.service
 import com.intellij.util.PlatformUtils
-import com.jetbrains.qodana.sarif.model.*
+import com.jetbrains.qodana.sarif.model.Level
+import com.jetbrains.qodana.sarif.model.Location
+import com.jetbrains.qodana.sarif.model.LogicalLocation
+import com.jetbrains.qodana.sarif.model.Message
+import com.jetbrains.qodana.sarif.model.PropertyBag
+import com.jetbrains.qodana.sarif.model.Result
 import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV2
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.withPartialFingerprints

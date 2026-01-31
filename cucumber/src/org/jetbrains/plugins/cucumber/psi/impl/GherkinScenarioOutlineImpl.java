@@ -10,9 +10,18 @@ import com.intellij.psi.util.PsiModificationTracker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinElementTypes;
+import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
+import org.jetbrains.plugins.cucumber.psi.GherkinExamplesBlock;
+import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
+import org.jetbrains.plugins.cucumber.psi.GherkinTable;
+import org.jetbrains.plugins.cucumber.psi.GherkinTableCell;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implements GherkinScenarioOutline {
   private static final TokenSet EXAMPLES_BLOCK_FILTER = TokenSet.create(GherkinElementTypes.EXAMPLES_BLOCK);

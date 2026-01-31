@@ -1,7 +1,24 @@
 package org.jetbrains.qodana.protocol
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.qodana.sarif.model.*
+import com.jetbrains.qodana.sarif.model.ArtifactLocation
+import com.jetbrains.qodana.sarif.model.Location
+import com.jetbrains.qodana.sarif.model.Message
+import com.jetbrains.qodana.sarif.model.MultiformatMessageString
+import com.jetbrains.qodana.sarif.model.OriginalUriBaseIds
+import com.jetbrains.qodana.sarif.model.PhysicalLocation
+import com.jetbrains.qodana.sarif.model.PropertyBag
+import com.jetbrains.qodana.sarif.model.Region
+import com.jetbrains.qodana.sarif.model.ReportingDescriptor
+import com.jetbrains.qodana.sarif.model.ReportingDescriptorReference
+import com.jetbrains.qodana.sarif.model.ReportingDescriptorRelationship
+import com.jetbrains.qodana.sarif.model.Result
+import com.jetbrains.qodana.sarif.model.Run
+import com.jetbrains.qodana.sarif.model.RunAutomationDetails
+import com.jetbrains.qodana.sarif.model.SarifReport
+import com.jetbrains.qodana.sarif.model.Tool
+import com.jetbrains.qodana.sarif.model.ToolComponent
+import com.jetbrains.qodana.sarif.model.VersionControlDetails
 import org.jetbrains.qodana.report.ReportDescriptorBuilder
 import org.jetbrains.qodana.report.ReportResult
 import org.jetbrains.qodana.report.ReportValidator
@@ -11,7 +28,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.QODANA_SEVERITY_KEY
 import org.jetbrains.qodana.staticAnalysis.sarif.SRCROOT_DESCRIPTION
 import org.jetbrains.qodana.staticAnalysis.sarif.SRCROOT_URI_BASE
 import java.net.URI
-import java.util.*
+import java.util.UUID
 
 class SingleMarkerReportDescriptorBuilder(
   private val project: Project,

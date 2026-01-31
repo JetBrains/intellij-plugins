@@ -1,7 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSInitializerOwner
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSSpreadExpression
+import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
@@ -17,7 +22,7 @@ import org.jetbrains.vuejs.index.getVueIndexData
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
 import org.jetbrains.vuejs.model.VueNamedComponent
-import java.util.*
+import java.util.ArrayDeque
 
 class VueComponentsCalculation {
   companion object {

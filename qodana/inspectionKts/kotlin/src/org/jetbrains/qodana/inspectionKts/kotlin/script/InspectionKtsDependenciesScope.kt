@@ -9,7 +9,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import org.jetbrains.kotlin.idea.base.projectStructure.scope.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.base.projectStructure.toKaLibraryModule
-import org.jetbrains.kotlin.idea.core.script.v1.ScriptDependencyAware
 
 internal class InspectionKtsDependenciesScope(
   private val roots: Set<VirtualFile>,

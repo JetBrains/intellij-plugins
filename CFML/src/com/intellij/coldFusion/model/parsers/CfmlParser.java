@@ -14,7 +14,19 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.*;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.ASSIGN;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.ATTRIBUTE;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.CF_TAG_NAME;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.CLOSER;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.DOUBLE_QUOTE;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.DOUBLE_QUOTE_CLOSER;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.END_EXPRESSION;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.LSLASH_ANGLEBRACKET;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.OPENER;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.R_ANGLEBRACKET;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.SINGLE_QUOTE;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.SINGLE_QUOTE_CLOSER;
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.START_EXPRESSION;
 
 /**
  * Created by Lera Nikolaenko

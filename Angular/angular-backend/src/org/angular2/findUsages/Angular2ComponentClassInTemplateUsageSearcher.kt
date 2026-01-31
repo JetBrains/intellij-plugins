@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.refactoring.JSDefaultRenameProcessor.JSNonRenameableReference
 import com.intellij.model.search.Searcher
 import com.intellij.openapi.util.TextRange
+import com.intellij.polySymbols.search.PolySymbolUsageQueries
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceBase
@@ -13,7 +14,6 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.startOffset
 import com.intellij.util.Query
-import com.intellij.polySymbols.search.PolySymbolUsageQueries
 import org.angular2.entities.Angular2EntitiesProvider
 
 class Angular2ComponentClassInTemplateUsageSearcher : Searcher<ReferencesSearch.SearchParameters, PsiReference> {

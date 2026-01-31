@@ -4,9 +4,9 @@ package com.intellij.tsr.psi;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.tsr.TslFileType;
 import com.intellij.tsr.TslLanguage;
+import org.jetbrains.annotations.NotNull;
 
 public final class TslFile extends PsiFileBase {
   public TslFile(@NotNull FileViewProvider viewProvider) {

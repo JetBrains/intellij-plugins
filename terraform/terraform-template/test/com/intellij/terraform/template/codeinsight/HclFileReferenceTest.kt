@@ -1,8 +1,8 @@
 package com.intellij.terraform.template.codeinsight
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.terraform.template.HclFileReference
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.junit.Assert
 
 private const val dollar = "$"

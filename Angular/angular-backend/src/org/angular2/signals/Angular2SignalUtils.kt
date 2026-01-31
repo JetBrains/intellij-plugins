@@ -3,8 +3,18 @@ package org.angular2.signals
 
 import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
-import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecma6.*
+import com.intellij.lang.javascript.psi.JSArgumentList
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.StubUnsafe
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
@@ -15,9 +25,6 @@ import com.intellij.lang.javascript.psi.types.recordImpl.ComputedPropertySignatu
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
-import org.angular2.Angular2DecoratorUtil
-import org.angular2.Angular2DecoratorUtil.INPUT_DEC
-import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.isFromImportedPackage
 import org.angular2.lang.Angular2LangUtil

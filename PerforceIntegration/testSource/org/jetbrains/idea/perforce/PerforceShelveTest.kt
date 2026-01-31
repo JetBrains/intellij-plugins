@@ -14,7 +14,9 @@ import org.jetbrains.idea.perforce.application.PerforceNumberNameSynchronizer
 import org.jetbrains.idea.perforce.application.PerforceShelf
 import org.jetbrains.idea.perforce.perforce.P4File
 import org.jetbrains.idea.perforce.perforce.PerforceRunner
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class PerforceShelveTest : PerforceTestCase() {

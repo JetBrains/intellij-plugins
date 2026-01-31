@@ -17,8 +17,8 @@ package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import com.intellij.protobuf.lang.psi.PbElement;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 interface PbOverridableElement extends PbElement {

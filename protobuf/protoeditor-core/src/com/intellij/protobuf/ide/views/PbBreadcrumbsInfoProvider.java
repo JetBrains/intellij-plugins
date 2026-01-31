@@ -17,7 +17,16 @@ package com.intellij.protobuf.ide.views;
 
 import com.intellij.lang.Language;
 import com.intellij.protobuf.lang.PbLanguage;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbEnumDefinition;
+import com.intellij.protobuf.lang.psi.PbEnumValue;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbGroupDefinition;
+import com.intellij.protobuf.lang.psi.PbMapField;
+import com.intellij.protobuf.lang.psi.PbMessageDefinition;
+import com.intellij.protobuf.lang.psi.PbNamedElement;
+import com.intellij.protobuf.lang.psi.PbOneofDefinition;
+import com.intellij.protobuf.lang.psi.PbServiceDefinition;
+import com.intellij.protobuf.lang.psi.PbServiceMethod;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.QualifiedName;
 import com.intellij.ui.breadcrumbs.BreadcrumbsProvider;

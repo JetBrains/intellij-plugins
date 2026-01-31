@@ -3,7 +3,12 @@ package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInsight.intention.FileModifier.SafeFieldForPreview
 import com.intellij.codeInsight.intention.preview.IntentionPreviewUtils
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.SuppressQuickFix
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -15,13 +20,23 @@ import com.intellij.util.containers.toArray
 import org.intellij.terraform.config.actions.createQuickFixNotInitialized
 import org.intellij.terraform.config.codeinsight.ResourcePropertyInsertHandler
 import org.intellij.terraform.config.codeinsight.TfModelHelper
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.TfTypeModel
+import org.intellij.terraform.config.model.Types
+import org.intellij.terraform.config.model.createDisableDeepVariableSearchQuickFix
+import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TfPsiPatterns.ConfigOverrideFile
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DynamicBlock
 import org.intellij.terraform.config.patterns.TfPsiPatterns.ModuleWithEmptySource
 import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLElementVisitor
+import org.intellij.terraform.hcl.psi.HCLPsiUtil
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.isHclCompatiblePsiFile
 
 class HclBlockMissingPropertyInspection : LocalInspectionTool() {

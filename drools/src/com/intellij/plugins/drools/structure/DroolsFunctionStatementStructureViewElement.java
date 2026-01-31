@@ -8,7 +8,7 @@ import com.intellij.plugins.drools.lang.psi.DroolsFunctionStatement;
 import com.intellij.ui.IconManager;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public  class DroolsFunctionStatementStructureViewElement extends DroolsStructureViewElement {
   public DroolsFunctionStatementStructureViewElement(DroolsFunctionStatement functionStatement) {

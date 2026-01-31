@@ -3,12 +3,21 @@
 package com.intellij.jhipster;
 
 import com.intellij.ide.navigationToolbar.StructureAwareNavBarModelExtension;
-import com.intellij.jhipster.psi.*;
+import com.intellij.jhipster.psi.JdlApplication;
+import com.intellij.jhipster.psi.JdlConfigBlock;
+import com.intellij.jhipster.psi.JdlConfigurationOption;
+import com.intellij.jhipster.psi.JdlDeployment;
+import com.intellij.jhipster.psi.JdlEntity;
+import com.intellij.jhipster.psi.JdlEntityFieldMapping;
+import com.intellij.jhipster.psi.JdlEnum;
+import com.intellij.jhipster.psi.JdlEnumValue;
+import com.intellij.jhipster.psi.JdlOptionNameValue;
+import com.intellij.jhipster.psi.JdlRelationshipGroup;
 import com.intellij.lang.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 import static com.intellij.jhipster.JdlConstants.CONFIG_BLOCK_NAME;
 import static com.intellij.jhipster.JdlConstants.DEPLOYMENT_BLOCK_NAME;

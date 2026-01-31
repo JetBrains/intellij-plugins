@@ -25,7 +25,11 @@ import org.jetbrains.vuejs.codeInsight.getHostFile
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.VUE_URL_INDEX_KEY
 import org.jetbrains.vuejs.index.findTopLevelVueTag
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueFileTemplate
+import org.jetbrains.vuejs.model.VueTagTemplate
+import org.jetbrains.vuejs.model.VueTemplate
+import org.jetbrains.vuejs.model.hasSrcReference
+import org.jetbrains.vuejs.model.tryResolveSrcReference
 
 class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
 

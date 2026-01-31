@@ -4,7 +4,11 @@ package com.jetbrains.plugins.meteor.spacebars.lang.parsing;
 import com.dmarcotte.handlebars.parsing.HbParsing;
 import com.intellij.lang.PsiBuilder;
 
-import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.ID;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.NUMBER;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.PARAM;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.SEP;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.WHITE_SPACE;
 
 public class SpacebarsParsing extends HbParsing {
   public SpacebarsParsing(PsiBuilder builder) {

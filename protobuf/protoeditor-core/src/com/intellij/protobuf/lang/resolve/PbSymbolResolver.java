@@ -26,7 +26,11 @@ import com.intellij.protobuf.lang.psi.PbSymbolOwner;
 import com.intellij.psi.util.QualifiedName;
 import com.intellij.util.SmartList;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /** Utilities for finding PbSymbol elements using protobuf's scoping and resolution rules. */

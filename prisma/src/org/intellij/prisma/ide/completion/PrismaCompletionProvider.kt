@@ -7,9 +7,9 @@ import com.intellij.patterns.ElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
+import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaDeclaration
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
-import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.lang.presentation.icon
 import org.intellij.prisma.lang.psi.PrismaEntityDeclaration
 

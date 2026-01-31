@@ -18,7 +18,11 @@ import org.jetbrains.plugins.cucumber.CucumberStepIndex;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intellij.psi.impl.source.tree.JavaElementType.*;
+import static com.intellij.psi.impl.source.tree.JavaElementType.EXPRESSION_LIST;
+import static com.intellij.psi.impl.source.tree.JavaElementType.LAMBDA_EXPRESSION;
+import static com.intellij.psi.impl.source.tree.JavaElementType.LOCAL_VARIABLE;
+import static com.intellij.psi.impl.source.tree.JavaElementType.METHOD_CALL_EXPRESSION;
+import static com.intellij.psi.impl.source.tree.JavaElementType.METHOD_REF_EXPRESSION;
 
 public final class CucumberJava8StepIndex extends CucumberStepIndex {
   public static final ID<Boolean, List<Integer>> INDEX_ID = ID.create("java.cucumber.java8.step");

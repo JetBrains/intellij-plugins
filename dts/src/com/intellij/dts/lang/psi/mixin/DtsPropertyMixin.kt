@@ -2,7 +2,11 @@ package com.intellij.dts.lang.psi.mixin
 
 import com.intellij.dts.DtsIcons
 import com.intellij.dts.lang.DtsAffiliation
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsProperty
+import com.intellij.dts.lang.psi.DtsPropertyContent
+import com.intellij.dts.lang.psi.DtsStatementKind
+import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.lang.psi.DtsValue
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement

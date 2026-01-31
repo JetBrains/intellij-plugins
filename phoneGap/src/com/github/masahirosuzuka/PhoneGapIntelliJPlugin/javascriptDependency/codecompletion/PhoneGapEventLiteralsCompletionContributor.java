@@ -1,7 +1,11 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.javascriptDependency.codecompletion;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
-import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionProvider;
+import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.openapi.project.Project;

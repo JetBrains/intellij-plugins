@@ -3,7 +3,11 @@ package org.jetbrains.qodana.ui.problemsView.tree.model.impl
 import org.jetbrains.qodana.problem.SarifProblem
 import org.jetbrains.qodana.settings.ConfigExcludeItem
 import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
-import org.jetbrains.qodana.ui.problemsView.tree.model.*
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeContext
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeEvent
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeInspectionOrFileSystemLevelChildren
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreePath
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeSeverityNode
 import org.jetbrains.qodana.ui.problemsView.tree.ui.QodanaUiTreeNode
 import org.jetbrains.qodana.ui.problemsView.tree.ui.QodanaUiTreeSeverityNode
 

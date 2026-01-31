@@ -6,7 +6,7 @@ import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.options.ConfigurationException;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 public class DartModuleWizardStep extends ModuleWizardStep implements Disposable {
   private final WizardContext myContext;

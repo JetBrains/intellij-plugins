@@ -4,11 +4,15 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.Dependencies;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.IosPackagingOptions;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Collection;
 
 public class NonStructuralModifiableBuildConfiguration implements FlexBuildConfiguration {

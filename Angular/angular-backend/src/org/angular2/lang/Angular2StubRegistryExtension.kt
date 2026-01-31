@@ -12,8 +12,18 @@ import org.angular2.lang.html.parser.Angular2HtmlElementTypes.NG_CONTENT_SELECTO
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.PROPERTY_BINDING
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.REFERENCE
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.TEMPLATE_BINDINGS
-import org.angular2.lang.html.psi.impl.*
-import org.angular2.lang.stubs.*
+import org.angular2.lang.html.psi.impl.Angular2HtmlBananaBoxBindingImpl
+import org.angular2.lang.html.psi.impl.Angular2HtmlEventImpl
+import org.angular2.lang.html.psi.impl.Angular2HtmlLetImpl
+import org.angular2.lang.html.psi.impl.Angular2HtmlPropertyBindingImpl
+import org.angular2.lang.html.psi.impl.Angular2HtmlReferenceImpl
+import org.angular2.lang.html.psi.impl.Angular2HtmlTemplateBindingsImpl
+import org.angular2.lang.stubs.Angular2HtmlAttributeStubFactory
+import org.angular2.lang.stubs.Angular2HtmlAttributeStubSerializer
+import org.angular2.lang.stubs.Angular2HtmlNgContentSelectorStubFactory
+import org.angular2.lang.stubs.Angular2HtmlNgContentSelectorStubSerializer
+import org.angular2.lang.stubs.Angular2StringPartsLiteralExpressionStubFactory
+import org.angular2.lang.stubs.Angular2StringPartsLiteralExpressionStubSerializer
 
 class Angular2StubRegistryExtension : StubRegistryExtension {
   override fun register(registry: StubRegistry) {

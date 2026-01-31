@@ -3,9 +3,9 @@ package org.angular2.lang.html
 
 import com.intellij.lexer.Lexer
 import com.intellij.psi.impl.cache.impl.OccurrenceConsumer
+import org.angular2.Angular2TestUtil
 import org.angular2.lang.html.index.Angular2HtmlFilterLexer
 import org.angular2.lang.html.lexer.Angular2HtmlLexer
-import org.angular2.Angular2TestUtil
 
 open class Angular2HtmlIndexerTest : Angular2HtmlHighlightingLexerTest() {
   override fun createLexer(): Lexer {

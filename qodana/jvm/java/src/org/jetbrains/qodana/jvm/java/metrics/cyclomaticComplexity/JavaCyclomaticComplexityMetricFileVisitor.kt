@@ -1,6 +1,12 @@
 package org.jetbrains.qodana.jvm.java.metrics.cyclomaticComplexity
 
-import com.intellij.psi.*
+import com.intellij.psi.JavaElementVisitor
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiLambdaExpression
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiVariable
 import com.intellij.psi.util.parents
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.inspections.VisitorLanguage
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.inspections.cyclomaticComplexity.CyclomaticComplexityMethodData

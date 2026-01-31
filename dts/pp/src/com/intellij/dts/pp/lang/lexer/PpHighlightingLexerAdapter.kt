@@ -5,7 +5,7 @@ import com.intellij.dts.pp.lang.psi.PpElifStatement
 import com.intellij.dts.pp.lang.psi.PpIfStatement
 import com.intellij.dts.pp.lang.psi.PpStatementType.Endif
 import com.intellij.lexer.Lexer
-import java.util.*
+import java.util.Stack
 
 /**
  * This lexer should only be used for parsing since it does not emit inactive tokens.

@@ -19,8 +19,12 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.Dimension;
 
 final class CfmlRunner extends GenericProgramRunner {
   @Override

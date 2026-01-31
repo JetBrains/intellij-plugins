@@ -1,7 +1,12 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.codeinsight
 
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.CompletionContributor
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionProvider
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionSorter
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder.create
 import com.intellij.codeInsight.lookup.LookupElementWeigher
@@ -21,14 +26,27 @@ import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createProperty
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getOriginalObject
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.BaseModelType
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.HclType
+import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.SimpleValueHint
+import org.intellij.terraform.config.model.Types
+import org.intellij.terraform.config.model.getType
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Block
 import org.intellij.terraform.hcl.patterns.HCLPatterns.IdentifierOrStringLiteral
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Object
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Property
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
+import org.intellij.terraform.hcl.psi.HCLValue
 import org.intellij.terraform.hil.HILFileType
 import org.intellij.terraform.hil.psi.ILExpression
 

@@ -16,8 +16,31 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.io.createDirectories
 import com.jetbrains.qodana.sarif.SarifUtil
-import com.jetbrains.qodana.sarif.model.*
-import com.jetbrains.qodana.sarif.model.Level.*
+import com.jetbrains.qodana.sarif.model.ArtifactContent
+import com.jetbrains.qodana.sarif.model.ArtifactLocation
+import com.jetbrains.qodana.sarif.model.Invocation
+import com.jetbrains.qodana.sarif.model.Level
+import com.jetbrains.qodana.sarif.model.Level.ERROR
+import com.jetbrains.qodana.sarif.model.Level.NOTE
+import com.jetbrains.qodana.sarif.model.Level.WARNING
+import com.jetbrains.qodana.sarif.model.Message
+import com.jetbrains.qodana.sarif.model.MultiformatMessageString
+import com.jetbrains.qodana.sarif.model.Notification
+import com.jetbrains.qodana.sarif.model.OriginalUriBaseIds
+import com.jetbrains.qodana.sarif.model.PhysicalLocation
+import com.jetbrains.qodana.sarif.model.PropertyBag
+import com.jetbrains.qodana.sarif.model.Region
+import com.jetbrains.qodana.sarif.model.ReportingConfiguration
+import com.jetbrains.qodana.sarif.model.ReportingDescriptor
+import com.jetbrains.qodana.sarif.model.ReportingDescriptorReference
+import com.jetbrains.qodana.sarif.model.ReportingDescriptorRelationship
+import com.jetbrains.qodana.sarif.model.Result
+import com.jetbrains.qodana.sarif.model.Run
+import com.jetbrains.qodana.sarif.model.RunAutomationDetails
+import com.jetbrains.qodana.sarif.model.SarifReport
+import com.jetbrains.qodana.sarif.model.Tool
+import com.jetbrains.qodana.sarif.model.ToolComponent
+import com.jetbrains.qodana.sarif.model.ToolComponentReference
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
@@ -34,7 +57,8 @@ import java.net.URI
 import java.nio.file.Path
 import java.text.SimpleDateFormat
 import java.time.Instant
-import java.util.*
+import java.util.Date
+import java.util.UUID
 import kotlin.math.max
 
 private val LOG = logger<SarifReport>()

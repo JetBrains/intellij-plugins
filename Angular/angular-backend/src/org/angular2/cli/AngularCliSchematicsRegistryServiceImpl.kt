@@ -32,8 +32,13 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
-import java.util.*
-import java.util.concurrent.*
+import java.util.Collections
+import java.util.concurrent.Callable
+import java.util.concurrent.CancellationException
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 import java.util.function.Supplier
 
 class AngularCliSchematicsRegistryServiceImpl(private val project: Project) : AngularCliSchematicsRegistryService() {

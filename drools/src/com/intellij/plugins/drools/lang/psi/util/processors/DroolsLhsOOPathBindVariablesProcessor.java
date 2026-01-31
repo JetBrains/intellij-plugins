@@ -1,7 +1,14 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util.processors;
 
-import com.intellij.plugins.drools.lang.psi.*;
+import com.intellij.plugins.drools.lang.psi.DroolsFile;
+import com.intellij.plugins.drools.lang.psi.DroolsLhsOOPathBind;
+import com.intellij.plugins.drools.lang.psi.DroolsLhsPatternBind;
+import com.intellij.plugins.drools.lang.psi.DroolsNameId;
+import com.intellij.plugins.drools.lang.psi.DroolsParentRule;
+import com.intellij.plugins.drools.lang.psi.DroolsPsiCompositeElement;
+import com.intellij.plugins.drools.lang.psi.DroolsRuleStatement;
+import com.intellij.plugins.drools.lang.psi.DroolsVisitor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiVariable;

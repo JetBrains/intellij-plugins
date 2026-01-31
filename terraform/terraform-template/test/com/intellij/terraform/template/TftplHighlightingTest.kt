@@ -1,10 +1,10 @@
 package com.intellij.terraform.template
 
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.terraform.template.editor.MaybeTfTemplateInspection
 import com.intellij.terraform.template.editor.TfUnselectedDataLanguageInspection
+import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.junit.Assert
 
 class TftplHighlightingTest : BasePlatformTestCase() {

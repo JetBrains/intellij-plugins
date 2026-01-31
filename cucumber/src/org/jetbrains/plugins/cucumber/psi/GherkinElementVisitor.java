@@ -1,7 +1,13 @@
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.psi.PsiElementVisitor;
-import org.jetbrains.plugins.cucumber.psi.impl.*;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinFeatureHeaderImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepParameterImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinTableHeaderRowImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinTableImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinTableRowImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinTagImpl;
 
 public abstract class GherkinElementVisitor extends PsiElementVisitor {
   public void visitFeature(GherkinFeature feature) {

@@ -7,8 +7,6 @@ import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 /**
  * Aggregator of InspectionFinished events. Each event belongs to a single bucket.

@@ -5,8 +5,8 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.psi.stubs.StubSerializer
-import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorStub
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.NG_CONTENT_SELECTOR
+import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorStub
 import org.angular2.lang.html.stub.impl.Angular2HtmlNgContentSelectorStubImpl
 
 class Angular2HtmlNgContentSelectorStubSerializer : StubSerializer<Angular2HtmlNgContentSelectorStub> {

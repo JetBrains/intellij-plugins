@@ -10,7 +10,12 @@ import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
-import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
+import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
+import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
+import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeContext
+import com.intellij.lang.javascript.psi.types.JSUnionType
 import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil

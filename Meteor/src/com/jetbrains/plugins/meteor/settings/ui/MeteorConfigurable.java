@@ -17,8 +17,11 @@ import com.jetbrains.plugins.meteor.settings.MeteorSettings;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
 
 public final class MeteorConfigurable implements Configurable, Configurable.NoScroll {
 

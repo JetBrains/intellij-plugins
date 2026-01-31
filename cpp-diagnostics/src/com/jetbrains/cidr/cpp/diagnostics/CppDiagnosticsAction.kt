@@ -1,7 +1,11 @@
 package com.jetbrains.cidr.cpp.diagnostics
 
 import com.intellij.ide.actions.RevealFileAction
-import com.intellij.notification.*
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationDisplayType
+import com.intellij.notification.NotificationGroup
+import com.intellij.notification.NotificationType
+import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.AppUIExecutor

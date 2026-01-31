@@ -16,13 +16,17 @@
 package com.intellij.protobuf.lang.resolve.directive;
 
 import com.intellij.codeInsight.AutoPopupController;
-import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionProvider;
+import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.lang.psi.PbTextFile;
 import com.intellij.psi.PsiComment;
 import com.intellij.util.ProcessingContext;
-import com.intellij.protobuf.lang.psi.PbTextFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;

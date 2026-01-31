@@ -1,6 +1,30 @@
 package com.dmarcotte.handlebars.parsing;
 
-import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.BOOLEAN;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CLOSE;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CLOSE_BLOCK_PARAMS;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CLOSE_SEXPR;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CLOSE_UNESCAPED;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.COMMENT;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CONTENT;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.DATA_PREFIX;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.ELSE;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.EQUALS;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.ESCAPE_CHAR;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.ID;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.NUMBER;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_BLOCK;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_BLOCK_PARAMS;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_ENDBLOCK;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_INVERSE;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_PARTIAL;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_PARTIAL_BLOCK;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_SEXPR;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_UNESCAPED;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.SEP;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.STRING;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.WHITE_SPACE;
 
 /**
  * Java representation of the validations in the spec/tokenizer.js revision which corresponds

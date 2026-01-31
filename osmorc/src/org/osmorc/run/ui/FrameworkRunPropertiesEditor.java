@@ -29,7 +29,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.run.OsgiRunConfiguration;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>

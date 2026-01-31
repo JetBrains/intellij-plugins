@@ -4,7 +4,11 @@ package org.jetbrains.astro.lang.lexer
 import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavaScriptHighlightingLexer
-import com.intellij.lexer.*
+import com.intellij.lexer.FlexAdapter
+import com.intellij.lexer.LayeredLexer
+import com.intellij.lexer.Lexer
+import com.intellij.lexer.MergeFunction
+import com.intellij.lexer.MergingLexerAdapterBase
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlTokenType.XML_DATA_CHARACTERS

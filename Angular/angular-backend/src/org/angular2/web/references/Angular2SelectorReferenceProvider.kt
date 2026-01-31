@@ -4,10 +4,10 @@ package org.angular2.web.references
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.psi.PsiExternalReferenceHost
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.asSafely
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.references.PsiPolySymbolReferenceProvider
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2DecoratorUtil.SELECTOR_PROP

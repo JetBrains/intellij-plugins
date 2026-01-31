@@ -14,7 +14,6 @@ import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.EncryptionBlock
-import kotlin.collections.filter
 
 internal fun findEncryptionBlocksIdsByType(element: PsiElement, blockType: String?, blockPattern: PsiElementPattern.Capture<HCLBlock>): Sequence<LookupElement> {
   blockType ?: return emptySequence()

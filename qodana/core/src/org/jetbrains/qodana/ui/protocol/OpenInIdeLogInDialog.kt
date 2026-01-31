@@ -11,7 +11,11 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.platform.util.coroutines.childScope
 import com.intellij.ui.AnimatedIcon
 import com.intellij.ui.components.panels.Wrapper
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.Align
+import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.BottomGap
+import com.intellij.ui.dsl.builder.RightGap
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.IconUtil
 import com.intellij.util.Urls
 import com.intellij.util.ui.JBFont

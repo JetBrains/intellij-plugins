@@ -14,7 +14,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.packageDependencies.DependencyValidationManager
-import com.intellij.profile.codeInspection.*
+import com.intellij.profile.codeInspection.BaseInspectionProfileManager
+import com.intellij.profile.codeInspection.InspectionProfileManager
+import com.intellij.profile.codeInspection.InspectionProfileProcessor
+import com.intellij.profile.codeInspection.PROFILES_SETTINGS
+import com.intellij.profile.codeInspection.PROFILE_DIR
+import com.intellij.profile.codeInspection.PROJECT_DEFAULT_PROFILE_NAME
+import com.intellij.profile.codeInspection.ProjectBasedInspectionProfileManager
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder
 import com.intellij.util.application
 import org.intellij.lang.annotations.Language

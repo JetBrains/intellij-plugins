@@ -5,12 +5,14 @@ import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.query.PolySymbolNamesProvider
-import com.intellij.polySymbols.query.PolySymbolNamesProvider.Target.*
+import com.intellij.polySymbols.query.PolySymbolNamesProvider.Target.CODE_COMPLETION_VARIANTS
+import com.intellij.polySymbols.query.PolySymbolNamesProvider.Target.NAMES_MAP_STORAGE
+import com.intellij.polySymbols.query.PolySymbolNamesProvider.Target.NAMES_QUERY
+import com.intellij.polySymbols.query.PolySymbolNamesProvider.Target.RENAME_QUERY
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.fromAsset

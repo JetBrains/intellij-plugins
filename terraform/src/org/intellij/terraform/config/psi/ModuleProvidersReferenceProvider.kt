@@ -7,7 +7,17 @@ import com.intellij.psi.PsiReferenceProvider
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.model.Module
 import org.intellij.terraform.config.model.getTerraformModule
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLIndexSelectExpression
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLPsiUtil
+import org.intellij.terraform.hcl.psi.HCLSelectExpression
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
+import org.intellij.terraform.hcl.psi.getParent
 import org.intellij.terraform.hil.psi.HCLElementLazyReferenceBase
 
 object ModuleProvidersReferenceProvider : PsiReferenceProvider() {

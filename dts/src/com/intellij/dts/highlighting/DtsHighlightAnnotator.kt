@@ -1,6 +1,10 @@
 package com.intellij.dts.highlighting
 
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsCompilerDirective
+import com.intellij.dts.lang.psi.DtsPHandle
+import com.intellij.dts.lang.psi.DtsProperty
+import com.intellij.dts.lang.psi.DtsSubNode
+import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.dts.util.DtsUtil
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator

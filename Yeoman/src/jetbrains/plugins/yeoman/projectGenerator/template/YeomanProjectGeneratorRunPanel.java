@@ -9,8 +9,8 @@ import jetbrains.plugins.yeoman.settings.YeomanGlobalSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 
 public class YeomanProjectGeneratorRunPanel implements YeomanProjectGeneratorSubPanel {

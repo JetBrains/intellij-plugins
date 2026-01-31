@@ -10,7 +10,12 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public final class CompilerOptionInfo {
   public enum OptionType {Group, Boolean, String, Int, File, List, IncludeClasses, IncludeFiles}

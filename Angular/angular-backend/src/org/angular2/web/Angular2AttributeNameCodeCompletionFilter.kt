@@ -6,7 +6,11 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
-import org.angular2.lang.html.parser.Angular2AttributeType.*
+import org.angular2.lang.html.parser.Angular2AttributeType.BANANA_BOX_BINDING
+import org.angular2.lang.html.parser.Angular2AttributeType.EVENT
+import org.angular2.lang.html.parser.Angular2AttributeType.PROPERTY_BINDING
+import org.angular2.lang.html.parser.Angular2AttributeType.REGULAR
+import org.angular2.lang.html.parser.Angular2AttributeType.TEMPLATE_BINDINGS
 import org.angular2.lang.html.psi.PropertyBindingType.ATTRIBUTE
 import org.angular2.lang.html.psi.PropertyBindingType.PROPERTY
 import java.util.function.Predicate

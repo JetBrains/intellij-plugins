@@ -1,7 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.expr.psi.formatter
 
-import com.intellij.formatting.*
+import com.intellij.formatting.Block
+import com.intellij.formatting.FormattingContext
+import com.intellij.formatting.FormattingModel
+import com.intellij.formatting.Indent
+import com.intellij.formatting.Wrap
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSLanguageUtil
 import com.intellij.lang.javascript.formatter.JSBlockContext

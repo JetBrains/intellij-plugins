@@ -2,8 +2,8 @@
 package org.angular2.lang.html
 
 import com.intellij.lexer.Lexer
-import org.angular2.lang.html.lexer.Angular2HtmlLexer
 import org.angular2.Angular2TestUtil
+import org.angular2.lang.html.lexer.Angular2HtmlLexer
 
 open class Angular2HtmlHighlightingLexerTest : Angular2HtmlLexerTest() {
   override fun createLexer(): Lexer {

@@ -21,7 +21,13 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.BOOTSTRAP_VUE_MODULE
 import org.jetbrains.vuejs.index.SHARDS_VUE_MODULE
 import org.jetbrains.vuejs.index.VUETIFY_MODULE
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueFilter
+import org.jetbrains.vuejs.model.VueLibrary
+import org.jetbrains.vuejs.model.VueMixin
+import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.VueNamedComponent
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 
 class VueLibraryImpl(

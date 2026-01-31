@@ -4,7 +4,11 @@ package org.intellij.terraform.config.codeinsight
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.registry.Registry
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.DataSourceType
+import org.intellij.terraform.config.model.EphemeralType
+import org.intellij.terraform.config.model.ProviderTier
+import org.intellij.terraform.config.model.ResourceOrDataSourceType
+import org.intellij.terraform.config.model.ResourceType
 import org.intellij.terraform.config.model.TypeModelProvider.Companion.globalModel
 import org.intellij.terraform.terragrunt.TerragruntCompletionTest
 

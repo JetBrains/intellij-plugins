@@ -9,7 +9,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.ex.JpsElementBase;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsModule;
-import org.jetbrains.osgi.jps.model.*;
+import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
+import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
+import org.jetbrains.osgi.jps.model.JpsOsmorcProjectExtension;
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
+import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry;
+import org.jetbrains.osgi.jps.model.OutputPathType;
 import org.jetbrains.osgi.jps.util.OsgiBuildUtil;
 
 import java.io.File;

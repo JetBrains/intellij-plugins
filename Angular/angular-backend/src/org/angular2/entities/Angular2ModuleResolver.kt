@@ -13,7 +13,6 @@ import org.angular2.Angular2DecoratorUtil.EXPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
 import org.angular2.entities.Angular2EntityUtils.forEachEntity
 import org.jetbrains.annotations.NonNls
-import java.util.*
 
 /**
  * Also used for standalone declarables

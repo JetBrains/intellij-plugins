@@ -3,11 +3,26 @@ package org.jetbrains.vuejs.codeInsight.attributes
 
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.MultiMap
-import com.intellij.xml.util.BasicHtmlUtil.*
-import org.jetbrains.vuejs.codeInsight.*
+import com.intellij.xml.util.BasicHtmlUtil.ID_ATTRIBUTE_NAME
+import com.intellij.xml.util.BasicHtmlUtil.LANG_ATTRIBUTE_NAME
+import com.intellij.xml.util.BasicHtmlUtil.SCRIPT_TAG_NAME
+import com.intellij.xml.util.BasicHtmlUtil.SLOT_TAG_NAME
+import com.intellij.xml.util.BasicHtmlUtil.SRC_ATTRIBUTE_NAME
+import com.intellij.xml.util.BasicHtmlUtil.STYLE_TAG_NAME
+import com.intellij.xml.util.BasicHtmlUtil.TEMPLATE_TAG_NAME
+import org.jetbrains.vuejs.codeInsight.ATTR_ARGUMENT_PREFIX
+import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
+import org.jetbrains.vuejs.codeInsight.ATTR_EVENT_SHORTHAND
+import org.jetbrains.vuejs.codeInsight.ATTR_MODIFIER_PREFIX
+import org.jetbrains.vuejs.codeInsight.ATTR_SLOT_SHORTHAND
+import org.jetbrains.vuejs.codeInsight.GENERIC_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.MODULE_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.REF_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.VAPOR_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
 import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
-import java.util.*
+import java.util.Locale
 
 class VueAttributeNameParser private constructor() {
   companion object {

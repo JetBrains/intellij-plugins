@@ -3,7 +3,11 @@ package org.jetbrains.vuejs.libraries.vuex.codeInsight
 
 import com.intellij.lang.javascript.patterns.JSLiteralExpressionPattern
 import com.intellij.lang.javascript.patterns.JSPatterns
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSIndexedPropertyAccessExpression
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiElementPattern

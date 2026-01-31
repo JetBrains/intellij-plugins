@@ -3,7 +3,14 @@
 package com.intellij.jhipster;
 
 import com.intellij.jhipster.model.JdlDeclarationsModel;
-import com.intellij.jhipster.psi.*;
+import com.intellij.jhipster.psi.JdlConfigurationOption;
+import com.intellij.jhipster.psi.JdlEntitiesList;
+import com.intellij.jhipster.psi.JdlEntity;
+import com.intellij.jhipster.psi.JdlEnum;
+import com.intellij.jhipster.psi.JdlFieldType;
+import com.intellij.jhipster.psi.JdlId;
+import com.intellij.jhipster.psi.JdlRecursiveElementVisitor;
+import com.intellij.jhipster.psi.JdlWildcardLiteral;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -12,7 +19,11 @@ import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.PsiModificationTracker;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.intellij.psi.util.CachedValuesManager.getCachedValue;

@@ -4,7 +4,11 @@ import com.intellij.coverage.CoverageDataManager
 import com.intellij.coverage.CoverageExecutor
 import com.intellij.coverage.CoverageHelper
 import com.intellij.coverage.CoverageRunnerData
-import com.intellij.execution.configurations.*
+import com.intellij.execution.configurations.ConfigurationInfoProvider
+import com.intellij.execution.configurations.RunConfigurationBase
+import com.intellij.execution.configurations.RunProfile
+import com.intellij.execution.configurations.RunProfileState
+import com.intellij.execution.configurations.RunnerSettings
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration
 import com.intellij.execution.process.NopProcessHandler
 import com.intellij.execution.runners.AsyncProgramRunner

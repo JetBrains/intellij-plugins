@@ -10,7 +10,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 /**
  * @author Dmitry_Cherkas, Ilia Motornyi

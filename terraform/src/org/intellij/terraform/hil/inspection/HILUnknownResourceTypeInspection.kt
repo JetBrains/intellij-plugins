@@ -17,7 +17,11 @@ import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLElement
-import org.intellij.terraform.hil.psi.*
+import org.intellij.terraform.hil.psi.DynamicBlockVariableReferenceProvider
+import org.intellij.terraform.hil.psi.ForVariableDirectReference
+import org.intellij.terraform.hil.psi.ILElementVisitor
+import org.intellij.terraform.hil.psi.ILSelectExpression
+import org.intellij.terraform.hil.psi.ILVariable
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import org.intellij.terraform.isTfOrTofuPsiFile
 

@@ -4,15 +4,10 @@ package org.angular2.codeInsight
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ReadResult
-import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.util.registry.Registry
-import com.intellij.openapi.util.registry.withValue
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
 import com.intellij.polySymbols.testFramework.LookupElementInfo
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
-import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5

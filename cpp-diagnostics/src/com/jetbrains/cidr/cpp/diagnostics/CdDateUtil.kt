@@ -1,7 +1,7 @@
 package com.jetbrains.cidr.cpp.diagnostics
 
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 private val DATE_FORMAT_SECONDS = SimpleDateFormat("yyyyMMdd-HHmmss")
 private val DATE_FORMAT_MS = SimpleDateFormat("yyyyMMdd-HHmmss.SSS")

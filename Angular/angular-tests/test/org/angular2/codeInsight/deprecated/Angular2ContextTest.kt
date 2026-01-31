@@ -15,11 +15,11 @@ import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptParameterImpl
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
+import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.xml.util.CheckDtdReferencesInspection
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider

@@ -23,7 +23,7 @@ import com.thoughtworks.gauge.GaugeConstants;
 import icons.GaugeIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class ConceptFileType extends LanguageFileType {
   public static final FileType INSTANCE = new ConceptFileType();

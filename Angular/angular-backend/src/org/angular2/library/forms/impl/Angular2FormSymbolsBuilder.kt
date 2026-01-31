@@ -1,13 +1,32 @@
 package org.angular2.library.forms.impl
 
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSAssignmentExpression
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSThisExpression
+import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptNewExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSNamedType
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
-import org.angular2.library.forms.*
+import org.angular2.library.forms.Angular2FormAbstractControl
+import org.angular2.library.forms.Angular2FormGroup
+import org.angular2.library.forms.FORM_ARRAY_CONSTRUCTOR
+import org.angular2.library.forms.FORM_BUILDER_ARRAY_METHOD
+import org.angular2.library.forms.FORM_BUILDER_CONTROL_METHOD
+import org.angular2.library.forms.FORM_BUILDER_GROUP_METHOD
+import org.angular2.library.forms.FORM_BUILDER_TYPE
+import org.angular2.library.forms.FORM_CONTROL_CONSTRUCTOR
+import org.angular2.library.forms.FORM_GROUP_CONSTRUCTOR
 
 class Angular2FormSymbolsBuilder(private val consumer: (Angular2FormGroup) -> Unit) : JSRecursiveWalkingElementVisitor() {
 

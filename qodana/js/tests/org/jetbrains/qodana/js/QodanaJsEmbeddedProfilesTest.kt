@@ -10,7 +10,9 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmbeddedProfile.QODANA_RECOMMENDED
 import org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmbeddedProfile.QODANA_STARTER
 import org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmbeddedProfilesProvider
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test

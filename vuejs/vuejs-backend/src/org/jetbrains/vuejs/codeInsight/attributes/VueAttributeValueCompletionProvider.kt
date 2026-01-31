@@ -10,9 +10,12 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.*
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.SCRIPT_LANG
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.SLOT
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.STYLE_LANG
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.TEMPLATE_LANG
 import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
-import java.util.*
+import java.util.Locale
 
 // TODO move to web-types
 class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParameters>() {

@@ -12,7 +12,9 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.text.CharArrayUtil
-import org.intellij.terraform.hcl.HCLElementTypes.*
+import org.intellij.terraform.hcl.HCLElementTypes.BLOCK_COMMENT
+import org.intellij.terraform.hcl.HCLElementTypes.LINE_C_COMMENT
+import org.intellij.terraform.hcl.HCLElementTypes.LINE_HASH_COMMENT
 import org.intellij.terraform.hcl.formatter.HclCodeStyleSettings
 import org.intellij.terraform.hcl.formatter.LineCommenterPrefix
 

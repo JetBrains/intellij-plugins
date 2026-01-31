@@ -11,7 +11,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
-import java.util.*
+import java.util.NavigableMap
+import java.util.TreeMap
 
 class Angular2TranspiledTemplateRequestArgs private constructor(
   file: VirtualFile,

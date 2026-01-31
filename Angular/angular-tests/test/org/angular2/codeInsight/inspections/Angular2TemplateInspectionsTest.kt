@@ -12,10 +12,32 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceIns
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
-import org.angular2.Angular2TestModule.*
+import org.angular2.Angular2TestModule.ANGULAR_COMMON_16_2_8
+import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
+import org.angular2.Angular2TestModule.ANGULAR_CORE_16_2_8
+import org.angular2.Angular2TestModule.ANGULAR_CORE_17_3_0
+import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
+import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
+import org.angular2.Angular2TestModule.ANGULAR_CORE_8_2_14
 import org.angular2.Angular2TestModule.Companion.configureDependencies
+import org.angular2.Angular2TestModule.TS_LIB
 import org.angular2.Angular2TsConfigFile
-import org.angular2.inspections.*
+import org.angular2.inspections.AngularAmbiguousComponentTagInspection
+import org.angular2.inspections.AngularDeferBlockOnTriggerInspection
+import org.angular2.inspections.AngularInaccessibleSymbolInspection
+import org.angular2.inspections.AngularIncorrectBlockUsageInspection
+import org.angular2.inspections.AngularInsecureBindingToEventInspection
+import org.angular2.inspections.AngularInvalidAnimationTriggerAssignmentInspection
+import org.angular2.inspections.AngularInvalidI18nAttributeInspection
+import org.angular2.inspections.AngularInvalidSelectorInspection
+import org.angular2.inspections.AngularInvalidTemplateReferenceVariableInspection
+import org.angular2.inspections.AngularMissingEventHandlerInspection
+import org.angular2.inspections.AngularMissingRequiredDirectiveInputBindingInspection
+import org.angular2.inspections.AngularMultipleStructuralDirectivesInspection
+import org.angular2.inspections.AngularNonEmptyNgContentInspection
+import org.angular2.inspections.AngularUncalledSignalLengthPropertyAccessInspection
+import org.angular2.inspections.AngularUndefinedBindingInspection
+import org.angular2.inspections.AngularUndefinedTagInspection
 import org.angular2.lang.Angular2Bundle
 
 /**

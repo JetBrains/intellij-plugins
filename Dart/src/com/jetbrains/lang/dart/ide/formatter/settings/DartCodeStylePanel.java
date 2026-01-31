@@ -14,7 +14,8 @@ import com.jetbrains.lang.dart.DartLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 public class DartCodeStylePanel extends CodeStyleAbstractPanel {
   private JPanel myMainPanel;

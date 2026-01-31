@@ -8,7 +8,7 @@ import com.intellij.ui.components.JBRadioButton;
 import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;

@@ -14,7 +14,7 @@ import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.Angular2DirectiveSimpleSelectorWithRanges
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException
-import java.util.*
+import java.util.Collections
 
 class Angular2DirectiveSelectorImpl(
   private val myElement: PsiElement,

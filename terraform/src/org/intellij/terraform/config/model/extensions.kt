@@ -10,8 +10,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopes
 import org.intellij.terraform.config.patterns.TfPsiPatterns
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.common.BaseExpression
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.hil.psi.TypeCachedValueProvider
 import org.intellij.terraform.hil.psi.impl.getHCLHost

@@ -1,9 +1,36 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.prisma.lang.psi.stubs
 
-import org.intellij.prisma.lang.psi.*
-import org.intellij.prisma.lang.psi.impl.*
-import org.intellij.prisma.lang.psi.stubs.impl.*
+import org.intellij.prisma.lang.psi.PrismaDatasourceDeclaration
+import org.intellij.prisma.lang.psi.PrismaEnumDeclaration
+import org.intellij.prisma.lang.psi.PrismaEnumValueDeclaration
+import org.intellij.prisma.lang.psi.PrismaFieldDeclaration
+import org.intellij.prisma.lang.psi.PrismaGeneratorDeclaration
+import org.intellij.prisma.lang.psi.PrismaKeyValue
+import org.intellij.prisma.lang.psi.PrismaModelDeclaration
+import org.intellij.prisma.lang.psi.PrismaTypeAlias
+import org.intellij.prisma.lang.psi.PrismaTypeDeclaration
+import org.intellij.prisma.lang.psi.PrismaViewDeclaration
+import org.intellij.prisma.lang.psi.impl.PrismaDatasourceDeclarationImpl
+import org.intellij.prisma.lang.psi.impl.PrismaEnumDeclarationImpl
+import org.intellij.prisma.lang.psi.impl.PrismaEnumValueDeclarationImpl
+import org.intellij.prisma.lang.psi.impl.PrismaFieldDeclarationImpl
+import org.intellij.prisma.lang.psi.impl.PrismaGeneratorDeclarationImpl
+import org.intellij.prisma.lang.psi.impl.PrismaKeyValueImpl
+import org.intellij.prisma.lang.psi.impl.PrismaModelDeclarationImpl
+import org.intellij.prisma.lang.psi.impl.PrismaTypeAliasImpl
+import org.intellij.prisma.lang.psi.impl.PrismaTypeDeclarationImpl
+import org.intellij.prisma.lang.psi.impl.PrismaViewDeclarationImpl
+import org.intellij.prisma.lang.psi.stubs.impl.PrismaDatasourceDeclarationStubImpl
+import org.intellij.prisma.lang.psi.stubs.impl.PrismaEnumDeclarationStubImpl
+import org.intellij.prisma.lang.psi.stubs.impl.PrismaEnumValueDeclarationStubImpl
+import org.intellij.prisma.lang.psi.stubs.impl.PrismaFieldDeclarationStubImpl
+import org.intellij.prisma.lang.psi.stubs.impl.PrismaGeneratorDeclarationStubImpl
+import org.intellij.prisma.lang.psi.stubs.impl.PrismaKeyValueStubImpl
+import org.intellij.prisma.lang.psi.stubs.impl.PrismaModelDeclarationStubImpl
+import org.intellij.prisma.lang.psi.stubs.impl.PrismaTypeAliasStubImpl
+import org.intellij.prisma.lang.psi.stubs.impl.PrismaTypeDeclarationStubImpl
+import org.intellij.prisma.lang.psi.stubs.impl.PrismaViewDeclarationStubImpl
 
 const val EXTERNAL_PREFIX_ID = "PRISMA:"
 

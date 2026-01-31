@@ -6,8 +6,33 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.util.asSafely
 import org.intellij.terraform.config.Constants
-import org.intellij.terraform.config.model.*
-import java.util.*
+import org.intellij.terraform.config.model.Argument
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.ContainerType
+import org.intellij.terraform.config.model.DataSourceType
+import org.intellij.terraform.config.model.EphemeralType
+import org.intellij.terraform.config.model.HclType
+import org.intellij.terraform.config.model.HclTypeImpl
+import org.intellij.terraform.config.model.ListType
+import org.intellij.terraform.config.model.MapType
+import org.intellij.terraform.config.model.NestingInfo
+import org.intellij.terraform.config.model.NestingType
+import org.intellij.terraform.config.model.ObjectType
+import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.ProviderTier
+import org.intellij.terraform.config.model.ProviderType
+import org.intellij.terraform.config.model.ResourceType
+import org.intellij.terraform.config.model.SetType
+import org.intellij.terraform.config.model.TfFunction
+import org.intellij.terraform.config.model.TupleType
+import org.intellij.terraform.config.model.Types
+import org.intellij.terraform.config.model.array
+import org.intellij.terraform.config.model.boolean
+import org.intellij.terraform.config.model.number
+import org.intellij.terraform.config.model.obj
+import org.intellij.terraform.config.model.string
+import java.util.Locale
 
 object TfBaseLoader {
   /*

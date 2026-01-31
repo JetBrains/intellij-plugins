@@ -2,11 +2,21 @@ package com.intellij.dts.completion
 
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.DtsTokenSets
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsCellArray
+import com.intellij.dts.lang.psi.DtsContainer
+import com.intellij.dts.lang.psi.DtsProperty
+import com.intellij.dts.lang.psi.DtsPropertyContent
+import com.intellij.dts.lang.psi.DtsStatement
+import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.lang.psi.DtsValue
 import com.intellij.dts.util.DtsTreeUtil
 import com.intellij.openapi.util.Key
 import com.intellij.patterns.PatternCondition
-import com.intellij.patterns.PlatformPatterns.*
+import com.intellij.patterns.PlatformPatterns.elementType
+import com.intellij.patterns.PlatformPatterns.not
+import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.patterns.PlatformPatterns.psiFile
+import com.intellij.patterns.PlatformPatterns.string
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement

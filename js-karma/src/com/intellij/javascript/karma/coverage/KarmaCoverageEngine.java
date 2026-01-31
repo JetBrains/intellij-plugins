@@ -1,7 +1,13 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.coverage;
 
-import com.intellij.coverage.*;
+import com.intellij.coverage.CoverageAnnotator;
+import com.intellij.coverage.CoverageDataManager;
+import com.intellij.coverage.CoverageEngine;
+import com.intellij.coverage.CoverageFileProvider;
+import com.intellij.coverage.CoverageRunner;
+import com.intellij.coverage.CoverageSuite;
+import com.intellij.coverage.CoverageSuitesBundle;
 import com.intellij.coverage.view.CoverageListRootNode;
 import com.intellij.coverage.view.CoverageViewExtension;
 import com.intellij.coverage.view.DirectoryCoverageViewExtension;

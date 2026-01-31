@@ -12,7 +12,7 @@ import icons.CucumberJavaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class CucumberJavaRunConfigurationType extends ConfigurationTypeBase {
   public CucumberJavaRunConfigurationType() {

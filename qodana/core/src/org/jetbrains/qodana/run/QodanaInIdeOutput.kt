@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.run
 
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.FULL_SARIF_REPORT_NAME
 import com.intellij.codeInspection.InspectionApplicationBase
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.FULL_SARIF_REPORT_NAME
 import java.nio.file.Path
 
 data class QodanaInIdeOutput(val reportGuid: String, val path: Path) {

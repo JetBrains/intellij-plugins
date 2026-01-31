@@ -8,7 +8,7 @@ import com.intellij.util.containers.MultiMap
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.html.Angular2HtmlFile
-import java.util.*
+import java.util.EnumSet
 
 internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 

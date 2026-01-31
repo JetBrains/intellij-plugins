@@ -1,8 +1,8 @@
 package com.jetbrains.lang.makefile.toolWindow
 
 import com.intellij.openapi.util.NlsSafe
-import javax.swing.*
-import javax.swing.tree.*
+import javax.swing.Icon
+import javax.swing.tree.TreeNode
 
 abstract class MakefileTreeNode(@NlsSafe val name: String) : TreeNode {
   abstract val icon: Icon

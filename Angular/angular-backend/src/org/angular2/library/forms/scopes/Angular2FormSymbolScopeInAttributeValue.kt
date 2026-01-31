@@ -20,7 +20,15 @@ import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor
 import org.angular2.lang.html.psi.PropertyBindingType
-import org.angular2.library.forms.*
+import org.angular2.library.forms.Angular2FormArray
+import org.angular2.library.forms.Angular2FormGroup
+import org.angular2.library.forms.Angular2FormsComponent
+import org.angular2.library.forms.FORM_ARRAY_NAME_ATTRIBUTE
+import org.angular2.library.forms.FORM_GROUP_BINDING
+import org.angular2.library.forms.FORM_GROUP_NAME_ATTRIBUTE
+import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
+import org.angular2.library.forms.NG_FORM_ARRAY_PROPS
+import org.angular2.library.forms.NG_FORM_GROUP_PROPS
 import org.angular2.library.forms.impl.Angular2FormArrayControl
 import org.angular2.library.forms.impl.Angular2UnknownFormArray
 import org.angular2.library.forms.impl.Angular2UnknownFormControl

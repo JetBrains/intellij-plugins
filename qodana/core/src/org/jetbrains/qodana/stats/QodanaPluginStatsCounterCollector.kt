@@ -18,8 +18,20 @@ import org.jetbrains.qodana.report.ReportDescriptor
 import org.jetbrains.qodana.run.LocalRunNotPublishedReportDescriptor
 import org.jetbrains.qodana.run.LocalRunPublishedReportDescriptor
 import org.jetbrains.qodana.ui.ci.EditYamlAndSetupCIWizardDialog
-import org.jetbrains.qodana.ui.problemsView.tree.model.*
-import org.jetbrains.qodana.ui.run.wizard.*
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeDirectoryNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeFileNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeInspectionCategoryNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeInspectionNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeModuleNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeProblemNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeRoot
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeSeverityNode
+import org.jetbrains.qodana.ui.run.wizard.EditYamlAndRunQodanaStep
+import org.jetbrains.qodana.ui.run.wizard.EditYamlBeforeSetupCIStep
+import org.jetbrains.qodana.ui.run.wizard.RunQodanaWizard
+import org.jetbrains.qodana.ui.run.wizard.SetupCIStep
+import org.jetbrains.qodana.ui.run.wizard.WelcomeRunQodanaStep
 
 internal object QodanaPluginStatsCounterCollector : CounterUsagesCollector() {
   override fun getGroup() = GROUP

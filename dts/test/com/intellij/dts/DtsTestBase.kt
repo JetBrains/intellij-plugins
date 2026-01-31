@@ -14,8 +14,12 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kotlinx.coroutines.runBlocking
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.*
-import kotlin.io.path.*
+import java.util.Locale
+import kotlin.io.path.absolute
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.exists
+import kotlin.io.path.pathString
+import kotlin.io.path.writeText
 
 val DTS_TEST_ROOT_PATH: String = PathManager.getHomePath() + "/contrib/dts"
 val DTS_TEST_DATA_PATH: String = PathManager.getHomePath() + "/contrib/dts/testData"

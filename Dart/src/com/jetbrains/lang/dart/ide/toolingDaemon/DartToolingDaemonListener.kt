@@ -2,7 +2,7 @@
 package com.jetbrains.lang.dart.ide.toolingDaemon
 
 import com.google.gson.JsonObject
-import java.util.*
+import java.util.EventListener
 
 fun interface DartToolingDaemonListener : EventListener {
   fun received(streamId: String, message: JsonObject)

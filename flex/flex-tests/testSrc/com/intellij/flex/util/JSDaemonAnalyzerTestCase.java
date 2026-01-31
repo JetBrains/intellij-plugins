@@ -22,7 +22,11 @@ import com.intellij.psi.css.inspections.CssUnknownPropertyInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidHtmlTagReferenceInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPropertyValueInspection;
-import com.intellij.testFramework.*;
+import com.intellij.testFramework.EditorTestUtil;
+import com.intellij.testFramework.ExpectedHighlightingData;
+import com.intellij.testFramework.InspectionsKt;
+import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.intellij.lang.annotations.Language;
@@ -32,7 +36,11 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Maxim.Mossienko

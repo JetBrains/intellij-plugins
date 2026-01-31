@@ -7,7 +7,7 @@ import com.intellij.psi.PsiType;
 import com.intellij.ui.IconManager;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public  class DroolsGlobalVariableStructureViewElement extends DroolsStructureViewElement {
   public DroolsGlobalVariableStructureViewElement(DroolsGlobalStatement globalStatement) {

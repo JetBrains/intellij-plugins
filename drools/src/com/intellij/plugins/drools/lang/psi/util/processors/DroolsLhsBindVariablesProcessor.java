@@ -2,15 +2,33 @@
 package com.intellij.plugins.drools.lang.psi.util.processors;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.plugins.drools.lang.psi.*;
+import com.intellij.plugins.drools.lang.psi.DroolsAccumulateFunctionBinding;
+import com.intellij.plugins.drools.lang.psi.DroolsFile;
+import com.intellij.plugins.drools.lang.psi.DroolsLhsPatternBind;
+import com.intellij.plugins.drools.lang.psi.DroolsNameId;
+import com.intellij.plugins.drools.lang.psi.DroolsParentRule;
+import com.intellij.plugins.drools.lang.psi.DroolsPsiCompositeElement;
+import com.intellij.plugins.drools.lang.psi.DroolsRuleStatement;
+import com.intellij.plugins.drools.lang.psi.DroolsStringId;
+import com.intellij.plugins.drools.lang.psi.DroolsUnaryAssignExpr;
+import com.intellij.plugins.drools.lang.psi.DroolsVisitor;
 import com.intellij.plugins.drools.lang.psi.util.DroolsLightVariable;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
+import com.intellij.psi.PsiVariable;
+import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public final class DroolsLhsBindVariablesProcessor implements DroolsDeclarationsProcessor {
   private static DroolsLhsBindVariablesProcessor myInstance;

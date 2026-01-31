@@ -27,7 +27,10 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Path;
 
 import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightFixture;
-import static com.intellij.testFramework.junit5.fixture.FixturesKt.*;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.moduleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.testNameFixture;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_5;
 
 /// Tests that [GherkinStepParameterRenameTest][GherkinStepParameterRenameTest]

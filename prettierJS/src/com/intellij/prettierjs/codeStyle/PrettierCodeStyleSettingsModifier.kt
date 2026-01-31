@@ -14,7 +14,13 @@ import com.intellij.openapi.options.ex.Settings
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.prettierjs.*
+import com.intellij.prettierjs.CONFIGURABLE_ID
+import com.intellij.prettierjs.PrettierBundle
+import com.intellij.prettierjs.PrettierConfig
+import com.intellij.prettierjs.PrettierConfigurable
+import com.intellij.prettierjs.PrettierConfiguration
+import com.intellij.prettierjs.isPrettierFormattingAllowedFor
+import com.intellij.prettierjs.resolveConfigForFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider

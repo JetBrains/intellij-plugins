@@ -4,7 +4,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.ui.SdkEditor;
 import com.intellij.openapi.ui.DialogWrapper;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 public class FlexSdkEditorDialog extends DialogWrapper {
   private JPanel myContentPane;

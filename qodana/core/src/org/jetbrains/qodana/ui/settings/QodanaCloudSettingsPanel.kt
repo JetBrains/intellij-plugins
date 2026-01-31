@@ -1,8 +1,12 @@
 package org.jetbrains.qodana.ui.settings
 
 import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.options.*
+import com.intellij.openapi.options.BoundConfigurable
+import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.Configurable.NoScroll
+import com.intellij.openapi.options.ConfigurableProvider
+import com.intellij.openapi.options.SearchableConfigurable
+import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer

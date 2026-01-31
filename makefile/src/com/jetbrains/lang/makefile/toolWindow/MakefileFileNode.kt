@@ -1,11 +1,11 @@
 package com.jetbrains.lang.makefile.toolWindow
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiFile
 import icons.MakefileIcons
-import java.util.*
-import java.util.Collections.*
-import javax.swing.*
-import javax.swing.tree.*
+import java.util.Collections.enumeration
+import java.util.Enumeration
+import javax.swing.Icon
+import javax.swing.tree.TreeNode
 
 class MakefileFileNode(private val myPsiFile: PsiFile, private val targets: List<MakefileTargetNode>) : MakefileTreeNode(myPsiFile.name) {
   init {

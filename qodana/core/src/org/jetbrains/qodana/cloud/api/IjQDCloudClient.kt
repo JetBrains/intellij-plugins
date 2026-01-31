@@ -6,7 +6,15 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.qodana.cloudclient.*
+import org.jetbrains.qodana.cloudclient.MockQDCloudHttpClient
+import org.jetbrains.qodana.cloudclient.MockQDCloudHttpRequestHandler
+import org.jetbrains.qodana.cloudclient.QDCloudClient
+import org.jetbrains.qodana.cloudclient.QDCloudEnvironment
+import org.jetbrains.qodana.cloudclient.QDCloudHttpClient
+import org.jetbrains.qodana.cloudclient.QDCloudRequest
+import org.jetbrains.qodana.cloudclient.QDCloudResponse
+import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
+import org.jetbrains.qodana.cloudclient.requestOn
 import java.net.http.HttpClient
 
 fun IjQDCloudClient(frontendUrl: String): QDCloudClient {

@@ -27,9 +27,15 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.*;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.DEFINE;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.NAME;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.VALUE;
 
 @Service
 public final class JSConditionalCompilationDefinitionsProviderImpl {

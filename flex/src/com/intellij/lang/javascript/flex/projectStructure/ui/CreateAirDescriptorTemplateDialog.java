@@ -25,14 +25,23 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import static com.intellij.flex.build.AirDescriptorOptions.*;
+import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_ACCESS_FINE_LOCATION;
+import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_CAMERA;
+import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_INTERNET;
+import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_WRITE_EXTERNAL_STORAGE;
 
 public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
 

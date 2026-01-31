@@ -11,14 +11,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.startOffset
+import com.intellij.terraform.template.TftplFileViewProvider
+import com.intellij.terraform.template.model.TftplVariable
+import com.intellij.terraform.template.psi.TftplFile
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.hil.HILElementTypes
 import org.intellij.terraform.hil.psi.ILExpressionHolder
 import org.intellij.terraform.hil.psi.ILVariable
 import org.intellij.terraform.hil.psi.template.TftplLanguage
-import com.intellij.terraform.template.TftplFileViewProvider
-import com.intellij.terraform.template.model.TftplVariable
-import com.intellij.terraform.template.psi.TftplFile
 
 internal const val HIGH_COMPLETION_PRIORITY: Double = 100.0
 

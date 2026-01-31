@@ -11,13 +11,22 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartExecutionScope;
+import com.jetbrains.lang.dart.psi.DartMetadata;
+import com.jetbrains.lang.dart.psi.DartPartOfStatement;
+import com.jetbrains.lang.dart.psi.DartReturnType;
+import com.jetbrains.lang.dart.psi.DartType;
+import com.jetbrains.lang.dart.psi.DartVarDeclarationList;
+import com.jetbrains.lang.dart.psi.DartVarDeclarationListPart;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public abstract class AbstractDartComponentImpl extends DartPsiCompositeElementImpl implements DartComponent {
   public AbstractDartComponentImpl(@NotNull ASTNode node) {

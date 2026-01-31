@@ -20,8 +20,20 @@
 package com.intellij.tsr;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.tsr.psi.TslBooleanLiteral;
+import com.intellij.tsr.psi.TslFallbackStringLiteral;
+import com.intellij.tsr.psi.TslList;
+import com.intellij.tsr.psi.TslMap;
+import com.intellij.tsr.psi.TslMapItem;
+import com.intellij.tsr.psi.TslNullLiteral;
+import com.intellij.tsr.psi.TslNumberLiteral;
+import com.intellij.tsr.psi.TslObject;
+import com.intellij.tsr.psi.TslObjectId;
+import com.intellij.tsr.psi.TslObjectRef;
+import com.intellij.tsr.psi.TslPropertyKeyValue;
+import com.intellij.tsr.psi.TslStringLiteral;
+import com.intellij.tsr.psi.TslValue;
 import org.jetbrains.annotations.NotNull;
-import com.intellij.tsr.psi.*;
 
 import java.util.List;
 

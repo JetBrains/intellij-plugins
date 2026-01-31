@@ -6,7 +6,11 @@ import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiFile
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.NamedType
+import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.model.ProviderType
+import org.intellij.terraform.config.model.getProviderForBlockType
 import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLProperty

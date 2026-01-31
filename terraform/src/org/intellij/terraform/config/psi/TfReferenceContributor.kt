@@ -5,7 +5,12 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
-import com.intellij.psi.*
+import com.intellij.psi.ElementManipulators
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiReferenceContributor
+import com.intellij.psi.PsiReferenceProvider
+import com.intellij.psi.PsiReferenceRegistrar
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.ProcessingContext
@@ -19,10 +24,21 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformVariablesFi
 import org.intellij.terraform.config.patterns.TfPsiPatterns.propertyWithName
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.patterns.HCLPatterns
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLArray
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLExpression
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLIndexSelectExpression
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLPsiUtil
+import org.intellij.terraform.hcl.psi.HCLSelectExpression
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.hil.psi.HCLElementLazyReference
 import org.intellij.terraform.hil.psi.HCLElementLazyReferenceBase
 

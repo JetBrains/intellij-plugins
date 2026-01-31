@@ -32,7 +32,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static com.intellij.lang.javascript.psi.JSCommonTypeNames.*;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.BOOLEAN_CLASS_NAME;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.FUNCTION_CLASS_NAMES;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.OBJECT_CLASS_NAME;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.STRING_CLASS_NAME;
 
 /**
  * @author Konstantin.Ulitin

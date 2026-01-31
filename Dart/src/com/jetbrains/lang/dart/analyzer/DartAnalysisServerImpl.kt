@@ -17,7 +17,11 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.util.concurrency.annotations.RequiresWriteLock
 import com.jetbrains.lang.dart.DartBundle
 import kotlinx.coroutines.launch
-import org.dartlang.analysis.server.protocol.*
+import org.dartlang.analysis.server.protocol.DartLspApplyWorkspaceEditParams
+import org.dartlang.analysis.server.protocol.DartLspApplyWorkspaceEditResult
+import org.dartlang.analysis.server.protocol.DartLspWorkspaceEdit
+import org.dartlang.analysis.server.protocol.MessageAction
+import org.dartlang.analysis.server.protocol.MessageType
 
 internal class DartAnalysisServerImpl(private val project: Project, socket: AnalysisServerSocket) : RemoteAnalysisServerImpl(socket) {
 

@@ -13,9 +13,9 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.startOffset
 import org.angular2.lang.expr.service.Angular2TypeScriptService
-import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.DiagnosticKind
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
+import org.angular2.lang.html.Angular2HtmlDialect
 
 abstract class AngularTcbOutOfBandInspectionBase(private val kind: DiagnosticKind) : LocalInspectionTool() {
 

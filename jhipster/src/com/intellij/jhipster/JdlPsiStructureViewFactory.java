@@ -2,10 +2,25 @@
 
 package com.intellij.jhipster;
 
-import com.intellij.ide.structureView.*;
+import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.ide.structureView.StructureViewModel;
+import com.intellij.ide.structureView.StructureViewModelBase;
+import com.intellij.ide.structureView.StructureViewTreeElement;
+import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
-import com.intellij.jhipster.psi.*;
+import com.intellij.jhipster.psi.JdlApplication;
+import com.intellij.jhipster.psi.JdlConfigBlock;
+import com.intellij.jhipster.psi.JdlConfigurationOption;
+import com.intellij.jhipster.psi.JdlConstant;
+import com.intellij.jhipster.psi.JdlDeployment;
+import com.intellij.jhipster.psi.JdlEntity;
+import com.intellij.jhipster.psi.JdlEntityFieldMapping;
+import com.intellij.jhipster.psi.JdlEnum;
+import com.intellij.jhipster.psi.JdlEnumValue;
+import com.intellij.jhipster.psi.JdlFile;
+import com.intellij.jhipster.psi.JdlOptionNameValue;
+import com.intellij.jhipster.psi.JdlRelationshipGroup;
 import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;

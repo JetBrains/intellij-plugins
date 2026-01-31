@@ -2,7 +2,7 @@ package org.jetbrains.qodana.registry
 
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.annotations.VisibleForTesting
-import java.util.*
+import java.util.MissingResourceException
 
 object QodanaRegistry {
   @VisibleForTesting

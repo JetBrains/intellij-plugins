@@ -9,7 +9,11 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.*;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.INCLUDE_NAMESPACES;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.MANIFEST;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.NAMESPACE;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.NAMESPACES;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.URI;
 
 public class NamespacesXmlBuilder extends NanoXmlUtil.BaseXmlBuilder {
 

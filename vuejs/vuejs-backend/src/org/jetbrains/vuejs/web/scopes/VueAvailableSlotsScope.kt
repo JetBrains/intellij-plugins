@@ -9,11 +9,20 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
-import com.intellij.polySymbols.query.*
+import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryStack
+import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.match
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlTag
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.DEFAULT_SLOT_NAME
+import org.jetbrains.vuejs.model.VueSymbol
+import org.jetbrains.vuejs.model.getAvailableSlots
+import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
+import org.jetbrains.vuejs.model.getMatchingAvailableSlots
 import org.jetbrains.vuejs.web.VUE_AVAILABLE_SLOTS
 
 class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {

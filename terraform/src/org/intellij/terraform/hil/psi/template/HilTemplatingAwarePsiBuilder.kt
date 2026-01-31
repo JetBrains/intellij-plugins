@@ -7,7 +7,7 @@ import com.intellij.lang.parser.GeneratedParserUtilBase
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.intellij.terraform.hil.HILElementTypes
-import java.util.*
+import java.util.LinkedList
 
 class HilTemplatingAwarePsiBuilder(builder: PsiBuilder?,
                                    state_: GeneratedParserUtilBase.ErrorState?,

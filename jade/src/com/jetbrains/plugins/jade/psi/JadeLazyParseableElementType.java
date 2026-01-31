@@ -3,7 +3,11 @@ package com.jetbrains.plugins.jade.psi;
 
 import com.intellij.embedding.EmbeddedLazyParseableElementType;
 import com.intellij.embedding.MasqueradingPsiBuilderAdapter;
-import com.intellij.lang.*;
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.Language;
+import com.intellij.lang.LanguageParserDefinitions;
+import com.intellij.lang.ParserDefinition;
+import com.intellij.lang.PsiBuilder;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.plugins.jade.lexer.JadeSimpleInterpolationLexer;

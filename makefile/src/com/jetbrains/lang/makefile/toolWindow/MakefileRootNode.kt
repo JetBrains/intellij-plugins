@@ -1,10 +1,10 @@
 package com.jetbrains.lang.makefile.toolWindow
 
 import icons.MakefileIcons
-import java.util.*
-import java.util.Collections.*
-import javax.swing.*
-import javax.swing.tree.*
+import java.util.Collections.enumeration
+import java.util.Enumeration
+import javax.swing.Icon
+import javax.swing.tree.TreeNode
 
 class MakefileRootNode(private val files: List<MakefileFileNode>) : MakefileTreeNode("make") {
   init {

@@ -4,7 +4,7 @@ package com.intellij.jhipster.uml.model;
 
 import com.intellij.openapi.util.NlsSafe;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public interface JdlNodeData {
   @NlsSafe String getName();

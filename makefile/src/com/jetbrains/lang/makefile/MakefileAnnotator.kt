@@ -15,7 +15,16 @@ import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.STRING
 import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.TARGET
 import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.VARIABLE
 import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.VARIABLE_VALUE
-import com.jetbrains.lang.makefile.psi.*
+import com.jetbrains.lang.makefile.psi.MakefileFunction
+import com.jetbrains.lang.makefile.psi.MakefileFunctionName
+import com.jetbrains.lang.makefile.psi.MakefilePrerequisite
+import com.jetbrains.lang.makefile.psi.MakefileRule
+import com.jetbrains.lang.makefile.psi.MakefileString
+import com.jetbrains.lang.makefile.psi.MakefileTarget
+import com.jetbrains.lang.makefile.psi.MakefileTypes
+import com.jetbrains.lang.makefile.psi.MakefileVariable
+import com.jetbrains.lang.makefile.psi.MakefileVariableUsage
+import com.jetbrains.lang.makefile.psi.MakefileVariableValue
 
 
 class MakefileAnnotator : Annotator, DumbAware {

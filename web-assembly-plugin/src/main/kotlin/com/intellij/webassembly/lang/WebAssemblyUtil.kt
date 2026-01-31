@@ -8,7 +8,11 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
-import com.intellij.webassembly.lang.psi.*
+import com.intellij.webassembly.lang.psi.WebAssemblyFileType
+import com.intellij.webassembly.lang.psi.WebAssemblyImport
+import com.intellij.webassembly.lang.psi.WebAssemblyModule
+import com.intellij.webassembly.lang.psi.WebAssemblyNamedElement
+import com.intellij.webassembly.lang.psi.WebAssemblyTypes
 
 internal object WebAssemblyUtil {
   fun findParamsLocals(parent: PsiElement): Array<WebAssemblyNamedElement> {

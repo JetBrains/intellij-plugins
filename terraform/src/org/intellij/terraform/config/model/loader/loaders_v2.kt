@@ -8,12 +8,28 @@ import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.TfParserDefinition
 import org.intellij.terraform.config.inspection.TypeSpecificationValidator
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.Argument
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.HclType
+import org.intellij.terraform.config.model.ListType
+import org.intellij.terraform.config.model.MapType
+import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.SetType
+import org.intellij.terraform.config.model.TfFunction
+import org.intellij.terraform.config.model.Types
+import org.intellij.terraform.config.model.VariadicArgument
+import org.intellij.terraform.config.model.array
+import org.intellij.terraform.config.model.boolean
+import org.intellij.terraform.config.model.isNotEmpty
 import org.intellij.terraform.config.model.loader.TfMetadataLoader.Companion.LOG
+import org.intellij.terraform.config.model.obj
+import org.intellij.terraform.config.model.string
+import org.intellij.terraform.config.model.toMap
 import org.intellij.terraform.hcl.HCLParser
 import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLProperty
-import java.util.*
+import java.util.Locale
 
 object BaseLoaderV2 : BaseLoader {
   override val version: String

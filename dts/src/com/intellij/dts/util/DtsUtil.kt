@@ -16,7 +16,7 @@ import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresReadLockAbsence
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
-import java.util.*
+import java.util.Collections
 
 object DtsUtil {
   fun isCMakeAvailable(project: Project): Boolean {

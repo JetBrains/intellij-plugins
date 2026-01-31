@@ -1,12 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight
 
-import com.intellij.polySymbols.html.HtmlSymbolsXmlExtension
-import com.intellij.polySymbols.html.StandardHtmlSymbol
-import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
 import com.intellij.javascript.web.WebFramework
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.polySymbols.html.HtmlSymbolsXmlExtension
+import com.intellij.polySymbols.html.StandardHtmlSymbol
+import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlFile

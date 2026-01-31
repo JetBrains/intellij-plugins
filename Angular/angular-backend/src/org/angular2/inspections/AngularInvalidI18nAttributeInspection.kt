@@ -15,7 +15,7 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.web.scopes.I18NAttributesScope.Companion.isI18nCandidate
-import java.util.*
+import java.util.TreeSet
 
 class AngularInvalidI18nAttributeInspection : AngularHtmlLikeTemplateLocalInspectionTool() {
 

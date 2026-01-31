@@ -12,7 +12,8 @@ import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 
 public final class DartPackagesLibraryType extends LibraryType<DartPackagesLibraryProperties> {
 

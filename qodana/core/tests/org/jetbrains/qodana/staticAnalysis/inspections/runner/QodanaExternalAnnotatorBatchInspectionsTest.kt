@@ -1,6 +1,10 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.GlobalInspectionContext
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ex.ExternalAnnotatorBatchInspection
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.progress.runBlockingCancellable

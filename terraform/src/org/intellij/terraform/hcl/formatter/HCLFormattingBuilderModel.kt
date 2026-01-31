@@ -1,13 +1,38 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.formatter
 
-import com.intellij.formatting.*
+import com.intellij.formatting.FormattingContext
+import com.intellij.formatting.FormattingModel
+import com.intellij.formatting.FormattingModelBuilder
+import com.intellij.formatting.FormattingModelProvider
+import com.intellij.formatting.Indent
+import com.intellij.formatting.SpacingBuilder
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import org.intellij.terraform.hcl.HCLElementTypes.*
+import org.intellij.terraform.hcl.HCLElementTypes.BLOCK
+import org.intellij.terraform.hcl.HCLElementTypes.BLOCK_OBJECT
+import org.intellij.terraform.hcl.HCLElementTypes.COMMA
+import org.intellij.terraform.hcl.HCLElementTypes.EQUALS
+import org.intellij.terraform.hcl.HCLElementTypes.HEREDOC_LITERAL
+import org.intellij.terraform.hcl.HCLElementTypes.IDENTIFIER
+import org.intellij.terraform.hcl.HCLElementTypes.L_BRACKET
+import org.intellij.terraform.hcl.HCLElementTypes.L_CURLY
+import org.intellij.terraform.hcl.HCLElementTypes.L_PAREN
+import org.intellij.terraform.hcl.HCLElementTypes.OBJECT
+import org.intellij.terraform.hcl.HCLElementTypes.OP_COLON
+import org.intellij.terraform.hcl.HCLElementTypes.OP_DOT
+import org.intellij.terraform.hcl.HCLElementTypes.OP_ELLIPSIS
+import org.intellij.terraform.hcl.HCLElementTypes.OP_MAPPING
+import org.intellij.terraform.hcl.HCLElementTypes.OP_NOT
+import org.intellij.terraform.hcl.HCLElementTypes.OP_QUEST
+import org.intellij.terraform.hcl.HCLElementTypes.PARAMETER_LIST
+import org.intellij.terraform.hcl.HCLElementTypes.R_BRACKET
+import org.intellij.terraform.hcl.HCLElementTypes.R_CURLY
+import org.intellij.terraform.hcl.HCLElementTypes.R_PAREN
+import org.intellij.terraform.hcl.HCLElementTypes.STRING_LITERAL
 import org.intellij.terraform.hcl.HCLLanguage
 
 open class HCLFormattingBuilderModel(val language: Language = HCLLanguage) : FormattingModelBuilder {

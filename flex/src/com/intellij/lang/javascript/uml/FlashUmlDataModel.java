@@ -2,7 +2,16 @@
 
 package com.intellij.lang.javascript.uml;
 
-import com.intellij.diagram.*;
+import com.intellij.diagram.DiagramAction;
+import com.intellij.diagram.DiagramBuilder;
+import com.intellij.diagram.DiagramDataModel;
+import com.intellij.diagram.DiagramEdge;
+import com.intellij.diagram.DiagramNode;
+import com.intellij.diagram.DiagramNoteNode;
+import com.intellij.diagram.DiagramProvider;
+import com.intellij.diagram.DiagramRelationshipInfo;
+import com.intellij.diagram.DiagramRelationships;
+import com.intellij.diagram.DiagramScopeManager;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
@@ -40,7 +49,15 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**

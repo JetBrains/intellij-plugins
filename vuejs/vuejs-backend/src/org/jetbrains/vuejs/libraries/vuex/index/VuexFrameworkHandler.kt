@@ -6,7 +6,11 @@ import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSNewExpression
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.ecma6.impl.JSStringTemplateExpressionImpl.isStringTemplateExpressionWithoutArguments
 import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl
 import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl.isQuotedLiteral

@@ -15,7 +15,12 @@ import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createPatternS
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createStringMatch
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createSymbolReferencePlaceholder
 import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver
-import com.intellij.polySymbols.query.*
+import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryStack
+import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.util.containers.map2Array
 import org.angular2.library.forms.Angular2FormGroup

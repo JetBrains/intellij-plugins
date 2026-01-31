@@ -2,8 +2,8 @@ package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.util.containers.BidirectionalMap;
 
-import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author Maxim.Mossienko

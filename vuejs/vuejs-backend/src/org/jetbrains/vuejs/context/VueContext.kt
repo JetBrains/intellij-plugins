@@ -23,7 +23,13 @@ import org.jetbrains.vuejs.codeInsight.VAPOR_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.withoutPreRelease
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.html.VueFileType
-import org.jetbrains.vuejs.libraries.*
+import org.jetbrains.vuejs.libraries.KIND_VUE_CLASS_COMPONENT_LIBRARY
+import org.jetbrains.vuejs.libraries.KIND_VUE_SSR_FRAMEWORK
+import org.jetbrains.vuejs.libraries.KIND_VUE_STORE
+import org.jetbrains.vuejs.libraries.VUE_CLASS_COMPONENT
+import org.jetbrains.vuejs.libraries.VUE_FRAMEWORK_NUXT
+import org.jetbrains.vuejs.libraries.VUE_STORE_PINIA
+import org.jetbrains.vuejs.libraries.VUE_STORE_VUEX
 import org.jetbrains.vuejs.libraries.componentDecorator.COMPONENT_DEC
 import org.jetbrains.vuejs.libraries.componentDecorator.OPTIONS_DEC
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS

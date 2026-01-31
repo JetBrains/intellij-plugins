@@ -15,7 +15,14 @@
  */
 package com.intellij.protobuf.lang.psi.type;
 
-import com.intellij.lang.*;
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.Language;
+import com.intellij.lang.LightPsiParser;
+import com.intellij.lang.LighterASTNode;
+import com.intellij.lang.LighterLazyParseableNode;
+import com.intellij.lang.ParserDefinition;
+import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.lang.PbParserDefinition;

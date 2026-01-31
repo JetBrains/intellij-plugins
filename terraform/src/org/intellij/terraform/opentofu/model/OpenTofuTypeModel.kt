@@ -3,7 +3,15 @@ package org.intellij.terraform.opentofu.model
 
 import com.intellij.openapi.fileTypes.FileType
 import org.intellij.terraform.config.Constants.HCL_DEFAULT_IDENTIFIER
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.NamedType
+import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.ReferenceHint
+import org.intellij.terraform.config.model.SimpleValueHint
+import org.intellij.terraform.config.model.Types
+import org.intellij.terraform.config.model.toMap
+import org.intellij.terraform.config.model.withDefaults
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted

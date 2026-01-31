@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project;
 import icons.PhoneGapIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
   public static final String RUN_CONFIGURATION_ID = "PhoneGap";

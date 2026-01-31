@@ -5,8 +5,8 @@ import com.intellij.patterns.ElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.completion.collectExistingMemberNames
-import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
 import org.intellij.prisma.lang.psi.PrismaPsiPatterns
 import org.intellij.prisma.lang.psi.afterNewLine
 

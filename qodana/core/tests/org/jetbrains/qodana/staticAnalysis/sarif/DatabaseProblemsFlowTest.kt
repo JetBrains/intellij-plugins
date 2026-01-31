@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV1
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

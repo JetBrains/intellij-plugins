@@ -7,7 +7,16 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.deno.DenoSettings
 import com.intellij.deno.findDenoConfig
 import com.intellij.deno.isDenoEnableForContext
-import com.intellij.deno.model.*
+import com.intellij.deno.model.DenoModel
+import com.intellij.deno.model.buildNpmModel
+import com.intellij.deno.model.hasJsrImportPrefix
+import com.intellij.deno.model.hasNpmImportPrefix
+import com.intellij.deno.model.isDepsFile
+import com.intellij.deno.model.isNpmFile
+import com.intellij.deno.model.jsrImportPrefix
+import com.intellij.deno.model.jsrUrlPart
+import com.intellij.deno.model.modFileName
+import com.intellij.deno.model.parseDenoUrl
 import com.intellij.javascript.JSModuleBaseReference
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonObject

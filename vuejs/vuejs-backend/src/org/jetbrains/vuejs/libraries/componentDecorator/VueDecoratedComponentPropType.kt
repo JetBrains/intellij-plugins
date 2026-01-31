@@ -6,7 +6,11 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
-import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSAnyType
+import com.intellij.lang.javascript.psi.types.JSCodeBasedType
+import com.intellij.lang.javascript.psi.types.JSTypeBaseImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.fixPrimitiveTypes
 import org.jetbrains.vuejs.codeInsight.getDecoratorArgument

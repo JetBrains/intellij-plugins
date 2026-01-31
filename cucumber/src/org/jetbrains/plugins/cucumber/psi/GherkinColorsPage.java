@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.HashMap;
 import java.util.Map;
 

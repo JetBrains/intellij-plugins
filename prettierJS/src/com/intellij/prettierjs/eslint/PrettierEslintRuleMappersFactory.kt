@@ -1,7 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs.eslint
 
-import com.intellij.json.psi.*
+import com.intellij.json.psi.JsonBooleanLiteral
+import com.intellij.json.psi.JsonLiteral
+import com.intellij.json.psi.JsonNumberLiteral
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonStringLiteral
+import com.intellij.json.psi.JsonValue
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonCommonUtil
 import com.intellij.lang.javascript.linter.eslint.importer.EslintRuleMapper
 import com.intellij.lang.javascript.linter.eslint.importer.EslintRuleMappersFactory

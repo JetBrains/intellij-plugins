@@ -15,13 +15,18 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.platform.lsp.api.LspServerManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFileFactory
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.Align
+import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.AlignY
+import com.intellij.ui.dsl.builder.HyperlinkEventAction
+import com.intellij.ui.dsl.builder.bind
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.layout.ComponentPredicate
 import com.intellij.util.ui.JBDimension
-import javax.swing.JComponent
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.service.AstroLspServerLoader
 import org.jetbrains.astro.service.AstroLspServerSupportProvider
+import javax.swing.JComponent
 
 class AstroServiceConfigurable(private val project: Project) : Configurable {
   private val settings = getAstroServiceSettings(project)

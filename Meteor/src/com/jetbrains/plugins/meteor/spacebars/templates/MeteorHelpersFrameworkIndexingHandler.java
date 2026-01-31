@@ -1,8 +1,17 @@
 package com.jetbrains.plugins.meteor.spacebars.templates;
 
 import com.dmarcotte.handlebars.psi.HbHash;
-import com.intellij.lang.javascript.index.*;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
+import com.intellij.lang.javascript.index.JSCustomIndexer;
+import com.intellij.lang.javascript.index.JSElementProxy;
+import com.intellij.lang.javascript.index.JSIndexContentBuilder;
+import com.intellij.lang.javascript.psi.JSArgumentList;
+import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
+import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementProvider;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;

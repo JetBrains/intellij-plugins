@@ -8,7 +8,7 @@ import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 @SuppressWarnings("unused")
 public class YeomanGeneratorInputControl implements YeomanGeneratorControl {

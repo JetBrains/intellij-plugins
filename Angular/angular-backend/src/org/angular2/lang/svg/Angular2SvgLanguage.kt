@@ -2,7 +2,12 @@
 package org.angular2.lang.svg
 
 import org.angular2.lang.Angular2Bundle
-import org.angular2.lang.html.*
+import org.angular2.lang.html.Angular2HtmlDialect
+import org.angular2.lang.html.Angular2HtmlLanguage
+import org.angular2.lang.html.Angular2TemplateFileElementTypeBase
+import org.angular2.lang.html.Angular2TemplateFileTypeBase
+import org.angular2.lang.html.Angular2TemplateLanguageBase
+import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.parser.Angular2TemplateParserDefinitionBase
 import org.jetbrains.annotations.Nls
 

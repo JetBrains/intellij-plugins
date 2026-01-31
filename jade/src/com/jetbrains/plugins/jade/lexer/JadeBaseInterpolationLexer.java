@@ -16,7 +16,13 @@ import com.jetbrains.plugins.jade.psi.JadeTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class JadeBaseInterpolationLexer extends MasqueradingLexer.SmartDelegate {
   private CharSequence myBuffer;

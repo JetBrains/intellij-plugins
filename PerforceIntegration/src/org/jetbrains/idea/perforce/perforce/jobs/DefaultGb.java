@@ -1,6 +1,7 @@
 package org.jetbrains.idea.perforce.perforce.jobs;
 
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 final class DefaultGb {
   public static GridBagConstraints create() {

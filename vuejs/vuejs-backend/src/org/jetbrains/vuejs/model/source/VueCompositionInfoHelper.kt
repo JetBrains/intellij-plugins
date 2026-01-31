@@ -1,9 +1,20 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSFunctionType
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
+import com.intellij.lang.javascript.psi.JSRecordType
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSAliasTypeImpl
+import com.intellij.lang.javascript.psi.types.JSAnyType
+import com.intellij.lang.javascript.psi.types.JSContextualUnionType
+import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSubstitutionContextImpl
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -13,7 +24,12 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueComputedProperty
+import org.jetbrains.vuejs.model.VueDataProperty
+import org.jetbrains.vuejs.model.VueImplicitElement
+import org.jetbrains.vuejs.model.VueMethod
+import org.jetbrains.vuejs.model.VueProperty
+import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.types.VueUnwrapRefType
 import kotlin.reflect.KClass
 import kotlin.reflect.safeCast

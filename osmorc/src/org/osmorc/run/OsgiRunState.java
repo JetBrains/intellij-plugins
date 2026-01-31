@@ -52,7 +52,14 @@ import org.osmorc.make.BundleCompiler;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * RunState for launching the OSGi framework.

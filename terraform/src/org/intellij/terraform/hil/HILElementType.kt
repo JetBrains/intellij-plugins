@@ -3,7 +3,21 @@ package org.intellij.terraform.hil
 
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import org.intellij.terraform.hil.HILElementTypes.*
+import org.intellij.terraform.hil.HILElementTypes.IL_BINARY_ADDITION_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_BINARY_AND_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_BINARY_EQUALITY_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_BINARY_MULTIPLY_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_BINARY_OR_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_BINARY_RELATIONAL_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_CONDITIONAL_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_EXPRESSION_HOLDER
+import org.intellij.terraform.hil.HILElementTypes.IL_INDEX_SELECT_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_LITERAL_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_METHOD_CALL_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_PARENTHESIZED_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_SELECT_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_UNARY_EXPRESSION
+import org.intellij.terraform.hil.HILElementTypes.IL_VARIABLE
 
 
 open class HILElementType(debugName: String) : IElementType(debugName, HILLanguage) {

@@ -28,7 +28,7 @@ import icons.PhoneGapIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.nio.file.Path;
 import java.util.List;
 

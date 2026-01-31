@@ -47,7 +47,9 @@ import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.util.FrameworkInstanceRenderer;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 import java.util.List;
 import java.util.Objects;
 

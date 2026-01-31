@@ -4,7 +4,11 @@ import com.intellij.ide.impl.getOriginFromUrl
 import com.intellij.ide.impl.getProjectOriginUrl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.extensions.RepositoryInfoProvider
 import kotlin.io.path.Path

@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.bnd.BndFileType;
 import org.osmorc.i18n.OsmorcBundle;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 public class BndRunConfigurationEditor extends SettingsEditor<BndRunConfigurationBase> {
   private JPanel myPanel;

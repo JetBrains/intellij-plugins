@@ -30,7 +30,12 @@ import org.jetbrains.qodana.respond200PublishReport
 import org.jetbrains.qodana.staticAnalysis.QodanaEnvEmpty
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase.Companion.runTest
 import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
-import org.jetbrains.qodana.staticAnalysis.inspections.config.*
+import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
+import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
+import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.SkipResultStrategy
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.jetbrains.qodana.staticAnalysis.markGenFolderAsGeneratedSources
 import org.jetbrains.qodana.staticAnalysis.profile.QODANA_PROMO_ANALYZE_EACH_N_FILE_KEY

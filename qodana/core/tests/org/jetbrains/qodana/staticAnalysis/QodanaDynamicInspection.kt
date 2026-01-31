@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.InspectionsBundle
 import com.intellij.codeInspection.ex.JobDescriptor
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project

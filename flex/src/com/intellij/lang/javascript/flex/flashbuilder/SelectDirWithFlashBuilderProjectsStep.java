@@ -19,7 +19,12 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import java.io.File;
 import java.util.ArrayList;

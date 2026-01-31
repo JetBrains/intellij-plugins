@@ -3,7 +3,7 @@ package com.intellij.dts.pp.test
 import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
-import java.util.*
+import java.util.Locale
 
 val PP_TEST_ROOT_PATH: String = PathManager.getHomePath() + "/contrib/dts/pp"
 val PP_TEST_DATA_PATH: String = PathManager.getHomePath() + "/contrib/dts/pp/testData"

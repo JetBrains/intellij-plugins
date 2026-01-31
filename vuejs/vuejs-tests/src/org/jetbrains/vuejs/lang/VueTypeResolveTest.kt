@@ -8,11 +8,11 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSAliasTypeImpl
+import com.intellij.polySymbols.testFramework.findOffsetBySignature
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.polySymbols.testFramework.findOffsetBySignature
 import junit.framework.TestCase
 
 private const val PREFIX_INTERPOLATION = "{{ "

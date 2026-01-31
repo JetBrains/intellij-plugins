@@ -8,12 +8,22 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.completion.collectExistingAttributeNames
 import org.intellij.prisma.ide.completion.findAttributeOwner
-import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
 import org.intellij.prisma.lang.PrismaConstants.BlockAttributes
 import org.intellij.prisma.lang.PrismaConstants.FieldAttributes
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.PrismaElementTypes
+import org.intellij.prisma.lang.psi.PrismaEntityDeclaration
+import org.intellij.prisma.lang.psi.PrismaEnumDeclaration
+import org.intellij.prisma.lang.psi.PrismaEnumValueDeclaration
+import org.intellij.prisma.lang.psi.PrismaFieldAttribute
+import org.intellij.prisma.lang.psi.PrismaFieldDeclaration
+import org.intellij.prisma.lang.psi.PrismaFieldType
+import org.intellij.prisma.lang.psi.PrismaPathExpression
+import org.intellij.prisma.lang.psi.PrismaTypeDeclaration
+import org.intellij.prisma.lang.psi.afterSiblingNewLinesAware
+import org.intellij.prisma.lang.psi.with
 
 object PrismaFieldAttributesProvider : PrismaSchemaCompletionProvider() {
   override val kind: PrismaSchemaKind = PrismaSchemaKind.FIELD_ATTRIBUTE

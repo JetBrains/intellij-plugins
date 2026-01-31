@@ -7,7 +7,11 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.testFramework.DumbModeTestUtils
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.qodana.QodanaPluginLightTestBase
@@ -24,7 +28,7 @@ import org.jetbrains.qodana.runDispatchingOnUi
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
 import org.jetbrains.qodana.ui.ProjectVcsDataProviderMock
 import java.nio.file.Path
-import java.util.*
+import java.util.UUID
 import kotlin.io.path.copyTo
 
 class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {

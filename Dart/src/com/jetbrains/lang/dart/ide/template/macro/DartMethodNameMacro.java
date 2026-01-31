@@ -8,7 +8,15 @@ import com.intellij.codeInsight.template.Result;
 import com.intellij.codeInsight.template.TextResult;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartFactoryConstructorDeclaration;
+import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBody;
+import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBodyOrNative;
+import com.jetbrains.lang.dart.psi.DartGetterDeclaration;
+import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
+import com.jetbrains.lang.dart.psi.DartNamedConstructorDeclaration;
+import com.jetbrains.lang.dart.psi.DartSetterDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

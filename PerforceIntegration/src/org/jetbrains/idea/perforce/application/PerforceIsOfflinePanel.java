@@ -4,8 +4,10 @@ import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class PerforceIsOfflinePanel implements PerforcePanel {
   @Override

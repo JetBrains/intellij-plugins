@@ -3,7 +3,12 @@ package org.jetbrains.plugins.cucumber.java.steps.search;
 
 import com.intellij.pom.PomDeclarationSearcher;
 import com.intellij.pom.PomTarget;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpressionList;
+import com.intellij.psi.PsiJavaCodeReferenceElement;
+import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiNewExpression;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;

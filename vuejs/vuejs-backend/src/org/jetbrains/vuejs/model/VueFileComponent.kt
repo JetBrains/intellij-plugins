@@ -2,11 +2,8 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.Project
-import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiFile
-import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 
 interface VueFileComponent : VuePsiSourcedComponent, PsiSourcedPolySymbol {
 

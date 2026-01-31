@@ -30,7 +30,7 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.xml.util.XmlUtil
 import junit.framework.TestCase
 import org.jetbrains.annotations.NonNls
-import java.util.*
+import java.util.Arrays
 
 class CfmlCompletionTest : JavaCodeInsightFixtureTestCase() {
 

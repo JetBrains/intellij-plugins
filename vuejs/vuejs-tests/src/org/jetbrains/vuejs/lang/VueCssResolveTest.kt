@@ -1,14 +1,14 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.polySymbols.testFramework.assertUnresolvedReference
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.psi.css.CssPseudoClass
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.polySymbols.testFramework.assertUnresolvedReference
-import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.polySymbols.testFramework.resolveReference
 import java.util.Arrays.asList
 
 class VueCssResolveTest : BasePlatformTestCase() {

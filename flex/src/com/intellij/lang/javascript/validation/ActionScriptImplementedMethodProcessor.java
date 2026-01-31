@@ -6,7 +6,12 @@ import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.CompletionResultSink;
+import com.intellij.lang.javascript.psi.resolve.JSCollectMembersToImplementProcessor;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.ResultSink;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 

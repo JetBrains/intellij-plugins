@@ -18,7 +18,11 @@ import com.intellij.plugins.serialmonitor.service.SerialPortService
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
 import com.intellij.terminal.JBTerminalSystemSettingsProviderBase
 import com.intellij.terminal.JBTerminalWidget
-import com.jediterm.terminal.*
+import com.jediterm.terminal.Terminal
+import com.jediterm.terminal.TerminalDataStream
+import com.jediterm.terminal.TerminalStarter
+import com.jediterm.terminal.TtyBasedArrayDataStream
+import com.jediterm.terminal.TtyConnector
 import com.jediterm.terminal.emulator.JediEmulator
 import com.jediterm.terminal.model.JediTerminal
 import com.jediterm.terminal.model.TerminalTextBuffer

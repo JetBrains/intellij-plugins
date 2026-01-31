@@ -11,9 +11,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveVisitor
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
+import com.intellij.terraform.template.psi.TftplVisitor
 import org.intellij.terraform.hil.psi.ILTemplateForBlockExpression
 import org.intellij.terraform.hil.psi.ILTemplateIfBlockExpression
-import com.intellij.terraform.template.psi.TftplVisitor
 
 internal class TftplFoldingBuilder : FoldingBuilder, DumbAware {
 

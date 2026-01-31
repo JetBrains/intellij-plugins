@@ -6,7 +6,7 @@ import icons.CucumberIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 
 public final class GherkinFileType extends LanguageFileType {

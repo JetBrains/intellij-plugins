@@ -26,7 +26,11 @@ package org.osmorc.facet.ui;
 
 import com.intellij.CommonBundle;
 import com.intellij.compiler.server.BuildManager;
-import com.intellij.facet.ui.*;
+import com.intellij.facet.ui.FacetEditorContext;
+import com.intellij.facet.ui.FacetEditorTab;
+import com.intellij.facet.ui.FacetEditorValidator;
+import com.intellij.facet.ui.FacetValidatorsManager;
+import com.intellij.facet.ui.ValidationResult;
 import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -60,16 +64,24 @@ import org.jetbrains.osgi.jps.model.OutputPathType;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.i18n.OsmorcBundle;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.io.File;
 
-import static org.jetbrains.osgi.jps.model.OutputPathType.*;
+import static org.jetbrains.osgi.jps.model.OutputPathType.CompilerOutputPath;
+import static org.jetbrains.osgi.jps.model.OutputPathType.OsgiOutputPath;
+import static org.jetbrains.osgi.jps.model.OutputPathType.SpecificOutputPath;
 
 /**
  * The facet editor tab which is used to set up Osmorc facet settings concerning the bundle JAR created by Osmorc.

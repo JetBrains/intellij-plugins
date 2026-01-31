@@ -1,7 +1,14 @@
 package com.intellij.lang.javascript.inspections.actionscript.fixes;
 
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSBlockStatement;
+import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSExpressionStatement;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSIfStatement;
+import com.intellij.lang.javascript.psi.JSSourceElement;
+import com.intellij.lang.javascript.psi.JSStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSSuperExpression;
 import com.intellij.lang.javascript.validation.JSAnnotatorProblemReporter;

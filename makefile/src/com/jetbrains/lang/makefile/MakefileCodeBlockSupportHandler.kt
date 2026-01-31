@@ -5,7 +5,14 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.jetbrains.lang.makefile.MakefileFoldingBuilder.MakefileConditionalElseFoldingDescriptor
 import com.jetbrains.lang.makefile.MakefileFoldingBuilder.MakefileConditionalFoldingDescriptor
-import com.jetbrains.lang.makefile.psi.MakefileTypes.*
+import com.jetbrains.lang.makefile.psi.MakefileTypes.CONDITIONAL
+import com.jetbrains.lang.makefile.psi.MakefileTypes.CONDITIONAL_ELSE
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_ELSE
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_ENDIF
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_IFDEF
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_IFEQ
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_IFNDEF
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_IFNEQ
 
 /**
  * Code block handler (which highlights matching tokens) for constructs like

@@ -30,7 +30,16 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 @State(name = "VcsOperationLog", storages = @Storage(StoragePathMacros.WORKSPACE_FILE), reportStatistic = false)
 public final class VcsOperationLog implements PersistentStateComponent<VcsOperationLog.OperationList>{

@@ -22,9 +22,29 @@ import com.intellij.util.containers.MultiMap
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
-import org.jetbrains.vuejs.index.*
-import org.jetbrains.vuejs.model.*
-import java.util.*
+import org.jetbrains.vuejs.index.GLOBAL
+import org.jetbrains.vuejs.index.VUE_COMPOSITION_APP_INDEX_KEY
+import org.jetbrains.vuejs.index.VUE_GLOBAL_DIRECTIVES_INDEX_KEY
+import org.jetbrains.vuejs.index.VUE_GLOBAL_FILTERS_INDEX_KEY
+import org.jetbrains.vuejs.index.VUE_MIXIN_BINDING_INDEX_KEY
+import org.jetbrains.vuejs.index.VUE_NO_INITIALIZER_COMPONENTS_INDEX
+import org.jetbrains.vuejs.index.VUE_OPTIONS_INDEX_KEY
+import org.jetbrains.vuejs.index.getForAllKeys
+import org.jetbrains.vuejs.index.resolve
+import org.jetbrains.vuejs.model.VueApp
+import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueFilter
+import org.jetbrains.vuejs.model.VueGlobal
+import org.jetbrains.vuejs.model.VueGlobalImpl
+import org.jetbrains.vuejs.model.VueLibrary
+import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
+import org.jetbrains.vuejs.model.VueMixin
+import org.jetbrains.vuejs.model.VueMode
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueNamedComponent
+import org.jetbrains.vuejs.model.VueScopeElement
+import java.util.TreeMap
 
 class VueSourceGlobal(override val project: Project, override val packageJsonUrl: String?) : VueGlobal {
 

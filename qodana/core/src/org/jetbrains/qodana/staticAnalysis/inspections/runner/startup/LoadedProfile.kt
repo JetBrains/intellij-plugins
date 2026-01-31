@@ -12,11 +12,11 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionProfileLoader
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.profile.QODANA_BASE_PROFILE_NAME
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManager
 import org.jetbrains.qodana.util.DynamicInspectionInitializer.Companion.waitForDynamicInspectionsInitialization
+import org.jetbrains.qodana.util.QodanaMessageReporter
 
 data class LoadedProfile(
   val profile: QodanaInspectionProfile,

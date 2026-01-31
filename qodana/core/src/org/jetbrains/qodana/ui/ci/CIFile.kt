@@ -2,12 +2,17 @@ package org.jetbrains.qodana.ui.ci
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import org.jetbrains.qodana.ui.ci.providers.CIFileChecker
+import org.jetbrains.qodana.ui.ci.providers.toNioPathSafe
 import org.jetbrains.qodana.util.appearedFilePath
 import org.jetbrains.qodana.util.disappearedFilePath
 import org.jetbrains.qodana.util.vfsChangesFilterFlow
-import org.jetbrains.qodana.ui.ci.providers.CIFileChecker
-import org.jetbrains.qodana.ui.ci.providers.toNioPathSafe
 import java.nio.file.Path
 import kotlin.io.path.pathString
 

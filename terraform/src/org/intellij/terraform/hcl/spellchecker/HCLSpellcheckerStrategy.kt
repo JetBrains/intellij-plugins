@@ -4,7 +4,11 @@ package org.intellij.terraform.hcl.spellchecker
 import com.intellij.codeInspection.SuppressionUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.project.DumbAware
-import com.intellij.psi.*
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiLanguageInjectionHost
+import com.intellij.psi.PsiNameIdentifierOwner
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
 import com.intellij.spellchecker.tokenizer.Tokenizer
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DescriptionProperty
@@ -12,7 +16,13 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns.RootBlockForHCLFiles
 import org.intellij.terraform.config.spellchecker.TfSpellcheckingUtil
 import org.intellij.terraform.config.spellchecker.TfSpellcheckingUtil.HeredocContentTokenizer
 import org.intellij.terraform.config.spellchecker.TfSpellcheckingUtil.StringLiteralTokenizer
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.hcl.psi.HCLHeredocContent
+import org.intellij.terraform.hcl.psi.HCLHeredocMarker
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 
 open class HCLSpellcheckerStrategy : SpellcheckingStrategy(), DumbAware {
   override fun getTokenizer(element: PsiElement?): Tokenizer<*> {

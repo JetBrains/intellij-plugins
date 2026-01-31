@@ -25,7 +25,11 @@ import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.VcsConnectionProblem;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.history.VcsRevisionNumber;
-import com.intellij.openapi.vcs.update.*;
+import com.intellij.openapi.vcs.update.SequentialUpdatesContext;
+import com.intellij.openapi.vcs.update.UpdateEnvironment;
+import com.intellij.openapi.vcs.update.UpdateSession;
+import com.intellij.openapi.vcs.update.UpdateSessionAdapter;
+import com.intellij.openapi.vcs.update.UpdatedFiles;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.WaitForProgressToShow;
 import com.intellij.util.containers.ContainerUtil;
@@ -43,7 +47,13 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManagerI;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @ApiStatus.Internal
 public abstract class AbstractUpdateEnvironment implements UpdateEnvironment {

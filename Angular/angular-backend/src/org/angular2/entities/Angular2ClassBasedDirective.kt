@@ -1,11 +1,11 @@
 package org.angular2.entities
 
-import com.intellij.polySymbols.js.apiStatus
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.JSExoticStringLiteralType
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
-import com.intellij.util.asSafely
 import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.js.apiStatus
+import com.intellij.util.asSafely
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.BINDING_GUARD
 

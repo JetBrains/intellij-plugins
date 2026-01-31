@@ -2,8 +2,19 @@ package org.jetbrains.qodana.staticAnalysis.sarif
 
 import com.google.gson.reflect.TypeToken
 import com.intellij.analysis.AnalysisScope
-import com.intellij.codeInspection.*
-import com.intellij.psi.*
+import com.intellij.codeInspection.GlobalInspectionContext
+import com.intellij.codeInspection.GlobalInspectionTool
+import com.intellij.codeInspection.GlobalSimpleInspectionTool
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.InspectionProfileEntry
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ProblemDescriptionsProcessor
+import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.psi.JavaElementVisitor
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiMethod
 import com.intellij.testFramework.LoggedErrorProcessor
 import com.intellij.testFramework.TestDataPath
 import com.jetbrains.qodana.sarif.SarifUtil
@@ -11,8 +22,8 @@ import com.jetbrains.qodana.sarif.model.Notification
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.FULL_SARIF_REPORT_NAME
-import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.profile.SanityInspectionGroup
+import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Test
 import java.nio.file.Paths

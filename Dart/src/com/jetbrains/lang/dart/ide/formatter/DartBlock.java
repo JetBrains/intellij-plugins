@@ -1,7 +1,13 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.formatter;
 
-import com.intellij.formatting.*;
+import com.intellij.formatting.Alignment;
+import com.intellij.formatting.Block;
+import com.intellij.formatting.ChildAttributes;
+import com.intellij.formatting.Indent;
+import com.intellij.formatting.Spacing;
+import com.intellij.formatting.Wrap;
+import com.intellij.formatting.WrapType;
 import com.intellij.formatting.templateLanguages.BlockWithParent;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.TokenType;
@@ -17,7 +23,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.jetbrains.lang.dart.DartTokenTypes.*;
+import static com.jetbrains.lang.dart.DartTokenTypes.ARGUMENT_LIST;
+import static com.jetbrains.lang.dart.DartTokenTypes.ASSIGNMENT_OPERATOR;
+import static com.jetbrains.lang.dart.DartTokenTypes.BREAK_STATEMENT;
+import static com.jetbrains.lang.dart.DartTokenTypes.COLON;
+import static com.jetbrains.lang.dart.DartTokenTypes.CONTINUE_STATEMENT;
+import static com.jetbrains.lang.dart.DartTokenTypes.DEFAULT_CASE;
+import static com.jetbrains.lang.dart.DartTokenTypes.FOR_STATEMENT;
+import static com.jetbrains.lang.dart.DartTokenTypes.IF_STATEMENT;
+import static com.jetbrains.lang.dart.DartTokenTypes.LBRACE;
+import static com.jetbrains.lang.dart.DartTokenTypes.LBRACKET;
+import static com.jetbrains.lang.dart.DartTokenTypes.OPEN_QUOTE;
+import static com.jetbrains.lang.dart.DartTokenTypes.RETURN_STATEMENT;
+import static com.jetbrains.lang.dart.DartTokenTypes.RPAREN;
+import static com.jetbrains.lang.dart.DartTokenTypes.SEMICOLON;
+import static com.jetbrains.lang.dart.DartTokenTypes.SWITCH_CASE;
+import static com.jetbrains.lang.dart.DartTokenTypes.THROW_EXPRESSION;
+import static com.jetbrains.lang.dart.DartTokenTypes.WHILE_STATEMENT;
 
 public class DartBlock extends AbstractBlock implements BlockWithParent {
   public static final List<DartBlock> DART_EMPTY = Collections.emptyList();

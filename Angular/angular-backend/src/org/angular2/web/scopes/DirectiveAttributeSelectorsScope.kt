@@ -24,7 +24,17 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates
-import org.angular2.web.*
+import org.angular2.web.Angular2DirectiveSymbolWrapper
+import org.angular2.web.Angular2StructuralDirectiveSymbol
+import org.angular2.web.Angular2Symbol
+import org.angular2.web.ELEMENT_NG_TEMPLATE
+import org.angular2.web.NG_DIRECTIVE_ATTRIBUTES
+import org.angular2.web.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.NG_DIRECTIVE_ELEMENT_SELECTORS
+import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_IN_OUTS
+import org.angular2.web.NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.NG_STRUCTURAL_DIRECTIVES
 
 class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolScope {
 

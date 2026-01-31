@@ -2,7 +2,15 @@
 
 package com.intellij.jhipster.uml;
 
-import com.intellij.diagram.*;
+import com.intellij.diagram.DiagramDataModel;
+import com.intellij.diagram.DiagramElementManager;
+import com.intellij.diagram.DiagramNodeContentManager;
+import com.intellij.diagram.DiagramPresentationModel;
+import com.intellij.diagram.DiagramProvider;
+import com.intellij.diagram.DiagramRelationshipManager;
+import com.intellij.diagram.DiagramVfsResolver;
+import com.intellij.diagram.DiagramVisibilityManager;
+import com.intellij.diagram.EmptyDiagramVisibilityManager;
 import com.intellij.jhipster.JdlBundle;
 import com.intellij.jhipster.uml.model.JdlNodeData;
 import com.intellij.openapi.project.Project;

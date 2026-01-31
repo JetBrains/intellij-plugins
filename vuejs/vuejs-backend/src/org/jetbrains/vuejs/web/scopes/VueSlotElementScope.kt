@@ -36,7 +36,13 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.DEFAULT_SLOT_NAME
+import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
+import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueDelegatedContainer
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueNamedComponent
+import org.jetbrains.vuejs.model.VueTemplateSymbol
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_SPECIAL_PROPERTIES
 

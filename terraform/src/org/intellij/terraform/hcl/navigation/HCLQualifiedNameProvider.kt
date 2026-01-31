@@ -8,7 +8,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.patterns.TfPsiPatterns
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLPsiUtil
 
 class HCLQualifiedNameProvider : QualifiedNameProvider {
   override fun adjustElementToCopy(element: PsiElement): PsiElement? {

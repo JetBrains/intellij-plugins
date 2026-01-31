@@ -7,8 +7,22 @@ import com.intellij.diagram.DiagramEdge;
 import com.intellij.diagram.DiagramNode;
 import com.intellij.diagram.DiagramProvider;
 import com.intellij.jhipster.JdlLanguage;
-import com.intellij.jhipster.psi.*;
-import com.intellij.jhipster.uml.model.*;
+import com.intellij.jhipster.psi.JdlEntity;
+import com.intellij.jhipster.psi.JdlEnum;
+import com.intellij.jhipster.psi.JdlEnumValue;
+import com.intellij.jhipster.psi.JdlFile;
+import com.intellij.jhipster.psi.JdlRelationshipEntity;
+import com.intellij.jhipster.psi.JdlRelationshipGroup;
+import com.intellij.jhipster.psi.JdlRelationshipMapping;
+import com.intellij.jhipster.uml.model.JdlDiagramData;
+import com.intellij.jhipster.uml.model.JdlDiagramRootData;
+import com.intellij.jhipster.uml.model.JdlEntityNodeData;
+import com.intellij.jhipster.uml.model.JdlEntityNodeField;
+import com.intellij.jhipster.uml.model.JdlEntityNodeLink;
+import com.intellij.jhipster.uml.model.JdlEntityNodeLinkType;
+import com.intellij.jhipster.uml.model.JdlEnumNodeData;
+import com.intellij.jhipster.uml.model.JdlEnumNodeLink;
+import com.intellij.jhipster.uml.model.JdlNodeData;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -19,7 +33,12 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.intellij.jhipster.JdlConstants.USER_ENTITY_NAME;
 

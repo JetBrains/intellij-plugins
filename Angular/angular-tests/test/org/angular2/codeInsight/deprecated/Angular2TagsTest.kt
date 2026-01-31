@@ -4,12 +4,12 @@ package org.angular2.codeInsight.deprecated
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
+import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
-import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.Angular2TestUtil
+import org.angular2.inspections.AngularUndefinedBindingInspection
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2TagsTest : Angular2CodeInsightFixtureTestCase() {

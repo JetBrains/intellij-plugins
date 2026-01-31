@@ -1,8 +1,8 @@
 package com.intellij.dts.lang.resolve.files
 
 import com.intellij.dts.lang.psi.FileInclude
-import com.intellij.dts.zephyr.DtsZephyrProvider
 import com.intellij.dts.zephyr.DtsZephyrFileUtil
+import com.intellij.dts.zephyr.DtsZephyrProvider
 import com.intellij.psi.PsiFile
 
 /**

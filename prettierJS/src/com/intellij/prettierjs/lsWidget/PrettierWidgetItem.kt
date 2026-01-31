@@ -29,7 +29,15 @@ import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
 import com.intellij.platform.lang.lsWidget.OpenSettingsAction
 import com.intellij.platform.lang.lsWidget.impl.fus.LanguageServiceWidgetActionKind
 import com.intellij.platform.lang.lsWidget.impl.fus.LanguageServiceWidgetUsagesCollector
-import com.intellij.prettierjs.*
+import com.intellij.prettierjs.OpenConfigurationAction
+import com.intellij.prettierjs.PrettierBundle
+import com.intellij.prettierjs.PrettierConfigurable
+import com.intellij.prettierjs.PrettierError
+import com.intellij.prettierjs.PrettierLanguageService
+import com.intellij.prettierjs.PrettierLanguageServiceImpl
+import com.intellij.prettierjs.PrettierLanguageServiceManager
+import com.intellij.prettierjs.PrettierUtil
+import com.intellij.prettierjs.isPrettierFormattingAllowedFor
 import javax.swing.Icon
 
 internal class PrettierWidgetItem(

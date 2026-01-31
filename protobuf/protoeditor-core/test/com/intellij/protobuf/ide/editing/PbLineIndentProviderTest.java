@@ -21,12 +21,12 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actions.EnterAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.codeStyle.lineIndent.LineIndentProvider;
-import com.intellij.psi.impl.source.codeStyle.lineIndent.FormatterBasedLineIndentProvider;
-import com.intellij.util.text.CharArrayUtil;
 import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 import com.intellij.protobuf.lang.PbLanguage;
+import com.intellij.psi.codeStyle.lineIndent.LineIndentProvider;
+import com.intellij.psi.impl.source.codeStyle.lineIndent.FormatterBasedLineIndentProvider;
+import com.intellij.util.text.CharArrayUtil;
 
 /** Tests for {@link PbLineIndentProvider} */
 public class PbLineIndentProviderTest extends PbCodeInsightFixtureTestCase {

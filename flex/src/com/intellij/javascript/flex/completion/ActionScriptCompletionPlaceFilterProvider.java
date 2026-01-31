@@ -2,11 +2,20 @@
 package com.intellij.javascript.flex.completion;
 
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSCommonTypeNames;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSPsiElementBase;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTagType;
-import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.javascript.psi.resolve.JSCompletionPlaceFilter;
+import com.intellij.lang.javascript.psi.resolve.JSCompletionPlaceFilterProvider;
+import com.intellij.lang.javascript.psi.resolve.JSDefaultPlaceFilters;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.psi.PsiElement;

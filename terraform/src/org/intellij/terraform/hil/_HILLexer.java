@@ -10,7 +10,47 @@ import com.intellij.psi.tree.IElementType;
 
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
-import static org.intellij.terraform.hil.HILElementTypes.*;
+import static org.intellij.terraform.hil.HILElementTypes.COLON_COLON;
+import static org.intellij.terraform.hil.HILElementTypes.COMMA;
+import static org.intellij.terraform.hil.HILElementTypes.DOUBLE_QUOTED_STRING;
+import static org.intellij.terraform.hil.HILElementTypes.ELSE_KEYWORD;
+import static org.intellij.terraform.hil.HILElementTypes.ENDFOR_KEYWORD;
+import static org.intellij.terraform.hil.HILElementTypes.ENDIF_KEYWORD;
+import static org.intellij.terraform.hil.HILElementTypes.EQUALS;
+import static org.intellij.terraform.hil.HILElementTypes.FALSE;
+import static org.intellij.terraform.hil.HILElementTypes.FOR_KEYWORD;
+import static org.intellij.terraform.hil.HILElementTypes.ID;
+import static org.intellij.terraform.hil.HILElementTypes.IF_KEYWORD;
+import static org.intellij.terraform.hil.HILElementTypes.INTERPOLATION_START;
+import static org.intellij.terraform.hil.HILElementTypes.IN_KEYWORD;
+import static org.intellij.terraform.hil.HILElementTypes.L_BRACKET;
+import static org.intellij.terraform.hil.HILElementTypes.L_CURLY;
+import static org.intellij.terraform.hil.HILElementTypes.L_PAREN;
+import static org.intellij.terraform.hil.HILElementTypes.NULL;
+import static org.intellij.terraform.hil.HILElementTypes.NUMBER;
+import static org.intellij.terraform.hil.HILElementTypes.OP_AND_AND;
+import static org.intellij.terraform.hil.HILElementTypes.OP_COLON;
+import static org.intellij.terraform.hil.HILElementTypes.OP_DIV;
+import static org.intellij.terraform.hil.HILElementTypes.OP_DOT;
+import static org.intellij.terraform.hil.HILElementTypes.OP_ELLIPSIS;
+import static org.intellij.terraform.hil.HILElementTypes.OP_EQUAL;
+import static org.intellij.terraform.hil.HILElementTypes.OP_GREATER;
+import static org.intellij.terraform.hil.HILElementTypes.OP_GREATER_OR_EQUAL;
+import static org.intellij.terraform.hil.HILElementTypes.OP_LESS;
+import static org.intellij.terraform.hil.HILElementTypes.OP_LESS_OR_EQUAL;
+import static org.intellij.terraform.hil.HILElementTypes.OP_MINUS;
+import static org.intellij.terraform.hil.HILElementTypes.OP_MOD;
+import static org.intellij.terraform.hil.HILElementTypes.OP_MUL;
+import static org.intellij.terraform.hil.HILElementTypes.OP_NOT;
+import static org.intellij.terraform.hil.HILElementTypes.OP_NOT_EQUAL;
+import static org.intellij.terraform.hil.HILElementTypes.OP_OR_OR;
+import static org.intellij.terraform.hil.HILElementTypes.OP_PLUS;
+import static org.intellij.terraform.hil.HILElementTypes.OP_QUEST;
+import static org.intellij.terraform.hil.HILElementTypes.R_BRACKET;
+import static org.intellij.terraform.hil.HILElementTypes.R_CURLY;
+import static org.intellij.terraform.hil.HILElementTypes.R_PAREN;
+import static org.intellij.terraform.hil.HILElementTypes.TEMPLATE_START;
+import static org.intellij.terraform.hil.HILElementTypes.TRUE;
 
 @SuppressWarnings({"ALL"})
 

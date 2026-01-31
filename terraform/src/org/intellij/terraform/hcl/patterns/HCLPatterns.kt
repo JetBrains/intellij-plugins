@@ -1,7 +1,11 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.patterns
 
-import com.intellij.patterns.*
+import com.intellij.patterns.ElementPattern
+import com.intellij.patterns.PatternCondition
+import com.intellij.patterns.PlatformPatterns
+import com.intellij.patterns.PsiElementPattern
+import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.parentsOfType
@@ -9,8 +13,18 @@ import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.hcl.HCLTokenTypes
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLArray
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLPsiUtil
+import org.intellij.terraform.hcl.psi.HCLSelectExpression
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
+import org.intellij.terraform.hcl.psi.HCLValue
 import org.intellij.terraform.hcl.psi.common.ProviderDefinedFunction
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 
 object HCLPatterns {
   val Nothing: ElementPattern<PsiElement> = StandardPatterns.alwaysFalse()

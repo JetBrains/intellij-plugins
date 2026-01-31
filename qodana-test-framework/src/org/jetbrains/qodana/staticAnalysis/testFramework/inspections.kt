@@ -16,7 +16,11 @@ import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.testFramework.replaceService
 import kotlinx.coroutines.cancel
-import org.jetbrains.qodana.staticAnalysis.profile.*
+import org.jetbrains.qodana.staticAnalysis.profile.QodanaApplicationInspectionProfileManager
+import org.jetbrains.qodana.staticAnalysis.profile.QodanaProjectInspectionProfileManager
+import org.jetbrains.qodana.staticAnalysis.profile.QodanaToolApplicationRegistrar
+import org.jetbrains.qodana.staticAnalysis.profile.QodanaToolProjectRegistrar
+import org.jetbrains.qodana.staticAnalysis.profile.QodanaToolRegistrar
 
 fun reinstantiateInspectionRelatedServices(project: Project, testRootDisposable: Disposable) {
   val scope = (project as ComponentManagerEx).getCoroutineScope().childScope("qdtest-inspections-services")

@@ -9,10 +9,22 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.TfTypeModel
+import org.intellij.terraform.config.model.Types
+import org.intellij.terraform.config.model.getType
+import org.intellij.terraform.config.model.isConvertibleTo
+import org.intellij.terraform.config.model.isListType
+import org.intellij.terraform.config.model.isObjectType
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElementGenerator
+import org.intellij.terraform.hcl.psi.HCLElementVisitor
+import org.intellij.terraform.hcl.psi.HCLExpression
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
+import org.intellij.terraform.hcl.psi.HCLValue
 import org.intellij.terraform.isTfOrTofuPsiFile
 import org.intellij.terraform.joinCommaOr
 

@@ -12,7 +12,6 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.containers.TreeTraversal
 import org.angular2.Angular2DecoratorUtil.getProperty
-import org.angular2.Angular2DecoratorUtil.isForwardRefCall
 import org.angular2.entities.Angular2Entity
 import org.angular2.entities.source.Angular2SourceEntityListProcessor
 import org.jetbrains.annotations.Nls

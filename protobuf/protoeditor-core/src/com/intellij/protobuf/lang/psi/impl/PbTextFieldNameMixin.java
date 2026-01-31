@@ -16,7 +16,11 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbNamedTypeElement;
+import com.intellij.protobuf.lang.psi.PbTextExtensionName;
+import com.intellij.protobuf.lang.psi.PbTextFieldName;
+import com.intellij.protobuf.lang.psi.PbTypeName;
 import com.intellij.protobuf.lang.resolve.PbTextFieldNameReference;
 import com.intellij.protobuf.lang.util.BuiltInType;
 import com.intellij.psi.PsiElement;

@@ -17,7 +17,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
-import com.intellij.psi.search.*
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.GlobalSearchScopes
+import com.intellij.psi.search.PsiElementProcessor
+import com.intellij.psi.search.PsiSearchHelper
+import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.childrenOfType
@@ -38,8 +42,14 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TfRequiredProvidersBlock
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElementVisitor
+import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.withGuaranteedProgressIndicator
 
 class Module private constructor(val moduleRoot: PsiFileSystemItem) {

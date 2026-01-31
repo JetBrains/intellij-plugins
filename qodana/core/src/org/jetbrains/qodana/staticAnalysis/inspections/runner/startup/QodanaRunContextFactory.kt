@@ -5,16 +5,20 @@ import com.intellij.diagnostic.PluginException
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.global.QodanaConfigJson
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import org.jetbrains.qodana.staticAnalysis.stat.UsageCollector
 import org.jetbrains.qodana.staticAnalysis.stat.UsageCollector.logPromoGithubConfigPresent
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import kotlin.io.path.readText
 
 private val logger = logger<QodanaRunContextFactory>()

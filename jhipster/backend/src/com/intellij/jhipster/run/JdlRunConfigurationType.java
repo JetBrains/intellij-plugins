@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class JdlRunConfigurationType implements ConfigurationType, DumbAware {
   public static final String ID = "JHipsterJDL";

@@ -13,7 +13,13 @@ import org.intellij.prisma.ide.schema.PrismaSchemaProvider
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaDeclaration
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameterLocation
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.PrismaArgumentsOwner
+import org.intellij.prisma.lang.psi.PrismaArrayExpression
+import org.intellij.prisma.lang.psi.PrismaFile
+import org.intellij.prisma.lang.psi.PrismaFunctionCall
+import org.intellij.prisma.lang.psi.PrismaNamedArgument
+import org.intellij.prisma.lang.psi.PrismaPathExpression
+import org.intellij.prisma.lang.psi.PrismaValueArgument
 
 object PrismaParametersProvider : PrismaCompletionProvider() {
   override val pattern: ElementPattern<out PsiElement> =

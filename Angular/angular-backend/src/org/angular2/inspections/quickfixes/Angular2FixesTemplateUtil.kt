@@ -4,7 +4,6 @@ package org.angular2.inspections.quickfixes
 import com.intellij.codeInsight.template.Template
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
-import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 
 object Angular2FixesTemplateUtil {
   fun addClassMemberModifiers(template: Template, staticContext: Boolean, targetClass: JSClass) {

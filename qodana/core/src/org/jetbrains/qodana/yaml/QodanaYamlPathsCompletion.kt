@@ -8,7 +8,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.findDirectory
 import com.intellij.openapi.vfs.findFileOrDirectory
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.jetbrains.yaml.psi.YAMLFile
 
 class QodanaYamlPathsCompletion : QodanaYamlCompletionContributorBase() {

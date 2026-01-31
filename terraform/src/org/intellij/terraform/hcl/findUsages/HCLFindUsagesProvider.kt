@@ -9,9 +9,13 @@ import com.intellij.psi.PsiNamedElement
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.createHclLexer
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLPsiUtil
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.jetbrains.annotations.Nls
-import kotlin.toString
 
 open class HCLFindUsagesProvider : FindUsagesProvider {
   override fun getWordsScanner(): WordsScanner? {

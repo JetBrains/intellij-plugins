@@ -1,6 +1,8 @@
 package com.intellij.dts.documentation
 
-import com.intellij.lang.documentation.DocumentationMarkup.*
+import com.intellij.lang.documentation.DocumentationMarkup.CONTENT_ELEMENT
+import com.intellij.lang.documentation.DocumentationMarkup.DEFINITION_ELEMENT
+import com.intellij.lang.documentation.DocumentationMarkup.PRE_ELEMENT
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.HtmlChunk

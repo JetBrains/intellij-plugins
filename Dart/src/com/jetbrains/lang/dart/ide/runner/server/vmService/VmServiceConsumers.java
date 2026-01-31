@@ -1,8 +1,17 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
-import org.dartlang.vm.service.consumer.*;
-import org.dartlang.vm.service.element.*;
+import org.dartlang.vm.service.consumer.Consumer;
+import org.dartlang.vm.service.consumer.GetIsolateConsumer;
+import org.dartlang.vm.service.consumer.InvokeConsumer;
+import org.dartlang.vm.service.consumer.ResumeConsumer;
+import org.dartlang.vm.service.consumer.SuccessConsumer;
+import org.dartlang.vm.service.consumer.VMConsumer;
+import org.dartlang.vm.service.element.Breakpoint;
+import org.dartlang.vm.service.element.ErrorRef;
+import org.dartlang.vm.service.element.RPCError;
+import org.dartlang.vm.service.element.Sentinel;
+import org.dartlang.vm.service.element.Success;
 
 import java.util.List;
 

@@ -9,7 +9,13 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.paths.StaticPathReferenceProvider
 import com.intellij.patterns.XmlAttributeValuePattern
 import com.intellij.patterns.XmlPatterns
-import com.intellij.psi.*
+import com.intellij.psi.ElementManipulators
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiReferenceBase
+import com.intellij.psi.PsiReferenceContributor
+import com.intellij.psi.PsiReferenceProvider
+import com.intellij.psi.PsiReferenceRegistrar
 import com.intellij.psi.css.resolve.CssReferenceProviderUtil.getFileReferenceData
 import com.intellij.psi.css.resolve.StylesheetFileReferenceSet
 import com.intellij.psi.filters.ElementFilter
@@ -19,7 +25,11 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
-import com.intellij.xml.util.HtmlUtil.*
+import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
+import com.intellij.xml.util.HtmlUtil.SRC_ATTRIBUTE_NAME
+import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
+import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
+import com.intellij.xml.util.HtmlUtil.hasHtmlPrefix
 import org.jetbrains.vuejs.lang.html.lexer.VueTagEmbeddedContentProvider
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 

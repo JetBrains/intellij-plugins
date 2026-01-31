@@ -5,7 +5,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.builders.ModuleFixtureBuilder
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.ModuleFixture
-import java.util.*
+import java.util.Arrays
 
 class JsonCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<ModuleFixture>>() {
   fun testResourceType1() {

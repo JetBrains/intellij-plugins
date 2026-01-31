@@ -29,7 +29,9 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.OsgiRunConfiguration;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import java.util.HashMap;
 import java.util.Map;
 

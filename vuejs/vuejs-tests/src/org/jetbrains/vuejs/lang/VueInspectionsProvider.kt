@@ -4,15 +4,31 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection
 import com.intellij.codeInspection.InspectionToolProvider
 import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.codeInspection.htmlInspections.*
+import com.intellij.codeInspection.htmlInspections.HtmlExtraClosingTagInspection
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
+import com.intellij.codeInspection.htmlInspections.HtmlWrongAttributeValueInspection
+import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection
-import com.intellij.lang.javascript.inspections.*
+import com.intellij.lang.javascript.inspections.JSAnnotatorInspection
+import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection
+import com.intellij.lang.javascript.inspections.JSConstantReassignmentInspection
+import com.intellij.lang.javascript.inspections.JSIncompatibleTypesComparisonInspection
+import com.intellij.lang.javascript.inspections.JSUndeclaredVariableInspection
+import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection
+import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
+import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.xml.util.CheckEmptyTagInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
-import org.jetbrains.vuejs.inspections.*
+import org.jetbrains.vuejs.inspections.DuplicateTagInspection
+import org.jetbrains.vuejs.inspections.VueDeprecatedSymbolInspection
+import org.jetbrains.vuejs.inspections.VueMissingComponentImportInspection
+import org.jetbrains.vuejs.inspections.VueUnrecognizedDirectiveInspection
+import org.jetbrains.vuejs.inspections.VueUnrecognizedSlotInspection
 
 class VueInspectionsProvider : InspectionToolProvider {
   override fun getInspectionClasses(): Array<Class<out LocalInspectionTool>> =

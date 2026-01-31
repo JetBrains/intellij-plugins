@@ -5,7 +5,11 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class PlainGherkinKeywordProvider implements GherkinKeywordProvider {
   public static final GherkinKeywordTable DEFAULT_KEYWORD_TABLE = new GherkinKeywordTable();

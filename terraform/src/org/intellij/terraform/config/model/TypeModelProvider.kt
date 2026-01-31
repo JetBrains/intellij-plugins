@@ -6,7 +6,11 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.runBlockingMaybeCancellable
 import com.intellij.psi.PsiElement
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import org.intellij.terraform.TfUsageTriggerCollector
 import org.intellij.terraform.config.model.loader.TfMetadataLoader
 import org.intellij.terraform.config.model.local.TfLocalSchemaService

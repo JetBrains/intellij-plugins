@@ -3,7 +3,16 @@ package com.intellij.plugins.drools.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.plugins.drools.lang.psi.*;
+import com.intellij.plugins.drools.lang.psi.DroolsAnnotation;
+import com.intellij.plugins.drools.lang.psi.DroolsEnumConstant;
+import com.intellij.plugins.drools.lang.psi.DroolsEnumDeclaration;
+import com.intellij.plugins.drools.lang.psi.DroolsField;
+import com.intellij.plugins.drools.lang.psi.DroolsFile;
+import com.intellij.plugins.drools.lang.psi.DroolsPsiClass;
+import com.intellij.plugins.drools.lang.psi.DroolsSuperType;
+import com.intellij.plugins.drools.lang.psi.DroolsTraitable;
+import com.intellij.plugins.drools.lang.psi.DroolsTypeName;
+import com.intellij.plugins.drools.lang.psi.DroolsVisitor;
 import com.intellij.plugins.drools.lang.psi.util.DroolsResolveUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;

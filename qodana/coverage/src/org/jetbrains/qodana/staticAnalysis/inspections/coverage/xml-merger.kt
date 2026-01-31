@@ -1,7 +1,9 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 
 import com.intellij.rt.coverage.report.XMLProjectData
-import com.intellij.rt.coverage.report.XMLProjectData.*
+import com.intellij.rt.coverage.report.XMLProjectData.ClassInfo
+import com.intellij.rt.coverage.report.XMLProjectData.FileInfo
+import com.intellij.rt.coverage.report.XMLProjectData.LineInfo
 import kotlin.math.max
 import kotlin.math.min
 

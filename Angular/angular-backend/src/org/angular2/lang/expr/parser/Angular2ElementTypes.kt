@@ -14,7 +14,20 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.util.ThreeState
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
-import org.angular2.lang.expr.psi.impl.*
+import org.angular2.lang.expr.psi.impl.Angular2ActionImpl
+import org.angular2.lang.expr.psi.impl.Angular2BindingImpl
+import org.angular2.lang.expr.psi.impl.Angular2BlockParameterImpl
+import org.angular2.lang.expr.psi.impl.Angular2ChainImpl
+import org.angular2.lang.expr.psi.impl.Angular2InterpolationImpl
+import org.angular2.lang.expr.psi.impl.Angular2PipeArgumentsListImpl
+import org.angular2.lang.expr.psi.impl.Angular2PipeExpressionImpl
+import org.angular2.lang.expr.psi.impl.Angular2PipeLeftSideArgumentImpl
+import org.angular2.lang.expr.psi.impl.Angular2PipeReferenceExpressionImpl
+import org.angular2.lang.expr.psi.impl.Angular2QuoteImpl
+import org.angular2.lang.expr.psi.impl.Angular2SimpleBindingImpl
+import org.angular2.lang.expr.psi.impl.Angular2TemplateBindingImpl
+import org.angular2.lang.expr.psi.impl.Angular2TemplateBindingKeyImpl
+import org.angular2.lang.expr.psi.impl.Angular2TemplateBindingsImpl
 import org.jetbrains.annotations.NonNls
 import java.util.function.Function
 

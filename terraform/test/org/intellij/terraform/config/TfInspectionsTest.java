@@ -5,8 +5,26 @@ import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
 import com.intellij.ui.RenameDialogInterceptor;
 import com.intellij.ui.UiInterceptors;
 import org.intellij.terraform.TfTestUtils;
-import org.intellij.terraform.config.inspection.*;
-import org.intellij.terraform.hil.inspection.*;
+import org.intellij.terraform.config.inspection.HCLBlockConflictingPropertiesInspection;
+import org.intellij.terraform.config.inspection.HCLLiteralValidnessInspection;
+import org.intellij.terraform.config.inspection.HclBlockMissingPropertyInspection;
+import org.intellij.terraform.config.inspection.TfBlockNameValidnessInspection;
+import org.intellij.terraform.config.inspection.TfDuplicatedBlockPropertyInspection;
+import org.intellij.terraform.config.inspection.TfDuplicatedOutputInspection;
+import org.intellij.terraform.config.inspection.TfDuplicatedProviderInspection;
+import org.intellij.terraform.config.inspection.TfDuplicatedVariableInspection;
+import org.intellij.terraform.config.inspection.TfIncorrectVariableTypeInspection;
+import org.intellij.terraform.config.inspection.TfNoInterpolationsAllowedInspection;
+import org.intellij.terraform.config.inspection.TfUnknownBlockTypeInspection;
+import org.intellij.terraform.config.inspection.TfUnknownPropertyInspection;
+import org.intellij.terraform.config.inspection.TfUnknownResourceInspection;
+import org.intellij.terraform.config.inspection.TfUnusedElementsInspection;
+import org.intellij.terraform.config.inspection.TfVARSIncorrectElementInspection;
+import org.intellij.terraform.hil.inspection.HILConvertToHCLInspection;
+import org.intellij.terraform.hil.inspection.HILMissingSelfInContextInspection;
+import org.intellij.terraform.hil.inspection.HILOperationTypesMismatchInspection;
+import org.intellij.terraform.hil.inspection.HILUnknownResourceTypeInspection;
+import org.intellij.terraform.hil.inspection.HILUnresolvedReferenceInspection;
 
 import java.util.List;
 

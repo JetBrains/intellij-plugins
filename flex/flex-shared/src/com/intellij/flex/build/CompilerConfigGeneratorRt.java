@@ -4,7 +4,21 @@ package com.intellij.flex.build;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.JpsFlexProjectLevelCompilerOptionsExtension;
-import com.intellij.flex.model.bc.*;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
+import com.intellij.flex.model.bc.InfoFromConfigFile;
+import com.intellij.flex.model.bc.JpsAirDesktopPackagingOptions;
+import com.intellij.flex.model.bc.JpsAndroidPackagingOptions;
+import com.intellij.flex.model.bc.JpsFlexBCDependencyEntry;
+import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
+import com.intellij.flex.model.bc.JpsFlexDependencyEntry;
+import com.intellij.flex.model.bc.JpsFlexModuleOrProjectCompilerOptions;
+import com.intellij.flex.model.bc.JpsIosPackagingOptions;
+import com.intellij.flex.model.bc.JpsLibraryDependencyEntry;
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.flex.model.bc.ValueSource;
 import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.flex.model.sdk.RslUtil;
 import com.intellij.openapi.diagnostic.Logger;
@@ -36,7 +50,14 @@ import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class CompilerConfigGeneratorRt {
 

@@ -5,10 +5,10 @@ import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.LoadingOrder
 import com.intellij.openapi.project.Project
-import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManager
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider
+import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 
 internal data class MockInspectionDescriptor(val shortName: String, val name: String, val group: String)
 internal data class ProfileDescriptor(val name: String, val inspections: List<MockInspectionDescriptor>)

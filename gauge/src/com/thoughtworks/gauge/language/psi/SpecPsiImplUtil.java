@@ -30,7 +30,7 @@ import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 
 public final class SpecPsiImplUtil {

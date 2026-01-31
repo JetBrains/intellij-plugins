@@ -20,7 +20,11 @@ import com.intellij.protobuf.lang.psi.PbExtendDefinition;
 import com.intellij.protobuf.lang.psi.PbTypeName;
 import com.intellij.protobuf.lang.psi.impl.PbExtendDefinitionImpl;
 import com.intellij.protobuf.lang.stub.PbExtendDefinitionStub;
-import com.intellij.psi.stubs.*;
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.stubs.IndexSink;
+import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.stubs.StubInputStream;
+import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

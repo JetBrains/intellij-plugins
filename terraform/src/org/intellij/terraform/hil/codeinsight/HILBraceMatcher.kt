@@ -5,7 +5,14 @@ import com.intellij.lang.BracePair
 import com.intellij.lang.PairedBraceMatcher
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
-import org.intellij.terraform.hil.HILElementTypes.*
+import org.intellij.terraform.hil.HILElementTypes.INTERPOLATION_START
+import org.intellij.terraform.hil.HILElementTypes.L_BRACKET
+import org.intellij.terraform.hil.HILElementTypes.L_CURLY
+import org.intellij.terraform.hil.HILElementTypes.L_PAREN
+import org.intellij.terraform.hil.HILElementTypes.R_BRACKET
+import org.intellij.terraform.hil.HILElementTypes.R_CURLY
+import org.intellij.terraform.hil.HILElementTypes.R_PAREN
+import org.intellij.terraform.hil.HILElementTypes.TEMPLATE_START
 
 class HILBraceMatcher : PairedBraceMatcher {
   override fun getCodeConstructStart(file: PsiFile, openingBraceOffset: Int): Int {

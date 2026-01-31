@@ -4,13 +4,24 @@ package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 import com.google.gson.JsonElement;
 import com.intellij.icons.AllIcons;
 import com.intellij.util.SmartList;
-import com.intellij.xdebugger.frame.*;
+import com.intellij.xdebugger.frame.XCompositeNode;
+import com.intellij.xdebugger.frame.XNamedValue;
+import com.intellij.xdebugger.frame.XNavigatable;
+import com.intellij.xdebugger.frame.XValueChildrenList;
+import com.intellij.xdebugger.frame.XValueGroup;
+import com.intellij.xdebugger.frame.XValueNode;
+import com.intellij.xdebugger.frame.XValuePlace;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
 import org.dartlang.vm.service.consumer.GetObjectConsumer;
-import org.dartlang.vm.service.element.*;
+import org.dartlang.vm.service.element.Field;
+import org.dartlang.vm.service.element.FieldRef;
+import org.dartlang.vm.service.element.InstanceRef;
+import org.dartlang.vm.service.element.Obj;
+import org.dartlang.vm.service.element.RPCError;
+import org.dartlang.vm.service.element.Sentinel;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.concurrent.atomic.AtomicInteger;
 
 // similar to com.intellij.debugger.engine.JavaStaticGroup

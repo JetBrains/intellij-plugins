@@ -2,9 +2,12 @@ package org.intellij.prisma.lang.types
 
 import com.intellij.openapi.util.text.StringUtil
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.PrismaFieldType
+import org.intellij.prisma.lang.psi.PrismaLegacyListType
 import org.intellij.prisma.lang.psi.PrismaListType
 import org.intellij.prisma.lang.psi.PrismaOptionalType
+import org.intellij.prisma.lang.psi.PrismaTypeSignature
+import org.intellij.prisma.lang.psi.PrismaUnsupportedOptionalListType
 
 fun createTypeFromSignature(element: PrismaTypeSignature): PrismaType {
   var type: PrismaType = when (element) {

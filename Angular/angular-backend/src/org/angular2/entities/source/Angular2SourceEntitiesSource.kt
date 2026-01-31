@@ -2,7 +2,14 @@ package org.angular2.entities.source
 
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
-import com.intellij.lang.javascript.psi.ecma6.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptConstType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTupleType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeofType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList.ModifierType
 import com.intellij.lang.javascript.psi.stubs.JSFrameworkMarkersIndex
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -17,8 +24,21 @@ import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.containers.addIfNotNull
 import org.angular2.Angular2DecoratorUtil
-import org.angular2.entities.*
-import org.angular2.index.*
+import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.Angular2EntitiesSource
+import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2Module
+import org.angular2.entities.Angular2Pipe
+import org.angular2.index.Angular2IndexUtil
+import org.angular2.index.Angular2IndexingHandler
+import org.angular2.index.Angular2SourceDirectiveIndexKey
+import org.angular2.index.Angular2SourceModuleIndexKey
+import org.angular2.index.Angular2SourcePipeIndexKey
+import org.angular2.index.isDirective
+import org.angular2.index.isModule
+import org.angular2.index.isPipe
 
 class Angular2SourceEntitiesSource : Angular2EntitiesSource {
 

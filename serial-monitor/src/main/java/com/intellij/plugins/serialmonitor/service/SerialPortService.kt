@@ -16,11 +16,15 @@ import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener.Companion.SERIAL_PORTS_TOPIC
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.jetbrains.annotations.Nls
 import kotlinx.coroutines.flow.StateFlow
-import java.util.*
+import kotlinx.coroutines.launch
+import org.jetbrains.annotations.Nls
+import java.util.TreeSet
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
 

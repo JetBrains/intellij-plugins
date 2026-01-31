@@ -11,7 +11,20 @@ package org.angular2.lang.expr.service.tcb
 
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavaScriptParserBundle
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSAssignmentExpression
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSEmptyExpression
+import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSParenthesizedExpression
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSRecordType
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSThisExpression
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList.ModifierType
@@ -36,9 +49,13 @@ import org.angular2.codeInsight.config.Angular2TypeCheckingConfig.ControlFlowPre
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_CONTEXT_GUARD
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_GUARD_PREFIX
 import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider
-import org.angular2.entities.*
+import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2DirectiveSelector
 import org.angular2.entities.Angular2EntityUtils.NG_ACCEPT_INPUT_TYPE_PREFIX
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
+import org.angular2.entities.Angular2Pipe
+import org.angular2.entities.Angular2TemplateGuard
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.Angular2LangUtil.`$IMPLICIT`

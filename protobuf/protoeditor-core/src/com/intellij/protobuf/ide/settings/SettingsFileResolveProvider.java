@@ -29,7 +29,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.BUNDLED_DESCRIPTOR;
 import static com.intellij.protobuf.ide.settings.PbImportPathsConfiguration.computeDeterministicImportPathsStream;

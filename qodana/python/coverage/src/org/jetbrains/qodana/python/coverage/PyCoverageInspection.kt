@@ -9,9 +9,21 @@ import com.intellij.psi.PsiFile
 import com.intellij.python.pro.coverage.PyCoverageEngine
 import com.intellij.rt.coverage.data.ClassData
 import com.intellij.rt.coverage.data.ProjectData
-import com.jetbrains.python.psi.*
+import com.jetbrains.python.psi.PyClass
+import com.jetbrains.python.psi.PyElementVisitor
+import com.jetbrains.python.psi.PyFile
+import com.jetbrains.python.psi.PyFunction
+import com.jetbrains.python.psi.PyStatement
 import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.staticAnalysis.inspections.coverage.*
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageInspectionBase
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.issueWithCoverage
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.iterateContents
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadClassData
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadMissingData
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.normalizeFilePath
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.removePrefixFromCoverage
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportElement
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportProblemsNeeded
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 
 class PyCoverageInspection : CoverageInspectionBase() {

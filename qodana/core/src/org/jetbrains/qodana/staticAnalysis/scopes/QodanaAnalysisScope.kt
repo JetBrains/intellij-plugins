@@ -12,7 +12,6 @@ import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import java.nio.file.Path
-import kotlin.io.path.Path
 import kotlin.io.path.invariantSeparatorsPathString
 
 class QodanaAnalysisScope : AnalysisScope {

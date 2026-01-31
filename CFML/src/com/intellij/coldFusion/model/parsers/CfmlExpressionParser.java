@@ -7,7 +7,38 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.*;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.ADDITIVE_OPERATIONS;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.ASSIGN_OPERATORS;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.BAD_CHARACTER;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.BOOLEAN;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.CLOSESHARP;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.COMMA;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.DOTDOT;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.DOUBLE;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.ELVIS;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.FUNCTION_KEYWORD;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.IDENTIFIER;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.INTEGER;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.KEYWORDS;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.LOGICAL_OPERATIONS;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.L_BRACKET;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.L_CURLYBRACKET;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.L_SQUAREBRACKET;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.MULTIPLICATIVE_OPERATIONS;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.OPENSHARP;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.OPERATIONS;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.POINT;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.POSTFIX_OPERATIONS;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.PREFIX_OPERATIONS;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.QUESTION;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.RELATIONAL_OPERATIONS;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.R_BRACKET;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.R_CURLYBRACKET;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.R_SQUAREBRACKET;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.SCOPE_KEYWORD;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.SEMICOLON;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.UNARY_OPERATIONS;
+import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.VAR_KEYWORD;
 
 /**
  * Created by Lera Nikolaenko

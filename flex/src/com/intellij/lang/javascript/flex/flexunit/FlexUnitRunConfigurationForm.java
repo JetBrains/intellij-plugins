@@ -6,7 +6,11 @@ import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.run.*;
+import com.intellij.lang.javascript.flex.run.BCCombo;
+import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
+import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
+import com.intellij.lang.javascript.flex.run.FlexLauncherDialog;
+import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -18,7 +22,11 @@ import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

@@ -3,7 +3,11 @@ package org.intellij.terraform
 
 import com.intellij.codeInsight.codeVision.CodeVisionHost
 import com.intellij.codeInsight.codeVision.ui.model.CodeVisionListData
-import com.intellij.openapi.application.*
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.edtWriteAction
+import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.runWriteActionAndWait
+import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.blockingContextToIndicator
 import com.intellij.testFramework.TestModeFlags

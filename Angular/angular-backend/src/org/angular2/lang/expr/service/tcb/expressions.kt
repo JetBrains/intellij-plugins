@@ -1,6 +1,12 @@
 package org.angular2.lang.expr.service.tcb
 
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSBinaryExpression
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSConditionalExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSPostfixExpression
+import com.intellij.lang.javascript.psi.JSPrefixExpression
 import com.intellij.psi.PsiElement
 import org.angular2.lang.expr.psi.Angular2ElementVisitor
 import org.angular2.lang.expr.psi.Angular2Interpolation

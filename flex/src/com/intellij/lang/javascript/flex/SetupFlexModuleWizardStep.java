@@ -4,7 +4,7 @@ import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.lang.javascript.flex.wizard.FlexModuleWizardForm;
 import com.intellij.openapi.options.ConfigurationException;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 public class SetupFlexModuleWizardStep extends ModuleWizardStep {
 

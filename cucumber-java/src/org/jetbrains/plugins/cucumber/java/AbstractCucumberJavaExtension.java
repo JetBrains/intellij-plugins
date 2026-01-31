@@ -16,7 +16,11 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.steps.AbstractCucumberExtension;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @NotNullByDefault
 public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExtension {

@@ -17,8 +17,8 @@ import com.intellij.javascript.debugger.JavaScriptDebugProcess
 import com.intellij.javascript.nodejs.NodeConsoleAdditionalFilter
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.Key
-import com.intellij.xdebugger.XSessionStartedResult
 import com.intellij.xdebugger.XDebuggerManager
+import com.intellij.xdebugger.XSessionStartedResult
 import com.jetbrains.plugins.meteor.settings.MeteorSettings
 import org.jetbrains.debugger.connection.RemoteVmConnection
 import java.net.InetSocketAddress

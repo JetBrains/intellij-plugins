@@ -2,11 +2,11 @@
 package com.intellij.plugins.drools.structure;
 
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
-import com.intellij.plugins.drools.lang.psi.DroolsRuleStatement;
 import com.intellij.plugins.drools.JbossDroolsIcons;
+import com.intellij.plugins.drools.lang.psi.DroolsRuleStatement;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public  class DroolsRuleStatementStructureViewElement extends DroolsStructureViewElement {
   public DroolsRuleStatementStructureViewElement(DroolsRuleStatement ruleStatement) {

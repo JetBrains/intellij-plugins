@@ -5,7 +5,11 @@ import com.google.gson.reflect.TypeToken
 import com.intellij.execution.DefaultExecutionTarget
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.ExecutionTargetManager
-import com.intellij.execution.process.*
+import com.intellij.execution.process.CapturingAnsiEscapesAwareProcessHandler
+import com.intellij.execution.process.ProcessEvent
+import com.intellij.execution.process.ProcessListener
+import com.intellij.execution.process.ProcessOutput
+import com.intellij.execution.process.ProcessOutputType
 import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
@@ -17,7 +21,14 @@ import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
-import com.intellij.openapi.externalSystem.model.task.event.*
+import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemFinishEvent
+import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemStartEvent
+import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemTaskExecutionEvent
+import com.intellij.openapi.externalSystem.model.task.event.Failure
+import com.intellij.openapi.externalSystem.model.task.event.FailureResult
+import com.intellij.openapi.externalSystem.model.task.event.OperationResult
+import com.intellij.openapi.externalSystem.model.task.event.SuccessResult
+import com.intellij.openapi.externalSystem.model.task.event.TaskOperationDescriptor
 import com.intellij.openapi.externalSystem.service.project.ExternalSystemProjectResolver
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -33,8 +44,16 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.asSafely
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.ui.EDT
-import com.jetbrains.cidr.cpp.embedded.platformio.*
-import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus.*
+import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
+import com.jetbrains.cidr.cpp.embedded.platformio.PLATFORMIO_UPDATES_TOPIC
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus.NOT_TRUSTED
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus.PARSED
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus.PARSE_FAILED
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus.PARSING
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus.UTILITY_FAILED
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioTargetData
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUsagesCollector
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.showUntrustedProjectLoadDialog
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
@@ -54,7 +73,8 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
 import java.nio.file.Path
-import java.util.*
+import java.util.Base64
+import java.util.UUID
 import java.util.zip.DeflaterOutputStream
 import java.util.zip.InflaterInputStream
 

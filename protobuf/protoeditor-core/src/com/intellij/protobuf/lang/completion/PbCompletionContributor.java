@@ -15,10 +15,30 @@
  */
 package com.intellij.protobuf.lang.completion;
 
-import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.completion.AddSpaceInsertHandler;
+import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionProvider;
+import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbElement;
+import com.intellij.protobuf.lang.psi.PbExtendDefinition;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbFieldLabel;
+import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.protobuf.lang.psi.PbIdentifierValue;
+import com.intellij.protobuf.lang.psi.PbImportName;
+import com.intellij.protobuf.lang.psi.PbMessageType;
+import com.intellij.protobuf.lang.psi.PbOptionExpression;
+import com.intellij.protobuf.lang.psi.PbServiceMethodType;
+import com.intellij.protobuf.lang.psi.PbSimpleField;
+import com.intellij.protobuf.lang.psi.PbStatementOwner;
+import com.intellij.protobuf.lang.psi.PbStringPart;
+import com.intellij.protobuf.lang.psi.PbTypeName;
+import com.intellij.protobuf.lang.psi.ProtoSymbolPath;
+import com.intellij.protobuf.lang.psi.SyntaxLevel;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.protobuf.lang.util.BuiltInType;
 import com.intellij.psi.PsiElement;

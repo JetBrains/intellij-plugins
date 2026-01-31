@@ -5,7 +5,11 @@ import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryM
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.model.Pointer
 import com.intellij.psi.util.CachedValueProvider.Result
-import org.angular2.entities.*
+import org.angular2.entities.Angular2Declaration
+import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2Module
+import org.angular2.entities.Angular2ModuleResolver
+import org.angular2.entities.Angular2ResolvedSymbolsSet
 
 class Angular2IvyModule(entityDef: Angular2IvySymbolDef.Module)
   : Angular2IvyEntity<Angular2IvySymbolDef.Module>(entityDef), Angular2Module {

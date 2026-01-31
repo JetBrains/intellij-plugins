@@ -3,7 +3,13 @@ package org.intellij.prisma.ide.schema.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
-import org.intellij.prisma.ide.schema.*
+import org.intellij.prisma.ide.schema.PrismaSchemaDeclarationPath
+import org.intellij.prisma.ide.schema.PrismaSchemaDefaultParameterPath
+import org.intellij.prisma.ide.schema.PrismaSchemaFakeElementPath
+import org.intellij.prisma.ide.schema.PrismaSchemaKind
+import org.intellij.prisma.ide.schema.PrismaSchemaParameterPath
+import org.intellij.prisma.ide.schema.PrismaSchemaPath
+import org.intellij.prisma.ide.schema.PrismaSchemaVariantPath
 
 class PrismaEvaluatedSchema(private val groups: Map<PrismaSchemaKind, PrismaSchemaElementGroup>) {
   fun getElement(kind: PrismaSchemaKind, label: String?): PrismaSchemaDeclaration? =

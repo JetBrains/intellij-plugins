@@ -9,8 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings
-import com.intellij.terraform.template.TftplFileType
 import com.intellij.terraform.template.TftplBundle
+import com.intellij.terraform.template.TftplFileType
 import com.intellij.terraform.template.knownTemplateExtensions
 
 internal class TfRemoveFileTypeAssociationIntention : IntentionAction {

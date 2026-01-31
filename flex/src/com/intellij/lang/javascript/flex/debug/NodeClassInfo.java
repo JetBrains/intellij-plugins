@@ -12,7 +12,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

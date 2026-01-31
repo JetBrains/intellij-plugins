@@ -3,8 +3,8 @@ package org.angular2.cli
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.polySymbols.context.PolyContextProvider
+import com.intellij.psi.util.CachedValueProvider
 import org.angular2.cli.config.AngularConfigProvider
 
 class AngularCliContextProvider : PolyContextProvider {

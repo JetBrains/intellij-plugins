@@ -20,7 +20,7 @@ import com.intellij.protobuf.ProtoeditorCoreIcons;
 import com.intellij.ui.IconManager;
 import com.intellij.util.PlatformIcons;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public interface PbIcons {
   Icon ENUM = PlatformIcons.ENUM_ICON;

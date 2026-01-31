@@ -6,7 +6,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.childrenOfType
 import org.jetbrains.yaml.YAMLElementGenerator
-import org.jetbrains.yaml.psi.*
+import org.jetbrains.yaml.psi.YAMLFile
+import org.jetbrains.yaml.psi.YAMLKeyValue
+import org.jetbrains.yaml.psi.YAMLMapping
+import org.jetbrains.yaml.psi.YAMLSequence
+import org.jetbrains.yaml.psi.YAMLSequenceItem
 import org.jetbrains.yaml.psi.impl.YAMLBlockSequenceImpl
 
 class QodanaYamlConfigUpdateHandler : ConfigUpdateHandler {

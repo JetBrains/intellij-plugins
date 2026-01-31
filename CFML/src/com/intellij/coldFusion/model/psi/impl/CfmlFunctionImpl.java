@@ -5,9 +5,19 @@ import com.intellij.coldFusion.UI.CfmlLookUpItemUtil;
 import com.intellij.coldFusion.model.info.CfmlFunctionDescription;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
-import com.intellij.coldFusion.model.psi.*;
+import com.intellij.coldFusion.model.psi.CfmlComponentType;
+import com.intellij.coldFusion.model.psi.CfmlCompositeElement;
+import com.intellij.coldFusion.model.psi.CfmlFunction;
+import com.intellij.coldFusion.model.psi.CfmlParameter;
+import com.intellij.coldFusion.model.psi.CfmlParametersList;
+import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
+import com.intellij.coldFusion.model.psi.CfmlRecursiveElementVisitor;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.ResolveState;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.ui.IconManager;
@@ -16,7 +26,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class CfmlFunctionImpl extends CfmlCompositeElement implements CfmlFunction, PsiNameIdentifierOwner {
   public CfmlFunctionImpl(@NotNull ASTNode node) {

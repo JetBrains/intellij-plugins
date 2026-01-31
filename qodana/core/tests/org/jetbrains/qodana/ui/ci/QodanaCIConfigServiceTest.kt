@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.ui.ci
 
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.edtWriteAction
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.TestDataPath
 import kotlinx.coroutines.flow.filter

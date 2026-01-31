@@ -21,7 +21,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.VueMixin
-import java.util.*
+import java.util.Objects
 
 class VueTypedMixin(
   source: JSExpression,

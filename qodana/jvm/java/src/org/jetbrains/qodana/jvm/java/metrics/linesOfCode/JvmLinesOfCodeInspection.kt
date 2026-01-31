@@ -1,6 +1,8 @@
 package org.jetbrains.qodana.jvm.java.metrics.linesOfCode
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.LocalInspectionToolSession
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager

@@ -1,14 +1,17 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.StubSafe
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.UserDataHolder
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
@@ -24,7 +27,20 @@ import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VUE_COMPOSITION_APP_INDEX_JS_KEY
 import org.jetbrains.vuejs.index.VUE_COMPOSITION_APP_INDEX_KEY
 import org.jetbrains.vuejs.index.resolve
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueContainer
+import org.jetbrains.vuejs.model.VueDelegatedContainer
+import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueFilter
+import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
+import org.jetbrains.vuejs.model.VueMixin
+import org.jetbrains.vuejs.model.VueMode
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueNamedComponent
+import org.jetbrains.vuejs.model.VuePlugin
+import org.jetbrains.vuejs.model.VueProvide
+import org.jetbrains.vuejs.model.VueScopeElement
 import org.jetbrains.vuejs.model.source.VueComponents.getComponent
 import org.jetbrains.vuejs.web.unwrapVueSymbolWithProximity
 

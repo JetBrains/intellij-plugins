@@ -28,7 +28,6 @@ import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.symbols.VueComponentWithProximity
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 
 class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySymbolQueryResultsCustomizer {

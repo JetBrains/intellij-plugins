@@ -2,9 +2,9 @@
 package org.angular2.lang.expr.service
 
 import com.intellij.ide.highlighter.HtmlFileType
-import com.intellij.lang.typescript.languageService.TypeScriptServiceProvider
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
+import com.intellij.lang.typescript.languageService.TypeScriptServiceProvider
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service

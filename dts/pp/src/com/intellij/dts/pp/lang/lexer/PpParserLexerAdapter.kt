@@ -3,7 +3,9 @@ package com.intellij.dts.pp.lang.lexer
 import com.intellij.dts.pp.lang.PpTokenTypes
 import com.intellij.dts.pp.lang.psi.PpElifStatement
 import com.intellij.dts.pp.lang.psi.PpIfStatement
-import com.intellij.dts.pp.lang.psi.PpStatementType.*
+import com.intellij.dts.pp.lang.psi.PpStatementType.Define
+import com.intellij.dts.pp.lang.psi.PpStatementType.Endif
+import com.intellij.dts.pp.lang.psi.PpStatementType.Undef
 import com.intellij.dts.pp.lang.psi.PpToken
 import com.intellij.dts.pp.lang.psi.identifier
 import com.intellij.lexer.Lexer

@@ -2,14 +2,18 @@
 
 import com.google.gson.JsonParser
 import com.intellij.aws.cloudformation.CloudFormationConstants.awsServerless20161031TransformName
-import com.intellij.aws.cloudformation.metadata.*
+import com.intellij.aws.cloudformation.metadata.CloudFormationLimits
+import com.intellij.aws.cloudformation.metadata.CloudFormationMetadata
+import com.intellij.aws.cloudformation.metadata.CloudFormationResourceTypesDescription
+import com.intellij.aws.cloudformation.metadata.MetadataSerializer
+import com.intellij.aws.cloudformation.metadata.ResourceTypeBuilder
 import com.intellij.aws.cloudformation.tests.TestUtil
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.io.IOException
 import java.net.URL
-import java.util.*
+import java.util.TreeMap
 import java.util.zip.GZIPInputStream
 
 object ResourceTypesSaver {

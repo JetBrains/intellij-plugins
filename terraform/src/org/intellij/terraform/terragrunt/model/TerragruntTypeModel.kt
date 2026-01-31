@@ -9,8 +9,27 @@ import org.intellij.terraform.config.Constants.HCL_PATH_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
-import org.intellij.terraform.config.model.*
-import org.intellij.terraform.terragrunt.*
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.ListType
+import org.intellij.terraform.config.model.MapType
+import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.SimpleValueHint
+import org.intellij.terraform.config.model.Types
+import org.intellij.terraform.config.model.toMap
+import org.intellij.terraform.terragrunt.TERRAGRUNT_COMMANDS
+import org.intellij.terraform.terragrunt.TERRAGRUNT_DEPENDENCIES
+import org.intellij.terraform.terragrunt.TERRAGRUNT_DEPENDENCY
+import org.intellij.terraform.terragrunt.TERRAGRUNT_ENGINE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_ERRORS
+import org.intellij.terraform.terragrunt.TERRAGRUNT_EXCLUDE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_EXECUTE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_FEATURE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_GENERATE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_INCLUDE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_REMOTE_STATE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_STACK
+import org.intellij.terraform.terragrunt.TERRAGRUNT_UNIT
 
 // Terragrunt `terraform` block schema based on Terragrunt documentation
 // https://terragrunt.gruntwork.io/docs/reference/config-blocks-and-attributes/#terraform

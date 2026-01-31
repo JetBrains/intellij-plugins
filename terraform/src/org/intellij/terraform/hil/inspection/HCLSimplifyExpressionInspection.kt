@@ -2,7 +2,13 @@
 package org.intellij.terraform.hil.inspection
 
 import com.intellij.codeInsight.FileModificationService
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.BatchQuickFix
+import com.intellij.codeInspection.CleanupLocalInspectionTool
+import com.intellij.codeInspection.CommonProblemDescriptor
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project

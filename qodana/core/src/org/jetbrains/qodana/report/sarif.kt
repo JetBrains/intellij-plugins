@@ -8,7 +8,7 @@ import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.coroutines.qodanaProjectScope
 import org.jetbrains.qodana.highlight.QodanaHighlightedReportService
 import java.nio.file.Path
-import java.util.*
+import java.util.UUID
 
 val SarifReport.guid: String
   get() = runs?.firstOrNull()?.automationDetails?.guid ?: UUID.randomUUID().toString()

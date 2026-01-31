@@ -6,7 +6,11 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider.Result
-import org.angular2.entities.*
+import org.angular2.entities.Angular2Declaration
+import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2Module
+import org.angular2.entities.Angular2ModuleResolver
+import org.angular2.entities.Angular2ResolvedSymbolsSet
 import org.angular2.entities.metadata.stubs.Angular2MetadataModuleStub
 
 class Angular2MetadataModule(element: Angular2MetadataModuleStub) : Angular2MetadataEntity<Angular2MetadataModuleStub>(

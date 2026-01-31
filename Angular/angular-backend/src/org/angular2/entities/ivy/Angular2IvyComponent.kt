@@ -4,7 +4,11 @@ package org.angular2.entities.ivy
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiFile
-import org.angular2.entities.*
+import org.angular2.entities.Angular2ClassBasedComponent
+import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2DirectiveKind
+import org.angular2.entities.Angular2DirectiveSelector
+import org.angular2.entities.Angular2Entity
 
 class Angular2IvyComponent(entityDef: Angular2IvySymbolDef.Component)
   : Angular2IvyDirective(entityDef), Angular2ClassBasedComponent {

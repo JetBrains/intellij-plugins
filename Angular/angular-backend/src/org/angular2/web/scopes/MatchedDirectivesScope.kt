@@ -16,7 +16,13 @@ import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
-import org.angular2.web.*
+import org.angular2.web.Angular2DirectiveSymbolWrapper
+import org.angular2.web.Angular2Symbol
+import org.angular2.web.NG_DIRECTIVE_ATTRIBUTES
+import org.angular2.web.NG_DIRECTIVE_EXPORTS_AS
+import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_IN_OUTS
+import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 private val providedKinds: Set<PolySymbolKind> = setOf(
   NG_DIRECTIVE_INPUTS,

@@ -20,14 +20,14 @@ import com.intellij.codeInsight.generation.actions.CommentByLineCommentAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.protobuf.TestUtils;
+import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.testFramework.EditorTestUtil;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.common.EditorCaretTestUtil.CaretAndSelectionState;
 import com.intellij.testFramework.common.EditorCaretTestUtil.CaretInfo;
-import com.intellij.testFramework.EdtTestUtil;
-import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 
 /** Tests for {@link PbCommenter} */
 public class PbCommenterTest extends PbCodeInsightFixtureTestCase {

@@ -5,8 +5,8 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SyntaxTraverser
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
-import org.intellij.terraform.config.Constants.LATEST_VERSION
 import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
+import org.intellij.terraform.config.Constants.LATEST_VERSION
 import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLObject

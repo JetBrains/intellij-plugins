@@ -5,7 +5,7 @@ package com.intellij.jhipster;
 import com.intellij.icons.AllIcons;
 import com.intellij.jhipster.icons.JhipsterIcons;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 import static com.intellij.ui.LayeredIcon.layeredIcon;
 

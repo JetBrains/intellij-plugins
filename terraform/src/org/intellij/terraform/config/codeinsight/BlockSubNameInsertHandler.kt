@@ -15,7 +15,12 @@ import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.config.model.getProviderForBlockType
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.formatter.HclCodeStyleSettings
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
 
 internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandler<LookupElement>() {
 

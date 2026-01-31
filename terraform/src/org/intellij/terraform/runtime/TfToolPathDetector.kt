@@ -20,7 +20,12 @@ import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
 import java.nio.file.Path
-import kotlin.io.path.*
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.isExecutable
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.pathString
 
 internal interface TfToolPathDetector {
 

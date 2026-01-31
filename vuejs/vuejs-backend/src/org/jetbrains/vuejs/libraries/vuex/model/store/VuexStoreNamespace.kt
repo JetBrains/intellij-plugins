@@ -2,7 +2,17 @@
 package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.codeInsight.completion.CompletionUtil
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSDestructuringObject
+import com.intellij.lang.javascript.psi.JSDestructuringParameter
+import com.intellij.lang.javascript.psi.JSDestructuringShorthandedProperty
+import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSParameter
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSVarStatement
+import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.util.JSDestructuringUtil

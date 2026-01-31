@@ -18,10 +18,10 @@ package com.intellij.protobuf.lang.lexer;
 import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.Lexer;
 import com.intellij.lexer.MergingLexerAdapter;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.protobuf.lang.lexer._StringLexer.TokenType;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 
 public class StringLexer extends FlexAdapter {
 

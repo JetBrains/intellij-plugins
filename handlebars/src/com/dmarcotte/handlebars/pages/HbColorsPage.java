@@ -11,7 +11,7 @@ import com.intellij.openapi.options.colors.ColorSettingsPage;
 import icons.HandlebarsIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Map;
 import java.util.Set;
 

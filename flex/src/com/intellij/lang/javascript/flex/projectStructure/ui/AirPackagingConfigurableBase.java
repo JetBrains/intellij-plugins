@@ -3,7 +3,11 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.IosPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAirPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAndroidPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableIosPackagingOptions;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.Messages;
@@ -18,7 +22,10 @@ import com.intellij.util.EventDispatcher;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

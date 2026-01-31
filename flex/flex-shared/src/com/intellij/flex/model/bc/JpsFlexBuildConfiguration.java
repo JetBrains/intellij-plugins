@@ -9,7 +9,7 @@ import org.jetbrains.jps.model.JpsReferenceableElement;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsTypedModule;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Collection;
 
 public interface JpsFlexBuildConfiguration

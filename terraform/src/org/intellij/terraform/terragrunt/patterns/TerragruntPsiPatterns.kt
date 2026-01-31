@@ -11,7 +11,14 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLFile
 import org.intellij.terraform.hil.patterns.HILPatterns.getMethodIdentifierPattern
-import org.intellij.terraform.terragrunt.*
+import org.intellij.terraform.terragrunt.TERRAGRUNT_DEPENDENCY
+import org.intellij.terraform.terragrunt.TERRAGRUNT_FEATURE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_GENERATE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_INCLUDE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_STACK
+import org.intellij.terraform.terragrunt.TERRAGRUNT_STACK_FILE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_UNIT
+import org.intellij.terraform.terragrunt.TerragruntFileType
 
 internal object TerragruntPsiPatterns {
   val TerragruntFile: PsiFilePattern.Capture<HCLFile> = PlatformPatterns.psiFile(HCLFile::class.java)

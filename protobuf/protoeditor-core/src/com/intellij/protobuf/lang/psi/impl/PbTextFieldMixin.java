@@ -16,7 +16,11 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbTextElement;
+import com.intellij.protobuf.lang.psi.PbTextField;
+import com.intellij.protobuf.lang.psi.PbTextLiteral;
+import com.intellij.protobuf.lang.psi.PbTextMessage;
+import com.intellij.protobuf.lang.psi.PbTextValueList;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 

@@ -6,7 +6,44 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.tree.TokenSet.create
 import com.intellij.psi.tree.TokenSet.orSet
 import org.intellij.prisma.lang.PrismaLanguage
-import org.intellij.prisma.lang.psi.PrismaElementTypes.*
+import org.intellij.prisma.lang.psi.PrismaElementTypes.BLOCK_ATTRIBUTE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.BLOCK_COMMENT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.DATASOURCE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.DATASOURCE_DECLARATION
+import org.intellij.prisma.lang.psi.PrismaElementTypes.DOUBLE_COMMENT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.ENUM
+import org.intellij.prisma.lang.psi.PrismaElementTypes.ENUM_DECLARATION
+import org.intellij.prisma.lang.psi.PrismaElementTypes.ENUM_DECLARATION_BLOCK
+import org.intellij.prisma.lang.psi.PrismaElementTypes.ENUM_VALUE_DECLARATION
+import org.intellij.prisma.lang.psi.PrismaElementTypes.FIELD_DECLARATION
+import org.intellij.prisma.lang.psi.PrismaElementTypes.FIELD_DECLARATION_BLOCK
+import org.intellij.prisma.lang.psi.PrismaElementTypes.FIELD_TYPE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.GENERATOR
+import org.intellij.prisma.lang.psi.PrismaElementTypes.GENERATOR_DECLARATION
+import org.intellij.prisma.lang.psi.PrismaElementTypes.KEY_VALUE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.KEY_VALUE_BLOCK
+import org.intellij.prisma.lang.psi.PrismaElementTypes.LBRACE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.LBRACKET
+import org.intellij.prisma.lang.psi.PrismaElementTypes.LEGACY_LIST_TYPE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.LEGACY_REQUIRED_TYPE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.LIST_TYPE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.LPAREN
+import org.intellij.prisma.lang.psi.PrismaElementTypes.MODEL
+import org.intellij.prisma.lang.psi.PrismaElementTypes.MODEL_DECLARATION
+import org.intellij.prisma.lang.psi.PrismaElementTypes.NUMERIC_LITERAL
+import org.intellij.prisma.lang.psi.PrismaElementTypes.OPTIONAL_TYPE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.RBRACE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.RBRACKET
+import org.intellij.prisma.lang.psi.PrismaElementTypes.RPAREN
+import org.intellij.prisma.lang.psi.PrismaElementTypes.SINGLE_TYPE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.STRING_LITERAL
+import org.intellij.prisma.lang.psi.PrismaElementTypes.TRIPLE_COMMENT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.TYPE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.TYPE_ALIAS
+import org.intellij.prisma.lang.psi.PrismaElementTypes.TYPE_DECLARATION
+import org.intellij.prisma.lang.psi.PrismaElementTypes.UNSUPPORTED_OPTIONAL_LIST_TYPE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.VIEW
+import org.intellij.prisma.lang.psi.PrismaElementTypes.VIEW_DECLARATION
 
 class PrismaTokenType(debugName: String) : IElementType(debugName, PrismaLanguage)
 

@@ -14,7 +14,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class P4ConnectionCalculator {
   private final Project myProject;

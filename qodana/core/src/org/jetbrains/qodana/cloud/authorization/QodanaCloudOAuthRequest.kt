@@ -10,7 +10,7 @@ import com.intellij.util.io.DigestUtil
 import org.jetbrains.ide.RestService
 import org.jetbrains.qodana.cloud.authorization.credentials.QodanaCloudCredentials
 import org.jetbrains.qodana.cloudclient.QDCloudClient
-import java.util.*
+import java.util.Base64
 
 private const val CODE_CHALLENGE_METHOD_SHA256 = "SHA256"
 

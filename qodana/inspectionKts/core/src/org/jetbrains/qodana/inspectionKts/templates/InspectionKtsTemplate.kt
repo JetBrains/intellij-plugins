@@ -5,7 +5,7 @@ import com.intellij.openapi.util.NlsContexts
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_DIRECTORY
 import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_EXTENSION
-import java.util.*
+import java.util.Locale
 import javax.swing.Icon
 
 class InspectionKtsTemplate(

@@ -1,6 +1,14 @@
 package org.intellij.plugins.postcss.inspections;
 
-import com.intellij.psi.css.inspections.invalid.*;
+import com.intellij.psi.css.inspections.invalid.CssInvalidAtRuleInspection;
+import com.intellij.psi.css.inspections.invalid.CssInvalidHtmlTagReferenceInspection;
+import com.intellij.psi.css.inspections.invalid.CssInvalidImportInspection;
+import com.intellij.psi.css.inspections.invalid.CssInvalidMediaFeatureInspection;
+import com.intellij.psi.css.inspections.invalid.CssInvalidNestedSelectorInspection;
+import com.intellij.psi.css.inspections.invalid.CssInvalidPropertyValueInspection;
+import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
+import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection;
+import com.intellij.psi.css.inspections.invalid.CssUnresolvedClassInComposesRuleInspection;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 

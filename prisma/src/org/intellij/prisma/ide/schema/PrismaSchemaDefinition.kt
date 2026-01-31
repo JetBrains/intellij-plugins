@@ -4,7 +4,13 @@ import com.intellij.psi.PsiElement
 import org.intellij.prisma.ide.schema.builder.PrismaEvaluatedSchema
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
 import org.intellij.prisma.ide.schema.builder.schema
-import org.intellij.prisma.ide.schema.definitions.*
+import org.intellij.prisma.ide.schema.definitions.PRISMA_SCHEMA_BLOCK_ATTRIBUTES
+import org.intellij.prisma.ide.schema.definitions.PRISMA_SCHEMA_FIELDS
+import org.intellij.prisma.ide.schema.definitions.PRISMA_SCHEMA_FIELD_ATTRIBUTES
+import org.intellij.prisma.ide.schema.definitions.PRISMA_SCHEMA_FUNCTIONS
+import org.intellij.prisma.ide.schema.definitions.PRISMA_SCHEMA_KEYWORDS
+import org.intellij.prisma.ide.schema.definitions.PRISMA_SCHEMA_PRIMITIVE_TYPES
+import org.intellij.prisma.ide.schema.definitions.PRISMA_SCHEMA_VALUES
 
 object PrismaSchemaProvider {
 

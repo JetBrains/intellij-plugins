@@ -7,9 +7,17 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.report.*
+import org.jetbrains.qodana.report.AggregatedReportMetadata
+import org.jetbrains.qodana.report.BannerContentProvider
+import org.jetbrains.qodana.report.BrowserViewProvider
+import org.jetbrains.qodana.report.LoadedReport
+import org.jetbrains.qodana.report.LocalReportDescriptor
+import org.jetbrains.qodana.report.NoProblemsContentProvider
+import org.jetbrains.qodana.report.NotificationCallback
+import org.jetbrains.qodana.report.ReportDescriptor
+import org.jetbrains.qodana.report.ValidatedSarif
 import org.jetbrains.qodana.ui.problemsView.viewModel.QodanaProblemsViewModel
-import java.util.*
+import java.util.Objects
 
 class SingleMarkerReportDescriptor(
   private val project: Project,

@@ -19,8 +19,8 @@ import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.index.VUE_INSTANCE_MODULE
-import org.jetbrains.vuejs.model.VueInstancePropertySymbol
 import org.jetbrains.vuejs.model.VueInstanceOwner
+import org.jetbrains.vuejs.model.VueInstancePropertySymbol
 import org.jetbrains.vuejs.model.VueTypeProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.types.asCompleteType

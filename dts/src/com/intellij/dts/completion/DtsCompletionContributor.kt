@@ -4,7 +4,12 @@ import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
-import com.intellij.dts.completion.provider.*
+import com.intellij.dts.completion.provider.DtsCompilerDirectiveProvider
+import com.intellij.dts.completion.provider.DtsIntValueProvider
+import com.intellij.dts.completion.provider.DtsNodeNameProvider
+import com.intellij.dts.completion.provider.DtsPropertyNameProvider
+import com.intellij.dts.completion.provider.DtsRootNodeProvider
+import com.intellij.dts.completion.provider.DtsStringValueProvider
 import com.intellij.dts.lang.DtsFile
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.openapi.editor.Editor

@@ -23,15 +23,15 @@ import org.jetbrains.qodana.settings.DefaultQodanaYamlContext
 import org.jetbrains.qodana.settings.LinterUsed
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.stats.logGithubPromoAddQodanaPressed
-import org.jetbrains.qodana.stats.logGithubPromoWorkflowCreatedEvent
 import org.jetbrains.qodana.stats.logGithubPromoDismissed
 import org.jetbrains.qodana.stats.logGithubPromoExploreQodanaPressed
+import org.jetbrains.qodana.stats.logGithubPromoWorkflowCreatedEvent
 import org.jetbrains.qodana.ui.ProjectVcsDataProviderImpl
 import org.jetbrains.qodana.ui.ci.providers.github.DEFAULT_GITHUB_WORKFLOW_FILENAME
 import org.jetbrains.qodana.ui.ci.providers.github.DefaultQodanaGithubWorkflowBuilder
 import java.io.IOException
-import java.nio.file.Path
 import java.nio.file.FileAlreadyExistsException
+import java.nio.file.Path
 import kotlin.io.path.createFile
 
 private val LOG = Logger.getInstance(GithubPromoBannerViewModelImpl::class.java)

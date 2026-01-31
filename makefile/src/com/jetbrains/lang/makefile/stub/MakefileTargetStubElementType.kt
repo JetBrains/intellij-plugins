@@ -1,6 +1,10 @@
 package com.jetbrains.lang.makefile.stub
 
-import com.intellij.psi.stubs.*
+import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import com.jetbrains.lang.makefile.MakefileLanguage
 import com.jetbrains.lang.makefile.TARGET_INDEX_KEY
 import com.jetbrains.lang.makefile.psi.MakefileTarget

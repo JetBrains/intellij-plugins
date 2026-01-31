@@ -9,7 +9,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.RawCommandLineEditor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 public final class FlexCompilerProjectConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 

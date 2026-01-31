@@ -9,7 +9,7 @@ import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.SQLSERV
 import org.intellij.prisma.lang.PrismaConstants.ParameterNames
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
 import org.intellij.prisma.lang.PrismaConstants.Types
-import java.util.*
+import java.util.EnumSet
 
 fun PrismaSchemaDeclaration.Builder.sort(
   parameterLocation: PrismaSchemaParameterLocation = PrismaSchemaParameterLocation.DEFAULT,

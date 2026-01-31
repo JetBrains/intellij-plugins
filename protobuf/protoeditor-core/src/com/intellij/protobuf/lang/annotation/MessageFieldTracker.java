@@ -16,20 +16,42 @@
 package com.intellij.protobuf.lang.annotation;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeSet;
+import com.google.common.collect.TreeRangeSet;
 import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.PbLangBundle;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbElement;
+import com.intellij.protobuf.lang.psi.PbExtensionRange;
+import com.intellij.protobuf.lang.psi.PbExtensionsStatement;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbIdentifierValue;
+import com.intellij.protobuf.lang.psi.PbMessageType;
+import com.intellij.protobuf.lang.psi.PbNumberValue;
+import com.intellij.protobuf.lang.psi.PbReservedRange;
+import com.intellij.protobuf.lang.psi.PbReservedStatement;
+import com.intellij.protobuf.lang.psi.PbStringValue;
+import com.intellij.protobuf.lang.psi.PbSymbol;
+import com.intellij.protobuf.lang.psi.PbTypeName;
+import com.intellij.protobuf.lang.psi.ProtoLiteral;
+import com.intellij.protobuf.lang.psi.SyntaxLevel;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Visits statements in a message type to track field numbers, reserved, and extension statements.

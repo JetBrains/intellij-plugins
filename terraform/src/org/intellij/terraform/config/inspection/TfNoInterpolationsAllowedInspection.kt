@@ -15,7 +15,12 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns.ModuleRootBlock
 import org.intellij.terraform.config.patterns.TfPsiPatterns.StringLiteralAnywhereInVariable
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformRootBlock
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLArray
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElementVisitor
+import org.intellij.terraform.hcl.psi.HCLHeredocContent
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.common.MethodCallExpression
 import org.intellij.terraform.hil.ILLanguageInjector
 import org.intellij.terraform.isTerraformFile

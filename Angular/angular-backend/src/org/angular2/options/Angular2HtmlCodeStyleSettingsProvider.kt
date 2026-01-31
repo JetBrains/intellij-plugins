@@ -8,7 +8,13 @@ import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.codeStyle.*
+import com.intellij.psi.codeStyle.CodeStyleConfigurable
+import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable
+import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizableOptions
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import com.intellij.psi.codeStyle.CustomCodeStyleSettings
+import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
 import org.angular2.lang.html.Angular17HtmlLanguage
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings

@@ -17,7 +17,12 @@ package com.intellij.protobuf.lang.psi.impl;
 
 import com.google.common.base.Ascii;
 import com.intellij.lang.ASTNode;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbEnumDefinition;
+import com.intellij.protobuf.lang.psi.PbNamedTypeElement;
+import com.intellij.protobuf.lang.psi.PbTextField;
+import com.intellij.protobuf.lang.psi.PbTextNumberValue;
+import com.intellij.protobuf.lang.psi.ProtoNumberValue;
+import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.protobuf.lang.resolve.PbEnumNumberReference;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;

@@ -4,7 +4,12 @@ package com.intellij.coldFusion.injection
 import com.intellij.coldFusion.model.CfmlUtil
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes
-import com.intellij.coldFusion.model.psi.*
+import com.intellij.coldFusion.model.psi.CfmlAssignmentExpression
+import com.intellij.coldFusion.model.psi.CfmlFunctionCallExpression
+import com.intellij.coldFusion.model.psi.CfmlLeafPsiElement
+import com.intellij.coldFusion.model.psi.CfmlLiteralExpressionType
+import com.intellij.coldFusion.model.psi.CfmlReferenceExpression
+import com.intellij.coldFusion.model.psi.CfmlStringLiteralExpressionType
 import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl
 import com.intellij.lang.Language
 import com.intellij.lang.injection.MultiHostInjector

@@ -4,7 +4,11 @@ package com.intellij.lang.javascript.inspections.actionscript;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.JSAnalysisHandlersFactory;
-import com.intellij.lang.javascript.validation.*;
+import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
+import com.intellij.lang.javascript.validation.JSFunctionSignatureChecker;
+import com.intellij.lang.javascript.validation.JSProblemReporter;
+import com.intellij.lang.javascript.validation.JSReferenceChecker;
+import com.intellij.lang.javascript.validation.JSTypeChecker;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 

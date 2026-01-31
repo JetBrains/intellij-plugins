@@ -12,7 +12,10 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.asSafely
-import com.jetbrains.cidr.cpp.embedded.platformio.*
+import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioDebugConfiguration
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import java.nio.file.Path
 
 private const val POSIX_HOME_ENV_VAR_NAME = "HOME"

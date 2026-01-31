@@ -7,9 +7,17 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade
 import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.*
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.runTaskAndLogTime
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
-import org.jetbrains.qodana.staticAnalysis.script.*
+import org.jetbrains.qodana.staticAnalysis.script.AnalysisKind
+import org.jetbrains.qodana.staticAnalysis.script.ComparingScript
+import org.jetbrains.qodana.staticAnalysis.script.QodanaScript
+import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
+import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptResult
+import org.jetbrains.qodana.staticAnalysis.script.UnvalidatedParameters
+import org.jetbrains.qodana.staticAnalysis.script.require
 import org.jetbrains.qodana.util.QodanaMessageReporter
 
 

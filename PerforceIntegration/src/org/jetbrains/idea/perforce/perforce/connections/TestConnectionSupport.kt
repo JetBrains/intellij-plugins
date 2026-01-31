@@ -7,7 +7,11 @@ import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ArrayUtil
 import org.jetbrains.idea.perforce.application.PerforceVcs
-import org.jetbrains.idea.perforce.perforce.*
+import org.jetbrains.idea.perforce.perforce.ConnectionId
+import org.jetbrains.idea.perforce.perforce.ExecResult
+import org.jetbrains.idea.perforce.perforce.P4File
+import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParametersI
+import org.jetbrains.idea.perforce.perforce.PerforceSettings
 import org.jetbrains.idea.perforce.perforce.login.LoginPerformerImpl
 import org.jetbrains.idea.perforce.perforce.login.LoginSupport
 import java.io.File

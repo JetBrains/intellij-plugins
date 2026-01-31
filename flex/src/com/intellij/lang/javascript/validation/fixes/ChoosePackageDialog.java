@@ -17,7 +17,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.util.ThreeState;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 public class ChoosePackageDialog extends DialogWrapper{
   private static final String DESTINATION_PACKAGE_RECENT_KEY = "ChoosePackageDialog.DESTINATION_PACKAGE_RECENT_KEY";

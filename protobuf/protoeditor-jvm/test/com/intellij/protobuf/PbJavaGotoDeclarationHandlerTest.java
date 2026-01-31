@@ -26,7 +26,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.protobuf.gencodeutils.GotoExpectationMarker;
 import com.intellij.protobuf.gencodeutils.ReferenceGotoExpectation;
 import com.intellij.protobuf.jvm.PbJavaGotoDeclarationHandler;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiQualifiedReferenceElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 

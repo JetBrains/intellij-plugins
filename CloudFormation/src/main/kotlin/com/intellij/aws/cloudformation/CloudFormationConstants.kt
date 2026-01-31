@@ -1,6 +1,8 @@
 package com.intellij.aws.cloudformation
 
-import com.intellij.aws.cloudformation.metadata.*
+import com.intellij.aws.cloudformation.metadata.awsServerlessApi
+import com.intellij.aws.cloudformation.metadata.awsServerlessFunction
+import com.intellij.aws.cloudformation.metadata.awsServerlessSimpleTable
 
 object CloudFormationConstants {
   val SupportedTemplateFormatVersions = setOf("2010-09-09")

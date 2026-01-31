@@ -12,11 +12,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.application
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.cloud.openBrowserWithCurrentQodanaCloudFrontend
@@ -32,7 +38,7 @@ import org.jetbrains.qodana.ui.ciRelevantBranches
 import org.jetbrains.qodana.ui.createEditor
 import org.jetbrains.qodana.ui.createInMemoryDocument
 import java.nio.file.Path
-import java.util.*
+import java.util.UUID
 import kotlin.io.path.exists
 
 class SetupTeamcityDslViewModel(

@@ -7,7 +7,7 @@ import jetbrains.plugins.yeoman.YeomanBundle;
 import jetbrains.plugins.yeoman.generators.YeomanGeneratorInfo;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.RowSorter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.util.ArrayList;

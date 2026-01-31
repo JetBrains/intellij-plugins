@@ -5,7 +5,11 @@ import com.intellij.protobuf.ide.gutter.PbCodeImplementationSearcher
 import com.intellij.protobuf.ide.gutter.PbGeneratedCodeConverter
 import com.intellij.protobuf.jvm.PbJavaFindUsagesHandlerFactory.ProtoToJavaConverter
 import com.intellij.protobuf.jvm.PbJavaGotoDeclarationHandler
-import com.intellij.protobuf.lang.psi.*
+import com.intellij.protobuf.lang.psi.PbElement
+import com.intellij.protobuf.lang.psi.PbFile
+import com.intellij.protobuf.lang.psi.PbMessageDefinition
+import com.intellij.protobuf.lang.psi.PbServiceDefinition
+import com.intellij.protobuf.lang.psi.PbServiceMethod
 import com.intellij.protobuf.lang.stub.PbSearchParameters
 import com.intellij.protobuf.lang.stub.ProtoFileAccessor
 import com.intellij.psi.JavaPsiFacade

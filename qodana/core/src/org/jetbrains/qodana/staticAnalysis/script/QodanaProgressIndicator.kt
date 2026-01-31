@@ -2,9 +2,9 @@ package org.jetbrains.qodana.staticAnalysis.script
 
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.progress.util.ProgressIndicatorWithDelayedPresentation
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.isInteractiveOutput
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.splitProgressText
+import org.jetbrains.qodana.util.QodanaMessageReporter
 
 class QodanaProgressIndicator(
   private val messageReporter: QodanaMessageReporter

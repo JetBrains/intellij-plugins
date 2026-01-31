@@ -1,10 +1,12 @@
 package com.jetbrains.lang.makefile.toolWindow
 
-import com.intellij.icons.*
-import com.intellij.openapi.actionSystem.*
-import com.intellij.ui.*
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ToggleAction
+import com.intellij.ui.AutoScrollToSourceHandler
 import com.jetbrains.lang.makefile.MakefileLangBundle
-import javax.swing.*
+import javax.swing.JComponent
 
 class MakefileToolWindowAutoscrollToSourceAction(
     private val options: MakefileToolWindowOptions,

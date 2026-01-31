@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.DependencyTypeImpl;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;

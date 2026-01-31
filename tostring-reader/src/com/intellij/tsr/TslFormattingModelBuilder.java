@@ -1,12 +1,21 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.tsr;
 
-import com.intellij.formatting.*;
+import com.intellij.formatting.FormattingContext;
+import com.intellij.formatting.FormattingModel;
+import com.intellij.formatting.FormattingModelBuilder;
+import com.intellij.formatting.Indent;
+import com.intellij.formatting.SpacingBuilder;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.formatting.FormattingModelProvider.createFormattingModelForPsiFile;
-import static com.intellij.tsr.psi.TslTokenTypes.*;
+import static com.intellij.tsr.psi.TslTokenTypes.ASSIGN;
+import static com.intellij.tsr.psi.TslTokenTypes.COMMA;
+import static com.intellij.tsr.psi.TslTokenTypes.LBRACE;
+import static com.intellij.tsr.psi.TslTokenTypes.LBRACKET;
+import static com.intellij.tsr.psi.TslTokenTypes.RBRACE;
+import static com.intellij.tsr.psi.TslTokenTypes.RBRACKET;
 
 final class TslFormattingModelBuilder implements FormattingModelBuilder {
   @Override

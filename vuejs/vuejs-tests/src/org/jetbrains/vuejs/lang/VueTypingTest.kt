@@ -5,8 +5,8 @@ import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.openapi.actionSystem.IdeActions
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.sass.SASSLanguage
 import org.jetbrains.plugins.scss.SCSSLanguage

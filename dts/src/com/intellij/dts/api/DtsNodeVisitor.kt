@@ -1,7 +1,14 @@
 package com.intellij.dts.api
 
 import com.intellij.dts.lang.DtsFile
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsCompilerDirective
+import com.intellij.dts.lang.psi.DtsNode
+import com.intellij.dts.lang.psi.DtsProperty
+import com.intellij.dts.lang.psi.DtsRefNode
+import com.intellij.dts.lang.psi.DtsRootNode
+import com.intellij.dts.lang.psi.DtsSubNode
+import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.lang.psi.getDtsPath
 import com.intellij.psi.util.elementType
 import com.intellij.util.asSafely
 import com.intellij.util.containers.headTail

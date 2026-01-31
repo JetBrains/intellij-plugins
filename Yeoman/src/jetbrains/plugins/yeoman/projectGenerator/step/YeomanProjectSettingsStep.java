@@ -11,10 +11,10 @@ import com.intellij.platform.DirectoryProjectGenerator;
 import jetbrains.plugins.yeoman.projectGenerator.template.YeomanProjectGenerator;
 import jetbrains.plugins.yeoman.projectGenerator.template.YeomanProjectGeneratorPanel;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

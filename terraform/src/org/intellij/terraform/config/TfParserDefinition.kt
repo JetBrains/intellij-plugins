@@ -11,7 +11,7 @@ import org.intellij.terraform.hcl.HCLLexer
 import org.intellij.terraform.hcl.HCLParserDefinition
 import org.intellij.terraform.hcl.psi.impl.HCLFileImpl
 import org.jetbrains.annotations.NotNull
-import java.util.*
+import java.util.EnumSet
 
 open class TfParserDefinition : HCLParserDefinition() {
   companion object {

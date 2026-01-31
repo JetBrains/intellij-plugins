@@ -1,5 +1,6 @@
 package com.jetbrains.cidr.cpp.embedded.platformio
 
+import com.intellij.clion.embedded.debugger.peripheralview.SvdPanel.Companion.registerPeripheralTab
 import com.intellij.clion.embedded.execution.custom.McuResetAction.Companion.addResetMcuAction
 import com.intellij.execution.CantRunException.CustomProcessedCantRunException
 import com.intellij.execution.ExecutionException
@@ -25,7 +26,6 @@ import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.notifyUploadUnavailable
 import com.jetbrains.cidr.cpp.execution.CLionLauncher
 import com.jetbrains.cidr.cpp.execution.debugger.backend.CLionGDBDriverConfiguration
-import com.intellij.clion.embedded.debugger.peripheralview.SvdPanel.Companion.registerPeripheralTab
 import com.jetbrains.cidr.cpp.toolchains.CPPDebugger
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.TrivialNativeToolchain

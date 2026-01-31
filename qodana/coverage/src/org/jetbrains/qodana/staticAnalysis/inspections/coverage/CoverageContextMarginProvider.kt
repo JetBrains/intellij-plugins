@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 
-import org.jetbrains.qodana.staticAnalysis.sarif.ContextMarginProvider
 import com.jetbrains.qodana.sarif.model.Result
+import org.jetbrains.qodana.staticAnalysis.sarif.ContextMarginProvider
 
 /**
  * Sets margin to 1 line to make SARIF smaller and make baseline comparison easier.

@@ -16,7 +16,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.intellij.testFramework.UsefulTestCase.*;
+import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
+import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
+import static com.intellij.testFramework.UsefulTestCase.assertSameElements;
 
 public class PerforceWindowsTest extends TestCase {
   @Override

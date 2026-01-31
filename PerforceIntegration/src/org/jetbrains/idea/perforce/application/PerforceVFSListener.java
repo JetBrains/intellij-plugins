@@ -7,7 +7,11 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.*;
+import com.intellij.openapi.vcs.AbstractVcsHelper;
+import com.intellij.openapi.vcs.FilePath;
+import com.intellij.openapi.vcs.FileStatus;
+import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.VcsVFSListener;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.LastUnchangedContentTracker;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -25,14 +29,23 @@ import com.intellij.vcsUtil.VcsUtil;
 import kotlinx.coroutines.CoroutineScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.PerforceBundle;
-import org.jetbrains.idea.perforce.operations.*;
+import org.jetbrains.idea.perforce.operations.P4AddOperation;
+import org.jetbrains.idea.perforce.operations.P4CopyOperation;
+import org.jetbrains.idea.perforce.operations.P4EditOperation;
+import org.jetbrains.idea.perforce.operations.P4MoveRenameOperation;
+import org.jetbrains.idea.perforce.operations.VcsOperation;
+import org.jetbrains.idea.perforce.operations.VcsOperationLog;
 import org.jetbrains.idea.perforce.perforce.P4File;
 import org.jetbrains.idea.perforce.perforce.PerforceCachingContentRevision;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class PerforceVFSListener extends VcsVFSListener {
   private static final Logger LOG = Logger.getInstance(PerforceVFSListener.class);

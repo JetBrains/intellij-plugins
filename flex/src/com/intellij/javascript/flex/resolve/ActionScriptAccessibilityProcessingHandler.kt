@@ -3,9 +3,18 @@ package com.intellij.javascript.flex.resolve
 
 import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil
 import com.intellij.lang.javascript.index.JSLocalNamespaceEvaluator
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSFieldVariable
+import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSPsiElementBase
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
-import com.intellij.lang.javascript.psi.ecmal4.*
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
+import com.intellij.lang.javascript.psi.ecmal4.JSNamespaceDeclaration
+import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement
+import com.intellij.lang.javascript.psi.ecmal4.JSSuperExpression
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler.Companion.getRealElement
 import com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler.Companion.isParentClassContext

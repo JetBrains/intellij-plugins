@@ -5,7 +5,13 @@ import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.*
+import com.intellij.psi.FileViewProvider
+import com.intellij.psi.FileViewProviderFactory
+import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider
 import com.intellij.psi.xml.XmlTag

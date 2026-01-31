@@ -8,7 +8,6 @@ import com.intellij.codeInspection.incorrectFormatting.IncorrectFormattingInspec
 import com.intellij.codeInspection.incorrectFormatting.IncorrectFormattingResultHandler
 import org.jetbrains.qodana.staticAnalysis.sarif.CONTEXT_MAX_LINES_MARGIN
 import org.jetbrains.qodana.staticAnalysis.sarif.MAX_CONTEXT_CHARS_LENGTH
-import kotlin.collections.isNotEmpty
 
 class IncorrectFormattingResultHandlerQodana : IncorrectFormattingResultHandler {
   companion object {

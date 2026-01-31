@@ -7,7 +7,9 @@ import org.jetbrains.idea.perforce.application.PerforceCheckinEnvironment
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.PerforceChange
-import org.junit.Assert.*
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Test
 
 class PerforceSubmitTest : PerforceTestCase() {

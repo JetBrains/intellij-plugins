@@ -4,7 +4,10 @@ package com.intellij.javascript.karma.runConfiguration
 import com.intellij.idea.IJIgnore
 import com.intellij.javascript.karma.runConfiguration.infrastructure.KarmaRunConfigurationTestsBase
 import com.intellij.javascript.karma.scope.KarmaScopeKind
-import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.*
+import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.FailedTest
+import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.Location
+import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.OutputError
+import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.PassedTest
 
 @IJIgnore(issue = "For local development usage. Will be enabled on CI after setting up headless Chrome on CI for these kind of tests")
 class KarmaRunConfigurationTreeTest: KarmaRunConfigurationTestsBase() {

@@ -10,7 +10,13 @@ import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
-import org.angular2.entities.*
+import org.angular2.entities.Angular2AliasedDirectiveProperty
+import org.angular2.entities.Angular2ClassBasedDirective
+import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2DirectiveProperties
+import org.angular2.entities.Angular2DirectiveProperty
+import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.Angular2HostDirective
 import org.angular2.entities.source.Angular2SourceUtil.readDirectivePropertyMappings
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS

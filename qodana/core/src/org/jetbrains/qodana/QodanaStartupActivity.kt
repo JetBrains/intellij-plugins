@@ -13,7 +13,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.jetbrains.qodana.cloud.QodanaCloudStateService
 import org.jetbrains.qodana.cloud.UserState
-import org.jetbrains.qodana.cloud.project.*
+import org.jetbrains.qodana.cloud.project.CloudProjectData
+import org.jetbrains.qodana.cloud.project.CloudProjectProperties
+import org.jetbrains.qodana.cloud.project.LinkState
+import org.jetbrains.qodana.cloud.project.QodanaCloudProjectLinkService
+import org.jetbrains.qodana.cloud.project.linkWithCloudProjectAndApply
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.coroutines.qodanaProjectScope
 import org.jetbrains.qodana.notifications.QodanaNotifications

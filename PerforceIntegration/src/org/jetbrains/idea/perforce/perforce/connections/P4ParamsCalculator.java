@@ -10,7 +10,11 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.perforce.perforce.*;
+import org.jetbrains.idea.perforce.perforce.ExecResult;
+import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParametersI;
+import org.jetbrains.idea.perforce.perforce.PerforceRunner;
+import org.jetbrains.idea.perforce.perforce.PerforceSettings;
+import org.jetbrains.idea.perforce.perforce.PerforceTimeoutException;
 
 import java.io.File;
 import java.io.IOException;

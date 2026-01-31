@@ -38,7 +38,7 @@ import org.jetbrains.osgi.jps.model.OutputPathType;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ProjectSettings;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 /**
  * The facet type of Osmorc.

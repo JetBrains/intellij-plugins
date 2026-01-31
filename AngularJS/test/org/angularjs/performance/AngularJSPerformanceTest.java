@@ -1,8 +1,8 @@
 package org.angularjs.performance;
 
 import com.intellij.testFramework.PerformanceUnitTest;
-import com.intellij.tools.ide.metrics.benchmark.Benchmark;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.tools.ide.metrics.benchmark.Benchmark;
 import org.angularjs.AngularTestUtil;
 
 /**

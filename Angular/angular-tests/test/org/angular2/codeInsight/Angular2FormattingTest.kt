@@ -6,12 +6,12 @@ import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.polySymbols.testFramework.findOffsetBySignature
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
-import com.intellij.polySymbols.testFramework.findOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings

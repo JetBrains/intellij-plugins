@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.tree.IFileElementType

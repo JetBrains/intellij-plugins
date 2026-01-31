@@ -21,7 +21,15 @@ import com.intellij.rt.coverage.data.ClassData
 import com.intellij.rt.coverage.data.ProjectData
 import com.sixrr.inspectjs.BaseInspectionVisitor
 import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.staticAnalysis.inspections.coverage.*
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageInspectionBase
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.issueWithCoverage
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.iterateContents
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadClassData
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadMissingData
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.normalizeFilePath
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.removePrefixFromCoverage
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportElement
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportProblemsNeeded
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 
 private val jest = Key.create<Lazy<ProjectData?>>("qodana.jest.coverage")

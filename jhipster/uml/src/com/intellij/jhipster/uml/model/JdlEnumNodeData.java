@@ -6,7 +6,7 @@ import com.intellij.jhipster.JdlIconsMapping;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.List;
 import java.util.Objects;
 

@@ -5,7 +5,13 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.util.containers.ContainerUtil;
 import org.intellij.terraform.config.model.Types;
-import org.intellij.terraform.hcl.psi.*;
+import org.intellij.terraform.hcl.psi.HCLBlock;
+import org.intellij.terraform.hcl.psi.HCLElementGenerator;
+import org.intellij.terraform.hcl.psi.HCLElementGeneratorTest;
+import org.intellij.terraform.hcl.psi.HCLObject;
+import org.intellij.terraform.hcl.psi.HCLProperty;
+import org.intellij.terraform.hcl.psi.HCLStringLiteral;
+import org.intellij.terraform.hcl.psi.HCLValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;

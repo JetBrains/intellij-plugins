@@ -4,9 +4,17 @@ package org.jetbrains.vuejs.model.typed
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeOwner
-import com.intellij.lang.javascript.psi.ecma6.*
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameterListOwner
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
-import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSAnyType
+import com.intellij.lang.javascript.psi.types.JSImportType
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.TypeScriptIndexedAccessJSTypeImpl
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
@@ -18,7 +26,11 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.lang.html.isVueFileName
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueNamedComponent
+import org.jetbrains.vuejs.model.VuePsiSourcedComponent
 import org.jetbrains.vuejs.model.source.VueComponents
 
 class VueTypedComponent private constructor(

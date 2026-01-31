@@ -2,7 +2,18 @@ package org.intellij.prisma.ide.documentation
 
 import com.intellij.psi.PsiElement
 import org.intellij.prisma.lang.presentation.PrismaPsiRenderer
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.PrismaDatasourceDeclaration
+import org.intellij.prisma.lang.psi.PrismaEnumDeclaration
+import org.intellij.prisma.lang.psi.PrismaFieldDeclaration
+import org.intellij.prisma.lang.psi.PrismaGeneratorDeclaration
+import org.intellij.prisma.lang.psi.PrismaKeyValue
+import org.intellij.prisma.lang.psi.PrismaMemberDeclaration
+import org.intellij.prisma.lang.psi.PrismaModelDeclaration
+import org.intellij.prisma.lang.psi.PrismaNamedElement
+import org.intellij.prisma.lang.psi.PrismaTypeAlias
+import org.intellij.prisma.lang.psi.PrismaTypeDeclaration
+import org.intellij.prisma.lang.psi.PrismaViewDeclaration
+import org.intellij.prisma.lang.psi.isKeyword
 
 private const val UNKNOWN = "<unknown>"
 

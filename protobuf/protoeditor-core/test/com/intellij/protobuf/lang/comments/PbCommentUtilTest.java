@@ -15,13 +15,17 @@
  */
 package com.intellij.protobuf.lang.comments;
 
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 import com.intellij.protobuf.lang.PbFileType;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.protobuf.lang.psi.PbMessageType;
+import com.intellij.protobuf.lang.psi.PbOptionStatement;
+import com.intellij.protobuf.lang.psi.PbStatement;
+import com.intellij.protobuf.lang.psi.PbSyntaxStatement;
 import com.intellij.protobuf.lang.psi.util.PbCommentUtil;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.util.QualifiedName;
 
 import java.util.Arrays;
 import java.util.List;

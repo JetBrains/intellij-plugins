@@ -21,7 +21,11 @@ import com.intellij.util.Consumer;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import icons.AngularJSIcons;
 import org.angularjs.AngularJSBundle;
-import org.angularjs.codeInsight.router.*;
+import org.angularjs.codeInsight.router.AngularUiRouterDiagramBuilder;
+import org.angularjs.codeInsight.router.AngularUiRouterGraphBuilder;
+import org.angularjs.codeInsight.router.DiagramObject;
+import org.angularjs.codeInsight.router.RootTemplate;
+import org.angularjs.codeInsight.router.UiRouterState;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 

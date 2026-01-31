@@ -2,7 +2,11 @@
 package org.intellij.prisma.lang.psi.stubs
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.stubs.*
+import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import org.intellij.prisma.ide.indexing.PRISMA_ENTITIES_INDEX_KEY
 import org.intellij.prisma.ide.indexing.PRISMA_KEY_VALUE_DECL_INDEX_KEY
 import org.intellij.prisma.lang.psi.PrismaEntityDeclaration

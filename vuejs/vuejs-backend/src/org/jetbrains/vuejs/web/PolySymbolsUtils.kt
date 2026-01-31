@@ -3,7 +3,8 @@ package org.jetbrains.vuejs.web
 
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueModelDirectiveProperties
+import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.symbols.VueComponentWithProximity
 import org.jetbrains.vuejs.web.symbols.VueDirectiveWithProximity
 

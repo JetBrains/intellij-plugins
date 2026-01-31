@@ -10,7 +10,12 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.toCanonicalPath
 import com.intellij.openapi.util.removeUserData
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.search.scope.packageSet.*
+import com.intellij.psi.search.scope.packageSet.AbstractPackageSet
+import com.intellij.psi.search.scope.packageSet.NamedScopesHolder
+import com.intellij.psi.search.scope.packageSet.PackageSet
+import com.intellij.psi.search.scope.packageSet.PackageSetFactory
+import com.intellij.psi.search.scope.packageSet.ParsingException
+import com.intellij.psi.search.scope.packageSet.UnionPackageSet
 import com.intellij.util.application
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
@@ -20,14 +25,21 @@ import org.jetbrains.qodana.extensions.VcsIgnoredFilesProvider
 import org.jetbrains.qodana.license.QodanaLicense
 import org.jetbrains.qodana.license.QodanaLicenseType
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.*
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.DefaultSeverityIncludeScopeModifier
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.ExcludeScopeModifier
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.GitIgnoreExcludeScopeModifier
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.GlobalExcludeScopeModifier
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaScopeModifier
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.getOutputFormat
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.sarif.hasFixes
 import org.jetbrains.qodana.staticAnalysis.script.DEFAULT_SCRIPT_NAME
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
-import java.util.*
+import java.util.Locale
 
 const val QODANA_YAML_CONFIG_FILENAME = "qodana.yaml"
 const val QODANA_YML_CONFIG_FILENAME = "qodana.yml"

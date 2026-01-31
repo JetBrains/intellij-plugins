@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.JSTestUtils.checkResolveToDestination
 import com.intellij.polySymbols.testFramework.multiResolveReference
 import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
 import com.intellij.polySymbols.testFramework.resolveReference
-import com.intellij.polySymbols.testFramework.resolveToPolySymbolSource
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule

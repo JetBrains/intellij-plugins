@@ -6,7 +6,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import org.jetbrains.annotations.Nls
 import org.jetbrains.idea.perforce.PerforceBundle
-import org.jetbrains.idea.perforce.application.*
+import org.jetbrains.idea.perforce.application.ClientRootsCache
+import org.jetbrains.idea.perforce.application.ConnectionDiagnoseRefresher
+import org.jetbrains.idea.perforce.application.ConnectionInfo
+import org.jetbrains.idea.perforce.application.P4RootsInformation
+import org.jetbrains.idea.perforce.application.PerforceClientRootsChecker
+import org.jetbrains.idea.perforce.application.PerforceInfoAndClient
 import org.jetbrains.idea.perforce.perforce.PerforceRunner
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
 import java.nio.file.Path

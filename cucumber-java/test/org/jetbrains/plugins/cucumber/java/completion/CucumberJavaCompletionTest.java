@@ -14,7 +14,6 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.io.File;
-import java.util.List;
 
 public class CucumberJavaCompletionTest extends BasePlatformTestCase {
   private CompletionTester myCompletionTester;

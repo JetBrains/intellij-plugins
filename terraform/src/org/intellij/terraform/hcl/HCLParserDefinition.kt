@@ -15,7 +15,7 @@ import com.intellij.psi.tree.TokenSet
 import org.intellij.terraform.hcl.HCLElementTypes.Factory
 import org.intellij.terraform.hcl.psi.impl.HCLFileImpl
 import org.jetbrains.annotations.NotNull
-import java.util.*
+import java.util.EnumSet
 
 private val FILE: IFileElementType by lazy { IFileElementType(HCLLanguage) }
 

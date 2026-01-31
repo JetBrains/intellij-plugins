@@ -12,8 +12,18 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.lang.makefile.psi.*
-import com.jetbrains.lang.makefile.psi.MakefileTypes.*
+import com.jetbrains.lang.makefile.MakefileFoldingBuilder.Companion.withoutFirstNode
+import com.jetbrains.lang.makefile.MakefileFoldingBuilder.Companion.withoutFirstNodeWithNextSiblingOfType
+import com.jetbrains.lang.makefile.psi.MakefileConditional
+import com.jetbrains.lang.makefile.psi.MakefileConditionalElse
+import com.jetbrains.lang.makefile.psi.MakefileDefine
+import com.jetbrains.lang.makefile.psi.MakefileRule
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_ENDIF
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_IFDEF
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_IFEQ
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_IFNDEF
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_IFNEQ
+import com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
 
 class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
   override fun buildFoldRegions(root: PsiElement, document: Document, quick: Boolean): Array<FoldingDescriptor> {

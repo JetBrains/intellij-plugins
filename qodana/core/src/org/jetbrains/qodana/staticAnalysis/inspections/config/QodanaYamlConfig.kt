@@ -1,6 +1,11 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.config
 
-import org.jetbrains.qodana.staticAnalysis.inspections.config.DependencyAnalysisConfig.*
+import org.jetbrains.qodana.staticAnalysis.inspections.config.DependencyAnalysisConfig.AllowedModule
+import org.jetbrains.qodana.staticAnalysis.inspections.config.DependencyAnalysisConfig.CustomDependency
+import org.jetbrains.qodana.staticAnalysis.inspections.config.DependencyAnalysisConfig.DependencyIgnore
+import org.jetbrains.qodana.staticAnalysis.inspections.config.DependencyAnalysisConfig.DependencyOverride
+import org.jetbrains.qodana.staticAnalysis.inspections.config.DependencyAnalysisConfig.LicenseOverride
+import org.jetbrains.qodana.staticAnalysis.inspections.config.DependencyAnalysisConfig.LicenseRule
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.exists

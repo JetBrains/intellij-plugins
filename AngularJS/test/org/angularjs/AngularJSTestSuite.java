@@ -1,7 +1,19 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs;
 
-import org.angularjs.codeInsight.*;
+import org.angularjs.codeInsight.AngularJSInjectorMatchingEndFinderTest;
+import org.angularjs.codeInsight.AngularUiRouterTest;
+import org.angularjs.codeInsight.AttributesTest;
+import org.angularjs.codeInsight.ComponentsTest;
+import org.angularjs.codeInsight.DependencyInjectionTest;
+import org.angularjs.codeInsight.DirectivesTest;
+import org.angularjs.codeInsight.DocumentationTest;
+import org.angularjs.codeInsight.FiltersTest;
+import org.angularjs.codeInsight.InjectionsTest;
+import org.angularjs.codeInsight.NgDocTest;
+import org.angularjs.codeInsight.NgRepeatTest;
+import org.angularjs.codeInsight.RoutingTest;
+import org.angularjs.codeInsight.TagsTest;
 import org.angularjs.codeInsight.messageFormat.AngularMessageFormatAnnotatorTest;
 import org.angularjs.diagrams.DiagramsTest;
 import org.angularjs.editor.AngularTypedHandlerTest;

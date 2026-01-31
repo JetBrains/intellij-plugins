@@ -3,7 +3,13 @@ package org.jetbrains.qodana.yaml
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.findFileOrDirectory
 import com.intellij.patterns.PlatformPatterns
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiReferenceBase
+import com.intellij.psi.PsiReferenceContributor
+import com.intellij.psi.PsiReferenceProvider
+import com.intellij.psi.PsiReferenceRegistrar
 import com.intellij.util.ProcessingContext
 import org.jetbrains.yaml.psi.YAMLScalar
 

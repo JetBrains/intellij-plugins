@@ -11,7 +11,12 @@ import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
-import com.intellij.lang.javascript.*;
+import com.intellij.lang.javascript.ActionScriptFileType;
+import com.intellij.lang.javascript.BaseJSCompletionTestCase;
+import com.intellij.lang.javascript.JSCompletionTestHelperSimple;
+import com.intellij.lang.javascript.JSTestOption;
+import com.intellij.lang.javascript.JSTestOptions;
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
@@ -46,7 +51,11 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 

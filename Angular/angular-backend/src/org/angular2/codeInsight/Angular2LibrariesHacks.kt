@@ -39,7 +39,7 @@ import org.angular2.lang.Angular2LangUtil.ANGULAR_ROUTER_PACKAGE
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolDelegate
 import org.jetbrains.annotations.NonNls
-import java.util.*
+import java.util.Locale
 
 /**
  * This class is intended to be a single point of origin for any hack to support a badly written library.

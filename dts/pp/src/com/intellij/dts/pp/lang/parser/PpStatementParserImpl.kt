@@ -2,7 +2,16 @@ package com.intellij.dts.pp.lang.parser
 
 import com.intellij.dts.pp.lang.PpTokenTypes
 import com.intellij.lang.PsiBuilder
-import com.intellij.lang.parser.GeneratedParserUtilBase.*
+import com.intellij.lang.parser.GeneratedParserUtilBase._NONE_
+import com.intellij.lang.parser.GeneratedParserUtilBase._NOT_
+import com.intellij.lang.parser.GeneratedParserUtilBase.consumeToken
+import com.intellij.lang.parser.GeneratedParserUtilBase.consumeTokenFast
+import com.intellij.lang.parser.GeneratedParserUtilBase.current_position_
+import com.intellij.lang.parser.GeneratedParserUtilBase.empty_element_parsed_guard_
+import com.intellij.lang.parser.GeneratedParserUtilBase.enter_section_
+import com.intellij.lang.parser.GeneratedParserUtilBase.exit_section_
+import com.intellij.lang.parser.GeneratedParserUtilBase.recursion_guard_
+import com.intellij.lang.parser.GeneratedParserUtilBase.report_error_
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 

@@ -1,7 +1,11 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.stubs
 
-import com.intellij.json.psi.*
+import com.intellij.json.psi.JsonArray
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonProperty
+import com.intellij.json.psi.JsonStringLiteral
+import com.intellij.json.psi.JsonValue
 import com.intellij.lang.javascript.index.flags.BooleanStructureElement
 import com.intellij.lang.javascript.index.flags.FlagsStructure
 import com.intellij.openapi.util.NotNullLazyValue
@@ -25,7 +29,7 @@ import org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue
 import org.angular2.lang.metadata.psi.MetadataElementType
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
-import java.util.*
+import java.util.Collections
 
 open class Angular2MetadataClassStubBase<Psi : PsiElement> : Angular2MetadataElementStub<Psi> {
 

@@ -3,7 +3,12 @@ package org.jetbrains.vuejs.lang.html.lexer
 
 import com.intellij.html.embedding.HtmlEmbeddedContentProvider
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lexer.*
+import com.intellij.lexer.FlexAdapter
+import com.intellij.lexer.HtmlLexer
+import com.intellij.lexer.HtmlScriptStyleEmbeddedContentProvider
+import com.intellij.lexer.Lexer
+import com.intellij.lexer.MergeFunction
+import com.intellij.lexer.MergingLexerAdapterBase
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet

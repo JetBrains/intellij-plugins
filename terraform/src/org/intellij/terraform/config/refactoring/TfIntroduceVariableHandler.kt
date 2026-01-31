@@ -30,7 +30,11 @@ import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLLiteral
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hil.refactoring.ILIntroduceVariableHandler
 import org.intellij.terraform.hil.refactoring.ILRefactoringUtil

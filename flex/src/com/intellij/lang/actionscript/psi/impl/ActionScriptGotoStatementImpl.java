@@ -1,7 +1,11 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.actionscript.psi.impl;
 
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSElementVisitor;
+import com.intellij.lang.javascript.psi.JSExecutionScope;
+import com.intellij.lang.javascript.psi.JSLabeledStatement;
+import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor;
+import com.intellij.lang.javascript.psi.JSStatementWithLabelReference;
 import com.intellij.lang.javascript.psi.impl.JSStatementWithLabelReferenceImpl;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;

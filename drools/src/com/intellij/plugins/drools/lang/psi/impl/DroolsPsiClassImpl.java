@@ -5,10 +5,30 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.plugins.drools.DroolsConstants;
-import com.intellij.plugins.drools.lang.psi.*;
+import com.intellij.plugins.drools.lang.psi.DroolsAnnotation;
+import com.intellij.plugins.drools.lang.psi.DroolsField;
+import com.intellij.plugins.drools.lang.psi.DroolsFile;
+import com.intellij.plugins.drools.lang.psi.DroolsPsiClass;
+import com.intellij.plugins.drools.lang.psi.DroolsSuperType;
+import com.intellij.plugins.drools.lang.psi.DroolsTypeDeclaration;
+import com.intellij.plugins.drools.lang.psi.DroolsTypeName;
 import com.intellij.plugins.drools.lang.psi.util.DroolsElementsFactory;
 import com.intellij.plugins.drools.lang.psi.util.DroolsResolveUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.HierarchicalMethodSignature;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassInitializer;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiIdentifier;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiModifierList;
+import com.intellij.psi.PsiReferenceList;
+import com.intellij.psi.PsiSubstitutor;
+import com.intellij.psi.PsiTypeParameter;
+import com.intellij.psi.PsiTypeParameterList;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.light.JavaIdentifier;
@@ -22,7 +42,11 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public abstract class DroolsPsiClassImpl extends DroolsPsiCompositeElementImpl implements DroolsPsiClass, DroolsTypeDeclaration {
 

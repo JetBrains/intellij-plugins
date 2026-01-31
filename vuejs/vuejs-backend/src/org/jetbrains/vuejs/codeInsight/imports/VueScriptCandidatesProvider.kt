@@ -6,7 +6,13 @@ import com.intellij.lang.javascript.modules.imports.JSImportCandidatesBase
 import com.intellij.lang.javascript.modules.imports.providers.JSCandidatesProcessor
 import com.intellij.lang.javascript.modules.imports.providers.JSImportCandidatesProvider
 import org.jetbrains.vuejs.lang.html.isVueFile
-import org.jetbrains.vuejs.model.source.*
+import org.jetbrains.vuejs.model.source.DEFINE_EMITS_FUN
+import org.jetbrains.vuejs.model.source.DEFINE_EXPOSE_FUN
+import org.jetbrains.vuejs.model.source.DEFINE_MODEL_FUN
+import org.jetbrains.vuejs.model.source.DEFINE_OPTIONS_FUN
+import org.jetbrains.vuejs.model.source.DEFINE_PROPS_FUN
+import org.jetbrains.vuejs.model.source.DEFINE_SLOTS_FUN
+import org.jetbrains.vuejs.model.source.WITH_DEFAULTS_FUN
 import java.util.function.Consumer
 
 internal val SCRIPT_SETUP_API = setOf(

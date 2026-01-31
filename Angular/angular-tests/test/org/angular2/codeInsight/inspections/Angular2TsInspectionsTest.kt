@@ -5,7 +5,11 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection
 import com.intellij.lang.javascript.JSTestUtils
-import com.intellij.lang.javascript.inspections.*
+import com.intellij.lang.javascript.inspections.JSDuplicatedDeclarationInspection
+import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection
+import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
+import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
+import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase

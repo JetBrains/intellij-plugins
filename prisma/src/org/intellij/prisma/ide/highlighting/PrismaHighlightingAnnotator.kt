@@ -8,8 +8,20 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
-import org.intellij.prisma.lang.psi.*
-import org.intellij.prisma.lang.psi.PrismaElementTypes.*
+import org.intellij.prisma.lang.psi.PrismaBlockAttribute
+import org.intellij.prisma.lang.psi.PrismaDeclaration
+import org.intellij.prisma.lang.psi.PrismaElementTypes.AT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.ATAT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.IDENTIFIER
+import org.intellij.prisma.lang.psi.PrismaEnumValueDeclaration
+import org.intellij.prisma.lang.psi.PrismaFieldAttribute
+import org.intellij.prisma.lang.psi.PrismaFieldDeclaration
+import org.intellij.prisma.lang.psi.PrismaFunctionCall
+import org.intellij.prisma.lang.psi.PrismaKeyValue
+import org.intellij.prisma.lang.psi.PrismaNamedArgument
+import org.intellij.prisma.lang.psi.PrismaPathExpression
+import org.intellij.prisma.lang.psi.PrismaTypeReference
+import org.intellij.prisma.lang.psi.findTopmostPathParent
 import org.intellij.prisma.lang.psi.isFieldExpression
 
 class PrismaHighlightingAnnotator : Annotator {

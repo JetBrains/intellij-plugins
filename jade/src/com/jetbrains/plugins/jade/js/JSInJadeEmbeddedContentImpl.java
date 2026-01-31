@@ -4,7 +4,7 @@ package com.jetbrains.plugins.jade.js;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSEmbeddedContent;
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiElement;

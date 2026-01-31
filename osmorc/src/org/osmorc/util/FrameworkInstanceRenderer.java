@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.i18n.OsmorcBundle;
 
-import javax.swing.*;
+import javax.swing.JList;
 
 public class FrameworkInstanceRenderer extends ColoredListCellRenderer<FrameworkInstanceDefinition> {
   private final @Nls String myDefaultText;

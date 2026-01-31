@@ -16,7 +16,11 @@ import org.intellij.prisma.PrismaIcons
 import org.intellij.prisma.ide.completion.PrismaCompletionProvider
 import org.intellij.prisma.ide.schema.types.PrismaNativeType
 import org.intellij.prisma.ide.schema.types.PrismaNativeTypeConstructor
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.PrismaFieldAttribute
+import org.intellij.prisma.lang.psi.PrismaFieldDeclaration
+import org.intellij.prisma.lang.psi.PrismaFile
+import org.intellij.prisma.lang.psi.PrismaPathExpression
+import org.intellij.prisma.lang.psi.with
 import org.intellij.prisma.lang.types.unwrapType
 
 

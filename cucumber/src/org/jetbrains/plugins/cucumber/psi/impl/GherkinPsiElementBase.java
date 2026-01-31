@@ -4,7 +4,6 @@ package org.jetbrains.plugins.cucumber.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
@@ -14,7 +13,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinPsiElement;
 import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 
 public abstract class GherkinPsiElementBase extends ASTWrapperPsiElement implements GherkinPsiElement {

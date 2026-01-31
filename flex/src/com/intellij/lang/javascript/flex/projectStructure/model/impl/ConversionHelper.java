@@ -3,7 +3,14 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.application.options.PathMacrosImpl;
 import com.intellij.application.options.ReplacePathToMacroMap;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.BuildConfigurationEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableBuildConfigurationEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyType;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableModuleLibraryEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableSharedLibraryEntry;
 import com.intellij.openapi.components.ExpandMacroToPathMap;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.module.Module;

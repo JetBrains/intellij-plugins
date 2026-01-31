@@ -2,7 +2,13 @@
 package org.intellij.terraform.config.patterns
 
 import com.intellij.openapi.util.Ref
-import com.intellij.patterns.*
+import com.intellij.patterns.ElementPattern
+import com.intellij.patterns.ElementPatternCondition
+import com.intellij.patterns.PatternCondition
+import com.intellij.patterns.PlatformPatterns
+import com.intellij.patterns.PsiElementPattern
+import com.intellij.patterns.PsiFilePattern
+import com.intellij.patterns.StandardPatterns
 import com.intellij.patterns.StandardPatterns.or
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
@@ -26,7 +32,15 @@ import org.intellij.terraform.config.TFVARS_EXTENSION
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.hcl.patterns.HCLPatterns
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.hcl.psi.HCLForIntro
+import org.intellij.terraform.hcl.psi.HCLHeredocContent
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 
 object TfPsiPatterns {
   val TerraformFile: PsiFilePattern.Capture<HCLFile> = PlatformPatterns.psiFile(HCLFile::class.java)

@@ -2,7 +2,11 @@
 package com.jetbrains.plugins.jade.validation;
 
 import com.intellij.codeInsight.actions.ReformatCodeProcessor;
-import com.intellij.codeInspection.*;
+import com.intellij.codeInspection.InspectionManager;
+import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;

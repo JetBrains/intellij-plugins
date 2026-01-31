@@ -5,11 +5,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightPlatformTestCase;
+import org.intellij.terraform.config.psi.TfElementGenerator;
 import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider;
 import org.intellij.terraform.hcl.psi.HCLBlock;
 import org.intellij.terraform.hcl.psi.HCLElementGenerator;
 import org.intellij.terraform.hcl.psi.HCLObject;
-import org.intellij.terraform.config.psi.TfElementGenerator;
 
 public class ModelFQNTest extends LightPlatformTestCase {
   private HCLElementGenerator myElementGenerator;

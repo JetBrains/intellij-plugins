@@ -6,7 +6,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.makefile.MakefileFile
-import com.jetbrains.lang.makefile.psi.MakefileTypes.*
+import com.jetbrains.lang.makefile.psi.MakefileTypes.ASSIGN
+import com.jetbrains.lang.makefile.psi.MakefileTypes.DOC_COMMENT
+import com.jetbrains.lang.makefile.psi.MakefileTypes.EOL
+import com.jetbrains.lang.makefile.psi.MakefileTypes.IDENTIFIER
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_ENDEF
+import com.jetbrains.lang.makefile.psi.MakefileTypes.TARGET
+import com.jetbrains.lang.makefile.psi.MakefileTypes.VARIABLE_USAGE
 import com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisiteImpl
 import java.util.regex.Pattern
 

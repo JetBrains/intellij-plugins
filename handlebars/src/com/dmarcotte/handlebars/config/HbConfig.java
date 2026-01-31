@@ -8,7 +8,14 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dmarcotte.handlebars.config.Property.*;
+import static com.dmarcotte.handlebars.config.Property.AUTOCOMPLETE_MUSTACHES;
+import static com.dmarcotte.handlebars.config.Property.AUTO_COLLAPSE_BLOCKS;
+import static com.dmarcotte.handlebars.config.Property.AUTO_GENERATE_CLOSE_TAG;
+import static com.dmarcotte.handlebars.config.Property.COMMENTER_LANGUAGE_ID;
+import static com.dmarcotte.handlebars.config.Property.DISABLED;
+import static com.dmarcotte.handlebars.config.Property.ENABLED;
+import static com.dmarcotte.handlebars.config.Property.FORMATTER;
+import static com.dmarcotte.handlebars.config.Property.SHOULD_OPEN_HTML;
 
 public final class HbConfig {
 

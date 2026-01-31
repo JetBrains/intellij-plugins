@@ -1,7 +1,11 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml;
 
-import com.intellij.diagram.*;
+import com.intellij.diagram.DiagramBuilder;
+import com.intellij.diagram.DiagramEdge;
+import com.intellij.diagram.DiagramElementsProvider;
+import com.intellij.diagram.DiagramNode;
+import com.intellij.diagram.DiagramRelationshipInfo;
 import com.intellij.diagram.actions.DiagramAddElementAction;
 import com.intellij.diagram.extras.DiagramExtras;
 import com.intellij.diagram.settings.DiagramConfigElement;

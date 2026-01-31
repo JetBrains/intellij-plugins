@@ -2,7 +2,14 @@
 package org.jetbrains.plugins.cucumber.completion;
 
 import com.intellij.codeInsight.TailTypes;
-import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionProvider;
+import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.completion.InsertionContext;
+import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -24,14 +31,30 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinElementTypes;
+import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
+import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+import org.jetbrains.plugins.cucumber.psi.GherkinKeywordProvider;
+import org.jetbrains.plugins.cucumber.psi.GherkinKeywordTable;
+import org.jetbrains.plugins.cucumber.psi.GherkinRule;
+import org.jetbrains.plugins.cucumber.psi.GherkinScenario;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
+import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
+import org.jetbrains.plugins.cucumber.psi.GherkinUtil;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

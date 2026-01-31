@@ -13,8 +13,36 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.jetbrains.lang.dart.DartTokenTypes.*;
-import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
+import static com.jetbrains.lang.dart.DartTokenTypes.COLON;
+import static com.jetbrains.lang.dart.DartTokenTypes.COMMA;
+import static com.jetbrains.lang.dart.DartTokenTypes.DOT;
+import static com.jetbrains.lang.dart.DartTokenTypes.DOT_DOT;
+import static com.jetbrains.lang.dart.DartTokenTypes.EXPRESSION_BODY_DEF;
+import static com.jetbrains.lang.dart.DartTokenTypes.HEX_NUMBER;
+import static com.jetbrains.lang.dart.DartTokenTypes.LBRACE;
+import static com.jetbrains.lang.dart.DartTokenTypes.LBRACKET;
+import static com.jetbrains.lang.dart.DartTokenTypes.LONG_TEMPLATE_ENTRY_END;
+import static com.jetbrains.lang.dart.DartTokenTypes.LONG_TEMPLATE_ENTRY_START;
+import static com.jetbrains.lang.dart.DartTokenTypes.LPAREN;
+import static com.jetbrains.lang.dart.DartTokenTypes.NUMBER;
+import static com.jetbrains.lang.dart.DartTokenTypes.QUEST;
+import static com.jetbrains.lang.dart.DartTokenTypes.QUEST_DOT;
+import static com.jetbrains.lang.dart.DartTokenTypes.QUEST_DOT_DOT;
+import static com.jetbrains.lang.dart.DartTokenTypes.RBRACE;
+import static com.jetbrains.lang.dart.DartTokenTypes.RBRACKET;
+import static com.jetbrains.lang.dart.DartTokenTypes.RPAREN;
+import static com.jetbrains.lang.dart.DartTokenTypes.SEMICOLON;
+import static com.jetbrains.lang.dart.DartTokenTypes.SHORT_TEMPLATE_ENTRY_START;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.ASSIGNMENT_OPERATORS;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.BAD_CHARACTER;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.BINARY_OPERATORS;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.MULTI_LINE_COMMENT;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.MULTI_LINE_DOC_COMMENT;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.RESERVED_WORDS;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.SINGLE_LINE_COMMENT;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.STRINGS;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.UNARY_OPERATORS;
 
 public final class DartSyntaxHighlighter extends SyntaxHighlighterBase implements EmbeddedTokenHighlighter {
   private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<>();

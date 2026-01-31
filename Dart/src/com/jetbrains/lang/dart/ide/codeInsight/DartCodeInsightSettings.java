@@ -10,7 +10,9 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.codeInsight.CodeInsightSettings.*;
+import static com.intellij.codeInsight.CodeInsightSettings.ASK;
+import static com.intellij.codeInsight.CodeInsightSettings.NO;
+import static com.intellij.codeInsight.CodeInsightSettings.YES;
 
 @State(name = "DartCodeInsightSettings", storages = @Storage("other.xml"))
 public class DartCodeInsightSettings implements PersistentStateComponent<DartCodeInsightSettings> {

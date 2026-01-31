@@ -12,7 +12,11 @@ import com.intellij.psi.ResolveResult
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.SmartList
 import org.angular2.entities.source.Angular2SourceUtil
-import org.angular2.inspections.quickfixes.*
+import org.angular2.inspections.quickfixes.Angular2FixesFactory
+import org.angular2.inspections.quickfixes.CreateComponentFieldIntentionAction
+import org.angular2.inspections.quickfixes.CreateComponentMethodIntentionAction
+import org.angular2.inspections.quickfixes.CreateComponentSignalIntentionAction
+import org.angular2.inspections.quickfixes.CreateDirectiveOutputIntentionAction
 import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.psi.Angular2Action
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression

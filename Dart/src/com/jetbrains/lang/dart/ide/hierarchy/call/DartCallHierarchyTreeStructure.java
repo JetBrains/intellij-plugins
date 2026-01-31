@@ -14,7 +14,11 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.jetbrains.lang.dart.ide.findUsages.DartServerFindUsagesHandler;
 import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartFile;
+import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

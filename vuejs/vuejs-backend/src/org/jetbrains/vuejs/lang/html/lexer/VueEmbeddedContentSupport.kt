@@ -1,8 +1,13 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.html.lexer
 
-import com.intellij.html.embedding.*
+import com.intellij.html.embedding.HtmlAttributeEmbeddedContentProvider
+import com.intellij.html.embedding.HtmlEmbeddedContentProvider
+import com.intellij.html.embedding.HtmlEmbeddedContentSupport
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport.Companion.getStyleTagEmbedmentInfo
+import com.intellij.html.embedding.HtmlEmbedmentInfo
+import com.intellij.html.embedding.HtmlTagEmbeddedContentProvider
+import com.intellij.html.embedding.HtmlTokenEmbeddedContentProvider
 import com.intellij.lang.Language
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.html.HTMLLanguage

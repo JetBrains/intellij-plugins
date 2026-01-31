@@ -5,9 +5,9 @@ import com.intellij.lang.BracePair;
 import com.intellij.lang.PairedBraceMatcher;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.tsr.psi.TslTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.intellij.tsr.psi.TslTokenTypes;
 
 final class TslPairedBraceMatcher implements PairedBraceMatcher {
   public static final BracePair[] PAIRS = new BracePair[]{

@@ -5,7 +5,6 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.ui.dsl.builder.Panel
-import com.intellij.ui.dsl.builder.RightGap
 import com.intellij.ui.dsl.builder.bindSelected
 
 class ActionScriptAutoImportOptionsProvider : UiDslUnnamedConfigurable.Simple(), AutoImportOptionsProvider {

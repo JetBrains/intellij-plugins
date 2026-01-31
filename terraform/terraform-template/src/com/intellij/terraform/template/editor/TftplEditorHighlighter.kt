@@ -12,9 +12,9 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.terraform.template.doComputeTemplateDataLanguage
 import org.intellij.terraform.hil.psi.template.TftplLanguage
 import org.intellij.terraform.hil.psi.template.TftplTokenTypes
-import com.intellij.terraform.template.doComputeTemplateDataLanguage
 
 private class TftplEditorHighlighterProvider : EditorHighlighterProvider {
   override fun getEditorHighlighter(project: Project?,

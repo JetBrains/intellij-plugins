@@ -1,7 +1,10 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.stubs
 
-import com.intellij.json.psi.*
+import com.intellij.json.psi.JsonArray
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonStringLiteral
+import com.intellij.json.psi.JsonValue
 import com.intellij.lang.javascript.index.flags.BooleanStructureElement
 import com.intellij.lang.javascript.index.flags.FlagsStructure
 import com.intellij.psi.PsiElement

@@ -1,8 +1,8 @@
 package org.jetbrains.qodana.ui.ci
 
 import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.edtWriteAction
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
 import com.intellij.openapi.vfs.writeText

@@ -1,10 +1,10 @@
 package com.jetbrains.lang.makefile.psi.impl
 
-import com.intellij.extapi.psi.*
-import com.intellij.lang.*
-import com.intellij.psi.stubs.*
-import com.jetbrains.lang.makefile.psi.*
-import com.jetbrains.lang.makefile.stub.*
+import com.intellij.extapi.psi.StubBasedPsiElementBase
+import com.intellij.lang.ASTNode
+import com.intellij.psi.stubs.IStubElementType
+import com.jetbrains.lang.makefile.psi.MakefileNamedElement
+import com.jetbrains.lang.makefile.stub.MakefileTargetStubElement
 
 abstract class MakefileTargetNamedElementImpl : StubBasedPsiElementBase<MakefileTargetStubElement>, MakefileNamedElement {
   constructor(node: ASTNode) : super(node)

@@ -6,7 +6,7 @@ import org.jetbrains.idea.perforce.perforce.connections.P4ConfigListener
 import org.jetbrains.idea.perforce.perforce.connections.PerforceExternalConfigTracker
 import org.jetbrains.idea.perforce.perforce.connections.PerforceWorkspaceConfigurator.Companion.P4CONFIG_NAME
 import java.io.File
-import java.util.*
+import java.util.Collections
 import java.util.concurrent.CountDownLatch
 
 class PerforceExternalConfigTrackerTest : VcsPlatformTest() {

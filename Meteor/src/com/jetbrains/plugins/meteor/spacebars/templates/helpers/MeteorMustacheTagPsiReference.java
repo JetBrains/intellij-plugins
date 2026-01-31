@@ -9,7 +9,12 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.ElementManipulators;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiPolyVariantReferenceBase;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -26,7 +31,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-import static com.jetbrains.plugins.meteor.spacebars.templates.MeteorHelpersFrameworkIndexingHandler.*;
+import static com.jetbrains.plugins.meteor.spacebars.templates.MeteorHelpersFrameworkIndexingHandler.METEOR_TEMPLATE_JS_TYPE;
+import static com.jetbrains.plugins.meteor.spacebars.templates.MeteorHelpersFrameworkIndexingHandler.NAMESPACE_GLOBAL_HELPERS;
+import static com.jetbrains.plugins.meteor.spacebars.templates.MeteorHelpersFrameworkIndexingHandler.NAMESPACE_TEMPLATE_HELPERS;
 
 /**
  * Mustache template: {{helperName}}

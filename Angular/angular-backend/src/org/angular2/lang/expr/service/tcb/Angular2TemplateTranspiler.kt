@@ -26,7 +26,7 @@ import org.angular2.web.scopes.BINDINGS_PROP
 import org.angular2.web.scopes.INPUT_BINDING_FUN
 import org.angular2.web.scopes.OUTPUT_BINDING_FUN
 import org.angular2.web.scopes.TWO_WAY_BINDING_FUN
-import java.util.*
+import java.util.EnumSet
 
 object Angular2TemplateTranspiler {
 

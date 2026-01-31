@@ -1,7 +1,11 @@
 package org.jetbrains.qodana.ui.problemsView.tree.model.impl
 
 import org.jetbrains.qodana.settings.ConfigExcludeItem
-import org.jetbrains.qodana.ui.problemsView.tree.model.*
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeEvent
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeExcludeEvent
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreePath
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeProblemEvent
 
 fun <T : QodanaTreeNode<T, ChildrenT, *>, ChildrenT : QodanaTreeNode.Children<ChildrenT>> T.processTreeEventBase(
   event: QodanaTreeEvent,

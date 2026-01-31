@@ -1,7 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.html.psi.formatter
 
-import com.intellij.formatting.*
+import com.intellij.formatting.Alignment
+import com.intellij.formatting.Block
+import com.intellij.formatting.BlockEx
+import com.intellij.formatting.Indent
+import com.intellij.formatting.Wrap
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage

@@ -12,7 +12,11 @@ import com.intellij.lang.javascript.psi.stubs.JSVariableStub
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.html.HtmlTag
-import com.intellij.psi.util.*
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.lang.expr.psi.Angular2TemplateBinding

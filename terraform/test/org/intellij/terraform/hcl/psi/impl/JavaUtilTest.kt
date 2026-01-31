@@ -4,7 +4,6 @@ package org.intellij.terraform.hcl.psi.impl
 import com.intellij.openapi.util.TextRange
 import org.assertj.core.api.BDDAssertions.then
 import org.junit.Test
-import java.util.*
 
 class JavaUtilTest {
   @Test

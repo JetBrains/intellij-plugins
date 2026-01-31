@@ -18,7 +18,8 @@ package org.jetbrains.idea.perforce.application;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 
 public class PerforceUpdatePanel implements PerforcePanel {
   private JCheckBox myForceSync;

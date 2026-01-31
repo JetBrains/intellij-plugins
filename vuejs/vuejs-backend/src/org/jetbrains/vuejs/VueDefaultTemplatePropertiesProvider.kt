@@ -12,10 +12,14 @@ import org.jetbrains.vuejs.VueProjects.isTypeScriptProjectDirectory
 import org.jetbrains.vuejs.VueProjects.isVaporProjectDirectory
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.VAPOR_ATTRIBUTE_NAME
-import org.jetbrains.vuejs.context.*
+import org.jetbrains.vuejs.context.getVueClassComponentDecoratorName
+import org.jetbrains.vuejs.context.getVueClassComponentLibrary
+import org.jetbrains.vuejs.context.hasVueFiles
+import org.jetbrains.vuejs.context.isVueContext
+import org.jetbrains.vuejs.context.supportsDefineComponent
 import org.jetbrains.vuejs.index.VUE_COMPONENT_STYLES_INDEX_KEY
 import org.jetbrains.vuejs.libraries.VUE_CLASS_COMPONENT
-import java.util.*
+import java.util.Properties
 
 private class VueDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesProvider {
   override fun fillProperties(directory: PsiDirectory, props: Properties) {

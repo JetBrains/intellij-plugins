@@ -19,10 +19,14 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.GlobalOutputConsumer.Companion.consumeOutputXmlFile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
-import org.jetbrains.qodana.staticAnalysis.sarif.*
+import org.jetbrains.qodana.staticAnalysis.sarif.CommonDescriptor
+import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter
+import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV1
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.fingerprintOf
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.withPartialFingerprints
+import org.jetbrains.qodana.staticAnalysis.sarif.getPhysicalLocation
+import org.jetbrains.qodana.staticAnalysis.sarif.getProblemOffset
 import java.nio.file.Path
 
 private val LOG = logger<DuplicateCodeConsumer>()

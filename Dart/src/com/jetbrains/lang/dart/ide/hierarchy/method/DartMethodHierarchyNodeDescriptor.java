@@ -16,7 +16,7 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
   private DartMethodHierarchyTreeStructure myTreeStructure;

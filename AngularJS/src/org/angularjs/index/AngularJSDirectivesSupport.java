@@ -19,7 +19,11 @@ import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_DIRECTIVES_DOC_INDEX_USER_STRING;

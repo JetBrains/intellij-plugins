@@ -16,7 +16,9 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveInfo
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind
 import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSScriptSetupExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSSlotPropsExpression

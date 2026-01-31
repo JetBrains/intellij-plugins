@@ -1,6 +1,6 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.testFramework.fixtures.*
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.lang.makefile.inspections.MakefileUnresolvedPrerequisiteInspection
 
 class MakefileCreateRuleQuickfixTest : BasePlatformTestCase() {

@@ -19,7 +19,11 @@ import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.lang.AstroFileImpl
-import org.jetbrains.astro.polySymbols.scope.*
+import org.jetbrains.astro.polySymbols.scope.AstroAvailableComponentsScope
+import org.jetbrains.astro.polySymbols.scope.AstroFrontmatterScope
+import org.jetbrains.astro.polySymbols.scope.AstroNamespacedComponentsScope
+import org.jetbrains.astro.polySymbols.scope.AstroScriptDefineVarsScope
+import org.jetbrains.astro.polySymbols.scope.AstroStyleDefineVarsScope
 
 val ASTRO_COMPONENTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "astro-components"]
 val ASTRO_COMPONENT_PROPS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "props"]

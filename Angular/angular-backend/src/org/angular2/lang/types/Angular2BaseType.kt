@@ -6,7 +6,10 @@ import com.intellij.lang.javascript.psi.JSType.TypeTextFormat
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.JSTypeWithIncompleteSubstitution
-import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSCodeBasedType
+import com.intellij.lang.javascript.psi.types.JSTypeBaseImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 

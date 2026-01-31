@@ -4,7 +4,11 @@ package com.jetbrains.lang.dart.ide.refactoring;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
-import org.dartlang.analysis.server.protocol.*;
+import org.dartlang.analysis.server.protocol.InlineMethodFeedback;
+import org.dartlang.analysis.server.protocol.InlineMethodOptions;
+import org.dartlang.analysis.server.protocol.RefactoringFeedback;
+import org.dartlang.analysis.server.protocol.RefactoringKind;
+import org.dartlang.analysis.server.protocol.RefactoringOptions;
 import org.jetbrains.annotations.NotNull;
 
 /**

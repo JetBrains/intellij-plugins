@@ -6,8 +6,8 @@ import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.completion.JSPatternBasedCompletionContributor
 import com.intellij.lang.javascript.completion.ml.JSMLTrackingCompletionProvider
 import com.intellij.lang.javascript.refactoring.JSRefactoringSettings
-import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
 import com.intellij.polySymbols.testFramework.LookupElementInfo
+import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
 import org.jetbrains.vuejs.codeInsight.VueCompletionContributor
 import java.io.File
 

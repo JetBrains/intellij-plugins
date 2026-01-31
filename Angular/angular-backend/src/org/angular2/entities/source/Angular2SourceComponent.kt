@@ -14,7 +14,12 @@ import org.angular2.Angular2DecoratorUtil.STYLE_URL_PROP
 import org.angular2.Angular2DecoratorUtil.TEMPLATE_PROP
 import org.angular2.Angular2DecoratorUtil.TEMPLATE_URL_PROP
 import org.angular2.Angular2DecoratorUtil.getProperty
-import org.angular2.entities.*
+import org.angular2.entities.Angular2ClassBasedComponent
+import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2DirectiveKind
+import org.angular2.entities.Angular2DirectiveSelector
+import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2ModuleResolver
 import org.angular2.entities.source.Angular2SourceUtil.getReferencedFile
 
 class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplicitElement)

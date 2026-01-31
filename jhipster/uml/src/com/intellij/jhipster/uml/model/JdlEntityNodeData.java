@@ -5,7 +5,7 @@ package com.intellij.jhipster.uml.model;
 import com.intellij.jhipster.JdlIconsMapping;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.List;
 import java.util.Objects;
 

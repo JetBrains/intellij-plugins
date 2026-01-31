@@ -1,8 +1,14 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.codeInsight.lookup.*
-import com.intellij.psi.*
-import com.jetbrains.lang.makefile.psi.*
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementResolveResult
+import com.intellij.psi.PsiPolyVariantReferenceBase
+import com.intellij.psi.ResolveResult
+import com.jetbrains.lang.makefile.psi.MakefileElementFactory
+import com.jetbrains.lang.makefile.psi.MakefilePrerequisite
+import com.jetbrains.lang.makefile.psi.MakefileRule
+import com.jetbrains.lang.makefile.psi.MakefileTarget
 
 class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : PsiPolyVariantReferenceBase<MakefilePrerequisite>(prerequisite, false) {
   override fun handleElementRename(newName: String): PsiElement {

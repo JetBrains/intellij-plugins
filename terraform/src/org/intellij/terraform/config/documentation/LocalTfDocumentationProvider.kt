@@ -8,12 +8,20 @@ import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfModelHelper
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.BaseModelType
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.TfTypeModel
+import org.intellij.terraform.config.model.TypeModelProvider
+import org.intellij.terraform.config.model.Variable
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.psi.TfDocumentPsi
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLValue
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.jetbrains.annotations.Nls
 
 internal object LocalTfDocumentationProvider {

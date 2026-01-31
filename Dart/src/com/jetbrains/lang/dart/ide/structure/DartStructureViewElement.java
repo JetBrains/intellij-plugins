@@ -25,11 +25,23 @@ import org.dartlang.analysis.server.protocol.Outline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Collection;
 import java.util.Collections;
 
-import static com.intellij.icons.AllIcons.Nodes.*;
+import static com.intellij.icons.AllIcons.Nodes.AbstractClass;
+import static com.intellij.icons.AllIcons.Nodes.AbstractMethod;
+import static com.intellij.icons.AllIcons.Nodes.Field;
+import static com.intellij.icons.AllIcons.Nodes.Include;
+import static com.intellij.icons.AllIcons.Nodes.Lambda;
+import static com.intellij.icons.AllIcons.Nodes.Method;
+import static com.intellij.icons.AllIcons.Nodes.PropertyRead;
+import static com.intellij.icons.AllIcons.Nodes.PropertyReadStatic;
+import static com.intellij.icons.AllIcons.Nodes.PropertyWrite;
+import static com.intellij.icons.AllIcons.Nodes.PropertyWriteStatic;
+import static com.intellij.icons.AllIcons.Nodes.TabPin;
+import static com.intellij.icons.AllIcons.Nodes.TestSourceFolder;
+import static com.intellij.icons.AllIcons.Nodes.Variable;
 
 final class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
   private static final LayeredIcon STATIC_FINAL_FIELD_ICON = LayeredIcon.layeredIcon(() -> {

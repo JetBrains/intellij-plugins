@@ -12,7 +12,11 @@ import com.intellij.openapi.ui.emptyText
 import com.intellij.openapi.ui.validation.DialogValidation
 import com.intellij.openapi.ui.validation.validationErrorIf
 import com.intellij.ui.components.JBLabel
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.Panel
+import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.trimmedTextValidation
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfExecutableTestButton
 import org.intellij.terraform.install.TfToolType

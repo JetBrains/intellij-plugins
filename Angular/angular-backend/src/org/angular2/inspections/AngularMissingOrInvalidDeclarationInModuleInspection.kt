@@ -18,7 +18,12 @@ import org.angular2.Angular2DecoratorUtil.getObjectLiteralInitializer
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
 import org.angular2.codeInsight.Angular2HighlightingUtils.renderEntityList
-import org.angular2.entities.*
+import org.angular2.entities.Angular2ClassBasedEntity
+import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2Declaration
+import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.Angular2FrameworkHandler
 import org.angular2.entities.source.Angular2SourceModule
 import org.angular2.inspections.quickfixes.ConvertToStandaloneNonStandaloneQuickFix
 import org.angular2.lang.Angular2Bundle

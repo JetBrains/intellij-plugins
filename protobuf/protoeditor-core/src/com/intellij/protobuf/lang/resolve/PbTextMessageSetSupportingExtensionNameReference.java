@@ -15,16 +15,16 @@
  */
 package com.intellij.protobuf.lang.resolve;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceWrapper;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.protobuf.lang.psi.PbField;
 import com.intellij.protobuf.lang.psi.PbField.CanonicalFieldLabel;
 import com.intellij.protobuf.lang.psi.PbMessageType;
 import com.intellij.protobuf.lang.psi.PbTextMessage;
 import com.intellij.protobuf.lang.psi.PbTypeName;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceWrapper;
+import com.intellij.psi.util.PsiTreeUtil;
 
 /**
  * A {@link PsiReference} that resolves valid message set references to their equivalent extension

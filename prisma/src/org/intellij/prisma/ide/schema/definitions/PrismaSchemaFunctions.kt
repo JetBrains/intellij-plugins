@@ -14,7 +14,7 @@ import org.intellij.prisma.lang.types.PrismaBigIntType
 import org.intellij.prisma.lang.types.PrismaDateTimeType
 import org.intellij.prisma.lang.types.PrismaIntType
 import org.intellij.prisma.lang.types.PrismaStringType
-import java.util.*
+import java.util.EnumSet
 
 val PRISMA_SCHEMA_FUNCTIONS = schema {
   group(PrismaSchemaKind.FUNCTION) {

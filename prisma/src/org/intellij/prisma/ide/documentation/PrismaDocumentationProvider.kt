@@ -9,7 +9,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.startOffset
 import org.intellij.prisma.ide.schema.PrismaSchemaPath
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.PrismaArrayExpression
+import org.intellij.prisma.lang.psi.PrismaDocComment
+import org.intellij.prisma.lang.psi.PrismaFunctionCall
+import org.intellij.prisma.lang.psi.PrismaReferenceElement
+import org.intellij.prisma.lang.psi.PrismaValueArgument
+import org.intellij.prisma.lang.psi.isFieldExpression
 import java.util.function.Consumer
 
 class PrismaDocumentationProvider : AbstractDocumentationProvider() {

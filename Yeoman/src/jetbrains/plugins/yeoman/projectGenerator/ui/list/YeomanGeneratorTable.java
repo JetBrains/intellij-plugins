@@ -8,7 +8,7 @@ import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.ui.ColumnInfo;
 import jetbrains.plugins.yeoman.generators.YeomanGeneratorInfo;
 
-import javax.swing.*;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 
 public class YeomanGeneratorTable extends JBTable {

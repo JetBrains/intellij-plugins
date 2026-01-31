@@ -1,7 +1,11 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.service
 
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonParseException
+import com.google.gson.JsonParser
 import com.intellij.idea.AppMode
 import com.intellij.javascript.nodejs.execution.NodeTargetRun
 import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage
@@ -18,7 +22,13 @@ import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue
 import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
-import com.intellij.lang.javascript.service.protocol.*
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceAnswer
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceCommand
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceInitialState
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceNodeStdProtocolBase
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
+import com.intellij.lang.javascript.service.protocol.LocalFilePath
 import com.intellij.lang.javascript.service.protocol.LocalFilePath.Companion.create
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project

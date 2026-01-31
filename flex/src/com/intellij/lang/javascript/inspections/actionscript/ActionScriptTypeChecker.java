@@ -8,7 +8,18 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.completion.ActionScriptSmartCompletionContributor;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSForInStatement;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSFunctionExpression;
+import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.lang.javascript.psi.JSParameter;
+import com.intellij.lang.javascript.psi.JSParameterList;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSVarStatement;
+import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
@@ -30,7 +41,10 @@ import org.jetbrains.annotations.PropertyKey;
 import java.util.List;
 import java.util.Map;
 
-import static com.intellij.lang.javascript.psi.JSCommonTypeNames.*;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.ANY_TYPE;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.FUNCTION_CLASS_NAMES;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.OBJECT_CLASS_NAME;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.STRING_CLASS_NAME;
 import static com.intellij.lang.javascript.validation.ValidateTypesUtil.getHighlightTypeForTypeOrSignatureProblem;
 
 /**

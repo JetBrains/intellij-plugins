@@ -7,7 +7,12 @@ import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.util.parentOfType
-import org.angular2.codeInsight.blocks.*
+import org.angular2.codeInsight.blocks.BLOCK_ELSE_IF
+import org.angular2.codeInsight.blocks.BLOCK_FOR
+import org.angular2.codeInsight.blocks.BLOCK_IF
+import org.angular2.codeInsight.blocks.BLOCK_LET
+import org.angular2.codeInsight.blocks.PARAMETER_AS
+import org.angular2.codeInsight.blocks.PARAMETER_LET
 import org.angular2.lang.Angular2LangUtil.AngularVersion
 import org.angular2.lang.Angular2LangUtil.isAtLeastAngularVersion
 import org.angular2.lang.expr.psi.Angular2BlockParameter

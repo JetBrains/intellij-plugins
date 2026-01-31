@@ -4,7 +4,6 @@ import com.intellij.internal.statistic.beans.MetricEvent
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.FUS_RECORDER
 import com.intellij.internal.statistic.eventLog.events.EventFields
-import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
 import com.intellij.openapi.project.Project
 import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus

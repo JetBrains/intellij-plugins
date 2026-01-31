@@ -24,7 +24,7 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStaticNamespace
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreActionContextNamespace
 import org.jetbrains.vuejs.model.VueImplicitElement
-import java.util.*
+import java.util.Objects
 
 class VuexActionContextType
 private constructor(

@@ -3,6 +3,9 @@ package org.angular2.codeInsight.blocks
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.javascript.findArgumentList
 import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax
+import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.ParameterInfoHandlerWithColoredSyntaxData
+import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.SignatureHtmlPresentation
 import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithTabActionSupport
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -12,13 +15,10 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.containers.MultiMap
+import com.intellij.xml.util.XmlUtil
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.ERROR
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
-import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax
-import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.ParameterInfoHandlerWithColoredSyntaxData
-import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.SignatureHtmlPresentation
-import com.intellij.xml.util.XmlUtil
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol.Companion.PRIMARY_EXPRESSION
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes

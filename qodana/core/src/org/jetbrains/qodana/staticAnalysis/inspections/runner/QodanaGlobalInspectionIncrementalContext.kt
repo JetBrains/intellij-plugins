@@ -11,8 +11,8 @@ import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageStatisticsData
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
-import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
 import org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender
+import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 

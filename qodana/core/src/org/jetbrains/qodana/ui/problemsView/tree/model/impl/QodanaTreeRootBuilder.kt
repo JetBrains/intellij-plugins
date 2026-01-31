@@ -7,7 +7,10 @@ import org.jetbrains.qodana.problem.SarifProblemWithProperties
 import org.jetbrains.qodana.problem.SarifProblemWithPropertiesAndFile
 import org.jetbrains.qodana.settings.ConfigExcludeItem
 import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
-import org.jetbrains.qodana.ui.problemsView.tree.model.*
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeContext
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreePath
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeProblemEvent
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeRoot
 
 class QodanaTreeRootBuilder(
   private val treeContext: QodanaTreeContext,

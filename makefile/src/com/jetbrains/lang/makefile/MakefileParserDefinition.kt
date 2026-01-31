@@ -1,10 +1,13 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.lang.*
-import com.intellij.openapi.project.*
-import com.intellij.psi.*
-import com.intellij.psi.tree.*
-import com.jetbrains.lang.makefile.psi.*
+import com.intellij.lang.ASTNode
+import com.intellij.lang.ParserDefinition
+import com.intellij.openapi.project.Project
+import com.intellij.psi.FileViewProvider
+import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.IFileElementType
+import com.intellij.psi.tree.TokenSet
+import com.jetbrains.lang.makefile.psi.MakefileTypes
 
 class MakefileParserDefinition : ParserDefinition {
   companion object {

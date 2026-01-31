@@ -12,7 +12,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import com.intellij.psi.util.*
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.ParameterizedCachedValue
+import com.intellij.psi.util.ParameterizedCachedValueProvider
+import com.intellij.psi.util.PsiTreeUtil
 import org.yaml.snakeyaml.Yaml
 
 private val LOG = Logger.getInstance(TsLintConfigWrapper::class.java)

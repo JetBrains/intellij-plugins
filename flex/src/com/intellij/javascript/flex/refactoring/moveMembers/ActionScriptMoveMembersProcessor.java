@@ -42,7 +42,12 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
   private static final Logger LOG = Logger.getInstance(ActionScriptMoveMembersProcessor.class.getName());

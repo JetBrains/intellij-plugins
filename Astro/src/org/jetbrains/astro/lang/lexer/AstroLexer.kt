@@ -6,7 +6,12 @@ import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JSTokenTypes.STRING_TEMPLATE_PART
 import com.intellij.lang.javascript.JavaScriptSupportLoader
-import com.intellij.lexer.*
+import com.intellij.lexer.FlexAdapter
+import com.intellij.lexer.HtmlLexer
+import com.intellij.lexer.Lexer
+import com.intellij.lexer.LexerPosition
+import com.intellij.lexer.MergeFunction
+import com.intellij.lexer.MergingLexerAdapterBase
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType

@@ -4,7 +4,6 @@ package org.angular2.lang.html.highlighting
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
-import com.intellij.psi.css.impl.util.CssHighlighter
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
 
 interface Angular2HtmlHighlighterColors {

@@ -15,9 +15,9 @@
  */
 package com.intellij.protobuf.lang.psi;
 
-import com.intellij.psi.PsiElement;
 import com.intellij.protobuf.lang.util.BuiltInType;
 import com.intellij.protobuf.lang.util.ValueTester;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 

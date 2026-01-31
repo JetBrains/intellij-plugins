@@ -4,11 +4,11 @@ import com.jetbrains.qodana.sarif.model.SarifReport
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.applyBaselineCalculation
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
+import org.jetbrains.qodana.util.QodanaMessageReporter
 
 const val DEFAULT_SCRIPT_NAME = "default"
 

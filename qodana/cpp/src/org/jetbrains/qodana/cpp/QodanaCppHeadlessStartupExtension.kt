@@ -1,5 +1,7 @@
 package org.jetbrains.qodana.cpp
 
+import com.intellij.clion.radler.core.inspections.RadHeadlessStartupExtension
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.PlatformUtils
@@ -7,8 +9,6 @@ import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener
 import com.jetbrains.cidr.project.workspace.CidrWorkspaceManager
 import com.jetbrains.cidr.project.workspace.CidrWorkspaceState
-import com.intellij.clion.radler.core.inspections.RadHeadlessStartupExtension
-import com.intellij.openapi.diagnostic.logger
 import kotlinx.coroutines.channels.Channel
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 

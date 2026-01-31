@@ -13,9 +13,15 @@ import org.intellij.terraform.config.documentation.psi.FAKE_PROVIDER_KEY
 import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.psi.TfDocumentPsi
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.HCLPsiUtil.getRequiredProviderProperty
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.common.ProviderDefinedFunction
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
+import org.intellij.terraform.hcl.psi.getNameOrText
 
 internal abstract class BaseTfDocUrlProvider {
 

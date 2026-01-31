@@ -8,7 +8,27 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.*;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.BLOCK_EXPRESSION;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.CHUNK_BLOCK;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.END;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.FUNCTION;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.IMPORT;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.INSERT;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.INSERT_LOGICAL;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.JAVA_IDENTIFIER;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.JAVA_STATEMENT;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.LBRACE;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.LBRACKET;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.LPAREN;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.MODIFY;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.OP_AT;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.RBRACE;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.RBRACKET;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.RETRACT;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.RPAREN;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.SEMICOLON;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.THEN;
+import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.UPDATE;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
 

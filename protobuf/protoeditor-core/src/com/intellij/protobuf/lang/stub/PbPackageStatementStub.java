@@ -15,11 +15,11 @@
  */
 package com.intellij.protobuf.lang.stub;
 
+import com.intellij.protobuf.lang.psi.PbPackageStatement;
+import com.intellij.protobuf.lang.stub.type.PbPackageStatementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.protobuf.lang.psi.PbPackageStatement;
-import com.intellij.protobuf.lang.stub.type.PbPackageStatementType;
 
 /** Stub for {@link PbPackageStatement}. */
 public class PbPackageStatementStub extends StubBase<PbPackageStatement>

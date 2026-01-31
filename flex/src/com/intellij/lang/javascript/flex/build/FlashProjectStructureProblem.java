@@ -6,7 +6,13 @@ import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackag
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.IosPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.ui.*;
+import com.intellij.lang.javascript.flex.projectStructure.ui.AirDesktopPackagingConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.AirPackagingConfigurableBase;
+import com.intellij.lang.javascript.flex.projectStructure.ui.AndroidPackagingConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.CompilerOptionsConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.DependenciesConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.IOSPackagingConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureProblemType;
 import org.jetbrains.annotations.Nullable;
 

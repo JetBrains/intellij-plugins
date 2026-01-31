@@ -1,7 +1,11 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSArgumentList
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.openapi.util.TextRange
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.declarations.PolySymbolDeclaration
@@ -17,7 +21,11 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.source.*
+import org.jetbrains.vuejs.model.source.DEFINE_EMITS_FUN
+import org.jetbrains.vuejs.model.source.DEFINE_PROPS_FUN
+import org.jetbrains.vuejs.model.source.EMITS_PROP
+import org.jetbrains.vuejs.model.source.PROPS_PROP
+import org.jetbrains.vuejs.model.source.VueCompositionContainer
 
 class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
 

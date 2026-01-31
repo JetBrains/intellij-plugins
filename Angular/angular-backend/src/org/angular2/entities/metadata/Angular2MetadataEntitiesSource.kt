@@ -5,13 +5,22 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
-import org.angular2.entities.*
+import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2EntitiesSource
+import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2Module
+import org.angular2.entities.Angular2Pipe
 import org.angular2.entities.ivy.Angular2IvyUtil
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity
 import org.angular2.entities.metadata.psi.Angular2MetadataModule
 import org.angular2.entities.metadata.psi.Angular2MetadataPipe
-import org.angular2.index.*
+import org.angular2.index.Angular2IndexUtil
+import org.angular2.index.Angular2IndexingHandler
+import org.angular2.index.Angular2MetadataDirectiveIndexKey
+import org.angular2.index.Angular2MetadataModuleIndexKey
+import org.angular2.index.Angular2MetadataPipeIndexKey
 import java.util.function.Consumer
 
 class Angular2MetadataEntitiesSource : Angular2EntitiesSource {

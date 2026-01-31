@@ -1,6 +1,10 @@
 package org.intellij.plugins.postcss.formatter;
 
-import com.intellij.formatting.*;
+import com.intellij.formatting.ASTBlock;
+import com.intellij.formatting.Alignment;
+import com.intellij.formatting.Block;
+import com.intellij.formatting.Indent;
+import com.intellij.formatting.Spacing;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.psi.PsiElement;

@@ -1,7 +1,12 @@
 package com.intellij.dts.settings
 
+import com.intellij.dts.settings.DtsSettings.ChangeListener.Companion.TOPIC
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.components.*
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.XmlSerializerUtil

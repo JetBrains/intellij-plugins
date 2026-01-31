@@ -14,7 +14,23 @@ import com.intellij.util.SmartList
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.Icons
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLArray
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLBooleanLiteral
+import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.HCLExpression
+import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.hcl.psi.HCLHeredocContent
+import org.intellij.terraform.hcl.psi.HCLHeredocLiteral
+import org.intellij.terraform.hcl.psi.HCLHeredocMarker
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLLiteral
+import org.intellij.terraform.hcl.psi.HCLNumberLiteral
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLPsiUtil
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
+import org.intellij.terraform.hcl.psi.isInHCLFileWithInterpolations
 import javax.swing.Icon
 
 val CharSequence.indentation: Int

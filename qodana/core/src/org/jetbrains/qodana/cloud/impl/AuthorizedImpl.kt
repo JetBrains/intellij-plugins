@@ -2,9 +2,17 @@ package org.jetbrains.qodana.cloud.impl
 
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.util.Url
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
-import org.jetbrains.qodana.cloud.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
+import org.jetbrains.qodana.cloud.IjQDCloudClientV1
+import org.jetbrains.qodana.cloud.QodanaCloudRefreshTokenPersistence
+import org.jetbrains.qodana.cloud.QodanaCloudUserDataProvider
+import org.jetbrains.qodana.cloud.StateManager
+import org.jetbrains.qodana.cloud.UserState
 import org.jetbrains.qodana.cloud.authorization.credentials.QodanaAccessToken
 import org.jetbrains.qodana.cloud.authorization.credentials.QodanaCloudCredentials
 import org.jetbrains.qodana.cloud.authorization.credentials.QodanaCloudCredentialsImpl
@@ -13,7 +21,11 @@ import org.jetbrains.qodana.cloudclient.QDCloudClient
 import org.jetbrains.qodana.cloudclient.QDCloudException
 import org.jetbrains.qodana.cloudclient.QDCloudResponse
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
-import org.jetbrains.qodana.cloudclient.v1.*
+import org.jetbrains.qodana.cloudclient.v1.QDCloudNotAuthorizedApiV1
+import org.jetbrains.qodana.cloudclient.v1.QDCloudProjectApiV1
+import org.jetbrains.qodana.cloudclient.v1.QDCloudSchema
+import org.jetbrains.qodana.cloudclient.v1.QDCloudUserApiV1
+import org.jetbrains.qodana.cloudclient.v1.QDCloudUserToken
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector
 import org.jetbrains.qodana.stats.SourceUserState

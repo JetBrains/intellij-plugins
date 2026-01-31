@@ -24,7 +24,7 @@ import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 abstract class PbExtendDefinitionMixin extends PbStubbedDefinitionBase<PbExtendDefinitionStub>
     implements PbExtendDefinition {

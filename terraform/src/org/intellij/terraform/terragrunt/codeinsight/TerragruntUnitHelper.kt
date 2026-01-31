@@ -8,7 +8,13 @@ import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
-import org.intellij.terraform.terragrunt.*
+import org.intellij.terraform.terragrunt.TERRAGRUNT_DEPENDENCY
+import org.intellij.terraform.terragrunt.TERRAGRUNT_FEATURE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_GENERATE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_INCLUDE
+import org.intellij.terraform.terragrunt.TERRAGRUNT_STACK
+import org.intellij.terraform.terragrunt.TERRAGRUNT_UNIT
+import org.intellij.terraform.terragrunt.isTerragruntStack
 import org.intellij.terraform.terragrunt.model.StackRootBlocksMap
 import org.intellij.terraform.terragrunt.model.TerragruntRootBlocksMap
 

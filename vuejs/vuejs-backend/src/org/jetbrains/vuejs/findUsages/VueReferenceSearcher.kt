@@ -3,7 +3,19 @@ package org.jetbrains.vuejs.findUsages
 
 import com.intellij.lang.ecmascript6.findUsages.JSFindReferencesResultProcessor
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSArgumentList
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSField
+import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSParameter
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptObjectType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
@@ -17,7 +29,12 @@ import com.intellij.polySymbols.search.PsiSourcedPolySymbolRequestResultProcesso
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
-import com.intellij.psi.search.*
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.PsiSearchHelper
+import com.intellij.psi.search.QuerySearchRequest
+import com.intellij.psi.search.RequestResultProcessor
+import com.intellij.psi.search.SearchRequestCollector
+import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttributeValue
@@ -39,7 +56,7 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.DEFINE_PROPS_FUN
 import org.jetbrains.vuejs.model.source.PROPS_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
-import java.util.*
+import java.util.Locale
 
 class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
 

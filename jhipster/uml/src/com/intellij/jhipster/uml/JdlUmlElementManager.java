@@ -6,7 +6,12 @@ import com.intellij.diagram.AbstractDiagramElementManager;
 import com.intellij.diagram.DiagramBuilder;
 import com.intellij.jhipster.JdlIconsMapping;
 import com.intellij.jhipster.psi.JdlFile;
-import com.intellij.jhipster.uml.model.*;
+import com.intellij.jhipster.uml.model.JdlDiagramRootData;
+import com.intellij.jhipster.uml.model.JdlEntityNodeData;
+import com.intellij.jhipster.uml.model.JdlEntityNodeField;
+import com.intellij.jhipster.uml.model.JdlEnumNodeData;
+import com.intellij.jhipster.uml.model.JdlEnumNodeItem;
+import com.intellij.jhipster.uml.model.JdlNodeData;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
@@ -19,7 +24,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 final class JdlUmlElementManager extends AbstractDiagramElementManager<JdlNodeData> {
   @Override

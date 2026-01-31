@@ -23,10 +23,17 @@ import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
-import static com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters.Scope.*;
+import static com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters.Scope.FILE;
+import static com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters.Scope.FOLDER;
+import static com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters.Scope.GROUP_OR_TEST_BY_NAME;
 
 public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunConfiguration> {
 

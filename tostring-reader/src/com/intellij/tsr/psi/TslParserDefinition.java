@@ -11,10 +11,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.tsr.TslLanguage;
 import com.intellij.tsr.TslLexer;
 import com.intellij.tsr.parser.TslParser;
+import org.jetbrains.annotations.NotNull;
 
 public final class TslParserDefinition implements ParserDefinition {
   public static final IFileElementType FILE = new IFileElementType(TslLanguage.INSTANCE);

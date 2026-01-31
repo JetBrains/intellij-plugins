@@ -2,7 +2,17 @@ package org.jetbrains.qodana.inspectionKts.kotlin.script
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider
-import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.KotlinType
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.ScriptEvaluationConfiguration
+import kotlin.script.experimental.api.asSuccess
+import kotlin.script.experimental.api.baseClass
+import kotlin.script.experimental.api.defaultImports
+import kotlin.script.experimental.api.dependencies
+import kotlin.script.experimental.api.displayName
+import kotlin.script.experimental.api.fileExtension
+import kotlin.script.experimental.api.hostConfiguration
+import kotlin.script.experimental.api.refineConfiguration
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.JvmDependency
 

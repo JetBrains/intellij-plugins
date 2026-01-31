@@ -3,10 +3,10 @@ package com.intellij.javascript.karma.coverage;
 
 import com.intellij.coverage.CoverageEngine;
 import com.intellij.coverage.CoverageLoadErrorReporter;
+import com.intellij.coverage.CoverageLoadingResult;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;
 import com.intellij.coverage.FailedCoverageLoadingResult;
-import com.intellij.coverage.CoverageLoadingResult;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.testing.coverage.CoverageProjectDataLoader;
 import com.intellij.openapi.diagnostic.Logger;

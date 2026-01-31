@@ -4,7 +4,7 @@ import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.builder.schema
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
-import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.*
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.MONGODB
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
 
 val PRISMA_SCHEMA_PRIMITIVE_TYPES = schema {

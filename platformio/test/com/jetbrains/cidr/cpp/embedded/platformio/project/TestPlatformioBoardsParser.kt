@@ -2,7 +2,9 @@ package com.jetbrains.cidr.cpp.embedded.platformio.project
 
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ResourceUtil
-import com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.*
+import com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.BOARD
+import com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.FRAMEWORK
+import com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.VENDOR
 
 class TestPlatformioBoardsParser : UsefulTestCase() {
   private var myJson: String? = null

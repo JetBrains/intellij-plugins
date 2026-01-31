@@ -13,7 +13,11 @@ import com.intellij.polySymbols.testFramework.renderLookupItems
 import com.intellij.refactoring.BaseRefactoringProcessor
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
-import org.angular2.Angular2TestModule.*
+import org.angular2.Angular2TestModule.ANGULAR_CDK_14_2_0
+import org.angular2.Angular2TestModule.ANGULAR_COMMON_16_2_8
+import org.angular2.Angular2TestModule.ANGULAR_CORE_16_2_8
+import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
+import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
 import org.angular2.lang.Angular2Bundle
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle

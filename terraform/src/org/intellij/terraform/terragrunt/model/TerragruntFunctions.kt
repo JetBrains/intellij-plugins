@@ -1,7 +1,11 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.terragrunt.model
 
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.Argument
+import org.intellij.terraform.config.model.ListType
+import org.intellij.terraform.config.model.TfFunction
+import org.intellij.terraform.config.model.Types
+import org.intellij.terraform.config.model.VariadicArgument
 
 // Terragrunt built-in helper functions
 // Source: https://terragrunt.gruntwork.io/docs/reference/hcl/functions

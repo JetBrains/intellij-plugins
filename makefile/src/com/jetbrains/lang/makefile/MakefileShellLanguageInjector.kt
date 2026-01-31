@@ -1,11 +1,16 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.lang.*
-import com.intellij.lang.injection.*
-import com.intellij.openapi.util.*
-import com.intellij.psi.*
-import com.jetbrains.lang.makefile.psi.*
-import kotlin.math.*
+import com.intellij.lang.Language
+import com.intellij.lang.injection.MultiHostInjector
+import com.intellij.lang.injection.MultiHostRegistrar
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiLanguageInjectionHost
+import com.jetbrains.lang.makefile.psi.MakefileCommand
+import com.jetbrains.lang.makefile.psi.MakefileFunction
+import com.jetbrains.lang.makefile.psi.MakefileFunctionParam
+import com.jetbrains.lang.makefile.psi.MakefileRecipe
+import com.jetbrains.lang.makefile.psi.MakefileSubstitution
 
 private const val SHELL_LANGUAGE_ID = "Shell Script"
 private val SHELL_LANGUAGE = Language.findLanguageByID(SHELL_LANGUAGE_ID)

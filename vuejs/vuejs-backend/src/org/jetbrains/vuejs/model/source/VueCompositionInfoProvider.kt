@@ -20,7 +20,14 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueComputedProperty
+import org.jetbrains.vuejs.model.VueDataProperty
+import org.jetbrains.vuejs.model.VueInject
+import org.jetbrains.vuejs.model.VueMethod
+import org.jetbrains.vuejs.model.VueProvide
+import org.jetbrains.vuejs.model.VueSymbol
+import org.jetbrains.vuejs.model.analyzeInject
+import org.jetbrains.vuejs.model.analyzeProvide
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 
 class VueCompositionInfoProvider : VueContainerInfoProvider {

@@ -7,9 +7,9 @@ import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.psi.PsiElement
 import com.intellij.psi.presentation.java.SymbolPresentationUtil
-import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import one.util.streamex.StreamEx
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestUtil

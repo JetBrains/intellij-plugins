@@ -14,7 +14,9 @@ import com.intellij.xdebugger.XDebuggerManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 /**
  * @author Maxim.Mossienko

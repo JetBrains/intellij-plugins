@@ -26,10 +26,12 @@ import org.jetbrains.idea.perforce.application.annotation.PerforceFileAnnotation
 import org.jetbrains.idea.perforce.perforce.P4Revision
 import org.jetbrains.idea.perforce.perforce.PerforceChangeList
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.nio.charset.StandardCharsets
-import java.util.*
+import java.util.Arrays
 
 class PerforceHistoryTest : PerforceTestCase() {
 

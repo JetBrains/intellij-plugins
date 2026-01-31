@@ -9,7 +9,17 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartList;
 import org.intellij.terraform.hcl.psi.HCLPsiUtil;
-import org.intellij.terraform.hil.psi.*;
+import org.intellij.terraform.hil.psi.ForVariable;
+import org.intellij.terraform.hil.psi.ILBinaryExpression;
+import org.intellij.terraform.hil.psi.ILExpression;
+import org.intellij.terraform.hil.psi.ILLiteralExpression;
+import org.intellij.terraform.hil.psi.ILMethodCallExpression;
+import org.intellij.terraform.hil.psi.ILObject;
+import org.intellij.terraform.hil.psi.ILProperty;
+import org.intellij.terraform.hil.psi.ILSelectExpression;
+import org.intellij.terraform.hil.psi.ILTemplateForBlockExpression;
+import org.intellij.terraform.hil.psi.ILUnaryExpression;
+import org.intellij.terraform.hil.psi.ILVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

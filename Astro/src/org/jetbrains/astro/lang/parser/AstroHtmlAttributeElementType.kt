@@ -3,7 +3,11 @@ package org.jetbrains.astro.lang.parser
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.types.PsiGenerator
-import com.intellij.psi.stubs.*
+import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.psi.xml.IXmlAttributeElementType
 import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.astro.lang.AstroLanguage

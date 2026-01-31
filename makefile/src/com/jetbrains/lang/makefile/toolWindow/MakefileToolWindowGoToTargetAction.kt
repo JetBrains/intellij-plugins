@@ -1,10 +1,13 @@
 package com.jetbrains.lang.makefile.toolWindow
 
-import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.project.*
-import com.intellij.psi.search.*
-import com.intellij.ui.treeStructure.*
-import com.jetbrains.lang.makefile.*
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.ui.treeStructure.Tree
+import com.jetbrains.lang.makefile.MakefileLangBundle
+import com.jetbrains.lang.makefile.MakefileTargetIcon
+import com.jetbrains.lang.makefile.MakefileTargetIndex
 
 class MakefileToolWindowGoToTargetAction(private val tree: Tree, private val project: Project)
   : AnAction(MakefileLangBundle.message("action.go.to.target.text"),

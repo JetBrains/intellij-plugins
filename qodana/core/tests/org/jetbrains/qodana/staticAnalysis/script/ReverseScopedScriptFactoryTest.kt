@@ -8,7 +8,6 @@ import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedRunNewCodeContextFactory
@@ -19,6 +18,7 @@ import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedScriptOld
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPE_ARG
 import org.jetbrains.qodana.staticAnalysis.script.scoped.STAGE_ARG
 import org.jetbrains.qodana.staticAnalysis.script.scoped.Stage
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.fail

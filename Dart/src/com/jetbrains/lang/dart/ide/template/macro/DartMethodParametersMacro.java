@@ -2,10 +2,25 @@
 package com.jetbrains.lang.dart.ide.template.macro;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.intellij.codeInsight.template.*;
+import com.intellij.codeInsight.template.Expression;
+import com.intellij.codeInsight.template.ExpressionContext;
+import com.intellij.codeInsight.template.ListResult;
+import com.intellij.codeInsight.template.Result;
+import com.intellij.codeInsight.template.TextResult;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartDefaultFormalNamedParameter;
+import com.jetbrains.lang.dart.psi.DartFactoryConstructorDeclaration;
+import com.jetbrains.lang.dart.psi.DartFormalParameterList;
+import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBody;
+import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBodyOrNative;
+import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
+import com.jetbrains.lang.dart.psi.DartNamedConstructorDeclaration;
+import com.jetbrains.lang.dart.psi.DartNormalFormalParameter;
+import com.jetbrains.lang.dart.psi.DartOptionalFormalParameters;
+import com.jetbrains.lang.dart.psi.DartSetterDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

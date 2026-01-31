@@ -12,7 +12,12 @@ import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue
 import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
-import com.intellij.lang.javascript.service.protocol.*
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceAnswer
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceInitialState
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceNodeStdProtocolBase
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
+import com.intellij.lang.javascript.service.protocol.LocalFilePath
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project

@@ -1,7 +1,9 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.application.options.*
-import com.intellij.psi.codeStyle.*
+import com.intellij.application.options.IndentOptionsEditor
+import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
 
 class MakefileLangCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
   override fun customizeDefaults(commonSettings: CommonCodeStyleSettings, indentOptions: CommonCodeStyleSettings.IndentOptions) {

@@ -28,7 +28,11 @@ import com.intellij.openapi.vcs.history.VcsRevisionNumber;
 import com.intellij.openapi.vcs.impl.ContentRevisionCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.perforce.application.*;
+import org.jetbrains.idea.perforce.application.PerforceBinaryContentRevision;
+import org.jetbrains.idea.perforce.application.PerforceClient;
+import org.jetbrains.idea.perforce.application.PerforceManager;
+import org.jetbrains.idea.perforce.application.PerforceOnlyRevisionNumber;
+import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.io.File;

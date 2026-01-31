@@ -7,7 +7,12 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.report.*
+import org.jetbrains.qodana.report.BannerContentProvider
+import org.jetbrains.qodana.report.BrowserViewProvider
+import org.jetbrains.qodana.report.FileReportDescriptor
+import org.jetbrains.qodana.report.LoadedReport
+import org.jetbrains.qodana.report.LocalReportDescriptor
+import org.jetbrains.qodana.report.ReportDescriptor
 import org.jetbrains.qodana.webUi.QodanaWebUiService
 
 class LocalRunNotPublishedReportDescriptor(

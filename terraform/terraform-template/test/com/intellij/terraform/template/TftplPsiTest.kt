@@ -1,9 +1,9 @@
 package com.intellij.terraform.template
 
 import com.intellij.lang.Language
+import com.intellij.terraform.template.psi.TftplFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.hcl.HCLLanguage
-import com.intellij.terraform.template.psi.TftplFile
 import org.junit.Assert
 
 internal const val dollar = "$"

@@ -9,7 +9,7 @@ import icons.HandlebarsIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class HbSimpleInverseImpl extends HbPlainMustacheImpl implements HbSimpleInverse {
   public HbSimpleInverseImpl(@NotNull ASTNode astNode) {

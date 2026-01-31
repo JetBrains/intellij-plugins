@@ -2,8 +2,8 @@ package org.jetbrains.qodana.config
 
 import com.intellij.codeInspection.ex.ProjectInspectionToolRegistrar
 import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.edtWriteAction
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.vfs.readText
 import com.intellij.profile.codeInspection.InspectionProfileLoadUtil
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager

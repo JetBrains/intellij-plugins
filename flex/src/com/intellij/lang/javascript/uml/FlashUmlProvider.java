@@ -1,16 +1,26 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml;
 
-import com.intellij.diagram.*;
+import com.intellij.diagram.DiagramColorManager;
+import com.intellij.diagram.DiagramEdgeCreationPolicy;
+import com.intellij.diagram.DiagramNodeContentManager;
+import com.intellij.diagram.DiagramPresentationModel;
+import com.intellij.diagram.DiagramProvider;
+import com.intellij.diagram.DiagramPsiScopeManager;
+import com.intellij.diagram.DiagramScopeManager;
 import com.intellij.diagram.actions.DiagramCreateNewElementAction;
 import com.intellij.diagram.actions.DiagramCreateNewNodeElementAction;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.uml.actions.*;
+import com.intellij.lang.javascript.uml.actions.FlexCreateConstructorFromDiagramAction;
+import com.intellij.lang.javascript.uml.actions.FlexCreateFieldFromDiagramAction;
+import com.intellij.lang.javascript.uml.actions.FlexCreateMethodFromDiagramAction;
+import com.intellij.lang.javascript.uml.actions.NewActionScriptClassUmlAction;
+import com.intellij.lang.javascript.uml.actions.NewFlexComponentUmlAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;

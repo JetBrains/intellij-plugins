@@ -3,7 +3,11 @@ package com.intellij.dts.zephyr
 import com.intellij.dts.DtsBundle
 import com.intellij.dts.settings.DtsSettings
 import com.intellij.dts.util.DtsUtil
-import com.intellij.dts.zephyr.binding.*
+import com.intellij.dts.zephyr.binding.BindingSource
+import com.intellij.dts.zephyr.binding.DtsZephyrBinding
+import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
+import com.intellij.dts.zephyr.binding.loadExternalBindings
+import com.intellij.dts.zephyr.binding.parseExternalBindings
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -15,7 +19,12 @@ import com.intellij.util.containers.MultiMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
 

@@ -27,7 +27,11 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Properties;
 
 public final class ErrorProneClasspathProvider extends BuildProcessParametersProvider {
   private static final Logger LOG = Logger.getInstance(ErrorProneClasspathProvider.class);

@@ -4,12 +4,21 @@ package com.intellij.lang.javascript.uml;
 import com.intellij.diagram.ChangeTracker;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.injection.MultiHostInjector;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JSTargetedInjector;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.ecmal4.*;
+import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSNamedElement;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
+import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
+import com.intellij.lang.javascript.psi.ecmal4.JSReferenceListMember;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.project.Project;
@@ -29,8 +38,12 @@ import com.intellij.psi.xml.XmlText;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.util.*;
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 final class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement, JSReferenceExpression> {
   private static class NameFilter<T extends PsiNamedElement> extends PsiFilter<T> {

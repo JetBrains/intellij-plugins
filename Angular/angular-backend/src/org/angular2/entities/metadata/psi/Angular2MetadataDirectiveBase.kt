@@ -6,7 +6,13 @@ import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
-import org.angular2.entities.*
+import org.angular2.entities.Angular2ClassBasedDirective
+import org.angular2.entities.Angular2DirectiveAttribute
+import org.angular2.entities.Angular2DirectiveExportAs
+import org.angular2.entities.Angular2DirectiveSelector
+import org.angular2.entities.Angular2DirectiveSelectorImpl
+import org.angular2.entities.Angular2EntityUtils
+import org.angular2.entities.Angular2HostDirective
 import org.angular2.entities.metadata.stubs.Angular2MetadataDirectiveStubBase
 
 abstract class Angular2MetadataDirectiveBase<Stub : Angular2MetadataDirectiveStubBase<*>>(element: Stub)

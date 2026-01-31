@@ -36,12 +36,20 @@ import com.intellij.util.SmartList;
 import com.intellij.util.net.HttpConfigurable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
-import org.osmorc.frameworkintegration.*;
+import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.frameworkintegration.FrameworkInstanceManager;
+import org.osmorc.frameworkintegration.FrameworkIntegrator;
+import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
+import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static org.osmorc.frameworkintegration.FrameworkInstanceManager.FrameworkBundleType;

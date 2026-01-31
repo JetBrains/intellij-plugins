@@ -8,7 +8,7 @@ import org.jetbrains.jps.builders.impl.java.JavacCompilerTool;
 import org.jetbrains.jps.builders.java.CannotCreateJavaCompilerException;
 import org.jetbrains.jps.builders.java.JavaCompilingTool;
 
-import javax.tools.*;
+import javax.tools.JavaCompiler;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;

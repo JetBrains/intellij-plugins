@@ -7,7 +7,15 @@ import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestUtil
-import org.angular2.inspections.*
+import org.angular2.inspections.AngularIncorrectTemplateDefinitionInspection
+import org.angular2.inspections.AngularInvalidEntryComponentInspection
+import org.angular2.inspections.AngularInvalidImportedOrDeclaredSymbolInspection
+import org.angular2.inspections.AngularInvalidSelectorInspection
+import org.angular2.inspections.AngularMissingOrInvalidDeclarationInModuleInspection
+import org.angular2.inspections.AngularNonStandaloneComponentImportsInspection
+import org.angular2.inspections.AngularRecursiveModuleImportExportInspection
+import org.angular2.inspections.AngularUndefinedModuleExportInspection
+import org.angular2.inspections.AngularUnusedComponentImportInspection
 import org.angular2.lang.Angular2Bundle
 
 /**

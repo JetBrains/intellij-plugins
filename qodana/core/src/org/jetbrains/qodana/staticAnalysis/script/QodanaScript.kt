@@ -6,7 +6,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.precomputedC
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import java.nio.file.Path
-import kotlin.collections.orEmpty
 
 interface QodanaScript {
   suspend fun execute(report: SarifReport): QodanaScriptResult

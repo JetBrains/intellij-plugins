@@ -6,7 +6,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtilRt;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import org.dartlang.analysis.server.protocol.*;
+import org.dartlang.analysis.server.protocol.ExtractLocalVariableFeedback;
+import org.dartlang.analysis.server.protocol.ExtractLocalVariableOptions;
+import org.dartlang.analysis.server.protocol.RefactoringFeedback;
+import org.dartlang.analysis.server.protocol.RefactoringKind;
+import org.dartlang.analysis.server.protocol.RefactoringOptions;
 import org.jetbrains.annotations.NotNull;
 
 /**

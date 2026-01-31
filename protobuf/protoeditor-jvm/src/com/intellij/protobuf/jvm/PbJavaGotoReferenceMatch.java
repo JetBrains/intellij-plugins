@@ -17,7 +17,11 @@ package com.intellij.protobuf.jvm;
 
 import com.intellij.protobuf.lang.psi.PbDefinition;
 import com.intellij.protobuf.lang.psi.PbFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMember;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;

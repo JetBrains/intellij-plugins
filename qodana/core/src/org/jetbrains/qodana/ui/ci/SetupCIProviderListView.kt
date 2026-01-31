@@ -7,11 +7,20 @@ import com.intellij.ui.CollectionListModel
 import com.intellij.ui.SingleSelectionModel
 import com.intellij.ui.components.JBList
 import com.intellij.util.IconUtil
-import com.intellij.util.ui.*
+import com.intellij.util.ui.GridBag
+import com.intellij.util.ui.JBDimension
+import com.intellij.util.ui.JBInsets
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.ListUiUtil
+import com.intellij.util.ui.UIUtil
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.GridBagLayout
-import javax.swing.*
+import javax.swing.JLabel
+import javax.swing.JList
+import javax.swing.JPanel
+import javax.swing.ListCellRenderer
+import javax.swing.ListModel
 
 class SetupCIProviderListView(
   providers: List<SetupCIProvider>,

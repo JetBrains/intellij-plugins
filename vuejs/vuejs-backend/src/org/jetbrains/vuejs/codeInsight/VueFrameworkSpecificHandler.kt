@@ -4,7 +4,13 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSExpectedTypeKind
+import com.intellij.lang.javascript.psi.JSExpressionStatement
+import com.intellij.lang.javascript.psi.JSFunctionExpression
+import com.intellij.lang.javascript.psi.JSIndexedPropertyAccessExpression
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSTypeImpl
@@ -21,7 +27,11 @@ import org.jetbrains.vuejs.context.hasPinia
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.evaluateInjectedType
+import org.jetbrains.vuejs.model.findInjectForCall
+import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.INJECT_FUN
 
 class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {

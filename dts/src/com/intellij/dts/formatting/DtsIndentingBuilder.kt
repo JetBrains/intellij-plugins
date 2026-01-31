@@ -1,7 +1,13 @@
 package com.intellij.dts.formatting
 
 import com.intellij.dts.lang.DtsTokenSets
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsArray
+import com.intellij.dts.lang.psi.DtsEntry
+import com.intellij.dts.lang.psi.DtsNode
+import com.intellij.dts.lang.psi.DtsNodeContent
+import com.intellij.dts.lang.psi.DtsPropertyContent
+import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.lang.psi.DtsValue
 import com.intellij.formatting.ASTBlock
 import com.intellij.formatting.Block
 import com.intellij.formatting.Indent

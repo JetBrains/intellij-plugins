@@ -1,9 +1,9 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project
 
 import com.intellij.clion.projectStatus.fus.ProjectFixKinds
+import com.intellij.clion.projectStatus.isProjectAwareFile
 import com.intellij.clion.projectStatus.popup.ProjectFixesProvider
 import com.intellij.clion.projectStatus.popup.asProjectFixAction
-import com.intellij.clion.projectStatus.isProjectAwareFile
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext

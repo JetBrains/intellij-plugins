@@ -9,7 +9,11 @@ import com.intellij.javascript.ift.debug.setLanguageLevel
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.treeStructure.Tree
-import training.dsl.*
+import training.dsl.LessonContext
+import training.dsl.LessonUtil
+import training.dsl.checkToolWindowState
+import training.dsl.dropMnemonic
+import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 import training.ui.LearningUiHighlightingManager
 

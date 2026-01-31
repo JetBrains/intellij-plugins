@@ -11,16 +11,28 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.PsiTypeLookupItem;
 import com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlMethodInsertHandler;
 import com.intellij.coldFusion.model.info.CfmlFunctionDescription;
-import com.intellij.coldFusion.model.psi.*;
+import com.intellij.coldFusion.model.psi.CfmlComponent;
+import com.intellij.coldFusion.model.psi.CfmlFunction;
+import com.intellij.coldFusion.model.psi.CfmlParameter;
+import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
+import com.intellij.coldFusion.model.psi.CfmlVariable;
 import com.intellij.coldFusion.model.psi.impl.CfmlNamedAttributeImpl;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.PsiSubstitutor;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiVariable;
 import com.intellij.ui.IconManager;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class CfmlLookUpItemUtil implements PlatformIcons {
   public static LookupElement functionDescriptionToLookupItem(final CfmlFunctionDescription functionDescription) {

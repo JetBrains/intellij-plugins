@@ -14,7 +14,7 @@ import com.jetbrains.qodana.sarif.model.Run
 import org.jetbrains.annotations.Nls
 import org.jetbrains.qodana.QodanaBundle
 import java.io.File
-import java.util.*
+import java.util.Collections
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val COV_FIELD_NAME = "coverage"

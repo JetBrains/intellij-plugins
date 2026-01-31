@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class DartProjectGenerator extends WebProjectTemplate<DartProjectWizardData> implements Comparable<DartProjectGenerator> {
 

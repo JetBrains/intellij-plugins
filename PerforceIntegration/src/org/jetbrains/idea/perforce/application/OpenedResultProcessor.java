@@ -18,7 +18,12 @@ import org.jetbrains.idea.perforce.perforce.ResolvedFile;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class OpenedResultProcessor {
   public static final Key<Boolean> BRANCHED_FILE = Key.create("Perforce.branched.file");

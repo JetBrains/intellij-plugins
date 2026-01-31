@@ -2,9 +2,9 @@
 package com.intellij.tsr.psi;
 
 import com.intellij.psi.tree.IElementType;
+import com.intellij.tsr.TslLanguage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import com.intellij.tsr.TslLanguage;
 
 public final class TslTokenType extends IElementType {
   TslTokenType(@NotNull @NonNls String debugName) {

@@ -1,6 +1,23 @@
 package org.jetbrains.qodana.jvm.java.metrics.cyclomaticComplexity
 
-import com.intellij.psi.*
+import com.intellij.psi.JavaRecursiveElementWalkingVisitor
+import com.intellij.psi.JavaTokenType
+import com.intellij.psi.PsiAnonymousClass
+import com.intellij.psi.PsiCatchSection
+import com.intellij.psi.PsiConditionalExpression
+import com.intellij.psi.PsiDoWhileStatement
+import com.intellij.psi.PsiForStatement
+import com.intellij.psi.PsiForeachStatement
+import com.intellij.psi.PsiIfStatement
+import com.intellij.psi.PsiLambdaExpression
+import com.intellij.psi.PsiPolyadicExpression
+import com.intellij.psi.PsiStatement
+import com.intellij.psi.PsiSwitchBlock
+import com.intellij.psi.PsiSwitchExpression
+import com.intellij.psi.PsiSwitchLabelStatement
+import com.intellij.psi.PsiSwitchLabeledRuleStatement
+import com.intellij.psi.PsiSwitchStatement
+import com.intellij.psi.PsiWhileStatement
 
 class JavaCyclomaticComplexityMethodVisitor : JavaRecursiveElementWalkingVisitor() {
   var cyclomaticComplexityValue: Int = 1

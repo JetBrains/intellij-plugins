@@ -7,7 +7,11 @@ import com.intellij.util.asSafely
 import com.intellij.util.text.nullize
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
 import org.intellij.prisma.lang.PrismaConstants
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.PrismaArrayExpression
+import org.intellij.prisma.lang.psi.PrismaDatasourceDeclaration
+import org.intellij.prisma.lang.psi.PrismaGeneratorDeclaration
+import org.intellij.prisma.lang.psi.PrismaKeyValue
+import org.intellij.prisma.lang.psi.PrismaLiteralExpression
 
 private val schemaMetadataCacheKey = createSchemaScopedCacheKey<PrismaSchemaMetadata>("schemaMetadata")
 

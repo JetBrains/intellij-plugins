@@ -10,7 +10,7 @@ import com.intellij.ui.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class FlashUmlPackageNode extends DiagramNodeBase<Object> {
 

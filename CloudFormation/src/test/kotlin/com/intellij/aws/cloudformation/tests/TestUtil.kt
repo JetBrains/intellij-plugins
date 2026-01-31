@@ -7,8 +7,8 @@ import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiFile
 import com.intellij.platform.testFramework.core.FileComparisonFailedError
+import com.intellij.psi.PsiFile
 import junit.framework.TestCase
 import java.io.File
 import java.io.IOException

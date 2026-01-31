@@ -22,7 +22,7 @@ import com.intellij.protobuf.lang.stub.PbOneofDefinitionStub;
 import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 abstract class PbOneofDefinitionMixin extends PbStubbedNamedDefinitionBase<PbOneofDefinitionStub>
     implements PbOneofDefinition {

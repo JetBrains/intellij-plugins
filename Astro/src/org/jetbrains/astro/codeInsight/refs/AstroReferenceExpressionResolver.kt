@@ -8,7 +8,10 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
-import org.jetbrains.astro.codeInsight.*
+import org.jetbrains.astro.codeInsight.ASTRO_GLOBAL_INTERFACE
+import org.jetbrains.astro.codeInsight.ASTRO_IMPLICIT_OBJECT
+import org.jetbrains.astro.codeInsight.ASTRO_PKG
+import org.jetbrains.astro.codeInsight.AstroImplicitElement
 import org.jetbrains.astro.types.AstroGlobalType
 
 class AstroReferenceExpressionResolver(expression: JSReferenceExpressionImpl, ignorePerformanceLimits: Boolean)

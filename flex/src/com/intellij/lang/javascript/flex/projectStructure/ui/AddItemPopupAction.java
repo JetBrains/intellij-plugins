@@ -4,7 +4,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.openapi.ui.popup.PopupStep;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 abstract class AddItemPopupAction implements Runnable {
   private final String myTitle;

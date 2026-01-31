@@ -9,7 +9,11 @@ import org.jetbrains.qodana.cloud.QodanaCloudStateService
 import org.jetbrains.qodana.cloud.project.QodanaCloudProjectLinkService
 import org.jetbrains.qodana.coverage.CoverageLanguage
 import org.jetbrains.qodana.coverage.CoverageMetaDataArtifact
-import org.jetbrains.qodana.highlight.*
+import org.jetbrains.qodana.highlight.HighlightedReportData
+import org.jetbrains.qodana.highlight.HighlightedReportState
+import org.jetbrains.qodana.highlight.QodanaHighlightedReportService
+import org.jetbrains.qodana.highlight.highlightedReportDataIfSelected
+import org.jetbrains.qodana.highlight.reportDescriptorIfSelectedOrLoading
 import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector.FIELD_USER_STATE
 import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector.IS_LINK
 import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector.REPORT_TYPE

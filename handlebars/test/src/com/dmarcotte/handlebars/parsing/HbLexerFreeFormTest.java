@@ -1,6 +1,28 @@
 package com.dmarcotte.handlebars.parsing;
 
-import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CLOSE;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CLOSE_RAW_BLOCK;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CLOSE_UNESCAPED;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.COMMENT;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CONTENT;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.DATA_PREFIX;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.ELSE;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.END_RAW_BLOCK;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.EQUALS;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.ESCAPE_CHAR;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.ID;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.INVALID;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.NUMBER;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_BLOCK;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_ENDBLOCK;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_INVERSE;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_PARTIAL;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_RAW_BLOCK;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_UNESCAPED;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.SEP;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.UNCLOSED_COMMENT;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.WHITE_SPACE;
 
 /**
  * Free form lexer tests to help develop the lexer, pin down regressions, etc.

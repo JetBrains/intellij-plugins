@@ -14,10 +14,18 @@ import com.intellij.ui.AnimatedIcon
 import com.intellij.ui.BrowserHyperlinkListener
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBOptionButton
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.BottomGap
+import com.intellij.ui.dsl.builder.Panel
+import com.intellij.ui.dsl.builder.Row
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.util.IconUtil
-import com.intellij.util.ui.*
+import com.intellij.util.ui.HTMLEditorKitBuilder
+import com.intellij.util.ui.JBFont
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.NamedColorUtil
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.stats.LearnMoreSource
@@ -26,7 +34,11 @@ import org.jetbrains.qodana.ui.ci.CIFile
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.event.ActionEvent
-import javax.swing.*
+import javax.swing.AbstractAction
+import javax.swing.JButton
+import javax.swing.JComponent
+import javax.swing.JEditorPane
+import javax.swing.JPanel
 
 internal const val LINE_INSETS = 12
 private const val TOP_PANEL_GAP = 40

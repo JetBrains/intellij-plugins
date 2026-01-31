@@ -2,14 +2,14 @@
 package org.jetbrains.vuejs.libraries.vueLoader
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
-import com.intellij.polySymbols.testFramework.assertUnresolvedReference
-import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolve
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolveAlias
-import com.intellij.webpack.createAndSetWebpackConfig
+import com.intellij.polySymbols.testFramework.assertUnresolvedReference
+import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.webpack.createAndSetWebpackConfig
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies

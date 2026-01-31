@@ -5,7 +5,10 @@ import com.intellij.openapi.vcs.FileStatus
 import com.intellij.openapi.vcs.FileStatusManager
 import com.intellij.openapi.vcs.VcsConfiguration
 import com.intellij.openapi.vcs.VcsShowConfirmationOption
-import com.intellij.testFramework.UsefulTestCase.*
+import com.intellij.testFramework.UsefulTestCase.assertNull
+import com.intellij.testFramework.UsefulTestCase.assertOneElement
+import com.intellij.testFramework.UsefulTestCase.assertSameElements
+import com.intellij.testFramework.UsefulTestCase.assertTrue
 import org.jetbrains.idea.perforce.application.PerforceRepositoryLocation
 import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.connections.AbstractP4Connection

@@ -17,7 +17,7 @@ import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularModuleIndex;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 

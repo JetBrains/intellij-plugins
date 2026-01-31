@@ -12,7 +12,7 @@ import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Shape;
 
 public interface FlashUmlRelationship extends DiagramRelationshipInfo {
   enum RelationshipType {

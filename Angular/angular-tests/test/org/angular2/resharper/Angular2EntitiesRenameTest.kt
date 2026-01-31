@@ -7,13 +7,13 @@ import com.intellij.lang.resharper.tests.ReSharperTestUtil
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.polySymbols.testFramework.canRenamePolySymbolAtCaret
+import com.intellij.polySymbols.testFramework.renamePolySymbol
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.testFramework.Parameterized
-import com.intellij.polySymbols.testFramework.canRenamePolySymbolAtCaret
-import com.intellij.polySymbols.testFramework.renamePolySymbol
 import org.angular2.Angular2TestUtil
 import org.junit.runner.RunWith
 import java.io.File

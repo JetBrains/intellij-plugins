@@ -1,11 +1,11 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.codeInsight.*
-import com.intellij.find.*
-import com.intellij.find.impl.*
-import com.intellij.testFramework.fixtures.*
-import org.hamcrest.core.IsNull.*
-import org.junit.Assert.*
+import com.intellij.codeInsight.TargetElementUtil
+import com.intellij.find.FindManager
+import com.intellij.find.impl.FindManagerImpl
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.hamcrest.core.IsNull.nullValue
+import org.junit.Assert.assertThat
 
 class MakefileFindUsagesTest : BasePlatformTestCase() {
   fun testSimple() {

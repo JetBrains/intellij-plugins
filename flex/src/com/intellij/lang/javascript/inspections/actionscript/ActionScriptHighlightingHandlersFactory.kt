@@ -4,8 +4,8 @@ package com.intellij.lang.javascript.inspections.actionscript
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder
 import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSHighlightingHandlersFactory
-import com.intellij.lang.javascript.validation.ActionScriptKeywordHighlighterVisitor
 import com.intellij.lang.javascript.highlighting.JSKeywordHighlighterVisitor
+import com.intellij.lang.javascript.validation.ActionScriptKeywordHighlighterVisitor
 
 class ActionScriptHighlightingHandlersFactory: JSHighlightingHandlersFactory() {
   override fun createKeywordHighlighterVisitor(holder: HighlightInfoHolder, dialectOptionHolder: DialectOptionHolder): JSKeywordHighlighterVisitor {

@@ -3,7 +3,18 @@ package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.application.ApplicationManager
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.BackendType
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.DataSourceType
+import org.intellij.terraform.config.model.EphemeralType
+import org.intellij.terraform.config.model.HclType
+import org.intellij.terraform.config.model.Hint
+import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.ProviderType
+import org.intellij.terraform.config.model.ProvisionerType
+import org.intellij.terraform.config.model.ResourceType
+import org.intellij.terraform.config.model.TfFunction
 
 class LoadingModel {
   val resources: MutableList<ResourceType> = arrayListOf()

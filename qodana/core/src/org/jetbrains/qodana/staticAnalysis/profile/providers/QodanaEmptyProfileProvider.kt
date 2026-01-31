@@ -1,7 +1,9 @@
 package org.jetbrains.qodana.staticAnalysis.profile.providers
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.qodana.staticAnalysis.profile.*
+import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
+import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManager
+import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider
 
 const val QODANA_EMPTY_PROFILE_NAME = "empty"
 

@@ -14,8 +14,23 @@ import org.intellij.prisma.ide.schema.types.PrismaIndexAlgorithm
 import org.intellij.prisma.ide.schema.types.PrismaNativeType.PostgreSQL
 import org.intellij.prisma.ide.schema.types.PrismaOperatorClass
 import org.intellij.prisma.lang.PrismaConstants
-import org.intellij.prisma.lang.psi.*
-import org.intellij.prisma.lang.types.*
+import org.intellij.prisma.lang.psi.PrismaBlockAttribute
+import org.intellij.prisma.lang.psi.PrismaFieldDeclaration
+import org.intellij.prisma.lang.psi.PrismaFunctionCall
+import org.intellij.prisma.lang.psi.PrismaNamedArgument
+import org.intellij.prisma.lang.psi.PrismaPathExpression
+import org.intellij.prisma.lang.psi.PrismaPsiPatterns
+import org.intellij.prisma.lang.types.PrismaBigIntType
+import org.intellij.prisma.lang.types.PrismaBytesType
+import org.intellij.prisma.lang.types.PrismaDateTimeType
+import org.intellij.prisma.lang.types.PrismaDecimalType
+import org.intellij.prisma.lang.types.PrismaFloatType
+import org.intellij.prisma.lang.types.PrismaIntType
+import org.intellij.prisma.lang.types.PrismaJsonType
+import org.intellij.prisma.lang.types.PrismaStringType
+import org.intellij.prisma.lang.types.PrismaType
+import org.intellij.prisma.lang.types.isList
+import org.intellij.prisma.lang.types.unwrapType
 
 
 object PrismaOperatorClassProvider : PrismaCompletionProvider() {

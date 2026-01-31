@@ -27,7 +27,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.*;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.FOLDER_PLATFORMS;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.FOLDER_WWW;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.IONIC_CONFIG;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.isPhoneGapProject;
 import static com.intellij.openapi.roots.ModuleRootModificationUtil.updateExcludedFolders;
 
 public final class PhoneGapStartupActivity implements StartupActivity, DumbAware {

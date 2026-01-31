@@ -1,7 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.ift
 
-import com.intellij.javascript.ift.lesson.editor.*
+import com.intellij.javascript.ift.lesson.editor.BasicCompletionLesson
+import com.intellij.javascript.ift.lesson.editor.CodeEditingLesson
+import com.intellij.javascript.ift.lesson.editor.CodeInspectionLesson
+import com.intellij.javascript.ift.lesson.editor.NavigationLesson
+import com.intellij.javascript.ift.lesson.editor.RefactoringLesson
 import com.intellij.javascript.ift.lesson.testing.JestLesson
 import com.intellij.lang.javascript.JavascriptLanguage
 import training.dsl.LessonUtil

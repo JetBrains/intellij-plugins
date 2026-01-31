@@ -16,7 +16,12 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbEnumDefinition;
+import com.intellij.protobuf.lang.psi.PbIdentifierValue;
+import com.intellij.protobuf.lang.psi.PbNamedTypeElement;
+import com.intellij.protobuf.lang.psi.PbNumberValue;
+import com.intellij.protobuf.lang.psi.PbOptionExpression;
+import com.intellij.protobuf.lang.psi.PbOptionName;
 import com.intellij.protobuf.lang.resolve.PbEnumValueReference;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;

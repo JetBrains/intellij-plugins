@@ -1,6 +1,10 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.jetbrains.qodana.sarif.model.*
+import com.jetbrains.qodana.sarif.model.ArtifactLocation
+import com.jetbrains.qodana.sarif.model.Location
+import com.jetbrains.qodana.sarif.model.PhysicalLocation
+import com.jetbrains.qodana.sarif.model.PropertyBag
+import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Result.BaselineState
 import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
 import org.junit.Test

@@ -8,6 +8,7 @@ import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.cidr.CidrProjectOpenProcessor
 import com.jetbrains.cidr.ProjectOpenHelper
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor.Companion.SupportedFileChecker
 import com.jetbrains.cidr.cpp.external.system.linkExternalProject
 import com.jetbrains.cidr.external.system.fus.CidrExternalUsageUtil
 

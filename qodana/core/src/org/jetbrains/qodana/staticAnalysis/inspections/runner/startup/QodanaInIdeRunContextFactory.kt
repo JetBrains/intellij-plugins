@@ -7,10 +7,10 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.addQodanaAnalysisConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.removeQodanaAnalysisConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionProfileLoader
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
+import org.jetbrains.qodana.util.QodanaMessageReporter
 
 /**
  * Shared between IDE run and headless run

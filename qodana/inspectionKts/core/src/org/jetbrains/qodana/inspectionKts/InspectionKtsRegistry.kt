@@ -1,7 +1,5 @@
 package org.jetbrains.qodana.inspectionKts
 
-import com.intellij.ide.plugins.PluginManagerCore
-import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.util.registry.Registry
 
 object InspectionKtsRegistry {

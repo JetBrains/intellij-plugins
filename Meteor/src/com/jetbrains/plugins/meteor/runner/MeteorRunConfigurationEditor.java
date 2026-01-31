@@ -15,8 +15,8 @@ import com.jetbrains.plugins.meteor.MeteorBundle;
 import com.jetbrains.plugins.meteor.MeteorUIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
 
 public class MeteorRunConfigurationEditor extends SettingsEditor<MeteorRunConfiguration> {
 

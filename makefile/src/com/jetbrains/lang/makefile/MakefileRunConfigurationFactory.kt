@@ -1,10 +1,10 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.execution.configurations.*
-import com.intellij.openapi.components.*
-import com.intellij.openapi.project.*
-import com.jetbrains.lang.makefile.psi.*
-import java.io.*
+import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.openapi.components.PathMacroManager
+import com.intellij.openapi.project.Project
+import com.jetbrains.lang.makefile.psi.MakefileTarget
+import java.io.File
 
 class MakefileRunConfigurationFactory(private val runConfigurationType: MakefileRunConfigurationType) : ConfigurationFactory(runConfigurationType) {
   override fun getId(): String = "Makefile"

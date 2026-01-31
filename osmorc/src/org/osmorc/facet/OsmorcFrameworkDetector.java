@@ -20,7 +20,12 @@ import org.jetbrains.lang.manifest.ManifestFileType;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osgi.framework.Constants;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public final class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcFacet, OsmorcFacetConfiguration> {
   private final String[] DETECTION_HEADERS = {Constants.BUNDLE_SYMBOLICNAME};

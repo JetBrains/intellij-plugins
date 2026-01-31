@@ -10,10 +10,21 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.*
+import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.jetbrains.qodana.allowExceptions
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
+import org.jetbrains.qodana.dispatchAllTasksOnUi
 import org.jetbrains.qodana.problem.SarifProblem
-import org.jetbrains.qodana.report.*
+import org.jetbrains.qodana.reinstansiateService
+import org.jetbrains.qodana.report.AggregatedReportMetadata
+import org.jetbrains.qodana.report.BannerContentProvider
+import org.jetbrains.qodana.report.BrowserViewProvider
+import org.jetbrains.qodana.report.LoadedReport
+import org.jetbrains.qodana.report.NoProblemsContentProvider
+import org.jetbrains.qodana.report.NotificationCallback
+import org.jetbrains.qodana.report.ReportDescriptor
+import org.jetbrains.qodana.report.ValidatedSarif
+import org.jetbrains.qodana.runDispatchingOnUi
 import java.nio.file.Path
 
 class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {

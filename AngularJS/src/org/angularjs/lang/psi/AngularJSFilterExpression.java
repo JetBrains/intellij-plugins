@@ -1,7 +1,11 @@
 package org.angularjs.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSArgumentList;
+import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSCallLikeExpressionCommon;
+import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;

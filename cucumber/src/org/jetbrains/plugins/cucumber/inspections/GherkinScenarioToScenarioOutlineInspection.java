@@ -12,7 +12,13 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinElementFactory;
+import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
+import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+import org.jetbrains.plugins.cucumber.psi.GherkinKeywordTable;
+import org.jetbrains.plugins.cucumber.psi.GherkinScenario;
+import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
+import org.jetbrains.plugins.cucumber.psi.GherkinUtil;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 
 import java.util.Collection;

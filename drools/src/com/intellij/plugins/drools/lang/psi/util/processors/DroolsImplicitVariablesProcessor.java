@@ -5,16 +5,28 @@ import com.intellij.openapi.project.Project;
 import com.intellij.plugins.drools.lang.psi.DroolsFile;
 import com.intellij.plugins.drools.lang.psi.util.DroolsLightClass;
 import com.intellij.plugins.drools.lang.psi.util.DroolsLightVariable;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static com.intellij.plugins.drools.DroolsConstants.*;
+import static com.intellij.plugins.drools.DroolsConstants.KIE_CONTEXT_CLASS;
+import static com.intellij.plugins.drools.DroolsConstants.KNOWLEDGE_HELPER_8_X;
+import static com.intellij.plugins.drools.DroolsConstants.KNOWLEDGE_HELPER_CLASS;
 
 public final class DroolsImplicitVariablesProcessor implements DroolsDeclarationsProcessor {
   private static DroolsImplicitVariablesProcessor myInstance;

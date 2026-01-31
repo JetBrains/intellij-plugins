@@ -6,7 +6,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
 
 public class ActionScriptIndentOptionsEditor extends SmartIndentOptionsEditor {
   protected JCheckBox myIndentPackageChildren;

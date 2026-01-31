@@ -9,7 +9,7 @@ import icons.HandlebarsIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class HbPartialImpl extends HbPlainMustacheImpl implements HbPartial {
   public HbPartialImpl(@NotNull ASTNode astNode) {

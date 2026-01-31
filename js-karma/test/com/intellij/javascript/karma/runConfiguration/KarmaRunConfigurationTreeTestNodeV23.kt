@@ -5,7 +5,7 @@ import com.intellij.idea.IJIgnore
 import com.intellij.javascript.debugger.NodeJsAppRule
 import com.intellij.javascript.karma.runConfiguration.infrastructure.KarmaRunConfigurationTestsBase
 import com.intellij.javascript.karma.scope.KarmaScopeKind
-import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.*
+import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.FailedTest
 
 @IJIgnore(issue = "For local development usage. Will be enabled on CI after setting up headless Chrome on CI for these kind of tests")
 class KarmaRunConfigurationTreeTestNodeV23: KarmaRunConfigurationTestsBase() {

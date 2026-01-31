@@ -13,9 +13,16 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.*
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.runTaskAndLogTime
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
-import org.jetbrains.qodana.staticAnalysis.script.*
+import org.jetbrains.qodana.staticAnalysis.script.AnalysisKind
+import org.jetbrains.qodana.staticAnalysis.script.QodanaScript
+import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
+import org.jetbrains.qodana.staticAnalysis.script.QodanaSingleRunScript
+import org.jetbrains.qodana.staticAnalysis.script.UnvalidatedParameters
 import org.jetbrains.qodana.util.QodanaMessageReporter
 
 internal class MigrateClassesScriptFactory : QodanaScriptFactory {

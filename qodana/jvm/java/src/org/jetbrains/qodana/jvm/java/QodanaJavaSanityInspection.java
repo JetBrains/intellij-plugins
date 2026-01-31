@@ -1,8 +1,13 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.qodana.jvm.java;
 
-import com.intellij.codeInspection.*;
-import com.intellij.psi.*;
+import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.JavaElementVisitor;
+import com.intellij.psi.JavaResolveResult;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiJavaCodeReferenceElement;
 import com.intellij.psi.impl.source.resolve.JavaResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.qodana.QodanaBundle;

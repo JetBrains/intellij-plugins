@@ -5,7 +5,9 @@ import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.PlatformDataKeys.*
+import com.intellij.openapi.actionSystem.PlatformDataKeys.PROJECT
+import com.intellij.openapi.actionSystem.PlatformDataKeys.PSI_ELEMENT
+import com.intellij.openapi.actionSystem.PlatformDataKeys.PSI_FILE
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory

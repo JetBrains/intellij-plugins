@@ -13,7 +13,12 @@ import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 import java.awt.Dimension
 import java.awt.GridBagConstraints.WEST
 import java.awt.GridBagLayout
-import javax.swing.*
+import javax.swing.Box
+import javax.swing.BoxLayout
+import javax.swing.JComponent
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.JRadioButton
 
 class VueIndentOptionsEditor : SmartIndentOptionsEditor() {
 

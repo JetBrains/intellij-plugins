@@ -3,7 +3,13 @@ package org.jetbrains.osgi.jps.util;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Implementation of {@link Properties} which has a defined order of elements.

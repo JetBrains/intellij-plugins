@@ -8,7 +8,11 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSEmbeddedContentStubImpl
 import com.intellij.lang.javascript.types.JSEmbeddedBlockElementType
 import com.intellij.lang.javascript.types.PsiGenerator
 import com.intellij.psi.PsiElement
-import com.intellij.psi.stubs.*
+import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.psi.AstroContentRoot
 

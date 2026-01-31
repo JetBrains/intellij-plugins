@@ -17,7 +17,14 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class PerforceClientRootsChecker implements P4RootsInformation {
   private static final Logger LOG = Logger.getInstance(PerforceClientRootsChecker.class);

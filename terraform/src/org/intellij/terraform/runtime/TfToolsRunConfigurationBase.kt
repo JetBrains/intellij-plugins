@@ -2,9 +2,21 @@
 package org.intellij.terraform.runtime
 
 import com.intellij.CommonBundle
-import com.intellij.execution.*
+import com.intellij.execution.CommonProgramRunConfigurationParameters
+import com.intellij.execution.DefaultExecutionResult
+import com.intellij.execution.EnvFilesOptions
+import com.intellij.execution.ExecutionException
+import com.intellij.execution.ExecutionResult
+import com.intellij.execution.Executor
+import com.intellij.execution.ExternalizablePath
 import com.intellij.execution.configuration.EnvironmentVariablesComponent
-import com.intellij.execution.configurations.*
+import com.intellij.execution.configurations.CommandLineState
+import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.configurations.RunConfigurationBase
+import com.intellij.execution.configurations.RunProfileState
+import com.intellij.execution.configurations.RuntimeConfigurationException
+import com.intellij.execution.configurations.SimpleProgramParameters
 import com.intellij.execution.filters.Filter
 import com.intellij.execution.process.KillableColoredProcessHandler
 import com.intellij.execution.process.OSProcessHandler

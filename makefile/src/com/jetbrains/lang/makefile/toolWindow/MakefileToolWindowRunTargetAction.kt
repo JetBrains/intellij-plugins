@@ -14,7 +14,11 @@ import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.ui.treeStructure.Tree
-import com.jetbrains.lang.makefile.*
+import com.jetbrains.lang.makefile.MakefileLangBundle
+import com.jetbrains.lang.makefile.MakefileRunConfigurationFactory
+import com.jetbrains.lang.makefile.MakefileRunConfigurationType
+import com.jetbrains.lang.makefile.MakefileTargetIcon
+import com.jetbrains.lang.makefile.MakefileTargetIndex
 
 @Suppress("DialogTitleCapitalization")
 internal class MakefileToolWindowRunTargetAction(private val tree: Tree, private val project: Project, private val runManager: RunManagerImpl)

@@ -15,7 +15,12 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.intellij.terraform.config.inspection.TfVARSIncorrectElementInspection
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLSyntaxHighlighter
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLExpression
+import org.intellij.terraform.hcl.psi.HCLForIntro
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLPsiUtil
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.jetbrains.annotations.Nls
 
 /**

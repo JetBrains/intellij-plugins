@@ -10,7 +10,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isNamespaceChild
-import java.util.*
+import java.util.Objects
 
 class VuexStoreStateElement(
   name: String,

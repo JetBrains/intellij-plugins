@@ -8,13 +8,20 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.completion.collectExistingAttributeNames
-import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
 import org.intellij.prisma.lang.PrismaConstants.BlockAttributes
 import org.intellij.prisma.lang.PrismaConstants.FieldAttributes
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.PrismaBlockAttribute
+import org.intellij.prisma.lang.psi.PrismaDeclaration
 import org.intellij.prisma.lang.psi.PrismaElementTypes.AT
 import org.intellij.prisma.lang.psi.PrismaElementTypes.ATAT
+import org.intellij.prisma.lang.psi.PrismaEnumDeclaration
+import org.intellij.prisma.lang.psi.PrismaEnumValueDeclaration
+import org.intellij.prisma.lang.psi.PrismaFieldAttribute
+import org.intellij.prisma.lang.psi.PrismaFieldDeclaration
+import org.intellij.prisma.lang.psi.PrismaModelDeclaration
+import org.intellij.prisma.lang.psi.PrismaPsiPatterns
 
 object PrismaBlockAttributesProvider : PrismaSchemaCompletionProvider() {
   override val kind: PrismaSchemaKind = PrismaSchemaKind.BLOCK_ATTRIBUTE

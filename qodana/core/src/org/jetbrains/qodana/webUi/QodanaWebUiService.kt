@@ -24,7 +24,7 @@ import org.jetbrains.qodana.run.QodanaConverterResults
 import org.jetbrains.qodana.run.runQodanaConverter
 import org.jetbrains.qodana.webUi.handlers.QODANA_WEB_UI_SOURCES_HANDLER_NAME
 import org.jetbrains.qodana.webUi.handlers.QODANA_WEB_UI_TOKEN_PARAM
-import java.util.*
+import java.util.UUID
 
 @Service(Service.Level.PROJECT)
 class QodanaWebUiService(@Suppress("unused") private val project: Project, private val scope: CoroutineScope) {

@@ -7,8 +7,13 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightPlatformTestCase;
-import org.intellij.terraform.hcl.psi.*;
 import org.intellij.terraform.config.psi.TfElementGenerator;
+import org.intellij.terraform.hcl.psi.HCLArray;
+import org.intellij.terraform.hcl.psi.HCLBlock;
+import org.intellij.terraform.hcl.psi.HCLElementGenerator;
+import org.intellij.terraform.hcl.psi.HCLExpression;
+import org.intellij.terraform.hcl.psi.HCLObject;
+import org.intellij.terraform.hcl.psi.HCLProperty;
 
 import java.util.List;
 

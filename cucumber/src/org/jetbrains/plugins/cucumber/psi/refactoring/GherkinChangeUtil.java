@@ -5,7 +5,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNullByDefault;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
+import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
+import org.jetbrains.plugins.cucumber.psi.GherkinKeywordProvider;
+import org.jetbrains.plugins.cucumber.psi.GherkinKeywordTable;
+import org.jetbrains.plugins.cucumber.psi.GherkinLanguage;
+import org.jetbrains.plugins.cucumber.psi.GherkinScenario;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 
 @NotNullByDefault

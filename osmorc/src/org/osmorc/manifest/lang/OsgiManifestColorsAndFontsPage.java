@@ -36,7 +36,7 @@ import org.jetbrains.lang.manifest.highlighting.ManifestColorsAndFonts;
 import org.jetbrains.lang.manifest.highlighting.ManifestSyntaxHighlighterFactory;
 import org.osmorc.i18n.OsmorcBundle;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.HashMap;
 import java.util.Map;
 

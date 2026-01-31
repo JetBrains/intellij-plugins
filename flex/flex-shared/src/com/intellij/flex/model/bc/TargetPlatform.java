@@ -5,7 +5,7 @@ import com.intellij.ui.IconManager;
 import com.intellij.ui.PlatformIcons;
 import icons.FlexSharedIcons;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public enum TargetPlatform {
   Web("Web"),

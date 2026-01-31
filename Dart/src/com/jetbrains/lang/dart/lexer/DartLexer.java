@@ -6,7 +6,13 @@ import com.intellij.lexer.MergingLexerAdapterBase;
 import com.intellij.psi.tree.IElementType;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.REGULAR_STRING_PART;
-import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.MULTI_LINE_COMMENT;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.MULTI_LINE_COMMENT_BODY;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.MULTI_LINE_COMMENT_END;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.MULTI_LINE_COMMENT_START;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.MULTI_LINE_DOC_COMMENT;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.MULTI_LINE_DOC_COMMENT_START;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.WHITE_SPACE;
 
 public class DartLexer extends MergingLexerAdapterBase {
 

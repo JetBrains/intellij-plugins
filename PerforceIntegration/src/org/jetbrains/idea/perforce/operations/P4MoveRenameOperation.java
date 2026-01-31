@@ -19,7 +19,12 @@ import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.ServerVersion;
 import org.jetbrains.idea.perforce.application.PerforceClient;
 import org.jetbrains.idea.perforce.application.PerforceManager;
-import org.jetbrains.idea.perforce.perforce.*;
+import org.jetbrains.idea.perforce.perforce.FStat;
+import org.jetbrains.idea.perforce.perforce.P4File;
+import org.jetbrains.idea.perforce.perforce.P4WhereResult;
+import org.jetbrains.idea.perforce.perforce.PerforceCachingContentRevision;
+import org.jetbrains.idea.perforce.perforce.PerforceRunner;
+import org.jetbrains.idea.perforce.perforce.ResolvedFile;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 

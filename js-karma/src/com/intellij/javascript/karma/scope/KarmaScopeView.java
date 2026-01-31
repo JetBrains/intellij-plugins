@@ -4,7 +4,7 @@ package com.intellij.javascript.karma.scope;
 import com.intellij.javascript.karma.execution.KarmaRunSettings;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 public abstract class KarmaScopeView {
 

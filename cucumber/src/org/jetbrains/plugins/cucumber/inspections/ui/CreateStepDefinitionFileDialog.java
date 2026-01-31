@@ -18,7 +18,10 @@ import org.jetbrains.plugins.cucumber.inspections.model.CreateStepDefinitionFile
 import org.jetbrains.plugins.cucumber.inspections.model.FileTypeComboboxItem;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;

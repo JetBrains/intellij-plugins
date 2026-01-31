@@ -2,7 +2,11 @@
 package com.intellij.coldFusion.model;
 
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
-import com.intellij.coldFusion.model.psi.*;
+import com.intellij.coldFusion.model.psi.CfmlAssignmentExpression;
+import com.intellij.coldFusion.model.psi.CfmlCommentSplitter;
+import com.intellij.coldFusion.model.psi.CfmlReferenceExpression;
+import com.intellij.coldFusion.model.psi.CfmlStringLiteralExpression;
+import com.intellij.coldFusion.model.psi.CfmlVariable;
 import com.intellij.coldFusion.model.psi.impl.CfmlNamedAttributeImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagComponentImpl;
 import com.intellij.lang.ASTNode;

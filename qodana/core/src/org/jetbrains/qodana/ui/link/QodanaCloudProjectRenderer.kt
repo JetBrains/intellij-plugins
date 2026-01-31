@@ -8,7 +8,11 @@ import com.intellij.ui.SimpleColoredComponent
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.IconUtil
 import com.intellij.util.text.DateFormatUtil
-import com.intellij.util.ui.*
+import com.intellij.util.ui.JBEmptyBorder
+import com.intellij.util.ui.JBInsets
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.ListUiUtil
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.cloud.project.QodanaCloudProjectsPagedLoader
 import java.awt.Component

@@ -9,7 +9,7 @@ import com.jetbrains.plugins.jade.JadeToPugTransitionHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class JadeIconProvider extends IconProvider {
   @Override

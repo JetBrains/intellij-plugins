@@ -17,7 +17,15 @@ import com.jetbrains.lang.dart.DartLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.jetbrains.lang.dart.DartTokenTypes.*;
+import static com.jetbrains.lang.dart.DartTokenTypes.CLOSING_QUOTE;
+import static com.jetbrains.lang.dart.DartTokenTypes.LONG_TEMPLATE_ENTRY;
+import static com.jetbrains.lang.dart.DartTokenTypes.LONG_TEMPLATE_ENTRY_START;
+import static com.jetbrains.lang.dart.DartTokenTypes.OPEN_QUOTE;
+import static com.jetbrains.lang.dart.DartTokenTypes.RAW_SINGLE_QUOTED_STRING;
+import static com.jetbrains.lang.dart.DartTokenTypes.RAW_TRIPLE_QUOTED_STRING;
+import static com.jetbrains.lang.dart.DartTokenTypes.REGULAR_STRING_PART;
+import static com.jetbrains.lang.dart.DartTokenTypes.SHORT_TEMPLATE_ENTRY;
+import static com.jetbrains.lang.dart.DartTokenTypes.SHORT_TEMPLATE_ENTRY_START;
 
 public final class DartEnterInStringHandler implements EnterHandlerDelegate {
 

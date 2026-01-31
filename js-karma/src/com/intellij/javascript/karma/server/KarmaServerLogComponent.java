@@ -33,7 +33,8 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 import java.util.concurrent.atomic.AtomicLong;
 
 public final class KarmaServerLogComponent implements ComponentWithActions {

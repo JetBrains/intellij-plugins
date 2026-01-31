@@ -1,6 +1,6 @@
 package jetbrains.plugins.yeoman.projectGenerator.ui.run.controls;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 public interface YeomanGeneratorControl {
   interface YeomanGeneratorControlUI {

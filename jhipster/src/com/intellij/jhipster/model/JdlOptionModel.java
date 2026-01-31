@@ -2,9 +2,16 @@
 
 package com.intellij.jhipster.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.intellij.jhipster.model.JdlPrimitiveType.*;
+import static com.intellij.jhipster.model.JdlPrimitiveType.BOOLEAN_TYPE;
+import static com.intellij.jhipster.model.JdlPrimitiveType.INTEGER_TYPE;
+import static com.intellij.jhipster.model.JdlPrimitiveType.STRING_ARRAY_TYPE;
+import static com.intellij.jhipster.model.JdlPrimitiveType.STRING_TYPE;
 
 public final class JdlOptionModel {
   public static final JdlOptionModel INSTANCE = new JdlOptionModel();

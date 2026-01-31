@@ -34,7 +34,11 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
   private static final @NonNls String IMPL_SUFFIX = "Impl";

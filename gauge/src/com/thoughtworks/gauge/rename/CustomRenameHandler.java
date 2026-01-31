@@ -35,7 +35,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.thoughtworks.gauge.util.StepUtil.*;
+import static com.thoughtworks.gauge.util.StepUtil.getGaugeStepAnnotationValues;
+import static com.thoughtworks.gauge.util.StepUtil.isConcept;
+import static com.thoughtworks.gauge.util.StepUtil.isMethod;
+import static com.thoughtworks.gauge.util.StepUtil.isStep;
 
 final class CustomRenameHandler implements RenameHandler {
   @Override

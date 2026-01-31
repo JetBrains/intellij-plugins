@@ -6,9 +6,9 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.terraform.template.psi.TftplDataLanguageSegment
 import com.intellij.terraform.template.TftplBundle
 import com.intellij.terraform.template.doComputeTemplateDataLanguage
+import com.intellij.terraform.template.psi.TftplDataLanguageSegment
 import com.intellij.terraform.template.psi.TftplVisitor
 
 internal class TfUnselectedDataLanguageInspection : LocalInspectionTool() {

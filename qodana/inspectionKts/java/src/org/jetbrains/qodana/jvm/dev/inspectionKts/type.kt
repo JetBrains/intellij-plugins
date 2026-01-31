@@ -2,7 +2,11 @@ package org.jetbrains.qodana.jvm.dev.inspectionKts
 
 import com.intellij.dev.psiViewer.properties.tree.nodes.apiMethods.PsiViewerApiMethod
 import com.intellij.openapi.application.readAction
-import com.intellij.psi.*
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiJavaCodeReferenceElement
+import com.intellij.psi.PsiType
 
 internal fun getAllSuperTypesPsiViewerApiMethod(psiType: PsiType): PsiViewerApiMethod {
   return PsiViewerApiMethod(

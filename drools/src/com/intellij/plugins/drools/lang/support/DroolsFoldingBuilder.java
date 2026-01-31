@@ -8,7 +8,13 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes;
-import com.intellij.plugins.drools.lang.psi.*;
+import com.intellij.plugins.drools.lang.psi.DroolsBlock;
+import com.intellij.plugins.drools.lang.psi.DroolsDeclareStatement;
+import com.intellij.plugins.drools.lang.psi.DroolsFile;
+import com.intellij.plugins.drools.lang.psi.DroolsFunctionStatement;
+import com.intellij.plugins.drools.lang.psi.DroolsQueryStatement;
+import com.intellij.plugins.drools.lang.psi.DroolsRuleStatement;
+import com.intellij.plugins.drools.lang.psi.DroolsTypeDeclaration;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 

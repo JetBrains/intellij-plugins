@@ -2,19 +2,34 @@
 package org.jetbrains.vuejs.libraries.cssModules
 
 import com.intellij.lang.javascript.JSStringUtil
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCommonTypeNames
+import com.intellij.lang.javascript.psi.JSRecordType
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
+import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSAnyType
+import com.intellij.lang.javascript.psi.types.JSCodeBasedType
+import com.intellij.lang.javascript.psi.types.JSRecordMemberSourceFactory
+import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeBaseImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.primitives.JSStringTypeImpl
 import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.psi.PsiElement
-import com.intellij.psi.css.*
+import com.intellij.psi.css.CssClass
+import com.intellij.psi.css.CssFunction
+import com.intellij.psi.css.CssPseudoClass
+import com.intellij.psi.css.CssRuleset
+import com.intellij.psi.css.CssSelectorList
+import com.intellij.psi.css.CssStylesheet
 import com.intellij.psi.impl.source.PsiFileWithStubSupport
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.VueImplicitElement
-import java.util.*
+import java.util.Locale
 
 class CssModuleType private constructor(val container: PsiElement, source: JSTypeSource) : JSTypeBaseImpl(source), JSCodeBasedType {
 

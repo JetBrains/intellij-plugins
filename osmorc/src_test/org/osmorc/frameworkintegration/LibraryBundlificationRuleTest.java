@@ -3,7 +3,9 @@ package org.osmorc.frameworkintegration;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class LibraryBundlificationRuleTest {
   @Test

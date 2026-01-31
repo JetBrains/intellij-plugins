@@ -8,7 +8,12 @@ import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.qodana.coroutines.qodanaProjectScope
 import org.jetbrains.qodana.ui.ProjectVcsDataProviderImpl
 import org.jetbrains.qodana.ui.run.QodanaYamlViewModelImpl
-import org.jetbrains.qodana.ui.run.wizard.*
+import org.jetbrains.qodana.ui.run.wizard.EditYamlBeforeSetupCIStep
+import org.jetbrains.qodana.ui.run.wizard.EditYamlBeforeSetupCIStepViewModel
+import org.jetbrains.qodana.ui.run.wizard.QODANA_RUN_WIZARD_DIALOG_HEIGHT
+import org.jetbrains.qodana.ui.run.wizard.QODANA_RUN_WIZARD_DIALOG_WIDTH
+import org.jetbrains.qodana.ui.run.wizard.SetupCIStep
+import org.jetbrains.qodana.ui.run.wizard.SetupCIStepViewModel
 import org.jetbrains.qodana.ui.wizard.QodanaWizardDialog
 import org.jetbrains.qodana.ui.wizard.QodanaWizardViewModel
 import java.awt.Dimension

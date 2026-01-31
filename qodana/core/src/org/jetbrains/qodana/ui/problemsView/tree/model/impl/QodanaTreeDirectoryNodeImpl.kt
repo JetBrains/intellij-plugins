@@ -2,7 +2,12 @@ package org.jetbrains.qodana.ui.problemsView.tree.model.impl
 
 import org.jetbrains.qodana.problem.SarifProblem
 import org.jetbrains.qodana.settings.ConfigExcludeItem
-import org.jetbrains.qodana.ui.problemsView.tree.model.*
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeDirectoryNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeEvent
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeExcludeEvent
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeFileAndDirectoryNodeChildren
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreePath
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeProblemEvent
 import org.jetbrains.qodana.ui.problemsView.tree.ui.QodanaUiTreeDirectoryNode
 import org.jetbrains.qodana.ui.problemsView.tree.ui.QodanaUiTreeNode
 import java.nio.file.Path

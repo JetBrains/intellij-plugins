@@ -9,7 +9,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 
 public class DartAnalysisServerSettingsForm {

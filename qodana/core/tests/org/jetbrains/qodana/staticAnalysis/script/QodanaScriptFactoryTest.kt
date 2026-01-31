@@ -1,8 +1,8 @@
 package org.jetbrains.qodana.staticAnalysis.script
 
 import com.intellij.testFramework.HeavyPlatformTestCase
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.runner.RunWith

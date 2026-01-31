@@ -14,8 +14,8 @@ import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.MODULE_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.index.findTopLevelVueTags
-import org.jetbrains.vuejs.model.VueInstancePropertySymbol
 import org.jetbrains.vuejs.model.VueInstanceOwner
+import org.jetbrains.vuejs.model.VueInstancePropertySymbol
 import org.jetbrains.vuejs.model.VueTypeProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 

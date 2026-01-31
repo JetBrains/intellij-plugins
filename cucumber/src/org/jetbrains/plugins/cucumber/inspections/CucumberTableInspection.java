@@ -7,7 +7,13 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
+import org.jetbrains.plugins.cucumber.psi.GherkinExamplesBlock;
+import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
+import org.jetbrains.plugins.cucumber.psi.GherkinTable;
+import org.jetbrains.plugins.cucumber.psi.GherkinTableCell;
+import org.jetbrains.plugins.cucumber.psi.GherkinTableRow;
 
 import java.util.Collection;
 import java.util.HashSet;

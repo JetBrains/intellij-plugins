@@ -17,7 +17,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 import org.osmorc.i18n.OsmorcBundle;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;

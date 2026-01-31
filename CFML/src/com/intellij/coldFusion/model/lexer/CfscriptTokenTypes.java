@@ -20,7 +20,11 @@ import com.intellij.coldFusion.model.psi.CfmlOperatorTokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
-import static com.intellij.coldFusion.model.psi.CfmlExpressionTypeCalculator.*;
+import static com.intellij.coldFusion.model.psi.CfmlExpressionTypeCalculator.BOOLEAN_CALCULATOR;
+import static com.intellij.coldFusion.model.psi.CfmlExpressionTypeCalculator.CONCATINATION_CALCULATOR;
+import static com.intellij.coldFusion.model.psi.CfmlExpressionTypeCalculator.MINUS_CALCULATOR;
+import static com.intellij.coldFusion.model.psi.CfmlExpressionTypeCalculator.MULTIPLICATIVE_CALCULATOR;
+import static com.intellij.coldFusion.model.psi.CfmlExpressionTypeCalculator.PLUS_CALCULATOR;
 
 /**
  * Created by Lera Nikolaenko

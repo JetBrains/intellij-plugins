@@ -27,9 +27,9 @@ package org.osmorc.manifest.lang.header;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.header.HeaderParser;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.BundleReference;
 import org.osmorc.manifest.lang.psi.Clause;
-import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>

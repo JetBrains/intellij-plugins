@@ -8,7 +8,7 @@ import com.intellij.refactoring.rename.RenameInputValidator
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
-import java.util.*
+import java.util.Locale
 
 
 class TfElementRenameValidator : RenameInputValidator {

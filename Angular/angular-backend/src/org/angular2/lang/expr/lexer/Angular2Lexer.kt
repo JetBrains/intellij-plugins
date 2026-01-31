@@ -2,7 +2,13 @@
 package org.angular2.lang.expr.lexer
 
 import com.intellij.lang.javascript.JSTokenTypes
-import com.intellij.lexer.*
+import com.intellij.lexer.FlexAdapter
+import com.intellij.lexer.Lexer
+import com.intellij.lexer.LexerPosition
+import com.intellij.lexer.MergeFunction
+import com.intellij.lexer.MergingLexerAdapterBase
+import com.intellij.lexer.RestartableLexer
+import com.intellij.lexer.TokenIterator
 import com.intellij.psi.tree.IElementType
 import org.angular2.lang.expr.lexer.Angular2TokenTypes.Companion.STRING_PART_SPECIAL_SEQ
 import org.angular2.lang.html.Angular2TemplateSyntax

@@ -20,7 +20,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 public abstract class PerforceUpdateConfigurable implements Configurable{
   private final PerforceSettings mySettings;

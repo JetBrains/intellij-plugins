@@ -12,7 +12,10 @@ import org.intellij.terraform.hcl.psi.HCLFile
 import org.intellij.terraform.hcl.psi.HCLHeredocContent
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.impl.HCLPsiImplUtils
-import org.intellij.terraform.hil.HILElementTypes.*
+import org.intellij.terraform.hil.HILElementTypes.INTERPOLATION_START
+import org.intellij.terraform.hil.HILElementTypes.L_CURLY
+import org.intellij.terraform.hil.HILElementTypes.R_CURLY
+import org.intellij.terraform.hil.HILElementTypes.TEMPLATE_START
 
 internal class ILLanguageInjector : LanguageInjector {
   override fun getLanguagesToInject(host: PsiLanguageInjectionHost, places: InjectedLanguagePlaces) {

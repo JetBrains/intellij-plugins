@@ -1,9 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.componentDecorator
 
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSFunctionType
+import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.JSRecordType.TypeMember
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
@@ -18,12 +23,27 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.asSafely
-import org.jetbrains.vuejs.codeInsight.*
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.codeInsight.findDecorator
+import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.getDecoratorArgument
+import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
+import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.model.EMIT_CALL_UPDATE_PREFIX
+import org.jetbrains.vuejs.model.VueComputedProperty
+import org.jetbrains.vuejs.model.VueDataProperty
+import org.jetbrains.vuejs.model.VueEmitCall
+import org.jetbrains.vuejs.model.VueImplicitElement
+import org.jetbrains.vuejs.model.VueInputProperty
+import org.jetbrains.vuejs.model.VueMethod
+import org.jetbrains.vuejs.model.VueMixin
+import org.jetbrains.vuejs.model.VueModelDirectiveProperties
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueProperty
+import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 import org.jetbrains.vuejs.types.optionalIf
-import java.util.*
+import java.util.Locale
 
 private const val PROP_DEC = "Prop"
 private const val PROP_SYNC_DEC = "PropSync"

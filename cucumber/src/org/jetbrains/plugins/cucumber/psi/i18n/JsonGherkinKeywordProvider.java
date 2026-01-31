@@ -10,7 +10,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinKeywordList;
+import org.jetbrains.plugins.cucumber.psi.GherkinKeywordProvider;
+import org.jetbrains.plugins.cucumber.psi.GherkinKeywordTable;
+import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
+import org.jetbrains.plugins.cucumber.psi.PlainGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
 import java.io.IOException;
@@ -18,7 +22,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 

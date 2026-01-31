@@ -26,7 +26,13 @@ import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VAR_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.PropertyOrBlockType
+import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.ProviderType
+import org.intellij.terraform.config.model.ResourceOrDataSourceType
+import org.intellij.terraform.config.model.TfFunction
+import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.Icons
@@ -38,7 +44,7 @@ import org.intellij.terraform.hil.codeinsight.ScopeSelectInsertHandler
 import org.intellij.terraform.opentofu.OpenTofuConstants.OpenTofuScopes
 import org.intellij.terraform.opentofu.OpenTofuFileType
 import org.intellij.terraform.stack.component.TfComponentFileType
-import java.util.*
+import java.util.SortedSet
 import javax.swing.Icon
 
 internal object TfCompletionUtil {

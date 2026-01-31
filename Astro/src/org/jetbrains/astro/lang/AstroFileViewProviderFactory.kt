@@ -4,7 +4,11 @@ package org.jetbrains.astro.lang
 import com.intellij.lang.Language
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.*
+import com.intellij.psi.FileViewProvider
+import com.intellij.psi.FileViewProviderFactory
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
+import com.intellij.psi.SingleRootFileViewProvider
 
 class AstroFileViewProviderFactory : FileViewProviderFactory {
   override fun createFileViewProvider(file: VirtualFile,

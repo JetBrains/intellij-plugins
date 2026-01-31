@@ -6,7 +6,12 @@ import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.impl.source.html.HtmlFileImpl
-import org.angular2.entities.*
+import org.angular2.entities.Angular2ClassBasedComponent
+import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2DirectiveKind
+import org.angular2.entities.Angular2DirectiveSelector
+import org.angular2.entities.Angular2DirectiveSelectorImpl
+import org.angular2.entities.Angular2Entity
 import org.angular2.entities.metadata.stubs.Angular2MetadataComponentStub
 
 class Angular2MetadataComponent(element: Angular2MetadataComponentStub)

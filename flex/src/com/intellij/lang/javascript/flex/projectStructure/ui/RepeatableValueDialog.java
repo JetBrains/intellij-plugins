@@ -18,8 +18,9 @@ import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.update.UiNotifyConnector;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JTable;
+import java.awt.Component;
 import java.util.List;
 
 import static com.intellij.flex.model.bc.CompilerOptionInfo.ListElementType;

@@ -15,9 +15,9 @@
  */
 package com.intellij.protobuf.jvm;
 
+import com.intellij.protobuf.lang.psi.PbDefinition;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiNamedElement;
-import com.intellij.protobuf.lang.psi.PbDefinition;
 
 /** Contextual information relevant to navigating from generated java code to .proto files. */
 public class PbJavaGotoDeclarationContext {

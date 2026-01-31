@@ -12,7 +12,7 @@ import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 import java.util.List;
 
 public class FlexModuleEditor implements ModuleConfigurationEditor {

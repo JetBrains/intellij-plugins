@@ -15,10 +15,10 @@
  */
 package com.intellij.protobuf.lang.stub;
 
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.lang.psi.PbElement;
 import com.intellij.protobuf.lang.psi.PbNamedElement;
+import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.Nullable;
 
 /**

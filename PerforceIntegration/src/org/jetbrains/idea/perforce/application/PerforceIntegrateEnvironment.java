@@ -25,7 +25,11 @@ import com.intellij.openapi.vcs.update.UpdatedFiles;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.idea.perforce.PerforceBundle;
-import org.jetbrains.idea.perforce.perforce.*;
+import org.jetbrains.idea.perforce.perforce.ExecResult;
+import org.jetbrains.idea.perforce.perforce.P4File;
+import org.jetbrains.idea.perforce.perforce.ParticularConnectionSettings;
+import org.jetbrains.idea.perforce.perforce.PerforceRunner;
+import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 

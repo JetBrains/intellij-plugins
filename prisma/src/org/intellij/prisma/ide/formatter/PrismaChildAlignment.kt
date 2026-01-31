@@ -6,7 +6,9 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.endOffset
 import org.intellij.prisma.lang.psi.PRISMA_TYPES
-import org.intellij.prisma.lang.psi.PrismaElementTypes.*
+import org.intellij.prisma.lang.psi.PrismaElementTypes.EQ
+import org.intellij.prisma.lang.psi.PrismaElementTypes.FIELD_ATTRIBUTE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.IDENTIFIER
 import org.intellij.prisma.lang.psi.PrismaEnumValueDeclaration
 import org.intellij.prisma.lang.psi.PrismaFieldAttribute
 import org.intellij.prisma.lang.psi.PrismaFieldType

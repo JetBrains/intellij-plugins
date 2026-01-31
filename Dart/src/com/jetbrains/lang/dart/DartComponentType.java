@@ -4,12 +4,31 @@ package com.jetbrains.lang.dart;
 import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartEnumConstantDeclaration;
+import com.jetbrains.lang.dart.psi.DartEnumDefinition;
+import com.jetbrains.lang.dart.psi.DartFactoryConstructorDeclaration;
+import com.jetbrains.lang.dart.psi.DartForInPart;
+import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBody;
+import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBodyOrNative;
+import com.jetbrains.lang.dart.psi.DartFunctionExpression;
+import com.jetbrains.lang.dart.psi.DartFunctionFormalParameter;
+import com.jetbrains.lang.dart.psi.DartFunctionTypeAlias;
+import com.jetbrains.lang.dart.psi.DartGetterDeclaration;
+import com.jetbrains.lang.dart.psi.DartLabel;
+import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
+import com.jetbrains.lang.dart.psi.DartNamedConstructorDeclaration;
+import com.jetbrains.lang.dart.psi.DartNormalFormalParameter;
+import com.jetbrains.lang.dart.psi.DartSetterDeclaration;
+import com.jetbrains.lang.dart.psi.DartVarAccessDeclaration;
+import com.jetbrains.lang.dart.psi.DartVarDeclarationListPart;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.function.Supplier;
 
 public enum DartComponentType {

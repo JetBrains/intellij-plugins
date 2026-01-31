@@ -9,12 +9,16 @@ import com.intellij.psi.PsiElement;
 import icons.CucumberIcons;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
+import org.jetbrains.plugins.cucumber.psi.GherkinPsiElement;
+import org.jetbrains.plugins.cucumber.psi.GherkinPystring;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
+import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinFeatureHeaderImpl;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinTableImpl;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinTagImpl;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

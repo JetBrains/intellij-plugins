@@ -3,7 +3,15 @@ package org.intellij.prisma.ide.schema.types
 import org.intellij.prisma.ide.schema.types.PrismaNativeTypeConstructor.Companion.withArgs
 import org.intellij.prisma.ide.schema.types.PrismaNativeTypeConstructor.Companion.withOptionalArgs
 import org.intellij.prisma.ide.schema.types.PrismaNativeTypeConstructor.Companion.withoutArgs
-import org.intellij.prisma.lang.types.*
+import org.intellij.prisma.lang.types.PrismaBigIntType
+import org.intellij.prisma.lang.types.PrismaBooleanType
+import org.intellij.prisma.lang.types.PrismaBytesType
+import org.intellij.prisma.lang.types.PrismaDateTimeType
+import org.intellij.prisma.lang.types.PrismaDecimalType
+import org.intellij.prisma.lang.types.PrismaFloatType
+import org.intellij.prisma.lang.types.PrismaIntType
+import org.intellij.prisma.lang.types.PrismaJsonType
+import org.intellij.prisma.lang.types.PrismaStringType
 
 object PrismaNativeType {
   fun findConstructorsByType(datasourceType: PrismaDatasourceProviderType): List<PrismaNativeTypeConstructor> {

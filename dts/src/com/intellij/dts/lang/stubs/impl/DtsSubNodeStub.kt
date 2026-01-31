@@ -6,7 +6,12 @@ import com.intellij.dts.lang.stubs.DTS_NODE_LABEL_INDEX
 import com.intellij.dts.lang.stubs.DtsStubElementType
 import com.intellij.dts.lang.stubs.readUTFList
 import com.intellij.dts.lang.stubs.writeUTFList
-import com.intellij.psi.stubs.*
+import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubBase
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 
 class DtsSubNodeStub(
   parent: StubElement<*>?,

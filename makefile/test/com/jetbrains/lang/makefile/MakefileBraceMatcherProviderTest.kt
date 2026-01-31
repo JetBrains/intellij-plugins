@@ -2,7 +2,12 @@ package com.jetbrains.lang.makefile
 
 import com.intellij.codeInsight.highlighting.BraceMatchingUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.jetbrains.lang.makefile.psi.MakefileTypes.*
+import com.jetbrains.lang.makefile.psi.MakefileTypes.CLOSE_CURLY
+import com.jetbrains.lang.makefile.psi.MakefileTypes.CLOSE_PAREN
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_DEFINE
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_ENDEF
+import com.jetbrains.lang.makefile.psi.MakefileTypes.OPEN_CURLY
+import com.jetbrains.lang.makefile.psi.MakefileTypes.OPEN_PAREN
 import org.intellij.lang.annotations.Language
 import org.junit.Assert
 import org.junit.FixMethodOrder

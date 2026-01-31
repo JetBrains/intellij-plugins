@@ -15,7 +15,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.NonFocusableCheckBox;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

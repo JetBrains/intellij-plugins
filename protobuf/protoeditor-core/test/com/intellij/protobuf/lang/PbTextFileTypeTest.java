@@ -15,8 +15,8 @@
  */
 package com.intellij.protobuf.lang;
 
-import com.intellij.psi.PsiFile;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.psi.PsiFile;
 
 import java.util.Arrays;
 import java.util.List;

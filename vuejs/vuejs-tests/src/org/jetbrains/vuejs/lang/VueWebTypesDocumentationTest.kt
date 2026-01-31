@@ -8,7 +8,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
-import java.util.*
 
 @RunWith(com.intellij.testFramework.Parameterized::class)
 class VueWebTypesDocumentationTest : BasePlatformTestCase() {

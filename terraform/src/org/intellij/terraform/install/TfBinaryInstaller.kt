@@ -12,7 +12,12 @@ import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.io.Decompressor
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.io.RequestBuilder
-import com.sun.jna.platform.win32.*
+import com.sun.jna.platform.win32.Advapi32
+import com.sun.jna.platform.win32.Advapi32Util
+import com.sun.jna.platform.win32.W32Errors
+import com.sun.jna.platform.win32.Win32Exception
+import com.sun.jna.platform.win32.WinNT
+import com.sun.jna.platform.win32.WinReg
 import kotlinx.coroutines.CoroutineScope
 import org.intellij.terraform.hcl.HCLBundle
 import org.jetbrains.annotations.Nls

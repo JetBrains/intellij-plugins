@@ -6,7 +6,7 @@ import com.intellij.ide.highlighter.XmlLikeFileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class MxmlFileType extends XmlLikeFileType {
   public static final LanguageFileType MXML = new MxmlFileType();

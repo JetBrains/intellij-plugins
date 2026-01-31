@@ -4,10 +4,10 @@ package org.angular2.cli
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestUtil
 
 class Angular2CliContextTest : BasePlatformTestCase() {

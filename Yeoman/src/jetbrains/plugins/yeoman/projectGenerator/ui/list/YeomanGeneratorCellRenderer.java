@@ -29,9 +29,11 @@ import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
 import jetbrains.plugins.yeoman.generators.YeomanGeneratorInfo;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
 
 public final class YeomanGeneratorCellRenderer extends DefaultTableCellRenderer {
   private final YeomanGeneratorInfo myInfo;

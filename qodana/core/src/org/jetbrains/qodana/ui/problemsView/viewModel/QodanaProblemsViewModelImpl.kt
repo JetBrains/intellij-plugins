@@ -2,9 +2,32 @@ package org.jetbrains.qodana.ui.problemsView.viewModel
 
 import com.intellij.openapi.project.Project
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.cloud.QodanaCloudStateService
 import org.jetbrains.qodana.cloud.UserState
@@ -31,7 +54,17 @@ import org.jetbrains.qodana.ui.ci.QodanaCIConfigService
 import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeFileNode
 import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeInspectionNode
 import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeProblemNode
-import org.jetbrains.qodana.ui.problemsView.viewModel.impl.*
+import org.jetbrains.qodana.ui.problemsView.viewModel.impl.AuthorizedUiStateImpl
+import org.jetbrains.qodana.ui.problemsView.viewModel.impl.QodanaTreeBuildConfiguration
+import org.jetbrains.qodana.ui.problemsView.viewModel.impl.ReportInteractor
+import org.jetbrains.qodana.ui.problemsView.viewModel.impl.UiStateAuthorizingImpl
+import org.jetbrains.qodana.ui.problemsView.viewModel.impl.UiStateLinkedImpl
+import org.jetbrains.qodana.ui.problemsView.viewModel.impl.UiStateLoadedImpl
+import org.jetbrains.qodana.ui.problemsView.viewModel.impl.UiStateLoadingReportImpl
+import org.jetbrains.qodana.ui.problemsView.viewModel.impl.UiStateNotAuthorizedImpl
+import org.jetbrains.qodana.ui.problemsView.viewModel.impl.UiStateNotLinkedImpl
+import org.jetbrains.qodana.ui.problemsView.viewModel.impl.UiStateRunningQodanaImpl
+import org.jetbrains.qodana.ui.problemsView.viewModel.impl.buildQodanaTreeRootForHighlightedReport
 import org.jetbrains.qodana.vcs.trimRevisionString
 
 @OptIn(ExperimentalCoroutinesApi::class)

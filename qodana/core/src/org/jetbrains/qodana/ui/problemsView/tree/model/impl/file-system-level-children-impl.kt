@@ -1,7 +1,19 @@
 package org.jetbrains.qodana.ui.problemsView.tree.model.impl
 
 import org.jetbrains.qodana.settings.ConfigExcludeItem
-import org.jetbrains.qodana.ui.problemsView.tree.model.*
+import org.jetbrains.qodana.ui.problemsView.tree.model.FileNodesChildren
+import org.jetbrains.qodana.ui.problemsView.tree.model.ModuleData
+import org.jetbrains.qodana.ui.problemsView.tree.model.ModuleDataProvider
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeContext
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeEvent
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeExcludeEvent
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeFileAndDirectoryNodeChildren
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeFileSystemLevelChildren
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeModuleNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeNodesWithoutModuleNode
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreePath
+import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeProblemEvent
 import kotlin.io.path.Path
 
 fun newEmptyFileSystemLevelChildren(

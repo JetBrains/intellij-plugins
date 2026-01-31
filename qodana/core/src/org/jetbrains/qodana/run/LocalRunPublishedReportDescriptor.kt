@@ -5,7 +5,12 @@ import com.intellij.openapi.project.Project
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.report.*
+import org.jetbrains.qodana.report.BannerContentProvider
+import org.jetbrains.qodana.report.BrowserViewProvider
+import org.jetbrains.qodana.report.FileReportDescriptor
+import org.jetbrains.qodana.report.LoadedReport
+import org.jetbrains.qodana.report.LocalReportDescriptor
+import org.jetbrains.qodana.report.ReportDescriptor
 
 class LocalRunPublishedReportDescriptor(
   val fileReportDescriptor: FileReportDescriptor,

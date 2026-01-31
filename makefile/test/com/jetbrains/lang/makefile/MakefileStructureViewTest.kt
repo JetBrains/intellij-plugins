@@ -1,7 +1,7 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.testFramework.*
-import com.intellij.testFramework.fixtures.*
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class MakefileStructureViewTest : BasePlatformTestCase() {
   fun testSimple() {

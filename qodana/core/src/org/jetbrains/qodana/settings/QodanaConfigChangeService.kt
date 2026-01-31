@@ -23,7 +23,7 @@ import org.jetbrains.qodana.problem.SarifProblem
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlReader
 import java.nio.file.Path
-import java.util.*
+import java.util.Objects
 import kotlin.io.path.createFile
 
 @Service(Service.Level.PROJECT)

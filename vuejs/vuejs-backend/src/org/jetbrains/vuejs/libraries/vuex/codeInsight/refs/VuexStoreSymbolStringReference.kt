@@ -21,7 +21,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isNamespaceChild
-import org.jetbrains.vuejs.libraries.vuex.model.store.*
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainer
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModelManager
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexNamedSymbol
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreNamespace
 
 class VuexStoreSymbolStringReference(
   element: PsiElement,

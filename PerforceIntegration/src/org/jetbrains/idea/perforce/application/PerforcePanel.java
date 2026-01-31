@@ -18,7 +18,7 @@ package org.jetbrains.idea.perforce.application;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 public interface PerforcePanel {
   void updateFrom(PerforceSettings settings);

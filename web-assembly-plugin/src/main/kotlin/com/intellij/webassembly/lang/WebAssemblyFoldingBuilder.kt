@@ -8,7 +8,16 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
-import com.intellij.webassembly.lang.psi.WebAssemblyTypes.*
+import com.intellij.webassembly.lang.psi.WebAssemblyTypes.BLOCKINSTR
+import com.intellij.webassembly.lang.psi.WebAssemblyTypes.DATA
+import com.intellij.webassembly.lang.psi.WebAssemblyTypes.ELEM
+import com.intellij.webassembly.lang.psi.WebAssemblyTypes.ENDKEY
+import com.intellij.webassembly.lang.psi.WebAssemblyTypes.FOLDEINSTR
+import com.intellij.webassembly.lang.psi.WebAssemblyTypes.FUNC
+import com.intellij.webassembly.lang.psi.WebAssemblyTypes.GLOBAL
+import com.intellij.webassembly.lang.psi.WebAssemblyTypes.MODULE
+import com.intellij.webassembly.lang.psi.WebAssemblyTypes.MODULEFIELD
+import com.intellij.webassembly.lang.psi.WebAssemblyTypes.RPAR
 
 
 class WebAssemblyFoldingBuilder : FoldingBuilderEx(), DumbAware {

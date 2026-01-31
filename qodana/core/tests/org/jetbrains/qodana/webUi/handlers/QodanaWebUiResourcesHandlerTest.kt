@@ -18,7 +18,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.file.Files
-import java.util.*
+import java.util.UUID
 import kotlin.io.path.exists
 import kotlin.io.path.pathString
 

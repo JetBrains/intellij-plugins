@@ -1,7 +1,10 @@
 package com.intellij.dts.parsing
 
 import com.intellij.dts.DtsTestBase
-import com.intellij.dts.zephyr.binding.*
+import com.intellij.dts.zephyr.binding.BindingFile
+import com.intellij.dts.zephyr.binding.BindingSource
+import com.intellij.dts.zephyr.binding.DtsZephyrBindingProvider
+import com.intellij.dts.zephyr.binding.parseExternalBindings
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.SafeConstructor

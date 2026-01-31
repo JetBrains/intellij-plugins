@@ -1,6 +1,6 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.testFramework.*
+import com.intellij.testFramework.ParsingTestCase
 
 class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinition()) {
   fun testHelloWorld() = doTest(true)

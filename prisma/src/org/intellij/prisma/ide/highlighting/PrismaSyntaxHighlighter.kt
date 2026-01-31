@@ -5,8 +5,24 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase
 import com.intellij.psi.tree.IElementType
 import org.intellij.prisma.lang.lexer.PrismaLexer
-import org.intellij.prisma.lang.psi.*
-import org.intellij.prisma.lang.psi.PrismaElementTypes.*
+import org.intellij.prisma.lang.psi.DOC_COMMENT
+import org.intellij.prisma.lang.psi.PRISMA_BRACES
+import org.intellij.prisma.lang.psi.PRISMA_BRACKETS
+import org.intellij.prisma.lang.psi.PRISMA_KEYWORDS
+import org.intellij.prisma.lang.psi.PRISMA_PARENTHESES
+import org.intellij.prisma.lang.psi.PrismaElementTypes.BLOCK_COMMENT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.COLON
+import org.intellij.prisma.lang.psi.PrismaElementTypes.COMMA
+import org.intellij.prisma.lang.psi.PrismaElementTypes.DOT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.DOUBLE_COMMENT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.EQ
+import org.intellij.prisma.lang.psi.PrismaElementTypes.EXCL
+import org.intellij.prisma.lang.psi.PrismaElementTypes.IDENTIFIER
+import org.intellij.prisma.lang.psi.PrismaElementTypes.NUMERIC_LITERAL
+import org.intellij.prisma.lang.psi.PrismaElementTypes.QUEST
+import org.intellij.prisma.lang.psi.PrismaElementTypes.STRING_LITERAL
+import org.intellij.prisma.lang.psi.PrismaElementTypes.TRIPLE_COMMENT
+import org.intellij.prisma.lang.psi.PrismaElementTypes.UNSUPPORTED
 
 class PrismaSyntaxHighlighter : SyntaxHighlighterBase() {
   override fun getHighlightingLexer(): Lexer = PrismaLexer()

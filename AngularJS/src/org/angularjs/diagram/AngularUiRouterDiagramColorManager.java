@@ -12,7 +12,7 @@ import org.angularjs.codeInsight.router.DiagramObject;
 import org.angularjs.codeInsight.router.Type;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Objects;
 
 @Service(Service.Level.APP)

@@ -2,7 +2,6 @@
 package org.angular2.codeInsight.refs
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
-import com.intellij.polySymbols.js.resolvePolySymbolsInJSReferenceExpression
 import com.intellij.lang.javascript.ecmascript6.TypeScriptReferenceExpressionResolver
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector
@@ -15,6 +14,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.util.JSClassUtils
+import com.intellij.polySymbols.js.resolvePolySymbolsInJSReferenceExpression
 import com.intellij.psi.ResolveResult
 import com.intellij.util.SmartList
 import org.angular2.codeInsight.Angular2ComponentPropertyResolveResult

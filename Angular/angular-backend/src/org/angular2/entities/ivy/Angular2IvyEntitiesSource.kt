@@ -8,9 +8,18 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.util.ObjectUtils
-import org.angular2.entities.*
+import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2EntitiesSource
+import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2Module
+import org.angular2.entities.Angular2Pipe
 import org.angular2.entities.metadata.Angular2MetadataUtil
-import org.angular2.index.*
+import org.angular2.index.Angular2IndexUtil
+import org.angular2.index.Angular2IndexingHandler
+import org.angular2.index.Angular2IvyDirectiveIndexKey
+import org.angular2.index.Angular2IvyModuleIndexKey
+import org.angular2.index.Angular2IvyPipeIndexKey
 import java.util.function.Consumer
 
 class Angular2IvyEntitiesSource : Angular2EntitiesSource {

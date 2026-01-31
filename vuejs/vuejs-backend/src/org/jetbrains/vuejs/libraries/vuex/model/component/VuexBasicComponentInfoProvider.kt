@@ -3,7 +3,18 @@ package org.jetbrains.vuejs.libraries.vuex.model.component
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSFunctionItem
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSSpreadExpression
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSTypeOwner
+import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitFunctionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -25,7 +36,12 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_GETTERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_MUTATIONS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_STATE
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreStateElement
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueComputedProperty
+import org.jetbrains.vuejs.model.VueImplicitElement
+import org.jetbrains.vuejs.model.VueImplicitFunction
+import org.jetbrains.vuejs.model.VueMethod
+import org.jetbrains.vuejs.model.VueProperty
+import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.model.source.COMPUTED_PROP
 import org.jetbrains.vuejs.model.source.METHODS_PROP
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider

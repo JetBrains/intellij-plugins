@@ -1,12 +1,16 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.stub.impl
 
-import com.intellij.psi.stubs.*
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubBase
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
+import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
 import org.angular2.lang.html.psi.impl.Angular2HtmlNgContentSelectorImpl
 import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorStub
-import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import java.io.IOException
 
 class Angular2HtmlNgContentSelectorStubImpl : StubBase<Angular2HtmlNgContentSelector>, Angular2HtmlNgContentSelectorStub {

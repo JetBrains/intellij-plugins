@@ -16,7 +16,9 @@ import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager
 import org.jetbrains.idea.perforce.perforce.login.LoginPerformerImpl
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assume
 import org.junit.Test
 

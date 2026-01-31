@@ -4,15 +4,12 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueSlot
-import org.jetbrains.vuejs.model.VueSymbol
 
 object VueAnySlot : PolySymbolWithPattern, VueSlot {
 

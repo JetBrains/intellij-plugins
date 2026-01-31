@@ -21,8 +21,16 @@ import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.LinkMap
 import org.intellij.markdown.parser.MarkdownParser
 import org.intellij.prisma.lang.PrismaLanguage
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.DOC_COMMENT
+import org.intellij.prisma.lang.psi.DOC_COMMENT_END
+import org.intellij.prisma.lang.psi.DOC_COMMENT_LEADING_ASTERISK
+import org.intellij.prisma.lang.psi.DOC_COMMENT_START
+import org.intellij.prisma.lang.psi.PrismaCompoundInlineDocumentationComment
+import org.intellij.prisma.lang.psi.PrismaDocComment
+import org.intellij.prisma.lang.psi.PrismaDocumentationOwner
 import org.intellij.prisma.lang.psi.PrismaElementTypes.TRIPLE_COMMENT
+import org.intellij.prisma.lang.psi.skipWhitespacesBackwardWithoutNewLines
+import org.intellij.prisma.lang.psi.skipWhitespacesForwardWithoutNewLines
 import java.net.URI
 
 internal const val NO_WRAP = "white-space: nowrap"

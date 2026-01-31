@@ -1,6 +1,11 @@
 package org.jetbrains.qodana.actions
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.LanguageInspectionSuppressors
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.SuppressIntentionAction
+import com.intellij.codeInspection.SuppressQuickFix
+import com.intellij.codeInspection.SuppressableProblemGroup
 import com.intellij.lang.LanguageUtil
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project

@@ -5,8 +5,13 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.PsiElement;
+import com.intellij.tsr.psi.TslFallbackStringLiteral;
+import com.intellij.tsr.psi.TslMapKey;
+import com.intellij.tsr.psi.TslObjectId;
+import com.intellij.tsr.psi.TslObjectName;
+import com.intellij.tsr.psi.TslPropertyKey;
+import com.intellij.tsr.psi.TslPropertyKeyValue;
 import org.jetbrains.annotations.NotNull;
-import com.intellij.tsr.psi.*;
 
 import java.util.regex.Pattern;
 

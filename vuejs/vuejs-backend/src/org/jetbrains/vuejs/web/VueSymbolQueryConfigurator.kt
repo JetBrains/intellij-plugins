@@ -3,7 +3,13 @@ package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.nodejs.monorepo.JSMonorepoManager
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
@@ -15,11 +21,22 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.js.NAMESPACE_JS
-import com.intellij.polySymbols.query.*
+import com.intellij.polySymbols.query.PolySymbolLocationQueryScopeProvider
+import com.intellij.polySymbols.query.PolySymbolNameConversionRules
+import com.intellij.polySymbols.query.PolySymbolNameConversionRulesProvider
+import com.intellij.polySymbols.query.PolySymbolNameConverter
+import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
+import com.intellij.polySymbols.query.PolySymbolQueryScopeContributor
+import com.intellij.polySymbols.query.PolySymbolQueryScopeProviderRegistrar
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.html.HtmlTag
-import com.intellij.psi.xml.*
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlAttributeValue
+import com.intellij.psi.xml.XmlElement
+import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.xml.XmlText
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
@@ -28,9 +45,27 @@ import org.jetbrains.vuejs.codeInsight.isGlobalDirectiveName
 import org.jetbrains.vuejs.codeInsight.isScriptSetupLocalDirectiveName
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.isVueFile
-import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.*
-import org.jetbrains.vuejs.web.scopes.*
+import org.jetbrains.vuejs.model.VueApp
+import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueGlobal
+import org.jetbrains.vuejs.model.VueLibrary
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.VueModule
+import org.jetbrains.vuejs.model.source.INJECT_FROM
+import org.jetbrains.vuejs.model.source.INJECT_PROP
+import org.jetbrains.vuejs.model.source.VueCompositionApp
+import org.jetbrains.vuejs.model.source.VueSourceComponent
+import org.jetbrains.vuejs.model.source.WATCH_PROP
+import org.jetbrains.vuejs.web.scopes.VueAvailableSlotsScope
+import org.jetbrains.vuejs.web.scopes.VueBindingShorthandScope
+import org.jetbrains.vuejs.web.scopes.VueCodeModelSymbolScope
+import org.jetbrains.vuejs.web.scopes.VueIncorrectlySelfReferredComponentFilteringScope
+import org.jetbrains.vuejs.web.scopes.VueInjectSymbolScope
+import org.jetbrains.vuejs.web.scopes.VueScriptSetupNamespacedComponentsScope
+import org.jetbrains.vuejs.web.scopes.VueSlotElementScope
+import org.jetbrains.vuejs.web.scopes.VueTopLevelElementsScope
+import org.jetbrains.vuejs.web.scopes.VueWatchSymbolScope
 
 val VUE_TOP_LEVEL_ELEMENTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-file-top-elements"]
 val VUE_COMPONENTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-components"]

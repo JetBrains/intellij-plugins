@@ -9,7 +9,14 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.StubSafe
+import com.intellij.lang.javascript.psi.StubUnsafe
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
@@ -39,7 +46,13 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.refs.Angular2TemplateReferencesProvider
-import org.angular2.entities.*
+import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2DirectiveExportAs
+import org.angular2.entities.Angular2DirectiveSelector
+import org.angular2.entities.Angular2DirectiveSelectorImpl
+import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.Angular2EntityUtils
+import org.angular2.entities.Angular2FrameworkHandler
 import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.index.resolveComponentsFromIndex
 import org.angular2.lang.expr.Angular2ExprDialect
@@ -50,7 +63,7 @@ import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor
 import org.angular2.signals.Angular2SignalUtils
 import org.jetbrains.annotations.ApiStatus
-import java.util.*
+import java.util.Collections
 import java.util.function.BiPredicate
 
 @ApiStatus.Internal

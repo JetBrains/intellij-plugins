@@ -6,7 +6,14 @@ import org.jetbrains.idea.perforce.ChangeListData;
 import org.jetbrains.idea.perforce.merge.BaseRevision;
 
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 public class P4OutputParserTest extends TestCase {
   private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss", Locale.getDefault());

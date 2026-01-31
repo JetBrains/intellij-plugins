@@ -19,13 +19,19 @@ import com.intellij.lang.ASTNode;
 import com.intellij.protobuf.ide.util.PbIcons;
 import com.intellij.protobuf.lang.descriptor.Descriptor;
 import com.intellij.protobuf.lang.descriptor.DescriptorOptionType;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbExtendDefinition;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbFieldLabel;
+import com.intellij.protobuf.lang.psi.PbOneofDefinition;
+import com.intellij.protobuf.lang.psi.PbOptionExpression;
+import com.intellij.protobuf.lang.psi.PbOptionList;
+import com.intellij.protobuf.lang.psi.PbTypeName;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Collections;
 import java.util.List;
 

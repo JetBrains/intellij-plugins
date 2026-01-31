@@ -2,7 +2,18 @@ package com.intellij.dts.lang.psi.mixin
 
 import com.intellij.dts.DtsIcons
 import com.intellij.dts.lang.DtsAffiliation
-import com.intellij.dts.lang.psi.*
+import com.intellij.dts.lang.psi.DtsEntry
+import com.intellij.dts.lang.psi.DtsNodeContent
+import com.intellij.dts.lang.psi.DtsPHandle
+import com.intellij.dts.lang.psi.DtsProperty
+import com.intellij.dts.lang.psi.DtsPsiFactory
+import com.intellij.dts.lang.psi.DtsRefNode
+import com.intellij.dts.lang.psi.DtsRootNode
+import com.intellij.dts.lang.psi.DtsStatement
+import com.intellij.dts.lang.psi.DtsStatementKind
+import com.intellij.dts.lang.psi.DtsSubNode
+import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.lang.psi.getDtsPresentableText
 import com.intellij.dts.lang.psi.impl.DtsStubBasedElement
 import com.intellij.dts.lang.stubs.impl.DtsRefNodeStub
 import com.intellij.dts.lang.stubs.impl.DtsRootNodeStub

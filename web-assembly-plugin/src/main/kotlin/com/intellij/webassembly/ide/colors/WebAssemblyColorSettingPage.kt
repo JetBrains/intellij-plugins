@@ -5,8 +5,8 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter
 import com.intellij.openapi.options.colors.AttributesDescriptor
 import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
-import com.intellij.webassembly.ide.WebAssemblySyntaxHighlighter
 import com.intellij.webassembly.WebassemblyIcons
+import com.intellij.webassembly.ide.WebAssemblySyntaxHighlighter
 import javax.swing.Icon
 
 class WebAssemblyColorSettingPage : ColorSettingsPage {

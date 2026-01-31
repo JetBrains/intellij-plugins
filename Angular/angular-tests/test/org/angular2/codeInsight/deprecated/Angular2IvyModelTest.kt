@@ -4,9 +4,9 @@ package org.angular2.codeInsight.deprecated
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.lang.javascript.TypeScriptTestUtil
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.polySymbols.testFramework.polySymbolAtCaret
+import com.intellij.util.containers.ContainerUtil
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule

@@ -1,10 +1,10 @@
 package com.jetbrains.lang.makefile.toolWindow
 
-import com.jetbrains.lang.makefile.*
-import com.jetbrains.lang.makefile.psi.*
-import java.util.*
-import javax.swing.*
-import javax.swing.tree.*
+import com.jetbrains.lang.makefile.MakefileTargetIcon
+import com.jetbrains.lang.makefile.psi.MakefileTarget
+import java.util.Enumeration
+import javax.swing.Icon
+import javax.swing.tree.TreeNode
 
 class MakefileTargetNode(target: MakefileTarget) : MakefileTreeNode(target.name) {
   val isSpecialTarget: Boolean = target.isSpecialTarget

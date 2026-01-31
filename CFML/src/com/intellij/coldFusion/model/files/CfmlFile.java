@@ -1,13 +1,23 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.files;
 
-import com.intellij.coldFusion.model.psi.*;
+import com.intellij.coldFusion.model.psi.CfmlComponent;
+import com.intellij.coldFusion.model.psi.CfmlFunction;
+import com.intellij.coldFusion.model.psi.CfmlImplicitVariable;
+import com.intellij.coldFusion.model.psi.CfmlImport;
+import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
+import com.intellij.coldFusion.model.psi.CfmlRecursiveElementVisitor;
+import com.intellij.coldFusion.model.psi.CfmlTag;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagScriptImpl;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Ref;
-import com.intellij.psi.*;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiRecursiveElementVisitor;
+import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
@@ -16,7 +26,12 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

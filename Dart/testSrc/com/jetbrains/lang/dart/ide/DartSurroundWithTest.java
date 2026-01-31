@@ -7,7 +7,13 @@ import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import com.jetbrains.lang.dart.ide.surroundWith.expression.DartWithBracketsExpressionSurrounder;
 import com.jetbrains.lang.dart.ide.surroundWith.expression.DartWithNotParenthesisExpressionSurrounder;
 import com.jetbrains.lang.dart.ide.surroundWith.expression.DartWithParenthesisExpressionSurrounder;
-import com.jetbrains.lang.dart.ide.surroundWith.statement.*;
+import com.jetbrains.lang.dart.ide.surroundWith.statement.DartWithDoWhileSurrounder;
+import com.jetbrains.lang.dart.ide.surroundWith.statement.DartWithForSurrounder;
+import com.jetbrains.lang.dart.ide.surroundWith.statement.DartWithIfElseSurrounder;
+import com.jetbrains.lang.dart.ide.surroundWith.statement.DartWithIfSurrounder;
+import com.jetbrains.lang.dart.ide.surroundWith.statement.DartWithTryCatchFinallySurrounder;
+import com.jetbrains.lang.dart.ide.surroundWith.statement.DartWithTryCatchSurrounder;
+import com.jetbrains.lang.dart.ide.surroundWith.statement.DartWithWhileSurrounder;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 

@@ -3,8 +3,13 @@ package com.jetbrains.lang.makefile
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.Executor
 import com.intellij.execution.configuration.EnvironmentVariablesData
-import com.intellij.execution.configurations.*
+import com.intellij.execution.configurations.CommandLineState
+import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.GeneralCommandLine.ParentEnvironmentType
+import com.intellij.execution.configurations.LocatableConfigurationBase
+import com.intellij.execution.configurations.ParametersList
+import com.intellij.execution.configurations.PtyCommandLine
+import com.intellij.execution.configurations.RunProfileState
 import com.intellij.execution.process.ColoredProcessHandler
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessTerminatedListener

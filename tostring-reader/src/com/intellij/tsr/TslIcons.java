@@ -3,7 +3,7 @@ package com.intellij.tsr;
 
 import com.intellij.icons.AllIcons;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public final class TslIcons {
   private TslIcons() {

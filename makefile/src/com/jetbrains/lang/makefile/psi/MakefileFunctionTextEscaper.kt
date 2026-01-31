@@ -1,7 +1,7 @@
 package com.jetbrains.lang.makefile.psi
 
-import com.intellij.openapi.util.*
-import com.intellij.psi.*
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.LiteralTextEscaper
 
 class MakefileFunctionTextEscaper(private val function: MakefileFunction) : LiteralTextEscaper<MakefileFunction>(function) {
   override fun isOneLine(): Boolean {

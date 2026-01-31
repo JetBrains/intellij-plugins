@@ -4,7 +4,6 @@ package com.intellij.jhipster.psi;
 
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 final class JdlFieldTypeReferenceProviderBackendImpl implements JdlFieldTypeReferenceProvider {
   @Override

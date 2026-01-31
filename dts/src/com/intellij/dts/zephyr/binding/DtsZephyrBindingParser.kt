@@ -3,7 +3,7 @@ package com.intellij.dts.zephyr.binding
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
-import java.util.*
+import java.util.Stack
 
 data class BindingSource(val files: Map<String, BindingFile>, val default: BindingFile?)
 

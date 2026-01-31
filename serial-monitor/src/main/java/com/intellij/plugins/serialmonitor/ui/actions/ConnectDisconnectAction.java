@@ -12,7 +12,7 @@ import com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplex
 import icons.SerialMonitorIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 /**
  * @author Dmitry_Cherkas, Ilia Motornyi

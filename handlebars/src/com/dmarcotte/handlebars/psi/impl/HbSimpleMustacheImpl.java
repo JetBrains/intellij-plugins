@@ -10,7 +10,7 @@ import icons.HandlebarsIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class HbSimpleMustacheImpl extends HbPlainMustacheImpl implements HbSimpleMustache {
   public HbSimpleMustacheImpl(@NotNull ASTNode astNode) {

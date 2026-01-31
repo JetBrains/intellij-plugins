@@ -5,8 +5,8 @@ import com.intellij.codeInspection.InspectionSuppressor
 import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSHighlightingHandlersFactory
 import com.intellij.lang.javascript.JSTokenTypes
-import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lang.javascript.highlighting.JSKeywordHighlighterVisitor
+import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lang.javascript.highlighting.TypeScriptKeywordHighlighterVisitor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.childLeafs

@@ -5,11 +5,15 @@ package org.jetbrains.qodana.ui.wizard
 import com.intellij.ui.JBCardLayout
 import com.intellij.ui.JBCardLayout.SwipeDirection
 import com.intellij.ui.components.panels.Wrapper
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.launch
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.ui.setContentAndRepaint
 import javax.swing.JPanel

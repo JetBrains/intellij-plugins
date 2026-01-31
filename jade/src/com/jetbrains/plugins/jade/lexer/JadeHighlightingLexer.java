@@ -2,7 +2,8 @@
 package com.jetbrains.plugins.jade.lexer;
 
 import com.intellij.embedding.LazyDelegateLexer;
-import com.intellij.lexer.*;
+import com.intellij.lexer.LayeredLexer;
+import com.intellij.lexer.Lexer;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.plugins.jade.psi.JadeTokenTypes;

@@ -6,7 +6,7 @@ import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.util.ui.ReloadableComboBoxPanel;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
 import java.util.ArrayList;
 import java.util.Set;
 

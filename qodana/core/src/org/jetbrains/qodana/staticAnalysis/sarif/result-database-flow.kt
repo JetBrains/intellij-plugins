@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.VULNERABLE_API_INSPECTION_ID
+import org.jetbrains.qodana.util.QodanaMessageReporter
 
 private val LOG = logger<QodanaToolResultDatabase>()
 private val GSON = SarifUtil.createGson()

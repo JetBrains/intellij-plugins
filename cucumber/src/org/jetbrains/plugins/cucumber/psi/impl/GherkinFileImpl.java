@@ -8,7 +8,14 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
+import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
+import org.jetbrains.plugins.cucumber.psi.GherkinKeywordProvider;
+import org.jetbrains.plugins.cucumber.psi.GherkinKeywordTable;
+import org.jetbrains.plugins.cucumber.psi.GherkinLanguage;
+import org.jetbrains.plugins.cucumber.psi.GherkinLexer;
+import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 
 import java.util.ArrayList;

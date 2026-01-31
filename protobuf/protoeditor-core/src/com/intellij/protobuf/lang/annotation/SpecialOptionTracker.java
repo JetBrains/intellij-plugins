@@ -20,7 +20,11 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.PbLangBundle;
-import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.PbField;
+import com.intellij.protobuf.lang.psi.PbOptionExpression;
+import com.intellij.protobuf.lang.psi.PbOptionName;
+import com.intellij.protobuf.lang.psi.PbOptionOwner;
+import com.intellij.protobuf.lang.psi.SpecialOptionType;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
 

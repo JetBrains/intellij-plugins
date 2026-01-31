@@ -2,11 +2,30 @@
 
 package com.jetbrains.lang.makefile
 
-import com.intellij.lang.*
-import com.intellij.lang.parser.*
-import com.intellij.psi.*
-import com.intellij.psi.tree.*
-import com.jetbrains.lang.makefile.psi.MakefileTypes.*
+import com.intellij.lang.PsiBuilder
+import com.intellij.lang.parser.GeneratedParserUtilBase
+import com.intellij.psi.TokenType
+import com.intellij.psi.tree.IElementType
+import com.jetbrains.lang.makefile.psi.MakefileTypes.ASSIGN
+import com.jetbrains.lang.makefile.psi.MakefileTypes.BACKTICK
+import com.jetbrains.lang.makefile.psi.MakefileTypes.CLOSE_CURLY
+import com.jetbrains.lang.makefile.psi.MakefileTypes.CLOSE_PAREN
+import com.jetbrains.lang.makefile.psi.MakefileTypes.COLON
+import com.jetbrains.lang.makefile.psi.MakefileTypes.COMMA
+import com.jetbrains.lang.makefile.psi.MakefileTypes.DOLLAR
+import com.jetbrains.lang.makefile.psi.MakefileTypes.DOUBLEQUOTE
+import com.jetbrains.lang.makefile.psi.MakefileTypes.EOL
+import com.jetbrains.lang.makefile.psi.MakefileTypes.FUNCTION_NAME
+import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_ENDEF
+import com.jetbrains.lang.makefile.psi.MakefileTypes.OPEN_CURLY
+import com.jetbrains.lang.makefile.psi.MakefileTypes.OPEN_PAREN
+import com.jetbrains.lang.makefile.psi.MakefileTypes.PIPE
+import com.jetbrains.lang.makefile.psi.MakefileTypes.QUOTE
+import com.jetbrains.lang.makefile.psi.MakefileTypes.RECIPE_PREFIX
+import com.jetbrains.lang.makefile.psi.MakefileTypes.SEMICOLON
+import com.jetbrains.lang.makefile.psi.MakefileTypes.SPLIT
+import com.jetbrains.lang.makefile.psi.MakefileTypes.STRING
+import com.jetbrains.lang.makefile.psi.MakefileTypes.TAB
 
 object MakefileParserUtil : GeneratedParserUtilBase() {
   private val nonTargetTokens = setOf(EOL, COLON, TAB, SPLIT, RECIPE_PREFIX)

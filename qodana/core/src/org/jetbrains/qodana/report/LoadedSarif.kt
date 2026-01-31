@@ -1,6 +1,10 @@
 package org.jetbrains.qodana.report
 
-import com.jetbrains.qodana.sarif.model.*
+import com.jetbrains.qodana.sarif.model.Result
+import com.jetbrains.qodana.sarif.model.Run
+import com.jetbrains.qodana.sarif.model.SarifReport
+import com.jetbrains.qodana.sarif.model.Tool
+import com.jetbrains.qodana.sarif.model.VersionControlDetails
 import org.jetbrains.qodana.run.RUN_TIMESTAMP
 import java.time.Instant
 
