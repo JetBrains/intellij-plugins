@@ -22,6 +22,9 @@
     <extensionPoint qualifiedName="com.intellij.vuejs.templateScopesProvider"
                     interface="org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesProvider"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.vuejs.templateSymbolScopesProvider"
+                    interface="org.jetbrains.vuejs.codeInsight.template.VueTemplateSymbolScopesProvider"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -288,10 +291,9 @@
       implementation="org.jetbrains.vuejs.codeInsight.template.VueScriptSetupScopeProvider"
       id="scriptSetupScope"
       order="after templateElements"/>
-    <vuejs.templateScopesProvider
-      implementation="org.jetbrains.vuejs.codeInsight.template.VueContainerScopeProvider"
-      id="containerScope"
-      order="after scriptSetupScope"/>
+    <vuejs.templateSymbolScopesProvider
+      implementation="org.jetbrains.vuejs.codeInsight.template.VueContainerSymbolScopeProvider"
+      id="containerScope"/>
 
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.model.source.VueDefaultContainerInfoProvider"
                                  id="default"/>

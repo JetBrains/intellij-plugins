@@ -11,14 +11,9 @@ import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
-import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.PsiElement
-import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
-import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
-import org.jetbrains.vuejs.web.VUE_COMPONENT_PROPS
-import org.jetbrains.vuejs.web.VUE_MODEL
 
-interface VueComponent : VueContainer, PolySymbolScope, VueMixin {
+interface VueComponent : VueContainer, VueMixin {
 
   val elementToImport: PsiElement?
 
@@ -35,45 +30,9 @@ interface VueComponent : VueContainer, PolySymbolScope, VueMixin {
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     when (kind) {
-      VUE_COMPONENT_PROPS -> {
-        val props = mutableListOf<VueInputProperty>()
-        acceptPropertiesAndMethods(object : VueModelVisitor() {
-          override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
-            props.add(prop)
-            return true
-          }
-        })
-        props
-      }
-      VUE_COMPONENT_DATA_PROPERTIES -> {
-        val props = mutableListOf<VueDataProperty>()
-        acceptPropertiesAndMethods(object : VueModelVisitor() {
-          override fun visitDataProperty(dataProperty: VueDataProperty, proximity: Proximity): Boolean {
-            props.add(dataProperty)
-            return true
-          }
-        }, onlyPublic = false)
-        props
-      }
-      VUE_COMPONENT_COMPUTED_PROPERTIES -> {
-        val props = mutableListOf<VueComputedProperty>()
-        acceptPropertiesAndMethods(object : VueModelVisitor() {
-          override fun visitComputedProperty(computedProperty: VueComputedProperty, proximity: Proximity): Boolean {
-            props.add(computedProperty)
-            return true
-          }
-        }, onlyPublic = false)
-        props
-      }
       HTML_SLOTS -> slots
       JS_EVENTS -> emits
-      VUE_MODEL -> {
-        collectModelDirectiveProperties()
-          .takeIf { it.prop != null || it.event != null }
-          ?.let { listOf(it) }
-        ?: emptyList()
-      }
-      else -> emptyList()
+      else -> super<VueContainer>.getSymbols(kind, params, stack)
     }
 
   override fun getModificationCount(): Long = -1

@@ -1,7 +1,10 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
+import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.javascript.nodejs.monorepo.JSMonorepoManager
+import com.intellij.lang.css.CSSLanguage
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSElement
@@ -10,40 +13,41 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.html.NAMESPACE_HTML
+import com.intellij.polySymbols.js.JS_KEYWORDS
+import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.js.NAMESPACE_JS
-import com.intellij.polySymbols.query.PolySymbolLocationQueryScopeProvider
-import com.intellij.polySymbols.query.PolySymbolNameConversionRules
-import com.intellij.polySymbols.query.PolySymbolNameConversionRulesProvider
-import com.intellij.polySymbols.query.PolySymbolNameConverter
-import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
-import com.intellij.polySymbols.query.PolySymbolQueryScopeContributor
-import com.intellij.polySymbols.query.PolySymbolQueryScopeProviderRegistrar
-import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.*
+import com.intellij.polySymbols.utils.PolySymbolIsolatedMappingScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.html.HtmlTag
-import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.psi.xml.XmlElement
-import com.intellij.psi.xml.XmlTag
-import com.intellij.psi.xml.XmlText
+import com.intellij.psi.util.contextOfType
+import com.intellij.psi.xml.*
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.isGlobalDirectiveName
 import org.jetbrains.vuejs.codeInsight.isScriptSetupLocalDirectiveName
+import org.jetbrains.vuejs.codeInsight.template.VueTemplateSymbolScopesProvider
 import org.jetbrains.vuejs.index.findModule
+import org.jetbrains.vuejs.index.isScriptSetupTag
+import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
+import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
+import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.model.VueApp
 import org.jetbrains.vuejs.model.VueEntitiesContainer
@@ -181,6 +185,12 @@ class VueSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
 
         forPsiLocations(XmlAttributeValue::class.java, XmlAttribute::class.java, XmlTag::class.java, XmlText::class.java)
           .contributeScopeProvider(VueTemplateSymbolScopeContributor)
+
+        forPsiLocations(JSReferenceExpression::class.java)
+          .contributeScopeProvider(VueTemplateJSReferenceSymbolScopeContributor)
+
+        forPsiLocations(JSThisExpression::class.java)
+          .contributeScopeProvider(VueTemplateThisExpressionScopeContributor)
       }
 
 
@@ -320,5 +330,86 @@ class VueSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
         }
       }
     }
+  }
+
+  private object VueTemplateJSReferenceSymbolScopeContributor : PolySymbolLocationQueryScopeProvider<JSReferenceExpression> {
+
+    override fun getScopes(location: JSReferenceExpression): List<PolySymbolScope> =
+      if (location is VueJSFilterReferenceExpression)
+        listOf(VueJSFilterScope(location))
+      else if (
+        location.qualifier.let { it == null || it is JSThisExpression }
+        && location.contextOfType<XmlTag>()?.isScriptSetupTag() != true
+      ) {
+        val original = CompletionUtil.getOriginalOrSelf(location)
+        if (!checkLanguage(original)) {
+          return emptyList()
+        }
+        val expressionIsInjected = isVueExprMetaLanguage(original.containingFile.language)
+        val hostElement: PsiElement?
+        if (expressionIsInjected) {
+          //we are working within injection
+          hostElement = InjectedLanguageManager.getInstance(location.project).getInjectionHost(location)
+          if (hostElement == null) {
+            return emptyList()
+          }
+        }
+        else {
+          hostElement = null
+        }
+        VueTemplateSymbolScopesProvider.EP_NAME.extensionList.flatMap {
+          it.getScopes(original, hostElement)
+        }
+      }
+      else
+        emptyList()
+
+    private fun checkLanguage(element: PsiElement): Boolean {
+      return element.language.let {
+        isVueExprMetaLanguage(it) || it == VueLanguage || it.isKindOf(CSSLanguage.INSTANCE)
+      } || element.parent?.language.let {
+        isVueExprMetaLanguage(it) || it == VueLanguage
+      }
+    }
+
+    private class VueJSFilterScope(
+      location: JSReferenceExpression,
+    ) : PolySymbolIsolatedMappingScope<JSReferenceExpression>(
+      mapOf(JS_SYMBOLS to VUE_FILTERS),
+      location,
+    ) {
+
+      override fun acceptSymbol(symbol: PolySymbol): Boolean =
+        symbol[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE
+
+      override val subScopeBuilder: (PolySymbolQueryExecutor, JSReferenceExpression) -> List<PolySymbolScope>
+        get() = { _, location ->
+          listOf(VueModelManager.findEnclosingContainer(location))
+        }
+
+      override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+        kind == JS_SYMBOLS || kind == JS_KEYWORDS
+
+      override fun createPointer(): Pointer<out PolySymbolScope> {
+        val locationPtr = location.createSmartPointer()
+        return Pointer {
+          locationPtr.dereference()?.let { VueJSFilterScope(it) }
+        }
+      }
+
+    }
+  }
+
+  private object VueTemplateThisExpressionScopeContributor : PolySymbolLocationQueryScopeProvider<JSThisExpression> {
+    override fun getScopes(location: JSThisExpression): List<PolySymbolScope> =
+      if (isVueExprMetaLanguage(location.language)) {
+        VueModelManager.findEnclosingContainer(location)
+      }
+      else {
+        VueModelManager.findComponentForThisResolve(location)
+      }
+        ?.instanceScope
+        ?.let { return listOf(it) }
+      ?: emptyList()
   }
 }

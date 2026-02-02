@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeKeyTypeImpl
 import com.intellij.model.Pointer
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -55,6 +56,9 @@ import kotlin.reflect.safeCast
 abstract class VueTypedContainer(override val source: PsiElement) : VueContainer {
 
   abstract override val thisType: JSType
+
+  override val instanceScope: PolySymbolScope?
+    get() = VueTypedContainerInstanceScope(this)
 
   final override val props: List<VueInputProperty>
     get() = CachedValuesManager.getCachedValue(source) {

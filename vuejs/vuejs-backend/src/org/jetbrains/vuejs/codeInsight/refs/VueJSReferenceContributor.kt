@@ -45,33 +45,15 @@ import org.jetbrains.vuejs.model.source.VueSourceEntity
 class VueJSReferenceContributor : PsiReferenceContributor() {
 
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-    registrar.registerReferenceProvider(THIS_INSIDE_COMPONENT, VueComponentLocalReferenceProvider())
     registrar.registerReferenceProvider(COMPONENT_NAME, VueComponentNameReferenceProvider())
     registrar.registerReferenceProvider(TEMPLATE_ID_REF, VueTemplateIdReferenceProvider())
     registrar.registerReferenceProvider(PATH_ATTRIBUTE_VALUE, createPathReferenceProvider())
   }
 }
 
-private val THIS_INSIDE_COMPONENT: ElementPattern<out PsiElement> = createThisInsideComponentPattern()
 private val COMPONENT_NAME: ElementPattern<out PsiElement> = createComponentNamePattern()
 private val TEMPLATE_ID_REF = JSPatterns.jsLiteral().withParent(JSPatterns.jsProperty().withName(TEMPLATE_PROP))
 private val PATH_ATTRIBUTE_VALUE: ElementPattern<out PsiElement> = creatPathAttributeValuePattern()
-
-private fun createThisInsideComponentPattern(): ElementPattern<out PsiElement> {
-  return PlatformPatterns.psiElement(JSReferenceExpression::class.java)
-    .and(FilterPattern(object : ElementFilter {
-      override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
-        return element.asSafely<JSReferenceExpression>()
-          ?.qualifier
-          ?.asSafely<JSThisExpression>()
-          ?.let { VueModelManager.findComponentForThisResolve(it) } != null
-      }
-
-      override fun isClassAcceptable(hintClass: Class<*>?): Boolean {
-        return true
-      }
-    }))
-}
 
 private fun createComponentNamePattern(): ElementPattern<out PsiElement> {
   return PlatformPatterns.psiElement(JSLiteralExpression::class.java)
@@ -111,38 +93,6 @@ private class VueTemplateIdReferenceProvider : PsiReferenceProvider() {
       arrayOf(VueTemplateIdReference(element as JSLiteralExpression, TextRange(2, element.textLength - 1)))
     }
     else emptyArray()
-  }
-}
-
-private class VueComponentLocalReferenceProvider : PsiReferenceProvider() {
-  override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
-    if (element is JSReferenceExpressionImpl) {
-      return arrayOf(VueComponentLocalReference(element, ElementManipulators.getValueTextRange(element)))
-    }
-    return emptyArray()
-  }
-}
-
-private class VueComponentLocalReference(
-  reference: JSReferenceExpressionImpl,
-  textRange: TextRange?,
-) : CachingPolyReferenceBase<JSReferenceExpressionImpl>(reference, textRange) {
-
-  override fun resolveInner(): Array<ResolveResult> {
-    val ref = element
-    val name = ref.referenceName
-    if (name == null) return ResolveResult.EMPTY_ARRAY
-    return ref.qualifier
-             .asSafely<JSThisExpression>()
-             ?.let { VueModelManager.findComponentForThisResolve(it) }
-             ?.thisType
-             ?.asRecordType()
-             ?.findPropertySignature(name)
-             ?.memberSource
-             ?.allSourceElements
-             ?.mapNotNull { if (it.isValid) PsiElementResolveResult(it) else null }
-             ?.toTypedArray<ResolveResult>()
-           ?: ResolveResult.EMPTY_ARRAY
   }
 }
 

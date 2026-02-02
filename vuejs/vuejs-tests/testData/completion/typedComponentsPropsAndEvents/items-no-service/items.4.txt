@@ -1,5 +1,5 @@
-change (typeText='(fixed: boolean) => void'; priority=100.0; bold; typeGreyed)
-scroll (typeText='({scrollTop, fixed}: {scrollTop: number, fixed: boolean}) => void'; priority=100.0; bold; typeGreyed)
+change (typeText='void'; priority=100.0; bold; typeGreyed)
+scroll (typeText='void'; priority=100.0; bold; typeGreyed)
 abort (typeText=null; priority=1.0; typeGreyed)
 auxclick (typeText=null; priority=1.0; typeGreyed)
 beforeinput (typeText=null; priority=1.0; typeGreyed)

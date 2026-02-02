@@ -4,9 +4,6 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider
-import com.intellij.lang.javascript.JSTokenTypes
-import com.intellij.lang.javascript.patterns.JSPatterns
-import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
@@ -27,10 +24,6 @@ class VueCompletionContributor : CompletionContributor() {
            VueExprCompletionProvider())
     extend(CompletionType.BASIC, psiElement().with(exprLanguage()),
            CssInBindingExpressionCompletionProvider())
-    extend(CompletionType.BASIC,
-           psiElement(JSTokenTypes.IDENTIFIER)
-             .withParent(JSPatterns.jsReferenceExpression().withFirstChild(psiElement(JSThisExpression::class.java))),
-           VueThisInstanceCompletionProvider())
   }
 
   private fun <T : PsiElement> exprLanguage(): PatternCondition<T> {

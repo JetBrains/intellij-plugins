@@ -9,7 +9,12 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.PlatformPatterns
+import com.intellij.polySymbols.js.JS_SYMBOLS
+import com.intellij.polySymbols.js.jsType
+import com.intellij.polySymbols.js.toJSImplicitElement
+import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceContributor
@@ -27,6 +32,7 @@ import com.intellij.util.ProcessingContext
 import org.apache.commons.text.WordUtils
 import org.jetbrains.vuejs.codeInsight.attributes.isVBindClassAttribute
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
+import org.jetbrains.vuejs.codeInsight.template.VueTemplateSymbolScopesProvider
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
@@ -76,6 +82,15 @@ class VueCssReferencesContributor : PsiReferenceContributor() {
         }
         true
       }
+      PolySymbolQueryExecutorFactory.create(myElement)
+        .nameMatchQuery(JS_SYMBOLS, name) {
+          additionalScope(VueTemplateSymbolScopesProvider.EP_NAME.extensionList
+                            .flatMap { it.getScopes(myElement, null) })
+        }
+        .forEach {
+          result.add(PsiElementResolveResult(it.toJSImplicitElement(containingFile)))
+        }
+
       return result.toTypedArray()
     }
 
@@ -93,6 +108,18 @@ class VueCssReferencesContributor : PsiReferenceContributor() {
           }
         true
       }
+
+      PolySymbolQueryExecutorFactory.create(myElement)
+        .codeCompletionQuery(JS_SYMBOLS, "", 0) {
+          additionalScope(VueTemplateSymbolScopesProvider.EP_NAME.extensionList
+                            .flatMap { it.getScopes(myElement, null) })
+        }
+        .forEach {
+          if (!it.name.startsWith("$")
+              && it.symbol?.jsType?.substitute() !is JSFunctionType)
+            result.add(it.buildLookupElement(myElement))
+        }
+
       return result.toTypedArray()
     }
 

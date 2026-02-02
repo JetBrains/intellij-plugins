@@ -1,4 +1,4 @@
-close (typeText='(_close: boolean) => void'; priority=100.0; bold; typeGreyed)
+close (typeText='void'; priority=100.0; bold; typeGreyed)
 abort (typeText=null; priority=1.0; typeGreyed)
 auxclick (typeText=null; priority=1.0; typeGreyed)
 beforeinput (typeText=null; priority=1.0; typeGreyed)

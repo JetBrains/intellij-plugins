@@ -7,7 +7,10 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.createSmartPointer
@@ -46,6 +49,11 @@ data class VueTypedDirective(
     get() = if (source is JSLiteralExpression)
       PolySymbolRenameTarget.create(this)
     else null
+
+  override fun getSymbols(kind: PolySymbolKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
+    super<VueDirective>.getSymbols(kind, params, stack)
+
+  override fun getModificationCount(): Long = -1
 
   override fun createPointer(): Pointer<VueTypedDirective> {
     val sourcePtr = source.createSmartPointer()

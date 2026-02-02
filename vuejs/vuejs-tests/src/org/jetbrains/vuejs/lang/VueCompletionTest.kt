@@ -829,6 +829,7 @@ abstract class VueCompletionTestBase(
     doLookupTest(
       VueTestModule.VUE_2_6_10,
       VueTestModule.COMPOSITION_API_0_4_0,
+      renderTailText = true,
       locations = listOf(
         "{{<caret>}}",
         "{{foo.<caret>}}",
@@ -1605,7 +1606,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testVueTscComponentAliasedExport() =
-    doLookupTest(VueTestModule.VUE_3_5_0) { it.priority >= 100 }
+    doLookupTest(VueTestModule.VUE_3_5_0, renderTailText = true) { it.priority >= 100 }
 
   @Test
   fun testWatchProperty() =

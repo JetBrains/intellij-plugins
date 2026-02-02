@@ -1,5 +1,5 @@
-on-close (typeText='(event: HTMLElement) => void'; priority=100.0; bold; typeGreyed)
-onClose (typeText='(event: HTMLElement) => void'; priority=100.0; bold; typeGreyed)
+on-close (typeText='void'; priority=100.0; bold; typeGreyed)
+onClose (typeText='void'; priority=100.0; bold; typeGreyed)
 abort (typeText=null; priority=1.0; typeGreyed)
 auxclick (typeText=null; priority=1.0; typeGreyed)
 beforeinput (typeText=null; priority=1.0; typeGreyed)
