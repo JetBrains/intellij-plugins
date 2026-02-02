@@ -337,10 +337,7 @@ class VueSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
     override fun getScopes(location: JSReferenceExpression): List<PolySymbolScope> =
       if (location is VueJSFilterReferenceExpression)
         listOf(VueJSFilterScope(location))
-      else if (
-        location.qualifier.let { it == null || it is JSThisExpression }
-        && location.contextOfType<XmlTag>()?.isScriptSetupTag() != true
-      ) {
+      else if (location.qualifier == null && location.contextOfType<XmlTag>()?.isScriptSetupTag() != true) {
         val original = CompletionUtil.getOriginalOrSelf(location)
         if (!checkLanguage(original)) {
           return emptyList()

@@ -14,10 +14,7 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_ELEMENTS
-import com.intellij.polySymbols.js.JS_EVENTS
-import com.intellij.polySymbols.js.JS_SYMBOLS
-import com.intellij.polySymbols.js.decorateWithSymbolType
-import com.intellij.polySymbols.js.toSymbolPriority
+import com.intellij.polySymbols.js.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
 import com.intellij.psi.xml.XmlTag
@@ -45,13 +42,16 @@ class VueCodeCompletionItemCustomizer :
           ?: item
         HTML_ELEMENTS ->
           item.takeIf { !shouldFilterOutLowerCaseScriptSetupIdentifier(it) }
-        JS_SYMBOLS ->
+        JS_SYMBOLS, JS_PROPERTIES ->
           item.let {
             val vueProximity = it.symbol?.get(PROP_VUE_PROXIMITY)
             if (vueProximity != null)
               it.withPriority(getJSLookupPriorityOf(vueProximity).toSymbolPriority(isJsSymbolOrProperty = true))
             else if (it.name.startsWith('$'))
-              it.withPriority(LOCAL_SCOPE_MAX_PRIORITY_EXOTIC.toSymbolPriority(isJsSymbolOrProperty = true))
+              it.withPriority(
+                (if (kind == JS_SYMBOLS) LOCAL_SCOPE_MAX_PRIORITY_EXOTIC else NESTING_LEVEL_1)
+                  .toSymbolPriority(isJsSymbolOrProperty = true)
+              )
             else
               it
           }

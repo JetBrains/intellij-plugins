@@ -166,7 +166,8 @@ private fun contributeCustomProperties(
 ) {
   resolveSymbolPropertiesFromAugmentations(source, VUE_CORE_MODULES, CUSTOM_PROPERTIES)
     .forEach { (string, signature) ->
-      signature.asJSSymbol()?.let { result[string] = it }
+      signature.asJSSymbol()
+        ?.let { result[string] = VueJsPropertyPropertyWithProximity.create(it, VueModelVisitor.Proximity.LOCAL) }
     }
 }
 
@@ -180,7 +181,11 @@ private fun getCustomMethods(
 
   return resolveSymbolMethodsFromAugmentations(source, VUE_CORE_MODULES, CUSTOM_PROPERTIES)
     .filter { it.memberName !in propertyNames }
-    .mapNotNull { it.asJSSymbol() }
+    .mapNotNull {
+      it.asJSSymbol()?.let { symbol ->
+        VueJsPropertyPropertyWithProximity.create(symbol, VueModelVisitor.Proximity.LOCAL)
+      }
+    }
 }
 
 private fun contributeDefaultInstanceProperties(
