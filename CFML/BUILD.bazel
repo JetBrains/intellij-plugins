@@ -103,6 +103,7 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "@community//platform/util/jdom",
     "@community//platform/execution",
+    "//dbe/database/testFramework",
   ]
 )
 ### auto-generated section `build intellij.cfml` end
