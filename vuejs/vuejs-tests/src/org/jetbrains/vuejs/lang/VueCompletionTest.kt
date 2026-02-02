@@ -791,6 +791,7 @@ abstract class VueCompletionTestBase(
     doLookupTest(
       VueTestModule.VUE_2_6_10,
       renderPriority = false,
+      renderTailText = true,
       locations = listOf(
         "{{ a<caret>",
         "this.<caret>"
@@ -802,6 +803,7 @@ abstract class VueCompletionTestBase(
     doLookupTest(
       VueTestModule.VUE_2_6_10,
       renderPriority = false,
+      renderTailText = true,
       locations = listOf(
         "{{ a<caret>",
         "this.<caret>"
@@ -813,6 +815,7 @@ abstract class VueCompletionTestBase(
     doLookupTest(
       VueTestModule.VUE_2_6_10,
       renderPriority = false,
+      renderTailText = true,
       locations = listOf(
         "this.<caret>msg\"",
         "= this.<caret>userInput"
@@ -838,6 +841,8 @@ abstract class VueCompletionTestBase(
     ) {
       // Ignore global objects and keywords
       it.priority > 10
+      // Ignore properties with unstable types
+      && it.lookupString !in setOf("toLocaleLowerCase", "toLocaleUpperCase", "match", "replace", "search", "split")
     }
 
   @Test

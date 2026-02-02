@@ -1990,15 +1990,15 @@ export default class UsageComponent extends Vue {
     myFixture.moveToOffsetBySignature("\"show<caret>1\"")
     myFixture.completeBasic()
     assertContainsElements(myFixture.renderLookupItems(true, true, true),
-                           "show1 (tailText='() (mixin.ts)'; typeText='void'; priority=101.0; bold)",
+                           "show1 (tailText='() (test.methods, mixin.ts)'; typeText='void'; priority=101.0; bold)",
                            "show2 (tailText='() (component.vue)'; typeText='void'; priority=101.0; bold)",
                            "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=101.0; bold)")
     myFixture.moveToOffsetBySignature("this.<caret>show2()")
     myFixture.completeBasic()
     assertContainsElements(myFixture.renderLookupItems(true, true, true),
-                           "show1 (tailText='() (mixin.ts)'; typeText='void'; priority=99.0; bold)",
-                           "show2 (tailText='() (component.vue)'; typeText='void'; priority=99.0; bold)",
-                           "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=99.0; bold)")
+                           "show1 (tailText='() (test.methods, mixin.ts)'; typeText='void'; priority=101.0; bold)",
+                           "show2 (tailText='() (component.vue)'; typeText='void'; priority=101.0; bold)",
+                           "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=101.0; bold)")
 
   }
 

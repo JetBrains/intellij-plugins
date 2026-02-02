@@ -1,4 +1,5 @@
 :foo (typeText='string')
+:Foo (typeText=null)
 :ref (typeText=null)
 v-bind: (typeText=null)
 v-model: (typeText=null)

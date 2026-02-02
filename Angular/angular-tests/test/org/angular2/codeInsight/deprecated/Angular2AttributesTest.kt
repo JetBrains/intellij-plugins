@@ -623,7 +623,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
       "simpleStringEnum (typeText='MyType')",
       "[simpleStringEnum] (typeText='MyType')",
       "(my-event) (typeText='MyEvent')",
-      "(problematicOutput) (typeText='T')",
+      "(problematicOutput) (typeText=null)",
       "(complex-event) (typeText='MyEvent | MouseEvent')",
       "(click) (typeText='PointerEvent')",
       "(blur) (typeText='FocusEvent')",

@@ -30,3 +30,10 @@ $ssrContext
 $store
 $vnode
 $watch
+constructor
+hasOwnProperty
+isPrototypeOf
+propertyIsEnumerable
+toLocaleString
+toString
+valueOf

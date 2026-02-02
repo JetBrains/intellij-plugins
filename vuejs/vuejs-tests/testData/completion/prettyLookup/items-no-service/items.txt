@@ -1,1 +1,1 @@
-callMe (tailText='(aaa, bbb)'; typeText='number'; priority=101.0; bold)
+callMe (tailText='(aaa, bbb) (prettyLookup.vue)'; typeText='number'; priority=101.0; bold)

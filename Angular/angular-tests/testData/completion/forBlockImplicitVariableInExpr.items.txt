@@ -1,1 +1,1 @@
-$count (typeText='number'; priority=100.0; typeGreyed)
+$count (typeText='number'; priority=100.0)
