@@ -29,10 +29,10 @@ class VuelidateContainerInfoProvider : VueContainerInfoProvider {
 
   override fun getThisTypePropertySymbols(
     instanceOwner: VueInstanceOwner,
-    standardProperties: Map<String, PolySymbol>,
+    standardProperties: List<PolySymbol>,
   ): Collection<PolySymbol> =
     listOfNotNull(
-      CompositeVuelidateTypeProvider(instanceOwner.source!!, standardProperties.values.toList())
+      CompositeVuelidateTypeProvider(instanceOwner.source!!, standardProperties.toList())
         .takeIf { it.canCreateType }
         ?.let { VueInstancePropertySymbol(name = "\$v", typeProvider = it, isReadOnly = true) }
     )

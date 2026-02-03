@@ -5,7 +5,12 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.completion.JSLookupPriority
-import com.intellij.lang.javascript.completion.JSLookupPriority.*
+import com.intellij.lang.javascript.completion.JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY
+import com.intellij.lang.javascript.completion.JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY_EXOTIC
+import com.intellij.lang.javascript.completion.JSLookupPriority.LOWEST_PRIORITY
+import com.intellij.lang.javascript.completion.JSLookupPriority.NESTING_LEVEL_1
+import com.intellij.lang.javascript.completion.JSLookupPriority.NESTING_LEVEL_2
+import com.intellij.lang.javascript.completion.JSLookupPriority.NESTING_LEVEL_3
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
@@ -14,7 +19,11 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_ELEMENTS
-import com.intellij.polySymbols.js.*
+import com.intellij.polySymbols.js.JS_EVENTS
+import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.JS_SYMBOLS
+import com.intellij.polySymbols.js.decorateWithSymbolType
+import com.intellij.polySymbols.js.toSymbolPriority
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
 import com.intellij.psi.xml.XmlTag
@@ -45,15 +54,15 @@ class VueCodeCompletionItemCustomizer :
         JS_SYMBOLS, JS_PROPERTIES ->
           item.let {
             val vueProximity = it.symbol?.get(PROP_VUE_PROXIMITY)
-            if (vueProximity != null)
-              it.withPriority(getJSLookupPriorityOf(vueProximity).toSymbolPriority(isJsSymbolOrProperty = true))
-            else if (it.name.startsWith('$'))
-              it.withPriority(
+            when {
+              it.name.startsWith('$') -> it.withPriority(
                 (if (kind == JS_SYMBOLS) LOCAL_SCOPE_MAX_PRIORITY_EXOTIC else NESTING_LEVEL_1)
                   .toSymbolPriority(isJsSymbolOrProperty = true)
               )
-            else
-              it
+              vueProximity != null -> it.withPriority(
+                getJSLookupPriorityOf(vueProximity).toSymbolPriority(isJsSymbolOrProperty = true))
+              else -> it
+            }
           }
         else -> item
       }

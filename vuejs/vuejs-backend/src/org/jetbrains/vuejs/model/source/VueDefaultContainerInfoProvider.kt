@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
@@ -34,6 +35,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
+import com.intellij.polySymbols.PolySymbol.Companion.PROP_READ_WRITE_ACCESS
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.js.expandJSElementWithReadWriteAccess
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
@@ -135,7 +139,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     val DELIMITERS = DelimitersAccessor()
     val PROVIDES = ProvidesAccessor()
     val INJECTS = SimpleMemberAccessor(ContainerMember.Injects, ::VueSourceInject)
-    val PROPS = SimpleMemberAccessor(ContainerMember.Props, VueSourceInputProperty.Companion::create)
+    val PROPS = SimpleMemberListAccessor(ContainerMember.Props, VueSourceInputProperty.Companion::create)
     val DATA = SimpleMemberAccessor(ContainerMember.Data, ::VueSourceDataProperty)
     val COMPUTED = SimpleMemberAccessor(ContainerMember.Computed, ::VueSourceComputedProperty)
     val METHODS = SimpleMemberAccessor(ContainerMember.Methods, ::VueSourceMethod)
@@ -329,16 +333,21 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         name: String,
         sourceElement: PsiElement,
         hasOuterDefault: Boolean = false,
-      ): VueSourceInputProperty<*>? =
+      ): List<VueSourceInputProperty<*>> =
         when (sourceElement) {
           is JSLiteralExpression if sourceElement.isQuotedLiteral ->
-            VueStringLiteralInputProperty(name, sourceElement, hasOuterDefault)
+            listOf(VueStringLiteralInputProperty(name, sourceElement, hasOuterDefault))
           is JSProperty ->
-            VuePsiNamedElementInputProperty(name, sourceElement, hasOuterDefault)
+            expandJSElementWithReadWriteAccess(sourceElement).map { (element, access) ->
+              VuePsiNamedElementInputProperty(name, element, access, hasOuterDefault)
+            }
           is JSImplicitElement if sourceElement.context is JSProperty ->
-            VuePsiNamedElementInputProperty(name, sourceElement, hasOuterDefault)
-          else -> null
+            expandJSElementWithReadWriteAccess(sourceElement).map { (element, access) ->
+              VuePsiNamedElementInputProperty(name, element, access, hasOuterDefault)
+            }
+          else -> emptyList()
         }
+
     }
 
   }
@@ -346,19 +355,27 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   private class VuePsiNamedElementInputProperty(
     name: String,
     sourceElement: PsiNamedElement,
+    private val access: ReadWriteAccessDetector.Access,
     hasOuterDefault: Boolean,
   ) : VueSourceInputProperty<PsiNamedElement>(name, sourceElement, hasOuterDefault),
       PsiSourcedPolySymbol {
 
     override val source: PsiNamedElement get() = sourceElement
 
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+      when (property) {
+        PROP_READ_WRITE_ACCESS -> property.tryCast(access)
+        else -> super<VueSourceInputProperty>.get(property)
+      }
+
     override fun createPointer(): Pointer<out VuePsiNamedElementInputProperty> {
       val name = name
       val propertyPtr = sourceElement.createSmartPointer()
       val hasOuterDefault = hasOuterDefault
+      val access = access
       return Pointer {
         val property = propertyPtr.dereference() ?: return@Pointer null
-        VuePsiNamedElementInputProperty(property.name ?: name, property, hasOuterDefault)
+        VuePsiNamedElementInputProperty(property.name ?: name, property, access, hasOuterDefault)
       }
     }
 

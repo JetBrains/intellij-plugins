@@ -23,7 +23,7 @@ class VueCssModulesInfoProvider : VueContainerInfoProvider {
 
   override fun getThisTypePropertySymbols(
     instanceOwner: VueInstanceOwner,
-    standardProperties: Map<String, PolySymbol>,
+    standardProperties: List<PolySymbol>,
   ): Collection<PolySymbol> {
     val context = instanceOwner.source as? PsiFile ?: instanceOwner.source?.context
     return context?.containingFile

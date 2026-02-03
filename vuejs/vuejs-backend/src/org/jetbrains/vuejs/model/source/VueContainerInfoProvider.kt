@@ -33,7 +33,7 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
 
   fun getThisTypePropertySymbols(
     instanceOwner: VueInstanceOwner,
-    standardProperties: Map<String, PolySymbol>,
+    standardProperties: List<PolySymbol>,
   ): Collection<PolySymbol> =
     emptyList()
 

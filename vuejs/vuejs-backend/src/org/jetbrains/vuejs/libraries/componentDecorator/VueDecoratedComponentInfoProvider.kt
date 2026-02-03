@@ -1,8 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.componentDecorator
 
+import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSFunctionItem
 import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
@@ -18,6 +20,8 @@ import com.intellij.lang.javascript.psi.types.evaluable.JSUnwrapPromiseType
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType
 import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverType
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -118,12 +122,15 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
             else -> {
               val source = member.memberSource.singleElement
               if (source is JSFunction) {
-                if (source.isGetProperty || source.isSetProperty) {
-                  computed.add(VueDecoratedComputedProperty(clazz, member.memberName, member, null, 0))
-                }
-                else {
+                if (source.isGetProperty || source.isSetProperty)
+                  member.memberSource.allSourceElements.mapNotNullTo(computed) {
+                    if (it is JSFunctionItem)
+                      VueDecoratedComputedProperty(clazz, member.memberName, member, null, 0, it)
+                    else
+                      null
+                  }
+                else
                   methods.add(VueDecoratedPropertyMethod(clazz, member.memberName, member))
-                }
               }
               else if (source is JSAttributeListOwner) {
                 data.add(VueDecoratedDataProperty(clazz, member))
@@ -245,6 +252,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       member: PropertySignature,
       private val decorator: ES6Decorator?,
       private val decoratorArgumentIndex: Int,
+      private val provider: PsiElement = member.memberSource.singleElement!!,
     ) : VueDecoratedProperty(name, member),
         VueComputedProperty {
 
@@ -255,10 +263,25 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
         VueImplicitElement(
           name = name,
           jsType = type,
-          provider = member.memberSource.singleElement!!,
+          provider = provider,
           kind = JSImplicitElement.Type.Property,
-          equivalentToProvider = false,
+          equivalentToProvider = true,
         )
+
+      override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+        when (property) {
+          PolySymbol.PROP_READ_WRITE_ACCESS -> property.tryCast(
+            if (provider is JSFunctionItem) {
+              when {
+                provider.isSetProperty -> ReadWriteAccessDetector.Access.Write
+                provider.isGetProperty -> ReadWriteAccessDetector.Access.Read
+                else -> null
+              }
+            }
+            else null
+          )
+          else -> super<VueDecoratedProperty>.get(property)
+        }
 
       override fun equals(other: Any?): Boolean =
         other === this
@@ -267,12 +290,14 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
         && other.name == name
         && other.decorator == decorator
         && other.decoratorArgumentIndex == decoratorArgumentIndex
+        && other.provider == provider
 
       override fun hashCode(): Int {
         var result = clazz.hashCode()
         result = 31 * result + name.hashCode()
         result = 31 * result + (decorator?.hashCode() ?: 0)
         result = 31 * result + decoratorArgumentIndex
+        result = 31 * result + provider.hashCode()
         return result
       }
 
@@ -282,12 +307,14 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
         val name = name
         val decoratorPtr = decorator?.createSmartPointer()
         val decoratorArgumentIndex = decoratorArgumentIndex
+        val providerPtr = provider.createSmartPointer()
         return Pointer {
           val clazz = clazzPtr.dereference() ?: return@Pointer null
           val decorator = decoratorPtr?.let { it.dereference() ?: return@Pointer null }
+          val provider = providerPtr.dereference() ?: return@Pointer null
           clazz.jsType.asRecordType()
             .findPropertySignature(memberName)
-            ?.let { VueDecoratedComputedProperty(clazz, name, it, decorator, decoratorArgumentIndex) }
+            ?.let { VueDecoratedComputedProperty(clazz, name, it, decorator, decoratorArgumentIndex, provider) }
         }
 
       }

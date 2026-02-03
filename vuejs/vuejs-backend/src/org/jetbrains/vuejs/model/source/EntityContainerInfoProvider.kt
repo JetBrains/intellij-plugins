@@ -107,6 +107,16 @@ interface EntityContainerInfoProvider<T> {
       }
     }
 
+    class SimpleMemberListAccessor<T>(
+      private val memberReader: MemberReader,
+      private val provider: (String, JSElement) -> List<T>,
+    ) : ListAccessor<T>() {
+
+      override fun build(declaration: JSElement): List<T> {
+        return memberReader.readMembers(declaration).flatMap { (name, element) -> provider(name, element) }
+      }
+    }
+
 
     class SimpleMemberMapAccessor<T>(
       private val memberReader: MemberReader,

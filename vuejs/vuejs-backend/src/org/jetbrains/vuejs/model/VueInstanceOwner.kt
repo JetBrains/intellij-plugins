@@ -3,6 +3,7 @@
 
 package org.jetbrains.vuejs.model
 
+import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
 import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
 import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolMethodsFromAugmentations
 import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolPropertiesFromAugmentations
@@ -52,10 +53,12 @@ import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
+import com.intellij.polySymbols.utils.asSingleSymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.index.CUSTOM_PROPERTIES
 import org.jetbrains.vuejs.index.VUE_CORE_MODULES
 import org.jetbrains.vuejs.index.VUE_MODULE
@@ -124,14 +127,21 @@ private class VueInstanceOwnerPropertiesScope(
     val source = instanceOwner.source ?: return
 
     RecursionManager.doPreventingRecursion(source, true) {
-      val result = mutableMapOf<String, PolySymbol>()
+      val result = MultiMap<String, PolySymbol>()
       contributeCustomProperties(source, result)
       contributeDefaultInstanceProperties(source, result)
       contributeComponentProperties(instanceOwner, source, result)
       replaceStandardProperty(INSTANCE_REFS_PROP, instanceOwner, ::buildRefsType, result)
-      contributePropertiesFromProviders(instanceOwner, result)
 
-      val properties = result.values.toList()
+      contributePropertiesFromProviders(
+        instanceOwner,
+        result.entrySet().flatMap { (_, symbols) ->
+          mergeSymbolsByAccessKind(symbols, source)
+        }, result)
+
+      val properties = result.entrySet().flatMap { (_, symbols) ->
+        mergeSymbolsByAccessKind(symbols, source)
+      }
       val methods = getCustomMethods(source, properties)
 
       for (symbol in properties.asSequence().plus(methods)) {
@@ -160,14 +170,40 @@ private class VueInstanceOwnerPropertiesScope(
 
 }
 
+fun mergeSymbolsByAccessKind(symbols: Collection<PolySymbol>, source: PsiElement): Collection<PolySymbol> {
+  if (symbols.size <= 1) return symbols.toList()
+
+  val readAccessSymbols = symbols.filter { it[PolySymbol.PROP_READ_WRITE_ACCESS] == ReadWriteAccessDetector.Access.Read }
+  val writeAccessSymbols = symbols.filter { it[PolySymbol.PROP_READ_WRITE_ACCESS] == ReadWriteAccessDetector.Access.Write }
+  val restSymbols = symbols.filter { it !in readAccessSymbols && it !in writeAccessSymbols }
+  return listOfNotNull(
+    mergeSymbols(readAccessSymbols, source),
+    mergeSymbols(writeAccessSymbols, source),
+    mergeSymbols(restSymbols, source)
+  )
+}
+
+fun mergeSymbols(symbols: Collection<PolySymbol>, source: PsiElement): PolySymbol? {
+  if (symbols.isEmpty()) return null
+  if (symbols.size == 1) return symbols.first()
+  val toMerge = mutableListOf<PolySymbol>()
+  for (symbol in symbols) {
+    if (toMerge.none { it.isEquivalentTo(symbol) }) {
+      toMerge.add(symbol)
+    }
+  }
+  if (toMerge.size == 1) return toMerge.first()
+  return VueMergedPropertiesSymbol(symbols.first().name, toMerge, source)
+}
+
 private fun contributeCustomProperties(
   source: PsiElement,
-  result: MutableMap<String, PolySymbol>,
+  result: MultiMap<String, PolySymbol>,
 ) {
   resolveSymbolPropertiesFromAugmentations(source, VUE_CORE_MODULES, CUSTOM_PROPERTIES)
     .forEach { (string, signature) ->
       signature.asJSSymbol()
-        ?.let { result[string] = VueJsPropertyPropertyWithProximity.create(it, VueModelVisitor.Proximity.LOCAL) }
+        ?.let { result.putValue(string, VueJsPropertyPropertyWithProximity.create(it, VueModelVisitor.Proximity.LOCAL)) }
     }
 }
 
@@ -190,66 +226,60 @@ private fun getCustomMethods(
 
 private fun contributeDefaultInstanceProperties(
   source: PsiElement,
-  result: MutableMap<String, PolySymbol>,
+  result: MultiMap<String, PolySymbol>,
 ) {
   val defaultInstance = getDefaultVueComponentInstance(source)
   if (defaultInstance != null) {
     defaultInstance
       .asJSSymbol()
       .getJSPropertySymbols()
-      .associateByTo(result) { it.name }
+      .forEach {
+        result.putValue(it.name, VueJsPropertyPropertyWithProximity.create(it, VueModelVisitor.Proximity.LOCAL))
+      }
   }
   else {
     // Fallback to a predefined list of properties without any typings
     VUE_INSTANCE_PROPERTIES.forEach {
-      result[it] = VueInstancePropertySymbol(it)
+      result.putValue(it, VueInstancePropertySymbol(it))
     }
     VUE_INSTANCE_METHODS.forEach {
-      result[it] = VueInstancePropertySymbol(it, jsKind = JsSymbolSymbolKind.Method)
+      result.putValue(it, VueInstancePropertySymbol(it, jsKind = JsSymbolSymbolKind.Method))
     }
   }
 }
 
 private fun contributePropertiesFromProviders(
   instance: VueInstanceOwner,
-  result: MutableMap<String, PolySymbol>,
+  standardProperties: List<PolySymbol>,
+  result: MultiMap<String, PolySymbol>,
 ) {
   VueContainerInfoProvider.getProviders().asSequence()
-    .flatMap { it.getThisTypePropertySymbols(instance, result.toMap()).asSequence() }
+    .flatMap { it.getThisTypePropertySymbols(instance, standardProperties).asSequence() }
     .filter { it.kind == JS_PROPERTIES }
-    .associateByTo(result) { it.name }
+    .forEach {
+      result.remove(it.name)
+      result.putValue(it.name, it)
+    }
 }
 
 private fun contributeComponentProperties(
   instance: VueInstanceOwner,
   source: PsiElement,
-  result: MutableMap<String, PolySymbol>,
+  result: MultiMap<String, PolySymbol>,
 ) {
   val proximityMap = mutableMapOf<String, VueModelVisitor.Proximity>()
 
-  val props = mutableMapOf<String, PolySymbol>()
-  val computed = mutableMapOf<String, PolySymbol>()
-  val data = mutableMapOf<String, PolySymbol>()
-  val methods = mutableMapOf<String, PolySymbol>()
-  val injects = mutableMapOf<String, PolySymbol>()
+  val props = MultiMap.create<String, PolySymbol>()
+  val computed = MultiMap.create<String, PolySymbol>()
+  val data = MultiMap.create<String, PolySymbol>()
+  val methods = MultiMap.create<String, PolySymbol>()
+  val injects = MultiMap.create<String, PolySymbol>()
 
   val provides by lazy(LazyThreadSafetyMode.NONE) { instance.global.provides }
 
-  fun mergeSymbols(existing: PolySymbol, updated: PolySymbol): PolySymbol =
-    when {
-      existing.isEquivalentTo(updated) -> existing
-      existing is VueMergedPropertiesSymbol ->
-        if (existing.properties.any { it.isEquivalentTo(updated) })
-          existing
-        else
-          existing.add(updated)
-      else -> VueMergedPropertiesSymbol(existing.name, listOf(existing, updated), source)
-    }
 
-  fun mergePut(result: MutableMap<String, PolySymbol>, contributions: MutableMap<String, PolySymbol>) {
-    for ((name, value) in contributions) {
-      result.merge(name, value, ::mergeSymbols)
-    }
+  fun mergePut(result: MultiMap<String, PolySymbol>, contributions: MultiMap<String, PolySymbol>) {
+    result.putAllValues(contributions)
   }
 
   instance.asSafely<VueEntitiesContainer>()
@@ -277,7 +307,6 @@ private fun contributeComponentProperties(
 
       override fun visitInject(inject: VueInject, proximity: Proximity): Boolean {
         if (inject is VueCallInject) return true
-
         process(VueJsPropertyPropertyWithProximity.create(inject, proximity, VueInjectedTypeProvider(inject, provides)), proximity, injects)
         return true
       }
@@ -285,19 +314,20 @@ private fun contributeComponentProperties(
       private fun process(
         symbol: PolySymbol,
         proximity: Proximity,
-        dest: MutableMap<String, PolySymbol>,
+        dest: MultiMap<String, PolySymbol>,
       ) {
         if ((proximityMap.putIfAbsent(symbol.name, proximity) ?: proximity) >= proximity) {
-          dest.merge(symbol.name,
-                     if (symbol.kind != JS_PROPERTIES) VueJsPropertyPropertyWithProximity.create(symbol, proximity) else symbol,
-                     ::mergeSymbols)
+          val symbol = if (symbol.kind != JS_PROPERTIES) VueJsPropertyPropertyWithProximity.create(symbol, proximity) else symbol
+          if (dest.get(symbol.name).none { it.isEquivalentTo(symbol) }) {
+            dest.putValue(symbol.name, symbol)
+          }
         }
       }
 
     }, onlyPublic = false)
 
-  replaceStandardProperty(INSTANCE_PROPS_PROP, props.values.toList(), source, result)
-  replaceStandardProperty(INSTANCE_DATA_PROP, data.values.toList(), source, result)
+  replaceStandardProperty(INSTANCE_PROPS_PROP, props.values().toList(), source, result)
+  replaceStandardProperty(INSTANCE_DATA_PROP, data.values().toList(), source, result)
 
   replaceStandardProperty(INSTANCE_OPTIONS_PROP, instance, ::buildOptionsType, result)
   replaceStandardProperty(INSTANCE_SLOTS_PROP, instance, ::buildSlotsType, result)
@@ -307,9 +337,9 @@ private fun contributeComponentProperties(
   // Vue will not proxy data properties starting with _ or $
   // https://vuejs.org/v2/api/#data
   // Interestingly it doesn't apply to computed, methods and props.
-  data.keys.removeIf { it.startsWith("_") || it.startsWith("$") }
+  data.keySet().removeIf { it.startsWith("_") || it.startsWith("$") }
 
-  result.keys.removeIf {
+  result.keySet().removeIf {
     props.containsKey(it) || data.containsKey(it) || computed.containsKey(it) || methods.containsKey(it) || injects.containsKey(it)
   }
 
@@ -429,23 +459,25 @@ private fun replaceStandardProperty(
   propName: String,
   properties: List<PolySymbol>,
   psiContext: PsiElement,
-  result: MutableMap<String, PolySymbol>,
+  result: MultiMap<String, PolySymbol>,
 ) {
-  result[propName] = VueStandardPropertySymbol(propName, properties, psiContext)
+  result.remove(propName)
+  result.putValue(propName, VueStandardPropertySymbol(propName, properties, psiContext))
 }
 
 private fun replaceStandardProperty(
   propName: String,
   instance: VueInstanceOwner,
   method: (VueInstanceOwner, JSType?) -> JSType?,
-  result: MutableMap<String, PolySymbol>,
+  result: MultiMap<String, PolySymbol>,
 ) {
-  val originalProperty = result[propName]
+  val originalProperty = result[propName].toList().asSingleSymbol()
   val typeProvider = StandardTypeProvider(instance, method, originalProperty)
-  result[propName] = VueInstancePropertySymbol(
+  result.remove(propName)
+  result.putValue(propName, VueInstancePropertySymbol(
     propName, typeProvider, isReadOnly = true,
     navigationTarget = originalProperty?.getNavigationTargets(instance.source!!.project)?.singleOrNull()
-  )
+  ))
 }
 
 open class VueJsPropertyPropertyWithProximity private constructor(
@@ -700,9 +732,6 @@ private data class VueMergedPropertiesSymbol(
       )
     )
   }
-
-  fun add(updated: PolySymbol): VueMergedPropertiesSymbol =
-    VueMergedPropertiesSymbol(name, properties + updated, psiContext)
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {

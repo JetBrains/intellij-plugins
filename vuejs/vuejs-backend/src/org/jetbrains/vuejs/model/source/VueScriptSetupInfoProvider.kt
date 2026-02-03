@@ -345,13 +345,13 @@ private fun analyzeDefineProps(call: JSCallExpression, defaults: List<@NlsSafe S
     when (val arg = arguments[0]) {
       is JSObjectLiteralExpression -> {
         props = collectMembers(arg)
-          .mapNotNull { (name, property) ->
+          .flatMap { (name, property) ->
             VueDefaultContainerInfoProvider.VueSourceInputProperty.create(name, property, defaults.contains(name))
           }
       }
       is JSArrayLiteralExpression -> {
         props = getStringLiteralsFromInitializerArray(arg)
-          .mapNotNull { literal ->
+          .flatMap { literal ->
             val name = getTextIfLiteral(literal) ?: ""
             VueDefaultContainerInfoProvider.VueSourceInputProperty.create(name, literal, defaults.contains(name))
           }
