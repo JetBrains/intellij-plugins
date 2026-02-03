@@ -19,8 +19,11 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.ecma6.JSComputedPropertyNameOwner
+import com.intellij.lang.javascript.psi.ecma6.JSTypedEntity
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.JSContext
+import com.intellij.lang.javascript.psi.types.JSNamedType
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.JSWidenType
@@ -217,26 +220,27 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       return Holder.ContainerMember.Components.readMembers(declaration)
         .asSequence()
         .mapNotNull { (_, element) ->
-          val component = when (val meaningfulElement = VueComponents.meaningfulExpression(element) ?: element) {
-            is ES6ImportedBinding ->
-              meaningfulElement.declaration?.fromClause
-                ?.resolveReferencedElements()
-                ?.find { it is JSEmbeddedContent }
-                ?.context
-                ?.asSafely<XmlTag>()
-                ?.takeIf {
-                  hasAttribute(it, SETUP_ATTRIBUTE_NAME)
-                  || hasAttribute(it, VAPOR_ATTRIBUTE_NAME)
-                }
-                ?.containingFile
-                ?.let { getComponent(it) }
-            is HtmlFileImpl -> getComponent(meaningfulElement)
-            else -> getComponent(meaningfulElement as? JSElement)
-          } ?: VueUnresolvedComponent(element)
-            if (element is JSPsiNamedElementBase && !(component is VuePsiSourcedComponent && component.source == element))
-              VueLocallyDefinedComponent.create(component, element)
-            else
-              component as? VueNamedComponent
+          val component =
+            when (val meaningfulElement = VueComponents.meaningfulExpression(element) ?: element) {
+              is ES6ImportedBinding ->
+                meaningfulElement.declaration?.fromClause
+                  ?.resolveReferencedElements()
+                  ?.find { it is JSEmbeddedContent }
+                  ?.context
+                  ?.asSafely<XmlTag>()
+                  ?.takeIf {
+                    hasAttribute(it, SETUP_ATTRIBUTE_NAME)
+                    || hasAttribute(it, VAPOR_ATTRIBUTE_NAME)
+                  }
+                  ?.containingFile
+                  ?.let { getComponent(it) }
+              is HtmlFileImpl -> getComponent(meaningfulElement)
+              else -> getComponent(meaningfulElement as? JSElement)
+            } ?: VueUnresolvedComponent(element)
+          if (element is JSPsiNamedElementBase && !(component is VuePsiSourcedComponent && component.source == element))
+            VueLocallyDefinedComponent.create(component, element)
+          else
+            component as? VueNamedComponent
         }
         .associateBy { it.name }
     }
@@ -484,6 +488,9 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     override val type: JSType?
       get() = JSResolveUtil.getElementJSType(source)
+                ?.takeIf { it !is JSNamedType || it.isStaticOrInstance != JSContext.STATIC }
+              ?: source.asSafely<JSTypedEntity>()?.jsType
+              ?: source.asSafely<JSTypeOwner>()?.jsType
 
     override fun createPointer(): Pointer<VueSourceMethod> =
       createPointer(::VueSourceMethod)
