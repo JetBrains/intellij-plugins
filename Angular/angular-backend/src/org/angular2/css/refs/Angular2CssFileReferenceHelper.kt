@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.css.refs
 
+import com.intellij.javascript.library.JSLibraryVersions
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.frameworks.modules.langs.TildeFileSystemItemCompletion
 import com.intellij.lang.javascript.frameworks.modules.langs.getSyntheticResolveContext
@@ -112,7 +113,10 @@ private class Angular2OverrideContextFilesProvider(
 private fun getOverrideContextFiles(angularProject: AngularProject, element: PsiElement): MutableSet<VirtualFile> {
   val result = mutableSetOf<VirtualFile>()
   val tsConfig = TypeScriptConfigService.Provider.parseConfigFile(element.project, angularProject.tsConfigFile)
-  val baseUrl = tsConfig?.baseUrl
+  val baseUrl = if (JSLibraryVersions.isTS7OrNewer(element.project, PsiUtilCore.getVirtualFile(element)))
+    null
+  else
+    tsConfig?.baseUrl
   if (baseUrl != null) {
     result.add(baseUrl)
   }
