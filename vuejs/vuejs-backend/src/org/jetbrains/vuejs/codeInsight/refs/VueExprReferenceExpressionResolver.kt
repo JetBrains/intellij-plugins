@@ -109,6 +109,8 @@ class VueExprReferenceExpressionResolver(
       }
       true
     })
+    if (results.isEmpty())
+      resolveFromPolySymbols()?.let { return it }
     return results.toTypedArray()
   }
 
