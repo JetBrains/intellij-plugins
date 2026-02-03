@@ -7,7 +7,11 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
-import org.jetbrains.vuejs.web.*
+import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
+import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
+import org.jetbrains.vuejs.web.VUE_COMPONENT_PROPS
+import org.jetbrains.vuejs.web.VUE_FILTERS
+import org.jetbrains.vuejs.web.VUE_MODEL
 import org.jetbrains.vuejs.web.symbols.VueFilterWithProximity
 
 interface VueEntitiesContainer : VueScopeElement, PolySymbolScope, VueInstanceOwner {

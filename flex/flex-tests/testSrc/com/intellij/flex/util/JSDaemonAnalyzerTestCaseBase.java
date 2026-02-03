@@ -3,7 +3,6 @@ package com.intellij.flex.util;
 
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.EditorInfo;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
