@@ -1,14 +1,12 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.polySymbols.symbols
 
-import com.intellij.polySymbols.js.symbols.asJSSymbol
-import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
-import com.intellij.lang.javascript.navigation.JSDeclarationEvaluator
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.Project
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.js.symbols.asJSSymbol
+import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -73,7 +71,6 @@ class AstroLocalComponent(
     when (property) {
       PROP_ASTRO_PROXIMITY -> property.tryCast(AstroProximity.LOCAL)
       else -> null
-      else -> super.get(property)
     }
 
   override fun createPointer(): Pointer<out AstroLocalComponent> {
@@ -85,7 +82,4 @@ class AstroLocalComponent(
   }
 
   override fun getModificationCount(): Long = super.getModificationCount()
-
-  override fun computeNavigationElement(project: Project): PsiElement =
-    JSDeclarationEvaluator.adjustDeclaration(source, null) ?: source
 }

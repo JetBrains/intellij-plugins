@@ -4,10 +4,7 @@ package org.jetbrains.astro.polySymbols.symbols
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedName
+import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.symbols.JSPropertySymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
@@ -49,41 +46,44 @@ data class AstroNamespacedComponent(
     get() = JSPsiBasedTypeOfType(
       (source as? JSPsiNamedElementBase)?.resolveIfImportSpecifier() ?: source, false)
 
-  override val kind: PolySymbolKind
+  override val origin: PolySymbolOrigin
+    get() = AstroProjectSymbolOrigin
+
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = UI_FRAMEWORK_COMPONENT_NAMESPACES
 
-  override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
-    isNamespacedKind(kind)
+  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
+    isNamespacedKind(qualifiedKind)
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    if (isNamespacedKind(qualifiedName.kind) && qualifiedName.name.getOrNull(0)?.isUpperCase() != false) {
+    if (isNamespacedKind(qualifiedName.qualifiedKind) && qualifiedName.name.getOrNull(0)?.isUpperCase() != false) {
       getMatchingJSPropertySymbols(qualifiedName.name, params.queryExecutor.namesProvider)
-        .adaptToNamespaceComponents(qualifiedName.kind)
+        .adaptToNamespaceComponents(qualifiedName.qualifiedKind)
         .ifEmpty { listOf(UiFrameworkNamespacedComponent(UnknownComponent(params.queryExecutor.location ?: source, qualifiedName.name))) }
     }
     else
       emptyList()
 
   override fun getSymbols(
-    kind: PolySymbolKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    if (isNamespacedKind(kind)) {
-      getJSPropertySymbols().adaptToNamespaceComponents(kind)
+    if (isNamespacedKind(qualifiedKind)) {
+      getJSPropertySymbols().adaptToNamespaceComponents(qualifiedKind)
     }
     else
       emptyList()
 
-  private fun List<JSPropertySymbol>.adaptToNamespaceComponents(kind: PolySymbolKind): List<PolySymbol> =
+  private fun List<JSPropertySymbol>.adaptToNamespaceComponents(qualifiedKind: PolySymbolQualifiedKind): List<PolySymbol> =
     mapNotNull { symbol ->
       val source = symbol.source as? PsiElement ?: return@mapNotNull null
       when {
-        kind == UI_FRAMEWORK_COMPONENTS -> {
+        qualifiedKind == UI_FRAMEWORK_COMPONENTS -> {
           UiFrameworkNamespacedComponent(UiFrameworkComponent(symbol.name, source))
         }
         else -> null
@@ -95,8 +95,8 @@ data class AstroNamespacedComponent(
 
     private val namespaceSymbol = AstroNamespacedComponent(delegate.name, delegate.source as PsiElement)
 
-    override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
-      isNamespacedKind(kind) || kind == UI_FRAMEWORK_COMPONENTS || super.isExclusiveFor(kind)
+    override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
+      isNamespacedKind(qualifiedKind) || qualifiedKind == UI_FRAMEWORK_COMPONENTS || super.isExclusiveFor(qualifiedKind)
 
     override fun createPointer(): Pointer<out UiFrameworkNamespacedComponent> {
       val delegatePtr = delegate.createPointer()
@@ -117,12 +117,12 @@ data class AstroNamespacedComponent(
       super.getMatchingSymbols(qualifiedName, params, stack)
 
     override fun getSymbols(
-      kind: PolySymbolKind,
+      qualifiedKind: PolySymbolQualifiedKind,
       params: PolySymbolListSymbolsQueryParams,
       stack: PolySymbolQueryStack,
     ): List<PolySymbol> =
-      namespaceSymbol.getSymbols(kind, params, stack) +
-      super.getSymbols(kind, params, stack)
+      namespaceSymbol.getSymbols(qualifiedKind, params, stack) +
+      super.getSymbols(qualifiedKind, params, stack)
 
     override fun getCodeCompletions(
       qualifiedName: PolySymbolQualifiedName,
@@ -134,7 +134,7 @@ data class AstroNamespacedComponent(
   }
 
   companion object {
-    private fun isNamespacedKind(qualifiedKind: PolySymbolKind) =
+    private fun isNamespacedKind(qualifiedKind: PolySymbolQualifiedKind) =
       qualifiedKind == UI_FRAMEWORK_COMPONENT_NAMESPACES || qualifiedKind == UI_FRAMEWORK_COMPONENTS
   }
 }

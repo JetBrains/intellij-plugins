@@ -10,7 +10,7 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 
-interface ComponentPolySymbol : PsiSourcedPolySymbol, AstroSymbol {
+interface ComponentPolySymbol : PsiSourcedPolySymbol {
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> {
     val target = computeNavigationElement(project) ?: return emptyList()
     return listOf(SymbolNavigationService.getInstance().psiElementNavigationTarget(target))

@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.StandardPatterns
 import com.intellij.patterns.XmlPatterns
-import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.NAMESPACE_HTML
@@ -26,7 +25,7 @@ val ASTRO_COMPONENT_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAM
 
 val UI_FRAMEWORK_COMPONENTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "ui-framework-components"]
 val UI_FRAMEWORK_COMPONENT_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "ui-framework-component-props"]
-val UI_FRAMEWORK_COMPONENT_NAMESPACES: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ui-framework-component-namespaces"]
+val UI_FRAMEWORK_COMPONENT_NAMESPACES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ui-framework-component-namespaces"]
 
 val ASTRO_COMMON_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "astro-common-directives"]
 val ASTRO_CLIENT_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "astro-client-directives"]

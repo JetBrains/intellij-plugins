@@ -18,7 +18,10 @@ class UnknownComponent(override val source: PsiElement, override val name: @NlsS
                                                                                               PolySymbolScope {
   override val pattern: PolySymbolPattern = PolySymbolPatternFactory.createRegExMatch(".*")
 
-  override val kind: PolySymbolKind
+  override val origin: PolySymbolOrigin
+    get() = AstroProjectSymbolOrigin
+
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = UI_FRAMEWORK_COMPONENT_NAMESPACES
 
   override val priority: PolySymbol.Priority
@@ -31,7 +34,7 @@ class UnknownComponent(override val source: PsiElement, override val name: @NlsS
   ): List<PolySymbol> = emptyList()
 
   override fun getSymbols(
-    kind: PolySymbolKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> = emptyList()

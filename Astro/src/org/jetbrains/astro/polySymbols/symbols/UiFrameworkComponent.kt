@@ -53,7 +53,6 @@ class UiFrameworkComponent(
     when (property) {
       PROP_ASTRO_PROXIMITY -> property.tryCast(AstroProximity.LOCAL)
       else -> null
-      else -> super.get(property)
     }
 
   override fun createPointer(): Pointer<out UiFrameworkComponent> {

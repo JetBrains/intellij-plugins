@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
@@ -15,11 +15,12 @@ import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_NAMESPACES
 import org.jetbrains.astro.polySymbols.symbols.AstroNamespacedComponent
 
 class AstroNamespacedComponentsScope(private val scope: PsiElement)
-  : PolySymbolScopeWithCache<PsiElement, Unit>(scope.project, scope, Unit) {
+  : PolySymbolScopeWithCache<PsiElement, Unit>(AstroFramework.ID, scope.project, scope, Unit) {
   override fun createPointer(): Pointer<out PolySymbolScopeWithCache<PsiElement, Unit>> {
     val modulePtr = dataHolder.createSmartPointer()
     return Pointer {
@@ -27,8 +28,8 @@ class AstroNamespacedComponentsScope(private val scope: PsiElement)
     }
   }
 
-  override fun provides(kind: PolySymbolKind): Boolean =
-    kind == UI_FRAMEWORK_COMPONENT_NAMESPACES
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
+    qualifiedKind == UI_FRAMEWORK_COMPONENT_NAMESPACES
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     JSStubBasedPsiTreeUtil.processDeclarationsInScope(

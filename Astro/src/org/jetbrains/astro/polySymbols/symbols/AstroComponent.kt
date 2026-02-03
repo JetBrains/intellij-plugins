@@ -2,14 +2,12 @@
 package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -22,9 +20,7 @@ import org.jetbrains.astro.polySymbols.PROP_ASTRO_PROXIMITY
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 class AstroComponent(file: PsiFile)
-  : PsiSourcedPolySymbol, PolySymbolScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {
-class AstroComponent(file: PsiFile) : ComponentPolySymbol,
-                                      PolySymbolScopeWithCache<PsiFile, Unit>(file.project, file, Unit) {
+  : ComponentPolySymbol, PolySymbolScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {
 
   override val source: PsiElement
     get() = dataHolder
@@ -41,7 +37,6 @@ class AstroComponent(file: PsiFile) : ComponentPolySymbol,
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_ASTRO_PROXIMITY -> property.tryCast(AstroProximity.OUT_OF_SCOPE)
-      else -> super.get(property)
       else -> null
     }
 
@@ -62,6 +57,4 @@ class AstroComponent(file: PsiFile) : ComponentPolySymbol,
       filePtr.dereference()?.let { AstroComponent(it) }
     }
   }
-
-  override fun computeNavigationElement(project: Project): PsiElement = source
 }
