@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.codeInsight.template
 
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.js.JS_PROPERTIES
@@ -36,10 +37,19 @@ internal class VueContainerSymbolScopeProvider : VueTemplateSymbolScopesProvider
   ) : PolySymbolIsolatedMappingScope<PsiElement>(mapOf(JS_SYMBOLS to JS_PROPERTIES), location) {
 
     private val excludedProperties by lazy {
+      val result = mutableSetOf<String>()
+
+      // TODO - migrate other scopes to symbols, create PolySymbolStructuredScope and properly set up symbol priorities.
+      //        For now, simply filter out symbols already provided by other scopes.
+      VueTemplateScopesResolver.resolve(location) { resolveResult ->
+        (resolveResult.element as? JSPsiNamedElementBase)?.name?.let { result.add(it) }
+        true
+      }
+
       if (VueModelManager.findEnclosingContainer(location).let { it is VueComponent && it.mode == VueMode.VAPOR })
-        VAPOR_EXCLUDED_PROPERTIES
-      else
-        emptySet()
+        result.addAll(VAPOR_EXCLUDED_PROPERTIES)
+
+      result
     }
 
     override fun acceptSymbol(symbol: PolySymbol): Boolean =
