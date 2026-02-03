@@ -75,6 +75,8 @@ jvm_library(
     "//plugins/JavaScriptLanguage:javascript-testFramework",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/testFramework/junit5",
+    "@community//platform/testFramework/junit5:junit5_test_lib",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",

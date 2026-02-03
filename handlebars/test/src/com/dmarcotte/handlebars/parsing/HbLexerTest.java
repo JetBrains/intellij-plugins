@@ -3,19 +3,21 @@ package com.dmarcotte.handlebars.parsing;
 
 import com.intellij.lexer.Lexer;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.testFramework.PlatformLiteFixture;
-import junit.framework.Assert;
+import com.intellij.testFramework.junit5.TestApplication;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class HbLexerTest extends PlatformLiteFixture {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@TestApplication
+public abstract class HbLexerTest {
 
   private Lexer _lexer;
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @BeforeEach
+  public void setUp() {
     _lexer = new HbLexer();
   }
 
@@ -72,10 +74,10 @@ public abstract class HbLexerTest extends PlatformLiteFixture {
       // these have the same length next - doing the content compare first yields more illuminating failures
       // in the case of a mis-match
       for (int i = 0; i < Math.min(_tokens.size(), tokenTypes.length); i++) {
-        Assert.assertEquals("Bad token at position " + i, tokenTypes[i], _tokens.get(i).getElementType());
+        assertEquals(tokenTypes[i], _tokens.get(i).getElementType(), "Bad token at position " + i);
       }
 
-      Assert.assertEquals(tokenTypes.length, _tokens.size());
+      assertEquals(tokenTypes.length, _tokens.size());
     }
 
     /**
@@ -87,10 +89,10 @@ public abstract class HbLexerTest extends PlatformLiteFixture {
       // these have the same length next - doing the content compare first yields more illuminating failures
       // in the case of a mis-match
       for (int i = 0; i < Math.min(_tokens.size(), tokenContent.length); i++) {
-        Assert.assertEquals(tokenContent[i], _tokens.get(i).getElementContent());
+        assertEquals(tokenContent[i], _tokens.get(i).getElementContent());
       }
 
-      Assert.assertEquals(tokenContent.length, _tokens.size());
+      assertEquals(tokenContent.length, _tokens.size());
     }
 
     /**
@@ -99,8 +101,8 @@ public abstract class HbLexerTest extends PlatformLiteFixture {
     public void shouldBeToken(int tokenPosition, IElementType tokenType, String tokenContent) {
       Token token = _tokens.get(tokenPosition);
 
-      Assert.assertEquals(tokenType, token.getElementType());
-      Assert.assertEquals(tokenContent, token.getElementContent());
+      assertEquals(tokenType, token.getElementType());
+      assertEquals(tokenContent, token.getElementContent());
     }
   }
 }
