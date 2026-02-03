@@ -63,7 +63,7 @@ internal class TfToolPathDetectorImpl(val project: Project, val coroutineScope: 
 
   override suspend fun detect(path: String): String? {
     return withContext(Dispatchers.IO) {
-      val filePath = Path(path)
+      val filePath = runCatching { Path(path) }.getOrNull() ?: return@withContext null
       if (isValidExecutable(filePath)) {
         return@withContext path
       }
