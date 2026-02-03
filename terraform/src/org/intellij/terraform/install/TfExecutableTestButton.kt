@@ -181,7 +181,7 @@ internal class TfExecutableTestButton(
   private suspend fun validateAndTestAction(): String {
     val currentPath = withContext(Dispatchers.EDT) { fieldToUpdate.text }
 
-    val validPath = if (isValidExecutablePath(currentPath)) {
+    val resolvedPath = if (isValidExecutablePath(currentPath)) {
       currentPath
     }
     else {
@@ -191,14 +191,12 @@ internal class TfExecutableTestButton(
       }
       detectedPath
     }
+    if (resolvedPath.isBlank()) return ""
 
-    return if (isValidExecutablePath(validPath)) {
-      val versionLine = getToolVersion(project, toolType, validPath).lineSequence().firstOrNull()?.trim()
-      versionLine?.split(" ")?.firstOrNull {
-        VERSION_REGEX.matches(StringUtil.newBombedCharSequence(it, PARSE_DELAY))
-      } ?: throw IllegalStateException(HCLBundle.message("tool.executor.unrecognized.version", toolType.executableName))
-    }
-    else ""
+    val versionLine = getToolVersion(project, toolType, resolvedPath).lineSequence().firstOrNull()?.trim()
+    return versionLine?.split(" ")?.firstOrNull {
+      VERSION_REGEX.matches(StringUtil.newBombedCharSequence(it, PARSE_DELAY))
+    } ?: throw IllegalStateException(HCLBundle.message("tool.executor.unrecognized.version", toolType.executableName))
   }
 
   @RequiresEdt
