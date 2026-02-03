@@ -9,7 +9,7 @@ object HclFileType : LanguageFileType(HCLLanguage) {
 
   override fun getDefaultExtension(): String = HCL_DEFAULT_EXTENSION
 
-  override fun getDescription(): String = HCLBundle.message("HCLFileType.description")
+  override fun getDescription(): String = HCLBundle.message("HclFileType.description")
 
   override fun getName(): String = "HCL"
 }

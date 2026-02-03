@@ -50,7 +50,7 @@ internal val StoreBlock: BlockType = BlockType(
   "store", 2,
   properties = listOf(
     PropertyType("name", Types.String, required = true, conflictsWith = listOf(HCL_ID_IDENTIFIER)),
-    // TODO:  The `id` property is required if `name` is not provided
+    // IJPL-233270 The `id` property is required if `name` is not provided
     PropertyType(HCL_ID_IDENTIFIER, Types.String, conflictsWith = listOf("name")),
     PropertyType("category", Types.String, required = true),
   ).toMap()
