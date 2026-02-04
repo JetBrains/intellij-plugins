@@ -26,8 +26,6 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
-import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
