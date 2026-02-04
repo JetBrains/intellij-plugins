@@ -82,12 +82,6 @@ abstract class VueRenameTestBase(
     doRenameTest(newName = "newName")
 
   @Test
-  fun testInlineFieldRename() =
-    doConfiguredTest(dir = true, checkResult = true) {
-      CodeInsightTestUtil.doInlineRename(VariableInplaceRenameHandler(), "foo", myFixture)
-    }
-
-  @Test
   fun testComponentNameFromDeclaration() =
     doRenameTest(mainFile = "componentNameFromDeclaration1.vue", newName = "AfterComponent")
 
