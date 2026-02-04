@@ -22,9 +22,9 @@ import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 
 internal open class VueComponentWithProximity private constructor(
-  delegate: VueNamedComponent,
+  override val delegate: VueNamedComponent,
   val vueProximity: VueModelVisitor.Proximity,
-) : VueDelegatedComponent<VueNamedComponent>(delegate) {
+) : VueDelegatedComponent<VueNamedComponent>() {
 
   companion object {
     fun create(delegate: VueNamedComponent, proximity: VueModelVisitor.Proximity): VueNamedComponent =

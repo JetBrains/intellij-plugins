@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameterListOwner
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeofType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.types.JSAnyType
@@ -41,11 +42,10 @@ class VueTypedComponent private constructor(
   companion object {
     fun create(source: JSQualifiedNamedElement): VueNamedComponent? {
       val name = source.name ?: return null
-      if (source is TypeScriptPropertySignature) {
-        VueComponents.getSourceComponent(source)
-          ?.let { return VueLocallyDefinedComponent.create(it, source) }
-      }
-      return VueTypedComponent(source, name)
+      return if (source is TypeScriptPropertySignature && source.typeDeclaration is TypeScriptTypeofType)
+        VueLocallyDefinedComponent.create(source, VueTypedComponentDelegateProvider(source))
+      else
+        VueTypedComponent(source, name)
     }
   }
 
@@ -112,4 +112,18 @@ class VueTypedComponent private constructor(
   override fun hashCode(): Int =
     source.hashCode()
 
+  private data class VueTypedComponentDelegateProvider(private val source: TypeScriptPropertySignature) :
+    VueLocallyDefinedComponent.DelegateComponentProvider {
+
+    override fun getDelegate(): VueComponent? =
+      VueComponents.getSourceComponent(source)
+      ?: VueTypedComponent(source, source.name ?: return null)
+
+    override fun createPointer(): Pointer<VueLocallyDefinedComponent.DelegateComponentProvider> {
+      val sourcePtr = source.createSmartPointer()
+      return Pointer {
+        sourcePtr.dereference()?.let { VueTypedComponentDelegateProvider(it) }
+      }
+    }
+  }
 }

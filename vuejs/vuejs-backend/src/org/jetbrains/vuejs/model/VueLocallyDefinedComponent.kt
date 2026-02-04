@@ -28,10 +28,16 @@ import kotlin.reflect.safeCast
 
 sealed class VueLocallyDefinedComponent<T : PsiElement>(
   override val name: String,
-  delegate: VueComponent,
+  override val delegate: VueComponent,
   val sourceElement: T,
   val isCompositionAppComponent: Boolean = false,
-) : VueDelegatedComponent<VueComponent>(delegate) {
+) : VueDelegatedComponent<VueComponent>() {
+
+  interface DelegateComponentProvider {
+    fun getDelegate(): VueComponent?
+    fun createPointer(): Pointer<DelegateComponentProvider>
+    override fun equals(other: Any?): Boolean
+  }
 
   companion object {
 
@@ -50,6 +56,14 @@ sealed class VueLocallyDefinedComponent<T : PsiElement>(
       source.name
         ?.let { toAsset(it, true) }
         ?.let { VuePsiNamedElementLocallyDefinedComponent(it, delegate, source) }
+
+    fun create(
+      source: JSPsiNamedElementBase,
+      delegateProvider: DelegateComponentProvider,
+    ): VueNamedComponent? =
+      source.name
+        ?.let { toAsset(it, true) }
+        ?.let { VuePsiNamedElementLocallyDefinedLazyComponent(it, delegateProvider, source) }
 
     fun create(
       delegate: VueComponent,
@@ -138,6 +152,50 @@ private class VuePsiNamedElementLocallyDefinedComponent(
 
   override fun createPointer(): Pointer<VuePsiNamedElementLocallyDefinedComponent> =
     createPointer(VuePsiNamedElementLocallyDefinedComponent::class)
+}
+
+private class VuePsiNamedElementLocallyDefinedLazyComponent(
+  override val name: String,
+  private val delegateProvider: VueLocallyDefinedComponent.DelegateComponentProvider,
+  override val source: JSPsiNamedElementBase,
+) : VueDelegatedComponent<VueComponent>(),
+    VuePsiSourcedComponent {
+
+  override val delegate: VueComponent? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    delegateProvider.getDelegate()
+  }
+
+  override val elementToImport: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    source.resolveIfImportSpecifier().takeIf { it !is JSProperty }
+    ?: delegate?.elementToImport
+  }
+
+  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+    (delegate?.getNavigationTargets(project) ?: emptyList())
+      .ifEmpty { listOf(VueComponentSourceNavigationTarget(source)) }
+
+  override fun isEquivalentTo(symbol: Symbol): Boolean =
+    super<VuePsiSourcedComponent>.isEquivalentTo(symbol)
+
+  override fun equals(other: Any?): Boolean =
+    other === this ||
+    other is VuePsiNamedElementLocallyDefinedLazyComponent
+    && other.delegateProvider == delegateProvider
+    && other.source == source
+
+  override fun hashCode(): Int =
+    delegateProvider.hashCode() + 31 * source.hashCode()
+
+  override fun createPointer(): Pointer<VuePsiNamedElementLocallyDefinedLazyComponent> {
+    val sourcePtr = source.createSmartPointer()
+    val delegateProviderPtr = delegateProvider.createPointer()
+    return Pointer {
+      val source = sourcePtr.dereference() ?: return@Pointer null
+      val delegateProvider = delegateProviderPtr.dereference() ?: return@Pointer null
+      VueLocallyDefinedComponent.create(source, delegateProvider) as? VuePsiNamedElementLocallyDefinedLazyComponent
+    }
+
+  }
 }
 
 private class VueFileLocallyDefinedComponent(

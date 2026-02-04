@@ -11,9 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 
-abstract class VueDelegatedComponent<T : VueComponent>(
-  final override val delegate: T,
-) : VueDelegatedContainer<T>(), VueNamedComponent {
+abstract class VueDelegatedComponent<T : VueComponent> : VueDelegatedContainer<T>(), VueNamedComponent {
 
   final override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
     PolySymbolDocumentationTarget.create(
@@ -34,10 +32,10 @@ abstract class VueDelegatedComponent<T : VueComponent>(
       })
 
   final override val typeParameters: List<TypeScriptTypeParameter>
-    get() = delegate.typeParameters
+    get() = delegate?.typeParameters ?: emptyList()
 
   override val elementToImport: PsiElement?
-    get() = delegate.elementToImport
+    get() = delegate?.elementToImport
 
   override fun equals(other: Any?): Boolean =
     other === this ||

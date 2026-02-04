@@ -10,8 +10,8 @@ import org.jetbrains.vuejs.model.VueDelegatedComponent
 
 class NuxtGlobalComponent(
   override val name: String,
-  delegate: VueComponent,
-) : VueDelegatedComponent<VueComponent>(delegate) {
+  override val delegate: VueComponent,
+) : VueDelegatedComponent<VueComponent>() {
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     delegate.getNavigationTargets(project)
