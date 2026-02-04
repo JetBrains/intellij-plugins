@@ -219,7 +219,7 @@ abstract class VueRenameTestBase(
 
   @Test
   fun testDefinePropsRecordTypeFromDefinition() =
-    doRenameTest(newName = "newName")
+    doRenameTest(mainFile = "MyLocalButton.vue", newName = "newName")
 
   @Test
   fun testDefinePropsRecordTypeFromUsage1() =
@@ -227,7 +227,7 @@ abstract class VueRenameTestBase(
 
   @Test
   fun testDefinePropsRecordTypeFromUsage2() =
-    doRenameTest(newName = "newName")
+    doRenameTest(mainFile = "MyLocalButton.vue", newName = "newName")
 
   @Test
   fun testDefinePropsRecordTypeExtUsageFromDefinition() =
@@ -287,7 +287,7 @@ abstract class VueRenameTestBase(
 
   @Test
   fun testDefinePropsInterfaceFromUsage2() =
-    doRenameTest(newName = "newName")
+    doRenameTest(mainFile = "MyLocalButton.vue", newName = "newName")
 
   @Test
   fun testDefinePropsInterfaceExtUsageFromDefinition() =

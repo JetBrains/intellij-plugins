@@ -1,18 +1,15 @@
 <script setup lang="ts">
-const props = defineProps<{
-  optionsApiWithType: string
-}>()
+import MyLocalButton from './MyLocalButton.vue'
 </script>
 
 <template>
-  {{optionsApiWithType}}
-  <define-props-record-type-from-usage1 opt<caret>ions-api-with-type="foo"></define-props-record-type-from-usage1>
-  <define-props-record-type-from-usage1 optionsApiWithType="foo"></define-props-record-type-from-usage1>
-  <define-props-record-type-from-usage1 OptionsApiWithType="foo"></define-props-record-type-from-usage1>
-  <define-props-record-type-from-usage1 :options-api-with-type="'foo'"></define-props-record-type-from-usage1>
-  <define-props-record-type-from-usage1 :optionsApiWithType="'foo'"></define-props-record-type-from-usage1>
-  <define-props-record-type-from-usage1 :OptionsApiWithType="'foo'"></define-props-record-type-from-usage1>
-  <define-props-record-type-from-usage1 v-bind:options-api-with-type="'foo'"></define-props-record-type-from-usage1>
-  <define-props-record-type-from-usage1 v-bind:optionsApiWithType="'foo'"></define-props-record-type-from-usage1>
-  <define-props-record-type-from-usage1 v-bind:OptionsApiWithType="'foo'"></define-props-record-type-from-usage1>
+  <my-local-button opt<caret>ions-api-with-type="foo"></my-local-button>
+  <my-local-button optionsApiWithType="foo"></my-local-button>
+  <my-local-button OptionsApiWithType="foo"></my-local-button>
+  <my-local-button :options-api-with-type="'foo'"></my-local-button>
+  <my-local-button :optionsApiWithType="'foo'"></my-local-button>
+  <my-local-button :OptionsApiWithType="'foo'"></my-local-button>
+  <my-local-button v-bind:options-api-with-type="'foo'"></my-local-button>
+  <my-local-button v-bind:optionsApiWithType="'foo'"></my-local-button>
+  <my-local-button v-bind:OptionsApiWithType="'foo'"></my-local-button>
 </template>
