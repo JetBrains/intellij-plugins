@@ -85,7 +85,7 @@ export class TestGenericComponent<T> {
     <app-test-annotation 
         [(required)]="signal4"/>
     <app-test-annotation 
-        [(required)]="<error descr="Attempt to assign to const or readonly variable">value4</error>"/>
+        [(required)]="value4"/>
   `,
   styles: [],
 })
