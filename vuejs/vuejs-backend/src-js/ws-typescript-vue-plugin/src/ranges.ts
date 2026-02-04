@@ -132,8 +132,8 @@ class ScriptMapper {
   }
 
   #toGeneratedOffset = (offset: number): number | undefined => {
-    for (const [generatedOffset] of this.mapper.toGeneratedLocation(offset + this.tsShift)) {
-      return generatedOffset
+    for (const [generatedOffset] of this.mapper.toGeneratedLocation(offset)) {
+      return generatedOffset + this.tsShift
     }
 
     return undefined
