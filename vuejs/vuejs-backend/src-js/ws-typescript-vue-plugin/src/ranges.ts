@@ -58,7 +58,7 @@ export function toGeneratedRange(
 ): SimpleRange {
   for (const {toGeneratedRange} of scriptMappers(language, fileName)) {
     const generatedRange = toGeneratedRange(startOffset, endOffset)
-    if (generatedRange) 
+    if (generatedRange)
       return generatedRange
   }
 
