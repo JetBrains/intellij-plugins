@@ -10,21 +10,21 @@ import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
 import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
 
 internal class InspectionKtsMetricsCollector : ProjectUsagesCollector() {
-  private val GROUP = EventLogGroup("qodana.flex.inspect.ide", 1, FUS_RECORDER, "Group with events related to FlexInspect in IDE")
+  private val GROUP = EventLogGroup("qodana.flex.inspect.ide", 1, FUS_RECORDER)
 
   override fun getGroup() = GROUP
 
-  private val FLEXINSPECT_TOTAL_FILES_FIELD = EventFields.RoundedInt("files_total")
-  private val FLEXINSPECT_COMPILED_FILES_FIELD = EventFields.RoundedInt("files_compiled")
-  private val FLEXINSPECT_FAILED_FILES_FIELD = EventFields.RoundedInt("files_failed")
-  private val FLEXINSPECT_COMPILED_INSPECTIONS_FIELD = EventFields.RoundedInt("inspections_compiled")
+  private val FLEX_INSPECT_TOTAL_FILES_FIELD = EventFields.RoundedInt("files_total")
+  private val FLEX_INSPECT_COMPILED_FILES_FIELD = EventFields.RoundedInt("files_compiled")
+  private val FLEX_INSPECT_FAILED_FILES_FIELD = EventFields.RoundedInt("files_failed")
+  private val FLEX_INSPECT_COMPILED_INSPECTIONS_FIELD = EventFields.RoundedInt("inspections_compiled")
 
-  private val FLEXINSPECT_COMPILED = GROUP.registerVarargEvent(
+  private val FLEX_INSPECT_COMPILED = GROUP.registerVarargEvent(
     "flexinspect.compiled.ide",
-    FLEXINSPECT_TOTAL_FILES_FIELD,
-    FLEXINSPECT_COMPILED_FILES_FIELD,
-    FLEXINSPECT_FAILED_FILES_FIELD,
-    FLEXINSPECT_COMPILED_INSPECTIONS_FIELD
+    FLEX_INSPECT_TOTAL_FILES_FIELD,
+    FLEX_INSPECT_COMPILED_FILES_FIELD,
+    FLEX_INSPECT_FAILED_FILES_FIELD,
+    FLEX_INSPECT_COMPILED_INSPECTIONS_FIELD
   )
 
   override fun getMetrics(project: Project): Set<MetricEvent> {
@@ -37,11 +37,11 @@ internal class InspectionKtsMetricsCollector : ProjectUsagesCollector() {
     val failedToCompileInspectionKtsFilesCount = inspectionKtsFileStatuses.filterIsInstance<InspectionKtsFileStatus.Error>().count()
     val inspectionKtsInspectionsCount = compiledInspectionFiles.flatMap { it.inspections.inspections }.count()
 
-    val inspectionKtsMetric = FLEXINSPECT_COMPILED.metric(
-      FLEXINSPECT_TOTAL_FILES_FIELD.with(inspectionKtsFilesCount),
-      FLEXINSPECT_COMPILED_FILES_FIELD.with(compiledInspectionKtsFilesCount),
-      FLEXINSPECT_FAILED_FILES_FIELD.with(failedToCompileInspectionKtsFilesCount),
-      FLEXINSPECT_COMPILED_INSPECTIONS_FIELD.with(inspectionKtsInspectionsCount)
+    val inspectionKtsMetric = FLEX_INSPECT_COMPILED.metric(
+      FLEX_INSPECT_TOTAL_FILES_FIELD.with(inspectionKtsFilesCount),
+      FLEX_INSPECT_COMPILED_FILES_FIELD.with(compiledInspectionKtsFilesCount),
+      FLEX_INSPECT_FAILED_FILES_FIELD.with(failedToCompileInspectionKtsFilesCount),
+      FLEX_INSPECT_COMPILED_INSPECTIONS_FIELD.with(inspectionKtsInspectionsCount)
     )
     return mutableSetOf(inspectionKtsMetric)
   }

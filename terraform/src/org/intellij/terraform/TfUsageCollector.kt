@@ -15,15 +15,9 @@ import com.intellij.util.CommonProcessors
 import org.intellij.terraform.terragrunt.TERRAGRUNT_MAIN_FILE
 
 internal class TfUsageCollector : ProjectUsagesCollector() {
+  private val GROUP = EventLogGroup(id = "terraform.project.metrics", version = 1)
 
-  private val GROUP = EventLogGroup(
-    id = "terraform.project.metrics",
-    version = 1,
-  )
-
-  private val TERRAGRUNT = GROUP.registerEvent(
-    "terragrunt.found", EventFields.Boolean("exists"),
-    "if \"terragrunt.hcl\" file exists in the project among other terraform files")
+  private val TERRAGRUNT = GROUP.registerEvent("terragrunt.found", EventFields.Boolean("exists"))
 
   override fun getGroup(): EventLogGroup = GROUP
 
@@ -45,16 +39,9 @@ internal class TfUsageCollector : ProjectUsagesCollector() {
 }
 
 internal object TfUsageTriggerCollector : CounterUsagesCollector() {
-
   override fun getGroup(): EventLogGroup = GROUP
 
-  private val GROUP = EventLogGroup(
-    id = "terraform.usages",
-    version = 1,
-  )
+  private val GROUP = EventLogGroup(id = "terraform.usages", version = 1)
 
-  val ODD_FEATURE_USED = GROUP.registerEvent(
-    "odd.feature.used", EventFields.String("feature", listOf("ignored-references")),
-    "if some legacy feature was used in the project")
+  val ODD_FEATURE_USED = GROUP.registerEvent("odd.feature.used", EventFields.String("feature", listOf("ignored-references")))
 }
-

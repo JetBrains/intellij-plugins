@@ -1,12 +1,11 @@
 package org.jetbrains.qodana.inspectionKts.stat
 
 import com.intellij.internal.statistic.eventLog.EventLogGroup
-import com.intellij.internal.statistic.eventLog.FUS_RECORDER
 import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 
 internal object InspectionKtsEventsCollector : CounterUsagesCollector() {
-  private val GROUP = EventLogGroup("qodana.flex.inspect", 1, FUS_RECORDER, "Group with events related to FlexInspect")
+  private val GROUP = EventLogGroup("qodana.flex.inspect", 1)
 
   override fun getGroup() = GROUP
 
