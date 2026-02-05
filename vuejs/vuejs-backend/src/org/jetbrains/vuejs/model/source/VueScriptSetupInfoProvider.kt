@@ -93,7 +93,9 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       }
   }
 
-  class VueScriptSetupInfo(val module: JSExecutionScope) : VueContainerInfoProvider.VueContainerInfo {
+  data class VueScriptSetupInfo(
+    val module: JSExecutionScope,
+  ) : VueContainerInfoProvider.VueContainerInfo {
 
     override val components: Map<String, VueNamedComponent>
       get() = structure.components
@@ -243,11 +245,6 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
       return VueScriptSetupStructure(components, directives, props, emits, slots, rawBindings)
     }
-
-    override fun equals(other: Any?): Boolean =
-      (other as? VueScriptSetupInfo)?.module == module
-
-    override fun hashCode(): Int = module.hashCode()
   }
 
   private data class VueScriptSetupStructure(
