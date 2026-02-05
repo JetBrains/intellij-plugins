@@ -44,7 +44,7 @@ public class ImportJSClassIntentionTest extends BaseJSIntentionTestCase {
         myFixture.type(" ");
         myFixture.type("\b");
         myFixture.doHighlighting();
-        CodeInsightTestFixtureImpl.waitForLazyQuickFixesUnderCaret(myFixture.getFile(), myFixture.getEditor());
+        CodeInsightTestFixtureImpl.waitForLazyQuickFixesUnderCaret(getProject(), myFixture.getEditor());
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
         myFixture.checkResultByFile(testName + "_after.as");
         return null;
