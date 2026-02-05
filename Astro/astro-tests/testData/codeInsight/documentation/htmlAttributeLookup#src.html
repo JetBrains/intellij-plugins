@@ -6,5 +6,9 @@
 <p><span class='grayed'>Chrome&nbsp;1, Chrome Android&nbsp;18, Edge&nbsp;12, Firefox&nbsp;1, Firefox Android&nbsp;4, Opera&nbsp;15, Safari&nbsp;1, Safari iOS&nbsp;1</span>
 <p class='grayed'>Baseline since 2015
 </details>
-The image <a href="https://developer.mozilla.org/en-us/docs/Glossary/URL">URL</a>. Mandatory for the <code>&lt;img&gt;</code> element. On <a href="https://developer.mozilla.org/en-us/docs/Glossary/Browser">browsers</a> supporting <code>srcset</code>, <code>src</code> is treated like a candidate image with a pixel density descriptor <code>1x</code>, unless an image with this pixel density descriptor is already defined in <code>srcset</code>, or unless <code>srcset</code> contains <code>w</code> descriptors.</div>
+The image <a href="https://developer.mozilla.org/en-us/docs/Glossary/URL">URL</a>. At least one of <code>src</code> and <a href="https://developer.mozilla.org/en-us/docs/web/html/reference/elements/img#src#srcset"><code>srcset</code></a> is required for an <code>&lt;img&gt;</code> element. If <a href="https://developer.mozilla.org/en-us/docs/web/html/reference/elements/img#src#srcset"><code>srcset</code></a> is specified, <code>src</code> is used in one of two ways:
+<ul>
+<li>as a fallback for browsers that don't support <code>srcset</code>.</li>
+<li>if <code>srcset</code> uses the "x" descriptor, then <code>src</code> is equivalent to a source with the density descriptor <code>1x</code>; that is, the image specified by <code>src</code> is used on low-density screens (such as typical 72 DPI or 96 DPI displays).</li>
+</ul></div>
 <div class='content'>By <a href='https://developer.mozilla.org/en-us/docs/web/html/reference/elements/img#src/contributors.txt'>Mozilla Contributors</a>, <a href='https://creativecommons.org/licenses/by-sa/2.5/'>CC BY-SA 2.5</a></div>
