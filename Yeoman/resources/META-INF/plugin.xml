@@ -13,9 +13,11 @@
   </ul>
     ]]>
   </description>
-  <depends>com.intellij.modules.lang</depends>
-  <depends>com.intellij.modules.ultimate</depends>
-  <depends>JavaScript</depends>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="JavaScript"/>
+  </dependencies>
+  <!-- endregion -->
 
   <resource-bundle>messages.YeomanBundle</resource-bundle>
 
