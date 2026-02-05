@@ -12,13 +12,13 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actions.ScrollToTheEndToolbarAction;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.plugins.serialmonitor.SerialMonitorException;
 import com.intellij.plugins.serialmonitor.SerialPortProfile;
 import com.intellij.plugins.serialmonitor.service.PortStatus;
@@ -78,6 +78,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
                                                  portProfile,
                                                  loadingPanel);
     connection.setDataListener(consoleView::append);
+    Disposer.register(consoleView, connection);
     return consoleView;
   }
 
@@ -298,14 +299,5 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
         e.getPresentation().setVisible(false);
       }
     }
-  }
-
-  @Override
-  public void dispose() {
-    super.dispose();
-    Application application = ApplicationManager.getApplication();
-    application.executeOnPooledThread(() -> {
-      myConnection.closeSilently(true);
-    });
   }
 }

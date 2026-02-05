@@ -6,6 +6,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.plugins.serialmonitor.service.PortStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortService
 import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.common.waitUntil
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.TestDisposable
 import kotlinx.coroutines.delay
@@ -78,7 +79,7 @@ class TestSerialMonitor {
 
       // Creating a second connection should dispose the first and disconnect the port
       val second = createConnection("/dev/ttyUSB0")
-      assertFalse(port.connected)
+      waitUntil { !port.connected }
 
       // Now connect with the second connection to make sure it functions
       second.connect(SerialPortProfile(portName = "/dev/ttyUSB0", baudRate = 9600))
@@ -307,7 +308,7 @@ class TestSerialMonitor {
       Disposer.dispose(conn)
 
       // Underlying mock port disconnected and service reports READY (port exists, no connection)
-      assertFalse(port.connected)
+      waitUntil { !port.connected }
       assertEquals(PortStatus.READY, portService.portStatus("/dev/ttyUSB0"))
     }
 
@@ -327,7 +328,7 @@ class TestSerialMonitor {
     fun `dispose swallows disconnect failure and updates status`() = timeoutRunBlocking {
       port.failOnDisconnect = true
       assertDoesNotThrow { Disposer.dispose(conn) }
-      assertEquals(PortStatus.DISCONNECTED, conn.getStatus())
+      waitUntil { conn.getStatus() == PortStatus.DISCONNECTED  }
       assertTrue(port.connected) // Verifies the disconnect failed
     }
   }

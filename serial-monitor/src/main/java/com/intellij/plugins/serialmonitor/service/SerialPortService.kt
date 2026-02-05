@@ -15,6 +15,7 @@ import com.intellij.plugins.serialmonitor.SerialMonitorException
 import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener.Companion.SERIAL_PORTS_TOPIC
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
+import com.intellij.util.application
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +24,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.Nls
 import java.util.TreeSet
 import java.util.concurrent.ConcurrentHashMap
@@ -84,7 +86,9 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
     for (name in portNames.value) {
       if (!portList.contains(name)) {
         //port disappeared
-        connections[name]?.closeSilently(false)
+        withContext(Dispatchers.IO) {
+          connections[name]?.closeSilently(false)
+        }
       }
     }
     for (name in portList) {
@@ -171,10 +175,12 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
       }.getOrHandleException(thisLogger()::info) ?: false
 
     override fun dispose() {
-      closeSilently(true)
-      connections.remove(portName, this)
-      cs.launch {
-        rescanPorts()
+      application.executeOnPooledThread {
+        closeSilently(true)
+        connections.remove(portName, this)
+        cs.launch {
+          rescanPorts()
+        }
       }
     }
 
