@@ -1,10 +1,11 @@
 <idea-plugin package="org.jetbrains.qodana.go">
   <dependencies>
-    <plugin id="com.intellij.modules.lang" />
-    <plugin id="org.jetbrains.plugins.go" />
-    <module name="intellij.qodana.coverage"/>
-    <module name="intellij.go.coverage" />
+    <plugin id="org.jetbrains.plugins.go"/>
+    <module name="intellij.go.coverage"/>
     <module name="intellij.platform.collaborationTools"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.qodana.coverage"/>
+    <!-- endregion -->
   </dependencies>
 
   <extensions defaultExtensionNs="org.intellij.qodana">

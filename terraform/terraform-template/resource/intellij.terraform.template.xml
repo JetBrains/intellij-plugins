@@ -1,7 +1,6 @@
 <idea-plugin>
   <dependencies>
     <plugin id="com.intellij.modules.ultimate"/>
-    <plugin id="com.intellij.modules.lang"/>
   </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">

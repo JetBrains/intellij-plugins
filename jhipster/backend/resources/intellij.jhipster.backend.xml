@@ -1,9 +1,10 @@
 <idea-plugin>
   <dependencies>
-    <plugin id="com.intellij.modules.lang"/>
-    <module name="intellij.spellchecker"/>
-    <module name="intellij.platform.backend"/>
     <module name="intellij.java.backend"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.platform.backend"/>
+    <module name="intellij.spellchecker"/>
+    <!-- endregion -->
   </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">

@@ -1,6 +1,5 @@
 <idea-plugin package="org.jetbrains.qodana.python.community">
   <dependencies>
-    <plugin id="com.intellij.modules.lang" />
     <plugin id="com.intellij.modules.python"/>
   </dependencies>
 

@@ -1,10 +1,11 @@
 <idea-plugin package="org.jetbrains.qodana.python.coverage">
   <dependencies>
-    <plugin id="com.intellij.modules.lang" />
     <plugin id="com.intellij.modules.python"/>
     <plugin id="Pythonid"/>
-    <module name="intellij.qodana.coverage"/>
     <module name="intellij.python"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.qodana.coverage"/>
+    <!-- endregion -->
   </dependencies>
 
   <extensions defaultExtensionNs="org.intellij.qodana">
