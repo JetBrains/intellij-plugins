@@ -46,9 +46,7 @@ class VueFindUsagesTest :
 
   @Test
   fun testScriptSetupImportedDirective() {
-    myFixture.configureByFiles("scriptSetupImportedDirective.vue")
-    myFixture.configureByFiles("vFocus.js")
-    myFixture.checkUsages("v<caret>Focus", getTestName(true))
+    doTest("vFocus.js")
   }
 
   @Test
@@ -101,7 +99,9 @@ class VueFindUsagesTest :
     checkFileUsages(fileName = "SomeComponent.vue")
   }
 
-  private fun doTest() {
-    checkUsages(fileName = "App.vue")
+  private fun doTest(
+    fileName: String = "App.vue",
+  ) {
+    checkUsages(fileName = fileName)
   }
 }
