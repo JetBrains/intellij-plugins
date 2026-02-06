@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.javascript.testFramework.web.checkFileUsages
 import com.intellij.javascript.testFramework.web.checkUsages
 import com.intellij.psi.search.GlobalSearchScopesCore
 import org.jetbrains.vuejs.VueTestCase
@@ -103,11 +102,6 @@ class VueFindUsagesTest :
 
   @Test
   fun testComponentFile() {
-    val testName = getTestName(true)
-    myFixture.copyDirectoryToProject(testName, ".")
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-
-    myFixture.configureFromTempProjectFile("SomeComponent.vue")
-    myFixture.checkFileUsages(testName)
+    checkFileUsages(fileName = "SomeComponent.vue")
   }
 }
