@@ -15,7 +15,7 @@ class VueFindUsagesTest :
 
   @Test
   fun testPrivateComponentGetter() {
-    checkUsages(fileName = "App.vue",)
+    doTest()
   }
 
   @Test
@@ -102,5 +102,9 @@ class VueFindUsagesTest :
   @Test
   fun testComponentFile() {
     checkFileUsages(fileName = "SomeComponent.vue")
+  }
+  
+  private fun doTest() {
+    checkUsages(fileName = "App.vue")
   }
 }
