@@ -13,6 +13,9 @@ import org.junit.runners.JUnit4
 class VueFindUsagesTest :
   VueTestCase("findUsages", testMode = VueTestMode.NO_PLUGIN) {
 
+  override val dirModeByDefault: Boolean =
+    true
+
   @Test
   fun testPrivateComponentGetter() {
     doTest()
@@ -35,8 +38,8 @@ class VueFindUsagesTest :
 
   @Test
   fun testScriptSetupRef() {
-    doConfiguredTest(dir = true) {
-      testDataPath = testDataPath + "/" + getTestName(true)
+    doConfiguredTest {
+      testDataPath += "/" + getTestName(true)
 
       sequenceOf(
         "ref='f<caret>oo2'",
@@ -58,21 +61,28 @@ class VueFindUsagesTest :
 
   @Test
   fun testTypedComponents() {
-    myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.NAIVE_UI_2_19_11)
-    myFixture.configureByFiles("typedComponentsClassic.vue", "typedComponentsScriptSetup.vue")
+    doConfiguredTest(
+      VueTestModule.HEADLESS_UI_1_4_1,
+      VueTestModule.NAIVE_UI_2_19_11,
+      configureFileName = "typedComponentsClassic.vue",
+    ) {
+      testDataPath += "/" + getTestName(true)
 
-    myFixture.checkUsages(" Dia<caret>log,", getTestName(true) + ".classic.headlessui")
-    myFixture.checkUsages(" N<caret>Affix,", getTestName(true) + ".classic.naive-ui")
-    myFixture.checkUsages(" Fo<caret>o:", getTestName(true) + ".classic.foo")
-    myFixture.checkUsages(" Ba<caret>r:", getTestName(true) + ".classic.bar")
+      checkUsages(" Dia<caret>log,", "usages.classic.headlessui")
+      checkUsages(" N<caret>Affix,", "usages.classic.naive-ui")
+      checkUsages(" Fo<caret>o:", "usages.classic.foo")
+      checkUsages(" Ba<caret>r:", "usages.classic.bar")
 
-    myFixture.configureFromTempProjectFile("node_modules/@headlessui/vue/dist/components/dialog/dialog.d.ts")
-    myFixture.checkUsages("export declare let Dia<caret>log:", getTestName(true) + ".headlessui")
+      configureFromTempProjectFile("node_modules/@headlessui/vue/dist/components/dialog/dialog.d.ts")
+      checkUsages("export declare let Dia<caret>log:", "usages.headlessui")
 
-    myFixture.configureFromTempProjectFile("node_modules/naive-ui/lib/affix/src/Affix.d.ts")
-    myFixture.checkUsages("declare const _defa<caret>ult:", getTestName(true) + ".naive-ui",
-                          scope = GlobalSearchScopesCore.directoryScope(project, myFixture.tempDirFixture.findOrCreateDir("."),
-                                                                        true))
+      configureFromTempProjectFile("node_modules/naive-ui/lib/affix/src/Affix.d.ts")
+      checkUsages(
+        "declare const _defa<caret>ult:",
+        "usages.naive-ui",
+        scope = GlobalSearchScopesCore.directoryScope(project, tempDirFixture.findOrCreateDir("."), true),
+      )
+    }
   }
 
   @Test
