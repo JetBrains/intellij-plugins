@@ -15,8 +15,7 @@ class VueFindUsagesTest :
 
   @Test
   fun testPrivateComponentGetter() {
-    myFixture.configureByFiles("privateFields.vue")
-    myFixture.checkUsages("get f<caret>oo", getTestName(true))
+    checkUsages(fileName = "App.vue",)
   }
 
   @Test
