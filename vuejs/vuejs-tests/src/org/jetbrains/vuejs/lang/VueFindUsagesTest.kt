@@ -20,8 +20,7 @@ class VueFindUsagesTest :
 
   @Test
   fun testPrivateComponentSetter() {
-    myFixture.configureByFiles("privateFields.vue")
-    myFixture.checkUsages("set f<caret>oo", getTestName(true))
+    doTest()
   }
 
   @Test
@@ -103,7 +102,7 @@ class VueFindUsagesTest :
   fun testComponentFile() {
     checkFileUsages(fileName = "SomeComponent.vue")
   }
-  
+
   private fun doTest() {
     checkUsages(fileName = "App.vue")
   }
