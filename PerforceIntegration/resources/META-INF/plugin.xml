@@ -1,12 +1,12 @@
 <idea-plugin allow-bundled-update="true">
-  <name>Perforce Helix Core</name>
+  <name>Perforce P4 (Helix Core)</name>
   <id>PerforceDirectPlugin</id>
   <vendor>JetBrains</vendor>
   <resource-bundle>messages.PerforceBundle</resource-bundle>
   <category>Version Controls</category>
   <description>
       <![CDATA[
-      Allows working with <a href="https://www.perforce.com/">Perforce version control system</a>.
+      Allows working with <a href="https://www.perforce.com/products/helix-core">Perforce P4 version control system</a>.
       The following features are available:
         <ul>
         <li>Submit, merge, diff, shelf and more</li>
