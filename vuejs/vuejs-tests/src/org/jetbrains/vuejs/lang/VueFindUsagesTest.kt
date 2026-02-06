@@ -30,8 +30,7 @@ class VueFindUsagesTest :
 
   @Test
   fun testPrivateConstructorField() {
-    myFixture.configureByFiles("privateFields.vue")
-    myFixture.checkUsages("private ba<caret>r", getTestName(true))
+    doTest()
   }
 
   @Test

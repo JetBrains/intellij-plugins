@@ -11,7 +11,7 @@
   export default @Component({})
   class Index extends Vue {
 
-    constructor(private bar) {
+    constructor(private b<caret>ar) {
       super()
     }
 
