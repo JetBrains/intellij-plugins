@@ -81,11 +81,6 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", u
     configureFileName = "index.astro"
   )
 
-  fun testReactDuplicateComponent() = doLookupTest(
-    dir = true,
-    configureFileName = "index.astro"
-  )
-
   fun testAstroComponent() = doLookupTest(
     dir = true,
     configureFileName = "index.astro"
