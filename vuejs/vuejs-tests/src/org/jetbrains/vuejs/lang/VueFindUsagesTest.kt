@@ -25,8 +25,7 @@ class VueFindUsagesTest :
 
   @Test
   fun testPrivateComponentMethod() {
-    myFixture.configureByFiles("privateFields.vue")
-    myFixture.checkUsages("private on<caret>Scrolled", getTestName(true))
+    doTest()
   }
 
   @Test
