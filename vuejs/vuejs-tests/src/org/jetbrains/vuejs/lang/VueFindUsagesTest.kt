@@ -4,15 +4,15 @@ package org.jetbrains.vuejs.lang
 import com.intellij.javascript.testFramework.web.checkFileUsages
 import com.intellij.javascript.testFramework.web.checkUsages
 import com.intellij.psi.search.GlobalSearchScopesCore
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueTestMode
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class VueFindUsagesTest : BasePlatformTestCase() {
-
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/findUsages"
+class VueFindUsagesTest :
+  VueTestCase("findUsages", testMode = VueTestMode.NO_PLUGIN) {
 
   @Test
   fun testPrivateComponentGetter() {
