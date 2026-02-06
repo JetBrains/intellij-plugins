@@ -191,7 +191,7 @@ class VueComponentTest :
 
   @Test
   fun testScriptSetupGeneric() =
-    doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+    doTest(true)
 
   @Test
   fun testPropsConstructorsAndGenerics() =
@@ -220,7 +220,10 @@ class VueComponentTest :
   /**
    * Runs `doTestInner` twice: once for default TS config, once for strict TS config
    */
-  private fun doTest(strictNullChecksDiffer: Boolean = false, addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_2_2)) {
+  private fun doTest(
+    strictNullChecksDiffer: Boolean = false,
+    addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_5_0),
+  ) {
     var file = configureTestProject(addNodeModules) as PsiFileImpl
 
     val textWithMarkers = file.text
@@ -240,7 +243,10 @@ class VueComponentTest :
     file = doTestInner(file, strictNullChecksDiffer)
   }
 
-  private fun doSingleStrictnessTest(strictNullChecks: Boolean, addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_2_2)) {
+  private fun doSingleStrictnessTest(
+    strictNullChecks: Boolean,
+    addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_5_0),
+  ) {
     val file = configureTestProject(addNodeModules) as PsiFileImpl
 
     if (strictNullChecks) {
@@ -285,7 +291,10 @@ class VueComponentTest :
     ComponentModelDebugOutputPrinter(false)
       .printValue(VueModelManager.findEnclosingContainer(file))
 
-  private fun configureTestProject(addNodeModules: List<VueTestModule> = emptyList(), extension: String = "vue"): PsiFile {
+  private fun configureTestProject(
+    addNodeModules: List<VueTestModule> = emptyList(),
+    extension: String = "vue",
+  ): PsiFile {
     if (addNodeModules.isNotEmpty()) {
       myFixture.configureVueDependencies(*addNodeModules.toTypedArray())
     }
