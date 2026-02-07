@@ -7,9 +7,13 @@ import org.intellij.terraform.config.Constants.HCL_ID_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_IMPORT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TYPE_IDENTIFIER
-import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.ListType
+import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.config.model.TfTypeModel.Companion.DescriptionProperty
 import org.intellij.terraform.config.model.TfTypeModel.Companion.Locals
+import org.intellij.terraform.config.model.Types
+import org.intellij.terraform.config.model.toMap
 import org.intellij.terraform.stack.component.InputsProperty
 
 internal val DeploymentBlock: BlockType = BlockType(
