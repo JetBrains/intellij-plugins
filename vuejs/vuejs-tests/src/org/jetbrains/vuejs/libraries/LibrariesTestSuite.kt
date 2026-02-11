@@ -10,9 +10,11 @@ import org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderCompletionTest
 import org.jetbrains.vuejs.libraries.vueLoader.VueLoaderTest
 import org.jetbrains.vuejs.libraries.vuelidate.VuelidateTest
 import org.jetbrains.vuejs.libraries.vuex.VuexTestSuite
+import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
+@Ignore("Manual only")
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
   NuxtTestSuite::class,

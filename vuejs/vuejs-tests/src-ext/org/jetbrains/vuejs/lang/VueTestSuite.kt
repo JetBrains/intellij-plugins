@@ -5,9 +5,11 @@ import org.jetbrains.vuejs.lang.expr.VueJSParserTest
 import org.jetbrains.vuejs.libraries.LibrariesTestSuite
 import org.jetbrains.vuejs.pug.PugTemplateTest
 import org.jetbrains.vuejs.pug.VuePugFoldingTest
+import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
+@Ignore("Manual only")
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
   VueTestCommons::class,

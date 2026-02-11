@@ -22,10 +22,12 @@ import org.angularjs.index.AngularDirectiveCommentParsingTest;
 import org.angularjs.lang.parser.AngularJSParserTest;
 import org.angularjs.refactoring.DirectiveRenameTest;
 import org.angularjs.resharper.AngularJSReSharperTestSuite;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 
+@Ignore("Manual only")
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   AngularJSParserTest.class,

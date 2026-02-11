@@ -1,9 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
+@Ignore("Manual only")
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
   VueAutoPopupTest::class,
@@ -18,6 +20,7 @@ import org.junit.runners.Suite
 )
 class VuePluginTestSuite
 
+@Ignore("Manual only")
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
   VueAutoPopupTest.WithTsGoProxyTest::class,
@@ -44,4 +47,5 @@ class VueWithTsGoProxyTestSuite
   VueNewComponentTest.WithoutServiceTest::class,
   VueRenameTest.WithoutServiceTest::class,
 )
+@Ignore("Manual only")
 class VueWithoutServiceTestSuite

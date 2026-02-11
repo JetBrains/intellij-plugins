@@ -76,9 +76,11 @@ import org.angular2.lang.html.Angular2SemanticHighlightingTest
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelectorSpecTest
 import org.angular2.library.forms.Angular2FormsTestSuite
 import org.angular2.resharper.Angular2ReSharperTestSuite
+import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
+@Ignore("Manual only")
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
   Angular2BlueprintListTest::class,

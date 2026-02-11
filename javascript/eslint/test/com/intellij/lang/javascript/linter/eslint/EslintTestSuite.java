@@ -14,7 +14,9 @@ import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSFixTest;
 import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSHighlightingTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.Ignore;
 
+@Ignore("Manual only")
 public final class EslintTestSuite {
   public static Test suite() {
     final TestSuite testSuite = new TestSuite("ESLint tests");

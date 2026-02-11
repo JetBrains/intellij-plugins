@@ -19,9 +19,11 @@ import org.jetbrains.astro.codeInsight.highlighting.AstroSuppressedInspectionsHi
 import org.jetbrains.astro.lang.AstroHighlightingLexerTest
 import org.jetbrains.astro.lang.AstroLexerTest
 import org.jetbrains.astro.service.AstroServiceHighlightingTest
+import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
+@Ignore("Manual only")
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
   AstroLexerTest::class,

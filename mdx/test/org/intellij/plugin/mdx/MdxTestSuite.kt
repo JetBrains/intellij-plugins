@@ -1,5 +1,6 @@
 package org.intellij.plugin.mdx
 
+import com.intellij.idea.IJIgnore
 import org.junit.platform.suite.api.SelectClasses
 import org.junit.platform.suite.api.Suite
 
@@ -23,4 +24,5 @@ import org.junit.platform.suite.api.Suite
   MdxParsingTest::class,
   MdxRenameTest::class,
 )
+@IJIgnore(issue = "Manual only")
 class MdxTestSuite

@@ -3,9 +3,11 @@ package com.jetbrains.plugins.jade
 
 import com.jetbrains.plugins.jade.injectedScriptJs.JadeJsHighlightingTest
 import com.jetbrains.plugins.jade.injectedScriptJs.JadeJsIntroduceVariableTest
+import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
+@Ignore("Manual only")
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
   JadeCompletionTest::class,

@@ -28,8 +28,10 @@ import org.intellij.plugins.postcss.resolve.PostCssCustomSelectorResolveTest;
 import org.intellij.plugins.postcss.resolve.PostCssSimpleVarsTest;
 import org.intellij.plugins.postcss.smartEnter.PostCssSmartEnterTest;
 import org.intellij.plugins.postcss.usages.PostCssFindUsagesTest;
+import org.junit.Ignore;
 
 @SuppressWarnings("JUnitTestClassNamingConvention")
+@Ignore("Manual only")
 public final class PostCssTestSuite {
   public static Test suite() {
     TestSuite testSuite = new TestSuite("All PostCSS");
@@ -37,6 +39,7 @@ public final class PostCssTestSuite {
     return testSuite;
   }
 
+  @Ignore("Manual only")
   public static final class WithoutPerformance {
     public static Test suite() {
       TestSuite suite = new TestSuite("All PostCSS without performance");
@@ -50,6 +53,7 @@ public final class PostCssTestSuite {
     }
   }
 
+  @Ignore("Manual only")
   public static final class Fast {
     public static Test suite() {
       TestSuite suite = new TestSuite("Fast PostCSS");
@@ -57,6 +61,7 @@ public final class PostCssTestSuite {
     }
   }
 
+  @Ignore("Manual only")
   public static final class Inspections {
     public static Test suite() {
       TestSuite suite = new TestSuite("Inspections PostCSS");
@@ -74,6 +79,7 @@ public final class PostCssTestSuite {
     }
   }
 
+  @Ignore("Manual only")
   public static final class Completion {
     public static Test suite() {
       TestSuite suite = new TestSuite("Completion PostCSS");
@@ -87,6 +93,7 @@ public final class PostCssTestSuite {
     }
   }
 
+  @Ignore("Manual only")
   public static final class Resolving {
     public static Test suite() {
       TestSuite suite = new TestSuite("Resolving PostCSS");
@@ -98,6 +105,7 @@ public final class PostCssTestSuite {
     }
   }
 
+  @Ignore("Manual only")
   public static final class Refactoring {
     public static Test suite() {
       TestSuite suite = new TestSuite("Refactoring PostCSS");
@@ -106,6 +114,7 @@ public final class PostCssTestSuite {
     }
   }
 
+  @Ignore("Manual only")
   public static final class Other {
     public static Test suite() {
       TestSuite suite = new TestSuite("Other PostCSS");

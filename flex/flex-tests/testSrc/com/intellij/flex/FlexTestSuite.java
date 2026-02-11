@@ -50,7 +50,9 @@ import com.intellij.flex.resolver.ActionScriptResolveTest;
 import com.intellij.flex.resolver.FlexCssNavigationTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.junit.Ignore;
 
+@Ignore("Manual only")
 public final class FlexTestSuite {
 
   public static Test suite() {
