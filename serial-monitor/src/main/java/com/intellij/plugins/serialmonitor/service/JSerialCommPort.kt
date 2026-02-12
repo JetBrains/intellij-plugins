@@ -13,6 +13,7 @@ import com.intellij.plugins.serialmonitor.SerialMonitorException
 import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.StopBits
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
+import com.intellij.util.application
 import com.intellij.util.system.OS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -117,7 +118,16 @@ class JSerialCommPort : SerialPort {
             listener.onDSRChanged(serialPort.dsr)
           }
           whenSet(LISTENING_EVENT_PORT_DISCONNECTED) {
-            serialPort.closePort()
+            // Redispatch to avoid closing the port on the event handler thread.
+            // This is needed for proper termination of the event handler thread in the `closePort()` method.
+            // After the event listener loop is finished (port is closed, app is closing, or handler is removed),
+            // the handler thread notifies the native code that there's no longer a listener.
+            // The problem comes when the user event handler closes the port, which sets the `portHandle` to 0.
+            // Then this call uses 0 as the handler, which causes the native code to dereference NULL.
+            // This workaround can be removed after the issue is fixed in the library, and we update to the fixed version. (CPP-48661)
+            application.executeOnPooledThread {
+              serialPort.closePort()
+            }
           }
         }
       }
