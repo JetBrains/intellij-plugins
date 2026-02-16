@@ -29,7 +29,7 @@ import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.BlockSubNameInsertHandler
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil
-import org.intellij.terraform.config.codeinsight.TfCompletionUtil.buildLookupForProviderBlock
+import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createProviderLookup
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getClearTextValue
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getLookupIcon
 import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
@@ -53,6 +53,7 @@ import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION_METHOD_
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_KEY_PROVIDER
 import org.intellij.terraform.opentofu.model.encryptionKeyProviders
 import org.intellij.terraform.opentofu.model.encryptionMethods
+import org.intellij.terraform.stack.component.TfComponentFileType
 
 internal object HclBlockTypeNameCompletionProvider : CompletionProvider<CompletionParameters>() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
@@ -79,6 +80,9 @@ internal object HclBlockTypeNameCompletionProvider : CompletionProvider<Completi
     }
     val previousNonSpace = obj.getPrevSiblingNonWhiteSpace()
     val type = getClearTextValue(previousNonSpace) ?: return true
+
+    val isTfComponent = position.containingFile.fileType == TfComponentFileType
+    if (isTfComponent && type != HCL_PROVIDER_IDENTIFIER) return true
 
     val typeModel = TypeModelProvider.getModel(position)
     val localProviders = TfTypeModel.collectProviderLocalNames(position)
@@ -108,7 +112,7 @@ internal object HclBlockTypeNameCompletionProvider : CompletionProvider<Completi
       HCL_PROVIDER_IDENTIFIER ->
         typeModel.allProviders().toPlow()
           .filter { parameters.invocationCount > 1 || it.tier in tiers || localProviders.containsValue(it.fullName) }
-          .map { buildLookupForProviderBlock(it, position) }
+          .map { createProviderLookup(it, position, !isTfComponent) }
           .processWith(consumer)
       HCL_PROVISIONER_IDENTIFIER ->
         typeModel.provisioners.toPlow()

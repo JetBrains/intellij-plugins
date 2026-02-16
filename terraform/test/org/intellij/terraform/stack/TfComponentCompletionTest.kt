@@ -1,12 +1,14 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.stack
 
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.lang.Language
 import com.intellij.openapi.util.registry.Registry
 import org.intellij.terraform.config.CompletionTestCase
 import org.intellij.terraform.config.codeinsight.COMPLETION_VARIANTS_LIMIT
 import org.intellij.terraform.config.codeinsight.TfConfigCompletionTest
 import org.intellij.terraform.config.codeinsight.TfConfigCompletionTest.Companion.assertNoTfRootBlocks
+import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.stack.TfDeployCompletionTest.Companion.assertNoTfDeployBlocks
 import org.intellij.terraform.stack.component.TF_COMPONENT_EXTENSION
@@ -213,6 +215,33 @@ internal class TfComponentCompletionTest : CompletionTestCase() {
         }
       }
     """.trimIndent(), "kubernetes")
+  }
+
+  fun testProviderTypeCompletion() {
+    val providers = getPartialMatcher(TfConfigCompletionTest.collectBundledProviders())
+
+    doBasicCompletionTest("provider <caret>", providers)
+    doBasicCompletionTest("provider <caret> {}", providers)
+    doBasicCompletionTest("provider <caret> \"some_name\" {}", providers)
+    doBasicCompletionTest("provider \"<caret>\" \"test_name\" {}", providers)
+  }
+
+  fun testNonOfficialProvidersCompletion() {
+    myFixture.configureByText(fileName, """provider "kubernet<caret>" """.trimIndent())
+    val lookupElements = myFixture.complete(CompletionType.BASIC, 2)
+    assertEquals(4, lookupElements.size)
+
+    val lookupStrings = lookupElements.map { element ->
+      val providerType = element.`object` as ProviderType
+      "${providerType.type} ${providerType.fullName} ${providerType.version}"
+    }.toList()
+    assertEquals(
+      listOf("kubernetes bgcorreia/kubernetes 1.12.4",
+             "kubernetes hashicorp/kubernetes 2.38.0",
+             "kubernetes sdb-cloud-ops/kubernetes 3.0.3",
+             "kubernetes-wait MehdiAtBud/kubernetes-wait 0.1.16"),
+      lookupStrings
+    )
   }
 
   companion object {

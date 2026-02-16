@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiFile
 import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider
+import org.intellij.terraform.hcl.codeinsight.HclBlockTypeNameCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRequiredProvidersCompletion
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
 import org.intellij.terraform.stack.component.TfComponentPsiPatterns.TfComponentFile
@@ -15,6 +16,8 @@ internal class TfComponentCompletionContributor : CompletionContributor(), DumbA
     HclBlockPropertiesCompletionProvider.registerTo(this, TfComponentFile)
 
     HclRequiredProvidersCompletion.registerTo(this, TfComponentPsiPatterns.TfComponentRequiredProviders)
+
+    HclBlockTypeNameCompletionProvider.registerTo(this, TfComponentFile)
 
     TfComponentObjectKeyCompletionProvider.registerTo(this, TfComponentFile)
   }

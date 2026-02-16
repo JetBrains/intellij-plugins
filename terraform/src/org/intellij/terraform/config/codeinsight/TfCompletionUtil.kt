@@ -104,10 +104,19 @@ internal object TfCompletionUtil {
     .withTypeText(function.returnType.presentableText)
     .withIcon(if (isTerragrunt) TerraformIcons.Terragrunt else AllIcons.Nodes.Function)
 
-  fun buildLookupForProviderBlock(provider: ProviderType, element: PsiElement): LookupElement =
-    createProviderLookupElement(provider, element)
+  fun createProviderLookup(
+    provider: ProviderType,
+    element: PsiElement,
+    withInsertHandler: Boolean = true,
+  ): LookupElementBuilder {
+    val baseLookup = createProviderLookupElement(provider, element)
+    if (!withInsertHandler) return baseLookup
+
+    val fakeService = element.project.service<HclFakeElementPsiFactory>()
+    return baseLookup
       .withInsertHandler(BlockSubNameInsertHandler(provider))
-      .withPsiElement(element.project.service<HclFakeElementPsiFactory>().createFakeHclBlock(provider, element.containingFile.originalFile))
+      .withPsiElement(fakeService.createFakeHclBlock(provider, element.containingFile.originalFile))
+  }
 
   fun createProviderLookupElement(provider: ProviderType, element: PsiElement): LookupElementBuilder =
     create(provider, provider.type)
