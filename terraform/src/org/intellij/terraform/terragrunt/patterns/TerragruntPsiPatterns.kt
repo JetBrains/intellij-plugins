@@ -7,7 +7,7 @@ import com.intellij.patterns.PsiFilePattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.Constants.HCL_STACK_IDENTIFIER
-import org.intellij.terraform.config.patterns.TfPsiPatterns.createBlockPattern
+import org.intellij.terraform.config.patterns.TfPsiPatterns.withHclBlockPattern
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLFile
@@ -39,11 +39,9 @@ internal object TerragruntPsiPatterns {
   val StackBlockPattern: Capture<HCLBlock> = getStackRootBlockPattern(HCL_STACK_IDENTIFIER)
   val UnitBlockPattern: Capture<HCLBlock> = getStackRootBlockPattern(TERRAGRUNT_UNIT)
 
-  fun getTerragruntRootBlockPattern(identifier: String) = PlatformPatterns.psiElement(HCLBlock::class.java)
+  fun getTerragruntRootBlockPattern(identifier: String) = withHclBlockPattern(identifier)
     .withParent(TerragruntFile)
-    .with(createBlockPattern(identifier))
 
-  fun getStackRootBlockPattern(identifier: String) = PlatformPatterns.psiElement(HCLBlock::class.java)
+  fun getStackRootBlockPattern(identifier: String) = withHclBlockPattern(identifier)
     .withParent(StackFile)
-    .with(createBlockPattern(identifier))
 }

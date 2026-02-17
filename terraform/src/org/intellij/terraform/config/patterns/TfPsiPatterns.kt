@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.patterns
 
 import com.intellij.openapi.util.Ref
@@ -42,7 +42,7 @@ import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 
-object TfPsiPatterns {
+internal object TfPsiPatterns {
   val TerraformFile: PsiFilePattern.Capture<HCLFile> = PlatformPatterns.psiFile(HCLFile::class.java)
     .withLanguage(TerraformLanguage)
 
@@ -72,29 +72,23 @@ object TfPsiPatterns {
   val RootBlockForHCLFiles: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
     .withParent(HCLFile::class.java)
 
-  val ModuleRootBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  val ModuleRootBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_MODULE_IDENTIFIER)
     .and(RootBlock)
-    .with(createBlockPattern(HCL_MODULE_IDENTIFIER))
 
-  val VariableRootBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  val VariableRootBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_VARIABLE_IDENTIFIER)
     .and(RootBlock)
-    .with(createBlockPattern(HCL_VARIABLE_IDENTIFIER))
 
-  val OutputRootBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  val OutputRootBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_OUTPUT_IDENTIFIER)
     .and(RootBlock)
-    .with(createBlockPattern(HCL_OUTPUT_IDENTIFIER))
 
-  val ResourceRootBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  val ResourceRootBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_RESOURCE_IDENTIFIER)
     .and(RootBlock)
-    .with(createBlockPattern(HCL_RESOURCE_IDENTIFIER))
 
-  val DataSourceRootBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  val DataSourceRootBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_DATASOURCE_IDENTIFIER)
     .and(RootBlock)
-    .with(createBlockPattern(HCL_DATASOURCE_IDENTIFIER))
 
-  val ProviderRootBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  val ProviderRootBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_PROVIDER_IDENTIFIER)
     .withParent(TerraformConfigFile)
-    .with(createBlockPattern(HCL_PROVIDER_IDENTIFIER))
 
   val ProviderDefinedHclBlocks: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
     .and(RootBlock)
@@ -105,24 +99,19 @@ object TfPsiPatterns {
       }
     })
 
-  val ProvisionerBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  val ProvisionerBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_PROVISIONER_IDENTIFIER)
     .withParent(or(ResourceRootBlock))
-    .with(createBlockPattern(HCL_PROVISIONER_IDENTIFIER))
 
-  val ResourceLifecycleBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  val ResourceLifecycleBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_LIFECYCLE_IDENTIFIER)
     .withParent(or(ResourceRootBlock))
-    .with(createBlockPattern(HCL_LIFECYCLE_IDENTIFIER))
 
-  val ResourceConnectionBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  val ResourceConnectionBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_CONNECTION_IDENTIFIER)
     .withParent(or(ResourceRootBlock, ProvisionerBlock))
-    .with(createBlockPattern(HCL_CONNECTION_IDENTIFIER))
 
-  val TerraformRootBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  val TerraformRootBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_TERRAFORM_IDENTIFIER)
     .and(RootBlock)
-    .with(createBlockPattern(HCL_TERRAFORM_IDENTIFIER))
 
-  val TfRequiredProvidersBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
-    .with(createBlockPattern(HCL_TERRAFORM_REQUIRED_PROVIDERS))
+  val TfRequiredProvidersBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_TERRAFORM_REQUIRED_PROVIDERS)
     .withSuperParent(2, TerraformRootBlock)
 
   val RequiredProvidersProperty: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
@@ -136,33 +125,29 @@ object TfPsiPatterns {
       }
     })
 
-  val LocalsRootBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  val LocalsRootBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_LOCALS_IDENTIFIER)
     .and(RootBlock)
-    .with(createBlockPattern(HCL_LOCALS_IDENTIFIER))
 
   val LocalsVariable: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
     .withParent(HCLObject::class.java)
     .withSuperParent(2, LocalsRootBlock)
 
-  val Backend: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
-    .with(createBlockPattern(HCL_BACKEND_IDENTIFIER))
+  val Backend: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_BACKEND_IDENTIFIER)
     .withSuperParent(2, TerraformRootBlock)
 
-  private val MovedBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  private val MovedBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_MOVED_BLOCK_IDENTIFIER)
     .and(RootBlock)
-    .with(createBlockPattern(HCL_MOVED_BLOCK_IDENTIFIER))
 
   val DynamicBlock: PsiElementPattern.Capture<HCLBlock>
   val DynamicBlockContent: PsiElementPattern.Capture<HCLBlock>
 
   init {
     val dynamicContentRef = Ref<ElementPattern<HCLBlock>>()
-    DynamicBlock = PlatformPatterns.psiElement(HCLBlock::class.java)
-      .with(createBlockPattern(HCL_DYNAMIC_BLOCK_IDENTIFIER))
+    DynamicBlock = withHclBlockPattern(HCL_DYNAMIC_BLOCK_IDENTIFIER)
       .withSuperParent(2, HCLPatterns.Block)
       .inside(true, or(ResourceRootBlock, DataSourceRootBlock, ProviderRootBlock, ProvisionerBlock, LazyInitElementPattern(dynamicContentRef)))
-    DynamicBlockContent = PlatformPatterns.psiElement(HCLBlock::class.java)
-      .with(createBlockPattern(HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER)).withSuperParent(2, DynamicBlock)
+    DynamicBlockContent = withHclBlockPattern(HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER)
+      .withSuperParent(2, DynamicBlock)
     dynamicContentRef.set(DynamicBlockContent)
   }
 
@@ -229,13 +214,12 @@ object TfPsiPatterns {
 
   val DescriptionProperty: PsiElementPattern.Capture<HCLProperty> = propertyWithName("description")
 
-  fun createBlockPattern(type: String): PatternCondition<HCLBlock?> {
-    return object : PatternCondition<HCLBlock?>("HCLBlock($type)") {
+  fun withHclBlockPattern(type: String): PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+    .with(object : PatternCondition<HCLBlock?>("HCLBlock($type)") {
       override fun accepts(t: HCLBlock, context: ProcessingContext?): Boolean {
         return t.getNameElementUnquoted(0) == type
       }
-    }
-  }
+    })
 
   fun propertyWithName(name: String): PsiElementPattern.Capture<HCLProperty> {
     return PlatformPatterns.psiElement(HCLProperty::class.java).with(object : PatternCondition<HCLProperty>("HCLProperty($name)") {
