@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
 import com.intellij.execution.ProgramRunnerUtil
@@ -53,7 +53,10 @@ internal sealed class TfRunBaseConfigAction : AnAction(), DumbAware {
 
     val runManager: RunManager = RunManager.getInstance(project)
     val configurationType = tfRunConfigurationType(toolType) ?: return
-    val existingConfiguration = runManager.findConfigurationByTypeAndName(configurationType, configurationName)
+    val existingConfiguration = runManager.allSettings.firstOrNull {
+      val configuration = it.configuration as? TfToolsRunConfigurationBase
+      it.type == configurationType && it.name == configurationName && configuration?.workingDirectory == rootModule.path
+    }
     val settings = existingConfiguration ?: createAndConfigureSettings(runManager, configurationName, rootModule.path, configurationType)
 
     runManager.selectedConfiguration = settings
