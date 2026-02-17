@@ -7,8 +7,10 @@ import com.intellij.patterns.PsiFilePattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.patterns.StandardPatterns.or
 import org.intellij.terraform.config.Constants.HCL_COMPONENT_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_CONFIG_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_INPUTS_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDERS_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_REMOVED_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_STACK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
@@ -45,4 +47,9 @@ internal object TfComponentPsiPatterns {
   val ProvidersPropertyOfComponent: PsiElementPattern.Capture<HCLProperty> = propertyWithName(HCL_PROVIDERS_IDENTIFIER)
     .withParent(HCLPatterns.Object)
     .withSuperParent(2, TfComponentBlock)
+
+  val ConfigOfProvider: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_CONFIG_IDENTIFIER)
+    .withParent(HCLPatterns.Object)
+    .withSuperParent(2, withHclBlockPattern(HCL_PROVIDER_IDENTIFIER))
+    .withSuperParent(3, TfComponentFile)
 }

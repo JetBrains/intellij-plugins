@@ -244,6 +244,25 @@ internal class TfComponentCompletionTest : CompletionTestCase() {
     )
   }
 
+  fun testProviderConfigCompletion() {
+    doBasicCompletionTest("""
+      provider "aws" "this" {
+        config {
+          <caret>
+        }
+      }
+    """.trimIndent(), "region", "assume_role_with_web_identity", "default_tags")
+
+    doBasicCompletionTest("""
+      provider "vault" "test" {
+        config {
+          address = "some_address"
+          tok<caret>
+        }
+      }
+    """.trimIndent(), "auth_login_token_file", "token", "token_name", "set_namespace_from_token", "skip_child_token")
+  }
+
   companion object {
     val TfComponentBlockKeywords: List<String> = TfComponentRootBlocks.map { it.name }
 
