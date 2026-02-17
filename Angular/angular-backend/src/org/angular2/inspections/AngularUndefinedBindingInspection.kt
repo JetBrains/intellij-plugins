@@ -27,6 +27,7 @@ import org.angular2.inspections.quickfixes.CreateDirectiveOutputIntentionAction
 import org.angular2.inspections.quickfixes.InputKind
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2Bundle.Companion.BUNDLE
+import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo
@@ -72,6 +73,12 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
         proximity = NOT_REACHABLE
       }
       else {
+        if (info.type == PROPERTY_BINDING && info.name.startsWith("aria-")
+            && !Angular2LangUtil.isAtLeastAngularVersion(attribute, Angular2LangUtil.AngularVersion.V_20_2)) {
+          holder.registerProblem(attribute.nameElement,
+                                 Angular2Bundle.message("angular.inspection.undefined-binding.message.aria-property-aliases-not-supported"),
+                                 )
+        }
         return
       }
     }
@@ -153,7 +160,7 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
                            severity,
                            *quickFixes.toTypedArray<LocalQuickFix>())
   }
-  
+
   private fun isFromNotSelector(attribute: XmlAttribute, descriptor: Angular2AttributeDescriptor): Boolean {
     val elementName = attribute.parent.name
     val attributeName = descriptor.name

@@ -189,6 +189,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   fun testBindingCompletion2TypeScript() {
     myFixture.configureByFiles("object_binding.html", "package.json", "object.ts")
     myFixture.completeBasic()
+    myFixture.type("\n")
     myFixture.checkResultByFile("object_binding.after.html")
   }
 
@@ -223,6 +224,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   fun testBindingCompletionViaBase2TypeScript() {
     myFixture.configureByFiles("object_binding_via_base.html", "package.json", "inheritor.ts", "object.ts")
     myFixture.completeBasic()
+    myFixture.type("\n")
     myFixture.checkResultByFile("object_binding_via_base.after.html")
   }
 
@@ -236,12 +238,14 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   fun testBindingOverride2CompletionTypeScript() {
     myFixture.configureByFiles("object_binding.html", "package.json", "objectOverride.ts")
     myFixture.completeBasic()
+    myFixture.type("\n")
     myFixture.checkResultByFile("object_binding.after.html")
   }
 
   fun testBindingAttributeCompletion2TypeScript() {
     myFixture.configureByFiles("attribute_binding.html", "package.json", "object.ts")
     myFixture.completeBasic()
+    myFixture.type("\n")
     myFixture.checkResultByFile("attribute_binding.after.html")
   }
 
@@ -290,6 +294,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   fun testBindingAttributeFunctionCompletion2TypeScript() {
     myFixture.configureByFiles("attribute_binding.html", "package.json", "object_with_function.ts")
     myFixture.completeBasic()
+    myFixture.type("\n")
     myFixture.checkResultByFile("attribute_binding.after.html")
   }
 
@@ -751,7 +756,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.type("bind-")
     assertContainsElements(myFixture.getLookupElementStrings()!!,
                                           "attr.")
-    myFixture.type("at\naat\n")
+    myFixture.type("attr\naat\n")
     val element = resolveToPolySymbolSource("bind-attr.aria-atomic<caret>=\"\"")
     assertEquals("aria.rnc", element.getContainingFile().getName())
   }

@@ -498,6 +498,12 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testInstanceof() =
     checkHighlighting(ANGULAR_CORE_21_2_0, extension = "ts")
 
+  fun testDirectAriaBindings_V20_1() =
+    checkHighlighting(ANGULAR_CORE_20_1_4, extension = "ts")
+
+  fun testDirectAriaBindings() =
+    checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

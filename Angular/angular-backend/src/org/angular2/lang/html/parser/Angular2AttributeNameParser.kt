@@ -6,6 +6,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.Html5TagAndAttributeNamesProvider
 import com.intellij.xml.util.Html5TagAndAttributeNamesProvider.Namespace
 import com.intellij.xml.util.HtmlUtil
+import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.html.psi.Angular2HtmlEvent
@@ -17,14 +18,6 @@ import org.angular2.web.ELEMENT_NG_TEMPLATE
 import org.jetbrains.annotations.Nls
 
 object Angular2AttributeNameParser {
-  val ATTR_TO_PROP_MAPPING: Map<String, String> = mapOf(
-    "class" to "className",
-    "for" to "htmlFor",
-    "formaction" to "formAction",
-    "innerHtml" to "innerHTML",
-    "readonly" to "readOnly",
-    "tabindex" to "tabIndex"
-  )
 
   fun parseBound(name: String, tagName: String): AttributeInfo {
     val info = parse(name)
@@ -205,7 +198,7 @@ object Angular2AttributeNameParser {
 
   private fun mapToHtmlProp(name: String, tagName: String): String =
     if (Html5TagAndAttributeNamesProvider.getTags(Namespace.HTML, false).contains(tagName))
-      ATTR_TO_PROP_MAPPING.getOrDefault(name, name)
+      DomElementSchemaRegistry.getMappedPropName(name)
     else
       name
 

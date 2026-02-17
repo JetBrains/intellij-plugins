@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
@@ -19,6 +20,7 @@ import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.html.StandardHtmlSymbol
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
@@ -29,7 +31,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
-import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2PsiSourcedSymbol
 import org.angular2.web.Angular2Symbol
@@ -104,6 +105,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
       else
         Angular2TypeUtils.createJSTypeSourceForXmlElement(templateFile)
       val tagClass = withTypeEvaluationLocation(templateFile) { WebJSTypesUtil.getHtmlElementClassType(typeSource, tagName) }
+      val ariaMixin = withTypeEvaluationLocation(templateFile) { WebJSTypesUtil.getAriaMixinClassType(typeSource) }
       val elementEventMap = Angular2TypeUtils.getElementEventMap(typeSource).asRecordType(templateFile)
 
       val allowedElementProperties = DomElementSchemaRegistry.getElementProperties(tagNamespace, tagName).toMutableSet()
@@ -111,11 +113,15 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
       elementEventMap.propertyNames.forEach { name -> eventNames.add(name) }
 
       fun addStandardProperty(name: String, project: Project, source: TypeScriptPropertySignature?) {
-        propToAttrName[name]?.let { consumer(Angular2StandardProperty(it, project, source, templateFile)) }
+        DomElementSchemaRegistry.getMappedBindingName(name)
+          ?.let { consumer(Angular2StandardProperty(it, project, source, templateFile)) }
         consumer(Angular2StandardProperty(name, project, source, templateFile))
       }
 
-      for (property in tagClass.asRecordType(templateFile).properties) {
+      for (property in sequenceOf(tagClass.asRecordType(templateFile),
+                                  ariaMixin.asRecordType(templateFile))
+        .flatMap { it.properties }
+      ) {
         val propertyDeclaration = property.memberSource.singleElement
         if (propertyDeclaration is TypeScriptPropertySignature) {
           if (propertyDeclaration.attributeList?.hasModifier(JSAttributeList.ModifierType.READONLY) == true) {
@@ -163,10 +169,6 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
 
   }
 
-  companion object {
-    private val propToAttrName = Angular2AttributeNameParser.ATTR_TO_PROP_MAPPING.entries.associateBy({ it.value }, { it.key })
-  }
-
   private class Angular2StandardProperty(
     override val name: String,
     override val project: Project,
@@ -188,6 +190,9 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
                                  templateFilePtr.dereference() ?: return@Pointer null)
       }
     }
+
+    override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
+      source?.asJSSymbol()?.getDocumentationTarget(location)
 
     override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
       when (property) {

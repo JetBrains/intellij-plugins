@@ -19,7 +19,6 @@ import com.intellij.lang.javascript.psi.JSEmptyExpression
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.JSParameterList
 import com.intellij.lang.javascript.psi.JSParenthesizedExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSRecordType
@@ -46,6 +45,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.sequenceOfNotNull
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.ANIMATE_ENTER_ATTR
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.ANIMATE_LEAVE_ATTR
+import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig.ControlFlowPreventingContentProjectionKind
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_CONTEXT_GUARD
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_GUARD_PREFIX
@@ -66,7 +66,6 @@ import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.expr.psi.Angular2RecursiveVisitor
-import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.Companion.createElementCssSelector
 import org.angular2.lang.selector.Angular2SelectorMatcher
 import org.angular2.web.scopes.INPUT_BINDING_FUN
@@ -1045,7 +1044,7 @@ private class TcbUnclaimedInputsOp(
             elId = this.scope.resolve(this.element)
           }
           // A direct binding to a property.
-          val propertyName = Angular2AttributeNameParser.ATTR_TO_PROP_MAPPING[binding.name] ?: binding.name
+          val propertyName = DomElementSchemaRegistry.getMappedPropName(binding.name)
           this.scope.addStatement {
             append(elId).append("[\"").append(propertyName, binding.keySpan).append("\"]")
             append(" = ")

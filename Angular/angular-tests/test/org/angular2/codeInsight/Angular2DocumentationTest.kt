@@ -107,6 +107,10 @@ class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
   fun testSignalStore() = doTest(ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0,
                                  configurators = listOf(Angular2TsConfigFile()))
 
+  fun testAriaProperty() = doTest(ANGULAR_CORE_20_1_4, ext = "html")
+
+  fun testAriaPropertyAlias() = doTest(ANGULAR_CORE_20_1_4, ext = "html")
+
   private fun doTestWithDeps(useConfig: Boolean = false) {
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                      additionalFiles = listOf("deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",
