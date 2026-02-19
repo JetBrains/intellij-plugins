@@ -1128,47 +1128,55 @@
           "name": "let"
         }
       ],
-      "implicit-usages": [
+      "ng-component-lifecycle-hooks": [
         {
           "name": "ngOnInit",
-          "kind": "class-method"
+          "doc-url": "https://angular.dev/guide/components/lifecycle#ngoninit",
+          "description": "The `ngOnInit` method runs after Angular has initialized all the components inputs with their initial values. A component's `ngOnInit` runs exactly once.\n\nThis step happens _before_ the component's own template is initialized. This means that you can update the component's state based on its initial input values."
         },
         {
           "name": "ngOnChanges",
-          "kind": "class-method"
+          "doc-url": "https://angular.dev/guide/components/lifecycle#ngonchanges",
+          "description": "The `ngOnChanges` method runs after any component inputs have changed.\n\nThis step happens _before_ the component's own template is checked. This means that you can update the component's state based on its initial input values.\n\nDuring initialization, the first `ngOnChanges` runs before `ngOnInit`.",
+          "parameters": [
+            {
+              "name": "changes",
+              "type": "import('@angular/core').SimpleChanges<__CLASS_NAME__>"
+            }
+          ]
         },
         {
           "name": "ngDoCheck",
-          "kind": "class-method"
+          "doc-url": "https://angular.dev/guide/components/lifecycle#ngdocheck",
+          "description": "The `ngDoCheck` method runs before every time Angular checks a component's template for changes.\n\nYou can use this lifecycle hook to manually check for state changes outside of Angular's normal change detection, manually updating the component's state.\n\nThis method runs very frequently and can significantly impact your page's performance. Avoid defining this hook whenever possible, only using it when you have no alternative.\n\nDuring initialization, the first `ngDoCheck` runs after `ngOnInit`."
         },
         {
           "name": "ngAfterContentInit",
-          "kind": "class-method"
+          "doc-url": "https://angular.dev/guide/components/lifecycle#ngaftercontentinit",
+          "description": "The `ngAfterContentInit` method runs once after all the children nested inside the component (its _content_) have been initialized.\n\nYou can use this lifecycle hook to read the results of content queries. While you can access the initialized state of these queries, attempting to change any state in this method results in an `ExpressionChangedAfterItHasBeenCheckedError`"
         },
         {
           "name": "ngAfterContentChecked",
-          "kind": "class-method"
+          "doc-url": "https://angular.dev/guide/components/lifecycle#ngaftercontentchecked",
+          "description": "The `ngAfterContentChecked` method runs every time the children nested inside the component (its _content_) have been checked for changes.\n\nThis method runs very frequently and can significantly impact your page's performance. Avoid defining this hook whenever possible, only using it when you have no alternative.\n\nWhile you can access the updated state of content queries here, attempting to change any state in this method results in an `ExpressionChangedAfterItHasBeenCheckedError`."
         },
         {
           "name": "ngAfterViewInit",
-          "kind": "class-method"
+          "doc-url": "https://angular.dev/guide/components/lifecycle#ngafterviewinit",
+          "description": "The `ngAfterViewInit` method runs once after all the children in the component's template (its _view_) have been initialized.\n\nYou can use this lifecycle hook to read the results of view queries. While you can access the initialized state of these queries, attempting to change any state in this method results in an `ExpressionChangedAfterItHasBeenCheckedError`"
         },
         {
           "name": "ngAfterViewChecked",
-          "kind": "class-method"
-        },
-        {
-          "name": "afterNextRender",
-          "kind": "class-method"
-        },
-        {
-          "name": "afterEveryRender",
-          "kind": "class-method"
+          "doc-url": "angular.dev/guide/components/lifecycle#ngafterviewchecked",
+          "description": "The `ngAfterViewChecked` method runs every time the children in the component's template (its _view_) have been checked for changes.\n\nThis method runs very frequently and can significantly impact your page's performance. Avoid defining this hook whenever possible, only using it when you have no alternative.\n\nWhile you can access the updated state of view queries here, attempting to change any state in this method results in an `ExpressionChangedAfterItHasBeenCheckedError`."
         },
         {
           "name": "ngOnDestroy",
-          "kind": "class-method"
-        },
+          "doc-url": "https://angular.dev/guide/components/lifecycle#ngondestroy",
+          "description": "The `ngOnDestroy` method runs once just before a component is destroyed. Angular destroys a component when it is no longer shown on the page, such as being hidden by `@if` or upon navigating to another page."
+        }
+      ],
+      "implicit-usages": [
         {
           "name": "effect",
           "kind": "class-field-initializer-method-call",

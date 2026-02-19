@@ -14,6 +14,7 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
 import org.angular2.Angular2TestModule.ANGULAR_CORE_15_1_5
 import org.angular2.Angular2TestModule.ANGULAR_CORE_19_2_0
 import org.angular2.Angular2TestModule.ANGULAR_CORE_21_2_0
+import org.angular2.Angular2TestModule.IONIC_ANGULAR_8_4_3
 import org.angular2.Angular2TsConfigFile
 import org.angular2.lang.Angular2Bundle
 
@@ -383,6 +384,12 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
       it.priority > 10.0
     }
   }
+
+  fun testComponentLifecycleHooks() =
+    doLookupTest(ANGULAR_CORE_21_2_0, renderTailText = true)
+
+  fun testIonicLifecycleHooks() =
+    doLookupTest(ANGULAR_CORE_21_2_0, IONIC_ANGULAR_8_4_3, renderTailText = true)
 
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 

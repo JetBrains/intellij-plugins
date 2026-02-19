@@ -28,7 +28,5 @@ export class AppComponent {
   ngAfterContentChecked(){ }
   ngAfterViewInit(){ }
   ngAfterViewChecked(){ }
-  afterNextRender(){ }
-  afterEveryRender(){ }
   ngOnDestroy(){ }
 }

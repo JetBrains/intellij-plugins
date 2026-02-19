@@ -81,6 +81,7 @@ import org.angular2.signals.Angular2SignalUtils.isViewChildrenSignalCall
 import org.angular2.templateBindingVarToDirectiveInput
 import org.angular2.web.scopes.Angular2CustomCssPropertiesScope
 import org.angular2.web.scopes.Angular2TemplateScope
+import org.angular2.web.scopes.Angular2ComponentExpectedMethodsScope
 import org.angular2.web.scopes.AttributeWithInterpolationsScope
 import org.angular2.web.scopes.BINDINGS_PROP
 import org.angular2.web.scopes.CreateComponentDirectiveBindingScope
@@ -144,6 +145,9 @@ class Angular2SymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
 
         forPsiLocation(JSObjectLiteralExpression::class.java)
           .contributeScopeProvider(JSObjectLiteralExpressionScopeProvider)
+
+        forPsiLocation(TypeScriptClass::class.java)
+          .contributeScopeProvider(TypeScriptClassScopeProvider)
 
         forPsiLocation(Angular2TemplateBindingKey::class.java)
           .contributeScopeProvider { element ->
@@ -278,6 +282,15 @@ class Angular2SymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
       )
     }
   }
+
+  private object TypeScriptClassScopeProvider : PolySymbolLocationQueryScopeProvider<TypeScriptClass> {
+    override fun getScopes(location: TypeScriptClass): List<PolySymbolScope> {
+      Angular2DecoratorUtil
+        .findDecorator(location, true, COMPONENT_DEC) ?: return emptyList()
+      return listOf(Angular2ComponentExpectedMethodsScope(location))
+    }
+  }
+
 }
 
 
@@ -408,6 +421,7 @@ val NG_TEMPLATE_BINDING_KEYWORDS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, 
 val NG_TEMPLATE_BINDINGS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-template-bindings"]
 val NG_KEY_EVENT_MODIFIERS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "key-event-modifiers"]
 val NG_CUSTOM_PROPERTY: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-custom-property"]
+val NG_COMPONENT_LIFECYCLE_HOOKS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-component-lifecycle-hooks"]
 
 fun isNgClassOrAnimateLiteralContext(literal: PsiElement): Boolean =
   isJSLiteralContextFromEmbeddedContent(literal, Angular2Binding::class.java, ::isNgClassOrAnimateAttribute)

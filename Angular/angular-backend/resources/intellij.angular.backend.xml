@@ -344,6 +344,7 @@
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@21.2.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
     <polySymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/ionic-angular@0.0.0.web-types.json"/>
 
     <polySymbols.queryScopeContributor implementation="org.angular2.web.Angular2SymbolQueryScopeContributor"/>
     <polySymbols.queryConfigurator implementation="org.angular2.web.Angular2SymbolQueryConfigurator"/>

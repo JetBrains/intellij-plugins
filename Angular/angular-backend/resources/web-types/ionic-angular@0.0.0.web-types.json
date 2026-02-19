@@ -1,0 +1,33 @@
+{
+  "name": "@ionic/angular",
+  "version": "0.0.0",
+  "framework": "angular",
+  "description-markup": "markdown",
+  "default-icon": "icons/angular2.svg",
+  "contributions": {
+    "js": {
+      "ng-component-lifecycle-hooks": [
+        {
+          "name": "ionViewWillEnter",
+          "doc-url": "https://ionicframework.com/docs/angular/lifecycle#ionic-page-events",
+          "description": "Fired when the component routing to is about to animate into view."
+        },
+        {
+          "name": "ionViewDidEnter",
+          "doc-url": "https://ionicframework.com/docs/angular/lifecycle#ionic-page-events",
+          "description": "Fired when the component routing to has _finished_ animating."
+        },
+        {
+          "name": "ionViewWillLeave",
+          "doc-url": "https://ionicframework.com/docs/angular/lifecycle#ionic-page-events",
+          "description": "Fired when the component routing _from_ is about to animate."
+        },
+        {
+          "name": "ionViewDidLeave",
+          "doc-url": "https://ionicframework.com/docs/angular/lifecycle#ionic-page-events",
+          "description": "Fired when the component routing _from_ has _finished_ animating."
+        }
+      ]
+    }
+  }
+}

@@ -37,6 +37,7 @@ object Angular2HighlightingUtils {
     TS_LOCAL_VARIABLE(TypeScriptHighlighter.TS_LOCAL_VARIABLE),
     TS_PROPERTY(TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE),
     TS_FUNCTION(TypeScriptHighlighter.TS_EXPORTED_FUNCTION),
+    TS_INSTANCE_METHOD(TypeScriptHighlighter.TS_INSTANCE_MEMBER_FUNCTION),
     TS_KEYWORD(TypeScriptHighlighter.TS_KEYWORD),
     HTML_TAG(XmlHighlighterColors.HTML_TAG_NAME),
     HTML_ATTRIBUTE(XmlHighlighterColors.HTML_ATTRIBUTE_NAME),

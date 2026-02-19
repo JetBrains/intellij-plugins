@@ -111,6 +111,10 @@ class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
 
   fun testAriaPropertyAlias() = doTest(ANGULAR_CORE_20_1_4, ext = "html")
 
+  fun testComponentLifecycleHook() = doTest(ANGULAR_CORE_20_1_4, ext = "ts")
+
+  fun testIonicLifecycleHook() = doTest(ANGULAR_CORE_20_1_4, Angular2TestModule.IONIC_ANGULAR_8_4_3, ext = "ts")
+
   private fun doTestWithDeps(useConfig: Boolean = false) {
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                      additionalFiles = listOf("deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",
