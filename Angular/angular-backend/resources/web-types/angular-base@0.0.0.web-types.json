@@ -1127,6 +1127,58 @@
         {
           "name": "let"
         }
+      ],
+      "implicit-usages": [
+        {
+          "name": "ngOnInit",
+          "kind": "class-method"
+        },
+        {
+          "name": "ngOnChanges",
+          "kind": "class-method"
+        },
+        {
+          "name": "ngDoCheck",
+          "kind": "class-method"
+        },
+        {
+          "name": "ngAfterContentInit",
+          "kind": "class-method"
+        },
+        {
+          "name": "ngAfterContentChecked",
+          "kind": "class-method"
+        },
+        {
+          "name": "ngAfterViewInit",
+          "kind": "class-method"
+        },
+        {
+          "name": "ngAfterViewChecked",
+          "kind": "class-method"
+        },
+        {
+          "name": "afterNextRender",
+          "kind": "class-method"
+        },
+        {
+          "name": "afterEveryRender",
+          "kind": "class-method"
+        },
+        {
+          "name": "ngOnDestroy",
+          "kind": "class-method"
+        },
+        {
+          "name": "effect",
+          "kind": "class-field-initializer-method-call",
+          "import": "@angular/core"
+        },
+        {
+          "name": "createEffect",
+          "kind": "class-field-initializer-method-call",
+          "import": "@ngrx/effects"
+        }
       ]
     }
   }

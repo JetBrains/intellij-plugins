@@ -41,6 +41,7 @@ import org.angular2.Angular2TestModule.ANGULAR_ROUTER_16_2_8
 import org.angular2.Angular2TestModule.IONIC_ANGULAR_4_1_1
 import org.angular2.Angular2TestModule.IONIC_ANGULAR_8_4_3
 import org.angular2.Angular2TestModule.IONIC_CORE_8_4_3
+import org.angular2.Angular2TestModule.NGRX_EFFECTS_21_0_1
 import org.angular2.Angular2TestModule.NGRX_SIGNALS_20_1_0
 import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TestModule.TS_LIB
@@ -506,6 +507,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testDirectAriaBindings() =
     checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts")
+
+  fun testImplicitUsages() =
+    checkHighlighting(ANGULAR_CORE_21_0_9, NGRX_EFFECTS_21_0_1, RXJS_7_8_1, extension = "ts")
 
   override fun setUp() {
     super.setUp()

@@ -3,6 +3,7 @@ package org.angular2.lang.expr.service
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.typescript.compiler.languageService.TS_ERROR_CODE_UNUSED_DECLARATION
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.codeFixes.TypeScriptLanguageServiceFix
 import com.intellij.psi.PsiElement

@@ -132,6 +132,9 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       super.getCompletionItemsSuspending(virtualFile, document, offset, parameters)
     }
 
+  override fun createErrorFilter(): (PsiFile, JSAnnotationError) -> Boolean =
+    Angular2LanguageServiceErrorFilter
+
   override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
     val result = getTranspiledDirectiveAndTopLevelSourceFile(file)
                    ?.let { (transpiledDirectiveFile, topLevelFile) ->
@@ -140,7 +143,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
                                             topLevelFile)
                    }
                  ?: errors
-    return result.filter { Angular2LanguageServiceErrorFilter.accept(file, it) }
+    return super.postprocessErrors(file, result)
   }
 
   override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> =

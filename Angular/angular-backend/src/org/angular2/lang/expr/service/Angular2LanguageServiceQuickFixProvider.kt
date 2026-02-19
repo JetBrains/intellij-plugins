@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.highlighting.JSLanguageServiceQuickFixProvider
 import com.intellij.lang.javascript.service.highlighting.JSLanguageServiceQuickFixProvider.JSLanguageServiceQuickFix
+import com.intellij.lang.typescript.compiler.languageService.TS_ERROR_CODE_TYPE_A_IS_NOT_ASSIGNABLE_TO_TYPE_B
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.openapi.util.TextRange

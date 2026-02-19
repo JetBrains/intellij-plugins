@@ -7,7 +7,7 @@ export class TestDir {
   @Input()
   protected protectedField!: string;
   @Input()
-  private <weak_warning descr="TS6133: 'privateField' is declared but its value is never read.">privateField</weak_warning>!: string;
+  private privateField!: string;
   @Input()
   readonly readonlyField!: string;
 }
