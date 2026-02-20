@@ -30,7 +30,7 @@ interface VueNamedComponent : VueComponent, VueSymbol {
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_VUE_COMPOSITION_COMPONENT -> VueCompositionContainer.isCompositionAppComponent(this) as T
-      else -> null
+      else -> super.get(property)
     }
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget>

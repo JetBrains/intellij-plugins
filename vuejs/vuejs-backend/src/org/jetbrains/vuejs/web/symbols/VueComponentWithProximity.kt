@@ -45,7 +45,7 @@ internal open class VueComponentWithProximity private constructor(
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_VUE_PROXIMITY -> vueProximity as T
-      else -> delegate[property]
+      else -> super[property]
     }
 
   override val searchTarget: PolySymbolSearchTarget

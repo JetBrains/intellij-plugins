@@ -2,6 +2,7 @@
 package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
@@ -12,7 +13,7 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.symbols.JSPropertySymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.types.JSTypeProperty
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
@@ -43,13 +44,8 @@ data class AstroNamespacedComponent(
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(source.project).modificationCount
 
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_JS_TYPE -> property.tryCast(type)
-      else -> super.get(property)
-    }
-
-  private val type: Any
+  @PolySymbol.Property(JSTypeProperty::class)
+  private val type: JSType
     get() = JSPsiBasedTypeOfType(
       (source as? JSPsiNamedElementBase)?.resolveIfImportSpecifier() ?: source, false)
 

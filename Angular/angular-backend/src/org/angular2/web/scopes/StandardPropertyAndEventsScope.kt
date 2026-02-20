@@ -6,6 +6,7 @@ import com.intellij.documentation.mdn.getDomEventDocumentation
 import com.intellij.javascript.web.js.WebJSTypesUtil
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
@@ -21,7 +22,7 @@ import com.intellij.polySymbols.html.StandardHtmlSymbol
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.symbols.asJSSymbol
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.types.JSTypeProperty
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
@@ -194,11 +195,9 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
       source?.asJSSymbol()?.getDocumentationTarget(location)
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      when (property) {
-        PROP_JS_TYPE -> property.tryCast(source?.getJSType(templateFile))
-        else -> super.get(property)
-      }
+    @PolySymbol.Property(JSTypeProperty::class)
+    val jsType: JSType?
+      get() = source?.getJSType(templateFile)
 
     override val kind: PolySymbolKind
       get() = JS_PROPERTIES
@@ -253,15 +252,14 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
       }
     }
 
+    @PolySymbol.Property(JSTypeProperty::class)
+    val jsType: JSType?
+      get() = Angular2TypeUtils.extractEventVariableType(mainSource?.getJSType(templateFile))
+              ?: mapSource?.getJSType(templateFile)
+
     override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      when (property) {
-        PROP_JS_TYPE -> property.tryCast(
-          Angular2TypeUtils.extractEventVariableType(mainSource?.getJSType(templateFile))
-          ?: mapSource?.getJSType(templateFile)
-        )
-        else -> super<StandardHtmlSymbol>.get(property)
-                ?: super<Angular2PsiSourcedSymbol>.get(property)
-      }
+      super<StandardHtmlSymbol>.get(property)
+      ?: super<Angular2PsiSourcedSymbol>.get(property)
 
     override val priority: PolySymbol.Priority
       get() = PolySymbol.Priority.NORMAL

@@ -15,7 +15,7 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.documentation.JSSymbolWithSubstitutor
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.types.JSTypeProperty
 import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.NavigatablePsiElement
@@ -80,6 +80,7 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSSymbolW
   override val priority: PolySymbol.Priority?
     get() = PolySymbol.Priority.LOW
 
+  @PolySymbol.Property(JSTypeProperty::class)
   val type: JSType?
     get() = if (kind == NG_DIRECTIVE_OUTPUTS)
       Angular2TypeUtils.extractEventVariableType(rawJsType)
@@ -98,7 +99,6 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSSymbolW
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
-      PROP_JS_TYPE -> property.tryCast(type)
       PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(attributeValue)
       else -> super.get(property)
     }

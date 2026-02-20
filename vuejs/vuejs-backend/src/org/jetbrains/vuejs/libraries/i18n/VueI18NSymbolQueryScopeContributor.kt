@@ -77,7 +77,7 @@ class VueI18NSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
     }
   }
 
-  private class I18nTagExtension(private val lang: String) : PolySymbol, VueSymbol {
+  private class I18nTagExtension(private val lang: String) : VueSymbol {
 
     override val name: String
       get() = "i18n"
@@ -91,7 +91,7 @@ class VueI18NSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
     override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
       when (property) {
         PolySymbol.PROP_INJECT_LANGUAGE -> property.tryCast(lang)
-        else -> null
+        else -> super.get(property)
       }
 
     override fun createPointer(): Pointer<out PolySymbol> =

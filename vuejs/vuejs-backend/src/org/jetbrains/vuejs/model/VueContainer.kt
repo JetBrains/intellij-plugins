@@ -74,7 +74,7 @@ data class VueModelDirectiveProperties(
     when (property) {
       PROP_VUE_MODEL_PROP -> prop as T?
       PROP_VUE_MODEL_EVENT -> event as T?
-      else -> null
+      else -> super.get(property)
     }
 
   override fun createPointer(): Pointer<VueModelDirectiveProperties> =

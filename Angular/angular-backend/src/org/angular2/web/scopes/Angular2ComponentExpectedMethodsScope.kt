@@ -14,14 +14,13 @@ import com.intellij.model.Symbol
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.js.JS_EXPECTED_METHODS
 import com.intellij.polySymbols.js.JS_PARAMETERS
 import com.intellij.polySymbols.js.jsType
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.types.JSTypeProperty
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.PolySymbolDelegate
@@ -84,13 +83,12 @@ internal class Angular2ComponentExpectedMethodsScope(cls: TypeScriptClass) :
     override val kind: PolySymbolKind
       get() = JS_EXPECTED_METHODS
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      when (property) {
-        PROP_JS_TYPE -> JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(psiContext) {
-          val typeSource = JSTypeSourceFactory.createTypeSource(psiContext)
-          property.tryCast(JSFunctionTypeImpl(typeSource, buildParameters(), JSNamedTypeFactory.createVoidType(typeSource)))
-        }
-        else -> super[property]
+
+    @PolySymbol.Property(JSTypeProperty::class)
+    val jsType: JSFunctionTypeImpl
+      get() = JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(psiContext) {
+        val typeSource = JSTypeSourceFactory.createTypeSource(psiContext)
+        JSFunctionTypeImpl(typeSource, buildParameters(), JSNamedTypeFactory.createVoidType(typeSource))
       }
 
     private fun buildParameters(): List<JSParameterTypeDecorator> {

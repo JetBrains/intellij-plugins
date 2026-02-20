@@ -10,7 +10,7 @@ import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.html.HtmlFrameworkSymbol
 import com.intellij.polySymbols.js.JsSymbolSymbolKind
 import com.intellij.polySymbols.js.PROP_JS_SYMBOL_KIND
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.types.JSTypeProperty
 import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.polySymbols.utils.PolySymbolTypeSupport
 import com.intellij.psi.PsiElement
@@ -21,6 +21,7 @@ import javax.swing.Icon
 
 interface VueSymbol : HtmlFrameworkSymbol, VueElement {
 
+  @PolySymbol.Property(JSTypeProperty::class)
   val type: JSType? get() = null
 
   override val framework: FrameworkId
@@ -32,7 +33,6 @@ interface VueSymbol : HtmlFrameworkSymbol, VueElement {
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PolySymbol.PROP_DOC_HIDE_ICON -> property.tryCast(true)
-      PROP_JS_TYPE -> property.tryCast(type)
       PROP_JS_SYMBOL_KIND -> property.tryCast(JsSymbolSymbolKind.Property)
       PolySymbolTypeSupport.PROP_TYPE_SUPPORT -> property.tryCast(TypeScriptSymbolTypeSupport.default)
       else -> super.get(property)

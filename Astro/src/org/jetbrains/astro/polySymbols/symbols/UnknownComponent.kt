@@ -47,7 +47,7 @@ class UnknownComponent(override val source: PsiElement, override val name: @NlsS
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? = when (property) {
     PolySymbol.PROP_HIDE_FROM_COMPLETION -> true as T
     PolySymbol.PROP_DOC_HIDE_PATTERN -> true as T
-    else -> null
+    else -> super<ComponentPolySymbol>.get(property)
   }
 
   override fun getModificationCount(): Long = PsiModificationTracker.getInstance(source.project).modificationCount

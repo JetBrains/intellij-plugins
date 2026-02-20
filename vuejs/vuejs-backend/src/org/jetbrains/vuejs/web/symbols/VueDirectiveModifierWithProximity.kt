@@ -32,7 +32,7 @@ internal open class VueDirectiveModifierWithProximity private constructor(
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_VUE_PROXIMITY -> vueProximity as T
-      else -> delegate[property]
+      else -> delegate[property] ?: super[property]
     }
 
   override val searchTarget: PolySymbolSearchTarget

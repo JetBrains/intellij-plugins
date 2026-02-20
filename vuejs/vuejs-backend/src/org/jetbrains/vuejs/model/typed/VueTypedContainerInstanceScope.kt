@@ -1,15 +1,15 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.typed
 
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.types.JSTypeProperty
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiModificationTracker
@@ -47,11 +47,9 @@ internal class VueTypedContainerInstanceScope(container: VueTypedContainer) :
     override val name: @NlsSafe String
       get() = "wrapper"
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      when (property) {
-        PROP_JS_TYPE -> property.tryCast(container.thisType)
-        else -> null
-      }
+    @PolySymbol.Property(JSTypeProperty::class)
+    private val type: JSType
+      get() = container.thisType
 
     override fun createPointer(): Pointer<out PolySymbol> {
       val containerPtr = container.createPointer()

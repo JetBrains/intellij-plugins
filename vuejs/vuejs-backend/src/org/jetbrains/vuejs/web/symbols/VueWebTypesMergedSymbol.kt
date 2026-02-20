@@ -18,8 +18,6 @@ import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
-import com.intellij.polySymbols.js.jsType
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
@@ -72,8 +70,7 @@ class VueWebTypesMergedSymbol(
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(symbols.asSequence().map { it[PROP_HTML_ATTRIBUTE_VALUE] }.merge())
-      PROP_JS_TYPE -> property.tryCast(symbols.firstNotNullOfOrNull { it.jsType })
-      else -> symbols.asSequence().mapNotNull { it[property] }.firstOrNull()
+      else -> symbols.firstNotNullOfOrNull { it[property] }
     }
 
   override val modifiers: Set<PolySymbolModifier>

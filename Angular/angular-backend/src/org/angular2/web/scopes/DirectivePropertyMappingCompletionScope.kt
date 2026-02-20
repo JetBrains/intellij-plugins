@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
@@ -19,7 +20,7 @@ import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.js.symbols.JSPropertySymbol
 import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.types.JSTypeProperty
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
@@ -174,19 +175,18 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
     override val icon: Icon?
       get() = super<Angular2Symbol>.icon
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      when (property) {
-        PROP_JS_TYPE -> property.tryCast(
-          if (kind == NG_DIRECTIVE_OUTPUTS) {
-            Angular2TypeUtils.extractEventVariableType(super<PolySymbolDelegate>[PROP_JS_TYPE])
-          }
-          else {
-            Angular2EntityUtils.jsTypeFromAcceptInputType(owner, name) ?: super<PolySymbolDelegate>[PROP_JS_TYPE]
-          }
-        )
-        else -> super<PolySymbolDelegate>.get(property)
-                ?: super<Angular2Symbol>.get(property)
+    @PolySymbol.Property(JSTypeProperty::class)
+    val jsType: JSType?
+      get() = if (kind == NG_DIRECTIVE_OUTPUTS) {
+        Angular2TypeUtils.extractEventVariableType(delegate[JSTypeProperty])
       }
+      else {
+        Angular2EntityUtils.jsTypeFromAcceptInputType(owner, name) ?: delegate[JSTypeProperty]
+      }
+
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+      super<PolySymbolDelegate>.get(property)
+      ?: super<Angular2Symbol>.get(property)
 
     override fun isEquivalentTo(symbol: Symbol): Boolean =
       symbol == this

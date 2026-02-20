@@ -45,7 +45,7 @@ import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.js.toPropertySignature
 import com.intellij.polySymbols.js.types.JSSymbolScopeType
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.types.JSTypeProperty
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
@@ -499,6 +499,7 @@ private constructor(
         VueJsPropertyWithProximity(delegate, vueProximity, typeProvider)
   }
 
+  @PolySymbol.Property(JSTypeProperty::class)
   private val type by lazy(LazyThreadSafetyMode.NONE) {
     typeProvider?.getType() ?: delegate.jsType
   }
@@ -520,9 +521,8 @@ private constructor(
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
-      PROP_JS_TYPE -> property.tryCast(type)
       PROP_VUE_PROXIMITY -> property.tryCast(vueProximity)
-      else -> delegate[property]
+      else -> super[property]
     }
 
   override fun equals(other: Any?): Boolean =
@@ -595,6 +595,7 @@ data class VueInstancePropertySymbol(
   private val navigationTarget: NavigationTarget? = null,
 ) : PolySymbol {
 
+  @PolySymbol.Property(JSTypeProperty::class)
   private val type by lazy(LazyThreadSafetyMode.NONE) { typeProvider?.getType() }
 
   override val kind: PolySymbolKind
@@ -607,7 +608,6 @@ data class VueInstancePropertySymbol(
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_JS_SYMBOL_KIND -> property.tryCast(jsKind)
-      PROP_JS_TYPE -> property.tryCast(type)
       else -> super.get(property)
     }
 
@@ -635,18 +635,13 @@ private class VueStandardPropertySymbol(
   override val psiContext: PsiElement,
 ) : PolySymbol, PolySymbolScope {
 
+  @PolySymbol.Property(JSTypeProperty::class)
   private val type: JSType? by lazy(LazyThreadSafetyMode.NONE) {
     JSSymbolScopeType(this, psiContext)
   }
 
   override val kind: PolySymbolKind
     get() = JS_PROPERTIES
-
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_JS_TYPE -> property.tryCast(type)
-      else -> super.get(property)
-    }
 
   override fun getSymbols(kind: PolySymbolKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
     if (kind == JS_PROPERTIES) properties else emptyList()
@@ -714,6 +709,7 @@ private data class VueMergedPropertiesSymbol(
       PolySymbolModifier.OPTIONAL.takeIf { properties.all { it.modifiers.contains(PolySymbolModifier.OPTIONAL) } }
     )
 
+  @PolySymbol.Property(JSTypeProperty::class)
   private val type: JSType? by lazy(LazyThreadSafetyMode.NONE) {
     properties
       .mapNotNull { it.jsType }
@@ -737,7 +733,6 @@ private data class VueMergedPropertiesSymbol(
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
-      PROP_JS_TYPE -> property.tryCast(type)
       PROP_JS_PROPERTY_SIGNATURE -> property.tryCast(propertySignature)
       PROP_VUE_PROXIMITY -> property.tryCast(properties.asSequence().mapNotNull { it[PROP_VUE_PROXIMITY] }.maxBy { it.ordinal })
       else -> super.get(property)
