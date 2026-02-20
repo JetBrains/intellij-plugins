@@ -3,7 +3,7 @@ package org.angular2
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.injections.JSInjectionUtil
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSBinaryExpression
 import com.intellij.lang.javascript.psi.JSCallExpression
@@ -11,13 +11,16 @@ import com.intellij.lang.javascript.psi.JSExecutionScope
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSParenthesizedExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSPsiElementBase
+import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.psi.StubSafe
 import com.intellij.lang.javascript.psi.StubUnsafe
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
@@ -30,10 +33,12 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.util.PsiTreeUtil.getContextOfType
 import com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList
+import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.util.ArrayUtil.contains
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
+import org.angular2.index.Angular2IndexUtil
 import org.angular2.index.TS_CLASS_TOKENS
 import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.lang.Angular2LangUtil
@@ -146,17 +151,48 @@ object Angular2DecoratorUtil {
 
   @StubUnsafe
   @JvmStatic
-  fun getExpressionStringValue(value: JSExpression?): String? {
-    return when {
-      value is JSBinaryExpression -> {
-        JSInjectionUtil.getConcatenationText(value)
-      }
-      value is JSLiteralExpression && value.isQuotedLiteral -> {
-        value.stringValue
-      }
-      else -> null
-    }
-  }
+  fun getExpressionStringValue(value: JSExpression?, processed: MutableSet<PsiElement> = mutableSetOf()): String? =
+    if (value != null && processed.add(value))
+      when (value) {
+        is JSBinaryExpression -> {
+          val result = StringBuilder()
+          value.accept(object : JSRecursiveWalkingElementVisitor() {
+            override fun visitJSExpression(node: JSExpression) {
+              if (node is JSBinaryExpression && node.getOperationSign() === JSTokenTypes.PLUS ||
+                  node is JSParenthesizedExpression)
+                super.visitElement(node)
+              else
+                getExpressionStringValue(node, processed)?.let(result::append)
+            }
+          })
+          result.toString()
+        }
+        is JSStringTemplateExpression -> {
+          val result = StringBuilder()
+          value.acceptChildren(object : JSRecursiveWalkingElementVisitor() {
+            override fun visitElement(element: PsiElement) {
+              if (element.elementType == JSTokenTypes.STRING_TEMPLATE_PART)
+                result.append(element.text)
+              else if (element is JSExpression)
+                getExpressionStringValue(element, processed)?.let(result::append)
+              else
+                super.visitElement(element)
+            }
+          })
+          result.toString()
+        }
+        is JSLiteralExpression if value.isQuotedLiteral -> {
+          value.stringValue
+        }
+        is JSReferenceExpression -> {
+          Angular2IndexUtil.resolveLocally(value)
+            .firstNotNullOfOrNull { it as? JSVariable }
+            ?.initializer
+            ?.let { getExpressionStringValue(it, processed) }
+        }
+        else -> null
+      }.also { processed.remove(value) }
+    else null
 
   @StubSafe
   @JvmStatic
@@ -281,4 +317,5 @@ object Angular2DecoratorUtil {
 
   private fun JSExpression.unwrapParenthesis(): JSExpression? =
     JSUtils.unparenthesize(this)
+
 }

@@ -474,6 +474,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testLibraryWithSignals() =
     checkHighlighting(ANGULAR_CORE_20_1_4, configureFileName = "my-component.ts", dir = true)
 
+  fun testConstAsSelector() =
+    checkHighlighting(ANGULAR_CORE_21_2_0, extension = "ts")
+
   fun testSpreadSyntax_V20() =
     checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts")
 
