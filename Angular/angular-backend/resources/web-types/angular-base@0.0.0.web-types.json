@@ -1176,15 +1176,13 @@
           "description": "The `ngOnDestroy` method runs once just before a component is destroyed. Angular destroys a component when it is no longer shown on the page, such as being hidden by `@if` or upon navigating to another page."
         }
       ],
-      "implicit-usages": [
+      "implicit-field-through-initializer-method-call-usages": [
         {
           "name": "effect",
-          "kind": "class-field-initializer-method-call",
           "import": "@angular/core"
         },
         {
           "name": "createEffect",
-          "kind": "class-field-initializer-method-call",
           "import": "@ngrx/effects"
         }
       ]
