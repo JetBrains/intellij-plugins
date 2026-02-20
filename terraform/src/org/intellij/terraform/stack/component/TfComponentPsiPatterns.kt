@@ -14,8 +14,8 @@ import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_REMOVED_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_STACK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
+import org.intellij.terraform.config.patterns.TfPsiPatterns.createBlockPattern
 import org.intellij.terraform.config.patterns.TfPsiPatterns.propertyWithName
-import org.intellij.terraform.config.patterns.TfPsiPatterns.withHclBlockPattern
 import org.intellij.terraform.hcl.patterns.HCLPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLFile
@@ -25,16 +25,16 @@ internal object TfComponentPsiPatterns {
   val TfComponentFile: PsiFilePattern.Capture<HCLFile> = PlatformPatterns.psiFile(HCLFile::class.java)
     .withFileType(StandardPatterns.instanceOf(TfComponentFileType::class.java))
 
-  val TfComponentRequiredProviders: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_TERRAFORM_REQUIRED_PROVIDERS)
+  val TfComponentRequiredProviders: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_TERRAFORM_REQUIRED_PROVIDERS)
     .withParent(TfComponentFile)
 
-  val TfComponentBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_COMPONENT_IDENTIFIER)
+  val TfComponentBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_COMPONENT_IDENTIFIER)
     .withParent(TfComponentFile)
 
-  val TfStackBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_STACK_IDENTIFIER)
+  val TfStackBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_STACK_IDENTIFIER)
     .withParent(TfComponentFile)
 
-  val TfComponentRemovedBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_REMOVED_BLOCK_IDENTIFIER)
+  val TfComponentRemovedBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_REMOVED_BLOCK_IDENTIFIER)
     .withParent(TfComponentFile)
 
   val TfComponentBlocksWithSource: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
@@ -48,8 +48,8 @@ internal object TfComponentPsiPatterns {
     .withParent(HCLPatterns.Object)
     .withSuperParent(2, TfComponentBlock)
 
-  val ConfigOfProvider: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(HCL_CONFIG_IDENTIFIER)
+  val ConfigOfProvider: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_CONFIG_IDENTIFIER)
     .withParent(HCLPatterns.Object)
-    .withSuperParent(2, withHclBlockPattern(HCL_PROVIDER_IDENTIFIER))
+    .withSuperParent(2, createBlockPattern(HCL_PROVIDER_IDENTIFIER))
     .withSuperParent(3, TfComponentFile)
 }

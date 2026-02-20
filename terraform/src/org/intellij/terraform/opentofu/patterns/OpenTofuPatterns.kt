@@ -7,7 +7,7 @@ import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.patterns.TfPsiPatterns
-import org.intellij.terraform.config.patterns.TfPsiPatterns.withHclBlockPattern
+import org.intellij.terraform.config.patterns.TfPsiPatterns.createBlockPattern
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLProperty
@@ -18,13 +18,13 @@ import org.intellij.terraform.opentofu.OpenTofuConstants
 
 internal object OpenTofuPatterns {
 
-  val EncryptionBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(OpenTofuConstants.TOFU_ENCRYPTION)
+  val EncryptionBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(OpenTofuConstants.TOFU_ENCRYPTION)
     .withSuperParent(2, TfPsiPatterns.TerraformRootBlock)
 
-  val KeyProviderBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(OpenTofuConstants.TOFU_KEY_PROVIDER)
+  val KeyProviderBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(OpenTofuConstants.TOFU_KEY_PROVIDER)
     .withSuperParent(2, EncryptionBlock)
 
-  val EncryptionMethodBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(OpenTofuConstants.TOFU_ENCRYPTION_METHOD_BLOCK)
+  val EncryptionMethodBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(OpenTofuConstants.TOFU_ENCRYPTION_METHOD_BLOCK)
     .withSuperParent(2, EncryptionBlock)
 
   val EncryptionMethodKeysProperty: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
@@ -41,13 +41,13 @@ internal object OpenTofuPatterns {
       .withParent(HCLIdentifier::class.java)
       .withSuperParent(2, EncryptionMethodKeysProperty)
 
-  val EncryptionStateBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(OpenTofuConstants.TOFU_STATE_BLOCK)
+  val EncryptionStateBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(OpenTofuConstants.TOFU_STATE_BLOCK)
     .withSuperParent(2, EncryptionBlock)
 
-  val EncryptionPlanBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(OpenTofuConstants.TOFU_PLAN_BLOCK)
+  val EncryptionPlanBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(OpenTofuConstants.TOFU_PLAN_BLOCK)
     .withSuperParent(2, EncryptionBlock)
 
-  val EncryptionFallbackMethodBlock: PsiElementPattern.Capture<HCLBlock> = withHclBlockPattern(OpenTofuConstants.TOFU_FALLBACK_BLOCK)
+  val EncryptionFallbackMethodBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(OpenTofuConstants.TOFU_FALLBACK_BLOCK)
     .andOr(
       PlatformPatterns.psiElement(HCLBlock::class.java).withSuperParent(2, EncryptionStateBlock),
       PlatformPatterns.psiElement(HCLBlock::class.java).withSuperParent(2, EncryptionPlanBlock)

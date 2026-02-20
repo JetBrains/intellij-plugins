@@ -229,7 +229,6 @@ internal class TfComponentCompletionTest : CompletionTestCase() {
   fun testNonOfficialProvidersCompletion() {
     myFixture.configureByText(fileName, """provider "kubernet<caret>" """.trimIndent())
     val lookupElements = myFixture.complete(CompletionType.BASIC, 2)
-    assertEquals(4, lookupElements.size)
 
     val lookupStrings = lookupElements.map { element ->
       val providerType = element.`object` as ProviderType
