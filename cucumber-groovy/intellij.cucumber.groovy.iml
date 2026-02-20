@@ -45,5 +45,6 @@
     <orderEntry type="module" module-name="intellij.java.impl" />
     <orderEntry type="library" name="cucumber-core-1" level="project" />
     <orderEntry type="module" module-name="intellij.cucumber.java" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model" />
   </component>
 </module>

@@ -26,5 +26,7 @@
     <orderEntry type="module" module-name="intellij.go.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.go.plugin" scope="TEST" />
     <orderEntry type="module" module-name="intellij.go.frontback" />
+    <orderEntry type="module" module-name="intellij.libraries.kotlinx.collections.immutable" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
   </component>
 </module>
