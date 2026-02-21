@@ -67,6 +67,7 @@ jvm_library(
     "@community//plugins/copyright",
     "@community//platform/execution",
     "@community//platform/lang-api:lang",
+    "@community//platform/structure-view-impl:structureView-impl",
   ]
 )
 
@@ -173,6 +174,8 @@ jvm_library(
     "@community//platform/execution:execution_test_lib",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/structure-view-impl:structureView-impl",
+    "@community//platform/structure-view-impl:structureView-impl_test_lib",
   ],
   runtime_deps = [
     "@community//platform/platform-impl:ide-impl_test_lib",

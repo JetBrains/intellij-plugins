@@ -77,6 +77,8 @@ jvm_library(
     "@community//platform/refactoring:refactoring_test_lib",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/structure-view-impl:structureView-impl",
+    "@community//platform/structure-view-impl:structureView-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@community//platform/util/jdom:jdom_test_lib",
