@@ -47,6 +47,38 @@ class QodanaLicenseCheckerTest {
   }
 
   @Test
+  fun parseQDPLLicenseYes() {
+    val license = """
+      {
+        "licenseId": "HG6V8JA1K3",
+        "licenseeName": "Keith Wojciech",
+        "assigneeName": "",
+        "assigneeEmail": "",
+        "licenseRestriction": "",
+        "checkConcurrentUse": false,
+        "products": [
+          {
+            "code": "QDL",
+            "paidUpTo": "2023-10-20",
+            "extended": false,
+            "properties": {
+              "plan": "QDPL"
+            }
+          }
+        ],
+        "metadata": "0120221020PSAA001009",
+        "hash": "39107469/0:-1863690899",
+        "gracePeriodDays": 7,
+        "autoProlongated": false,
+        "isAutoProlongated": false
+      }
+    """.trimIndent()
+    Assert.assertEquals(
+      QodanaLicense(QodanaLicenseType.PREMIUM_LIGHT, false, SimpleDateFormat("yyyy-MM-dd").parse("2023-10-20")),
+      QodanaLicenseChecker.parseLicense(license))
+  }
+
+  @Test
   fun parseTrialLicenseYes() {
     val license = """
       {
