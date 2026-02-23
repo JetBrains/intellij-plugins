@@ -26,7 +26,7 @@ import java.time.Duration
 import java.time.Instant
 
 object UsageCollector : CounterUsagesCollector() {
-  private val GROUP = QodanaEventLogGroup("qodana.usage", 14)
+  private val GROUP = QodanaEventLogGroup("qodana.usage", 15)
 
   override fun getGroup() = GROUP.eventLogGroup
 
