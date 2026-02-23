@@ -1,5 +1,5 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-import {Component, signal, effect} from '@angular/core';
+import {Component, afterRenderEffect, signal, effect} from '@angular/core';
 import {createEffect} from "@ngrx/effects";
 
 @Component({
@@ -19,6 +19,7 @@ export class AppComponent {
 
   //Signal effects
   private loggingEffect = effect(() => null);
+  private afterEffect = afterRenderEffect(() => null);
 
   // Lifecycle hooks
   ngOnInit(){ }

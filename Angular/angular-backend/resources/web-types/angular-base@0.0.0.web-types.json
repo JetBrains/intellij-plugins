@@ -1182,6 +1182,10 @@
           "import": "@angular/core"
         },
         {
+          "name": "afterRenderEffect",
+          "import": "@angular/core"
+        },
+        {
           "name": "createEffect",
           "import": "@ngrx/effects"
         }
