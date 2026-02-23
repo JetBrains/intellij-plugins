@@ -9,6 +9,7 @@ import com.intellij.ui.LicensingFacade
 import org.jetbrains.qodana.license.QodanaLicenseType.COMMUNITY
 import org.jetbrains.qodana.license.QodanaLicenseType.NONE
 import org.jetbrains.qodana.license.QodanaLicenseType.PREMIUM
+import org.jetbrains.qodana.license.QodanaLicenseType.PREMIUM_LIGHT
 import org.jetbrains.qodana.license.QodanaLicenseType.ULTIMATE
 import org.jetbrains.qodana.license.QodanaLicenseType.ULTIMATE_PLUS
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
@@ -42,6 +43,7 @@ enum class QodanaLicenseType(val presentableName: String) {
   ULTIMATE("Ultimate"),
   ULTIMATE_PLUS("Ultimate Plus"),
   PREMIUM("Premium"),
+  PREMIUM_LIGHT("Premium Light"),
   NONE("None")
 }
 
@@ -222,6 +224,7 @@ object QodanaLicenseChecker {
       "QDUE" -> ULTIMATE_PLUS
       "QDUP" -> ULTIMATE_PLUS
       "QDP" -> PREMIUM
+      "QDPL" -> PREMIUM_LIGHT
       "QDU" -> ULTIMATE
       "QDC" -> COMMUNITY
       else -> throw QodanaException("Unknown license type '$planText'")

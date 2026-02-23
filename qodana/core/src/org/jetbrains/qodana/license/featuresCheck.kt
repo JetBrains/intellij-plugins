@@ -3,6 +3,7 @@ package org.jetbrains.qodana.license
 import com.intellij.codeInspection.ex.ToolsImpl
 import org.jetbrains.qodana.license.QodanaLicenseType.NONE
 import org.jetbrains.qodana.license.QodanaLicenseType.PREMIUM
+import org.jetbrains.qodana.license.QodanaLicenseType.PREMIUM_LIGHT
 import org.jetbrains.qodana.license.QodanaLicenseType.ULTIMATE
 import org.jetbrains.qodana.license.QodanaLicenseType.ULTIMATE_PLUS
 
@@ -18,7 +19,7 @@ private val ULTIMATE_PLUS_INSPECTIONS: Set<String> = setOf(
 )
 
 internal fun QodanaLicenseType.isInspectionLicensed(from: ToolsImpl): Boolean {
-  if (this == ULTIMATE_PLUS || this == PREMIUM) return true
+  if (this == ULTIMATE_PLUS || this == PREMIUM || this == PREMIUM_LIGHT) return true
   if (this == NONE) return false
   if (from.tool.shortName in ULTIMATE_PLUS_INSPECTIONS) return false
 
@@ -27,5 +28,5 @@ internal fun QodanaLicenseType.isInspectionLicensed(from: ToolsImpl): Boolean {
 }
 
 internal fun QodanaLicenseType.isFixesAvailable(): Boolean {
-  return this == ULTIMATE_PLUS || this == ULTIMATE || this == PREMIUM
+  return this == ULTIMATE_PLUS || this == ULTIMATE || this == PREMIUM || this == PREMIUM_LIGHT
 }
