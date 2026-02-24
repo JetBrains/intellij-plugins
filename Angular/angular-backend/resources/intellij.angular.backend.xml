@@ -7,9 +7,6 @@
     <plugin id="com.intellij.modules.ultimate"/>
     <plugin id="HtmlTools"/>
     <plugin id="intellij.webpack"/>
-
-    <!-- TODO remove this dependency (see org.angular2.cli.config.AngularLintConfiguration ) -->
-    <plugin id="tslint"/>
   </dependencies>
 
   <extensionPoints>

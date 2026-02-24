@@ -36,7 +36,7 @@
     <module name="intellij.angular.backend"/>
     <module name="intellij.angular.free"/>
 
-    <module name="intellij.angular.tslint" loading="optional"/>
+    <module name="intellij.angular.tslint"/>
   </content>
 
   <extensions defaultExtensionNs="com.intellij">
