@@ -4,7 +4,6 @@ package org.angular2.web.scopes
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
@@ -20,8 +19,8 @@ import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.match
 import org.angular2.web.Angular2Symbol
+import org.angular2.web.BindingPatternProperty
 import org.angular2.web.NG_DIRECTIVE_INPUTS
-import org.angular2.web.PROP_BINDING_PATTERN
 
 object AttributeWithInterpolationsScope : PolySymbolScope {
 
@@ -49,11 +48,9 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
       get() = "Attribute with interpolations"
 
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      when (property) {
-        PROP_BINDING_PATTERN -> property.tryCast(true)
-        else -> super<Angular2Symbol>.get(property)
-      }
+    @PolySymbol.Property(BindingPatternProperty::class)
+    private val bindingPattern: Boolean
+      get() = true
 
     override fun createPointer(): Pointer<AttributeWithInterpolationsSymbol> =
       Pointer.hardPointer(this)

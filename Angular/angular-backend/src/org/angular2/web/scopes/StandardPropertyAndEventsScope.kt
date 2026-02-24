@@ -257,10 +257,6 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
       get() = Angular2TypeUtils.extractEventVariableType(mainSource?.getJSType(templateFile))
               ?: mapSource?.getJSType(templateFile)
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      super<StandardHtmlSymbol>.get(property)
-      ?: super<Angular2PsiSourcedSymbol>.get(property)
-
     override val priority: PolySymbol.Priority
       get() = PolySymbol.Priority.NORMAL
 

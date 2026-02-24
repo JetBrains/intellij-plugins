@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
@@ -89,9 +88,9 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
       return item.takeIf { Angular2LangUtil.isAtLeastAngularVersion(context, Angular2LangUtil.AngularVersion.V_14_2) }
     if (symbol == null || !scopedKinds.contains(kind)) return item
     val directives = symbol.unwrapMatchedSymbols()
-      .mapNotNull { it[PROP_SYMBOL_DIRECTIVE] }
+      .mapNotNull { it[SymbolDirectiveProperty] }
       .toList()
-    return if (symbol[PROP_ERROR_SYMBOL] == true) {
+    return if (symbol[ErrorSymbolProperty] == true) {
       null
     }
     else if (directives.isNotEmpty()) {
@@ -116,10 +115,10 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
 
   private fun List<PolySymbol>.wrapWithScopedSymbols(scope: Angular2DeclarationsScope): List<PolySymbol> {
     val proximityMap = groupBy {
-      val directive = it[PROP_SYMBOL_DIRECTIVE]
+      val directive = it[SymbolDirectiveProperty]
       if (directive != null)
         scope.getDeclarationProximity(directive)
-      else if (it[PROP_ERROR_SYMBOL] == true)
+      else if (it[ErrorSymbolProperty] == true)
         DeclarationProximity.NOT_REACHABLE
       else
         DeclarationProximity.IN_SCOPE
@@ -131,15 +130,15 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
 
   private fun List<PolySymbol>.filterOutOfScopeOrErrorSymbols(scope: Angular2DeclarationsScope): List<PolySymbol> =
     filter { symbol ->
-      symbol[PROP_SYMBOL_DIRECTIVE]?.let { scope.contains(it) } != false
-      && symbol[PROP_ERROR_SYMBOL] != true
+      symbol[SymbolDirectiveProperty]?.let { scope.contains(it) } != false
+      && symbol[ErrorSymbolProperty] != true
     }
 
   private fun List<PolySymbol>.filterByNearestProximity(): List<PolySymbol> {
     if (size <= 1) return this
     val proximityMap = groupBy { match ->
-      match[PROP_SCOPE_PROXIMITY]
-      ?: DeclarationProximity.NOT_REACHABLE.takeIf { match[PROP_ERROR_SYMBOL] == true }
+      match[ScopeProximityProperty]
+      ?: DeclarationProximity.NOT_REACHABLE.takeIf { match[ErrorSymbolProperty] == true }
       ?: DeclarationProximity.IN_SCOPE
     }
     return DeclarationProximity.entries.firstNotNullOfOrNull { proximity ->
@@ -164,7 +163,7 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
         else
           listOf(it)
       }.forEach { symbol ->
-        symbol[PROP_SYMBOL_DIRECTIVE]?.let { candidates.putValue(it, symbol) }
+        symbol[SymbolDirectiveProperty]?.let { candidates.putValue(it, symbol) }
       }
 
       val filteredSymbols = candidates.toHashMap()
@@ -182,7 +181,7 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
           val newSegments = it.nameSegments.mapNotNull { segment ->
             val newSymbols = segment.symbols.mapNotNull { segmentSymbol ->
               segmentSymbol.takeIf {
-                filteredSymbols.contains(it) || it[PROP_SYMBOL_DIRECTIVE] == null
+                filteredSymbols.contains(it) || it[SymbolDirectiveProperty] == null
               }
             }
             when {
@@ -200,7 +199,7 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
         }
         else
           it.takeIf {
-            filteredSymbols.contains(it) || it[PROP_SYMBOL_DIRECTIVE] == null
+            filteredSymbols.contains(it) || it[SymbolDirectiveProperty] == null
           }
       }
     }
@@ -246,6 +245,7 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
 
   private open class Angular2ScopedSymbol private constructor(
     override val delegate: PolySymbol,
+    @PolySymbol.Property(ScopeProximityProperty::class)
     private val scopeProximity: DeclarationProximity,
   ) : PolySymbolDelegate<PolySymbol> {
 
@@ -294,12 +294,6 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
 
     override fun hashCode(): Int =
       31 * delegate.hashCode() + scopeProximity.hashCode()
-
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      when (property) {
-        PROP_SCOPE_PROXIMITY -> property.tryCast(scopeProximity)
-        else -> super.get(property)
-      }
 
     private class Angular2PsiSourcedScopedSymbol(
       symbol: PolySymbol,

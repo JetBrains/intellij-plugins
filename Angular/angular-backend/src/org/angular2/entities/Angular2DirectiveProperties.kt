@@ -119,10 +119,6 @@ class Angular2DirectiveProperties(
     Angular2SymbolDelegate<Angular2DirectiveProperty>(inOut),
     Angular2DirectiveProperty, PsiSourcedPolySymbol {
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      super<Angular2DirectiveProperty>.get(property)
-      ?: delegate[property]
-
     override val modifiers: Set<PolySymbolModifier>
       get() = super<Angular2SymbolDelegate>.modifiers + super<Angular2DirectiveProperty>.modifiers
 

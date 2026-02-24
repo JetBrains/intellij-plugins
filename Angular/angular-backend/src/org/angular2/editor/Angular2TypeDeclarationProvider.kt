@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.angular2.entities.Angular2Component
 import org.angular2.lang.Angular2Bundle
-import org.angular2.web.PROP_SYMBOL_DIRECTIVE
+import org.angular2.web.SymbolDirectiveProperty
 
 class Angular2TypeDeclarationProvider : TypeDeclarationProvider, SymbolTypeProvider {
 
@@ -30,7 +30,7 @@ class Angular2TypeDeclarationProvider : TypeDeclarationProvider, SymbolTypeProvi
 
   override fun getSymbolTypes(project: Project, symbol: Symbol): List<Symbol> {
     if (symbol is PolySymbol) {
-      symbol[PROP_SYMBOL_DIRECTIVE]
+      symbol[SymbolDirectiveProperty]
         ?.asSafely<Angular2Component>()
         ?.templateFile
         ?.let {

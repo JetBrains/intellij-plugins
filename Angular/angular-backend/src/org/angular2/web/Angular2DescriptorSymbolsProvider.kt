@@ -23,14 +23,14 @@ class Angular2DescriptorSymbolsProvider(symbol: PolySymbol) {
     symbol.unwrapMatchedSymbols()
       .filter { !it.extension }
       .forEach { s ->
-        if (s[PROP_BINDING_PATTERN] == true) {
+        if (s[BindingPatternProperty] == true) {
           return@forEach
         }
-        if (s[PROP_ERROR_SYMBOL] == true) {
+        if (s[ErrorSymbolProperty] == true) {
           errorSymbols.add(s)
         }
         else {
-          val directive = s[PROP_SYMBOL_DIRECTIVE]
+          val directive = s[SymbolDirectiveProperty]
           if (directive != null) {
             directiveSymbols.add(s)
             directives.add(directive)

@@ -49,8 +49,8 @@ import org.angular2.entities.Angular2EntitiesProvider.getComponent
 import org.angular2.entities.source.Angular2SourceDirectiveVirtualProperty
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
-import org.angular2.web.PROP_BINDING_PATTERN
-import org.angular2.web.PROP_ERROR_SYMBOL
+import org.angular2.web.BindingPatternProperty
+import org.angular2.web.ErrorSymbolProperty
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
@@ -468,22 +468,22 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("selectorBasedAttributes.ts", "package.json")
     myFixture.completeBasic()
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "myInput", "[myInput]",
-                                          "(myOutput)",
-                                          "[mySimpleBindingInput]", "mySimpleBindingInput",
-                                          "myPlain",
-                                          "myInOut", "[myInOut]", "[(myInOut)]",
-                                          "fake", "[fake]", "[(fake)]",
-                                          "(fakeChange)")
+                           "myInput", "[myInput]",
+                           "(myOutput)",
+                           "[mySimpleBindingInput]", "mySimpleBindingInput",
+                           "myPlain",
+                           "myInOut", "[myInOut]", "[(myInOut)]",
+                           "fake", "[fake]", "[(fake)]",
+                           "(fakeChange)")
     assertDoesntContain(myFixture.getLookupElementStrings()!!,
-                                       "(myInput)", "[(myInput)]",
-                                       "myOutput", "[myOutput]", "[(myOutput)]",
-                                       "(mySimpleBindingInput)", "[(mySimpleBindingInput)]",
-                                       "[myPlain]", "(myPlain)", "[(myPlain)]",
-                                       "(myInOut)",
-                                       "myInOutChange", "(myInOutChange)", "[myInOutChange]", "[(myInOutChange)]",
-                                       "(fake)",
-                                       "fakeChange, [fakeChange], [(fakeChange)]")
+                        "(myInput)", "[(myInput)]",
+                        "myOutput", "[myOutput]", "[(myOutput)]",
+                        "(mySimpleBindingInput)", "[(mySimpleBindingInput)]",
+                        "[myPlain]", "(myPlain)", "[(myPlain)]",
+                        "(myInOut)",
+                        "myInOutChange", "(myInOutChange)", "[myInOutChange]", "[(myInOutChange)]",
+                        "(fake)",
+                        "fakeChange, [fakeChange], [(fakeChange)]")
   }
 
   fun testSelectorBasedAttributesNavigation() {
@@ -503,8 +503,8 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
         val wrap = attrWrap[i]
         val ref = myFixture.multiResolvePolySymbolReference(wrap.first + "<caret>" + name + wrap.second + "=")
           .filter { s: PolySymbol ->
-            s[PROP_ERROR_SYMBOL] != true
-            && s[PROP_BINDING_PATTERN] != true
+            s[ErrorSymbolProperty] != true
+            && s[BindingPatternProperty] != true
           }
         val sources = ref.map { it.psiContext }
         val messageStart = "Attribute " + wrap.first + name + wrap.second
@@ -606,10 +606,10 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("standardTagProperties.ts", "package.json")
     myFixture.completeBasic()
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "[autofocus]", "[readOnly]", "[selectionDirection]", "[innerHTML]",
-                                          "(auxclick)", "(blur)", "(click)", "(paste)", "(webkitfullscreenchange)")
+                           "[autofocus]", "[readOnly]", "[selectionDirection]", "[innerHTML]",
+                           "(auxclick)", "(blur)", "(click)", "(paste)", "(webkitfullscreenchange)")
     assertDoesntContain(myFixture.getLookupElementStrings()!!,
-                                       "innerHTML")
+                        "innerHTML")
   }
 
   fun testNgIfAsCodeCompletion() {
@@ -696,8 +696,8 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.type("(clic\n\$event.")
     myFixture.completeBasic()
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "x", "y", "layerX", "layerY", "altKey", "button",
-                                          "clientX", "clientY", "isTrusted", "timeStamp")
+                           "x", "y", "layerX", "layerY", "altKey", "button",
+                           "clientX", "clientY", "isTrusted", "timeStamp")
   }
 
   fun testAttrCompletions() {
@@ -714,11 +714,11 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.completeBasic()
     myFixture.type("[attr.")
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "about]", "accesskey]",
-                                          "id]", "style]", "title]",
-                                          "aria-atomic]")
+                           "about]", "accesskey]",
+                           "id]", "style]", "title]",
+                           "aria-atomic]")
     assertDoesntContain(myFixture.getLookupElementStrings()!!,
-                                       "innerHTML]")
+                        "innerHTML]")
     myFixture.type("acc\n")
     val element = resolveToPolySymbolSource("[attr.ac<caret>cesskey]=\"\"")
     assertEquals("common.rnc", element.getContainingFile().getName())
@@ -728,7 +728,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("div.html", "package.json")
     myFixture.completeBasic()
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "[attr.")
+                           "[attr.")
     myFixture.type("att\n")
     // TODO - make web-types insert ']' - should be "<div [attr.]" here
     assertEquals("<div [attr.", myFixture.getFile().getText())
@@ -741,10 +741,10 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("div.html", "package.json")
     myFixture.completeBasic()
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "bind-", "bindon-", "on-", "ref-")
+                           "bind-", "bindon-", "on-", "ref-")
     myFixture.type("bind-")
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "tabIndex", "innerHTML")
+                           "tabIndex", "innerHTML")
     myFixture.type("iH\n")
     val element = resolveToPolySymbolSource("bind-inner<caret>HTML")
     assertEquals("lib.dom.d.ts", element.getContainingFile().getName())
@@ -755,7 +755,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.completeBasic()
     myFixture.type("bind-")
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "attr.")
+                           "attr.")
     myFixture.type("attr\naat\n")
     val element = resolveToPolySymbolSource("bind-attr.aria-atomic<caret>=\"\"")
     assertEquals("aria.rnc", element.getContainingFile().getName())
@@ -765,17 +765,17 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByFiles("attrTest.ts", "package.json")
     myFixture.completeBasic()
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "(keyup.", "(keydown.")
+                           "(keyup.", "(keydown.")
     myFixture.type("keyd.\n")
     assertEquals("(keydown.", myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1)!!.getText())
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "meta.", "control.", "shift.", "alt.", "escape)", "home)")
+                           "meta.", "control.", "shift.", "alt.", "escape)", "home)")
     myFixture.type("alt.")
     assertEquals("(keydown.alt.", myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1)!!.getText())
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "meta.", "control.", "escape)", "home)")
+                           "meta.", "control.", "escape)", "home)")
     assertDoesntContain(myFixture.getLookupElementStrings()!!,
-                                       "alt.")
+                        "alt.")
     myFixture.type("ins\n")
     assertEquals("<div (keydown.alt.insert)=\"\"", myFixture.getFile().getText())
   }
@@ -785,21 +785,21 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.completeBasic()
     myFixture.type("on-")
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "keyup.", "keydown.")
+                           "keyup.", "keydown.")
     myFixture.type("keyu.\n")
     assertEquals("on-keyup.", myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1)!!.getText())
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "meta.", "control.", "shift.", "alt.", "escape", "home")
+                           "meta.", "control.", "shift.", "alt.", "escape", "home")
     myFixture.type("alt.")
     assertEquals("on-keyup.alt.", myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1)!!.getText())
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "meta.", "control.", "escape", "home")
+                           "meta.", "control.", "escape", "home")
     assertDoesntContain(myFixture.getLookupElementStrings()!!,
-                                       "alt.")
+                        "alt.")
     myFixture.type("m.\n")
     assertEquals("on-keyup.alt.meta.", myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1)!!.getText())
     assertDoesntContain(myFixture.getLookupElementStrings()!!,
-                                       "alt.", "meta.")
+                        "alt.", "meta.")
     myFixture.type("esca\n")
     val source = resolvePolySymbolReference("on-keyup.alt.meta.<caret>escape=\"\"")
     assertEquals("Extended event special key", source.name)
@@ -928,10 +928,10 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureByText("input-type.html", "<input type=\"<caret>\"")
     myFixture.completeBasic()
     assertContainsElements(myFixture.getLookupElementStrings()!!,
-                                          "button", "checkbox", "color", "date", "datetime-local", "email", "file", "hidden", "image",
-                                          "month",
-                                          "number", "password", "radio", "range", "reset", "search", "submit", "tel", "text", "time", "url",
-                                          "week")
+                           "button", "checkbox", "color", "date", "datetime-local", "email", "file", "hidden", "image",
+                           "month",
+                           "number", "password", "radio", "range", "reset", "search", "submit", "tel", "text", "time", "url",
+                           "week")
   }
 
   fun testI18nCompletion() {

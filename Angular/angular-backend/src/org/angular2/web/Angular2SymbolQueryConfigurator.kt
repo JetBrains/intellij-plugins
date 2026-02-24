@@ -79,9 +79,9 @@ import org.angular2.signals.Angular2SignalUtils.getPossibleSignalFunNameForLiter
 import org.angular2.signals.Angular2SignalUtils.isViewChildSignalCall
 import org.angular2.signals.Angular2SignalUtils.isViewChildrenSignalCall
 import org.angular2.templateBindingVarToDirectiveInput
+import org.angular2.web.scopes.Angular2ComponentExpectedMethodsScope
 import org.angular2.web.scopes.Angular2CustomCssPropertiesScope
 import org.angular2.web.scopes.Angular2TemplateScope
-import org.angular2.web.scopes.Angular2ComponentExpectedMethodsScope
 import org.angular2.web.scopes.AttributeWithInterpolationsScope
 import org.angular2.web.scopes.BINDINGS_PROP
 import org.angular2.web.scopes.CreateComponentDirectiveBindingScope
@@ -377,20 +377,16 @@ private fun getCssClassesInJSLiteralInHtmlAttributeScope(element: PsiElement): P
     ?.parentOfType<XmlAttribute>()
     ?.let { CssClassListInJSLiteralInHtmlAttributeScope(it) }
 
-@JvmField
-val PROP_BINDING_PATTERN: PolySymbolProperty<Boolean> = PolySymbolProperty["ng-binding-pattern"]
+object BindingPatternProperty : PolySymbolProperty<Boolean>("ng-binding-pattern", Boolean::class.java)
 
-@JvmField
-val PROP_ERROR_SYMBOL: PolySymbolProperty<Boolean> = PolySymbolProperty["ng-error-symbol"]
+object ErrorSymbolProperty : PolySymbolProperty<Boolean>("ng-error-symbol", Boolean::class.java)
 
-@JvmField
-val PROP_SYMBOL_DIRECTIVE: PolySymbolProperty<Angular2Directive> = PolySymbolProperty["ng-symbol-directive"]
+object SymbolDirectiveProperty : PolySymbolProperty<Angular2Directive>("ng-symbol-directive", Angular2Directive::class.java)
 
-@JvmField
-val PROP_SCOPE_PROXIMITY: PolySymbolProperty<Angular2DeclarationsScope.DeclarationProximity> = PolySymbolProperty["scope-proximity"]
+object ScopeProximityProperty : PolySymbolProperty<Angular2DeclarationsScope.DeclarationProximity>("scope-proximity",
+                                                                                                   Angular2DeclarationsScope.DeclarationProximity::class.java)
 
-@JvmField
-val PROP_HOST_BINDING: PolySymbolProperty<Boolean> = PolySymbolProperty["ng-host-binding"]
+object HostBindingProperty : PolySymbolProperty<Boolean>("ng-host-binding", Boolean::class.java)
 
 const val EVENT_ATTR_PREFIX: String = "on"
 

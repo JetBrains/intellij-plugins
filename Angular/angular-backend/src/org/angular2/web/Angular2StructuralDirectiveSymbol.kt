@@ -8,7 +8,6 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.html.HtmlAttributeValueProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -19,6 +18,7 @@ import com.intellij.psi.createSmartPointer
 import org.angular2.entities.Angular2Directive
 
 open class Angular2StructuralDirectiveSymbol private constructor(
+  @PolySymbol.Property(SymbolDirectiveProperty::class)
   val directive: Angular2Directive,
   sourceSymbol: Angular2Symbol,
   private val hasInputsToBind: Boolean,
@@ -53,12 +53,6 @@ open class Angular2StructuralDirectiveSymbol private constructor(
       PolySymbolHtmlAttributeValue.create(required = false)
     else JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(location) {
       delegate[HtmlAttributeValueProperty]
-    }
-
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_SYMBOL_DIRECTIVE -> property.tryCast(directive)
-      else -> super.get(property)
     }
 
   override val apiStatus: PolySymbolApiStatus

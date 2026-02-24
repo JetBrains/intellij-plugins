@@ -15,8 +15,8 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolProperty
@@ -104,7 +104,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
 
   companion object {
 
-    val PROP_DELEGATE_PRIORITY: PolySymbolProperty<PolySymbol.Priority> = PolySymbolProperty["ng-delegate-priority"]
+    object DelegatePriorityProperty : PolySymbolProperty<PolySymbol.Priority>("ng-delegate-priority", PolySymbol.Priority::class.java)
 
     private val ONE_TIME_BINDING_EXCLUDES = listOf(Angular2AttributeValueProvider.NG_CLASS_ATTR)
     private val STRING_TYPE: JSType = JSStringTypeImpl.STRING_EMPTY_EXPLICIT_TYPE
@@ -153,11 +153,9 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
     val hideFromCompletion: Boolean
       get() = resolveOnly
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      when {
-        property == PROP_DELEGATE_PRIORITY -> property.tryCast(super<PolySymbolDelegate>.priority)
-        else -> super<PolySymbolDelegate>.get(property)
-      }
+    @PolySymbol.Property(DelegatePriorityProperty::class)
+    private val delegatePriority: PolySymbol.Priority?
+      get() = super<PolySymbolDelegate>.priority
 
     override val modifiers: Set<PolySymbolModifier>
       get() = super<PolySymbolDelegate>.modifiers.asSequence()
@@ -166,6 +164,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
         .filter { it != PolySymbolModifier.REQUIRED }
         .plus(PolySymbolModifier.OPTIONAL)
         .toSet()
+
     @PolySymbol.Property(HtmlAttributeValueProperty::class)
     private val attributeValue: PolySymbolHtmlAttributeValue? by lazy(LazyThreadSafetyMode.PUBLICATION) {
       withTypeEvaluationLocation(typeEvaluationLocation) {

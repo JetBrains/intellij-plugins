@@ -12,6 +12,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.web.ErrorSymbolProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -22,7 +23,6 @@ import static com.intellij.lang.javascript.completion.JSLookupPriority.NON_CONTE
 import static com.intellij.lang.javascript.completion.JSLookupPriority.TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES;
 import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
 import static junit.framework.TestCase.assertEquals;
-import static org.angular2.web.Angular2SymbolQueryConfiguratorKt.PROP_ERROR_SYMBOL;
 
 public final class Angular2TestUtil {
 
@@ -94,7 +94,7 @@ public final class Angular2TestUtil {
   public static void assertUnresolvedReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture,
                                                Boolean okWithNoRef, Boolean allowSelfReference) {
     var symbols = WebTestUtil.multiResolvePolySymbolReference(fixture, signature);
-    if (!symbols.isEmpty() && ContainerUtil.and(symbols, s -> s.get(PROP_ERROR_SYMBOL) == Boolean.TRUE)) {
+    if (!symbols.isEmpty() && ContainerUtil.and(symbols, s -> s.get(ErrorSymbolProperty.INSTANCE) == Boolean.TRUE)) {
       return;
     }
     WebTestUtil.assertUnresolvedReference(fixture, signature, okWithNoRef, allowSelfReference);

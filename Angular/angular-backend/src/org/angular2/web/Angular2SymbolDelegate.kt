@@ -13,8 +13,4 @@ abstract class Angular2SymbolDelegate<T : Angular2Symbol>(override val delegate:
   override val icon: Icon?
     get() = delegate.icon
 
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    super<PolySymbolDelegate>.get(property)
-    ?: super<Angular2Symbol>.get(property)
-
 }

@@ -184,10 +184,6 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
         Angular2EntityUtils.jsTypeFromAcceptInputType(owner, name) ?: delegate[JSTypeProperty]
       }
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      super<PolySymbolDelegate>.get(property)
-      ?: super<Angular2Symbol>.get(property)
-
     override fun isEquivalentTo(symbol: Symbol): Boolean =
       symbol == this
       || delegate.isEquivalentTo(symbol)
