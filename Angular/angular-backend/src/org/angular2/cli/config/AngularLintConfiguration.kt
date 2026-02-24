@@ -2,13 +2,14 @@
 package org.angular2.cli.config
 
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil
-import com.intellij.lang.javascript.linter.tslint.TslintUtil
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.nullize
 import com.intellij.util.text.minimatch.Minimatch
+
+private val TSLINT_CONFIG_FILE_NAMES: Array<String> = arrayOf("tslint.json", "tslint.yaml", "tslint.yml")
 
 class AngularLintConfiguration(private val project: Project,
                                private val ngProject: AngularProject,
@@ -26,7 +27,7 @@ class AngularLintConfiguration(private val project: Project,
   fun getTsLintConfig(file: VirtualFile): VirtualFile? {
     if (!accept(file)) return null
     tsLintConfig?.let { return it }
-    return JSLinterConfigFileUtil.findFileUpToRoot(file, TslintUtil.CONFIG_FILE_NAMES, ngProject.angularCliFolder)
+    return JSLinterConfigFileUtil.findFileUpToRoot(file, TSLINT_CONFIG_FILE_NAMES, ngProject.angularCliFolder)
   }
 
   fun accept(file: VirtualFile): Boolean {

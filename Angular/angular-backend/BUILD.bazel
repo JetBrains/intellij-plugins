@@ -57,7 +57,6 @@ jvm_library(
     "@community//plugins/htmltools:html-tools",
     "@community//libraries/jackson/jackson",
     "@community//libraries/jackson/databind",
-    "//contrib/tslint",
     "@community//libraries/stream",
     "@community//platform/core-ui",
     "@community//libraries/icu4j",
