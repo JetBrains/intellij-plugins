@@ -14,8 +14,8 @@ import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.JsSymbolKindProperty
 import com.intellij.polySymbols.js.JsSymbolSymbolKind
-import com.intellij.polySymbols.js.PROP_JS_SYMBOL_KIND
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
@@ -284,11 +284,9 @@ interface VueMethod : VueProperty {
   override val kind: PolySymbolKind
     get() = VUE_METHODS
 
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_JS_SYMBOL_KIND -> property.tryCast(JsSymbolSymbolKind.Method)
-      else -> super.get(property)
-    }
+  @PolySymbol.Property(JsSymbolKindProperty::class)
+  override val jsKind: JsSymbolSymbolKind
+    get() = JsSymbolSymbolKind.Method
 
   override val presentation: TargetPresentation
     get() = TargetPresentation.builder(VueBundle.message("vue.documentation.type.component.method", name))
