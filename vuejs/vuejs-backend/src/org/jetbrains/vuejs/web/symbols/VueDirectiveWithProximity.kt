@@ -17,11 +17,12 @@ import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueDirectiveModifier
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
+import org.jetbrains.vuejs.web.VueProximityProperty
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 
 internal open class VueDirectiveWithProximity private constructor(
   val delegate: VueDirective,
+  @PolySymbol.Property(VueProximityProperty::class)
   val vueProximity: VueModelVisitor.Proximity,
 ) : VueDirective {
 
@@ -39,12 +40,8 @@ internal open class VueDirectiveWithProximity private constructor(
   override val priority: PolySymbol.Priority
     get() = vueProximity.asPolySymbolPriority()
 
-  @Suppress("UNCHECKED_CAST")
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_VUE_PROXIMITY -> vueProximity as T
-      else -> delegate[property] ?: super[property]
-    }
+    super.get(property) ?: delegate[property]
 
   override val searchTarget: PolySymbolSearchTarget
     get() = delegate.searchTarget

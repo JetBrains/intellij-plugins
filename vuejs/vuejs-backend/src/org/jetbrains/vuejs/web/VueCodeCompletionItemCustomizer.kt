@@ -53,7 +53,7 @@ class VueCodeCompletionItemCustomizer :
           item.takeIf { !shouldFilterOutLowerCaseScriptSetupIdentifier(it) }
         JS_SYMBOLS, JS_PROPERTIES ->
           item.let {
-            val vueProximity = it.symbol?.get(PROP_VUE_PROXIMITY)
+            val vueProximity = it.symbol?.get(VueProximityProperty)
             when {
               it.name.startsWith('$') -> it.withPriority(
                 (if (kind == JS_SYMBOLS) LOCAL_SCOPE_MAX_PRIORITY_EXOTIC else NESTING_LEVEL_1)

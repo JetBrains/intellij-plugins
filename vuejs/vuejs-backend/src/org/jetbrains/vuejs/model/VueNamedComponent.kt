@@ -5,12 +5,13 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.model.source.VueCompositionContainer
-import org.jetbrains.vuejs.web.PROP_VUE_COMPOSITION_COMPONENT
+import org.jetbrains.vuejs.web.VueCompositionComponentProperty
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 
 interface VueNamedComponent : VueComponent, VueSymbol {
@@ -26,12 +27,9 @@ interface VueNamedComponent : VueComponent, VueSymbol {
   override val searchTarget: PolySymbolSearchTarget
     get() = PolySymbolSearchTarget.create(this)
 
-  @Suppress("UNCHECKED_CAST")
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_VUE_COMPOSITION_COMPONENT -> VueCompositionContainer.isCompositionAppComponent(this) as T
-      else -> super.get(property)
-    }
+  @PolySymbol.Property(VueCompositionComponentProperty::class)
+  private val isCompositionComponent: Boolean
+    get() = VueCompositionContainer.isCompositionAppComponent(this)
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget>
 

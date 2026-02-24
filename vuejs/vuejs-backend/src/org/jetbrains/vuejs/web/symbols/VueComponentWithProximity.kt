@@ -18,11 +18,12 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueDelegatedComponent
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueNamedComponent
-import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
+import org.jetbrains.vuejs.web.VueProximityProperty
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 
 internal open class VueComponentWithProximity private constructor(
   override val delegate: VueNamedComponent,
+  @PolySymbol.Property(VueProximityProperty::class)
   val vueProximity: VueModelVisitor.Proximity,
 ) : VueDelegatedComponent<VueNamedComponent>() {
 
@@ -38,15 +39,11 @@ internal open class VueComponentWithProximity private constructor(
   override val name: @NlsSafe String
     get() = delegate.name
 
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    super.get(property) ?: delegate[property]
+
   override val priority: PolySymbol.Priority
     get() = vueProximity.asPolySymbolPriority()
-
-  @Suppress("UNCHECKED_CAST")
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_VUE_PROXIMITY -> vueProximity as T
-      else -> super[property]
-    }
 
   override val searchTarget: PolySymbolSearchTarget
     get() = delegate.searchTarget

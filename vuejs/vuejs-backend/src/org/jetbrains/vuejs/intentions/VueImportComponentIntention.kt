@@ -18,8 +18,8 @@ import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.inspections.quickfixes.VueImportComponentQuickFix
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.PROP_VUE_COMPOSITION_COMPONENT
-import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
+import org.jetbrains.vuejs.web.VueCompositionComponentProperty
+import org.jetbrains.vuejs.web.VueProximityProperty
 
 class VueImportComponentIntention : JavaScriptIntention(), HighPriorityAction {
 
@@ -31,8 +31,8 @@ class VueImportComponentIntention : JavaScriptIntention(), HighPriorityAction {
       ?.extractComponentSymbol()
       ?.takeIf { it.elementToImport != null }
       ?.let {
-        it[PROP_VUE_COMPOSITION_COMPONENT] == true
-        || it[PROP_VUE_PROXIMITY].let { proximity ->
+        it[VueCompositionComponentProperty] == true
+        || it[VueProximityProperty].let { proximity ->
           proximity == null || (proximity != VueModelVisitor.Proximity.LOCAL && proximity != VueModelVisitor.Proximity.OUT_OF_SCOPE)
         }
       } == true

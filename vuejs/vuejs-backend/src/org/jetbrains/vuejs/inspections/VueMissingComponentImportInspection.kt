@@ -18,8 +18,8 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.inspections.quickfixes.VueImportComponentQuickFix
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.PROP_VUE_COMPOSITION_COMPONENT
-import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
+import org.jetbrains.vuejs.web.VueCompositionComponentProperty
+import org.jetbrains.vuejs.web.VueProximityProperty
 
 class VueMissingComponentImportInspection : LocalInspectionTool() {
 
@@ -31,8 +31,8 @@ class VueMissingComponentImportInspection : LocalInspectionTool() {
           return
 
         val symbol = descriptor.symbol
-        if (symbol[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE
-            || symbol[PROP_VUE_COMPOSITION_COMPONENT] == true)
+        if (symbol[VueProximityProperty] != VueModelVisitor.Proximity.OUT_OF_SCOPE
+            || symbol[VueCompositionComponentProperty] == true)
           return
         val elementToImport = symbol.extractComponentSymbol()?.elementToImport ?: return
 

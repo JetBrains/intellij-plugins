@@ -16,8 +16,8 @@ import org.jetbrains.vuejs.web.symbols.VueDirectiveWithProximity
 fun HtmlElementSymbolDescriptor.getModel(): VueModelDirectiveProperties =
   runListSymbolsQuery(VUE_MODEL, true).firstOrNull()
     ?.let {
-      VueModelDirectiveProperties(prop = it[PROP_VUE_MODEL_PROP],
-                                  event = it[PROP_VUE_MODEL_EVENT])
+      VueModelDirectiveProperties(prop = it[VueModelPropProperty],
+                                  event = it[VueModelEventProperty])
     }
   ?: VueModelDirectiveProperties()
 

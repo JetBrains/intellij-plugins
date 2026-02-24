@@ -16,11 +16,12 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueFilter
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
+import org.jetbrains.vuejs.web.VueProximityProperty
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 
 internal open class VueFilterWithProximity private constructor(
   val delegate: VueFilter,
+  @PolySymbol.Property(VueProximityProperty::class)
   val vueProximity: VueModelVisitor.Proximity,
 ) : VueFilter {
 
@@ -39,12 +40,8 @@ internal open class VueFilterWithProximity private constructor(
   override val kind: PolySymbolKind
     get() = delegate.kind
 
-  @Suppress("UNCHECKED_CAST")
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_VUE_PROXIMITY -> vueProximity as T
-      else -> delegate[property] ?: super[property]
-    }
+    super.get(property) ?: delegate[property]
 
   override val searchTarget: PolySymbolSearchTarget
     get() = delegate.searchTarget

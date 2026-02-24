@@ -78,7 +78,7 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueSourceEntity
 import org.jetbrains.vuejs.types.VueRefsType
 import org.jetbrains.vuejs.types.createStrictTypeSource
-import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
+import org.jetbrains.vuejs.web.VueProximityProperty
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 
@@ -494,6 +494,7 @@ private fun replaceStandardProperty(
 open class VueJsPropertyWithProximity
 private constructor(
   override val delegate: PolySymbol,
+  @PolySymbol.Property(VueProximityProperty::class)
   val vueProximity: VueModelVisitor.Proximity,
   protected val typeProvider: VueTypeProvider?,
 ) : PolySymbolDelegate<PolySymbol> {
@@ -529,12 +530,6 @@ private constructor(
     || symbol is VueJsPropertyWithProximity
     && symbol.delegate.isEquivalentTo(delegate)
     || delegate.isEquivalentTo(symbol)
-
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_VUE_PROXIMITY -> property.tryCast(vueProximity)
-      else -> super[property]
-    }
 
   override fun equals(other: Any?): Boolean =
     other === this
@@ -737,10 +732,13 @@ private data class VueMergedPropertiesSymbol(
     )
   }
 
+  @PolySymbol.Property(VueProximityProperty::class)
+  private val vueProximity: VueModelVisitor.Proximity?
+    get() = properties.asSequence().mapNotNull { it[VueProximityProperty] }.maxByOrNull { it.ordinal }
+
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_JS_PROPERTY_SIGNATURE -> property.tryCast(propertySignature)
-      PROP_VUE_PROXIMITY -> property.tryCast(properties.asSequence().mapNotNull { it[PROP_VUE_PROXIMITY] }.maxBy { it.ordinal })
       else -> super.get(property)
     }
 

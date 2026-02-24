@@ -77,8 +77,8 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
     }
 
     return result.filter { symbol ->
-      symbol[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE ||
-      symbol[PROP_VUE_COMPOSITION_COMPONENT] == true
+      symbol[VueProximityProperty] != VueModelVisitor.Proximity.OUT_OF_SCOPE ||
+      symbol[VueCompositionComponentProperty] == true
     }
   }
 
@@ -92,7 +92,7 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
             val component = it.unwrapVueSymbolWithProximity()
             component !is VueLocallyDefinedComponent<*>
             || component.delegate != originalComponent
-            || (it[PROP_VUE_PROXIMITY] ?: VueModelVisitor.Proximity.OUT_OF_SCOPE) > (originalComponent[PROP_VUE_PROXIMITY]
+            || (it[VueProximityProperty] ?: VueModelVisitor.Proximity.OUT_OF_SCOPE) > (originalComponent[VueProximityProperty]
                                                                                      ?: VueModelVisitor.Proximity.OUT_OF_SCOPE)
           }
         else
@@ -111,7 +111,7 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
             .getTags(Html5TagAndAttributeNamesProvider.Namespace.HTML, true)
             .contains(item.name)
         ) return null
-        val proximity = item.symbol?.get(PROP_VUE_PROXIMITY)
+        val proximity = item.symbol?.get(VueProximityProperty)
         val element = item.symbol?.extractComponentSymbol()?.elementToImport
         if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {
           val settings = JSApplicationSettings.getInstance()

@@ -29,8 +29,8 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
-import org.jetbrains.vuejs.web.PROP_VUE_MODEL_EVENT
-import org.jetbrains.vuejs.web.PROP_VUE_MODEL_PROP
+import org.jetbrains.vuejs.web.VueModelEventProperty
+import org.jetbrains.vuejs.web.VueModelPropProperty
 import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
 import org.jetbrains.vuejs.web.VUE_COMPONENT_PROPS
@@ -60,7 +60,9 @@ interface VueContainer : VueEntitiesContainer {
 }
 
 data class VueModelDirectiveProperties(
+  @PolySymbol.Property(VueModelPropProperty::class)
   val prop: String? = null,
+  @PolySymbol.Property(VueModelEventProperty::class)
   val event: String? = null,
 ) : VueSymbol {
 
@@ -69,13 +71,6 @@ data class VueModelDirectiveProperties(
 
   override val kind: PolySymbolKind
     get() = VUE_MODEL
-
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_VUE_MODEL_PROP -> prop as T?
-      PROP_VUE_MODEL_EVENT -> event as T?
-      else -> super.get(property)
-    }
 
   override fun createPointer(): Pointer<VueModelDirectiveProperties> =
     Pointer.hardPointer(this)

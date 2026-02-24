@@ -82,6 +82,7 @@ import org.jetbrains.vuejs.web.scopes.VueScriptSetupNamespacedComponentsScope
 import org.jetbrains.vuejs.web.scopes.VueSlotElementScope
 import org.jetbrains.vuejs.web.scopes.VueTopLevelElementsScope
 import org.jetbrains.vuejs.web.scopes.VueWatchSymbolScope
+import kotlin.jvm.java
 
 val VUE_TOP_LEVEL_ELEMENTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-file-top-elements"]
 val VUE_COMPONENTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-components"]
@@ -104,11 +105,11 @@ val VUE_PROVIDES: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "vue-provides"]
 val VUE_SPECIAL_PROPERTIES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-special-properties"]
 val VUE_BINDING_SHORTHANDS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-binding-shorthands"]
 
-val PROP_VUE_MODEL_PROP: PolySymbolProperty<String> = PolySymbolProperty["prop"]
-val PROP_VUE_MODEL_EVENT: PolySymbolProperty<String> = PolySymbolProperty["event"]
+object VueModelPropProperty : PolySymbolProperty<String>("prop", String::class.java)
+object VueModelEventProperty : PolySymbolProperty<String>("event", String::class.java)
 
-val PROP_VUE_PROXIMITY: PolySymbolProperty<VueModelVisitor.Proximity> = PolySymbolProperty["x-vue-proximity"]
-val PROP_VUE_COMPOSITION_COMPONENT: PolySymbolProperty<Boolean> = PolySymbolProperty["x-vue-composition-component"]
+object VueProximityProperty : PolySymbolProperty<VueModelVisitor.Proximity>("x-vue-proximity", VueModelVisitor.Proximity::class.java)
+object VueCompositionComponentProperty : PolySymbolProperty<Boolean>("x-vue-composition-component", Boolean::class.java)
 
 class VueSymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
@@ -389,7 +390,7 @@ class VueSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
     ) {
 
       override fun acceptSymbol(symbol: PolySymbol): Boolean =
-        symbol[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE
+        symbol[VueProximityProperty] != VueModelVisitor.Proximity.OUT_OF_SCOPE
 
       override val subScopeBuilder: (PolySymbolQueryExecutor, JSReferenceExpression) -> List<PolySymbolScope>
         get() = { _, location ->

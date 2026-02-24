@@ -10,7 +10,7 @@ import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
+import org.jetbrains.vuejs.web.VueProximityProperty
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_ARGUMENT
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.symbols.VueAnySymbol
@@ -42,7 +42,7 @@ interface VueDirective : VueSymbol, VueScopeElement, PolySymbolScope {
 
       VUE_DIRECTIVE_MODIFIERS -> {
         directiveModifiers
-          .map { VueDirectiveModifierWithProximity.create(it, this[PROP_VUE_PROXIMITY]) }
+          .map { VueDirectiveModifierWithProximity.create(it, this[VueProximityProperty]) }
           .ifEmpty { listOf(VueAnySymbol(kind, "Vue directive modifier")) }
       }
 
