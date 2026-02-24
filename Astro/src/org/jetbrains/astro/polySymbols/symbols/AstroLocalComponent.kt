@@ -7,7 +7,6 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.js.symbols.asJSSymbol
@@ -26,7 +25,7 @@ import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENT_PROPS
 import org.jetbrains.astro.polySymbols.AstroProximity
-import org.jetbrains.astro.polySymbols.PROP_ASTRO_PROXIMITY
+import org.jetbrains.astro.polySymbols.AstroProximityProperty
 
 class AstroLocalComponent(
   override val name: String,
@@ -68,11 +67,9 @@ class AstroLocalComponent(
   override val kind: PolySymbolKind
     get() = ASTRO_COMPONENTS
 
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_ASTRO_PROXIMITY -> property.tryCast(AstroProximity.LOCAL)
-      else -> super.get(property)
-    }
+  @PolySymbol.Property(AstroProximityProperty::class)
+  val astroProximity: AstroProximity
+    get() = AstroProximity.LOCAL
 
   override fun createPointer(): Pointer<out AstroLocalComponent> {
     val name = name

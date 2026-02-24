@@ -7,8 +7,7 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
-import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
+import com.intellij.polySymbols.html.HtmlAttributeValueProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.symbols.JSPropertySymbol
 import com.intellij.polySymbols.js.types.JSTypeProperty
@@ -32,11 +31,9 @@ class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol) : P
   private val type: JSType?
     get() = propertySymbol.type
 
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(PolySymbolHtmlAttributeValue.create(kind = PolySymbolHtmlAttributeValue.Kind.PLAIN))
-      else -> super<AstroSymbol>.get(property)
-    }
+  @PolySymbol.Property(HtmlAttributeValueProperty::class)
+  private val htmlAttributeValue: PolySymbolHtmlAttributeValue?
+    get() = PolySymbolHtmlAttributeValue.create(kind = PolySymbolHtmlAttributeValue.Kind.PLAIN)
 
   override val modifiers: Set<PolySymbolModifier>
     get() = setOf(

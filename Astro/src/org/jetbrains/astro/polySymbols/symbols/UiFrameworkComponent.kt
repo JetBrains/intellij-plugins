@@ -4,7 +4,6 @@ package org.jetbrains.astro.polySymbols.symbols
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
@@ -14,7 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.astro.polySymbols.AstroProximity
-import org.jetbrains.astro.polySymbols.PROP_ASTRO_PROXIMITY
+import org.jetbrains.astro.polySymbols.AstroProximityProperty
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENTS
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
@@ -48,11 +47,9 @@ class UiFrameworkComponent(
   override val kind: PolySymbolKind
     get() = UI_FRAMEWORK_COMPONENTS
 
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_ASTRO_PROXIMITY -> property.tryCast(AstroProximity.LOCAL)
-      else -> super.get(property)
-    }
+  @PolySymbol.Property(AstroProximityProperty::class)
+  val astroProximity: AstroProximity
+    get() = AstroProximity.LOCAL
 
   override fun createPointer(): Pointer<out UiFrameworkComponent> {
     val name = name

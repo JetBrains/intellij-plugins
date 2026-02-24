@@ -9,7 +9,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
+import com.intellij.polySymbols.html.HtmlAttributeValueProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
@@ -47,15 +47,17 @@ open class Angular2StructuralDirectiveSymbol private constructor(
   override val kind: PolySymbolKind
     get() = NG_STRUCTURAL_DIRECTIVES
 
+  @PolySymbol.Property(HtmlAttributeValueProperty::class)
+  private val htmlAttributeValue: PolySymbolHtmlAttributeValue?
+    get() = if (!hasInputsToBind)
+      PolySymbolHtmlAttributeValue.create(required = false)
+    else JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(location) {
+      delegate[HtmlAttributeValueProperty]
+    }
+
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_SYMBOL_DIRECTIVE -> property.tryCast(directive)
-      PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(
-        if (!hasInputsToBind)
-          PolySymbolHtmlAttributeValue.create(required = false)
-        else JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(location) {
-          super[PROP_HTML_ATTRIBUTE_VALUE]
-        })
       else -> super.get(property)
     }
 

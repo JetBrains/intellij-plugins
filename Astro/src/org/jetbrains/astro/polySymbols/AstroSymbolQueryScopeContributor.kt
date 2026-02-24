@@ -37,7 +37,10 @@ val ASTRO_CLIENT_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "as
 val ASTRO_STYLE_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "astro-style-directives"]
 val ASTRO_SCRIPT_STYLE_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "astro-script-style-directives"]
 
-val PROP_ASTRO_PROXIMITY: PolySymbolProperty<AstroProximity> = PolySymbolProperty["x-astro-proximity"]
+/**
+ * Indicates the proximity of a component to the current Astro file context.
+ */
+object AstroProximityProperty : PolySymbolProperty<AstroProximity>("x-astro-proximity", AstroProximity::class.java)
 
 class AstroSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
   override fun registerProviders(registrar: PolySymbolQueryScopeProviderRegistrar) {

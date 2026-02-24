@@ -12,7 +12,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
+import com.intellij.polySymbols.html.HtmlAttributeValueProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.documentation.JSSymbolWithSubstitutor
 import com.intellij.polySymbols.js.types.JSTypeProperty
@@ -87,6 +87,7 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSSymbolW
     else
       rawJsType
 
+  @PolySymbol.Property(HtmlAttributeValueProperty::class)
   val attributeValue: PolySymbolHtmlAttributeValue?
     get() = JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(sourceElement) {
       if (TypeScriptSymbolTypeSupport.isBoolean(type) != ThreeState.NO) {
@@ -95,12 +96,6 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSSymbolW
       else {
         null
       }
-    }
-
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(attributeValue)
-      else -> super.get(property)
     }
 
   override val apiStatus: PolySymbolApiStatus

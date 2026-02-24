@@ -34,7 +34,7 @@ class AstroSymbolQueryResultsCustomizer(private val context: PsiElement) : PolyS
     else
       matches.filter { symbol ->
         symbol.asSafely<AstroComponent>()?.source != context.containingFile.originalFile
-        && (!strict || symbol[PROP_ASTRO_PROXIMITY].let {
+        && (!strict || symbol[AstroProximityProperty].let {
           it == null || it == AstroProximity.LOCAL
         })
       }
@@ -42,7 +42,7 @@ class AstroSymbolQueryResultsCustomizer(private val context: PsiElement) : PolyS
   override fun apply(item: PolySymbolCodeCompletionItem, kind: PolySymbolKind): PolySymbolCodeCompletionItem? {
     if (kind == ASTRO_COMPONENTS) {
       if (isHtmlTagName(item.name)) return null
-      val proximity = item.symbol?.get(PROP_ASTRO_PROXIMITY)
+      val proximity = item.symbol?.get(AstroProximityProperty)
       val element = (item.symbol as? PsiSourcedPolySymbol)?.source
       if (proximity == AstroProximity.OUT_OF_SCOPE && element is AstroFileImpl) {
         return if (element != context.containingFile.originalFile)

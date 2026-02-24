@@ -17,7 +17,8 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
-import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
+import com.intellij.polySymbols.html.HtmlAttributeValueProperty
+import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
@@ -67,11 +68,12 @@ class VueWebTypesMergedSymbol(
   override val priority: PolySymbol.Priority?
     get() = symbols.asSequence().mapNotNull { it.priority }.maxOrNull()
 
+  @PolySymbol.Property(HtmlAttributeValueProperty::class)
+  private val htmlAttributeValue: PolySymbolHtmlAttributeValue?
+    get() = symbols.asSequence().map { it[HtmlAttributeValueProperty] }.merge()
+
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(symbols.asSequence().map { it[PROP_HTML_ATTRIBUTE_VALUE] }.merge())
-      else -> symbols.firstNotNullOfOrNull { it[property] }
-    }
+    symbols.firstNotNullOfOrNull { it[property] }
 
   override val modifiers: Set<PolySymbolModifier>
     get() = symbols.asSequence().flatMap { it.modifiers }.toSet()
