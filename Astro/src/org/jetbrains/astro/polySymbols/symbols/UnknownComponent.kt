@@ -5,9 +5,10 @@ import com.intellij.lang.typescript.getNavigationFromService
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.polySymbols.PolySymbol.DocHidePatternProperty
+import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
@@ -43,12 +44,13 @@ class UnknownComponent(override val source: PsiElement, override val name: @NlsS
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> = emptyList()
 
-  @Suppress("UNCHECKED_CAST")
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? = when (property) {
-    PolySymbol.PROP_HIDE_FROM_COMPLETION -> true as T
-    PolySymbol.PROP_DOC_HIDE_PATTERN -> true as T
-    else -> super<ComponentPolySymbol>.get(property)
-  }
+  @PolySymbol.Property(HideFromCompletionProperty::class)
+  val hideFromCompletion: Boolean
+    get() = true
+
+  @PolySymbol.Property(DocHidePatternProperty::class)
+  val docHidePattern: Boolean
+    get() = true
 
   override fun getModificationCount(): Long = PsiModificationTracker.getInstance(source.project).modificationCount
 

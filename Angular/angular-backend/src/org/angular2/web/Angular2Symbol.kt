@@ -2,8 +2,8 @@
 package org.angular2.web
 
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.PolySymbol.Companion.PROP_DOC_HIDE_ICON
-import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbol.DocHideIconProperty
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.html.HtmlFrameworkSymbol
 import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
@@ -20,9 +20,12 @@ interface Angular2Symbol : HtmlFrameworkSymbol {
   override val icon: Icon?
     get() = AngularIcons.Angular2
 
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+  @PolySymbol.Property(DocHideIconProperty::class)
+  val docHideIcon: Boolean
+    get() = true
+
+  override fun <T : Any> get(property: com.intellij.polySymbols.PolySymbolProperty<T>): T? =
     when (property) {
-      PROP_DOC_HIDE_ICON -> property.tryCast(true)
       PROP_TYPE_SUPPORT -> property.tryCast(TypeScriptSymbolTypeSupport.default)
       else -> super.get(property)
     }

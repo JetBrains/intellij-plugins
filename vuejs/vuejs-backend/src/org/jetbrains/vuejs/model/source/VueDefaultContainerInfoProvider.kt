@@ -35,8 +35,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.polySymbols.PolySymbol.Companion.PROP_READ_WRITE_ACCESS
-import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbol.ReadWriteAccessProperty
 import com.intellij.polySymbols.js.expandJSElementWithReadWriteAccess
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -362,11 +362,9 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     override val source: PsiNamedElement get() = sourceElement
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      when (property) {
-        PROP_READ_WRITE_ACCESS -> property.tryCast(access)
-        else -> super<VueSourceInputProperty>.get(property)
-      }
+    @PolySymbol.Property(ReadWriteAccessProperty::class)
+    val readWriteAccess: ReadWriteAccessDetector.Access
+      get() = access
 
     override fun createPointer(): Pointer<out VuePsiNamedElementInputProperty> {
       val name = name

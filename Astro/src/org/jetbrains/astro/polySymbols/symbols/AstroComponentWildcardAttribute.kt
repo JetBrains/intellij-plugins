@@ -2,11 +2,10 @@
 package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbol.DocHidePatternProperty
+import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbol.Companion.PROP_DOC_HIDE_PATTERN
-import com.intellij.polySymbols.PolySymbol.Companion.PROP_HIDE_FROM_COMPLETION
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
@@ -26,12 +25,13 @@ object AstroComponentWildcardAttribute : PolySymbolWithPattern, AstroSymbol {
   override val pattern: PolySymbolPattern
     get() = PolySymbolPatternFactory.createRegExMatch(".*")
 
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_DOC_HIDE_PATTERN -> property.tryCast(true)
-      PROP_HIDE_FROM_COMPLETION -> property.tryCast(true)
-      else -> super<AstroSymbol>.get(property)
-    }
+  @PolySymbol.Property(HideFromCompletionProperty::class)
+  val hideFromCompletion: Boolean
+    get() = true
+
+  @PolySymbol.Property(DocHidePatternProperty::class)
+  val docHidePattern: Boolean
+    get() = true
 
   override fun createPointer(): Pointer<out PolySymbol> =
     Pointer.hardPointer(this)

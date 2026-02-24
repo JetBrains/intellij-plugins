@@ -21,7 +21,7 @@ import com.intellij.lang.javascript.psi.types.primitives.JSVoidType
 import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbol.ReadWriteAccessProperty
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -268,20 +268,16 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
           equivalentToProvider = true,
         )
 
-      override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-        when (property) {
-          PolySymbol.PROP_READ_WRITE_ACCESS -> property.tryCast(
-            if (provider is JSFunctionItem) {
-              when {
-                provider.isSetProperty -> ReadWriteAccessDetector.Access.Write
-                provider.isGetProperty -> ReadWriteAccessDetector.Access.Read
-                else -> null
-              }
-            }
-            else null
-          )
-          else -> super<VueDecoratedProperty>.get(property)
+      @PolySymbol.Property(ReadWriteAccessProperty::class)
+      val readWriteAccess: ReadWriteAccessDetector.Access?
+        get() = if (provider is JSFunctionItem) {
+          when {
+            provider.isSetProperty -> ReadWriteAccessDetector.Access.Write
+            provider.isGetProperty -> ReadWriteAccessDetector.Access.Read
+            else -> null
+          }
         }
+        else null
 
       override fun equals(other: Any?): Boolean =
         other === this

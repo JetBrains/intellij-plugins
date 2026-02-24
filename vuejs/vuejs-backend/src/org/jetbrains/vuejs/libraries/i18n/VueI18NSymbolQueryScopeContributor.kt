@@ -6,9 +6,9 @@ import com.intellij.model.Pointer
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.patterns.StandardPatterns.instanceOf
+import com.intellij.polySymbols.PolySymbol.InjectLanguageProperty
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
@@ -88,11 +88,9 @@ class VueI18NSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
     override val extension: Boolean
       get() = true
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      when (property) {
-        PolySymbol.PROP_INJECT_LANGUAGE -> property.tryCast(lang)
-        else -> super.get(property)
-      }
+    @PolySymbol.Property(InjectLanguageProperty::class)
+    val injectLanguage: String
+      get() = lang
 
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)

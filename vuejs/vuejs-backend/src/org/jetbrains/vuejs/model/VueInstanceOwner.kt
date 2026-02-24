@@ -40,10 +40,11 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbol.ReadWriteAccessProperty
 import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.JsSymbolKindProperty
 import com.intellij.polySymbols.js.JsSymbolSymbolKind
 import com.intellij.polySymbols.js.PROP_JS_PROPERTY_SIGNATURE
-import com.intellij.polySymbols.js.JsSymbolKindProperty
 import com.intellij.polySymbols.js.jsType
 import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
@@ -183,8 +184,8 @@ private class VueInstanceOwnerPropertiesScope(
 fun mergeSymbolsByAccessKind(symbols: Collection<PolySymbol>, source: PsiElement): Collection<PolySymbol> {
   if (symbols.size <= 1) return symbols.toList()
 
-  val readAccessSymbols = symbols.filter { it[PolySymbol.PROP_READ_WRITE_ACCESS] == ReadWriteAccessDetector.Access.Read }
-  val writeAccessSymbols = symbols.filter { it[PolySymbol.PROP_READ_WRITE_ACCESS] == ReadWriteAccessDetector.Access.Write }
+  val readAccessSymbols = symbols.filter { it[ReadWriteAccessProperty] == ReadWriteAccessDetector.Access.Read }
+  val writeAccessSymbols = symbols.filter { it[ReadWriteAccessProperty] == ReadWriteAccessDetector.Access.Write }
   val restSymbols = symbols.filter { it !in readAccessSymbols && it !in writeAccessSymbols }
   return listOfNotNull(
     mergeSymbols(readAccessSymbols, source),

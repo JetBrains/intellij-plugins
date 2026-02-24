@@ -15,6 +15,7 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
+import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
@@ -148,11 +149,14 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
     override val priority: PolySymbol.Priority
       get() = PolySymbol.Priority.LOW
 
+    @PolySymbol.Property(HideFromCompletionProperty::class)
+    val hideFromCompletion: Boolean
+      get() = resolveOnly
+
     override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
       when {
         property == PROP_DELEGATE_PRIORITY -> property.tryCast(super<PolySymbolDelegate>.priority)
         property == PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(attributeValue)
-        resolveOnly && property == PolySymbol.PROP_HIDE_FROM_COMPLETION -> property.tryCast(true)
         else -> super<PolySymbolDelegate>.get(property)
       }
 

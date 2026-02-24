@@ -3,8 +3,9 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbol.DocHidePatternProperty
+import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
@@ -20,13 +21,13 @@ object VueAnySlot : PolySymbolWithPattern, VueSlot {
   override val pattern: PolySymbolPattern
     get() = PolySymbolPatternFactory.createRegExMatch(".*", false)
 
-  @Suppress("UNCHECKED_CAST")
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PolySymbol.PROP_HIDE_FROM_COMPLETION -> true as? T
-      PolySymbol.PROP_DOC_HIDE_PATTERN -> true as? T
-      else -> super<PolySymbolWithPattern>.get(property)
-    }
+  @PolySymbol.Property(HideFromCompletionProperty::class)
+  val hideFromCompletion: Boolean
+    get() = true
+
+  @PolySymbol.Property(DocHidePatternProperty::class)
+  val docHidePattern: Boolean
+    get() = true
 
   override val source: PsiElement?
     get() = null
