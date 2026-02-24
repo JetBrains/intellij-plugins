@@ -1,7 +1,9 @@
 <idea-plugin visibility="internal">
   <dependencies>
-    <plugin id="com.intellij.cmake"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.cidr.workspaceModel"/>
+    <module name="intellij.cmake.core"/>
+    <!-- endregion -->
   </dependencies>
 
   <projectListeners>

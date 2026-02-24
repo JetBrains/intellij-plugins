@@ -19,7 +19,7 @@ jvm_library(
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/util",
-    "//CIDR/clion-cmake:cmake",
+    "//CIDR/clion-cmake/core",
     "//contrib/qodana",
     "@community//platform/platform-api:ide",
     "//CIDR/cidr-projectModel",
