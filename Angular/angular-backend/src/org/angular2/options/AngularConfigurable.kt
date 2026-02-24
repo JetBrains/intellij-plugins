@@ -43,7 +43,10 @@ class AngularConfigurable(project: Project) : UiDslUnnamedConfigurable.Simple(),
             toolTipText = JavaScriptBundle.message("typescript.compiler.configurable.options.use.servicePoweredTypeEngine.comment")
           }
           .enabledIf(rbDisabled.selected.not())
-          .bindSelected(settings::useTypesFromServer)
+          .bindSelected(
+            { settings.useTypesFromServer },
+            { settings.useServicePoweredTypesManualOverride = it }
+          )
       }
     }
   }

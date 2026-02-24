@@ -17,6 +17,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.annotations.TestOnly
 
 fun getAngularSettings(project: Project): AngularSettings = project.service<AngularSettings>()
@@ -47,26 +48,37 @@ class AngularSettings(val project: Project) : SimplePersistentStateComponent<Ang
       state.innerServiceType = value
       if (prevServiceType != value) {
         project.service<TypeScriptServiceRestartService>().restartServices(
-          isEffectiveUseTypesFromServer(prevServiceType == AngularServiceSettings.AUTO, state.useTypesFromServer)
-            != isEffectiveUseTypesFromServer(state.innerServiceType == AngularServiceSettings.AUTO, state.useTypesFromServer))
+          isEffectiveUseTypesFromServer(prevServiceType == AngularServiceSettings.AUTO, useTypesFromServer)
+            != isEffectiveUseTypesFromServer(state.innerServiceType == AngularServiceSettings.AUTO, useTypesFromServer))
       }
     }
 
-  var useTypesFromServer: Boolean
+  val useTypesFromServer: Boolean
     get() {
-      return (TypeScriptCompilerSettings.useTypesFromServerInTests ?: state.useTypesFromServer).also {
-        with(project.service<JSLogOnceService>()) {
-          LOG.infoOnce { "'Service-powered type engine' option of AngularSettings: $it" }
-        }
+      val result =
+        TypeScriptCompilerSettings.useTypesFromServerInTests
+        ?: useServicePoweredTypesManualOverride
+        ?: (Registry.`is`("angular.service.powered.type.engine.enabled.by.default") && state.useTypesFromServer)
+      with(project.service<JSLogOnceService>()) {
+        LOG.infoOnce { "'Service-powered type engine' option of AngularSettings: $result" }
       }
+      return result
+    }
+
+  var useServicePoweredTypesManualOverride: Boolean?
+    get() = when {
+      state.useServicePoweredTypesEnabledManually -> true
+      state.useServicePoweredTypesDisabledManually -> false
+      else -> null
     }
     set(value) {
-      val prevUseTypesFromServer = state.useTypesFromServer
-      state.useTypesFromServer = value
+      val prevUseTypesFromServer = useTypesFromServer
+      state.useServicePoweredTypesEnabledManually = value == true
+      state.useServicePoweredTypesDisabledManually = value == false
       if (prevUseTypesFromServer != value) {
         project.service<TypeScriptServiceRestartService>().restartServices(
           isEffectiveUseTypesFromServer(serviceType == AngularServiceSettings.AUTO, prevUseTypesFromServer)
-            != isEffectiveUseTypesFromServer(serviceType == AngularServiceSettings.AUTO, state.useTypesFromServer))
+            != isEffectiveUseTypesFromServer(serviceType == AngularServiceSettings.AUTO, useTypesFromServer))
       }
     }
 }
@@ -74,7 +86,10 @@ class AngularSettings(val project: Project) : SimplePersistentStateComponent<Ang
 class AngularSettingsState : BaseState() {
   var innerServiceType: AngularServiceSettings by enum(AngularServiceSettings.AUTO)
   var packageName: String? by string(defaultPackageKey)
+  @Deprecated(message = "Use useServicePoweredTypesEnabledManually and useServicePoweredTypesDisabledManually")
   var useTypesFromServer: Boolean by property(true)
+  var useServicePoweredTypesEnabledManually: Boolean by property(false)
+  var useServicePoweredTypesDisabledManually: Boolean by property(false)
 }
 
 enum class AngularServiceSettings {
