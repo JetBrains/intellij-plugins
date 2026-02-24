@@ -3,8 +3,8 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.platform.backend.documentation.DocumentationTarget
-import com.intellij.polySymbols.PolySymbol.DocHideIconProperty
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbol.DocHideIconProperty
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.html.HtmlFrameworkSymbol
@@ -13,6 +13,7 @@ import com.intellij.polySymbols.js.JsSymbolSymbolKind
 import com.intellij.polySymbols.js.types.JSTypeProperty
 import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.polySymbols.utils.PolySymbolTypeSupport
+import com.intellij.polySymbols.utils.PolySymbolTypeSupport.TypeSupportProperty
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
@@ -38,11 +39,9 @@ interface VueSymbol : HtmlFrameworkSymbol, VueElement {
   val docHideIcon: Boolean
     get() = true
 
-  override fun <T : Any> get(property: com.intellij.polySymbols.PolySymbolProperty<T>): T? =
-    when (property) {
-      PolySymbolTypeSupport.PROP_TYPE_SUPPORT -> property.tryCast(TypeScriptSymbolTypeSupport.default)
-      else -> super.get(property)
-    }
+  @PolySymbol.Property(TypeSupportProperty::class)
+  val typeSupport: PolySymbolTypeSupport
+    get() = TypeScriptSymbolTypeSupport.default
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     PolySymbolDocumentationTarget.create(this, location) { symbol, _ ->
