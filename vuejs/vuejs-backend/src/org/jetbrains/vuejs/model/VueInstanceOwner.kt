@@ -44,7 +44,7 @@ import com.intellij.polySymbols.PolySymbol.ReadWriteAccessProperty
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JsSymbolKindProperty
 import com.intellij.polySymbols.js.JsSymbolSymbolKind
-import com.intellij.polySymbols.js.PROP_JS_PROPERTY_SIGNATURE
+import com.intellij.polySymbols.js.JSPropertySignatureProperty
 import com.intellij.polySymbols.js.jsType
 import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
@@ -720,6 +720,7 @@ private data class VueMergedPropertiesSymbol(
       }
   }
 
+  @PolySymbol.Property(JSPropertySignatureProperty::class)
   private val propertySignature: PropertySignatureImpl? by lazy(LazyThreadSafetyMode.NONE) {
     PropertySignatureImpl(
       name, type, modifiers.contains(PolySymbolModifier.OPTIONAL),
@@ -735,12 +736,6 @@ private data class VueMergedPropertiesSymbol(
   @PolySymbol.Property(VueProximityProperty::class)
   private val vueProximity: VueModelVisitor.Proximity?
     get() = properties.asSequence().mapNotNull { it[VueProximityProperty] }.maxByOrNull { it.ordinal }
-
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_JS_PROPERTY_SIGNATURE -> property.tryCast(propertySignature)
-      else -> super.get(property)
-    }
 
   override fun createPointer(): Pointer<out PolySymbol> {
     val propertiesPtr = properties.map { it.createPointer() }
