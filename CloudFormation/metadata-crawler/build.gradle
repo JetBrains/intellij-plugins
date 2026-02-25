@@ -1,0 +1,130 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
+plugins {
+  id 'java'
+  id 'application'
+  id 'org.jetbrains.kotlin.jvm' version '2.1.21'
+  id 'maven-publish'
+}
+
+def sharedCloudFormationSources = layout.buildDirectory.dir('generated/shared-cloudformation-sources')
+
+tasks.register('syncSharedCloudFormationSources', Sync) {
+  from('../src/main/kotlin') {
+    include 'com/intellij/aws/cloudformation/CloudFormationConstants.kt'
+    include 'com/intellij/aws/cloudformation/CloudFormationIntrinsicFunction.kt'
+    include 'com/intellij/aws/cloudformation/CloudFormationMetadataProvider.kt'
+    include 'com/intellij/aws/cloudformation/CloudFormationParameterType.kt'
+    include 'com/intellij/aws/cloudformation/model/**'
+    include 'com/intellij/aws/cloudformation/metadata/**'
+  }
+  into(sharedCloudFormationSources)
+}
+
+def envOrDefault = { String key, String defaultValue -> System.getenv(key) ?: defaultValue }
+
+def repositoryUrl = envOrDefault('REPO_URL', 'https://packages.jetbrains.team/maven/p/ij/intellij-dependencies')
+def repoUsername = envOrDefault('REPO_USERNAME', 'spaceUsername')
+def repoPassword = envOrDefault('REPO_PASSWORD', 'spacePassword')
+
+def artifactGroup = envOrDefault('ARTIFACT_GROUP', 'com.intellij.aws')
+def artifactVersion = envOrDefault('ARTIFACT_VERSION', '2026.1.0-SNAPSHOT')
+def artifactName = envOrDefault('ARTIFACT_NAME', 'cloudformation-meta')
+
+group = artifactGroup
+version = artifactVersion
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+  implementation 'org.jetbrains:annotations:24.1.0'
+  implementation 'com.google.code.gson:gson:2.10.1'
+  implementation 'org.jsoup:jsoup:1.17.2'
+  implementation 'com.thoughtworks.xstream:xstream:1.4.20'
+}
+
+kotlin {
+  sourceSets.main.kotlin.srcDir(sharedCloudFormationSources)
+}
+
+tasks.named('compileKotlin') {
+  dependsOn tasks.named('syncSharedCloudFormationSources')
+}
+
+application {
+  applicationName = 'cloudformation-metadata-crawler'
+  mainClass = 'MetadataCrawlerMain'
+}
+
+def metadataOutputDir = layout.buildDirectory.dir('generated/metadata')
+def examplesOutputDir = layout.buildDirectory.dir('generated/examples')
+
+tasks.register('generateMetadata', JavaExec) {
+  group = 'metadata'
+  description = 'Collect CloudFormation metadata and write XML files under build/generated/metadata'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'MetadataCrawlerMain'
+  args = ['METADATA']
+  jvmArgs '--add-opens=java.base/java.util=ALL-UNNAMED'
+  systemProperty 'cloudformation.metadata.outputDir', metadataOutputDir.get().asFile.absolutePath
+}
+
+tasks.register('generateExamples', JavaExec) {
+  group = 'metadata'
+  description = 'Download official CloudFormation and SAM examples under build/generated/examples'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'MetadataCrawlerMain'
+  args = ['EXAMPLES']
+  systemProperty 'cloudformation.examples.official.outputDir', new File(examplesOutputDir.get().asFile, 'officialExamples/src').absolutePath
+  systemProperty 'cloudformation.examples.serverless.outputDir', new File(examplesOutputDir.get().asFile, 'serverless-application-model/src').absolutePath
+}
+
+tasks.register('metadataJar', Jar) {
+  group = 'build'
+  description = 'Build CloudFormation metadata jar'
+  dependsOn tasks.named('generateMetadata')
+  archiveBaseName = artifactName
+  archiveVersion = artifactVersion
+  destinationDirectory = layout.buildDirectory.dir('dist')
+  from(metadataOutputDir)
+}
+
+tasks.register('buildMetadata') {
+  group = 'build'
+  description = 'Collect metadata and package metadata jar'
+  dependsOn tasks.named('metadataJar')
+}
+
+publishing {
+  publications {
+    metadata(MavenPublication) {
+      groupId = artifactGroup
+      artifactId = artifactName
+      version = artifactVersion
+      artifact(tasks.named('metadataJar'))
+    }
+  }
+  repositories {
+    maven {
+      url = uri(repositoryUrl)
+      allowInsecureProtocol = true
+      credentials {
+        username = repoUsername
+        password = repoPassword
+      }
+    }
+  }
+}
+
+tasks.named('publishMetadataPublicationToMavenRepository') {
+  dependsOn tasks.named('metadataJar')
+}
