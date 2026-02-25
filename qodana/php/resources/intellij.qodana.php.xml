@@ -2,6 +2,7 @@
   <dependencies>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="com.jetbrains.php"/>
+    <module name="intellij.php.coverage"/>
     <module name="intellij.qodana.coverage"/>
     <!-- endregion -->
   </dependencies>

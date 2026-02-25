@@ -5,6 +5,7 @@ import com.intellij.codeInspection.options.OptPane
 import com.intellij.codeInspection.options.OptPane.number
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
+import com.intellij.php.coverage.PhpUnitCoverageEngine
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -19,7 +20,6 @@ import com.jetbrains.php.lang.psi.elements.PhpExpression
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement
 import com.jetbrains.php.lang.psi.elements.impl.FunctionImpl
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
-import com.jetbrains.php.phpunit.coverage.PhpUnitCoverageEngine
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageInspectionBase
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.issueWithCoverage

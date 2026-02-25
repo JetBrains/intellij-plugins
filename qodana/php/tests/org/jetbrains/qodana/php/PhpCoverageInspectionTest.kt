@@ -4,9 +4,9 @@ import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageFileProvider
 import com.intellij.coverage.CoverageRunner
 import com.intellij.coverage.CoverageSuitesBundle
+import com.intellij.php.coverage.PhpUnitCoverageEngine
 import com.intellij.rt.coverage.util.ProjectDataLoader
 import com.intellij.testFramework.UsefulTestCase
-import com.jetbrains.php.phpunit.coverage.PhpUnitCoverageEngine
 import junit.framework.TestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageInspectionTest
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFromCloud

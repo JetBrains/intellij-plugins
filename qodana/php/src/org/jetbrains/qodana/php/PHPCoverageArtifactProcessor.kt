@@ -4,8 +4,8 @@ import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageFileProvider
 import com.intellij.coverage.CoverageSuitesBundle
 import com.intellij.openapi.project.Project
+import com.intellij.php.coverage.PhpUnitCoverageEngine
 import com.intellij.rt.coverage.util.ProjectDataLoader
-import com.jetbrains.php.phpunit.coverage.PhpUnitCoverageEngine
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.coverage.CoverageMetaDataArtifact
