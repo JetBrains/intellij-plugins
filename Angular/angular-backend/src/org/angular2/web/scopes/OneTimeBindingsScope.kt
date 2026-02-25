@@ -104,7 +104,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
 
   companion object {
 
-    object DelegatePriorityProperty : PolySymbolProperty<PolySymbol.Priority>("ng-delegate-priority", PolySymbol.Priority::class.java)
+    object Angular2DelegatePriorityProperty : PolySymbolProperty<PolySymbol.Priority>("ng-delegate-priority", PolySymbol.Priority::class.java)
 
     private val ONE_TIME_BINDING_EXCLUDES = listOf(Angular2AttributeValueProvider.NG_CLASS_ATTR)
     private val STRING_TYPE: JSType = JSStringTypeImpl.STRING_EMPTY_EXPLICIT_TYPE
@@ -153,7 +153,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
     val hideFromCompletion: Boolean
       get() = resolveOnly
 
-    @PolySymbol.Property(DelegatePriorityProperty::class)
+    @PolySymbol.Property(Angular2DelegatePriorityProperty::class)
     private val delegatePriority: PolySymbol.Priority?
       get() = super<PolySymbolDelegate>.priority
 

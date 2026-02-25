@@ -19,7 +19,7 @@ import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.match
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.BindingPatternProperty
+import org.angular2.web.Angular2BindingPatternProperty
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 
 object AttributeWithInterpolationsScope : PolySymbolScope {
@@ -48,7 +48,7 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
       get() = "Attribute with interpolations"
 
 
-    @PolySymbol.Property(BindingPatternProperty::class)
+    @PolySymbol.Property(Angular2BindingPatternProperty::class)
     private val bindingPattern: Boolean
       get() = true
 

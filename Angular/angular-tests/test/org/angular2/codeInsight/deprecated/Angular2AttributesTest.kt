@@ -49,8 +49,8 @@ import org.angular2.entities.Angular2EntitiesProvider.getComponent
 import org.angular2.entities.source.Angular2SourceDirectiveVirtualProperty
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
-import org.angular2.web.BindingPatternProperty
-import org.angular2.web.ErrorSymbolProperty
+import org.angular2.web.Angular2BindingPatternProperty
+import org.angular2.web.Angular2ErrorSymbolProperty
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
@@ -503,8 +503,8 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
         val wrap = attrWrap[i]
         val ref = myFixture.multiResolvePolySymbolReference(wrap.first + "<caret>" + name + wrap.second + "=")
           .filter { s: PolySymbol ->
-            s[ErrorSymbolProperty] != true
-            && s[BindingPatternProperty] != true
+            s[Angular2ErrorSymbolProperty] != true
+            && s[Angular2BindingPatternProperty] != true
           }
         val sources = ref.map { it.psiContext }
         val messageStart = "Attribute " + wrap.first + name + wrap.second

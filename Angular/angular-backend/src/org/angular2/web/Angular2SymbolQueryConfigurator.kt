@@ -377,16 +377,16 @@ private fun getCssClassesInJSLiteralInHtmlAttributeScope(element: PsiElement): P
     ?.parentOfType<XmlAttribute>()
     ?.let { CssClassListInJSLiteralInHtmlAttributeScope(it) }
 
-object BindingPatternProperty : PolySymbolProperty<Boolean>("ng-binding-pattern", Boolean::class.java)
+object Angular2BindingPatternProperty : PolySymbolProperty<Boolean>("ng-binding-pattern", Boolean::class.java)
 
-object ErrorSymbolProperty : PolySymbolProperty<Boolean>("ng-error-symbol", Boolean::class.java)
+object Angular2ErrorSymbolProperty : PolySymbolProperty<Boolean>("ng-error-symbol", Boolean::class.java)
 
-object SymbolDirectiveProperty : PolySymbolProperty<Angular2Directive>("ng-symbol-directive", Angular2Directive::class.java)
+object Angular2SymbolDirectiveProperty : PolySymbolProperty<Angular2Directive>("ng-symbol-directive", Angular2Directive::class.java)
 
-object ScopeProximityProperty : PolySymbolProperty<Angular2DeclarationsScope.DeclarationProximity>("scope-proximity",
-                                                                                                   Angular2DeclarationsScope.DeclarationProximity::class.java)
+object Angular2ScopeProximityProperty : PolySymbolProperty<Angular2DeclarationsScope.DeclarationProximity>("scope-proximity",
+                                                                                                           Angular2DeclarationsScope.DeclarationProximity::class.java)
 
-object HostBindingProperty : PolySymbolProperty<Boolean>("ng-host-binding", Boolean::class.java)
+object Angular2HostBindingProperty : PolySymbolProperty<Boolean>("ng-host-binding", Boolean::class.java)
 
 const val EVENT_ATTR_PREFIX: String = "on"
 

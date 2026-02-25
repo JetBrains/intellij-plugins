@@ -19,7 +19,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import org.angular2.Angular2Framework
 import org.angular2.lang.types.BindingsTypeResolver
-import org.angular2.web.scopes.OneTimeBindingsScope.Companion.DelegatePriorityProperty
+import org.angular2.web.scopes.OneTimeBindingsScope.Companion.Angular2DelegatePriorityProperty
 
 private val typedKinds = setOf(JS_EVENTS,
                                JS_PROPERTIES,
@@ -58,7 +58,7 @@ class Angular2CodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomi
                   item
                     .decorateWithSymbolType(location, symbol)
                     .withPriority(
-                      symbol[DelegatePriorityProperty]
+                      symbol[Angular2DelegatePriorityProperty]
                       ?: PolySymbol.Priority.HIGH
                     )
 

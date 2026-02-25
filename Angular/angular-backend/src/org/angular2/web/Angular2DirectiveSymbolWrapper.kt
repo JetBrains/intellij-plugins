@@ -23,7 +23,7 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 
 open class Angular2DirectiveSymbolWrapper private constructor(
-  @PolySymbol.Property(SymbolDirectiveProperty::class)
+  @PolySymbol.Property(Angular2SymbolDirectiveProperty::class)
   val directive: Angular2Directive,
   delegate: Angular2Symbol,
   private val forcedPriority: PolySymbol.Priority? = null,

@@ -17,7 +17,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.css.StylesheetFile
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2EntitiesProvider
-import org.angular2.web.HostBindingProperty
+import org.angular2.web.Angular2HostBindingProperty
 
 class HostBindingsScope(mappings: Map<PolySymbolKind, PolySymbolKind>, decorator: ES6Decorator) :
   PolySymbolIsolatedMappingScope<ES6Decorator>(mappings, decorator) {
@@ -34,7 +34,7 @@ class HostBindingsScope(mappings: Map<PolySymbolKind, PolySymbolKind>, decorator
     mappings.containsKey(kind)
 
   override fun acceptSymbol(symbol: PolySymbol): Boolean =
-    (symbol[HostBindingProperty] != false && (!symbol.name.startsWith("on") || !symbol.hasOnlyStandardHtmlSymbolsOrExtensions()))
+    (symbol[Angular2HostBindingProperty] != false && (!symbol.name.startsWith("on") || !symbol.hasOnlyStandardHtmlSymbolsOrExtensions()))
 
   override val subScopeBuilder: (PolySymbolQueryExecutor, ES6Decorator) -> List<PolySymbolScope>
     get() = ::buildSubScope

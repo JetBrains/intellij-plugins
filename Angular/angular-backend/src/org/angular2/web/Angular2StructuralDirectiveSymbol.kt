@@ -18,7 +18,7 @@ import com.intellij.psi.createSmartPointer
 import org.angular2.entities.Angular2Directive
 
 open class Angular2StructuralDirectiveSymbol private constructor(
-  @PolySymbol.Property(SymbolDirectiveProperty::class)
+  @PolySymbol.Property(Angular2SymbolDirectiveProperty::class)
   val directive: Angular2Directive,
   sourceSymbol: Angular2Symbol,
   private val hasInputsToBind: Boolean,
