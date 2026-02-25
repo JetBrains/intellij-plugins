@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import com.bertramlabs.plugins.hcl4j.HCLParser
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -125,19 +125,18 @@ object TerraformProvidersMetadataBuilder {
   private fun buildProviderMetadata(data: JsonNode,
                                     version: String,
                                     outputDir: File): File {
-    val name = data["attributes"]["full-name"].asText()
-    logger.info("Provider: $name")
-    val dir = name.substringBeforeLast("/")
-    val file = name.substringAfterLast("/")
+    val fullName = data["attributes"]["full-name"].asText()
+    logger.info("Provider: $fullName")
+    val namespace = fullName.substringBeforeLast("/")
+    val provider = fullName.substringAfterLast("/")
 
+    val tfgendir = File("terraform-gen-dir/${namespace}").apply { mkdirs() }
 
-    val tfgendir = File("terraform-gen-dir/${dir}").apply { mkdirs() }
+    writeVersionsTfFile(tfgendir, version, namespace, provider)
 
-    writeVersionsTfFile(tfgendir, version, name)
-
-    val logFile = File(File(outputDir, "logs/$dir").apply { mkdirs() }, "$file.log")
-    val parentDir = File(outputDir, "resources/model/providers/$dir").apply { mkdirs() }
-    val schemaFile = File(parentDir, "$file.json")
+    val logFile = File(File(outputDir, "logs/$namespace").apply { mkdirs() }, "$provider.log")
+    val parentDir = File(outputDir, "resources/model/providers/$namespace").apply { mkdirs() }
+    val schemaFile = File(parentDir, "$provider.json")
 
     val initError = initTerraform(tfgendir, logFile)
     val schemaError: String = generateTerraformSchema(tfgendir, schemaFile)
@@ -145,16 +144,16 @@ object TerraformProvidersMetadataBuilder {
     if (schemaFile.length() <= 0L) {
       schemaFile.delete()
       parentDir.delete()
-      val failures = File(outputDir, "failed/$dir")
-      val failureDir = File(failures, file).apply { deleteRecursively() }.also { it.mkdirs() }
+      val failures = File(outputDir, "failed/$namespace")
+      val failureDir = File(failures, provider).apply { deleteRecursively() }.also { it.mkdirs() }
       File(tfgendir, "versions.tf").copyTo(File(failureDir, "versions.tf"))
       File(failureDir, "init.err").writeText(initError)
       File(failureDir, "schema.err").writeText(schemaError)
-      logger.error("Metadata build failure for provider $name. \n Error: $initError \n Schema Generation Error: $schemaError")
+      logger.error("Metadata build failure for provider $fullName. \n Error: $initError \n Schema Generation Error: $schemaError")
     }
     else {
-      storeRegistryData(data, tfgendir, outputDir, dir, file)
-      logger.info("Schema file generated: $file")
+      storeRegistryData(data, tfgendir, outputDir, namespace, provider)
+      logger.info("Schema file generated: $provider")
     }
     deleteDirRecursively(tfgendir)
     return schemaFile
@@ -199,17 +198,42 @@ object TerraformProvidersMetadataBuilder {
         .forEach(File::deleteOnExit)
   }
 
-  private fun writeVersionsTfFile(tfgendir: File, version: String?, fullName: String?) {
-    File(tfgendir, "versions.tf").writeText("""
-        terraform {
-          required_version = "$version"
-          required_providers {
-            googleworkspace = {
-              source = "$fullName"
-            }
+  private fun writeVersionsTfFile(tfGenDir: File, version: String, namespace: String, provider: String) {
+    val providerVersion = getLatestProviderVersion(namespace, provider)
+
+    File(tfGenDir, "versions.tf").writeText("""
+      terraform {
+        required_version = "$version"
+        required_providers {
+          googleworkspace = {
+            source = "$namespace/$provider"
+            ${if (!providerVersion.isNullOrEmpty()) "version = \"$providerVersion\"" else ""}
           }
         }
-      """.trimIndent())
+      }
+      """.trimIndent()
+    )
+  }
+
+  private fun getLatestProviderVersion(namespace: String, provider: String): String? {
+    val url = "$terraformRegistryHost/v1/providers/$namespace/$provider/versions"
+    val fullName = "$namespace/$provider"
+    return try {
+      val response = getQuery(url)
+      if (response.statusCode() != 200) {
+        logger.warn("Failed to get versions for $fullName, status=${response.statusCode()}")
+        null
+      }
+      else {
+        val json = objectMapper.readTree(response.body())
+        val versions = json["versions"]?.map { it["version"].asText() } ?: emptyList()
+        versions.maxOrNull()
+      }
+    }
+    catch (e: Exception) {
+      logger.error("Error fetching versions for $fullName", e)
+      null
+    }
   }
 
   private fun generateTerraformSchema(tfgendir: File, schemaFile: File): String {
