@@ -24,9 +24,6 @@ module Minitest
       assert_no_minitest_reporters
       Minitest.reporter.reporters.clear
       Minitest.reporter.reporters << Minitest::RubyMineReporter.new(options)
-      unless is_diff_reporting_disabled?
-        Minitest::Assertions.prepend(Minitest::RubyMineAssertionsPatch)
-      end
     end
 
     def assert_no_minitest_reporters
@@ -72,10 +69,6 @@ module Minitest
     rescue NameError, NoMethodError
       "ruby_minitest_qn://#{class_name}"
     end
-
-    def is_diff_reporting_disabled?
-      ENV["INTELLIJ_IDEA_RUN_CONF_MINITEST_DIFF_VIEWER_DISABLE"] ? true : false
-    end
   end
 
   class RubymineTestData
@@ -114,34 +107,6 @@ module Minitest
 
     def klass
       @klass || Object.const_get(@class_name)
-    end
-  end
-
-  module RubyMineAssertionPatch
-    attr_accessor :rm_expected_str, :rm_actual_str
-  end
-
-  module RubyMineAssertionsPatch
-    def rm_inject_assertion_details(e, exp, act)
-      e.extend(RubyMineAssertionPatch)
-      if exp.is_a?(String) && act.is_a?(String)
-        e.rm_expected_str = exp
-        e.rm_actual_str = act
-      else
-        e.rm_expected_str = mu_pp(exp)
-        e.rm_actual_str = mu_pp(act)
-      end
-    end
-
-    def assert_equal(exp, act, msg = nil)
-      super
-    rescue Minitest::Assertion => e
-      rm_inject_assertion_details e, exp, act
-      raise
-    end
-
-    def diff(exp, act)
-      nil # prevent minitest from computing and showing its own diff
     end
   end
 
