@@ -319,7 +319,7 @@ public final class PerforceManager  {
       String vcsRootPath = vcsRoot.getPath();
       if (FileUtil.startsWith(filePath, vcsRootPath)) {
         //already under vcs root
-        continue;
+        return filePath;
       }
 
       try {
