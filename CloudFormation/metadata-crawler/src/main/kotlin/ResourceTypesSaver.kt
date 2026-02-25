@@ -1,26 +1,30 @@
 @file:Suppress("LoopToCallChain")
 
 import com.google.gson.JsonParser
-import com.intellij.aws.cloudformation.CloudFormationConstants.awsServerless20161031TransformName
 import com.intellij.aws.cloudformation.metadata.CloudFormationLimits
 import com.intellij.aws.cloudformation.metadata.CloudFormationMetadata
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceTypesDescription
 import com.intellij.aws.cloudformation.metadata.MetadataSerializer
 import com.intellij.aws.cloudformation.metadata.ResourceTypeBuilder
-import com.intellij.aws.cloudformation.tests.TestUtil
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.io.File
 import java.io.IOException
+import java.net.URI
 import java.net.URL
 import java.util.TreeMap
 import java.util.zip.GZIPInputStream
 
 object ResourceTypesSaver {
   private const val FETCH_TIMEOUT_MS = 10000
+  private const val AWS_SERVERLESS_2016_10_31_TRANSFORM_NAME = "AWS::Serverless-2016-10-31"
+  private val PSEUDO_PARAMETER_TOKEN_REGEX = Regex("""AWS::[A-Za-z0-9]+(?![:A-Za-z0-9-])""")
+
+  private class MissingAwsDocumentationException(message: String) : RuntimeException(message)
 
   fun saveResourceTypes() {
-    TestUtil.getTestDataFile("../metadata-package/build/jar/com/intellij/aws/meta").mkdirs()
+    CrawlerPaths.metadataResourceDir.mkdirs()
 
     val limits = fetchLimits()
     val resourceTypeLocations = fetchResourceTypeLocations()
@@ -56,10 +60,13 @@ object ResourceTypesSaver {
         builder.toResourceTypeDescription()
 
         builder
+      } catch (e: MissingAwsDocumentationException) {
+        println("Skipping ${it.name}: ${e.message}")
+        null
       } catch (e: Throwable) {
         throw Exception("Unable to parse resource type ${it.name} from $location: ${e.message}", e)
       }
-    }
+    }.filterNotNull()
 
     val metadata = CloudFormationMetadata(
       resourceTypes = TreeMap(resourceTypes.associate { Pair(it.name, it.toResourceType()) }),
@@ -71,9 +78,9 @@ object ResourceTypesSaver {
         resourceTypes = resourceTypes.associate { Pair(it.name, it.toResourceTypeDescription()) }
     )
 
-    TestUtil.getTestDataFile("../metadata-package/build/jar/com/intellij/aws/meta/cloudformation-metadata.xml")
+    File(CrawlerPaths.metadataResourceDir, "cloudformation-metadata.xml")
       .outputStream().use { outputStream -> MetadataSerializer.toXML(metadata, outputStream) }
-    TestUtil.getTestDataFile("../metadata-package/build/jar/com/intellij/aws/meta/cloudformation-descriptions.xml")
+    File(CrawlerPaths.metadataResourceDir, "cloudformation-descriptions.xml")
       .outputStream().use { outputStream -> MetadataSerializer.toXML(descriptions, outputStream) }
   }
 
@@ -85,21 +92,30 @@ object ResourceTypesSaver {
     }
 
     val partialLocation = doc.location().removeSuffix(".html") + ".partial.html"
-    val partialDoc = downloadDocument(URL(partialLocation))
+    val partialDoc = downloadDocument(toURL(partialLocation))
 
     if (partialDoc.select("div").any { it.attr("id") == "main-col-body" }) {
       return partialDoc
     }
 
+    if (isCloudFormationIndexRedirect(doc) && isCloudFormationIndexRedirect(partialDoc)) {
+      throw MissingAwsDocumentationException("Documentation page is unavailable")
+    }
+
     error("Could not fetch a valid AWS document page $url from both $doc and $partialDoc")
+  }
+
+  private fun isCloudFormationIndexRedirect(doc: Document): Boolean {
+    val refreshContent = doc.select("meta[http-equiv=refresh]").firstOrNull()?.attr("content")
+    return refreshContent?.contains("introduction.html") == true
   }
 
   private fun downloadDocument(url: URL): Document {
     println("Downloading $url")
-    for (retry in 1..4) {
+    repeat(4) {
       try {
         return Jsoup.parse(url, FETCH_TIMEOUT_MS)
-      } catch (ignored: IOException) {
+      } catch (_: IOException) {
       }
 
       println("retry...")
@@ -132,7 +148,7 @@ object ResourceTypesSaver {
   private fun fetchResourceType(builder: ResourceTypeBuilder) {
     println(builder.name)
 
-    val doc = getDocumentFromUrl(URL(builder.url))
+    val doc = getDocumentFromUrl(toURL(builder.url))
 
     val descriptionElement = doc.select("div").single { it.attr("id") == "main-col-body" }
     descriptionElement.getElementsByAttributeValueMatching("id", "language-filter").forEach { it.remove() }
@@ -397,7 +413,7 @@ object ResourceTypesSaver {
 
   private fun fetchResourceTypeLocations(url: String): Map<String, ResourceTypeLocation> {
     val content = try {
-      URL(url).openStream().use { stream ->
+      toURL(url).openStream().use { stream ->
         GZIPInputStream(stream).bufferedReader().readText()
       }
     } catch (t: Throwable) {
@@ -453,17 +469,30 @@ object ResourceTypesSaver {
 
   private fun serverlessLocation(name: String, url: String): ResourceTypeLocation {
     // Serverless types must have "Transform:" attribute
-    return ResourceTypeLocation(name, url, awsServerless20161031TransformName)
+    return ResourceTypeLocation(name, url, AWS_SERVERLESS_2016_10_31_TRANSFORM_NAME)
   }
 
   private fun fetchPredefinedParameters(): List<String> {
-    val url = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html")
+    val url = toURL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html")
     val doc = getDocumentFromUrl(url)
-    return doc.select("h2").asSequence().filter { it.attr("id").startsWith("cfn-pseudo-param") }.map { it.text() }.sorted().toList()
+
+    val extracted =
+      (doc.select("h1, h2, h3, h4, h5, h6") + doc.select("div#main-col-body code"))
+        .asSequence()
+        .flatMap { element ->
+          PSEUDO_PARAMETER_TOKEN_REGEX.findAll(element.text()).map { it.value }
+        }
+        .toSet()
+
+    check(extracted.isNotEmpty()) {
+      "Could not extract predefined pseudo-parameters from ${url}"
+    }
+
+    return extracted.sorted()
   }
 
   private fun fetchLimits(): CloudFormationLimits {
-    val fnGetAttrDocUrl = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html")
+    val fnGetAttrDocUrl = toURL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html")
     val doc = getDocumentFromUrl(fnGetAttrDocUrl)
 
     val tableElement = doc.select("div.table-contents").first()!!
@@ -478,4 +507,6 @@ object ResourceTypesSaver {
         maxOutputs = Integer.parseInt(limits.getValue("Outputs").replace(" outputs", ""))
     )
   }
+
+  private fun toURL(url: String): URL = URI(url).toURL()
 }
