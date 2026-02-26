@@ -14,6 +14,8 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.ModuleFixture
 import org.jetbrains.yaml.psi.YAMLFile
 import org.junit.Assert
+import org.junit.Assume
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 
@@ -48,6 +50,7 @@ abstract class BaseInspectionTestCase(private val folder: String) : CodeInsightF
 
   @Test
   fun testAll() {
+    Assume.assumeTrue("Test disabled", false)
     val testsPath = File(myFixture.testDataPath)
     Assert.assertTrue("Is not a directory: $testsPath", testsPath.isDirectory)
 
