@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory
 import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor
 import com.intellij.lang.javascript.findUsages.JSDialectSpecificReadWriteAccessDetector
+import com.intellij.lang.javascript.library.JSLibraryVersionChecker
 import com.intellij.lang.javascript.psi.ExpectedTypeEvaluator
 import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.JSElement
@@ -118,7 +119,9 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
     ) {
       return false
     }
-    return TypeScriptConfigUtil.getConfigForPsiFile(context.getContainingFile())?.strictNullChecks() == true
+    val config = TypeScriptConfigUtil.getConfigForPsiFile(context.getContainingFile()) ?: return false
+    val ts6orNewer = JSLibraryVersionChecker.isTS6OrGreater(context, config)
+    return TypeScriptConfigUtil.getConfigForPsiFile(context.getContainingFile())?.strictNullChecks(ts6orNewer) == true
   }
 
   override fun shouldForceBuiltInTypeEngine(element: PsiElement): Boolean =

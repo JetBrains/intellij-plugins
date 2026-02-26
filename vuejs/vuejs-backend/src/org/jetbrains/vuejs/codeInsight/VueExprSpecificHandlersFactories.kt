@@ -6,6 +6,7 @@ import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil.isEmbeddedBlock
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory
+import com.intellij.lang.javascript.library.JSLibraryVersionChecker
 import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
@@ -62,10 +63,13 @@ class VueTSSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
 class VueFileSpecificHandlersFactory : VueJSSpecificHandlersFactory() {
 
   override fun strictNullChecks(context: PsiElement): Boolean {
-    return if (context is VueFile && context.langMode == LangMode.HAS_TS)
-      TypeScriptConfigUtil.getConfigForPsiFile(context)?.strictNullChecks() == true
-    else
-      super.strictNullChecks(context)
+    if (context is VueFile && context.langMode == LangMode.HAS_TS) {
+      val config = TypeScriptConfigUtil.getConfigForPsiFile(context) ?: return false
+      val ts6orNewer = JSLibraryVersionChecker.isTS6OrGreater(context, config)
+      return config.strictNullChecks(ts6orNewer)
+    } else {
+      return super.strictNullChecks(context)
+    }
   }
 
 }
