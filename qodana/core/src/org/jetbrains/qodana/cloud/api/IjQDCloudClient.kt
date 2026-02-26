@@ -4,6 +4,7 @@ package org.jetbrains.qodana.cloud.api
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.util.net.PlatformHttpClient
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.qodana.cloudclient.MockQDCloudHttpClient
@@ -15,7 +16,6 @@ import org.jetbrains.qodana.cloudclient.QDCloudRequest
 import org.jetbrains.qodana.cloudclient.QDCloudResponse
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import org.jetbrains.qodana.cloudclient.requestOn
-import java.net.http.HttpClient
 
 fun IjQDCloudClient(frontendUrl: String): QDCloudClient {
   return service<IjQDCloudClientProvider>().getQDCloudClient(frontendUrl)
@@ -38,7 +38,7 @@ interface IjQDCloudClientProvider {
 }
 
 private class IjQDCloudClientProviderImpl(private val scope: CoroutineScope) : IjQDCloudClientProvider {
-  override val httpClient: QDCloudHttpClient = LoggingQDCloudHttpClient(QDCloudHttpClient(HttpClient.newHttpClient()))
+  override val httpClient: QDCloudHttpClient = LoggingQDCloudHttpClient(QDCloudHttpClient(PlatformHttpClient.client()))
 
   override fun getQDCloudClient(frontendUrl: String): QDCloudClient {
     val environment = QDCloudEnvironment(frontendUrl, httpClient).requestOn(scope)
