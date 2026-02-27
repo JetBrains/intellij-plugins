@@ -268,7 +268,7 @@ class Angular2ContextTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testNgspEntityCompletion() {
     myFixture.configureByFiles("package.json")
-    myFixture.configureByText("foo.html", "&<caret>")
+    myFixture.configureByText("foo.html", "&ng<caret>")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!, "ngsp")
   }
