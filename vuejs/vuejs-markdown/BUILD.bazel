@@ -16,6 +16,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "//contrib/vuejs/vuejs-common:common",
+    "//contrib/vuejs/vuejs-backend:backend",
     "@community//plugins/markdown/core:markdown",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",

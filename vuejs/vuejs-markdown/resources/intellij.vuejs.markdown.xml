@@ -3,7 +3,10 @@
     <plugin id="org.intellij.plugins.markdown"/>
     <module name="intellij.markdown"/>
     <module name="intellij.xml.parser"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.vuejs.backend"/>
     <module name="intellij.vuejs.common"/>
+    <!-- endregion -->
   </dependencies>
   <extensions defaultExtensionNs="org.intellij.markdown">
     <fenceLanguageProvider implementation="com.intellij.vuejs.markdown.VueCodeFenceLanguageProvider"/>
