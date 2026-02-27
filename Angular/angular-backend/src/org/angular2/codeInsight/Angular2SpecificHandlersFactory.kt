@@ -121,7 +121,7 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
     }
     val config = TypeScriptConfigUtil.getConfigForPsiFile(context.getContainingFile()) ?: return false
     val ts6orNewer = JSLibraryVersionChecker.isTS6OrGreater(context, config)
-    return TypeScriptConfigUtil.getConfigForPsiFile(context.getContainingFile())?.strictNullChecks(ts6orNewer) == true
+    return config.strictNullChecks(ts6orNewer)
   }
 
   override fun shouldForceBuiltInTypeEngine(element: PsiElement): Boolean =
