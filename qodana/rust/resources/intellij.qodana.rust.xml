@@ -1,0 +1,11 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="com.intellij.modules.rustrover"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="org.intellij.qodana.rust.QodanaRustLoaderProjectActivity"/>
+    <activityTracker implementation="org.intellij.qodana.rust.QodanaRustLoaderActivityTracker"/>
+    <registryKey defaultValue="10" description="Timeout in minutes for Qodana Rust project configuration" key="qd.rust.configuration.timeout.minutes"/>
+  </extensions>
+</idea-plugin>

@@ -1,0 +1,12 @@
+[package]
+name = "rust-test-features"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["enabled_feature"]
+enabled_feature = []
+disabled_feature = []
+should_not_compile = []
+
+[dependencies]

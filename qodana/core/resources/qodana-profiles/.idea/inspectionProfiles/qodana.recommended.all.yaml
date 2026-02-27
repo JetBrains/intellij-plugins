@@ -46,6 +46,7 @@ groups:
       - "JSInspections"
       - "category:Ruby"
       - "category:RBS"
+      - "category:Rust"
       - "category:Security"
 
       # qodana4cpp inspections
