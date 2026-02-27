@@ -221,22 +221,24 @@ object TerraformProvidersMetadataBuilder {
   }
 
   private fun getLatestProviderVersion(namespace: String, provider: String): String? {
-    val url = "$terraformRegistryHost/v1/providers/$namespace/$provider/versions"
+    val url = "$terraformRegistryHost/v1/providers/$namespace/$provider"
     val fullName = "$namespace/$provider"
     return try {
       val response = getQuery(url)
       if (response.statusCode() != 200) {
-        logger.warn("Failed to get versions for $fullName, status=${response.statusCode()}")
+        logger.warn("Failed to get latest version for $fullName, status=${response.statusCode()}")
         null
       }
       else {
         val json = objectMapper.readTree(response.body())
-        val versions = json["versions"]?.map { it["version"].asText() } ?: emptyList()
-        versions.maxOrNull()
+        val version = json["version"]?.asText() ?: return null
+
+        logger.info("Latest version for $fullName = $version")
+        version
       }
     }
     catch (e: Exception) {
-      logger.error("Error fetching versions for $fullName", e)
+      logger.error("Error fetching latest version for $fullName", e)
       null
     }
   }
