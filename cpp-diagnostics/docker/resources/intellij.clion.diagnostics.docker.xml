@@ -1,6 +1,9 @@
 <idea-plugin package="com.intellij.clion.diagnostics.docker">
   <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.cidr.util.execution"/>
     <module name="intellij.clion.docker"/>
+    <!-- endregion -->
   </dependencies>
 
   <extensions defaultExtensionNs="com.intellij.clion.diagnostics">
