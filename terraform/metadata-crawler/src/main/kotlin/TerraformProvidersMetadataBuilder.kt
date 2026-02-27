@@ -39,15 +39,20 @@ object TerraformProvidersMetadataBuilder {
 
   private fun String.urlDecode(): String = URLDecoder.decode(this, StandardCharsets.UTF_8)
 
-  private fun getProvidersDataFromPages(): Sequence<JsonNode> {
-    logger.info("Loading providers from $terraformRegistryHost ...")
+  private fun getProvidersDataFromPages(): Sequence<JsonNode> =
+    getProvidersByTier("official") +
+    getProvidersByTier("partner") +
+    getProvidersByTier("community")
+
+  private fun getProvidersByTier(tier: String): Sequence<JsonNode> {
+    logger.info("Loading providers for tier=$tier ...")
     return sequence {
-      var httpResponse = getQuery("${terraformRegistryHost}/v2/providers?page[size]=100")
+      var httpResponse = getQuery("${terraformRegistryHost}/v2/providers?filter[tier]=$tier&sort=-downloads&page[size]=100")
       do {
         val jsonResponse = objectMapper.readTree(httpResponse.body())
         val page = jsonResponse.get("meta")?.get("pagination")?.get("current-page")?.asLong() ?: 0
         val pageTotal = jsonResponse.get("meta")?.get("pagination")?.get("total-pages")?.asLong()
-        logger.info("Loaded page $page of $pageTotal  ...")
+        logger.info("Loaded tier=$tier page $page of $pageTotal")
         when (val responseData = jsonResponse["data"]) {
           is ObjectNode -> yield(responseData)
           is ArrayNode -> yieldAll(responseData.elements())
