@@ -1,14 +1,10 @@
 /* Angular type checking code */
 
-/* TCB for regexes.ts */
+/* TCB for regexesExt.html */
 
 function _tcb1(this: RobotProfileComponent) {
 var _t1 = document.createElement("div");
 (/abc/.matches('foo') ? 'bar' : 'baz');
-"" + ("foo".match(/abc/);
-"" + ("foo".match(/abc/gig));
-"" + (/abc );
-"" + ("foo".match(/abc/gi));
 "" + (/^http:\/\/foo\.bar/.test("\""));
 }
 /* TCB for host bindings of RobotProfileComponent */

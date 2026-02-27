@@ -9,6 +9,8 @@
 
 package org.angular2.lang.expr.service.tcb
 
+import com.intellij.json.psi.impl.JSStringLiteralEscaper
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavaScriptParserBundle
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
@@ -2681,20 +2683,46 @@ private open class TcbExpressionTranslator(
   }
 
   override fun visitJSLiteralExpression(node: JSLiteralExpression) {
-    if (node.isStringLiteral) {
+    if (node.isStringLiteral || node.isRegExpLiteral) {
       val text = node.text
       val textRange = node.textRange
-      if ((text.startsWith("\\\"") && text.endsWith("\\\""))
-          || (text.startsWith("\\'") && text.endsWith("\\'"))) {
-        result.withSourceSpan(node.textRange, supportTypes = true) {
-          result.append("\"")
-          result.append(text.substring(2, text.length - 2), TextRange(textRange.startOffset + 2, textRange.endOffset - 2),
-                        supportTypes = true)
-          result.append("\"")
-        }
+
+      if (InjectedLanguageManager.getInstance(node.project).getInjectionHost(node) !is JSLiteralExpression) {
+        result.append(text, textRange, supportTypes = true)
+        return
+      }
+
+      val escapedText = StringBuilder()
+      val sourceOffsets = JSStringLiteralEscaper.SourceOffsets()
+
+      JSStringLiteralEscaper.parseStringCharacters(
+        text, escapedText, sourceOffsets, false, false)
+
+      if (sourceOffsets.lengthIfNoShifts >= 0 || sourceOffsets.sourceOffsets == null) {
+        result.append(text, textRange, supportTypes = true)
       }
       else {
-        result.append(text, textRange, supportTypes = true)
+        val textRangeStartOffset = textRange.startOffset
+        val offsets = sourceOffsets.sourceOffsets!!
+
+        fun appendRange(start: Int, end: Int) {
+          if (start < end) {
+            result.append(escapedText.substring(start, end),
+                          TextRange(textRangeStartOffset + offsets[start], textRangeStartOffset + offsets[end]))
+          }
+        }
+
+        var offset = 0
+        var subRangeStartOffset = 0
+        while (offset < escapedText.length) {
+          if (offsets[offset] + 1 != offsets[offset + 1]) {
+            appendRange(subRangeStartOffset, offset)
+            appendRange(offset, offset + 1)
+            subRangeStartOffset = offset + 1
+          }
+          offset++
+        }
+        appendRange(subRangeStartOffset, escapedText.length)
       }
     }
     else super.visitJSLiteralExpression(node)

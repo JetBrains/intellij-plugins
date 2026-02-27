@@ -10,14 +10,7 @@ export interface User {
 @Component({
   selector: 'robot-profile',
   standalone: true,
-  template: `
-    <div [title]="/abc/.matches('foo') ? 'bar' : 'baz'"></div>
-    {{ "foo".match(/abc/O) }}
-    {{ "foo".match(/abc/gig) }}
-    {{ /abc }}
-    {{ "foo".match(/abc/gi) }}
-    {{ /^http:\\/\\/foo\\.bar/.test("\\"") }}
-  `,
+  templateUrl: "./regexesExt.html",
   host: {
     "[small]": "/^http:\\/\\/foo\\.bar/.test(\"\\\"\")",
   },

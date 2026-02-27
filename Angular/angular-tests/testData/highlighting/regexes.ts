@@ -1,14 +1,7 @@
 import {Component} from '@angular/core';
 
-export interface User {
-  name: string,
-  pictureUrl: string,
-  isHuman?: boolean,
-  isRobot?: boolean,
-}
-
 @Component({
-  selector: 'robot-profile',
+  selector: 'regex-test',
   standalone: true,
   template: `
     <!-- should report invalid regular expression flag -->
@@ -16,8 +9,11 @@ export interface User {
     
     <!-- should report unterminated regex -->
     {{ <error descr="TS1161: Unterminated regular expression literal.">/abc</error> }}
+    
+    <!-- should not report errors on properly escaped regex -->
+    {{ /^http:\\/\\/foo\\.bar/.test(value) }}
   `
 })
-export class RobotProfileComponent {
-    <warning descr="Unused field user">user</warning>!: User
+export class RegexComponent {
+    value!: string
 }

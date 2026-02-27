@@ -215,6 +215,10 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_CORE_21_0_9
   )
 
+  fun testRegexesExt() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_21_0_9, dir = true
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
