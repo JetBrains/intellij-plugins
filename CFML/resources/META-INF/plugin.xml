@@ -13,6 +13,12 @@ To configure path mappings, open the <b>Settings / Preferences</b> dialog and se
       ]]>
   </description>
   <vendor>JetBrains</vendor>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.xml.impl"/>
+    <module name="intellij.xml.psi"/>
+  </dependencies>
+  <!-- endregion -->
   <resource-bundle>messages.CfmlBundle</resource-bundle>
 
   <depends>com.intellij.java</depends>

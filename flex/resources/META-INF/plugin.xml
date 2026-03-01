@@ -12,6 +12,23 @@
       - Run, debug, test, package and deploy your applications.
     ]]></description>
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.css.common"/>
+    <module name="intellij.css.common.psi"/>
+    <module name="intellij.css.psi"/>
+    <module name="intellij.platform.graph"/>
+    <module name="intellij.platform.jps.build"/>
+    <module name="intellij.properties.backend"/>
+    <module name="intellij.properties.backend.psi"/>
+    <module name="intellij.properties.psi"/>
+    <module name="intellij.xml.analysis"/>
+    <module name="intellij.xml.impl"/>
+    <module name="intellij.xml.parser"/>
+    <module name="intellij.xml.psi"/>
+    <module name="intellij.xml.structureView"/>
+  </dependencies>
+  <!-- endregion -->
   <depends>JavaScript</depends>
   <depends>JavaScriptDebugger</depends>
   <depends>com.intellij.modules.css.backend</depends>
