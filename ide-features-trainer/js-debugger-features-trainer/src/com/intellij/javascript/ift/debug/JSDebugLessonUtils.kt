@@ -19,7 +19,7 @@ internal fun TaskRuntimeContext.lineContainsBreakpoint(line: Int): Boolean {
   val document = editor.document
   val breakpoint = DocumentMarkupModel.forDocument(document, project, true).allHighlighters
     .filter {
-      it.gutterIconRenderer?.icon == AllIcons.Debugger.Db_set_breakpoint && document.getLineNumber(it.startOffset) + 1 == line
+      it.isValid && it.gutterIconRenderer?.icon == AllIcons.Debugger.Db_set_breakpoint && document.getLineNumber(it.startOffset) + 1 == line
     }
   return breakpoint.isNotEmpty()
 }

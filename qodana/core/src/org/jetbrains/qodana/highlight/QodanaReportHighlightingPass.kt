@@ -254,8 +254,9 @@ internal class QodanaReportHighlightingPass(
 
 internal data class ProblemWithRange(val problem: SarifProblem, val range: TextRange?)
 
-internal fun getQodanaHighlightsDuplicatingIde(ideHighlighter: RangeHighlighter, qodanaHighlights: List<HighlightInfo>): List<HighlightInfo> {
-  val ideHighlight = HighlightInfo.fromRangeHighlighter(ideHighlighter) ?: return emptyList()
+internal fun getQodanaHighlightsDuplicatingIde(highlighter: RangeHighlighter, qodanaHighlights: List<HighlightInfo>): List<HighlightInfo> {
+  if (!highlighter.isValid) return emptyList()
+  val ideHighlight = HighlightInfo.fromRangeHighlighter(highlighter) ?: return emptyList()
   if (ideHighlight.type is QodanaHighlightingInfoType ||
       ideHighlight.description == null ||
       ideHighlight.inspectionToolId == null && ideHighlight.externalSourceId == null) return emptyList()
