@@ -24,11 +24,6 @@ enum class VueTestMode {
   ;
 }
 
-private val DEFAULT_VUE_MODULES: Array<out WebFrameworkTestModule> = arrayOf(
-  VueTestModule.VUE_3_5_0,
-  VueTestModule.VUE_TSCONFIG_0_8_1,
-)
-
 abstract class VueTestCase(
   override val testCasePath: String,
   private val testMode: VueTestMode = VueTestMode.DEFAULT,
@@ -38,15 +33,15 @@ abstract class VueTestCase(
 
   override fun adjustModules(
     modules: Array<out WebFrameworkTestModule>,
-  ): Array<out WebFrameworkTestModule> {
-    val hasVueDependency = modules.any { VUE_MODULE in it.packageNames }
-    if (hasVueDependency)
-      return modules
+  ): Array<out WebFrameworkTestModule> =
+    buildList {
+      addAll(modules)
 
-    return modules.asList()
-      .plus(DEFAULT_VUE_MODULES)
-      .toTypedArray()
-  }
+      if (modules.none { VUE_MODULE in it.packageNames })
+        add(VueTestModule.VUE_3_5_0)
+
+      add(VueTestModule.VUE_TSCONFIG_0_8_1)
+    }.toTypedArray()
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
     val tsPluginVersion = getRequiredTypescriptPluginVersion(myFixture, testMode)
