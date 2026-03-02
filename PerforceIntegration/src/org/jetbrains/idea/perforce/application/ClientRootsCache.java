@@ -1,3 +1,4 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.idea.perforce.application;
 
 import com.intellij.openapi.components.Service;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +36,25 @@ public final class ClientRootsCache {
     synchronized (myLock) {
       if (!myRawToCanonical.containsKey(rawClientRoot)) {
         String converted = correctCase(rawClientRoot);
-        LOG.debug("canonicalize " + rawClientRoot + " to " + converted);
+        // If a VCS root resolves to the same canonical path, use the VCS root path
+        // so that convertPath maps directly to VCS root junction/symlink paths.
+        String vcsRoot = myCanonicalToRaw.get(converted);
+        if (vcsRoot != null) {
+          converted = vcsRoot;
+        }
+        else {
+          // Check if canonical is a parent of any VCS root canonical:
+          // if so, raw is already in the junction namespace — keep it.
+          for (String vcsCanonical : myCanonicalToRaw.keySet()) {
+            if (FileUtil.startsWith(vcsCanonical, converted)) {
+              converted = rawClientRoot;
+              break;
+            }
+          }
+        }
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("canonicalize " + rawClientRoot + " to " + converted);
+        }
         myCanonicalToRaw.put(converted, rawClientRoot);
         myRawToCanonical.put(rawClientRoot, converted);
       }
@@ -97,6 +117,30 @@ public final class ClientRootsCache {
         }
       }
       return trimmed;
+    }
+  }
+
+  /**
+   * Registers VCS root paths so that subsequent {@link #putGet} calls can map P4 client roots
+   * to VCS root junction/symlink paths when they share the same canonical path.
+   * Must be called before {@link #putGet} during a refresh cycle (clears all maps).
+   */
+  void putVcsRoots(@NotNull Collection<String> vcsRootPaths) {
+    synchronized (myLock) {
+      myRawToCanonical.clear();
+      myCanonicalToRaw.clear();
+      for (String vcsRootPath : vcsRootPaths) {
+        try {
+          String canonical = new File(vcsRootPath).getCanonicalPath();
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("VCS root: " + vcsRootPath + " -> canonical: " + canonical);
+          }
+          myCanonicalToRaw.put(canonical, vcsRootPath);
+        }
+        catch (IOException e) {
+          LOG.debug("Failed to resolve canonical path for VCS root: " + vcsRootPath, e);
+        }
+      }
     }
   }
 
