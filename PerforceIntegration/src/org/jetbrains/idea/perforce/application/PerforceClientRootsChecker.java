@@ -15,7 +15,6 @@ import org.jetbrains.idea.perforce.perforce.PerforceServerUnavailable;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class PerforceClientRootsChecker implements P4RootsInformation {
@@ -59,17 +58,9 @@ public class PerforceClientRootsChecker implements P4RootsInformation {
         continue; // logged already at the recalculate method start
       }
       boolean checkedOk = false;
+      // Client roots are already case-corrected and junction-mapped by ClientRootsCache.putGet,
+      // so they are in the same path space as VirtualFile paths — no canonical resolution needed.
       File ioFile = new File(root.getPath());
-
-      // ClientRootsCache.correctCase the canonical path, effectively resolves possible symlinks.
-      // Normalize here the paths to canonical representation.
-      File canonicalIoFile = null;
-      try {
-        canonicalIoFile = ioFile.getCanonicalFile();
-      }
-      catch (IOException e) {
-        LOG.debug("Cannot resolve canonical path for " + root.getPath(), e);
-      }
 
       for (String clientRoot : clientRoots) {
         if ("null".equals(clientRoot)) {
@@ -78,9 +69,7 @@ public class PerforceClientRootsChecker implements P4RootsInformation {
         }
 
         File ioRoot = new File(clientRoot);
-        if (isDirectory(ioRoot) &&
-            (FileUtil.isAncestor(ioRoot, ioFile, false) ||
-             (canonicalIoFile != null && FileUtil.isAncestor(ioRoot, canonicalIoFile, false)))) {
+        if (isDirectory(ioRoot) && FileUtil.isAncestor(ioRoot, ioFile, false)) {
           checkedOk = true;
           break;
         }
