@@ -5,6 +5,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.perforce.PerforceAuthenticationException;
@@ -108,6 +109,7 @@ public final class PerforceBaseInfoWorker {
     Project project = mySettings.getProject();
     PerforceRunner runner = PerforceRunner.getInstance(project);
     ClientRootsCache cache = ClientRootsCache.getClientRootsCache(project);
+    cache.putVcsRoots(ContainerUtil.map(allConnections.keySet(), VirtualFile::getPath));
     return PerforceInfoAndClient.recalculateInfos(old, allConnections.values(), runner, cache);
   }
 
