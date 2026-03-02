@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.javascript.testFramework.web.filterOutStandardHtmlSymbols
 import com.intellij.lang.javascript.JSTestUtils
@@ -14,6 +15,7 @@ import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCach
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
+import org.jetbrains.vuejs.VueTsConfigFile
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,7 +46,7 @@ class VueCompletionTest :
 
 @RunWith(JUnit4::class)
 abstract class VueCompletionTestBase(
-  testMode: VueTestMode = VueTestMode.DEFAULT,
+  private val testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueTestCase("completion", testMode = testMode) {
 
   override fun setUp() {
@@ -52,6 +54,16 @@ abstract class VueCompletionTestBase(
     // Let's ensure we don't get PolySymbols registry stack overflows randomly
     this.enableIdempotenceChecksOnEveryCache()
   }
+
+  override val defaultConfigurators: List<WebFrameworkTestConfigurator>
+    get() {
+      if (testMode == VueTestMode.NO_PLUGIN)
+        return emptyList()
+
+      return listOf(
+        VueTsConfigFile(),
+      )
+    }
 
   override val dirModeByDefault: Boolean = true
 
