@@ -1,0 +1,2 @@
+prop1="$1" (typeText='(property) prop1: string'; priority=0.0; typeGreyed)
+prop2={$1} (typeText='(property) prop2: number'; priority=0.0; typeGreyed)
