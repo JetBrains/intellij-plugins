@@ -27,6 +27,9 @@
     <listener
       class="com.intellij.dts.inspections.DtsInspectionsRestarter"
       topic="com.intellij.dts.settings.DtsSettings$ChangeListener"/>
+    <listener
+      class="com.intellij.dts.ide.DtsProjectViewDecorator$DtsSettingsListener"
+      topic="com.intellij.dts.settings.DtsSettings$ChangeListener"/>
   </projectListeners>
 
   <actions>

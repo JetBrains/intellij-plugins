@@ -15,20 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DtsProjectViewDecorator(
-  private val project: Project,
-  private val parentScope: CoroutineScope,
-) : ProjectViewNodeDecorator, DtsSettings.ChangeListener {
-  init {
-    project.messageBus.connect(parentScope).subscribe(DtsSettings.ChangeListener.TOPIC, this)
-  }
-
-  override fun settingsChanged(settings: DtsSettings) {
-    parentScope.launch(Dispatchers.EDT) {
-      ProjectView.getInstance(project).refresh(ProjectViewUpdateCause.PLUGIN_DTS)
-    }
-  }
-
+class DtsProjectViewDecorator(private val project: Project): ProjectViewNodeDecorator {
   override fun decorate(node: ProjectViewNode<*>, data: PresentationData) {
     val settings = DtsSettings.of(project)
     if (settings.zephyrCMakeSync) return
@@ -43,5 +30,13 @@ class DtsProjectViewDecorator(
     val layeredIcon = LayeredIcon.create(icon, AllIcons.Modules.SourceRootFileLayer)
 
     data.setIcon(layeredIcon)
+  }
+
+  class DtsSettingsListener(private val project: Project, private val scope: CoroutineScope): DtsSettings.ChangeListener {
+    override fun settingsChanged(settings: DtsSettings) {
+      scope.launch(Dispatchers.EDT) {
+        ProjectView.getInstance(project).refresh(ProjectViewUpdateCause.PLUGIN_DTS)
+      }
+    }
   }
 }
