@@ -26,6 +26,7 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
@@ -47,6 +48,13 @@ class VueRenameTest :
 abstract class VueRenameTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueTestCase("rename", testMode = testMode) {
+
+  override val defaultConfigurators: List<WebFrameworkTestConfigurator>
+    get() = listOf(
+      VueTsConfigFile(),
+    )
+
+  override val dirModeByDefault: Boolean = true
 
   @Test
   fun testComponentFieldFromTemplate() =
@@ -409,10 +417,6 @@ abstract class VueRenameTestBase(
     checkSymbolRename(
       mainFile = mainFile,
       newName = newName,
-      dir = true,
-      configurators = listOf(
-        VueTsConfigFile(),
-      ),
     )
   }
 }
