@@ -24,6 +24,7 @@ import com.intellij.xml.util.CheckEmptyTagInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection
 import org.angular2.inspections.AngularBindingTypeMismatchInspection
+import org.angular2.inspections.AngularConstantReassignmentInspection
 import org.angular2.inspections.AngularForBlockNonIterableVarInspection
 import org.angular2.inspections.AngularIllegalForLoopTrackAccess
 import org.angular2.inspections.AngularInaccessibleSymbolInspection
@@ -75,6 +76,7 @@ class Angular2TemplateInspectionsProvider(private val strict: Boolean = false) :
       AngularIllegalForLoopTrackAccess::class.java,
       AngularUncalledSignalLengthPropertyAccessInspection::class.java,
       AngularMisconfiguredDeferTriggerInspection::class.java,
+      AngularConstantReassignmentInspection::class.java,
       // TS
       TypeScriptUnresolvedReferenceInspection::class.java,
       TypeScriptValidateTypesInspection::class.java,
