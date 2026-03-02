@@ -16,10 +16,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.source.VueLibraryImpl
 import org.jetbrains.vuejs.model.source.VueSourceGlobal
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 import java.util.concurrent.ConcurrentHashMap
 
 internal class VueGlobalImpl(
@@ -49,9 +49,7 @@ internal class VueGlobalImpl(
 
   private fun getElementToParentMap(): MultiMap<VueScopeElement, VueEntitiesContainer> =
     CachedValuesManager.getManager(project).getCachedValue(this) {
-      Result.create(buildElementToParentMap(),
-                    PsiModificationTracker.MODIFICATION_COUNT,
-                    VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+      Result.create(buildElementToParentMap(), getVueSymbolsCacheDependencies(project))
     } ?: MultiMap.empty()
 
   /**

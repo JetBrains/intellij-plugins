@@ -22,6 +22,7 @@ import org.jetbrains.vuejs.model.VueGlobal
 import org.jetbrains.vuejs.model.VueLibrary
 import org.jetbrains.vuejs.model.VueNamedComponent
 import org.jetbrains.vuejs.model.VueScopeElement
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 data class VueTypedGlobal(
   override val delegate: VueGlobal,
@@ -35,8 +36,7 @@ data class VueTypedGlobal(
         .values
         .mapNotNull { VueTypedComponent.create(it) }
         .associateBy { it.name }
-
-      CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
+      CachedValueProvider.Result.create(result, getVueSymbolsCacheDependencies(source.project))
     }
 
   private val typedGlobalDirectives: Map<String, VueDirective> =
@@ -56,8 +56,7 @@ data class VueTypedGlobal(
           put(name, VueTypedDirective(source, name))
         }
       }
-
-      CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
+      CachedValueProvider.Result.create(result, getVueSymbolsCacheDependencies(source.project))
     }
 
   override val components: Map<String, VueNamedComponent>
