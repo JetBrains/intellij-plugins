@@ -1,8 +1,13 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.web
 
+import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryManager
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.symbols.VueComponentWithProximity
@@ -32,3 +37,11 @@ fun PolySymbol.unwrapVueSymbolWithProximity(): PolySymbol =
 internal fun isVueComponentQuery(name: String): Boolean {
   return name.getOrNull(0)?.isUpperCase() == true || name.contains('-') || name == "slot"
 }
+
+internal fun getVueSymbolsCacheDependencies(project: Project): Set<Any> =
+  setOf<Any>(
+    PsiModificationTracker.MODIFICATION_COUNT,
+    VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
+    DumbService.getInstance(project).modificationTracker,
+    NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
+  )

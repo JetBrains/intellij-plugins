@@ -43,6 +43,7 @@ import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_DIRECTIVES
 import org.jetbrains.vuejs.web.VUE_GLOBAL_DIRECTIVES
 import org.jetbrains.vuejs.web.VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 import org.jetbrains.vuejs.web.symbols.VueComponentWithProximity
 import org.jetbrains.vuejs.web.symbols.VueDirectiveWithProximity
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
@@ -100,11 +101,11 @@ private constructor(
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val webTypesContributions = calculateWebTypesContributions()
+    cacheDependencies.addAll(getVueSymbolsCacheDependencies(project))
     visitContainer(container, proximity, webTypesContributions, consumer)
     if (container is VueGlobal) {
       visitContainer(container.unregistered, VueModelVisitor.Proximity.OUT_OF_SCOPE, webTypesContributions, consumer)
     }
-    cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
 
   private fun visitContainer(
