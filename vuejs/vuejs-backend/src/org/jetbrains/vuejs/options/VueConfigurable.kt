@@ -5,6 +5,7 @@ package org.jetbrains.vuejs.options
 
 import com.intellij.lang.typescript.lsp.bind
 import com.intellij.lang.typescript.lsp.createBundledNodePackageField
+import com.intellij.lang.typescript.lsp.createNodePackageField
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.openapi.project.Project
@@ -57,7 +58,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
 
           row(VueBundle.message("vue.configurable.service.languageServerPackage")) {
             cell(
-              VueLspServerLoader.createNodePackageField(project)
+              createNodePackageField(project, VueLspServerLoader.packageDescriptor)
             ).align(AlignX.FILL)
               .bind(settings.manualSettings::lspServerPackageRef)
           }.visibleIf(mode.isSelected(

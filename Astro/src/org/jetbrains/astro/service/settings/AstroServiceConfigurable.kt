@@ -4,6 +4,7 @@ package org.jetbrains.astro.service.settings
 import com.intellij.codeInsight.template.impl.TemplateEditorUtil
 import com.intellij.json.JsonLanguage
 import com.intellij.lang.typescript.lsp.bind
+import com.intellij.lang.typescript.lsp.createNodePackageField
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
@@ -51,13 +52,13 @@ class AstroServiceConfigurable(private val project: Project) : Configurable {
     panel = panel {
       group(AstroBundle.message("astro.service.configurable.service.group")) {
         row(AstroBundle.message("astro.service.configurable.service.languageServerPackage")) {
-          cell(AstroLspServerLoader.createNodePackageField(project))
+          cell(createNodePackageField(project, AstroLspServerLoader.packageDescriptor))
             .align(AlignX.FILL)
             .bind(settings::lspServerPackageRef)
         }
 
         row(AstroBundle.message("astro.service.configurable.service.tsPluginPackage")) {
-          cell(org.jetbrains.astro.service.AstroTSPluginLoader.createNodePackageField(project))
+          cell(createNodePackageField(project, org.jetbrains.astro.service.AstroTSPluginLoader.packageDescriptor))
             .align(AlignX.FILL)
             .bind(settings::tsPluginPackageRef)
         }

@@ -2,6 +2,7 @@
 package org.intellij.prisma.ide.ui
 
 import com.intellij.lang.typescript.lsp.bind
+import com.intellij.lang.typescript.lsp.createNodePackageField
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.openapi.project.Project
@@ -19,7 +20,7 @@ class PrismaSettingsConfigurable(val project: Project) : UiDslUnnamedConfigurabl
   override fun Panel.createContent() {
     group(PrismaBundle.message("prisma.settings.service.configurable.service.group")) {
       row(PrismaBundle.message("prisma.settings.service.configurable.service.languageServerPackage")) {
-        cell(PrismaLspServerLoader.createNodePackageField(project))
+        cell(createNodePackageField(project, PrismaLspServerLoader.packageDescriptor))
           .align(AlignX.FILL)
           .bind(settings::lspServerPackageRef)
       }
