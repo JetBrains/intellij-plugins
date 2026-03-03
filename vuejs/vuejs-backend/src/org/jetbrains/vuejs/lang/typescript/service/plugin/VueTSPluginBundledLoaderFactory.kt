@@ -1,11 +1,11 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.plugin
 
-import com.intellij.javascript.nodejs.util.NodePackageRef
+import com.intellij.javascript.nodejs.util.NodePackage
+import com.intellij.lang.typescript.lsp.JSExternalDefinitionsPackage
 import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.lang.typescript.lsp.PackageVersion
 import com.intellij.lang.typescript.lsp.TSPluginLoader
-import com.intellij.lang.typescript.lsp.createPackageRef
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.annotations.ApiStatus
@@ -44,7 +44,7 @@ object VueTSPluginBundledLoaderFactory {
 private class VueTSPluginBundledLoader(
   private val descriptor: LspServerPackageDescriptor,
 ) : TSPluginLoader(descriptor) {
-  override fun getSelectedPackageRef(project: Project): NodePackageRef {
-    return createPackageRef(descriptor.serverPackage)
+  override fun getSelectedPackage(project: Project): NodePackage? {
+    return JSExternalDefinitionsPackage(descriptor.serverPackage)
   }
 }

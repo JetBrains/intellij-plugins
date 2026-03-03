@@ -1,7 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.lsp
 
-import com.intellij.javascript.nodejs.util.NodePackageRef
+import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.typescript.lsp.LspServerLoader
 import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.lang.typescript.lsp.PackageVersion
@@ -28,8 +28,8 @@ private object VueLspServerPackageDescriptor : LspServerPackageDescriptor(
 
 @ApiStatus.Experimental
 object VueLspServerLoader : LspServerLoader(VueLspServerPackageDescriptor) {
-  override fun getSelectedPackageRef(project: Project): NodePackageRef {
+  override fun getSelectedPackage(project: Project): NodePackage? {
     val settings = VueSettings.instance(project)
-    return settings.manualSettings.lspServerPackageRef
+    return settings.manualSettings.lspServerPackageRef.constantPackage
   }
 }

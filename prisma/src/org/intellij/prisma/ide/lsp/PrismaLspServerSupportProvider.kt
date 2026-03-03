@@ -1,6 +1,6 @@
 package org.intellij.prisma.ide.lsp
 
-import com.intellij.javascript.nodejs.util.NodePackageRef
+import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.typescript.lsp.LspServerLoader
 import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.lang.typescript.lsp.PackageVersion
@@ -23,13 +23,13 @@ private object PrismaLspServerPackageDescriptor : LspServerPackageDescriptor("@p
 
   override val registryVersion: String get() = Registry.stringValue("prisma.language.server.default.version")
 
-  override fun getPackageRelativePath(project: Project, ref: NodePackageRef): String {
-    val version = ref.constantPackage?.version
+  override fun getPackageRelativePath(project: Project, pkg: NodePackage): String {
+    val version = pkg.version
     if (version != null && !version.isGreaterOrEqualThan(sinceNewServiceLayoutVersion)) {
       return "/dist/src/bin.js"
     }
 
-    return super.getPackageRelativePath(project, ref)
+    return super.getPackageRelativePath(project, pkg)
   }
 }
 
@@ -51,8 +51,8 @@ fun restartPrismaServerAsync(project: Project) {
 }
 
 object PrismaLspServerLoader : LspServerLoader(PrismaLspServerPackageDescriptor) {
-  override fun getSelectedPackageRef(project: Project): NodePackageRef =
-    PrismaServiceSettings.getInstance(project).lspServerPackageRef
+  override fun getSelectedPackage(project: Project): NodePackage? =
+    PrismaServiceSettings.getInstance(project).lspServerPackageRef.constantPackage
 
   override fun restartService(project: Project) {
     restartPrismaServerAsync(project)

@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.service
 
-import com.intellij.javascript.nodejs.util.NodePackageRef
+import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.lsp.LspServerActivationRule
 import com.intellij.lang.typescript.lsp.LspServerLoader
@@ -39,8 +39,8 @@ private object AstroLspServerPackageDescriptor : LspServerPackageDescriptor(
 
 @ApiStatus.Experimental
 object AstroLspServerLoader : LspServerLoader(AstroLspServerPackageDescriptor) {
-  override fun getSelectedPackageRef(project: Project): NodePackageRef {
-    return getAstroServiceSettings(project).lspServerPackageRef
+  override fun getSelectedPackage(project: Project): NodePackage? {
+    return getAstroServiceSettings(project).lspServerPackageRef.constantPackage
   }
 }
 
@@ -69,8 +69,8 @@ private object AstroTSPluginPackageDescriptor : LspServerPackageDescriptor(
 
 @ApiStatus.Experimental
 object AstroTSPluginLoader : TSPluginLoader(AstroTSPluginPackageDescriptor) {
-  override fun getSelectedPackageRef(project: Project): NodePackageRef {
-    return getAstroServiceSettings(project).tsPluginPackageRef
+  override fun getSelectedPackage(project: Project): NodePackage? {
+    return getAstroServiceSettings(project).tsPluginPackageRef.constantPackage
   }
 }
 
