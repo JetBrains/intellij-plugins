@@ -11,8 +11,8 @@
 <script lang="ts" setup>
 // eslint-disable-next-line no-undef,@typescript-eslint/no-unused-vars
 
-import {Color} from "./Color";
-import {getText, items} from "./Items";
+import {Color} from "./Color.ts";
+import {getText, items} from "./Items.ts";
 
 const myProps = defineProps<{
   msg: string

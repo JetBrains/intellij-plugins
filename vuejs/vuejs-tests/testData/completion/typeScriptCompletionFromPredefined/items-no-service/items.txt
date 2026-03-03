@@ -1,3 +1,3 @@
-open (typeText='Window'; priority=4.0; bold)
+open (typeText='Window | null'; priority=4.0; bold)
 opener (typeText='any'; priority=4.0; bold)
 openBlock (typeText='void'; priority=0.0; bold)

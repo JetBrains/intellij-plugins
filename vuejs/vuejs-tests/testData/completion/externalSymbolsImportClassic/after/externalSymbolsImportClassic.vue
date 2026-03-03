@@ -11,9 +11,9 @@
 <script lang="ts">
 // eslint-disable-next-line no-undef,@typescript-eslint/no-unused-vars
 
-import {Color} from "./Color";
+import {Color} from "./Color.ts";
 import {defineComponent} from "vue";
-import {getText, items} from "./Items";
+import {getText, items} from "./Items.ts";
 
 export default defineComponent({
   methods: {

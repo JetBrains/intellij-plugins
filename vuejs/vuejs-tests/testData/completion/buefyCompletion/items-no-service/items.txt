@@ -1,3 +1,4 @@
+base-transition (typeText='@vue/runtime-core'; priority=10.0; typeGreyed)
 b-autocomplete (typeText='buefy'; priority=10.0; typeGreyed)
 b-checkbox (typeText='buefy'; priority=10.0; typeGreyed)
 b-checkbox-button (typeText='buefy'; priority=10.0; typeGreyed)

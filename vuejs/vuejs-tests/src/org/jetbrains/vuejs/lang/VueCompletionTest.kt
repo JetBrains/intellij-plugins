@@ -46,7 +46,7 @@ class VueCompletionTest :
 
 @RunWith(JUnit4::class)
 abstract class VueCompletionTestBase(
-  private val testMode: VueTestMode = VueTestMode.DEFAULT,
+  testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueTestCase("completion", testMode = testMode) {
 
   override fun setUp() {
@@ -56,14 +56,9 @@ abstract class VueCompletionTestBase(
   }
 
   override val defaultConfigurators: List<WebFrameworkTestConfigurator>
-    get() {
-      if (testMode == VueTestMode.NO_PLUGIN)
-        return emptyList()
-
-      return listOf(
-        VueTsConfigFile(),
-      )
-    }
+    get() = listOf(
+      VueTsConfigFile(),
+    )
 
   override val dirModeByDefault: Boolean = true
 
