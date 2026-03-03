@@ -5,4 +5,4 @@
   library: intellij.aws.cloudformation.meta
   module: intellij.cloudFormation
   files:
-  - name: $MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2023/cloudformation-meta-2023.jar
+  - name: $MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2026/cloudformation-meta-2026.jar

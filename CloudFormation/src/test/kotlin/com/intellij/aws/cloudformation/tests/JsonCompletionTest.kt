@@ -76,9 +76,10 @@ class JsonCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
   fun testPredefinedParameters() {
     checkBasicCompletion("PredefinedParameters.template",
         "AWS::AccountId",
-        "AWS::NoValue",
         "AWS::NotificationARNs",
+        "AWS::NoValue",
         "AWS::Partition",
+        "AWS::PseudoParameter",
         "AWS::Region",
         "AWS::StackId",
         "AWS::StackName",

@@ -45,11 +45,11 @@ class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
   fun testServerless1() {
     val properties = arrayOf(
       "Architectures", "AssumeRolePolicyDocument", "AutoPublishAlias", "AutoPublishAliasAllProperties",  "AutoPublishCodeSha256", "CodeSigningConfigArn",
-      "CodeUri", "DeadLetterQueue", "DeploymentPreference", "Description", "Environment", "EphemeralStorage",
-      "EventInvokeConfig", "Events", "FileSystemConfigs", "FunctionName", "FunctionUrlConfig", "ImageConfig", "ImageUri",
+      "CapacityProviderConfig", "CodeUri", "DeadLetterQueue", "DeploymentPreference", "Description", "DurableConfig", "Environment", "EphemeralStorage",
+      "EventInvokeConfig", "Events", "FileSystemConfigs", "FunctionName", "FunctionScalingConfig", "FunctionUrlConfig", "ImageConfig", "ImageUri",
       "InlineCode", "KmsKeyArn", "Layers", "LoggingConfig", "MemorySize", "PackageType", "PermissionsBoundary", "Policies", "PropagateTags",
-      "ProvisionedConcurrencyConfig", "ReservedConcurrentExecutions", "Role", "RolePath", "RuntimeManagementConfig", "SnapStart", "Tags",
-      "Timeout", "Tracing", "VersionDescription", "VpcConfig"
+      "ProvisionedConcurrencyConfig", "PublishToLatestPublished", "RecursiveLoop", "ReservedConcurrentExecutions", "Role", "RolePath", "RuntimeManagementConfig", "SnapStart", "SourceKMSKeyArn", "Tags", "TenancyConfig",
+      "Timeout", "Tracing", "VersionDeletionPolicy", "VersionDescription", "VpcConfig"
     )
 
     checkBasicCompletion("serverless_1.yaml", *properties)
@@ -65,10 +65,14 @@ class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
       "AWS::Serverless::SimpleTable",
       "AWS::Serverless::StateMachine",
       "AWS::EMRServerless::Application",
+      "AWS::MWAAServerless::Workflow",
       "AWS::RedshiftServerless::Namespace",
+      "AWS::RedshiftServerless::Snapshot",
       "AWS::RedshiftServerless::Workgroup",
       "AWS::OpenSearchServerless::AccessPolicy",
       "AWS::OpenSearchServerless::Collection",
+      "AWS::OpenSearchServerless::CollectionGroup",
+      "AWS::OpenSearchServerless::Index",
       "AWS::OpenSearchServerless::LifecyclePolicy",
       "AWS::OpenSearchServerless::SecurityConfig",
       "AWS::OpenSearchServerless::SecurityPolicy",
@@ -81,10 +85,14 @@ class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
   fun testServerless3() {
     checkBasicCompletion("serverless_3.yaml",
                          "AWS::EMRServerless::Application",
+                         "AWS::MWAAServerless::Workflow",
                          "AWS::RedshiftServerless::Namespace",
+                         "AWS::RedshiftServerless::Snapshot",
                          "AWS::RedshiftServerless::Workgroup",
                          "AWS::OpenSearchServerless::AccessPolicy",
                          "AWS::OpenSearchServerless::Collection",
+                         "AWS::OpenSearchServerless::CollectionGroup",
+                         "AWS::OpenSearchServerless::Index",
                          "AWS::OpenSearchServerless::LifecyclePolicy",
                          "AWS::OpenSearchServerless::SecurityConfig",
                          "AWS::OpenSearchServerless::SecurityPolicy",
