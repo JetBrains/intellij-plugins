@@ -7,6 +7,8 @@ import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
 import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
 import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolMethodsFromAugmentations
 import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolPropertiesFromAugmentations
+import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSRecordType
@@ -25,6 +27,8 @@ import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.JSTypeofTypeImpl
 import com.intellij.lang.javascript.psi.types.TypeScriptJSFunctionTypeImpl
 import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
@@ -33,14 +37,13 @@ import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbol.ReadWriteAccessProperty
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
-import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbol.ReadWriteAccessProperty
+import com.intellij.polySymbols.js.JSPropertySignatureProperty
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JsSymbolKindProperty
 import com.intellij.polySymbols.js.JsSymbolSymbolKind
-import com.intellij.polySymbols.js.JSPropertySignatureProperty
 import com.intellij.polySymbols.js.jsType
 import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
@@ -69,14 +72,13 @@ import org.jetbrains.vuejs.model.source.INSTANCE_OPTIONS_PROP
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
 import org.jetbrains.vuejs.model.source.INSTANCE_REFS_PROP
 import org.jetbrains.vuejs.model.source.INSTANCE_SLOTS_PROP
-import org.jetbrains.vuejs.model.source.VUE_NAMESPACE
 import org.jetbrains.vuejs.model.source.VueCallInject
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueSourceEntity
 import org.jetbrains.vuejs.types.VueRefsType
 import org.jetbrains.vuejs.types.createStrictTypeSource
-import org.jetbrains.vuejs.web.VueProximityProperty
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
+import org.jetbrains.vuejs.web.VueProximityProperty
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 
 interface VueInstanceOwner : VueScopeElement {
@@ -98,12 +100,19 @@ interface VueInstanceOwner : VueScopeElement {
 fun getDefaultVueComponentInstance(context: PsiElement?): JSTypedEntity? =
   resolveSymbolFromNodeModule(context, VUE_MODULE, "ComponentPublicInstance", TypeScriptTypeAlias::class.java)
     ?.typeDeclaration
-  ?: resolveSymbolFromNodeModule(context, VUE_MODULE, VUE_NAMESPACE, TypeScriptInterface::class.java)
+  ?: resolveVueInterface(context)
 
 fun getDefaultVueComponentInstanceType(context: PsiElement?): JSType? =
-  resolveSymbolFromNodeModule(context, VUE_MODULE, "ComponentPublicInstance", TypeScriptTypeAlias::class.java)
-    ?.typeDeclaration?.jsType
-  ?: resolveSymbolFromNodeModule(context, VUE_MODULE, VUE_NAMESPACE, TypeScriptInterface::class.java)?.jsType
+  getDefaultVueComponentInstance(context)?.jsType
+
+private fun resolveVueInterface(context: PsiElement?): TypeScriptInterface? {
+  val exportDefault =
+    resolveSymbolFromNodeModule(context, VUE_MODULE, ES6PsiUtil.DEFAULT_NAME, ES6ExportDefaultAssignment::class.java) ?: return null
+  val meaningfulElements = JSStubBasedPsiTreeUtil.calculateMeaningfulElements(exportDefault)
+  return meaningfulElements
+    .filterIsInstance<TypeScriptInterface>()
+    .minByOrNull { TypeScriptPsiUtil.isFromAugmentationModule(it) }
+}
 
 private val VUE_INSTANCE_PROPERTIES: List<String> = listOf(
   "\$el", INSTANCE_OPTIONS_PROP, "\$parent", "\$root", "\$children", INSTANCE_REFS_PROP, INSTANCE_SLOTS_PROP,
