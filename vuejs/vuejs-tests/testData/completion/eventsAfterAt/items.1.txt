@@ -6,4 +6,5 @@
 @auxclick (typeText=null; priority=1.0; typeGreyed)
 @beforeinput (typeText=null; priority=1.0; typeGreyed)
 @beforematch (typeText=null; priority=1.0; typeGreyed)
+@beforetoggle (typeText=null; priority=1.0; typeGreyed)
 @blur (typeText=null; priority=1.0; typeGreyed)

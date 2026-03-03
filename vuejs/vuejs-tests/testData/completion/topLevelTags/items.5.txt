@@ -1,5 +1,4 @@
 media (typeText=null; priority=50.0)
-type (typeText=null; priority=50.0)
 # (typeText=null; priority=10.0; typeGreyed)
 : (typeText=null; priority=10.0; typeGreyed)
 @ (typeText=null; priority=10.0; typeGreyed)

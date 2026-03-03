@@ -4,6 +4,7 @@ ref
 about
 accesskey
 autocapitalize
+autocorrect
 autofocus
 class
 content
@@ -13,6 +14,8 @@ dir
 download
 draggable
 enterkeyhint
+headingoffset
+headingreset
 hidden
 href
 hreflang
@@ -45,6 +48,7 @@ type
 typeof
 urn
 vocab
+writingsuggestions
 charset
 coords
 name
