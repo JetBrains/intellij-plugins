@@ -1,7 +1,7 @@
 'a' (typeText=null; priority=103.0; bold)
 'b' (typeText=null; priority=103.0; bold)
 'c' (typeText=null; priority=103.0; bold)
-bar (typeText='"a" | "b" | "c"'; priority=101.0; bold)
+bar (typeText='"a" | "b" | "c" | undefined'; priority=101.0; bold)
 props (typeText=null; priority=101.0; bold)
 $ (typeText='ComponentInternalInstance'; priority=100.0; bold)
 $attrs (typeText='Data'; priority=100.0; bold)

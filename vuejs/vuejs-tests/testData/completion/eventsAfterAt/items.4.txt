@@ -10,6 +10,7 @@
 @change (typeText=null; priority=1.0; typeGreyed)
 @click (typeText=null; priority=1.0; typeGreyed)
 @close (typeText=null; priority=1.0; typeGreyed)
+@command (typeText=null; priority=1.0; typeGreyed)
 @contextlost (typeText=null; priority=1.0; typeGreyed)
 @contextmenu (typeText=null; priority=1.0; typeGreyed)
 @contextrestored (typeText=null; priority=1.0; typeGreyed)
