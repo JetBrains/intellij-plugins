@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.idea.perforce.perforce.connections
 
 import com.intellij.openapi.project.Project
@@ -119,7 +119,7 @@ internal class TestParametersConnection(
     inputStream: StringBuffer?,
   ) {
     val connArgs = buildConnectionArgs()
-    runP4CommandImpl(parameters!!, connArgs, p4args, retVal, inputStream)
+    runP4CommandImpl(parameters!!, connArgs, p4args, retVal, inputStream, myParameters.password)
   }
 
   private fun buildConnectionArgs(): Array<String?> {
@@ -130,10 +130,6 @@ internal class TestParametersConnection(
     }
     myParameters.user?.takeIf { it.isNotBlank() }?.let {
       args.add("-u")
-      args.add(it)
-    }
-    myParameters.password?.takeIf { it.isNotBlank() }?.let {
-      args.add("-P")
       args.add(it)
     }
     myParameters.client?.takeIf { it.isNotBlank() }?.let {

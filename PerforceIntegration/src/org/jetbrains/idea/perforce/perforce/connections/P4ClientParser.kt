@@ -1,3 +1,4 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.idea.perforce.perforce.connections
 
 import com.intellij.openapi.components.Service
@@ -46,7 +47,7 @@ class P4ClientParser {
       val workingDir = project.basePath ?: return emptyList()
       val user = parameters.user ?: return emptyList()
       P4ParametersConnection(parameters, ConnectionId(null, workingDir))
-        .runP4CommandLine(settings, parameters.toConnectArgs(), arrayOf<String>("clients", "-u", user), null)
+        .runP4CommandLine(settings, parameters.toConnectArgs(), arrayOf<String>("clients", "-u", user), null, parameters.password)
         .stdout.lines().forEach { line ->
           parseClientLine(line, parameters)?.let { clients.add(it) }
         }
@@ -75,12 +76,6 @@ class P4ClientParser {
         args.add("-u");
         args.add(user);
       }
-      val pass = password;
-      if (!pass.isNullOrBlank()) {
-        args.add("-P");
-        args.add(pass);
-      }
-
       return args.toTypedArray()
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 @file:Suppress("IO_FILE_USAGE")
 
 package org.jetbrains.idea.perforce.checkout
@@ -21,7 +21,7 @@ internal object PerforceCloneRunnerFactory {
     }
 
     val connArgs = buildConnectArgs(params)
-    val connection = PerforceCloneConnection(workDir, connArgs)
+    val connection = PerforceCloneConnection(workDir, connArgs, params.password.ifBlank { null })
     val connectionManager = PerforceCloneConnectionManager(connection)
     val loginManager = TestLoginManager(project, settings, connectionManager)
 
@@ -37,10 +37,6 @@ internal object PerforceCloneRunnerFactory {
     if (params.user.isNotBlank()) {
       args.add("-u")
       args.add(params.user)
-    }
-    if (params.password.isNotBlank()) {
-      args.add("-P")
-      args.add(params.password)
     }
     if (params.client.isNotBlank()) {
       args.add("-c")

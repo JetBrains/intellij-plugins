@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 @file:Suppress("IO_FILE_USAGE")
 
 package org.jetbrains.idea.perforce.checkout
@@ -32,6 +32,7 @@ internal class PerforceCloneConnectionManager(
 internal class PerforceCloneConnection(
   private val workDir: File,
   private val connArgs: Array<String>,
+  private val password: String? = null,
 ) : AbstractP4Connection() {
   private val connectionId = ConnectionId(null, workDir.absolutePath)
 
@@ -41,7 +42,7 @@ internal class PerforceCloneConnection(
     retVal: ExecResult,
     inputStream: StringBuffer?,
   ) {
-    runP4CommandImpl(parameters, connArgs, p4args, retVal, inputStream)
+    runP4CommandImpl(parameters, connArgs, p4args, retVal, inputStream, password)
   }
 
   override fun getWorkingDirectory(): File = workDir
