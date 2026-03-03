@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2005 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.idea.perforce.perforce.connections;
 
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -39,6 +25,7 @@ import com.intellij.util.MemoryDumpHelper;
 import com.intellij.util.ui.EDT;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.application.PerforceManager;
@@ -92,9 +79,17 @@ public abstract class AbstractP4Connection implements P4Connection {
                                      final String[] conArgs,
                                      final String[] p4args,
                                      final StringBuffer stringBuffer) throws VcsException {
+    return runP4CommandLine(settings, conArgs, p4args, stringBuffer, null);
+  }
+
+  public ExecResult runP4CommandLine(@NotNull PerforcePhysicalConnectionParametersI settings,
+                                     final String[] conArgs,
+                                     final String[] p4args,
+                                     final StringBuffer stringBuffer,
+                                     @Nullable String password) throws VcsException {
     final ExecResult result = new ExecResult();
     try {
-      runP4CommandImpl(settings, conArgs, p4args, result, stringBuffer);
+      runP4CommandImpl(settings, conArgs, p4args, result, stringBuffer, password);
     } catch (RuntimeException e) {
       throw new VcsException(e);
     }
@@ -106,8 +101,17 @@ public abstract class AbstractP4Connection implements P4Connection {
                                   String[] p4args,
                                   ExecResult retVal,
                                   StringBuffer inputStream) {
+    runP4CommandImpl(parameters, connArgs, p4args, retVal, inputStream, null);
+  }
+
+  protected void runP4CommandImpl(@NotNull PerforcePhysicalConnectionParametersI parameters,
+                                  String[] connArgs,
+                                  String[] p4args,
+                                  ExecResult retVal,
+                                  StringBuffer inputStream,
+                                  @Nullable String password) {
     try {
-      runCmdLine(parameters, connArgs, p4args, retVal, inputStream);
+      runCmdLine(parameters, connArgs, p4args, retVal, inputStream, password);
     }
     catch (ProcessCanceledException e) {
       throw e;
@@ -132,7 +136,8 @@ public abstract class AbstractP4Connection implements P4Connection {
                           String[] connArgs,
                           @NonNls String[] p4args,
                           ExecResult retVal,
-                          StringBuffer inputData) throws Exception {
+                          StringBuffer inputData,
+                          @Nullable String password) throws Exception {
     ProgressManager.checkCanceled();
     Project project = perforceSettings.getProject();
 
@@ -143,7 +148,7 @@ public abstract class AbstractP4Connection implements P4Connection {
     File cwd = getWorkingDirectory();
     Charset charset = perforceSettings.getConsoleCharset();
     retVal.setCharset(charset);
-    GeneralCommandLine cmd = fillCmdLine(perforceSettings, connArgs, p4args);
+    GeneralCommandLine cmd = fillCmdLine(perforceSettings, connArgs, p4args, password);
     cmd.setWorkDirectory(cwd);
     cmd.setCharset(charset);
     setEnvironment(cwd, cmd.getEnvironment());
@@ -276,7 +281,8 @@ public abstract class AbstractP4Connection implements P4Connection {
     });
   }
 
-  private static GeneralCommandLine fillCmdLine(PerforcePhysicalConnectionParametersI perforceSettings, String[] connArgs, String[] p4args) {
+  private static GeneralCommandLine fillCmdLine(PerforcePhysicalConnectionParametersI perforceSettings, String[] connArgs, String[] p4args,
+                                                @Nullable String password) {
     GeneralCommandLine cmd = new GeneralCommandLine(perforceSettings.getPathToExec());
     String cmdName = p4args.length == 0 ? null : p4args[0];
     if (ourCommandCallback != EmptyConsumer.getInstance()) {
@@ -290,6 +296,9 @@ public abstract class AbstractP4Connection implements P4Connection {
     cmd.addParameters(p4args);
     if (perforceSettings.getPathToIgnore() != null) {
       cmd.withEnvironment(P4ConfigFields.P4IGNORE.getName(), perforceSettings.getPathToIgnore());
+    }
+    if (password != null && !password.isBlank()) {
+      cmd.withEnvironment(P4ConfigFields.P4PASSWD.getName(), password);
     }
     return cmd;
   }
@@ -355,9 +364,11 @@ public abstract class AbstractP4Connection implements P4Connection {
     }
   }
 
-  private void debugCmd(File cwd, CommandDebugInfoWrapper wrapper, Map<String, String> env) {
+  private void debugCmd(@NotNull File cwd, CommandDebugInfoWrapper wrapper, @NotNull Map<String, String> env) {
     if (LOG.isDebugEnabled()) {
-      LOG.debug("[Perf Execute:] " + wrapper.getPresentation() + "\n [cwd] " + cwd + "\n env=" + env + "\n connection=" + this);
+      Map<String, String> safeEnv = new HashMap<>(env);
+      safeEnv.computeIfPresent(P4ConfigFields.P4PASSWD.getName(), (k, v) -> "*****");
+      LOG.debug("[Perf Execute:] " + wrapper.getPresentation() + "\n [cwd] " + cwd + "\n env=" + safeEnv + "\n connection=" + this);
     }
   }
 
