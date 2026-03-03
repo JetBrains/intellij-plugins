@@ -31,15 +31,15 @@
     <orderEntry type="module" module-name="intellij.java.rt" scope="TEST" />
     <orderEntry type="module-library">
       <library name="intellij.aws.cloudformation.meta" type="repository">
-        <properties include-transitive-deps="false" maven-id="com.intellij.aws:cloudformation-meta:2023.3.4">
+        <properties include-transitive-deps="false" maven-id="com.intellij.aws:cloudformation-meta:2026.1.6">
           <verification>
-            <artifact url="file://$MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2023.3.4/cloudformation-meta-2023.3.4.jar">
-              <sha256sum>a79c8ea35ab587dc72d70f938769a76eeaa8937c08843786278c3bc5b6c8c9e5</sha256sum>
+            <artifact url="file://$MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2026.1.6/cloudformation-meta-2026.1.6.jar">
+              <sha256sum>100ba8511c1f0efe5f66d5b9192d998de7ec56919b53ec553f75873a027456ad</sha256sum>
             </artifact>
           </verification>
         </properties>
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2023.3.4/cloudformation-meta-2023.3.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2026.1.6/cloudformation-meta-2026.1.6.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
