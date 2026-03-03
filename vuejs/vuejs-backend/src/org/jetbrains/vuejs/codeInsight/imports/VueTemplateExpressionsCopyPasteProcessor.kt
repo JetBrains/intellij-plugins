@@ -47,7 +47,7 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueProperty
 import java.awt.datatransfer.DataFlavor
 
-private class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTemplateExpressionsImportsTransferableData>() {
+internal class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTemplateExpressionsImportsTransferableData>() {
   override val dataFlavor: DataFlavor
     get() = VUE_TEMPLATE_EXPRESSIONS_IMPORTS_FLAVOR
 
@@ -168,23 +168,25 @@ private class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBa
   override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): VueTemplateExpressionsImportsTransferableData =
     VueTemplateExpressionsImportsTransferableData(importedElementsDeferred)
 
-  override fun getExportScope(file: PsiFile, caret: Int): PsiElement? {
-    return super.getExportScope(file, caret)
-           ?: WriteAction.compute<PsiElement, Throwable> {
-             VueComponentSourceEdit.getOrCreateScriptScope(
-               disableIndexUpToDateCheckIn(file) { VueModelManager.findEnclosingContainer(file) })
-           }
-  }
+  override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
+    super.getExportScope(file, caret)
+    ?: WriteAction.compute<PsiElement, Throwable> {
+      VueComponentSourceEdit.getOrCreateScriptScope(
+        disableIndexUpToDateCheckIn(file) { VueModelManager.findEnclosingContainer(file) })
+    }
 
-  override fun insertRequiredImports(
+  override fun prepareInsertingRequiredImports(
     pasteContext: PsiElement,
     data: VueTemplateExpressionsImportsTransferableData,
     destinationModule: PsiElement,
-    imports: Collection<Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
+    imports: List<ImportedElement>,
+    resolvedImports: Collection<Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
     pasteContextLanguage: Language,
-  ) {
-    ES6CreateImportUtil.addRequiredImports(destinationModule, VueJSLanguage, imports)
-  }
+  ): () -> Unit =
+    ES6CreateImportUtil.createExecutorsAddingRequiredImports(destinationModule, VueJSLanguage, resolvedImports)
+      .let { executors ->
+        { executors.forEach { it.execute() } }
+      }
 
   class VueTemplateExpressionsImportsTransferableData(
     importedElementsDeferred: Deferred<List<ImportedElement>>,
