@@ -2,6 +2,7 @@
 package org.jetbrains.astro.codeInsight.imports
 
 import com.intellij.lang.Language
+import com.intellij.lang.ecmascript6.editor.ES6CopyPasteProcessor.ES6ImportsTransferableData
 import com.intellij.lang.ecmascript6.editor.ES6CopyPasteProcessorBase
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
@@ -82,13 +83,18 @@ class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponen
   override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): AstroComponentImportsTransferableData =
     AstroComponentImportsTransferableData(importedElementsDeferred)
 
-  override fun insertRequiredImports(pasteContext: PsiElement,
-                                     data: AstroComponentImportsTransferableData,
-                                     destinationModule: PsiElement,
-                                     imports: Collection<OpenApiPair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
-                                     pasteContextLanguage: Language) {
-    ES6CreateImportUtil.addRequiredImports(destinationModule, pasteContextLanguage, imports)
-  }
+  override fun prepareInsertingRequiredImports(
+    pasteContext: PsiElement,
+    data: AstroComponentImportsTransferableData,
+    destinationModule: PsiElement,
+    imports: List<ImportedElement>,
+    resolvedImports: Collection<OpenApiPair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
+    pasteContextLanguage: Language
+  ): () -> Unit =
+    ES6CreateImportUtil.createExecutorsAddingRequiredImports(destinationModule, pasteContextLanguage, resolvedImports)
+      .let { executors ->
+        { executors.forEach { it.execute() } }
+      }
 
   class AstroComponentImportsTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>) : ES6ImportsTransferableDataBase(importedElementsDeferred) {
     override fun getFlavor(): DataFlavor {
