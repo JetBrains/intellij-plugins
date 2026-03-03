@@ -28,6 +28,7 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.xml.util.XmlTagUtil
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
@@ -37,7 +38,6 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.LangMode
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
@@ -160,14 +160,25 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
     }
   }
 
-  override fun insertRequiredImports(
+  override fun prepareInsertingRequiredImports(
     pasteContext: PsiElement,
     data: VueComponentImportsTransferableData,
     destinationModule: PsiElement,
-    imports: Collection<OpenApiPair<CreateImportExportInfo, PsiElement>>,
+    imports: List<ImportedElement>,
+    resolvedImports: Collection<OpenApiPair<CreateImportExportInfo, PsiElement>>,
     pasteContextLanguage: Language,
+  ): () -> Unit = {
+    // It looks like we can't prepare imports in advance
+    // because we might need to create some code in the write action.
+    insertRequiredImports(pasteContext, resolvedImports)
+  }
+
+  private fun insertRequiredImports(
+    pasteContext: PsiElement,
+    imports: Collection<OpenApiPair<CreateImportExportInfo, PsiElement>>,
   ) {
     if (imports.isEmpty()) return
+    ThreadingAssertions.assertWriteAccess()
     val componentSourceEdit = VueComponentSourceEdit.create(VueModelManager.findEnclosingContainer(pasteContext)) ?: return
     val scriptScope = componentSourceEdit.getOrCreateScriptScope() ?: return
     for (import in imports) {
@@ -243,10 +254,9 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
         }
       }, { elementsToImport ->
         val pasteContext = pasteContextPtr.dereference() ?: return@scheduleOnPasteProcessing
-        val exportScope = exportScopePtr.dereference() ?: return@scheduleOnPasteProcessing
-        insertRequiredImports(pasteContext, VueComponentImportsTransferableData(ArrayList(), null, emptyList()), exportScope,
-                              elementsToImport.mapNotNull { info -> info.second?.let { OpenApiPair(info.first, it) } },
-                              VueJSLanguage)
+        insertRequiredImports(pasteContext, elementsToImport.mapNotNull { info ->
+          info.second?.let { OpenApiPair(info.first, it) }
+        })
       }
     )
   }

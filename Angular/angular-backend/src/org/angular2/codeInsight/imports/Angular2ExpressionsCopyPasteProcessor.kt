@@ -33,7 +33,6 @@ import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import org.angular2.codeInsight.imports.Angular2ExpressionsCopyPasteProcessor.Angular2ExpressionsImportsTransferableData
 import org.angular2.entities.source.Angular2SourceUtil
@@ -85,13 +84,14 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
     return true
   }
 
-  override fun collectTransferableData(rangesWithParents: List<kotlin.Pair<PsiElement, TextRange>>, project: Project): Angular2ExpressionsImportsTransferableData? {
+  override fun collectTransferableData(
+    rangesWithParents: List<kotlin.Pair<PsiElement, TextRange>>,
+    project: Project,
+  ): Angular2ExpressionsImportsTransferableData? {
     val expressionContexts = rangesWithParents.count { Util.isExpressionContext(it.first) }
     if (expressionContexts != 0 && expressionContexts != rangesWithParents.size)
       return null
-    val importedElements = processTextRanges(rangesWithParents)
-    return importedElements.takeIf { it.isNotEmpty() }
-      ?.let { Angular2ExpressionsImportsTransferableData(it.toList(), expressionContexts != 0) }
+    return Angular2ExpressionsImportsTransferableData(deferredProcessTextRanges(rangesWithParents, project), expressionContexts != 0)
   }
 
   override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): Angular2ExpressionsImportsTransferableData =
@@ -100,15 +100,16 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     Angular2SourceUtil.findComponentClass(getContextElementOrFile(file, caret))?.containingFile
 
-  override fun insertRequiredImports(
+  override fun prepareInsertingRequiredImports(
     pasteContext: PsiElement,
     data: Angular2ExpressionsImportsTransferableData,
     destinationModule: PsiElement,
-    imports: Collection<Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
+    imports: List<ImportedElement>,
+    resolvedImports: Collection<Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
     pasteContextLanguage: Language,
-  ) {
-    if (Util.isExpressionContext(pasteContext) != data.isExpressionContext) return
-    val globalImports = data.importedElements.mapNotNull {
+  ): () -> Unit {
+    if (Util.isExpressionContext(pasteContext) != data.isExpressionContext) return {}
+    val globalImports = imports.mapNotNull {
       if (it.myInfo.importType == ImportExportType.BARE && it.myPath == "")
         Angular2GlobalImportCandidate(it.myInfo.exportedName ?: return@mapNotNull null,
                                       it.myInfo.importedName ?: return@mapNotNull null,
@@ -116,9 +117,11 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
       else
         null
     }
-    if (imports.isNotEmpty() || globalImports.isNotEmpty()) {
-      ES6CreateImportUtil.addRequiredImports(pasteContext, Angular2ExprDialect.forContext(pasteContext), imports)
+    val executors = ES6CreateImportUtil.createExecutorsAddingRequiredImports(
+      pasteContext, Angular2ExprDialect.forContext(pasteContext), resolvedImports)
 
+    return {
+      executors.forEach { it.execute() }
       globalImports.forEach {
         JSImportAction(null, pasteContext, it.name)
           .executeFor(JSImportCandidateWithExecutor(it, Angular2AddImportExecutor(pasteContext)), null)
@@ -155,7 +158,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
           // This is most likely a global import
           result.add(ImportedElement(
             "", ES6ImportPsiUtil.CreateImportExportInfo(
-            referenceName, fieldName, ImportExportType.BARE, ImportExportPrefixKind.IMPORT), true))
+              referenceName, fieldName, ImportExportType.BARE, ImportExportPrefixKind.IMPORT), true))
         }
       }
     }
@@ -166,9 +169,9 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   }
 
   class Angular2ExpressionsImportsTransferableData(
-    val importedElements: List<ImportedElement>,
+    importedElementsDeferred: Deferred<List<ImportedElement>>,
     val isExpressionContext: Boolean,
-  ) : ES6ImportsTransferableDataBase(CompletableDeferred(importedElements)) {
+  ) : ES6ImportsTransferableDataBase(importedElementsDeferred) {
     override fun getFlavor(): DataFlavor {
       return ANGULAR2_EXPRESSIONS_IMPORTS_FLAVOR
     }
