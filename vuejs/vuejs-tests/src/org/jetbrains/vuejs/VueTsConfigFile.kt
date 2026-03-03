@@ -14,6 +14,10 @@ class VueTsConfigFile :
     fixture: CodeInsightTestFixture,
     disposable: Disposable?,
   ) {
+    // TEMP (for migration)
+    if (fixture.tempDirFixture.getFile(FILE_NAME) != null)
+      return
+
     fixture.configureByText(FILE_NAME, DEFAULT_TSCONFIG_CONTENT)
 
     disposable?.let {
