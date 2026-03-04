@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -141,7 +142,7 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
     return item
   }
 
-  override fun getModificationCount(): Long = 0
+  override val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
 
   override fun equals(other: Any?): Boolean =
     other is VueSymbolQueryResultsCustomizer

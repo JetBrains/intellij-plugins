@@ -232,8 +232,8 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
   override fun hashCode(): Int =
     context.hashCode()
 
-  override fun getModificationCount(): Long =
-    PsiModificationTracker.getInstance(context.project).modificationCount
+  override val modificationTracker
+    get() = PsiModificationTracker.getInstance(context.project)
 
   class Factory : PolySymbolQueryResultsCustomizerFactory {
     override fun create(location: PsiElement, context: PolyContext): PolySymbolQueryResultsCustomizer? =

@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.polySymbols.PolySymbol
@@ -165,12 +166,13 @@ private interface VueDirectiveNameConversionRulesProviderBase :
   PolySymbolNameConversionRulesProvider,
   PolySymbolNameConversionRules {
 
+  override val modificationTracker: ModificationTracker
+    get() = ModificationTracker.NEVER_CHANGED
+
   override fun getNameConversionRules(): PolySymbolNameConversionRules = this
 
   override fun createPointer(): Pointer<out PolySymbolNameConversionRulesProvider> =
     Pointer.hardPointer(this)
-
-  override fun getModificationCount(): Long = 0
 
   override val renames: Map<PolySymbolKind, PolySymbolNameConverter>
     get() = canonicalNames
