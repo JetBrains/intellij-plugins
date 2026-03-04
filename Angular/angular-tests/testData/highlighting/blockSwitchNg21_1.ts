@@ -15,7 +15,7 @@ export interface User {
         @case ("foo") {
             <a (click)="use(user.name)">test</a>
         }
-        <error descr="Matching multiple switch conditions for a single block is supported only in Angular 21.1 and above.">@case ("foo1")</error>
+        @case ("foo1")
         @case ("bar"; <error descr="@case does not support parameter foo">foo</error>) {
             <a (click)="use(<error descr="TS2345: Argument of type '\"foo1\" | \"bar\"' is not assignable to parameter of type '\"foo\"'.
   Type '\"foo1\"' is not assignable to type '\"foo\"'.">user.name</error>)">test</a>

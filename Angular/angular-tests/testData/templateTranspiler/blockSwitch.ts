@@ -16,10 +16,13 @@ export interface User {
             {{user.name}}
             <a (click)="use(user.name)">test</a>
         }
+        @case ("foo1")
+        @case ("foo2")
         @case ("bar"; foo) {
             {{user.name}}
             <a (click)="use(user.name)">test</a>
         }
+        @case ("foo3")
         @default {
             {{user.name}}
             <a (click)="use(user.name)">test</a>
