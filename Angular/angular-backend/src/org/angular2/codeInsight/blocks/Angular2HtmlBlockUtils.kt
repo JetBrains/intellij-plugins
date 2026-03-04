@@ -4,6 +4,7 @@ package org.angular2.codeInsight.blocks
 import com.intellij.lang.javascript.JSKeywordSets
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
@@ -12,7 +13,6 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.childrenOfType
-import com.intellij.psi.util.childrenSequence
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.parentOfType
@@ -112,7 +112,7 @@ fun getAngular2HtmlBlocksConfig(location: PsiElement): Angular2HtmlBlocksConfig 
         .listSymbolsQuery(NG_BLOCKS, true)
         .run()
         .filterIsInstance<Angular2HtmlBlockSymbol>()
-        .associateBy { it.name }), queryExecutor)
+        .associateBy { it.name }), ModificationTracker.NEVER_CHANGED)
   }
 }
 
