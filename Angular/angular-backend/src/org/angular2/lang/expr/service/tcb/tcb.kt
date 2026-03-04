@@ -955,7 +955,7 @@ private class TcbControlFlowContentProjectionOp(
         }
       }
       else if (child is TmplAstSwitchBlock) {
-        for (current in child.cases) {
+        for (current in child.groups) {
           if (this.shouldCheck(current)) {
             result.add(current)
           }
@@ -1474,8 +1474,8 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
     this.scope.addStatement(Statement {
       val switchExpression = tcbExpression(block.expression, tcb, scope)
       append("switch(").append(switchExpression).append(")")
-      this.codeBlock {
-        block.cases.forEach { current ->
+      codeBlock {
+        block.groups.forEach { current ->
           val checkBody = tcb.env.config.checkControlFlowBodies
           val clauseScope = Scope.forNodes(
             tcb,
@@ -1484,17 +1484,19 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
             if (checkBody) current.children else emptyList(),
             if (checkBody) generateGuard(current, switchExpression) else null,
           )
-          val statements = clauseScope.render() //, ts.factory.createBreakStatement()]
-
-          if (current.expression === null)
-            appendStatement { append("default:") }
-          else
-            appendStatement {
-              append("case ")
-                .append(tcbExpression(current.expression, tcb, clauseScope))
-                .append(":")
+          current.cases.forEach { switchCase ->
+            if (switchCase.expression == null) {
+              appendStatement { append("default:") }
             }
-          statements.forEach(::appendStatement)
+            else {
+              appendStatement {
+                append("case ")
+                  .append(tcbExpression(switchCase.expression, tcb, scope))
+                  .append(":")
+              }
+            }
+          }
+          clauseScope.render().forEach(::appendStatement)
           appendStatement { append("break;") }
         }
       }
@@ -1502,17 +1504,36 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
     return null
   }
 
-  private fun generateGuard(node: TmplAstSwitchBlockCase, switchValue: Expression): Expression? {
+  private fun generateGuard(group: TmplAstSwitchBlockCaseGroup, switchValue: Expression): Expression? {
     // For non-default cases, the guard needs to compare against the case value, e.g.
     // `switchExpression === caseExpression`.
-    if (node.expression != null) {
-      // The expression needs to be ignored for diagnostics since it has been checked already.
-      val expression = tcbExpression(node.expression, this.tcb, this.scope)
-      return Expression {
-        withIgnoreMappings {
-          append(switchValue).append(" === ").append(expression)
+    val hasDefault = group.cases.any { it.expression == null }
+
+    if (!hasDefault) {
+      var guard: Expression? = null
+
+      for (switchCase in group.cases) {
+        if (switchCase.expression != null) {
+          // The expression needs to be ignored for diagnostics since it has been checked already.
+          val expression = tcbExpression(switchCase.expression, this.tcb, this.scope)
+          val comparison = Expression {
+            withIgnoreMappings {
+              append(switchValue).append(" === ").append(expression)
+            }
+          }
+
+          if (guard == null) {
+            guard = comparison
+          }
+          else {
+            guard = Expression {
+              append(guard!!).append(" || ").append(comparison)
+            }
+          }
         }
       }
+
+      return guard
     }
 
     // To fully narrow the type in the default case, we need to generate an expression that negates
@@ -1525,25 +1546,32 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
     // Will produce the guard `expr !== 1 && expr !== 2`.
     var guard: Expression? = null
 
-    for (current in this.block.cases) {
-      if (current.expression == null) {
+    for (currentGroup in this.block.groups) {
+      if (currentGroup == group) {
         continue
       }
 
-      // The expression needs to be ignored for diagnostics since it has been checked already.
-      val expression = tcbExpression(current.expression, this.tcb, this.scope)
-      val comparison = Expression {
-        withIgnoreMappings {
-          append(switchValue).append(" !== ").append(expression)
+      for (switchCase in currentGroup.cases) {
+        if (switchCase.expression == null) {
+          // Skip the default case.
+          continue
         }
-      }
 
-      if (guard == null) {
-        guard = comparison
-      }
-      else {
-        guard = Expression {
-          append(guard!!).append(" && ").append(comparison)
+        // The expression needs to be ignored for diagnostics since it has been checked already.
+        val expression = tcbExpression(switchCase.expression, this.tcb, this.scope)
+        val comparison = Expression {
+          withIgnoreMappings {
+            append(switchValue).append(" !== ").append(expression)
+          }
+        }
+
+        if (guard == null) {
+          guard = comparison
+        }
+        else {
+          guard = Expression {
+            append(guard!!).append(" && ").append(comparison)
+          }
         }
       }
     }

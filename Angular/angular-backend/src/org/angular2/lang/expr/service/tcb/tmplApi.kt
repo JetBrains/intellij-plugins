@@ -30,7 +30,7 @@ import com.intellij.util.containers.MultiMap
 import com.intellij.util.containers.addIfNotNull
 import com.intellij.xml.util.XmlTagUtil
 import org.angular2.Angular2DecoratorUtil
-import org.angular2.Angular2InjectionUtils
+import org.angular2.Angular2InjectionUtils.findInjectedAngularExpression
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.blocks.BLOCK_CASE
@@ -300,21 +300,26 @@ internal class TmplAstIfBlockBranch(
 internal class TmplAstSwitchBlock(
   override val nameSpan: TextRange?,
   val expression: JSExpression?,
-  val cases: List<TmplAstSwitchBlockCase>,
+  val groups: List<TmplAstSwitchBlockCaseGroup>,
 ) : TmplAstBlockNode
+
+internal class TmplAstSwitchBlockCaseGroup(
+  override val nameSpan: TextRange?,
+  override val children: List<TmplAstNode>,
+  val cases: List<TmplAstSwitchBlockCase>,
+) : TmplAstBlockNodeWithChildren
 
 internal class TmplAstSwitchBlockCase(
   override val nameSpan: TextRange?,
   val expression: JSExpression?,
-  override val children: List<TmplAstNode>,
-) : TmplAstBlockNodeWithChildren
+) : TmplAstBlockNode
 
 internal class TmplAstLetBlock(
   override val nameSpan: TextRange?,
   val declaration: TmplAstLetDeclaration?,
 ) : TmplAstBlockNode
 
-internal class TmplDirectiveMetadata constructor(
+internal class TmplDirectiveMetadata(
   val directive: Angular2Directive,
   val isHostDirective: Boolean,
   val inputs: Map<String, Angular2DirectiveProperty>,
@@ -598,7 +603,8 @@ internal fun buildHostBindingsAst(
   cls: TypeScriptClass,
 ): Pair<TmplAstNode, List<TextRange>>? {
   val decorator = Angular2DecoratorUtil.findDecorator(cls, true, Angular2DecoratorUtil.COMPONENT_DEC, Angular2DecoratorUtil.DIRECTIVE_DEC)
-  val hostBindings = Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.HOST_PROP)?.value?.asSafely<JSObjectLiteralExpression>()
+  val hostBindings = Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.HOST_PROP)
+                       ?.value?.asSafely<JSObjectLiteralExpression>()
                      ?: return null
 
   val directive = Angular2EntitiesProvider.getDirective(decorator)
@@ -626,7 +632,7 @@ internal fun buildHostBindingsAst(
         outputs[attributeName.name] =
           TmplAstBoundEvent(attributeName.name, property.nameIdentifier?.textRange,
                             (attributeName as Angular2AttributeNameParser.EventInfo).tmplParsedEventType,
-                            Angular2InjectionUtils.findInjectedAngularExpression(quotedLiteral, Angular2Action::class.java)?.statements?.toList()
+                            findInjectedAngularExpression(quotedLiteral, Angular2Action::class.java)?.statements?.toList()
                             ?: emptyList(), valueTextRange.startOffset, null, null, property.textRange, null, true)
       }
       PROPERTY_BINDING -> {
@@ -634,7 +640,7 @@ internal fun buildHostBindingsAst(
         inputs[attributeName.name] =
           TmplAstBoundAttribute(attributeName.name, property.nameIdentifier?.textRange,
                                 (attributeName as Angular2AttributeNameParser.PropertyBindingInfo).tmplAstBindingType,
-                                Angular2InjectionUtils.findInjectedAngularExpression(quotedLiteral, Angular2SimpleBinding::class.java)?.expression,
+                                findInjectedAngularExpression(quotedLiteral, Angular2SimpleBinding::class.java)?.expression,
                                 valueTextRange.startOffset, valueTextRange, false)
       }
       else -> {}
@@ -998,18 +1004,15 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
     BLOCK_SWITCH -> TmplAstSwitchBlock(
       nameSpan = nameElement.textRange,
       expression = parameters.getOrNull(0)?.expression,
-      cases = contents?.children?.mapNotNull { (it as? Angular2HtmlBlock)?.toTmplAstBlock(referenceResolver) as? TmplAstSwitchBlockCase }
-              ?: emptyList()
+      groups = buildSwitchBlockGroups(contents?.children, referenceResolver)
     )
     BLOCK_CASE -> TmplAstSwitchBlockCase(
       nameSpan = nameElement.textRange,
       expression = parameters.getOrNull(0)?.expression,
-      children = contents.mapChildren(referenceResolver),
     )
     BLOCK_DEFAULT -> TmplAstSwitchBlockCase(
       nameSpan = nameElement.textRange,
       expression = null,
-      children = contents.mapChildren(referenceResolver),
     )
     BLOCK_DEFER -> TmplAstDeferredBlock(
       nameSpan = nameElement.textRange,
@@ -1018,7 +1021,8 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
       hydrateTriggers = this.buildTriggers(PARAMETER_PREFIX_HYDRATE),
       error = blockSiblingsForward().find { it.name == BLOCK_ERROR }?.toTmplAstBlock(referenceResolver) as? TmplAstDeferredBlockError,
       loading = blockSiblingsForward().find { it.name == BLOCK_LOADING }?.toTmplAstBlock(referenceResolver) as? TmplAstDeferredBlockLoading,
-      placeholder = blockSiblingsForward().find { it.name == BLOCK_PLACEHOLDER }?.toTmplAstBlock(referenceResolver) as? TmplAstDeferredBlockPlaceholder,
+      placeholder = blockSiblingsForward().find { it.name == BLOCK_PLACEHOLDER }
+        ?.toTmplAstBlock(referenceResolver) as? TmplAstDeferredBlockPlaceholder,
       children = contents.mapChildren(referenceResolver),
     )
     BLOCK_ERROR -> TmplAstDeferredBlockError(
@@ -1040,6 +1044,25 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
     )
     else -> null
   }
+
+
+private fun buildSwitchBlockGroups(children: Array<PsiElement>?, referenceResolver: ReferenceResolver): List<TmplAstSwitchBlockCaseGroup> {
+  if (children == null) return emptyList()
+  val result = mutableListOf<TmplAstSwitchBlockCaseGroup>()
+  val cases = mutableListOf<TmplAstSwitchBlockCase>()
+
+  for (child in children) {
+    if (child !is Angular2HtmlBlock) continue
+    val blockCase = child.toTmplAstBlock(referenceResolver) as? TmplAstSwitchBlockCase ?: continue
+    cases.add(blockCase)
+    if (child.contents != null) {
+      val children = child.contents.mapChildren(referenceResolver)
+      result.add(TmplAstSwitchBlockCaseGroup(blockCase.nameSpan, children, cases.toList()))
+      cases.clear()
+    }
+  }
+  return result
+}
 
 private fun Angular2HtmlBlock.buildTriggers(prefix: String?): TmplAstDeferredBlockTriggers =
   TmplAstDeferredBlockTriggers(
@@ -1085,7 +1108,10 @@ private fun JSVariable.toTmplAstLetDeclaration(referenceResolver: ReferenceResol
     referenceResolver.set(this@toTmplAstLetDeclaration, this)
   }
 
-private fun buildContextVariables(forOfBlock: Angular2HtmlBlock, referenceResolver: ReferenceResolver): MultiMap<String, Pair<TmplAstVariable, JSExpression?>> {
+private fun buildContextVariables(
+  forOfBlock: Angular2HtmlBlock,
+  referenceResolver: ReferenceResolver,
+): MultiMap<String, Pair<TmplAstVariable, JSExpression?>> {
   val result = MultiMap<String, Pair<TmplAstVariable, JSExpression?>>()
 
   val symbols = forOfBlock.definition?.implicitVariables?.associateBy { it.name }

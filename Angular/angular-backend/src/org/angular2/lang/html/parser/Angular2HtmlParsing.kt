@@ -13,6 +13,8 @@ import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.parsing.XmlParserBundle
 import com.intellij.xml.util.XmlUtil
+import org.angular2.codeInsight.blocks.BLOCK_CASE
+import org.angular2.codeInsight.blocks.BLOCK_DEFAULT
 import org.angular2.codeInsight.blocks.BLOCK_LET
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
@@ -260,7 +262,13 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
       val errorEndMarker = builder.mark()
       pushItemToStack(AngularBlock(startMarker, errorStartMarker.precede(), errorStartMarker, errorEndMarker))
     }
-    else {
+    else if (blockName == BLOCK_CASE) {
+      if (builder.tokenType != Angular2HtmlTokenTypes.BLOCK_NAME
+          || builder.tokenText!!.removePrefix("@").let { it != BLOCK_CASE && it != BLOCK_DEFAULT }) {
+        builder.error(Angular2Bundle.message("angular.parse.template.incomplete.case.block"))
+      }
+      startMarker.done(Angular2HtmlElementTypes.BLOCK)
+    } else {
       builder.error(Angular2Bundle.message("angular.parse.template.missing-block-opening-lbrace"))
       startMarker.done(Angular2HtmlElementTypes.BLOCK)
     }
