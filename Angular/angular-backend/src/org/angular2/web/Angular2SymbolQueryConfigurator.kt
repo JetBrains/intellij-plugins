@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.context.PolyContext
@@ -323,6 +324,8 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
           ?: emptyList()
         }
         return listOf(object : PolySymbolNameConversionRulesProvider {
+          override val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
+
           override fun getNameConversionRules(): PolySymbolNameConversionRules =
             PolySymbolNameConversionRules.builder()
               .addMatchNamesRule(NG_DIRECTIVE_INPUTS) { name ->
@@ -336,14 +339,14 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
           override fun createPointer(): Pointer<out PolySymbolNameConversionRulesProvider> =
             Pointer.hardPointer(this)
-
-          override fun getModificationCount(): Long = 0
         })
       }
       else if (element is Angular2TemplateBindingKey) {
         val templateName = element.parentOfType<Angular2TemplateBindings>()?.templateName
         if (templateName != null)
           return listOf(object : PolySymbolNameConversionRulesProvider {
+            override val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
+
             override fun getNameConversionRules(): PolySymbolNameConversionRules =
               PolySymbolNameConversionRules.builder()
                 .addMatchNamesRule(NG_DIRECTIVE_INPUTS) {
@@ -362,8 +365,6 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
             override fun createPointer(): Pointer<out PolySymbolNameConversionRulesProvider> =
               Pointer.hardPointer(this)
-
-            override fun getModificationCount(): Long = 0
           })
       }
     }
