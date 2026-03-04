@@ -179,6 +179,7 @@ else
     # Do nothing: 'testunit/autorun' will launch all stuff
   else
     # MiniTest:
+    require 'minitest/rm_diff_patch'
     # required for minitest 6.0, which made loading plugins optional, so now they have to be required and loaded manually
     require 'minitest/rm_reporter_plugin'
   end
