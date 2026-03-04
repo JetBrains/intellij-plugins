@@ -58,6 +58,4 @@ class UiFrameworkComponent(
       sourcePtr.dereference()?.let { UiFrameworkComponent(name, it) }
     }
   }
-
-  override fun getModificationCount(): Long = super.getModificationCount()
 }

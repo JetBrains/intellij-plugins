@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -33,7 +34,8 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {
     other is VueAvailableSlotsScope
     && other.tag == tag
 
-  override fun getModificationCount(): Long = tag.containingFile.modificationStamp
+  override val modificationTracker: ModificationTracker
+    get() = ModificationTracker { tag.containingFile.modificationStamp }
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,

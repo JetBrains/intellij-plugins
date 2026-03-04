@@ -79,8 +79,6 @@ class AstroLocalComponent(
     }
   }
 
-  override fun getModificationCount(): Long = super.getModificationCount()
-
   override fun computeNavigationElement(project: Project): PsiElement =
     JSDeclarationEvaluator.adjustDeclaration(source, null) ?: source
 }

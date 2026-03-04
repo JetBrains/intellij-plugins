@@ -4,6 +4,7 @@ package org.jetbrains.astro.polySymbols.symbols
 import com.intellij.lang.typescript.getNavigationFromService
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.polySymbols.PolySymbol.DocHidePatternProperty
 import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
@@ -52,7 +53,8 @@ class UnknownComponent(override val source: PsiElement, override val name: @NlsS
   val docHidePattern: Boolean
     get() = true
 
-  override fun getModificationCount(): Long = PsiModificationTracker.getInstance(source.project).modificationCount
+  override val modificationTracker: ModificationTracker
+    get() = PsiModificationTracker.getInstance(source.project)
 
   override fun createPointer(): Pointer<UnknownComponent> {
     val filePtr = source.createSmartPointer()

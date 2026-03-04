@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -89,9 +90,11 @@ private constructor(
     }
   }
 
-  override fun getModificationCount(): Long =
-    PsiModificationTracker.getInstance(project).modificationCount +
-    VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS.modificationCount
+  override val modificationTracker: ModificationTracker
+    get() = ModificationTracker {
+      PsiModificationTracker.getInstance(project).modificationCount +
+      VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS.modificationCount
+    }
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == VUE_COMPONENTS

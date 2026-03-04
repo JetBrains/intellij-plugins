@@ -2,6 +2,7 @@ package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.model.Pointer.hardPointer
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -47,6 +48,6 @@ object TemplateBindingKeywordsScope : PolySymbolScope {
   override fun createPointer(): Pointer<out PolySymbolScope> =
     hardPointer(this)
 
-  override fun getModificationCount(): Long =
-    0
+  override val modificationTracker: ModificationTracker
+    get() = ModificationTracker.NEVER_CHANGED
 }

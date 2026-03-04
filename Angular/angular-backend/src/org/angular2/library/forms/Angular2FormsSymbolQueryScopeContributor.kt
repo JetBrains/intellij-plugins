@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
@@ -103,7 +104,8 @@ class Angular2FormsSymbolQueryScopeContributor : PolySymbolQueryScopeContributor
       }
     }
 
-    override fun getModificationCount(): Long = 0
+    override val modificationTracker: ModificationTracker
+      get() = ModificationTracker.NEVER_CHANGED
 
     override fun equals(other: Any?): Boolean =
       other === this || (other is SingleSymbolExclusiveScope && other.symbol == symbol)

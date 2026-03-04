@@ -5,6 +5,7 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.polySymbols.PolySymbol
@@ -39,10 +40,11 @@ internal class AstroAvailableComponentsScope(project: Project) :
     cacheDependencies.add(DumbService.getInstance(project))
   }
 
-  override fun getModificationCount(): Long {
-    return VirtualFileManager.getInstance().structureModificationCount +
-           DumbService.getInstance(project).modificationTracker.modificationCount
-  }
+  override val modificationTracker: ModificationTracker
+    get() = ModificationTracker {
+      VirtualFileManager.getInstance().structureModificationCount +
+      DumbService.getInstance(project).modificationTracker.modificationCount
+    }
 
   override fun createPointer(): Pointer<out PolySymbolScopeWithCache<Project, Unit>> =
     Pointer.hardPointer(this)

@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
 import com.intellij.model.Pointer.hardPointer
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -83,8 +84,8 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent<*>)
       }
 
 
-  override fun getModificationCount(): Long =
-    PsiModificationTracker.getInstance(enclosingComponent.source.project).modificationCount
+  override val modificationTracker: ModificationTracker
+    get() = PsiModificationTracker.getInstance(enclosingComponent.source.project)
 
   companion object {
 
