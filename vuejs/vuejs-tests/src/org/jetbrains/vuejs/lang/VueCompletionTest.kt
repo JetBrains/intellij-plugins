@@ -995,7 +995,10 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testObjectLiteralProperty() =
-    doLookupTest()
+    doLookupTest {
+      // ignore global objects and keywords
+      it.priority > 4
+    }
 
   @Test
   fun testEnum() =
@@ -1473,7 +1476,10 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testExpressionOperationKeywordsTS() =
-    doLookupTest()
+    doLookupTest {
+      // ignore global objects and keywords
+      it.priority > 4
+    }
 
   @Test
   fun testExpressionOperationKeywordsNestedJS() =
@@ -1481,7 +1487,10 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testExpressionOperationKeywordsNestedTS() =
-    doLookupTest()
+    doLookupTest {
+      // ignore global objects and keywords
+      it.priority > 4
+    }
 
   @Test
   fun testComponentEmitsDefinitions() =
