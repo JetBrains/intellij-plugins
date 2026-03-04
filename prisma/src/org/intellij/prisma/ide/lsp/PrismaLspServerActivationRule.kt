@@ -14,6 +14,10 @@ object PrismaLspServerActivationRule : LspServerActivationRule(PrismaLspServerLo
     if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
     return file.fileType == PrismaFileType
   }
+
+  override fun restartService(project: Project) {
+    restartPrismaServerAsync(project)
+  }
 }
 
 object PrismaActivationHelper : ServiceActivationHelper {

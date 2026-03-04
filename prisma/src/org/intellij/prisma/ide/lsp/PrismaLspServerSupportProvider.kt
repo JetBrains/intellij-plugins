@@ -53,8 +53,4 @@ fun restartPrismaServerAsync(project: Project) {
 object PrismaLspServerLoader : LspServerLoader(PrismaLspServerPackageDescriptor) {
   override fun getSelectedPackage(project: Project): NodePackage? =
     PrismaServiceSettings.getInstance(project).lspServerPackageRef.constantPackage
-
-  override fun restartService(project: Project) {
-    restartPrismaServerAsync(project)
-  }
 }
