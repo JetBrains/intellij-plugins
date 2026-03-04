@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.libraries.i18n
 
 import com.intellij.lang.Language
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.patterns.StandardPatterns.instanceOf
@@ -56,7 +57,8 @@ class VueI18NSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
       }
     }
 
-    override fun getModificationCount(): Long = tag.containingFile.modificationStamp
+    override val modificationTracker: ModificationTracker
+      get() = ModificationTracker { tag.containingFile.modificationStamp }
 
     override fun getSymbols(
       kind: PolySymbolKind,

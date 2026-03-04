@@ -6,6 +6,7 @@ import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.IntellijInternalApi
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.polySymbols.PolySymbol
@@ -84,7 +85,8 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey) :
     }
   }
 
-  override fun getModificationCount(): Long = 0
+  override val modificationTracker: ModificationTracker
+    get() = ModificationTracker.NEVER_CHANGED
 
   private class TemplateBindingsSymbol(private val bindings: Angular2TemplateBindings) : Angular2Symbol {
 

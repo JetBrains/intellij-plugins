@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
@@ -47,8 +48,10 @@ class VueWebTypesMergedSymbol(
       ?.name
       ?.takeIf { toAsset(it) != toAsset(name) }
 
-  override fun getModificationCount(): Long =
-    symbols.sumOf { (it as? PolySymbolScope)?.modificationCount ?: 0 }
+  override val modificationTracker: ModificationTracker
+    get() = ModificationTracker {
+      symbols.sumOf { (it as? PolySymbolScope)?.modificationTracker?.modificationCount ?: 0 }
+    }
 
   override val nameSegments: List<PolySymbolNameSegment>
     get() = listOf(PolySymbolNameSegment.create(

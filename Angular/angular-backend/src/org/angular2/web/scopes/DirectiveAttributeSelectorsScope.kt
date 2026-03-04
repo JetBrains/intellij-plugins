@@ -4,6 +4,7 @@ package org.angular2.web.scopes
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.model.Pointer
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -41,7 +42,8 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolScope {
   override fun createPointer(): Pointer<out PolySymbolScope> =
     Pointer.hardPointer(this)
 
-  override fun getModificationCount(): Long = 0
+  override val modificationTracker: ModificationTracker
+    get() = ModificationTracker.NEVER_CHANGED
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
@@ -77,8 +79,8 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolScope {
     override val kind: PolySymbolKind
       get() = HTML_ELEMENTS
 
-    override fun getModificationCount(): Long =
-      PsiModificationTracker.getInstance(project).modificationCount
+    override val modificationTracker: ModificationTracker
+      get() = PsiModificationTracker.getInstance(project)
 
     override fun createPointer(): Pointer<HtmlAttributeDirectiveAttributeSelectorsExtension> =
       Pointer.hardPointer(this)

@@ -3,6 +3,7 @@ package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbol
@@ -41,8 +42,8 @@ class AstroComponent(file: PsiFile) : ComponentPolySymbol,
     cacheDependencies.add(dataHolder)
   }
 
-  override fun getModificationCount(): Long =
-    PsiModificationTracker.getInstance(project).modificationCount
+  override val modificationTracker: ModificationTracker
+    get() = PsiModificationTracker.getInstance(project)
 
   override fun createPointer(): Pointer<AstroComponent> {
     val filePtr = dataHolder.createSmartPointer()

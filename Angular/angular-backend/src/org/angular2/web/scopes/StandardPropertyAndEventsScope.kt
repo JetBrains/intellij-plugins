@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
@@ -39,8 +40,8 @@ import org.angular2.web.EVENT_ATTR_PREFIX
 
 class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySymbolScope {
 
-  override fun getModificationCount(): Long =
-    PsiModificationTracker.getInstance(templateFile.project).modificationCount
+  override val modificationTracker: ModificationTracker
+    get() = PsiModificationTracker.getInstance(templateFile.project)
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
@@ -84,8 +85,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     override val kind: PolySymbolKind
       get() = HTML_ELEMENTS
 
-    override fun getModificationCount(): Long =
-      PsiModificationTracker.getInstance(project).modificationCount
+    override val modificationTracker: ModificationTracker
+      get() = PsiModificationTracker.getInstance(project)
 
     override fun createPointer(): Pointer<HtmlElementStandardPropertyAndEventsExtension> {
       val templateFile = this.dataHolder.createSmartPointer()

@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
@@ -49,5 +50,6 @@ interface VueDirective : VueSymbol, VueScopeElement, PolySymbolScope {
       else -> emptyList()
     }
 
-  override fun getModificationCount(): Long = -1
+  override val modificationTracker: ModificationTracker
+    get() = ModificationTracker { -1 }
 }

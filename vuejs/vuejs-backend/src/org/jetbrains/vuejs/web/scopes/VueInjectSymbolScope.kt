@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -52,8 +53,8 @@ class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent<*>
     }
   }
 
-  override fun getModificationCount(): Long =
-    PsiModificationTracker.getInstance(enclosingComponent.source.project).modificationCount
+  override val modificationTracker: ModificationTracker
+    get() = PsiModificationTracker.getInstance(enclosingComponent.source.project)
 
   private val vueInjectStringSymbol = ReferencingPolySymbol.create(
     JS_STRING_LITERALS,

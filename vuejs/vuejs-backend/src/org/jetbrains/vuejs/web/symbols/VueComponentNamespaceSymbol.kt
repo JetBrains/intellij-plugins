@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -43,8 +44,8 @@ data class VueComponentNamespaceSymbol(
     }
   }
 
-  override fun getModificationCount(): Long =
-    PsiModificationTracker.getInstance(source.project).modificationCount
+  override val modificationTracker: ModificationTracker
+    get() = PsiModificationTracker.getInstance(source.project)
 
   override val type: JSType
     get() = JSPsiBasedTypeOfType(

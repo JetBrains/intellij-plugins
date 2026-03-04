@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -62,8 +63,8 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
     }
   }
 
-  override fun getModificationCount(): Long =
-    delegate.modificationCount
+  override val modificationTracker: ModificationTracker
+    get() = delegate.modificationTracker
 
   override fun equals(other: Any?): Boolean =
     other is VueIncorrectlySelfReferredComponentFilteringScope
