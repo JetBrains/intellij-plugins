@@ -5,6 +5,7 @@ import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.javascript.testFramework.web.filterOutStandardHtmlSymbols
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.TrackFailedTestRule
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
@@ -17,7 +18,9 @@ import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
@@ -25,9 +28,8 @@ private val FILTER_DEFAULT_ATTRIBUTES = (filterOutStandardHtmlSymbols
   and filterOutMostOfGlobalJSSymbolsInVue
   and { info -> info.lookupString.let { !it.contains("aria-") && !it.startsWith("on") } })
 
-@Ignore
 class VueCompletionTest :
-  VueCompletionTestBase() {
+  VueCompletionWithPluginTestBase() {
 
   @Ignore
   class WithLegacyPluginTest :
@@ -41,6 +43,67 @@ class VueCompletionTest :
 
       return super.getExpectedItemsLocation(dir) + "/items-no-service"
     }
+  }
+}
+
+abstract class VueCompletionWithPluginTestBase(
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+) : VueCompletionTestBase(testMode = testMode) {
+
+  @Rule
+  @JvmField
+  val rule: TestRule = TrackFailedTestRule(
+    "testNamespacedComponents",
+    "testNoFilterForOnProps",
+    "testFilters",
+    "testTypescriptVForItemCompletion",
+    "testCompleteComponentWithDefineOptions",
+    "testComputedTypeJS",
+    "testComputedTypeTS",
+    "testAliasedComponentImport",
+    "testIview3Completion",
+    "testDefineSlotsProperties",
+    "testNoCompletionInVueAttributes",
+    "testCastedObjectProps",
+    "testComponentEmitsDefinitions",
+    "testComplexThisContext",
+    "testVueOutObjectLiteralTs",
+    "testDestructuringVariableTypeInVFor",
+    "testComponentInsertionWithClassDefined",
+    "testPropsDataOptionsJS",
+    "testPropsOfComponentsWithTwoScriptTags",
+    "testVueTscComponentWithSlots",
+    "testPropsOfComponentsWithTwoScriptTags_vapor",
+  )
+
+  @Ignore
+  // run problem
+  override fun testScriptSetupTs() {
+  }
+
+  @Ignore
+  // run problem
+  override fun testTypedComponentsPropsAndEvents() {
+  }
+  
+  @Ignore
+  // timeout
+  override fun testStyleVBindScriptSetupCss() {
+  }
+
+  @Ignore
+  // timeout
+  override fun testStyleVBindScriptSetupLess() {
+  }
+
+  @Ignore
+  // timeout
+  override fun testStyleVBindScriptSetupSass() {
+  }
+
+  @Ignore
+  // timeout
+  override fun testStyleVBindScriptSetupScss() {
   }
 }
 
@@ -970,6 +1033,7 @@ abstract class VueCompletionTestBase(
     )
 
   @Test
+  open /* temp */
   fun testScriptSetupTs() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     doLookupTest(
@@ -1035,6 +1099,7 @@ abstract class VueCompletionTestBase(
     doLookupTest(VueTestModule.NAIVE_UI_2_19_11_NO_WEB_TYPES, typeToFinishLookup = "\n")
 
   @Test
+  open /* temp */
   fun testTypedComponentsPropsAndEvents() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
 
@@ -1066,22 +1131,26 @@ abstract class VueCompletionTestBase(
     doLookupTest(renderPriority = false, renderTypeText = false)
 
   @Test
+  open /* temp */
   fun testStyleVBindScriptSetupCss() =
     doLookupTest(renderPriority = false)
 
   @Test
+  open /* temp */
   fun testStyleVBindScriptSetupScss() =
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
       doLookupTest(renderPriority = false)
     }
 
   @Test
+  open /* temp */
   fun testStyleVBindScriptSetupSass() =
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
       doLookupTest(renderPriority = false)
     }
 
   @Test
+  open /* temp */
   fun testStyleVBindScriptSetupLess() =
     doLookupTest(renderPriority = false)
 
