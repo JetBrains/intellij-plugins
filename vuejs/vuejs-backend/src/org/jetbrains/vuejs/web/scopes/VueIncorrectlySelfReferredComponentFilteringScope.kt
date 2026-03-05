@@ -64,7 +64,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
   }
 
   override val modificationTracker: ModificationTracker
-    get() = delegate.modificationTracker
+    get() = ModificationTracker.EVER_CHANGED
 
   override fun equals(other: Any?): Boolean =
     other is VueIncorrectlySelfReferredComponentFilteringScope

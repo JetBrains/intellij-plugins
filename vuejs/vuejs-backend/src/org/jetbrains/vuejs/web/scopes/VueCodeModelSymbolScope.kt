@@ -26,6 +26,7 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.utils.CompositeModificationTracker
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.webTypes.WebTypesSymbol
 import com.intellij.psi.PsiElement
@@ -91,10 +92,10 @@ private constructor(
   }
 
   override val modificationTracker: ModificationTracker
-    get() = ModificationTracker {
-      PsiModificationTracker.getInstance(project).modificationCount +
-      VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS.modificationCount
-    }
+    get() = CompositeModificationTracker(
+      PsiModificationTracker.getInstance(project),
+      VirtualFileManager.getInstance(),
+    )
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == VUE_COMPONENTS

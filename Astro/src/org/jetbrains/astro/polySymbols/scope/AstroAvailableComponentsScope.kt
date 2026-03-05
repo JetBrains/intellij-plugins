@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.utils.CompositeModificationTracker
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
@@ -41,10 +42,10 @@ internal class AstroAvailableComponentsScope(project: Project) :
   }
 
   override val modificationTracker: ModificationTracker
-    get() = ModificationTracker {
-      VirtualFileManager.getInstance().structureModificationCount +
-      DumbService.getInstance(project).modificationTracker.modificationCount
-    }
+    get() = CompositeModificationTracker(
+      VirtualFileManager.getInstance(),
+      DumbService.getInstance(project).modificationTracker
+    )
 
   override fun createPointer(): Pointer<out PolySymbolScopeWithCache<Project, Unit>> =
     Pointer.hardPointer(this)

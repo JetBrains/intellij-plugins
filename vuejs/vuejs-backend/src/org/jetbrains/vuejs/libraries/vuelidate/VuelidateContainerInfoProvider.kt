@@ -104,7 +104,7 @@ class VuelidateContainerInfoProvider : VueContainerInfoProvider {
       Pointer { null }
 
     override val modificationTracker: ModificationTracker
-      get() = ModificationTracker { -1 }
+      get() = ModificationTracker.NEVER_CHANGED
 
   }
 

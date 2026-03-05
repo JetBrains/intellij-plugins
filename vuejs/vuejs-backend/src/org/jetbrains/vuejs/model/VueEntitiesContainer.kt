@@ -79,6 +79,6 @@ interface VueEntitiesContainer : VueScopeElement, PolySymbolScope, VueInstanceOw
     }
 
   override val modificationTracker: ModificationTracker
-    get() = ModificationTracker { -1 }
+    get() = ModificationTracker.EVER_CHANGED
 
 }
