@@ -120,7 +120,7 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
       return false
     }
     val config = TypeScriptConfigUtil.getConfigForPsiFile(context.getContainingFile()) ?: return false
-    val ts6orNewer = JSLibraryVersionChecker.isTS6OrGreater(context, config)
+    val ts6orNewer = JSLibraryVersionChecker.isTS6OrGreater(context)
     return config.strictNullChecks(ts6orNewer)
   }
 
