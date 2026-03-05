@@ -4,6 +4,7 @@
     <plugin id="com.intellij.modules.rustrover"/>
     <plugin id="com.jetbrains.rust"/>
     <plugin id="org.intellij.qodana"/>
+    <module name="intellij.rustrover.core"/>
   </dependencies>
   <!-- endregion -->
 
