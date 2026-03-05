@@ -2,7 +2,6 @@ package org.angular2.library.forms
 
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -21,8 +20,6 @@ import org.angular2.web.Angular2SymbolDelegate
 import org.angular2.web.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 
 object Angular2FormsPolySymbolQueryResultsCustomizer : PolySymbolQueryResultsCustomizer {
-
-  override val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
 
   override fun createPointer(): Pointer<out PolySymbolQueryResultsCustomizer> =
     Pointer.hardPointer(this)

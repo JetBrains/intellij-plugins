@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -94,7 +93,7 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
             component !is VueLocallyDefinedComponent<*>
             || component.delegate != originalComponent
             || (it[VueProximityProperty] ?: VueModelVisitor.Proximity.OUT_OF_SCOPE) > (originalComponent[VueProximityProperty]
-                                                                                     ?: VueModelVisitor.Proximity.OUT_OF_SCOPE)
+                                                                                       ?: VueModelVisitor.Proximity.OUT_OF_SCOPE)
           }
         else
           list
@@ -141,8 +140,6 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
     }
     return item
   }
-
-  override val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
 
   override fun equals(other: Any?): Boolean =
     other is VueSymbolQueryResultsCustomizer
