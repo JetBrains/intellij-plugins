@@ -170,6 +170,9 @@ unless drb_runner.nil?
 else
   ARGV << get_test_name_pattern(test_names) unless test_names.empty?
 
+  # won't affect test-unit. Since the Minitest module hasn't been loaded yet, we can't use `use_minitest?` to check
+  require 'minitest/rm_load_minitest'
+
   # usual mode: tests will be launched in same process
   require_all_test_scripts(test_scripts)
 
@@ -177,8 +180,5 @@ else
     # TestUnit:
     ::Rake::TeamCity::RunnerUtils.ignore_root_test_case = true
     # Do nothing: 'testunit/autorun' will launch all stuff
-  else
-    # MiniTest:
-    require 'minitest/rm_load_minitest'
   end
 end
