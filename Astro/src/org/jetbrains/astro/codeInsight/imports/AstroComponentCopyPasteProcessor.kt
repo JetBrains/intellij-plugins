@@ -17,6 +17,10 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.XmlRecursiveElementWalkingVisitor
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.concurrency.ThreadingAssertions
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
+import com.intellij.util.concurrency.annotations.RequiresEdt
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.xml.util.XmlTagUtil
 import kotlinx.coroutines.Deferred
 import org.jetbrains.astro.codeInsight.frontmatterScript
@@ -32,24 +36,33 @@ class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponen
   override val dataFlavor: DataFlavor
     get() = ASTRO_COMPONENT_IMPORTS_FLAVOR
 
+  @RequiresEdt
   override fun isAcceptableCopyContext(file: PsiFile, contextElements: List<PsiElement>): Boolean {
     val settings = JSApplicationSettings.getInstance()
     return file is AstroFileImpl && settings.isUseTypeScriptAutoImport
   }
 
+  @RequiresEdt
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
     context.containingFile is AstroFileImpl
     && context.parentOfType<AstroFrontmatterScript>(withSelf = true) == null
 
+  @RequiresEdt
   override fun hasUnsupportedContentInCopyContext(parent: PsiElement, textRange: TextRange): Boolean =
     parent.frontmatterScript()
       ?.let { textRange.intersects(it.textRange) } != false
 
+  @RequiresReadLock
+  @RequiresBackgroundThread
   override fun alreadyHasImport(actualImportedName: String, importedElement: ImportedElement, scope: PsiElement): Boolean =
     scope.frontmatterScript()
       ?.let { super.alreadyHasImport(actualImportedName, importedElement, it) } == true
 
+  @RequiresReadLock
+  @RequiresBackgroundThread
   override fun processTextRanges(textRanges: List<Pair<PsiElement, TextRange>>): Set<ImportedElement> {
+    ThreadingAssertions.assertReadAccess()
+    ThreadingAssertions.assertBackgroundThread()
     val textRangesOnly = textRanges.map { it.second }
     val result = mutableSetOf<ImportedElement>()
 
@@ -74,15 +87,19 @@ class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponen
     return result
   }
 
+  @RequiresEdt
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     super.getExportScope(file, caret)
     ?: WriteAction.compute<PsiElement, Throwable> {
       AstroComponentSourceEdit.getOrCreateFrontmatterScript(file)
     }
 
+  @RequiresEdt
   override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): AstroComponentImportsTransferableData =
     AstroComponentImportsTransferableData(importedElementsDeferred)
 
+  @RequiresReadLock
+  @RequiresBackgroundThread
   override fun prepareInsertingRequiredImports(
     pasteContext: PsiElement,
     data: AstroComponentImportsTransferableData,

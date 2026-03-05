@@ -33,6 +33,9 @@ import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
+import com.intellij.util.concurrency.annotations.RequiresEdt
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import kotlinx.coroutines.Deferred
 import org.angular2.codeInsight.imports.Angular2ExpressionsCopyPasteProcessor.Angular2ExpressionsImportsTransferableData
 import org.angular2.entities.source.Angular2SourceUtil
@@ -45,18 +48,22 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   override val dataFlavor: DataFlavor
     get() = ANGULAR2_EXPRESSIONS_IMPORTS_FLAVOR
 
+  @RequiresEdt
   override fun isAcceptableCopyContext(file: PsiFile, contextElements: List<PsiElement>): Boolean {
     val settings = JSApplicationSettings.getInstance()
     return settings.isUseTypeScriptAutoImport
            && isAcceptablePasteContext(file) || contextElements.all { isAcceptablePasteContext(it) }
   }
 
+  @RequiresEdt
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
     context.containingFile.let { it is Angular2HtmlFile || (it is JSFile && it.language is Angular2ExprDialect) }
 
+  @RequiresEdt
   override fun hasUnsupportedContentInCopyContext(parent: PsiElement, textRange: TextRange): Boolean =
     false
 
+  @RequiresReadLock
   override fun collectReferenceExpressions(parent: PsiElement, range: TextRange, addInfo: (ES6ReferenceExpressionsInfo) -> Unit): Boolean {
     if (!super.collectReferenceExpressions(parent, range, addInfo)) return false
     // We need to collect injected Angular 2 expressions as well
@@ -84,6 +91,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
     return true
   }
 
+  @RequiresEdt
   override fun collectTransferableData(
     rangesWithParents: List<kotlin.Pair<PsiElement, TextRange>>,
     project: Project,
@@ -94,12 +102,16 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
     return Angular2ExpressionsImportsTransferableData(deferredProcessTextRanges(rangesWithParents, project), expressionContexts != 0)
   }
 
+  @RequiresEdt
   override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): Angular2ExpressionsImportsTransferableData =
     throw UnsupportedOperationException()
 
+  @RequiresEdt
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     Angular2SourceUtil.findComponentClass(getContextElementOrFile(file, caret))?.containingFile
 
+  @RequiresReadLock
+  @RequiresBackgroundThread
   override fun prepareInsertingRequiredImports(
     pasteContext: PsiElement,
     data: Angular2ExpressionsImportsTransferableData,
@@ -129,6 +141,8 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
     }
   }
 
+  @RequiresReadLock
+  @RequiresBackgroundThread
   override fun toImportedElements(expressions: List<ES6ReferenceExpressionsInfo>, ranges: Collection<TextRange>): Set<ImportedElement> {
     val result = mutableSetOf<ImportedElement>()
     val imports = mutableListOf<Pair<String, ES6ImportExportDeclarationPart>>()

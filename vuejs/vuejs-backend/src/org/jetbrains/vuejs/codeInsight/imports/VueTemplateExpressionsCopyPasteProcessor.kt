@@ -32,6 +32,9 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
+import com.intellij.util.concurrency.annotations.RequiresEdt
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
 import org.jetbrains.vuejs.VueBundle
@@ -51,6 +54,7 @@ internal class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorB
   override val dataFlavor: DataFlavor
     get() = VUE_TEMPLATE_EXPRESSIONS_IMPORTS_FLAVOR
 
+  @RequiresEdt
   override fun isAcceptableCopyContext(file: PsiFile, contextElements: List<PsiElement>): Boolean {
     val settings = JSApplicationSettings.getInstance()
     return file is VueFile
@@ -63,11 +67,13 @@ internal class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorB
            && findScriptTag(file, true) != null
   }
 
+  @RequiresEdt
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
     context.containingFile is VueFile
     && context.parentOfTypes(JSExecutionScope::class, XmlTag::class, PsiFile::class, withSelf = true)
       .let { (it !is JSExecutionScope || it is XmlElement) && it != null }
 
+  @RequiresEdt
   override fun hasUnsupportedContentInCopyContext(parent: PsiElement, textRange: TextRange): Boolean {
     var result = false
     parent.accept(object : JSRecursiveWalkingElementVisitor() {
@@ -81,6 +87,7 @@ internal class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorB
     return result || parent.parents(true).any { it is JSEmbeddedContentImpl }
   }
 
+  @RequiresReadLock
   override fun collectReferenceExpressions(parent: PsiElement, range: TextRange, addInfo: (ES6ReferenceExpressionsInfo) -> Unit): Boolean {
     if (!super.collectReferenceExpressions(parent, range, addInfo)) return false
     // We need to collect injected Vue JS expressions
@@ -106,6 +113,7 @@ internal class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorB
     return true
   }
 
+  @RequiresEdt
   override fun processTransferableData(
     values: List<VueTemplateExpressionsImportsTransferableData>,
     exportScope: PsiElement,
@@ -150,6 +158,8 @@ internal class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorB
 
   }
 
+  @RequiresReadLock
+  @RequiresBackgroundThread
   override fun alreadyHasImport(actualImportedName: String, importedElement: ImportedElement, scope: PsiElement): Boolean =
     if (scope.containingFile.asSafely<XmlFile>()?.let { findScriptTag(it, true) } != null)
       super.alreadyHasImport(actualImportedName, importedElement, scope)
@@ -165,9 +175,11 @@ internal class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorB
       result
     }
 
+  @RequiresEdt
   override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): VueTemplateExpressionsImportsTransferableData =
     VueTemplateExpressionsImportsTransferableData(importedElementsDeferred)
 
+  @RequiresEdt
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     super.getExportScope(file, caret)
     ?: WriteAction.compute<PsiElement, Throwable> {
@@ -175,6 +187,8 @@ internal class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorB
         disableIndexUpToDateCheckIn(file) { VueModelManager.findEnclosingContainer(file) })
     }
 
+  @RequiresReadLock
+  @RequiresBackgroundThread
   override fun prepareInsertingRequiredImports(
     pasteContext: PsiElement,
     data: VueTemplateExpressionsImportsTransferableData,

@@ -29,6 +29,9 @@ import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.concurrency.ThreadingAssertions
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
+import com.intellij.util.concurrency.annotations.RequiresEdt
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.xml.util.XmlTagUtil
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
@@ -52,6 +55,7 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
   override val dataFlavor: DataFlavor
     get() = VUE_COMPONENT_IMPORTS_FLAVOR
 
+  @RequiresEdt
   override fun isAcceptableCopyContext(file: PsiFile, contextElements: List<PsiElement>): Boolean {
     val settings = JSApplicationSettings.getInstance()
     return file is VueFile
@@ -62,11 +66,13 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
              }
   }
 
+  @RequiresEdt
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
     context.containingFile is VueFile
     && context.parentOfTypes(JSExecutionScope::class, XmlTag::class, PsiFile::class, withSelf = true)
       .let { (it !is JSExecutionScope || it is XmlElement) && it != null }
 
+  @RequiresEdt
   override fun hasUnsupportedContentInCopyContext(parent: PsiElement, textRange: TextRange): Boolean {
     var result = false
     parent.acceptChildren(object : JSRecursiveWalkingElementVisitor() {
@@ -80,12 +86,14 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
     return result && isAcceptablePasteContext(parent)
   }
 
+  @RequiresEdt
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     super.getExportScope(file, caret)
     ?: WriteAction.compute<PsiElement, Throwable> {
       VueComponentSourceEdit.getOrCreateScriptScope(VueModelManager.findEnclosingContainer(file))
     }
 
+  @RequiresEdt
   override fun collectTransferableData(
     rangesWithParents: List<Pair<PsiElement, TextRange>>,
     project: Project,
@@ -141,9 +149,11 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
     }
   }
 
+  @RequiresEdt
   override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): VueComponentImportsTransferableData =
     throw UnsupportedOperationException()
 
+  @RequiresEdt
   override fun processTransferableData(
     values: List<VueComponentImportsTransferableData>,
     exportScope: PsiElement,
@@ -160,6 +170,8 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
     }
   }
 
+  @RequiresReadLock
+  @RequiresBackgroundThread
   override fun prepareInsertingRequiredImports(
     pasteContext: PsiElement,
     data: VueComponentImportsTransferableData,
