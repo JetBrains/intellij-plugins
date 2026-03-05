@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
@@ -77,8 +76,5 @@ interface VueEntitiesContainer : VueScopeElement, PolySymbolScope, VueInstanceOw
       }
       else -> emptyList()
     }
-
-  override val modificationTracker: ModificationTracker
-    get() = ModificationTracker.EVER_CHANGED
 
 }

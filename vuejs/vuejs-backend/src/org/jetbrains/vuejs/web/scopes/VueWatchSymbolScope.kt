@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
 import com.intellij.model.Pointer.hardPointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -83,10 +82,6 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent<*>)
           codeCompletions
       }
 
-
-  override val modificationTracker: ModificationTracker
-    get() = PsiModificationTracker.getInstance(enclosingComponent.source.project)
-
   companion object {
 
     private val anyJsDataSymbol = VueAnySymbol(
@@ -110,7 +105,7 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent<*>)
           symbolsResolver = PolySymbolPatternReferenceResolver(
             Reference(kind = VUE_COMPONENT_DATA_PROPERTIES),
             Reference(kind = VUE_COMPONENT_COMPUTED_PROPERTIES)),
-          additionalLastSegmentSymbol = object: VueSymbol {
+          additionalLastSegmentSymbol = object : VueSymbol {
             override val kind: PolySymbolKind get() = JS_PROPERTIES
             override val name: String get() = "watch property type provider"
             override val type: JSType? get() = JSAnyType.get(null) // TODO return proper type

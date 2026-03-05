@@ -4,7 +4,6 @@ import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -77,10 +76,6 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
 
   override fun hashCode(): Int =
     31 * formGroup.hashCode() + location.hashCode()
-
-  override val modificationTracker: ModificationTracker
-    get() = ModificationTracker.NEVER_CHANGED
-
 
   companion object {
     private val formGroupGetPathRefSymbol = ReferencingPolySymbol.create(

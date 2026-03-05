@@ -4,11 +4,10 @@ package org.jetbrains.astro.polySymbols.symbols
 import com.intellij.lang.typescript.getNavigationFromService
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.DocHidePatternProperty
 import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
-import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.patterns.PolySymbolPattern
@@ -20,7 +19,6 @@ import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_NAMESPACES
 
 class UnknownComponent(override val source: PsiElement, override val name: @NlsSafe String) : PolySymbolWithPattern, ComponentPolySymbol,
@@ -52,9 +50,6 @@ class UnknownComponent(override val source: PsiElement, override val name: @NlsS
   @PolySymbol.Property(DocHidePatternProperty::class)
   val docHidePattern: Boolean
     get() = true
-
-  override val modificationTracker: ModificationTracker
-    get() = PsiModificationTracker.getInstance(source.project)
 
   override fun createPointer(): Pointer<UnknownComponent> {
     val filePtr = source.createSmartPointer()

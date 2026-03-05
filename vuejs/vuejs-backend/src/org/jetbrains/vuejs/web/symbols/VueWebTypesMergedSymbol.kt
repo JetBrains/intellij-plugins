@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
@@ -26,7 +25,6 @@ import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
-import com.intellij.polySymbols.utils.CompositeModificationTracker
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.polySymbols.utils.coalesceApiStatus
 import com.intellij.polySymbols.utils.merge
@@ -48,11 +46,6 @@ class VueWebTypesMergedSymbol(
     get() = symbols.getOrNull(1)
       ?.name
       ?.takeIf { toAsset(it) != toAsset(name) }
-
-  override val modificationTracker: ModificationTracker
-    get() = symbols.mapNotNull { (it as? PolySymbolScope)?.modificationTracker }
-      .ifEmpty { listOf(ModificationTracker.NEVER_CHANGED) }
-      .let { CompositeModificationTracker(it) }
 
   override val nameSegments: List<PolySymbolNameSegment>
     get() = listOf(PolySymbolNameSegment.create(

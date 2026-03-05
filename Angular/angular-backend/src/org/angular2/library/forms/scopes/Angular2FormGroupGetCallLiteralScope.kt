@@ -1,7 +1,6 @@
 package org.angular2.library.forms.scopes
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
@@ -77,9 +76,6 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
   override fun hashCode(): Int =
     formGroup.hashCode()
 
-  override val modificationTracker: ModificationTracker
-    get() = ModificationTracker.NEVER_CHANGED
-
   companion object {
     object FormGroupGetPathSymbol : PolySymbolWithPattern, PolySymbolScope, Angular2Symbol {
 
@@ -91,9 +87,6 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
 
       override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
         kind == JS_STRING_LITERALS
-
-      override val modificationTracker: ModificationTracker
-    get() = ModificationTracker.NEVER_CHANGED
 
       override val pattern: PolySymbolPattern
         get() = createComplexPattern(

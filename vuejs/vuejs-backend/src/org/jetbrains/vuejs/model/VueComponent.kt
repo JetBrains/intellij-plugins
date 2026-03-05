@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.model
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
@@ -35,9 +34,6 @@ interface VueComponent : VueContainer, VueMixin {
       JS_EVENTS -> emits
       else -> super<VueContainer>.getSymbols(kind, params, stack)
     }
-
-  override val modificationTracker: ModificationTracker
-    get() = ModificationTracker.EVER_CHANGED
 
   override fun createPointer(): Pointer<out VueComponent>
 }

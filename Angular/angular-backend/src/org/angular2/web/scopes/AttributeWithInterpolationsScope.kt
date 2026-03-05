@@ -2,7 +2,6 @@
 package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -19,17 +18,14 @@ import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.match
-import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2BindingPatternProperty
+import org.angular2.web.Angular2Symbol
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 
 object AttributeWithInterpolationsScope : PolySymbolScope {
 
   override fun createPointer(): Pointer<out PolySymbolScope> =
     Pointer.hardPointer(this)
-
-  override val modificationTracker: ModificationTracker
-    get() = ModificationTracker.NEVER_CHANGED
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
