@@ -10,15 +10,8 @@ end
 
 # has to be loaded from a separate file before `Minitest::Test` is loaded due to the behavior of `prepend` in ruby 2.7 and lower
 # once RM no longer supports ruby versions below 3.0, this can be put back into `rm_reporter_plugin`
-if ENV["INTELLIJ_IDEA_RUN_CONF_TEST_FILE_PATH"]
-  require 'minitest/rm_diff_patch'
-end
+require 'minitest/rm_load_minitest'
 
 files.split("||").each do |file|
    require file
-end
-
-# Minitest 6.0 makes plugin loading opt-in, which means the reporter file isn't `require`-d anymore, so we have to require it manually
-if ::Rake::TeamCity::RunnerUtils.use_minitest?
-  require 'minitest/rm_reporter_plugin'
 end
