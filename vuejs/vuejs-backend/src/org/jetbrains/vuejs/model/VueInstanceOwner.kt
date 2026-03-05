@@ -111,7 +111,7 @@ private fun resolveVueInterface(context: PsiElement?): TypeScriptInterface? {
   val meaningfulElements = JSStubBasedPsiTreeUtil.calculateMeaningfulElements(exportDefault)
   return meaningfulElements
     .filterIsInstance<TypeScriptInterface>()
-    .minByOrNull { TypeScriptPsiUtil.isFromAugmentationModule(it) }
+    .firstOrNull { !TypeScriptPsiUtil.isFromAugmentationModule(it) }
 }
 
 private val VUE_INSTANCE_PROPERTIES: List<String> = listOf(
