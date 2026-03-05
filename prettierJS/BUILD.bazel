@@ -50,6 +50,7 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/statistics",
+    "@community//platform/diff-api:diff",
     "@community//platform/diff-impl",
     "//plugins/JavaScriptLanguage/javascript-common",
   ]
@@ -122,6 +123,8 @@ jvm_library(
     "@community//platform/statistics:statistics_test_lib",
     "@community//platform/statistics/testFramework",
     "@community//platform/statistics/testFramework:testFramework_test_lib",
+    "@community//platform/diff-api:diff",
+    "@community//platform/diff-api:diff_test_lib",
     "@community//platform/diff-impl",
     "@community//platform/diff-impl:diff-impl_test_lib",
     "//plugins/JavaScriptLanguage/javascript-common",
