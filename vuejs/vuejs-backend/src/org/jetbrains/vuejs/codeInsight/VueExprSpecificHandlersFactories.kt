@@ -65,7 +65,7 @@ class VueFileSpecificHandlersFactory : VueJSSpecificHandlersFactory() {
   override fun strictNullChecks(context: PsiElement): Boolean {
     if (context is VueFile && context.langMode == LangMode.HAS_TS) {
       val config = TypeScriptConfigUtil.getConfigForPsiFile(context) ?: return false
-      val ts6orNewer = JSLibraryVersionChecker.isTS6OrGreater(context, config)
+      val ts6orNewer = JSLibraryVersionChecker.isTS6OrGreater(context)
       return config.strictNullChecks(ts6orNewer)
     } else {
       return super.strictNullChecks(context)
