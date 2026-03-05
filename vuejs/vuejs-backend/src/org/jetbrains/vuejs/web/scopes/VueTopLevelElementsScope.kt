@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.html.HTML_ELEMENTS
@@ -31,8 +30,5 @@ object VueTopLevelElementsScope : PolySymbolScope {
       emptyList()
 
   override fun createPointer(): Pointer<out PolySymbolScope> = Pointer.hardPointer(this)
-
-  override val modificationTracker: ModificationTracker
-    get() = ModificationTracker.NEVER_CHANGED
 
 }

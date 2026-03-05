@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
@@ -53,9 +52,6 @@ data class VueTypedDirective(
 
   override fun getSymbols(kind: PolySymbolKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
     super<VueDirective>.getSymbols(kind, params, stack)
-
-  override val modificationTracker: ModificationTracker
-    get() = ModificationTracker.EVER_CHANGED
 
   override fun createPointer(): Pointer<VueTypedDirective> {
     val sourcePtr = source.createSmartPointer()

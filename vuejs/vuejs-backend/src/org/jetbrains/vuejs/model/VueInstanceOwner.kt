@@ -32,7 +32,6 @@ import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
@@ -675,9 +674,6 @@ private class VueStandardPropertySymbol(
       VueStandardPropertySymbol(name, properties, psiContext)
     }
   }
-
-  override val modificationTracker: ModificationTracker
-    get() = ModificationTracker.EVER_CHANGED
 
 }
 

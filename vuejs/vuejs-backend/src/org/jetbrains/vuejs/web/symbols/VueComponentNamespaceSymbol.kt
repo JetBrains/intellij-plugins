@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -23,7 +22,6 @@ import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.psi.createSmartPointer
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
 import org.jetbrains.vuejs.model.VuePsiSourcedComponent
@@ -43,9 +41,6 @@ data class VueComponentNamespaceSymbol(
       sourcePtr.dereference()?.let { VueComponentNamespaceSymbol(name, it) }
     }
   }
-
-  override val modificationTracker: ModificationTracker
-    get() = PsiModificationTracker.getInstance(source.project)
 
   override val type: JSType
     get() = JSPsiBasedTypeOfType(

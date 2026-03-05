@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.model
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
@@ -120,9 +119,6 @@ interface VueSlot : VueSymbol, PolySymbolScope {
   }
 
   override fun createPointer(): Pointer<out VueSlot>
-
-  override val modificationTracker: ModificationTracker
-    get() = ModificationTracker.EVER_CHANGED
 }
 
 @JvmDefaultWithCompatibility
@@ -184,9 +180,6 @@ interface VueEmitCall : VueTemplateSymbol {
 interface VueProperty : VueSymbol, PolySymbolScope {
 
   abstract override fun createPointer(): Pointer<out VueProperty>
-
-  override val modificationTracker: ModificationTracker
-    get() = ModificationTracker.EVER_CHANGED
 
   override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
     kind == JS_PROPERTIES

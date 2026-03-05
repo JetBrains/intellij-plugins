@@ -3,7 +3,6 @@ package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.CompositePolySymbol
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
@@ -66,9 +65,6 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolScope {
       tag.dereference()?.let { I18NAttributesScope(it) }
     }
   }
-
-  override val modificationTracker: ModificationTracker
-    get() = ModificationTracker { tag.containingFile.modificationStamp }
 
   override fun equals(other: Any?): Boolean =
     other is I18NAttributesScope

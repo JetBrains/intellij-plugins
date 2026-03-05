@@ -3,7 +3,6 @@ package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbol
@@ -12,7 +11,6 @@ import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.polySymbols.AstroProximity
 import org.jetbrains.astro.polySymbols.AstroProximityProperty
@@ -41,9 +39,6 @@ class AstroComponent(file: PsiFile) : ComponentPolySymbol,
     consumer(AstroComponentWildcardAttribute)
     cacheDependencies.add(dataHolder)
   }
-
-  override val modificationTracker: ModificationTracker
-    get() = PsiModificationTracker.getInstance(project)
 
   override fun createPointer(): Pointer<AstroComponent> {
     val filePtr = dataHolder.createSmartPointer()

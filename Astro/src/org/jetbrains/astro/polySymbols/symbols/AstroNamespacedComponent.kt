@@ -5,10 +5,8 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.symbols.JSPropertySymbol
@@ -24,7 +22,6 @@ import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.astro.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENTS
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_NAMESPACES
@@ -41,9 +38,6 @@ data class AstroNamespacedComponent(
       sourcePtr.dereference()?.let { AstroNamespacedComponent(name, it) }
     }
   }
-
-  override val modificationTracker: ModificationTracker
-    get() = PsiModificationTracker.getInstance(source.project)
 
   @PolySymbol.Property(JSTypeProperty::class)
   private val type: JSType

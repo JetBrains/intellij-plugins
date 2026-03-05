@@ -1,11 +1,10 @@
 package org.angular2.library.forms.impl
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.DocHidePatternProperty
 import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
-import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
@@ -36,9 +35,6 @@ object Angular2UnknownFormArray : PolySymbolWithPattern, PolySymbolScope, Angula
 
   override val priority: PolySymbol.Priority
     get() = PolySymbol.Priority.LOWEST
-
-  override val modificationTracker: ModificationTracker
-    get() = ModificationTracker.NEVER_CHANGED
 
   @PolySymbol.Property(HideFromCompletionProperty::class)
   val hideFromCompletion: Boolean

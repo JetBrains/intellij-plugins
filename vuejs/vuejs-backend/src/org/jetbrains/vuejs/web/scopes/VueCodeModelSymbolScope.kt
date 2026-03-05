@@ -17,22 +17,18 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
-import com.intellij.polySymbols.utils.CompositeModificationTracker
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.webTypes.WebTypesSymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.impl.source.html.HtmlFileImpl
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.VueComponent
@@ -90,12 +86,6 @@ private constructor(
       VueCodeModelSymbolScope(container, project, dataHolder, proximity, key)
     }
   }
-
-  override val modificationTracker: ModificationTracker
-    get() = CompositeModificationTracker(
-      PsiModificationTracker.getInstance(project),
-      VirtualFileManager.getInstance(),
-    )
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == VUE_COMPONENTS
