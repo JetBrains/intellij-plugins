@@ -2,7 +2,6 @@
 package org.jetbrains.astro.polySymbols
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -53,8 +52,6 @@ class AstroSymbolQueryResultsCustomizer(private val context: PsiElement) : PolyS
     }
     return item
   }
-
-  override val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
 
   override fun createPointer(): Pointer<out PolySymbolQueryResultsCustomizer> {
     val contextPtr = context.createSmartPointer()

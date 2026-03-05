@@ -26,7 +26,6 @@ import com.intellij.polySymbols.utils.withSegments
 import com.intellij.polySymbols.utils.withSymbols
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
@@ -231,9 +230,6 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
 
   override fun hashCode(): Int =
     context.hashCode()
-
-  override val modificationTracker
-    get() = PsiModificationTracker.getInstance(context.project)
 
   class Factory : PolySymbolQueryResultsCustomizerFactory {
     override fun create(location: PsiElement, context: PolyContext): PolySymbolQueryResultsCustomizer? =
