@@ -32,6 +32,7 @@ jvm_library(
     "@lib//:kotlin-stdlib",
     "@community//java/java-psi-api:psi",
     "@community//platform/core-impl",
+    "@community//jps/model-api:model",
   ]
 )
 
@@ -77,6 +78,8 @@ jvm_library(
     "@community//platform/core-impl:core-impl_test_lib",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "@community//jps/model-api:model",
+    "@community//jps/model-api:model_test_lib",
   ],
   runtime_deps = ["@community//platform/platform-util-io:ide-util-io_test_lib"]
 )

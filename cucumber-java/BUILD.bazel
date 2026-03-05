@@ -47,6 +47,9 @@ jvm_library(
     "@ultimate_lib//:cucumber-java-cucumber-java",
     "@community//platform/execution",
     "@community//platform/forms_rt:java-guiForms-rt",
+    "@community//libraries/fastutil",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//platform/util/concurrency",
   ]
 )
 
@@ -156,6 +159,12 @@ jvm_library(
     "@community//platform/execution:execution_test_lib",
     "@community//platform/forms_rt:java-guiForms-rt",
     "@community//platform/forms_rt:java-guiForms-rt_test_lib",
+    "@community//libraries/fastutil",
+    "@community//libraries/fastutil:fastutil_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "@community//platform/util/concurrency",
+    "@community//platform/util/concurrency:concurrency_test_lib",
   ],
   runtime_deps = [
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",

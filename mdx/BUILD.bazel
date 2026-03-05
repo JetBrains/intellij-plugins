@@ -37,6 +37,7 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "@community//xml/impl",
     "//plugins/JavaScriptLanguage/javascript-common",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
   ]
 )
 
@@ -104,6 +105,8 @@ jvm_library(
     "//plugins/js/react/free:free_test_lib",
     "//plugins/js/react/plugin",
     "//plugins/js/react/plugin:plugin_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   runtime_deps = [
     "@community//platform/platform-impl:ide-impl_test_lib",

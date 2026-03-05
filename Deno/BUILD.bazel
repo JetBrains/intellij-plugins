@@ -48,6 +48,7 @@ jvm_library(
     "@community//platform/backend/workspace",
     "@community//platform/workspace/storage",
     "@community//platform/execution",
+    "@community//platform/script-debugger/backend",
   ]
 )
 
@@ -113,6 +114,8 @@ jvm_library(
     "@community//platform/core-impl:core-impl_test_lib",
     "@community//platform/execution",
     "@community//platform/execution:execution_test_lib",
+    "@community//platform/script-debugger/backend",
+    "@community//platform/script-debugger/backend:backend_test_lib",
   ],
   runtime_deps = [
     "@community//platform/platform-impl:ide-impl_test_lib",

@@ -30,6 +30,7 @@ jvm_library(
     "//contrib/jhipster/plugin",
     "@community//platform/lang-api:lang",
     "@community//platform/structure-view-impl:structureView-impl",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
   ]
 )
 
@@ -71,6 +72,8 @@ jvm_library(
     "@community//platform/lang-api:lang_test_lib",
     "@community//platform/structure-view-impl:structureView-impl",
     "@community//platform/structure-view-impl:structureView-impl_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   runtime_deps = [
     "@community//platform/platform-impl:ide-impl_test_lib",

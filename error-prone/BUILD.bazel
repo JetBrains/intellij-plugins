@@ -25,6 +25,7 @@ jvm_library(
     "@community//libraries/stream",
     "@community//platform/projectModel-api:projectModel",
     "@community//java/java-psi-impl:psi-impl",
+    "@community//jps/jps-builders:build",
   ]
 )
 
@@ -46,6 +47,7 @@ jvm_library(
     "@community//libraries/stream:stream_test_lib",
     "@community//platform/projectModel-api:projectModel_test_lib",
     "@community//java/java-psi-impl:psi-impl_test_lib",
+    "@community//jps/jps-builders:build_test_lib",
   ]
 )
 ### auto-generated section `build intellij.errorProne` end

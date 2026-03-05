@@ -64,6 +64,7 @@ jvm_library(
     "@community//platform/xdebugger-impl:debugger-impl",
     "@community//platform/execution",
     "@community//platform/lang-api:lang",
+    "@community//jps/model-api:model",
   ]
 )
 
@@ -149,6 +150,8 @@ jvm_library(
     "@community//platform/execution:execution_test_lib",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-api:lang_test_lib",
+    "@community//jps/model-api:model",
+    "@community//jps/model-api:model_test_lib",
   ],
   runtime_deps = [
     "@community//platform/platform-impl:ide-impl_test_lib",

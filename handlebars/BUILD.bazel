@@ -43,6 +43,7 @@ jvm_library(
     "@community//platform/core-impl",
     "@community//platform/forms_rt:java-guiForms-rt",
     "@community//xml/emmet",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
   ]
 )
 
@@ -110,6 +111,8 @@ jvm_library(
     "@community//platform/forms_rt:java-guiForms-rt_test_lib",
     "@community//xml/emmet",
     "@community//xml/emmet:emmet_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   runtime_deps = [
     "@community//platform/platform-impl:ide-impl_test_lib",

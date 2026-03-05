@@ -52,6 +52,7 @@ jvm_library(
     "@community//platform/core-ui",
     "//plugins/css/common/psi",
     "//plugins/css/backend",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
   ],
   exports = ["@community//xml/impl"]
 )
@@ -112,6 +113,8 @@ jvm_library(
     "//plugins/css/backend:backend_test_lib",
     "@community//plugins/copyright",
     "@community//plugins/copyright:copyright_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   exports = [
     "@community//xml/impl",

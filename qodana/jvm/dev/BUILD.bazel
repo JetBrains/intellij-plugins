@@ -21,6 +21,7 @@ jvm_library(
     "@community//platform/analysis-api:analysis",
     "@community//plugins/dev/intellij.dev.codeInsight:codeInsight",
     "@community//java/java-frontback-psi-api:frontback-psi",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
   ]
 )
 
@@ -37,6 +38,7 @@ jvm_library(
     "@community//platform/analysis-api:analysis_test_lib",
     "@community//plugins/dev/intellij.dev.codeInsight:codeInsight_test_lib",
     "@community//java/java-frontback-psi-api:frontback-psi_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ]
 )
 ### auto-generated section `build intellij.qodana.jvm.dev` end

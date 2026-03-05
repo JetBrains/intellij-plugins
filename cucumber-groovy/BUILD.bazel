@@ -31,6 +31,7 @@ jvm_library(
     "@community//java/java-impl:impl",
     "@lib//:cucumber-core-1",
     "//contrib/cucumber-java",
+    "@community//jps/model-api:model",
   ]
 )
 
@@ -75,6 +76,8 @@ jvm_library(
     "@lib//:cucumber-core-1",
     "//contrib/cucumber-java",
     "//contrib/cucumber-java:cucumber-java_test_lib",
+    "@community//jps/model-api:model",
+    "@community//jps/model-api:model_test_lib",
   ],
   runtime_deps = ["@community//platform/platform-impl:ide-impl_test_lib"]
 )

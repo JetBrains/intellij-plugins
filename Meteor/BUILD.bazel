@@ -59,6 +59,8 @@ jvm_library(
     "@community//platform/script-debugger/backend",
     "@community//platform/xdebugger-impl:debugger-impl",
     "@community//platform/execution",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//platform/util/concurrency",
   ]
 )
 
@@ -145,6 +147,10 @@ jvm_library(
     "@community//platform/xdebugger-impl:debugger-impl_test_lib",
     "@community//platform/execution",
     "@community//platform/execution:execution_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "@community//platform/util/concurrency",
+    "@community//platform/util/concurrency:concurrency_test_lib",
   ],
   runtime_deps = [
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",

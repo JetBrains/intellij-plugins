@@ -63,6 +63,9 @@ jvm_library(
     "//plugins/css/common/psi",
     "//plugins/css/common",
     "//plugins/JavaScriptLanguage/diagrams",
+    "@community//libraries/guava",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//platform/util/concurrency",
   ]
 )
 
@@ -189,6 +192,12 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
     "//plugins/JavaScriptLanguage/diagrams",
     "//plugins/JavaScriptLanguage/diagrams:diagrams_test_lib",
+    "@community//libraries/guava",
+    "@community//libraries/guava:guava_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "@community//platform/util/concurrency",
+    "@community//platform/util/concurrency:concurrency_test_lib",
   ],
   runtime_deps = [
     "@community//platform/platform-impl:ide-impl_test_lib",

@@ -20,6 +20,7 @@ jvm_library(
     "@community//build:build-javac-rt",
     "@lib//:jetbrains-annotations",
     "@community//jps/model-serialization",
+    "@community//jps/model-api:model",
   ]
 )
 
@@ -41,6 +42,8 @@ jvm_library(
     "@community//jps/model-serialization:model-serialization_test_lib",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "@community//jps/model-api:model",
+    "@community//jps/model-api:model_test_lib",
   ]
 )
 ### auto-generated section `build intellij.errorProne.jps` end

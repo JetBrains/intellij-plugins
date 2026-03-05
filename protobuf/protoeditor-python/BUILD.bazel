@@ -25,6 +25,8 @@ jvm_library(
     "@community//platform/lang-impl",
     "//contrib/protobuf/protoeditor-core",
     "@community//python/python-psi-api:psi",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//platform/statistics",
   ]
 )
 
@@ -58,6 +60,10 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@lib//:truth",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "@community//platform/statistics",
+    "@community//platform/statistics:statistics_test_lib",
   ]
 )
 ### auto-generated section `build intellij.protoeditor.python` end

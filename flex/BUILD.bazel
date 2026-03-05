@@ -85,6 +85,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-duplicates-detection:javascript-duplicatesDetection",
     "@community//xml/xml-analysis-api:analysis",
     "@community//platform/execution",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
   ],
   runtime_deps = ["//contrib/flex/jps-plugin:jps"]
 )
@@ -168,6 +169,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-duplicates-detection:javascript-duplicatesDetection_test_lib",
     "@community//xml/xml-analysis-api:analysis_test_lib",
     "@community//platform/execution:execution_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ]
 )
 ### auto-generated section `build intellij.flex` end

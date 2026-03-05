@@ -23,6 +23,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/editor-ui-ex:editor-ex",
     "@community//platform/indexing-api:indexing",
+    "@community//jps/model-api:model",
     "@community//platform/lang-api:lang",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/refactoring",
@@ -34,6 +35,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//java/java-impl-refactorings:impl-refactorings",
     "@community//libraries/fastutil",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
   ]
 )
 
@@ -87,6 +89,8 @@ jvm_library(
     "@community//java/java-impl-refactorings:impl-refactorings_test_lib",
     "@community//libraries/fastutil",
     "@community//libraries/fastutil:fastutil_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   runtime_deps = [
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",

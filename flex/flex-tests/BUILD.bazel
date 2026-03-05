@@ -138,6 +138,10 @@ jvm_library(
     "@community//platform/lang-api:lang_test_lib",
     "@community//xml/xml-parser:parser",
     "@community//xml/xml-parser:parser_test_lib",
+    "@community//platform/util/concurrency",
+    "@community//platform/util/concurrency:concurrency_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   runtime_deps = [
     ":tests",

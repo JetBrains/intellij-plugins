@@ -46,6 +46,7 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//json/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
   ]
 )
 
@@ -102,6 +103,8 @@ jvm_library(
     "@community//json/backend:backend_test_lib",
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   runtime_deps = [
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",

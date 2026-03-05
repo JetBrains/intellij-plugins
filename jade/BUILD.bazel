@@ -61,6 +61,8 @@ jvm_library(
     "//plugins/css/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/JavaScriptLanguage/javascript-codeinsight",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//jps/model-api:model",
   ]
 )
 
@@ -151,6 +153,10 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
     "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "@community//jps/model-api:model",
+    "@community//jps/model-api:model_test_lib",
   ],
   runtime_deps = [
     "@community//platform/platform-impl:ide-impl_test_lib",

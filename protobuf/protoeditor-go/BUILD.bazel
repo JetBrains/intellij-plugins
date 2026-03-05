@@ -25,6 +25,8 @@ jvm_library(
     "//goland/intellij-go/impl",
     "@community//libraries/guava",
     "//goland/intellij-go/go-frontback",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//platform/statistics",
   ]
 )
 
@@ -65,6 +67,10 @@ jvm_library(
     "//goland/intellij-go/plugin:plugin_test_lib",
     "//goland/intellij-go/go-frontback",
     "//goland/intellij-go/go-frontback:go-frontback_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "@community//platform/statistics",
+    "@community//platform/statistics:statistics_test_lib",
   ],
   runtime_deps = ["@community//platform/ide-core-impl:ide-core-impl_test_lib"]
 )
