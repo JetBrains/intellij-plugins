@@ -42,7 +42,8 @@ jvm_library(
     "@community//platform/execution",
     "@community//platform/platform-impl:ide-impl",
     "@community//libraries/io",
-  ]
+  ],
+  runtime_deps = ["//rustrover/plugin"]
 )
 
 jvm_library(
