@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.containers.Stack
@@ -18,7 +19,7 @@ abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>(
 ) : Angular2SourceEntityListProcessor<T>(entityClass, source) {
 
   private var isFullyResolved = true
-  private val dependencies = HashSet<PsiElement>()
+  private val dependencies = HashSet<PsiFile>()
   private val resolveQueue = Stack<Pair<PsiElement?, Boolean>>()
 
   protected var isForwardRefEntity: Boolean = false
@@ -78,7 +79,7 @@ abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>(
   protected abstract fun createResult(isFullyResolved: Boolean, dependencies: Set<PsiElement>): Result<R>
 
   final override fun processCacheDependency(element: PsiElement) {
-    dependencies.add(element)
+    dependencies.add(element.containingFile)
   }
 
   override fun processNonAcceptableEntityClass(aClass: JSClass) {
