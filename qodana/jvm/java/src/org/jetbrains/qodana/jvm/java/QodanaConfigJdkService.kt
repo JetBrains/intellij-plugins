@@ -3,6 +3,7 @@ package org.jetbrains.qodana.jvm.java
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ui.configuration.SdkLookup
 import com.intellij.openapi.util.SystemInfo
@@ -11,6 +12,8 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.withTimeout
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import java.nio.file.InvalidPathException
+import java.nio.file.Path
 import kotlin.time.Duration.Companion.minutes
 
 private val LOG = logger<QodanaConfigJdkService>()
@@ -49,6 +52,15 @@ class QodanaConfigJdkService {
       .newLookupBuilder()
       .withSdkName(jdkName)
       .withSdkType(JavaSdk.getInstance())
+      .withSdkHomeFilter { homePath ->
+        try {
+          val path = Path.of(homePath)
+          JdkUtil.checkForJdk(path) && JdkUtil.checkForJre(path)
+        }
+        catch (_: InvalidPathException) {
+          false
+        }
+      }
       .onSdkResolved { sdk ->
         if (sdk == null) {
           deferredSdk.completeExceptionally(
