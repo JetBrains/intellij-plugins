@@ -8,8 +8,6 @@ require 'teamcity/utils/service_message_factory'
 require 'set'
 require 'pp'
 
-Minitest.load_plugins
-
 module Minitest
   class << self
     def rm_logger
