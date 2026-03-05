@@ -678,7 +678,7 @@ private class VueStandardPropertySymbol(
   }
 
   override val modificationTracker: ModificationTracker
-    get() = ModificationTracker { -1 }
+    get() = ModificationTracker.EVER_CHANGED
 
 }
 

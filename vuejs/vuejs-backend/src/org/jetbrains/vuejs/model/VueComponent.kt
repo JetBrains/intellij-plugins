@@ -37,7 +37,7 @@ interface VueComponent : VueContainer, VueMixin {
     }
 
   override val modificationTracker: ModificationTracker
-    get() = ModificationTracker { -1 }
+    get() = ModificationTracker.EVER_CHANGED
 
   override fun createPointer(): Pointer<out VueComponent>
 }

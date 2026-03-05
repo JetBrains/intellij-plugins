@@ -9,7 +9,6 @@ import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
@@ -30,8 +29,6 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
-import org.jetbrains.vuejs.web.VueModelEventProperty
-import org.jetbrains.vuejs.web.VueModelPropProperty
 import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
 import org.jetbrains.vuejs.web.VUE_COMPONENT_PROPS
@@ -40,6 +37,8 @@ import org.jetbrains.vuejs.web.VUE_METHODS
 import org.jetbrains.vuejs.web.VUE_MODEL
 import org.jetbrains.vuejs.web.VUE_MODEL_DECL
 import org.jetbrains.vuejs.web.VUE_PROVIDES
+import org.jetbrains.vuejs.web.VueModelEventProperty
+import org.jetbrains.vuejs.web.VueModelPropProperty
 
 const val EMIT_CALL_UPDATE_PREFIX: String = "update:"
 
@@ -123,7 +122,7 @@ interface VueSlot : VueSymbol, PolySymbolScope {
   override fun createPointer(): Pointer<out VueSlot>
 
   override val modificationTracker: ModificationTracker
-    get() = ModificationTracker { -1 }
+    get() = ModificationTracker.EVER_CHANGED
 }
 
 @JvmDefaultWithCompatibility
@@ -187,7 +186,7 @@ interface VueProperty : VueSymbol, PolySymbolScope {
   abstract override fun createPointer(): Pointer<out VueProperty>
 
   override val modificationTracker: ModificationTracker
-    get() = ModificationTracker { -1 }
+    get() = ModificationTracker.EVER_CHANGED
 
   override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
     kind == JS_PROPERTIES

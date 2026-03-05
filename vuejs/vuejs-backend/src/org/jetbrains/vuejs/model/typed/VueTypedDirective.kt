@@ -55,7 +55,7 @@ data class VueTypedDirective(
     super<VueDirective>.getSymbols(kind, params, stack)
 
   override val modificationTracker: ModificationTracker
-    get() = ModificationTracker { -1 }
+    get() = ModificationTracker.EVER_CHANGED
 
   override fun createPointer(): Pointer<VueTypedDirective> {
     val sourcePtr = source.createSmartPointer()

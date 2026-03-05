@@ -11,9 +11,9 @@ import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.web.VueProximityProperty
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_ARGUMENT
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
+import org.jetbrains.vuejs.web.VueProximityProperty
 import org.jetbrains.vuejs.web.symbols.VueAnySymbol
 import org.jetbrains.vuejs.web.symbols.VueDirectiveModifierWithProximity
 
@@ -51,5 +51,5 @@ interface VueDirective : VueSymbol, VueScopeElement, PolySymbolScope {
     }
 
   override val modificationTracker: ModificationTracker
-    get() = ModificationTracker { -1 }
+    get() = ModificationTracker.EVER_CHANGED
 }
