@@ -61,7 +61,6 @@ abstract class VueCompletionWithPluginTestBase(
     "testComputedTypeJS",
     "testComputedTypeTS",
     "testAliasedComponentImport",
-    "testIview3Completion",
     "testDefineSlotsProperties",
     "testNoCompletionInVueAttributes",
     "testCastedObjectProps",
@@ -85,7 +84,7 @@ abstract class VueCompletionWithPluginTestBase(
   // run problem
   override fun testTypedComponentsPropsAndEvents() {
   }
-  
+
   @Ignore
   // timeout
   override fun testStyleVBindScriptSetupCss() {
@@ -408,6 +407,7 @@ abstract class VueCompletionTestBase(
   @Test
   fun testVuetifyCompletion_017() =
     doLookupTest(
+      VueTestModule.VUE_2_7_14,
       VueTestModule.VUETIFY_0_17_2,
       fileContents = "<template><<caret></template>",
     ) { item ->
@@ -417,6 +417,7 @@ abstract class VueCompletionTestBase(
   @Test
   fun testVuetifyCompletion_137() =
     doLookupTest(
+      VueTestModule.VUE_2_7_14,
       VueTestModule.VUETIFY_1_3_7,
       fileContents = "<template><<caret></template>",
     ) { item ->
@@ -426,6 +427,7 @@ abstract class VueCompletionTestBase(
   @Test
   fun testVuetifyCompletion_1210() =
     doLookupTest(
+      VueTestModule.VUE_2_7_14,
       VueTestModule.VUETIFY_1_2_10,
       fileContents = "<template><<caret></template>",
     ) { item ->
@@ -435,6 +437,7 @@ abstract class VueCompletionTestBase(
   @Test
   fun testIviewCompletion() =
     doLookupTest(
+      VueTestModule.VUE_2_7_14,
       VueTestModule.IVIEW_2_8_0,
       fileContents = "<template><a<caret></template>",
       lookupItemFilter = filterOutStandardHtmlSymbols,
@@ -443,6 +446,7 @@ abstract class VueCompletionTestBase(
   @Test
   fun testIview3Completion() =
     doLookupTest(
+      VueTestModule.VUE_2_7_14,
       VueTestModule.IVIEW_3_5_4,
       locations = listOf("v-bind:<caret>", "v-on:<caret>"),
       lookupItemFilter = filterOutAriaAttributes,
@@ -451,6 +455,7 @@ abstract class VueCompletionTestBase(
   @Test
   fun testBootstrapVueCompletion() =
     doLookupTest(
+      VueTestModule.VUE_2_5_3,
       VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11,
       fileContents = "<template><<caret></template>",
       lookupItemFilter = filterOutStandardHtmlSymbols,
@@ -487,11 +492,19 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testClassComponentCompletion() =
-    doLookupTest(fileContents = "<template><<caret></template>", lookupItemFilter = filterOutStandardHtmlSymbols)
+    doLookupTest(
+      VueTestModule.VUE_2_7_14,
+      fileContents = "<template><<caret></template>",
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
 
   @Test
   fun testClassComponentCompletionTs() =
-    doLookupTest(fileContents = "<template><<caret></template>", lookupItemFilter = filterOutStandardHtmlSymbols)
+    doLookupTest(
+      VueTestModule.VUE_2_7_14,
+      fileContents = "<template><<caret></template>",
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
 
   @Test
   fun testComponentInsertionNoScript() =
@@ -1515,6 +1528,7 @@ abstract class VueCompletionTestBase(
   @Test
   fun testSlotTypes() =
     doLookupTest(
+      VueTestModule.VUE_3_1_0,
       VueTestModule.QUASAR_2_6_5,
       renderPriority = false,
       locations = listOf("props.<caret>key", "{<caret>selected,")
