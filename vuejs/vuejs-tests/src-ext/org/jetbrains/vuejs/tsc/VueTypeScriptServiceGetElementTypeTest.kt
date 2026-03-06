@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.tsc
 
+import com.intellij.javascript.types.TSType
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSType
@@ -28,6 +29,12 @@ class VueTypeScriptServiceGetElementTypeTest :
 
   override fun calculateType(element: PsiElement, typeRequestKind: TypeScriptTypeRequestKind): JSType? {
     return super.calculateType(element, typeRequestKind).also {
+      assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VuePluginTypeScriptService::class.java)
+    }
+  }
+
+  override fun calculateTSType(element: PsiElement, typeRequestKind: TypeScriptTypeRequestKind): TSType? {
+    return super.calculateTSType(element, typeRequestKind).also {
       assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VuePluginTypeScriptService::class.java)
     }
   }
