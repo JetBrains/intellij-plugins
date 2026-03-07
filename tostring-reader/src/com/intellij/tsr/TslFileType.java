@@ -11,7 +11,7 @@ public final class TslFileType extends LanguageFileType {
 
   public static final TslFileType INSTANCE = new TslFileType();
 
-  public TslFileType() {
+  private TslFileType() {
     super(TslLanguage.INSTANCE);
   }
 
