@@ -6,7 +6,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.projectImport.ProjectOpenProcessor
 import com.jetbrains.cidr.cpp.cmake.CMakeProjectOpenProcessor
 import com.jetbrains.cidr.cpp.compdb.wizard.CompDBProjectOpenProcessor
-import com.jetbrains.cidr.cpp.makefile.wizard.MakefileProjectOpenProcessor
+import com.intellij.clion.makefile.core.wizard.MakefileProjectOpenProcessor
 import com.jetbrains.cidr.meson.wizard.MesonProjectOpenProcessor
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaProjectLoaderExtension
