@@ -1,20 +1,13 @@
 package com.intellij.deno.settings
 
-import com.intellij.codeInsight.template.impl.TemplateEditorUtil
 import com.intellij.deno.DenoBundle
 import com.intellij.deno.DenoSettings
 import com.intellij.json.JsonLanguage
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.openapi.util.Disposer
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiFileFactory
+import com.intellij.ui.LanguageTextField
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.MutableProperty
@@ -58,15 +51,13 @@ internal class DenoSettingsConfigurable(
       row {
         label(DenoBundle.message("deno.cache.init"))
           .align(AlignY.TOP)
-        val editor = createInitCommandEditor(disposable!!)
-        cell(editor.component)
+        val editorTextField = createInitCommandEditorTextField()
+        cell(editorTextField)
           .align(AlignX.FILL)
           .bind(
-            componentGet = { editor.document.text.trim() },
+            componentGet = { editorTextField.text.trim() },
             componentSet = { _, value ->
-              ApplicationManager.getApplication().runWriteAction {
-                editor.document.setText(value)
-              }
+              editorTextField.text = value
             },
             prop = MutableProperty(
               getter = { service.getDenoInit() },
@@ -85,14 +76,12 @@ internal class DenoSettingsConfigurable(
     }
   }
 
-  private fun createInitCommandEditor(parentDisposable: Disposable): Editor {
-    val fakeFile = PsiFileFactory.getInstance(project).createFileFromText("dummy", JsonLanguage.INSTANCE, "", true, false)
-    val document = PsiDocumentManager.getInstance(project).getDocument(fakeFile)
-    val editor = TemplateEditorUtil.createEditor(false, document, project)
-    editor.settings.additionalLinesCount = 0
-    Disposer.register(parentDisposable) {
-      EditorFactory.getInstance().releaseEditor(editor)
+  private fun createInitCommandEditorTextField(): LanguageTextField {
+    val jsonTextField = LanguageTextField(JsonLanguage.INSTANCE, project, "", false)
+    jsonTextField.setFontInheritedFromLAF(false)
+    jsonTextField.addSettingsProvider { editor ->
+      editor.getSettings().additionalLinesCount = 0
     }
-    return editor
+    return jsonTextField
   }
 }
