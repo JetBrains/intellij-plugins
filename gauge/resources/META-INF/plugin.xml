@@ -12,6 +12,7 @@
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.libraries.grpc"/>
     <module name="intellij.libraries.grpc.netty.shaded"/>
+    <module name="intellij.maven"/>
     <!-- endregion -->
   </dependencies>
   <!--suppress PluginXmlValidity -->

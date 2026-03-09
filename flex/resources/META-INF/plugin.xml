@@ -17,6 +17,7 @@
     <module name="intellij.css.common"/>
     <module name="intellij.css.common.psi"/>
     <module name="intellij.css.psi"/>
+    <module name="intellij.maven"/>
     <module name="intellij.platform.graph"/>
     <module name="intellij.platform.jps.build"/>
     <module name="intellij.properties.backend"/>
