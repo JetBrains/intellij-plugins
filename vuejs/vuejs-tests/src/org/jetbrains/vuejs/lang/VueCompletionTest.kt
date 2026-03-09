@@ -61,7 +61,6 @@ abstract class VueCompletionWithPluginTestBase(
     "testComputedTypeTS",
     "testAliasedComponentImport",
     "testDefineSlotsProperties",
-    "testNoCompletionInVueAttributes",
     "testComponentEmitsDefinitions",
     "testComplexThisContext",
     "testVueOutObjectLiteralTs",

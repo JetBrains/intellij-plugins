@@ -1,4 +1,4 @@
 <template>
-  <ul v-show="open<caret>">
+  <ul v-show="wind<caret>">
   </ul>
 </template>
