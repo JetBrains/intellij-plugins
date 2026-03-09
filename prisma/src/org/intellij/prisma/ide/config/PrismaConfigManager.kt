@@ -220,7 +220,7 @@ class PrismaConfigManager(private val project: Project, private val coroutineSco
         PrismaBundle.message("prisma.config.evaluation.interpreter.not.found.error", file.name),
         NotificationType.WARNING
       ).addAction(NodeSettingsConfigurable.createConfigureInterpreterAction(project, null))
-      Notifications.Bus.notify(notification)
+      Notifications.Bus.notify(notification, project)
     }
   }
 
