@@ -62,7 +62,6 @@ abstract class VueCompletionWithPluginTestBase(
     "testAliasedComponentImport",
     "testDefineSlotsProperties",
     "testNoCompletionInVueAttributes",
-    "testCastedObjectProps",
     "testComponentEmitsDefinitions",
     "testComplexThisContext",
     "testVueOutObjectLiteralTs",
@@ -1020,6 +1019,7 @@ abstract class VueCompletionTestBase(
   @Test
   fun testCastedObjectProps() =
     doLookupTest(
+      VueTestModule.VUE_2_7_14,
       locations = listOf(
         "post.<caret>",
         "callback.<caret>",
