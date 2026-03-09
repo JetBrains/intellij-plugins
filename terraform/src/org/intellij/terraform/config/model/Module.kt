@@ -24,7 +24,6 @@ import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.childrenOfType
 import com.intellij.util.Processor
 import com.intellij.util.indexing.IndexingIteratorsProvider
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
@@ -39,7 +38,6 @@ import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.local.TfLocalSchemaService
 import org.intellij.terraform.config.model.version.VersionConstraint
 import org.intellij.terraform.config.patterns.TfPsiPatterns
-import org.intellij.terraform.config.patterns.TfPsiPatterns.TfRequiredProvidersBlock
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -261,13 +259,28 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     return getDefinedHclBlocks(HCL_RESOURCE_IDENTIFIER, numberOfArguments = 2, firstArgument = type, secondArgument = name)
   }
 
+  private fun getDefinedTerraformBlocks(): List<HCLBlock> = getDefinedHclBlocks(HCL_TERRAFORM_IDENTIFIER, numberOfArguments = 0)
+
+  private fun findRequiredProvidersBlock(hclBlock: HCLBlock): HCLBlock? {
+    return hclBlock.`object`?.blockList?.firstOrNull {
+      it.name == HCL_TERRAFORM_REQUIRED_PROVIDERS
+    }
+  }
+
   fun getDefinedRequiredProviders(): List<HCLProperty>? {
     // `required_providers` should be only 1 in terraform module
-    val requiredProvidersBlock = getDefinedHclBlocks(HCL_TERRAFORM_IDENTIFIER, numberOfArguments = 0).firstNotNullOfOrNull { terraformBlock ->
-      terraformBlock.`object`?.blockList?.firstOrNull { it.name == HCL_TERRAFORM_REQUIRED_PROVIDERS }
+    val requiredProvidersBlock = getDefinedTerraformBlocks().firstNotNullOfOrNull {
+      findRequiredProvidersBlock(it)
     } ?: return null
 
     return requiredProvidersBlock.`object`?.propertyList
+  }
+
+  fun getTerraformBlockWithProvidersOrFirst(): HCLBlock? {
+    val terraformBlocks = getDefinedTerraformBlocks()
+
+    val blockWithRequiredProviders = terraformBlocks.firstOrNull { findRequiredProvidersBlock(it) != null }
+    return blockWithRequiredProviders ?: terraformBlocks.firstOrNull()
   }
 
   // numberOfArguments should be 0, 1 or 2:
@@ -364,15 +377,6 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
 
   fun getDefinedOutputs(): List<HCLBlock> {
     return getDefinedHclBlocks(HCL_OUTPUT_IDENTIFIER, numberOfArguments = 1)
-  }
-
-  fun getTerraformBlockWithProvidersOrFirst(): HCLBlock? {
-    val terraformBlocks = getDefinedHclBlocks(HCL_TERRAFORM_IDENTIFIER, numberOfArguments = 0)
-
-    val blockWithRequiredProviders = terraformBlocks.firstOrNull { block ->
-      block.childrenOfType<HCLBlock>().any { TfRequiredProvidersBlock.accepts(it) }
-    }
-    return blockWithRequiredProviders ?: terraformBlocks.firstOrNull()
   }
 
   // Returns all 'terraform.required_version' defined in module.
