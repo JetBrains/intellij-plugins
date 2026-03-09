@@ -2,6 +2,7 @@ package com.intellij.deno.settings
 
 import com.intellij.deno.DenoBundle
 import com.intellij.deno.DenoSettings
+import com.intellij.deno.getDefaultInitTemplate
 import com.intellij.json.JsonLanguage
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.BoundSearchableConfigurable
@@ -16,6 +17,7 @@ import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.PathUtil
+import java.awt.Dimension
 
 internal class DenoSettingsConfigurable(
   private val project: Project,
@@ -81,7 +83,21 @@ internal class DenoSettingsConfigurable(
     jsonTextField.setFontInheritedFromLAF(false)
     jsonTextField.addSettingsProvider { editor ->
       editor.getSettings().additionalLinesCount = 0
+      editor.setVerticalScrollbarVisible(true)
     }
+    jsonTextField.preferredSize = getDefaultPreferredSizeOfInitCommandEditor(jsonTextField)
     return jsonTextField
+  }
+
+  private fun getDefaultPreferredSizeOfInitCommandEditor(initCommandTextField: LanguageTextField): Dimension {
+    val prevText = initCommandTextField.text
+    try {
+      initCommandTextField.text = getDefaultInitTemplate()
+      initCommandTextField.ensureWillComputePreferredSize()
+      return initCommandTextField.preferredSize
+    }
+    finally {
+      initCommandTextField.text = prevText
+    }
   }
 }

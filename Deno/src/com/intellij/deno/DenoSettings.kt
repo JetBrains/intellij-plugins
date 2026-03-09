@@ -249,7 +249,7 @@ fun isDenoEnableForContextDirectory(project: Project, virtualFile: VirtualFile?)
          denoSettings.isEnableDeno()
 }
 
-fun getDefaultInitTemplate() = """
+internal fun getDefaultInitTemplate() = """
       {
         "enable": true,
         "lint": true,
