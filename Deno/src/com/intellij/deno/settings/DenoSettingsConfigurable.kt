@@ -12,6 +12,7 @@ import com.intellij.ui.LanguageTextField
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.MutableProperty
+import com.intellij.ui.dsl.builder.RightGap
 import com.intellij.ui.dsl.builder.RowLayout
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
@@ -53,6 +54,7 @@ internal class DenoSettingsConfigurable(
       row {
         label(DenoBundle.message("deno.cache.init"))
           .align(AlignY.TOP)
+          .gap(RightGap.SMALL)
         val editorTextField = createInitCommandEditorTextField()
         cell(editorTextField)
           .align(AlignX.FILL)
