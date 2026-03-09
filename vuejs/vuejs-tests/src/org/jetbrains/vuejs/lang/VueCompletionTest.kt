@@ -55,7 +55,6 @@ abstract class VueCompletionWithPluginTestBase(
   val rule: TestRule = TrackFailedTestRule(
     "testNamespacedComponents",
     "testNoFilterForOnProps",
-    "testFilters",
     "testTypescriptVForItemCompletion",
     "testCompleteComponentWithDefineOptions",
     "testComputedTypeJS",
