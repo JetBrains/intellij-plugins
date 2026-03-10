@@ -19,6 +19,7 @@ import com.intellij.util.xmlb.annotations.MapAnnotation
 import com.intellij.util.xmlb.annotations.Tag
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTarget
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor.Companion.isNewlyLinkedPlatformioProject
 import com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildTarget
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioTargetAction
@@ -164,6 +165,9 @@ class PlatformioService(val project: Project, val cs: CoroutineScope) : Persiste
   fun initializeProject() {
     cs.launch(Dispatchers.EDT) {
       ensureProjectIsTrusted(project)
+      // No need to initialize on the first-ever opening, the external system handles the first reload
+      if (project.isNewlyLinkedPlatformioProject()) return@launch
+
       writeAction {
         val policy = PlatformioProjectResolvePolicyInitialize
         ExternalSystemUtil.refreshProject(project.basePath!!, ImportSpecBuilder(project, ID).projectResolverPolicy(policy))

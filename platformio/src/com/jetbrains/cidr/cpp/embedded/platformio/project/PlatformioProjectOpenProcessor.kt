@@ -42,11 +42,13 @@ class PlatformioProjectOpenProcessor : CidrProjectOpenProcessor(PlatformioProjec
 
     val workspace = project.service<PlatformioWorkspace>()
 
+    project.putUserData(NEWLY_LINKED_PROJECT_KEY, true)
     linkExternalProject(project, ID, settings, workspace)
   }
 
   companion object {
     private val DATA_KEY: Key<OpenProjectSpec> = Key.create("PLATFORMIO_FILE_TO_OPEN_KEY")
+    private val NEWLY_LINKED_PROJECT_KEY: Key<Boolean> = Key.create("PLATFORMIO_NEWLY_LINKED_PROJECT_KEY")
 
     object PlatformioProjectOpenHelper : ProjectOpenHelper<OpenProjectSpec>(DATA_KEY, SupportedFileChecker)
 
@@ -60,5 +62,7 @@ class PlatformioProjectOpenProcessor : CidrProjectOpenProcessor(PlatformioProjec
         }
       }
     }
+
+    fun Project.isNewlyLinkedPlatformioProject(): Boolean = getUserData(NEWLY_LINKED_PROJECT_KEY) == true
   }
 }
