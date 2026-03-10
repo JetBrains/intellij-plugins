@@ -1,4 +1,4 @@
-package com.jetbrains.cidr.cpp.embedded.platformio.project
+package com.intellij.clion.embedded.platformio
 
 import com.intellij.build.events.MessageEvent
 import com.intellij.openapi.application.PathManager
@@ -21,7 +21,11 @@ import com.intellij.util.asSafely
 import com.intellij.util.system.OS
 import com.jetbrains.cidr.cpp.CPPTestUtil
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
-import com.jetbrains.cidr.cpp.embedded.platformio.project.TestUtils.findExternalModule
+import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTarget
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectResolver
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioRunConfigurationManagerHelper
+import com.intellij.clion.embedded.platformio.TestUtils.findExternalModule
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.external.system.model.ExternalModule
 import com.jetbrains.cidr.lang.CLanguageKind

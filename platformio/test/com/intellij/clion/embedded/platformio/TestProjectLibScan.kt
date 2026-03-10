@@ -1,4 +1,4 @@
-package com.jetbrains.cidr.cpp.embedded.platformio.project
+package com.intellij.clion.embedded.platformio
 
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
@@ -12,7 +12,10 @@ import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.system.OS
 import com.jetbrains.cidr.cpp.CPPTestUtil
-import com.jetbrains.cidr.cpp.embedded.platformio.project.TestUtils.findExternalModule
+import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectResolver
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioRunConfigurationManagerHelper
+import com.intellij.clion.embedded.platformio.TestUtils.findExternalModule
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import org.junit.Assume
 import org.junit.runner.RunWith

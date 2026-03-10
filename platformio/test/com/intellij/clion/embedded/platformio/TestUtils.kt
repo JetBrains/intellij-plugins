@@ -1,4 +1,4 @@
-package com.jetbrains.cidr.cpp.embedded.platformio.project
+package com.intellij.clion.embedded.platformio
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys

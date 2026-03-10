@@ -1,14 +1,12 @@
-package com.jetbrains.cidr.cpp.embedded.platformio.project
+package com.intellij.clion.embedded.platformio
 
 import com.intellij.clion.testFramework.nolang.junit5.core.clionProjectTestFixture
 import com.intellij.openapi.components.service
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.tempPathFixture
-import com.jetbrains.cidr.cpp.CPPTestUtil
-import com.jetbrains.cidr.cpp.toolchains.CPPCompilerSwitchesUtil
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectResolver
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspace
 import com.jetbrains.cidr.external.system.model.impl.ExternalResolveConfigurationBuilder
-import com.jetbrains.cidr.lang.toolchains.CidrCompilerSwitches
-import com.jetbrains.cidr.lang.toolchains.CidrSwitchBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.io.path.Path

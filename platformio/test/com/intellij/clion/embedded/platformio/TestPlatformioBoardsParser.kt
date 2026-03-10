@@ -1,10 +1,14 @@
-package com.jetbrains.cidr.cpp.embedded.platformio.project
+package com.intellij.clion.embedded.platformio
 
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ResourceUtil
+import com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo
+import com.jetbrains.cidr.cpp.embedded.platformio.project.BoardsJsonParser
+import com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode
 import com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.BOARD
 import com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.FRAMEWORK
 import com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.VENDOR
+import com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate
 
 class TestPlatformioBoardsParser : UsefulTestCase() {
   private var myJson: String? = null
