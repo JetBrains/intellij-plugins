@@ -129,6 +129,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
       val boardInfo = project.getUserData(PROJECT_INIT_KEY)
       if (boardInfo != null) {
         cliGenerateProject(project, listener, id, projectDir, boardInfo)
+        project.putUserData(PROJECT_INIT_KEY, null)
       }
       checkCancelled()
       val pioResolvePolicy = resolverPolicy.asSafely<PlatformioProjectResolvePolicy>()
