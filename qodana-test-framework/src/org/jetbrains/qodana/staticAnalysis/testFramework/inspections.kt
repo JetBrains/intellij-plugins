@@ -38,7 +38,7 @@ fun reinstantiateInspectionRelatedServices(project: Project, testRootDisposable:
   Disposer.register(testRootDisposable, qodanaAppToolRegistrar)
   app.replaceService(QodanaToolRegistrar::class.java, qodanaAppToolRegistrar, testRootDisposable)
 
-  app.replaceService(InspectionProfileManager::class.java, ApplicationInspectionProfileManager(), testRootDisposable)
+  app.replaceService(InspectionProfileManager::class.java, ApplicationInspectionProfileManager(scope), testRootDisposable)
 
   app.replaceService(QodanaApplicationInspectionProfileManager::class.java, QodanaApplicationInspectionProfileManager(), testRootDisposable)
 
