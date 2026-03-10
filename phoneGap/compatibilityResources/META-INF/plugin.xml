@@ -15,6 +15,13 @@ Adds Cordova support to IntelliJ-based IDEs. Here's what's included in this supp
 </ul>
 <p>For more information, check out our <a href="https://www.jetbrains.com/help/webstorm/using-phonegap-cordova.html">documentation</a>.
     ]]></description>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.javascript.parser"/>
+    <module name="intellij.regexp"/>
+    <module name="intellij.xml.psi"/>
+  </dependencies>
+  <!-- endregion -->
   i
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.regexp</depends>
