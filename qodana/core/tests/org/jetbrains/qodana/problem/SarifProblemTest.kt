@@ -29,6 +29,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
   // using percentage sign in baseUri names
   private val problemsWithOriginalUriBaseIds2 by lazy { getReport(sarifProblemTestDir.resolve("reportWithOriginalUriBaseIds2.sarif.json")) }
   private val problemsWithOriginalUriBaseIdsAndAbsolutePaths by lazy { getReport(sarifProblemTestDir.resolve("reportWithOriginalUriBaseIdsAndAbsolutePaths.sarif.json")) }
+  private val reportWithOriginalUriBaseIdsAndMultiplePossibleFiles by lazy { getReport(sarifProblemTestDir.resolve("reportWithOriginalUriBaseIdsAndMultiplePossibleFiles.sarif.json")) }
   private val problemsWithOriginalUriBaseIdsNoSlash by lazy { getReport(sarifProblemTestDir.resolve("reportWithOriginalUriBaseIdsNoSlash.sarif.json")) }
   private val problemsBadWithOriginalUriBaseIds by lazy { getReport(sarifProblemTestDir.resolve("reportBadWithOriginalUriBaseIds.sarif.json")) }
   private val problemsWithParentBaseUri by lazy { getReport(sarifProblemTestDir.resolve("reportWithParentBaseUri.sarif.json")) }
@@ -199,6 +200,16 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
 
     val problem2 = problemsWithOriginalUriBaseIds[1]
     assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
+  }
+
+  fun `test paths resolved correctly if both source files can remap to the path`() {
+    assertThat(reportWithOriginalUriBaseIdsAndMultiplePossibleFiles.size).isEqualTo(2)
+
+    val problem1 = reportWithOriginalUriBaseIdsAndMultiplePossibleFiles[0]
+    assertThat(problem1.relativePathToFile).isEqualTo("src/Logic.java")
+
+    val problem2 = reportWithOriginalUriBaseIdsAndMultiplePossibleFiles[1]
+    assertThat(problem2.relativePathToFile).isEqualTo("src/Main.java")
   }
 
   fun `test originUriIds resolved correctly if absolute path in project root specified`() {

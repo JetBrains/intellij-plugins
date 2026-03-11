@@ -288,19 +288,25 @@ private fun findPrefixToRemove(files: Set<String>, contentRoot: VirtualFile, che
   }
   val sortedFiles = ContainerUtil.reverse(ContainerUtil.sorted(files, comparator))
   
-  val possiblePrefixes = mutableSetOf<String>()
-  sortedFiles.subList(0, checkFilesCount.coerceAtMost(sortedFiles.size)).forEach { filePath ->
-      val pathParts = filePath.split("/".toRegex()).dropLastWhile { part -> part.isEmpty() }.toTypedArray()
-      var possiblePrefix = ""
-      for (part in pathParts) {
-        val relPath = StringUtil.substringAfter(filePath, possiblePrefix)
-        if (relPath != null && contentRoot.findFileByRelativePath(relPath) != null) {
-          possiblePrefixes.add(possiblePrefix)
-        }
-        possiblePrefix += "$part/"
+  // we want to find a prefix from which ALL checkFilesCount files are resolvable
+  var commonPrefixes: Set<String>? = null
+
+  for (path in sortedFiles.take(checkFilesCount)) {
+    val filePrefixes = mutableSetOf<String>()
+    var prefix = ""
+
+    path.split('/').forEach { part ->
+      if (contentRoot.findFileByRelativePath(path.removePrefix(prefix)) != null) {
+        filePrefixes.add(prefix)
       }
+      prefix += "$part/"
     }
-  return if (possiblePrefixes.size == 1) possiblePrefixes.first() else ""
+
+    commonPrefixes = commonPrefixes?.intersect(filePrefixes) ?: filePrefixes
+    if (commonPrefixes.isEmpty()) return ""
+  }
+
+  return commonPrefixes?.singleOrNull() ?: ""
 }
 
 private fun getPossibleTaintAnalysisSinksResultsAndLocations(
