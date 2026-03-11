@@ -13,8 +13,9 @@ import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
-import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptServiceBundled
-import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginVersion
+import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
+import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 import org.jetbrains.vuejs.types.VueUnwrapRefType
 import org.junit.Test
 
@@ -24,20 +25,20 @@ class VueTypeScriptServiceGetElementTypeTest :
   override fun setUpTypeScriptService() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
-      it is VuePluginTypeScriptServiceBundled
-      && it.version == VueTSPluginVersion.DEFAULT
+      it is VuePluginTypeScriptService
+      && it.runtime == VueServiceRuntime.Bundled(VueLanguageToolsVersion.DEFAULT)
     }
   }
 
   override fun calculateType(element: PsiElement, typeRequestKind: TypeScriptTypeRequestKind): JSType? {
     return super.calculateType(element, typeRequestKind).also {
-      assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VuePluginTypeScriptServiceBundled::class.java)
+      assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VuePluginTypeScriptService::class.java)
     }
   }
 
   override fun calculateTSType(element: PsiElement, typeRequestKind: TypeScriptTypeRequestKind): TSType? {
     return super.calculateTSType(element, typeRequestKind).also {
-      assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VuePluginTypeScriptServiceBundled::class.java)
+      assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VuePluginTypeScriptService::class.java)
     }
   }
 

@@ -88,6 +88,7 @@ jvm_library(
     "//platform/lsp-impl",
     "@community//platform/platform-util-io:ide-util-io",
     "@ultimate_lib//:eclipse-lsp4j",
+    "@ultimate_lib//:eclipse-lsp4j-jsonrpc",
     "@community//platform/backend/workspace",
     "@community//libraries/commons/text",
     "//plugins/css/common/psi",

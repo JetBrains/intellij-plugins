@@ -1,6 +1,7 @@
 package org.jetbrains.vuejs.lang.typescript.service
 
 import com.intellij.idea.AppMode
+import com.intellij.javascript.nodejs.execution.NodeTargetRun
 import com.intellij.lang.javascript.psi.util.JSPluginPathManager.getPluginResource
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceAnswer
 import com.intellij.lang.javascript.service.protocol.LocalFilePath
@@ -27,6 +28,19 @@ internal class VueTypeScriptServiceProtocol(
   tsServicePath = tsServicePath,
   servicePlugin = servicePlugin,
 ) {
+  override fun prepareTargetRun(targetRun: NodeTargetRun) {
+    super.prepareTargetRun(targetRun)
+    /**
+     * Not a well-documented option of tsserver.
+     * With it the server creates a separate inferred project for each distinct project root path.
+     * When a file is opened by the editor with a projectRootPath (typically the workspace folder),
+     * it gets its own inferred project scoped to that root.
+     *
+     * [org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService.getProjectRootPath]
+     */
+    targetRun.commandLineBuilder.addParameter("--useInferredProjectPerProjectRoot")
+  }
+
   override fun getGlobalPlugins(): List<String> {
     val globalPlugins = super.getGlobalPlugins()
     return globalPlugins + "ws-typescript-vue-plugin"

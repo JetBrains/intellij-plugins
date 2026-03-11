@@ -9,8 +9,8 @@ import org.jetbrains.vuejs.lang.html.VueParserTest
 import org.jetbrains.vuejs.libraries.LibrariesTestSuite
 import org.jetbrains.vuejs.pug.PugTemplateTest
 import org.jetbrains.vuejs.pug.VuePugFoldingTest
-import org.jetbrains.vuejs.service.VueLspServiceDocumentationTest
-import org.jetbrains.vuejs.service.VueLspTypeScriptServiceTest
+import org.jetbrains.vuejs.service.takeovermode.VueLspServiceDocumentationTest
+import org.jetbrains.vuejs.service.takeovermode.VueLspTypeScriptServiceTest
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 

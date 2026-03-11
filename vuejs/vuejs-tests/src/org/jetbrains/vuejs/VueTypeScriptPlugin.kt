@@ -3,21 +3,21 @@ package org.jetbrains.vuejs
 
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginVersion
+import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 
-fun getRequiredTypescriptPluginVersion(
+fun getRequiredHybridModeBundledVersion(
   fixture: CodeInsightTestFixture,
   testMode: VueTestMode,
-): VueTSPluginVersion? =
+): VueLanguageToolsVersion? =
   when (testMode) {
     VueTestMode.DEFAULT,
       -> if (useDefaultPlugin(fixture))
-      VueTSPluginVersion.DEFAULT
+      VueLanguageToolsVersion.DEFAULT
     else
-      VueTSPluginVersion.LEGACY
+      VueLanguageToolsVersion.LEGACY
 
     VueTestMode.LEGACY_PLUGIN,
-      -> VueTSPluginVersion.LEGACY
+      -> VueLanguageToolsVersion.LEGACY
 
     VueTestMode.NO_PLUGIN,
       -> return null

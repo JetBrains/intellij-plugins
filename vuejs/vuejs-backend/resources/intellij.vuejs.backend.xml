@@ -65,7 +65,14 @@
     <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFileReferenceHelper"/>
     <useScopeEnlarger implementation="org.jetbrains.vuejs.findUsages.VueUseScopeEnlarger"/>
     <implicitUsageProvider implementation="org.jetbrains.vuejs.codeInsight.refs.VueImplicitUsageProvider"/>
-    <platform.lsp.serverSupportProvider implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerSupportProvider"/>
+    <platform.lsp.serverSupportProvider
+      implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerTakeoverModeSupportProvider"/>
+    <platform.lsp.serverSupportProvider
+      implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeLegacySupportProvider"/>
+    <platform.lsp.serverSupportProvider
+      implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeDefaultSupportProvider"/>
+    <platform.lsp.serverSupportProvider
+      implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeManualSupportProvider"/>
 
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Vue.js"/>
     <copyPastePostProcessor implementation="org.jetbrains.vuejs.codeInsight.imports.VueTemplateExpressionsCopyPasteProcessor"/>

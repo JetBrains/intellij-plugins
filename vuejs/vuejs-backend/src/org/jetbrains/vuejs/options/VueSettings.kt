@@ -8,6 +8,7 @@ import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.lsp.JSBundledServiceNodePackage
 import com.intellij.lang.typescript.lsp.createPackage
 import com.intellij.lang.typescript.lsp.restartTypeScriptServicesAsync
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.SerializablePersistentStateComponent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
@@ -18,11 +19,17 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.platform.lsp.api.LspServerManager
 import com.intellij.util.text.SemVer
 import kotlinx.serialization.Serializable
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerLoader
-import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginBundledLoaderFactory.getLoader
-import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginVersion
+import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
+import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
+import org.jetbrains.vuejs.lang.typescript.service.allVueServiceRuntimes
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeLoaderFactory
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeSupportProvider
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerTakeoverModeLoader
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginLoaderFactory
+import org.jetbrains.vuejs.lang.typescript.service.vueLspPackageName
 import org.jetbrains.vuejs.lang.typescript.service.vueTSPluginPackageName
 
 @Service(Service.Level.PROJECT)
@@ -32,6 +39,11 @@ import org.jetbrains.vuejs.lang.typescript.service.vueTSPluginPackageName
 )
 class VueSettings(private val project: Project) :
   SerializablePersistentStateComponent<VueSettings.State>(State()) {
+
+  override fun loadState(state: State) {
+    super.loadState(normalizeState(state))
+  }
+
   var serviceType: VueLSMode
     get() = state.serviceType
     set(value) {
@@ -39,7 +51,6 @@ class VueSettings(private val project: Project) :
         return
 
       updateState { state -> state.copy(serviceType = value) }
-      restartTypeScriptServicesAsync(project)
     }
 
   val useTypesFromServer: Boolean
@@ -68,7 +79,6 @@ class VueSettings(private val project: Project) :
           useServicePoweredTypesDisabledManually = value == false,
         )
       }
-      restartTypeScriptServicesAsync(project)
     }
 
   val manualSettings: ManualSettings = ManualSettings()
@@ -81,14 +91,13 @@ class VueSettings(private val project: Project) :
           return
 
         updateState { state -> state.copy(manual = state.manual.copy(mode = value)) }
-        restartTypeScriptServicesAsync(project)
       }
 
     var lspServerPackage: NodePackage
       get() {
         return createPackage(
           ref = state.manual.lspServerPackagePath,
-          defaultPackage = VueLspServerLoader.packageDescriptor.serverPackage,
+          defaultPackage = VueLspServerTakeoverModeLoader.packageDescriptor.serverPackage,
         )
       }
       set(value) {
@@ -101,25 +110,63 @@ class VueSettings(private val project: Project) :
             manual = state.manual.copy(lspServerPackagePath = path)
           )
         }
-        restartTypeScriptServicesAsync(project)
+      }
+
+    var lspHybridModePackage: NodePackage
+      get() {
+        return when (val lspHybridModePackage = state.manual.lspHybridModePackage) {
+          is ManualPackageBundled -> createLspHybridModeBundledPackage(
+            versionString = lspHybridModePackage.version,
+            project = project,
+          )
+
+          is ManualPackageCustom -> createPackage(
+            ref = lspHybridModePackage.path,
+            defaultPackage = getDefaultLspHybridModePackage(),
+          )
+
+          null -> createLspHybridModeBundledPackage(
+            versionString = VueLanguageToolsVersion.DEFAULT.versionString,
+            project = project,
+          )
+        }
+      }
+      set(value) {
+        val newPackage = when (value) {
+          is JSBundledServiceNodePackage -> ManualPackageBundled(
+            version = value.version.toString(),
+          )
+
+          else -> ManualPackageCustom(
+            path = value.systemDependentPath,
+          )
+        }
+
+        if (newPackage == state.manual.lspHybridModePackage)
+          return
+
+        updateState { state ->
+          state.copy(
+            manual = state.manual.copy(lspHybridModePackage = newPackage)
+          )
+        }
       }
 
     var tsPluginPackage: NodePackage
       get() {
-        val tsPluginPackage = state.manual.tsPluginPackage
-        return when (tsPluginPackage) {
-          is ManualPackageBundled -> createBundledPackage(
+        return when (val tsPluginPackage = state.manual.tsPluginPackage) {
+          is ManualPackageBundled -> createTsPluginBundledPackage(
             versionString = tsPluginPackage.version,
             project = project,
           )
 
-          is ManualPackageFS -> createPackage(
+          is ManualPackageCustom -> createPackage(
             ref = tsPluginPackage.path,
             defaultPackage = getDefaultTsPluginPackage(),
           )
 
-          null -> createBundledPackage(
-            versionString = VueTSPluginVersion.DEFAULT.versionString,
+          null -> createTsPluginBundledPackage(
+            versionString = VueLanguageToolsVersion.DEFAULT.versionString,
             project = project,
           )
         }
@@ -130,7 +177,7 @@ class VueSettings(private val project: Project) :
             version = value.version.toString(),
           )
 
-          else -> ManualPackageFS(
+          else -> ManualPackageCustom(
             path = value.systemDependentPath,
           )
         }
@@ -143,8 +190,20 @@ class VueSettings(private val project: Project) :
             manual = state.manual.copy(tsPluginPackage = newTSPluginPackage)
           )
         }
-        restartTypeScriptServicesAsync(project)
       }
+  }
+
+  private fun normalizeState(state: State): State {
+    val manual = state.manual
+    val normalizedTsPlugin = normalizeBundledPackage(manual.tsPluginPackage)
+    val normalizedLspHybrid = normalizeBundledPackage(manual.lspHybridModePackage)
+    if (normalizedTsPlugin == manual.tsPluginPackage && normalizedLspHybrid == manual.lspHybridModePackage) {
+      return state
+    }
+    return state.copy(manual = manual.copy(
+      tsPluginPackage = normalizedTsPlugin,
+      lspHybridModePackage = normalizedLspHybrid,
+    ))
   }
 
   companion object {
@@ -164,16 +223,17 @@ class VueSettings(private val project: Project) :
   data class ManualSettingsState(
     val mode: ManualMode = ManualMode.ONLY_TS_PLUGIN,
     val lspServerPackagePath: String? = null,
+    val lspHybridModePackage: ManualServicePackage? = null,
     val tsPluginPackage: ManualServicePackage? = null,
   )
-
   @Serializable
   enum class ManualMode(
     @param:NlsSafe
     val displayName: String,
   ) {
+    HYBRID_MODE("Hybrid mode"),
     ONLY_TS_PLUGIN("TypeScript plugin"),
-    ONLY_LSP_SERVER("Language server"),
+    ONLY_LSP_SERVER("Takeover mode"),
 
     ;
   }
@@ -187,16 +247,27 @@ class VueSettings(private val project: Project) :
   ) : ManualServicePackage
 
   @Serializable
-  data class ManualPackageFS(
+  data class ManualPackageCustom(
     val path: String,
   ) : ManualServicePackage
 }
 
-private fun createBundledPackage(
+private fun normalizeBundledPackage(pkg: VueSettings.ManualServicePackage?): VueSettings.ManualServicePackage? {
+  if (pkg !is VueSettings.ManualPackageBundled)
+    return pkg
+
+  val resolved = VueLanguageToolsVersion.fromVersionOrInfer(pkg.version)
+  if (resolved.versionString == pkg.version)
+    return pkg
+
+  return pkg.copy(version = resolved.versionString)
+}
+
+private fun createTsPluginBundledPackage(
   versionString: String,
   project: Project,
 ): JSBundledServiceNodePackage {
-  val path = getLoader(versionString).getAbsolutePath(project)
+  val path = VueTSPluginLoaderFactory.getLoader(versionString).getAbsolutePath(project)
 
   return JSBundledServiceNodePackage(
     packageName = vueTSPluginPackageName,
@@ -206,7 +277,28 @@ private fun createBundledPackage(
 }
 
 private fun getDefaultTsPluginPackage(): TypeScriptPackageName {
-  return getLoader(VueTSPluginVersion.DEFAULT)
+  val runtime = VueServiceRuntime.Bundled(VueLanguageToolsVersion.DEFAULT)
+  return VueTSPluginLoaderFactory.getLoader(runtime)
+    .packageDescriptor
+    .serverPackage
+}
+
+private fun createLspHybridModeBundledPackage(
+  versionString: String,
+  project: Project,
+): NodePackage {
+  val path = VueLspServerHybridModeLoaderFactory.getLoader(versionString).getAbsolutePath(project)
+
+  return JSBundledServiceNodePackage(
+    packageName = vueLspPackageName,
+    packageVersion = SemVer.parseFromText(versionString),
+    path = path,
+  )
+}
+
+private fun getDefaultLspHybridModePackage(): TypeScriptPackageName {
+  val runtime = VueServiceRuntime.Bundled(VueLanguageToolsVersion.DEFAULT)
+  return VueLspServerHybridModeLoaderFactory.getLoader(runtime)
     .packageDescriptor
     .serverPackage
 }
@@ -220,4 +312,22 @@ enum class VueLSMode {
   ;
 
   fun isEnabled(): Boolean = this != DISABLED
+}
+
+/**
+ * Restarts both TypeScript services (TS plugin, regular LSP) and the
+ * Vue Hybrid Mode LSP server which has its own [com.intellij.platform.lsp.api.LspServerSupportProvider]
+ * not backed by a [com.intellij.lang.typescript.compiler.TypeScriptService].
+ */
+internal fun restartVueServicesAsync(project: Project) {
+  restartTypeScriptServicesAsync(project)
+  ApplicationManager.getApplication().invokeLater(
+    {
+      for (runtime in allVueServiceRuntimes) {
+        LspServerManager.getInstance(project)
+          .stopAndRestartIfNeeded(VueLspServerHybridModeSupportProvider.getProviderClass(runtime))
+      }
+    },
+    project.disposed
+  )
 }

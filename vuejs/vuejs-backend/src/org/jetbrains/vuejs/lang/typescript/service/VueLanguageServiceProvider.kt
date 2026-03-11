@@ -11,11 +11,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.lang.html.isVueFile
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTakeoverModeTypeScriptService
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
-import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptServiceBundled
-import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptServiceManual
-import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginVersion
 
 internal class VueLanguageServiceProvider(project: Project) : TypeScriptServiceProvider() {
   private val lspLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueLspServiceWrapper>() }
@@ -39,12 +36,13 @@ internal class VueTypeScriptPluginServiceWrapper(project: Project) : Disposable 
     private set
 
   private fun getServices(project: Project): List<VuePluginTypeScriptService> {
-    val bundledServices = VueTSPluginVersion.entries.map {
-      VuePluginTypeScriptServiceBundled(project, it)
+    return allVueServiceRuntimes.map {
+      VuePluginTypeScriptService(project, it)
     }
-
-    return bundledServices + VuePluginTypeScriptServiceManual(project)
   }
+
+  fun findService(runtime: VueServiceRuntime): VuePluginTypeScriptService? =
+    services.firstOrNull { it.runtime == runtime }
 
   override fun dispose() {
     services.forEach(Disposer::dispose)
@@ -53,7 +51,7 @@ internal class VueTypeScriptPluginServiceWrapper(project: Project) : Disposable 
 
 @Service(Service.Level.PROJECT)
 private class VueLspServiceWrapper(project: Project) : Disposable {
-  val service = VueLspTypeScriptService(project)
+  val service = VueLspTakeoverModeTypeScriptService(project)
 
   override fun dispose() {
     Disposer.dispose(service)

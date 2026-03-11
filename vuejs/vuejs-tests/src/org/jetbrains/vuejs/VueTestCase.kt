@@ -12,9 +12,10 @@ import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.getVueTestDataPath
+import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
+import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceTestMixin.setForceLegacyPluginUsage
-import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptServiceBundled
-import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginVersion
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 
 enum class VueTestMode {
   DEFAULT,
@@ -44,14 +45,14 @@ abstract class VueTestCase(
     }.toTypedArray()
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
-    val tsPluginVersion = getRequiredTypescriptPluginVersion(myFixture, testMode)
-                          ?: return
+    val bundledVersion = getRequiredHybridModeBundledVersion(myFixture, testMode)
+                         ?: return
 
-    setForceLegacyPluginUsage(tsPluginVersion == VueTSPluginVersion.LEGACY, testRootDisposable)
+    setForceLegacyPluginUsage(bundledVersion == VueLanguageToolsVersion.LEGACY, testRootDisposable)
 
     val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
-      it is VuePluginTypeScriptServiceBundled
-      && it.version == tsPluginVersion
+      it is VuePluginTypeScriptService
+      && it.runtime == VueServiceRuntime.Bundled(bundledVersion)
     } as TypeScriptServerServiceImpl
 
     service.assertProcessStarted()

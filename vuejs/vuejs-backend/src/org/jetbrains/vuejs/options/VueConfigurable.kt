@@ -17,8 +17,9 @@ import com.intellij.ui.dsl.builder.selected
 import com.intellij.ui.dsl.builder.toNullableProperty
 import com.intellij.ui.layout.ComponentPredicate
 import org.jetbrains.vuejs.VueBundle
+import org.jetbrains.vuejs.lang.typescript.service.getVueLspHybridModePackages
 import org.jetbrains.vuejs.lang.typescript.service.getVueTSPluginNodePackages
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerLoader
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerTakeoverModeLoader
 
 class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable {
   private val settings = VueSettings.instance(project)
@@ -56,13 +57,27 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
             rowComment(VueBundle.message("vue.configurable.service.manual.description"))
           }
 
+          // Takeover mode lsp
           row(VueBundle.message("vue.configurable.service.languageServerPackage")) {
             cell(
-              createNodePackageField(project, VueLspServerLoader.packageDescriptor)
+              createNodePackageField(project, VueLspServerTakeoverModeLoader.packageDescriptor)
             ).align(AlignX.FILL)
               .bindPackage(settings.manualSettings::lspServerPackage)
           }.visibleIf(mode.isSelected(
             VueSettings.ManualMode.ONLY_LSP_SERVER,
+          ))
+
+          // Hybrid mode lsp
+          row(VueBundle.message("vue.configurable.service.languageServerPackage")) {
+            cell(
+              createBundledNodePackageField(
+                project = project,
+                packages = getVueLspHybridModePackages(project),
+              )
+            ).align(AlignX.FILL)
+              .bindPackage(settings.manualSettings::lspHybridModePackage)
+          }.visibleIf(mode.isSelected(
+            VueSettings.ManualMode.HYBRID_MODE,
           ))
 
           row(VueBundle.message("vue.configurable.service.typescriptPluginPackage")) {
@@ -75,11 +90,29 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
               .bindPackage(settings.manualSettings::tsPluginPackage)
           }.visibleIf(mode.isSelected(
             VueSettings.ManualMode.ONLY_TS_PLUGIN,
+            VueSettings.ManualMode.HYBRID_MODE,
           ))
 
         }.visibleIf(manualModeSelected)
 
       }.bind(settings::serviceType)
+    }
+
+    /**
+     * We don't restart services in [VueSettings] because it's tricky to avoid race condition there
+     * when two fields (ts plugin and lsp hybrid mode packages) are updated simultaneously.
+     */
+    var lastAppliedState = settings.state
+
+    onApply {
+      val current = settings.state
+      if (current != lastAppliedState) {
+        restartVueServicesAsync(project)
+      }
+      lastAppliedState = current
+    }
+    onReset {
+      lastAppliedState = settings.state
     }
   }
 
