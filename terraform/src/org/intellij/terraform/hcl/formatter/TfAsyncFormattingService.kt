@@ -24,10 +24,10 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.Constants.TF_FMT
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.isTfOrTofuPsiFile
 import org.intellij.terraform.runtime.TfToolPathDetector
 import java.util.concurrent.CancellationException
 import kotlin.io.path.Path
@@ -43,7 +43,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     if (ApplicationManager.getApplication().isUnitTestMode) return false
 
     val settings = CodeStyle.getCustomSettings(file, HclCodeStyleSettings::class.java)
-    return (file.fileType is TerraformFileType || file.name.endsWith(TestsExtension)) && settings.RUN_TF_FMT_ON_REFORMAT
+    return (isTfOrTofuPsiFile(file) || file.name.endsWith(TestsExtension)) && settings.RUN_TF_FMT_ON_REFORMAT
   }
 
   override fun createFormattingTask(request: AsyncFormattingRequest): FormattingTask? {
