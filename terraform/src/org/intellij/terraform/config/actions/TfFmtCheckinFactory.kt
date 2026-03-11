@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.actions
 
 import com.intellij.openapi.application.readAction
@@ -20,7 +20,7 @@ import com.intellij.psi.PsiManager
 import org.intellij.terraform.config.Constants.TF_FMT
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLFile
-import org.intellij.terraform.isTerraformFileExtension
+import org.intellij.terraform.isTfOrTofuExtension
 import org.intellij.terraform.runtime.TfProjectSettings
 
 class TfFmtCheckinFactory : CheckinHandlerFactory() {
@@ -39,7 +39,7 @@ class TfFmtCheckinFactory : CheckinHandlerFactory() {
       val manager = PsiManager.getInstance(project)
       val commitedPsiFiles: List<PsiFile> = readAction {
         commitInfo.committedVirtualFiles
-          .filter { isTerraformFileExtension(it.extension) }
+          .filter { isTfOrTofuExtension(it.extension) }
           .mapNotNull { manager.findFile(it) }
           .filterIsInstance<HCLFile>()
       }
