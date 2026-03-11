@@ -20,9 +20,9 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.text.SemVer
 import kotlinx.serialization.Serializable
-import org.jetbrains.vuejs.lang.typescript.service.VueTSPluginVersion
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerLoader
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginBundledLoaderFactory.getLoader
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginVersion
 import org.jetbrains.vuejs.lang.typescript.service.vueTSPluginPackageName
 
 @Service(Service.Level.PROJECT)

@@ -5,7 +5,6 @@ import com.intellij.lang.typescript.lsp.ServiceActivationHelper
 import com.intellij.lang.typescript.lsp.TSPluginActivationRule
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.vuejs.lang.typescript.service.VueTSPluginVersion
 import org.jetbrains.vuejs.lang.typescript.service.decideVueLSBundledVersion
 import org.jetbrains.vuejs.lang.typescript.service.isVueServiceContext
 import org.jetbrains.vuejs.options.VueLSMode

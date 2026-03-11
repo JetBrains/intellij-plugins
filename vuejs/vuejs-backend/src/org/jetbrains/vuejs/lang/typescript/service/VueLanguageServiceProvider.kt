@@ -15,6 +15,7 @@ import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptServiceBundled
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptServiceManual
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginVersion
 
 internal class VueLanguageServiceProvider(project: Project) : TypeScriptServiceProvider() {
   private val lspLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueLspServiceWrapper>() }

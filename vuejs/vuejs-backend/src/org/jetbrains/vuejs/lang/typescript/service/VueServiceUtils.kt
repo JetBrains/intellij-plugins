@@ -9,6 +9,7 @@ import org.jetbrains.vuejs.context.isVue2
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginBundledLoaderFactory.getLoader
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginVersion
 
 internal const val vuePluginPath = "vuejs/vuejs-backend"
 

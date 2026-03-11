@@ -13,8 +13,8 @@ import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceTestMixin.setForceLegacyPluginUsage
-import org.jetbrains.vuejs.lang.typescript.service.VueTSPluginVersion
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptServiceBundled
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginVersion
 
 enum class VueTestMode {
   DEFAULT,

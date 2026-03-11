@@ -5,7 +5,7 @@ import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.typescript.lsp.PackageVersion
 import com.intellij.lang.typescript.lsp.TSPluginLoader
 import com.intellij.openapi.project.Project
-import org.jetbrains.vuejs.lang.typescript.service.VueTSPluginVersion
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginVersion
 import org.jetbrains.vuejs.lang.typescript.service.vuePluginPath
 import org.jetbrains.vuejs.options.VueSettings
 

@@ -3,7 +3,7 @@ package org.jetbrains.vuejs
 
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import org.jetbrains.vuejs.lang.typescript.service.VueTSPluginVersion
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginVersion
 
 fun getRequiredTypescriptPluginVersion(
   fixture: CodeInsightTestFixture,
