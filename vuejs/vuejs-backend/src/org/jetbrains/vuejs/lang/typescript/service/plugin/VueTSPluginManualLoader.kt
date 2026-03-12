@@ -12,9 +12,9 @@ import org.jetbrains.vuejs.options.VueSettings
 internal object VueTSPluginManualLoader : TSPluginLoader(
   packageDescriptor = VueTSPluginPackageDescriptor(vueTSPluginManualPackageVersion),
 ) {
-  override fun getSelectedPackage(project: Project): NodePackage? {
+  override fun getSelectedPackage(project: Project): NodePackage {
     val settings = VueSettings.instance(project)
-    return settings.manualSettings.tsPluginPackageRef.constantPackage
+    return settings.manualSettings.tsPluginPackage
   }
 }
 

@@ -1,14 +1,12 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.options
 
-import com.intellij.javascript.nodejs.util.NodePackageRef
+import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.util.JSLogOnceService
 import com.intellij.lang.javascript.library.typings.TypeScriptPackageName
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.lsp.JSBundledServiceNodePackage
-import com.intellij.lang.typescript.lsp.createPackageRef
-import com.intellij.lang.typescript.lsp.extractPath
-import com.intellij.lang.typescript.lsp.extractRefText
+import com.intellij.lang.typescript.lsp.createPackage
 import com.intellij.lang.typescript.lsp.restartTypeScriptServicesAsync
 import com.intellij.openapi.components.SerializablePersistentStateComponent
 import com.intellij.openapi.components.Service
@@ -86,54 +84,54 @@ class VueSettings(private val project: Project) :
         restartTypeScriptServicesAsync(project)
       }
 
-    var lspServerPackageRef: NodePackageRef
+    var lspServerPackage: NodePackage
       get() {
-        return createPackageRef(
+        return createPackage(
           ref = state.manual.lspServerPackagePath,
           defaultPackage = VueLspServerLoader.packageDescriptor.serverPackage,
         )
       }
       set(value) {
-        val refText = extractRefText(value)
-        if (refText == state.manual.lspServerPackagePath)
+        val path = value.systemDependentPath
+        if (path == state.manual.lspServerPackagePath)
           return
 
         updateState { state ->
           state.copy(
-            manual = state.manual.copy(lspServerPackagePath = refText)
+            manual = state.manual.copy(lspServerPackagePath = path)
           )
         }
         restartTypeScriptServicesAsync(project)
       }
 
-    var tsPluginPackageRef: NodePackageRef
+    var tsPluginPackage: NodePackage
       get() {
         val tsPluginPackage = state.manual.tsPluginPackage
         return when (tsPluginPackage) {
-          is ManualPackageBundled -> createBundledPackageRef(
+          is ManualPackageBundled -> createBundledPackage(
             versionString = tsPluginPackage.version,
             project = project,
           )
 
-          is ManualPackageFS -> createPackageRef(
+          is ManualPackageFS -> createPackage(
             ref = tsPluginPackage.path,
             defaultPackage = getDefaultTsPluginPackage(),
           )
 
-          null -> createBundledPackageRef(
+          null -> createBundledPackage(
             versionString = VueTSPluginVersion.DEFAULT.versionString,
             project = project,
           )
         }
       }
       set(value) {
-        val newTSPluginPackage = when (value.constantPackage) {
+        val newTSPluginPackage = when (value) {
           is JSBundledServiceNodePackage -> ManualPackageBundled(
-            version = value.constantPackage?.version.toString(),
+            version = value.version.toString(),
           )
 
           else -> ManualPackageFS(
-            path = extractPath(value, project) ?: "",
+            path = value.systemDependentPath,
           )
         }
 
@@ -194,17 +192,17 @@ class VueSettings(private val project: Project) :
   ) : ManualServicePackage
 }
 
-private fun createBundledPackageRef(
+private fun createBundledPackage(
   versionString: String,
   project: Project,
-): NodePackageRef {
+): JSBundledServiceNodePackage {
   val path = getLoader(versionString).getAbsolutePath(project)
 
-  return NodePackageRef.create(JSBundledServiceNodePackage(
+  return JSBundledServiceNodePackage(
     packageName = vueTSPluginPackageName,
     packageVersion = SemVer.parseFromText(versionString),
     path = path,
-  ))
+  )
 }
 
 private fun getDefaultTsPluginPackage(): TypeScriptPackageName {

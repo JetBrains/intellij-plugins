@@ -3,7 +3,7 @@
 
 package org.jetbrains.vuejs.options
 
-import com.intellij.lang.typescript.lsp.bind
+import com.intellij.lang.typescript.lsp.bindPackage
 import com.intellij.lang.typescript.lsp.createBundledNodePackageField
 import com.intellij.lang.typescript.lsp.createNodePackageField
 import com.intellij.openapi.options.Configurable
@@ -60,7 +60,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
             cell(
               createNodePackageField(project, VueLspServerLoader.packageDescriptor)
             ).align(AlignX.FILL)
-              .bind(settings.manualSettings::lspServerPackageRef)
+              .bindPackage(settings.manualSettings::lspServerPackage)
           }.visibleIf(mode.isSelected(
             VueSettings.ManualMode.ONLY_LSP_SERVER,
           ))
@@ -72,7 +72,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
                 packages = getVueTSPluginNodePackages(project),
               )
             ).align(AlignX.FILL)
-              .bind(settings.manualSettings::tsPluginPackageRef)
+              .bindPackage(settings.manualSettings::tsPluginPackage)
           }.visibleIf(mode.isSelected(
             VueSettings.ManualMode.ONLY_TS_PLUGIN,
           ))

@@ -3,10 +3,9 @@ package org.jetbrains.astro.service.settings
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import com.intellij.javascript.nodejs.util.NodePackageRef
-import com.intellij.lang.typescript.lsp.createPackageRef
+import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.typescript.lsp.defaultPackageKey
-import com.intellij.lang.typescript.lsp.extractRefText
+import com.intellij.lang.typescript.lsp.createPackage
 import com.intellij.lang.typescript.lsp.restartTypeScriptServicesAsync
 import com.intellij.openapi.components.BaseState
 import com.intellij.openapi.components.Service
@@ -60,21 +59,21 @@ class AstroServiceSettings(val project: Project) : SimplePersistentStateComponen
       if (changed) restartTypeScriptServicesAsync(project)
     }
 
-  var lspServerPackageRef: NodePackageRef
-    get() = createPackageRef(state.lspServerPackageName, AstroLspServerLoader.packageDescriptor.serverPackage)
+  var lspServerPackage: NodePackage
+    get() = createPackage(state.lspServerPackageName, AstroLspServerLoader.packageDescriptor.serverPackage)
     set(value) {
-      val refText = extractRefText(value)
-      val changed = state.lspServerPackageName != refText
-      state.lspServerPackageName = refText
+      val path = value.systemDependentPath
+      val changed = state.lspServerPackageName != path
+      state.lspServerPackageName = path
       if (changed) restartTypeScriptServicesAsync(project)
     }
 
-  var tsPluginPackageRef: NodePackageRef
-    get() = createPackageRef(state.tsPluginPackageName, AstroTSPluginLoader.packageDescriptor.serverPackage)
+  var tsPluginPackage: NodePackage
+    get() = createPackage(state.tsPluginPackageName, AstroTSPluginLoader.packageDescriptor.serverPackage)
     set(value) {
-      val refText = extractRefText(value)
-      val changed = state.tsPluginPackageName != refText
-      state.tsPluginPackageName = refText
+      val path = value.systemDependentPath
+      val changed = state.tsPluginPackageName != path
+      state.tsPluginPackageName = path
       if (changed) restartTypeScriptServicesAsync(project)
     }
 

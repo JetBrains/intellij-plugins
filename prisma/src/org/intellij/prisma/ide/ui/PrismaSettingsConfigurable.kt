@@ -1,7 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.prisma.ide.ui
 
-import com.intellij.lang.typescript.lsp.bind
+import com.intellij.lang.typescript.lsp.bindPackage
 import com.intellij.lang.typescript.lsp.createNodePackageField
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
@@ -22,7 +22,7 @@ class PrismaSettingsConfigurable(val project: Project) : UiDslUnnamedConfigurabl
       row(PrismaBundle.message("prisma.settings.service.configurable.service.languageServerPackage")) {
         cell(createNodePackageField(project, PrismaLspServerLoader.packageDescriptor))
           .align(AlignX.FILL)
-          .bind(settings::lspServerPackageRef)
+          .bindPackage(settings::lspServerPackage)
       }
 
       buttonsGroup {

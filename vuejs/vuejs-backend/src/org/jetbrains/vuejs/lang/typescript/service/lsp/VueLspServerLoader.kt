@@ -28,8 +28,8 @@ private object VueLspServerPackageDescriptor : LspServerPackageDescriptor(
 
 @ApiStatus.Experimental
 object VueLspServerLoader : LspServerLoader(VueLspServerPackageDescriptor) {
-  override fun getSelectedPackage(project: Project): NodePackage? {
+  override fun getSelectedPackage(project: Project): NodePackage {
     val settings = VueSettings.instance(project)
-    return settings.manualSettings.lspServerPackageRef.constantPackage
+    return settings.manualSettings.lspServerPackage
   }
 }

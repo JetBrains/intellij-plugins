@@ -44,7 +44,7 @@ object VueTSPluginBundledLoaderFactory {
 private class VueTSPluginBundledLoader(
   private val descriptor: LspServerPackageDescriptor,
 ) : TSPluginLoader(descriptor) {
-  override fun getSelectedPackage(project: Project): NodePackage? {
+  override fun getSelectedPackage(project: Project): NodePackage {
     return JSExternalDefinitionsPackage(descriptor.serverPackage)
   }
 }

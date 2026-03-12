@@ -39,8 +39,8 @@ private object AstroLspServerPackageDescriptor : LspServerPackageDescriptor(
 
 @ApiStatus.Experimental
 object AstroLspServerLoader : LspServerLoader(AstroLspServerPackageDescriptor) {
-  override fun getSelectedPackage(project: Project): NodePackage? {
-    return getAstroServiceSettings(project).lspServerPackageRef.constantPackage
+  override fun getSelectedPackage(project: Project): NodePackage {
+    return getAstroServiceSettings(project).lspServerPackage
   }
 }
 
@@ -69,8 +69,8 @@ private object AstroTSPluginPackageDescriptor : LspServerPackageDescriptor(
 
 @ApiStatus.Experimental
 object AstroTSPluginLoader : TSPluginLoader(AstroTSPluginPackageDescriptor) {
-  override fun getSelectedPackage(project: Project): NodePackage? {
-    return getAstroServiceSettings(project).tsPluginPackageRef.constantPackage
+  override fun getSelectedPackage(project: Project): NodePackage {
+    return getAstroServiceSettings(project).tsPluginPackage
   }
 }
 
