@@ -1,0 +1,10 @@
+/* Angular type checking code */
+/* Imports */
+import * as _i1 from "./node_modules/@ionic/angular/directives/navigation/router-link-delegate";
+
+/* TCB for relativeImports.ts */
+
+function _tcb1(this: RobotProfileComponent) {
+var _t1 = document.createElement("div");
+var _t2 = null! as _i1.RouterLinkDelegateDirective;
+}

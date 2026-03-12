@@ -1,0 +1,11 @@
+[
+  {
+    "file-name": "relativeImports.ts",
+    "mappings": [
+      "0:188 => 0:188 (source)",
+      "«div» [195] => «_t1» [229]} (no diagnostics) (no semantic)",
+      "«div» [195] => «_t2» [270]} (ignored)",
+      "225:268 => 225:268 (source)"
+    ]
+  }
+]
