@@ -6,10 +6,17 @@ import com.intellij.lang.ecmascript6.actions.JSImportDescriptorBuilder
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifier.ImportExportSpecifierKind
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
+import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
+import com.intellij.lang.ecmascript6.resolve.ES6ImportHandler
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProviderSupport.Companion.instance
 import com.intellij.lang.javascript.modules.JSImportPlaceInfo
+import com.intellij.lang.javascript.modules.JSModuleDescriptorFactory
+import com.intellij.lang.javascript.modules.JSModuleNameInfo
 import com.intellij.lang.javascript.modules.NodeModuleUtil
+import com.intellij.lang.javascript.modules.imports.JSImportDescriptor
+import com.intellij.lang.javascript.modules.imports.JSSimpleImportDescriptor
 import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSType
@@ -20,7 +27,9 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSAliasTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeImpl
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -113,7 +122,8 @@ internal class Environment(
                    ?.let { referenceExternalType(importDescriptor.moduleName, it, sourceElement) }
                  ?: Expression {
                    withSourceFile(sourceElement.containingFile) {
-                     append(substitutedType.getTypeText(JSType.TypeTextFormat.CODE), originalRange = sourceElement.nameIdentifier?.textRange)
+                     append(substitutedType.getTypeText(JSType.TypeTextFormat.CODE),
+                            originalRange = sourceElement.nameIdentifier?.textRange)
                    }
                  }
         }
@@ -128,26 +138,34 @@ internal class Environment(
       if (element.containingFile == file || isBuiltIn(element)) {
         return@computeIfAbsent element.qualifiedName ?: element.name!!
       }
-      val importDescriptor = ES6CreateImportUtil.getImportDescriptor(
-        null, element, element.containingFile.virtualFile, file, true)
-                             ?: throw RuntimeException("Cannot import class ${element.qualifiedName ?: element.name} from file ${element.containingFile.virtualFile} to file ${file.virtualFile}")
-      assert(importDescriptor.importType.let {
-        !it.isBare && !it.isComposite && !it.isNamespace && !it.isBindingAll && !it.isTypeScriptRequire
-      }) {
-        importDescriptor.importType
-      }
-      assert(importDescriptor.importType.let {
-        it.isES6 && (it.isSpecifier || it.isDefault)
-      }) {
-        importDescriptor.importType
-      }
+      try {
+        val importDescriptor =
+          ES6CreateImportUtil.getImportDescriptor(
+            null, element, element.containingFile.virtualFile, file, true)
+          ?: createRelativeImportDescriptor(element, element.containingFile.virtualFile, file)
+          ?: throw IllegalStateException("Cannot import class ${element.qualifiedName ?: element.name} from file ${element.containingFile.virtualFile} to file ${file.virtualFile}")
+        assert(importDescriptor.importType.let {
+          !it.isBare && !it.isComposite && !it.isNamespace && !it.isBindingAll && !it.isTypeScriptRequire
+        }) {
+          importDescriptor.importType
+        }
+        assert(importDescriptor.importType.let {
+          it.isES6 && (it.isSpecifier || it.isDefault)
+        }) {
+          importDescriptor.importType
+        }
 
-      val importName = getModuleImportName(importDescriptor.moduleName, importDescriptor.importType.isDefault, kind)
-      if (importDescriptor.importType.isDefault) {
-        return@computeIfAbsent importName
+        val importName = getModuleImportName(importDescriptor.moduleName, importDescriptor.importType.isDefault, kind)
+        if (importDescriptor.importType.isDefault) {
+          return@computeIfAbsent importName
+        }
+        else {
+          return@computeIfAbsent importName + "." + importDescriptor.effectiveName
+        }
       }
-      else {
-        return@computeIfAbsent importName + "." + importDescriptor.effectiveName
+      catch (e: Exception) {
+        thisLogger().error(e)
+        "__unresolved_import." + (element.qualifiedName ?: element.name!!)
       }
     }
 
@@ -168,6 +186,43 @@ internal class Environment(
   ): String {
     val importInfo = ImportInfo(moduleName, isDefault, kind)
     return packageImport2name.computeIfAbsent(importInfo) { "_i" + nextImportNameId.getAndIncrement() }
+  }
+
+  private fun createRelativeImportDescriptor(
+    element: JSQualifiedNamedElement,
+    elementFile: VirtualFile,
+    place: PsiFile,
+  ): JSImportDescriptor? {
+    val placeFile = place.virtualFile ?: return null
+    val elementName = element.name ?: return null
+
+    // Compute relative path from place file to element file
+    var relativePath = VfsUtilCore.findRelativePath(placeFile, elementFile, '/')
+                       ?: return null
+
+    // Ensure the path starts with "./" or "../"
+    if (!relativePath.startsWith(".")) {
+      relativePath = if (relativePath.startsWith("/")) ".$relativePath" else "./$relativePath"
+    }
+
+    // Create module descriptor using the relative path
+    val moduleDescriptor = JSModuleDescriptorFactory.createModuleDescriptor(
+      relativePath, elementFile, elementFile, place,
+      JSFileReferencesUtil.IMPLICIT_EXTENSIONS, JSModuleNameInfo.ExtensionSettings.DEFAULT
+    )
+
+    // Determine import type based on whether the element is a default export
+    val importType = if (ES6ImportHandler.isExportedWithDefault(element)) {
+      ES6ImportPsiUtil.ImportExportType.DEFAULT
+    }
+    else {
+      ES6ImportPsiUtil.ImportExportType.SPECIFIER
+    }
+
+    // Create import info for the element
+    val importInfo = ES6ImportPsiUtil.CreateImportExportInfo(elementName, importType)
+
+    return JSSimpleImportDescriptor(moduleDescriptor, importInfo)
   }
 
   fun isExplicitlyDeferred(directive: TmplDirectiveMetadata): Boolean {
