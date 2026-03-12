@@ -27,6 +27,7 @@ import com.intellij.util.ui.JBDimension
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.service.AstroLspServerLoader
 import org.jetbrains.astro.service.AstroLspServerSupportProvider
+import org.jetbrains.astro.service.AstroTSPluginLoader
 import javax.swing.JComponent
 
 class AstroServiceConfigurable(private val project: Project) : Configurable {
@@ -58,7 +59,7 @@ class AstroServiceConfigurable(private val project: Project) : Configurable {
         }
 
         row(AstroBundle.message("astro.service.configurable.service.tsPluginPackage")) {
-          cell(createNodePackageField(project, org.jetbrains.astro.service.AstroTSPluginLoader.packageDescriptor))
+          cell(createNodePackageField(project, AstroTSPluginLoader.packageDescriptor))
             .align(AlignX.FILL)
             .bind(settings::tsPluginPackageRef)
         }
