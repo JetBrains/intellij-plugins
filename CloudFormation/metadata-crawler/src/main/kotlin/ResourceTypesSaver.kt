@@ -19,6 +19,8 @@ import java.util.zip.GZIPInputStream
 object ResourceTypesSaver {
   private const val FETCH_TIMEOUT_MS = 10000
   private const val AWS_SERVERLESS_2016_10_31_TRANSFORM_NAME = "AWS::Serverless-2016-10-31"
+  private const val AWS_SERVERLESS_RESOURCES_DOC_URL = "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-resources-and-properties.html"
+  private const val AWS_SERVERLESS_GLOBALS_DOC_URL = "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-template-anatomy-globals.html"
   private val PSEUDO_PARAMETER_TOKEN_REGEX = Regex("""AWS::[A-Za-z0-9]+(?![:A-Za-z0-9-])""")
 
   private class MissingAwsDocumentationException(message: String) : RuntimeException(message)
@@ -29,6 +31,7 @@ object ResourceTypesSaver {
     val limits = fetchLimits()
     val resourceTypeLocations = fetchResourceTypeLocations()
     val predefinedParameters = fetchPredefinedParameters()
+    val serverlessGlobals = fetchServerlessGlobals()
 
     val unsupportedTypes = setOf( // broken links on website
       "AWS::M2::Application",
@@ -71,7 +74,8 @@ object ResourceTypesSaver {
     val metadata = CloudFormationMetadata(
       resourceTypes = TreeMap(resourceTypes.associate { Pair(it.name, it.toResourceType()) }),
       predefinedParameters = predefinedParameters,
-      limits = limits
+      limits = limits,
+      serverlessGlobals = TreeMap(serverlessGlobals.mapValues { (_, properties) -> properties.sorted() })
     )
 
     val descriptions = CloudFormationResourceTypesDescription(
@@ -405,7 +409,7 @@ object ResourceTypesSaver {
     return result
   }
 
-  private data class ResourceTypeLocation(
+  internal data class ResourceTypeLocation(
     val name: String,
     val location: String,
     val transform: String? = null
@@ -453,18 +457,118 @@ object ResourceTypesSaver {
       .fold(mapOf<String, ResourceTypeLocation>()) { acc, map -> acc + map }
       .map { it.value }
 
-    val serverlessResourceLocations = listOf(
-      serverlessLocation("AWS::Serverless::Api", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-api.html"),
-      serverlessLocation("AWS::Serverless::Application", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-application.html"),
-      serverlessLocation("AWS::Serverless::Function", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html"),
-      serverlessLocation("AWS::Serverless::HttpApi", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-httpapi.html"),
-      serverlessLocation("AWS::Serverless::LayerVersion", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-layerversion.html"),
-      serverlessLocation("AWS::Serverless::SimpleTable", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-simpletable.html"),
-      serverlessLocation("AWS::Serverless::StateMachine", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-statemachine.html")
-    )
+    val serverlessResourceLocations = fetchServerlessResourceTypeLocations()
 
     return (standardResourceLocations + serverlessResourceLocations)
         .sortedBy { it.name }
+  }
+
+  private fun fetchServerlessResourceTypeLocations(): List<ResourceTypeLocation> {
+    val doc = getDocumentFromUrl(toURL(AWS_SERVERLESS_RESOURCES_DOC_URL))
+    val resourceLocations = parseServerlessResourceTypeLocations(doc)
+
+    check(resourceLocations.isNotEmpty()) {
+      "Could not extract AWS SAM resource types from $AWS_SERVERLESS_RESOURCES_DOC_URL"
+    }
+
+    return resourceLocations
+  }
+
+  internal fun parseServerlessResourceTypeLocations(doc: Document): List<ResourceTypeLocation> {
+    return doc.select("a[href]")
+      .asSequence()
+      .mapNotNull { link ->
+        val name = link.text().trim()
+        val href = link.absUrl("href")
+
+        if (!name.startsWith("AWS::Serverless::") || !href.contains("sam-resource-")) {
+          return@mapNotNull null
+        }
+
+        serverlessLocation(name, href)
+      }
+      .distinctBy { it.name }
+      .sortedBy { it.name }
+      .toList()
+  }
+
+  private fun fetchServerlessGlobals(): Map<String, Set<String>> {
+    val doc = getDocumentFromUrl(toURL(AWS_SERVERLESS_GLOBALS_DOC_URL))
+    val globals = parseServerlessGlobals(doc)
+
+    check(globals.isNotEmpty()) {
+      "Could not extract AWS SAM Globals support from $AWS_SERVERLESS_GLOBALS_DOC_URL"
+    }
+
+    return globals
+  }
+
+  internal fun parseServerlessGlobals(doc: Document): Map<String, Set<String>> {
+    val snippet = doc.select("pre, code, div.programlisting, div.highlighter-rouge")
+      .asSequence()
+      .map { element -> element.wholeText().ifBlank { element.text() }.trim() }
+      .filter { it.contains("Globals:") && it.contains("Function:") }
+      .maxByOrNull { it.length }
+      ?: error("Could not locate SAM Globals support snippet in ${doc.location()}")
+
+    return parseServerlessGlobalsSnippet(snippet)
+  }
+
+  internal fun parseServerlessGlobalsSnippet(snippet: String): Map<String, Set<String>> {
+    val lines = snippet.lines().map { it.replace('\t', ' ').trimEnd() }
+    val globalsIndex = lines.indexOfFirst { it.trim() == "Globals:" }
+
+    check(globalsIndex >= 0) {
+      "Could not locate 'Globals:' in SAM Globals snippet"
+    }
+
+    val globals = linkedMapOf<String, LinkedHashSet<String>>()
+    var currentSection: String? = null
+    var sectionIndent = -1
+    var propertyIndent: Int? = null
+
+    for (line in lines.drop(globalsIndex + 1)) {
+      if (line.isBlank()) {
+        continue
+      }
+
+      val indent = line.indexOfFirst { !it.isWhitespace() }
+      if (indent < 0) {
+        continue
+      }
+
+      val trimmed = line.trim()
+      if (!trimmed.endsWith(':')) {
+        continue
+      }
+
+      val name = trimmed.removeSuffix(":")
+      if (sectionIndent < 0) {
+        sectionIndent = indent
+      }
+
+      if (indent < sectionIndent) {
+        break
+      }
+
+      if (indent == sectionIndent) {
+        currentSection = name
+        propertyIndent = null
+        globals.getOrPut(name) { linkedSetOf() }
+        continue
+      }
+
+      val activeSection = currentSection ?: continue
+      if (propertyIndent == null) {
+        propertyIndent = indent
+      }
+
+      if (indent == propertyIndent) {
+        globals.getValue(activeSection).add(name)
+      }
+    }
+
+    return globals
   }
 
   private fun serverlessLocation(name: String, url: String): ResourceTypeLocation {

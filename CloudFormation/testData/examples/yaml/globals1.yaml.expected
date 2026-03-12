@@ -57,4 +57,4 @@ Resources:
             Method: ANY
 
 0: Property UnknownApiProperty is unsupported in 'Api' sections of Globals
-1: Unsupported globals section 'UnknownGlobalsSection'. The following sections are supported: Api, Function, SimpleTable
+1: Unsupported globals section 'UnknownGlobalsSection'. The following sections are supported: Api, CapacityProvider, Function, HttpApi, SimpleTable, StateMachine

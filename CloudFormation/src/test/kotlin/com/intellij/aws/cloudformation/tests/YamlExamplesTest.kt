@@ -32,6 +32,8 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
   fun test21() = runTest("globals1.yaml")
   fun test22() = runTest("globals2.yaml")
   fun test23() = runTest("serverless-function-version.yaml")
+  fun test24() = runTest("globals_http_api.yaml")
+  fun test25() = runTest("serverless_new_resource_types.yaml")
 
   fun testParameters1() = runTest("parameters1.yaml")
   fun testParameters2() = runTest("parameters2.yaml")

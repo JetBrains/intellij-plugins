@@ -59,7 +59,10 @@ class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
     val types = arrayOf(
       "AWS::Serverless::Api",
       "AWS::Serverless::Application",
+      "AWS::Serverless::CapacityProvider",
+      "AWS::Serverless::Connector",
       "AWS::Serverless::Function",
+      "AWS::Serverless::GraphQLApi",
       "AWS::Serverless::HttpApi",
       "AWS::Serverless::LayerVersion",
       "AWS::Serverless::SimpleTable",

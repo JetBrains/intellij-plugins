@@ -1,0 +1,12 @@
+---
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  GraphQLApi:
+    Type: AWS::Serverless::GraphQLApi
+
+  Connector:
+    Type: AWS::Serverless::Connector
+
+  CapacityProvider:
+    Type: AWS::Serverless::CapacityProvider

@@ -441,18 +441,17 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     @NlsSafe val name = serverlessEntityDefaultsNode.name?.value
 
     if (name != null) {
-      val resourceType = CloudFormationConstants.GlobalsResourcesMap.get(name)
-      if (resourceType == null) {
+      val supportedProperties = CloudFormationMetadataProvider.METADATA.supportedGlobalsProperties(name)
+      if (supportedProperties == null) {
         addProblem(
           serverlessEntityDefaultsNode,
           message("unsupported.globals.section.0.the.following.sections.are.supported.1", name,
-                  CloudFormationConstants.GlobalsResourcesMap.keys.sorted().joinToString()))
+                  CloudFormationMetadataProvider.METADATA.supportedGlobalsSections.joinToString()))
       } else {
         for (nameValueNode in serverlessEntityDefaultsNode.properties) {
           @NlsSafe val propertyName = nameValueNode.name?.value ?: continue
 
-          val property = resourceType.properties.firstOrNull { it.name == propertyName }
-          if (property == null || property.excludedFromGlobals) {
+          if (propertyName !in supportedProperties) {
             addProblem(
               nameValueNode.name,
               message("property.0.is.unsupported.in.1.sections.of.globals", propertyName, name))

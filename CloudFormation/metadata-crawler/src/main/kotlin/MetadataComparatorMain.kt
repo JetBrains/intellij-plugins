@@ -22,6 +22,7 @@ private val SUMMARY_TRUNCATED_SUFFIX_REGEX = Regex(""", \.\.\. \(\+\d+ more\)$""
 private val NON_TRUNCATED_DIFF_PATHS = setOf(
   "metadata.predefinedParameters",
   "metadata.resourceTypes",
+  "metadata.serverlessGlobals",
   "descriptions.resourceTypes",
 )
 
@@ -39,6 +40,8 @@ object MetadataComparatorMain {
     var rightOnlyResourceTypes: List<String> = emptyList(),
     var leftOnlyPredefinedParameters: List<String> = emptyList(),
     var rightOnlyPredefinedParameters: List<String> = emptyList(),
+    var leftOnlyServerlessGlobalsSections: List<String> = emptyList(),
+    var rightOnlyServerlessGlobalsSections: List<String> = emptyList(),
   )
 
   private data class MetadataBundle(
@@ -236,6 +239,13 @@ object MetadataComparatorMain {
             "right" -> summary.rightOnlyPredefinedParameters = names
           }
         }
+
+        "metadata.serverlessGlobals" -> {
+          when (side) {
+            "left" -> summary.leftOnlyServerlessGlobalsSections = names
+            "right" -> summary.rightOnlyServerlessGlobalsSections = names
+          }
+        }
       }
     }
 
@@ -298,6 +308,19 @@ object MetadataComparatorMain {
         summary.rightOnlyPredefinedParameters.joinToString(", "),
       )
     }
+
+    if (summary.leftOnlyServerlessGlobalsSections.isNotEmpty()) {
+      println(
+        "- Serverless Globals sections missing in $sourceB (${summary.leftOnlyServerlessGlobalsSections.size}): " +
+        formatSummaryPreview(summary.leftOnlyServerlessGlobalsSections),
+      )
+    }
+    if (summary.rightOnlyServerlessGlobalsSections.isNotEmpty()) {
+      println(
+        "- Serverless Globals sections missing in $sourceA (${summary.rightOnlyServerlessGlobalsSections.size}): " +
+        formatSummaryPreview(summary.rightOnlyServerlessGlobalsSections),
+      )
+    }
   }
 
   private fun printSideSummary(title: String, counts: Map<String, Int>) {
@@ -312,6 +335,8 @@ object MetadataComparatorMain {
       "metadata.resourceTypes",
       "metadata.resourceTypes[].properties",
       "metadata.resourceTypes[].attributes",
+      "metadata.serverlessGlobals",
+      "metadata.serverlessGlobals[]",
     )
 
     val printedKeys = HashSet<String>()
@@ -333,6 +358,8 @@ object MetadataComparatorMain {
       "metadata.resourceTypes" -> "resourceTypes"
       "metadata.resourceTypes[].properties" -> "resourceType properties"
       "metadata.resourceTypes[].attributes" -> "resourceType attributes"
+      "metadata.serverlessGlobals" -> "serverlessGlobals sections"
+      "metadata.serverlessGlobals[]" -> "serverlessGlobals properties"
       else -> path
     }
   }
@@ -363,9 +390,29 @@ object MetadataComparatorMain {
       diff += "metadata.limits changed: ${left.limits} -> ${right.limits}"
     }
 
-    compareStringList(left.predefinedParameters, right.predefinedParameters, diff)
+    compareStringList("metadata.predefinedParameters", left.predefinedParameters, right.predefinedParameters, diff)
 
     compareResourceTypes(left.resourceTypes, right.resourceTypes, diff)
+    compareServerlessGlobals(left.serverlessGlobals.orEmpty(), right.serverlessGlobals.orEmpty(), diff)
+  }
+
+  private fun compareServerlessGlobals(
+    left: Map<String, List<String>>,
+    right: Map<String, List<String>>,
+    diff: MutableList<String>,
+  ) {
+    val path = "metadata.serverlessGlobals"
+    compareMapKeys(path, left.keys, right.keys, diff)
+
+    val sharedSections = left.keys.intersect(right.keys).sorted()
+    for (sectionName in sharedSections) {
+      compareStringList(
+        path = "$path[$sectionName]",
+        left = left.getValue(sectionName),
+        right = right.getValue(sectionName),
+        diff = diff,
+      )
+    }
   }
 
   private fun compareDescriptions(
@@ -508,11 +555,11 @@ object MetadataComparatorMain {
   }
 
   private fun compareStringList(
+    path: String,
     left: List<String>,
     right: List<String>,
     diff: MutableList<String>,
   ) {
-    val path = "metadata.predefinedParameters"
     if (left == right) {
       return
     }

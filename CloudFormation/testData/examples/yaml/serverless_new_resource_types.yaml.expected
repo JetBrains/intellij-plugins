@@ -1,0 +1,16 @@
+---
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  0@<GraphQLApi>:
+    Type: AWS::Serverless::GraphQLApi
+
+  1@<Connector>:
+    Type: AWS::Serverless::Connector
+
+  2@<CapacityProvider>:
+    Type: AWS::Serverless::CapacityProvider
+
+0: Required resource properties are not set: Auth DataSources Functions LogicalId Resolvers
+1: Required resource properties are not set: Destination Permissions
+2: Required resource properties are not set: VpcConfig
