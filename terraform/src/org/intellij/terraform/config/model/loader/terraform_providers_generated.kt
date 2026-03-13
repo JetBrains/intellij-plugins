@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.JsonNode
@@ -212,7 +212,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
           warnOrFailInInternalMode("Unsupported type '$node'")
           Types.Invalid
         }
-      }.pool(context)
+      }
     }
 
     // Based on cty.Type#MarshalJSON
@@ -222,15 +222,15 @@ Sensitive           bool            `json:"sensitive,omitempty"`
       when (node.get(0).textValue()) {
         "list" -> {
           assert(node.size() == 2)
-          return ListType(parseType(context, node.get(1))).pool(context)
+          return ListType(parseType(context, node.get(1)))
         }
         "set" -> {
           assert(node.size() == 2)
-          return SetType(parseType(context, node.get(1))).pool(context)
+          return SetType(parseType(context, node.get(1)))
         }
         "map" -> {
           assert(node.size() == 2)
-          return MapType(parseType(context, node.get(1))).pool(context)
+          return MapType(parseType(context, node.get(1)))
         }
         "object" -> {
           assert(node.get(1).isObject)
@@ -246,13 +246,13 @@ Sensitive           bool            `json:"sensitive,omitempty"`
             else
               null
 
-          return ObjectType(attributes, optional).pool(context)
+          return ObjectType(attributes, optional)
         }
         "tuple" -> {
           assert(node.get(1).isArray)
           assert(node.size() == 2)
           val elements = (node.get(1) as ArrayNode).elements().asSequence().map { parseType(context, it) }.toList()
-          return TupleType(elements).pool(context)
+          return TupleType(elements)
         }
       }
     }
@@ -282,14 +282,14 @@ MaxItems    uint64                `json:"max_items,omitempty"`
     val attrs = attributes?.properties()?.asSequence()?.map { parseAttribute(context, it.key, it.value, fqnPrefix) }?.toList()
                 ?: emptyList()
 
-    val nested = ObjectType(attrs.associate { it.name to it.asType() }).pool(context)
+    val nested = ObjectType(attrs.associate { it.name to it.asType() })
 
     when (nesting_mode) {
       "single" -> return Types.Any // TODO: check
       //"group" -> return Types.Any // TODO: check
-      "list" -> return ListType(nested).pool(context)
-      "set" -> return SetType(nested).pool(context)
-      "map" -> return MapType(nested).pool(context)
+      "list" -> return ListType(nested)
+      "set" -> return SetType(nested)
+      "map" -> return MapType(nested)
     }
 
     warnOrFailInInternalMode("Unsupported nested type: $node")
