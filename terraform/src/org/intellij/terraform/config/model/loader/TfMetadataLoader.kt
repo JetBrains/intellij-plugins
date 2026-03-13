@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -21,6 +21,8 @@ import org.intellij.terraform.config.model.string
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
+
+private const val MODEL_RESOURCE_PREFIX: String = "/terraform/model"
 
 class TfMetadataLoader {
   private val pool = ReusePool()
@@ -109,9 +111,8 @@ class TfMetadataLoader {
     return map
   }
 
-
   private fun loadBundled() {
-    val resources: Collection<String> = getAllResourcesToLoad(ModelResourcesPrefix)
+    val resources: Collection<String> = getAllResourcesToLoad(MODEL_RESOURCE_PREFIX)
 
     for (it in resources) {
       val file = it.ensureHavePrefix("/")
@@ -205,7 +206,6 @@ class TfMetadataLoader {
 
   companion object {
     internal val LOG: Logger by lazy { Logger.getInstance(TfMetadataLoader::class.java) }
-    const val ModelResourcesPrefix: String = "/terraform/model"
 
     fun getResource(path: String): InputStream? {
       return TfMetadataLoader::class.java.getResourceAsStream(path)
