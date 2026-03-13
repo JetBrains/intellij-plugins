@@ -105,29 +105,29 @@ Sensitive           bool            `json:"sensitive,omitempty"`
 
     if (isAttributeAsBlock(type)) {
       return BlockType(
-        name.pool(context),
-        description = description?.pool(context),
-        descriptionKind = descriptionKind.pool(context),
+        name,
+        description = description,
+        descriptionKind = descriptionKind,
         optional = optional,
         required = required,
         computed = computed,
         deprecated = if (deprecated) "DEPRECATED" else null,
         properties = type.asSafely<ContainerType<*>>()?.elements
           ?.asSafely<ObjectType>()?.elements?.mapValues { (k, v) -> PropertyType(k, type = v ?: Types.Any) }.orEmpty()
-      ).pool(context)
+      )
     }
 
     // External description and hint overrides one from model
     return PropertyType(
-      name.pool(context), type, hint = additional?.hint,
-      description = description?.pool(context),
-      descriptionKind = descriptionKind.pool(context),
+      name, type, hint = additional?.hint,
+      description = description,
+      descriptionKind = descriptionKind,
       optional = optional,
       required = required,
       computed = computed,
       sensitive = sensitive,
       deprecated = if (deprecated) "DEPRECATED" else null,
-    ).pool(context)
+    )
   }
 
   // https://developer.hashicorp.com/terraform/language/attr-as-blocks
@@ -191,12 +191,12 @@ Sensitive           bool            `json:"sensitive,omitempty"`
       parseBlockType(context, it.key, it.value)
     }?.toList() ?: emptyList()
 
-    return BlockType(name.pool(context),
-                     description = description?.pool(context),
-                     descriptionKind = descriptionKind.pool(context),
+    return BlockType(name,
+                     description = description,
+                     descriptionKind = descriptionKind,
                      deprecated = if (deprecated) "DEPRECATED" else null,
                      nesting = nesting,
-                     properties = (attrs + blocks).associateBy { it.name }).pool(context)
+                     properties = (attrs + blocks).associateBy { it.name })
   }
 
   private fun parseType(context: LoadContext, node: JsonNode): HclType {
@@ -346,7 +346,7 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
 
       val providerDefinedFunctions = provider.obj("functions")
       providerDefinedFunctions?.let { function ->
-        function.properties()?.mapNotNullTo(model.providerDefinedFunctions) { parseProviderFunctionInfo(context, it, providerInfo) }
+        function.properties()?.mapNotNullTo(model.providerDefinedFunctions) { parseProviderFunctionInfo(it, providerInfo) }
       }
 
       val ephemeralResources = provider.obj("ephemeral_resource_schemas")
@@ -365,7 +365,7 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
   }
 
   private fun parseResourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): ResourceType {
-    val name = entry.key.pool(context)
+    val name = entry.key
     assert(entry.value is ObjectNode) { "Right part of resource should be object" }
     val obj = entry.value as ObjectNode
     val (parsed, version) = TfBaseLoader.parseSchema(context, obj, name)
@@ -374,7 +374,7 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
   }
 
   private fun parseDataSourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): DataSourceType {
-    val name = entry.key.pool(context)
+    val name = entry.key
     assert(entry.value is ObjectNode) { "Right part of data-source should be object" }
     val obj = entry.value as ObjectNode
     val (parsed, version) = TfBaseLoader.parseSchema(context, obj, name)
@@ -382,8 +382,8 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
     return DataSourceType(name, info, parsed.properties.values.toList(), parsed)
   }
 
-  private fun parseProviderFunctionInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): TfFunction? {
-    val name = entry.key.pool(context)
+  private fun parseProviderFunctionInfo(entry: Map.Entry<String, Any?>, info: ProviderType): TfFunction? {
+    val name = entry.key
     val objectNode = entry.value as? ObjectNode ?: return null
 
     val description = objectNode.string("description")
@@ -403,7 +403,7 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
   }
 
   private fun parseEphemeralResourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): EphemeralType? {
-    val name = entry.key.pool(context)
+    val name = entry.key
     val objectNode = entry.value as? ObjectNode ?: return null
     val (block, _) = TfBaseLoader.parseSchema(context, objectNode, name) ?: return null
     return EphemeralType(name, info, block)
