@@ -17,6 +17,8 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicInteger
 
+private const val MAX_SCHEMA_SIZE = 20L * 1024 * 1024 // 20 MB
+
 object TerraformProvidersMetadataBuilder {
 
   private val objectMapper: ObjectMapper = ObjectMapper()
@@ -24,10 +26,14 @@ object TerraformProvidersMetadataBuilder {
   private val httpClient: HttpClient = HttpClient.newBuilder().build()
 
   private val terraformRegistryHost = System.getenv("TERRAFORM_REGISTRY_HOST") ?: "https://registry.terraform.io"
-  private val downloadsLimitForProvider = System.getenv("DOWNLOADS_LIMIT_FOR_PROVIDER")?.toInt() ?: 20000
+  private val downloadsLimitForProvider = System.getenv("DOWNLOADS_LIMIT_FOR_PROVIDER")?.toInt() ?: 50_000
   private val cleanDownloadedData = System.getenv("CLEAN_DOWNLOADED_DATA")?.toBoolean() ?: true
 
   private val logger = LoggerFactory.getLogger(TerraformProvidersMetadataBuilder::class.java.simpleName)
+
+  private val totalProviders = AtomicInteger(0)
+  private val failedProviders = AtomicInteger(0)
+  private val skippedProviders = AtomicInteger(0)
 
   private fun getQuery(httpQuery: String): HttpResponse<String> {
     val httpRequest =
@@ -95,19 +101,15 @@ object TerraformProvidersMetadataBuilder {
     logger.info("Terraform version: $version")
 
     val generatedJsonFileNames = File(File(outputDir, "resources/model").apply { mkdirs() }, "providers.list")
-    val totalProviders = AtomicInteger(0)
-    val errors = AtomicInteger(0)
     mostUsefulProviders.forEach { data ->
       totalProviders.incrementAndGet()
+
       val name = data["attributes"]["full-name"].asText()
       logger.info("Processing: $name")
       officialProviders.remove(name)
       val file = buildProviderMetadata(data, version, outputDir)
       if (file.exists()) {
         generatedJsonFileNames.appendText("$name\n")
-      }
-      else {
-        errors.incrementAndGet()
       }
     }
     if (officialProviders.isNotEmpty()) {
@@ -117,7 +119,7 @@ object TerraformProvidersMetadataBuilder {
       logger.info("Deleting data about providers from file: $allOut")
       allOut.deleteOnExit()
     }
-    logger.info("Providing processing finished, processed $totalProviders providers, errors: $errors")
+    logger.info("Providing processing finished, processed $totalProviders providers, failed: $failedProviders, skipped: $skippedProviders")
   }
 
   private fun loadOfficialProvidersList(): MutableSet<String> {
@@ -145,16 +147,21 @@ object TerraformProvidersMetadataBuilder {
 
     val initError = initTerraform(tfgendir, logFile)
     val schemaError: String = generateTerraformSchema(tfgendir, schemaFile)
-
-    if (schemaFile.length() <= 0L) {
-      schemaFile.delete()
-      parentDir.delete()
+    val schemaSize = schemaFile.length()
+    if (schemaSize <= 0L) {
+      cleanupSchema(schemaFile, parentDir)
       val failures = File(outputDir, "failed/$namespace")
       val failureDir = File(failures, provider).apply { deleteRecursively() }.also { it.mkdirs() }
       File(tfgendir, "versions.tf").copyTo(File(failureDir, "versions.tf"))
       File(failureDir, "init.err").writeText(initError)
       File(failureDir, "schema.err").writeText(schemaError)
+      failedProviders.incrementAndGet()
       logger.error("Metadata build failure for provider $fullName. \n Error: $initError \n Schema Generation Error: $schemaError")
+    }
+    else if (schemaSize > MAX_SCHEMA_SIZE) {
+      cleanupSchema(schemaFile, parentDir)
+      skippedProviders.incrementAndGet()
+      logger.warn("Skipping provider $fullName because schema is too large: ${formatMb(schemaSize)} MB")
     }
     else {
       storeRegistryData(data, tfgendir, outputDir, namespace, provider)
@@ -163,6 +170,13 @@ object TerraformProvidersMetadataBuilder {
     deleteDirRecursively(tfgendir)
     return schemaFile
   }
+
+  private fun cleanupSchema(schemaFile: File, parentDir: File) {
+    schemaFile.delete()
+    parentDir.delete()
+  }
+
+  private fun formatMb(bytes: Long): String = "%.2f".format(bytes / 1024.0 / 1024.0)
 
   private fun storeRegistryData(data: JsonNode, tfgendir: File, outputDir: File, dir: String, file: String) {
     val lockFile = File(tfgendir, ".terraform.lock.hcl")
