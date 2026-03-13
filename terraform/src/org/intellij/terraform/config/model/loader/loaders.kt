@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -34,8 +34,6 @@ class ReusePool {
   private val strings: MutableMap<String, String> = HashMap()
   private val properties: MutableMap<PropertyType, PropertyType> = HashMap()
   private val blocks: MutableMap<BlockType, BlockType> = HashMap()
-  private val hints: MutableMap<Hint, Hint> = HashMap()
-  private val types: MutableMap<HclType, HclType> = HashMap()
 
   fun pool(v: String): String {
     var ret = strings[v]
@@ -60,22 +58,6 @@ class ReusePool {
     blocks[ret] = ret
     return ret
   }
-
-  fun pool(v: Hint): Hint {
-    var ret = hints[v]
-    if (ret != null) return ret
-    ret = v
-    hints[ret] = ret
-    return ret
-  }
-
-  fun pool(t: HclType): HclType {
-    var ret = types[t]
-    if (ret != null) return ret
-    ret = t
-    types[ret] = ret
-    return ret
-  }
 }
 
 class LoadContext(val pool: ReusePool, val model: LoadingModel)
@@ -98,9 +80,6 @@ interface BaseLoader {
 internal fun String.pool(context: LoadContext): String = context.pool.pool(this)
 internal fun PropertyType.pool(context: LoadContext): PropertyType = context.pool.pool(this)
 internal fun BlockType.pool(context: LoadContext): BlockType = context.pool.pool(this)
-internal fun Hint.pool(context: LoadContext): Hint = context.pool.pool(this)
-internal fun HclType.pool(context: LoadContext): HclType = context.pool.pool(this)
-
 
 internal fun warnOrFailInInternalMode(message: String) {
   val application = ApplicationManager.getApplication()
