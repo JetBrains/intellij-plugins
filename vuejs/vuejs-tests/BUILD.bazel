@@ -145,6 +145,8 @@ jvm_library(
     "@community//platform/lang-api:lang_test_lib",
     "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
+    "//plugins/webpack:webpack-tests",
+    "//plugins/webpack:webpack-tests_test_lib",
   ],
   runtime_deps = [":tests"]
 )

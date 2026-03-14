@@ -54,9 +54,71 @@ jvm_library(
 
 jvm_library(
   name = "deno_test_lib",
+  module_name = "intellij.deno",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":deno",
+    "@community//libraries/guava:guava_test_lib",
+    "@community//libraries/gson:gson_test_lib",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/execution-impl:execution-impl_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-backend_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//platform/lang-core:lang-core_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-testFramework",
+    "//plugins/JavaScriptLanguage:javascript-testFramework_test_lib",
+    "//platform/lsp/testFramework",
+    "//platform/lsp/testFramework:testFramework_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-tests",
+    "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
+    "@community//platform/xdebugger-api:debugger_test_lib",
+    "//plugins/JavaScriptDebugger/backend:backend_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "//platform/lsp-impl:lsp-impl_test_lib",
+    "@community//platform/workspace/jps:jps_test_lib",
+    "@community//platform/backend/workspace:workspace_test_lib",
+    "@community//platform/workspace/storage:storage_test_lib",
+    "@community//platform/core-impl",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/execution:execution_test_lib",
+    "@community//platform/script-debugger/backend:backend_test_lib",
+  ]
+)
+### auto-generated section `build intellij.deno` end
+
+### auto-generated section `iml intellij.deno` start
+exports_files([
+  "intellij.deno.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.deno` end
+
+### auto-generated section `build intellij.deno.tests` start
+jvm_library(
+  name = "deno-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "deno-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/src/**/*.kt", "test/src/**/*.java", "test/src/**/*.form"], allow_empty = True),
-  associates = [":deno"],
+  associates = [
+    "//contrib/Deno:deno",
+    "//contrib/Deno:deno_test_lib",
+  ],
   deps = [
     "@community//libraries/guava",
     "@community//libraries/guava:guava_test_lib",
@@ -118,24 +180,25 @@ jvm_library(
     "@community//platform/script-debugger/backend:backend_test_lib",
   ],
   runtime_deps = [
+    ":deno-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
   ]
 )
-### auto-generated section `build intellij.deno` end
+### auto-generated section `build intellij.deno.tests` end
 
-### auto-generated section `iml intellij.deno` start
+### auto-generated section `iml intellij.deno.tests` start
 exports_files([
-  "intellij.deno.iml",
+  "intellij.deno.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.deno` end
+### auto-generated section `iml intellij.deno.tests` end
 
-### auto-generated section `test intellij.deno` start
+### auto-generated section `test intellij.deno.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "deno_test",
-  runtime_deps = [":deno_test_lib"]
+  name = "deno-tests_test",
+  runtime_deps = [":deno-tests_test_lib"]
 )
-### auto-generated section `test intellij.deno` end
+### auto-generated section `test intellij.deno.tests` end

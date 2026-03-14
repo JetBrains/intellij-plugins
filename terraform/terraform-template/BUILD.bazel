@@ -7,12 +7,6 @@ resourcegroup(
   strip_prefix = "resource"
 )
 
-resourcegroup(
-  name = "template_test_resources",
-  srcs = glob(["test-data/**/*"]),
-  strip_prefix = "test-data"
-)
-
 jvm_library(
   name = "template",
   module_name = "intellij.terraform.template",
@@ -39,10 +33,59 @@ jvm_library(
 
 jvm_library(
   name = "template_test_lib",
+  module_name = "intellij.terraform.template",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":template",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/util:util_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/editor-ui-ex:editor-ex_test_lib",
+    "//contrib/terraform:terraform_test_lib",
+    "@community//platform/util:util-ui_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/util/jdom:jdom_test_lib",
+  ]
+)
+### auto-generated section `build intellij.terraform.template` end
+
+### auto-generated section `iml intellij.terraform.template` start
+exports_files([
+  "intellij.terraform.template.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.terraform.template` end
+
+### auto-generated section `build intellij.terraform.template.tests` start
+resourcegroup(
+  name = "template-tests_test_resources",
+  srcs = glob(["test-data/**/*"]),
+  strip_prefix = "test-data"
+)
+
+jvm_library(
+  name = "template-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "template-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  resources = [":template_test_resources"],
-  associates = [":template"],
+  resources = [":template-tests_test_resources"],
+  associates = [
+    "//contrib/terraform/terraform-template:template",
+    "//contrib/terraform/terraform-template:template_test_lib",
+  ],
   deps = [
     "@community//platform/core-api:core",
     "@community//platform/core-api:core_test_lib",
@@ -74,21 +117,24 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//platform/util/jdom:jdom_test_lib",
   ],
-  runtime_deps = ["@community//platform/ide-core:ide-core_test_lib"]
+  runtime_deps = [
+    ":template-tests",
+    "@community//platform/ide-core:ide-core_test_lib",
+  ]
 )
-### auto-generated section `build intellij.terraform.template` end
+### auto-generated section `build intellij.terraform.template.tests` end
 
-### auto-generated section `iml intellij.terraform.template` start
+### auto-generated section `iml intellij.terraform.template.tests` start
 exports_files([
-  "intellij.terraform.template.iml",
+  "intellij.terraform.template.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.terraform.template` end
+### auto-generated section `iml intellij.terraform.template.tests` end
 
-### auto-generated section `test intellij.terraform.template` start
+### auto-generated section `test intellij.terraform.template.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "template_test",
-  runtime_deps = [":template_test_lib"]
+  name = "template-tests_test",
+  runtime_deps = [":template-tests_test_lib"]
 )
-### auto-generated section `test intellij.terraform.template` end
+### auto-generated section `test intellij.terraform.template.tests` end

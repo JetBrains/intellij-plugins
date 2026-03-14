@@ -33,9 +33,56 @@ jvm_library(
 
 jvm_library(
   name = "protoeditor-jvm_test_lib",
+  module_name = "intellij.protoeditor.jvm",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":protoeditor-jvm",
+    "@community//java/java-psi-api:psi_test_lib",
+    "@community//libraries/guava:guava_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//jps/model-api:model",
+    "@community//jps/model-api:model_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
+    "@community//java/testFramework",
+    "@community//java/testFramework:testFramework_test_lib",
+    "@lib//:truth",
+    "@community//java/java-indexing-api:indexing_test_lib",
+  ]
+)
+### auto-generated section `build intellij.protoeditor.jvm` end
+
+### auto-generated section `iml intellij.protoeditor.jvm` start
+exports_files([
+  "intellij.protoeditor.jvm.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.protoeditor.jvm` end
+
+### auto-generated section `build intellij.protoeditor.jvm.tests` start
+jvm_library(
+  name = "protoeditor-jvm-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "protoeditor-jvm-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  associates = [":protoeditor-jvm"],
+  associates = [
+    "//contrib/protobuf/protoeditor-jvm",
+    "//contrib/protobuf/protoeditor-jvm:protoeditor-jvm_test_lib",
+  ],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//java/java-psi-api:psi",
@@ -71,21 +118,24 @@ jvm_library(
     "@lib//:truth",
     "@community//java/java-indexing-api:indexing",
     "@community//java/java-indexing-api:indexing_test_lib",
-  ]
+    "//contrib/protobuf/protoeditor-core:protoeditor-core-tests",
+    "//contrib/protobuf/protoeditor-core:protoeditor-core-tests_test_lib",
+  ],
+  runtime_deps = [":protoeditor-jvm-tests"]
 )
-### auto-generated section `build intellij.protoeditor.jvm` end
+### auto-generated section `build intellij.protoeditor.jvm.tests` end
 
-### auto-generated section `iml intellij.protoeditor.jvm` start
+### auto-generated section `iml intellij.protoeditor.jvm.tests` start
 exports_files([
-  "intellij.protoeditor.jvm.iml",
+  "intellij.protoeditor.jvm.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.protoeditor.jvm` end
+### auto-generated section `iml intellij.protoeditor.jvm.tests` end
 
-### auto-generated section `test intellij.protoeditor.jvm` start
+### auto-generated section `test intellij.protoeditor.jvm.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "protoeditor-jvm_test",
-  runtime_deps = [":protoeditor-jvm_test_lib"]
+  name = "protoeditor-jvm-tests_test",
+  runtime_deps = [":protoeditor-jvm-tests_test_lib"]
 )
-### auto-generated section `test intellij.protoeditor.jvm` end
+### auto-generated section `test intellij.protoeditor.jvm.tests` end

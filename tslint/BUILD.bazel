@@ -52,9 +52,64 @@ jvm_library(
 
 jvm_library(
   name = "tslint_test_lib",
+  module_name = "intellij.tslint",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":tslint",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/code-style-api:codeStyle_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/execution:execution_test_lib",
+    "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/lvcs-api:lvcs_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//xml/impl:impl_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-backend_test_lib",
+    "//webcore/impl:impl_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-testFramework",
+    "//plugins/JavaScriptLanguage:javascript-testFramework_test_lib",
+    "@community//libraries/gson:gson_test_lib",
+    "@community//libraries/snakeyaml:snakeyaml_test_lib",
+    "@community//platform/statistics:statistics_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/util/jdom:jdom_test_lib",
+    "@community//json/backend:backend_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+  ]
+)
+### auto-generated section `build intellij.tslint` end
+
+### auto-generated section `iml intellij.tslint` start
+exports_files([
+  "intellij.tslint.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.tslint` end
+
+### auto-generated section `build intellij.tslint.tests` start
+jvm_library(
+  name = "tslint-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "tslint-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/src/**/*.kt", "test/src/**/*.java", "test/src/**/*.form"], allow_empty = True),
-  associates = [":tslint"],
+  associates = [
+    "//contrib/tslint",
+    "//contrib/tslint:tslint_test_lib",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-api:analysis_test_lib",
@@ -107,24 +162,25 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   runtime_deps = [
+    ":tslint-tests",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
   ]
 )
-### auto-generated section `build intellij.tslint` end
+### auto-generated section `build intellij.tslint.tests` end
 
-### auto-generated section `iml intellij.tslint` start
+### auto-generated section `iml intellij.tslint.tests` start
 exports_files([
-  "intellij.tslint.iml",
+  "intellij.tslint.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.tslint` end
+### auto-generated section `iml intellij.tslint.tests` end
 
-### auto-generated section `test intellij.tslint` start
+### auto-generated section `test intellij.tslint.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "tslint_test",
-  runtime_deps = [":tslint_test_lib"]
+  name = "tslint-tests_test",
+  runtime_deps = [":tslint-tests_test_lib"]
 )
-### auto-generated section `test intellij.tslint` end
+### auto-generated section `test intellij.tslint.tests` end

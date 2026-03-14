@@ -37,9 +37,56 @@ jvm_library(
 
 jvm_library(
   name = "cucumber-groovy_test_lib",
+  module_name = "intellij.cucumber.groovy",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":cucumber-groovy",
+    "//contrib/cucumber:gherkin_test_lib",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//plugins/groovy:groovy_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//java/java-psi-impl:psi-impl_test_lib",
+    "@community//java/java-psi-api:psi_test_lib",
+    "@community//platform/usageView:usageView_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//java/testFramework",
+    "@community//java/testFramework:testFramework_test_lib",
+    "@community//java/java-impl:impl_test_lib",
+    "//contrib/cucumber-java:cucumber-java_test_lib",
+    "@community//jps/model-api:model_test_lib",
+  ]
+)
+### auto-generated section `build intellij.cucumber.groovy` end
+
+### auto-generated section `iml intellij.cucumber.groovy` start
+exports_files([
+  "intellij.cucumber.groovy.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.cucumber.groovy` end
+
+### auto-generated section `build intellij.cucumber.groovy.tests` start
+jvm_library(
+  name = "cucumber-groovy-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "cucumber-groovy-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  associates = [":cucumber-groovy"],
+  associates = [
+    "//contrib/cucumber-groovy",
+    "//contrib/cucumber-groovy:cucumber-groovy_test_lib",
+  ],
   deps = [
     "//contrib/cucumber:gherkin",
     "//contrib/cucumber:gherkin_test_lib",
@@ -70,7 +117,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//java/testFramework",
     "@community//java/testFramework:testFramework_test_lib",
-    "@ultimate_lib//:cucumber-groovy-cucumber-groovy",
+    "@ultimate_lib//:cucumber-groovy-tests-cucumber-groovy",
     "@community//java/java-impl:impl",
     "@community//java/java-impl:impl_test_lib",
     "@lib//:cucumber-core-1",
@@ -78,22 +125,27 @@ jvm_library(
     "//contrib/cucumber-java:cucumber-java_test_lib",
     "@community//jps/model-api:model",
     "@community//jps/model-api:model_test_lib",
+    "@community//plugins/groovy:groovy-tests",
+    "@community//plugins/groovy:groovy-tests_test_lib",
   ],
-  runtime_deps = ["@community//platform/platform-impl:ide-impl_test_lib"]
+  runtime_deps = [
+    ":cucumber-groovy-tests",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+  ]
 )
-### auto-generated section `build intellij.cucumber.groovy` end
+### auto-generated section `build intellij.cucumber.groovy.tests` end
 
-### auto-generated section `iml intellij.cucumber.groovy` start
+### auto-generated section `iml intellij.cucumber.groovy.tests` start
 exports_files([
-  "intellij.cucumber.groovy.iml",
+  "intellij.cucumber.groovy.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.cucumber.groovy` end
+### auto-generated section `iml intellij.cucumber.groovy.tests` end
 
-### auto-generated section `test intellij.cucumber.groovy` start
+### auto-generated section `test intellij.cucumber.groovy.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "cucumber-groovy_test",
-  runtime_deps = [":cucumber-groovy_test_lib"]
+  name = "cucumber-groovy-tests_test",
+  runtime_deps = [":cucumber-groovy-tests_test_lib"]
 )
-### auto-generated section `test intellij.cucumber.groovy` end
+### auto-generated section `test intellij.cucumber.groovy.tests` end

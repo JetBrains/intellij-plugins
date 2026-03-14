@@ -84,9 +84,68 @@ jvm_library(
 
 jvm_library(
   name = "go_test_lib",
+  module_name = "intellij.qodana.go",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":go",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/core-ui",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-api:ide_test_lib",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/lang-impl",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/core-impl",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "//contrib/qodana",
+    "//contrib/qodana:qodana_test_lib",
+    "//contrib/qodana/coverage:coverage_test_lib",
+    "//goland/intellij-go/plugin",
+    "//goland/intellij-go/plugin:plugin_test_lib",
+    "//goland/intellij-go/go-coverage",
+    "//goland/intellij-go/go-coverage:go-coverage_test_lib",
+    "@community//platform/util/jdom",
+    "@community//platform/util/jdom:jdom_test_lib",
+    "@community//plugins/coverage-common:coverage",
+    "@community//plugins/coverage-common:coverage_test_lib",
+    "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
+    "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent_test_lib",
+    "@community//java/testFramework",
+    "@community//java/testFramework:testFramework_test_lib",
+    "//contrib/qodana-test-framework:qodana-testFramework",
+    "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+  ]
+)
+### auto-generated section `build intellij.qodana.go` end
+
+### auto-generated section `iml intellij.qodana.go` start
+exports_files([
+  "intellij.qodana.go.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.go` end
+
+### auto-generated section `build intellij.qodana.go.tests` start
+jvm_library(
+  name = "go-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "go-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  associates = [":go"],
+  associates = [
+    "//contrib/qodana/go",
+    "//contrib/qodana/go:go_test_lib",
+  ],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-api:analysis",
@@ -124,22 +183,27 @@ jvm_library(
     "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "//contrib/qodana/coverage:coverage-tests",
+    "//contrib/qodana/coverage:coverage-tests_test_lib",
   ],
-  runtime_deps = ["@community//platform/platform-impl:ide-impl_test_lib"]
+  runtime_deps = [
+    ":go-tests",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+  ]
 )
-### auto-generated section `build intellij.qodana.go` end
+### auto-generated section `build intellij.qodana.go.tests` end
 
-### auto-generated section `iml intellij.qodana.go` start
+### auto-generated section `iml intellij.qodana.go.tests` start
 exports_files([
-  "intellij.qodana.go.iml",
+  "intellij.qodana.go.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.qodana.go` end
+### auto-generated section `iml intellij.qodana.go.tests` end
 
-### auto-generated section `test intellij.qodana.go` start
+### auto-generated section `test intellij.qodana.go.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "go_test",
-  runtime_deps = [":go_test_lib"]
+  name = "go-tests_test",
+  runtime_deps = [":go-tests_test_lib"]
 )
-### auto-generated section `test intellij.qodana.go` end
+### auto-generated section `test intellij.qodana.go.tests` end

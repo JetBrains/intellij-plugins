@@ -7,12 +7,6 @@ resourcegroup(
   strip_prefix = "resources"
 )
 
-resourcegroup(
-  name = "tsr_test_resources",
-  srcs = glob(["test-resources/**/*"]),
-  strip_prefix = "test-resources"
-)
-
 jvm_library(
   name = "tsr",
   module_name = "intellij.tsr",
@@ -35,10 +29,57 @@ jvm_library(
 
 jvm_library(
   name = "tsr_test_lib",
+  module_name = "intellij.tsr",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":tsr",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/code-style-api:codeStyle_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//java/testFramework",
+    "@community//java/testFramework:testFramework_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/platform-api:ide_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+  ]
+)
+### auto-generated section `build intellij.tsr` end
+
+### auto-generated section `iml intellij.tsr` start
+exports_files([
+  "intellij.tsr.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.tsr` end
+
+### auto-generated section `build intellij.tsr.tests` start
+resourcegroup(
+  name = "tsr-tests_test_resources",
+  srcs = glob(["test-resources/**/*"]),
+  strip_prefix = "test-resources"
+)
+
+jvm_library(
+  name = "tsr-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "tsr-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  resources = [":tsr_test_resources"],
-  associates = [":tsr"],
+  resources = [":tsr-tests_test_resources"],
+  associates = [
+    "//contrib/tostring-reader:tsr",
+    "//contrib/tostring-reader:tsr_test_lib",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-api:analysis_test_lib",
@@ -64,21 +105,24 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
-  runtime_deps = ["@community//platform/platform-impl:ide-impl_test_lib"]
+  runtime_deps = [
+    ":tsr-tests",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+  ]
 )
-### auto-generated section `build intellij.tsr` end
+### auto-generated section `build intellij.tsr.tests` end
 
-### auto-generated section `iml intellij.tsr` start
+### auto-generated section `iml intellij.tsr.tests` start
 exports_files([
-  "intellij.tsr.iml",
+  "intellij.tsr.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.tsr` end
+### auto-generated section `iml intellij.tsr.tests` end
 
-### auto-generated section `test intellij.tsr` start
+### auto-generated section `test intellij.tsr.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "tsr_test",
-  runtime_deps = [":tsr_test_lib"]
+  name = "tsr-tests_test",
+  runtime_deps = [":tsr-tests_test_lib"]
 )
-### auto-generated section `test intellij.tsr` end
+### auto-generated section `test intellij.tsr.tests` end

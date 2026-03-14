@@ -39,9 +39,70 @@ jvm_library(
 
 jvm_library(
   name = "php_test_lib",
+  module_name = "intellij.qodana.php",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":php",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/core-ui",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/platform-api:ide_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "//contrib/qodana:qodana_test_lib",
+    "//contrib/qodana/coverage:coverage_test_lib",
+    "//phpstorm/php-openapi:php_test_lib",
+    "//phpstorm/php:php-impl_test_lib",
+    "//plugins/taint-analysis",
+    "//plugins/taint-analysis:taint-analysis_test_lib",
+    "@community//platform/util/jdom:jdom_test_lib",
+    "@community//plugins/coverage-common:coverage_test_lib",
+    "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent_test_lib",
+    "@community//java/testFramework",
+    "@community//java/testFramework:testFramework_test_lib",
+    "//contrib/qodana-test-framework:qodana-testFramework",
+    "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/inspect",
+    "@community//platform/inspect:inspect_test_lib",
+    "@lib//:assert_j",
+    "@community//libraries/gson:gson_test_lib",
+    "//contrib/qodana/sarif:sarif_test_lib",
+    "@community//libraries/kotlinx/coroutines/core:core_test_lib",
+    "@community//platform/backend/observation:observation_test_lib",
+    "//contrib/qodana/util:util_test_lib",
+    "//contrib/qodana:qodana-core-tests",
+    "//contrib/qodana:qodana-core-tests_test_lib",
+  ]
+)
+### auto-generated section `build intellij.qodana.php` end
+
+### auto-generated section `iml intellij.qodana.php` start
+exports_files([
+  "intellij.qodana.php.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.php` end
+
+### auto-generated section `build intellij.qodana.php.tests` start
+jvm_library(
+  name = "php-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "php-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  associates = [":php"],
+  associates = [
+    "//contrib/qodana/php",
+    "//contrib/qodana/php:php_test_lib",
+  ],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-api:analysis",
@@ -96,22 +157,27 @@ jvm_library(
     "//contrib/qodana/util:util_test_lib",
     "//contrib/qodana:qodana-core-tests",
     "//contrib/qodana:qodana-core-tests_test_lib",
+    "//contrib/qodana/coverage:coverage-tests",
+    "//contrib/qodana/coverage:coverage-tests_test_lib",
   ],
-  runtime_deps = ["@community//platform/platform-impl:ide-impl_test_lib"]
+  runtime_deps = [
+    ":php-tests",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+  ]
 )
-### auto-generated section `build intellij.qodana.php` end
+### auto-generated section `build intellij.qodana.php.tests` end
 
-### auto-generated section `iml intellij.qodana.php` start
+### auto-generated section `iml intellij.qodana.php.tests` start
 exports_files([
-  "intellij.qodana.php.iml",
+  "intellij.qodana.php.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.qodana.php` end
+### auto-generated section `iml intellij.qodana.php.tests` end
 
-### auto-generated section `test intellij.qodana.php` start
+### auto-generated section `test intellij.qodana.php.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "php_test",
-  runtime_deps = [":php_test_lib"]
+  name = "php-tests_test",
+  runtime_deps = [":php-tests_test_lib"]
 )
-### auto-generated section `test intellij.qodana.php` end
+### auto-generated section `test intellij.qodana.php.tests` end

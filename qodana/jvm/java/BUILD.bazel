@@ -46,9 +46,73 @@ jvm_library(
 
 jvm_library(
   name = "java_test_lib",
+  module_name = "intellij.qodana.jvm.java",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":java",
+    "@lib//:assert_j",
+    "@community//java/openapi:java_test_lib",
+    "@community//java/structuralsearch-java:structuralSearch_test_lib",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/core-ui",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/platform-api:ide_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/lang-core:lang-core_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/execution:execution_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/refactoring:refactoring_test_lib",
+    "//contrib/qodana:qodana_test_lib",
+    "@community//java/java-analysis-api:analysis_test_lib",
+    "@community//platform/statistics:statistics_test_lib",
+    "@community//java/testFramework",
+    "@community//java/testFramework:testFramework_test_lib",
+    "//contrib/qodana-test-framework:qodana-testFramework",
+    "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//java/java-impl-refactorings:impl-refactorings_test_lib",
+    "@community//java/idea-ui:ui_test_lib",
+    "@community//platform/collaboration-tools/auth:auth_test_lib",
+    "//contrib/qodana/sarif:sarif_test_lib",
+    "@community//java/java-psi-impl:psi-impl_test_lib",
+    "@community//platform/backend/observation:observation_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/vcs-impl:vcs-impl_test_lib",
+    "@community//platform/util/coroutines:coroutines_test_lib",
+    "@community//platform/backend/workspace:workspace_test_lib",
+    "@community//platform/workspace/storage:storage_test_lib",
+    "//contrib/qodana/util:util_test_lib",
+    "//contrib/qodana:qodana-core-tests",
+    "//contrib/qodana:qodana-core-tests_test_lib",
+  ]
+)
+### auto-generated section `build intellij.qodana.jvm.java` end
+
+### auto-generated section `iml intellij.qodana.jvm.java` start
+exports_files([
+  "intellij.qodana.jvm.java.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.jvm.java` end
+
+### auto-generated section `build intellij.qodana.jvm.java.tests` start
+jvm_library(
+  name = "qodana-jvm-java-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "qodana-jvm-java-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  associates = [":java"],
+  associates = [
+    "//contrib/qodana/jvm/java",
+    "//contrib/qodana/jvm/java:java_test_lib",
+  ],
   deps = [
     "@lib//:kotlin-stdlib",
     "@lib//:assert_j",
@@ -114,21 +178,24 @@ jvm_library(
     "//contrib/qodana:qodana-core-tests",
     "//contrib/qodana:qodana-core-tests_test_lib",
   ],
-  runtime_deps = ["@community//platform/platform-impl:ide-impl_test_lib"]
+  runtime_deps = [
+    ":qodana-jvm-java-tests",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+  ]
 )
-### auto-generated section `build intellij.qodana.jvm.java` end
+### auto-generated section `build intellij.qodana.jvm.java.tests` end
 
-### auto-generated section `iml intellij.qodana.jvm.java` start
+### auto-generated section `iml intellij.qodana.jvm.java.tests` start
 exports_files([
-  "intellij.qodana.jvm.java.iml",
+  "intellij.qodana.jvm.java.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.qodana.jvm.java` end
+### auto-generated section `iml intellij.qodana.jvm.java.tests` end
 
-### auto-generated section `test intellij.qodana.jvm.java` start
+### auto-generated section `test intellij.qodana.jvm.java.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "java_test",
-  runtime_deps = [":java_test_lib"]
+  name = "qodana-jvm-java-tests_test",
+  runtime_deps = [":qodana-jvm-java-tests_test_lib"]
 )
-### auto-generated section `test intellij.qodana.jvm.java` end
+### auto-generated section `test intellij.qodana.jvm.java.tests` end

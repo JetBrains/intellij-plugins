@@ -32,9 +32,60 @@ jvm_library(
 
 jvm_library(
   name = "cmake_test_lib",
+  module_name = "intellij.clion.diagnostics.cmake",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":cmake",
+    "//CIDR/clion-cmake/core:core_test_lib",
+    "//contrib/cpp-diagnostics:clion-diagnostics_test_lib",
+    "//CIDR/clion-toolchains:clion-toolchains_test_lib",
+    "//CIDR/cidr-util/execution:execution_test_lib",
+    "//CIDR/cidr-workspaceModel:cidr-workspaceModel_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/util:util_test_lib",
+    "@community//platform/util/jdom:jdom_test_lib",
+    "@community//libraries/kotlinx/serialization/core:core_test_lib",
+    "@community//libraries/kotlinx/serialization/json:json_test_lib",
+    "//CIDR/cidr-common-testFramework/nolang",
+    "//CIDR/cidr-common-testFramework/nolang:nolang_test_lib",
+    "//CIDR/clion-testFramework-nolang",
+    "//CIDR/clion-testFramework-nolang:clion-testFramework-nolang_test_lib",
+    "//CIDR/clion-testFramework-nolang/junit5/cmake",
+    "//CIDR/clion-testFramework-nolang/junit5/cmake:cmake_test_lib",
+    "//CIDR/clion-testFramework-nolang/junit5/core",
+    "//CIDR/clion-testFramework-nolang/junit5/core:core_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/testFramework/junit5",
+    "@community//platform/testFramework/junit5:junit5_test_lib",
+  ]
+)
+### auto-generated section `build intellij.clion.diagnostics.cmake` end
+
+### auto-generated section `iml intellij.clion.diagnostics.cmake` start
+exports_files([
+  "intellij.clion.diagnostics.cmake.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.clion.diagnostics.cmake` end
+
+### auto-generated section `build intellij.clion.diagnostics.cmake.tests` start
+jvm_library(
+  name = "clion-diagnostics-cmake-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "clion-diagnostics-cmake-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  associates = [":cmake"],
+  associates = [
+    "//contrib/cpp-diagnostics/cmake",
+    "//contrib/cpp-diagnostics/cmake:cmake_test_lib",
+  ],
   deps = [
     "@lib//:kotlin-stdlib",
     "//CIDR/clion-cmake/core",
@@ -73,21 +124,22 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/testFramework/junit5",
     "@community//platform/testFramework/junit5:junit5_test_lib",
-  ]
+  ],
+  runtime_deps = [":clion-diagnostics-cmake-tests"]
 )
-### auto-generated section `build intellij.clion.diagnostics.cmake` end
+### auto-generated section `build intellij.clion.diagnostics.cmake.tests` end
 
-### auto-generated section `iml intellij.clion.diagnostics.cmake` start
+### auto-generated section `iml intellij.clion.diagnostics.cmake.tests` start
 exports_files([
-  "intellij.clion.diagnostics.cmake.iml",
+  "intellij.clion.diagnostics.cmake.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.clion.diagnostics.cmake` end
+### auto-generated section `iml intellij.clion.diagnostics.cmake.tests` end
 
-### auto-generated section `test intellij.clion.diagnostics.cmake` start
+### auto-generated section `test intellij.clion.diagnostics.cmake.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "cmake_test",
-  runtime_deps = [":cmake_test_lib"]
+  name = "clion-diagnostics-cmake-tests_test",
+  runtime_deps = [":clion-diagnostics-cmake-tests_test_lib"]
 )
-### auto-generated section `test intellij.clion.diagnostics.cmake` end
+### auto-generated section `test intellij.clion.diagnostics.cmake.tests` end

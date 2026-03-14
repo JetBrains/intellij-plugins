@@ -27,9 +27,50 @@ jvm_library(
 
 jvm_library(
   name = "groovy_test_lib",
+  module_name = "intellij.qodana.jvm.groovy",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":groovy",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//java/java-psi-api:psi_test_lib",
+    "@community//plugins/groovy/groovy-psi:psi_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//plugins/groovy:groovy_test_lib",
+    "//contrib/qodana:qodana_test_lib",
+    "@lib//:assert_j",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/testFramework/extensions:testExtensions",
+    "@community//platform/testFramework/extensions:testExtensions_test_lib",
+    "//contrib/qodana:qodana-core-tests",
+    "//contrib/qodana:qodana-core-tests_test_lib",
+  ]
+)
+### auto-generated section `build intellij.qodana.jvm.groovy` end
+
+### auto-generated section `iml intellij.qodana.jvm.groovy` start
+exports_files([
+  "intellij.qodana.jvm.groovy.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.jvm.groovy` end
+
+### auto-generated section `build intellij.qodana.jvm.groovy.tests` start
+jvm_library(
+  name = "qodana-jvm-groovy-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "qodana-jvm-groovy-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  associates = [":groovy"],
+  associates = [
+    "//contrib/qodana/jvm/groovy",
+    "//contrib/qodana/jvm/groovy:groovy_test_lib",
+  ],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/core-api:core",
@@ -53,21 +94,22 @@ jvm_library(
     "@community//platform/testFramework/extensions:testExtensions_test_lib",
     "//contrib/qodana:qodana-core-tests",
     "//contrib/qodana:qodana-core-tests_test_lib",
-  ]
+  ],
+  runtime_deps = [":qodana-jvm-groovy-tests"]
 )
-### auto-generated section `build intellij.qodana.jvm.groovy` end
+### auto-generated section `build intellij.qodana.jvm.groovy.tests` end
 
-### auto-generated section `iml intellij.qodana.jvm.groovy` start
+### auto-generated section `iml intellij.qodana.jvm.groovy.tests` start
 exports_files([
-  "intellij.qodana.jvm.groovy.iml",
+  "intellij.qodana.jvm.groovy.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.qodana.jvm.groovy` end
+### auto-generated section `iml intellij.qodana.jvm.groovy.tests` end
 
-### auto-generated section `test intellij.qodana.jvm.groovy` start
+### auto-generated section `test intellij.qodana.jvm.groovy.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "groovy_test",
-  runtime_deps = [":groovy_test_lib"]
+  name = "qodana-jvm-groovy-tests_test",
+  runtime_deps = [":qodana-jvm-groovy-tests_test_lib"]
 )
-### auto-generated section `test intellij.qodana.jvm.groovy` end
+### auto-generated section `test intellij.qodana.jvm.groovy.tests` end

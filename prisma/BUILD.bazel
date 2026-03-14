@@ -26,12 +26,6 @@ resourcegroup(
   strip_prefix = "gen-resources"
 )
 
-resourcegroup(
-  name = "prisma_test_resources",
-  srcs = glob(["testData/**/*"]),
-  strip_prefix = "testData"
-)
-
 jvm_library(
   name = "prisma",
   module_name = "intellij.prisma",
@@ -79,11 +73,100 @@ jvm_library(
 
 jvm_library(
   name = "prisma_test_lib",
+  module_name = "intellij.prisma",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  kotlinc_opts = ":custom_prisma",
+  runtime_deps = [
+    ":prisma",
+    "@community//libraries/kotlinx/serialization/core:core_test_lib",
+    "@community//libraries/kotlinx/serialization/json:json_test_lib",
+    "@community//libraries/markdown:markdown_test_lib",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/code-style-api:codeStyle_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/refactoring:refactoring_test_lib",
+    "@community//platform/usageView:usageView_test_lib",
+    "@community//libraries/gson:gson_test_lib",
+    "@community//platform/platform-api:ide_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//xml/xml-parser:parser_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/analysis-impl:analysis-impl_test_lib",
+    "@community//platform/markdown-utils:markdown-utils_test_lib",
+    "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+    "@community//xml/impl:impl_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-plugin_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-backend_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
+    "//platform/lsp:lsp_test_lib",
+    "@community//platform/execution:execution_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-testFramework",
+    "//plugins/JavaScriptLanguage:javascript-testFramework_test_lib",
+    "//platform/lsp/testFramework",
+    "//platform/lsp/testFramework:testFramework_test_lib",
+    "//ultimate/ultimate-resources:idea-ultimate-customization",
+    "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
+    "@community//platform/polySymbols",
+    "@community//platform/polySymbols:polySymbols_test_lib",
+    "@community//platform/polySymbols:polySymbols-testFramework",
+    "@community//platform/polySymbols:polySymbols-testFramework_test_lib",
+  ]
+)
+### auto-generated section `build intellij.prisma` end
+
+### auto-generated section `iml intellij.prisma` start
+exports_files([
+  "intellij.prisma.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.prisma` end
+
+### auto-generated section `build intellij.prisma.tests` start
+create_kotlinc_options(
+  name = "custom_prisma-tests",
+  opt_in = [
+    "kotlin.uuid.ExperimentalUuidApi",
+    "com.intellij.openapi.util.IntellijInternalApi",
+    "org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction",
+    "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+    "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+  ],
+  x_context_parameters = True
+)
+
+resourcegroup(
+  name = "prisma-tests_test_resources",
+  srcs = glob(["testData/**/*"]),
+  strip_prefix = "testData"
+)
+
+jvm_library(
+  name = "prisma-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "prisma-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  resources = [":prisma_test_resources"],
-  kotlinc_opts = ":custom_prisma",
-  associates = [":prisma"],
+  resources = [":prisma-tests_test_resources"],
+  kotlinc_opts = ":custom_prisma-tests",
+  associates = [
+    "//contrib/prisma",
+    "//contrib/prisma:prisma_test_lib",
+  ],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//libraries/kotlinx/serialization/core",
@@ -159,23 +242,24 @@ jvm_library(
     "@community//platform/polySymbols:polySymbols-testFramework_test_lib",
   ],
   runtime_deps = [
+    ":prisma-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
   ]
 )
-### auto-generated section `build intellij.prisma` end
+### auto-generated section `build intellij.prisma.tests` end
 
-### auto-generated section `iml intellij.prisma` start
+### auto-generated section `iml intellij.prisma.tests` start
 exports_files([
-  "intellij.prisma.iml",
+  "intellij.prisma.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.prisma` end
+### auto-generated section `iml intellij.prisma.tests` end
 
-### auto-generated section `test intellij.prisma` start
+### auto-generated section `test intellij.prisma.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "prisma_test",
-  runtime_deps = [":prisma_test_lib"]
+  name = "prisma-tests_test",
+  runtime_deps = [":prisma-tests_test_lib"]
 )
-### auto-generated section `test intellij.prisma` end
+### auto-generated section `test intellij.prisma.tests` end

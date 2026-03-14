@@ -43,9 +43,74 @@ jvm_library(
 
 jvm_library(
   name = "mdx_test_lib",
+  module_name = "intellij.mdx",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":mdx",
+    "@community//libraries/kotlinx/coroutines/core:core_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+    "@community//libraries/markdown:markdown_test_lib",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/code-style-api:codeStyle_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/editor-ui-ex:editor-ex_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/markdown-utils:markdown-utils_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//xml/xml-parser:parser_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-backend_test_lib",
+    "@community//libraries/gson:gson_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//plugins/markdown/core:markdown_test_lib",
+    "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+    "@community//xml/xml-psi-api:psi_test_lib",
+    "@community//xml/impl:impl_test_lib",
+    "@community//xml/xml-analysis-api:analysis",
+    "@community//xml/xml-analysis-api:analysis_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-codeinsight",
+    "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-plugin",
+    "//plugins/JavaScriptLanguage:javascript-plugin_test_lib",
+    "//plugins/js/react/core:ultimate",
+    "//plugins/js/react/core:ultimate_test_lib",
+    "//plugins/js/react/free",
+    "//plugins/js/react/free:free_test_lib",
+    "//plugins/js/react/plugin",
+    "//plugins/js/react/plugin:plugin_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+  ]
+)
+### auto-generated section `build intellij.mdx` end
+
+### auto-generated section `iml intellij.mdx` start
+exports_files([
+  "intellij.mdx.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.mdx` end
+
+### auto-generated section `build intellij.mdx.tests` start
+jvm_library(
+  name = "mdx-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "mdx-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java", "src/test/kotlin/**/*.form"], allow_empty = True),
-  associates = [":mdx"],
+  associates = [
+    "//contrib/mdx",
+    "//contrib/mdx:mdx_test_lib",
+  ],
   deps = [
     "@community//libraries/kotlinx/coroutines/core",
     "@community//libraries/kotlinx/coroutines/core:core_test_lib",
@@ -109,23 +174,24 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   runtime_deps = [
+    ":mdx-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
   ]
 )
-### auto-generated section `build intellij.mdx` end
+### auto-generated section `build intellij.mdx.tests` end
 
-### auto-generated section `iml intellij.mdx` start
+### auto-generated section `iml intellij.mdx.tests` start
 exports_files([
-  "intellij.mdx.iml",
+  "intellij.mdx.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.mdx` end
+### auto-generated section `iml intellij.mdx.tests` end
 
-### auto-generated section `test intellij.mdx` start
+### auto-generated section `test intellij.mdx.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "mdx_test",
-  runtime_deps = [":mdx_test_lib"]
+  name = "mdx-tests_test",
+  runtime_deps = [":mdx-tests_test_lib"]
 )
-### auto-generated section `test intellij.mdx` end
+### auto-generated section `test intellij.mdx.tests` end

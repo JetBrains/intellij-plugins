@@ -13,12 +13,6 @@ resourcegroup(
   strip_prefix = "resources"
 )
 
-resourcegroup(
-  name = "jade_test_resources",
-  srcs = glob(["testResources/**/*"]),
-  strip_prefix = "testResources"
-)
-
 jvm_library(
   name = "jade",
   module_name = "intellij.jade",
@@ -68,10 +62,95 @@ jvm_library(
 
 jvm_library(
   name = "jade_test_lib",
+  module_name = "intellij.jade",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":jade",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/code-style-api:codeStyle_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/platform-api:ide_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "//plugins/css/common:common_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/editor-ui-ex:editor-ex_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/indexing-impl:indexing-impl_test_lib",
+    "@community//platform/macro:macro_test_lib",
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//RegExpSupport:regexp_test_lib",
+    "@community//xml/xml-parser:parser_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+    "//plugins/css/psi:psi_test_lib",
+    "@community//platform/execution-impl:execution-impl_test_lib",
+    "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+    "@community//xml/impl:impl_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "//plugins/css/plugin:plugin_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-backend_test_lib",
+    "//ultimate/ultimate-resources:idea-ultimate-customization",
+    "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+    "//plugins/fileWatcher:fileWatcher_test_lib",
+    "@community//spellchecker:spellchecker_test_lib",
+    "@community//plugins/grazie/src:core",
+    "@community//plugins/grazie/src:core_test_lib",
+    "@community//xml/xml-psi-api:psi_test_lib",
+    "@community//xml/tests",
+    "@community//xml/tests:tests_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-testFramework",
+    "//plugins/JavaScriptLanguage:javascript-testFramework_test_lib",
+    "//plugins/coffeescript/coffeescript-core:coffeescript",
+    "//plugins/coffeescript/coffeescript-core:coffeescript_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
+    "@community//xml/testFramework",
+    "@community//xml/testFramework:testFramework_test_lib",
+    "//plugins/css/common/psi:psi_test_lib",
+    "//plugins/css/backend:backend_test_lib",
+    "//plugins/css/codeinsight/analysis",
+    "//plugins/css/codeinsight/analysis:analysis_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "@community//jps/model-api:model_test_lib",
+  ]
+)
+### auto-generated section `build intellij.jade` end
+
+### auto-generated section `iml intellij.jade` start
+exports_files([
+  "intellij.jade.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.jade` end
+
+### auto-generated section `build intellij.jade.tests` start
+resourcegroup(
+  name = "jade-tests_test_resources",
+  srcs = glob(["testResources/**/*"]),
+  strip_prefix = "testResources"
+)
+
+jvm_library(
+  name = "jade-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "jade-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  resources = [":jade_test_resources"],
-  associates = [":jade"],
+  resources = [":jade-tests_test_resources"],
+  associates = [
+    "//contrib/jade",
+    "//contrib/jade:jade_test_lib",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-api:analysis_test_lib",
@@ -157,25 +236,28 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     "@community//jps/model-api:model",
     "@community//jps/model-api:model_test_lib",
+    "//plugins/fileWatcher:fileWatcher-tests",
+    "//plugins/fileWatcher:fileWatcher-tests_test_lib",
   ],
   runtime_deps = [
+    ":jade-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
   ]
 )
-### auto-generated section `build intellij.jade` end
+### auto-generated section `build intellij.jade.tests` end
 
-### auto-generated section `iml intellij.jade` start
+### auto-generated section `iml intellij.jade.tests` start
 exports_files([
-  "intellij.jade.iml",
+  "intellij.jade.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.jade` end
+### auto-generated section `iml intellij.jade.tests` end
 
-### auto-generated section `test intellij.jade` start
+### auto-generated section `test intellij.jade.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "jade_test",
-  runtime_deps = [":jade_test_lib"]
+  name = "jade-tests_test",
+  runtime_deps = [":jade-tests_test_lib"]
 )
-### auto-generated section `test intellij.jade` end
+### auto-generated section `test intellij.jade.tests` end

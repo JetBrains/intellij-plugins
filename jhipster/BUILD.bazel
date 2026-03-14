@@ -36,9 +36,55 @@ jvm_library(
 
 jvm_library(
   name = "jhipster_test_lib",
+  module_name = "intellij.jhipster",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":jhipster",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/refactoring:refactoring_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/code-style-api:codeStyle_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//libraries/fastutil:fastutil_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/analysis-impl:analysis-impl_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "//contrib/jhipster/plugin:plugin_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/structure-view-impl:structureView-impl_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+  ]
+)
+### auto-generated section `build intellij.jhipster` end
+
+### auto-generated section `iml intellij.jhipster` start
+exports_files([
+  "intellij.jhipster.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.jhipster` end
+
+### auto-generated section `build intellij.jhipster.tests` start
+jvm_library(
+  name = "jhipster-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "jhipster-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  associates = [":jhipster"],
+  associates = [
+    "//contrib/jhipster",
+    "//contrib/jhipster:jhipster_test_lib",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-api:analysis_test_lib",
@@ -76,23 +122,24 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   runtime_deps = [
+    ":jhipster-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
   ]
 )
-### auto-generated section `build intellij.jhipster` end
+### auto-generated section `build intellij.jhipster.tests` end
 
-### auto-generated section `iml intellij.jhipster` start
+### auto-generated section `iml intellij.jhipster.tests` start
 exports_files([
-  "intellij.jhipster.iml",
+  "intellij.jhipster.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.jhipster` end
+### auto-generated section `iml intellij.jhipster.tests` end
 
-### auto-generated section `test intellij.jhipster` start
+### auto-generated section `test intellij.jhipster.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "jhipster_test",
-  runtime_deps = [":jhipster_test_lib"]
+  name = "jhipster-tests_test",
+  runtime_deps = [":jhipster-tests_test_lib"]
 )
-### auto-generated section `test intellij.jhipster` end
+### auto-generated section `test intellij.jhipster.tests` end

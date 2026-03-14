@@ -60,9 +60,77 @@ jvm_library(
 
 jvm_library(
   name = "gauge_test_lib",
+  module_name = "intellij.gauge",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":gauge",
+    "@community//java/java-indexing-api:indexing_test_lib",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/util/concurrency:concurrency_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//java/java-psi-impl:psi-impl_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/execution-impl:execution-impl_test_lib",
+    "@community//platform/external-system-impl:externalSystem-impl_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//jps/model-api:model_test_lib",
+    "@community//jps/model-serialization:model-serialization_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//java/java-impl:impl_test_lib",
+    "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+    "@community//json/backend:backend_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/lang-core:lang-core_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/refactoring:refactoring_test_lib",
+    "@community//plugins/properties/properties-psi-impl:backend-psi_test_lib",
+    "@community//platform/xdebugger-api:debugger_test_lib",
+    "@community//java/debugger/impl:impl_test_lib",
+    "@community//java/execution/impl:impl_test_lib",
+    "@community//platform/smRunner:smRunner_test_lib",
+    "@community//java/openapi:java_test_lib",
+    "@community//java/compiler/openapi:java-compiler_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//plugins/gradle:gradle-common_test_lib",
+    "@community//plugins/maven:maven_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//libraries/gson:gson_test_lib",
+    "@community//libraries/protobuf:protobuf_test_lib",
+    "@community//libraries/commons/io:io_test_lib",
+    "@community//platform/util/jdom:jdom_test_lib",
+    "@community//libraries/grpc:grpc_test_lib",
+    "@community//libraries/grpc-netty-shaded:grpc-netty-shaded_test_lib",
+    "@community//platform/execution:execution_test_lib",
+    "@community//platform/forms_rt:java-guiForms-rt_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+  ]
+)
+### auto-generated section `build intellij.gauge` end
+
+### auto-generated section `iml intellij.gauge` start
+exports_files([
+  "intellij.gauge.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.gauge` end
+
+### auto-generated section `build intellij.gauge.tests` start
+jvm_library(
+  name = "gauge-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "gauge-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  associates = [":gauge"],
+  associates = [
+    "//contrib/gauge",
+    "//contrib/gauge:gauge_test_lib",
+  ],
   deps = [
     "@community//java/java-indexing-api:indexing",
     "@community//java/java-indexing-api:indexing_test_lib",
@@ -102,7 +170,7 @@ jvm_library(
     "@community//platform/refactoring:refactoring_test_lib",
     "@community//plugins/properties/properties-psi-impl:backend-psi",
     "@community//plugins/properties/properties-psi-impl:backend-psi_test_lib",
-    "@ultimate_lib//:gauge-com-thoughtworks-gauge-gauge-java",
+    "@ultimate_lib//:gauge-tests-com-thoughtworks-gauge-gauge-java",
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/xdebugger-api:debugger_test_lib",
     "@community//java/debugger/impl",
@@ -145,24 +213,25 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   runtime_deps = [
+    ":gauge-tests",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
   ]
 )
-### auto-generated section `build intellij.gauge` end
+### auto-generated section `build intellij.gauge.tests` end
 
-### auto-generated section `iml intellij.gauge` start
+### auto-generated section `iml intellij.gauge.tests` start
 exports_files([
-  "intellij.gauge.iml",
+  "intellij.gauge.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.gauge` end
+### auto-generated section `iml intellij.gauge.tests` end
 
-### auto-generated section `test intellij.gauge` start
+### auto-generated section `test intellij.gauge.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "gauge_test",
-  runtime_deps = [":gauge_test_lib"]
+  name = "gauge-tests_test",
+  runtime_deps = [":gauge-tests_test_lib"]
 )
-### auto-generated section `test intellij.gauge` end
+### auto-generated section `test intellij.gauge.tests` end

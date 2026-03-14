@@ -48,9 +48,58 @@ jvm_library(
 
 jvm_library(
   name = "phoneGap_test_lib",
+  module_name = "intellij.phoneGap",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":phoneGap",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//jps/model-api:model_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/lang-core:lang-core_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/execution-impl:execution-impl_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-backend_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//RegExpSupport:regexp_test_lib",
+    "@community//xml/xml-psi-api:psi_test_lib",
+    "@community//libraries/gson:gson_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/util/jdom:jdom_test_lib",
+    "@community//platform/execution:execution_test_lib",
+  ]
+)
+### auto-generated section `build intellij.phoneGap` end
+
+### auto-generated section `iml intellij.phoneGap` start
+exports_files([
+  "intellij.phoneGap.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.phoneGap` end
+
+### auto-generated section `build intellij.phoneGap.tests` start
+jvm_library(
+  name = "phoneGap-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "phoneGap-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  associates = [":phoneGap"],
+  associates = [
+    "//contrib/phoneGap",
+    "//contrib/phoneGap:phoneGap_test_lib",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-api:analysis_test_lib",
@@ -94,23 +143,24 @@ jvm_library(
     "@community//platform/execution:execution_test_lib",
   ],
   runtime_deps = [
+    ":phoneGap-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
   ]
 )
-### auto-generated section `build intellij.phoneGap` end
+### auto-generated section `build intellij.phoneGap.tests` end
 
-### auto-generated section `iml intellij.phoneGap` start
+### auto-generated section `iml intellij.phoneGap.tests` start
 exports_files([
-  "intellij.phoneGap.iml",
+  "intellij.phoneGap.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.phoneGap` end
+### auto-generated section `iml intellij.phoneGap.tests` end
 
-### auto-generated section `test intellij.phoneGap` start
+### auto-generated section `test intellij.phoneGap.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "phoneGap_test",
-  runtime_deps = [":phoneGap_test_lib"]
+  name = "phoneGap-tests_test",
+  runtime_deps = [":phoneGap-tests_test_lib"]
 )
-### auto-generated section `test intellij.phoneGap` end
+### auto-generated section `test intellij.phoneGap.tests` end

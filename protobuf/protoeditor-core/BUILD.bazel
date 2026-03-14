@@ -49,9 +49,71 @@ jvm_library(
 
 jvm_library(
   name = "protoeditor-core_test_lib",
+  module_name = "intellij.protoeditor.core",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":protoeditor-core",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/code-style-api:codeStyle_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//jps/model-api:model_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/lang-core",
+    "@community//platform/lang-core:lang-core_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//libraries/guava:guava_test_lib",
+    "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/structure-view-impl:structureView-impl_test_lib",
+    "@community//platform/usageView-impl:usageView-impl_test_lib",
+    "@community//spellchecker:spellchecker_test_lib",
+    "@community//plugins/grazie/src:core",
+    "@community//plugins/grazie/src:core_test_lib",
+    "@community//platform/indexing-impl:indexing-impl_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@lib//:truth",
+    "@community//platform/usageView:usageView_test_lib",
+    "@community//platform/util/jdom:jdom_test_lib",
+    "@community//xml/dom-impl:dom-impl_test_lib",
+    "@community//platform/projectModel-impl:projectModel-impl_test_lib",
+    "@community//platform/workspace/jps:jps_test_lib",
+    "@community//platform/backend/workspace:workspace_test_lib",
+    "@community//libraries/protobuf:protobuf_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "@community//platform/util/concurrency:concurrency_test_lib",
+  ]
+)
+### auto-generated section `build intellij.protoeditor.core` end
+
+### auto-generated section `iml intellij.protoeditor.core` start
+exports_files([
+  "intellij.protoeditor.core.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.protoeditor.core` end
+
+### auto-generated section `build intellij.protoeditor.core.tests` start
+jvm_library(
+  name = "protoeditor-core-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "protoeditor-core-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  associates = [":protoeditor-core"],
+  associates = [
+    "//contrib/protobuf/protoeditor-core",
+    "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
+  ],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-api:analysis",
@@ -118,23 +180,24 @@ jvm_library(
     "@community//platform/util/concurrency:concurrency_test_lib",
   ],
   runtime_deps = [
+    ":protoeditor-core-tests",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
     "@community//platform/platform-impl:ide-impl_test_lib",
   ]
 )
-### auto-generated section `build intellij.protoeditor.core` end
+### auto-generated section `build intellij.protoeditor.core.tests` end
 
-### auto-generated section `iml intellij.protoeditor.core` start
+### auto-generated section `iml intellij.protoeditor.core.tests` start
 exports_files([
-  "intellij.protoeditor.core.iml",
+  "intellij.protoeditor.core.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.protoeditor.core` end
+### auto-generated section `iml intellij.protoeditor.core.tests` end
 
-### auto-generated section `test intellij.protoeditor.core` start
+### auto-generated section `test intellij.protoeditor.core.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "protoeditor-core_test",
-  runtime_deps = [":protoeditor-core_test_lib"]
+  name = "protoeditor-core-tests_test",
+  runtime_deps = [":protoeditor-core-tests_test_lib"]
 )
-### auto-generated section `test intellij.protoeditor.core` end
+### auto-generated section `test intellij.protoeditor.core.tests` end

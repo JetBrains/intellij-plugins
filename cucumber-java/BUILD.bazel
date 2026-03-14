@@ -55,9 +55,109 @@ jvm_library(
 
 jvm_library(
   name = "cucumber-java_test_lib",
+  module_name = "intellij.cucumber.java",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":cucumber-java",
+    "@community//libraries/guava:guava_test_lib",
+    "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter_test_lib",
+    "//contrib/cucumber:gherkin_test_lib",
+    "@community//java/openapi:java_test_lib",
+    "@community//java/execution/openapi:java-execution_test_lib",
+    "@community//java/execution/impl:impl_test_lib",
+    "@community//java/java-impl:impl_test_lib",
+    "@community//java/java-indexing-api:indexing_test_lib",
+    "@community//java/java-psi-api:psi_test_lib",
+    "@community//java/java-psi-impl:psi-impl_test_lib",
+    "@community//plugins/junit:junit_test_lib",
+    "@community//plugins/junit_rt:junit-rt_test_lib",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/execution-impl:execution-impl_test_lib",
+    "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//jps/model-api:model_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/lang-core:lang-core_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/smRunner:smRunner_test_lib",
+    "@community//platform/usageView:usageView_test_lib",
+    "@community//platform/util/jdom:jdom_test_lib",
+    "@lib//:objenesis",
+    "@lib//:cucumber-core-2",
+    "@lib//:easymock",
+    "@community//plugins/gradle:gradle-common",
+    "@community//plugins/gradle:gradle-common_test_lib",
+    "@community//plugins/gradle/plugin",
+    "@community//plugins/gradle/plugin:plugin_test_lib",
+    "@community//plugins/gradle/java:java-tests",
+    "@community//plugins/gradle/java:java-tests_test_lib",
+    "@community//plugins/gradle:gradle-tests",
+    "@community//plugins/gradle:gradle-tests_test_lib",
+    "@community//java/testFramework",
+    "@community//java/testFramework:testFramework_test_lib",
+    "@community//plugins/maven",
+    "@community//plugins/maven:maven_test_lib",
+    "@community//plugins/maven/testFramework",
+    "@community//plugins/maven/testFramework:testFramework_test_lib",
+    "@community//platform/refactoring",
+    "@community//platform/refactoring:refactoring_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/testFramework/junit5",
+    "@community//platform/testFramework/junit5:junit5_test_lib",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
+    "@ultimate_lib//:cucumber-java-cucumber-core-3",
+    "@ultimate_lib//:cucumber-java-cucumber-core-4-5",
+    "@ultimate_lib//:cucumber-java-cucumber-java-4-5",
+    "@ultimate_lib//:cucumber-java-cucumber-java-5",
+    "@ultimate_lib//:cucumber-java-cucumber-java8-3",
+    "@ultimate_lib//:cucumber-java-cucumber-java8-5",
+    "@ultimate_lib//:cucumber-java-cucumber-core-5",
+    "@ultimate_lib//:cucumber-java-cucumber-core-5-5",
+    "@ultimate_lib//:cucumber-java-cucumber-core-7",
+    "@ultimate_lib//:cucumber-java-cucumber-java-7",
+    "@ultimate_lib//:cucumber-java-cucumber-java8-7",
+    "@ultimate_lib//:cucumber-java-cucumber-java-5-5",
+    "@ultimate_lib//:cucumber-java-cucumber-java8-5-5",
+    "@community//platform/testFramework/junit5/codeInsight",
+    "@community//platform/testFramework/junit5/codeInsight:codeInsight_test_lib",
+    "@community//platform/execution:execution_test_lib",
+    "@community//platform/forms_rt:java-guiForms-rt_test_lib",
+    "@community//libraries/fastutil:fastutil_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "@community//platform/util/concurrency:concurrency_test_lib",
+  ]
+)
+### auto-generated section `build intellij.cucumber.java` end
+
+### auto-generated section `iml intellij.cucumber.java` start
+exports_files([
+  "intellij.cucumber.java.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.cucumber.java` end
+
+### auto-generated section `build intellij.cucumber.java.tests` start
+jvm_library(
+  name = "cucumber-java-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "cucumber-java-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  associates = [":cucumber-java"],
+  associates = [
+    "//contrib/cucumber-java",
+    "//contrib/cucumber-java:cucumber-java_test_lib",
+  ],
   deps = [
     "@community//libraries/guava",
     "@community//libraries/guava:guava_test_lib",
@@ -138,21 +238,21 @@ jvm_library(
     "@community//platform/testFramework/junit5:junit5_test_lib",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
-    "@ultimate_lib//:cucumber-java-cucumber-expressions",
-    "@ultimate_lib//:cucumber-java-cucumber-java",
-    "@ultimate_lib//:cucumber-java-cucumber-core-3",
-    "@ultimate_lib//:cucumber-java-cucumber-core-4-5",
-    "@ultimate_lib//:cucumber-java-cucumber-java-4-5",
-    "@ultimate_lib//:cucumber-java-cucumber-java-5",
-    "@ultimate_lib//:cucumber-java-cucumber-java8-3",
-    "@ultimate_lib//:cucumber-java-cucumber-java8-5",
-    "@ultimate_lib//:cucumber-java-cucumber-core-5",
-    "@ultimate_lib//:cucumber-java-cucumber-core-5-5",
-    "@ultimate_lib//:cucumber-java-cucumber-core-7",
-    "@ultimate_lib//:cucumber-java-cucumber-java-7",
-    "@ultimate_lib//:cucumber-java-cucumber-java8-7",
-    "@ultimate_lib//:cucumber-java-cucumber-java-5-5",
-    "@ultimate_lib//:cucumber-java-cucumber-java8-5-5",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-expressions",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-java",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-core-3",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-core-4-5",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-java-4-5",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-java-5",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-java8-3",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-java8-5",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-core-5",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-core-5-5",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-core-7",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-java-7",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-java8-7",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-java-5-5",
+    "@ultimate_lib//:cucumber-java-tests-cucumber-java8-5-5",
     "@community//platform/testFramework/junit5/codeInsight",
     "@community//platform/testFramework/junit5/codeInsight:codeInsight_test_lib",
     "@community//platform/execution",
@@ -165,26 +265,31 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     "@community//platform/util/concurrency",
     "@community//platform/util/concurrency:concurrency_test_lib",
+    "//contrib/cucumber:gherkin-tests",
+    "//contrib/cucumber:gherkin-tests_test_lib",
+    "@community//platform/smRunner:smRunner-tests",
+    "@community//platform/smRunner:smRunner-tests_test_lib",
   ],
   runtime_deps = [
+    ":cucumber-java-tests",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
   ]
 )
-### auto-generated section `build intellij.cucumber.java` end
+### auto-generated section `build intellij.cucumber.java.tests` end
 
-### auto-generated section `iml intellij.cucumber.java` start
+### auto-generated section `iml intellij.cucumber.java.tests` start
 exports_files([
-  "intellij.cucumber.java.iml",
+  "intellij.cucumber.java.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.cucumber.java` end
+### auto-generated section `iml intellij.cucumber.java.tests` end
 
-### auto-generated section `test intellij.cucumber.java` start
+### auto-generated section `test intellij.cucumber.java.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "cucumber-java_test",
-  runtime_deps = [":cucumber-java_test_lib"]
+  name = "cucumber-java-tests_test",
+  runtime_deps = [":cucumber-java-tests_test_lib"]
 )
-### auto-generated section `test intellij.cucumber.java` end
+### auto-generated section `test intellij.cucumber.java.tests` end

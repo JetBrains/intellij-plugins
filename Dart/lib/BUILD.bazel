@@ -8,6 +8,18 @@ java_import(
 )
 
 java_import(
+  name = "dart-tests-json",
+  jars = ["json.jar"],
+  visibility = ["//visibility:public"]
+)
+
+java_import(
+  name = "dart-tests-weberknecht-0-1-5",
+  jars = ["weberknecht-0.1.5.jar"],
+  visibility = ["//visibility:public"]
+)
+
+java_import(
   name = "dart-weberknecht-0-1-5",
   jars = ["weberknecht-0.1.5.jar"],
   visibility = ["//visibility:public"]

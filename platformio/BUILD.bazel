@@ -7,12 +7,6 @@ resourcegroup(
   strip_prefix = "resources"
 )
 
-resourcegroup(
-  name = "platformio_test_resources",
-  srcs = glob(["test-resources/**/*"]),
-  strip_prefix = "test-resources"
-)
-
 jvm_library(
   name = "platformio",
   module_name = "intellij.clion.embedded.platformio",
@@ -75,10 +69,108 @@ jvm_library(
 
 jvm_library(
   name = "platformio_test_lib",
+  module_name = "intellij.clion.embedded.platformio",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":platformio",
+    "//CIDR/cidr-common-testFramework/core",
+    "//CIDR/cidr-common-testFramework/core:core_test_lib",
+    "//CIDR/cidr-common-testFramework/nolang",
+    "//CIDR/cidr-common-testFramework/nolang:nolang_test_lib",
+    "//CIDR/cidr-core:cidr-core_test_lib",
+    "//CIDR/cidr-debugger/backend-api:cidr-debugger-backend_test_lib",
+    "//CIDR/cidr-debugger/core:core_test_lib",
+    "//CIDR/cidr-execution:cidr-execution_test_lib",
+    "//CIDR/cidr-external-system:cidr-externalSystem_test_lib",
+    "//CIDR/cidr-lang-base:cidr-lang-base_test_lib",
+    "//CIDR/cidr-profiling:cidr-profiling_test_lib",
+    "//CIDR/cidr-projectModel:cidr-projectModel_test_lib",
+    "//CIDR/cidr-psi-base:cidr-psi-base_test_lib",
+    "//CIDR/cidr-runner:cidr-runner_test_lib",
+    "//CIDR/cidr-util:cidr-util_test_lib",
+    "//CIDR/cidr-util/execution:execution_test_lib",
+    "//CIDR/cidr-workspaceModel:cidr-workspaceModel_test_lib",
+    "//CIDR/clion-embedded/core:core_test_lib",
+    "//CIDR/clion-execution:clion-execution_test_lib",
+    "//CIDR/clion-external-system:clion-externalSystem_test_lib",
+    "//CIDR/clion-projectStatus:clion-projectStatus_test_lib",
+    "//CIDR/clion-testFramework",
+    "//CIDR/clion-testFramework:clion-testFramework_test_lib",
+    "//CIDR/clion-testFramework-nolang",
+    "//CIDR/clion-testFramework-nolang:clion-testFramework-nolang_test_lib",
+    "//CIDR/clion-testFramework-nolang/junit5/core",
+    "//CIDR/clion-testFramework-nolang/junit5/core:core_test_lib",
+    "//CIDR/clion-toolchains:clion-toolchains_test_lib",
+    "@community//libraries/assertj-core",
+    "@community//libraries/assertj-core:assertj-core_test_lib",
+    "@community//libraries/gson:gson_test_lib",
+    "@community//libraries/jediterm-core:jediterm-core_test_lib",
+    "@community//libraries/jediterm-ui:jediterm-ui_test_lib",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/util/concurrency:concurrency_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/xdebugger-api:debugger_test_lib",
+    "@community//platform/xdebugger-impl:debugger-impl_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/execution:execution_test_lib",
+    "@community//platform/execution-impl:execution-impl_test_lib",
+    "@community//platform/external-system-api:externalSystem_test_lib",
+    "@community//platform/external-system-impl:externalSystem-impl_test_lib",
+    "@community//platform/platform-api:ide_test_lib",
+    "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/observable:observable_test_lib",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/lang-core:lang-core_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/statistics:statistics_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/testFramework/junit5",
+    "@community//platform/testFramework/junit5:junit5_test_lib",
+    "@community//platform/ui.jcef:ui.jcef_test_lib",
+    "@community//platform/util/coroutines:coroutines_test_lib",
+    "@community//platform/util/jdom:jdom_test_lib",
+    "@community//platform/welcome-screen-impl:welcomeScreen-impl_test_lib",
+    "//plugins/profiler/clion:clion_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+  ]
+)
+### auto-generated section `build intellij.clion.embedded.platformio` end
+
+### auto-generated section `iml intellij.clion.embedded.platformio` start
+exports_files([
+  "intellij.clion.embedded.platformio.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.clion.embedded.platformio` end
+
+### auto-generated section `build intellij.clion.embedded.platformio.tests` start
+resourcegroup(
+  name = "clion-embedded-platformio-tests_test_resources",
+  srcs = glob(["test-resources/**/*"]),
+  strip_prefix = "test-resources"
+)
+
+jvm_library(
+  name = "clion-embedded-platformio-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "clion-embedded-platformio-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  resources = [":platformio_test_resources"],
-  associates = [":platformio"],
+  resources = [":clion-embedded-platformio-tests_test_resources"],
+  associates = [
+    "//contrib/platformio",
+    "//contrib/platformio:platformio_test_lib",
+  ],
   deps = [
     "@ultimate_lib//:eclipse-lsp4j-jsonrpc",
     "//CIDR/cidr-common-testFramework/core",
@@ -193,25 +285,26 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   runtime_deps = [
+    ":clion-embedded-platformio-tests",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/observable:observable_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
   ]
 )
-### auto-generated section `build intellij.clion.embedded.platformio` end
+### auto-generated section `build intellij.clion.embedded.platformio.tests` end
 
-### auto-generated section `iml intellij.clion.embedded.platformio` start
+### auto-generated section `iml intellij.clion.embedded.platformio.tests` start
 exports_files([
-  "intellij.clion.embedded.platformio.iml",
+  "intellij.clion.embedded.platformio.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.clion.embedded.platformio` end
+### auto-generated section `iml intellij.clion.embedded.platformio.tests` end
 
-### auto-generated section `test intellij.clion.embedded.platformio` start
+### auto-generated section `test intellij.clion.embedded.platformio.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "platformio_test",
-  runtime_deps = [":platformio_test_lib"]
+  name = "clion-embedded-platformio-tests_test",
+  runtime_deps = [":clion-embedded-platformio-tests_test_lib"]
 )
-### auto-generated section `test intellij.clion.embedded.platformio` end
+### auto-generated section `test intellij.clion.embedded.platformio.tests` end

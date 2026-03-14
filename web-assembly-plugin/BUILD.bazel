@@ -7,12 +7,6 @@ resourcegroup(
   strip_prefix = "src/main/resources"
 )
 
-resourcegroup(
-  name = "webassembly_test_resources",
-  srcs = glob(["src/test/resources/**/*"]),
-  strip_prefix = "src/test/resources"
-)
-
 jvm_library(
   name = "webassembly",
   module_name = "intellij.webassembly",
@@ -37,10 +31,57 @@ jvm_library(
 
 jvm_library(
   name = "webassembly_test_lib",
+  module_name = "intellij.webassembly",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":webassembly",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/execution-impl:execution-impl_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//libraries/gson:gson_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/util/jdom:jdom_test_lib",
+  ]
+)
+### auto-generated section `build intellij.webassembly` end
+
+### auto-generated section `iml intellij.webassembly` start
+exports_files([
+  "intellij.webassembly.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.webassembly` end
+
+### auto-generated section `build intellij.webassembly.tests` start
+resourcegroup(
+  name = "webassembly-tests_test_resources",
+  srcs = glob(["src/test/resources/**/*"]),
+  strip_prefix = "src/test/resources"
+)
+
+jvm_library(
+  name = "webassembly-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "webassembly-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java", "src/test/kotlin/**/*.form"], allow_empty = True),
-  resources = [":webassembly_test_resources"],
-  associates = [":webassembly"],
+  resources = [":webassembly-tests_test_resources"],
+  associates = [
+    "//contrib/web-assembly-plugin:webassembly",
+    "//contrib/web-assembly-plugin:webassembly_test_lib",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-api:analysis_test_lib",
@@ -68,21 +109,24 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//platform/util/jdom:jdom_test_lib",
   ],
-  runtime_deps = ["@community//platform/platform-util-io:ide-util-io_test_lib"]
+  runtime_deps = [
+    ":webassembly-tests",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+  ]
 )
-### auto-generated section `build intellij.webassembly` end
+### auto-generated section `build intellij.webassembly.tests` end
 
-### auto-generated section `iml intellij.webassembly` start
+### auto-generated section `iml intellij.webassembly.tests` start
 exports_files([
-  "intellij.webassembly.iml",
+  "intellij.webassembly.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.webassembly` end
+### auto-generated section `iml intellij.webassembly.tests` end
 
-### auto-generated section `test intellij.webassembly` start
+### auto-generated section `test intellij.webassembly.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "webassembly_test",
-  runtime_deps = [":webassembly_test_lib"]
+  name = "webassembly-tests_test",
+  runtime_deps = [":webassembly-tests_test_lib"]
 )
-### auto-generated section `test intellij.webassembly` end
+### auto-generated section `test intellij.webassembly.tests` end

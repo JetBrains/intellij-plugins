@@ -35,9 +35,58 @@ jvm_library(
 
 jvm_library(
   name = "cloudFormation_test_lib",
+  module_name = "intellij.cloudFormation",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":cloudFormation",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//platform/refactoring",
+    "@community//platform/refactoring:refactoring_test_lib",
+    "@community//plugins/yaml/backend:backend_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//plugins/yaml:yaml_test_lib",
+    "@community//json/backend:backend_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//libraries/guava:guava_test_lib",
+    "@community//libraries/xstream:xstream_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//libraries/commons/lang3",
+    "@community//libraries/commons/lang3:lang3_test_lib",
+    "@community//java/java-runtime:rt",
+    "@community//java/java-runtime:rt_test_lib",
+  ]
+)
+### auto-generated section `build intellij.cloudFormation` end
+
+### auto-generated section `iml intellij.cloudFormation` start
+exports_files([
+  "intellij.cloudFormation.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.cloudFormation` end
+
+### auto-generated section `build intellij.cloudFormation.tests` start
+jvm_library(
+  name = "cloudFormation-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "cloudFormation-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java", "src/test/kotlin/**/*.form"], allow_empty = True),
-  associates = [":cloudFormation"],
+  associates = [
+    "//contrib/CloudFormation:cloudFormation",
+    "//contrib/CloudFormation:cloudFormation_test_lib",
+  ],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-api:analysis",
@@ -75,23 +124,26 @@ jvm_library(
     "@community//libraries/commons/lang3:lang3_test_lib",
     "@community//java/java-runtime:rt",
     "@community//java/java-runtime:rt_test_lib",
-    "@ultimate_lib//:cloud_formation-intellij-aws-cloudformation-meta",
+    "@ultimate_lib//:cloud_formation-tests-intellij-aws-cloudformation-meta",
   ],
-  runtime_deps = ["@community//platform/platform-impl:ide-impl_test_lib"]
+  runtime_deps = [
+    ":cloudFormation-tests",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+  ]
 )
-### auto-generated section `build intellij.cloudFormation` end
+### auto-generated section `build intellij.cloudFormation.tests` end
 
-### auto-generated section `iml intellij.cloudFormation` start
+### auto-generated section `iml intellij.cloudFormation.tests` start
 exports_files([
-  "intellij.cloudFormation.iml",
+  "intellij.cloudFormation.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.cloudFormation` end
+### auto-generated section `iml intellij.cloudFormation.tests` end
 
-### auto-generated section `test intellij.cloudFormation` start
+### auto-generated section `test intellij.cloudFormation.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "cloudFormation_test",
-  runtime_deps = [":cloudFormation_test_lib"]
+  name = "cloudFormation-tests_test",
+  runtime_deps = [":cloudFormation-tests_test_lib"]
 )
-### auto-generated section `test intellij.cloudFormation` end
+### auto-generated section `test intellij.cloudFormation.tests` end

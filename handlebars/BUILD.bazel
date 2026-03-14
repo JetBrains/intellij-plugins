@@ -49,9 +49,77 @@ jvm_library(
 
 jvm_library(
   name = "handlebars_test_lib",
+  module_name = "intellij.handlebars",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":handlebars",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/code-style-api:codeStyle_test_lib",
+    "@community//platform/util/concurrency",
+    "@community//platform/util/concurrency:concurrency_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/indexing-api:indexing",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/editor-ui-ex:editor-ex_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/structure-view-impl:structureView-impl_test_lib",
+    "@community//xml/impl:impl_test_lib",
+    "@community//xml/xml-analysis-api:analysis",
+    "@community//xml/xml-analysis-api:analysis_test_lib",
+    "@community//xml/xml-parser:parser_test_lib",
+    "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+    "@community//xml/xml-psi-api:psi_test_lib",
+    "@community//xml/tests",
+    "@community//xml/tests:tests_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-testFramework",
+    "//plugins/JavaScriptLanguage:javascript-testFramework_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/testFramework/junit5",
+    "@community//platform/testFramework/junit5:junit5_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+    "@community//xml/relaxng",
+    "@community//xml/relaxng:relaxng_test_lib",
+    "@community//xml/testFramework",
+    "@community//xml/testFramework:testFramework_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/forms_rt:java-guiForms-rt_test_lib",
+    "@community//xml/emmet:emmet_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+  ]
+)
+### auto-generated section `build intellij.handlebars` end
+
+### auto-generated section `iml intellij.handlebars` start
+exports_files([
+  "intellij.handlebars.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.handlebars` end
+
+### auto-generated section `build intellij.handlebars.tests` start
+jvm_library(
+  name = "handlebars-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "handlebars-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/src/**/*.kt", "test/src/**/*.java", "test/src/**/*.form"], allow_empty = True),
-  associates = [":handlebars"],
+  associates = [
+    "//contrib/handlebars",
+    "//contrib/handlebars:handlebars_test_lib",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-api:analysis_test_lib",
@@ -115,23 +183,24 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ],
   runtime_deps = [
+    ":handlebars-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
   ]
 )
-### auto-generated section `build intellij.handlebars` end
+### auto-generated section `build intellij.handlebars.tests` end
 
-### auto-generated section `iml intellij.handlebars` start
+### auto-generated section `iml intellij.handlebars.tests` start
 exports_files([
-  "intellij.handlebars.iml",
+  "intellij.handlebars.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.handlebars` end
+### auto-generated section `iml intellij.handlebars.tests` end
 
-### auto-generated section `test intellij.handlebars` start
+### auto-generated section `test intellij.handlebars.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "handlebars_test",
-  runtime_deps = [":handlebars_test_lib"]
+  name = "handlebars-tests_test",
+  runtime_deps = [":handlebars-tests_test_lib"]
 )
-### auto-generated section `test intellij.handlebars` end
+### auto-generated section `test intellij.handlebars.tests` end

@@ -30,9 +30,63 @@ jvm_library(
 
 jvm_library(
   name = "kotlin_test_lib",
+  module_name = "intellij.qodana.jvm.kotlin",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":kotlin",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/core-ui",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/platform-api:ide_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//java/compiler/openapi:java-compiler_test_lib",
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "//contrib/qodana/jvm/coverage",
+    "//contrib/qodana/jvm/coverage:coverage_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//java/testFramework",
+    "@community//java/testFramework:testFramework_test_lib",
+    "//contrib/qodana-test-framework:qodana-testFramework",
+    "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "//contrib/qodana:qodana_test_lib",
+    "@lib//:kotlinc-kotlin-compiler-common-provided",
+    "@community//platform/util-class-loader:util-classLoader_test_lib",
+    "@community//plugins/kotlin:kotlin-plugin-community-main_test_lib",
+    "//contrib/qodana:qodana-core-tests",
+    "//contrib/qodana:qodana-core-tests_test_lib",
+  ]
+)
+### auto-generated section `build intellij.qodana.jvm.kotlin` end
+
+### auto-generated section `iml intellij.qodana.jvm.kotlin` start
+exports_files([
+  "intellij.qodana.jvm.kotlin.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.jvm.kotlin` end
+
+### auto-generated section `build intellij.qodana.jvm.kotlin.tests` start
+jvm_library(
+  name = "qodana-jvm-kotlin-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"]
+)
+
+jvm_library(
+  name = "qodana-jvm-kotlin-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  associates = [":kotlin"],
+  associates = [
+    "//contrib/qodana/jvm/kotlin",
+    "//contrib/qodana/jvm/kotlin:kotlin_test_lib",
+  ],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/core-api:core",
@@ -69,23 +123,24 @@ jvm_library(
     "//contrib/qodana:qodana-core-tests_test_lib",
   ],
   runtime_deps = [
+    ":qodana-jvm-kotlin-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//plugins/kotlin:kotlin-plugin-community-main_test_lib",
   ]
 )
-### auto-generated section `build intellij.qodana.jvm.kotlin` end
+### auto-generated section `build intellij.qodana.jvm.kotlin.tests` end
 
-### auto-generated section `iml intellij.qodana.jvm.kotlin` start
+### auto-generated section `iml intellij.qodana.jvm.kotlin.tests` start
 exports_files([
-  "intellij.qodana.jvm.kotlin.iml",
+  "intellij.qodana.jvm.kotlin.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.qodana.jvm.kotlin` end
+### auto-generated section `iml intellij.qodana.jvm.kotlin.tests` end
 
-### auto-generated section `test intellij.qodana.jvm.kotlin` start
+### auto-generated section `test intellij.qodana.jvm.kotlin.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "kotlin_test",
-  runtime_deps = [":kotlin_test_lib"]
+  name = "qodana-jvm-kotlin-tests_test",
+  runtime_deps = [":qodana-jvm-kotlin-tests_test_lib"]
 )
-### auto-generated section `test intellij.qodana.jvm.kotlin` end
+### auto-generated section `test intellij.qodana.jvm.kotlin.tests` end

@@ -42,9 +42,56 @@ jvm_library(
 
 jvm_library(
   name = "javascript-featuresTrainer_test_lib",
+  module_name = "intellij.javascript.featuresTrainer",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":javascript-featuresTrainer",
+    "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/code-style-api:codeStyle_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/testRunner:testRunner_test_lib",
+    "@community//platform/smRunner:smRunner_test_lib",
+    "@community//plugins/ide-features-trainer:featuresTrainer_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/analysis-impl:analysis-impl_test_lib",
+    "@community//platform/refactoring:refactoring_test_lib",
+    "@community//platform/xdebugger-api:debugger_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-backend",
+    "//plugins/JavaScriptLanguage:javascript-backend_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/execution:execution_test_lib",
+  ]
+)
+### auto-generated section `build intellij.javascript.featuresTrainer` end
+
+### auto-generated section `iml intellij.javascript.featuresTrainer` start
+exports_files([
+  "intellij.javascript.featuresTrainer.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.javascript.featuresTrainer` end
+
+### auto-generated section `build intellij.javascript.featuresTrainer.tests` start
+jvm_library(
+  name = "javascript-featuresTrainer-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "javascript-featuresTrainer-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java", "testSrc/**/*.form"], allow_empty = True),
-  associates = [":javascript-featuresTrainer"],
+  associates = [
+    "//contrib/ide-features-trainer/js-features-trainer:javascript-featuresTrainer",
+    "//contrib/ide-features-trainer/js-features-trainer:javascript-featuresTrainer_test_lib",
+  ],
   deps = [
     "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
@@ -82,22 +129,27 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/execution",
     "@community//platform/execution:execution_test_lib",
+    "@community//plugins/ide-features-trainer:featuresTrainer-tests",
+    "@community//plugins/ide-features-trainer:featuresTrainer-tests_test_lib",
   ],
-  runtime_deps = ["@community//platform/platform-impl:ide-impl_test_lib"]
+  runtime_deps = [
+    ":javascript-featuresTrainer-tests",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+  ]
 )
-### auto-generated section `build intellij.javascript.featuresTrainer` end
+### auto-generated section `build intellij.javascript.featuresTrainer.tests` end
 
-### auto-generated section `iml intellij.javascript.featuresTrainer` start
+### auto-generated section `iml intellij.javascript.featuresTrainer.tests` start
 exports_files([
-  "intellij.javascript.featuresTrainer.iml",
+  "intellij.javascript.featuresTrainer.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.javascript.featuresTrainer` end
+### auto-generated section `iml intellij.javascript.featuresTrainer.tests` end
 
-### auto-generated section `test intellij.javascript.featuresTrainer` start
+### auto-generated section `test intellij.javascript.featuresTrainer.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "javascript-featuresTrainer_test",
-  runtime_deps = [":javascript-featuresTrainer_test_lib"]
+  name = "javascript-featuresTrainer-tests_test",
+  runtime_deps = [":javascript-featuresTrainer-tests_test_lib"]
 )
-### auto-generated section `test intellij.javascript.featuresTrainer` end
+### auto-generated section `test intellij.javascript.featuresTrainer.tests` end

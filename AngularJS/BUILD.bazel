@@ -7,12 +7,6 @@ resourcegroup(
   strip_prefix = "resources"
 )
 
-resourcegroup(
-  name = "angularJS_test_resources",
-  srcs = glob(["testResources/**/*"]),
-  strip_prefix = "testResources"
-)
-
 jvm_library(
   name = "angularJS",
   module_name = "intellij.angularJS",
@@ -71,10 +65,121 @@ jvm_library(
 
 jvm_library(
   name = "angularJS_test_lib",
+  module_name = "intellij.angularJS",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":angularJS",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/code-style-api:codeStyle_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//jps/model-api:model",
+    "@community//jps/model-api:model_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/refactoring:refactoring_test_lib",
+    "@community//xml/xml-psi-api:psi_test_lib",
+    "@community//xml/xml-psi-impl:psi-impl_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/execution-impl:execution-impl_test_lib",
+    "@community//RegExpSupport:regexp_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+    "@community//xml/xml-parser:parser_test_lib",
+    "//plugins/css/psi:psi_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-backend_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
+    "@community//xml/impl:impl_test_lib",
+    "//plugins/css/plugin:plugin_test_lib",
+    "@community//platform/polySymbols:polySymbols-testFramework",
+    "@community//platform/polySymbols:polySymbols-testFramework_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-testFramework",
+    "//plugins/JavaScriptLanguage:javascript-testFramework_test_lib",
+    "//plugins/webpack:webpack_test_lib",
+    "@community//libraries/gson:gson_test_lib",
+    "//plugins/JSIntentionPowerPack:javascript-intentions",
+    "//plugins/JSIntentionPowerPack:javascript-intentions_test_lib",
+    "@community//xml/xml-analysis-api:analysis",
+    "@community//xml/xml-analysis-api:analysis_test_lib",
+    "@ultimate_lib//:angular_j_s-oleaster-matcher",
+    "@ultimate_lib//:angular_j_s-oleaster-runner",
+    "//plugins/IntelliLang-js:javascript-langInjection",
+    "//plugins/IntelliLang-js:javascript-langInjection_test_lib",
+    "@community//xml/langInjection",
+    "@community//xml/langInjection:langInjection_test_lib",
+    "//plugins/sass/plugin",
+    "//plugins/sass/plugin:plugin_test_lib",
+    "//plugins/less",
+    "//plugins/less:less_test_lib",
+    "//contrib/postcss",
+    "//contrib/postcss:postcss_test_lib",
+    "@community//xml/tests",
+    "@community//xml/tests:tests_test_lib",
+    "//tests/resharper:resharper-testFramework",
+    "//tests/resharper:resharper-testFramework_test_lib",
+    "@community//plugins/htmltools:html-tools_test_lib",
+    "@community//libraries/jackson/jackson:jackson_test_lib",
+    "@community//libraries/jackson/databind:databind_test_lib",
+    "@community//libraries/stream:stream_test_lib",
+    "//plugins/graph:graph-impl_test_lib",
+    "//plugins/uml/impl:impl_test_lib",
+    "//plugins/graph:graph_test_lib",
+    "//plugins/uml:diagram_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//libraries/icu4j:icu4j_test_lib",
+    "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/util/jdom:jdom_test_lib",
+    "@community//libraries/fastutil:fastutil_test_lib",
+    "@community//images:images_test_lib",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
+    "//webcore/impl:impl_test_lib",
+    "//plugins/css/common/psi:psi_test_lib",
+    "//plugins/css/common:common_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-common",
+    "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
+    "//plugins/JavaScriptLanguage/diagrams:diagrams_test_lib",
+    "@community//libraries/guava:guava_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "@community//platform/util/concurrency:concurrency_test_lib",
+  ]
+)
+### auto-generated section `build intellij.angularJS` end
+
+### auto-generated section `iml intellij.angularJS` start
+exports_files([
+  "intellij.angularJS.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.angularJS` end
+
+### auto-generated section `build intellij.angularJS.tests` start
+resourcegroup(
+  name = "angularJS-tests_test_resources",
+  srcs = glob(["testResources/**/*"]),
+  strip_prefix = "testResources"
+)
+
+jvm_library(
+  name = "angularJS-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "angularJS-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  resources = [":angularJS_test_resources"],
-  associates = [":angularJS"],
+  resources = [":angularJS-tests_test_resources"],
+  associates = [
+    "//contrib/AngularJS:angularJS",
+    "//contrib/AngularJS:angularJS_test_lib",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-api:analysis_test_lib",
@@ -133,8 +238,8 @@ jvm_library(
     "//plugins/JSIntentionPowerPack:javascript-intentions_test_lib",
     "@community//xml/xml-analysis-api:analysis",
     "@community//xml/xml-analysis-api:analysis_test_lib",
-    "@ultimate_lib//:angular_j_s-oleaster-matcher",
-    "@ultimate_lib//:angular_j_s-oleaster-runner",
+    "@ultimate_lib//:angular_j_s-tests-oleaster-matcher",
+    "@ultimate_lib//:angular_j_s-tests-oleaster-runner",
     "//plugins/IntelliLang-js:javascript-langInjection",
     "//plugins/IntelliLang-js:javascript-langInjection_test_lib",
     "@community//xml/langInjection",
@@ -200,23 +305,24 @@ jvm_library(
     "@community//platform/util/concurrency:concurrency_test_lib",
   ],
   runtime_deps = [
+    ":angularJS-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
   ]
 )
-### auto-generated section `build intellij.angularJS` end
+### auto-generated section `build intellij.angularJS.tests` end
 
-### auto-generated section `iml intellij.angularJS` start
+### auto-generated section `iml intellij.angularJS.tests` start
 exports_files([
-  "intellij.angularJS.iml",
+  "intellij.angularJS.tests.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.angularJS` end
+### auto-generated section `iml intellij.angularJS.tests` end
 
-### auto-generated section `test intellij.angularJS` start
+### auto-generated section `test intellij.angularJS.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "angularJS_test",
-  runtime_deps = [":angularJS_test_lib"]
+  name = "angularJS-tests_test",
+  runtime_deps = [":angularJS-tests_test_lib"]
 )
-### auto-generated section `test intellij.angularJS` end
+### auto-generated section `test intellij.angularJS.tests` end
