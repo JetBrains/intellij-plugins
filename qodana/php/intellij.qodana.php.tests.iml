@@ -36,6 +36,7 @@
     <orderEntry type="module" module-name="intellij.qodana.util" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.core.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.php" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.coverage.tests" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana.php" />
 </module>

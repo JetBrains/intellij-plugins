@@ -26,6 +26,7 @@
     <orderEntry type="library" scope="TEST" name="truth" level="project" />
     <orderEntry type="module" module-name="intellij.java.indexing" scope="TEST" />
     <orderEntry type="module" module-name="intellij.protoeditor.jvm" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.protoeditor.core.tests" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.protoeditor.jvm" />
 </module>

@@ -45,6 +45,7 @@
     <orderEntry type="module" module-name="intellij.cucumber.java" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cucumber.groovy" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.groovy.tests" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.cucumber.groovy" />
 </module>

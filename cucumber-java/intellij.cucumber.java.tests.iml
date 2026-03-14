@@ -327,6 +327,8 @@
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.collections.immutable" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.concurrency" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cucumber.java" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.gherkin.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner.tests" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.cucumber.java" />
 </module>

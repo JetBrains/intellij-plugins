@@ -27,6 +27,7 @@
     <orderEntry type="module" module-name="intellij.qodana.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.go" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.coverage.tests" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana.go" />
 </module>

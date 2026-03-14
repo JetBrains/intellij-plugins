@@ -34,6 +34,7 @@
     <orderEntry type="module" module-name="intellij.javascript.codeinsight" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.coverage" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.js" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.coverage.tests" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana.js" />
 </module>

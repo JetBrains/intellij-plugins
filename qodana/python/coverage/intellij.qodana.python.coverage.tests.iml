@@ -23,6 +23,7 @@
     <orderEntry type="module" module-name="intellij.idea.ultimate.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.python.plugin" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.python.coverage" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.coverage.tests" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana.python.coverage" />
 </module>

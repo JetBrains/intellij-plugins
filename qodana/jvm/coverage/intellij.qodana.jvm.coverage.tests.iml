@@ -33,6 +33,7 @@
     <orderEntry type="module" module-name="intellij.kotlin.plugin.community.main" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.qodana.core.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.jvm.coverage" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.coverage.tests" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana.jvm.coverage" />
 </module>

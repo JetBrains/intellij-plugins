@@ -19,6 +19,7 @@
     <orderEntry type="module" module-name="intellij.platform.core.ui" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.ruby.featuresTrainer" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.featuresTrainer.tests" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.ruby.featuresTrainer" />
 </module>
