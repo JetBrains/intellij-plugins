@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/test">
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+    </content>
+    <content url="file://$MODULE_DIR$/testResources">
+      <sourceFolder url="file://$MODULE_DIR$/testResources" type="java-test-resource" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="intellij.platform.analysis" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.codeStyle" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.editor.ui" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.indexing" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.refactoring" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.psi" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.psi.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lang" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.regexp" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.parser" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.parser" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.css.psi" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.backend" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.codeinsight" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.css.plugin" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.webpack" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.gson" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.intentions" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.analysis" scope="TEST" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="oleaster-matcher" type="repository">
+        <properties include-transitive-deps="false" maven-id="com.mscharhag.oleaster:oleaster-matcher:0.2.0">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0.jar">
+              <sha256sum>cd48639040cf962886a0ed84849be7ce9071b16dacb1d20c3f4ff03c3999f8ed</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="oleaster-runner" type="repository">
+        <properties include-transitive-deps="false" maven-id="com.mscharhag.oleaster:oleaster-runner:0.2.0">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0.jar">
+              <sha256sum>039a992d5b3e336a1003f3a7b4ce75c2791f6d211a3202e3b296375a10c368f1</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.javascript.langInjection" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.langInjection" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.sass.plugin" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.less" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.postcss" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.resharper.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.html.tools" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.jackson" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.jackson.databind" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.stream" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.graph.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.diagram.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.graph" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.diagram" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core.ui" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.icu4j" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.web" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.ide.util.io" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.fastutil" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.images" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.tools.ide.metrics.benchmark" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.webide.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.css.common.psi" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.css.common" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.common" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.backend.diagrams" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.guava" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.kotlinx.collections.immutable" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.concurrency" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.angularJS" scope="TEST" />
+  </component>
+  <component name="TestModuleProperties" production-module="intellij.angularJS" />
+</module>

@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/test">
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="intellij.libraries.guava" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="cucumber-core-1" level="project" />
+    <orderEntry type="module" module-name="intellij.cucumber.jvmFormatter" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.gherkin" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.execution" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.execution.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.indexing" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.psi" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.psi.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.junit" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.junit.rt" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.analysis" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core.ui" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.editor.ui" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.ide.core.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.ide.util.io" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.indexing" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lang" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lang.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.usageView" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Objenesis" level="project" />
+    <orderEntry type="library" scope="TEST" name="cucumber-core-2" level="project" />
+    <orderEntry type="library" scope="TEST" name="easymock" level="project" />
+    <orderEntry type="module" module-name="intellij.gradle.common" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.gradle.plugin" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.gradle.java.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.gradle.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.maven" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.maven.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.refactoring" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.tools.ide.metrics.benchmark" scope="TEST" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-expressions" type="repository">
+        <properties maven-id="io.cucumber:cucumber-expressions:6.1.2">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-expressions/6.1.2/cucumber-expressions-6.1.2.jar">
+              <sha256sum>1907742356e7c8554acd29903da2fc096ffe6ec170907f76ef4190e44b076135</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-expressions/6.1.2/cucumber-expressions-6.1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-expressions/6.1.2/cucumber-expressions-6.1.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java" type="repository">
+        <properties include-transitive-deps="false" maven-id="info.cukes:cucumber-java:1.2.4">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/info/cukes/cucumber-java/1.2.4/cucumber-java-1.2.4.jar">
+              <sha256sum>3133b140f91f9b61e8e28cd40779e2404a352a8d8a117978c3e15ba176d61f7f</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-java/1.2.4/cucumber-java-1.2.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-java/1.2.4/cucumber-java-1.2.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-core-3" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-core:3.0.2">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/3.0.2/cucumber-core-3.0.2.jar">
+              <sha256sum>d3fc5dce5cd26a8a71a94b932395b9588c1c6abbd40c49c2281da74e5e48f6a4</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/3.0.2/cucumber-core-3.0.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/3.0.2/cucumber-core-3.0.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-core-4.5" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-core:4.5.2">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/4.5.2/cucumber-core-4.5.2.jar">
+              <sha256sum>3ffdc4a530698b10e4b76beaaca66ec2cd157311889f57ba91196881420947ed</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/4.5.2/cucumber-core-4.5.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/4.5.2/cucumber-core-4.5.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java-4.5" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java:4.5.2">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/4.5.2/cucumber-java-4.5.2.jar">
+              <sha256sum>978804fa30b42a5e601a360bd438ccf8bd157406cebbb26fa87588a7b4dfb35b</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/4.5.2/cucumber-java-4.5.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/4.5.2/cucumber-java-4.5.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java-5" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java:5.0.0-RC1">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/5.0.0-RC1/cucumber-java-5.0.0-RC1.jar">
+              <sha256sum>789e598804155bcca83a01071382af90d0e9e1f6c686c881800b07fc0c1ea3c4</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/5.0.0-RC1/cucumber-java-5.0.0-RC1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/5.0.0-RC1/cucumber-java-5.0.0-RC1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java8-3" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java8:3.0.0">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/3.0.0/cucumber-java8-3.0.0.jar">
+              <sha256sum>5e2c4890995554bc78381631e1bb9f8aa954940ca7e8427280665501b5f8e1d2</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/3.0.0/cucumber-java8-3.0.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/3.0.0/cucumber-java8-3.0.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java8-5" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java8:5.0.0-RC1">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/5.0.0-RC1/cucumber-java8-5.0.0-RC1.jar">
+              <sha256sum>797be11e6725a66b849e324c8225d9f8a8950c2c74f6820283faea10437b9032</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/5.0.0-RC1/cucumber-java8-5.0.0-RC1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/5.0.0-RC1/cucumber-java8-5.0.0-RC1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-core-5" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-core:5.0.0-RC1">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/5.0.0-RC1/cucumber-core-5.0.0-RC1.jar">
+              <sha256sum>ada4315573c505d9dbb03cb0624f4a4e9fe9af92f4d278c4d7eb0422cdf299ff</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/5.0.0-RC1/cucumber-core-5.0.0-RC1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/5.0.0-RC1/cucumber-core-5.0.0-RC1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-core-5.5" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-core:5.5.0">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/5.5.0/cucumber-core-5.5.0.jar">
+              <sha256sum>b8a792f0919d20cd87f691a2462a744e1a23c2f70af52a5d9f236bcd6ac5acb2</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/5.5.0/cucumber-core-5.5.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/5.5.0/cucumber-core-5.5.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-core-7" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-core:7.22.1">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/7.22.1/cucumber-core-7.22.1.jar">
+              <sha256sum>b3a32e1f8022364e38c3b37fcb2b55fda8620176cc0862f747083222b222b09f</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/7.22.1/cucumber-core-7.22.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/7.22.1/cucumber-core-7.22.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java-7" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java:7.22.1">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/7.22.1/cucumber-java-7.22.1.jar">
+              <sha256sum>e9a74b62eac3e77e96ed8db6bd777d6d9f0b2e3a7ee472ba0ffaf5991d1b0ead</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/7.22.1/cucumber-java-7.22.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/7.22.1/cucumber-java-7.22.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java8-7" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java8:7.22.1">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/7.22.1/cucumber-java8-7.22.1.jar">
+              <sha256sum>b46aca9b1f1c2927db29550ef50718063d257fa75d7f588284a6fe74972b678c</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/7.22.1/cucumber-java8-7.22.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/7.22.1/cucumber-java8-7.22.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java-5.5" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java:5.5.0">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/5.5.0/cucumber-java-5.5.0.jar">
+              <sha256sum>4ba000bd2c5b56b33c4c5b733e1dc54150be03c4bd4277198cf18128d1940830</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/5.5.0/cucumber-java-5.5.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/5.5.0/cucumber-java-5.5.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java8-5.5" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java8:5.5.0">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/5.5.0/cucumber-java8-5.5.0.jar">
+              <sha256sum>7870854e65c2b65d8dad7590e2059ae8ec2cf34dc74364b69679af418d797393</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/5.5.0/cucumber-java8-5.5.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/5.5.0/cucumber-java8-5.5.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.testFramework.junit5.codeInsight" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.execution" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.rt" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.fastutil" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.kotlinx.collections.immutable" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.concurrency" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.cucumber.java" scope="TEST" />
+  </component>
+  <component name="TestModuleProperties" production-module="intellij.cucumber.java" />
+</module>

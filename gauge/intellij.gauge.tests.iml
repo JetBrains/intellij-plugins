@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/test">
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="intellij.java.indexing" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.analysis" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.concurrency" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.psi.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.editor.ui" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.indexing" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lang" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.ide.core.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.json.backend" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lang.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.refactoring" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.properties.backend.psi" scope="TEST" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="com.thoughtworks.gauge:gauge-java" type="repository">
+        <properties maven-id="com.thoughtworks.gauge:gauge-java:0.7.3">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/com/thoughtworks/gauge/gauge-java/0.7.3/gauge-java-0.7.3.jar">
+              <sha256sum>76a0ca92276fcbcd544c5fed80758bddf81f53d196e13be22b8b4cd330727a80</sha256sum>
+            </artifact>
+            <artifact url="file://$MAVEN_REPOSITORY$/org/reflections/reflections/0.9.11/reflections-0.9.11.jar">
+              <sha256sum>cca88428f8a8919df885105833d45ff07bd26f985f96ee55690551216b58b4a1</sha256sum>
+            </artifact>
+            <artifact url="file://$MAVEN_REPOSITORY$/org/javassist/javassist/3.21.0-GA/javassist-3.21.0-GA.jar">
+              <sha256sum>7aa59e031f941984af07dacc6ca85e6dc9bd3a485e9aa2494cbc034efa1225d0</sha256sum>
+            </artifact>
+            <artifact url="file://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-core/2.5.1/javaparser-core-2.5.1.jar">
+              <sha256sum>76d7072067534bea86b60e9c9735bbd01d0d25c7b8ac4139ddd3d63af43bd971</sha256sum>
+            </artifact>
+            <artifact url="file://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6.jar">
+              <sha256sum>50f11b09f877c294d56f24463f47d28f929cf5044f648661c0f0cfbae9a2f49c</sha256sum>
+            </artifact>
+            <artifact url="file://$MAVEN_REPOSITORY$/org/json/json/20190722/json-20190722.jar">
+              <sha256sum>e35b3830de02a8992ca8beb6936f52ee80e509753d64469c8f0dde93e17a880b</sha256sum>
+            </artifact>
+          </verification>
+          <exclude>
+            <dependency maven-id="org.assertj:assertj-core" />
+            <dependency maven-id="com.google.guava:guava" />
+            <dependency maven-id="commons-io:commons-io" />
+            <dependency maven-id="com.google.protobuf:protobuf-java" />
+            <dependency maven-id="io.grpc:grpc-netty-shaded" />
+            <dependency maven-id="io.grpc:grpc-protobuf" />
+            <dependency maven-id="io.grpc:grpc-stub" />
+            <dependency maven-id="javax.annotation:javax.annotation-api" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/gauge/gauge-java/0.7.3/gauge-java-0.7.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/reflections/reflections/0.9.11/reflections-0.9.11.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/javassist/javassist/3.21.0-GA/javassist-3.21.0-GA.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-core/2.5.1/javaparser-core-2.5.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/json/json/20190722/json-20190722.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/gauge/gauge-java/0.7.3/gauge-java-0.7.3-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/reflections/reflections/0.9.11/reflections-0.9.11-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/javassist/javassist/3.21.0-GA/javassist-3.21.0-GA-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-core/2.5.1/javaparser-core-2.5.1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/json/json/20190722/json-20190722-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.debugger" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.debugger.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.execution.impl" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="kotlin-stdlib" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.compiler" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.gradle.common" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.maven" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core.ui" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.ide.util.io" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.gson" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.protobuf" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.commons.io" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.grpc" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.grpc.netty.shaded" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.execution" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.rt" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.kotlinx.collections.immutable" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.gauge" scope="TEST" />
+  </component>
+  <component name="TestModuleProperties" production-module="intellij.gauge" />
+</module>
