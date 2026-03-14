@@ -1,4 +1,3 @@
-STATE_SOURCE (typeText='{books: {(): Book[]} & {SIGNAL: unknown}, filter: {(): {order: "asc" | "desc", query: string}} & {SIGNAL: unknown}, isLoading: {(): boolean} & {SIGNAL: unknown}}'; priority=101.0; bold)
-books (typeText='{(): Book[]} & {SIGNAL: unknown}'; priority=101.0; bold)
-filter (typeText='{(): {order: "asc" | "desc", query: string}} & {SIGNAL: unknown} & Readonly<{order: {(): ("asc" | "desc")} & {SIGNAL: unknown}, query: {(): string} & {SIGNAL: unknown}}>'; priority=101.0; bold)
-isLoading (typeText='{(): boolean} & {SIGNAL: unknown}'; priority=101.0; bold)
+books (typeText='Signal<Book[]>'; priority=101.0; bold)
+filter (typeText='DeepSignal<{ query: string; order: "asc" | "desc"; }>'; priority=101.0; bold)
+isLoading (typeText='Signal<boolean>'; priority=101.0; bold)
