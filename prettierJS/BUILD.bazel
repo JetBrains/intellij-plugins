@@ -146,6 +146,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.prettierJS` end
 
+### auto-generated section `iml intellij.prettierJS` start
+exports_files([
+  "intellij.prettierJS.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.prettierJS` end
+
 ### auto-generated section `test intellij.prettierJS` start
 load("@community//build:tests-options.bzl", "jps_test")
 

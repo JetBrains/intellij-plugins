@@ -32,3 +32,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.protoeditor` end
+
+### auto-generated section `iml intellij.protoeditor` start
+exports_files([
+  "intellij.protoeditor.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.protoeditor` end

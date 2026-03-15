@@ -66,3 +66,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.angular.free` end
+
+### auto-generated section `iml intellij.angular.free` start
+exports_files([
+  "intellij.angular.free.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.angular.free` end

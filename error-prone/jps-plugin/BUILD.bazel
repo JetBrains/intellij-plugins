@@ -48,6 +48,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.errorProne.jps` end
 
+### auto-generated section `iml intellij.errorProne.jps` start
+exports_files([
+  "intellij.errorProne.jps.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.errorProne.jps` end
+
 ### auto-generated section `test intellij.errorProne.jps` start
 load("@community//build:tests-options.bzl", "jps_test")
 

@@ -115,6 +115,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.mdx` end
 
+### auto-generated section `iml intellij.mdx` start
+exports_files([
+  "intellij.mdx.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.mdx` end
+
 ### auto-generated section `test intellij.mdx` start
 load("@community//build:tests-options.bzl", "jps_test")
 

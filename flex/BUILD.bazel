@@ -173,3 +173,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.flex` end
+
+### auto-generated section `iml intellij.flex` start
+exports_files([
+  "intellij.flex.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.flex` end

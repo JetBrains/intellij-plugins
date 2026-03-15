@@ -22,3 +22,9 @@ jvm_library(
   runtime_deps = [":plugin"]
 )
 ### auto-generated section `build intellij.jhipster.plugin` end
+
+### auto-generated section `iml intellij.jhipster.plugin` start
+exports_files([
+  "intellij.jhipster.plugin.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.jhipster.plugin` end

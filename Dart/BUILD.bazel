@@ -217,6 +217,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.dart` end
 
+### auto-generated section `iml intellij.dart` start
+exports_files([
+  "intellij.dart.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.dart` end
+
 ### auto-generated section `test intellij.dart` start
 load("@community//build:tests-options.bzl", "jps_test")
 

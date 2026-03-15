@@ -152,6 +152,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.gauge` end
 
+### auto-generated section `iml intellij.gauge` start
+exports_files([
+  "intellij.gauge.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.gauge` end
+
 ### auto-generated section `test intellij.gauge` start
 load("@community//build:tests-options.bzl", "jps_test")
 

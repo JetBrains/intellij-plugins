@@ -42,3 +42,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.clion.diagnostics.docker` end
+
+### auto-generated section `iml intellij.clion.diagnostics.docker` start
+exports_files([
+  "intellij.clion.diagnostics.docker.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.clion.diagnostics.docker` end

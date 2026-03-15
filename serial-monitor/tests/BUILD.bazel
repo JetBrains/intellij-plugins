@@ -35,6 +35,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.serial.monitor.tests` end
 
+### auto-generated section `iml intellij.serial.monitor.tests` start
+exports_files([
+  "intellij.serial.monitor.tests.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.serial.monitor.tests` end
+
 ### auto-generated section `test intellij.serial.monitor.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 

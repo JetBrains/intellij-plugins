@@ -42,3 +42,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.qodana.python.community` end
+
+### auto-generated section `iml intellij.qodana.python.community` start
+exports_files([
+  "intellij.qodana.python.community.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.python.community` end

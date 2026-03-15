@@ -38,6 +38,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.clion.diagnostics.tests` end
 
+### auto-generated section `iml intellij.clion.diagnostics.tests` start
+exports_files([
+  "intellij.clion.diagnostics.tests.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.clion.diagnostics.tests` end
+
 ### auto-generated section `test intellij.clion.diagnostics.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 

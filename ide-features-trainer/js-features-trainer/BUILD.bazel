@@ -87,6 +87,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.javascript.featuresTrainer` end
 
+### auto-generated section `iml intellij.javascript.featuresTrainer` start
+exports_files([
+  "intellij.javascript.featuresTrainer.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.javascript.featuresTrainer` end
+
 ### auto-generated section `test intellij.javascript.featuresTrainer` start
 load("@community//build:tests-options.bzl", "jps_test")
 

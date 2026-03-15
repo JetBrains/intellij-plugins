@@ -22,3 +22,9 @@ jvm_library(
   runtime_deps = [":angular"]
 )
 ### auto-generated section `build intellij.angular` end
+
+### auto-generated section `iml intellij.angular` start
+exports_files([
+  "intellij.angular.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.angular` end

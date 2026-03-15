@@ -82,6 +82,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.jhipster` end
 
+### auto-generated section `iml intellij.jhipster` start
+exports_files([
+  "intellij.jhipster.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.jhipster` end
+
 ### auto-generated section `test intellij.jhipster` start
 load("@community//build:tests-options.bzl", "jps_test")
 

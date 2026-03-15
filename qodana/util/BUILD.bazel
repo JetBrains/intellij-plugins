@@ -38,3 +38,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.qodana.util` end
+
+### auto-generated section `iml intellij.qodana.util` start
+exports_files([
+  "intellij.qodana.util.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.util` end

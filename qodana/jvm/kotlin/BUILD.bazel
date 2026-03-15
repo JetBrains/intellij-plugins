@@ -75,6 +75,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.qodana.jvm.kotlin` end
 
+### auto-generated section `iml intellij.qodana.jvm.kotlin` start
+exports_files([
+  "intellij.qodana.jvm.kotlin.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.jvm.kotlin` end
+
 ### auto-generated section `test intellij.qodana.jvm.kotlin` start
 load("@community//build:tests-options.bzl", "jps_test")
 

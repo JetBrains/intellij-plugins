@@ -22,3 +22,9 @@ jvm_library(
   runtime_deps = [":plugin"]
 )
 ### auto-generated section `build intellij.appcode.reveal.plugin` end
+
+### auto-generated section `iml intellij.appcode.reveal.plugin` start
+exports_files([
+  "intellij.appcode.reveal.plugin.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.appcode.reveal.plugin` end

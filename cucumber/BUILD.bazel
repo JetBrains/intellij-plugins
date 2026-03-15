@@ -134,6 +134,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.gherkin` end
 
+### auto-generated section `iml intellij.gherkin` start
+exports_files([
+  "intellij.gherkin.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.gherkin` end
+
 ### auto-generated section `test intellij.gherkin` start
 load("@community//build:tests-options.bzl", "jps_test")
 

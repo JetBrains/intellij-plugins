@@ -201,6 +201,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.clion.embedded.platformio` end
 
+### auto-generated section `iml intellij.clion.embedded.platformio` start
+exports_files([
+  "intellij.clion.embedded.platformio.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.clion.embedded.platformio` end
+
 ### auto-generated section `test intellij.clion.embedded.platformio` start
 load("@community//build:tests-options.bzl", "jps_test")
 

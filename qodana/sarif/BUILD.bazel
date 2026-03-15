@@ -31,3 +31,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.qodana.sarif` end
+
+### auto-generated section `iml intellij.qodana.sarif` start
+exports_files([
+  "intellij.qodana.sarif.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.sarif` end

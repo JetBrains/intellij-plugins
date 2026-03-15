@@ -58,6 +58,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.ruby.featuresTrainer` end
 
+### auto-generated section `iml intellij.ruby.featuresTrainer` start
+exports_files([
+  "intellij.ruby.featuresTrainer.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.ruby.featuresTrainer` end
+
 ### auto-generated section `test intellij.ruby.featuresTrainer` start
 load("@community//build:tests-options.bzl", "jps_test")
 

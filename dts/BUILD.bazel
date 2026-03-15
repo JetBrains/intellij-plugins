@@ -104,6 +104,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.dts` end
 
+### auto-generated section `iml intellij.dts` start
+exports_files([
+  "intellij.dts.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.dts` end
+
 ### auto-generated section `test intellij.dts` start
 load("@community//build:tests-options.bzl", "jps_test")
 

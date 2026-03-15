@@ -154,6 +154,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.cfml` end
 
+### auto-generated section `iml intellij.cfml` start
+exports_files([
+  "intellij.cfml.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.cfml` end
+
 ### auto-generated section `test intellij.cfml` start
 load("@community//build:tests-options.bzl", "jps_test")
 

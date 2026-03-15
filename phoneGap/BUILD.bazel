@@ -100,6 +100,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.phoneGap` end
 
+### auto-generated section `iml intellij.phoneGap` start
+exports_files([
+  "intellij.phoneGap.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.phoneGap` end
+
 ### auto-generated section `test intellij.phoneGap` start
 load("@community//build:tests-options.bzl", "jps_test")
 

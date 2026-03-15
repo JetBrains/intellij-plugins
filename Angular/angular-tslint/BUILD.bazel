@@ -38,3 +38,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.angular.tslint` end
+
+### auto-generated section `iml intellij.angular.tslint` start
+exports_files([
+  "intellij.angular.tslint.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.angular.tslint` end

@@ -124,6 +124,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.postcss` end
 
+### auto-generated section `iml intellij.postcss` start
+exports_files([
+  "intellij.postcss.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.postcss` end
+
 ### auto-generated section `test intellij.postcss` start
 load("@community//build:tests-options.bzl", "jps_test")
 

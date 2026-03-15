@@ -38,3 +38,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.vuejs.debugger` end
+
+### auto-generated section `iml intellij.vuejs.debugger` start
+exports_files([
+  "intellij.vuejs.debugger.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.vuejs.debugger` end

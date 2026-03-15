@@ -103,3 +103,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.astro` end
+
+### auto-generated section `iml intellij.astro` start
+exports_files([
+  "intellij.astro.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.astro` end

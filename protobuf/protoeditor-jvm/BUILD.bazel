@@ -75,6 +75,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.protoeditor.jvm` end
 
+### auto-generated section `iml intellij.protoeditor.jvm` start
+exports_files([
+  "intellij.protoeditor.jvm.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.protoeditor.jvm` end
+
 ### auto-generated section `test intellij.protoeditor.jvm` start
 load("@community//build:tests-options.bzl", "jps_test")
 

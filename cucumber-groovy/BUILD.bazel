@@ -83,6 +83,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.cucumber.groovy` end
 
+### auto-generated section `iml intellij.cucumber.groovy` start
+exports_files([
+  "intellij.cucumber.groovy.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.cucumber.groovy` end
+
 ### auto-generated section `test intellij.cucumber.groovy` start
 load("@community//build:tests-options.bzl", "jps_test")
 

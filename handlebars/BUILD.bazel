@@ -121,6 +121,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.handlebars` end
 
+### auto-generated section `iml intellij.handlebars` start
+exports_files([
+  "intellij.handlebars.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.handlebars` end
+
 ### auto-generated section `test intellij.handlebars` start
 load("@community//build:tests-options.bzl", "jps_test")
 

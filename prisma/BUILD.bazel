@@ -165,6 +165,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.prisma` end
 
+### auto-generated section `iml intellij.prisma` start
+exports_files([
+  "intellij.prisma.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.prisma` end
+
 ### auto-generated section `test intellij.prisma` start
 load("@community//build:tests-options.bzl", "jps_test")
 

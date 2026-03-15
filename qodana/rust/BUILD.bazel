@@ -110,6 +110,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.qodana.rust` end
 
+### auto-generated section `iml intellij.qodana.rust` start
+exports_files([
+  "intellij.qodana.rust.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.rust` end
+
 ### auto-generated section `test intellij.qodana.rust` start
 load("@community//build:tests-options.bzl", "jps_test")
 

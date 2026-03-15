@@ -53,3 +53,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.jhipster.uml` end
+
+### auto-generated section `iml intellij.jhipster.uml` start
+exports_files([
+  "intellij.jhipster.uml.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.jhipster.uml` end

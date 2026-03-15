@@ -22,3 +22,9 @@ jvm_library(
   runtime_deps = [":ruby-testing"]
 )
 ### auto-generated section `build intellij.ruby.testing` end
+
+### auto-generated section `iml intellij.ruby.testing` start
+exports_files([
+  "intellij.ruby.testing.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.ruby.testing` end

@@ -66,6 +66,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.qodana.inspectionKts.js` end
 
+### auto-generated section `iml intellij.qodana.inspectionKts.js` start
+exports_files([
+  "intellij.qodana.inspectionKts.js.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.inspectionKts.js` end
+
 ### auto-generated section `test intellij.qodana.inspectionKts.js` start
 load("@community//build:tests-options.bzl", "jps_test")
 

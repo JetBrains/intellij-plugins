@@ -99,6 +99,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.jboss.drools` end
 
+### auto-generated section `iml intellij.jboss.drools` start
+exports_files([
+  "intellij.jboss.drools.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.jboss.drools` end
+
 ### auto-generated section `test intellij.jboss.drools` start
 load("@community//build:tests-options.bzl", "jps_test")
 

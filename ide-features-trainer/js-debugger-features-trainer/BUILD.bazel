@@ -70,3 +70,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.javascript.debugger.featuresTrainer` end
+
+### auto-generated section `iml intellij.javascript.debugger.featuresTrainer` start
+exports_files([
+  "intellij.javascript.debugger.featuresTrainer.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.javascript.debugger.featuresTrainer` end

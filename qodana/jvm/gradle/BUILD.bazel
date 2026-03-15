@@ -52,3 +52,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.qodana.jvm.gradle` end
+
+### auto-generated section `iml intellij.qodana.jvm.gradle` start
+exports_files([
+  "intellij.qodana.jvm.gradle.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.jvm.gradle` end

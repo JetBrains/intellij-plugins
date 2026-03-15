@@ -150,6 +150,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.flex.tests` end
 
+### auto-generated section `iml intellij.flex.tests` start
+exports_files([
+  "intellij.flex.tests.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.flex.tests` end
+
 ### auto-generated section `test intellij.flex.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
 

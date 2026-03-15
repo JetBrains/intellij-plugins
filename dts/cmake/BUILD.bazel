@@ -44,3 +44,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.dts.cmake` end
+
+### auto-generated section `iml intellij.dts.cmake` start
+exports_files([
+  "intellij.dts.cmake.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.dts.cmake` end

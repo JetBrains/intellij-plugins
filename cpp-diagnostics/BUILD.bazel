@@ -65,3 +65,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.clion.diagnostics` end
+
+### auto-generated section `iml intellij.clion.diagnostics` start
+exports_files([
+  "intellij.clion.diagnostics.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.clion.diagnostics` end

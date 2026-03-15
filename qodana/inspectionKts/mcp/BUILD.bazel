@@ -50,3 +50,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.qodana.inspectionKts.mcp` end
+
+### auto-generated section `iml intellij.qodana.inspectionKts.mcp` start
+exports_files([
+  "intellij.qodana.inspectionKts.mcp.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.inspectionKts.mcp` end

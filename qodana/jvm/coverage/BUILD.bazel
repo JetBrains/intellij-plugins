@@ -94,6 +94,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.qodana.jvm.coverage` end
 
+### auto-generated section `iml intellij.qodana.jvm.coverage` start
+exports_files([
+  "intellij.qodana.jvm.coverage.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.jvm.coverage` end
+
 ### auto-generated section `test intellij.qodana.jvm.coverage` start
 load("@community//build:tests-options.bzl", "jps_test")
 

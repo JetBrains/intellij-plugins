@@ -41,3 +41,9 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.vuejs.plugin` end
+
+### auto-generated section `iml intellij.vuejs.plugin` start
+exports_files([
+  "intellij.vuejs.plugin.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.vuejs.plugin` end

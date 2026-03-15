@@ -72,6 +72,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.webassembly` end
 
+### auto-generated section `iml intellij.webassembly` start
+exports_files([
+  "intellij.webassembly.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.webassembly` end
+
 ### auto-generated section `test intellij.webassembly` start
 load("@community//build:tests-options.bzl", "jps_test")
 

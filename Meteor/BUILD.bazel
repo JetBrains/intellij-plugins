@@ -160,6 +160,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.meteor` end
 
+### auto-generated section `iml intellij.meteor` start
+exports_files([
+  "intellij.meteor.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.meteor` end
+
 ### auto-generated section `test intellij.meteor` start
 load("@community//build:tests-options.bzl", "jps_test")
 

@@ -201,6 +201,12 @@ jvm_library(
 )
 ### auto-generated section `build intellij.qodana` end
 
+### auto-generated section `iml intellij.qodana` start
+exports_files([
+  "intellij.qodana.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana` end
+
 ### auto-generated section `build intellij.qodana.core.tests` start
 create_kotlinc_options(
   name = "custom_qodana-core-tests",
@@ -418,6 +424,12 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.qodana.core.tests` end
+
+### auto-generated section `iml intellij.qodana.core.tests` start
+exports_files([
+  "intellij.qodana.core.tests.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.core.tests` end
 
 ### auto-generated section `test intellij.qodana.core.tests` start
 load("@community//build:tests-options.bzl", "jps_test")
