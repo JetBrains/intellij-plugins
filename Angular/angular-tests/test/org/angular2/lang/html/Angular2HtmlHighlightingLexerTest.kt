@@ -40,6 +40,22 @@ open class Angular2HtmlHighlightingLexerTest : Angular2HtmlLexerTest() {
     """.trimIndent())
   }
 
+  fun testIncompleteStringInInterpolation() {
+    doTest("""
+      <main>
+        {{ 'a }}
+      </main>  
+      <main>
+        {{ '}}
+      </main>
+      <main>
+        {{ '}}
+        }}
+      </main>
+      <main>{{ '}}</main>
+    """.trimIndent())
+  }
+
   override fun getDirPath(): String {
     return Angular2TestUtil.getLexerTestDirPath() + "html/highlightingLexer"
   }
