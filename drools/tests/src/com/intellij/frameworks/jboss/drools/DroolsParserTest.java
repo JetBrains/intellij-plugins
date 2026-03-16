@@ -1,10 +1,14 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.frameworks.jboss.drools;
 
+import com.intellij.java.frontback.psi.impl.syntax.JavaSyntaxDefinitionExtension;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.lang.java.JavaParserDefinition;
+import com.intellij.lang.java.syntax.JavaElementTypeConverterExtension;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.platform.syntax.psi.ElementTypeConverters;
+import com.intellij.platform.syntax.psi.LanguageSyntaxDefinitions;
 import com.intellij.plugins.drools.lang.parser.DroolsParserDefinition;
 import com.intellij.psi.impl.source.tree.JavaASTFactory;
 import com.intellij.testFramework.ParsingTestCase;
@@ -20,6 +24,8 @@ public class DroolsParserTest extends ParsingTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     addExplicitExtension(LanguageASTFactory.INSTANCE, JavaLanguage.INSTANCE, new JavaASTFactory());
+    addExplicitExtension(LanguageSyntaxDefinitions.Companion.getINSTANCE(), JavaLanguage.INSTANCE, new JavaSyntaxDefinitionExtension());
+    addExplicitExtension(ElementTypeConverters.getInstance(), JavaLanguage.INSTANCE, new JavaElementTypeConverterExtension ());
   }
 
   @Override
