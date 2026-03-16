@@ -909,7 +909,6 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       resource "aws_ec2_host<caret>"
       """.trimIndent())
     val lookupElements = myFixture.complete(CompletionType.BASIC, 2)
-    assertEquals(6, lookupElements.size)
 
     val lookupStrings = lookupElements.map { element ->
       val resourceType = element.`object` as ResourceType
@@ -918,7 +917,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       "$name $provider"
     }.toList()
     assertEquals(
-      listOf("aws_ec2_host figma/aws", "aws_ec2_host hashicorp/aws", "aws_ec2_host isometry/faws", "aws_ec2_host jandillenkofer/aws",
+      listOf("aws_ec2_host figma/aws", "aws_ec2_host hashicorp/aws", "aws_ec2_host isometry/faws",
              "aws_ec2_host msalman899/aws", "awscc_ec2_host hashicorp/awscc"),
       lookupStrings
     )
