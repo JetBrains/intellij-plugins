@@ -13,10 +13,8 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   resources = [":frontend_resources"],
-  deps = [
-    "//remote-dev/cwm-guest:frontend-split",
-    "//contrib/jhipster",
-  ]
+  deps = ["//contrib/jhipster"],
+  runtime_deps = ["@community//platform/platform-frontend:frontend"]
 )
 
 jvm_library(
@@ -26,7 +24,7 @@ jvm_library(
   srcs = glob([], allow_empty = True),
   runtime_deps = [
     ":frontend",
-    "//remote-dev/cwm-guest:frontend-split_test_lib",
+    "@community//platform/platform-frontend:frontend_test_lib",
     "//contrib/jhipster:jhipster_test_lib",
   ]
 )
