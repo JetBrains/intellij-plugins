@@ -52,6 +52,12 @@ class Angular2EditorTest : Angular2TestCase("editor", false) {
       type("\t")
     }
 
+  fun testIncompleteStringInInterpolation() =
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0,
+                     fileContents = "<main>{{ <caret> }}</main>", extension = "html", checkResult = true) {
+      type("'sdf'")
+    }
+
   private fun doWordSelectionTest() =
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0, configureFile = false) {
       CodeInsightTestUtil.doWordSelectionTestOnDirectory(myFixture, getTestName(true), "html")
