@@ -14,8 +14,8 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
-import com.intellij.util.ui.update.MergingUpdateQueue;
-import com.intellij.util.ui.update.Update;
+import com.intellij.util.ui.update.DebouncedUpdates;
+import com.intellij.util.ui.update.UpdateQueue;
 import com.thoughtworks.gauge.connection.GaugeConnection;
 import com.thoughtworks.gauge.core.GaugeCli;
 import com.thoughtworks.gauge.core.GaugeExceptionHandler;
@@ -27,6 +27,9 @@ import com.thoughtworks.gauge.reference.ReferenceCache;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.SocketUtils;
+import kotlin.Unit;
+import kotlinx.coroutines.CoroutineScope;
+import kotlinx.coroutines.Dispatchers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,12 +57,15 @@ public final class GaugeBootstrapService implements Disposable {
   private final Map<Module, ReferenceCache> moduleReferenceCaches = new ConcurrentHashMap<>();
 
   private final Project myProject;
-  private final MergingUpdateQueue myUpdateQueue = new MergingUpdateQueue("GAUGE_BOOTSTRAP", 5000, true, null, this);
+  private final UpdateQueue<Unit> myUpdateQueue;
 
   private final Queue<WeakReference<Module>> modulesQueue = new LinkedBlockingQueue<>();
 
-  private GaugeBootstrapService(Project project) {
+  private GaugeBootstrapService(Project project, CoroutineScope coroutineScope) {
     myProject = project;
+    myUpdateQueue = DebouncedUpdates.<Unit>forScope(coroutineScope, "GAUGE_BOOTSTRAP", 5000)
+      .withContext(Dispatchers.getDefault())
+      .runLatest(ignored -> runUpdate());
   }
 
   public static GaugeBootstrapService getInstance(Project project) {
@@ -69,20 +75,21 @@ public final class GaugeBootstrapService implements Disposable {
   public void moduleAdded(@NotNull Module module) {
     if (ApplicationManager.getApplication().isUnitTestMode()) return;
     modulesQueue.add(new WeakReference<>(module));
+    myUpdateQueue.queue(Unit.INSTANCE);
+  }
 
-    myUpdateQueue.queue(Update.create("INIT_GAUGE", () -> {
-      Task.Backgroundable task = new Task.Backgroundable(myProject,
-                                                         GaugeBundle.message("gauge.connecting"),
-                                                         false, ALWAYS_BACKGROUND) {
-        @Override
-        public void run(@NotNull ProgressIndicator indicator) {
-          bootstrapServiceForModules(indicator);
-        }
-      };
+  private void runUpdate() {
+    Task.Backgroundable task = new Task.Backgroundable(myProject,
+                                                       GaugeBundle.message("gauge.connecting"),
+                                                       false, ALWAYS_BACKGROUND) {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        bootstrapServiceForModules(indicator);
+      }
+    };
 
-      ProgressManager.getInstance()
-        .runProcessWithProgressAsynchronously(task, new BackgroundableProcessIndicator(task));
-    }));
+    ProgressManager.getInstance()
+      .runProcessWithProgressAsynchronously(task, new BackgroundableProcessIndicator(task));
   }
 
   public void moduleRemoved(@NotNull Module module) {
