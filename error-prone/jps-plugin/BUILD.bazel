@@ -60,7 +60,6 @@ jvm_library(
   name = "errorProne-jps-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  kotlinc_opts = "@community//:k11",
   associates = [
     "//contrib/error-prone/jps-plugin:errorProne-jps",
     "//contrib/error-prone/jps-plugin:errorProne-jps_test_lib",
