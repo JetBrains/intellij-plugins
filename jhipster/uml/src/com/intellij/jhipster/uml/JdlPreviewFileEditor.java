@@ -3,7 +3,7 @@
 package com.intellij.jhipster.uml;
 
 import com.intellij.jhipster.JdlBundle;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.CoroutinesKt;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -16,8 +16,10 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
-import com.intellij.util.ui.update.MergingUpdateQueue;
-import com.intellij.util.ui.update.Update;
+import com.intellij.util.ui.update.DebouncedUpdates;
+import com.intellij.util.ui.update.UpdateQueue;
+import kotlin.Unit;
+import kotlinx.coroutines.Dispatchers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,13 +42,19 @@ final class JdlPreviewFileEditor extends UserDataHolderBase implements FileEdito
   private final JPanel myUmlPanelWrapper;
   private @Nullable JdlDiagramPanel myPanel;
 
-  private final MergingUpdateQueue mergingUpdateQueue = new MergingUpdateQueue("JDL", RENDERING_DELAY_MS, true, null, this);
+  private final UpdateQueue<Unit> mergingUpdateQueue;
   private final Alarm mySwingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
 
   JdlPreviewFileEditor(@NotNull Project project, @NotNull VirtualFile file) {
     myProject = project;
     myFile = file;
     myDocument = FileDocumentManager.getInstance().getDocument(myFile);
+    
+    myUmlPanelWrapper = new JPanel(new BorderLayout());
+    
+    mergingUpdateQueue = DebouncedUpdates.<Unit>forComponent(myUmlPanelWrapper, "JDL", RENDERING_DELAY_MS)
+      .withContext(CoroutinesKt.getEDT(Dispatchers.INSTANCE))
+      .runLatest(ignored -> updateUmlImpl());
 
     if (myDocument != null) {
       myDocument.addDocumentListener(new DocumentListener() {
@@ -57,8 +65,6 @@ final class JdlPreviewFileEditor extends UserDataHolderBase implements FileEdito
         }
       }, this);
     }
-
-    myUmlPanelWrapper = new JPanel(new BorderLayout());
 
     myUmlPanelWrapper.addComponentListener(new ComponentAdapter() {
       @Override
@@ -167,17 +173,14 @@ final class JdlPreviewFileEditor extends UserDataHolderBase implements FileEdito
       return;
     }
 
-    mergingUpdateQueue.queue(new Update("JDL.REDRAW") {
-      @Override
-      public void run() {
-        ApplicationManager.getApplication().invokeLater(() -> {
-          if (myPanel == null || !myFile.isValid() || isDisposed) {
-            return;
-          }
+    mergingUpdateQueue.queue(Unit.INSTANCE);
+  }
 
-          myPanel.draw();
-        });
-      }
-    });
+  private void updateUmlImpl() {
+    if (myPanel == null || !myFile.isValid() || isDisposed) {
+      return;
+    }
+
+    myPanel.draw();
   }
 }
