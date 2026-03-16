@@ -6,10 +6,6 @@ terraform {
       source  = "Datadog/Datadog"
       version = "3.42.0"
     }
-    dockerk = {
-      source  = "calXus/doCKer"
-      version = "3.0.0"
-    }
     aws-sso-scim = {
       source  = "burdaforward/aws-sso-scim"
       version = ">= 0.1.0"

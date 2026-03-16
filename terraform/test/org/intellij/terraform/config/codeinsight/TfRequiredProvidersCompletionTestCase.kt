@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.application.options.CodeStyle
@@ -15,68 +15,59 @@ import org.intellij.terraform.hcl.formatter.HclCodeStyleSettings
 
 internal class TfRequiredProvidersCompletionTestCase : BasePlatformTestCase() {
 
-  fun testTerraformBlockCompletionRequiredProvidersEnabled() {
-    performBlockCompletionRequiredProviders("main.tf", """ 
-      resource "ad_group<caret>" "" {}
-    """.trimIndent(), """
-      terraform {
-        required_providers {
-          ad = {
-            source  = "hanneshayashi/ad"
-            version = "0.5.4"
-          }
+  private val resourceBlock = """
+    resource "libvirt_cloudinit_disk<caret>" "" {
+      meta_data = ""
+      name      = ""
+      user_data = ""
+    }
+  """.trimIndent()
+
+  private val resourceBlockWithoutCaret = """
+    resource "libvirt_cloudinit_disk" "" {
+      meta_data = ""
+      name      = ""
+      user_data = ""
+    }
+  """.trimIndent()
+
+  private val requiredProvidersBlock = """
+    terraform {
+      required_providers {
+        libvirt = {
+          source  = "dmacvicar/libvirt"
+          version = "0.9.4"
         }
       }
-      resource "ad_group" "" {
-        container        = ""
-        name             = ""
-        sam_account_name = ""
-      }
-    """.trimIndent(), true)
+    }
+  """.trimIndent()
+
+  private fun runCompletionTest(fileName: String, importProvidersAutomatically: Boolean) {
+    val initialText = resourceBlock
+    val finalText = if (importProvidersAutomatically) {
+      "$requiredProvidersBlock\n$resourceBlockWithoutCaret"
+    }
+    else {
+      resourceBlockWithoutCaret
+    }
+
+    performBlockCompletionRequiredProviders(fileName, initialText, finalText, importProvidersAutomatically)
+  }
+
+  fun testTerraformBlockCompletionRequiredProvidersEnabled() {
+    runCompletionTest("main.tf", importProvidersAutomatically = true)
   }
 
   fun testTerraformBlockCompletionRequiredProvidersDisabled() {
-    performBlockCompletionRequiredProviders("main.tf", """
-      resource "ad_group<caret>" "" {}
-    """.trimIndent(), """
-      resource "ad_group" "" {
-        container        = ""
-        name             = ""
-        sam_account_name = ""
-      }
-    """.trimIndent(), false)
+    runCompletionTest("main.tf", importProvidersAutomatically = false)
   }
 
   fun testTofuBlockCompletionRequiredProvidersEnabled() {
-    performBlockCompletionRequiredProviders("main.tofu", """ 
-      resource "ad_group<caret>" "" {}
-    """.trimIndent(), """
-      terraform {
-        required_providers {
-          ad = {
-            source  = "hanneshayashi/ad"
-            version = "0.5.4"
-          }
-        }
-      }
-      resource "ad_group" "" {
-        container        = ""
-        name             = ""
-        sam_account_name = ""
-      }
-    """.trimIndent(), true)
+    runCompletionTest("main.tofu", importProvidersAutomatically = true)
   }
 
   fun testTofuBlockCompletionRequiredProvidersDisabled() {
-    performBlockCompletionRequiredProviders("main.tofu", """
-      resource "ad_group<caret>" "" {}
-    """.trimIndent(), """
-      resource "ad_group" "" {
-        container        = ""
-        name             = ""
-        sam_account_name = ""
-      }
-    """.trimIndent(), false)
+    runCompletionTest("main.tofu", importProvidersAutomatically = false)
   }
 
   fun performBlockCompletionRequiredProviders(fileName: String, initialText: String, finalText: String, importProvidersAutomatically: Boolean) {
@@ -88,7 +79,7 @@ internal class TfRequiredProvidersCompletionTestCase : BasePlatformTestCase() {
     runInEdtAndWait {
       val element = myFixture.complete(CompletionType.BASIC, 2).first { el: LookupElement? ->
         val resourceType = el!!.getObject() as ResourceType
-        "hanneshayashi/ad" == resourceType.provider.fullName
+        "dmacvicar/libvirt" == resourceType.provider.fullName
       }
       myFixture.lookup.setCurrentItem(element)
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)

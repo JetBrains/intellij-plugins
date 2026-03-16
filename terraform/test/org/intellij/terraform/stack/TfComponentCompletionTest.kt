@@ -235,10 +235,7 @@ internal class TfComponentCompletionTest : CompletionTestCase() {
       "${providerType.type} ${providerType.fullName} ${providerType.version}"
     }.toList()
     assertEquals(
-      listOf("kubernetes bgcorreia/kubernetes 1.12.4",
-             "kubernetes hashicorp/kubernetes 3.0.1",
-             "kubernetes sdb-cloud-ops/kubernetes 3.0.3",
-             "kubernetes-wait MehdiAtBud/kubernetes-wait 0.1.16"),
+      listOf("kubernetes hashicorp/kubernetes 3.0.1", "kubernetes sdb-cloud-ops/kubernetes 3.0.3"),
       lookupStrings
     )
   }
