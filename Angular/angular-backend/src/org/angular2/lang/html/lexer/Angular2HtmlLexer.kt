@@ -44,6 +44,15 @@ open class Angular2HtmlLexer(
            && state != _Angular2HtmlLexer.BLOCK_PARAMETER
            && state != _Angular2HtmlLexer.BLOCK_PARAMETER_END
            && state != _Angular2HtmlLexer.BLOCK_PARAMETERS_START
+           && state != _Angular2HtmlLexer.UNTERMINATED_INTERPOLATION
+           && state != _Angular2HtmlLexer.UNTERMINATED_INTERPOLATION_DQ
+           && state != _Angular2HtmlLexer.UNTERMINATED_INTERPOLATION_SQ
+           && state != _Angular2HtmlLexer.INTERPOLATION
+           && state != _Angular2HtmlLexer.INTERPOLATION_END
+           && state != _Angular2HtmlLexer.INTERPOLATION_DQ
+           && state != _Angular2HtmlLexer.INTERPOLATION_SQ
+           && state != _Angular2HtmlLexer.INTERPOLATION_END_DQ
+           && state != _Angular2HtmlLexer.INTERPOLATION_END_SQ
   }
 
   override fun isHtmlTagState(state: Int): Boolean {
