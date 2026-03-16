@@ -1,17 +1,10 @@
 ### auto-generated section `build intellij.vuejs` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
-
-resourcegroup(
-  name = "vuejs_resources",
-  srcs = glob(["compatibilityResources/**/*"]),
-  strip_prefix = "compatibilityResources"
-)
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 jvm_library(
   name = "vuejs",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  resources = [":vuejs_resources"]
+  srcs = glob([], allow_empty = True)
 )
 
 jvm_library(

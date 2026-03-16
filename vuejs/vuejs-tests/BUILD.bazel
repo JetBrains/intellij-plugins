@@ -45,8 +45,6 @@ jvm_library(
     "@community//platform/refactoring:refactoring_test_lib",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
-    "//contrib/vuejs",
-    "//contrib/vuejs:vuejs_test_lib",
     "//plugins/css/common",
     "//plugins/css/common:common_test_lib",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
