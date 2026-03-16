@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
   public int interpolationStartPos;
   private boolean inInterpolationComment;
   private Character interpolationQuote;
+  private int interpolationQuoteStart;
 
   public String blockName;
   public int parameterIndex;
@@ -74,6 +75,21 @@ import org.jetbrains.annotations.NotNull;
 
   private boolean tryRollbackInterpolation() {
     if (yystate() == INTERPOLATION) {
+      if (interpolationQuote != null && interpolationQuoteStart > 0 && interpolationStartPos > 0) {
+        // try to close interpolation if within an unterminated string
+        for (int offset = zzMarkedPos - zzStartRead; offset < zzMarkedPos - interpolationQuoteStart; offset++) {
+          if (inBuffer(interpolationEnd, -offset)) {
+            // if interpolation end chars are found, position lexer just before them
+            // to properly lex it in the next iteration
+            zzStartRead = zzMarkedPos - offset - 1;
+            zzMarkedPos = zzStartRead;
+            interpolationStartPos = -1;
+            interpolationQuoteStart = -1;
+            interpolationQuote = null;
+            return true;
+          }
+        }
+      }
       rollbackInterpolation();
       yybegin(UNTERMINATED_INTERPOLATION);
       return true;
@@ -124,10 +140,12 @@ import org.jetbrains.annotations.NotNull;
     if (interpolationQuote != null) {
       if (interpolationQuote == ch) {
         interpolationQuote = null;
+        interpolationQuoteStart = -1;
       }
     } else {
       if (ch == '\"' || ch == '\'' || ch =='`') {
         interpolationQuote = ch;
+        interpolationQuoteStart = zzMarkedPos;
       }
     }
   }
