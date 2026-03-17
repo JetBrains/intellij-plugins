@@ -28,6 +28,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSAliasTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeImpl
 import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -55,6 +56,7 @@ import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.DiagnosticKind
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.coroutines.cancellation.CancellationException
 
 
 internal class Environment(
@@ -162,6 +164,9 @@ internal class Environment(
         else {
           return@computeIfAbsent importName + "." + importDescriptor.effectiveName
         }
+      }
+      catch (e: CancellationException){
+        throw e
       }
       catch (e: Exception) {
         thisLogger().error(e)
