@@ -1,4 +1,4 @@
-// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.node.ArrayNode
@@ -111,7 +111,7 @@ object BaseLoaderV1 : BaseLoader {
       }
     }
 
-    val conflicts: List<String>? = value.array("ConflictsWith")?.mapNotNull { it.textValue() }?.map { it }
+    val conflicts: List<String>? = value.array("ConflictsWith")?.mapNotNull { it.textValue() }?.map { it.pool(context) }
 
     val deprecated = value.string("Deprecated")
     val has_default: Boolean = value.obj("Default")?.isNotEmpty() ?: false
@@ -135,23 +135,23 @@ object BaseLoaderV1 : BaseLoader {
     if (isBlock) {
       // TODO: Do something with a additional.hint
       val properties: Map<String, PropertyOrBlockType> = innerTypeProperties?.toMap() ?: emptyMap()
-      return BlockType(name,
-                       description = description,
+      return BlockType(name.pool(context),
+                       description = description?.pool(context),
                        optional = optional,
                        required = required,
                        computed = computed,
-                       deprecated = deprecated,
+                       deprecated = deprecated?.pool(context),
                        conflictsWith = conflicts,
-                       properties = properties)
+                       properties = properties).pool(context)
     }
-    return PropertyType(name, type, hint = additional.hint,
-                        description = description,
+    return PropertyType(name.pool(context), type, hint = additional.hint,
+                        description = description?.pool(context),
                         optional = optional,
                         required = required,
                         computed = computed,
-                        deprecated = deprecated,
+                        deprecated = deprecated?.pool(context),
                         conflictsWith = conflicts,
-                        hasDefault = has_default || has_default_function)
+                        hasDefault = has_default || has_default_function).pool(context)
   }
 
   override fun parseType(context: LoadContext, string: String?): HclType {
@@ -188,7 +188,7 @@ abstract class ProviderLoader(protected val base: BaseLoader) : VersionedMetadat
 
   override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val model = context.model
-    val name = json.string("name")!!
+    val name = json.string("name")!!.pool(context)
     val provider = json.obj("provider")
     if (provider == null) {
       LOG.warn("No provider schema in file '$fileName'")
@@ -215,35 +215,35 @@ abstract class ProviderLoader(protected val base: BaseLoader) : VersionedMetadat
   }
 
   private fun parseResourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): ResourceType {
-    val name = entry.key
+    val name = entry.key.pool(context)
     assert(entry.value is ObjectNode) { "Right part of resource should be object" }
     val obj = entry.value as ObjectNode
-    val timeouts = getTimeoutsBlock(obj)
+    val timeouts = getTimeoutsBlock(context, obj)
     return ResourceType(name, info, obj.properties().asSequence().map { base.parseSchemaElement(context, it, name) }.plus(timeouts).filterNotNull().toList())
   }
 
   private fun parseDataSourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): DataSourceType {
-    val name = entry.key
+    val name = entry.key.pool(context)
     assert(entry.value is ObjectNode) { "Right part of data-source should be object" }
     val obj = entry.value as ObjectNode
-    val timeouts = getTimeoutsBlock(obj)
+    val timeouts = getTimeoutsBlock(context, obj)
     return DataSourceType(name, info, obj.properties().asSequence().map { base.parseSchemaElement(context, it, name) }.plus(timeouts).filterNotNull().toList())
   }
 
-  private fun getTimeoutsBlock(obj: ObjectNode): PropertyOrBlockType? {
+  private fun getTimeoutsBlock(context: LoadContext, obj: ObjectNode): PropertyOrBlockType? {
     val value = obj.remove(Constants.TIMEOUTS) ?: return null
     assert(value is ArrayNode) { "${Constants.TIMEOUTS} should be an array" }
     val array = value as? ArrayNode ?: return null
     for (element in array) {
       assert(element is TextNode) { "${Constants.TIMEOUTS} array elements should be string, got ${element?.javaClass?.name}" }
     }
-    val timeouts = array.mapNotNull { it.textValue() }.map { it }
+    val timeouts = array.mapNotNull { it.textValue() }.map { it.pool(context) }
     if (timeouts.isEmpty()) return null
     return BlockType("timeouts", 0,
         description = "Amount of time a specific operation is allowed to take before being considered an error", // TODO: Improve description
-                     properties = timeouts.map { PropertyType(it, Types.String, optional = true) }.toMap()
+        properties = timeouts.map { PropertyType(it, Types.String, optional = true).pool(context) }.toMap()
         // TODO: ^ Check type, should be Time? (allowed suffixes are s, m, h)
-    )
+    ).pool(context)
   }
 }
 
@@ -252,7 +252,7 @@ abstract class ProvisionerLoader(protected val base: BaseLoader) : VersionedMeta
   override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val model = context.model
     val provisioner_schema = json.obj("schemas") ?: json
-    val name = provisioner_schema.string("name")!!
+    val name = provisioner_schema.string("name")!!.pool(context)
     val provisioner = provisioner_schema.obj("schema")
     if (provisioner == null) {
       LOG.warn("No provisioner schema in file '$fileName'")
@@ -273,7 +273,7 @@ abstract class BackendLoader(protected val base: BaseLoader) : VersionedMetadata
   override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val backend_schema = json.obj("schemas") ?: json
     val model = context.model
-    val name = backend_schema.string("name")!!
+    val name = backend_schema.string("name")!!.pool(context)
     val backend = backend_schema.obj("schema")
     if (backend == null) {
       LOG.warn("No backend schema in file '$fileName'")
@@ -328,7 +328,7 @@ class FunctionsLoaderV1 : VersionedMetadataLoader {
       if (variadic) {
         va = VariadicArgument(BaseLoaderV1.parseType(context, v.string("VariadicType")))
       }
-      model.functions.add(TfFunction(k, returnType, *args.toTypedArray(), variadic = va))
+      model.functions.add(TfFunction(k.pool(context), returnType, *args.toTypedArray(), variadic = va))
     }
   }
 

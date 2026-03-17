@@ -25,8 +25,9 @@ import java.io.InputStream
 private const val MODEL_RESOURCE_PREFIX: String = "/terraform/model"
 
 class TfMetadataLoader {
+  private val pool = ReusePool()
   private val model = LoadingModel()
-  private val context: LoadContext = LoadContext(model)
+  private val context: LoadContext = LoadContext(pool, model)
 
   private val loaders: List<VersionedMetadataLoader> = listOf(
     TfProvidersSchema(),

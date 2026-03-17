@@ -1,4 +1,4 @@
-// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.JsonNode
@@ -105,29 +105,29 @@ Sensitive           bool            `json:"sensitive,omitempty"`
 
     if (isAttributeAsBlock(type)) {
       return BlockType(
-        name,
-        description = description,
-        descriptionKind = descriptionKind,
+        name.pool(context),
+        description = description?.pool(context),
+        descriptionKind = descriptionKind.pool(context),
         optional = optional,
         required = required,
         computed = computed,
         deprecated = if (deprecated) "DEPRECATED" else null,
         properties = type.asSafely<ContainerType<*>>()?.elements
           ?.asSafely<ObjectType>()?.elements?.mapValues { (k, v) -> PropertyType(k, type = v ?: Types.Any) }.orEmpty()
-      )
+      ).pool(context)
     }
 
     // External description and hint overrides one from model
     return PropertyType(
-      name, type, hint = additional?.hint,
-      description = description,
-      descriptionKind = descriptionKind,
+      name.pool(context), type, hint = additional?.hint,
+      description = description?.pool(context),
+      descriptionKind = descriptionKind.pool(context),
       optional = optional,
       required = required,
       computed = computed,
       sensitive = sensitive,
       deprecated = if (deprecated) "DEPRECATED" else null,
-    )
+    ).pool(context)
   }
 
   // https://developer.hashicorp.com/terraform/language/attr-as-blocks
@@ -191,12 +191,12 @@ Sensitive           bool            `json:"sensitive,omitempty"`
       parseBlockType(context, it.key, it.value)
     }?.toList() ?: emptyList()
 
-    return BlockType(name,
-                     description = description,
-                     descriptionKind = descriptionKind,
+    return BlockType(name.pool(context),
+                     description = description?.pool(context),
+                     descriptionKind = descriptionKind.pool(context),
                      deprecated = if (deprecated) "DEPRECATED" else null,
                      nesting = nesting,
-                     properties = (attrs + blocks).associateBy { it.name })
+                     properties = (attrs + blocks).associateBy { it.name }).pool(context)
   }
 
   private fun parseType(context: LoadContext, node: JsonNode): HclType {
@@ -212,7 +212,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
           warnOrFailInInternalMode("Unsupported type '$node'")
           Types.Invalid
         }
-      }
+      }.pool(context)
     }
 
     // Based on cty.Type#MarshalJSON
@@ -222,15 +222,15 @@ Sensitive           bool            `json:"sensitive,omitempty"`
       when (node.get(0).textValue()) {
         "list" -> {
           assert(node.size() == 2)
-          return ListType(parseType(context, node.get(1)))
+          return ListType(parseType(context, node.get(1))).pool(context)
         }
         "set" -> {
           assert(node.size() == 2)
-          return SetType(parseType(context, node.get(1)))
+          return SetType(parseType(context, node.get(1))).pool(context)
         }
         "map" -> {
           assert(node.size() == 2)
-          return MapType(parseType(context, node.get(1)))
+          return MapType(parseType(context, node.get(1))).pool(context)
         }
         "object" -> {
           assert(node.get(1).isObject)
@@ -246,13 +246,13 @@ Sensitive           bool            `json:"sensitive,omitempty"`
             else
               null
 
-          return ObjectType(attributes, optional)
+          return ObjectType(attributes, optional).pool(context)
         }
         "tuple" -> {
           assert(node.get(1).isArray)
           assert(node.size() == 2)
           val elements = (node.get(1) as ArrayNode).elements().asSequence().map { parseType(context, it) }.toList()
-          return TupleType(elements)
+          return TupleType(elements).pool(context)
         }
       }
     }
@@ -282,14 +282,14 @@ MaxItems    uint64                `json:"max_items,omitempty"`
     val attrs = attributes?.properties()?.asSequence()?.map { parseAttribute(context, it.key, it.value, fqnPrefix) }?.toList()
                 ?: emptyList()
 
-    val nested = ObjectType(attrs.associate { it.name to it.asType() })
+    val nested = ObjectType(attrs.associate { it.name to it.asType() }).pool(context)
 
     when (nesting_mode) {
       "single" -> return Types.Any // TODO: check
       //"group" -> return Types.Any // TODO: check
-      "list" -> return ListType(nested)
-      "set" -> return SetType(nested)
-      "map" -> return MapType(nested)
+      "list" -> return ListType(nested).pool(context)
+      "set" -> return SetType(nested).pool(context)
+      "map" -> return MapType(nested).pool(context)
     }
 
     warnOrFailInInternalMode("Unsupported nested type: $node")
@@ -346,7 +346,7 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
 
       val providerDefinedFunctions = provider.obj("functions")
       providerDefinedFunctions?.let { function ->
-        function.properties()?.mapNotNullTo(model.providerDefinedFunctions) { parseProviderFunctionInfo(it, providerInfo) }
+        function.properties()?.mapNotNullTo(model.providerDefinedFunctions) { parseProviderFunctionInfo(context, it, providerInfo) }
       }
 
       val ephemeralResources = provider.obj("ephemeral_resource_schemas")
@@ -365,7 +365,7 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
   }
 
   private fun parseResourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): ResourceType {
-    val name = entry.key
+    val name = entry.key.pool(context)
     assert(entry.value is ObjectNode) { "Right part of resource should be object" }
     val obj = entry.value as ObjectNode
     val (parsed, version) = TfBaseLoader.parseSchema(context, obj, name)
@@ -374,7 +374,7 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
   }
 
   private fun parseDataSourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): DataSourceType {
-    val name = entry.key
+    val name = entry.key.pool(context)
     assert(entry.value is ObjectNode) { "Right part of data-source should be object" }
     val obj = entry.value as ObjectNode
     val (parsed, version) = TfBaseLoader.parseSchema(context, obj, name)
@@ -382,8 +382,8 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
     return DataSourceType(name, info, parsed.properties.values.toList(), parsed)
   }
 
-  private fun parseProviderFunctionInfo(entry: Map.Entry<String, Any?>, info: ProviderType): TfFunction? {
-    val name = entry.key
+  private fun parseProviderFunctionInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): TfFunction? {
+    val name = entry.key.pool(context)
     val objectNode = entry.value as? ObjectNode ?: return null
 
     val description = objectNode.string("description")
@@ -403,7 +403,7 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
   }
 
   private fun parseEphemeralResourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): EphemeralType? {
-    val name = entry.key
+    val name = entry.key.pool(context)
     val objectNode = entry.value as? ObjectNode ?: return null
     val (block, _) = TfBaseLoader.parseSchema(context, objectNode, name) ?: return null
     return EphemeralType(name, info, block)
