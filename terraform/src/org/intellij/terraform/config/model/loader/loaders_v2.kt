@@ -1,4 +1,4 @@
-// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -150,7 +150,7 @@ object BaseLoaderV2 : BaseLoader {
       }
     }
 
-    val conflicts: List<String>? = value.array("ConflictsWith")?.mapNotNull { it.textValue() }?.map { it }
+    val conflicts: List<String>? = value.array("ConflictsWith")?.mapNotNull { it.textValue() }?.map { it.pool(context) }
 
     val deprecated = value.string("Deprecated")
     val has_default: Boolean = value.obj("Default")?.isNotEmpty() ?: false
@@ -168,23 +168,23 @@ object BaseLoaderV2 : BaseLoader {
     // External description and hint overrides one from model
     if (isBlock) {
       val properties: Map<String, PropertyOrBlockType> = innerTypeProperties?.toMap() ?: emptyMap()
-      return BlockType(name,
-                       description = description,
+      return BlockType(name.pool(context),
+          description = description?.pool(context),
           optional = optional,
           required = required,
           computed = computed,
-                       deprecated = deprecated,
+          deprecated = deprecated?.pool(context),
           conflictsWith = conflicts,
-                       properties = properties)
+          properties = properties).pool(context)
     }
-    return PropertyType(name, type, hint = additional.hint,
-                        description = description,
+    return PropertyType(name.pool(context), type, hint = additional.hint,
+                        description = description?.pool(context),
                         optional = optional,
                         required = required,
                         computed = computed,
-                        deprecated = deprecated,
+                        deprecated = deprecated?.pool(context),
                         conflictsWith = conflicts,
-                        hasDefault = has_default || has_default_function)
+                        hasDefault = has_default || has_default_function).pool(context)
   }
 
   override fun parseType(context: LoadContext, string: String?): HclType {
@@ -310,7 +310,7 @@ class FunctionsLoaderV2 : VersionedMetadataLoader {
       }
 
       model.functions.add(TfFunction(
-        name = name,
+        name = name.pool(context),
         returnType = returnType,
         arguments = args.toTypedArray(),
         variadic = va
