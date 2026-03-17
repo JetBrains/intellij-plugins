@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.jvm.java.workflow
 
 import com.intellij.codeInspection.InspectionsBundle
+import com.intellij.openapi.application.smartReadAction
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.project.modules
@@ -25,7 +26,7 @@ class JvmProjectStructureChecker : QodanaWorkflowExtension {
       val entries = rootManager.getOrderEntries()
       for (entry in entries) {
         when {
-          entry is JdkOrderEntry && !ModuleType.get(module).isValidSdk(module, null) -> {
+          entry is JdkOrderEntry && smartReadAction(project) { !ModuleType.get(module).isValidSdk(module, null) } -> {
             val message = InspectionsBundle.message("offline.inspections.module.jdk.not.found",
                                                     entry.getJdkName(),
                                                     module.getName()
