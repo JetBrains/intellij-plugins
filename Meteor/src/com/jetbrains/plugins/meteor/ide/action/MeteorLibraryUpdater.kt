@@ -1,5 +1,3 @@
-@file:OptIn(FlowPreview::class)
-
 package com.jetbrains.plugins.meteor.ide.action
 
 import com.intellij.lang.javascript.library.JSLibraryManager
@@ -7,7 +5,6 @@ import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.smartReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.debug
@@ -18,46 +15,35 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.RootsChangeRescanningInfo
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.util.ui.update.MergingUpdateQueue
-import com.intellij.util.ui.update.Update
+import com.intellij.util.ui.update.DebouncedUpdates
+import com.intellij.util.ui.update.UpdateQueue
 import com.jetbrains.plugins.meteor.MeteorFacade
 import com.jetbrains.plugins.meteor.MeteorProjectStartupActivity
 import com.jetbrains.plugins.meteor.initMeteorProject
 import com.jetbrains.plugins.meteor.settings.MeteorSettings
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.annotations.VisibleForTesting
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.minutes
 
 private val LOG = logger<MeteorLibraryUpdater>()
 
 internal class MeteorLibraryUpdater(private val project: Project, coroutineScope: CoroutineScope) : Disposable {
-  private val queue: MergingUpdateQueue
-
-  private val projectStatusRequests = MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+  private val queue: UpdateQueue<Unit>
+  private val projectStatusQueue: UpdateQueue<Unit>
 
   init {
     LOG.assertTrue(!project.isDefault)
-    queue = MergingUpdateQueue("Meteor update packages", 300, true, null, this, null, false)
-    coroutineScope.launch {
-      projectStatusRequests
-        .debounce(1.seconds)
-        .collectLatest {
-          smartReadAction(project) {
-            findAndInitMeteorRoots(project)
-          }
+    queue = DebouncedUpdates.forScope<Unit>(coroutineScope, "Meteor update packages", 300)
+      .runLatest { performUpdate() }
+    projectStatusQueue = DebouncedUpdates.forScope<Unit>(coroutineScope, "Meteor project status", 1000)
+      .restartTimerOnAdd(true)
+      .runLatest {
+        smartReadAction(project) {
+          findAndInitMeteorRoots(project)
         }
-    }
+      }
   }
 
   fun update() {
@@ -65,18 +51,18 @@ internal class MeteorLibraryUpdater(private val project: Project, coroutineScope
       return
     }
 
-    queue.queue(object : Update(this) {
-      override fun run() {
-        DumbService.getInstance(project).runReadActionInSmartMode {
-          LOG.debug { "Check meteor libraries" }
-          if (updateStoredMeteorFolders()) {
-            refreshMeteorLibraries(project = project, removeDeprecated = true)
-            return@runReadActionInSmartMode
-          }
-          updateMeteorLibraryIfRequired(project)
-        }
+    queue.queue(Unit)
+  }
+
+  private fun performUpdate() {
+    DumbService.getInstance(project).runReadActionInSmartMode {
+      LOG.debug { "Check meteor libraries" }
+      if (updateStoredMeteorFolders()) {
+        refreshMeteorLibraries(project = project, removeDeprecated = true)
+        return@runReadActionInSmartMode
       }
-    })
+      updateMeteorLibraryIfRequired(project)
+    }
   }
 
   private fun updateStoredMeteorFolders(): Boolean {
@@ -93,34 +79,21 @@ internal class MeteorLibraryUpdater(private val project: Project, coroutineScope
   }
 
   fun scheduleProjectUpdate() {
-    check(projectStatusRequests.tryEmit(Unit))
+    projectStatusQueue.queue(Unit)
   }
 
   override fun dispose() {
-    queue.cancelAllUpdates()
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
   @TestOnly
   fun waitForUpdate() {
-    do {
-      try {
-        queue.waitForAllExecuted(1, TimeUnit.MINUTES)
-        if (projectStatusRequests.replayCache.isNotEmpty()) {
-          projectStatusRequests.resetReplayCache()
-          @Suppress("SSBasedInspection")
-          runBlocking {
-            readAction {
-              findAndInitMeteorRoots(project)
-            }
-          }
-        }
-      }
-      catch (e: TimeoutException) {
-        throw RuntimeException(e)
-      }
+    try {
+      queue.waitForAllExecuted(1.minutes)
+      projectStatusQueue.waitForAllExecuted(1.minutes)
     }
-    while (!queue.isEmpty)
+    catch (e: TimeoutException) {
+      throw RuntimeException(e)
+    }
   }
 
   companion object {
