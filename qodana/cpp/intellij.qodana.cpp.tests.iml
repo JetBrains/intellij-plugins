@@ -40,6 +40,7 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.tools.ide.starter" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.tools.ide.starter.build.server.clion" scope="TEST" />
     <orderEntry type="module" module-name="intellij.ide.starter.extended.allure" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.testsFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.ide.starter.extended" scope="TEST" />
