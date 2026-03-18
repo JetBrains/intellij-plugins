@@ -38,7 +38,8 @@ class LoadingModel {
 class ReusePool {
   private val strings: MutableMap<String, String> = HashMap()
   private val properties: MutableMap<PropertyType, PropertyType> = HashMap()
-  private val blocks: MutableMap<BlockType, BlockType> = HashMap()
+
+  private val blocks = createCache<BlockType, BlockType>(maximumSize = 2048)
   private val types = createCache<HclType, HclType>(maximumSize = 20)
 
   fun pool(v: String): String {
@@ -57,13 +58,7 @@ class ReusePool {
     return ret
   }
 
-  fun pool(v: BlockType): BlockType {
-    var ret = blocks[v]
-    if (ret != null) return ret
-    ret = v
-    blocks[ret] = ret
-    return ret
-  }
+  fun pool(block: BlockType): BlockType = blocks.get(block) { block }
 
   fun pool(type: HclType): HclType = types.get(type) { type }
 }
