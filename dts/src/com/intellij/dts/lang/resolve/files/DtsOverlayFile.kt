@@ -2,6 +2,7 @@ package com.intellij.dts.lang.resolve.files
 
 import com.intellij.dts.lang.psi.FileInclude
 import com.intellij.dts.zephyr.DtsZephyrProvider
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -18,9 +19,10 @@ object DtsOverlayFile : FileInclude {
 
     val name = "${context.nameWithoutExtension}.dts"
     val board = DtsZephyrProvider.of(anchor.project).board ?: return null
+    val file = VfsUtil.findFile(board.path, false) ?: return null
 
     val candidates = mutableListOf<VirtualFile>()
-    VfsUtilCore.processFilesRecursively(board.file) { virtualFile ->
+    VfsUtilCore.processFilesRecursively(file) { virtualFile ->
       if (virtualFile.name == name) {
         candidates.add(virtualFile)
       }

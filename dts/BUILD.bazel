@@ -69,6 +69,8 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/testRunner",
+    "@community//platform/testRunner:testRunner_test_lib",
     "@community//xml/dom-impl",
     "@community//libraries/snakeyaml",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",

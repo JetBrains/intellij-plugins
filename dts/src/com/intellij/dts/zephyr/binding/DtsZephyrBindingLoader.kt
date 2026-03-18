@@ -1,25 +1,30 @@
 package com.intellij.dts.zephyr.binding
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.readText
 import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.SafeConstructor
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.io.path.extension
+import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.pathString
+import kotlin.io.path.readText
 
 data class BindingFile(val path: String?, val data: Map<*, *>)
 
 private val yaml = Yaml(SafeConstructor(LoaderOptions()))
 private val logger = Logger.getInstance("DtsZephyrBindingLoader")
 
-private fun loadFileData(file: VirtualFile): Map<*, *>? {
+private fun loadFileData(text: String): Map<*, *>? {
   try {
     return synchronized(yaml) {
-      yaml.load(file.readText())
+      yaml.load(text)
     }
   }
   catch (e: Exception) {
@@ -30,23 +35,27 @@ private fun loadFileData(file: VirtualFile): Map<*, *>? {
 }
 
 @RequiresBackgroundThread
-fun loadExternalBindings(root: VirtualFile): Map<String, BindingFile> {
+fun loadExternalBindings(root: Path): Map<String, BindingFile> {
   ThreadingAssertions.assertBackgroundThread()
+
+  if (!Files.isDirectory(root)) return emptyMap()
 
   val bindings = mutableMapOf<String, BindingFile>()
 
-  val visitor = object : VirtualFileVisitor<Any>() {
-    override fun visitFile(file: VirtualFile): Boolean {
-      if (file.isDirectory || file.extension != "yaml") return true
+  try {
+    Files.walk(root).use { stream ->
+      for (file in stream) {
+        if (Files.isDirectory(file) || file.extension != "yaml") continue
 
-      loadFileData(file)?.let {
-        bindings[file.nameWithoutExtension] = BindingFile(file.path, it)
+        loadFileData(file.readText())?.let {
+          bindings[file.nameWithoutExtension] = BindingFile(file.pathString, it)
+        }
       }
-
-      return true
     }
   }
-  VfsUtilCore.visitChildrenRecursively(root, visitor)
+  catch (_: IOException) {
+    logger.debug("could not walk binding directory: $root")
+  }
 
   return bindings
 }
@@ -60,7 +69,7 @@ fun loadBundledBindings(dir: VirtualFile): Map<String, BindingFile> {
   for (file in dir.children) {
     if (file.isDirectory || file.extension != "yaml") continue
 
-    val binding = loadFileData(file)
+    val binding = loadFileData(file.readText())
 
     if (binding != null) {
       bindings[file.nameWithoutExtension] = BindingFile(null, binding)

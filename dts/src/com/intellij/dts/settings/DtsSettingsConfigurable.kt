@@ -20,6 +20,7 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.toMutableProperty
 import org.jetbrains.annotations.Nls
 import java.nio.file.InvalidPathException
+import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.name
 
@@ -35,10 +36,10 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
   private fun validateRoot(path: String): Result<String> {
     if (path.isBlank()) {
       val root = DtsZephyrFileUtil.searchForRoot(project) ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
-      return Either.Right(root.path)
+      return Either.Right(root.toString())
     }
     else {
-      val root = DtsUtil.findFileAndRefresh(path) ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
+      val root = DtsUtil.toPath(path) ?: return Either.Left(DtsBundle.message("settings.zephyr.root.not_found"))
 
       if (!DtsZephyrFileUtil.isValid(root)) {
         return Either.Left(DtsBundle.message("settings.zephyr.root.invalid"))
@@ -122,14 +123,14 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
       override fun performCheck(state: String): Result<String> = validateBoard(state)
     }
 
-    val updateBoardList = object : DtsSettingsInputStatus<String, List<String>>(disposable) {
+    val updateBoardList = object : DtsSettingsInputStatus<String, List<Path>>(disposable) {
       override fun readState(): String = rootInput.text
 
-      override fun performCheck(state: String): Result<List<String>> = validateRoot(state).mapRight { rootPath ->
-        DtsZephyrFileUtil.getAllBoardDirs(DtsUtil.findFileAndRefresh(rootPath)).toList()
+      override fun performCheck(state: String): Result<List<Path>> = validateRoot(state).mapRight { rootPath ->
+        DtsZephyrFileUtil.getAllBoardDirs(Path(rootPath)).toList()
       }
 
-      override fun evaluate(state: String, result: Result<List<String>>): ValidationInfo? {
+      override fun evaluate(state: String, result: Result<List<Path>>): ValidationInfo? {
         result.fold(
           {
             boardInput.isEnabled = false
@@ -137,7 +138,7 @@ class DtsSettingsConfigurable(private val project: Project) : BoundSearchableCon
           },
           { boards ->
             boardInput.isEnabled = !syncInput.isSelected
-            boardInput.setBoards(boards)
+            boardInput.setBoards(boards.map { it.toString() })
           },
         )
 

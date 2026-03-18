@@ -1,8 +1,8 @@
 package com.intellij.dts.zephyr
 
-import com.intellij.openapi.vfs.VirtualFile
+import java.nio.file.Path
 
-data class DtsZephyrBoard(val file: VirtualFile) {
-  val name: String get() = file.name
-  val arch: String? get() = file.parent?.name
+data class DtsZephyrBoard(val path: Path) {
+  val name: String get() = path.fileName.toString()
+  val arch: String? get() = path.parent?.fileName?.toString()
 }

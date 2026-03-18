@@ -86,19 +86,25 @@ object DtsUtil {
   fun findFileAndRefresh(first: String, vararg more: String): VirtualFile? {
     ThreadingAssertions.assertNoReadAccess()
 
-    return try {
-      VfsUtil.findFile(Path.of(first, *more), true)
-    } catch (_: InvalidPathException) {
-      null
-    }
+    return toPath(first, *more)?.let { VfsUtil.findFile(it, true) }
   }
 
   fun findFile(first: String, vararg more: String): VirtualFile? {
-    return try {
-      VfsUtil.findFile(Path.of(first, *more), false)
+    return toPath(first, *more)?.let { VfsUtil.findFile(it, false) }
+  }
+
+  fun toPath(first: String, vararg more: String): Path? {
+    val path = try {
+      Path.of(first, *more)
     } catch (_: InvalidPathException) {
-      null
+      return null
     }
+
+    if (path.toString().isEmpty()) {
+      return null
+    }
+
+    return path
   }
 
   private fun nextElement(element: PsiElement, filter: Boolean): PsiElement? {
