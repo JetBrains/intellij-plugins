@@ -114,7 +114,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
         deprecated = if (deprecated) "DEPRECATED" else null,
         properties = type.asSafely<ContainerType<*>>()?.elements
           ?.asSafely<ObjectType>()?.elements?.mapValues { (k, v) -> PropertyType(k, type = v ?: Types.Any) }.orEmpty()
-      ).pool(context)
+      )
     }
 
     // External description and hint overrides one from model
