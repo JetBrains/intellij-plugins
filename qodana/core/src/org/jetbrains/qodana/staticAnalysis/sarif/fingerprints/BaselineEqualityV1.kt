@@ -28,6 +28,7 @@ internal data object BaselineEqualityV1 : FingerprintCalculator {
 
       hasher.put(graph.description?.text)
     }
+    result.codeFlows.forEachNotNull { it.hash(hasher, includeDescription = true) }
 
     hasher.put(result.ruleId)
     hasher.put(result.message?.text)
