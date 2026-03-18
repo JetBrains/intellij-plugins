@@ -2,24 +2,17 @@
 package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.github.benmanes.caffeine.cache.Cache
-import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.application.ApplicationManager
 import org.intellij.terraform.config.model.BackendType
-import org.intellij.terraform.config.model.BlockType
-import org.intellij.terraform.config.model.ContainerType
 import org.intellij.terraform.config.model.DataSourceType
 import org.intellij.terraform.config.model.EphemeralType
 import org.intellij.terraform.config.model.HclType
 import org.intellij.terraform.config.model.Hint
-import org.intellij.terraform.config.model.PrimitiveType
 import org.intellij.terraform.config.model.PropertyOrBlockType
-import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.ProvisionerType
 import org.intellij.terraform.config.model.ResourceType
 import org.intellij.terraform.config.model.TfFunction
-import org.intellij.terraform.config.model.TupleType
 
 class LoadingModel {
   val resources: MutableList<ResourceType> = arrayListOf()
@@ -35,41 +28,7 @@ class LoadingModel {
   data class Additional(val name: String, val description: String? = null, val hint: Hint? = null, val optional: Boolean? = null, val required: Boolean? = null)
 }
 
-class ReusePool {
-  private val strings: MutableMap<String, String> = HashMap()
-  private val properties: MutableMap<PropertyType, PropertyType> = HashMap()
-
-  private val blocks = createCache<BlockType, BlockType>(maximumSize = 2048)
-  private val types = createCache<HclType, HclType>(maximumSize = 20)
-
-  fun pool(v: String): String {
-    var ret = strings[v]
-    if (ret != null) return ret
-    ret = v
-    strings[ret] = ret
-    return ret
-  }
-
-  fun pool(v: PropertyType): PropertyType {
-    var ret = properties[v]
-    if (ret != null) return ret
-    ret = v
-    properties[ret] = ret
-    return ret
-  }
-
-  fun pool(block: BlockType): BlockType = blocks.get(block) { block }
-
-  fun pool(type: HclType): HclType = types.get(type) { type }
-}
-
-private fun <K : Any, V : Any> createCache(maximumSize: Long): Cache<K, V> {
-  return Caffeine.newBuilder()
-    .maximumSize(maximumSize)
-    .build()
-}
-
-class LoadContext(val pool: ReusePool, val model: LoadingModel)
+class LoadContext(val pool: TfReusePool, val model: LoadingModel)
 
 interface VersionedMetadataLoader {
   fun isSupportedVersion(version: String): Boolean
@@ -84,19 +43,6 @@ interface BaseLoader {
   fun parseSchemaElement(context: LoadContext, entry: Map.Entry<String, Any?>, fqnPrefix: String): PropertyOrBlockType
   fun parseSchemaElement(context: LoadContext, name: String, value: Any?, fqnPrefix: String): PropertyOrBlockType
   fun parseType(context: LoadContext, string: String?): HclType
-}
-
-internal fun String.pool(context: LoadContext): String = context.pool.pool(this)
-internal fun PropertyType.pool(context: LoadContext): PropertyType = context.pool.pool(this)
-internal fun BlockType.pool(context: LoadContext): BlockType = context.pool.pool(this)
-
-internal fun HclType.pool(context: LoadContext): HclType = if (shouldPoolTypes()) context.pool.pool(this) else this
-
-private fun HclType.shouldPoolTypes(): Boolean = when (this) {
-  is PrimitiveType -> true
-  is TupleType -> elements.all { it is PrimitiveType }
-  is ContainerType<*> -> elements is PrimitiveType
-  else -> false
 }
 
 internal fun warnOrFailInInternalMode(message: String) {
