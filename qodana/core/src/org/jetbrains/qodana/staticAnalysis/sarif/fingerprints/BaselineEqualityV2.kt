@@ -31,6 +31,7 @@ internal data object BaselineEqualityV2 : FingerprintCalculator {
       graph.nodes.forEachNotNull { it.hash(hasher) }
       graph.edges.forEachNotNull { it.hash(hasher) }
     }
+    result.codeFlows.forEachNotNull { it.hash(hasher, includeDescription = false) }
     hasher.put(result.properties?.get(ADDITIONAL_FINGERPRINT_DATA)?.hashCode())
   }
 }
