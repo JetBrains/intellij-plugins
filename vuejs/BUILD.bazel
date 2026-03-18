@@ -1,24 +1,50 @@
-### auto-generated section `build intellij.vuejs` start
-load("@rules_jvm//:jvm.bzl", "jvm_library")
+### auto-generated section `build intellij.vuejs.plugin` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_library(
-  name = "vuejs",
-  module_name = "intellij.vuejs",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+resourcegroup(
+  name = "vuejs-plugin_resources",
+  srcs = glob(["vuejs-plugin/resources/**/*"]),
+  strip_prefix = "vuejs-plugin/resources"
 )
 
 jvm_library(
-  name = "vuejs_test_lib",
-  module_name = "intellij.vuejs",
+  name = "vuejs-plugin",
+  module_name = "intellij.vuejs.plugin",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
-  runtime_deps = [":vuejs"]
+  resources = [":vuejs-plugin_resources"],
+  runtime_deps = [
+    "@lib//:kotlin-stdlib",
+    "//contrib/vuejs/vuejs-backend:backend",
+    "//contrib/vuejs/vuejs-common:common",
+    "//contrib/vuejs/vuejs-copyright:copyright",
+    "//contrib/vuejs/vuejs-debugger:debugger",
+    "//contrib/vuejs/vuejs-markdown:markdown",
+    "//contrib/vuejs/vuejs-prettier:prettier",
+    "//plugins/JavaScriptLanguage:javascript-plugin",
+  ]
 )
-### auto-generated section `build intellij.vuejs` end
 
-### auto-generated section `iml intellij.vuejs` start
+jvm_library(
+  name = "vuejs-plugin_test_lib",
+  module_name = "intellij.vuejs.plugin",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":vuejs-plugin",
+    "//contrib/vuejs/vuejs-backend:backend_test_lib",
+    "//contrib/vuejs/vuejs-common:common_test_lib",
+    "//contrib/vuejs/vuejs-copyright:copyright_test_lib",
+    "//contrib/vuejs/vuejs-debugger:debugger_test_lib",
+    "//contrib/vuejs/vuejs-markdown:markdown_test_lib",
+    "//contrib/vuejs/vuejs-prettier:prettier_test_lib",
+    "//plugins/JavaScriptLanguage:javascript-plugin_test_lib",
+  ]
+)
+### auto-generated section `build intellij.vuejs.plugin` end
+
+### auto-generated section `iml intellij.vuejs.plugin` start
 exports_files([
-  "intellij.vuejs.iml",
+  "intellij.vuejs.plugin.iml",
 ], visibility = ["//visibility:public"])
-### auto-generated section `iml intellij.vuejs` end
+### auto-generated section `iml intellij.vuejs.plugin` end
