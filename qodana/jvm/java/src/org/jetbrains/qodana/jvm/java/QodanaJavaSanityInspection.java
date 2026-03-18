@@ -4,6 +4,7 @@ package org.jetbrains.qodana.jvm.java;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.psi.JavaElementVisitor;
 import com.intellij.psi.JavaResolveResult;
 import com.intellij.psi.PsiElementVisitor;
@@ -15,6 +16,9 @@ import org.jetbrains.qodana.QodanaBundle;
 final class QodanaJavaSanityInspection extends LocalInspectionTool {
   @Override
   public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
+    if (InjectedLanguageManager.getInstance(holder.getProject()).isInjectedFragment(holder.getFile())) {
+      return PsiElementVisitor.EMPTY_VISITOR;
+    }
     return new JavaElementVisitor() {
       @Override
       public void visitReferenceElement(@NotNull PsiJavaCodeReferenceElement reference) {
