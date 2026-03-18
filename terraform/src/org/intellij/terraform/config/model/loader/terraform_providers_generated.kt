@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.JsonNode
@@ -246,7 +246,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
             else
               null
 
-          return ObjectType(attributes, optional).pool(context)
+          return ObjectType(attributes, optional)
         }
         "tuple" -> {
           assert(node.get(1).isArray)
