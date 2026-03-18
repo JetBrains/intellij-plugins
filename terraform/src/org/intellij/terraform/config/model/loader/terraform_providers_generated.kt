@@ -183,13 +183,13 @@ Sensitive           bool            `json:"sensitive,omitempty"`
 
     val deprecated = block.boolean("deprecated") ?: false
 
-    val attrs: List<PropertyOrBlockType> = attributes?.properties()?.asSequence()?.map {
+    val attrs = attributes?.properties()?.asSequence()?.map {
       parseAttribute(context, it.key, it.value, name)
-    }?.toList() ?: emptyList()
+    } ?: emptySequence()
 
-    val blocks: List<PropertyOrBlockType> = blockTypes?.properties()?.asSequence()?.map {
+    val blocks = blockTypes?.properties()?.asSequence()?.map {
       parseBlockType(context, it.key, it.value)
-    }?.toList() ?: emptyList()
+    } ?: emptySequence()
 
     return BlockType(name.pool(context),
                      description = description?.pool(context),
