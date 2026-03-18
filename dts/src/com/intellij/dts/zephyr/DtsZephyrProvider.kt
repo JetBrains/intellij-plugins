@@ -11,7 +11,6 @@ import com.intellij.dts.zephyr.binding.parseExternalBindings
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.platform.util.progress.SequentialProgressReporter
 import com.intellij.platform.util.progress.reportSequentialProgress
@@ -27,6 +26,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
+import java.nio.file.Files
+import java.nio.file.InvalidPathException
+import java.nio.file.Path
 
 private fun settings(project: Project): Flow<DtsSettings.State> = channelFlow {
   project.messageBus.connect(this@channelFlow).subscribe(DtsSettings.ChangeListener.TOPIC, DtsSettings.ChangeListener { settings ->
@@ -58,20 +60,20 @@ internal class DtsZephyrProvider(private val project: Project, scope: CoroutineS
     }
   }
 
-  val root: VirtualFile? get() = state.value?.root
+  val root: Path? get() = state.value?.root
 
   val board: DtsZephyrBoard? get() = state.value?.board
 
   val bindings: MultiMap<String, DtsZephyrBinding> get() = state.value?.bindings ?: MultiMap.empty()
 
-  private suspend fun findSdk(reporter: SequentialProgressReporter, root: String): VirtualFile? {
+  private suspend fun findSdk(reporter: SequentialProgressReporter, root: String): Path? {
     return if (root.isBlank()) {
       reporter.indeterminateStep(DtsBundle.message("background.load_zephyr.search")) {
         DtsZephyrFileUtil.searchForRoot(project)
       }
     }
     else {
-      DtsUtil.findFileAndRefresh(root)
+      DtsUtil.toPath(root)
     }
   }
 
@@ -79,13 +81,13 @@ internal class DtsZephyrProvider(private val project: Project, scope: CoroutineS
     val root = findSdk(reporter, settings.zephyrRoot)
     if (root == null) return null
 
-    val board = DtsUtil.findFileAndRefresh(settings.zephyrBoard)?.let(::DtsZephyrBoard)
+    val board = DtsUtil.toPath(settings.zephyrBoard)?.let(::DtsZephyrBoard)
 
     val bundledBindings = DtsZephyrBundledBindings.getInstance().getSource()
     val defaultBinding = bundledBindings?.files?.get(DtsZephyrBundledBindings.DEFAULT_BINDING)
 
     val bindings = reporter.indeterminateStep(DtsBundle.message("background.load_zephyr.bindings")) {
-      val files = loadExternalBindings(root)
+      val files = loadExternalBindings(root.resolve("dts").resolve("bindings"))
       parseExternalBindings(BindingSource(files, defaultBinding))
     }
 
@@ -98,7 +100,7 @@ internal class DtsZephyrProvider(private val project: Project, scope: CoroutineS
   }
 
   private data class State(
-    val root: VirtualFile?,
+    val root: Path?,
     val board: DtsZephyrBoard?,
     val bindings: MultiMap<String, DtsZephyrBinding>,
   )

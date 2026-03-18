@@ -8,9 +8,17 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
-import com.intellij.openapi.vfs.findDirectory
 import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
+import java.io.IOException
+import java.nio.file.FileVisitOption
+import java.nio.file.FileVisitResult
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
+import kotlin.io.path.isDirectory
+import kotlin.io.path.name
 
 object DtsZephyrFileUtil {
   private const val BOARDS_PATH = "boards"
@@ -19,30 +27,39 @@ object DtsZephyrFileUtil {
 
   private val includePaths = listOf("include", "dts", "dts/common")
 
-  fun isValid(root: VirtualFile?): Boolean {
-    if (root == null || !root.isDirectory) return false
+  fun isValid(root: Path?): Boolean {
+    if (root == null || !Files.isDirectory(root)) return false
 
-    // check if all expected directories exist
     for (expectedDirectory in listOf(BOARDS_PATH, BINDINGS_PATH) + includePaths) {
-      val directory = root.findDirectory(expectedDirectory)
-      if (directory == null || !directory.exists() || directory.children.isEmpty()) return false
+      val directory = root.resolve(expectedDirectory)
+      if (!Files.isDirectory(directory)) return false
+
+      val hasChildren = try {
+        Files.list(directory).use { it.findFirst().isPresent }
+      }
+      catch (_: IOException) {
+        false
+      }
+      if (!hasChildren) return false
     }
 
     return true
   }
 
   @RequiresBackgroundThread
-  fun searchForRoot(project: Project): VirtualFile? {
+  fun searchForRoot(project: Project): Path? {
     ThreadingAssertions.assertBackgroundThread()
 
-    val candidates = mutableListOf<VirtualFile>()
+    val candidates = mutableListOf<Path>()
 
     val visitor = object : VirtualFileVisitor<Any>(limit(2)) {
       override fun visitFile(file: VirtualFile): Boolean {
         ProgressManager.checkCanceled()
 
-        if (isValid(file)) {
-          candidates.add(file)
+        val path = Path.of(file.path)
+
+        if (isValid(path)) {
+          candidates.add(path)
           return false
         }
 
@@ -61,34 +78,35 @@ object DtsZephyrFileUtil {
 
     // search default installation directory
     if (candidates.isEmpty()) {
-      val file = VfsUtil.findRelativeFile(VfsUtil.getUserHomeDir(), DEFAULT_PATH)
-
-      if (file != null && isValid(file)) {
-        candidates.add(file)
+      val defaultPath = Path.of(System.getProperty("user.home"), DEFAULT_PATH)
+      if (isValid(defaultPath)) {
+        candidates.add(defaultPath)
       }
     }
 
     return candidates.firstOrNull()
   }
 
-  fun getAllBoardDirs(root: VirtualFile?): Sequence<String> {
-    val boards = VfsUtil.findRelativeFile(root, BOARDS_PATH)
-    if (boards == null || !boards.isDirectory) return emptySequence()
+  fun getAllBoardDirs(root: Path?): Sequence<Path> {
+    if (root == null) return emptySequence()
+
+    val boards = root.resolve(BOARDS_PATH)
+    if (!Files.isDirectory(boards)) return emptySequence()
 
     return sequence {
-      for (arch in boards.children.filter { it.isDirectory }) {
+      for (arch in Files.list(boards).filter { it.isDirectory() }) {
         if (arch.name == "common") continue
 
-        for (board in arch.children.filter { it.isDirectory }) {
-          if (board.findChild("board.cmake") == null) continue
-
-          yield(board.path)
+        for (board in Files.list(arch).filter { it.isDirectory() }) {
+          if (Files.list(board).anyMatch { it.name == "board.cmake"}) {
+            yield(board)
+          }
         }
       }
     }
   }
 
-  fun getIncludeDirs(root: VirtualFile?, board: DtsZephyrBoard?): List<VirtualFile> {
+  fun getIncludeDirs(root: Path?, board: DtsZephyrBoard?): List<VirtualFile> {
     if (root == null) return emptyList()
 
     val includes = sequence {
@@ -97,6 +115,9 @@ object DtsZephyrFileUtil {
       board?.arch?.let { yield("dts/$it") }
     }
 
-    return includes.mapNotNull(root::findDirectory).toList()
+    return includes.mapNotNull { subPath ->
+      val resolved = root.resolve(subPath)
+      if (Files.isDirectory(resolved)) VfsUtil.findFile(resolved, false) else null
+    }.toList()
   }
 }
