@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <input type="number" :value="app.<weak_warning descr="Unresolved variable num">num</weak_warning>" @blur="<weak_warning descr="Unresolved variable or type setValue">setValue</weak_warning>" />
+    <input type="number" :value="app.num" @blur="<weak_warning descr="Unresolved variable or type setValue">setValue</weak_warning>" />
     <div>
       <button class="btn" @click="add">+</button>
       <button class="btn" @click="<weak_warning descr="Unresolved variable or type less">less</weak_warning>">-</button>
