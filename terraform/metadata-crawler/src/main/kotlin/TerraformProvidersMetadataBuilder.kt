@@ -17,8 +17,6 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicInteger
 
-private const val MAX_SCHEMA_SIZE = 20L * 1024 * 1024 // 20 MB
-
 object TerraformProvidersMetadataBuilder {
 
   private val objectMapper: ObjectMapper = ObjectMapper()
@@ -28,6 +26,7 @@ object TerraformProvidersMetadataBuilder {
   private val terraformRegistryHost = System.getenv("TERRAFORM_REGISTRY_HOST") ?: "https://registry.terraform.io"
   private val downloadsLimitForProvider = System.getenv("DOWNLOADS_LIMIT_FOR_PROVIDER")?.toInt() ?: 50_000
   private val cleanDownloadedData = System.getenv("CLEAN_DOWNLOADED_DATA")?.toBoolean() ?: true
+  private val maxSchemaSize = System.getenv("MAX_SCHEMA_SIZE")?.toLong() ?: (20L * 1024 * 1024)  // 20 MB by default
 
   private val logger = LoggerFactory.getLogger(TerraformProvidersMetadataBuilder::class.java.simpleName)
 
@@ -158,7 +157,7 @@ object TerraformProvidersMetadataBuilder {
       failedProviders.incrementAndGet()
       logger.error("Metadata build failure for provider $fullName. \n Error: $initError \n Schema Generation Error: $schemaError")
     }
-    else if (schemaSize > MAX_SCHEMA_SIZE) {
+    else if (schemaSize > maxSchemaSize) {
       cleanupSchema(schemaFile, parentDir)
       skippedProviders.incrementAndGet()
       logger.warn("Skipping provider $fullName because schema is too large: ${formatMb(schemaSize)} MB")
