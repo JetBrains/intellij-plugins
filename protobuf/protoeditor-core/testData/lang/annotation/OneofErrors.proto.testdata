@@ -21,10 +21,10 @@ message Test {
     group FooGroup = 50 {}
   }
 
-  <error descr="Oneof must contain at least one field">oneof OptionButNoFields</error> {
+  <error descr="'Oneof' must contain at least one field">oneof OptionButNoFields</error> {
     option (oneof_option) = 10;
   }
 
-  <error descr="Oneof must contain at least one field">oneof CompletelyEmpty</error> {
+  <error descr="'Oneof' must contain at least one field">oneof CompletelyEmpty</error> {
   }
 }
