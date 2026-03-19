@@ -32,12 +32,12 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="kotlin-stdlib" level="project" />
-    <orderEntry type="module" module-name="intellij.dfa.analysis.rml" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.rml.dfa" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.qodana.cpp" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.dfa.analysis.rml.tests" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.dfa.analysis.rml.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.rml.dfa.tests" scope="TEST" />
+        <orderEntry type="module" module-name="intellij.rml.dfa.impl" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="kodein-di-jvm" level="project" />
     <orderEntry type="library" scope="TEST" name="qodana-sarif" level="project" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
