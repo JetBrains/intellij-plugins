@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.config
 
 import com.intellij.codeInspection.ex.ProjectInspectionToolRegistrar
+import com.intellij.idea.IJIgnore
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
@@ -53,6 +54,7 @@ class QodanaConfigChangeServiceTest : QodanaPluginHeavyTestBase() {
       .isEqualTo(expectedQodanaYaml.readText().replace("\r", "").updateVersion())
   }
 
+  @IJIgnore(issue = "QD-14084")
   fun `test config don't exists`() = runDispatchingOnUi {
     doCheck()
   }
