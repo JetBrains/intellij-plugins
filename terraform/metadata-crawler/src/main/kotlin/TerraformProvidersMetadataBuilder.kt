@@ -46,11 +46,11 @@ object TerraformProvidersMetadataBuilder {
   private fun String.urlDecode(): String = URLDecoder.decode(this, StandardCharsets.UTF_8)
 
   private fun getProvidersDataFromPages(): Sequence<JsonNode> =
-    getProvidersByTier("official") +
-    getProvidersByTier("partner") +
-    getProvidersByTier("community")
+    getProvidersByTier(Tier.OFFICIAL) +
+    getProvidersByTier(Tier.PARTNER) +
+    getProvidersByTier(Tier.COMMUNITY)
 
-  private fun getProvidersByTier(tier: String): Sequence<JsonNode> {
+  private fun getProvidersByTier(tier: Tier): Sequence<JsonNode> {
     logger.info("Loading providers for tier=$tier ...")
     return sequence {
       var httpResponse = getQuery("${terraformRegistryHost}/v2/providers?filter[tier]=$tier&sort=-downloads&page[size]=100")
@@ -86,9 +86,9 @@ object TerraformProvidersMetadataBuilder {
                                       .put("type", "providers")
                                       .put("name", "terraform")
                                       .put("namespace", "terraform")
-                                      .put("tier", "builtin"))
+                                      .put("tier", "${Tier.BUILTIN}"))
     }
-    val providerVendorsTier = setOf("partner", "official")
+    val providerVendorsTier = listOf(Tier.OFFICIAL, Tier.PARTNER).map { it.toString() }
     val mostUsefulProviders = sequenceOf<JsonNode>(buildInProvider) +
                               objectMapper.readTree(allOut).elements().asSequence()
                                 .filter { providerData ->
@@ -277,5 +277,13 @@ object TerraformProvidersMetadataBuilder {
       .waitFor()
     return initError
   }
+}
 
+internal enum class Tier(private val tierName: String) {
+  OFFICIAL("official"),
+  PARTNER("partner"),
+  COMMUNITY("community"),
+  BUILTIN("builtin");
+
+  override fun toString(): String = tierName
 }
