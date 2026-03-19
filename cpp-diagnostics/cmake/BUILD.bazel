@@ -74,6 +74,7 @@ exports_files([
 ### auto-generated section `build intellij.clion.diagnostics.cmake.tests` start
 jvm_library(
   name = "clion-diagnostics-cmake-tests",
+  module_name = "intellij.clion.diagnostics.cmake.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

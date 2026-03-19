@@ -9,6 +9,7 @@ resourcegroup(
 
 jvm_library(
   name = "sarif",
+  module_name = "intellij.qodana.sarif",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
   resources = [":sarif_resources"],

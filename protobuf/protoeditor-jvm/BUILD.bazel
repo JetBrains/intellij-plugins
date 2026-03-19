@@ -71,6 +71,7 @@ exports_files([
 ### auto-generated section `build intellij.protoeditor.jvm.tests` start
 jvm_library(
   name = "protoeditor-jvm-tests",
+  module_name = "intellij.protoeditor.jvm.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

@@ -130,6 +130,7 @@ exports_files([
 ### auto-generated section `build intellij.meteor.tests` start
 jvm_library(
   name = "meteor-tests",
+  module_name = "intellij.meteor.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

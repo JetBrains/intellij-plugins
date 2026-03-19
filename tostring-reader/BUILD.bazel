@@ -67,6 +67,7 @@ resourcegroup(
 
 jvm_library(
   name = "tsr-tests",
+  module_name = "intellij.tsr.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

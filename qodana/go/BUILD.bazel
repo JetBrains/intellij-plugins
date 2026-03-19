@@ -134,6 +134,7 @@ exports_files([
 ### auto-generated section `build intellij.qodana.go.tests` start
 jvm_library(
   name = "go-tests",
+  module_name = "intellij.qodana.go.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

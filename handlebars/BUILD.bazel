@@ -108,6 +108,7 @@ exports_files([
 ### auto-generated section `build intellij.handlebars.tests` start
 jvm_library(
   name = "handlebars-tests",
+  module_name = "intellij.handlebars.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

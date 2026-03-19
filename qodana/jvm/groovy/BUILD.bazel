@@ -59,6 +59,7 @@ exports_files([
 ### auto-generated section `build intellij.qodana.jvm.groovy.tests` start
 jvm_library(
   name = "qodana-jvm-groovy-tests",
+  module_name = "intellij.qodana.jvm.groovy.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

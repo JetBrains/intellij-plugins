@@ -9,6 +9,7 @@ resourcegroup(
 
 jvm_library(
   name = "angular",
+  module_name = "intellij.angular",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
   resources = [":angular_resources"]

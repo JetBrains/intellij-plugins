@@ -99,6 +99,7 @@ exports_files([
 ### auto-generated section `build intellij.mdx.tests` start
 jvm_library(
   name = "mdx-tests",
+  module_name = "intellij.mdx.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

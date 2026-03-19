@@ -76,6 +76,7 @@ exports_files([
 ### auto-generated section `build intellij.jhipster.backend.tests` start
 jvm_library(
   name = "backend-tests",
+  module_name = "intellij.jhipster.backend.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

@@ -107,6 +107,7 @@ resourcegroup(
 
 jvm_library(
   name = "rust-tests",
+  module_name = "intellij.qodana.rust.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
   runtime_deps = ["//rustrover/plugin"]

@@ -91,6 +91,7 @@ exports_files([
 ### auto-generated section `build intellij.qodana.php.tests` start
 jvm_library(
   name = "php-tests",
+  module_name = "intellij.qodana.php.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

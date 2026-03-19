@@ -109,6 +109,7 @@ resourcegroup(
 
 jvm_library(
   name = "postcss-tests",
+  module_name = "intellij.postcss.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
   exports = ["@community//xml/impl"]

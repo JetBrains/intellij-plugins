@@ -9,6 +9,7 @@ resourcegroup(
 
 jvm_library(
   name = "protoeditor",
+  module_name = "intellij.protoeditor",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
   resources = [":protoeditor_resources"],

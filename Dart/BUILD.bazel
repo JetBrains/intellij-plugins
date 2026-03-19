@@ -167,6 +167,7 @@ exports_files([
 ### auto-generated section `build intellij.dart.tests` start
 jvm_library(
   name = "dart-tests",
+  module_name = "intellij.dart.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

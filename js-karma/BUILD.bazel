@@ -131,6 +131,7 @@ resourcegroup(
 
 jvm_library(
   name = "karma-tests",
+  module_name = "intellij.karma.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

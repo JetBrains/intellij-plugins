@@ -71,6 +71,7 @@ exports_files([
 ### auto-generated section `build intellij.qodana.coverage.tests` start
 jvm_library(
   name = "coverage-tests",
+  module_name = "intellij.qodana.coverage.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

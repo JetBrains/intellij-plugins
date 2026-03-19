@@ -85,6 +85,7 @@ exports_files([
 ### auto-generated section `build intellij.qodana.jvm.coverage.tests` start
 jvm_library(
   name = "qodana-jvm-coverage-tests",
+  module_name = "intellij.qodana.jvm.coverage.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
   runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"]

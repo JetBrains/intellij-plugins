@@ -73,6 +73,7 @@ resourcegroup(
 
 jvm_library(
   name = "template-tests",
+  module_name = "intellij.terraform.template.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

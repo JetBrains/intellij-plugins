@@ -58,6 +58,7 @@ exports_files([
 ### auto-generated section `build intellij.ruby.featuresTrainer.tests` start
 jvm_library(
   name = "ruby-featuresTrainer-tests",
+  module_name = "intellij.ruby.featuresTrainer.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

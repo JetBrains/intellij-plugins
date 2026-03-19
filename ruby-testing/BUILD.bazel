@@ -9,6 +9,7 @@ resourcegroup(
 
 jvm_library(
   name = "ruby-testing",
+  module_name = "intellij.ruby.testing",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
   resources = [":ruby-testing_resources"]

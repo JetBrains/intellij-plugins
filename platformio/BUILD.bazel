@@ -158,6 +158,7 @@ resourcegroup(
 
 jvm_library(
   name = "clion-embedded-platformio-tests",
+  module_name = "intellij.clion.embedded.platformio.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

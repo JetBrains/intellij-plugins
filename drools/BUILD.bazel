@@ -85,6 +85,7 @@ exports_files([
 ### auto-generated section `build intellij.jboss.drools.tests` start
 jvm_library(
   name = "jboss-drools-tests",
+  module_name = "intellij.jboss.drools.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

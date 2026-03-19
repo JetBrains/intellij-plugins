@@ -90,6 +90,7 @@ exports_files([
 ### auto-generated section `build intellij.yeoman.tests` start
 jvm_library(
   name = "yeoman-tests",
+  module_name = "intellij.yeoman.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

@@ -73,6 +73,7 @@ exports_files([
 ### auto-generated section `build intellij.protoeditor.go.tests` start
 jvm_library(
   name = "protoeditor-go-tests",
+  module_name = "intellij.protoeditor.go.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

@@ -96,6 +96,7 @@ resourcegroup(
 
 jvm_library(
   name = "dts-tests",
+  module_name = "intellij.dts.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

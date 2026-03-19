@@ -146,6 +146,7 @@ exports_files([
 ### auto-generated section `build intellij.cucumber.java.tests` start
 jvm_library(
   name = "cucumber-java-tests",
+  module_name = "intellij.cucumber.java.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

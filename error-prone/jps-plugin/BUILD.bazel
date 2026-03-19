@@ -52,6 +52,7 @@ exports_files([
 ### auto-generated section `build intellij.errorProne.jps.tests` start
 jvm_library(
   name = "errorProne-jps-tests",
+  module_name = "intellij.errorProne.jps.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

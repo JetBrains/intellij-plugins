@@ -167,6 +167,7 @@ resourcegroup(
 
 jvm_library(
   name = "angularJS-tests",
+  module_name = "intellij.angularJS.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

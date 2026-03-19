@@ -101,6 +101,7 @@ exports_files([
 ### auto-generated section `build intellij.qodana.jvm.java.tests` start
 jvm_library(
   name = "qodana-jvm-java-tests",
+  module_name = "intellij.qodana.jvm.java.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

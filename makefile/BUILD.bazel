@@ -83,6 +83,7 @@ exports_files([
 ### auto-generated section `build intellij.makefile.tests` start
 jvm_library(
   name = "makefile-tests",
+  module_name = "intellij.makefile.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )

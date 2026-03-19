@@ -74,6 +74,7 @@ exports_files([
 ### auto-generated section `build intellij.qodana.jvm.kotlin.tests` start
 jvm_library(
   name = "qodana-jvm-kotlin-tests",
+  module_name = "intellij.qodana.jvm.kotlin.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
   runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"]

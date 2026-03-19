@@ -120,6 +120,7 @@ exports_files([
 ### auto-generated section `build intellij.prettierJS.tests` start
 jvm_library(
   name = "prettierJS-tests",
+  module_name = "intellij.prettierJS.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True)
 )
