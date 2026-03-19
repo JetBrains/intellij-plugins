@@ -25,7 +25,7 @@ export default defineComponent({
       this.$refs.divRef3.<weak_warning descr="Unresolved variable foo">foo</weak_warning>
       this.$refs.inputRef[0].<weak_warning descr="Unresolved variable validationMesage">validationMesage</weak_warning>
       this.$refs.div.innerHTML
-      this.$refs.div.<weak_warning descr="Unresolved variable foo">foo</weak_warning>
+      this.$refs.div.foo
     }
   }
 })

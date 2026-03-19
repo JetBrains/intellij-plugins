@@ -6,7 +6,7 @@
     {{ myStyle.<weak_warning descr="Unresolved variable foo">foo</weak_warning> }}
     {{ myStyle["my-stuff"] }}
     {{ theStyle.the__stuff }}
-    {{ <weak_warning descr="Unresolved variable or type noStyle">noStyle</weak_warning>.<weak_warning descr="Unresolved variable foo">foo</weak_warning> }}
+    {{ <weak_warning descr="Unresolved variable or type noStyle">noStyle</weak_warning>.foo }}
   </div>
 </template>
 
