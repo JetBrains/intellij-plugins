@@ -124,6 +124,8 @@ jvm_library(
     "@community//java/java-indexing-api:indexing_test_lib",
     "//contrib/protobuf/protoeditor-core:protoeditor-core-tests",
     "//contrib/protobuf/protoeditor-core:protoeditor-core-tests_test_lib",
+    "@community//platform/statistics",
+    "@community//platform/statistics:statistics_test_lib",
   ],
   runtime_deps = [
     ":protoeditor-jvm-tests",

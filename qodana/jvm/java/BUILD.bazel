@@ -46,6 +46,7 @@ jvm_library(
     "@community//platform/backend/workspace",
     "@community//platform/workspace/storage",
     "//contrib/qodana/util",
+    "@community//platform/core-impl",
   ]
 )
 
@@ -98,6 +99,7 @@ jvm_library(
     "//contrib/qodana/util:util_test_lib",
     "//contrib/qodana:qodana-core-tests",
     "//contrib/qodana:qodana-core-tests_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
   ]
 )
 ### auto-generated section `build intellij.qodana.jvm.java` end

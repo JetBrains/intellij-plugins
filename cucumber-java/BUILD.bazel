@@ -297,6 +297,8 @@ jvm_library(
     "@community//java/java-syntax:syntax_test_lib",
     "@community//java/java-frontback-psi-api:frontback-psi",
     "@community//java/java-frontback-psi-api:frontback-psi_test_lib",
+    "@community//platform/statistics",
+    "@community//platform/statistics:statistics_test_lib",
   ],
   runtime_deps = [
     ":cucumber-java-tests",

@@ -30,6 +30,7 @@ jvm_library(
     "@community//platform/indexing-api:indexing",
     "@community//platform/usageView",
     "@community//platform/markdown-utils",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
   ]
 )
 
@@ -55,6 +56,7 @@ jvm_library(
     "@community//platform/indexing-api:indexing_test_lib",
     "@community//platform/usageView:usageView_test_lib",
     "@community//platform/markdown-utils:markdown-utils_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ]
 )
 ### auto-generated section `build intellij.protoeditor.python` end
@@ -116,6 +118,8 @@ jvm_library(
     "@community//python:python-community-tests_test_lib",
     "@community//platform/usageView",
     "@community//platform/usageView:usageView_test_lib",
+    "@community//platform/statistics",
+    "@community//platform/statistics:statistics_test_lib",
   ],
   runtime_deps = [":protoeditor-python-tests"]
 )

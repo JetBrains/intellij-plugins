@@ -156,6 +156,8 @@ jvm_library(
     "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
     "@community//platform/execution",
     "@community//platform/execution:execution_test_lib",
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
   ],
   runtime_deps = [
     ":nextjs-tests",

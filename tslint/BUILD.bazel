@@ -49,6 +49,7 @@ jvm_library(
     "@community//json/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//platform/core-impl",
   ]
 )
 
@@ -89,6 +90,7 @@ jvm_library(
     "@community//json/backend:backend_test_lib",
     "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
   ]
 )
 ### auto-generated section `build intellij.tslint` end

@@ -46,5 +46,6 @@
     <orderEntry type="module" module-name="intellij.platform.workspace.storage" />
     <orderEntry type="module" module-name="intellij.qodana.util" />
     <orderEntry type="module" module-name="intellij.qodana.core.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" />
   </component>
 </module>
