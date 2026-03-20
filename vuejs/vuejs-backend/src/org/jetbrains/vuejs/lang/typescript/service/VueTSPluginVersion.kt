@@ -7,7 +7,7 @@ enum class VueTSPluginVersion(
   @param:NlsSafe
   val versionString: String,
 ) {
-  DEFAULT("3.2.5"),
+  DEFAULT("3.2.6"),
   LEGACY("3.0.10"),
 
   ;
