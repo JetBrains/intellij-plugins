@@ -153,6 +153,13 @@ object ResourceTypesSaver {
     println(builder.name)
 
     val doc = getDocumentFromUrl(toURL(builder.url))
+    val serverlessSyntaxProperties =
+      if (builder.transform == AWS_SERVERLESS_2016_10_31_TRANSFORM_NAME) {
+        parseServerlessSyntaxPropertyNames(doc)
+      }
+      else {
+        null
+      }
 
     val descriptionElement = doc.select("div").single { it.attr("id") == "main-col-body" }
     descriptionElement.getElementsByAttributeValueMatching("id", "language-filter").forEach { it.remove() }
@@ -198,6 +205,8 @@ object ResourceTypesSaver {
           error("Unknown section $sectionTitle")
         }
 
+        val ignoredServerlessProperties = LinkedHashSet<String>()
+
         for (term in vlist.select("span.term")) {
           if (term.parent()?.parent()?.parent() !== vlist) {
             continue
@@ -208,6 +217,10 @@ object ResourceTypesSaver {
           val descrElements = descr?.select("p")
 
           val name = term.text()
+          if (serverlessSyntaxProperties != null && name !in serverlessSyntaxProperties) {
+            ignoredServerlessProperties.add(name)
+            continue
+          }
 
           val href = term.previousElementSibling() ?: term.parent()
           assert(href?.tagName() == "a" || href?.tagName() == "dt")
@@ -255,24 +268,19 @@ object ResourceTypesSaver {
             }
           }
 
-          propertyBuilder.type = if (typeValue != null) {
-            typeValue
-          } else if (builder.name == "AWS::Redshift::Cluster" && name == "SnapshotClusterIdentifier") {
-            "String"
-          } else if (builder.name == "AWS::Cognito::IdentityPool" && name == "SupportedLoginProviders") {
-            "String"
-          } else if (builder.name == "AWS::ApiGateway::VpcLink" && name == "TargetArns") {
-            "List of String"
-          } else if (builder.name == "AWS::SNS::TopicPolicy" && name == "PolicyDocument") {
-            "JSON or YAML"
-          } else if (builder.name == "AWS::Route53::RecordSet" && name == "Region") {
-            "String"
-          } else {
-            // TODO
+          propertyBuilder.type = typeValue ?: when (builder.name to name) {
+            "AWS::Redshift::Cluster" to "SnapshotClusterIdentifier" -> "String"
+            "AWS::Cognito::IdentityPool" to "SupportedLoginProviders" -> "String"
+            "AWS::ApiGateway::VpcLink" to "TargetArns" -> "List of String"
+            "AWS::SNS::TopicPolicy" to "PolicyDocument" -> "JSON or YAML"
+            "AWS::Route53::RecordSet" to "Region" -> "String"
+            else -> {
+              // TODO
 //            if (resourceTypeName == "AWS::Route53::RecordSet" || name == "ScheduleExpression" && resourceTypeName == "AWS::Events::Rule") "" else {
 //            }
 
-            throw RuntimeException("Type is not found in property $name in ${builder.url}")
+              throw RuntimeException("Type is not found in property $name in ${builder.url}")
+            }
           }
 
           // TODO Handle "Required if NetBiosNameServers is specified; optional otherwise" in https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-dhcp-options.html
@@ -337,6 +345,12 @@ object ResourceTypesSaver {
               url = propertyBuilder.url
             }
           }
+        }
+
+        if (ignoredServerlessProperties.isNotEmpty()) {
+          println(
+            "Skipping AWS SAM documented properties not present in syntax for ${builder.name}: ${ignoredServerlessProperties.joinToString()}"
+          )
         }
       }
     } else {
@@ -490,6 +504,96 @@ object ResourceTypesSaver {
       .distinctBy { it.name }
       .sortedBy { it.name }
       .toList()
+  }
+
+  internal fun parseServerlessSyntaxPropertyNames(doc: Document): Set<String> {
+    val syntaxHeader = doc.select("h2").firstOrNull { it.text().equals("Syntax", ignoreCase = true) }
+                       ?: error("Could not locate SAM syntax section in ${doc.location()}")
+    var current: Element? = syntaxHeader.nextElementSibling()
+    while (current != null && current.tagName() != "h2") {
+      val yamlSnippet = current.select("pre.programlisting, div.programlisting, pre")
+        .asSequence()
+        .map { it.wholeText().ifBlank { it.text() }.trim() }
+        .firstOrNull { it.isNotEmpty() }
+      if (yamlSnippet != null) {
+        return parseServerlessSyntaxPropertyNames(yamlSnippet)
+      }
+
+      current = current.nextElementSibling()
+    }
+
+    error("Could not locate SAM YAML syntax snippet in ${doc.location()}")
+  }
+
+  internal fun parseServerlessSyntaxPropertyNames(snippet: String): Set<String> {
+    val yamlKeyLines = snippet.lines()
+      .mapIndexedNotNull { index, line -> parseYamlKeyLine(index, line) }
+
+    check(yamlKeyLines.isNotEmpty()) {
+      "Could not parse any YAML keys from SAM syntax snippet"
+    }
+
+    val parent = yamlKeyLines.firstOrNull { it.name == "Properties" } ?: yamlKeyLines.first()
+    val propertyNames = LinkedHashSet<String>()
+    var childIndent: Int? = null
+
+    for (keyLine in yamlKeyLines) {
+      if (keyLine.lineIndex <= parent.lineIndex) {
+        continue
+      }
+
+      if (keyLine.indent <= parent.indent) {
+        break
+      }
+
+      if (childIndent == null) {
+        childIndent = keyLine.indent
+      }
+
+      if (keyLine.indent == childIndent) {
+        propertyNames.add(keyLine.name)
+      }
+    }
+
+    check(propertyNames.isNotEmpty()) {
+      "Could not parse direct properties from SAM syntax snippet"
+    }
+
+    return propertyNames
+  }
+
+  private data class YamlKeyLine(
+    val lineIndex: Int,
+    val indent: Int,
+    val name: String,
+  )
+
+  private fun parseYamlKeyLine(index: Int, line: String): YamlKeyLine? {
+    val normalizedLine = line.replace('\t', ' ').trimEnd()
+    if (normalizedLine.isBlank()) {
+      return null
+    }
+
+    val indent = normalizedLine.indexOfFirst { !it.isWhitespace() }
+    if (indent < 0) {
+      return null
+    }
+
+    val trimmed = normalizedLine.trim()
+    if (trimmed.startsWith("- ")) {
+      return null
+    }
+
+    val delimiterIndex = trimmed.indexOf(':')
+    if (delimiterIndex <= 0) {
+      return null
+    }
+
+    return YamlKeyLine(
+      lineIndex = index,
+      indent = indent,
+      name = trimmed.substring(0, delimiterIndex).trim(),
+    )
   }
 
   private fun fetchServerlessGlobals(): Map<String, Set<String>> {

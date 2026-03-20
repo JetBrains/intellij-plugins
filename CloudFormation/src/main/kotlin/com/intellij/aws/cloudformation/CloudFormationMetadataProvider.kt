@@ -10,8 +10,8 @@ object CloudFormationMetadataProvider {
     val stream = classLoader.getResourceAsStream("com/intellij/aws/meta/cloudformation-metadata.xml")
                  ?: throw RuntimeException("Metadata resource is not found")
 
-    stream.use {
-      MetadataSerializer.metadataFromXML(stream)
+    stream.use { input ->
+      MetadataSerializer.metadataFromXML(input)
     }
   }
 
@@ -20,8 +20,8 @@ object CloudFormationMetadataProvider {
     val stream = classLoader.getResourceAsStream("com/intellij/aws/meta/cloudformation-descriptions.xml")
                  ?: throw RuntimeException("Descriptions resource is not found")
 
-    stream.use {
-      MetadataSerializer.descriptionsFromXML(stream)
+    stream.use { input ->
+      MetadataSerializer.descriptionsFromXML(input)
     }
   }
 }

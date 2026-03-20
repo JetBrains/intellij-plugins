@@ -3,11 +3,9 @@ package com.intellij.aws.cloudformation.tests
 import com.intellij.aws.cloudformation.CloudFormationConstants
 import com.intellij.aws.cloudformation.CloudFormationMetadataProvider
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.builders.ModuleFixtureBuilder
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.ModuleFixture
-import java.util.Arrays
 
 class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<ModuleFixture>>() {
   private val predefinedAndECSCluster = (CloudFormationMetadataProvider.METADATA.predefinedParameters + "ECSCluster").toTypedArray()
@@ -102,11 +100,19 @@ class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
                          "AWS::OpenSearchServerless::VpcEndpoint")
   }
 
+  fun testServerlessGraphqlApiPropertiesExcludeLogicalId() {
+    myFixture.configureByFile("serverless_graphql_api_properties.yaml")
+    myFixture.complete(CompletionType.BASIC, 1)
+    val strings = myFixture.lookupElementStrings!!
+    assertContainsElements(strings, "ApiKeys", "Auth", "Functions", "Resolvers")
+    assertDoesntContain(strings, "LogicalId")
+  }
+
   private fun checkBasicCompletion(fileName: String, vararg expectedElements: String) {
     myFixture.configureByFiles(fileName)
     myFixture.complete(CompletionType.BASIC, 1)
     val strings = myFixture.lookupElementStrings!!
-    UsefulTestCase.assertSameElements(strings, Arrays.asList(*expectedElements))
+    assertSameElements(strings, expectedElements.asList())
   }
 
   override fun setUp() {

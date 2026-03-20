@@ -11,6 +11,6 @@ Resources:
   2@<CapacityProvider>:
     Type: AWS::Serverless::CapacityProvider
 
-0: Required resource properties are not set: Auth DataSources Functions LogicalId Resolvers
+0: Required resource properties are not set: Auth DataSources Functions Resolvers
 1: Required resource properties are not set: Destination Permissions
 2: Required resource properties are not set: VpcConfig
