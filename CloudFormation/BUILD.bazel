@@ -125,7 +125,6 @@ jvm_library(
     "@community//libraries/commons/lang3:lang3_test_lib",
     "@community//java/java-runtime:rt",
     "@community//java/java-runtime:rt_test_lib",
-    "@ultimate_lib//:cloud_formation-tests-intellij-aws-cloudformation-meta",
   ],
   runtime_deps = [
     ":cloudFormation-tests",

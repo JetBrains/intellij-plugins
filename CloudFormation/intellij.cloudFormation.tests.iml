@@ -26,22 +26,6 @@
     <orderEntry type="module" module-name="intellij.platform.core.ui" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.commons.lang3" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.rt" scope="TEST" />
-    <orderEntry type="module-library" scope="TEST">
-      <library name="intellij.aws.cloudformation.meta" type="repository">
-        <properties include-transitive-deps="false" maven-id="com.intellij.aws:cloudformation-meta:2026.1.7">
-          <verification>
-            <artifact url="file://$MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2026.1.7/cloudformation-meta-2026.1.7.jar">
-              <sha256sum>3076e302a5e5f4182123f69ffa7d207620d4156fa1957a7838b136f52b7d0e86</sha256sum>
-            </artifact>
-          </verification>
-        </properties>
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2026.1.7/cloudformation-meta-2026.1.7.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="intellij.cloudFormation" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.cloudFormation" />

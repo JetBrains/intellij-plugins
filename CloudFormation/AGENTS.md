@@ -9,6 +9,8 @@ These notes are specific to `contrib/CloudFormation` and its `metadata-crawler` 
 - Runtime resource metadata is not generated from sources in this module at IDE startup. The plugin reads `com/intellij/aws/meta/cloudformation-metadata.xml` and `cloudformation-descriptions.xml` from the external `cloudformation-meta` jar via `CloudFormationMetadataProvider`.
 - The consumed metadata artifact is wired through `intellij.cloudFormation.iml` and packaged through `plugin-content.yaml` as `intellij.aws.cloudformation.meta.jar`.
 - Changing only crawler code does not change editor behavior until a new metadata jar is built/published and the plugin consumes that refreshed artifact.
+- Don't write tests for the crawler, it makes no sense. Because the html on server could be changed without us
+- IDE runs with only one specific metadata, there is no need to make any compatibility or fallback logic to support old metadata
 
 ## Metadata Crawler
 
@@ -21,6 +23,7 @@ These notes are specific to `contrib/CloudFormation` and its `metadata-crawler` 
 
 - AWS SAM resource type discovery is collected in `ResourceTypesSaver` from the official SAM resources documentation page, not from a hardcoded list.
 - AWS SAM `Globals` support is also collected in `ResourceTypesSaver`, from the official SAM globals documentation page, and persisted in `CloudFormationMetadata.serverlessGlobals`.
+- AWS SAM `AWS::Serverless::GraphQLApi` documentation currently lists `LogicalId` in the resource property table, but this is the resource logical id from the syntax block, not a user-settable `Properties` entry. Runtime metadata loading and the crawler both normalize it out.
 - Runtime `Globals` validation in `CloudFormationInspections` should use collected metadata from `CloudFormationMetadata`, not a separate hardcoded property list.
 - If new SAM resources are missing from completion or are reported as unknown, check the crawler output and the consumed metadata jar before changing completion logic.
 
@@ -43,4 +46,5 @@ These notes are specific to `contrib/CloudFormation` and its `metadata-crawler` 
 
 ## Final steps
 
-- Update this file if you find something importante to know in the next sessions
+- Remember to add to git all the new files you created
+- Update this file if you find something important to know in the next sessions
