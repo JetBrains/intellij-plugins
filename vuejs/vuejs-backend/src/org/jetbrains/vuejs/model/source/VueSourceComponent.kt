@@ -94,7 +94,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
         stringLiteral != null -> VueStringLiteralNamedClassSourceComponent(clazz, stringLiteral, initializer)
         isExportedClass -> VueFileSourceComponent(clazz, initializer)
         clazz.name != null -> VueNamedClassSourceComponent(clazz, initializer)
-        else -> VueUnnamedClassSourceComponent(clazz, initializer)
+        else -> VueAnonymousClassSourceComponent(clazz, initializer)
       }
     }
 
@@ -104,7 +104,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
         VueNamedSourceComponent(nameLiteral, initializer)
       }
       else {
-        val result = VueUnnamedSourceComponent(initializer)
+        val result = VueAnonymousSourceComponent(initializer)
         if (result.elementToImport is PsiFile)
           VueFileSourceComponent(initializer)
         else result
@@ -232,14 +232,14 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
               ?.typeParameters?.toList()
             ?: emptyList()
 
-  private class VueUnnamedSourceComponent(
+  private class VueAnonymousSourceComponent(
     override val initializer: JSObjectLiteralExpression,
   ) : VueSourceComponent<JSObjectLiteralExpression>(initializer, initializer, null) {
 
-    override fun createPointer(): Pointer<VueUnnamedSourceComponent> {
+    override fun createPointer(): Pointer<VueAnonymousSourceComponent> {
       val sourcePtr = initializer.createSmartPointer()
       return Pointer {
-        sourcePtr.dereference()?.let { create(it) } as? VueUnnamedSourceComponent
+        sourcePtr.dereference()?.let { create(it) } as? VueAnonymousSourceComponent
       }
     }
   }
@@ -361,15 +361,15 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
 
   }
 
-  private class VueUnnamedClassSourceComponent(
+  private class VueAnonymousClassSourceComponent(
     clazz: JSClass,
     override val initializer: JSObjectLiteralExpression?,
   ) : VueSourceComponent<JSClass>(clazz, initializer, clazz) {
 
-    override fun createPointer(): Pointer<VueUnnamedClassSourceComponent> {
+    override fun createPointer(): Pointer<VueAnonymousClassSourceComponent> {
       val sourcePtr = source.createSmartPointer()
       return Pointer {
-        sourcePtr.dereference()?.let { create(it) } as? VueUnnamedClassSourceComponent
+        sourcePtr.dereference()?.let { create(it) } as? VueAnonymousClassSourceComponent
       }
     }
   }
