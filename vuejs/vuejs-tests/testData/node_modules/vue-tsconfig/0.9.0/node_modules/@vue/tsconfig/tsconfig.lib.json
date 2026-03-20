@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    // Emit declaration files for the library.
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+
+    // Libraries generally require more strict type accuracy.
+    // For example, its types must be compatible with the Vue types.
+    // So we don't want to skip the type checking of its dependencies.
+    "skipLibCheck": false,
+
+    // See <https://www.semver-ts.org/formal-spec/5-compiler-considerations.html#strictness>
+    // Part of the recommended tsconfig as of TS 5.9.
+    // Flags starting with `no` are likely to have false positives,
+    // So they are not suitable for existing codebases, but are recommended for new codebases,
+    // as well as libraries that need to be more strict about their types.
+    // See also <https://github.com/vuejs/tsconfig/issues/38#issuecomment-3524621112> for more discussion.
+    "noUncheckedIndexedAccess": true,
+  }
+}

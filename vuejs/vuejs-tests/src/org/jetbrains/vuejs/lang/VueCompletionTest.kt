@@ -56,7 +56,6 @@ abstract class VueCompletionWithPluginTestBase(
     "testNamespacedComponents",
     "testNoFilterForOnProps",
     "testTypescriptVForItemCompletion",
-    "testCompleteComponentWithDefineOptions",
     "testComputedTypeJS",
     "testComputedTypeTS",
     "testAliasedComponentImport",

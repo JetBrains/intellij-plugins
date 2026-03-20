@@ -147,6 +147,7 @@ instantiateStreaming (tailText='(source: Response | PromiseLike<Response>, impor
 lvmax (tailText='(value: number) (CSS, DOM)'; typeText='CSSUnitValue')
 rad (tailText='(value: number) (CSS, DOM)'; typeText='CSSUnitValue')
 rcap (tailText='(value: number) (CSS, DOM)'; typeText='CSSUnitValue')
+supportedValuesOf (tailText='(key: "calendar" | "collation" | "currency" | "numberingSystem" | "timeZone" | "unit") (Intl, built-in)'; typeText='string[]')
 svmax (tailText='(value: number) (CSS, DOM)'; typeText='CSSUnitValue')
 validate (tailText='(bytes: BufferSource) (WebAssembly, DOM)'; typeText='boolean')
 vmax (tailText='(value: number) (CSS, DOM)'; typeText='CSSUnitValue')

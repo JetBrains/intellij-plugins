@@ -38,23 +38,19 @@ class VueTsConfigFile :
     val DEFAULT_TSCONFIG_CONTENT = """
     {
       "extends": "@vue/tsconfig/tsconfig.dom.json",
-      "compilerOptions": {
-        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
-        "types": [],
-    
-        /* Linting */
-        "strict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "erasableSyntaxOnly": true,
-        "noFallthroughCasesInSwitch": true,
-        "noUncheckedSideEffectImports": true
-      },
       "include": [
         "**/*.ts", 
         "**/*.tsx",
         "**/*.vue"
       ]
+      "compilerOptions": {
+        // Extra safety for array and object lookups, but may have false positives.
+        "noUncheckedIndexedAccess": true,
+    
+        // `vue-tsc --build` produces a .tsbuildinfo file for incremental type-checking.
+        // Specified here to keep it out of the root directory.
+        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo"
+      }
     }
     """.trimIndent()
   }

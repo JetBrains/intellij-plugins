@@ -1,6 +1,6 @@
 {
   "name": "@vue/tsconfig",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "A base TSConfig for working with Vue.js",
   "main": "tsconfig.json",
   "scripts": {

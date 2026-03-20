@@ -40,7 +40,7 @@ abstract class VueTestCase(
       if (modules.none { VUE_MODULE in it.packageNames })
         add(VueTestModule.VUE_3_5_0)
 
-      add(VueTestModule.VUE_TSCONFIG_0_8_1)
+      add(VueTestModule.VUE_TSCONFIG_0_9_0)
     }.toTypedArray()
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
