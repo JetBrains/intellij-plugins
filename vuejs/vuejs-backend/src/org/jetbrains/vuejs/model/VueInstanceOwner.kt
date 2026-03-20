@@ -286,7 +286,7 @@ private fun contributeComponentProperties(
   val methods = MultiMap.create<String, PolySymbol>()
   val injects = MultiMap.create<String, PolySymbol>()
 
-  val provides by lazy(LazyThreadSafetyMode.NONE) { instance.global.provides }
+  val provides by lazy(LazyThreadSafetyMode.PUBLICATION) { instance.global.provides }
 
 
   fun mergePut(result: MultiMap<String, PolySymbol>, contributions: MultiMap<String, PolySymbol>) {
@@ -512,7 +512,7 @@ private constructor(
   }
 
   @PolySymbol.Property(JSTypeProperty::class)
-  private val type by lazy(LazyThreadSafetyMode.NONE) {
+  private val type by lazy(LazyThreadSafetyMode.PUBLICATION) {
     typeProvider?.getType() ?: delegate.jsType
   }
 
@@ -603,7 +603,7 @@ data class VueInstancePropertySymbol(
 ) : PolySymbol {
 
   @PolySymbol.Property(JSTypeProperty::class)
-  private val type by lazy(LazyThreadSafetyMode.NONE) { typeProvider?.getType() }
+  private val type by lazy(LazyThreadSafetyMode.PUBLICATION) { typeProvider?.getType() }
 
   override val kind: PolySymbolKind
     get() = JS_PROPERTIES
@@ -637,7 +637,7 @@ private class VueStandardPropertySymbol(
 ) : PolySymbol, PolySymbolScope {
 
   @PolySymbol.Property(JSTypeProperty::class)
-  private val type: JSType? by lazy(LazyThreadSafetyMode.NONE) {
+  private val type: JSType? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     JSSymbolScopeType(this, psiContext)
   }
 
@@ -709,7 +709,7 @@ private data class VueMergedPropertiesSymbol(
     )
 
   @PolySymbol.Property(JSTypeProperty::class)
-  private val type: JSType? by lazy(LazyThreadSafetyMode.NONE) {
+  private val type: JSType? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     properties
       .mapNotNull { it.jsType }
       .takeIf { it.size == properties.size }
@@ -719,7 +719,7 @@ private data class VueMergedPropertiesSymbol(
   }
 
   @PolySymbol.Property(JSPropertySignatureProperty::class)
-  private val propertySignature: PropertySignatureImpl? by lazy(LazyThreadSafetyMode.NONE) {
+  private val propertySignature: PropertySignatureImpl? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     PropertySignatureImpl(
       name, type, modifiers.contains(PolySymbolModifier.OPTIONAL),
       modifiers.contains(PolySymbolModifier.READONLY),
