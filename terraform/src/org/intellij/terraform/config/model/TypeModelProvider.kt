@@ -3,7 +3,7 @@ package org.intellij.terraform.config.model
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.progress.runBlockingMaybeCancellable
+import com.intellij.openapi.progress.util.awaitWithCheckCanceled
 import com.intellij.psi.PsiElement
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +25,6 @@ internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
   val ignoredReferences: Set<String> by lazy { loadIgnoredReferences() }
 
   companion object {
-
     @JvmStatic
     @OptIn(ExperimentalCoroutinesApi::class)
     val globalModel: TfTypeModel
@@ -35,7 +34,8 @@ internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
           asyncModelLoadTask.getCompleted()
         }
         else {
-          runBlockingMaybeCancellable { asyncModelLoadTask.await() }
+          asyncModelLoadTask.start()
+          awaitWithCheckCanceled(asyncModelLoadTask)
         }
       }
 
