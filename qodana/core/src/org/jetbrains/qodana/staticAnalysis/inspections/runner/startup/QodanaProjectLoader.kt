@@ -56,8 +56,8 @@ import kotlin.io.path.writeText
 import kotlin.time.Duration.Companion.minutes
 
 private const val LOG_CONFIGURATION_ACTIVITIES_PERIOD_MINUTES = "qodana.log.configuration.period.minutes"
-private const val REGISTRY_STARTUP_TIMEOUT_MINUTES = "batch.inspections.startup.activities.timeout"
-
+private const val PROJECT_OPEN_TYPE_PROPERTY = "project.open.type"
+private const val QODANA_AS_FOLDER_PROJECT_OPENER = "QodanaAsFolder"
 private val LOG = logger<QodanaProjectLoader>()
 
 /**
@@ -135,7 +135,9 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
       InspectionsBundle.message("inspection.application.unable.open.project")
     )
     doConfigure(project)
-    QodanaWorkflowExtension.callManualProjectsImport(config, project)
+    if (!isQodanaAsFolderProjectOpenRequested()) {
+      QodanaWorkflowExtension.callManualProjectsImport(config, project)
+    }
     return project
   }
 
@@ -149,10 +151,14 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
     ) ?: throw QodanaException(InspectionsBundle.message("inspection.application.unable.open.project"))
 
     doConfigure(openedProject)
-    if (isOpenedByPlatformProcessor(openedProject)) {
+    if (isOpenedByPlatformProcessor(openedProject) && !isQodanaAsFolderProjectOpenRequested()) {
       QodanaWorkflowExtension.callAutomaticProjectsImport(config, openedProject)
     }
     return openedProject
+  }
+
+  private fun isQodanaAsFolderProjectOpenRequested(): Boolean {
+    return System.getProperty(PROJECT_OPEN_TYPE_PROPERTY) == QODANA_AS_FOLDER_PROJECT_OPENER
   }
 
   suspend fun configureProjectWithConfigurators(config: QodanaConfig, project: Project) {
