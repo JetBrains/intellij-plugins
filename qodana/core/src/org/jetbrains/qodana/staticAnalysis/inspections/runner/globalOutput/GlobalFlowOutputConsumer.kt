@@ -37,7 +37,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.loadTextFromVirtualFile
 import java.nio.file.Path
 
 private val vulnerableFlowMessage = Message().withText("Vulnerable code flow").withMarkdown("Vulnerable code flow")
-private const val FQN_ATTRIBUTE_NAME: String = "step_fqn" // used in fingerprint computation
+internal const val FQN_ATTRIBUTE_NAME: String = "step_fqn" // used in fingerprint computation
 
 /**
  * Responsible for handling FlowInspection.xml and FlowInspection_aggregate.xml files
@@ -172,7 +172,7 @@ private suspend fun convertFlowFromXmlFormat(problem: Element, macroManager: Pat
     .withCustomPartialFingerprints()
 }
 
-private fun computeSources(problem: Element) = problem.getChild("sources").getChildren("source").map {
+internal fun computeSources(problem: Element) = problem.getChild("sources").getChildren("source").map {
   mapOf(
     "file" to it.getAttributeValue(ElementToSarifConverter.FILE),
     "sanitized_vulnerabilities" to getVulnerabilityValues(it, "sanitized_vulnerabilities"),
@@ -181,7 +181,7 @@ private fun computeSources(problem: Element) = problem.getChild("sources").getCh
   )
 }
 
-private fun computeTarget(problem: Element): Map<String, Any?> {
+internal fun computeTarget(problem: Element): Map<String, Any?> {
   val target = problem.getChild("sink")
   val targetText = target.getAttributeValue("text")
   val targetFqn = target.getAttributeValue("fqn")
@@ -195,10 +195,10 @@ private fun computeTarget(problem: Element): Map<String, Any?> {
   )
 }
 
-private fun getLocationByAttributes(fileUrl: String,
-                                    line: Int, column: Int, startCharOffset: Int,
-                                    endCharOffset: Int, language: String,
-                                    macroManager: PathMacroManager, skipContextRegion: Boolean): Location? {
+internal fun getLocationByAttributes(fileUrl: String,
+                                     line: Int, column: Int, startCharOffset: Int,
+                                     endCharOffset: Int, language: String,
+                                     macroManager: PathMacroManager, skipContextRegion: Boolean): Location? {
   val artifactLocation = getArtifactLocation(fileUrl)
   val physicalLocation = PhysicalLocation().withArtifactLocation(artifactLocation)
   val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPath(fileUrl))
