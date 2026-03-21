@@ -363,6 +363,7 @@
     <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedScriptFactory"/>
     <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.TeamCityChangesScriptFactory"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.DuplicateCodeConsumer"/>
+    <globalOutputConsumer implementation="org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.OpenGrepGlobalInspectionOutputConsumer"/>
 
     <workflowExtension
       implementation="org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector$NotificationWorkflowExtension"/>
