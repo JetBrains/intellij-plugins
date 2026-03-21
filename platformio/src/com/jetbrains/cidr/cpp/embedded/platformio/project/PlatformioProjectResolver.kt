@@ -382,13 +382,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
   }
 
   protected open fun createRunConfigurationIfRequired(project: Project) {
-    ApplicationManager.getApplication().invokeLater {
-      WriteAction.run<Throwable> {
-        if (!project.isDisposed) {
-          CLionRunConfigurationManager.getInstance(project).updateRunConfigurations(PlatformioRunConfigurationManagerHelper)
-        }
-      }
-    }
+    CLionRunConfigurationManager.getInstance(project).updateRunConfigurations(PlatformioRunConfigurationManagerHelper)
   }
 
   protected open fun gatherEnvMetadata(id: ExternalSystemTaskId,

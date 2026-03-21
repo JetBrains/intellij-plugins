@@ -1,6 +1,5 @@
 package com.intellij.clion.embedded.platformio
 
-import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
@@ -38,9 +37,7 @@ class TestProjectLibScan : LightPlatformTestCase() {
     super.setUp()
     projectPath = BASE_TEST_DATA_PATH.resolve("project-scan-libraries").toString()
     projectDir = VfsUtil.findFile(Paths.get(projectPath), true)!!
-    WriteAction.run<Throwable> {
-      CLionRunConfigurationManager.getInstance(project).updateRunConfigurations(PlatformioRunConfigurationManagerHelper)
-    }
+    CLionRunConfigurationManager.getInstance(project).updateRunConfigurations(PlatformioRunConfigurationManagerHelper)
   }
 
   fun testScanLibraries() {

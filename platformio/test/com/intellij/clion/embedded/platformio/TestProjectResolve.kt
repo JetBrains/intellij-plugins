@@ -2,7 +2,6 @@ package com.intellij.clion.embedded.platformio
 
 import com.intellij.build.events.MessageEvent
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
@@ -71,9 +70,7 @@ class TestProjectResolve : LightPlatformTestCase() {
     super.setUp()
     projectPath = BASE_TEST_DATA_PATH.resolve("project1").toString()
     projectDir = VfsUtil.findFile(Paths.get(projectPath), true)!!
-    WriteAction.run<Throwable> {
-      CLionRunConfigurationManager.getInstance(project).updateRunConfigurations(PlatformioRunConfigurationManagerHelper)
-    }
+    CLionRunConfigurationManager.getInstance(project).updateRunConfigurations(PlatformioRunConfigurationManagerHelper)
   }
 
   fun testScanFiles() = doTestScanFiles()
