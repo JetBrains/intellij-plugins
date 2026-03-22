@@ -27,6 +27,7 @@ import com.intellij.openapi.project.configuration.ConfigurationResult
 import com.intellij.openapi.project.configuration.HeadlessLogging
 import com.intellij.openapi.project.configuration.awaitCompleteProjectConfiguration
 import com.intellij.openapi.project.ex.ProjectManagerEx
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Predicates
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.findOrCreateFile
@@ -55,9 +56,8 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.io.path.writeText
 import kotlin.time.Duration.Companion.minutes
 
+val DISABLE_PROJECT_IMPORTS: Key<Boolean> = Key.create("qodana.skip.project.imports")
 private const val LOG_CONFIGURATION_ACTIVITIES_PERIOD_MINUTES = "qodana.log.configuration.period.minutes"
-private const val PROJECT_OPEN_TYPE_PROPERTY = "project.open.type"
-private const val QODANA_AS_FOLDER_PROJECT_OPENER = "QodanaAsFolder"
 private val LOG = logger<QodanaProjectLoader>()
 
 /**
@@ -135,7 +135,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
       InspectionsBundle.message("inspection.application.unable.open.project")
     )
     doConfigure(project)
-    if (!isQodanaAsFolderProjectOpenRequested()) {
+    if (!project.isProjectImportsProhibited()) {
       QodanaWorkflowExtension.callManualProjectsImport(config, project)
     }
     return project
@@ -151,15 +151,13 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
     ) ?: throw QodanaException(InspectionsBundle.message("inspection.application.unable.open.project"))
 
     doConfigure(openedProject)
-    if (isOpenedByPlatformProcessor(openedProject) && !isQodanaAsFolderProjectOpenRequested()) {
+    if (isOpenedByPlatformProcessor(openedProject) && !openedProject.isProjectImportsProhibited()) {
       QodanaWorkflowExtension.callAutomaticProjectsImport(config, openedProject)
     }
     return openedProject
   }
 
-  private fun isQodanaAsFolderProjectOpenRequested(): Boolean {
-    return System.getProperty(PROJECT_OPEN_TYPE_PROPERTY) == QODANA_AS_FOLDER_PROJECT_OPENER
-  }
+  private fun Project.isProjectImportsProhibited() = this.getUserData(DISABLE_PROJECT_IMPORTS) == true
 
   suspend fun configureProjectWithConfigurators(config: QodanaConfig, project: Project) {
     runConfigurators(config, project)
