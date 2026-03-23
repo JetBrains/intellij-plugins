@@ -87,7 +87,7 @@ class AngularSettingsState : BaseState() {
   var innerServiceType: AngularServiceSettings by enum(AngularServiceSettings.AUTO)
   var packageName: String? by string(defaultPackageKey)
   @Deprecated(message = "Use useServicePoweredTypesEnabledManually and useServicePoweredTypesDisabledManually")
-  var useTypesFromServer: Boolean by property(false)
+  var useTypesFromServer: Boolean by property(true)
   var useServicePoweredTypesEnabledManually: Boolean by property(false)
   var useServicePoweredTypesDisabledManually: Boolean by property(false)
 }
