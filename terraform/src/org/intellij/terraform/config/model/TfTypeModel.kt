@@ -258,7 +258,7 @@ class TfTypeModel(
     val ToProperty: PropertyType = PropertyType("to", Types.Identifier, required = true)
     val Moved: BlockType = BlockType(HCL_MOVED_BLOCK_IDENTIFIER, properties = listOf(FromProperty, ToProperty).toMap())
     val Cloud: BlockType = BlockType(HCL_CLOUD_IDENTIFIER, properties = listOf(
-      PropertyType("organization", Types.String),
+      PropertyType("organization", Types.String, required = true),
       BlockType(HCL_WORKSPACES_BLOCK_IDENTIFIER, required = true, properties = listOf(
         PropertyType("name", Types.String, conflictsWith = listOf("tags")),
         PropertyType("tags", ListType(Types.String), conflictsWith = listOf("name"))
