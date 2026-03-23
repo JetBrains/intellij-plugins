@@ -6,6 +6,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import org.junit.jupiter.api.assertNull
 
 class VueTsConfigFile :
   WebFrameworkTestConfigurator {
@@ -14,9 +15,8 @@ class VueTsConfigFile :
     fixture: CodeInsightTestFixture,
     disposable: Disposable?,
   ) {
-    // TEMP (for migration)
-    if (fixture.tempDirFixture.getFile(FILE_NAME) != null)
-      return
+    assertNull(fixture.tempDirFixture.getFile(FILE_NAME))
+    assertNull(fixture.tempDirFixture.getFile("tsconfig.base.json"))
 
     fixture.configureByText(FILE_NAME, DEFAULT_TSCONFIG_CONTENT)
 

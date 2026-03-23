@@ -58,7 +58,6 @@ abstract class VueCompletionWithPluginTestBase(
     "testTypescriptVForItemCompletion",
     "testComputedTypeJS",
     "testComputedTypeTS",
-    "testAliasedComponentImport",
     "testDefineSlotsProperties",
     "testComponentEmitsDefinitions",
     "testVueOutObjectLiteralTs",
@@ -112,9 +111,17 @@ abstract class VueCompletionTestBase(
   }
 
   override val defaultConfigurators: List<WebFrameworkTestConfigurator>
-    get() = listOf(
-      VueTsConfigFile(),
-    )
+    get() = when (name) {
+      "testAliasedComponentImport",
+      "testAliasedComponentImportKebabCase",
+      "testAliasedComponentImportOptionsApi",
+      "testGlobalItemsAugmentedFromCompilerOptionsTypes",
+        -> emptyList()
+
+      else -> listOf(
+        VueTsConfigFile(),
+      )
+    }
 
   override val dirModeByDefault: Boolean = true
 
