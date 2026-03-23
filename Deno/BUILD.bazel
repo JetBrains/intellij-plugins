@@ -105,6 +105,12 @@ exports_files([
 ### auto-generated section `iml intellij.deno` end
 
 ### auto-generated section `build intellij.deno.tests` start
+resourcegroup(
+  name = "deno-tests_test_resources",
+  srcs = glob(["testResources/**/*"]),
+  strip_prefix = "testResources"
+)
+
 jvm_library(
   name = "deno-tests",
   module_name = "intellij.deno.tests",
@@ -116,6 +122,7 @@ jvm_library(
   name = "deno-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/src/**/*.kt", "test/src/**/*.java", "test/src/**/*.form"], allow_empty = True),
+  resources = [":deno-tests_test_resources"],
   associates = [
     "//contrib/Deno:deno",
     "//contrib/Deno:deno_test_lib",
