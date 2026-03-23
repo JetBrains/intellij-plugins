@@ -17,7 +17,7 @@ import com.intellij.ui.layout.not
 import org.angular2.lang.Angular2Bundle
 import org.jetbrains.annotations.Nls
 
-class AngularConfigurable(project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable, Configurable.Beta {
+class AngularConfigurable(project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable {
   private val settings = getAngularSettings(project)
 
   override fun Panel.createContent() {
