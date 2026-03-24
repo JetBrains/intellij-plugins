@@ -53,6 +53,10 @@ class VueCompletionTest :
     @Test
     fun testDestructuringVariableTypeInVFor() =
       doLookupTest(VueTestModule.VUE_2_5_3)
+
+    @Test
+    fun testComponentInsertionWithClassDefined() =
+      doLookupTest(VueTestModule.VUE_2_6_10, typeToFinishLookup = "")
   }
 }
 
@@ -69,7 +73,6 @@ abstract class VueCompletionWithPluginTestBase(
     "testComputedTypeTS",
     "testDefineSlotsProperties",
     "testComponentEmitsDefinitions",
-    "testComponentInsertionWithClassDefined",
     "testPropsOfComponentsWithTwoScriptTags",
     "testVueTscComponentWithSlots",
     "testPropsOfComponentsWithTwoScriptTags_vapor",
@@ -517,10 +520,6 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testComponentInsertionScriptVueClassComponentImport() =
-    doLookupTest(VueTestModule.VUE_2_6_10, typeToFinishLookup = "")
-
-  @Test
-  fun testComponentInsertionWithClassDefined() =
     doLookupTest(VueTestModule.VUE_2_6_10, typeToFinishLookup = "")
 
   @Test
