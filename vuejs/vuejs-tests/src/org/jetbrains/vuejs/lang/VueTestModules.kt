@@ -64,7 +64,7 @@ enum class VueTestModule(
   VUE_3_5_0("vue/3.5.0", VUE_MODULE),
   VUE_3_6_0("vue/3.6.0", VUE_MODULE),
 
-  VUE_TSCONFIG_0_9_0("vue-tsconfig/0.9.0", "@vue/tsconfig"),
+  VUE_TSCONFIG_0_9_1("vue-tsconfig/0.9.1", "@vue/tsconfig"),
 
   VUELIDATE_0_7_13("vuelidate", "@types/vuelidate", "vuelidate"),
 

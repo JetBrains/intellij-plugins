@@ -36,7 +36,7 @@ class VuePluginTypeScriptServiceTest :
   private fun configureVueDependencies(
     vueModule: VueTestModule = DEFAULT_VUE_MODULE,
   ) {
-    myFixture.configureVueDependencies(modules = arrayOf(vueModule, VueTestModule.VUE_TSCONFIG_0_9_0))
+    myFixture.configureVueDependencies(modules = arrayOf(vueModule, VueTestModule.VUE_TSCONFIG_0_9_1))
   }
 
   private fun doSimpleHighlightTest(
