@@ -6,7 +6,6 @@ import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.javascript.testFramework.web.filterOutStandardHtmlSymbols
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.TrackFailedTestRule
-import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.settings.JSApplicationSettings
@@ -74,17 +73,8 @@ abstract class VueCompletionWithPluginTestBase(
     "testPropsOfComponentsWithTwoScriptTags",
     "testVueTscComponentWithSlots",
     "testPropsOfComponentsWithTwoScriptTags_vapor",
+    "testTypedComponentsPropsAndEvents",
   )
-
-  @Ignore
-  // run problem
-  override fun testScriptSetupTs() {
-  }
-
-  @Ignore
-  // run problem
-  override fun testTypedComponentsPropsAndEvents() {
-  }
 
   @Ignore
   // timeout
@@ -1044,9 +1034,7 @@ abstract class VueCompletionTestBase(
     )
 
   @Test
-  open /* temp */
   fun testScriptSetupTs() {
-    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     doLookupTest(
       renderPriority = false,
       locations = listOf(
@@ -1110,10 +1098,7 @@ abstract class VueCompletionTestBase(
     doLookupTest(VueTestModule.NAIVE_UI_2_19_11_NO_WEB_TYPES, typeToFinishLookup = "\n")
 
   @Test
-  open /* temp */
   fun testTypedComponentsPropsAndEvents() {
-    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
-
     doLookupTest(
       VueTestModule.HEADLESS_UI_1_4_1,
       VueTestModule.ELEMENT_PLUS_2_1_11_NO_WEB_TYPES,
