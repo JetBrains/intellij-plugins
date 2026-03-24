@@ -43,6 +43,17 @@ class VueCompletionTest :
 
       return super.getExpectedItemsLocation(dir) + "/items-no-service"
     }
+
+    @Test
+    fun testTypescriptVForItemCompletion() =
+      doLookupTest(
+        VueTestModule.VUE_2_7_14,
+        lookupItemFilter = filterOutJsKeywordsGlobalObjectsAndCommonProperties,
+      )
+
+    @Test
+    fun testDestructuringVariableTypeInVFor() =
+      doLookupTest(VueTestModule.VUE_2_5_3)
   }
 }
 
@@ -55,12 +66,10 @@ abstract class VueCompletionWithPluginTestBase(
   val rule: TestRule = TrackFailedTestRule(
     "testNamespacedComponents",
     "testNoFilterForOnProps",
-    "testTypescriptVForItemCompletion",
     "testComputedTypeJS",
     "testComputedTypeTS",
     "testDefineSlotsProperties",
     "testComponentEmitsDefinitions",
-    "testDestructuringVariableTypeInVFor",
     "testComponentInsertionWithClassDefined",
     "testPropsOfComponentsWithTwoScriptTags",
     "testVueTscComponentWithSlots",
@@ -525,12 +534,6 @@ abstract class VueCompletionTestBase(
     doLookupTest(VueTestModule.VUE_2_6_10, typeToFinishLookup = "")
 
   @Test
-  fun testTypescriptVForItemCompletion() =
-    doLookupTest(
-      lookupItemFilter = filterOutJsKeywordsGlobalObjectsAndCommonProperties,
-    )
-
-  @Test
   fun testTypescriptVForCompletionWebTypes() =
     doLookupTest(
       VueTestModule.VUE_2_5_3,
@@ -755,10 +758,6 @@ abstract class VueCompletionTestBase(
       locations = listOf("<HW <caret>", "<<caret>HW"),
       lookupItemFilter = filterOutStandardHtmlSymbols and { it.priority > 0 && !it.lookupString.startsWith("v-") },
     )
-
-  @Test
-  fun testDestructuringVariableTypeInVFor() =
-    doLookupTest(VueTestModule.VUE_2_5_3)
 
   @Test
   fun testWebTypesComplexSetup() {
