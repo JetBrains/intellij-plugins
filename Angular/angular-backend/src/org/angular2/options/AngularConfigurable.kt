@@ -31,7 +31,10 @@ class AngularConfigurable(project: Project) : UiDslUnnamedConfigurable.Simple(),
         }
         row {
           radioButton(Angular2Bundle.message("angular.configurable.service.auto"), AngularServiceSettings.AUTO)
-            .comment(Angular2Bundle.message("angular.configurable.service.auto.help"))
+            .comment(Angular2Bundle.message(
+              "angular.configurable.service.auto.help",
+              JavaScriptBundle.message("typescript.compiler.configurable.options.use.servicePoweredTypeEngine")
+            ))
         }
       }.bind(settings::serviceType)
 
