@@ -7,6 +7,8 @@ import com.intellij.lang.html.HTMLLanguage
 import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import com.intellij.psi.codeStyle.arrangement.ArrangementSettings
 import com.intellij.xml.arrangement.HtmlRearranger
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
@@ -21,33 +23,32 @@ private class VueArrangementSettingsMigration : ProjectActivity {
       return
     }
 
-    edtWriteAction {
-      if (propertiesComponent.isTrueValue(VUE_REARRANGER_SETTINGS_MIGRATION)) {
-        return@edtWriteAction
-      }
-
-      propertiesComponent.setValue(VUE_REARRANGER_SETTINGS_MIGRATION, true)
-      val codeStyleSchemesModel = CodeStyleSchemesModel(project)
-      var changed = false
-      codeStyleSchemesModel.schemes.asSequence()
-        .map { it.codeStyleSettings }
-        .forEach { codeStyleSettings ->
-          codeStyleSettings
-            .getCommonSettings(HTMLLanguage.INSTANCE)
-            .takeIf { it != HtmlRearranger().defaultSettings }
-            ?.arrangementSettings
-            ?.let {
-              val vueSettings = codeStyleSettings
-                .getCommonSettings(VueLanguage)
-              if (vueSettings.arrangementSettings == null) {
-                vueSettings.setArrangementSettings(it)
-                changed = true
-              }
+    val codeStyleSchemesModel = CodeStyleSchemesModel(project)
+    val map = mutableMapOf <CommonCodeStyleSettings, ArrangementSettings>()
+    codeStyleSchemesModel.schemes.asSequence()
+      .map { it.codeStyleSettings }
+      .forEach { codeStyleSettings ->
+        codeStyleSettings
+          .getCommonSettings(HTMLLanguage.INSTANCE)
+          .takeIf { it != HtmlRearranger().defaultSettings }
+          ?.arrangementSettings
+          ?.let {
+            val vueSettings = codeStyleSettings.getCommonSettings(VueLanguage)
+            if (vueSettings.arrangementSettings == null) {
+              map.put(vueSettings, it)
             }
+          }
+      }
+    if (!map.isEmpty()) {
+      edtWriteAction {
+        if (!propertiesComponent.isTrueValue(VUE_REARRANGER_SETTINGS_MIGRATION)) {
+          map.forEach { (vueSettings, arrangementSettings) ->
+            vueSettings.setArrangementSettings(arrangementSettings)
+          }
+          codeStyleSchemesModel.apply()
         }
-      if (changed) {
-        codeStyleSchemesModel.apply()
       }
     }
+    propertiesComponent.setValue(VUE_REARRANGER_SETTINGS_MIGRATION, true)
   }
 }
