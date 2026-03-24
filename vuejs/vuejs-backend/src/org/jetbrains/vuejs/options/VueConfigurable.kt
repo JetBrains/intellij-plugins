@@ -14,7 +14,7 @@ import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.SegmentedButton
 import com.intellij.ui.dsl.builder.bind
 import com.intellij.ui.dsl.builder.selected
-import com.intellij.ui.dsl.builder.toMutableProperty
+import com.intellij.ui.dsl.builder.toNullableProperty
 import com.intellij.ui.layout.ComponentPredicate
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.getVueTSPluginNodePackages
@@ -51,7 +51,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
               renderer = {
                 text = it.displayName
               },
-            ).bind(settings.manualSettings::mode.toMutableProperty())
+            ).bind(settings.manualSettings::mode.toNullableProperty())
           }.apply {
             rowComment(VueBundle.message("vue.configurable.service.manual.description"))
           }
