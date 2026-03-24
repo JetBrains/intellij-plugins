@@ -60,7 +60,6 @@ abstract class VueCompletionWithPluginTestBase(
     "testComputedTypeTS",
     "testDefineSlotsProperties",
     "testComponentEmitsDefinitions",
-    "testVueOutObjectLiteralTs",
     "testDestructuringVariableTypeInVFor",
     "testComponentInsertionWithClassDefined",
     "testPropsOfComponentsWithTwoScriptTags",
@@ -366,7 +365,6 @@ abstract class VueCompletionTestBase(
   @Test
   fun testVueOutObjectLiteral() =
     doLookupTest(
-      VueTestModule.VUE_2_5_3,
       renderPriority = false,
       renderTypeText = false,
     )
@@ -374,7 +372,6 @@ abstract class VueCompletionTestBase(
   @Test
   fun testVueOutObjectLiteralTs() =
     doLookupTest(
-      VueTestModule.VUE_2_5_3,
       renderPriority = false,
       renderTypeText = false,
     )
