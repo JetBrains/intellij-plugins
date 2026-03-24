@@ -5,6 +5,7 @@ import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.idea.IJIgnore;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.JSAbstractDocumentationTest;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
@@ -20,6 +21,7 @@ import com.intellij.psi.css.descriptor.CssPropertyDescriptorStub;
 import com.intellij.psi.css.impl.util.CssDocumentationProvider;
 import com.intellij.testFramework.LightProjectDescriptor;
 
+@IJIgnore(issue = "IDEA-387406")
 public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   private static final String BASE_PATH = "as_documentation/";
 
