@@ -1,6 +1,10 @@
 <html>
 <body>
-<p>Reports unknown properties in blocks</p>
+<p>Reports unknown properties in blocks.</p>
+<p>
+  This inspection is available only if the Terraform or OpenTofu directory is initialized
+  (i.e., <code>terraform init</code> or <code>tofu init</code> has been run), so that the IDE can fetch provider metadata.
+</p>
 <p>Example of a problem:</p>
 <pre><code>
 resource "awscc_appflow_flow" "aws_flow1" {
@@ -11,7 +15,6 @@ resource "awscc_appflow_flow" "aws_flow1" {
   tasks {}
   test = ""
 }
-
 </code></pre>
 <p>
   In this example, the <code>test</code> property in the block is unknown.
@@ -25,7 +28,6 @@ resource "awscc_appflow_flow" "aws_flow1" {
   destination_flow_config_list {}
   tasks {}
 }
-
 </code></pre>
 </body>
 </html>
