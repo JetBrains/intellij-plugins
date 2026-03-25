@@ -23,6 +23,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/core-impl",
+    "@community//platform/util:util-ui",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
   ]
 )
@@ -47,6 +48,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/code-style-impl:codeStyle-impl_test_lib",
     "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/util:util-ui_test_lib",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
   ]
 )

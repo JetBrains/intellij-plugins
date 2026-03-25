@@ -102,6 +102,8 @@ jvm_library(
     "@community//libraries/gson:gson_test_lib",
     "@community//platform/core-ui",
     "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/core-impl",
+    "@community//platform/core-impl:core-impl_test_lib",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
     "//plugins/webpack",
@@ -142,12 +144,18 @@ jvm_library(
     "//contrib/vuejs:vuejs-plugin_test_lib",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/ide-core",
+    "@community//platform/util:util-ui",
+    "@community//platform/util:util-ui_test_lib",
     "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
     "//plugins/webpack:webpack-tests",
     "//plugins/webpack:webpack-tests_test_lib",
   ],
-  runtime_deps = [":tests"]
+  runtime_deps = [
+    ":tests",
+    "@community//platform/ide-core:ide-core_test_lib",
+  ]
 )
 ### auto-generated section `build intellij.vuejs.tests` end
 

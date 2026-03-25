@@ -29,6 +29,7 @@ jvm_library(
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-api:ide",
+    "@community//platform/ide-core",
     "@community//platform/indexing-api:indexing",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
@@ -44,6 +45,7 @@ jvm_library(
     "@community//xml/impl",
     "//plugins/css/plugin",
     "@community//platform/core-ui",
+    "@community//platform/util:util-ui",
     "//plugins/css/common/psi",
     "//plugins/css/backend",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
@@ -68,6 +70,7 @@ jvm_library(
     "@community//platform/editor-ui-api:editor-ui_test_lib",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/platform-api:ide_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
     "@community//platform/indexing-api:indexing_test_lib",
     "@community//platform/lang-api:lang_test_lib",
     "@community//platform/lang-impl:lang-impl_test_lib",
@@ -85,6 +88,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/css/plugin:plugin_test_lib",
     "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/util:util-ui_test_lib",
     "//plugins/css/common/psi:psi_test_lib",
     "//plugins/css/backend:backend_test_lib",
     "@community//plugins/copyright",
@@ -136,6 +140,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-api:ide_test_lib",
+    "@community//platform/ide-core",
     "@community//platform/indexing-api:indexing",
     "@community//platform/indexing-api:indexing_test_lib",
     "@community//platform/lang-api:lang",
@@ -184,6 +189,7 @@ jvm_library(
   runtime_deps = [
     ":postcss-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
   ]
 )
 ### auto-generated section `build intellij.postcss.tests` end

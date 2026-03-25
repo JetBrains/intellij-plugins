@@ -32,6 +32,7 @@ jvm_library(
     "@community//platform/execution-impl",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/ide-core-impl",
+    "@community//platform/ide-core",
     "//plugins/JavaScriptLanguage:javascript-backend",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//platform/indexing-api:indexing",
@@ -47,8 +48,11 @@ jvm_library(
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
     "@community//platform/workspace/storage",
+    "@community//platform/core-impl",
     "@community//platform/execution",
     "@community//platform/script-debugger/backend",
+    "@community//platform/util:util-ui",
+    "@community//platform/util-ex",
   ]
 )
 
@@ -67,6 +71,7 @@ jvm_library(
     "@community//platform/execution-impl:execution-impl_test_lib",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
     "//plugins/JavaScriptLanguage:javascript-backend_test_lib",
     "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
     "@community//platform/indexing-api:indexing_test_lib",
@@ -90,10 +95,11 @@ jvm_library(
     "@community//platform/workspace/jps:jps_test_lib",
     "@community//platform/backend/workspace:workspace_test_lib",
     "@community//platform/workspace/storage:storage_test_lib",
-    "@community//platform/core-impl",
     "@community//platform/core-impl:core-impl_test_lib",
     "@community//platform/execution:execution_test_lib",
     "@community//platform/script-debugger/backend:backend_test_lib",
+    "@community//platform/util:util-ui_test_lib",
+    "@community//platform/util-ex:util-ex_test_lib",
   ]
 )
 ### auto-generated section `build intellij.deno` end
@@ -186,6 +192,8 @@ jvm_library(
     "@community//platform/execution:execution_test_lib",
     "@community//platform/script-debugger/backend",
     "@community//platform/script-debugger/backend:backend_test_lib",
+    "@community//platform/util:util-ui",
+    "@community//platform/util:util-ui_test_lib",
   ],
   runtime_deps = [
     ":deno-tests",

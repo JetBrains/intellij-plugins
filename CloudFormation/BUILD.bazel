@@ -111,6 +111,7 @@ jvm_library(
     "@community//json/backend",
     "@community//json/backend:backend_test_lib",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/ide-core",
     "@community//platform/lang-impl",
     "@community//platform/lang-impl:lang-impl_test_lib",
     "@community//libraries/guava",
@@ -129,6 +130,7 @@ jvm_library(
   runtime_deps = [
     ":cloudFormation-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
   ]
 )
 ### auto-generated section `build intellij.cloudFormation.tests` end

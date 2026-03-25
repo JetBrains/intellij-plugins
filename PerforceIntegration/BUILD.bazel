@@ -28,6 +28,7 @@ jvm_library(
     "@community//platform/vcs-impl",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/ide-core-impl",
+    "@community//platform/ide-core",
     "@community//libraries/guava",
     "@community//libraries/fastutil",
     "@community//platform/core-ui",
@@ -36,6 +37,7 @@ jvm_library(
     "@community//platform/dvcs-api:vcs-dvcs",
     "@community//platform/backend/workspace",
     "@community//platform/util/coroutines",
+    "@community//platform/util:util-ui",
     "@community//platform/vcs-impl/shared",
   ]
 )
@@ -61,6 +63,7 @@ jvm_library(
     "@community//platform/vcs-impl:vcs-impl_test_lib",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
     "@community//libraries/guava:guava_test_lib",
     "@community//libraries/fastutil:fastutil_test_lib",
     "@community//platform/core-ui:core-ui_test_lib",
@@ -69,6 +72,7 @@ jvm_library(
     "@community//platform/dvcs-api:vcs-dvcs_test_lib",
     "@community//platform/backend/workspace:workspace_test_lib",
     "@community//platform/util/coroutines:coroutines_test_lib",
+    "@community//platform/util:util-ui_test_lib",
     "@community//platform/vcs-impl/shared:shared_test_lib",
   ]
 )
@@ -142,9 +146,12 @@ jvm_library(
     "@community//platform/diff-api:diff_test_lib",
     "@community//platform/util:util-tests",
     "@community//platform/util:util-tests_test_lib",
+    "@community//platform/util:util-ui",
+    "@community//platform/util:util-ui_test_lib",
     "@community//platform/vcs-tests:vcs-testFramework",
     "@community//platform/vcs-tests:vcs-testFramework_test_lib",
     "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/ide-core",
     "@lib//:mockito",
     "@community//platform/forms_rt:java-guiForms-rt",
     "@community//platform/forms_rt:java-guiForms-rt_test_lib",
@@ -154,6 +161,7 @@ jvm_library(
   runtime_deps = [
     ":vcs-perforce-tests",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
   ]
 )
 ### auto-generated section `build intellij.vcs.perforce.tests` end

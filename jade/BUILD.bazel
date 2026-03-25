@@ -42,6 +42,7 @@ jvm_library(
     "//plugins/css/psi",
     "@community//platform/execution-impl",
     "@community//platform/ide-core-impl",
+    "@community//platform/ide-core",
     "@community//xml/impl",
     "//plugins/css/plugin",
     "//plugins/JavaScriptLanguage:javascript-backend",
@@ -49,6 +50,7 @@ jvm_library(
     "@community//spellchecker",
     "@community//xml/xml-psi-api:psi",
     "@community//platform/core-ui",
+    "@community//platform/core-impl",
     "@community//platform/code-style-impl:codeStyle-impl",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "//plugins/css/common/psi",
@@ -57,6 +59,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     "@community//jps/model-api:model",
+    "@community//platform/util-ex",
   ]
 )
 
@@ -88,6 +91,7 @@ jvm_library(
     "//plugins/css/psi:psi_test_lib",
     "@community//platform/execution-impl:execution-impl_test_lib",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
     "@community//xml/impl:impl_test_lib",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
@@ -107,6 +111,7 @@ jvm_library(
     "//plugins/coffeescript/coffeescript-core:coffeescript",
     "//plugins/coffeescript/coffeescript-core:coffeescript_test_lib",
     "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
     "@community//platform/code-style-impl:codeStyle-impl_test_lib",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
     "@community//xml/testFramework",
@@ -119,6 +124,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     "@community//jps/model-api:model_test_lib",
+    "@community//platform/util-ex:util-ex_test_lib",
   ]
 )
 ### auto-generated section `build intellij.jade` end
@@ -191,6 +197,7 @@ jvm_library(
     "@community//platform/execution-impl",
     "@community//platform/execution-impl:execution-impl_test_lib",
     "@community//platform/ide-core-impl",
+    "@community//platform/ide-core",
     "@community//xml/impl",
     "@community//xml/impl:impl_test_lib",
     "@community//platform/testFramework",
@@ -217,6 +224,8 @@ jvm_library(
     "//plugins/coffeescript/coffeescript-core:coffeescript_test_lib",
     "@community//platform/core-ui",
     "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/core-impl",
+    "@community//platform/core-impl:core-impl_test_lib",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/code-style-impl:codeStyle-impl_test_lib",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
@@ -244,6 +253,7 @@ jvm_library(
     ":jade-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
   ]
 )
 ### auto-generated section `build intellij.jade.tests` end

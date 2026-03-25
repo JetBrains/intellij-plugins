@@ -111,6 +111,8 @@ jvm_library(
     "//contrib/qodana:qodana_test_lib",
     "@community//platform/util/coroutines",
     "@community//platform/util/coroutines:coroutines_test_lib",
+    "@community//platform/util-ex",
+    "@community//platform/util-ex:util-ex_test_lib",
     "//contrib/qodana:qodana-core-tests",
     "//contrib/qodana:qodana-core-tests_test_lib",
   ],

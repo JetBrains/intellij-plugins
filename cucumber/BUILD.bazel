@@ -36,6 +36,7 @@ jvm_library(
     "@community//platform/refactoring",
     "@community//platform/structure-view-impl:structureView-impl",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/ide-core",
     "@community//spellchecker",
     "@community//libraries/gson",
     "@community//RegExpSupport:regexp",
@@ -51,6 +52,7 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     "@community//platform/util/concurrency",
     "@community//jps/model-api:model",
+    "@community//platform/util:util-ui",
   ]
 )
 
@@ -86,6 +88,7 @@ jvm_library(
     "@community//platform/usageView",
     "@community//platform/usageView:usageView_test_lib",
     "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
     "@community//spellchecker:spellchecker_test_lib",
     "@community//libraries/gson:gson_test_lib",
     "@community//RegExpSupport:regexp_test_lib",
@@ -103,6 +106,7 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     "@community//platform/util/concurrency:concurrency_test_lib",
     "@community//jps/model-api:model_test_lib",
+    "@community//platform/util:util-ui_test_lib",
   ]
 )
 ### auto-generated section `build intellij.gherkin` end
@@ -199,6 +203,8 @@ jvm_library(
     "@community//platform/util/concurrency:concurrency_test_lib",
     "@community//jps/model-api:model",
     "@community//jps/model-api:model_test_lib",
+    "@community//platform/util:util-ui",
+    "@community//platform/util:util-ui_test_lib",
   ],
   runtime_deps = [
     ":gherkin-tests",

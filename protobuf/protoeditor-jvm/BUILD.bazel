@@ -16,6 +16,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//java/java-psi-api:psi",
+    "@community//java/java-frontback-psi-api:frontback-psi",
     "@community//libraries/guava",
     "@community//platform/core-api:core",
     "@community//platform/lang-api:lang",
@@ -39,6 +40,7 @@ jvm_library(
   runtime_deps = [
     ":protoeditor-jvm",
     "@community//java/java-psi-api:psi_test_lib",
+    "@community//java/java-frontback-psi-api:frontback-psi_test_lib",
     "@community//libraries/guava:guava_test_lib",
     "@community//platform/core-api:core_test_lib",
     "@community//platform/lang-api:lang_test_lib",
@@ -112,6 +114,7 @@ jvm_library(
     "@community//platform/indexing-api:indexing_test_lib",
     "@community//platform/lang-impl",
     "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/ide-core",
     "//contrib/protobuf/protoeditor-core",
     "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
     "@community//java/testFramework",
@@ -122,7 +125,10 @@ jvm_library(
     "//contrib/protobuf/protoeditor-core:protoeditor-core-tests",
     "//contrib/protobuf/protoeditor-core:protoeditor-core-tests_test_lib",
   ],
-  runtime_deps = [":protoeditor-jvm-tests"]
+  runtime_deps = [
+    ":protoeditor-jvm-tests",
+    "@community//platform/ide-core:ide-core_test_lib",
+  ]
 )
 ### auto-generated section `build intellij.protoeditor.jvm.tests` end
 

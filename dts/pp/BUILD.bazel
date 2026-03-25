@@ -105,6 +105,8 @@ jvm_library(
     "@community//platform/projectModel-api:projectModel_test_lib",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/util:util-ui",
+    "@community//platform/util:util-ui_test_lib",
   ],
   runtime_deps = [
     ":pp-tests",

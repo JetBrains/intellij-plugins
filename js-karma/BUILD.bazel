@@ -51,14 +51,18 @@ jvm_library(
     "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
     "@community//platform/script-debugger/backend",
     "@community//platform/core-ui",
+    "@community//platform/core-impl",
     "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/ide-core",
     "@community//platform/util/jdom",
+    "@community//platform/util:util-ui",
     "@community//xml/xml-psi-api:psi",
     "//plugins/JavaScriptDebugger/common",
     "@community//platform/xdebugger-impl:debugger-impl",
     "@community//platform/execution",
     "@community//platform/lang-api:lang",
     "@community//jps/model-api:model",
+    "@community//platform/testRunner",
   ]
 )
 
@@ -100,8 +104,11 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
     "@community//platform/util/jdom:jdom_test_lib",
+    "@community//platform/util:util-ui_test_lib",
     "//plugins/js-test-common/test:javascript-testing-tests",
     "//plugins/js-test-common/test:javascript-testing-tests_test_lib",
     "@community//xml/xml-psi-api:psi_test_lib",
@@ -112,6 +119,7 @@ jvm_library(
     "@community//platform/execution:execution_test_lib",
     "@community//platform/lang-api:lang_test_lib",
     "@community//jps/model-api:model_test_lib",
+    "@community//platform/testRunner:testRunner_test_lib",
   ]
 )
 ### auto-generated section `build intellij.karma` end
@@ -205,6 +213,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/core-ui:core-ui_test_lib",
     "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/ide-core",
     "@community//platform/util/jdom",
     "@community//platform/util/jdom:jdom_test_lib",
     "//plugins/js-test-common/test:javascript-testing-tests",
@@ -223,11 +232,14 @@ jvm_library(
     "@community//platform/lang-api:lang_test_lib",
     "@community//jps/model-api:model",
     "@community//jps/model-api:model_test_lib",
+    "@community//platform/testRunner",
+    "@community//platform/testRunner:testRunner_test_lib",
   ],
   runtime_deps = [
     ":karma-tests",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
   ]
 )
 ### auto-generated section `build intellij.karma.tests` end

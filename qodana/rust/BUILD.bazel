@@ -35,6 +35,7 @@ jvm_library(
     "@community//platform/execution-impl",
     "@community//platform/execution",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/ide-core",
     "@community//libraries/io",
   ],
   runtime_deps = ["//rustrover/plugin"]
@@ -78,6 +79,7 @@ jvm_library(
     "@community//platform/execution-impl:execution-impl_test_lib",
     "@community//platform/execution:execution_test_lib",
     "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
     "@community//libraries/io:io_test_lib",
     "@community//libraries/kotlinx/coroutines/test",
     "@community//libraries/kotlinx/coroutines/test:test_test_lib",

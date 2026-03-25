@@ -15,6 +15,7 @@ jvm_library(
   resources = [":common_resources"],
   deps = [
     "@community//platform/core-api:core",
+    "@community//platform/core-impl",
     "@lib//:kotlin-stdlib",
     "@community//platform/util",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
@@ -38,6 +39,7 @@ jvm_library(
   runtime_deps = [
     ":common",
     "@community//platform/core-api:core_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
     "@community//platform/util:util_test_lib",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
     "@community//xml/xml-parser:parser_test_lib",

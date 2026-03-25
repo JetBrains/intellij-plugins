@@ -33,6 +33,7 @@ jvm_library(
     "@community//platform/polySymbols",
     "@community//xml/xml-psi-api:psi",
     "@community//platform/execution",
+    "@community//platform/util:util-ui",
   ]
 )
 
@@ -72,6 +73,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
     "@community//platform/execution:execution_test_lib",
+    "@community//platform/util:util-ui_test_lib",
   ]
 )
 ### auto-generated section `build intellij.nextjs` end

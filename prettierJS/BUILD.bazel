@@ -48,7 +48,9 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/util/jdom",
+    "@community//platform/util:util-ui",
     "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/ide-core",
     "@community//platform/statistics",
     "@community//platform/diff-api:diff",
     "@community//platform/diff-impl",
@@ -90,7 +92,9 @@ jvm_library(
     "@community//platform/core-ui:core-ui_test_lib",
     "@community//platform/code-style-impl:codeStyle-impl_test_lib",
     "@community//platform/util/jdom:jdom_test_lib",
+    "@community//platform/util:util-ui_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
@@ -183,6 +187,7 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//platform/util/jdom:jdom_test_lib",
     "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/ide-core",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
@@ -211,6 +216,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/observable:observable_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
   ]
 )
 ### auto-generated section `build intellij.prettierJS.tests` end

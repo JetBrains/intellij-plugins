@@ -17,6 +17,7 @@ jvm_library(
   deps = [
     "@community//jps/jps-builders:build",
     "@community//platform/util",
+    "@community//platform/util/base",
     "@community//build:build-javac-rt",
     "@lib//:jetbrains-annotations",
     "@community//jps/model-serialization",
@@ -34,6 +35,7 @@ jvm_library(
     ":errorProne-jps",
     "@community//jps/jps-builders:build_test_lib",
     "@community//platform/util:util_test_lib",
+    "@community//platform/util/base:base_test_lib",
     "@community//build:build-javac-rt_test_lib",
     "@community//jps/model-serialization:model-serialization_test_lib",
     "@community//platform/testFramework",

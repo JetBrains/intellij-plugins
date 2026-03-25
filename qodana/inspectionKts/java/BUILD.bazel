@@ -25,12 +25,14 @@ jvm_library(
     "@community//platform/platform-api:ide",
     "@community//platform/util:util-ui",
     "@community//platform/core-ui",
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//plugins/kotlin/base/resources:kotlin-base-resources",
     "@community//plugins/kotlin/base/plugin",
     "@community//plugins/kotlin/base/util",
     "@community//plugins/kotlin/scripting",
     "@community//platform/util-class-loader:util-classLoader",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/ide-core",
     "@community//platform/backend/workspace",
   ],
   runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"]
@@ -54,6 +56,7 @@ jvm_library(
     "@community//platform/platform-api:ide_test_lib",
     "@community//platform/util:util-ui_test_lib",
     "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
     "@community//plugins/kotlin/base/resources:kotlin-base-resources_test_lib",
     "@community//plugins/kotlin/base/plugin:plugin_test_lib",
     "@community//plugins/kotlin/base/util:util_test_lib",
@@ -61,6 +64,7 @@ jvm_library(
     "@community//plugins/kotlin:kotlin-plugin-community-main_test_lib",
     "@community//platform/util-class-loader:util-classLoader_test_lib",
     "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
     "@community//platform/backend/workspace:workspace_test_lib",
   ]
 )

@@ -25,5 +25,6 @@
     <orderEntry type="module" module-name="intellij.javascript.debugger.backend" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
     <orderEntry type="module" module-name="intellij.platform.execution" />
+    <orderEntry type="module" module-name="intellij.platform.util.ui" />
   </component>
 </module>
