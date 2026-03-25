@@ -1,7 +1,6 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.lexer;
 
-import com.intellij.java.syntax.JavaSyntaxBundle;
 import com.intellij.java.syntax.parser.JavaParser;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.java.parser.JavaParserUtil;
@@ -19,7 +18,7 @@ import com.intellij.psi.tree.ILazyParseableElementType;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
-public class DroolsBlockExpressionsLazyParseableElementType extends ILazyParseableElementType {
+public final class DroolsBlockExpressionsLazyParseableElementType extends ILazyParseableElementType {
   private static final SyntaxElementType BLOCK_EXPRESSION_SYNTAX = SyntaxElementTypeKt.SyntaxElementType("DROOLS_BLOCK_EXPRESSION");
 
   private final ElementTypeConverter converter;
