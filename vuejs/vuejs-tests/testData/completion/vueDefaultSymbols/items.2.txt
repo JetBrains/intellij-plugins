@@ -1,5 +1,5 @@
 $ (typeText='ComponentInternalInstance'; priority=100.0; bold)
-$attrs (typeText='Data'; priority=100.0; bold)
+$attrs (typeText='Attrs'; priority=100.0; bold)
 $data (typeText=null; priority=100.0; bold)
 $el (typeText='TypeEl'; priority=100.0; bold)
 $emit (typeText='void'; priority=100.0; bold)
