@@ -72,9 +72,7 @@ abstract class VueCompletionWithPluginTestBase(
     "testComputedTypeTS",
     "testDefineSlotsProperties",
     "testComponentEmitsDefinitions",
-    "testPropsOfComponentsWithTwoScriptTags",
     "testVueTscComponentWithSlots",
-    "testPropsOfComponentsWithTwoScriptTags_vapor",
     "testTypedComponentsPropsAndEvents",
   )
 
