@@ -1,18 +1,4 @@
-/*
- * Copyright 2013-2016 Sergey Ignatov, Alexander Zolotov, Florin Patan
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.actions
 
 import com.intellij.notification.NotificationType
@@ -33,43 +19,34 @@ import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.HclFileType
+import org.intellij.terraform.opentofu.OpenTofuFileType
 import org.intellij.terraform.runtime.TfToolPathDetector
 import org.intellij.terraform.runtime.showIncorrectPathNotification
 import org.jetbrains.annotations.Nls
 import kotlin.coroutines.cancellation.CancellationException
 
-internal abstract class TfExternalToolsAction : DumbAwareAction() {
-
-  private fun isAvailableOnFile(file: VirtualFile, checkDirChildren: Boolean, onlyTerraformFileType: Boolean): Boolean {
-    if (!file.isInLocalFileSystem) return false
-    if (file.isDirectory) {
-      if (!checkDirChildren) return false
-      val children = file.children
-      if (children != null) {
-        for (child in children) {
-          if (isAvailableOnFile(child, false, onlyTerraformFileType)) return true
-        }
-      }
-      return false
-    }
-
-    return FileTypeRegistry.getInstance().run {
-      if (onlyTerraformFileType) isFileOfType(file, TerraformFileType)
-      else isFileOfType(file, HclFileType) || isFileOfType(file, TerraformFileType)
-    }
+internal fun isTfOrTofuAvailable(file: VirtualFile, checkDirChildren: Boolean = true): Boolean {
+  if (!file.isInLocalFileSystem) return false
+  if (file.isDirectory) {
+    if (!checkDirChildren) return false
+    return file.children.any { child -> isTfOrTofuAvailable(child, false) }
   }
+
+  return FileTypeRegistry.getInstance().run {
+    isFileOfType(file, TerraformFileType) || isFileOfType(file, OpenTofuFileType)
+  }
+}
+
+internal abstract class TfExternalToolsAction : DumbAwareAction() {
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
     val project = e.project
     val file = e.getData(CommonDataKeys.VIRTUAL_FILE)
-    if (project == null || file == null || !isAvailableOnFile(file, true, true)) {
-      e.presentation.isEnabled = false
-      return
-    }
-    e.presentation.isEnabled = true
+    e.presentation.isEnabledAndVisible = project != null &&
+                                         file != null &&
+                                         isTfOrTofuAvailable(file)
   }
 
   protected fun getActionCoroutineScope(project: Project): CoroutineScope = project.service<CoroutineScopeProvider>().coroutineScope
