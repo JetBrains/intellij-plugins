@@ -44,7 +44,7 @@ class VueHighlightingTest : BasePlatformTestCase() {
   }
 
   private fun doTest(
-    addNodeModules: List<VueTestModule> = emptyList(),
+    addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_5_0),
     extension: String = "vue",
   ) {
     configureTestProject(addNodeModules, extension)
@@ -201,7 +201,7 @@ const props = {seeMe: {}}
   @Test
   fun testSpellchecking() {
     myFixture.enableInspections(GrazieSpellCheckingInspection())
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
@@ -427,8 +427,7 @@ const props = {seeMe: {}}
   // TODO add special inspection for unused slot scope parameters - WEB-43893
   @Test
   fun testSlotSyntax() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
-    doTest()
+    doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
   }
 
   @Test
@@ -563,7 +562,7 @@ const props = {seeMe: {}}
   @Test
   fun testScriptSetup() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
@@ -639,7 +638,7 @@ const props = {seeMe: {}}
   @Test
   fun testCssVBind() {
     myFixture.enableInspections(CssInvalidFunctionInspection::class.java)
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
@@ -651,19 +650,19 @@ const props = {seeMe: {}}
   @Test
   fun testGlobalSymbols() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
   fun testStandardBooleanAttributes() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest()
+    doTest(addNodeModules = listOf(/* TEMP WA */))
   }
 
   @Test
   fun testRefUnwrap() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
@@ -707,13 +706,13 @@ const props = {seeMe: {}}
   @Test
   fun testWithPropsFromFunctionCall() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest()
+    doTest(addNodeModules = listOf(/* TEMP WA */))
   }
 
   @Test
   fun testWithPropsFromFunctionCall2() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest()
+    doTest(addNodeModules = listOf(/* TEMP WA */))
   }
 
   @Test
@@ -748,7 +747,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testCustomEvents() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
@@ -782,7 +781,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
@@ -791,7 +790,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
@@ -800,7 +799,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
@@ -815,7 +814,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testScriptCaseSensitivity() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
@@ -825,7 +824,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testHtmlTagOmission() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0), extension = "html")
+    doTest(extension = "html")
   }
 
   @Test
@@ -835,7 +834,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testScriptSetupGeneric() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
@@ -1046,13 +1045,13 @@ const props = {seeMe: {}}
   @Test
   fun testPropTypeJsDoc() {
     myFixture.enableInspections(JSValidateTypesInspection())
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
   fun testPropsWithDefaults() {
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
@@ -1068,12 +1067,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testBindShorthandAttribute() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doTest()
   }
 
   @Test
   fun testWatchProperty() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0), extension = "js")
+    doTest(extension = "js")
   }
 
   @Test
