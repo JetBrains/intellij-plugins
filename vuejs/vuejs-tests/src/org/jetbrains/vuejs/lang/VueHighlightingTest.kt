@@ -63,7 +63,7 @@ class VueHighlightingTest : BasePlatformTestCase() {
     addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_5_0),
     additionalDependencies: Map<String, String> = emptyMap(),
     fileName: String? = null,
-    vararg additionalFilesToCheck: String,
+    additionalFilesToCheck: List<String> = emptyList(),
   ) {
     val testName = getTestName(true)
     if (addNodeModules.isNotEmpty()) {
@@ -714,7 +714,7 @@ const props = {seeMe: {}}
     doDirTest(
       addNodeModules = listOf(/* TEMP WA */),
       fileName = "main.vue",
-      additionalFilesToCheck = arrayOf("main2.vue"),
+      additionalFilesToCheck = listOf("main2.vue"),
     )
   }
 
