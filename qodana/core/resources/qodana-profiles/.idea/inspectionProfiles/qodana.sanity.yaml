@@ -3,6 +3,7 @@ name: "qodana.sanity"
 
 include:
   - "qodana-dotnet.static.yaml"
+  - "qodana-rust.yaml"
 
 groups:
   - groupId: ClionSanity
@@ -23,4 +24,6 @@ inspections:
   - group: RiderStaticSanityInspections
     enabled: true
   - group: ClionSanity
+    enabled: true
+  - group: RustSanity
     enabled: true

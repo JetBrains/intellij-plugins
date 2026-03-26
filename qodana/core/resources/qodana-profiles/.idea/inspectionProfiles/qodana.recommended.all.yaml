@@ -1,6 +1,9 @@
 baseProfile: "Project Default"
 name: "qodana.recommended.all"
 
+include:
+  - "qodana-rust.yaml"
+
 groups:
   - groupId: JSRelatedInspections
     inspections:
@@ -69,6 +72,7 @@ groups:
       - "ExcludedInspections"
       - "!category:FlexInspect" # FlexInspect enabled by default (even global)
       - "!AndroidInspections"
+      - "RustSanity" # Sanity-only Rust inspections
 
   - groupId: ExcludedInspections # list of inspections disabled by specific reason
     inspections:
