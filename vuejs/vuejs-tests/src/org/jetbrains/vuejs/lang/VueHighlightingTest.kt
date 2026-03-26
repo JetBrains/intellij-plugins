@@ -597,7 +597,10 @@ const props = {seeMe: {}}
   fun testBindingToDataAttributes() = doTest()
 
   @Test
-  fun testPropsValidation() = doDirTest(modules = emptyArray(/* TEMP WA */))
+  fun testPropsValidation() =
+    doDirTest(
+      additionalDependencies = mapOf("lib" to "*"),
+    )
 
   @Test
   fun testScriptSetupRef() {
