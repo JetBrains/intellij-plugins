@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
-import com.intellij.psi.PsiFile
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
@@ -55,9 +54,9 @@ class VueHighlightingTest : BasePlatformTestCase() {
   private fun configureTestProject(
     addNodeModules: List<VueTestModule> = emptyList(),
     extension: String = "vue",
-  ): PsiFile {
+  ) {
     myFixture.configureVueDependencies(modules = addNodeModules.toTypedArray())
-    return myFixture.configureByFile(getTestName(true) + "." + extension)
+    myFixture.configureByFile(getTestName(true) + "." + extension)
   }
 
   private fun doDirTest(
