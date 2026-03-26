@@ -133,21 +133,21 @@ internal class MissingPropertyVisitor(val holder: ProblemsHolder, val recursive:
 
     val candidates = ArrayList(properties.values.filter { it.required && !(it is PropertyType && it.hasDefault) })
     if (candidates.isEmpty()) return
-    val all = ArrayList<String>()
-    all.addAll(obj.propertyList.map { it.name })
+
+    val configured = HashSet<String>()
+    configured.addAll(obj.propertyList.map { it.name })
     for (it in obj.blockList) {
-      if (DynamicBlock.accepts(it)) {
-        all.add(it.name)
-      }
-      else {
-        all.add(it.fullName)
-      }
+      if (DynamicBlock.accepts(it))
+        configured.add(it.name)
+      else
+        configured.add(it.fullName)
     }
 
     ProgressIndicatorProvider.checkCanceled()
 
-    var required = candidates.filterNot { it.name in all }
-
+    var required = candidates.filterNot { candidate ->
+      candidate.name in configured || candidate.conflictsWith?.any { configured.contains(it) } == true
+    }
     if (required.isEmpty()) return
 
     val requiredProps = required.filterIsInstance<PropertyType>()

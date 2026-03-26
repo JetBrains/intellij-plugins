@@ -138,6 +138,10 @@ public class TfInspectionsTest extends TfInspectionFixtureTestCase {
     doTest("missing_properties", new HclBlockMissingPropertyInspection());
   }
 
+  public void testMissingPropertyConflictsWith() {
+    doTest("missing_property_conflicts_with", new HclBlockMissingPropertyInspection());
+  }
+
   // ignored, because no "Conflicts" medatada is provided in recent updates
   public void _testConflictingBlockProperty() {
     doTest("conflicting_properties", new HCLBlockConflictingPropertiesInspection());
