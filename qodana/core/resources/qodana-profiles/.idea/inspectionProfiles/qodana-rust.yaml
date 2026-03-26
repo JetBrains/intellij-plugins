@@ -1,0 +1,6 @@
+# Rust inspections that run only in the sanity profile
+groups:
+  - groupId: RustSanity
+    inspections:
+      - RsUnresolvedPath
+      - RsUnresolvedMethod

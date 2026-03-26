@@ -1,3 +1,7 @@
-/.idea/workspace.xml
-/.idea/shelf
+# contrib/.gitignore ignores .idea entirely. To track inspection profiles
+# we must: (1) unignore .idea/ so git looks inside, (2) re-ignore everything
+# in it, (3) unignore only inspectionProfiles/.
+!/.idea/
+/.idea/*
+!/.idea/inspectionProfiles/
 /.idea/inspectionProfiles/profiles_settings.xml
