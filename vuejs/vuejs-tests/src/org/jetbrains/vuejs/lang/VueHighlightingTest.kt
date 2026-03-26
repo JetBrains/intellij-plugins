@@ -48,9 +48,8 @@ class VueHighlightingTest : BasePlatformTestCase() {
     packageJsonDependencies: Map<String, String> = emptyMap(),
     addNodeModules: List<VueTestModule> = emptyList(),
     extension: String = "vue",
-    vararg files: String,
   ) {
-    configureTestProject(packageJsonDependencies, addNodeModules, extension, *files)
+    configureTestProject(packageJsonDependencies, addNodeModules, extension)
     myFixture.checkHighlighting()
   }
 
@@ -58,11 +57,9 @@ class VueHighlightingTest : BasePlatformTestCase() {
     packageJsonDependencies: Map<String, String> = emptyMap(),
     addNodeModules: List<VueTestModule> = emptyList(),
     extension: String = "vue",
-    vararg files: String,
   ): PsiFile {
     myFixture.configureVueDependencies(*addNodeModules.toTypedArray(),
                                        additionalDependencies = packageJsonDependencies)
-    myFixture.configureByFiles(*files)
     return myFixture.configureByFile(getTestName(true) + "." + extension)
   }
 
