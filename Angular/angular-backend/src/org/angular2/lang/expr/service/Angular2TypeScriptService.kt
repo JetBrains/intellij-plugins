@@ -385,7 +385,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
       val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, projectFileName, range)
       val command = Angular2GetGeneratedElementTypeCommand(args)
-      val type = sendGetElementTypeCommandAndDeserialize(null, command) ?: return@withServiceTraceSpan null
+      val type = sendGetElementTypeCommandAndDeserializeResponse(command) ?: return@withServiceTraceSpan null
       val refreshableType = createRefreshableType(transpiledFile.originalFile, type, command)
       return@withServiceTraceSpan refreshableType.toTSType().asJSType()
     }
