@@ -44,31 +44,31 @@ class VueHighlightingTest : BasePlatformTestCase() {
   }
 
   private fun doTest(
-    addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_5_0),
+    vararg modules: VueTestModule = arrayOf(VueTestModule.VUE_3_5_0),
     extension: String = "vue",
   ) {
-    configureTestProject(addNodeModules, extension)
+    configureTestProject(modules = modules, extension)
     myFixture.checkHighlighting()
   }
 
   private fun configureTestProject(
-    addNodeModules: List<VueTestModule> = emptyList(),
+    vararg modules: VueTestModule,
     extension: String = "vue",
   ) {
-    myFixture.configureVueDependencies(modules = addNodeModules.toTypedArray())
+    myFixture.configureVueDependencies(modules = modules)
     myFixture.configureByFile(getTestName(true) + "." + extension)
   }
 
   private fun doDirTest(
-    addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_5_0),
+    vararg modules: VueTestModule = arrayOf(VueTestModule.VUE_3_5_0),
     additionalDependencies: Map<String, String> = emptyMap(),
     fileName: String? = null,
     additionalFilesToCheck: List<String> = emptyList(),
   ) {
     val testName = getTestName(true)
-    if (addNodeModules.isNotEmpty()) {
+    if (modules.isNotEmpty()) {
       myFixture.configureVueDependencies(
-        modules = addNodeModules.toTypedArray(),
+        modules = modules,
         additionalDependencies = additionalDependencies,
       )
     }
@@ -151,7 +151,7 @@ const props = {seeMe: {}}
   fun testRequiredAttributeWithModifierTest() = doDirTest()
 
   @Test
-  fun testRequiredAttributeWithVModel() = doDirTest(listOf(VueTestModule.VUE_2_6_10))
+  fun testRequiredAttributeWithVModel() = doDirTest(VueTestModule.VUE_2_6_10)
 
   @Test
   fun testRequiredAttributeWithVModel3() = doDirTest()
@@ -307,7 +307,7 @@ const props = {seeMe: {}}
   fun testEmptyTagsForVueAreAllowed() = doTest()
 
   @Test
-  fun testBuiltinTagsHighlighting() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_5_3))
+  fun testBuiltinTagsHighlighting() = doTest(VueTestModule.VUE_2_5_3)
 
   @Test
   fun testNonPropsAttributesAreNotHighlighted() = doTest()
@@ -420,7 +420,7 @@ const props = {seeMe: {}}
   // TODO add special inspection for unused slot scope parameters - WEB-43893
   @Test
   fun testSlotSyntax() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+    doTest(VueTestModule.VUE_2_6_10)
   }
 
   @Test
@@ -430,10 +430,10 @@ const props = {seeMe: {}}
   fun testSlotNameBinding() = doTest()
 
   @Test
-  fun testVueExtendSyntax() = doDirTest(addNodeModules = listOf(VueTestModule.VUE_2_5_3))
+  fun testVueExtendSyntax() = doDirTest(VueTestModule.VUE_2_5_3)
 
   @Test
-  fun testBootstrapVue() = doTest(addNodeModules = listOf(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11))
+  fun testBootstrapVue() = doTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
 
   @Test
   fun testDestructuringPatternsInVFor() = doTest()
@@ -442,7 +442,7 @@ const props = {seeMe: {}}
   fun testDirectivesWithParameters() = doTest()
 
   @Test
-  fun testDirectiveWithModifiers() = doTest(addNodeModules = listOf(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11))
+  fun testDirectiveWithModifiers() = doTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
 
   @Test
   fun testIsAttributeSupport() = doTest()
@@ -515,16 +515,16 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testCommonJSSupport() = doTest(addNodeModules = listOf(VueTestModule.VUEX_3_1_0))
+  fun testCommonJSSupport() = doTest(VueTestModule.VUEX_3_1_0)
 
   @Test
-  fun testComputedTypeTS() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+  fun testComputedTypeTS() = doTest(VueTestModule.VUE_2_6_10)
 
   @Test
-  fun testComputedTypeJS() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+  fun testComputedTypeJS() = doTest(VueTestModule.VUE_2_6_10)
 
   @Test
-  fun testDataTypeTS() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+  fun testDataTypeTS() = doTest(VueTestModule.VUE_2_6_10)
 
   @Test
   fun testScssBuiltInModules() {
@@ -547,10 +547,10 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testIndirectExport() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+  fun testIndirectExport() = doTest(VueTestModule.VUE_2_6_10)
 
   @Test
-  fun testAsyncSetup() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_0_0))
+  fun testAsyncSetup() = doTest(VueTestModule.VUE_3_0_0)
 
   @Test
   fun testScriptSetup() {
@@ -597,7 +597,7 @@ const props = {seeMe: {}}
   fun testBindingToDataAttributes() = doTest()
 
   @Test
-  fun testPropsValidation() = doDirTest(addNodeModules = listOf(/* TEMP WA */))
+  fun testPropsValidation() = doDirTest(modules = emptyArray(/* TEMP WA */))
 
   @Test
   fun testScriptSetupRef() {
@@ -619,13 +619,21 @@ const props = {seeMe: {}}
   @Test
   fun testTypedComponentsScriptSetup() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doTest(addNodeModules = listOf(VueTestModule.NAIVE_UI_2_19_11, VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.VUE_3_5_0))
+    doTest(
+      VueTestModule.NAIVE_UI_2_19_11,
+      VueTestModule.HEADLESS_UI_1_4_1,
+      VueTestModule.VUE_3_5_0,
+    )
   }
 
   @Test
   fun testTypedComponentsScriptSetup2() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doTest(addNodeModules = listOf(VueTestModule.NAIVE_UI_2_19_11, VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.VUE_3_5_0))
+    doTest(
+      VueTestModule.NAIVE_UI_2_19_11,
+      VueTestModule.HEADLESS_UI_1_4_1,
+      VueTestModule.VUE_3_5_0,
+    )
   }
 
   @Test
@@ -637,7 +645,7 @@ const props = {seeMe: {}}
   @Test
   fun testCssVBindVue31() {
     myFixture.enableInspections(CssInvalidFunctionInspection::class.java)
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_1_0))
+    doTest(VueTestModule.VUE_3_1_0)
   }
 
   @Test
@@ -649,7 +657,7 @@ const props = {seeMe: {}}
   @Test
   fun testStandardBooleanAttributes() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(addNodeModules = listOf(/* TEMP WA */))
+    doTest(modules = emptyArray(/* TEMP WA */))
   }
 
   @Test
@@ -673,8 +681,9 @@ const props = {seeMe: {}}
   fun testSlotTypes() {
     myFixture.enableInspections(VueInspectionsProvider())
     doDirTest(
+      VueTestModule.QUASAR_2_6_5,
+      VueTestModule.VUE_3_5_0,
       fileName = "MyTable.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0, VueTestModule.QUASAR_2_6_5),
     )
   }
 
@@ -693,26 +702,29 @@ const props = {seeMe: {}}
   @Test
   fun testWithPropsFromFunctionCall() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(addNodeModules = listOf(/* TEMP WA */))
+    doTest(modules = emptyArray(/* TEMP WA */))
   }
 
   @Test
   fun testWithPropsFromFunctionCall2() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(addNodeModules = listOf(/* TEMP WA */))
+    doTest(modules = emptyArray(/* TEMP WA */))
   }
 
   @Test
   fun testInferPropType() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED))
+    doTest(
+      VueTestModule.VUE_3_2_2,
+      VueTestModule.NAIVE_UI_2_33_2_PATCHED,
+    )
   }
 
   @Test
   fun testLocalWebTypes() {
     myFixture.enableInspections(VueInspectionsProvider())
     doDirTest(
-      addNodeModules = listOf(/* TEMP WA */),
+      modules = emptyArray(/* TEMP WA */),
       fileName = "main.vue",
       additionalFilesToCheck = listOf("main2.vue"),
     )
@@ -746,7 +758,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+    doTest(VueTestModule.VUE_2_6_10)
   }
 
   @Test
@@ -755,7 +767,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+    doTest(VueTestModule.VUE_2_6_10)
   }
 
   @Test
@@ -833,8 +845,8 @@ const props = {seeMe: {}}
   @Test
   fun testComponentFromFunctionPlugin_vapor() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -846,8 +858,8 @@ const props = {seeMe: {}}
   @Test
   fun testComponentFromNestedFunctionPlugin_vapor() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -859,8 +871,8 @@ const props = {seeMe: {}}
   @Test
   fun testComponentFromNestedFunctionPluginWithCycle_vapor() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -872,8 +884,8 @@ const props = {seeMe: {}}
   @Test
   fun testComponentFromObjectPlugin_vapor() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -885,8 +897,8 @@ const props = {seeMe: {}}
   @Test
   fun testComponentFromNestedObjectPlugin_vapor() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -898,8 +910,8 @@ const props = {seeMe: {}}
   @Test
   fun testComponentFromNestedObjectPluginWithCycle_vapor() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -911,8 +923,8 @@ const props = {seeMe: {}}
   @Test
   fun testDirectivesFromFunctionPlugin_vapor() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -924,8 +936,8 @@ const props = {seeMe: {}}
   @Test
   fun testDirectivesFromNestedFunctionPlugin_vapor() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -937,8 +949,8 @@ const props = {seeMe: {}}
   @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle_vapor() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -950,8 +962,8 @@ const props = {seeMe: {}}
   @Test
   fun testDirectivesFromObjectPlugin_vapor() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -963,8 +975,8 @@ const props = {seeMe: {}}
   @Test
   fun testDirectivesFromNestedObjectPlugin_vapor() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -976,8 +988,8 @@ const props = {seeMe: {}}
   @Test
   fun testDirectivesFromNestedObjectPluginWithCycle_vapor() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -1007,7 +1019,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testVuetifyWebTypesWithTrailingNewLine() {
-    doTest(addNodeModules = listOf(VueTestModule.VUETIFY_3_3_3))
+    doTest(VueTestModule.VUETIFY_3_3_3)
   }
 
   @Test
@@ -1028,8 +1040,8 @@ const props = {seeMe: {}}
   @Test
   fun testVaporSimpleApplication() {
     doDirTest(
+      VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 }
