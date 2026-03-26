@@ -36,6 +36,10 @@ import org.junit.runners.JUnit4
  */
 @RunWith(JUnit4::class)
 class VueHighlightingTest : BasePlatformTestCase() {
+
+  // WA for migration
+  private val NO_MODULES: Array<out VueTestModule> = emptyArray()
+
   override fun getTestDataPath(): String = getVueTestDataPath() + "/highlighting"
 
   override fun setUp() {
@@ -660,7 +664,7 @@ const props = {seeMe: {}}
   @Test
   fun testStandardBooleanAttributes() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(modules = emptyArray(/* TEMP WA */))
+    doTest(modules = NO_MODULES)
   }
 
   @Test
@@ -705,13 +709,13 @@ const props = {seeMe: {}}
   @Test
   fun testWithPropsFromFunctionCall() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(modules = emptyArray(/* TEMP WA */))
+    doTest(modules = NO_MODULES)
   }
 
   @Test
   fun testWithPropsFromFunctionCall2() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(modules = emptyArray(/* TEMP WA */))
+    doTest(modules = NO_MODULES)
   }
 
   @Test
@@ -727,7 +731,7 @@ const props = {seeMe: {}}
   fun testLocalWebTypes() {
     myFixture.enableInspections(VueInspectionsProvider())
     doDirTest(
-      modules = emptyArray(/* TEMP WA */),
+      modules = NO_MODULES,
       fileName = "main.vue",
       additionalFilesToCheck = listOf("main2.vue"),
     )
