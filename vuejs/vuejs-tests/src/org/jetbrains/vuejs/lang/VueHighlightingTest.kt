@@ -60,7 +60,7 @@ class VueHighlightingTest : BasePlatformTestCase() {
   }
 
   private fun doDirTest(
-    addNodeModules: List<VueTestModule> = emptyList(),
+    addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_5_0),
     additionalDependencies: Map<String, String> = emptyMap(),
     fileName: String? = null,
     vararg additionalFilesToCheck: String,
@@ -154,7 +154,7 @@ const props = {seeMe: {}}
   fun testRequiredAttributeWithVModel() = doDirTest(listOf(VueTestModule.VUE_2_6_10))
 
   @Test
-  fun testRequiredAttributeWithVModel3() = doDirTest(listOf(VueTestModule.VUE_3_5_0))
+  fun testRequiredAttributeWithVModel3() = doDirTest()
 
   @Test
   fun testVueAttributeInCustomTag() = doTest()
@@ -230,25 +230,18 @@ const props = {seeMe: {}}
   fun testGlobalItemsAugmentedFromCompilerOptionsTypes() {
     doDirTest(
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
       additionalDependencies = mapOf("my-vue-items-library" to "*"),
     )
   }
 
   @Test
   fun testDirectivesFromGlobalDirectives() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
   fun testDirectivesWithModifiersFromGlobalDirectives() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -568,7 +561,7 @@ const props = {seeMe: {}}
   @Test
   fun testScriptSetupComplexImports() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doDirTest()
   }
 
   @Test
@@ -598,13 +591,13 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testScriptSetupScopePriority() = doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+  fun testScriptSetupScopePriority() = doDirTest()
 
   @Test
   fun testBindingToDataAttributes() = doTest()
 
   @Test
-  fun testPropsValidation() = doDirTest()
+  fun testPropsValidation() = doDirTest(addNodeModules = listOf(/* TEMP WA */))
 
   @Test
   fun testScriptSetupRef() {
@@ -620,7 +613,7 @@ const props = {seeMe: {}}
     myFixture.enableInspections(
       ES6UnusedImportsInspection(),
     )
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
+    doDirTest()
   }
 
   @Test
@@ -688,19 +681,13 @@ const props = {seeMe: {}}
   @Test
   fun testGlobalScriptSetup() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(
-      fileName = "HelloWorld.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "HelloWorld.vue")
   }
 
   @Test
   fun testDynamicArguments() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(
-      fileName = "HelloWorld.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "HelloWorld.vue")
   }
 
   @Test
@@ -725,6 +712,7 @@ const props = {seeMe: {}}
   fun testLocalWebTypes() {
     myFixture.enableInspections(VueInspectionsProvider())
     doDirTest(
+      addNodeModules = listOf(/* TEMP WA */),
       fileName = "main.vue",
       additionalFilesToCheck = arrayOf("main2.vue"),
     )
@@ -739,10 +727,7 @@ const props = {seeMe: {}}
   @Test
   fun testSourceScopedSlots() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(
-      fileName = "Catalogue.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "Catalogue.vue")
   }
 
   @Test
@@ -752,9 +737,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testCustomEventsTypedComponent() {
-    doDirTest(
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest()
   }
 
   @Test
@@ -839,17 +822,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testGenericComponentUsage() {
-    doDirTest(
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest()
   }
 
   @Test
   fun testComponentFromFunctionPlugin() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -862,10 +840,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromNestedFunctionPlugin() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -878,10 +853,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromNestedFunctionPluginWithCycle() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -894,10 +866,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromObjectPlugin() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -910,10 +879,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromNestedObjectPlugin() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -926,10 +892,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromNestedObjectPluginWithCycle() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -942,10 +905,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromFunctionPlugin() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -958,10 +918,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromNestedFunctionPlugin() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -974,10 +931,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -990,10 +944,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromObjectPlugin() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -1006,10 +957,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromNestedObjectPlugin() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -1022,10 +970,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromNestedObjectPluginWithCycle() {
-    doDirTest(
-      fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "App.vue")
   }
 
   @Test
@@ -1077,10 +1022,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testTypedMixins() {
-    doDirTest(
-      fileName = "index.js",
-      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
-    )
+    doDirTest(fileName = "index.js")
   }
 
   @Test
