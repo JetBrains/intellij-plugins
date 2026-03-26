@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>test.tf</file>
+    <line>4</line>
+    <module>0</module>
+    <package>&lt;default&gt;</package>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
+    <description>Missing required properties: id</description>
+  </problem>
+</problems>
