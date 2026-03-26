@@ -624,13 +624,23 @@
     </action>
 
     <group id="TfTools" popup="true" icon="org.intellij.terraform.TerraformIcons.Terraform"
-           class="com.intellij.ide.actions.NonTrivialActionGroup">
+           class="org.intellij.terraform.config.actions.TfToolsActionGroup">
       <action id="TfInitAction" class="org.intellij.terraform.config.actions.TfInitAction"/>
       <action id="TfFmtFileAction" class="org.intellij.terraform.config.actions.TfFmtFileAction">
         <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt F"/>
       </action>
       <action id="TfGenerateLocalMetadataAction"
               class="org.intellij.terraform.config.actions.TfGenerateLocalMetadataAction"/>
+      <add-to-group group-id="CodeMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+      <add-to-group group-id="EditorLangPopupMenu" anchor="last"/>
+    </group>
+
+    <group id="TofuTools" popup="true" icon="org.intellij.terraform.TerraformIcons.Opentofu"
+           class="org.intellij.terraform.config.actions.TofuToolsActionGroup">
+      <reference ref="TfInitAction"/>
+      <reference ref="TfFmtFileAction"/>
+      <reference ref="TfGenerateLocalMetadataAction"/>
       <add-to-group group-id="CodeMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
       <add-to-group group-id="EditorLangPopupMenu" anchor="last"/>
