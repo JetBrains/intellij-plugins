@@ -4,6 +4,6 @@
   </dependencies>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.terminal">
-    <localTerminalCustomizer implementation="com.jetbrains.cidr.cpp.embedded.platformio.terminal.PlatformioLocalTerminalCustomizer"/>
+    <shellExecOptionsCustomizer implementation="com.jetbrains.cidr.cpp.embedded.platformio.terminal.PlatformioShellExecOptionCustomizer"/>
   </extensions>
 </idea-plugin>
