@@ -45,21 +45,18 @@ class VueHighlightingTest : BasePlatformTestCase() {
   }
 
   private fun doTest(
-    packageJsonDependencies: Map<String, String> = emptyMap(),
     addNodeModules: List<VueTestModule> = emptyList(),
     extension: String = "vue",
   ) {
-    configureTestProject(packageJsonDependencies, addNodeModules, extension)
+    configureTestProject(addNodeModules, extension)
     myFixture.checkHighlighting()
   }
 
   private fun configureTestProject(
-    packageJsonDependencies: Map<String, String> = emptyMap(),
     addNodeModules: List<VueTestModule> = emptyList(),
     extension: String = "vue",
   ): PsiFile {
-    myFixture.configureVueDependencies(*addNodeModules.toTypedArray(),
-                                       additionalDependencies = packageJsonDependencies)
+    myFixture.configureVueDependencies(modules = addNodeModules.toTypedArray())
     return myFixture.configureByFile(getTestName(true) + "." + extension)
   }
 
@@ -527,7 +524,7 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testCommonJSSupport() = doTest(mapOf("vuex" to "*"))
+  fun testCommonJSSupport() = doTest(addNodeModules = listOf(VueTestModule.VUEX_3_1_0))
 
   @Test
   fun testComputedTypeTS() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
