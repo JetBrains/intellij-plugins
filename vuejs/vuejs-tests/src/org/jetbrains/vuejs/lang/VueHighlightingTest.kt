@@ -483,20 +483,26 @@ const props = {seeMe: {}}
 
   @Test
   fun testCompositionApiBasic_0_4_0() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10, VueTestModule.COMPOSITION_API_0_4_0)
-    myFixture.configureByFile("compositionComponent1.vue")
-    myFixture.checkHighlighting()
-    myFixture.configureByFile("compositionComponent2.vue")
-    myFixture.checkHighlighting()
+    doTest(
+      VueTestModule.VUE_2_6_10,
+      VueTestModule.COMPOSITION_API_0_4_0,
+      fileName = "compositionComponent1.vue",
+      additionalFilesToCheck = listOf(
+        "compositionComponent2.vue",
+      )
+    )
   }
 
   @Test
   fun testCompositionApiBasic_1_0_0() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10, VueTestModule.COMPOSITION_API_1_0_0)
-    myFixture.configureByFile("compositionComponent1.vue")
-    myFixture.checkHighlighting()
-    myFixture.configureByFile("compositionComponent2.vue")
-    myFixture.checkHighlighting()
+    doTest(
+      VueTestModule.VUE_2_6_10,
+      VueTestModule.COMPOSITION_API_1_0_0,
+      fileName = "compositionComponent1.vue",
+      additionalFilesToCheck = listOf(
+        "compositionComponent2.vue",
+      )
+    )
   }
 
   @Test
