@@ -47,23 +47,12 @@ class VueHighlightingTest : BasePlatformTestCase() {
     myFixture.enableInspections(VueInspectionsProvider())
   }
 
+  private fun configureTestProject() {
+    val testName = getTestName(true)
+    myFixture.configureByFile("$testName/$testName.vue")
+  }
+
   private fun doTest(
-    vararg modules: VueTestModule = arrayOf(VueTestModule.VUE_3_5_0),
-    extension: String = "vue",
-  ) {
-    configureTestProject(modules = modules, extension)
-    myFixture.checkHighlighting()
-  }
-
-  private fun configureTestProject(
-    vararg modules: VueTestModule,
-    extension: String = "vue",
-  ) {
-    myFixture.configureVueDependencies(modules = modules)
-    myFixture.configureByFile(getTestName(true) + "." + extension)
-  }
-
-  private fun doDirTest(
     vararg modules: VueTestModule = arrayOf(VueTestModule.VUE_3_5_0),
     additionalDependencies: Map<String, String> = emptyMap(),
     fileName: String? = null,
@@ -152,13 +141,13 @@ const props = {seeMe: {}}
   fun testCompRequiredAttributesTestTS() = doTest()
 
   @Test
-  fun testRequiredAttributeWithModifierTest() = doDirTest()
+  fun testRequiredAttributeWithModifierTest() = doTest()
 
   @Test
-  fun testRequiredAttributeWithVModel() = doDirTest(VueTestModule.VUE_2_6_10)
+  fun testRequiredAttributeWithVModel() = doTest(VueTestModule.VUE_2_6_10)
 
   @Test
-  fun testRequiredAttributeWithVModel3() = doDirTest()
+  fun testRequiredAttributeWithVModel3() = doTest()
 
   @Test
   fun testVueAttributeInCustomTag() = doTest()
@@ -176,19 +165,19 @@ const props = {seeMe: {}}
   fun testTextarea() = doTest()
 
   @Test
-  fun testGlobalComponentLiteral() = doDirTest()
+  fun testGlobalComponentLiteral() = doTest()
 
   @Test
-  fun testExternalMixin() = doDirTest()
+  fun testExternalMixin() = doTest()
 
   @Test
-  fun testTwoExternalMixins() = doDirTest()
+  fun testTwoExternalMixins() = doTest()
 
   @Test
-  fun testTwoGlobalMixins() = doDirTest()
+  fun testTwoGlobalMixins() = doTest()
 
   @Test
-  fun testNotImportedComponentIsUnknown() = doDirTest()
+  fun testNotImportedComponentIsUnknown() = doTest()
 
   @Test
   fun testNoDoubleSpellCheckingInAttributesWithEmbeddedContents() {
@@ -232,7 +221,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testGlobalItemsAugmentedFromCompilerOptionsTypes() {
-    doDirTest(
+    doTest(
       fileName = "App.vue",
       additionalDependencies = mapOf("my-vue-items-library" to "*"),
     )
@@ -240,12 +229,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromGlobalDirectives() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testDirectivesWithModifiersFromGlobalDirectives() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
@@ -350,19 +339,19 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testLocalComponentExtendsInClassSyntax() = doDirTest()
+  fun testLocalComponentExtendsInClassSyntax() = doTest()
 
   @Test
-  fun testLocalComponentInClassSyntax() = doDirTest()
+  fun testLocalComponentInClassSyntax() = doTest()
 
   @Test
-  fun testLocalComponentInMixin() = doDirTest()
+  fun testLocalComponentInMixin() = doTest()
 
   @Test
-  fun testLocalComponentInMixinRecursion() = doDirTest()
+  fun testLocalComponentInMixinRecursion() = doTest()
 
   @Test
-  fun testBooleanProps() = doDirTest()
+  fun testBooleanProps() = doTest()
 
   @Test
   fun testRecursiveMixedMixins() {
@@ -399,7 +388,7 @@ const props = {seeMe: {}}
   fun testTopLevelTags() = doTest()
 
   @Test
-  fun testEndTagNotForbidden() = doDirTest()
+  fun testEndTagNotForbidden() = doTest()
 
   @Test
   fun testColonInEventName() = doTest()
@@ -434,7 +423,7 @@ const props = {seeMe: {}}
   fun testSlotNameBinding() = doTest()
 
   @Test
-  fun testVueExtendSyntax() = doDirTest(VueTestModule.VUE_2_5_3)
+  fun testVueExtendSyntax() = doTest(VueTestModule.VUE_2_5_3)
 
   @Test
   fun testBootstrapVue() = doTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
@@ -455,7 +444,7 @@ const props = {seeMe: {}}
   fun testKeyAttributeSupport() = doTest()
 
   @Test
-  fun testPropsWithOptions() = doDirTest()
+  fun testPropsWithOptions() = doTest()
 
   @Test
   fun testFilters() = doTest()
@@ -487,7 +476,7 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testMultipleScriptTagsInHTML() = doTest(extension = "html")
+  fun testMultipleScriptTagsInHTML() = doTest(fileName = "multipleScriptTagsInHTML.html")
 
   @Test
   fun testMultipleScriptTagsInVue() = doTest()
@@ -565,7 +554,7 @@ const props = {seeMe: {}}
   @Test
   fun testScriptSetupComplexImports() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doDirTest()
+    doTest()
   }
 
   @Test
@@ -577,7 +566,7 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testSuperComponentMixin() = doDirTest()
+  fun testSuperComponentMixin() = doTest()
 
   @Test
   fun testCompositionPropsJS() = doTest()
@@ -595,14 +584,14 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testScriptSetupScopePriority() = doDirTest()
+  fun testScriptSetupScopePriority() = doTest()
 
   @Test
   fun testBindingToDataAttributes() = doTest()
 
   @Test
   fun testPropsValidation() =
-    doDirTest(
+    doTest(
       additionalDependencies = mapOf("lib" to "*"),
     )
 
@@ -620,7 +609,7 @@ const props = {seeMe: {}}
     myFixture.enableInspections(
       ES6UnusedImportsInspection(),
     )
-    doDirTest()
+    doTest()
   }
 
   @Test
@@ -675,7 +664,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testVModelWithMixin() {
-    doDirTest(fileName = "MyForm.vue")
+    doTest(fileName = "MyForm.vue")
   }
 
   @Test
@@ -687,7 +676,7 @@ const props = {seeMe: {}}
   @Test
   fun testSlotTypes() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(
+    doTest(
       VueTestModule.QUASAR_2_6_5,
       VueTestModule.VUE_3_5_0,
       fileName = "MyTable.vue",
@@ -697,13 +686,13 @@ const props = {seeMe: {}}
   @Test
   fun testGlobalScriptSetup() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(fileName = "HelloWorld.vue")
+    doTest(fileName = "HelloWorld.vue")
   }
 
   @Test
   fun testDynamicArguments() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(fileName = "HelloWorld.vue")
+    doTest(fileName = "HelloWorld.vue")
   }
 
   @Test
@@ -730,7 +719,7 @@ const props = {seeMe: {}}
   @Test
   fun testLocalWebTypes() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(
+    doTest(
       modules = NO_MODULES,
       fileName = "main.vue",
       additionalFilesToCheck = listOf("main2.vue"),
@@ -746,7 +735,7 @@ const props = {seeMe: {}}
   @Test
   fun testSourceScopedSlots() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(fileName = "Catalogue.vue")
+    doTest(fileName = "Catalogue.vue")
   }
 
   @Test
@@ -756,7 +745,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testCustomEventsTypedComponent() {
-    doDirTest()
+    doTest()
   }
 
   @Test
@@ -806,12 +795,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testVueCreateApp() {
-    doDirTest(fileName = "test.html")
+    doTest(fileName = "test.html")
   }
 
   @Test
   fun testInstanceMountedOnElement() {
-    doDirTest(fileName = "test.html")
+    doTest(fileName = "test.html")
   }
 
   @Test
@@ -826,7 +815,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testHtmlTagOmission() {
-    doTest(extension = "html")
+    doTest(fileName = "htmlTagOmission.html")
   }
 
   @Test
@@ -841,17 +830,17 @@ const props = {seeMe: {}}
 
   @Test
   fun testGenericComponentUsage() {
-    doDirTest()
+    doTest()
   }
 
   @Test
   fun testComponentFromFunctionPlugin() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testComponentFromFunctionPlugin_vapor() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
@@ -859,12 +848,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromNestedFunctionPlugin() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedFunctionPlugin_vapor() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
@@ -872,12 +861,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromNestedFunctionPluginWithCycle() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedFunctionPluginWithCycle_vapor() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
@@ -885,12 +874,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromObjectPlugin() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testComponentFromObjectPlugin_vapor() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
@@ -898,12 +887,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromNestedObjectPlugin() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedObjectPlugin_vapor() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
@@ -911,12 +900,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromNestedObjectPluginWithCycle() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedObjectPluginWithCycle_vapor() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
@@ -924,12 +913,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromFunctionPlugin() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromFunctionPlugin_vapor() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
@@ -937,12 +926,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromNestedFunctionPlugin() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedFunctionPlugin_vapor() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
@@ -950,12 +939,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle_vapor() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
@@ -963,12 +952,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromObjectPlugin() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromObjectPlugin_vapor() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
@@ -976,12 +965,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromNestedObjectPlugin() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedObjectPlugin_vapor() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
@@ -989,12 +978,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromNestedObjectPluginWithCycle() {
-    doDirTest(fileName = "App.vue")
+    doTest(fileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedObjectPluginWithCycle_vapor() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
@@ -1021,7 +1010,7 @@ const props = {seeMe: {}}
   @Test
   fun testPropsWithDefaultsInTs() {
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
-    doTest(extension = "ts")
+    doTest(fileName = "propsWithDefaultsInTs.ts")
   }
 
   @Test
@@ -1036,17 +1025,17 @@ const props = {seeMe: {}}
 
   @Test
   fun testWatchProperty() {
-    doTest(extension = "js")
+    doTest(fileName = "watchProperty.js")
   }
 
   @Test
   fun testTypedMixins() {
-    doDirTest(fileName = "index.js")
+    doTest(fileName = "index.js")
   }
 
   @Test
   fun testVaporSimpleApplication() {
-    doDirTest(
+    doTest(
       VueTestModule.VUE_3_6_0,
       fileName = "App.vue",
     )
