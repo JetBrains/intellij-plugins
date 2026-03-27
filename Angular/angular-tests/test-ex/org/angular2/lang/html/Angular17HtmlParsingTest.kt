@@ -157,6 +157,17 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
         <div></div>
       }
       @case ("foo8")
+      
+      @switch(foo) {
+        @default
+        @case (foo) {
+        }
+      }
+      @switch(foo) {
+        @default
+        @default {
+        }
+      }
     """.trimIndent())
   }
 
