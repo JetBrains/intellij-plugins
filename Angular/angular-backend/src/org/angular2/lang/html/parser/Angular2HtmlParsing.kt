@@ -262,13 +262,19 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
       val errorEndMarker = builder.mark()
       pushItemToStack(AngularBlock(startMarker, errorStartMarker.precede(), errorStartMarker, errorEndMarker))
     }
-    else if (blockName == BLOCK_CASE) {
+    else if (blockName == BLOCK_CASE || blockName == BLOCK_DEFAULT) {
       if (builder.tokenType != Angular2HtmlTokenTypes.BLOCK_NAME
           || builder.tokenText!!.removePrefix("@").let { it != BLOCK_CASE && it != BLOCK_DEFAULT }) {
-        builder.error(Angular2Bundle.message("angular.parse.template.incomplete.case.block"))
+        builder.error(Angular2Bundle.message(
+          if (blockName == BLOCK_DEFAULT)
+            "angular.parse.template.incomplete.default.block"
+          else
+            "angular.parse.template.incomplete.case.block"
+        ))
       }
       startMarker.done(Angular2HtmlElementTypes.BLOCK)
-    } else {
+    }
+    else {
       builder.error(Angular2Bundle.message("angular.parse.template.missing-block-opening-lbrace"))
       startMarker.done(Angular2HtmlElementTypes.BLOCK)
     }

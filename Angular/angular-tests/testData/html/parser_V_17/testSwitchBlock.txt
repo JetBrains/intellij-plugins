@@ -179,3 +179,69 @@ HtmlFile:test.html
         PsiElement(JS:RPAR)(')')
       PsiErrorElement:Incomplete @case block - expected { or another @case or @default condition
         <empty list>
+    PsiWhiteSpace('\n\n')
+    Angular2HtmlBlock (@switch)
+      PsiElement(NG:BLOCK_NAME)('@switch')
+      Angular2HtmlBlockParameters
+        PsiElement(JS:LPAR)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (switch:0))
+          Angular2BlockParameter
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('foo')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        Angular2HtmlBlock (@default)
+          PsiElement(NG:BLOCK_NAME)('@default')
+        PsiWhiteSpace('\n  ')
+        Angular2HtmlBlock (@case)
+          PsiElement(NG:BLOCK_NAME)('@case')
+          PsiWhiteSpace(' ')
+          Angular2HtmlBlockParameters
+            PsiElement(JS:LPAR)('(')
+            ASTWrapperPsiElement(NG:BLOCK_PARAMETER (case:0))
+              Angular2BlockParameter
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('foo')
+            PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace(' ')
+          Angular2HtmlBlockContents
+            PsiElement(NG:BLOCK_START)('{')
+            XmlText
+              PsiWhiteSpace('\n  ')
+            PsiElement(NG:BLOCK_END)('}')
+        XmlText
+          PsiWhiteSpace('\n')
+        PsiElement(NG:BLOCK_END)('}')
+    PsiWhiteSpace('\n')
+    Angular2HtmlBlock (@switch)
+      PsiElement(NG:BLOCK_NAME)('@switch')
+      Angular2HtmlBlockParameters
+        PsiElement(JS:LPAR)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (switch:0))
+          Angular2BlockParameter
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('foo')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        Angular2HtmlBlock (@default)
+          PsiElement(NG:BLOCK_NAME)('@default')
+        PsiWhiteSpace('\n  ')
+        Angular2HtmlBlock (@default)
+          PsiElement(NG:BLOCK_NAME)('@default')
+          PsiWhiteSpace(' ')
+          Angular2HtmlBlockContents
+            PsiElement(NG:BLOCK_START)('{')
+            XmlText
+              PsiWhiteSpace('\n  ')
+            PsiElement(NG:BLOCK_END)('}')
+        XmlText
+          PsiWhiteSpace('\n')
+        PsiElement(NG:BLOCK_END)('}')

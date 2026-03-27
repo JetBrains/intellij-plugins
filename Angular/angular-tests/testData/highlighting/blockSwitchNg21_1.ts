@@ -28,6 +28,16 @@ export interface User {
     <error descr="@else block must be a sibling of primary block @if">@else</error> {
     
     }
+    @switch (<error descr="TS2339: Property 'foo' does not exist on type 'RobotProfileComponent'.">foo</error>) {
+       @default
+       @case(1) {    
+       }
+    }
+    @switch (<error descr="TS2339: Property 'foo' does not exist on type 'RobotProfileComponent'.">foo</error>) {
+       <error descr="@switch block can only have one @default block">@default</error>
+       <error descr="@switch block can only have one @default block">@default</error> {     
+       }
+    }
   `
 })
 export class RobotProfileComponent {
