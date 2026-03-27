@@ -329,7 +329,7 @@
     <lang.findUsagesProvider language="HCL-Terraform" implementationClass="org.intellij.terraform.config.findUsages.TfFindUsagesProvider"/>
     <useScopeEnlarger implementation="org.intellij.terraform.config.TfOutputsAndVariablesUseScopeEnlarger"/>
     <codeInsight.daemonBoundCodeVisionProvider implementation="org.intellij.terraform.config.hints.TfReferencesCodeVisionProvider"/>
-    <vcs.codeVisionLanguageContext language="HCL-Terraform" implementationClass="org.intellij.terraform.config.hints.TfVcsContextProvider"/>
+    <vcs.codeVisionLanguageContext language="HCL" implementationClass="org.intellij.terraform.config.hints.TfVcsContextProvider"/>
     <codeInsight.codeVisionSettingsPreviewLanguage modelId="references" language="HCL-Terraform"/>
     <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.config.psi.TfReferenceContributor"/>
 
