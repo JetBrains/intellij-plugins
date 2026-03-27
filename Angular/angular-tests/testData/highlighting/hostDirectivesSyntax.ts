@@ -1,4 +1,4 @@
-import {<symbolName descr="identifiers//exported function">Component</symbolName>, <symbolName descr="identifiers//exported function">Directive</symbolName>, <symbolName descr="identifiers//exported function">EventEmitter</symbolName>, <symbolName descr="identifiers//exported function">Input</symbolName>, <symbolName descr="identifiers//exported function">Output</symbolName>} <info textAttributesKey="TS.KEYWORD">from</info> '@angular/core';
+import {<symbolName descr="identifiers//exported function">Component</symbolName>, <symbolName descr="identifiers//exported function">Directive</symbolName>, <symbolName descr="classes//exported class">EventEmitter</symbolName>, <symbolName descr="identifiers//exported function">Input</symbolName>, <symbolName descr="identifiers//exported function">Output</symbolName>} <info textAttributesKey="TS.KEYWORD">from</info> '@angular/core';
 
 <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Directive</symbolName>({
     <symbolName descr="instance field">selector</symbolName>: '[<symbolName textAttributesKey="HTML_ATTRIBUTE_NAME">appBold</symbolName>]',
@@ -6,8 +6,8 @@ import {<symbolName descr="identifiers//exported function">Component</symbolName
     <symbolName descr="instance field">exportAs</symbolName>: "boldDir"
 })
 export class <symbolName descr="classes//exported class">BoldDirective</symbolName> {
-    // EventEmitter interface has new() signature, so from TS point of view it's possible to write `new new EventEmitter()`, so we highlight `hover` as a method
-    <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Output</symbolName>() <symbolName descr="instance method">hover</symbolName> = new <symbolName descr="identifiers//exported function">EventEmitter</symbolName>()
+    // EventEmitter interface has construct signature
+    <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Output</symbolName>() <symbolName descr="instance field">hover</symbolName> = new <symbolName descr="classes//exported class">EventEmitter</symbolName>()
 }
 
 <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Directive</symbolName>({
