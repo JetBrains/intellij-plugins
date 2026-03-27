@@ -55,7 +55,6 @@
     <orderEntry type="module" module-name="intellij.qodana.core.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.assertj.core" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
     <orderEntry type="module" module-name="intellij.ide.starter.extended.clion" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana.cpp" />

@@ -147,6 +147,8 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//tools/intellij.tools.ide.starter:ide-starter",
     "@community//tools/intellij.tools.ide.starter:ide-starter_test_lib",
+    "@community//tools/intellij.tools.ide.starter.build.server.clion:ide-starter-build-server-clion",
+    "@community//tools/intellij.tools.ide.starter.build.server.clion:ide-starter-build-server-clion_test_lib",
     "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure",
     "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure_test_lib",
     "//tests/intellij.qodana.testsFramework:qodana-testsFramework",
@@ -175,6 +177,8 @@ jvm_library(
     "@community//platform/util/jdom:jdom_test_lib",
     "@community//libraries/assertj-core",
     "@community//libraries/assertj-core:assertj-core_test_lib",
+    "//tests/intellij.ide.starter.extended.clion:ide-starter-extended-clion",
+    "//tests/intellij.ide.starter.extended.clion:ide-starter-extended-clion_test_lib",
   ],
   runtime_deps = [":cpp-tests"]
 )
