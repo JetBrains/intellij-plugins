@@ -1,0 +1,18 @@
+/* Angular type checking code */
+
+/* TCB for extendedKeyEvents.ts */
+
+function _tcb1(this: RobotProfileComponent) {
+var _t1 = document.createElement("div");
+_t1.addEventListener("keydown", ($event): any => {
+$event.foo;
+});
+var _t2 = document.createElement("div");
+_t2.addEventListener("keydown", ($event): any => {
+$event.foo;
+});
+var _t3 = document.createElement("div");
+_t3.addEventListener("keyup", ($event): any => {
+$event.foo;
+});
+}

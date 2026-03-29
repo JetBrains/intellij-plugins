@@ -1,0 +1,27 @@
+[
+  {
+    "file-name": "extendedKeyEvents.ts",
+    "mappings": [
+      "0:116 => 0:116 (source)",
+      "«div» [123] => «_t1» [120]} (no diagnostics) (no semantic)",
+      "«(keydown)» [127] => «keydown» [179]} (no types)",
+      "«$event» [138] => «$event» [208]}",
+      "«$event.foo» [138] => «$event.foo» [208]}",
+      "«.» [144] => «.» [214]}",
+      "«foo» [145] => «foo» [215]}",
+      "«div» [162] => «_t2» [228]} (no diagnostics) (no semantic)",
+      "«(keydown.space)» [166] => «keydown» [287]} (no types)",
+      "«$event» [183] => «$event» [316]}",
+      "«$event.foo» [183] => «$event.foo» [316]}",
+      "«.» [189] => «.» [322]}",
+      "«foo» [190] => «foo» [323]}",
+      "«div» [207] => «_t3» [336]} (no diagnostics) (no semantic)",
+      "«(keyup.code.123)» [211] => «keyup» [395]} (no types)",
+      "«$event» [229] => «$event» [422]}",
+      "«$event.foo» [229] => «$event.foo» [422]}",
+      "«.» [235] => «.» [428]}",
+      "«foo» [236] => «foo» [429]}",
+      "250:293 => 250:293 (source)"
+    ]
+  }
+]

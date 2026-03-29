@@ -223,6 +223,10 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_CORE_21_0_9, Angular2TestModule.IONIC_ANGULAR_7_7_3
   )
 
+  fun testExtendedKeyEvents() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_21_0_9
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
