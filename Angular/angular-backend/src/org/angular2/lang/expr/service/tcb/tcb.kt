@@ -1246,10 +1246,17 @@ private class TcbUnclaimedOutputsOp(
         if (elId == null) {
           elId = this.scope.resolve(this.element)
         }
+        val eventName = output.name.let {
+          if (it.startsWith("keydown."))
+            "keydown"
+          else if (it.startsWith("keyup."))
+            "keyup"
+          else it
+        }
         this.scope.addStatement {
           append(elId)
           append(".addEventListener(\"")
-          append(output.name, output.keySpan)
+          append(eventName, output.keySpan)
           append("\", ")
           append(handler)
           append(");")
