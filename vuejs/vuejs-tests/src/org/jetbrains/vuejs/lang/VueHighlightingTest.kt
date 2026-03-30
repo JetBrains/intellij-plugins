@@ -812,19 +812,16 @@ const props = {seeMe: {}}
 
   @Test
   fun testGlobalSymbols() {
-    myFixture.enableInspections(VueInspectionsProvider())
     checkHighlighting()
   }
 
   @Test
   fun testStandardBooleanAttributes() {
-    myFixture.enableInspections(VueInspectionsProvider())
     checkHighlighting()
   }
 
   @Test
   fun testRefUnwrap() {
-    myFixture.enableInspections(VueInspectionsProvider())
     checkHighlighting()
   }
 
@@ -841,7 +838,6 @@ const props = {seeMe: {}}
 
   @Test
   fun testSlotTypes() {
-    myFixture.enableInspections(VueInspectionsProvider())
     checkHighlighting(
       VueTestModule.QUASAR_2_6_5,
       VueTestModule.VUE_3_5_0,
@@ -851,31 +847,26 @@ const props = {seeMe: {}}
 
   @Test
   fun testGlobalScriptSetup() {
-    myFixture.enableInspections(VueInspectionsProvider())
     checkHighlighting(configureFileName = "HelloWorld.vue")
   }
 
   @Test
   fun testDynamicArguments() {
-    myFixture.enableInspections(VueInspectionsProvider())
     checkHighlighting(configureFileName = "HelloWorld.vue")
   }
 
   @Test
   fun testWithPropsFromFunctionCall() {
-    myFixture.enableInspections(VueInspectionsProvider())
     checkHighlighting()
   }
 
   @Test
   fun testWithPropsFromFunctionCall2() {
-    myFixture.enableInspections(VueInspectionsProvider())
     checkHighlighting()
   }
 
   @Test
   fun testInferPropType() {
-    myFixture.enableInspections(VueInspectionsProvider())
     checkHighlighting(
       VueTestModule.VUE_3_2_2,
       VueTestModule.NAIVE_UI_2_33_2_PATCHED,
@@ -887,8 +878,7 @@ const props = {seeMe: {}}
     // Tree access disabled
     //  /Test2.vue
     disableAstLoadingFilter()
-
-    myFixture.enableInspections(VueInspectionsProvider())
+    
     checkHighlighting(
       configureFileName = "main.vue",
     )
@@ -896,13 +886,11 @@ const props = {seeMe: {}}
 
   @Test
   fun testPropertyReferenceInLambda() {
-    myFixture.enableInspections(VueInspectionsProvider())
     checkHighlighting()
   }
 
   @Test
   fun testSourceScopedSlots() {
-    myFixture.enableInspections(VueInspectionsProvider())
     checkHighlighting(configureFileName = "Catalogue.vue")
   }
 
