@@ -26,6 +26,7 @@ import junit.framework.TestCase
 import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspection
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
 import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.libraries.nuxt.NuxtHighlightingTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,7 +40,7 @@ import org.junit.runners.JUnit4
  */
 @RunWith(JUnit4::class)
 class VueHighlightingTest :
-  VueTestCase("highlighting") {
+  VueTestCase("highlighting", testMode = VueTestMode.NO_PLUGIN) {
 
   override fun setUp() {
     super.setUp()
@@ -54,6 +55,8 @@ class VueHighlightingTest :
       "testWithPropsFromFunctionCall2",
       "testStandardBooleanAttributes",
       "testCommonJSSupport",
+        // WA for `package.json`
+      "testLocalWebTypes",
         -> modules
 
       else -> super.adjustModules(modules)
@@ -73,10 +76,12 @@ class VueHighlightingTest :
       .map { it as VueTestModule }
       .toTypedArray()
 
-    myFixture.configureVueDependencies(
-      modules = vueModules,
-      additionalDependencies = additionalDependencies,
-    )
+    if (vueModules.isNotEmpty() || additionalDependencies.isNotEmpty()) {
+      myFixture.configureVueDependencies(
+        modules = vueModules,
+        additionalDependencies = additionalDependencies,
+      )
+    }
 
     myFixture.copyDirectoryToProject(testName, ".")
 
