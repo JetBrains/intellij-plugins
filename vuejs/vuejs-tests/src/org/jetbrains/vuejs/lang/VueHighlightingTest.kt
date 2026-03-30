@@ -70,12 +70,12 @@ class VueHighlightingTest :
   private fun doTest(
     vararg modules: VueTestModule,
     additionalDependencies: Map<String, String> = emptyMap(),
-    fileName: String = "$testName.vue",
+    configureFileName: String = "$testName.vue",
   ) {
     checkHighlighting(
       modules = modules,
       additionalDependencies = additionalDependencies,
-      configureFileName = fileName,
+      configureFileName = configureFileName,
     )
   }
 
@@ -283,19 +283,19 @@ const props = {seeMe: {}}
   @Test
   fun testGlobalItemsAugmentedFromCompilerOptionsTypes() {
     doTest(
-      fileName = "App.vue",
+      configureFileName = "App.vue",
       additionalDependencies = mapOf("my-vue-items-library" to "*"),
     )
   }
 
   @Test
   fun testDirectivesFromGlobalDirectives() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesWithModifiersFromGlobalDirectives() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
@@ -600,7 +600,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testMultipleScriptTagsInHTML() {
-    doTest(fileName = "multipleScriptTagsInHTML.html")
+    doTest(configureFileName = "multipleScriptTagsInHTML.html")
   }
 
   @Test
@@ -613,7 +613,7 @@ const props = {seeMe: {}}
     doTest(
       VueTestModule.VUE_2_6_10,
       VueTestModule.COMPOSITION_API_0_4_0,
-      fileName = "compositionComponent1.vue",
+      configureFileName = "compositionComponent1.vue",
     )
   }
 
@@ -622,7 +622,7 @@ const props = {seeMe: {}}
     doTest(
       VueTestModule.VUE_2_6_10,
       VueTestModule.COMPOSITION_API_1_0_0,
-      fileName = "compositionComponent1.vue",
+      configureFileName = "compositionComponent1.vue",
     )
   }
 
@@ -830,7 +830,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testVModelWithMixin() {
-    doTest(fileName = "MyForm.vue")
+    doTest(configureFileName = "MyForm.vue")
   }
 
   @Test
@@ -845,20 +845,20 @@ const props = {seeMe: {}}
     doTest(
       VueTestModule.QUASAR_2_6_5,
       VueTestModule.VUE_3_5_0,
-      fileName = "MyTable.vue",
+      configureFileName = "MyTable.vue",
     )
   }
 
   @Test
   fun testGlobalScriptSetup() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(fileName = "HelloWorld.vue")
+    doTest(configureFileName = "HelloWorld.vue")
   }
 
   @Test
   fun testDynamicArguments() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(fileName = "HelloWorld.vue")
+    doTest(configureFileName = "HelloWorld.vue")
   }
 
   @Test
@@ -890,7 +890,7 @@ const props = {seeMe: {}}
 
     myFixture.enableInspections(VueInspectionsProvider())
     doTest(
-      fileName = "main.vue",
+      configureFileName = "main.vue",
     )
   }
 
@@ -903,7 +903,7 @@ const props = {seeMe: {}}
   @Test
   fun testSourceScopedSlots() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(fileName = "Catalogue.vue")
+    doTest(configureFileName = "Catalogue.vue")
   }
 
   @Test
@@ -963,12 +963,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testVueCreateApp() {
-    doTest(fileName = "test.html")
+    doTest(configureFileName = "test.html")
   }
 
   @Test
   fun testInstanceMountedOnElement() {
-    doTest(fileName = "test.html")
+    doTest(configureFileName = "test.html")
   }
 
   @Test
@@ -983,7 +983,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testHtmlTagOmission() {
-    doTest(fileName = "htmlTagOmission.html")
+    doTest(configureFileName = "htmlTagOmission.html")
   }
 
   @Test
@@ -1003,157 +1003,157 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromFunctionPlugin() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromFunctionPlugin_vapor() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 
   @Test
   fun testComponentFromNestedFunctionPlugin() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedFunctionPlugin_vapor() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 
   @Test
   fun testComponentFromNestedFunctionPluginWithCycle() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedFunctionPluginWithCycle_vapor() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 
   @Test
   fun testComponentFromObjectPlugin() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromObjectPlugin_vapor() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 
   @Test
   fun testComponentFromNestedObjectPlugin() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedObjectPlugin_vapor() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 
   @Test
   fun testComponentFromNestedObjectPluginWithCycle() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedObjectPluginWithCycle_vapor() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 
   @Test
   fun testDirectivesFromFunctionPlugin() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromFunctionPlugin_vapor() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 
   @Test
   fun testDirectivesFromNestedFunctionPlugin() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedFunctionPlugin_vapor() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 
   @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle_vapor() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 
   @Test
   fun testDirectivesFromObjectPlugin() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromObjectPlugin_vapor() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 
   @Test
   fun testDirectivesFromNestedObjectPlugin() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedObjectPlugin_vapor() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 
   @Test
   fun testDirectivesFromNestedObjectPluginWithCycle() {
-    doTest(fileName = "App.vue")
+    doTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedObjectPluginWithCycle_vapor() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 
@@ -1182,7 +1182,7 @@ const props = {seeMe: {}}
   @Test
   fun testPropsWithDefaultsInTs() {
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
-    doTest(fileName = "propsWithDefaultsInTs.ts")
+    doTest(configureFileName = "propsWithDefaultsInTs.ts")
   }
 
   @Test
@@ -1197,19 +1197,19 @@ const props = {seeMe: {}}
 
   @Test
   fun testWatchProperty() {
-    doTest(fileName = "watchProperty.js")
+    doTest(configureFileName = "watchProperty.js")
   }
 
   @Test
   fun testTypedMixins() {
-    doTest(fileName = "index.js")
+    doTest(configureFileName = "index.js")
   }
 
   @Test
   fun testVaporSimpleApplication() {
     doTest(
       VueTestModule.VUE_3_6_0,
-      fileName = "App.vue",
+      configureFileName = "App.vue",
     )
   }
 }
