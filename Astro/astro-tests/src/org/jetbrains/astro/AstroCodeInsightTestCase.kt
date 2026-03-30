@@ -17,8 +17,10 @@ import org.jetbrains.astro.service.AstroLspTypeScriptService
 import org.jetbrains.astro.service.settings.AstroServiceMode
 import org.jetbrains.astro.service.settings.getAstroServiceSettings
 
-
-abstract class AstroCodeInsightTestCase(override val testCasePath: String, val useLsp: Boolean = false) : WebFrameworkTestCase(if (useLsp) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform) {
+abstract class AstroCodeInsightTestCase(
+  override val testCasePath: String,
+  val useLsp: Boolean = false,
+) : WebFrameworkTestCase(if (useLsp) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform) {
 
   protected open val defaultTsconfigJsonContent: String = ("""
     {
