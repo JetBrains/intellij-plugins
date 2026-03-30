@@ -18,6 +18,7 @@ import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspecti
 import com.intellij.testFramework.VfsTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.runInInitMode
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import junit.framework.TestCase
@@ -75,22 +76,34 @@ class VueHighlightingTest : BasePlatformTestCase() {
   }
 
   @Test
-  fun testDirectivesWithoutParameters() = doTest()
+  fun testDirectivesWithoutParameters() {
+    doTest()
+  }
 
   @Test
-  fun testVIfRequireParameter() = doTest()
+  fun testVIfRequireParameter() {
+    doTest()
+  }
 
   @Test
-  fun testArrowFunctionsAndExpressionsInTemplate() = doTest()
+  fun testArrowFunctionsAndExpressionsInTemplate() {
+    doTest()
+  }
 
   @Test
-  fun testShorthandArrowFunctionInTemplate() = doTest()
+  fun testShorthandArrowFunctionInTemplate() {
+    doTest()
+  }
 
   @Test
-  fun testLocalPropsInArrayInCompAttrsAndWithKebabCaseAlso() = doTest()
+  fun testLocalPropsInArrayInCompAttrsAndWithKebabCaseAlso() {
+    doTest()
+  }
 
   @Test
-  fun testLocalPropsInObjectInCompAttrsAndWithKebabCaseAlso() = doTest()
+  fun testLocalPropsInObjectInCompAttrsAndWithKebabCaseAlso() {
+    doTest()
+  }
 
   @Test
   fun testImportedComponentPropsInCompAttrsAsArray() {
@@ -135,49 +148,83 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testCompRequiredAttributesTest() = doTest()
+  fun testCompRequiredAttributesTest() {
+    doTest()
+  }
 
   @Test
-  fun testCompRequiredAttributesTestTS() = doTest()
+  fun testCompRequiredAttributesTestTS() {
+    doTest()
+  }
 
   @Test
-  fun testRequiredAttributeWithModifierTest() = doTest()
+  fun testRequiredAttributeWithModifierTest() {
+    doTest()
+  }
 
   @Test
-  fun testRequiredAttributeWithVModel() = doTest(VueTestModule.VUE_2_6_10)
+  fun testRequiredAttributeWithVModel() {
+    doTest(VueTestModule.VUE_2_6_10)
+  }
 
   @Test
-  fun testRequiredAttributeWithVModel3() = doTest()
+  fun testRequiredAttributeWithVModel3() {
+    doTest()
+  }
 
   @Test
-  fun testVueAttributeInCustomTag() = doTest()
+  fun testVueAttributeInCustomTag() {
+    doTest()
+  }
 
   @Test
-  fun testVFor() = com.intellij.testFramework.runInInitMode { doTest() }
+  fun testVFor() {
+    runInInitMode {
+      doTest()
+    }
+  }
 
   @Test
-  fun testVForInPug() = com.intellij.testFramework.runInInitMode { doTest() }
+  fun testVForInPug() {
+    runInInitMode {
+      doTest()
+    }
+  }
 
   @Test
-  fun testTopLevelThisInInjection() = doTest()
+  fun testTopLevelThisInInjection() {
+    doTest()
+  }
 
   @Test
-  fun testTextarea() = doTest()
+  fun testTextarea() {
+    doTest()
+  }
 
   @Test
-  fun testGlobalComponentLiteral() = doTest()
+  fun testGlobalComponentLiteral() {
+    doTest()
+  }
 
   @Test
-  fun testExternalMixin() = doTest()
+  fun testExternalMixin() {
+    doTest()
+  }
 
   @Test
-  fun testTwoExternalMixins() = doTest()
+  fun testTwoExternalMixins() {
+    doTest()
+  }
 
   @Test
-  fun testTwoGlobalMixins() = doTest()
+  fun testTwoGlobalMixins() {
+    doTest()
+  }
 
   @Test
-  fun testNotImportedComponentIsUnknown() = doTest()
+  fun testNotImportedComponentIsUnknown() {
+    doTest()
+  }
 
   @Test
   fun testNoDoubleSpellCheckingInAttributesWithEmbeddedContents() {
@@ -198,13 +245,19 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testTypeScriptTypesAreResolved() = doTest()
+  fun testTypeScriptTypesAreResolved() {
+    doTest()
+  }
 
   @Test
-  fun testVBindVOnHighlighting() = doTest()
+  fun testVBindVOnHighlighting() {
+    doTest()
+  }
 
   @Test
-  fun testComponentNameAsStringTemplate() = doTest()
+  fun testComponentNameAsStringTemplate() {
+    doTest()
+  }
 
   @Test
   fun testTypeScriptTypesInVue() {
@@ -238,7 +291,9 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testEmptyAttributeValue() = doTest()
+  fun testEmptyAttributeValue() {
+    doTest()
+  }
 
   @Test
   fun testNoCreateVarQuickFix() {
@@ -297,25 +352,39 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testEmptyTagsForVueAreAllowed() = doTest()
+  fun testEmptyTagsForVueAreAllowed() {
+    doTest()
+  }
 
   @Test
-  fun testBuiltinTagsHighlighting() = doTest(VueTestModule.VUE_2_5_3)
+  fun testBuiltinTagsHighlighting() {
+    doTest(VueTestModule.VUE_2_5_3)
+  }
 
   @Test
-  fun testNonPropsAttributesAreNotHighlighted() = doTest()
+  fun testNonPropsAttributesAreNotHighlighted() {
+    doTest()
+  }
 
   @Test
-  fun testVueAttributeWithoutValueWithFollowingAttribute() = doTest()
+  fun testVueAttributeWithoutValueWithFollowingAttribute() {
+    doTest()
+  }
 
   @Test
-  fun testTsxIsNormallyParsed() = doTest()
+  fun testTsxIsNormallyParsed() {
+    doTest()
+  }
 
   @Test
-  fun testJadeWithVueShortcutAttributes() = doTest()
+  fun testJadeWithVueShortcutAttributes() {
+    doTest()
+  }
 
   @Test
-  fun testComponentsNamedLikeHtmlTags() = doTest()
+  fun testComponentsNamedLikeHtmlTags() {
+    doTest()
+  }
 
   @Test
   fun testClassComponentAnnotationWithLocalComponent() {
@@ -339,19 +408,29 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testLocalComponentExtendsInClassSyntax() = doTest()
+  fun testLocalComponentExtendsInClassSyntax() {
+    doTest()
+  }
 
   @Test
-  fun testLocalComponentInClassSyntax() = doTest()
+  fun testLocalComponentInClassSyntax() {
+    doTest()
+  }
 
   @Test
-  fun testLocalComponentInMixin() = doTest()
+  fun testLocalComponentInMixin() {
+    doTest()
+  }
 
   @Test
-  fun testLocalComponentInMixinRecursion() = doTest()
+  fun testLocalComponentInMixinRecursion() {
+    doTest()
+  }
 
   @Test
-  fun testBooleanProps() = doTest()
+  fun testBooleanProps() {
+    doTest()
+  }
 
   @Test
   fun testRecursiveMixedMixins() {
@@ -385,13 +464,19 @@ const props = {seeMe: {}}
   */
 
   @Test
-  fun testTopLevelTags() = doTest()
+  fun testTopLevelTags() {
+    doTest()
+  }
 
   @Test
-  fun testEndTagNotForbidden() = doTest()
+  fun testEndTagNotForbidden() {
+    doTest()
+  }
 
   @Test
-  fun testColonInEventName() = doTest()
+  fun testColonInEventName() {
+    doTest()
+  }
 
   @Test
   fun testNoVueTagErrorsInPlainXml() {
@@ -408,7 +493,9 @@ const props = {seeMe: {}}
 
   // TODO add special inspection for unused slot scope parameters - WEB-43893
   @Test
-  fun testVSlotSyntax() = doTest()
+  fun testVSlotSyntax() {
+    doTest()
+  }
 
   // TODO add special inspection for unused slot scope parameters - WEB-43893
   @Test
@@ -417,37 +504,59 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testSlotName() = doTest()
+  fun testSlotName() {
+    doTest()
+  }
 
   @Test
-  fun testSlotNameBinding() = doTest()
+  fun testSlotNameBinding() {
+    doTest()
+  }
 
   @Test
-  fun testVueExtendSyntax() = doTest(VueTestModule.VUE_2_5_3)
+  fun testVueExtendSyntax() {
+    doTest(VueTestModule.VUE_2_5_3)
+  }
 
   @Test
-  fun testBootstrapVue() = doTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
+  fun testBootstrapVue() {
+    doTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
+  }
 
   @Test
-  fun testDestructuringPatternsInVFor() = doTest()
+  fun testDestructuringPatternsInVFor() {
+    doTest()
+  }
 
   @Test
-  fun testDirectivesWithParameters() = doTest()
+  fun testDirectivesWithParameters() {
+    doTest()
+  }
 
   @Test
-  fun testDirectiveWithModifiers() = doTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
+  fun testDirectiveWithModifiers() {
+    doTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
+  }
 
   @Test
-  fun testIsAttributeSupport() = doTest()
+  fun testIsAttributeSupport() {
+    doTest()
+  }
 
   @Test
-  fun testKeyAttributeSupport() = doTest()
+  fun testKeyAttributeSupport() {
+    doTest()
+  }
 
   @Test
-  fun testPropsWithOptions() = doTest()
+  fun testPropsWithOptions() {
+    doTest()
+  }
 
   @Test
-  fun testFilters() = doTest()
+  fun testFilters() {
+    doTest()
+  }
 
   @Test
   fun testEmptyTags() {
@@ -461,7 +570,9 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testComputedPropType() = doTest()
+  fun testComputedPropType() {
+    doTest()
+  }
 
   @Test
   fun testPseudoSelectors() {
@@ -476,10 +587,14 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testMultipleScriptTagsInHTML() = doTest(fileName = "multipleScriptTagsInHTML.html")
+  fun testMultipleScriptTagsInHTML() {
+    doTest(fileName = "multipleScriptTagsInHTML.html")
+  }
 
   @Test
-  fun testMultipleScriptTagsInVue() = doTest()
+  fun testMultipleScriptTagsInVue() {
+    doTest()
+  }
 
   @Test
   fun testCompositionApiBasic_0_4_0() {
@@ -514,16 +629,24 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testCommonJSSupport() = doTest(VueTestModule.VUEX_3_1_0)
+  fun testCommonJSSupport() {
+    doTest(VueTestModule.VUEX_3_1_0)
+  }
 
   @Test
-  fun testComputedTypeTS() = doTest(VueTestModule.VUE_2_6_10)
+  fun testComputedTypeTS() {
+    doTest(VueTestModule.VUE_2_6_10)
+  }
 
   @Test
-  fun testComputedTypeJS() = doTest(VueTestModule.VUE_2_6_10)
+  fun testComputedTypeJS() {
+    doTest(VueTestModule.VUE_2_6_10)
+  }
 
   @Test
-  fun testDataTypeTS() = doTest(VueTestModule.VUE_2_6_10)
+  fun testDataTypeTS() {
+    doTest(VueTestModule.VUE_2_6_10)
+  }
 
   @Test
   fun testScssBuiltInModules() {
@@ -546,10 +669,14 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testIndirectExport() = doTest(VueTestModule.VUE_2_6_10)
+  fun testIndirectExport() {
+    doTest(VueTestModule.VUE_2_6_10)
+  }
 
   @Test
-  fun testAsyncSetup() = doTest(VueTestModule.VUE_3_0_0)
+  fun testAsyncSetup() {
+    doTest(VueTestModule.VUE_3_0_0)
+  }
 
   @Test
   fun testScriptSetup() {
@@ -572,10 +699,14 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testSuperComponentMixin() = doTest()
+  fun testSuperComponentMixin() {
+    doTest()
+  }
 
   @Test
-  fun testCompositionPropsJS() = doTest()
+  fun testCompositionPropsJS() {
+    doTest()
+  }
 
   @Test
   fun testCssSelectors() {
@@ -590,16 +721,21 @@ const props = {seeMe: {}}
   }
 
   @Test
-  fun testScriptSetupScopePriority() = doTest()
+  fun testScriptSetupScopePriority() {
+    doTest()
+  }
 
   @Test
-  fun testBindingToDataAttributes() = doTest()
+  fun testBindingToDataAttributes() {
+    doTest()
+  }
 
   @Test
-  fun testPropsValidation() =
+  fun testPropsValidation() {
     doTest(
       additionalDependencies = mapOf("lib" to "*"),
     )
+  }
 
   @Test
   fun testScriptSetupRef() {
