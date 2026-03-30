@@ -737,8 +737,9 @@ const props = {seeMe: {}}
 
   @Test
   fun testCssUnusedPseudoSelector() {
-    myFixture.enableInspections(CssUnusedSymbolInspection())
-    checkHighlighting()
+    checkHighlighting {
+      enableInspections(CssUnusedSymbolInspection())
+    }
   }
 
   @Test
