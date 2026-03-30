@@ -12,11 +12,11 @@ import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
+import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
 import com.intellij.testFramework.VfsTestUtil
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.runInInitMode
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
@@ -24,6 +24,7 @@ import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import junit.framework.TestCase
 import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspection
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
+import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.libraries.nuxt.NuxtHighlightingTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,12 +37,11 @@ import org.junit.runners.JUnit4
  * @see NuxtHighlightingTest
  */
 @RunWith(JUnit4::class)
-class VueHighlightingTest : BasePlatformTestCase() {
+class VueHighlightingTest :
+  VueTestCase("highlighting") {
 
   // WA for migration
   private val NO_MODULES: Array<out VueTestModule> = emptyArray()
-
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/highlighting"
 
   override fun setUp() {
     super.setUp()
@@ -203,6 +203,10 @@ const props = {seeMe: {}}
 
   @Test
   fun testGlobalComponentLiteral() {
+    // Tree access disabled
+    //  /index.js
+    disableAstLoadingFilter()
+    
     doTest()
   }
 
@@ -515,6 +519,10 @@ const props = {seeMe: {}}
 
   @Test
   fun testVueExtendSyntax() {
+    // Tree access disabled
+    //  /a-component.vue
+    disableAstLoadingFilter()
+
     doTest(VueTestModule.VUE_2_5_3)
   }
 
@@ -622,6 +630,10 @@ const props = {seeMe: {}}
 
   @Test
   fun testSimpleVueHtml() {
+    // Tree access disabled
+    //  /xml/xml-psi-impl/psi-impl.jar!/standardSchemas/xml.xsd
+    disableAstLoadingFilter()
+
     for (suffix in listOf("cdn", "cdn2", "cdn3", "cdn.js", "cdn@", "js", "deep")) {
       myFixture.configureByFile("simple-vue/simple-vue-${suffix}.html")
       myFixture.checkHighlighting(true, false, true)
@@ -650,6 +662,10 @@ const props = {seeMe: {}}
 
   @Test
   fun testScssBuiltInModules() {
+    // Tree access disabled
+    //  /plugins/sass/sass.jar!/org/jetbrains/plugins/sass/stdlib/sass_math.scss
+    disableAstLoadingFilter()
+
     myFixture.enableInspections(
       CssInvalidFunctionInspection::class.java,
       SassScssResolvedByNameOnlyInspection::class.java,
@@ -663,6 +679,10 @@ const props = {seeMe: {}}
 
   @Test
   fun testSassBuiltInModules() {
+    // Tree access disabled
+    //  /plugins/sass/sass.jar!/org/jetbrains/plugins/sass/stdlib/sass_math.scss
+    disableAstLoadingFilter()
+
     myFixture.enableInspections(
       CssInvalidFunctionInspection::class.java,
       SassScssResolvedByNameOnlyInspection::class.java,
@@ -866,6 +886,10 @@ const props = {seeMe: {}}
 
   @Test
   fun testLocalWebTypes() {
+    // Tree access disabled
+    //  /Test2.vue
+    disableAstLoadingFilter()
+
     myFixture.enableInspections(VueInspectionsProvider())
     doTest(
       modules = NO_MODULES,
@@ -1143,7 +1167,7 @@ const props = {seeMe: {}}
       HtmlRequiredTitleElementInspection::class.java,
       HtmlRequiredAltAttributeInspection::class.java,
     )
-    
+
     doTest()
   }
 
