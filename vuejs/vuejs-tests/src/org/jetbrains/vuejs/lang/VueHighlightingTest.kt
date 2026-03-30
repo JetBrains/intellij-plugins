@@ -60,7 +60,6 @@ class VueHighlightingTest :
     }
 
   private fun configureTestProject() {
-    val testName = getTestName(true)
     myFixture.configureByFile("$testName/$testName.vue")
   }
 
@@ -70,8 +69,6 @@ class VueHighlightingTest :
     fileName: String? = null,
     additionalFilesToCheck: List<String> = emptyList(),
   ) {
-    val testName = getTestName(true)
-
     val vueModules = adjustModules(modules)
       .map { it as VueTestModule }
       .toTypedArray()
