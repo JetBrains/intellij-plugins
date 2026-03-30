@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
 import com.intellij.openapi.fileTypes.FileType
@@ -200,7 +200,6 @@ fun getCommonSupertype(input: Collection<HclType?>): HclType? {
   return null
 }
 
-
 // Based on getConversionKnown from
 // github.com/zclconf/go-cty/cty/convert/conversion.go
 fun HclType.isConvertibleTo(other: HclType): Boolean {
@@ -288,7 +287,6 @@ fun HclType.isConvertibleTo(other: HclType): Boolean {
                          (other is ListType && (this.elements == null || other.elements == null || this.elements.isConvertibleTo(other.elements)))
 
   }
-
 
   return false
 }
@@ -418,6 +416,25 @@ open class BlockType(
 ) : BaseModelType(description = description, descriptionKind = descriptionKind,
                   optional = optional && !required, required = required, computed = computed,
                   deprecated = deprecated, conflictsWith = conflictsWith), PropertyOrBlockType, ObjectType {
+  constructor(
+    literal: String,
+    args: Int,
+    inherited: BlockType?,
+    properties: Map<String, PropertyOrBlockType>,
+  ) : this(
+    literal = literal,
+    args = args,
+    description = inherited?.description,
+    descriptionKind = inherited?.descriptionKind,
+    optional = inherited?.optional == true,
+    required = inherited?.required == true,
+    computed = inherited?.computed == true,
+    deprecated = inherited?.deprecated,
+    conflictsWith = inherited?.conflictsWith,
+    nesting = inherited?.nesting,
+    properties = properties,
+  )
+
   override val name: String
     get() = literal
 
@@ -521,7 +538,7 @@ interface NamedType {
   val type: String
 }
 
-interface ResourceOrDataSourceType : NamedType {
+interface ProviderDefinedType : NamedType {
   val provider: ProviderType
 }
 
@@ -532,15 +549,8 @@ class ResourceType(
   blockType: BlockType? = null,
 ) : BlockType(literal = HCL_RESOURCE_IDENTIFIER,
               args = 2,
-              description = blockType?.description,
-              descriptionKind = blockType?.descriptionKind,
-              optional = blockType?.optional == true,
-              required = blockType?.required == true,
-              computed = blockType?.computed == true,
-              deprecated = blockType?.deprecated,
-              conflictsWith = blockType?.conflictsWith,
-              nesting = blockType?.nesting,
-              properties = withDefaults(properties, TfTypeModel.AbstractResource.properties)), ResourceOrDataSourceType {
+              inherited = blockType,
+              properties = withDefaults(properties, TfTypeModel.AbstractResource.properties)), ProviderDefinedType {
   override fun toString(): String {
     return "ResourceType (type='$type', provider='${provider.presentableText}')"
   }
@@ -555,16 +565,8 @@ class EphemeralType(
   blockType: BlockType? = null,
 ) : BlockType(literal = HCL_EPHEMERAL_IDENTIFIER,
               args = 2,
-              description = blockType?.description,
-              descriptionKind = blockType?.descriptionKind,
-              optional = blockType?.optional == true,
-              required = blockType?.required == true,
-              computed = blockType?.computed == true,
-              deprecated = blockType?.deprecated,
-              conflictsWith = blockType?.conflictsWith,
-              nesting = blockType?.nesting,
-              properties = withDefaults(blockType?.properties, TfTypeModel.AbstractEphemeralResource.properties)
-), ResourceOrDataSourceType
+              inherited = blockType,
+              properties = withDefaults(blockType?.properties, TfTypeModel.AbstractEphemeralResource.properties)), ProviderDefinedType
 
 class DataSourceType(
   override val type: String,
@@ -573,15 +575,8 @@ class DataSourceType(
   blockType: BlockType? = null,
 ) : BlockType(literal = HCL_DATASOURCE_IDENTIFIER,
               args = 2,
-              description = blockType?.description,
-              descriptionKind = blockType?.descriptionKind,
-              optional = blockType?.optional == true,
-              required = blockType?.required == true,
-              computed = blockType?.computed == true,
-              deprecated = blockType?.deprecated,
-              conflictsWith = blockType?.conflictsWith,
-              nesting = blockType?.nesting,
-              properties = withDefaults(properties, TfTypeModel.AbstractDataSource.properties)), ResourceOrDataSourceType {
+              inherited = blockType,
+              properties = withDefaults(properties, TfTypeModel.AbstractDataSource.properties)), ProviderDefinedType {
   override fun toString(): String {
     return "DataSourceType (type='$type', provider='${provider.presentableText}')"
   }
@@ -599,14 +594,7 @@ class ProviderType(
   blockType: BlockType? = null,
 ) : BlockType(literal = HCL_PROVIDER_IDENTIFIER,
               args = 1,
-              description = blockType?.description,
-              descriptionKind = blockType?.descriptionKind,
-              optional = blockType?.optional == true,
-              required = blockType?.required == true,
-              computed = blockType?.computed == true,
-              deprecated = blockType?.deprecated,
-              conflictsWith = blockType?.conflictsWith,
-              nesting = blockType?.nesting,
+              inherited = blockType,
               properties = withDefaults(properties, TfTypeModel.AbstractProvider.properties)), NamedType {
   val fullName: String = "$namespace/$type"
   val tier: ProviderTier = if (tier == ProviderTier.TIER_NONE && OfficialProvidersNamespace.contains(namespace)) ProviderTier.TIER_OFFICIAL else tier
@@ -683,7 +671,7 @@ internal fun getContainingFile(psiElement: PsiElement): PsiFile? {
 
 internal fun getProviderForBlockType(blockType: BlockType?): ProviderType? {
   val provider = when (blockType) {
-    is ResourceOrDataSourceType -> blockType.provider
+    is ProviderDefinedType -> blockType.provider
     is ProviderType -> blockType
     else -> null
   }

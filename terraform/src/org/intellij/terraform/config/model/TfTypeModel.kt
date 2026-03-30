@@ -421,7 +421,7 @@ class TfTypeModel(
   fun getEphemeralType(name: String, psiElement: PsiElement? = null): EphemeralType? =
     lookupType(name, psiElement, ephemeralByProvider, allEphemeralResources())
 
-  private fun <T : ResourceOrDataSourceType> lookupType(
+  private fun <T : ProviderDefinedType> lookupType(
     name: String,
     psiElement: PsiElement?,
     typesMap: Map<String, List<T>>,

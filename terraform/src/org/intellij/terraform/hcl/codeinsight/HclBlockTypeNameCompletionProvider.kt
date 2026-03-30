@@ -34,8 +34,8 @@ import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getClearTextVa
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getLookupIcon
 import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
 import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.ProviderDefinedType
 import org.intellij.terraform.config.model.ProviderTier
-import org.intellij.terraform.config.model.ResourceOrDataSourceType
 import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.hcl.HCLBundle
@@ -97,17 +97,17 @@ internal object HclBlockTypeNameCompletionProvider : CompletionProvider<Completi
       HCL_RESOURCE_IDENTIFIER ->
         typeModel.allResources().toPlow()
           .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsValue(it.provider.fullName) }
-          .map { buildResourceOrDataLookupElement(it, position) }
+          .map { buildProviderDefinedLookupElement(it, position) }
           .processWith(consumer)
       HCL_DATASOURCE_IDENTIFIER ->
         typeModel.allDataSources().toPlow()
           .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsValue(it.provider.fullName) }
-          .map { buildResourceOrDataLookupElement(it, position) }
+          .map { buildProviderDefinedLookupElement(it, position) }
           .processWith(consumer)
       HCL_EPHEMERAL_IDENTIFIER ->
         typeModel.allEphemeralResources().toPlow()
           .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsValue(it.provider.fullName) }
-          .map { buildResourceOrDataLookupElement(it, position) }
+          .map { buildProviderDefinedLookupElement(it, position) }
           .processWith(consumer)
       HCL_PROVIDER_IDENTIFIER ->
         typeModel.allProviders().toPlow()
@@ -135,7 +135,7 @@ internal object HclBlockTypeNameCompletionProvider : CompletionProvider<Completi
   }
 
   // Lookup element builders
-  private fun buildResourceOrDataLookupElement(it: ResourceOrDataSourceType, position: PsiElement): LookupElementBuilder {
+  private fun buildProviderDefinedLookupElement(it: ProviderDefinedType, position: PsiElement): LookupElementBuilder {
     val providerLocalNamesReversed = TfTypeModel.collectProviderLocalNames(position).entries.associateBy({ it.value }) { it.key }
     return create(it, it.type)
       .withRenderer(object : LookupElementRenderer<LookupElement>() {

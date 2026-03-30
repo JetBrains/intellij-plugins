@@ -29,8 +29,8 @@ import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.ProviderDefinedType
 import org.intellij.terraform.config.model.ProviderType
-import org.intellij.terraform.config.model.ResourceOrDataSourceType
 import org.intellij.terraform.config.model.TfFunction
 import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.hcl.HCLElementTypes
@@ -152,7 +152,7 @@ internal object TfCompletionUtil {
   @NlsSafe
   internal fun buildResourceDisplayString(block: BlockType, providerLocalNames: Map<String, String>): String {
     return when (block) {
-      is ResourceOrDataSourceType -> {
+      is ProviderDefinedType -> {
         val providerLocalName = providerLocalNames[block.provider.fullName] ?: return block.type
         "${providerLocalName}_${TfTypeModel.getResourceName(block.type)}"
       }
@@ -168,7 +168,7 @@ internal object TfCompletionUtil {
 
   @NlsSafe
   internal fun buildResourceFullString(block: BlockType): String = when (block) {
-    is ResourceOrDataSourceType -> {
+    is ProviderDefinedType -> {
       "${block.type} (${buildProviderTypeText(block.provider)})"
     }
     is ProviderType -> {

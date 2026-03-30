@@ -7,8 +7,8 @@ import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
 import org.intellij.terraform.config.model.DataSourceType
 import org.intellij.terraform.config.model.EphemeralType
+import org.intellij.terraform.config.model.ProviderDefinedType
 import org.intellij.terraform.config.model.ProviderTier
-import org.intellij.terraform.config.model.ResourceOrDataSourceType
 import org.intellij.terraform.config.model.ResourceType
 import org.intellij.terraform.config.model.TypeModelProvider.Companion.globalModel
 import org.intellij.terraform.stack.TfComponentCompletionTest.Companion.assertNoTfComponentBlocks
@@ -73,7 +73,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     doBasicCompletionTest("\"resource\" <caret> \"aaa\" {}", matcher)
   }
 
-  private inline fun <reified T : ResourceOrDataSourceType> collectTypeNames(): List<String> {
+  private inline fun <reified T : ProviderDefinedType> collectTypeNames(): List<String> {
     val items = when (T::class) {
                   ResourceType::class -> globalModel.allResources()
                   EphemeralType::class -> globalModel.allEphemeralResources()
@@ -350,8 +350,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
             <caret>
           }
         }
-        """.trimIndent(), 6, "postcondition", "precondition", "create_before_destroy", "ignore_changes",
-      "prevent_destroy", "replace_triggered_by")
+        """.trimIndent(), 1, "destroy")
   }
 
   fun testDataSourceQuotedTypeCompletion() {
@@ -459,10 +458,12 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       """
         resource null_resource test {
           lifecycle {
-            con<caret>
+            <caret>
           }
         }
-        """.trimIndent(), 2, "precondition", "postcondition")
+        """.trimIndent(), 7, "action_trigger", "create_before_destroy", "ignore_changes", "postcondition",
+      "precondition", "prevent_destroy", "replace_triggered_by"
+    )
 
     doBasicCompletionTest(
       """
@@ -472,7 +473,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
             <caret>
           }
         }
-        """.trimIndent(), 6, "replace_triggered_by")
+        """.trimIndent(), 2, "precondition", "postcondition")
 
     doBasicCompletionTest(
       """
