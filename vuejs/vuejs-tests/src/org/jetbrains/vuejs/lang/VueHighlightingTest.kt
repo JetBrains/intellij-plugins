@@ -71,7 +71,7 @@ class VueHighlightingTest :
   private fun doTest(
     vararg modules: VueTestModule,
     additionalDependencies: Map<String, String> = emptyMap(),
-    fileName: String? = null,
+    fileName: String = "$testName.vue",
     additionalFilesToCheck: List<String> = emptyList(),
   ) {
     val vueModules = adjustModules(modules)
@@ -87,7 +87,7 @@ class VueHighlightingTest :
 
     myFixture.copyDirectoryToProject(testName, ".")
 
-    for (toCheck in sequenceOf(fileName ?: "$testName.vue").plus(additionalFilesToCheck)) {
+    for (toCheck in sequenceOf(fileName).plus(additionalFilesToCheck)) {
       myFixture.configureFromTempProjectFile(toCheck)
         .virtualFile.putUserData(VfsTestUtil.TEST_DATA_FILE_PATH, "$testDataPath/$testName/$toCheck")
       myFixture.checkHighlighting()
