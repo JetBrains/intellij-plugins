@@ -15,6 +15,11 @@
     </ul>
   ]]></description>
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.javascript.psi.impl"/>
+  </dependencies>
+  <!-- endregion -->
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>JavaScript</depends>

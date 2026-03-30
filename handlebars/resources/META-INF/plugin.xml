@@ -23,6 +23,11 @@ For WebStorm, you can check out this section in the <a href="https://www.jetbrai
 ]]>
   </description>
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.javascript.parser"/>
+  </dependencies>
+  <!-- endregion -->
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="javascript-ex.xml">JavaScript</depends>
 

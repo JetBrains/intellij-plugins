@@ -1,6 +1,11 @@
 <idea-plugin visibility="internal">
   <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="JavaScript"/>
+    <module name="intellij.javascript.parser"/>
+    <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.javascript.web"/>
+    <!-- endregion -->
   </dependencies>
 
   <resource-bundle>messages.VueBundle</resource-bundle>

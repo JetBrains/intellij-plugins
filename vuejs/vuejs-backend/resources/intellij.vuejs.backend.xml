@@ -1,21 +1,25 @@
 <idea-plugin visibility="internal">
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <module name="intellij.platform.backend"/>
-    <module name="intellij.vuejs.common"/>
-    <module name="intellij.vuejs.free"/>
     <plugin id="com.intellij.modules.ultimate"/>
     <plugin id="com.intellij.modules.xml"/>
-    <plugin id="JavaScript"/>
     <plugin id="com.intellij.css"/>
+    <plugin id="JavaScript"/>
     <plugin id="intellij.webpack"/>
     <plugin id="org.intellij.plugins.postcss"/>
-    <module name="intellij.spellchecker"/>
     <module name="intellij.javascript.codeinsight"/>
+    <module name="intellij.javascript.common"/>
+    <module name="intellij.javascript.parser"/>
+    <module name="intellij.javascript.psi.impl"/>
     <module name="intellij.javascript.ultimate"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.javascript.web"/>
     <module name="intellij.libraries.commons.text"/>
-    <!-- endregion -->
+    <module name="intellij.platform.backend"/>
+    <module name="intellij.spellchecker"/>
+    <module name="intellij.vuejs.common"/>
+    <module name="intellij.vuejs.free"/>
   </dependencies>
+  <!-- endregion -->
 
   <extensionPoints>
     <extensionPoint qualifiedName="com.intellij.vuejs.containerInfoProvider"

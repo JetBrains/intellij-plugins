@@ -1,8 +1,11 @@
 <idea-plugin>
   <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.javascript.debugger.backend"/>
     <module name="intellij.javascript.debugger.ui"/>
+    <module name="intellij.javascript.web"/>
     <module name="intellij.vuejs.backend"/>
+    <!-- endregion -->
   </dependencies>
   <extensions defaultExtensionNs="com.jetbrains">
     <javaScriptDebugAware implementation="com.intellij.vuejs.debugger.VueDebugAware"/>

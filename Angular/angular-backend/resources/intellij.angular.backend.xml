@@ -1,12 +1,18 @@
 <idea-plugin visibility="internal">
   <dependencies>
     <module name="intellij.xml.impl"/>
-    <module name="intellij.css.backend"/>
-    <module name="intellij.javascript.codeinsight"/>
-    <module name="intellij.angular.free"/>
     <plugin id="com.intellij.modules.ultimate"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="HtmlTools"/>
     <plugin id="intellij.webpack"/>
+    <module name="intellij.angular.free"/>
+    <module name="intellij.css.backend"/>
+    <module name="intellij.javascript.codeinsight"/>
+    <module name="intellij.javascript.common"/>
+    <module name="intellij.javascript.parser"/>
+    <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.javascript.web"/>
+    <!-- endregion -->
   </dependencies>
 
   <extensionPoints>

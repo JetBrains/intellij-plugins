@@ -26,12 +26,17 @@
   </content>
 
   <dependencies>
-    <module name="intellij.spellchecker"/>
     <plugin id="com.intellij.modules.xml"/>
-    <module name="intellij.css.backend"/>
-    <module name="intellij.javascript.codeinsight"/>
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.modules.ultimate"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.css.backend"/>
+    <module name="intellij.javascript.codeinsight"/>
+    <module name="intellij.javascript.common"/>
+    <module name="intellij.javascript.parser"/>
+    <module name="intellij.javascript.web"/>
+    <module name="intellij.spellchecker"/>
+    <!-- endregion -->
   </dependencies>
   <depends optional="true" config-file="jade-liveEdit.xml">com.intellij.plugins.html.instantEditing</depends>
   <depends optional="true" config-file="jade-watcher.xml">com.intellij.plugins.watcher</depends>

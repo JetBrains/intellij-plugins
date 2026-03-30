@@ -19,6 +19,11 @@
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.javascript.common"/>
+  </dependencies>
+  <!-- endregion -->
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.javascript</depends>
   <depends>com.intellij.modules.ultimate</depends>

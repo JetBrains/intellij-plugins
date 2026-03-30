@@ -12,6 +12,12 @@
     </ul>
   ]]></description>
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.javascript.common"/>
+    <module name="intellij.javascript.parser"/>
+  </dependencies>
+  <!-- endregion -->
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
   <resource-bundle>messages.TsLintBundle</resource-bundle>
