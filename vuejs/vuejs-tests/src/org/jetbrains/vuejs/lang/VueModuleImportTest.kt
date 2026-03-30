@@ -87,6 +87,7 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
     checkAfterFile(extension)
   }
 
+  @Test
   @JSTestOptions(selectLookupItem = 0)
   fun testEnumImport() {
     doTestWithCopyDirectory(1, true, extension)
