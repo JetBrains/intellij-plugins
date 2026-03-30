@@ -49,7 +49,7 @@ private constructor(
       }
 
       if (source is JSVariable) {
-        val install = source.initializer
+        val install = source.initializerOrStub
                         ?.let { it as? JSObjectLiteralExpression }
                         ?.findProperty(INSTALL_FUN)
                         ?.let { it as? JSFunctionProperty }
