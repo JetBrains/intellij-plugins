@@ -11,7 +11,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.RegistryManager
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
-import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.astro.service.AstroLspTypeScriptService
 import org.jetbrains.astro.service.settings.AstroServiceMode
@@ -21,6 +20,16 @@ abstract class AstroCodeInsightTestCase(
   override val testCasePath: String,
   val useLsp: Boolean = false,
 ) : WebFrameworkTestCase(if (useLsp) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform) {
+
+  override val defaultConfigurators: List<WebFrameworkTestConfigurator>
+    get() = buildList {
+      addAll(super.defaultConfigurators)
+
+      if (useLsp) {
+        add(AstroLspConfigurator())
+        add(AstroTsConfigConfigurator(defaultTsconfigJsonContent))
+      }
+    }
 
   protected open val defaultTsconfigJsonContent: String = ("""
     {
@@ -53,26 +62,6 @@ abstract class AstroCodeInsightTestCase(
     val base = super.adjustModules(modules)
     if (!useLsp) return base
     return if (base.any { it == AstroTestModule.ASTRO_5_14_4 }) base else arrayOf(*base, AstroTestModule.ASTRO_5_14_4)
-  }
-
-  override fun doConfiguredTest(
-    vararg modules: WebFrameworkTestModule,
-    fileContents: String?,
-    dir: Boolean,
-    dirName: String,
-    extension: String,
-    configureFile: Boolean,
-    configureFileName: String,
-    configurators: List<WebFrameworkTestConfigurator>,
-    additionalFiles: List<String>,
-    checkResult: Boolean,
-    editorConfigEnabled: Boolean,
-    configureCodeStyleSettings: (CodeStyleSettings.() -> Unit)?,
-    test: CodeInsightTestFixture.() -> Unit,
-  ) {
-    val combinedConfigurators = if (useLsp) configurators + AstroLspConfigurator() + AstroTsConfigConfigurator(defaultTsconfigJsonContent)
-    else configurators
-    super.doConfiguredTest(*modules, fileContents = fileContents, dir = dir, dirName = dirName, extension = extension, configureFile = configureFile, configureFileName = configureFileName, configurators = combinedConfigurators, additionalFiles = additionalFiles, checkResult = checkResult, editorConfigEnabled = editorConfigEnabled, configureCodeStyleSettings = configureCodeStyleSettings, test = test)
   }
 }
 
