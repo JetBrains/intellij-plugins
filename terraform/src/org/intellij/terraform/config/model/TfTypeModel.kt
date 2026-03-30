@@ -197,7 +197,7 @@ class TfTypeModel(
     ).toMap())
 
     val ResourceLifecycle: BlockType = BlockType(HCL_LIFECYCLE_IDENTIFIER, 0,
-                                                 description = "Describe to Terraform how to connect to the resource for provisioning", // TODO: Improve description
+                                                 description = "Defines a piece of infrastructure and specifies the settings for Terraform to create it with",
                                                  properties = listOf(
                                                    PropertyType("create_before_destroy", Types.Boolean),
                                                    PropertyType("prevent_destroy", Types.Boolean),
@@ -238,12 +238,16 @@ class TfTypeModel(
       AbstractResourceProvisioner
     ).toMap())
 
+    private val ConditionalLifecycle: BlockType = BlockType(HCL_LIFECYCLE_IDENTIFIER, properties = listOf(
+      PreconditionBlock, PostconditionBlock
+    ).toMap())
+
     val AbstractEphemeralResource: BlockType = BlockType(HCL_EPHEMERAL_IDENTIFIER, 2, properties = listOf<PropertyOrBlockType>(
       DependsOnProperty,
       CountProperty,
       ForEachProperty,
       ProviderProperty,
-      ResourceLifecycle
+      ConditionalLifecycle
     ).toMap())
 
     @JvmField
@@ -253,7 +257,7 @@ class TfTypeModel(
       CountProperty,
       ForEachProperty,
       DependsOnProperty,
-      ResourceLifecycle,
+      ConditionalLifecycle,
       ProviderProperty,
     ).toMap())
 
@@ -309,7 +313,10 @@ class TfTypeModel(
 
     val CheckBlock: BlockType = BlockType(HCL_CHECK_BLOCK_IDENTIFIER, 1, properties = listOf(AbstractDataSource, AssertBlock).toMap())
 
-    val RemovedBlock: BlockType = BlockType(HCL_REMOVED_BLOCK_IDENTIFIER, 0, properties = listOf(FromProperty, ResourceLifecycle).toMap())
+    private val RemovedLifecycle: BlockType = BlockType(HCL_LIFECYCLE_IDENTIFIER, required = true, properties = listOf(
+      PropertyType("destroy", Types.Boolean)
+    ).toMap())
+    val RemovedBlock: BlockType = BlockType(HCL_REMOVED_BLOCK_IDENTIFIER, properties = listOf(FromProperty, RemovedLifecycle).toMap())
 
     val RootBlocks: List<BlockType> = listOf(
       Action,
