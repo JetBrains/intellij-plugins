@@ -3,9 +3,14 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import kotlinx.coroutines.CancellationException
 
-class QodanaException : RuntimeException {
+open class QodanaException : RuntimeException {
   constructor(message: String, cause: Throwable) : super(message, cause)
   constructor(message: String) : super(message)
 }
 
 class QodanaCancellationException(message: String) : CancellationException(message)
+
+class QodanaTimeoutException : QodanaException {
+  constructor(message: String) : super(message)
+  constructor(message: String, cause: Throwable) : super(message, cause)
+}

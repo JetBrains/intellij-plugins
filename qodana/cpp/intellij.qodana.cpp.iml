@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="kotlin-language" name="Kotlin">
+      <configuration version="5" platform="JVM 21" allPlatforms="JVM [21]" useProjectSettings="false">
+        <compilerSettings>
+          <option name="additionalArguments" value="-Xjvm-default=all -opt-in=com.intellij.openapi.util.IntellijInternalApi -Xcontext-parameters -opt-in=org.jetbrains.kotlin.analysis.api.KaExperimentalApi -opt-in=kotlin.io.path.ExperimentalPathApi -XXLanguage:+AllowEagerSupertypeAccessibilityChecks -progressive" />
+        </compilerSettings>
+        <compilerArguments>
+          <stringArguments>
+            <stringArg name="jvmTarget" arg="21" />
+            <stringArg name="apiVersion" arg="2.3" />
+            <stringArg name="languageVersion" arg="2.3" />
+          </stringArguments>
+          <arrayArguments>
+            <arrayArg name="pluginClasspaths">
+              <args>$KOTLIN_BUNDLED$/lib/kotlinx-serialization-compiler-plugin.jar</args>
+            </arrayArg>
+          </arrayArguments>
+        </compilerArguments>
+      </configuration>
+    </facet>
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="org.jetbrains.qodana.cpp" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -13,9 +34,11 @@
     <orderEntry type="module" module-name="intellij.platform.analysis" />
     <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module" module-name="intellij.cmake.core" />
     <orderEntry type="module" module-name="intellij.qodana" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.ide.core" />
     <orderEntry type="module" module-name="intellij.cidr.projectModel" />
     <orderEntry type="module" module-name="intellij.cidr.workspaceModel" />
     <orderEntry type="module" module-name="intellij.clion.radler.core" />
@@ -25,5 +48,15 @@
     <orderEntry type="module" module-name="intellij.cidr.execution" />
     <orderEntry type="module" module-name="intellij.clion.compdb" />
     <orderEntry type="module" module-name="intellij.clion.meson.core" />
+    <orderEntry type="module" module-name="intellij.cidr.util" />
+    <orderEntry type="module" module-name="intellij.platform.backend.observation" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem" />
+    <orderEntry type="module" module-name="intellij.rd.platform" />
+    <orderEntry type="module" module-name="intellij.libraries.rd.core" />
+    <orderEntry type="module" module-name="intellij.libraries.rd.framework" />
+    <orderEntry type="module" module-name="intellij.rider.rdclient.dotnet" />
+    <orderEntry type="module" module-name="intellij.rider.rdclient.dotnet.startup" />
+    <orderEntry type="module" module-name="intellij.rider.model.generated" />
+    <orderEntry type="module" module-name="intellij.rd.ide.model.generated" />
   </component>
 </module>

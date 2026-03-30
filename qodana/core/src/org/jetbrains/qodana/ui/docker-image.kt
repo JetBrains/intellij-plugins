@@ -26,5 +26,6 @@ enum class Linter(val imageName: String) {
   GO("qodana-go"),
   RD("qodana-dotnet"),
   WS("qodana-js"),
+  CL("qodana-cpp"),
   UNKNOWN("qodana-<linter>")
 }

@@ -183,20 +183,13 @@ internal fun getSimpleHtmlPane(@NlsSafe content: String): JEditorPane {
 internal fun localRunDisabledMessage(): String? {
   if (QodanaRegistry.isForceLocalRunEnabled) return null
   return when(ApplicationInfo.getInstance().build.productCode) {
-    "CL" -> QodanaBundle.message("qodana.panel.local.run.disabled.clion")
     "AI" -> QodanaBundle.message("qodana.panel.local.run.disabled.androidstudio")
     else -> null
   }
 }
 
 @NlsContexts.Tooltip
-internal fun setupCiDisabledMessage(): String? {
-  if (QodanaRegistry.isForceSetupCIEnabled) return null
-  return when(ApplicationInfo.getInstance().build.productCode) {
-    "CL" -> QodanaBundle.message("qodana.panel.setup.ci.disabled.clion")
-    else -> null
-  }
-}
+internal fun setupCiDisabledMessage(): String? = null
 
 internal fun isLocalRunEnabled(): Boolean {
   return localRunDisabledMessage() == null
