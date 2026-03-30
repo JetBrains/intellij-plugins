@@ -44,7 +44,7 @@
     <additionalTextAttributes scheme="Dark" file="colorSchemes/Angular2Dark.xml"/>
 
     <!-- Angular 2 contributions -->
-    <metaLanguage implementation="org.angular2.lang.Angular2MetaLanguage"/>
+    <metaLanguageProvider implementation="org.angular2.lang.Angular2MetaLanguage$Provider"/>
     <polySymbols.framework id="angular" implementation="org.angular2.Angular2Framework"/>
 
     <projectService serviceInterface="org.angular2.cli.AngularCliSchematicsRegistryService"

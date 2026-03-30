@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.expr
 import com.intellij.lang.DependentLanguage
 import com.intellij.lang.Language
 import com.intellij.lang.MetaLanguage
+import com.intellij.lang.MetaLanguageProvider
 import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JavaScriptSupportLoader
@@ -30,7 +31,7 @@ fun isVueExprMetaLanguage(language: Language?): Boolean {
   return language != null && MetaLanguage.findInstance(VueExprMetaLanguage::class.java).matchesLanguage(language)
 }
 
-class VueExprMetaLanguage private constructor() : MetaLanguage("VueExpr") {
+object VueExprMetaLanguage : MetaLanguage("VueExpr") {
 
   override fun matchesLanguage(language: Language): Boolean {
     return vueExprLanguages.contains(language)
@@ -40,4 +41,7 @@ class VueExprMetaLanguage private constructor() : MetaLanguage("VueExpr") {
     return vueExprLanguages
   }
 
+  internal class Provider : MetaLanguageProvider {
+    override fun getLanguage(): MetaLanguage = VueExprMetaLanguage
+  }
 }

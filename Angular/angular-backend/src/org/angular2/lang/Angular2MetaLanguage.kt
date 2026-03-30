@@ -3,6 +3,7 @@ package org.angular2.lang
 
 import com.intellij.lang.Language
 import com.intellij.lang.MetaLanguage
+import com.intellij.lang.MetaLanguageProvider
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.html.Angular2HtmlDialect
@@ -11,7 +12,7 @@ import org.angular2.lang.html.Angular2HtmlDialect
  * Meta-language covering Angular2Language (expression language) Angular2HtmlLanguage (template language) and TypeScript.
  * This can be used for inspections and other language-specific features that should apply to all Angular contexts.
  */
-class Angular2MetaLanguage private constructor() : MetaLanguage("Angular2Languages") {
+object Angular2MetaLanguage : MetaLanguage("Angular2Languages") {
 
   private val angular2Languages: Set<Language> by lazy {
     getRegisteredLanguages().filterTo(mutableSetOf()) {
@@ -24,4 +25,8 @@ class Angular2MetaLanguage private constructor() : MetaLanguage("Angular2Languag
 
   override fun getMatchingLanguages(): Collection<Language> =
     angular2Languages
+
+  internal class Provider : MetaLanguageProvider {
+    override fun getLanguage(): MetaLanguage = Angular2MetaLanguage
+  }
 }
