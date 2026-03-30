@@ -67,46 +67,34 @@ class VueHighlightingTest :
     myFixture.configureByFile("$testName/$testName.vue")
   }
 
-  private fun doTest(
-    vararg modules: VueTestModule,
-    additionalDependencies: Map<String, String> = emptyMap(),
-    configureFileName: String = "$testName.vue",
-  ) {
-    checkHighlighting(
-      modules = modules,
-      additionalDependencies = additionalDependencies,
-      configureFileName = configureFileName,
-    )
-  }
-
   @Test
   fun testDirectivesWithoutParameters() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testVIfRequireParameter() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testArrowFunctionsAndExpressionsInTemplate() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testShorthandArrowFunctionInTemplate() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testLocalPropsInArrayInCompAttrsAndWithKebabCaseAlso() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testLocalPropsInObjectInCompAttrsAndWithKebabCaseAlso() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -119,7 +107,7 @@ class VueHighlightingTest :
     }
 </script>
 """)
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -134,7 +122,7 @@ class VueHighlightingTest :
     }
 </script>
 """)
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -148,61 +136,61 @@ const props = {seeMe: {}}
     }
 </script>
 """)
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testCompRequiredAttributesTest() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testCompRequiredAttributesTestTS() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testRequiredAttributeWithModifierTest() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testRequiredAttributeWithVModel() {
-    doTest(VueTestModule.VUE_2_6_10)
+    checkHighlighting(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testRequiredAttributeWithVModel3() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testVueAttributeInCustomTag() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testVFor() {
     runInInitMode {
-      doTest()
+      checkHighlighting()
     }
   }
 
   @Test
   fun testVForInPug() {
     runInInitMode {
-      doTest()
+      checkHighlighting()
     }
   }
 
   @Test
   fun testTopLevelThisInInjection() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testTextarea() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -211,66 +199,66 @@ const props = {seeMe: {}}
     //  /index.js
     disableAstLoadingFilter()
 
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testExternalMixin() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testTwoExternalMixins() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testTwoGlobalMixins() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testNotImportedComponentIsUnknown() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testNoDoubleSpellCheckingInAttributesWithEmbeddedContents() {
     myFixture.enableInspections(GrazieSpellCheckingInspection())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testNoSpellcheckInEnumeratedAttributes() {
     myFixture.enableInspections(GrazieSpellCheckingInspection())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testSpellchecking() {
     myFixture.enableInspections(GrazieSpellCheckingInspection())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testTypeScriptTypesAreResolved() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testVBindVOnHighlighting() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testComponentNameAsStringTemplate() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testTypeScriptTypesInVue() {
     myFixture.enableInspections(JSUnusedGlobalSymbolsInspection())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -282,7 +270,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testGlobalItemsAugmentedFromCompilerOptionsTypes() {
-    doTest(
+    checkHighlighting(
       configureFileName = "App.vue",
       additionalDependencies = mapOf("my-vue-items-library" to "*"),
     )
@@ -290,17 +278,17 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromGlobalDirectives() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesWithModifiersFromGlobalDirectives() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testEmptyAttributeValue() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -361,44 +349,44 @@ const props = {seeMe: {}}
 
   @Test
   fun testEmptyTagsForVueAreAllowed() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testBuiltinTagsHighlighting() {
-    doTest(VueTestModule.VUE_2_5_3)
+    checkHighlighting(VueTestModule.VUE_2_5_3)
   }
 
   @Test
   fun testNonPropsAttributesAreNotHighlighted() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testVueAttributeWithoutValueWithFollowingAttribute() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testTsxIsNormallyParsed() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testJadeWithVueShortcutAttributes() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testComponentsNamedLikeHtmlTags() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testClassComponentAnnotationWithLocalComponent() {
     myFixture.configureVueDependencies()
     createTwoClassComponents(myFixture)
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -406,7 +394,7 @@ const props = {seeMe: {}}
     myFixture.configureVueDependencies()
     myFixture.configureByText("vue.d.ts", "export interface Vue {};export class Vue {}")
     createTwoClassComponents(myFixture, true)
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -417,27 +405,27 @@ const props = {seeMe: {}}
 
   @Test
   fun testLocalComponentExtendsInClassSyntax() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testLocalComponentInClassSyntax() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testLocalComponentInMixin() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testLocalComponentInMixinRecursion() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testBooleanProps() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -473,17 +461,17 @@ const props = {seeMe: {}}
 
   @Test
   fun testTopLevelTags() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testEndTagNotForbidden() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testColonInEventName() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -502,23 +490,23 @@ const props = {seeMe: {}}
   // TODO add special inspection for unused slot scope parameters - WEB-43893
   @Test
   fun testVSlotSyntax() {
-    doTest()
+    checkHighlighting()
   }
 
   // TODO add special inspection for unused slot scope parameters - WEB-43893
   @Test
   fun testSlotSyntax() {
-    doTest(VueTestModule.VUE_2_6_10)
+    checkHighlighting(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testSlotName() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testSlotNameBinding() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -527,47 +515,47 @@ const props = {seeMe: {}}
     //  /a-component.vue
     disableAstLoadingFilter()
 
-    doTest(VueTestModule.VUE_2_5_3)
+    checkHighlighting(VueTestModule.VUE_2_5_3)
   }
 
   @Test
   fun testBootstrapVue() {
-    doTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
+    checkHighlighting(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
   }
 
   @Test
   fun testDestructuringPatternsInVFor() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testDirectivesWithParameters() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testDirectiveWithModifiers() {
-    doTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
+    checkHighlighting(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
   }
 
   @Test
   fun testIsAttributeSupport() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testKeyAttributeSupport() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testPropsWithOptions() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testFilters() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -583,34 +571,34 @@ const props = {seeMe: {}}
 
   @Test
   fun testComputedPropType() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testPseudoSelectors() {
     myFixture.enableInspections(CssInvalidPseudoSelectorInspection::class.java)
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testPrivateMembersHighlighting() {
     myFixture.enableInspections(JSUnusedGlobalSymbolsInspection::class.java)
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testMultipleScriptTagsInHTML() {
-    doTest(configureFileName = "multipleScriptTagsInHTML.html")
+    checkHighlighting(configureFileName = "multipleScriptTagsInHTML.html")
   }
 
   @Test
   fun testMultipleScriptTagsInVue() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testCompositionApiBasic_0_4_0() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_2_6_10,
       VueTestModule.COMPOSITION_API_0_4_0,
       configureFileName = "compositionComponent1.vue",
@@ -619,7 +607,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testCompositionApiBasic_1_0_0() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_2_6_10,
       VueTestModule.COMPOSITION_API_1_0_0,
       configureFileName = "compositionComponent1.vue",
@@ -640,22 +628,22 @@ const props = {seeMe: {}}
 
   @Test
   fun testCommonJSSupport() {
-    doTest(VueTestModule.VUEX_3_1_0)
+    checkHighlighting(VueTestModule.VUEX_3_1_0)
   }
 
   @Test
   fun testComputedTypeTS() {
-    doTest(VueTestModule.VUE_2_6_10)
+    checkHighlighting(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testComputedTypeJS() {
-    doTest(VueTestModule.VUE_2_6_10)
+    checkHighlighting(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testDataTypeTS() {
-    doTest(VueTestModule.VUE_2_6_10)
+    checkHighlighting(VueTestModule.VUE_2_6_10)
   }
 
   @Test
@@ -671,7 +659,7 @@ const props = {seeMe: {}}
     )
 
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
-      doTest()
+      checkHighlighting()
     }
   }
 
@@ -688,30 +676,30 @@ const props = {seeMe: {}}
     )
 
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
-      doTest()
+      checkHighlighting()
     }
   }
 
   @Test
   fun testIndirectExport() {
-    doTest(VueTestModule.VUE_2_6_10)
+    checkHighlighting(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testAsyncSetup() {
-    doTest(VueTestModule.VUE_3_0_0)
+    checkHighlighting(VueTestModule.VUE_3_0_0)
   }
 
   @Test
   fun testScriptSetup() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testScriptSetupComplexImports() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -724,39 +712,39 @@ const props = {seeMe: {}}
 
   @Test
   fun testSuperComponentMixin() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testCompositionPropsJS() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testCssSelectors() {
     myFixture.enableInspections(CssInvalidPseudoSelectorInspection())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testCssUnusedPseudoSelector() {
     myFixture.enableInspections(CssUnusedSymbolInspection())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testScriptSetupScopePriority() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testBindingToDataAttributes() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testPropsValidation() {
-    doTest(
+    checkHighlighting(
       additionalDependencies = mapOf("lib" to "*"),
     )
   }
@@ -767,7 +755,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -775,13 +763,13 @@ const props = {seeMe: {}}
     myFixture.enableInspections(
       ES6UnusedImportsInspection(),
     )
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testTypedComponentsScriptSetup() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doTest(
+    checkHighlighting(
       VueTestModule.NAIVE_UI_2_19_11,
       VueTestModule.HEADLESS_UI_1_4_1,
       VueTestModule.VUE_3_5_0,
@@ -791,7 +779,7 @@ const props = {seeMe: {}}
   @Test
   fun testTypedComponentsScriptSetup2() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doTest(
+    checkHighlighting(
       VueTestModule.NAIVE_UI_2_19_11,
       VueTestModule.HEADLESS_UI_1_4_1,
       VueTestModule.VUE_3_5_0,
@@ -801,36 +789,36 @@ const props = {seeMe: {}}
   @Test
   fun testCssVBind() {
     myFixture.enableInspections(CssInvalidFunctionInspection::class.java)
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testCssVBindVue31() {
     myFixture.enableInspections(CssInvalidFunctionInspection::class.java)
-    doTest(VueTestModule.VUE_3_1_0)
+    checkHighlighting(VueTestModule.VUE_3_1_0)
   }
 
   @Test
   fun testGlobalSymbols() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testStandardBooleanAttributes() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testRefUnwrap() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testVModelWithMixin() {
-    doTest(configureFileName = "MyForm.vue")
+    checkHighlighting(configureFileName = "MyForm.vue")
   }
 
   @Test
@@ -842,7 +830,7 @@ const props = {seeMe: {}}
   @Test
   fun testSlotTypes() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(
+    checkHighlighting(
       VueTestModule.QUASAR_2_6_5,
       VueTestModule.VUE_3_5_0,
       configureFileName = "MyTable.vue",
@@ -852,31 +840,31 @@ const props = {seeMe: {}}
   @Test
   fun testGlobalScriptSetup() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(configureFileName = "HelloWorld.vue")
+    checkHighlighting(configureFileName = "HelloWorld.vue")
   }
 
   @Test
   fun testDynamicArguments() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(configureFileName = "HelloWorld.vue")
+    checkHighlighting(configureFileName = "HelloWorld.vue")
   }
 
   @Test
   fun testWithPropsFromFunctionCall() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testWithPropsFromFunctionCall2() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testInferPropType() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_2_2,
       VueTestModule.NAIVE_UI_2_33_2_PATCHED,
     )
@@ -889,7 +877,7 @@ const props = {seeMe: {}}
     disableAstLoadingFilter()
 
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(
+    checkHighlighting(
       configureFileName = "main.vue",
     )
   }
@@ -897,23 +885,23 @@ const props = {seeMe: {}}
   @Test
   fun testPropertyReferenceInLambda() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testSourceScopedSlots() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(configureFileName = "Catalogue.vue")
+    checkHighlighting(configureFileName = "Catalogue.vue")
   }
 
   @Test
   fun testCustomEvents() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testCustomEventsTypedComponent() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -922,7 +910,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest(VueTestModule.VUE_2_6_10)
+    checkHighlighting(VueTestModule.VUE_2_6_10)
   }
 
   @Test
@@ -931,7 +919,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest(VueTestModule.VUE_2_6_10)
+    checkHighlighting(VueTestModule.VUE_2_6_10)
   }
 
   @Test
@@ -940,7 +928,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -949,7 +937,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest()
+    checkHighlighting()
   }
 
   @Test
@@ -958,57 +946,57 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testVueCreateApp() {
-    doTest(configureFileName = "test.html")
+    checkHighlighting(configureFileName = "test.html")
   }
 
   @Test
   fun testInstanceMountedOnElement() {
-    doTest(configureFileName = "test.html")
+    checkHighlighting(configureFileName = "test.html")
   }
 
   @Test
   fun testScriptCaseSensitivity() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testVPre() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testHtmlTagOmission() {
-    doTest(configureFileName = "htmlTagOmission.html")
+    checkHighlighting(configureFileName = "htmlTagOmission.html")
   }
 
   @Test
   fun testVueNoTagOmission() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testScriptSetupGeneric() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testGenericComponentUsage() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testComponentFromFunctionPlugin() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromFunctionPlugin_vapor() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1016,12 +1004,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromNestedFunctionPlugin() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedFunctionPlugin_vapor() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1029,12 +1017,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromNestedFunctionPluginWithCycle() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedFunctionPluginWithCycle_vapor() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1042,12 +1030,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromObjectPlugin() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromObjectPlugin_vapor() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1055,12 +1043,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromNestedObjectPlugin() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedObjectPlugin_vapor() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1068,12 +1056,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testComponentFromNestedObjectPluginWithCycle() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedObjectPluginWithCycle_vapor() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1081,12 +1069,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromFunctionPlugin() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromFunctionPlugin_vapor() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1094,12 +1082,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromNestedFunctionPlugin() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedFunctionPlugin_vapor() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1107,12 +1095,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle_vapor() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1120,12 +1108,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromObjectPlugin() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromObjectPlugin_vapor() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1133,12 +1121,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromNestedObjectPlugin() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedObjectPlugin_vapor() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1146,12 +1134,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testDirectivesFromNestedObjectPluginWithCycle() {
-    doTest(configureFileName = "App.vue")
+    checkHighlighting(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedObjectPluginWithCycle_vapor() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1164,50 +1152,50 @@ const props = {seeMe: {}}
       HtmlRequiredAltAttributeInspection::class.java,
     )
 
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testPropTypeJsDoc() {
     myFixture.enableInspections(JSValidateTypesInspection())
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testPropsWithDefaults() {
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testPropsWithDefaultsInTs() {
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
-    doTest(configureFileName = "propsWithDefaultsInTs.ts")
+    checkHighlighting(configureFileName = "propsWithDefaultsInTs.ts")
   }
 
   @Test
   fun testVuetifyWebTypesWithTrailingNewLine() {
-    doTest(VueTestModule.VUETIFY_3_3_3)
+    checkHighlighting(VueTestModule.VUETIFY_3_3_3)
   }
 
   @Test
   fun testBindShorthandAttribute() {
-    doTest()
+    checkHighlighting()
   }
 
   @Test
   fun testWatchProperty() {
-    doTest(configureFileName = "watchProperty.js")
+    checkHighlighting(configureFileName = "watchProperty.js")
   }
 
   @Test
   fun testTypedMixins() {
-    doTest(configureFileName = "index.js")
+    checkHighlighting(configureFileName = "index.js")
   }
 
   @Test
   fun testVaporSimpleApplication() {
-    doTest(
+    checkHighlighting(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
