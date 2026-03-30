@@ -20,6 +20,7 @@ internal object Constants {
   const val HCL_BACKEND_IDENTIFIER: String = "backend"
   const val HCL_LIFECYCLE_IDENTIFIER: String = "lifecycle"
   const val HCL_CONNECTION_IDENTIFIER: String = "connection"
+  const val HCL_ACTION_IDENTIFIER: String = "action"
   const val HCL_MOVED_BLOCK_IDENTIFIER: String = "moved"
   const val HCL_DYNAMIC_BLOCK_IDENTIFIER: String = "dynamic"
   const val HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER: String = "content"

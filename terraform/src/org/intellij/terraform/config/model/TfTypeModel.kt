@@ -1,18 +1,21 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.childrenOfType
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.intellij.terraform.config.Constants
+import org.intellij.terraform.config.Constants.HCL_ACTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_ASSERT_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_ATLAS_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CHECK_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CLOUD_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONDITION_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_CONFIG_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONNECTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
@@ -42,6 +45,7 @@ import org.intellij.terraform.config.Constants.HCL_TYPE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VALIDATION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_WORKSPACES_BLOCK_IDENTIFIER
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.local.LocalProviderNamesService
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -199,6 +203,11 @@ class TfTypeModel(
                                                    PropertyType("prevent_destroy", Types.Boolean),
                                                    PropertyType("ignore_changes", ListType(Types.Any)),
                                                    PropertyType("replace_triggered_by", ListType(Types.Any)),
+                                                   BlockType("action_trigger", properties = listOf(
+                                                     PropertyType("events", Types.Array, required = true),
+                                                     ConditionProperty,
+                                                     PropertyType("actions", Types.Array, required = true)
+                                                   ).toMap()),
                                                    PreconditionBlock,
                                                    PostconditionBlock
                                                  ).toMap())
@@ -254,6 +263,16 @@ class TfTypeModel(
       VersionProperty
     ).toMap())
     val AbstractBackend: BlockType = BlockType(HCL_BACKEND_IDENTIFIER, 1)
+
+    val Action: BlockType = object : BlockType(HCL_ACTION_IDENTIFIER, 2, properties = listOf<PropertyOrBlockType>(
+      BlockType(HCL_CONFIG_IDENTIFIER),
+      CountProperty,
+      ForEachProperty,
+      ProviderProperty,
+    ).toMap()) {
+      override fun canBeUsedIn(fileType: FileType): Boolean = fileType == TerraformFileType
+    }
+
     val FromProperty: PropertyType = PropertyType("from", Types.Identifier, required = true)
     val ToProperty: PropertyType = PropertyType("to", Types.Identifier, required = true)
     val Moved: BlockType = BlockType(HCL_MOVED_BLOCK_IDENTIFIER, properties = listOf(FromProperty, ToProperty).toMap())
@@ -293,6 +312,7 @@ class TfTypeModel(
     val RemovedBlock: BlockType = BlockType(HCL_REMOVED_BLOCK_IDENTIFIER, 0, properties = listOf(FromProperty, ResourceLifecycle).toMap())
 
     val RootBlocks: List<BlockType> = listOf(
+      Action,
       AbstractDataSource,
       AbstractEphemeralResource,
       AbstractProvider,
