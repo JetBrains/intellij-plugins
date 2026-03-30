@@ -5,6 +5,7 @@ import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredAltAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredTitleElementInspection
+import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.TypeScriptTestUtil
@@ -40,13 +41,23 @@ import org.junit.runners.JUnit4
 class VueHighlightingTest :
   VueTestCase("highlighting") {
 
-  // WA for migration
-  private val NO_MODULES: Array<out VueTestModule> = emptyArray()
-
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(VueInspectionsProvider())
   }
+
+  override fun adjustModules(
+    modules: Array<out WebFrameworkTestModule>,
+  ): Array<out WebFrameworkTestModule> =
+    when (name) {
+      "testWithPropsFromFunctionCall",
+      "testWithPropsFromFunctionCall2",
+      "testStandardBooleanAttributes",
+      "testCommonJSSupport",
+        -> modules
+
+      else -> super.adjustModules(modules)
+    }
 
   private fun configureTestProject() {
     val testName = getTestName(true)
@@ -54,18 +65,22 @@ class VueHighlightingTest :
   }
 
   private fun doTest(
-    vararg modules: VueTestModule = arrayOf(VueTestModule.VUE_3_5_0),
+    vararg modules: VueTestModule,
     additionalDependencies: Map<String, String> = emptyMap(),
     fileName: String? = null,
     additionalFilesToCheck: List<String> = emptyList(),
   ) {
     val testName = getTestName(true)
-    if (modules.isNotEmpty()) {
-      myFixture.configureVueDependencies(
-        modules = modules,
-        additionalDependencies = additionalDependencies,
-      )
-    }
+
+    val vueModules = adjustModules(modules)
+      .map { it as VueTestModule }
+      .toTypedArray()
+
+    myFixture.configureVueDependencies(
+      modules = vueModules,
+      additionalDependencies = additionalDependencies,
+    )
+
     myFixture.copyDirectoryToProject(testName, ".")
 
     for (toCheck in sequenceOf(fileName ?: "$testName.vue").plus(additionalFilesToCheck)) {
@@ -206,7 +221,7 @@ const props = {seeMe: {}}
     // Tree access disabled
     //  /index.js
     disableAstLoadingFilter()
-    
+
     doTest()
   }
 
@@ -821,7 +836,7 @@ const props = {seeMe: {}}
   @Test
   fun testStandardBooleanAttributes() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(modules = NO_MODULES)
+    doTest()
   }
 
   @Test
@@ -866,13 +881,13 @@ const props = {seeMe: {}}
   @Test
   fun testWithPropsFromFunctionCall() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(modules = NO_MODULES)
+    doTest()
   }
 
   @Test
   fun testWithPropsFromFunctionCall2() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(modules = NO_MODULES)
+    doTest()
   }
 
   @Test
@@ -892,7 +907,6 @@ const props = {seeMe: {}}
 
     myFixture.enableInspections(VueInspectionsProvider())
     doTest(
-      modules = NO_MODULES,
       fileName = "main.vue",
       additionalFilesToCheck = listOf("main2.vue"),
     )
