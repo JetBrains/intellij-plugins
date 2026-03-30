@@ -17,7 +17,6 @@ import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
-import com.intellij.testFramework.VfsTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.runInInitMode
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
@@ -72,26 +71,12 @@ class VueHighlightingTest :
     vararg modules: VueTestModule,
     additionalDependencies: Map<String, String> = emptyMap(),
     fileName: String = "$testName.vue",
-    additionalFilesToCheck: List<String> = emptyList(),
   ) {
-    val vueModules = adjustModules(modules)
-      .map { it as VueTestModule }
-      .toTypedArray()
-
-    if (vueModules.isNotEmpty() || additionalDependencies.isNotEmpty()) {
-      myFixture.configureVueDependencies(
-        modules = vueModules,
-        additionalDependencies = additionalDependencies,
-      )
-    }
-
-    myFixture.copyDirectoryToProject(testName, ".")
-
-    for (toCheck in sequenceOf(fileName).plus(additionalFilesToCheck)) {
-      myFixture.configureFromTempProjectFile(toCheck)
-        .virtualFile.putUserData(VfsTestUtil.TEST_DATA_FILE_PATH, "$testDataPath/$testName/$toCheck")
-      myFixture.checkHighlighting()
-    }
+    checkHighlighting(
+      modules = modules,
+      additionalDependencies = additionalDependencies,
+      configureFileName = fileName,
+    )
   }
 
   @Test
@@ -629,9 +614,6 @@ const props = {seeMe: {}}
       VueTestModule.VUE_2_6_10,
       VueTestModule.COMPOSITION_API_0_4_0,
       fileName = "compositionComponent1.vue",
-      additionalFilesToCheck = listOf(
-        "compositionComponent2.vue",
-      )
     )
   }
 
@@ -641,9 +623,6 @@ const props = {seeMe: {}}
       VueTestModule.VUE_2_6_10,
       VueTestModule.COMPOSITION_API_1_0_0,
       fileName = "compositionComponent1.vue",
-      additionalFilesToCheck = listOf(
-        "compositionComponent2.vue",
-      )
     )
   }
 
@@ -912,7 +891,6 @@ const props = {seeMe: {}}
     myFixture.enableInspections(VueInspectionsProvider())
     doTest(
       fileName = "main.vue",
-      additionalFilesToCheck = listOf("main2.vue"),
     )
   }
 
