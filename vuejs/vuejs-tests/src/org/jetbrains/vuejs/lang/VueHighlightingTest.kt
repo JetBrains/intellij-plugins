@@ -42,6 +42,8 @@ import org.junit.runners.JUnit4
 class VueHighlightingTest :
   VueTestCase("highlighting", testMode = VueTestMode.NO_PLUGIN) {
 
+  override val dirModeByDefault: Boolean = true
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(VueInspectionsProvider())
