@@ -224,20 +224,23 @@ const props = {seeMe: {}}
 
   @Test
   fun testNoDoubleSpellCheckingInAttributesWithEmbeddedContents() {
-    myFixture.enableInspections(GrazieSpellCheckingInspection())
-    checkHighlighting()
+    checkHighlighting(
+      inspections = listOf(GrazieSpellCheckingInspection::class.java),
+    )
   }
 
   @Test
   fun testNoSpellcheckInEnumeratedAttributes() {
-    myFixture.enableInspections(GrazieSpellCheckingInspection())
-    checkHighlighting()
+    checkHighlighting(
+      inspections = listOf(GrazieSpellCheckingInspection::class.java),
+    )
   }
 
   @Test
   fun testSpellchecking() {
-    myFixture.enableInspections(GrazieSpellCheckingInspection())
-    checkHighlighting()
+    checkHighlighting(
+      inspections = listOf(GrazieSpellCheckingInspection::class.java),
+    )
   }
 
   @Test
@@ -257,8 +260,9 @@ const props = {seeMe: {}}
 
   @Test
   fun testTypeScriptTypesInVue() {
-    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection())
-    checkHighlighting()
+    checkHighlighting(
+      inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java),
+    )
   }
 
   @Test
@@ -576,14 +580,16 @@ const props = {seeMe: {}}
 
   @Test
   fun testPseudoSelectors() {
-    myFixture.enableInspections(CssInvalidPseudoSelectorInspection::class.java)
-    checkHighlighting()
+    checkHighlighting(
+      inspections = listOf(CssInvalidPseudoSelectorInspection::class.java),
+    )
   }
 
   @Test
   fun testPrivateMembersHighlighting() {
-    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection::class.java)
-    checkHighlighting()
+    checkHighlighting(
+      inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java),
+    )
   }
 
   @Test
@@ -652,14 +658,14 @@ const props = {seeMe: {}}
     //  /plugins/sass/sass.jar!/org/jetbrains/plugins/sass/stdlib/sass_math.scss
     disableAstLoadingFilter()
 
-    myFixture.enableInspections(
-      CssInvalidFunctionInspection::class.java,
-      SassScssResolvedByNameOnlyInspection::class.java,
-      SassScssUnresolvedVariableInspection::class.java,
-    )
-
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
-      checkHighlighting()
+      checkHighlighting(
+        inspections = listOf(
+          CssInvalidFunctionInspection::class.java,
+          SassScssResolvedByNameOnlyInspection::class.java,
+          SassScssUnresolvedVariableInspection::class.java,
+        ),
+      )
     }
   }
 
@@ -669,14 +675,14 @@ const props = {seeMe: {}}
     //  /plugins/sass/sass.jar!/org/jetbrains/plugins/sass/stdlib/sass_math.scss
     disableAstLoadingFilter()
 
-    myFixture.enableInspections(
-      CssInvalidFunctionInspection::class.java,
-      SassScssResolvedByNameOnlyInspection::class.java,
-      SassScssUnresolvedVariableInspection::class.java,
-    )
-
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
-      checkHighlighting()
+      checkHighlighting(
+        inspections = listOf(
+          CssInvalidFunctionInspection::class.java,
+          SassScssResolvedByNameOnlyInspection::class.java,
+          SassScssUnresolvedVariableInspection::class.java,
+        ),
+      )
     }
   }
 
@@ -692,14 +698,16 @@ const props = {seeMe: {}}
 
   @Test
   fun testScriptSetup() {
-    myFixture.enableInspections(ES6UnusedImportsInspection())
-    checkHighlighting()
+    checkHighlighting(
+      inspections = listOf(ES6UnusedImportsInspection::class.java),
+    )
   }
 
   @Test
   fun testScriptSetupComplexImports() {
-    myFixture.enableInspections(ES6UnusedImportsInspection())
-    checkHighlighting()
+    checkHighlighting(
+      inspections = listOf(ES6UnusedImportsInspection::class.java),
+    )
   }
 
   @Test
@@ -722,8 +730,9 @@ const props = {seeMe: {}}
 
   @Test
   fun testCssSelectors() {
-    myFixture.enableInspections(CssInvalidPseudoSelectorInspection())
-    checkHighlighting()
+    checkHighlighting(
+      inspections = listOf(CssInvalidPseudoSelectorInspection::class.java),
+    )
   }
 
   @Test
@@ -751,51 +760,54 @@ const props = {seeMe: {}}
 
   @Test
   fun testScriptSetupRef() {
-    myFixture.enableInspections(
-      JSUnusedLocalSymbolsInspection(),
-      JSUnusedGlobalSymbolsInspection()
+    checkHighlighting(
+      inspections = listOf(
+        JSUnusedLocalSymbolsInspection::class.java,
+        JSUnusedGlobalSymbolsInspection::class.java,
+      ),
     )
-    checkHighlighting()
   }
 
   @Test
   fun testScriptSetupImportedDirective() {
-    myFixture.enableInspections(
-      ES6UnusedImportsInspection(),
+    checkHighlighting(
+      inspections = listOf(ES6UnusedImportsInspection::class.java),
     )
-    checkHighlighting()
   }
 
   @Test
   fun testTypedComponentsScriptSetup() {
-    myFixture.enableInspections(ES6UnusedImportsInspection())
     checkHighlighting(
       VueTestModule.NAIVE_UI_2_19_11,
       VueTestModule.HEADLESS_UI_1_4_1,
       VueTestModule.VUE_3_5_0,
+      inspections = listOf(ES6UnusedImportsInspection::class.java),
     )
   }
 
   @Test
   fun testTypedComponentsScriptSetup2() {
-    myFixture.enableInspections(ES6UnusedImportsInspection())
     checkHighlighting(
       VueTestModule.NAIVE_UI_2_19_11,
       VueTestModule.HEADLESS_UI_1_4_1,
       VueTestModule.VUE_3_5_0,
+      inspections = listOf(ES6UnusedImportsInspection::class.java),
     )
   }
 
   @Test
   fun testCssVBind() {
-    myFixture.enableInspections(CssInvalidFunctionInspection::class.java)
-    checkHighlighting()
+    checkHighlighting(
+      inspections = listOf(CssInvalidFunctionInspection::class.java),
+    )
   }
 
   @Test
   fun testCssVBindVue31() {
-    myFixture.enableInspections(CssInvalidFunctionInspection::class.java)
-    checkHighlighting(VueTestModule.VUE_3_1_0)
+    checkHighlighting(
+      VueTestModule.VUE_3_1_0,
+      inspections = listOf(CssInvalidFunctionInspection::class.java),
+    )
   }
 
   @Test
@@ -906,47 +918,54 @@ const props = {seeMe: {}}
 
   @Test
   fun testLifecycleEventsVue2ClassComponent() {
-    myFixture.enableInspections(
-      JSUnusedLocalSymbolsInspection(),
-      JSUnusedGlobalSymbolsInspection()
+    checkHighlighting(
+      VueTestModule.VUE_2_6_10,
+      inspections = listOf(
+        JSUnusedLocalSymbolsInspection::class.java,
+        JSUnusedGlobalSymbolsInspection::class.java,
+      ),
     )
-    checkHighlighting(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testLifecycleEventsVue2VueExtend() {
-    myFixture.enableInspections(
-      JSUnusedLocalSymbolsInspection(),
-      JSUnusedGlobalSymbolsInspection()
+    checkHighlighting(
+      VueTestModule.VUE_2_6_10,
+      inspections = listOf(
+        JSUnusedLocalSymbolsInspection::class.java,
+        JSUnusedGlobalSymbolsInspection::class.java,
+      ),
     )
-    checkHighlighting(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testLifecycleEventsVue3Options() {
-    myFixture.enableInspections(
-      JSUnusedLocalSymbolsInspection(),
-      JSUnusedGlobalSymbolsInspection()
+    checkHighlighting(
+      inspections = listOf(
+        JSUnusedLocalSymbolsInspection::class.java,
+        JSUnusedGlobalSymbolsInspection::class.java,
+      ),
     )
-    checkHighlighting()
   }
 
   @Test
   fun testLifecycleEventsVue3DefineComponent() {
-    myFixture.enableInspections(
-      JSUnusedLocalSymbolsInspection(),
-      JSUnusedGlobalSymbolsInspection()
+    checkHighlighting(
+      inspections = listOf(
+        JSUnusedLocalSymbolsInspection::class.java,
+        JSUnusedGlobalSymbolsInspection::class.java,
+      ),
     )
-    checkHighlighting()
   }
 
   @Test
   fun testIdIndexer() {
-    myFixture.enableInspections(
-      JSUnusedLocalSymbolsInspection(),
-      JSUnusedGlobalSymbolsInspection()
+    checkHighlighting(
+      inspections = listOf(
+        JSUnusedLocalSymbolsInspection::class.java,
+        JSUnusedGlobalSymbolsInspection::class.java,
+      ),
     )
-    checkHighlighting()
   }
 
   @Test
@@ -1147,18 +1166,19 @@ const props = {seeMe: {}}
 
   @Test
   fun testStdTagsInspections() {
-    myFixture.enableInspections(
-      HtmlRequiredTitleElementInspection::class.java,
-      HtmlRequiredAltAttributeInspection::class.java,
+    checkHighlighting(
+      inspections = listOf(
+        HtmlRequiredTitleElementInspection::class.java,
+        HtmlRequiredAltAttributeInspection::class.java,
+      ),
     )
-
-    checkHighlighting()
   }
 
   @Test
   fun testPropTypeJsDoc() {
-    myFixture.enableInspections(JSValidateTypesInspection())
-    checkHighlighting()
+    checkHighlighting(
+      inspections = listOf(JSValidateTypesInspection::class.java),
+    )
   }
 
   @Test
