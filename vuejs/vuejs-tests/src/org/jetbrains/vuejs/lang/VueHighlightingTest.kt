@@ -650,9 +650,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testScssBuiltInModules() {
-    myFixture.enableInspections(CssInvalidFunctionInspection::class.java,
-                                SassScssResolvedByNameOnlyInspection::class.java,
-                                SassScssUnresolvedVariableInspection::class.java)
+    myFixture.enableInspections(
+      CssInvalidFunctionInspection::class.java,
+      SassScssResolvedByNameOnlyInspection::class.java,
+      SassScssUnresolvedVariableInspection::class.java,
+    )
+
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
       doTest()
     }
@@ -660,9 +663,12 @@ const props = {seeMe: {}}
 
   @Test
   fun testSassBuiltInModules() {
-    myFixture.enableInspections(CssInvalidFunctionInspection::class.java,
-                                SassScssResolvedByNameOnlyInspection::class.java,
-                                SassScssUnresolvedVariableInspection::class.java)
+    myFixture.enableInspections(
+      CssInvalidFunctionInspection::class.java,
+      SassScssResolvedByNameOnlyInspection::class.java,
+      SassScssUnresolvedVariableInspection::class.java,
+    )
+
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
       doTest()
     }
@@ -1133,7 +1139,11 @@ const props = {seeMe: {}}
 
   @Test
   fun testStdTagsInspections() {
-    myFixture.enableInspections(HtmlRequiredTitleElementInspection::class.java, HtmlRequiredAltAttributeInspection::class.java)
+    myFixture.enableInspections(
+      HtmlRequiredTitleElementInspection::class.java,
+      HtmlRequiredAltAttributeInspection::class.java,
+    )
+    
     doTest()
   }
 
