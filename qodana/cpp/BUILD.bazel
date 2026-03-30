@@ -34,3 +34,63 @@ jvm_library(
   ]
 )
 ### auto-generated section `build intellij.qodana.cpp` end
+
+### auto-generated section `build intellij.qodana.cpp.tests` start
+load("@community//build:compiler-options.bzl", "create_kotlinc_options")
+
+create_kotlinc_options(
+  name = "custom_cpp-tests",
+  opt_in = ["kotlin.io.path.ExperimentalPathApi"]
+)
+
+resourcegroup(
+  name = "cpp-tests_test_resources",
+  srcs = glob(["test-data/**/*"]),
+  strip_prefix = "test-data"
+)
+
+jvm_library(
+  name = "cpp-tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "cpp-tests_test_lib",
+  visibility = ["//visibility:public"],
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
+  resources = [":cpp-tests_test_resources"],
+  kotlinc_opts = ":custom_cpp-tests",
+  associates = ["//contrib/qodana/cpp"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/core-api:core",
+    "@community//platform/util",
+    "@lib//:kodein-di-jvm",
+    "@lib//:qodana-sarif",
+    "@community//platform/testFramework/junit5",
+    "@community//platform/testFramework/junit5:junit5_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//tools/intellij.tools.ide.starter:ide-starter",
+    "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure",
+    "//tests/intellij.qodana.testsFramework:qodana-testsFramework_test_lib",
+    "//tests/intellij.ide.starter.extended:ide-starter-extended",
+    "//tests/intellij.ide.starter.extended:ide-starter-extended_test_lib",
+    "@community//libraries/kotlin/test:libraries-kotlinTest",
+    "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm",
+    "@community//libraries/kotlinx/serialization/core",
+    "@community//libraries/kotlinx/serialization/json",
+  ],
+  runtime_deps = [":cpp-tests"]
+)
+### auto-generated section `build intellij.qodana.cpp.tests` end
+
+### auto-generated section `test intellij.qodana.cpp.tests` start
+load("@community//build:tests-options.bzl", "jps_test")
+
+jps_test(
+  name = "cpp-tests_test",
+  runtime_deps = [":cpp-tests_test_lib"]
+)
+### auto-generated section `test intellij.qodana.cpp.tests` end
