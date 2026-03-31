@@ -693,10 +693,9 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testMissingLabelSuppressed() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    myFixture.enableInspections(HtmlFormInputWithoutLabelInspection())
-    myFixture.configureByText("Foo.vue", """<input>""")
-    myFixture.checkHighlighting()
+    checkHighlighting(
+      inspections = listOf(HtmlFormInputWithoutLabelInspection::class.java),
+    )
   }
 
   @Test
