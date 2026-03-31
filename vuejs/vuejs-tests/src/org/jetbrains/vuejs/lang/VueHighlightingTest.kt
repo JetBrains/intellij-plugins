@@ -7,7 +7,7 @@ import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredAltAttr
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredTitleElementInspection
 import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
-import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.JSTestUtils.checkHighlightingWithSymbolNames
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
@@ -93,10 +93,6 @@ abstract class VueHighlightingTestBase(
 
       else -> super.adjustModules(modules)
     }
-
-  private fun configureTestProject() {
-    myFixture.configureByFile("$testName/$testName.vue")
-  }
 
   @Test
   fun testDirectivesWithoutParameters() {
@@ -518,8 +514,9 @@ const props = {seeMe: {}}
 
   @Test
   fun testSemanticHighlighting() {
-    configureTestProject()
-    JSTestUtils.checkHighlightingWithSymbolNames(myFixture, false, false, true)
+    doConfiguredTest {
+      checkHighlightingWithSymbolNames(this, false, false, true)
+    }
   }
 
   // TODO add special inspection for unused slot scope parameters - WEB-43893
@@ -864,8 +861,9 @@ const props = {seeMe: {}}
 
   @Test
   fun testScriptSetupSymbolsHighlighting() {
-    configureTestProject()
-    JSTestUtils.checkHighlightingWithSymbolNames(myFixture, true, true, true)
+    doConfiguredTest {
+      checkHighlightingWithSymbolNames(this, true, true, true)
+    }
   }
 
   @Test

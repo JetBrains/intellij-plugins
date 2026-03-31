@@ -7,11 +7,11 @@
 
 <<symbolName descr="Custom tag name">script</symbolName> setup>
 
-import {ref} <info descr="null">from</info> "vue";
+import {<symbolName descr="identifiers//exported function">ref</symbolName>} <info descr="null">from</info> "vue";
 
 export const <symbolName descr="identifiers//exported variable">foo</symbolName> = 12
 
-let <symbolName descr="identifiers//local variable">newName</symbolName> = ref(12)
+let <symbolName descr="identifiers//local variable">newName</symbolName> = <symbolName descr="identifiers//exported function">ref</symbolName>(12)
 
 function <symbolName descr="identifiers//local function">foo12</symbolName>() {
   let <symbolName descr="identifiers//local variable">bar</symbolName> = {<symbolName descr="instance field">a</symbolName>: 12}
