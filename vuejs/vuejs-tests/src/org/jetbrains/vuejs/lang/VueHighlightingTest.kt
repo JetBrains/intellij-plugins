@@ -126,43 +126,16 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testImportedComponentPropsInCompAttrsAsArray() {
-    myFixture.configureByText("compUI.vue", """
-<script>
-    export default {
-        name: 'compUI',
-        props: ['seeMe']
-    }
-</script>
-""")
     checkHighlighting()
   }
 
   @Test
   fun testImportedComponentPropsInCompAttrsAsObject() {
-    myFixture.configureByText("compUI.vue", """
-<script>
-    export default {
-        name: 'compUI',
-        props: {
-          seeMe: {}
-        }
-    }
-</script>
-""")
     checkHighlighting()
   }
 
   @Test
   fun testImportedComponentPropsInCompAttrsObjectRef() {
-    myFixture.configureByText("compUI.vue", """
-<script>
-const props = {seeMe: {}}
-    export default {
-        name: 'compUI',
-        props: props
-    }
-</script>
-""")
     checkHighlighting()
   }
 
@@ -324,38 +297,35 @@ const props = {seeMe: {}}
 
   @Test
   fun testNoCreateVarQuickFix() {
-    myFixture.configureByText("NoCreateVarQuickFix.vue", """
-<template>
-{{ <caret>someNonExistingReference2389 }}
-</template>
-""")
-    val intentions = myFixture.filterAvailableIntentions(
-      JavaScriptBundle.message("javascript.create.variable.intention.name", "someNonExistingReference2389"))
-    TestCase.assertTrue(intentions.isEmpty())
+    doConfiguredTest {
+      val intentions = filterAvailableIntentions(
+        JavaScriptBundle.message("javascript.create.variable.intention.name", "someNonExistingReference2389"),
+      )
+
+      assertEmpty(intentions)
+    }
   }
 
   @Test
   fun testNoCreateFunctionQuickFix() {
-    myFixture.configureByText("NoCreateFunctionQuickFix.vue", """
-<template>
-<div @click="<caret>notExistingF()"></div>
-</template>
-""")
-    val intentions = myFixture.filterAvailableIntentions(
-      JavaScriptBundle.message("javascript.create.function.intention.name", "notExistingF"))
-    TestCase.assertTrue(intentions.isEmpty())
+    doConfiguredTest {
+      val intentions = filterAvailableIntentions(
+        JavaScriptBundle.message("javascript.create.function.intention.name", "notExistingF"),
+      )
+
+      assertEmpty(intentions)
+    }
   }
 
   @Test
   fun testNoCreateClassQuickFix() {
-    myFixture.configureByText("NoCreateClassQuickFix.vue", """
-<template>
-<div @click="new <caret>NotExistingClass().a()"></div>
-</template>
-""")
-    val intentions = myFixture.filterAvailableIntentions(
-      JavaScriptBundle.message("javascript.create.class.intention.name", "NotExistingClass"))
-    TestCase.assertTrue(intentions.isEmpty())
+    doConfiguredTest {
+      val intentions = filterAvailableIntentions(
+        JavaScriptBundle.message("javascript.create.class.intention.name", "NotExistingClass"),
+      )
+
+      assertEmpty(intentions)
+    }
   }
 
   @Test
