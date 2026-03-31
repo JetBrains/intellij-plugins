@@ -22,7 +22,6 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.runInInitMode
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import com.intellij.xml.util.CheckTagEmptyBodyInspection
-import junit.framework.TestCase
 import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspection
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
 import org.jetbrains.vuejs.VueTestCase
@@ -336,7 +335,7 @@ abstract class VueHighlightingTestBase(
 </template>
 """)
     var intentions = myFixture.filterAvailableIntentions("Split current tag")
-    TestCase.assertTrue(intentions.isEmpty())
+    assertEmpty(intentions)
 
     //but near
     myFixture.configureByText("NoSplitTagInsideInjection2.vue", """
@@ -345,7 +344,7 @@ abstract class VueHighlightingTestBase(
 </template>
 """)
     intentions = myFixture.filterAvailableIntentions("Split current tag")
-    TestCase.assertFalse(intentions.isEmpty())
+    assertNotEmpty(intentions)
   }
 
   @Test
