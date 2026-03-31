@@ -1,5 +1,16 @@
 ### auto-generated section `build intellij.qodana.cpp` start
+load("@community//build:compiler-options.bzl", "create_kotlinc_options")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+create_kotlinc_options(
+  name = "custom_cpp",
+  opt_in = [
+    "com.intellij.openapi.util.IntellijInternalApi",
+    "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+    "kotlin.io.path.ExperimentalPathApi",
+  ],
+  x_context_parameters = True
+)
 
 resourcegroup(
   name = "cpp_resources",
@@ -13,15 +24,18 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   resources = [":cpp_resources"],
+  kotlinc_opts = ":custom_cpp",
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-impl",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/util",
+    "@community//platform/util/jdom",
     "//CIDR/clion-cmake/core",
     "//contrib/qodana",
     "@community//platform/platform-api:ide",
+    "@community//platform/ide-core",
     "//CIDR/cidr-projectModel",
     "//CIDR/cidr-workspaceModel",
     "//CIDR/clion-radler/core",
@@ -31,13 +45,20 @@ jvm_library(
     "//CIDR/cidr-execution",
     "//CIDR/clion-compdb",
     "//CIDR/clion-meson/core",
+    "//CIDR/cidr-util",
+    "@community//platform/backend/observation",
+    "@community//platform/external-system-api:externalSystem",
+    "//remote-dev/rd-platform",
+    "@community//libraries/rd/core",
+    "@community//libraries/rd/framework",
+    "//rider/rdclient-dotnet",
+    "//rider/model/generated",
+    "//remote-dev/rd-ide-model-generated",
   ]
 )
 ### auto-generated section `build intellij.qodana.cpp` end
 
 ### auto-generated section `build intellij.qodana.cpp.tests` start
-load("@community//build:compiler-options.bzl", "create_kotlinc_options")
-
 create_kotlinc_options(
   name = "custom_cpp-tests",
   opt_in = ["kotlin.io.path.ExperimentalPathApi"]
@@ -81,6 +102,8 @@ jvm_library(
     "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm",
     "@community//libraries/kotlinx/serialization/core",
     "@community//libraries/kotlinx/serialization/json",
+    "@community//platform/util/jdom",
+    "@lib//:assert_j",
   ],
   runtime_deps = [":cpp-tests"]
 )

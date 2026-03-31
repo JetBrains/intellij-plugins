@@ -29,6 +29,7 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//platform/util",
     "@community//platform/backend/observation",
+    "//contrib/qodana",
     "@lib//:qodana-sarif",
     "@community//platform/rd-platform-community:rd-community",
     "@community//platform/projectModel-api:projectModel",

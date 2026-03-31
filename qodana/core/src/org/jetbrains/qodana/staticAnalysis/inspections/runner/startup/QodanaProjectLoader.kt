@@ -65,12 +65,19 @@ private val LOG = logger<QodanaProjectLoader>()
  */
 interface QodanaProjectLoaderExtension {
   companion object {
-    val EP_NAME: ExtensionPointName<QodanaProjectLoaderExtension> = ExtensionPointName<QodanaProjectLoaderExtension>("org.intellij.qodana.projectLoaderExtension")
+    val EP_NAME: ExtensionPointName<QodanaProjectLoaderExtension> =
+      ExtensionPointName<QodanaProjectLoaderExtension>("org.intellij.qodana.projectLoaderExtension")
 
     val buildProjectOpenTask: OpenProjectTaskBuilder.() -> Unit = {
       EP_NAME.extensionList.forEach { it.buildProjectOpenTask.invoke(this) }
     }
   }
+
+  /**
+   * Called before the project is opened. Extensions can clean up stale IDE configuration (e.g., `.idea` state)
+   * that would interfere with Qodana settings from `qodana.yaml`.
+   */
+  fun prepareProjectDirectory(projectPath: Path) {}
 
   /**
    * Modify a [OpenProjectTask] used to open a project during [QodanaProjectLoader.openProjectManually] or
@@ -97,8 +104,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
       tryConvertProject(config.projectPath)
       if (config.rootJavaProjects.isEmpty()) {
         openProjectAutomatically(config)
-      }
-      else {
+      } else {
         openProjectManually(config)
       }
     }
@@ -116,6 +122,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   }
 
   private suspend fun openProjectManually(config: QodanaConfig): Project {
+    QodanaProjectLoaderExtension.EP_NAME.extensionList.forEach { it.prepareProjectDirectory(config.projectPath) }
     val options = OpenProjectTask {
       beforeOpen = { project ->
         project.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, true)
@@ -133,6 +140,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   }
 
   private suspend fun openProjectAutomatically(config: QodanaConfig): Project {
+    QodanaProjectLoaderExtension.EP_NAME.extensionList.forEach { it.prepareProjectDirectory(config.projectPath) }
     val openedProject = ProjectUtil.openOrImportAsync(
       file = config.projectPath,
       options = OpenProjectTask {
@@ -168,13 +176,13 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
     runApplicableConfigurators(config.projectPath) { ctx ->
       if (this is CommandLineInspectionProjectAsyncConfigurator) {
         configureProjectAsync(project, ctx)
-      }
-      else {
+      } else {
         // In tests, we're on EDT with write-intent, in prod we're on Dispatchers.Default without any lock
         // The go configurator wants to run blocking code via invokeAndWait.
         // In tests, we have to call blockingContext in the current (=EDT) thread else we deadlock,
         // but in prod we must not block the current thread
-        val dispatcher = if (ApplicationManager.getApplication().isUnitTestMode) EmptyCoroutineContext else StaticAnalysisDispatchers.IO
+        val dispatcher =
+          if (ApplicationManager.getApplication().isUnitTestMode) EmptyCoroutineContext else StaticAnalysisDispatchers.IO
         blockOn(dispatcher) { configureProject(project, ctx) }
       }
     }
@@ -196,8 +204,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
 
     if (ApplicationManager.getApplication().isUnitTestMode) { // should throw away
       blockOn(EmptyCoroutineContext) { PatchProjectUtil.patchProject(project) }
-    }
-    else {
+    } else {
       blockOn(StaticAnalysisDispatchers.UI) { PatchProjectUtil.patchProject(project) }
     }
   }
@@ -252,17 +259,25 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   private suspend fun tryConvertProject(projectPath: Path) {
     val listener = object : ConversionListener {
       override fun successfullyConverted(backupDir: Path) =
-        reporter.reportMessage(1, InspectionsBundle.message(
-          "inspection.application.project.was.successfully.converted.old.project.files.were.saved.to.0",
-          backupDir.toString()))
+        reporter.reportMessage(
+          1, InspectionsBundle.message(
+            "inspection.application.project.was.successfully.converted.old.project.files.were.saved.to.0",
+            backupDir.toString()
+          )
+        )
 
       override fun cannotWriteToFiles(readonlyFiles: List<Path>) = throw QodanaException(
-        InspectionsBundle.message("inspection.application.cannot.convert.the.project.the.following.files.are.read.only.0",
-                                  readonlyFiles.joinToString(separator = ";"))
+        InspectionsBundle.message(
+          "inspection.application.cannot.convert.the.project.the.following.files.are.read.only.0",
+          readonlyFiles.joinToString(separator = ";")
+        )
       )
 
       override fun conversionNeeded() =
-        reporter.reportMessage(1, InspectionsBundle.message("inspection.application.project.has.older.format.and.will.be.converted"))
+        reporter.reportMessage(
+          1,
+          InspectionsBundle.message("inspection.application.project.has.older.format.and.will.be.converted")
+        )
 
       override fun error(message: String) = throw QodanaException(
         InspectionsBundle.message("inspection.application.cannot.convert.project.0", message)

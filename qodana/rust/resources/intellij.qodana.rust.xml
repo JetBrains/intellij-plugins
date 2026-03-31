@@ -1,14 +1,17 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="com.intellij.modules.rustrover"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="com.jetbrains.rust"/>
-    <!-- endregion -->
+    <plugin id="org.intellij.qodana"/>
   </dependencies>
+  <!-- endregion -->
 
   <extensions defaultExtensionNs="com.intellij">
-    <postStartupActivity implementation="org.intellij.qodana.rust.QodanaRustLoaderProjectActivity"/>
     <activityTracker implementation="org.intellij.qodana.rust.QodanaRustLoaderActivityTracker"/>
     <registryKey defaultValue="10" description="Timeout in minutes for Qodana Rust project configuration" key="qd.rust.configuration.timeout.minutes"/>
+  </extensions>
+  <extensions defaultExtensionNs="org.intellij">
+    <qodana.workflowExtension implementation="org.intellij.qodana.rust.QodanaRustWorkflow"/>
   </extensions>
 </idea-plugin>

@@ -4,10 +4,13 @@
     <plugin id="org.jetbrains.plugins.clion.radler"/>
     <plugin id="com.intellij.clion-compdb"/>
     <module name="intellij.cidr.projectModel"/>
+    <module name="intellij.cidr.util"/>
     <module name="intellij.clion.makefile.core"/>
     <module name="intellij.clion.meson.core"/>
     <module name="intellij.clion.radler.core"/>
     <module name="intellij.cmake.core"/>
+    <module name="intellij.rd.ide.model.generated"/>
+    <module name="intellij.rd.platform"/>
   </dependencies>
   <!-- endregion -->
 
@@ -23,7 +26,7 @@
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <cmake.workspace.enabledProfileInitializer implementation="org.jetbrains.qodana.cpp.QodanaCppCMakeEnabledProfileInitializer" order="first"/>
-    <registryKey defaultValue="false" description="Force printing of CMake configuration output" key="qd.force.cmake.output.enabled"/>
+    <externalSystemTaskNotificationListener implementation="org.jetbrains.qodana.cpp.QodanaCppImportFailureListener"/>
   </extensions>
   <extensions defaultExtensionNs="org.intellij">
     <qodana.externalToolsConfigurationProvider implementation="org.jetbrains.qodana.cpp.QodanaRadlerScopeLimitator"/>
@@ -31,6 +34,11 @@
     <qodana.projectLoaderExtension implementation="org.jetbrains.qodana.cpp.QodanaCppProjectLoaderExtension" />
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
-    <clion.radler.core.inspections.headlessStartupExtension implementation="org.jetbrains.qodana.cpp.QodanaCppHeadlessStartupExtension"/>
+    <activityTracker implementation="org.jetbrains.qodana.cpp.QodanaCppProjectAwaiter"/>
+    <registryKey defaultValue="5" description="Timeout in minutes for Qodana C++ startup sequence" key="qd.cpp.startup.timeout.minutes" restartRequired="false"/>
+    <registryKey defaultValue="60" description="Timeout in seconds for waiting for CIDR workspaces to become ready" key="qd.cpp.workspace.ready.timeout.seconds" restartRequired="false"/>
+    <registryKey defaultValue="60" description="Timeout in seconds for waiting for ProgressManager tasks to complete" key="qd.cpp.progress.manager.timeout.seconds" restartRequired="false"/>
+    <registryKey defaultValue="60000" description="Timeout in milliseconds for waiting for OC resolve configurations during Qodana C++ startup" key="qd.cpp.oc.resolve.timeout.ms" restartRequired="false"/>
+    <registryKey defaultValue="120" description="Timeout in seconds for waiting for backend project model" key="qd.cpp.project.model.timeout.seconds" restartRequired="false"/>
   </extensions>
 </idea-plugin>

@@ -16,9 +16,6 @@ object QodanaRegistry {
   val isForceLocalRunEnabled: Boolean
     get() = Registry.`is`("qd.force.local.run.enabled", false)
 
-  val isForceSetupCIEnabled: Boolean
-    get() = Registry.`is`("qd.force.setup.ci.enabled", false)
-
   val isQodanaCloudIntegrationEnabled: Boolean
     get() = Registry.`is`(CLOUD_INTEGRATION_ENABLE_KEY, true)
 
@@ -64,8 +61,7 @@ object QodanaRegistry {
 private fun fromRegistryOrDefaultIfEmpty(key: String, default: String): String {
   try {
     return Registry.stringValue(key).ifEmpty { default }
-  }
-  catch(_ : MissingResourceException) {
+  } catch (_: MissingResourceException) {
     return default
   }
 }
