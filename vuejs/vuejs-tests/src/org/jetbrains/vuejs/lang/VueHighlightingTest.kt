@@ -222,11 +222,11 @@ const props = {seeMe: {}}
 
   @Test
   fun testGlobalComponentLiteral() {
-    // Tree access disabled
-    //  /index.js
-    disableAstLoadingFilter()
-
-    checkHighlighting()
+    checkHighlighting {
+      // Tree access disabled
+      //  /index.js
+      disableAstLoadingFilter()
+    }
   }
 
   @Test
@@ -543,11 +543,13 @@ const props = {seeMe: {}}
 
   @Test
   fun testVueExtendSyntax() {
-    // Tree access disabled
-    //  /a-component.vue
-    disableAstLoadingFilter()
-
-    checkHighlighting(VueTestModule.VUE_2_5_3)
+    checkHighlighting(
+      VueTestModule.VUE_2_5_3,
+    ) {
+      // Tree access disabled
+      //  /a-component.vue
+      disableAstLoadingFilter()
+    }
   }
 
   @Test
@@ -699,10 +701,6 @@ const props = {seeMe: {}}
 
   @Test
   fun testSassBuiltInModules() {
-    // Tree access disabled
-    //  /plugins/sass/sass.jar!/org/jetbrains/plugins/sass/stdlib/sass_math.scss
-    disableAstLoadingFilter()
-
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
       checkHighlighting(
         inspections = listOf(
@@ -710,7 +708,11 @@ const props = {seeMe: {}}
           SassScssResolvedByNameOnlyInspection::class.java,
           SassScssUnresolvedVariableInspection::class.java,
         ),
-      )
+      ) {
+        // Tree access disabled
+        //  /plugins/sass/sass.jar!/org/jetbrains/plugins/sass/stdlib/sass_math.scss
+        disableAstLoadingFilter()
+      }
     }
   }
 
