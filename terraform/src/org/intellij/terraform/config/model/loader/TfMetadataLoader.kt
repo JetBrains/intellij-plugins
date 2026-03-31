@@ -30,7 +30,7 @@ class TfMetadataLoader {
   private val context: LoadContext = LoadContext(pool, model)
 
   private val loaders: List<VersionedMetadataLoader> = listOf(
-    TfProvidersSchema(),
+    TfProvidersSchemaLoader(),
 
     ProviderLoaderV2(),
     ProvisionerLoaderV2(),

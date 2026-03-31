@@ -6,14 +6,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.util.asSafely
 import org.intellij.terraform.config.Constants
-import org.intellij.terraform.config.model.ActionType
-import org.intellij.terraform.config.model.Argument
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.ContainerType
-import org.intellij.terraform.config.model.DataSourceType
-import org.intellij.terraform.config.model.EphemeralType
 import org.intellij.terraform.config.model.HclType
-import org.intellij.terraform.config.model.HclTypeImpl
 import org.intellij.terraform.config.model.ListType
 import org.intellij.terraform.config.model.MapType
 import org.intellij.terraform.config.model.NestingInfo
@@ -22,20 +17,16 @@ import org.intellij.terraform.config.model.ObjectType
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.config.model.ProviderTier
-import org.intellij.terraform.config.model.ProviderType
-import org.intellij.terraform.config.model.ResourceType
 import org.intellij.terraform.config.model.SetType
-import org.intellij.terraform.config.model.TfFunction
 import org.intellij.terraform.config.model.TupleType
 import org.intellij.terraform.config.model.Types
-import org.intellij.terraform.config.model.array
 import org.intellij.terraform.config.model.boolean
 import org.intellij.terraform.config.model.number
 import org.intellij.terraform.config.model.obj
 import org.intellij.terraform.config.model.string
 import java.util.Locale
 
-object TfBaseLoader {
+internal object TfProvidersSchemaParser {
   /*
     type schema struct {
       Version uint64 `json:"version"`
@@ -155,14 +146,16 @@ Sensitive           bool            `json:"sensitive,omitempty"`
     }
 
     val block = value.obj("block")!!
-    val nesting_mode = value.string("nesting_mode")
-    val min_items = value.number("min_items")
-    val max_items = value.number("max_items")
+    val nestingMode = value.string("nesting_mode")
+    val minItems = value.number("min_items")
+    val maxItems = value.number("max_items")
 
-    val parsed = parseBlock(context, block, name,
-                            NestingInfo(NestingType.fromString(nesting_mode!!)!!, min_items?.toInt(), max_items?.toInt()))
-
-    return parsed
+    return parseBlock(
+      context,
+      block,
+      name,
+      NestingInfo(NestingType.fromString(nestingMode!!)!!, minItems?.toInt(), maxItems?.toInt())
+    )
   }
 
   /*
@@ -191,12 +184,14 @@ Sensitive           bool            `json:"sensitive,omitempty"`
       parseBlockType(context, it.key, it.value)
     } ?: emptySequence()
 
-    return BlockType(name.pool(context),
-                     description = description?.pool(context),
-                     descriptionKind = descriptionKind.pool(context),
-                     deprecated = if (deprecated) "DEPRECATED" else null,
-                     nesting = nesting,
-                     properties = (attrs + blocks).associateBy { it.name }).pool(context)
+    return BlockType(
+      name.pool(context),
+      description = description?.pool(context),
+      descriptionKind = descriptionKind.pool(context),
+      deprecated = if (deprecated) "DEPRECATED" else null,
+      nesting = nesting,
+      properties = (attrs + blocks).associateBy { it.name }
+    ).pool(context)
   }
 
   private fun parseType(context: LoadContext, node: JsonNode): HclType {
@@ -261,7 +256,6 @@ Sensitive           bool            `json:"sensitive,omitempty"`
     return Types.Invalid
   }
 
-
   /*
 type nestedType struct {
 Attributes  map[string]*attribute `json:"attributes,omitempty"`
@@ -273,18 +267,18 @@ MaxItems    uint64                `json:"max_items,omitempty"`
   private fun parseAttrNestedType(context: LoadContext, node: ObjectNode, fqnPrefix: String): HclType {
     val attributes = node.obj("attributes")
 
-    val nesting_mode = node.string("nesting_mode")
-    val min_items = node.number("min_items")
-    val max_items = node.number("max_items")
+    val nestingMode = node.string("nesting_mode")
+    val minItems = node.number("min_items")
+    val maxItems = node.number("max_items")
 
-    NestingInfo(NestingType.fromString(nesting_mode!!)!!, min_items?.toInt(), max_items?.toInt())
+    NestingInfo(NestingType.fromString(nestingMode!!)!!, minItems?.toInt(), maxItems?.toInt())
 
     val attrs = attributes?.properties()?.asSequence()?.map { parseAttribute(context, it.key, it.value, fqnPrefix) }?.toList()
                 ?: emptyList()
 
     val nested = ObjectType(attrs.associate { it.name to it.asType() }).pool(context)
 
-    when (nesting_mode) {
+    when (nestingMode) {
       "single" -> return Types.Any // TODO: check
       //"group" -> return Types.Any // TODO: check
       "list" -> return ListType(nested).pool(context)
@@ -295,7 +289,6 @@ MaxItems    uint64                `json:"max_items,omitempty"`
     warnOrFailInInternalMode("Unsupported nested type: $node")
     return Types.Invalid
   }
-
 }
 
 private fun PropertyOrBlockType.asType(): HclType? {
@@ -314,112 +307,3 @@ internal data class ProviderMetadata(
   val version: String = "",
   val tier: ProviderTier = ProviderTier.TIER_NONE,
 )
-
-internal class TfProvidersSchema : VersionedMetadataLoader {
-  override fun isSupportedVersion(version: String): Boolean = version in listOf("0.1", "0.2", "1.0")
-  override fun isSupportedType(type: String): Boolean = type == "terraform-providers-schema-json"
-
-  override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
-    val model = context.model
-    val providerSchemas = (json.obj("schemas") ?: json).obj("provider_schemas") ?: return
-    for ((n, provider) in providerSchemas.properties().asSequence()) {
-      val coordinates = ProviderType.parseCoordinates(n)
-      val providerFullName = "${coordinates.namespace}/${coordinates.name}"
-      val providerKey = "provider.$providerFullName"
-      if (model.loaded.containsKey(providerKey)) {
-        TfMetadataLoader.LOG.warn("Provider '$providerFullName' is already loaded from '${model.loaded[providerKey]}'")
-        continue
-      }
-      provider as ObjectNode
-      model.loaded[providerKey] = fileName
-      val providerInfo = provider.obj("provider")?.let { parseProviderInfo(context, coordinates.name, coordinates.namespace, it, json) }
-                         ?: ProviderType(coordinates.name, emptyList(), coordinates.namespace)
-      model.providers.add(providerInfo)
-
-      val resources = provider.obj("resource_schemas")
-      val dataSources = provider.obj("data_source_schemas")
-      if (resources == null && dataSources == null) {
-        TfMetadataLoader.LOG.warn("No resources nor data-sources defined for provider '$providerFullName' in file '$fileName'")
-      }
-      resources?.let { resource -> resource.properties().mapTo(model.resources) { parseResourceInfo(context, it, providerInfo) } }
-      dataSources?.let { dataSource -> dataSource.properties().mapTo(model.dataSources) { parseDataSourceInfo(context, it, providerInfo) } }
-
-      val providerDefinedFunctions = provider.obj("functions")
-      providerDefinedFunctions?.let { function ->
-        function.properties()?.mapNotNullTo(model.providerDefinedFunctions) { parseProviderFunctionInfo(context, it, providerInfo) }
-      }
-
-      val ephemeralResources = provider.obj("ephemeral_resource_schemas")
-      ephemeralResources?.let { ephemeralResource ->
-        ephemeralResource.properties().mapNotNullTo(model.ephemeralResources) {
-          parseEphemeralResourceInfo(context, it, providerInfo)
-        }
-      }
-
-      val actions = provider.obj("action_schemas")
-      actions?.let { action ->
-        action.properties().mapNotNullTo(model.actions) {
-          parseActionInfo(context, it, providerInfo)
-        }
-      }
-    }
-  }
-
-  private fun parseProviderInfo(context: LoadContext, name: String, namespace: String, obj: ObjectNode, file: ObjectNode): ProviderType? {
-    val parsed = TfBaseLoader.parseSchema(context, obj, name) ?: return null
-    val providerMetadata = TfBaseLoader.parseMetadata(file.obj("metadata"), name, namespace)
-    return ProviderType(providerMetadata.name, parsed.properties.values.toList(), providerMetadata.namespace, providerMetadata.tier, providerMetadata.version, parsed)
-  }
-
-  private fun parseResourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): ResourceType {
-    val name = entry.key.pool(context)
-    assert(entry.value is ObjectNode) { "Right part of resource should be object" }
-    val obj = entry.value as ObjectNode
-    val parsed = TfBaseLoader.parseSchema(context, obj, name)
-                 ?: throw IllegalArgumentException("can't parse schema parseResourceInfo $name, entry = $entry")
-    return ResourceType(name, info, parsed.properties.values.toList(), parsed)
-  }
-
-  private fun parseDataSourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): DataSourceType {
-    val name = entry.key.pool(context)
-    assert(entry.value is ObjectNode) { "Right part of data-source should be object" }
-    val obj = entry.value as ObjectNode
-    val parsed = TfBaseLoader.parseSchema(context, obj, name)
-                 ?: throw IllegalArgumentException("can't parse schema parseDataSourceInfo $name, entry = $entry")
-    return DataSourceType(name, info, parsed.properties.values.toList(), parsed)
-  }
-
-  private fun parseProviderFunctionInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): TfFunction? {
-    val name = entry.key.pool(context)
-    val objectNode = entry.value as? ObjectNode ?: return null
-
-    val description = objectNode.string("description")
-    val returnType = objectNode.string("return_type").orEmpty()
-    val parameters = objectNode.array("parameters")
-      ?.filterIsInstance<ObjectNode>()
-      ?.map { Argument(HclTypeImpl(it.string("type").orEmpty()), it.string("name")) }
-      ?.toTypedArray().orEmpty()
-
-    return TfFunction(
-      name,
-      HclTypeImpl(returnType),
-      arguments = parameters,
-      description = description,
-      providerType = info.type
-    )
-  }
-
-  private fun parseEphemeralResourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): EphemeralType? {
-    val name = entry.key.pool(context)
-    val objectNode = entry.value as? ObjectNode ?: return null
-    val block = TfBaseLoader.parseSchema(context, objectNode, name) ?: return null
-    return EphemeralType(name, info, block)
-  }
-
-  private fun parseActionInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): ActionType? {
-    val name = entry.key.pool(context)
-    val objectNode = entry.value as? ObjectNode ?: return null
-    val block = TfBaseLoader.parseSchema(context, objectNode, name) ?: return null
-    return ActionType(name, info, block)
-  }
-}
