@@ -5,6 +5,7 @@ import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredAltAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredTitleElementInspection
+import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptBundle
@@ -26,6 +27,7 @@ import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspecti
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
+import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.libraries.nuxt.NuxtHighlightingTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -42,6 +44,21 @@ class VueHighlightingTest :
   VueTestCase("highlighting", testMode = VueTestMode.NO_PLUGIN) {
 
   override val dirModeByDefault: Boolean = true
+
+  override val defaultConfigurators: List<WebFrameworkTestConfigurator>
+    get() = when (name) {
+      // TODO: use base config instead 
+      "testGlobalItemsAugmentedFromCompilerOptionsTypes",
+
+      // TEMP
+      "testDataTypeTS",
+      "testScriptSetupScopePriority",
+        -> emptyList()
+
+      else -> listOf(
+        VueTsConfigFile(),
+      )
+    }
 
   override fun setUp() {
     super.setUp()
@@ -879,7 +896,7 @@ const props = {seeMe: {}}
     // Tree access disabled
     //  /Test2.vue
     disableAstLoadingFilter()
-    
+
     checkHighlighting(
       configureFileName = "main.vue",
     )
