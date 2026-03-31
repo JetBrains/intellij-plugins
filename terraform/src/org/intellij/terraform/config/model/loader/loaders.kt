@@ -3,6 +3,7 @@ package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.application.ApplicationManager
+import org.intellij.terraform.config.model.ActionType
 import org.intellij.terraform.config.model.BackendType
 import org.intellij.terraform.config.model.DataSourceType
 import org.intellij.terraform.config.model.EphemeralType
@@ -23,6 +24,7 @@ class LoadingModel {
   val functions: MutableList<TfFunction> = arrayListOf()
   val providerDefinedFunctions: MutableList<TfFunction> = arrayListOf()
   val ephemeralResources: MutableList<EphemeralType> = arrayListOf()
+  val actions: MutableList<ActionType> = arrayListOf()
   val external: MutableMap<String, Additional> = linkedMapOf()
   val loaded: MutableMap<String, String> = linkedMapOf()
   data class Additional(val name: String, val description: String? = null, val hint: Hint? = null, val optional: Boolean? = null, val required: Boolean? = null)

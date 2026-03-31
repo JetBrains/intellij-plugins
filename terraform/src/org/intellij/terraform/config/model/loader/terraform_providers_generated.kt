@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.util.asSafely
 import org.intellij.terraform.config.Constants
+import org.intellij.terraform.config.model.ActionType
 import org.intellij.terraform.config.model.Argument
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.ContainerType
@@ -41,10 +42,9 @@ object TfBaseLoader {
       Block   *block `json:"block,omitempty"`
     }
    */
-  fun parseSchema(context: LoadContext, obj: ObjectNode, name: String): Pair<BlockType, Int>? {
-    val version = obj.number("version")!!.toInt()
+  fun parseSchema(context: LoadContext, obj: ObjectNode, name: String): BlockType? {
     val block = obj.obj("block") ?: return null
-    return parseBlock(context, block, name, null) to version
+    return parseBlock(context, block, name, null)
   }
 
   internal fun parseMetadata(obj: ObjectNode?, name: String, namespace: String): ProviderMetadata {
@@ -355,11 +355,18 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
           parseEphemeralResourceInfo(context, it, providerInfo)
         }
       }
+
+      val actions = provider.obj("action_schemas")
+      actions?.let { action ->
+        action.properties().mapNotNullTo(model.actions) {
+          parseActionInfo(context, it, providerInfo)
+        }
+      }
     }
   }
 
   private fun parseProviderInfo(context: LoadContext, name: String, namespace: String, obj: ObjectNode, file: ObjectNode): ProviderType? {
-    val (parsed, version) = TfBaseLoader.parseSchema(context, obj, name) ?: return null
+    val parsed = TfBaseLoader.parseSchema(context, obj, name) ?: return null
     val providerMetadata = TfBaseLoader.parseMetadata(file.obj("metadata"), name, namespace)
     return ProviderType(providerMetadata.name, parsed.properties.values.toList(), providerMetadata.namespace, providerMetadata.tier, providerMetadata.version, parsed)
   }
@@ -368,8 +375,8 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
     val name = entry.key.pool(context)
     assert(entry.value is ObjectNode) { "Right part of resource should be object" }
     val obj = entry.value as ObjectNode
-    val (parsed, version) = TfBaseLoader.parseSchema(context, obj, name)
-                            ?: throw IllegalArgumentException("can't parse schema parseResourceInfo $name, entry = $entry")
+    val parsed = TfBaseLoader.parseSchema(context, obj, name)
+                 ?: throw IllegalArgumentException("can't parse schema parseResourceInfo $name, entry = $entry")
     return ResourceType(name, info, parsed.properties.values.toList(), parsed)
   }
 
@@ -377,8 +384,8 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
     val name = entry.key.pool(context)
     assert(entry.value is ObjectNode) { "Right part of data-source should be object" }
     val obj = entry.value as ObjectNode
-    val (parsed, version) = TfBaseLoader.parseSchema(context, obj, name)
-                            ?: throw IllegalArgumentException("can't parse schema parseDataSourceInfo $name, entry = $entry")
+    val parsed = TfBaseLoader.parseSchema(context, obj, name)
+                 ?: throw IllegalArgumentException("can't parse schema parseDataSourceInfo $name, entry = $entry")
     return DataSourceType(name, info, parsed.properties.values.toList(), parsed)
   }
 
@@ -389,7 +396,7 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
     val description = objectNode.string("description")
     val returnType = objectNode.string("return_type").orEmpty()
     val parameters = objectNode.array("parameters")
-      ?.mapNotNull { it as? ObjectNode }
+      ?.filterIsInstance<ObjectNode>()
       ?.map { Argument(HclTypeImpl(it.string("type").orEmpty()), it.string("name")) }
       ?.toTypedArray().orEmpty()
 
@@ -405,7 +412,14 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
   private fun parseEphemeralResourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): EphemeralType? {
     val name = entry.key.pool(context)
     val objectNode = entry.value as? ObjectNode ?: return null
-    val (block, _) = TfBaseLoader.parseSchema(context, objectNode, name) ?: return null
+    val block = TfBaseLoader.parseSchema(context, objectNode, name) ?: return null
     return EphemeralType(name, info, block)
+  }
+
+  private fun parseActionInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): ActionType? {
+    val name = entry.key.pool(context)
+    val objectNode = entry.value as? ObjectNode ?: return null
+    val block = TfBaseLoader.parseSchema(context, objectNode, name) ?: return null
+    return ActionType(name, info, block)
   }
 }

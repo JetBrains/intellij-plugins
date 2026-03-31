@@ -5,6 +5,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
+import org.intellij.terraform.config.Constants.HCL_ACTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
@@ -567,6 +568,19 @@ class EphemeralType(
               args = 2,
               inherited = blockType,
               properties = withDefaults(blockType?.properties, TfTypeModel.AbstractEphemeralResource.properties)), ProviderDefinedType
+
+class ActionType(
+  override val type: String,
+  override val provider: ProviderType,
+  blockType: BlockType? = null,
+) : BlockType(
+  literal = HCL_ACTION_IDENTIFIER,
+  args = 2,
+  inherited = blockType,
+  properties = TfTypeModel.Action.properties,
+), ProviderDefinedType {
+  val configs: Map<String, PropertyOrBlockType> = blockType?.properties ?: emptyMap()
+}
 
 class DataSourceType(
   override val type: String,

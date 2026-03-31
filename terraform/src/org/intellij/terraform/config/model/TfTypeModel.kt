@@ -80,6 +80,7 @@ class TfTypeModel(
   functions: List<TfFunction> = emptyList(),
   providerDefinedFunctions: List<TfFunction> = emptyList(),
   ephemeralResources: List<EphemeralType> = emptyList(),
+  actions: List<ActionType> = emptyList(),
 ) {
 
   val provisioners: List<ProvisionerType> = provisioners.sortedBy { it.type }
@@ -94,6 +95,7 @@ class TfTypeModel(
   val resourcesByProvider: Map<String, List<ResourceType>>
   val dataSourcesByProvider: Map<String, List<DataSourceType>>
   val ephemeralByProvider: Map<String, List<EphemeralType>>
+  val actionsByProvider: Map<String, List<ActionType>>
 
   init {
     val loadedProviders = providersByFullName.values.toSet()
@@ -101,6 +103,7 @@ class TfTypeModel(
     resourcesByProvider = resources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
     dataSourcesByProvider = dataSources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
     ephemeralByProvider = ephemeralResources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
+    actionsByProvider = actions.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
   }
 
   companion object {
@@ -421,6 +424,9 @@ class TfTypeModel(
   fun getEphemeralType(name: String, psiElement: PsiElement? = null): EphemeralType? =
     lookupType(name, psiElement, ephemeralByProvider, allEphemeralResources())
 
+  fun getActionType(name: String, psiElement: PsiElement? = null): ActionType? =
+    lookupType(name, psiElement, actionsByProvider, allActions())
+
   private fun <T : ProviderDefinedType> lookupType(
     name: String,
     psiElement: PsiElement?,
@@ -493,6 +499,7 @@ class TfTypeModel(
   fun allDataSources(): Sequence<DataSourceType> = dataSourcesByProvider.values.asSequence().flatten()
   fun allProviders(): Sequence<ProviderType> = providersByFullName.values.asSequence()
   fun allEphemeralResources(): Sequence<EphemeralType> = ephemeralByProvider.values.asSequence().flatten()
+  fun allActions(): Sequence<ActionType> = actionsByProvider.values.asSequence().flatten()
 }
 
 fun Collection<PropertyOrBlockType>.toMap(): Map<String, PropertyOrBlockType> {
