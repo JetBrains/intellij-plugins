@@ -9,6 +9,7 @@ import org.junit.runners.Suite
   VueAutoPopupTest::class,
   VueCompletionTest::class,
   VueExtractComponentTest::class,
+  VueHighlightingTest::class,
   VueNewComponentTest::class,
   VueRenameTest::class,
 )
@@ -19,6 +20,7 @@ class VuePluginTestSuite
   VueAutoPopupTest.WithLegacyPluginTest::class,
   VueCompletionTest.WithLegacyPluginTest::class,
   VueExtractComponentTest.WithLegacyPluginTest::class,
+  VueHighlightingTest.WithLegacyPluginTest::class,
   VueNewComponentTest.WithLegacyPluginTest::class,
   VueRenameTest.WithLegacyPluginTest::class,
 )
@@ -29,6 +31,7 @@ class VueLegacyPluginTestSuite
   VueAutoPopupTest.WithoutServiceTest::class,
   VueCompletionTest.WithoutServiceTest::class,
   VueExtractComponentTest.WithoutServiceTest::class,
+  VueHighlightingTest.WithoutServiceTest::class,
   VueNewComponentTest.WithoutServiceTest::class,
   VueRenameTest.WithoutServiceTest::class,
 )

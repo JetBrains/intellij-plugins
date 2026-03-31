@@ -26,6 +26,7 @@ import org.junit.runners.Suite
   VueCompletionTest.WithoutServiceTest::class,
   VueCommenterTest::class,
   VueHighlightingTest::class,
+  VueHighlightingTest.WithoutServiceTest::class,
   VueControlFlowTest::class,
   VueComponentTest::class,
   VueNewComponentTest::class,

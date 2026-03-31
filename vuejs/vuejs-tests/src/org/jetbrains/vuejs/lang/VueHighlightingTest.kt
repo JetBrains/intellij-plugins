@@ -29,6 +29,7 @@ import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.libraries.nuxt.NuxtHighlightingTest
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -39,9 +40,22 @@ import org.junit.runners.JUnit4
  * @see VueControlFlowTest
  * @see NuxtHighlightingTest
  */
-@RunWith(JUnit4::class)
+@Ignore
 class VueHighlightingTest :
-  VueTestCase("highlighting", testMode = VueTestMode.NO_PLUGIN) {
+  VueHighlightingTestBase() {
+
+  @Ignore
+  class WithLegacyPluginTest :
+    VueHighlightingTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
+
+  class WithoutServiceTest :
+    VueHighlightingTestBase(testMode = VueTestMode.NO_PLUGIN)
+}
+
+@RunWith(JUnit4::class)
+abstract class VueHighlightingTestBase(
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+) : VueTestCase("highlighting", testMode = testMode) {
 
   override val dirModeByDefault: Boolean = true
 
@@ -50,7 +64,7 @@ class VueHighlightingTest :
       // TODO: use base config instead 
       "testGlobalItemsAugmentedFromCompilerOptionsTypes",
 
-      // TEMP
+        // TEMP
       "testDataTypeTS",
       "testScriptSetupScopePriority",
         -> emptyList()
