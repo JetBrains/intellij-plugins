@@ -441,25 +441,6 @@ abstract class VueHighlightingTestBase(
     myFixture.checkHighlighting()
   }
 
-  /*
-  @Test
-  fun testFlowJSEmbeddedContent() {
-    // Flow is not used unless there is associated .flowconfig. Instead of it to have 'console' resolved we may enable HTML library.
-    JSTestUtils.setDependencyOnPredefinedJsLibraries(project, testRootDisposable, JSCorePredefinedLibrariesConstants.LIB_HTML)
-    testWithinLanguageLevel<Exception>(JSLanguageLevel.FLOW, project) {
-      myFixture.configureByText("FlowJSEmbeddedContent.vue", """
-<script>
-    // @flow
-    type Foo = { a: number }
-    const foo: Foo = { a: 1 }
-    console.log(foo);
-</script>
-""")
-      myFixture.checkHighlighting()
-    }
-  }
-  */
-
   @Test
   fun testTopLevelTags() {
     checkHighlighting()
