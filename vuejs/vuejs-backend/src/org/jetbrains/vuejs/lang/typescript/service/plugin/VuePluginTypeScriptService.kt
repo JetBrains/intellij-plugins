@@ -1,7 +1,6 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.plugin
 
-import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
 import com.intellij.javascript.types.TSType
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
@@ -143,11 +142,6 @@ sealed class VuePluginTypeScriptService(
 
       return super.getElementType(element, typeRequestKind, virtualFile, projectFile)
     }
-
-    override fun isEnabledInUsageContext(
-      usageContext: JSServicePoweredTypeEngineUsageContext,
-    ): Boolean =
-      true
 
     override val supportsTypeScriptInInjections: Boolean =
       true

@@ -67,12 +67,8 @@ abstract class VueCompletionWithPluginTestBase(
   @Rule
   @JvmField
   val rule: TestRule = TrackFailedTestRule(
-    "testNamespacedComponents",
     "testComputedTypeJS",
     "testComputedTypeTS",
-    "testDefineSlotsProperties",
-    "testComponentEmitsDefinitions",
-    "testVueTscComponentWithSlots",
     "testTypedComponentsPropsAndEvents",
   )
 
