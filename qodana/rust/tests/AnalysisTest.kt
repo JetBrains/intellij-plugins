@@ -1,46 +1,46 @@
 package org.intellij.qodana.rust
 
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import org.junit.jupiter.api.DisplayNameGeneration
 import org.junit.jupiter.api.DisplayNameGenerator
 import org.junit.jupiter.api.Test
-import kotlin.test.assertContains
 
 @DisplayNameGeneration(DisplayNameGenerator.Simple::class)
 class AnalysisTest : IntegrationTest() {
   @Test
   fun `basic`() {
     val workdir = checkout("rust-test")
-    val result = analyzeProject(workdir)
+    val result = analyze(workdir)
 
-    assert(result.ok)
-    assertContains(result.problems, "RsLiveness")
-    assertContains(result.problems, "RsSimplifyPrint")
-    assertContains(result.problems, "RsUnnecessaryReturn")
-    assertContains(result.problems, "RsUnusedImport")
+    result.ok.shouldBeTrue()
+    result.findIssue("RsLiveness").shouldNotBeNull()
+    result.findIssue("RsSimplifyPrint").shouldNotBeNull()
+    result.findIssue("RsUnnecessaryReturn").shouldNotBeNull()
+    result.findIssue("RsUnusedImport").shouldNotBeNull()
   }
 
   @Test
   fun `dirty project`() {
     val workdir = checkout("rust-test")
-    analyzeProject(workdir)
-    val result = analyzeProject(workdir)
+    analyze(workdir)
+    val result = analyze(workdir)
 
-    assert(result.ok)
-    assertContains(result.problems, "RsLiveness")
-    assertContains(result.problems, "RsSimplifyPrint")
-    assertContains(result.problems, "RsUnnecessaryReturn")
-    assertContains(result.problems, "RsUnusedImport")
+    result.ok.shouldBeTrue()
+    result.findIssue("RsLiveness").shouldNotBeNull()
+    result.findIssue("RsSimplifyPrint").shouldNotBeNull()
+    result.findIssue("RsUnnecessaryReturn").shouldNotBeNull()
+    result.findIssue("RsUnusedImport").shouldNotBeNull()
   }
 
   @Test
   fun `features`() {
     val workdir = checkout("rust-test-features")
-    val result = analyzeProject(workdir)
+    val result = analyze(workdir)
 
-    assert(result.ok)
+    result.ok.shouldBeTrue()
     result.findIssue("RsLiveness", "src/main.rs:2").shouldNotBeNull()
     result.findIssue("RsLiveness", "src/main.rs:7").shouldNotBeNull()
     result.findIssue("RsLiveness", "src/main.rs:12").shouldBeNull()
@@ -50,9 +50,9 @@ class AnalysisTest : IntegrationTest() {
   @Test
   fun `cfg options`() {
     val workdir = checkout("rust-test-cfg-options")
-    val result = analyzeProject(workdir)
+    val result = analyze(workdir)
 
-    assert(result.ok)
+    result.ok.shouldBeTrue()
     result.findIssue("RsLiveness", "src/main.rs:2").shouldNotBeNull()
     result.findIssue("RsLiveness", "src/main.rs:8").shouldNotBeNull()
     result.findIssue("RsLiveness", "src/main.rs:14").shouldBeNull()
@@ -64,11 +64,11 @@ class AnalysisTest : IntegrationTest() {
   @Test
   fun `rustc private`() {
     val workdir = checkout("rust-test-rustc-private")
-    val result = analyzeProject(workdir)
+    val result = analyze(workdir)
 
-    assert(result.ok)
-    assertContains(result.problems, "RsUnusedImport")
-    assertContains(result.problems, "RsUnnecessaryReturn")
+    result.ok.shouldBeTrue()
+    result.findIssue("RsUnusedImport").shouldNotBeNull()
+    result.findIssue("RsUnnecessaryReturn").shouldNotBeNull()
   }
 
 }

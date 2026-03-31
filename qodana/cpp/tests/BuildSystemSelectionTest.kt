@@ -1,10 +1,10 @@
 package org.jetbrains.qodana.cpp
 
 import kotlinx.serialization.json.Json
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.io.path.div
 import kotlin.io.path.writeText
-import kotlin.test.assertEquals
 
 class BuildSystemSelectionTest : IntegrationTest() {
   @Test
@@ -15,8 +15,9 @@ class BuildSystemSelectionTest : IntegrationTest() {
         buildSystem: CMake
     """.trimIndent())
 
-    val result = analyzeProject(cwd)
-    assertEquals(Result.Succeeded(listOf("CppDFANullDereference")), result)
+    val result = analyze(cwd)
+    assertThat(result.ok).isTrue()
+    assertThat(result.results!!.map { it.ruleId }).containsExactly("CppDFANullDereference")
   }
 
   @Test
@@ -38,8 +39,9 @@ class BuildSystemSelectionTest : IntegrationTest() {
       ]
     """.trimIndent())
 
-    val result = analyzeProject(cwd)
-    assertEquals(Result.Succeeded(listOf("CppDFANullDereference")), result)
+    val result = analyze(cwd)
+    assertThat(result.ok).isTrue()
+    assertThat(result.results!!.map { it.ruleId }).containsExactly("CppDFANullDereference")
   }
 
   @Test
@@ -50,14 +52,16 @@ class BuildSystemSelectionTest : IntegrationTest() {
         buildSystem: INVALID
     """.trimIndent())
 
-    val result = analyzeProject(cwd)
-    assertEquals( Result.Failed("Specified build system 'INVALID' is not supported by Qodana"), result)
+    val result = analyze(cwd)
+    assertThat(result.ok).isFalse()
+    assertThat(result.ideaLog).contains("Specified build system 'INVALID' is not supported by Qodana")
   }
 
   @Test
   fun `select no build system`() {
     val cwd = checkout("build-system-selection-test")
-    val result = analyzeProject(cwd)
-    assertEquals( Result.Succeeded(listOf("CppDFANullDereference")), result)
+    val result = analyze(cwd)
+    assertThat(result.ok).isTrue()
+    assertThat(result.results!!.map { it.ruleId }).containsExactly("CppDFANullDereference")
   }
 }
