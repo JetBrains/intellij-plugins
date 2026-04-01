@@ -1,6 +1,5 @@
 package org.jetbrains.astro.codeInsight
 
-import com.intellij.lang.javascript.JSTestUtils
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
 class AstroTypingTest : AstroCodeInsightTestCase("codeInsight/typing") {
@@ -19,11 +18,7 @@ class AstroTypingTest : AstroCodeInsightTestCase("codeInsight/typing") {
 
   fun testParensInHtmlCode() = doTest("(")
 
-  fun testEmmetExpressions() {
-    doConfiguredTest(checkResult = true) {
-      JSTestUtils.runEmmetTemplate(myFixture)
-    }
-  }
+  fun testEmmetExpressions() = doTest("\t")
 
   fun testHtmlTagRootElementCompletion() = doTest(">")
 
@@ -35,7 +30,7 @@ class AstroTypingTest : AstroCodeInsightTestCase("codeInsight/typing") {
 
   //region Test configuration and helper methods
   private fun doTest(textToType: String) {
-    doConfiguredTest(checkResult = true) {
+    doEditorTypingTest(checkResult = true) {
       type(textToType)
     }
   }
