@@ -19,23 +19,35 @@ class AnalysisTest : IntegrationTest() {
     val result = analyze(workdir)
 
     result.ok.shouldBeTrue()
-    result.findIssue("RsLiveness").shouldNotBeNull()
-    result.findIssue("RsSimplifyPrint").shouldNotBeNull()
-    result.findIssue("RsUnnecessaryReturn").shouldNotBeNull()
-    result.findIssue("RsUnusedImport").shouldNotBeNull()
+    result.findIssue("RsUnusedImport", "src/main.rs:1").shouldNotBeNull()
+    result.findIssue("RsLiveness", "src/main.rs:6").shouldNotBeNull()
+    result.findIssue("RsSimplifyPrint", "src/main.rs:22").shouldNotBeNull()
+    result.findIssue("RsUnnecessaryReturn", "src/main.rs:30").shouldNotBeNull()
+    result.findIssues("RsUnusedImport").shouldHaveSize(1)
+    result.findIssues("RsLiveness").shouldHaveSize(1)
+    result.findIssues("RsSimplifyPrint").shouldHaveSize(1)
+    result.findIssues("RsUnnecessaryReturn").shouldHaveSize(1)
   }
 
   @Test
   fun `dirty project`() {
     val workdir = checkout("rust-test")
-    analyze(workdir)
-    val result = analyze(workdir)
 
-    result.ok.shouldBeTrue()
-    result.findIssue("RsLiveness").shouldNotBeNull()
-    result.findIssue("RsSimplifyPrint").shouldNotBeNull()
-    result.findIssue("RsUnnecessaryReturn").shouldNotBeNull()
-    result.findIssue("RsUnusedImport").shouldNotBeNull()
+    // First run establishes IDE state (indexes, .idea, caches)
+    val result1 = analyze(workdir)
+    result1.ok.shouldBeTrue()
+
+    // Second run verifies analysis works correctly on a "dirty" working directory
+    val result2 = analyze(workdir)
+    result2.ok.shouldBeTrue()
+    result2.findIssue("RsUnusedImport", "src/main.rs:1").shouldNotBeNull()
+    result2.findIssue("RsLiveness", "src/main.rs:6").shouldNotBeNull()
+    result2.findIssue("RsSimplifyPrint", "src/main.rs:22").shouldNotBeNull()
+    result2.findIssue("RsUnnecessaryReturn", "src/main.rs:30").shouldNotBeNull()
+    result2.findIssues("RsUnusedImport").shouldHaveSize(1)
+    result2.findIssues("RsLiveness").shouldHaveSize(1)
+    result2.findIssues("RsSimplifyPrint").shouldHaveSize(1)
+    result2.findIssues("RsUnnecessaryReturn").shouldHaveSize(1)
   }
 
   @Test
@@ -70,8 +82,10 @@ class AnalysisTest : IntegrationTest() {
     val result = analyze(workdir)
 
     result.ok.shouldBeTrue()
-    result.findIssue("RsUnusedImport").shouldNotBeNull()
-    result.findIssue("RsUnnecessaryReturn").shouldNotBeNull()
+    result.findIssue("RsUnusedImport", "src/lib.rs:3").shouldNotBeNull()
+    result.findIssue("RsUnnecessaryReturn", "src/lib.rs:6").shouldNotBeNull()
+    result.findIssues("RsUnusedImport").shouldHaveSize(1)
+    result.findIssues("RsUnnecessaryReturn").shouldHaveSize(1)
   }
 
   /**
