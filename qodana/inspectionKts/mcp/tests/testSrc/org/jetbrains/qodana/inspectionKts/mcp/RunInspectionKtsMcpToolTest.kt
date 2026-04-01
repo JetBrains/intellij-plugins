@@ -1,11 +1,14 @@
 package org.jetbrains.qodana.inspectionKts.mcp
 
 import com.intellij.mcpserver.McpToolsetTestBase
+import com.intellij.testFramework.junit5.fixture.moduleFixture
+import com.intellij.testFramework.junit5.fixture.sourceRootFixture
 import com.intellij.testFramework.junit5.fixture.virtualFileFixture
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContains
 import kotlin.test.assertTrue
@@ -20,8 +23,16 @@ class RunInspectionKtsMcpToolTest : McpToolsetTestBase() {
     }
   """.trimIndent()
 
+  private val moduleFixture = projectFixture.moduleFixture("testModule")
+  private val sourceRootFixture = moduleFixture.sourceRootFixture()
+
   @Suppress("unused")
   private val exampleFile = sourceRootFixture.virtualFileFixture("Example.java", simpleJavaCode)
+
+  @BeforeEach
+  fun initSourceRootFixture() {
+    sourceRootFixture.get()
+  }
 
   private val simpleInspectionKts = """
     import com.intellij.psi.*
