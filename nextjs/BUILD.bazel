@@ -148,6 +148,8 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/polySymbols",
     "@community//platform/polySymbols:polySymbols_test_lib",
+    "@community//platform/polySymbols:polySymbols-testFramework",
+    "@community//platform/polySymbols:polySymbols-testFramework_test_lib",
     "@community//xml/xml-psi-api:psi",
     "@community//xml/xml-psi-api:psi_test_lib",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",

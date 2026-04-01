@@ -208,6 +208,8 @@ jvm_library(
     "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
     "//plugins/JavaScriptLanguage:javascript-testFramework_test_lib",
+    "@community//platform/polySymbols:polySymbols-testFramework",
+    "@community//platform/polySymbols:polySymbols-testFramework_test_lib",
     "//plugins/fileWatcher",
     "//plugins/fileWatcher:fileWatcher_test_lib",
     "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",

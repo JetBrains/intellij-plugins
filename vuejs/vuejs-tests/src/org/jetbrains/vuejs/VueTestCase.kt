@@ -3,11 +3,11 @@ package org.jetbrains.vuejs
 
 import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
-import com.intellij.lang.javascript.HybridTestMode
 import com.intellij.lang.javascript.waitEmptyServiceQueueForService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.polySymbols.testFramework.HybridTestMode
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.VueTestModule

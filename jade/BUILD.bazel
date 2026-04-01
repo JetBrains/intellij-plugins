@@ -218,6 +218,8 @@ jvm_library(
     "@community//xml/xml-psi-api:psi_test_lib",
     "@community//xml/tests",
     "@community//xml/tests:tests_test_lib",
+    "@community//platform/polySymbols:polySymbols-testFramework",
+    "@community//platform/polySymbols:polySymbols-testFramework_test_lib",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
     "//plugins/JavaScriptLanguage:javascript-testFramework_test_lib",
     "//plugins/coffeescript/coffeescript-core:coffeescript",

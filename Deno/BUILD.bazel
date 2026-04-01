@@ -165,6 +165,8 @@ jvm_library(
     "@community//platform/projectModel-api:projectModel_test_lib",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/polySymbols:polySymbols-testFramework",
+    "@community//platform/polySymbols:polySymbols-testFramework_test_lib",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
     "//plugins/JavaScriptLanguage:javascript-testFramework_test_lib",
     "//platform/lsp/testFramework",

@@ -3,13 +3,13 @@ package org.angular2
 
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
-import com.intellij.lang.javascript.HybridTestMode
 import com.intellij.lang.javascript.waitEmptyServiceQueueForService
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.polySymbols.testFramework.HybridTestMode
 import com.intellij.testFramework.replaceService
 import com.intellij.testFramework.runInEdtAndWait
 import org.angular2.codeInsight.refactoring.Angular2CliComponentGeneratorMockImpl

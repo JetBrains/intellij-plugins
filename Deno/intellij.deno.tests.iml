@@ -27,6 +27,7 @@
     <orderEntry type="module" module-name="intellij.platform.lang" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lsp.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.tests" scope="TEST" />

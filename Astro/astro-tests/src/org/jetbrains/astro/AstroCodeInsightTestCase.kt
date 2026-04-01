@@ -3,7 +3,6 @@ package org.jetbrains.astro
 import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
-import com.intellij.lang.javascript.HybridTestMode
 import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
@@ -11,6 +10,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.RegistryManager
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
+import com.intellij.polySymbols.testFramework.HybridTestMode
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.astro.service.AstroLspTypeScriptService
 import org.jetbrains.astro.service.settings.AstroServiceMode
