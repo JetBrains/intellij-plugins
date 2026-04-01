@@ -68,7 +68,9 @@
     <packaging.sourceItemProvider implementation="com.intellij.lang.javascript.flex.artifacts.FlashPackagingSourceItemsProvider"/>
     <xml.schemaProvider implementation="com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler"/>
     <xml.xmlExtension implementation="com.intellij.javascript.flex.mxml.schema.FlexXmlExtension"/>
-    <renamePsiElementProcessor implementation="com.intellij.lang.javascript.refactoring.ActionScriptQualifiedElementRenameProcessor"/>
+    <renamePsiElementProcessor id="ActionScriptQualifiedElementRenameProcessor"
+                               implementation="com.intellij.lang.javascript.refactoring.ActionScriptQualifiedElementRenameProcessor"
+                               order="before PhpFileRenameProcessor"/>
     <renamePsiElementProcessor implementation="com.intellij.lang.javascript.refactoring.ActionScriptPropertyFunctionRenameProcessor"/>
     <renamePsiElementProcessor implementation="com.intellij.javascript.flex.FlexRenameHandler"/>
     <updateAddedFileProcessor implementation="com.intellij.javascript.flex.FlexUpdateAddedFileHandler"/>
