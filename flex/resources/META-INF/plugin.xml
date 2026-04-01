@@ -161,7 +161,7 @@
     <lang.refactoringSupport language="Mxml" implementationClass="com.intellij.lang.javascript.flex.MxmlRefactoringSupportProvider"/>
     <lang.refactoringSupport language="JavaScript"
                              implementationClass="com.intellij.lang.javascript.flex.ActionScriptRefactoringSupportProvider"
-                             order="before JavascriptRefactoringSupportProvider"/>
+                             order="before JavascriptRefactoringSupportProvider, before CoffeeScriptRefactoringSupportProvider"/>
     <implicitUsageProvider implementation="com.intellij.lang.javascript.flex.FlexImplicitUsageProvider"/>
     <cantBeStatic implementation="com.intellij.lang.javascript.flex.FlexImplicitUsageProvider"/>
     <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider"/>
