@@ -1,11 +1,11 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
-import com.intellij.javascript.testFramework.web.configure
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.controlflow.BaseJSControlFlowTest
 import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
+import com.intellij.polySymbols.testFramework.configure
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureDependencies

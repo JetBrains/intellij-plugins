@@ -5,10 +5,10 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
-import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.typescript.inspections.TypeScriptExplicitMemberTypeInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
@@ -42,7 +42,6 @@ import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.inspections.AngularUndefinedTagInspection
 import org.angular2.inspections.AngularUnsupportedSyntaxInspection
 import org.angular2.lang.Angular2Bundle
-import kotlin.jvm.java
 
 /**
  * @see Angular2TsInspectionsTest
@@ -185,24 +184,33 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
 
   fun testMissingRequiredInputBinding1() {
     doTest(1, "<ng-<caret>template", "Create '[ngForOf]' attribute",
-           inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java, HtmlUnknownBooleanAttributeInspection::class.java),
+           inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java,
+                                HtmlUnknownBooleanAttributeInspection::class.java),
            dependencies = listOf(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8),
-           files = listOf("missing-required-directive-input-bindings.html", "missing-required-directive-input-bindings-module.ts", "foo-bar.directive.ts"))
+           files = listOf("missing-required-directive-input-bindings.html",
+                          "missing-required-directive-input-bindings-module.ts",
+                          "foo-bar.directive.ts"))
   }
 
   fun testMissingRequiredInputBinding2() {
     doTest(2, "<d<caret>iv appFooBar>", "Create '[appFooBar2]' attribute",
-           inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java, HtmlUnknownBooleanAttributeInspection::class.java),
+           inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java,
+                                HtmlUnknownBooleanAttributeInspection::class.java),
            dependencies = listOf(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8),
-           files = listOf("missing-required-directive-input-bindings.html", "missing-required-directive-input-bindings-module.ts", "foo-bar.directive.ts"))
+           files = listOf("missing-required-directive-input-bindings.html",
+                          "missing-required-directive-input-bindings-module.ts",
+                          "foo-bar.directive.ts"))
   }
 
   fun testMissingRequiredInputBinding3() {
     myFixture.enableInspections(HtmlUnknownBooleanAttributeInspection::class.java)
     doTest(3, "<d<caret>iv appFooBar=\"foo\"", "Create 'appFooBar2' attribute",
-           inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java, HtmlUnknownBooleanAttributeInspection::class.java),
+           inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java,
+                                HtmlUnknownBooleanAttributeInspection::class.java),
            dependencies = listOf(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8),
-           files = listOf("missing-required-directive-input-bindings.html", "missing-required-directive-input-bindings-module.ts", "foo-bar.directive.ts"))
+           files = listOf("missing-required-directive-input-bindings.html",
+                          "missing-required-directive-input-bindings-module.ts",
+                          "foo-bar.directive.ts"))
   }
 
   fun testTypeScriptSpecifyTypeNoFix() {
@@ -511,7 +519,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
     quickFixName: String? = null,
     inspections: List<Class<out LocalInspectionTool?>>,
     dependencies: List<Angular2TestModule> = listOf(ANGULAR_CORE_8_2_14),
-    configurators: List<WebFrameworkTestConfigurator> = emptyList(),
+    configurators: List<PolySymbolsTestConfigurator> = emptyList(),
     files: List<String>,
   ) {
     myFixture.enableInspections(inspections)

@@ -5,23 +5,23 @@ import org.angular2.Angular2TestCase
 
 class Angular2FindUsagesTest : Angular2TestCase("navigation/findUsages", false) {
 
-  fun testPrivateComponentField() = checkUsages()
+  fun testPrivateComponentField() = doUsagesTest()
 
-  fun testPrivateComponentMethod() = checkUsages()
+  fun testPrivateComponentMethod() = doUsagesTest()
 
-  fun testPrivateConstructorField() = checkUsages()
+  fun testPrivateConstructorField() = doUsagesTest()
 
-  fun testComponentCustomElementSelector() = checkUsages()
+  fun testComponentCustomElementSelector() = doUsagesTest()
 
-  fun testSlotComponentAttributeSelector() = checkUsages()
+  fun testSlotComponentAttributeSelector() = doUsagesTest()
 
-  fun testAttrVariable() = checkUsages(extension = "html")
+  fun testAttrVariable() = doUsagesTest(extension = "html")
 
-  fun testExportAs() = checkUsages()
+  fun testExportAs() = doUsagesTest()
 
-  fun testHostDirectiveOneTimeBinding() = checkUsages(fileName = "mouseenter.directive.ts")
+  fun testHostDirectiveOneTimeBinding() = doUsagesTest(fileName = "mouseenter.directive.ts")
 
-  fun testDollarSymbolInInlineTemplate() = checkUsages(fileName = "hello1.service.ts")
+  fun testDollarSymbolInInlineTemplate() = doUsagesTest(fileName = "hello1.service.ts")
 
-  fun testComponentClassUsagesInTemplates() = checkUsages()
+  fun testComponentClassUsagesInTemplates() = doUsagesTest()
 }

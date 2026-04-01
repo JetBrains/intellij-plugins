@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.javascript.testFramework.web.filterOutStandardHtmlSymbols
 import com.intellij.lang.javascript.JSTestUtils
@@ -10,6 +9,7 @@ import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.util.RecursionManager
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.and
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
@@ -104,7 +104,7 @@ abstract class VueCompletionTestBase(
     this.enableIdempotenceChecksOnEveryCache()
   }
 
-  override val defaultConfigurators: List<WebFrameworkTestConfigurator>
+  override val defaultConfigurators: List<PolySymbolsTestConfigurator>
     get() = when (name) {
       "testAliasedComponentImport",
       "testAliasedComponentImportKebabCase",

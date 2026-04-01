@@ -1,7 +1,6 @@
 package org.jetbrains.astro
 
 import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
-import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
@@ -11,6 +10,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.RegistryManager
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
 import com.intellij.polySymbols.testFramework.HybridTestMode
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.astro.service.AstroLspTypeScriptService
 import org.jetbrains.astro.service.settings.AstroServiceMode
@@ -21,7 +21,7 @@ abstract class AstroCodeInsightTestCase(
   val useLsp: Boolean = false,
 ) : WebFrameworkTestCase(if (useLsp) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform) {
 
-  override val defaultConfigurators: List<WebFrameworkTestConfigurator>
+  override val defaultConfigurators: List<PolySymbolsTestConfigurator>
     get() = buildList {
       addAll(super.defaultConfigurators)
 
@@ -65,7 +65,7 @@ abstract class AstroCodeInsightTestCase(
   }
 }
 
-private class AstroLspConfigurator : WebFrameworkTestConfigurator {
+private class AstroLspConfigurator : PolySymbolsTestConfigurator {
   override fun configure(fixture: CodeInsightTestFixture, disposable: Disposable?) {
     val serviceSettings = getAstroServiceSettings(fixture.project)
 
@@ -85,7 +85,7 @@ private class AstroLspConfigurator : WebFrameworkTestConfigurator {
   }
 }
 
-private class AstroTsConfigConfigurator(private val tsconfigJsonContent: String) : WebFrameworkTestConfigurator {
+private class AstroTsConfigConfigurator(private val tsconfigJsonContent: String) : PolySymbolsTestConfigurator {
   override fun configure(fixture: CodeInsightTestFixture, disposable: Disposable?) {
     if (fixture.tempDirFixture.getFile("tsconfig.json") == null) {
       fixture.addFileToProject("tsconfig.json", tsconfigJsonContent)

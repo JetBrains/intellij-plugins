@@ -1,6 +1,6 @@
 package org.angular2.codeInsight
 
-import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
@@ -142,7 +142,7 @@ class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
     vararg modules: Angular2TestModule,
     ext: String = "ts",
     additionalFiles: List<String> = emptyList(),
-    configurators: List<WebFrameworkTestConfigurator> = emptyList(),
+    configurators: List<PolySymbolsTestConfigurator> = emptyList(),
   ) {
     doConfiguredTest(modules = modules, extension = ext, additionalFiles = additionalFiles, configurators = configurators) {
       checkDocumentationAtCaret()

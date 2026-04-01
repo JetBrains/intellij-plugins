@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.cssModules
 
-import com.intellij.javascript.testFramework.web.checkUsages
+import com.intellij.javascript.testFramework.web.checkJsUsages
 import com.intellij.polySymbols.testFramework.assertUnresolvedReference
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.polySymbols.testFramework.resolveReference
@@ -81,7 +81,7 @@ class CssModulesTest : BasePlatformTestCase() {
 
   fun testUsages() {
     myFixture.configureByFile("cssModule.vue")
-    myFixture.checkUsages(".b<caret>ar", "bar-usages")
+    myFixture.checkJsUsages(".b<caret>ar", "bar-usages")
   }
 
 }

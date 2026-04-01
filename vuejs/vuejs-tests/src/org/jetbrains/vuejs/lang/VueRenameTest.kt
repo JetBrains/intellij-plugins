@@ -26,7 +26,7 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
@@ -49,7 +49,7 @@ abstract class VueRenameTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueTestCase("rename", testMode = testMode) {
 
-  override val defaultConfigurators: List<WebFrameworkTestConfigurator>
+  override val defaultConfigurators: List<PolySymbolsTestConfigurator>
     get() = listOf(
       VueTsConfigFile(),
     )

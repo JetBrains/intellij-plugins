@@ -1,15 +1,15 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs
 
-import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.util.Disposer
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.junit.jupiter.api.assertNull
 
 class VueTsConfigFile :
-  WebFrameworkTestConfigurator {
+  PolySymbolsTestConfigurator {
 
   override fun configure(
     fixture: CodeInsightTestFixture,

@@ -1,7 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.codeInsight
 
-import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
 class AstroAttributeInsertHandlerTest : AstroCodeInsightTestCase("codeInsight/completion/attributeInsertHandler") {
@@ -44,7 +44,7 @@ class AstroAttributeInsertHandlerTest : AstroCodeInsightTestCase("codeInsight/co
   private fun doTypingTest(
     textToType: String,
     additionalFiles: List<String> = emptyList(),
-    configurators: List<WebFrameworkTestConfigurator> = emptyList(),
+    configurators: List<PolySymbolsTestConfigurator> = emptyList(),
   ) {
     doConfiguredTest(additionalFiles = additionalFiles, configurators = configurators, checkResult = true) {
       completeBasic()

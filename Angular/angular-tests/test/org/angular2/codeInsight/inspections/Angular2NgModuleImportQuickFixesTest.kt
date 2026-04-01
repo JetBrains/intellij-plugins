@@ -2,13 +2,13 @@
 package org.angular2.codeInsight.inspections
 
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler
-import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.modules.imports.JSImportAction
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Disposer
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.checkListByFile
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.psi.PsiFile
@@ -426,9 +426,9 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
     }
   }
 
-  private fun buildConfiguratorsList(configure: (() -> Unit)? = null): List<WebFrameworkTestConfigurator> =
+  private fun buildConfiguratorsList(configure: (() -> Unit)? = null): List<PolySymbolsTestConfigurator> =
     if (configure != null)
-      listOf(object : WebFrameworkTestConfigurator {
+      listOf(object : PolySymbolsTestConfigurator {
         override fun configure(fixture: CodeInsightTestFixture, disposable: Disposable?) {
           configure()
         }

@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.javascript.testFramework.web.checkUsages
 import com.intellij.psi.search.GlobalSearchScopesCore
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
@@ -91,10 +90,10 @@ class VueFindUsagesTest :
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.configureFromTempProjectFile("main.ts")
 
-    myFixture.checkUsages("\"f<caret>oo", "createApp.foo")
-    myFixture.checkUsages("\"B<caret>ar", "createApp.bar")
-    myFixture.checkUsages("\"C<caret>ar", "createApp.car")
-    myFixture.checkUsages("\"Foo<caret>Bar", "createApp.foo-bar")
+    checkUsages("\"f<caret>oo", "createApp.foo")
+    checkUsages("\"B<caret>ar", "createApp.bar")
+    checkUsages("\"C<caret>ar", "createApp.car")
+    checkUsages("\"Foo<caret>Bar", "createApp.foo-bar")
 
   }
 
@@ -105,20 +104,20 @@ class VueFindUsagesTest :
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
 
     myFixture.configureFromTempProjectFile("defineComponent.vue")
-    myFixture.checkUsages("\"test<caret>-event", "$testName.test-event")
+    checkUsages("\"test<caret>-event", "$testName.test-event")
 
     myFixture.configureFromTempProjectFile("defineEmits.vue")
-    myFixture.checkUsages("'f<caret>oo", "$testName.foo")
+    checkUsages("'f<caret>oo", "$testName.foo")
   }
 
   @Test
   fun testComponentFile() {
-    checkFileUsages(fileName = "SomeComponent.vue")
+    doFileUsagesTest(fileName = "SomeComponent.vue")
   }
 
   private fun doTest(
     fileName: String = "App.vue",
   ) {
-    checkUsages(fileName = fileName)
+    doUsagesTest(fileName = fileName)
   }
 }
