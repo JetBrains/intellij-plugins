@@ -5,7 +5,6 @@ import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.RegistryManager
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
@@ -66,12 +65,12 @@ abstract class AstroCodeInsightTestCase(
 }
 
 private class AstroLspConfigurator : PolySymbolsTestConfigurator {
-  override fun configure(fixture: CodeInsightTestFixture, disposable: Disposable?) {
+  override fun configure(fixture: CodeInsightTestFixture) {
     val serviceSettings = getAstroServiceSettings(fixture.project)
 
     val old = serviceSettings.serviceMode
 
-    val contextDisposable = disposable ?: fixture.testRootDisposable
+    val contextDisposable = fixture.testRootDisposable
     Disposer.register(contextDisposable) {
       serviceSettings.serviceMode = old
     }
@@ -86,7 +85,7 @@ private class AstroLspConfigurator : PolySymbolsTestConfigurator {
 }
 
 private class AstroTsConfigConfigurator(private val tsconfigJsonContent: String) : PolySymbolsTestConfigurator {
-  override fun configure(fixture: CodeInsightTestFixture, disposable: Disposable?) {
+  override fun configure(fixture: CodeInsightTestFixture) {
     if (fixture.tempDirFixture.getFile("tsconfig.json") == null) {
       fixture.addFileToProject("tsconfig.json", tsconfigJsonContent)
     }

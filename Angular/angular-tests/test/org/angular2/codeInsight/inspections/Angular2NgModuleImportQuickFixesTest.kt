@@ -5,7 +5,6 @@ import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.modules.imports.JSImportAction
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Disposer
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
@@ -429,7 +428,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   private fun buildConfiguratorsList(configure: (() -> Unit)? = null): List<PolySymbolsTestConfigurator> =
     if (configure != null)
       listOf(object : PolySymbolsTestConfigurator {
-        override fun configure(fixture: CodeInsightTestFixture, disposable: Disposable?) {
+        override fun configure(fixture: CodeInsightTestFixture) {
           configure()
         }
       })

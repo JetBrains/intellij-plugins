@@ -1,7 +1,6 @@
 package org.angular2
 
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
-import com.intellij.openapi.Disposable
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import java.io.FileNotFoundException
@@ -15,7 +14,7 @@ class Angular2TsExpectedConfigFiles(
 
   private val paths = paths.toList()
 
-  override fun configure(fixture: CodeInsightTestFixture, disposable: Disposable?) {
+  override fun configure(fixture: CodeInsightTestFixture) {
     TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(
       fixture.testRootDisposable,
       *paths.map { path -> fixture.tempDirFixture.getFile(path) ?: throw FileNotFoundException(path) }

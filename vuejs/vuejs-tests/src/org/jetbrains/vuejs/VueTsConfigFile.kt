@@ -1,9 +1,8 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.junit.jupiter.api.assertNull
@@ -13,23 +12,21 @@ class VueTsConfigFile :
 
   override fun configure(
     fixture: CodeInsightTestFixture,
-    disposable: Disposable?,
   ) {
     assertNull(fixture.tempDirFixture.getFile(FILE_NAME))
     assertNull(fixture.tempDirFixture.getFile("tsconfig.base.json"))
 
     fixture.configureByText(FILE_NAME, DEFAULT_TSCONFIG_CONTENT)
+  }
 
-    disposable?.let {
-      Disposer.register(it) {
-        WriteAction.run<Throwable> {
-          fixture.tempDirFixture
-            .getFile(FILE_NAME)
-            ?.delete(Any())
-        }
-      }
+  override fun beforeDirectoryComparison(fixture: CodeInsightTestFixture, resultsDir: VirtualFile, goldDir: VirtualFile) {
+    WriteAction.run<Throwable> {
+      fixture.tempDirFixture
+        .getFile(FILE_NAME)
+        ?.delete(Any())
     }
   }
+
 
   companion object {
     const val FILE_NAME: String = "tsconfig.json"
