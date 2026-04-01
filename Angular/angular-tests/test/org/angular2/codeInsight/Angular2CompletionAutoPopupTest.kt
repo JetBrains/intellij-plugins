@@ -9,7 +9,7 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_21_2_0
 class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", false) {
 
   fun testForBlockTyping1() =
-    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_17_3_0) {
+    doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_17_3_0) {
       type("item ")
 
       // "of" keyword completion popup should show
@@ -46,7 +46,7 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", 
     }
 
   fun testForBlockTyping2() =
-    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_17_3_0) {
+    doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_17_3_0) {
       type("item ")
 
       // "of" keyword completion popup should show
@@ -78,7 +78,7 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", 
     }
 
   fun testDeferBlockTyping() =
-    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_19_2_0, extension = "html") {
+    doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_19_2_0, extension = "html") {
       type("prefetch ")
       assertLookupShown()
 
@@ -96,7 +96,7 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", 
     }
 
   fun testCompletionInExpression() {
-    doCompletionAutoPopupTest(
+    doEditorTypingTest(
       Angular2TestModule.ANGULAR_CORE_13_3_5, Angular2TestModule.ANGULAR_CDK_14_2_0, dir = true,
       before = {
         checkLookupItems(renderPriority = true, renderTypeText = true)
@@ -126,7 +126,7 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", 
   }
 
   fun testKeyupCodeModifierTyping() =
-    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", checkResult = false) {
+    doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", checkResult = false) {
       type("(keyup.")
       checkLookupItems { it.lookupString.endsWith(".") }
       type("al\n")
@@ -136,12 +136,12 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", 
     }
 
   fun testComponentLifecycleHooks() =
-    doCompletionAutoPopupTest(ANGULAR_CORE_21_2_0, extension = "ts") {
+    doEditorTypingTest(ANGULAR_CORE_21_2_0, extension = "ts") {
       type("ngOnCh\n")
     }
 
   fun testComponentLifecycleHooksV_17() =
-    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts") {
+    doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts") {
       type("ngOnCh\n")
     }
 

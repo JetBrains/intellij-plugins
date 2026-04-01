@@ -24,7 +24,7 @@ abstract class VueAutoPopupTestBase(
 
   @Test
   fun testEventsAfterAt() =
-    doCompletionAutoPopupTest(checkResult = false) {
+    doEditorTypingTest(checkResult = false) {
       type("@")
       checkLookupItems { item ->
         item.lookupString.let {
@@ -35,7 +35,7 @@ abstract class VueAutoPopupTestBase(
 
   @Test
   fun testEventsAfterVOnColon() =
-    doCompletionAutoPopupTest(checkResult = false) {
+    doEditorTypingTest(checkResult = false) {
       type(":")
       checkLookupItems { item ->
         item.lookupString.let {
@@ -46,7 +46,7 @@ abstract class VueAutoPopupTestBase(
 
   @Test
   fun testVBindShorthand() =
-    doCompletionAutoPopupTest(checkResult = false) {
+    doEditorTypingTest(checkResult = false) {
       type(":")
       assertLookupShown()
       type("a")
@@ -59,7 +59,7 @@ abstract class VueAutoPopupTestBase(
 
   @Test
   fun testNoAutopopupAfterMinus() =
-    doCompletionAutoPopupTest(checkResult = false) {
+    doEditorTypingTest(checkResult = false) {
       type("-")
       assertLookupNotShown()
     }

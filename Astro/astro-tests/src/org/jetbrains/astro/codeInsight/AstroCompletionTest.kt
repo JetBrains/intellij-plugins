@@ -98,7 +98,7 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", u
 
   fun testAstroLibComponent() = doLookupTest()
 
-  fun testTemplatePartCompletionReload() = doCompletionAutoPopupTest(
+  fun testTemplatePartCompletionReload() = doEditorTypingTest(
     dir = true,
     configureFileName = "index.astro",
     checkResult = false,

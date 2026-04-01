@@ -48,7 +48,7 @@ class Angular2EditorTest : Angular2TestCase("editor", false) {
     doWordSelectionTest()
 
   fun testTopLevelBlockEmmetExpansion() =
-    doCompletionAutoPopupTest(checkResult = true, extension = "html") {
+    doEditorTypingTest(checkResult = true, extension = "html") {
       type("\t")
     }
 

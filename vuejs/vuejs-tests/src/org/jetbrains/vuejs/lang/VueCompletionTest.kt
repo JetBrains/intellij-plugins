@@ -464,7 +464,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testWrongPropsNotInCompletion() =
-    doCompletionAutoPopupTest(checkResult = false) {
+    doEditorTypingTest(checkResult = false) {
       completeBasic()
       checkLookupItems(lookupItemFilter = filterOutAriaAttributes)
 
@@ -546,7 +546,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testEventsAfterAt() =
-    doCompletionAutoPopupTest(
+    doEditorTypingTest(
       VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11,
       checkResult = false,
     ) {
@@ -567,7 +567,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testEventsAfterVOn() =
-    doCompletionAutoPopupTest(checkResult = false) {
+    doEditorTypingTest(checkResult = false) {
       type(":")
       assertLookupShown()
 
@@ -603,7 +603,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testAutopopupAfterVOnSelection() =
-    doCompletionAutoPopupTest {
+    doEditorTypingTest {
       completeBasic()
       checkLookupItems()
       type("\n")
@@ -952,7 +952,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testNoDuplicateCompletionProposals() =
-    doCompletionAutoPopupTest(checkResult = false) {
+    doEditorTypingTest(checkResult = false) {
       completeBasic()
       assertLookupContains("v-dir2", "v-on:", "v-bind:")
       assertLookupDoesntContain("v-dir1", "v-slot", "v-slot:")
@@ -1574,7 +1574,7 @@ abstract class VueCompletionTestBase(
     doTestExternalSymbolsImport()
 
   private fun doTestExternalSymbolsImport() =
-    doCompletionAutoPopupTest {
+    doEditorTypingTest {
       moveToOffsetBySignature(":style=\"<caret>\"")
       completeBasic()
       type("Col\n.r")
@@ -1596,7 +1596,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testImportNoScriptOrScriptSetupComponentInCode() =
-    doCompletionAutoPopupTest(configureFileName = "test.ts") {
+    doEditorTypingTest(configureFileName = "test.ts") {
       completeBasic()
       type("ScriptC\n")
       type(",\nbar: Sc")
@@ -1606,7 +1606,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testImportNoScriptOrScriptSetupComponentImports() =
-    doCompletionAutoPopupTest(configureFileName = "imports.ts") {
+    doEditorTypingTest(configureFileName = "imports.ts") {
       completeBasic()
       type("ScriptC\n")
       moveToOffsetBySignature("import Sc<caret>")
@@ -1616,14 +1616,14 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testExternalScriptComponentEdit() =
-    doCompletionAutoPopupTest(configureFileName = "foo.vue") {
+    doEditorTypingTest(configureFileName = "foo.vue") {
       completeBasic()
       type("Col\n.r\n")
     }
 
   @Test
   fun testExternalScriptComponentImport() =
-    doCompletionAutoPopupTest(configureFileName = "test.vue") {
+    doEditorTypingTest(configureFileName = "test.vue") {
       type("<")
       assertLookupShown()
       type("fo\n :")
@@ -1676,10 +1676,10 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testWatchProperty() =
-    doCompletionAutoPopupTest(VueTestModule.VUE_2_6_10) {
+    doEditorTypingTest(VueTestModule.VUE_2_6_10) {
       completeBasic()
       type("doubleA")
-      selectItem("doubleAge.")
+      selectLookupItem("doubleAge.")
       type("\n")
       assertLookupShown()
       type("\n")
@@ -1687,7 +1687,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testNamespacedComponents() =
-    doCompletionAutoPopupTest(configureFileName = "scriptSetup.vue") {
+    doEditorTypingTest(configureFileName = "scriptSetup.vue") {
       type("Forms.")
       assertLookupShown()
       type("Fo\n")
@@ -1729,7 +1729,7 @@ abstract class VueCompletionTestBase(
   @Ignore
   @Test
   fun testInjectInLiteralsUnquoted() =
-    doCompletionAutoPopupTest(configureFileName = "InjectInLiteralsUnquoted.vue") {
+    doEditorTypingTest(configureFileName = "InjectInLiteralsUnquoted.vue") {
       completeBasic()
       assertLookupContains(
         "provideGlobal",
@@ -1744,7 +1744,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testInjectInScriptSetupLiteralsUnquoted() =
-    doCompletionAutoPopupTest(configureFileName = "InjectInScriptSetupLiteralsUnquoted.vue") {
+    doEditorTypingTest(configureFileName = "InjectInScriptSetupLiteralsUnquoted.vue") {
       completeBasic()
       assertLookupContains(
         "provideGlobal",

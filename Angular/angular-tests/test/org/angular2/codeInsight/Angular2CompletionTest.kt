@@ -349,20 +349,20 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
     }
 
   fun testAutoImportWithDFilesNg19() =
-    doCompletionAutoPopupTest(ANGULAR_CORE_19_2_0, configureFileName = "autoImportWithDFiles.ts", checkResult = true) {
+    doEditorTypingTest(ANGULAR_CORE_19_2_0, configureFileName = "autoImportWithDFiles.ts", checkResult = true) {
       completeBasic()
       type("SetFn\n")
     }
 
   fun testAutoImportWithDFilesNg20_1() =
-    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_20_1_4, configureFileName = "autoImportWithDFiles.ts", checkResult = true) {
+    doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_20_1_4, configureFileName = "autoImportWithDFiles.ts", checkResult = true) {
       completeBasic()
       type("SetFn\n")
     }
 
   fun testCompleteAfterQuickFixToExternalTemplate() {
     myFixture.setCaresAboutInjection(false)
-    doCompletionAutoPopupTest(ANGULAR_CORE_19_2_0,  checkResult = true, configurators = listOf(Angular2TsConfigFile())) {
+    doEditorTypingTest(ANGULAR_CORE_19_2_0, checkResult = true, configurators = listOf(Angular2TsConfigFile())) {
       ApplicationManager.getApplication().invokeAndWait {
         ApplicationManager.getApplication().runWriteIntentReadAction<Unit, Throwable> {
           myFixture.launchAction(Angular2Bundle.message("angular.intention.extract.component.template.name"))
