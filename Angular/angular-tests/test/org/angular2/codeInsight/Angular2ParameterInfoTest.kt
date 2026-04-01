@@ -16,55 +16,55 @@ class Angular2ParameterInfoTest : Angular2TestCase("parameterInfo") {
   }
 
   fun testPipe() =
-    checkParameterInfo(extension = "ts")
+    doParameterInfoTest(extension = "ts")
 
   fun testTemplateBindingsNgIfEmpty() =
-    checkParameterInfo(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
-                       extension = "ts")
+    doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
+                        extension = "ts")
 
   fun testTemplateBindingsNgIf1() =
-    checkParameterInfo(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
-                       extension = "ts")
+    doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
+                        extension = "ts")
 
   fun testTemplateBindingsNgIf2() =
-    checkParameterInfo(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
-                       extension = "ts")
+    doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
+                        extension = "ts")
 
   fun testTemplateBindingsNgIf3() =
-    checkParameterInfo(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
-                       extension = "ts")
+    doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
+                        extension = "ts")
 
   fun testForBlock1() =
-    checkParameterInfo(ANGULAR_CORE_18_2_1, extension = "html")
+    doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
   fun testForBlock2() =
-    checkParameterInfo(ANGULAR_CORE_18_2_1, extension = "html")
+    doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
   fun testForBlock3() =
-    checkParameterInfo(ANGULAR_CORE_18_2_1, extension = "html")
+    doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
   fun testIfBlock1() =
-    checkParameterInfo(ANGULAR_CORE_18_2_1, extension = "html")
+    doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
   fun testIfBlock2() =
-    checkParameterInfo(ANGULAR_CORE_18_2_1, extension = "html")
+    doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
   fun testIfBlock3() =
-    checkParameterInfo(ANGULAR_CORE_18_2_1, extension = "html")
+    doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
   fun testIfBlock4() =
-    checkParameterInfo(ANGULAR_CORE_18_2_1, extension = "html")
+    doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
   fun testDeferBlock1() =
-    checkParameterInfo(ANGULAR_CORE_19_2_0, extension = "html")
+    doParameterInfoTest(ANGULAR_CORE_19_2_0, extension = "html")
 
   fun testDeferBlock2() =
-    checkParameterInfo(ANGULAR_CORE_19_2_0, extension = "html")
+    doParameterInfoTest(ANGULAR_CORE_19_2_0, extension = "html")
 
   fun testDeferBlock3() =
-    checkParameterInfo(ANGULAR_CORE_19_2_0, extension = "html")
+    doParameterInfoTest(ANGULAR_CORE_19_2_0, extension = "html")
 
   fun testDeferBlock4() =
-    checkParameterInfo(ANGULAR_CORE_19_2_0, extension = "html")
+    doParameterInfoTest(ANGULAR_CORE_19_2_0, extension = "html")
 
 }

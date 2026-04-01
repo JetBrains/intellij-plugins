@@ -5,61 +5,61 @@ import org.angular2.Angular2TestCase
 
 class Angular2UsageHighlightingTest : Angular2TestCase("usageHighlighting", false) {
 
-  fun testPrivateComponentField() = checkUsageHighlighting()
+  fun testPrivateComponentField() = doUsageHighlightingTest()
 
-  fun testPublicComponentField() = checkUsageHighlighting()
+  fun testPublicComponentField() = doUsageHighlightingTest()
 
-  fun testDirectiveInputFromField() = checkUsageHighlighting()
+  fun testDirectiveInputFromField() = doUsageHighlightingTest()
 
-  fun testDirectiveInputFromMapping() = checkUsageHighlighting()
+  fun testDirectiveInputFromMapping() = doUsageHighlightingTest()
 
-  fun testDirectiveInputFromTemplate() = checkUsageHighlighting()
+  fun testDirectiveInputFromTemplate() = doUsageHighlightingTest()
 
-  fun testDirectiveSelectorFromDefinition() = checkUsageHighlighting()
+  fun testDirectiveSelectorFromDefinition() = doUsageHighlightingTest()
 
-  fun testDirectiveSelectorFromUsage() = checkUsageHighlighting()
+  fun testDirectiveSelectorFromUsage() = doUsageHighlightingTest()
 
-  fun testDirectiveExportAsFromDefinition() = checkUsageHighlighting()
+  fun testDirectiveExportAsFromDefinition() = doUsageHighlightingTest()
 
-  fun testDirectiveExportAsFromUsage() = checkUsageHighlighting()
+  fun testDirectiveExportAsFromUsage() = doUsageHighlightingTest()
 
-  fun testStructuralDirectiveWithNgTemplateSelectorFromBinding() = checkUsageHighlighting()
+  fun testStructuralDirectiveWithNgTemplateSelectorFromBinding() = doUsageHighlightingTest()
 
-  fun testStructuralDirectiveWithNgTemplateSelectorFromPlainAttr() = checkUsageHighlighting()
+  fun testStructuralDirectiveWithNgTemplateSelectorFromPlainAttr() = doUsageHighlightingTest()
 
-  fun testStructuralDirectiveWithNgTemplateSelectorFromDefinition() = checkUsageHighlighting()
+  fun testStructuralDirectiveWithNgTemplateSelectorFromDefinition() = doUsageHighlightingTest()
 
-  fun testModelSignalFromDeclaration() = checkUsageHighlighting()
+  fun testModelSignalFromDeclaration() = doUsageHighlightingTest()
 
-  fun testModelSignalFromUsage1() = checkUsageHighlighting()
+  fun testModelSignalFromUsage1() = doUsageHighlightingTest()
 
-  fun testModelSignalFromUsage2() = checkUsageHighlighting()
+  fun testModelSignalFromUsage2() = doUsageHighlightingTest()
 
-  fun testModelSignalFromUsage3() = checkUsageHighlighting()
+  fun testModelSignalFromUsage3() = doUsageHighlightingTest()
 
-  fun testModelSignalAliasedFromDeclaration() = checkUsageHighlighting()
+  fun testModelSignalAliasedFromDeclaration() = doUsageHighlightingTest()
 
-  fun testModelSignalAliasedFromUsage1() = checkUsageHighlighting()
+  fun testModelSignalAliasedFromUsage1() = doUsageHighlightingTest()
 
-  fun testModelSignalAliasedFromUsage2() = checkUsageHighlighting()
+  fun testModelSignalAliasedFromUsage2() = doUsageHighlightingTest()
 
-  fun testModelSignalAliasedFromUsage3() = checkUsageHighlighting()
+  fun testModelSignalAliasedFromUsage3() = doUsageHighlightingTest()
 
-  fun testInputAndSelectorFromSelector() = checkUsageHighlighting()
+  fun testInputAndSelectorFromSelector() = doUsageHighlightingTest()
 
-  fun testInputAndSelectorFromInput() = checkUsageHighlighting()
+  fun testInputAndSelectorFromInput() = doUsageHighlightingTest()
 
-  fun testInputAndSelectorFromUsage() = checkUsageHighlighting()
+  fun testInputAndSelectorFromUsage() = doUsageHighlightingTest()
 
-  fun testInputAndSelectorSeparateDirectivesFromInputField() = checkUsageHighlighting()
+  fun testInputAndSelectorSeparateDirectivesFromInputField() = doUsageHighlightingTest()
 
-  fun testInputAndSelectorSeparateDirectivesFromInputDecorator() = checkUsageHighlighting()
+  fun testInputAndSelectorSeparateDirectivesFromInputDecorator() = doUsageHighlightingTest()
 
-  fun testInputAndSelectorSeparateDirectivesFromSelector1() = checkUsageHighlighting()
+  fun testInputAndSelectorSeparateDirectivesFromSelector1() = doUsageHighlightingTest()
 
-  fun testInputAndSelectorSeparateDirectivesFromSelector2() = checkUsageHighlighting()
+  fun testInputAndSelectorSeparateDirectivesFromSelector2() = doUsageHighlightingTest()
 
-  fun testInputAndSelectorNotImportedDirective() = checkUsageHighlighting()
+  fun testInputAndSelectorNotImportedDirective() = doUsageHighlightingTest()
 
-  fun testNgClass() = checkUsageHighlighting()
+  fun testNgClass() = doUsageHighlightingTest()
 }

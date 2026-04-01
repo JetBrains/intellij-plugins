@@ -14,18 +14,18 @@ class Angular2ExpressionTypesInspectionWithoutServiceTest : Angular2TestCase("in
   }
 
   fun testAnyType() =
-    checkHighlighting(Angular2TestModule.TS_LIB,
-                      Angular2TestModule.ANGULAR_CORE_8_2_14,
-                      configurators = listOf(Angular2TsConfigFile()))
+    doHighlightingTest(Angular2TestModule.TS_LIB,
+                       Angular2TestModule.ANGULAR_CORE_8_2_14,
+                       configurators = listOf(Angular2TsConfigFile()))
 
 
   fun testSlicePipe() =
-    checkHighlighting(Angular2TestModule.TS_LIB,
-                      Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
+    doHighlightingTest(Angular2TestModule.TS_LIB,
+                       Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
 
 
   fun testNgForOfQueryList() =
-    checkHighlighting(Angular2TestModule.TS_LIB,
-                      Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
+    doHighlightingTest(Angular2TestModule.TS_LIB,
+                       Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14)
 
 }

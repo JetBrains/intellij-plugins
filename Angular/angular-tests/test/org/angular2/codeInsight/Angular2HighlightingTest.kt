@@ -7,6 +7,7 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import junit.framework.TestCase
@@ -409,7 +410,12 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
 
   fun testNgDeepSemantic() =
-    checkHighlighting(ANGULAR_CORE_19_2_0, extension = "css", checkSymbolNames = true, checkInformation = false, checkWarnings = false, checkWeakWarnings = false)
+    checkHighlighting(ANGULAR_CORE_19_2_0,
+                      extension = "css",
+                      checkSymbolNames = true,
+                      checkInformation = false,
+                      checkWarnings = false,
+                      checkWeakWarnings = false)
 
   fun testSignalStore() =
     checkHighlighting(ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0, extension = "ts",
@@ -527,13 +533,18 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     configureFileName: String = "$testName.$extension",
     checkSymbolNames: Boolean = false,
     checkInformation: Boolean = checkSymbolNames,
+    checkWarnings: Boolean = true,
+    checkWeakWarnings: Boolean = true,
+    configurators: List<PolySymbolsTestConfigurator> = listOf(Angular2TsConfigFile(strictTemplates = strictTemplates)),
   ) {
-    checkHighlighting(
+    doHighlightingTest(
       *modules, dir = dir, extension = extension, configureFileName = configureFileName,
-      configurators = listOf(Angular2TsConfigFile(strictTemplates = strictTemplates)),
+      configurators = configurators,
       checkInjections = checkInjections,
       checkSymbolNames = checkSymbolNames,
       checkInformation = checkInformation,
+      checkWarnings = checkWarnings,
+      checkWeakWarnings = checkWeakWarnings,
     )
   }
 

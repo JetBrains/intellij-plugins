@@ -8,6 +8,6 @@ class PrismaRenameTest : PrismaTestCase("rename") {
   }
 
   fun testModelGlobal() {
-    checkSymbolRename("user.prisma", "NewUser")
+    doSymbolRenameTest("user.prisma", "NewUser")
   }
 }

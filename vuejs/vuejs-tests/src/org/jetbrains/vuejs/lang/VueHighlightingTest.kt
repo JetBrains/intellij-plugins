@@ -60,7 +60,7 @@ abstract class VueHighlightingTestBase(
 
   override val defaultConfigurators: List<WebFrameworkTestConfigurator>
     get() = when (name) {
-      // TODO: use base config instead 
+      // TODO: use base config instead
       "testGlobalItemsAugmentedFromCompilerOptionsTypes",
 
         // TEMP
@@ -95,106 +95,106 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testDirectivesWithoutParameters() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testVIfRequireParameter() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testArrowFunctionsAndExpressionsInTemplate() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testShorthandArrowFunctionInTemplate() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testLocalPropsInArrayInCompAttrsAndWithKebabCaseAlso() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testLocalPropsInObjectInCompAttrsAndWithKebabCaseAlso() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testImportedComponentPropsInCompAttrsAsArray() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testImportedComponentPropsInCompAttrsAsObject() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testImportedComponentPropsInCompAttrsObjectRef() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testCompRequiredAttributesTest() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testCompRequiredAttributesTestTS() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testRequiredAttributeWithModifierTest() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testRequiredAttributeWithVModel() {
-    checkHighlighting(VueTestModule.VUE_2_6_10)
+    doHighlightingTest(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testRequiredAttributeWithVModel3() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testVueAttributeInCustomTag() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testVFor() {
     runInInitMode {
-      checkHighlighting()
+      doHighlightingTest()
     }
   }
 
   @Test
   fun testVForInPug() {
     runInInitMode {
-      checkHighlighting()
+      doHighlightingTest()
     }
   }
 
   @Test
   fun testTopLevelThisInInjection() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testTextarea() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testGlobalComponentLiteral() {
-    checkHighlighting {
+    doHighlightingTest {
       // Tree access disabled
       //  /index.js
       disableAstLoadingFilter()
@@ -203,63 +203,63 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testExternalMixin() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testTwoExternalMixins() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testTwoGlobalMixins() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testNotImportedComponentIsUnknown() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testNoDoubleSpellCheckingInAttributesWithEmbeddedContents() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(GrazieSpellCheckingInspection::class.java),
     )
   }
 
   @Test
   fun testNoSpellcheckInEnumeratedAttributes() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(GrazieSpellCheckingInspection::class.java),
     )
   }
 
   @Test
   fun testSpellchecking() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(GrazieSpellCheckingInspection::class.java),
     )
   }
 
   @Test
   fun testTypeScriptTypesAreResolved() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testVBindVOnHighlighting() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testComponentNameAsStringTemplate() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testTypeScriptTypesInVue() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java),
     )
   }
@@ -273,7 +273,7 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testGlobalItemsAugmentedFromCompilerOptionsTypes() {
-    checkHighlighting(
+    doHighlightingTest(
       configureFileName = "App.vue",
       additionalDependencies = mapOf("my-vue-items-library" to "*"),
     )
@@ -281,17 +281,17 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testDirectivesFromGlobalDirectives() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesWithModifiersFromGlobalDirectives() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testEmptyAttributeValue() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
@@ -349,44 +349,44 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testEmptyTagsForVueAreAllowed() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testBuiltinTagsHighlighting() {
-    checkHighlighting(VueTestModule.VUE_2_5_3)
+    doHighlightingTest(VueTestModule.VUE_2_5_3)
   }
 
   @Test
   fun testNonPropsAttributesAreNotHighlighted() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testVueAttributeWithoutValueWithFollowingAttribute() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testTsxIsNormallyParsed() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testJadeWithVueShortcutAttributes() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testComponentsNamedLikeHtmlTags() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testClassComponentAnnotationWithLocalComponent() {
     myFixture.configureVueDependencies()
     createTwoClassComponents(myFixture)
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
@@ -394,7 +394,7 @@ abstract class VueHighlightingTestBase(
     myFixture.configureVueDependencies()
     myFixture.configureByText("vue.d.ts", "export interface Vue {};export class Vue {}")
     createTwoClassComponents(myFixture, true)
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
@@ -405,27 +405,27 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testLocalComponentExtendsInClassSyntax() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testLocalComponentInClassSyntax() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testLocalComponentInMixin() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testLocalComponentInMixinRecursion() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testBooleanProps() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
@@ -442,17 +442,17 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testTopLevelTags() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testEndTagNotForbidden() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testColonInEventName() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
@@ -472,28 +472,28 @@ abstract class VueHighlightingTestBase(
   // TODO add special inspection for unused slot scope parameters - WEB-43893
   @Test
   fun testVSlotSyntax() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   // TODO add special inspection for unused slot scope parameters - WEB-43893
   @Test
   fun testSlotSyntax() {
-    checkHighlighting(VueTestModule.VUE_2_6_10)
+    doHighlightingTest(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testSlotName() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testSlotNameBinding() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testVueExtendSyntax() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_2_5_3,
     ) {
       // Tree access disabled
@@ -504,42 +504,42 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testBootstrapVue() {
-    checkHighlighting(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
+    doHighlightingTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
   }
 
   @Test
   fun testDestructuringPatternsInVFor() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testDirectivesWithParameters() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testDirectiveWithModifiers() {
-    checkHighlighting(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
+    doHighlightingTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
   }
 
   @Test
   fun testIsAttributeSupport() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testKeyAttributeSupport() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testPropsWithOptions() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testFilters() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
@@ -555,36 +555,36 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testComputedPropType() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testPseudoSelectors() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(CssInvalidPseudoSelectorInspection::class.java),
     )
   }
 
   @Test
   fun testPrivateMembersHighlighting() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java),
     )
   }
 
   @Test
   fun testMultipleScriptTagsInHTML() {
-    checkHighlighting(configureFileName = "multipleScriptTagsInHTML.html")
+    doHighlightingTest(configureFileName = "multipleScriptTagsInHTML.html")
   }
 
   @Test
   fun testMultipleScriptTagsInVue() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testCompositionApiBasic_0_4_0() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_2_6_10,
       VueTestModule.COMPOSITION_API_0_4_0,
       configureFileName = "compositionComponent1.vue",
@@ -593,7 +593,7 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testCompositionApiBasic_1_0_0() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_2_6_10,
       VueTestModule.COMPOSITION_API_1_0_0,
       configureFileName = "compositionComponent1.vue",
@@ -614,22 +614,22 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testCommonJSSupport() {
-    checkHighlighting(VueTestModule.VUEX_3_1_0)
+    doHighlightingTest(VueTestModule.VUEX_3_1_0)
   }
 
   @Test
   fun testComputedTypeTS() {
-    checkHighlighting(VueTestModule.VUE_2_6_10)
+    doHighlightingTest(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testComputedTypeJS() {
-    checkHighlighting(VueTestModule.VUE_2_6_10)
+    doHighlightingTest(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testDataTypeTS() {
-    checkHighlighting(VueTestModule.VUE_2_6_10)
+    doHighlightingTest(VueTestModule.VUE_2_6_10)
   }
 
   @Test
@@ -639,7 +639,7 @@ abstract class VueHighlightingTestBase(
     disableAstLoadingFilter()
 
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
-      checkHighlighting(
+      doHighlightingTest(
         inspections = listOf(
           CssInvalidFunctionInspection::class.java,
           SassScssResolvedByNameOnlyInspection::class.java,
@@ -652,7 +652,7 @@ abstract class VueHighlightingTestBase(
   @Test
   fun testSassBuiltInModules() {
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
-      checkHighlighting(
+      doHighlightingTest(
         inspections = listOf(
           CssInvalidFunctionInspection::class.java,
           SassScssResolvedByNameOnlyInspection::class.java,
@@ -668,24 +668,24 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testIndirectExport() {
-    checkHighlighting(VueTestModule.VUE_2_6_10)
+    doHighlightingTest(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testAsyncSetup() {
-    checkHighlighting(VueTestModule.VUE_3_0_0)
+    doHighlightingTest(VueTestModule.VUE_3_0_0)
   }
 
   @Test
   fun testScriptSetup() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(ES6UnusedImportsInspection::class.java),
     )
   }
 
   @Test
   fun testScriptSetupComplexImports() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(ES6UnusedImportsInspection::class.java),
     )
   }
@@ -699,48 +699,48 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testSuperComponentMixin() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testCompositionPropsJS() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testCssSelectors() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(CssInvalidPseudoSelectorInspection::class.java),
     )
   }
 
   @Test
   fun testCssUnusedPseudoSelector() {
-    checkHighlighting {
+    doHighlightingTest {
       enableInspections(CssUnusedSymbolInspection())
     }
   }
 
   @Test
   fun testScriptSetupScopePriority() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testBindingToDataAttributes() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testPropsValidation() {
-    checkHighlighting(
+    doHighlightingTest(
       additionalDependencies = mapOf("lib" to "*"),
     )
   }
 
   @Test
   fun testScriptSetupRef() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(
         JSUnusedLocalSymbolsInspection::class.java,
         JSUnusedGlobalSymbolsInspection::class.java,
@@ -750,14 +750,14 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testScriptSetupImportedDirective() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(ES6UnusedImportsInspection::class.java),
     )
   }
 
   @Test
   fun testTypedComponentsScriptSetup() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.NAIVE_UI_2_19_11,
       VueTestModule.HEADLESS_UI_1_4_1,
       VueTestModule.VUE_3_5_0,
@@ -767,7 +767,7 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testTypedComponentsScriptSetup2() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.NAIVE_UI_2_19_11,
       VueTestModule.HEADLESS_UI_1_4_1,
       VueTestModule.VUE_3_5_0,
@@ -777,14 +777,14 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testCssVBind() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(CssInvalidFunctionInspection::class.java),
     )
   }
 
   @Test
   fun testCssVBindVue31() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_1_0,
       inspections = listOf(CssInvalidFunctionInspection::class.java),
     )
@@ -792,22 +792,22 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testGlobalSymbols() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testStandardBooleanAttributes() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testRefUnwrap() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testVModelWithMixin() {
-    checkHighlighting(configureFileName = "MyForm.vue")
+    doHighlightingTest(configureFileName = "MyForm.vue")
   }
 
   @Test
@@ -819,7 +819,7 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testSlotTypes() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.QUASAR_2_6_5,
       VueTestModule.VUE_3_5_0,
       configureFileName = "MyTable.vue",
@@ -828,27 +828,27 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testGlobalScriptSetup() {
-    checkHighlighting(configureFileName = "HelloWorld.vue")
+    doHighlightingTest(configureFileName = "HelloWorld.vue")
   }
 
   @Test
   fun testDynamicArguments() {
-    checkHighlighting(configureFileName = "HelloWorld.vue")
+    doHighlightingTest(configureFileName = "HelloWorld.vue")
   }
 
   @Test
   fun testWithPropsFromFunctionCall() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testWithPropsFromFunctionCall2() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testInferPropType() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_2_2,
       VueTestModule.NAIVE_UI_2_33_2_PATCHED,
     )
@@ -860,34 +860,34 @@ abstract class VueHighlightingTestBase(
     //  /Test2.vue
     disableAstLoadingFilter()
 
-    checkHighlighting(
+    doHighlightingTest(
       configureFileName = "main.vue",
     )
   }
 
   @Test
   fun testPropertyReferenceInLambda() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testSourceScopedSlots() {
-    checkHighlighting(configureFileName = "Catalogue.vue")
+    doHighlightingTest(configureFileName = "Catalogue.vue")
   }
 
   @Test
   fun testCustomEvents() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testCustomEventsTypedComponent() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testLifecycleEventsVue2ClassComponent() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_2_6_10,
       inspections = listOf(
         JSUnusedLocalSymbolsInspection::class.java,
@@ -898,7 +898,7 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testLifecycleEventsVue2VueExtend() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_2_6_10,
       inspections = listOf(
         JSUnusedLocalSymbolsInspection::class.java,
@@ -909,7 +909,7 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testLifecycleEventsVue3Options() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(
         JSUnusedLocalSymbolsInspection::class.java,
         JSUnusedGlobalSymbolsInspection::class.java,
@@ -919,7 +919,7 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testLifecycleEventsVue3DefineComponent() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(
         JSUnusedLocalSymbolsInspection::class.java,
         JSUnusedGlobalSymbolsInspection::class.java,
@@ -929,7 +929,7 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testIdIndexer() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(
         JSUnusedLocalSymbolsInspection::class.java,
         JSUnusedGlobalSymbolsInspection::class.java,
@@ -939,52 +939,52 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testVueCreateApp() {
-    checkHighlighting(configureFileName = "test.html")
+    doHighlightingTest(configureFileName = "test.html")
   }
 
   @Test
   fun testInstanceMountedOnElement() {
-    checkHighlighting(configureFileName = "test.html")
+    doHighlightingTest(configureFileName = "test.html")
   }
 
   @Test
   fun testScriptCaseSensitivity() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testVPre() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testHtmlTagOmission() {
-    checkHighlighting(configureFileName = "htmlTagOmission.html")
+    doHighlightingTest(configureFileName = "htmlTagOmission.html")
   }
 
   @Test
   fun testVueNoTagOmission() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testScriptSetupGeneric() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testGenericComponentUsage() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testComponentFromFunctionPlugin() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromFunctionPlugin_vapor() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -992,12 +992,12 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testComponentFromNestedFunctionPlugin() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedFunctionPlugin_vapor() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1005,12 +1005,12 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testComponentFromNestedFunctionPluginWithCycle() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedFunctionPluginWithCycle_vapor() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1018,12 +1018,12 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testComponentFromObjectPlugin() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromObjectPlugin_vapor() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1031,12 +1031,12 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testComponentFromNestedObjectPlugin() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedObjectPlugin_vapor() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1044,12 +1044,12 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testComponentFromNestedObjectPluginWithCycle() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testComponentFromNestedObjectPluginWithCycle_vapor() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1057,12 +1057,12 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testDirectivesFromFunctionPlugin() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromFunctionPlugin_vapor() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1070,12 +1070,12 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testDirectivesFromNestedFunctionPlugin() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedFunctionPlugin_vapor() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1083,12 +1083,12 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle_vapor() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1096,12 +1096,12 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testDirectivesFromObjectPlugin() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromObjectPlugin_vapor() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1109,12 +1109,12 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testDirectivesFromNestedObjectPlugin() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedObjectPlugin_vapor() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1122,12 +1122,12 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testDirectivesFromNestedObjectPluginWithCycle() {
-    checkHighlighting(configureFileName = "App.vue")
+    doHighlightingTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testDirectivesFromNestedObjectPluginWithCycle_vapor() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )
@@ -1135,7 +1135,7 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testStdTagsInspections() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(
         HtmlRequiredTitleElementInspection::class.java,
         HtmlRequiredAltAttributeInspection::class.java,
@@ -1145,7 +1145,7 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testPropTypeJsDoc() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(JSValidateTypesInspection::class.java),
     )
   }
@@ -1153,38 +1153,38 @@ abstract class VueHighlightingTestBase(
   @Test
   fun testPropsWithDefaults() {
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testPropsWithDefaultsInTs() {
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
-    checkHighlighting(configureFileName = "propsWithDefaultsInTs.ts")
+    doHighlightingTest(configureFileName = "propsWithDefaultsInTs.ts")
   }
 
   @Test
   fun testVuetifyWebTypesWithTrailingNewLine() {
-    checkHighlighting(VueTestModule.VUETIFY_3_3_3)
+    doHighlightingTest(VueTestModule.VUETIFY_3_3_3)
   }
 
   @Test
   fun testBindShorthandAttribute() {
-    checkHighlighting()
+    doHighlightingTest()
   }
 
   @Test
   fun testWatchProperty() {
-    checkHighlighting(configureFileName = "watchProperty.js")
+    doHighlightingTest(configureFileName = "watchProperty.js")
   }
 
   @Test
   fun testTypedMixins() {
-    checkHighlighting(configureFileName = "index.js")
+    doHighlightingTest(configureFileName = "index.js")
   }
 
   @Test
   fun testVaporSimpleApplication() {
-    checkHighlighting(
+    doHighlightingTest(
       VueTestModule.VUE_3_6_0,
       configureFileName = "App.vue",
     )

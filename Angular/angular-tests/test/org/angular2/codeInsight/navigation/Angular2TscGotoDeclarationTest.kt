@@ -8,8 +8,8 @@ import org.angular2.Angular2TsConfigFile
 
 class Angular2TscGotoDeclarationTest : Angular2TestCase("navigation/declaration", true) {
 
-  fun testSignalStore() = checkGotoDeclaration("<caret>books: Book[];",
-                                               ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0,
-                                               configurators = listOf(Angular2TsConfigFile()))
+  fun testSignalStore() = doGotoDeclarationTest("<caret>books: Book[];",
+                                                ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0,
+                                                configurators = listOf(Angular2TsConfigFile()))
 
 }

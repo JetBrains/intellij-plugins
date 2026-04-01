@@ -149,11 +149,11 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
   }
 
   fun testLocalResolveHasPriority() {
-    checkGotoDeclaration("model <caret>Address", dir = true, expectedFileName = getTestFileName())
+    doGotoDeclarationTest("model <caret>Address", dir = true, expectedFileName = getTestFileName())
   }
 
   fun testGlobalModelResolve() {
-    checkGotoDeclaration("model <caret>Address", dir = true, expectedFileName = "address.prisma")
+    doGotoDeclarationTest("model <caret>Address", dir = true, expectedFileName = "address.prisma")
   }
 
   fun testSchemaNameReference() {

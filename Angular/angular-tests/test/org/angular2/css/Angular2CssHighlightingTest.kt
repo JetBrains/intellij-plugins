@@ -31,6 +31,6 @@ class Angular2CssHighlightingTest: Angular2TestCase("css/highlighting", false) {
     vararg modules: Angular2TestModule,
     extension: String = "css"
   ) {
-    checkHighlighting(*modules, configureFileName = "$testName.$extension")
+    doHighlightingTest(*modules, configureFileName = "$testName.$extension")
   }
 }

@@ -147,19 +147,19 @@ abstract class VueRenameTestBase(
   @Test
   fun testComponentFile() =
     withRenameUsages(false) {
-      checkFileRename("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
+      doFileRenameTest("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
     }
 
   @Test
   fun testComponentFileWithUsages() =
     withRenameUsages(true) {
-      checkFileRename("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
+      doFileRenameTest("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
     }
 
   @Test
   fun testComponentFileWithReexports() =
     withRenameUsages(true) {
-      checkFileRename("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
+      doFileRenameTest("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
     }
 
   @Test
@@ -414,7 +414,7 @@ abstract class VueRenameTestBase(
     mainFile: String = "$testName.$defaultExtension",
     newName: String,
   ) {
-    checkSymbolRename(
+    doSymbolRenameTest(
       mainFile = mainFile,
       newName = newName,
     )

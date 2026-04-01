@@ -5,7 +5,7 @@ import org.jetbrains.astro.AstroCodeInsightTestCase
 import org.jetbrains.astro.AstroTestModule
 
 class AstroGotoDeclarationTest : AstroCodeInsightTestCase("codeInsight/navigation/declaration", useLsp = true) {
-  fun testAstroComponentProp() = checkGotoDeclaration("<caret>title: string,", expectedFileName = "component.astro", dir = true)
+  fun testAstroComponentProp() = doGotoDeclarationTest("<caret>title: string,", expectedFileName = "component.astro", dir = true)
 
   fun testDestructuredParams() = doConfiguredTest(dir = true, configureFileName = "index.astro") {
     checkGotoDeclaration("la<caret>ng", "<caret>lang: 'en'")

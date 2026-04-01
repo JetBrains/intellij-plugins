@@ -4,17 +4,17 @@ import org.angular2.Angular2TestCase
 
 class Angular2CssUsageHighlightingTest : Angular2TestCase("css/usageHighlighting", false) {
 
-  fun testClassFromBinding() = checkUsageHighlighting()
+  fun testClassFromBinding() = doUsageHighlightingTest()
 
-  fun testClassFromCss() = checkUsageHighlighting()
+  fun testClassFromCss() = doUsageHighlightingTest()
 
-  fun testClassFromHostBinding() = checkUsageHighlighting()
+  fun testClassFromHostBinding() = doUsageHighlightingTest()
 
-  fun testClassFromHostBindingAttribute() = checkUsageHighlighting()
+  fun testClassFromHostBindingAttribute() = doUsageHighlightingTest()
 
-  fun testClassFromHostBindingDecorator() = checkUsageHighlighting()
+  fun testClassFromHostBindingDecorator() = doUsageHighlightingTest()
 
-  fun testClassFromHtmlAttribute() = checkUsageHighlighting()
+  fun testClassFromHtmlAttribute() = doUsageHighlightingTest()
 
-  fun testClassFromNgClassBinding() = checkUsageHighlighting()
+  fun testClassFromNgClassBinding() = doUsageHighlightingTest()
 }

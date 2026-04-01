@@ -19,7 +19,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
   // TODO fails on server
   fun _testSimpleTypes() =
     withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
-      checkHighlighting(
+      doHighlightingTest(
         Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.ANGULAR_FORMS_8_2_14,
         dir = true,
         configureFileName = "simple.html"
@@ -27,36 +27,36 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
     }
 
   fun testExpressions() =
-    checkHighlighting(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
-                      Angular2TestModule.ANGULAR_FORMS_16_2_8, Angular2TestModule.RXJS_7_8_1,
-                      configurators = listOf(Angular2TsConfigFile()),
-                      dir = true,
-                      configureFileName = "expressions.html")
+    doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
+                       Angular2TestModule.ANGULAR_FORMS_16_2_8, Angular2TestModule.RXJS_7_8_1,
+                       configurators = listOf(Angular2TsConfigFile()),
+                       dir = true,
+                       configureFileName = "expressions.html")
 
   fun testTemplateBindings() =
     withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
-      checkHighlighting(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
-                        dir = true,
-                        configureFileName = "template.html")
+      doHighlightingTest(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
+                         dir = true,
+                         configureFileName = "template.html")
     }
 
   fun testGenericsValidation() =
     withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
-      checkHighlighting(Angular2TestModule.ANGULAR_CORE_8_2_14,
-                        dir = true,
-                        configureFileName = "generics.html")
+      doHighlightingTest(Angular2TestModule.ANGULAR_CORE_8_2_14,
+                         dir = true,
+                         configureFileName = "generics.html")
     }
 
   fun testGenericsValidationStrict() =
-    checkHighlighting(Angular2TestModule.TS_LIB,
-                      Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
-                      configurators = listOf(Angular2TsConfigFile()))
+    doHighlightingTest(Angular2TestModule.TS_LIB,
+                       Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
+                       configurators = listOf(Angular2TsConfigFile()))
 
   fun testNgForOfAnyTypeNonStrictTemplates() =
     withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
-      checkHighlighting(Angular2TestModule.TS_LIB,
-                        Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
-                        configurators = listOf(Angular2TsConfigFile(strict = false)))
+      doHighlightingTest(Angular2TestModule.TS_LIB,
+                         Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
+                         configurators = listOf(Angular2TsConfigFile(strict = false)))
     }
 
 
@@ -65,9 +65,9 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
 
   fun testInputValue() =
     withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
-      checkHighlighting(Angular2TestModule.ANGULAR_CORE_8_2_14,
-                        dir = true,
-                        configureFileName = "inputValue.html")
+      doHighlightingTest(Angular2TestModule.ANGULAR_CORE_8_2_14,
+                         dir = true,
+                         configureFileName = "inputValue.html")
     }
 
   /**
@@ -140,24 +140,24 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
     checkHighlightingNg15()
 
   fun testGenericDirectiveReferenceNonStrict() =
-    checkHighlighting(Angular2TestModule.TS_LIB,
-                      Angular2TestModule.ANGULAR_MATERIAL_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8,
-                      Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_FORMS_16_2_8,
-                      configurators = listOf(Angular2TsConfigFile(strict = false, strictTemplates = false)),
-                      configureFileName = "genericDirectiveReference.ts")
+    doHighlightingTest(Angular2TestModule.TS_LIB,
+                       Angular2TestModule.ANGULAR_MATERIAL_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8,
+                       Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_FORMS_16_2_8,
+                       configurators = listOf(Angular2TsConfigFile(strict = false, strictTemplates = false)),
+                       configureFileName = "genericDirectiveReference.ts")
 
   fun testGenericDirectiveReferenceStrictTemplates() =
-    checkHighlighting(Angular2TestModule.TS_LIB,
-                      Angular2TestModule.ANGULAR_MATERIAL_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8,
-                      Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_FORMS_16_2_8,
-                      configurators = listOf(Angular2TsConfigFile()),
-                      configureFileName = "genericDirectiveReference.ts")
+    doHighlightingTest(Angular2TestModule.TS_LIB,
+                       Angular2TestModule.ANGULAR_MATERIAL_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8,
+                       Angular2TestModule.ANGULAR_COMMON_16_2_8, Angular2TestModule.ANGULAR_FORMS_16_2_8,
+                       configurators = listOf(Angular2TsConfigFile()),
+                       configureFileName = "genericDirectiveReference.ts")
 
   fun testGenericDirectiveReferenceUnsubstitutedFallsBackToAny() =
     checkHighlightingNg15()
 
   private fun checkHighlightingNg15(dir: Boolean = false, extension: String = if (dir) "html" else "ts") =
-    checkHighlighting(
+    doHighlightingTest(
       Angular2TestModule.TS_LIB, Angular2TestModule.ANGULAR_CORE_15_1_5,
       Angular2TestModule.ANGULAR_COMMON_15_1_5, Angular2TestModule.RXJS_6_4_0,
       configurators = listOf(Angular2TsConfigFile()),
