@@ -105,16 +105,19 @@ abstract class VueCompletionTestBase(
   }
 
   override val defaultConfigurators: List<PolySymbolsTestConfigurator>
-    get() = when (name) {
-      "testAliasedComponentImport",
-      "testAliasedComponentImportKebabCase",
-      "testAliasedComponentImportOptionsApi",
-      "testGlobalItemsAugmentedFromCompilerOptionsTypes",
-        -> emptyList()
+    get() = buildList {
+      addAll(super.defaultConfigurators)
+      when (name) {
+        "testAliasedComponentImport",
+        "testAliasedComponentImportKebabCase",
+        "testAliasedComponentImportOptionsApi",
+        "testGlobalItemsAugmentedFromCompilerOptionsTypes",
+          -> {
+          // no ts-config file
+        }
 
-      else -> listOf(
-        VueTsConfigFile(),
-      )
+        else -> add(VueTsConfigFile())
+      }
     }
 
   override val dirModeByDefault: Boolean = true

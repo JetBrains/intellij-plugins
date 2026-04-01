@@ -5,7 +5,6 @@ import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredAltAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredTitleElementInspection
-import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.JSTestUtils.checkHighlightingWithSymbolNames
 import com.intellij.lang.javascript.JavaScriptBundle
@@ -14,6 +13,7 @@ import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
@@ -58,7 +58,7 @@ abstract class VueHighlightingTestBase(
 
   override val dirModeByDefault: Boolean = true
 
-  override val defaultConfigurators: List<WebFrameworkTestConfigurator>
+  override val defaultConfigurators: List<PolySymbolsTestConfigurator>
     get() = when (name) {
       // TODO: use base config instead
       "testGlobalItemsAugmentedFromCompilerOptionsTypes",
@@ -66,11 +66,9 @@ abstract class VueHighlightingTestBase(
         // TEMP
       "testDataTypeTS",
       "testScriptSetupScopePriority",
-        -> emptyList()
+        -> super.defaultConfigurators
 
-      else -> listOf(
-        VueTsConfigFile(),
-      )
+      else -> super.defaultConfigurators + VueTsConfigFile()
     }
 
   override fun setUp() {
@@ -692,7 +690,7 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testMissingLabelSuppressed() {
-    checkHighlighting(
+    doHighlightingTest(
       inspections = listOf(HtmlFormInputWithoutLabelInspection::class.java),
     )
   }
