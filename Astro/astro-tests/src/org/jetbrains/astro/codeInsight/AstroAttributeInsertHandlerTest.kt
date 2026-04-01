@@ -46,7 +46,7 @@ class AstroAttributeInsertHandlerTest : AstroCodeInsightTestCase("codeInsight/co
     additionalFiles: List<String> = emptyList(),
     configurators: List<PolySymbolsTestConfigurator> = emptyList(),
   ) {
-    doConfiguredTest(additionalFiles = additionalFiles, configurators = configurators, checkResult = true) {
+    doEditorTypingTest(additionalFiles = additionalFiles, configurators = configurators, checkResult = true) {
       completeBasic()
       type(textToType)
     }

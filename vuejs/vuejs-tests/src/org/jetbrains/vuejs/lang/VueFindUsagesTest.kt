@@ -118,6 +118,6 @@ class VueFindUsagesTest :
   private fun doTest(
     fileName: String = "App.vue",
   ) {
-    doUsagesTest(fileName = fileName)
+    doFindUsagesTest(configureFileName = fileName)
   }
 }
