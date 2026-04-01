@@ -3,7 +3,7 @@ package org.angular2;
 
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.polySymbols.testFramework.WebTestUtil;
+import com.intellij.polySymbols.testFramework.PolySymbolsTestUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -71,20 +71,20 @@ public final class Angular2TestUtil {
   }
 
   public static void enableAstLoadingFilter(@NotNull UsefulTestCase testCase) {
-    WebTestUtil.enableAstLoadingFilter(testCase);
+    PolySymbolsTestUtil.enableAstLoadingFilter(testCase);
   }
 
   public static void moveToOffsetBySignature(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
-    WebTestUtil.moveToOffsetBySignature(fixture, signature);
+    PolySymbolsTestUtil.moveToOffsetBySignature(fixture, signature);
   }
 
   public static int findOffsetBySignature(String signature, final PsiFile psiFile) {
-    return WebTestUtil.findOffsetBySignature(psiFile, signature);
+    return PolySymbolsTestUtil.findOffsetBySignature(psiFile, signature);
   }
 
   @NotNull
   public static PsiElement resolveReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
-    return WebTestUtil.resolveReference(fixture, signature);
+    return PolySymbolsTestUtil.resolveReference(fixture, signature);
   }
 
   public static void assertUnresolvedReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
@@ -93,11 +93,11 @@ public final class Angular2TestUtil {
 
   public static void assertUnresolvedReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture,
                                                Boolean okWithNoRef, Boolean allowSelfReference) {
-    var symbols = WebTestUtil.multiResolvePolySymbolReference(fixture, signature);
+    var symbols = PolySymbolsTestUtil.multiResolvePolySymbolReference(fixture, signature);
     if (!symbols.isEmpty() && ContainerUtil.and(symbols, s -> s.get(Angular2ErrorSymbolProperty.INSTANCE) == Boolean.TRUE)) {
       return;
     }
-    WebTestUtil.assertUnresolvedReference(fixture, signature, okWithNoRef, allowSelfReference);
+    PolySymbolsTestUtil.assertUnresolvedReference(fixture, signature, okWithNoRef, allowSelfReference);
   }
 
   public static List<String> renderLookupItems(@NotNull CodeInsightTestFixture fixture,
@@ -118,8 +118,8 @@ public final class Angular2TestUtil {
                                                boolean renderTypeText,
                                                boolean renderTailText,
                                                boolean filterOutGlobalSymbols) {
-    return WebTestUtil.renderLookupItems(fixture, renderPriority,
-                                         renderTypeText, renderTailText, false, false, renderPriority, lookupElementInfo -> {
+    return PolySymbolsTestUtil.renderLookupItems(fixture, renderPriority,
+                                                 renderTypeText, renderTailText, false, false, renderPriority, lookupElementInfo -> {
         if (!filterOutGlobalSymbols || "$any".equals(lookupElementInfo.getLookupString())) {
           return true;
         }
