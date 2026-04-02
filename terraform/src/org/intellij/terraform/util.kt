@@ -4,6 +4,7 @@ package org.intellij.terraform
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -21,6 +22,11 @@ internal fun isTerraformFileExtension(extension: String?): Boolean {
 
 internal fun isTfOrTofuExtension(extension: String?): Boolean {
   return isTerraformFileExtension(extension) || extension == OpenTofuFileType.defaultExtension
+}
+
+internal fun isTfOrTofuFile(file: VirtualFile?): Boolean {
+  val fileType = file?.fileType ?: return false
+  return fileType is TerraformFileType || fileType is OpenTofuFileType
 }
 
 internal fun isTfOrTofuPsiFile(file: PsiFile?): Boolean {
