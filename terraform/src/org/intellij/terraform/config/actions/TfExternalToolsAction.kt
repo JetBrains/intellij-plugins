@@ -8,33 +8,29 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.isFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.opentofu.OpenTofuFileType
+import org.intellij.terraform.isTfOrTofuFile
 import org.intellij.terraform.runtime.TfToolPathDetector
 import org.intellij.terraform.runtime.showIncorrectPathNotification
 import org.jetbrains.annotations.Nls
 import kotlin.coroutines.cancellation.CancellationException
 
-internal fun isTfOrTofuAvailable(file: VirtualFile, checkDirChildren: Boolean = true): Boolean {
+internal fun isTfOrTofuAvailable(file: VirtualFile): Boolean {
   if (!file.isInLocalFileSystem) return false
-  if (file.isDirectory) {
-    if (!checkDirChildren) return false
-    return file.children.any { child -> isTfOrTofuAvailable(child, false) }
-  }
 
-  return FileTypeRegistry.getInstance().run {
-    isFileOfType(file, TerraformFileType) || isFileOfType(file, OpenTofuFileType)
+  if (file.isDirectory) {
+    return file.children?.any { it.isFile && isTfOrTofuFile(it) } ?: false
   }
+  return isTfOrTofuFile(file)
 }
 
 internal abstract class TfExternalToolsAction : DumbAwareAction() {

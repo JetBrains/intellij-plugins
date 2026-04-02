@@ -134,8 +134,7 @@ internal class MissingPropertyVisitor(val holder: ProblemsHolder, val recursive:
     val candidates = ArrayList(properties.values.filter { it.required && !(it is PropertyType && it.hasDefault) })
     if (candidates.isEmpty()) return
 
-    val configured = HashSet<String>()
-    configured.addAll(obj.propertyList.map { it.name })
+    val configured = obj.propertyList.map { it.name }.toMutableSet()
     for (it in obj.blockList) {
       if (DynamicBlock.accepts(it))
         configured.add(it.name)
