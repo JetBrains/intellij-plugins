@@ -1,13 +1,11 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.intellij.terraform.config.hint
+package org.intellij.terraform.config.hints
 
 import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.utils.codeVision.CodeVisionTestCase
-import org.intellij.terraform.config.hints.TF_USAGES_LIMIT_ID
-import org.intellij.terraform.config.hints.TfReferencesCodeVisionProvider
 
-internal class TfCodeVisionProviderTest : CodeVisionTestCase() {
+internal class TfReferencesCodeVisionTest : CodeVisionTestCase() {
 
   private val usagesLimit = 4
 
@@ -16,7 +14,7 @@ internal class TfCodeVisionProviderTest : CodeVisionTestCase() {
     setUpAdvancedSettings()
   }
 
-  fun testHintsForVariousBlocks() = testUsageHints($$"""
+  private val variousBlocksExample = $$"""
     provider "aws" {
       region = "us-west-2"
     }
@@ -103,9 +101,8 @@ internal class TfCodeVisionProviderTest : CodeVisionTestCase() {
       }
     }
   """.trimIndent()
-  )
 
-  fun testCodeVisionLimit() = testUsageHints($$"""
+  private val codeVisionLimitExample = $$"""
     variable "region" {/*<# [4+ usages] #>*/
       description = "AWS region to deploy resources in"
       type        = string
@@ -132,10 +129,17 @@ internal class TfCodeVisionProviderTest : CodeVisionTestCase() {
       bucket = "example-bucket-4-${var.region}"
     }
   """.trimIndent()
-  )
 
-  private fun testUsageHints(text: String) {
-    testProviders(text, "main.tf", TfReferencesCodeVisionProvider().groupId)
+  fun testTfHintsForVariousBlocks() = testUsageHints(variousBlocksExample, "main.tf")
+
+  fun testTfCodeVisionLimit() = testUsageHints(codeVisionLimitExample, "main.tf")
+
+  fun testTofuHintsForVariousBlocks() = testUsageHints(variousBlocksExample, "main.tofu")
+
+  fun testTofuCodeVisionLimit() = testUsageHints(codeVisionLimitExample, "main.tofu")
+
+  private fun testUsageHints(text: String, fileName: String) {
+    testProviders(text, fileName, TfReferencesCodeVisionProvider().groupId)
   }
 
   private fun setUpAdvancedSettings() {

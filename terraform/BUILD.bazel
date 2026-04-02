@@ -239,6 +239,8 @@ jvm_library(
     "@community//libraries/fastutil:fastutil_test_lib",
     "@community//platform/vcs-impl",
     "@community//platform/vcs-impl:vcs-impl_test_lib",
+    "@community//platform/vcs-impl/lang",
+    "@community//platform/vcs-impl/lang:lang_test_lib",
     "@community//platform/util/coroutines",
     "@community//platform/util/coroutines:coroutines_test_lib",
     "@community//platform/backend/workspace",
