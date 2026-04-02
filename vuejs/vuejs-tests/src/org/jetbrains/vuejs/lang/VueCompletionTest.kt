@@ -104,9 +104,12 @@ abstract class VueCompletionTestBase(
     this.enableIdempotenceChecksOnEveryCache()
   }
 
-  override val defaultConfigurators: List<PolySymbolsTestConfigurator>
-    get() = buildList {
-      addAll(super.defaultConfigurators)
+  override fun adjustConfigurators(
+    configurators: List<PolySymbolsTestConfigurator>,
+  ): List<PolySymbolsTestConfigurator> =
+    buildList {
+      addAll(super.adjustConfigurators(configurators))
+
       when (name) {
         "testAliasedComponentImport",
         "testAliasedComponentImportKebabCase",

@@ -49,8 +49,11 @@ abstract class VueRenameTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueTestCase("rename", testMode = testMode) {
 
-  override val defaultConfigurators: List<PolySymbolsTestConfigurator>
-    get() = super.defaultConfigurators + VueTsConfigFile()
+  override fun adjustConfigurators(
+    configurators: List<PolySymbolsTestConfigurator>,
+  ): List<PolySymbolsTestConfigurator> =
+    super.adjustConfigurators(configurators)
+      .plus(VueTsConfigFile())
 
   override val dirModeByDefault: Boolean = true
 

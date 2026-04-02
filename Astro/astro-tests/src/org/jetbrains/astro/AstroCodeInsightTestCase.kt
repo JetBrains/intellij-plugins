@@ -20,9 +20,11 @@ abstract class AstroCodeInsightTestCase(
   val useLsp: Boolean = false,
 ) : WebFrameworkTestCase(if (useLsp) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform) {
 
-  override val defaultConfigurators: List<PolySymbolsTestConfigurator>
-    get() = buildList {
-      addAll(super.defaultConfigurators)
+  override fun adjustConfigurators(
+    configurators: List<PolySymbolsTestConfigurator>,
+  ): List<PolySymbolsTestConfigurator> =
+    buildList {
+      addAll(super.adjustConfigurators(configurators))
 
       if (useLsp) {
         add(AstroLspConfigurator())

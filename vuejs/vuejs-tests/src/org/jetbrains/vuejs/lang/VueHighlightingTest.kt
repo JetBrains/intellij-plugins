@@ -58,17 +58,25 @@ abstract class VueHighlightingTestBase(
 
   override val dirModeByDefault: Boolean = true
 
-  override val defaultConfigurators: List<PolySymbolsTestConfigurator>
-    get() = when (name) {
-      // TODO: use base config instead
-      "testGlobalItemsAugmentedFromCompilerOptionsTypes",
+  override fun adjustConfigurators(
+    configurators: List<PolySymbolsTestConfigurator>,
+  ): List<PolySymbolsTestConfigurator> =
+    buildList {
+      addAll(super.adjustConfigurators(configurators))
 
-        // TEMP
-      "testDataTypeTS",
-      "testScriptSetupScopePriority",
-        -> super.defaultConfigurators
+      when (name) {
+        // TODO: use base config instead
+        "testGlobalItemsAugmentedFromCompilerOptionsTypes",
 
-      else -> super.defaultConfigurators + VueTsConfigFile()
+          // TEMP
+        "testDataTypeTS",
+        "testScriptSetupScopePriority",
+          -> {
+          // no ts-config file
+        }
+
+        else -> add(VueTsConfigFile())
+      }
     }
 
   override fun setUp() {
