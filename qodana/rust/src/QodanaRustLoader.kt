@@ -55,6 +55,21 @@ internal class QodanaRustLoader(private val project: Project, coroutineScope: Co
         internal val log = logger<QodanaRustLoader>()
     }
 
+    // Subscribes early (at service creation time, before configure() runs) to avoid a race
+    // where MacroExpansionManager.stateLoaded() triggers expansion from cached .idea state
+    // before configure() gets a chance to subscribe. CompletableDeferred.complete() is idempotent.
+    private val macroExpansionCompleted = CompletableDeferred<Unit>()
+    init {
+        project.messageBus.connect(project).subscribe(
+            MacroExpansionTaskListener.MACRO_EXPANSION_TASK_TOPIC,
+            object : MacroExpansionTaskListener {
+                override fun onMacroExpansionTaskFinished() {
+                    macroExpansionCompleted.complete(Unit)
+                }
+            }
+        )
+    }
+
     private val configureDeferred: Deferred<Unit> = coroutineScope.async(start = CoroutineStart.LAZY) {
         project.lifetime.usingNested {
             withContext(Dispatchers.EDT) {
@@ -82,7 +97,6 @@ internal class QodanaRustLoader(private val project: Project, coroutineScope: Co
         }
 
         val cargoProjectReload = project.deferredCargoProjectReload()
-        val macroExpansion = project.deferredMacroExpansion()
 
         val cargoProjectsService = project.cargoProjects
         val result = guessAndSetupRustProject(project, explicitRequest = true, createConfigurations = true)
@@ -115,7 +129,7 @@ internal class QodanaRustLoader(private val project: Project, coroutineScope: Co
             }
         }.toString())
 
-        macroExpansion.await()
+        macroExpansionCompleted.await()
 
         // Awaits a service that is responsible for attaching extra sources to projects using #![feature(rustc_private)]
         project.service<RsRustcPrivateTracker>().rustcPrivateInitializedInAllPackages.firstOrNull { it }
@@ -165,24 +179,6 @@ internal class QodanaRustLoader(private val project: Project, coroutineScope: Co
         return refreshFinished
     }
 
-    /**
-     * Returns a CompletableDeferred that completes when the Cargo project has finished the macro expansion task.
-     * This call does not request the macro expansion task to start.
-     */
-    private fun Project.deferredMacroExpansion(): CompletableDeferred<Unit> {
-        val connection = messageBus.connect(this)
-        val result = CompletableDeferred<Unit>()
-        connection.subscribe(
-            MacroExpansionTaskListener.MACRO_EXPANSION_TASK_TOPIC,
-            object : MacroExpansionTaskListener {
-                override fun onMacroExpansionTaskFinished() {
-                    result.complete(Unit)
-                }
-            }
-        )
-
-        return result
-    }
 }
 
 class QodanaRustLoaderActivityTracker : ActivityTracker {
