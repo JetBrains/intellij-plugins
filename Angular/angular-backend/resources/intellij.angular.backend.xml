@@ -4,7 +4,6 @@
     <plugin id="com.intellij.modules.ultimate"/>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="HtmlTools"/>
-    <plugin id="intellij.webpack"/>
     <module name="intellij.angular.free"/>
     <module name="intellij.css.backend"/>
     <module name="intellij.javascript.codeinsight"/>

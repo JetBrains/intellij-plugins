@@ -1,5 +1,6 @@
 <idea-plugin>
   <dependencies>
+    <plugin id="HtmlTools"/>
     <plugin id="com.intellij.platform.images"/>
     <module name="intellij.platform.trialPromotion.common"/>
   </dependencies>

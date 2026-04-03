@@ -34,6 +34,7 @@ jvm_library(
     "@community//platform/workspace/storage",
     "//platform/trialPromotion/common",
     "@community//platform/core-impl",
+    "@community//plugins/htmltools:html-tools",
   ]
 )
 
@@ -63,6 +64,7 @@ jvm_library(
     "@community//platform/workspace/storage:storage_test_lib",
     "//platform/trialPromotion/common:common_test_lib",
     "@community//platform/core-impl:core-impl_test_lib",
+    "@community//plugins/htmltools:html-tools_test_lib",
   ]
 )
 ### auto-generated section `build intellij.angular.free` end
