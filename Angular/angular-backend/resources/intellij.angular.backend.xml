@@ -6,7 +6,6 @@
     <module name="intellij.angular.free"/>
     <plugin id="com.intellij.modules.ultimate"/>
     <plugin id="HtmlTools"/>
-    <plugin id="intellij.webpack"/>
   </dependencies>
 
   <extensionPoints>

@@ -52,7 +52,6 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "@community//xml/impl",
     "//plugins/css/plugin",
-    "//plugins/webpack",
     "@community//libraries/gson",
     "@community//plugins/htmltools:html-tools",
     "@community//libraries/jackson/jackson",
