@@ -47,6 +47,7 @@
 
     <directoryProjectGenerator implementation="com.intellij.deno.generator.DenoProjectTemplateGenerator"/>
     <fileBasedIndex implementation="com.intellij.deno.lang.DenoCacheContentIndexExtension"/>
+    <projectSettings service="com.intellij.deno.DenoSettings"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <languageServiceProvider order="first" implementation="com.intellij.deno.service.DenoTypeScriptServiceProvider"/>

@@ -86,6 +86,7 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      implementationClass="com.jetbrains.lang.makefile.inspections.MakefileUnresolvedPrerequisiteInspection" />
+    <projectSettings service="com.jetbrains.lang.makefile.MakefileProjectSettings"/>
   </extensions>
 
   <extensionPoints>

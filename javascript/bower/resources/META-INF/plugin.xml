@@ -31,6 +31,7 @@ Note that this plugin is not actively maintained and may stop working in future 
     <fileType name="JSON" fileNames="bowerrc"/>
     <completion.contributor language="JSON" implementationClass="com.intellij.javascript.bower.BowerCompletionContributor"/>
     <spellchecker.support language="JSON" order="first" implementationClass="com.intellij.javascript.bower.BowerConfigFileSpellcheckingStrategy"/>
+    <projectSettings service="com.intellij.javascript.bower.BowerSettingsManager"/>
   </extensions>
 
 </idea-plugin>

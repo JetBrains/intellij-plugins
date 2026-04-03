@@ -34,6 +34,7 @@
 
     <applicationService id="yeomanGlobalSettings" serviceImplementation="jetbrains.plugins.yeoman.settings.YeomanGlobalSettings"/>
     <directoryProjectGenerator implementation="jetbrains.plugins.yeoman.projectGenerator.template.YeomanProjectGenerator"/>
+    <applicationSettings service="jetbrains.plugins.yeoman.settings.YeomanGlobalSettings"/>
   </extensions>
 
   <actions>

@@ -240,5 +240,6 @@
       key="dts.insert_semicolons"
       defaultValue="true"
       description="Enables automatic semicolon insertion after entries"/>
+    <projectSettings service="com.intellij.dts.settings.DtsSettings"/>
   </extensions>
 </idea-plugin>

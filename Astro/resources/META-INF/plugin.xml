@@ -129,6 +129,7 @@
 
     <css.inclusionContext implementation="org.jetbrains.astro.lang.css.AstroCssInclusionContext"/>
     <css.embeddedCssProvider implementation="org.jetbrains.astro.lang.css.AstroEmbeddedCssProvider"/>
+    <projectSettings service="org.jetbrains.astro.service.settings.AstroServiceSettings"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

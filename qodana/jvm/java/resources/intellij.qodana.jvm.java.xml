@@ -30,5 +30,7 @@
                       groupKey="code.metrics.group.display.name"
                       enabledByDefault="false"
                       implementationClass="org.jetbrains.qodana.jvm.java.metrics.linesOfCode.JvmLinesOfCodeInspection"/>
+    <projectSettings service="org.jetbrains.qodana.jvm.java.QodanaGithubPromoNotificationProjectDismissalState"/>
+    <applicationSettings service="org.jetbrains.qodana.jvm.java.QodanaGithubPromoNotificationApplicationDismissalState"/>
   </extensions>
 </idea-plugin>

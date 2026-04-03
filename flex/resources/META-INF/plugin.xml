@@ -325,6 +325,9 @@
     <notificationGroup id="Flash Compiler" displayType="BALLOON" bundle="messages.FlexBundle" key="notification.group.flash.compiler"/>
     <notificationGroup id="Debugger" displayType="BALLOON" bundle="messages.FlexBundle" key="notification.group.debugger"/>
     <workspaceFileIndexContributorEnforcer implementation="com.intellij.lang.javascript.flex.sdk.FlexSdkWorkspaceFileIndexContributorEnforcer"/>
+    <projectSettings service="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters"/>
+    <projectSettings service="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration"/>
+    <projectSettings service="com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectLevelCompilerOptionsHolderImpl"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

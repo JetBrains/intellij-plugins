@@ -610,6 +610,9 @@
     <fileType name="Terraform Deployment" language="HCL" patterns="*.tfdeploy.hcl"
               implementationClass="org.intellij.terraform.stack.deployment.TfDeployFileType" fieldName="INSTANCE"/>
     <completion.contributor language="HCL" implementationClass="org.intellij.terraform.stack.deployment.TfDeployCompletionContributor"/>
+    <projectSettings service="org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings"/>
+    <projectSettings service="org.intellij.terraform.terragrunt.runtime.TerragruntProjectSettings"/>
+    <projectSettings service="org.intellij.terraform.runtime.TfProjectSettings"/>
   </extensions>
 
   <projectListeners>

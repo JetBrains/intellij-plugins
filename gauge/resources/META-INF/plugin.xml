@@ -141,6 +141,7 @@
 
     <notificationGroup id="Gauge Error" displayType="BALLOON" bundle="messages.GaugeBundle" key="notification.group.gauge.error"/>
     <notificationGroup id="Gauge" displayType="BALLOON" bundle="messages.GaugeBundle" key="notification.group.gauge"/>
+    <applicationSettings service="com.thoughtworks.gauge.settings.GaugeSettingsService"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript.JsonSchema">

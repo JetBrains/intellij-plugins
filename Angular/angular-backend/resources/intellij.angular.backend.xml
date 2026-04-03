@@ -462,6 +462,7 @@
     <annotator language="TypeScript" implementationClass="org.angular2.library.forms.Angular2FormsAnnotator"/>
     <editorFloatingToolbarProvider implementation="org.angular2.navigation.Angular2GotoRelatedToolbarProvider"/>
     <openInBrowserFloatingToolbarSuppressor implementation="org.angular2.navigation.BrowsersToolbarSuppressor"/>
+    <projectSettings service="org.angular2.options.AngularSettings"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

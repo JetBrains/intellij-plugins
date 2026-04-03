@@ -89,6 +89,7 @@
                        displayType="BALLOON"
                        bundle="messages.MeteorBundle"
                        key="notification.group.meteor.js.generator"/>
+    <applicationSettings service="com.jetbrains.plugins.meteor.settings.MeteorSettings"/>
   </extensions>
 
 

@@ -147,5 +147,6 @@
        <editorNotificationProvider implementation="org.intellij.prisma.ide.config.PrismaConfigStatusEditorNotificationProvider"/>
 
        <postStartupActivity implementation="org.intellij.prisma.ide.startup.PrismaStartupActivity"/>
+      <projectSettings service="org.intellij.prisma.ide.lsp.PrismaServiceSettings"/>
     </extensions>
 </idea-plugin>

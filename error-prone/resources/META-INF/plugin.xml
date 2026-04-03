@@ -17,5 +17,6 @@
     <compileServer.plugin classpath="jps/errorProne-jps.jar"/>
     <buildProcess.parametersProvider implementation="org.intellij.errorProne.ErrorProneClasspathProvider"/>
     <compiler.task execute="BEFORE" implementation="org.intellij.errorProne.ErrorProneCompilerDownloadingTask"/>
+    <projectSettings service="org.intellij.errorProne.ErrorProneCompilerConfiguration"/>
   </extensions>
 </idea-plugin>

@@ -43,6 +43,7 @@ Adds Cordova support to IntelliJ-based IDEs. Here's what's included in this supp
                        displayType="BALLOON"
                        bundle="messages.PhoneGapBundle"
                        key="notification.group.phonegap.notification"/>
+    <applicationSettings service="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings"/>
   </extensions>
 
 

@@ -54,6 +54,7 @@
     <statistics.applicationUsagesCollector implementation="com.intellij.plugins.serialmonitor.SerialMonitorUsagesCollector"/>
     <applicationService serviceInterface="com.intellij.plugins.serialmonitor.service.SerialPortProvider" open="true"
                         serviceImplementation="com.intellij.plugins.serialmonitor.service.JSerialCommPortProvider" />
+    <applicationSettings service="com.intellij.plugins.serialmonitor.SerialProfileService"/>
   </extensions>
   <resource-bundle>messages.SerialMonitorBundle</resource-bundle>
 </idea-plugin>

@@ -273,7 +273,7 @@ class QodanaProblemsViewTab(
 
 @Service(Service.Level.APP)
 @State(name = "QodanaTabWasOpened", storages = [Storage(value = "qodana.xml")])
-private class QodanaTabWasEverOpenedService : PersistentStateComponent<QodanaTabWasEverOpenedService.State> {
+internal class QodanaTabWasEverOpenedService : PersistentStateComponent<QodanaTabWasEverOpenedService.State> {
   companion object {
     fun getInstance(): QodanaTabWasEverOpenedService = service()
   }

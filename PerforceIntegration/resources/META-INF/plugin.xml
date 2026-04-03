@@ -157,6 +157,11 @@
     <registryKey key="p4.force.p4v.exe"
                  defaultValue="true"
                  description="Force `p4v.exe` instead of any wrapper specified in settings (see IDEA-369150)"/>
+    <projectSettings service="org.jetbrains.idea.perforce.application.PerforceNumberNameSynchronizer"/>
+    <projectSettings service="org.jetbrains.idea.perforce.operations.VcsOperationLog"/>
+    <projectSettings service="org.jetbrains.idea.perforce.perforce.PerforceSettings"/>
+    <projectSettings service="org.jetbrains.idea.perforce.application.LastSuccessfulUpdateTracker"/>
+    <projectSettings service="org.jetbrains.idea.perforce.changesBrowser.PerforceChangeBrowserSettingsService"/>
   </extensions>
   <applicationListeners>
     <listener class="org.jetbrains.idea.perforce.application.P4LocalChangesRefresher"

@@ -342,6 +342,8 @@
     <platform.backend.documentation.psiTargetProvider implementation="org.jetbrains.vuejs.web.VuePsiDocumentationProvider"/>
 
     <codeInsight.codeVisionSettingsPreviewLanguage language="Vue" modelId="component.usage"/>
+    <projectSettings service="org.jetbrains.vuejs.options.VueSettings"/>
+    <projectSettings service="org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderManager"/>
   </extensions>
 
   <actions resource-bundle="messages.VueBundle">

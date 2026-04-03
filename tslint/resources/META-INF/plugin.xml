@@ -60,6 +60,7 @@
                            id="default"
                            order="last"/>
 
+    <projectSettings service="com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <JsonSchema.ProviderFactory implementation="com.intellij.lang.javascript.linter.tslint.schema.TsLintJsonSchemaProviderFactory"/>

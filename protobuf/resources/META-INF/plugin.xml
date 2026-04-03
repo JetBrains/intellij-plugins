@@ -165,6 +165,8 @@
       implementation="com.intellij.protobuf.ide.template.PbLanguageContext$OneofBody"/>
     <liveTemplateContext contextId="PROTO_SERVICE" baseContextId="PROTO"
       implementation="com.intellij.protobuf.ide.template.PbLanguageContext$ServiceBody"/>
+    <projectSettings service="com.intellij.protobuf.ide.settings.PbProjectSettings"/>
+    <projectSettings service="com.intellij.protobuf.ide.settings.PbTextLanguageSettings"/>
   </extensions>
 
   <!-- Text format extensions -->

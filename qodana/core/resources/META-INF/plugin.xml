@@ -160,6 +160,17 @@
 
     <postStartupActivity implementation="org.jetbrains.qodana.staticAnalysis.QodanaAwaitBackgroundStartupActivity"/>
     <backgroundPostStartupActivity implementation="org.jetbrains.qodana.staticAnalysis.QodanaLinterBackgroundStartupActivity"/>
+    <projectSettings service="org.jetbrains.qodana.ui.ci.QodanaCIConfigService"/>
+    <projectSettings service="org.jetbrains.qodana.cloud.project.QodanaCloudProjectLinkService"/>
+    <applicationSettings service="org.jetbrains.qodana.cloud.QodanaCloudStateService"/>
+    <projectSettings service="org.jetbrains.qodana.highlight.QodanaHighlightedReportService"/>
+    <projectSettings service="org.jetbrains.qodana.highlight.QodanaIsSelectedPersistenceService"/>
+    <projectSettings service="org.jetbrains.qodana.report.QodanaLocalReportsService"/>
+    <projectSettings service="org.jetbrains.qodana.settings.QodanaPerProjectSettings"/>
+    <projectSettings service="org.jetbrains.qodana.ui.problemsView.viewModel.QodanaProblemsViewStateService"/>
+    <projectSettings service="org.jetbrains.qodana.cloud.project.QodanaReportDownloader"/>
+    <applicationSettings service="org.jetbrains.qodana.settings.QodanaSettings"/>
+    <applicationSettings service="org.jetbrains.qodana.ui.problemsView.QodanaTabWasEverOpenedService"/>
   </extensions>
 
   <actions resource-bundle="messages.QodanaBundle">
