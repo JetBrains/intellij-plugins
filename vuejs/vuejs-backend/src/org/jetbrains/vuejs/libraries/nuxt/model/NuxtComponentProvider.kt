@@ -8,8 +8,8 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.asSafely
-import com.intellij.webpack.WebpackConfigManager
-import com.intellij.webpack.WebpackReferenceContributor
+import com.intellij.lang.javascript.buildTools.bundler.WebBundlerDefinitionsProvider
+import com.intellij.lang.javascript.buildTools.bundler.WebBundlerReferenceContributorBase
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_COMPONENTS_DEFS
@@ -103,14 +103,22 @@ class NuxtComponentProvider : VueContainerInfoProvider {
 
   private fun resolvePath(configFile: PsiFile, componentDir: NuxtConfig.ComponentsDirectoryConfig): VirtualFile? =
     if (componentDir.path.startsWith("~") || componentDir.path.startsWith("@")) {
-      WebpackConfigManager.getInstance(configFile.project)
-        .resolveConfig(configFile)
-        .takeIf { !it.isEmpty() }
-        ?.let { webpackReferenceProvider.getAliasedReferences(componentDir.path.trimEnd('/'), configFile, 0, it, true) }
-        ?.lastOrNull()
-        ?.resolve()
-        ?.asSafely<PsiDirectory>()
-        ?.virtualFile
+      WebBundlerDefinitionsProvider.getInstance(configFile.project).getAllDefinitions()
+        .asSequence()
+        .mapNotNull { def ->
+          def.getConfigManager(configFile.project)
+            .resolveConfig(configFile)
+            .takeIf { !it.isEmpty() }
+        }
+        .firstNotNullOfOrNull { config ->
+          WebBundlerReferenceContributorBase.resolveAliasedReferences(
+            componentDir.path.trimEnd('/'),
+            configFile,
+            0,
+            config,
+            true,
+          ).lastOrNull()?.resolve()?.asSafely<PsiDirectory>()?.virtualFile
+        }
     }
     else {
       configFile.virtualFile.parent?.findFileByRelativePath(componentDir.path)
@@ -119,5 +127,4 @@ class NuxtComponentProvider : VueContainerInfoProvider {
 
 }
 
-private val webpackReferenceProvider = WebpackReferenceContributor()
 private val MULTI_HYPHEN_REGEX = Regex("-{2,}")

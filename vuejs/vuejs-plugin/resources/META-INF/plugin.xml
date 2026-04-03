@@ -38,6 +38,7 @@
     <module name="intellij.vuejs.free"/>
     <module name="intellij.vuejs.common" loading="required"/>
     <module name="intellij.vuejs.backend"/>
+    <module name="intellij.vuejs.webpack"/>
   </content>
 
   <extensions defaultExtensionNs="com.intellij">

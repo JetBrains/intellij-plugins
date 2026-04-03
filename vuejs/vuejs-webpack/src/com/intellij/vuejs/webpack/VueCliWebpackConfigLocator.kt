@@ -1,5 +1,5 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.vuejs.cli
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package com.intellij.vuejs.webpack
 
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.PackageJsonData
@@ -29,6 +29,6 @@ class VueCliWebpackConfigLocator : WebpackConfigLocator {
   }
 
   companion object {
-    const val VUE_CLI_SERVICE_PKG = "@vue/cli-service"
+    const val VUE_CLI_SERVICE_PKG: String = "@vue/cli-service"
   }
 }

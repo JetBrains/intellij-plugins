@@ -1,0 +1,44 @@
+### auto-generated section `build intellij.vuejs.webpack` start
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+jvm_library(
+  name = "webpack",
+  module_name = "intellij.vuejs.webpack",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
+  deps = [
+    "@community//platform/util",
+    "//contrib/vuejs/vuejs-backend:backend",
+    "//contrib/vuejs/vuejs-common:common",
+    "//plugins/webpack",
+    "@lib//:kotlin-stdlib",
+    "@community//platform/core-api:core",
+    "//plugins/JavaScriptLanguage/javascript-backend",
+  ]
+)
+
+jvm_library(
+  name = "webpack_test_lib",
+  testonly = True,
+  module_name = "intellij.vuejs.webpack",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":webpack",
+    "@community//platform/util:util_test_lib",
+    "//contrib/vuejs/vuejs-backend:backend_test_lib",
+    "//contrib/vuejs/vuejs-common:common_test_lib",
+    "//plugins/webpack:webpack_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
+  ]
+)
+### auto-generated section `build intellij.vuejs.webpack` end
+
+### auto-generated section `iml intellij.vuejs.webpack` start
+exports_files([
+  "intellij.vuejs.webpack.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.vuejs.webpack` end

@@ -7,6 +7,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
   runtime_deps = [
+    "//contrib/vuejs/vuejs-webpack:webpack",
     "//plugins/css/common",
     "//plugins/css/plugin",
     "//plugins/JavaScriptLanguage/javascript-parser",
@@ -26,6 +27,8 @@ jvm_library(
   resources = glob(["testData/**/*"]),
   resource_strip_prefix = "testData",
   deps = [
+    "//contrib/vuejs/vuejs-webpack:webpack",
+    "//contrib/vuejs/vuejs-webpack:webpack_test_lib",
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-api:analysis_test_lib",
     "@community//platform/code-style-api:codeStyle",

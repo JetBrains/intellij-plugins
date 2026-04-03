@@ -6,7 +6,6 @@
     <plugin id="com.intellij.modules.xml"/>
     <plugin id="com.intellij.css"/>
     <plugin id="JavaScript"/>
-    <plugin id="intellij.webpack"/>
     <plugin id="org.intellij.plugins.postcss"/>
     <module name="intellij.javascript.analysis.impl"/>
     <module name="intellij.javascript.backend"/>
@@ -407,10 +406,5 @@
     <moduleExportsProvider id="vue" implementation="org.jetbrains.vuejs.codeInsight.imports.VueModuleExportsProvider"/>
     <componentUsageProvider language="Vue" implementationClass="org.jetbrains.vuejs.codeInsight.hints.VueComponentUsageProvider"/>
     <typeScriptCompilerTypeFilter implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtTypeScriptTypeFilter"/>
-  </extensions>
-
-  <extensions defaultExtensionNs="intellij.webpack">
-    <webpackLocator implementation="org.jetbrains.vuejs.cli.VueCliWebpackConfigLocator"/>
-    <webpackLocator implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtWebpackConfigLocator"/>
   </extensions>
 </idea-plugin>

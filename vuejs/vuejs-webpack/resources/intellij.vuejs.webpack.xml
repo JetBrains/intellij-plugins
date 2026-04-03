@@ -1,0 +1,14 @@
+<idea-plugin visibility="internal">
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="intellij.webpack"/>
+    <module name="intellij.javascript.backend"/>
+    <module name="intellij.vuejs.backend"/>
+    <module name="intellij.vuejs.common"/>
+  </dependencies>
+  <!-- endregion -->
+  <extensions defaultExtensionNs="intellij.webpack">
+    <webpackLocator implementation="com.intellij.vuejs.webpack.VueCliWebpackConfigLocator"/>
+    <webpackLocator implementation="com.intellij.vuejs.webpack.NuxtWebpackConfigLocator"/>
+  </extensions>
+</idea-plugin>
