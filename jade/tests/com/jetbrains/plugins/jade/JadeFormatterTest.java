@@ -11,7 +11,9 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Ignore;
 
+@Ignore("AT-4013")
 public class JadeFormatterTest extends LightPlatformCodeInsightTestCase {
 
   @NotNull

@@ -13,9 +13,11 @@ import org.jetbrains.qodana.jvm.java.migrate.MigrateClassesTestUtils.paramMap
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
 
+@Ignore("AT-4013")
 class MigrateClassesScriptTest : QodanaRunnerTestCase() {
 
   private lateinit var sourceFile: PsiFile

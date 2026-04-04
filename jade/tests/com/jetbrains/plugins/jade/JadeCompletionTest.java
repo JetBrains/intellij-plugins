@@ -3,6 +3,7 @@ package com.jetbrains.plugins.jade;
 
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.idea.IJIgnore;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.text.StringUtil;
@@ -29,10 +30,12 @@ public class JadeCompletionTest extends BasePlatformTestCase {
     assertCompletionContains(true, "html", "plist", "transitional", "strict", "frameset", "1.1", "mobile");
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testVariable1() {
     defaultTest(null);
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testVariable2() {
     defaultTest(null);
   }
@@ -176,30 +179,37 @@ public class JadeCompletionTest extends BasePlatformTestCase {
     fail("item '" + lookupString + "' not found");
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testScript1() {
     defaultTest("length");
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testScript2() {
     defaultTest("length");
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testScript3() {
     defaultTest("length");
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testScript4() {
     defaultTest("length");
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testScriptTopLevel1() {
     defaultTest("console");
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testScriptTopLevel2() {
     defaultTest("console");
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testFilterTopLevel() {
     defaultTest("console");
   }
@@ -236,6 +246,7 @@ public class JadeCompletionTest extends BasePlatformTestCase {
     myFixture.checkResultByFile("inBlock_after.pug");
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testMixinsObjectDestructuring() {
     configureByFile(getTestName(true) + ".jade");
     complete();

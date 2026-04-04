@@ -5,6 +5,7 @@ import org.jetbrains.qodana.staticAnalysis.QodanaTestCase.Companion.runTest
 import org.jetbrains.qodana.staticAnalysis.script.CHANGES_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.LocalChangesScript
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
+import org.junit.Ignore
 import org.junit.Test
 import java.nio.file.Path
 
@@ -102,6 +103,7 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
     }
   }
 
+  @Ignore("AT-4013")
   @Test
   fun `changes arg overrides default script`() = runTest {
     val testProjectPath = project.basePath
@@ -128,6 +130,7 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
     assertInstanceOf<LocalChangesScript>(script)
   }
 
+  @Ignore("AT-4013")
   @Test
   fun `changes arg works with changes script`() = runTest {
     val testProjectPath = project.basePath

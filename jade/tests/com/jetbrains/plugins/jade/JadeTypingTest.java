@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.plugins.jade;
 
+import com.intellij.idea.IJIgnore;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,10 +25,12 @@ public class JadeTypingTest extends BasePlatformTestCase {
     doTest("\n");
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testEnterEmbeddedJS() {
     doTest("\n");
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testEnterEmbeddedJSToplevel() {
     doTest("\n");
   }

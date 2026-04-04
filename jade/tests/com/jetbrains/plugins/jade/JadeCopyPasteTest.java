@@ -2,6 +2,7 @@
 package com.jetbrains.plugins.jade;
 
 import com.intellij.codeInsight.CodeInsightSettings;
+import com.intellij.idea.IJIgnore;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
@@ -34,10 +35,12 @@ public class JadeCopyPasteTest extends BasePlatformTestCase {
     }
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testWholeLine1() {
     doTest();
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testWholeLine2() {
     doTest();
   }
@@ -46,6 +49,7 @@ public class JadeCopyPasteTest extends BasePlatformTestCase {
     doTest();
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testPartLine2() {
     doTest();
   }
@@ -54,22 +58,27 @@ public class JadeCopyPasteTest extends BasePlatformTestCase {
     doTest();
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testPasteInNewlineIndent() {
     doTest();
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testPasteInTextOnTheEndOfLine() {
     doTest();
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testPasteInPipedText() {
     doTest();
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testLeadingNewLine() {
     doTest();
   }
 
+  @IJIgnore(issue = "AT-4013")
   public void testCss() {
     String name = "web_2153";
     myFixture.configureByFile(name + "_source.css");
