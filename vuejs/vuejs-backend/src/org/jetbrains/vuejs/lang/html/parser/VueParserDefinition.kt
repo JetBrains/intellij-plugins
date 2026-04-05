@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.html.parser
 
 import com.intellij.lang.ASTNode
@@ -30,8 +30,14 @@ class VueParserDefinition : HTMLParserDefinition() {
     ): Lexer {
       val level = JSRootConfiguration.getInstance(project).languageLevel
       return VueParsingLexer(
-        VueLexer(if (level.isES6Compatible) level else JSLanguageLevel.ES6, project, interpolationConfig, htmlCompatMode, false),
-        parentLangMode
+        VueLexer(
+          languageLevel = if (level.isES6Compatible) level else JSLanguageLevel.ES6,
+          project = project,
+          interpolationConfig = interpolationConfig,
+          htmlCompatMode = htmlCompatMode,
+          highlightMode = false,
+        ),
+        parentLangMode,
       )
     }
   }
