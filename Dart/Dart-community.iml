@@ -100,7 +100,7 @@
     <orderEntry type="module" module-name="intellij.tools.ide.metrics.benchmark" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.guava" />
     <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="library" name="snakeyaml" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.snakeyaml" />
     <orderEntry type="library" name="netty-buffer" level="project" />
   </component>
 </module>
