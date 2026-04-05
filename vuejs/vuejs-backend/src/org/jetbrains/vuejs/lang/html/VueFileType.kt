@@ -10,11 +10,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 
-val PsiFile.isVueFile
+val PsiFile.isVueFile: Boolean
   get() = originalFile.virtualFile?.isVueFile
           ?: (this is VueFile && isVueFileName(this.name))
 
-val VirtualFile.isVueFile
+val VirtualFile.isVueFile: Boolean
   get() = isVueFileName(nameSequence)
 
 fun isVueFileName(name: CharSequence): Boolean =
