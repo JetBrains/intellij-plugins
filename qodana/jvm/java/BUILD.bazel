@@ -57,7 +57,8 @@ jvm_library(
   srcs = glob([], allow_empty = True),
   runtime_deps = [
     ":java",
-    "@lib//:assert_j",
+    "@community//libraries/assertj-core",
+    "@community//libraries/assertj-core:assertj-core_test_lib",
     "@community//java/openapi:java_test_lib",
     "@community//java/structuralsearch-java:structuralSearch_test_lib",
     "@community//java/java-syntax:syntax_test_lib",
@@ -128,7 +129,8 @@ jvm_library(
   ],
   deps = [
     "@lib//:kotlin-stdlib",
-    "@lib//:assert_j",
+    "@community//libraries/assertj-core",
+    "@community//libraries/assertj-core:assertj-core_test_lib",
     "@community//java/openapi:java",
     "@community//java/openapi:java_test_lib",
     "@community//java/structuralsearch-java:structuralSearch",

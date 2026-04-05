@@ -39,7 +39,8 @@ jvm_library(
   srcs = glob([], allow_empty = True),
   runtime_deps = [
     ":coverage",
-    "@lib//:assert_j",
+    "@community//libraries/assertj-core",
+    "@community//libraries/assertj-core:assertj-core_test_lib",
     "@community//platform/analysis-api:analysis_test_lib",
     "@community//platform/core-api:core_test_lib",
     "@community//platform/projectModel-api:projectModel_test_lib",
@@ -88,7 +89,8 @@ jvm_library(
   ],
   deps = [
     "@lib//:kotlin-stdlib",
-    "@lib//:assert_j",
+    "@community//libraries/assertj-core",
+    "@community//libraries/assertj-core:assertj-core_test_lib",
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-api:analysis_test_lib",
     "@community//platform/core-api:core",

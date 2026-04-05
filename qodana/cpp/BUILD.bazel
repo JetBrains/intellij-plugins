@@ -173,7 +173,8 @@ jvm_library(
     "//contrib/qodana:qodana-core-tests_test_lib",
     "@community//platform/util/jdom",
     "@community//platform/util/jdom:jdom_test_lib",
-    "@lib//:assert_j",
+    "@community//libraries/assertj-core",
+    "@community//libraries/assertj-core:assertj-core_test_lib",
   ],
   runtime_deps = [":cpp-tests"]
 )
