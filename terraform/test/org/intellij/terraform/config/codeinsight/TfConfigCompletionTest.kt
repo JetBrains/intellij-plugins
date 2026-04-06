@@ -993,6 +993,28 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     """.trimIndent(), expression
   )
 
+  fun testActionPropertiesCompletion() {
+    doBasicCompletionTest("action \"test_action\" \"example\" { <caret> }", 4, "config", "count", "for_each", "provider")
+
+    doBasicCompletionTest("""
+      action "aws_lambda_invoke" "example" {
+        config {
+          function_name = "123456789012:function:my-function:1"
+          <caret>
+        }
+      }
+    """.trimIndent(), Matcher.and(
+      Matcher.all("payload", "client_context", "invocation_type", "log_type", "qualifier", "region"),
+      Matcher.not("function_name"))
+    )
+
+    doBasicCompletionTest("""
+      action "local_command" "bash_example" {
+        config { <caret> }
+      }
+    """.trimIndent(), "command", "arguments", "stdin", "working_directory")
+  }
+
   fun testRequiredProvidersCompletion() {
     val matcher = getPartialMatcher(collectBundledProviders())
 
