@@ -27,6 +27,7 @@ import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.Variable
 import org.intellij.terraform.config.model.getType
+import org.intellij.terraform.config.model.withDefaults
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLObject
@@ -87,7 +88,6 @@ internal object TfModelHelper {
       HCL_DATASOURCE_IDENTIFIER -> getDataSourceProperties(block)
       HCL_EPHEMERAL_IDENTIFIER -> getEphemeralProperties(block)
       HCL_MODULE_IDENTIFIER -> getModuleProperties(block)
-      HCL_TERRAFORM_IDENTIFIER -> getTerraformProperties(block)
       else -> TfTypeModel.RootBlocksMap[type]?.properties ?: emptyMap()
     }
     return props
@@ -221,24 +221,19 @@ internal object TfModelHelper {
   private fun getProviderProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
     val providerType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getProviderType(type, block) else null
-    return getPropertiesWithDefaults(TfTypeModel.AbstractProvider, providerType)
+    return withDefaults(providerType, TfTypeModel.AbstractProvider)
   }
 
   private fun getProvisionerProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
     val provisionerType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getProvisionerType(type) else null
-    return getPropertiesWithDefaults(TfTypeModel.AbstractResourceProvisioner, provisionerType)
+    return withDefaults(provisionerType, TfTypeModel.AbstractResourceProvisioner)
   }
 
   private fun getBackendProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
     val backendType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getBackendType(type) else null
-    return getPropertiesWithDefaults(TfTypeModel.AbstractBackend, backendType)
-  }
-
-  @Suppress("UNUSED_PARAMETER")
-  private fun getTerraformProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
-    return TfTypeModel.Terraform.properties
+    return withDefaults(backendType, TfTypeModel.AbstractBackend)
   }
 
   private fun getConnectionProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
@@ -263,19 +258,19 @@ internal object TfModelHelper {
   fun getResourceProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
     val resourceType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getResourceType(type, block) else null
-    return getPropertiesWithDefaults(TfTypeModel.AbstractResource, resourceType)
+    return withDefaults(resourceType, TfTypeModel.AbstractResource)
   }
 
   private fun getDataSourceProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
     val dataSourceType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getDataSourceType(type, block) else null
-    return getPropertiesWithDefaults(TfTypeModel.AbstractDataSource, dataSourceType)
+    return withDefaults(dataSourceType, TfTypeModel.AbstractDataSource)
   }
 
   private fun getEphemeralProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
     val ephemeralType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getEphemeralType(type) else null
-    return getPropertiesWithDefaults(TfTypeModel.AbstractEphemeralResource, ephemeralType)
+    return withDefaults(ephemeralType, TfTypeModel.AbstractEphemeralResource)
   }
 
   private fun getActionConfigProperties(configBlock: HCLBlock): Map<String, PropertyOrBlockType> {
@@ -319,11 +314,4 @@ internal object TfModelHelper {
     }
   }
 
-  private fun getPropertiesWithDefaults(defaults: BlockType, origin: BlockType?): Map<String, PropertyOrBlockType> {
-    if (origin == null) return defaults.properties
-    val result = HashMap<String, PropertyOrBlockType>(defaults.properties.size + origin.properties.size)
-    result.putAll(defaults.properties)
-    result.putAll(origin.properties)
-    return result
-  }
 }

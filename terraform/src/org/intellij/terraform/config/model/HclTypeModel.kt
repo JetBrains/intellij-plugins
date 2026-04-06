@@ -551,7 +551,7 @@ class ResourceType(
 ) : BlockType(literal = HCL_RESOURCE_IDENTIFIER,
               args = 2,
               inherited = blockType,
-              properties = withDefaults(properties, TfTypeModel.AbstractResource.properties)), ProviderDefinedType {
+              properties = withDefaults(properties, TfTypeModel.AbstractResource)), ProviderDefinedType {
   override fun toString(): String {
     return "ResourceType (type='$type', provider='${provider.presentableText}')"
   }
@@ -567,7 +567,7 @@ class EphemeralType(
 ) : BlockType(literal = HCL_EPHEMERAL_IDENTIFIER,
               args = 2,
               inherited = blockType,
-              properties = withDefaults(blockType?.properties, TfTypeModel.AbstractEphemeralResource.properties)), ProviderDefinedType
+              properties = withDefaults(blockType, TfTypeModel.AbstractEphemeralResource)), ProviderDefinedType
 
 class ActionType(
   override val type: String,
@@ -590,7 +590,7 @@ class DataSourceType(
 ) : BlockType(literal = HCL_DATASOURCE_IDENTIFIER,
               args = 2,
               inherited = blockType,
-              properties = withDefaults(properties, TfTypeModel.AbstractDataSource.properties)), ProviderDefinedType {
+              properties = withDefaults(properties, TfTypeModel.AbstractDataSource)), ProviderDefinedType {
   override fun toString(): String {
     return "DataSourceType (type='$type', provider='${provider.presentableText}')"
   }
@@ -609,7 +609,7 @@ class ProviderType(
 ) : BlockType(literal = HCL_PROVIDER_IDENTIFIER,
               args = 1,
               inherited = blockType,
-              properties = withDefaults(properties, TfTypeModel.AbstractProvider.properties)), NamedType {
+              properties = withDefaults(properties, TfTypeModel.AbstractProvider)), NamedType {
   val fullName: String = "$namespace/$type"
   val tier: ProviderTier = if (tier == ProviderTier.TIER_NONE && OfficialProvidersNamespace.contains(namespace)) ProviderTier.TIER_OFFICIAL else tier
 
@@ -635,7 +635,8 @@ class ProviderType(
   internal data class ProviderCoordinates(val registryUrl: String, val namespace: String, val name: String)
 }
 
-class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_PROVISIONER_IDENTIFIER, 1, properties = withDefaults(properties, TfTypeModel.AbstractResourceProvisioner.properties)) {
+class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) :
+  BlockType(HCL_PROVISIONER_IDENTIFIER, 1, properties = withDefaults(properties, TfTypeModel.AbstractResourceProvisioner)) {
   override fun toString(): String {
     return "ProvisionerType (type='$type')"
   }
@@ -644,7 +645,8 @@ class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) :
     get() = "$literal ($type)"
 }
 
-class BackendType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_BACKEND_IDENTIFIER, 1, properties = withDefaults(properties, TfTypeModel.AbstractBackend.properties)) {
+class BackendType(val type: String, properties: List<PropertyOrBlockType>) :
+  BlockType(HCL_BACKEND_IDENTIFIER, 1, properties = withDefaults(properties, TfTypeModel.AbstractBackend)) {
   override fun toString(): String {
     return "BackendType (type='$type')"
   }
@@ -653,7 +655,8 @@ class BackendType(val type: String, properties: List<PropertyOrBlockType>) : Blo
     get() = "$literal ($type)"
 }
 
-class ModuleType(override val name: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_MODULE_IDENTIFIER, 1, properties = withDefaults(properties, TfTypeModel.Module.properties)) {
+class ModuleType(override val name: String, properties: List<PropertyOrBlockType>) :
+  BlockType(HCL_MODULE_IDENTIFIER, 1, properties = withDefaults(properties, TfTypeModel.Module)) {
   override fun toString(): String {
     return "ModuleType (name='$name')"
   }
@@ -662,20 +665,17 @@ class ModuleType(override val name: String, properties: List<PropertyOrBlockType
     get() = "$literal ($name)"
 }
 
-internal fun withDefaults(properties: List<PropertyOrBlockType>, default: Map<String, PropertyOrBlockType>): Map<String, PropertyOrBlockType> {
-  if (properties.isEmpty()) return default
-  val result = HashMap<String, PropertyOrBlockType>(default.size + properties.size)
-  result.putAll(default)
-  result.putAll(properties.toMap())
-  return result
+internal fun withDefaults(properties: List<PropertyOrBlockType>, default: BlockType): Map<String, PropertyOrBlockType> {
+  if (properties.isEmpty()) return default.properties
+  return properties.toMap() + default.properties
 }
 
-internal fun withDefaults(
-  properties: Map<String, PropertyOrBlockType>?,
-  default: Map<String, PropertyOrBlockType>,
-): Map<String, PropertyOrBlockType> {
-  return if (properties.isNullOrEmpty()) default
-  else default + properties
+internal fun withDefaults(origin: BlockType?, default: BlockType): Map<String, PropertyOrBlockType> {
+  val properties = origin?.properties
+  val defaultProperties = default.properties
+
+  return if (properties.isNullOrEmpty()) defaultProperties
+  else properties + defaultProperties
 }
 
 internal fun getContainingFile(psiElement: PsiElement): PsiFile? {

@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.opentofu.model
 
 import com.intellij.openapi.fileTypes.FileType
@@ -11,7 +11,6 @@ import org.intellij.terraform.config.model.ReferenceHint
 import org.intellij.terraform.config.model.SimpleValueHint
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.toMap
-import org.intellij.terraform.config.model.withDefaults
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
@@ -35,7 +34,7 @@ internal class AbstractEncryptionProvider(
               deprecated = blockType?.deprecated,
               conflictsWith = blockType?.conflictsWith,
               nesting = blockType?.nesting,
-              properties = withDefaults(properties, emptyMap())), NamedType {
+              properties = properties.toMap()), NamedType {
   override fun toString(): String {
     return "Encryption Provider (type='$type')"
   }
@@ -88,7 +87,7 @@ internal class AbstractEncryptionMethod(
               deprecated = blockType?.deprecated,
               conflictsWith = blockType?.conflictsWith,
               nesting = blockType?.nesting,
-              properties = withDefaults(properties, emptyMap())), NamedType {
+              properties = properties.toMap()), NamedType {
   override fun toString(): String {
     return "Encryption Method (type='$type')"
   }
