@@ -11,7 +11,9 @@ import com.intellij.patterns.PsiFilePattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.patterns.StandardPatterns.or
 import com.intellij.util.ProcessingContext
+import org.intellij.terraform.config.Constants.HCL_ACTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_CONFIG_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONNECTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER
@@ -107,6 +109,11 @@ internal object TfPsiPatterns {
 
   val ResourceConnectionBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_CONNECTION_IDENTIFIER)
     .withParent(or(ResourceRootBlock, ProvisionerBlock))
+
+  val ActionBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_ACTION_IDENTIFIER).and(RootBlock)
+
+  val ActionConfigBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_CONFIG_IDENTIFIER)
+    .withSuperParent(2, ActionBlock)
 
   val TerraformRootBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_TERRAFORM_IDENTIFIER)
     .and(RootBlock)

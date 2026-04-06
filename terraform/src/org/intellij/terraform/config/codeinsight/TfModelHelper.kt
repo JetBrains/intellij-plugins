@@ -75,6 +75,7 @@ internal object TfModelHelper {
       TfPsiPatterns.ProvisionerBlock.accepts(block) -> return getProvisionerProperties(block)
       TfPsiPatterns.ResourceLifecycleBlock.accepts(block) -> return TfTypeModel.ResourceLifecycle.properties
       TfPsiPatterns.ResourceConnectionBlock.accepts(block) -> return getConnectionProperties(block)
+      TfPsiPatterns.ActionConfigBlock.accepts(block) -> return getActionConfigProperties(block)
       OpenTofuPatterns.KeyProviderBlock.accepts(block) -> return getEncryptionKeyProviderProperties(block)
       OpenTofuPatterns.EncryptionMethodBlock.accepts(block) -> return getEncryptionMethodProperties(block)
       block.parent !is PsiFile -> return traverseParentBlockProperties(block, type)
@@ -117,7 +118,7 @@ internal object TfModelHelper {
     if (TfPsiPatterns.Backend.accepts(block)) {
       val fallback = TfTypeModel.AbstractBackend
       val name = block.getNameElementUnquoted(1) ?: return fallback
-      return TypeModelProvider.getModel(block).getBackendType(name) ?: return fallback
+      return TypeModelProvider.getModel(block).getBackendType(name) ?: fallback
     }
     if (TfPsiPatterns.DynamicBlockContent.accepts(block)) {
       val fallback = TfTypeModel.AbstractResourceDynamicContent
@@ -125,7 +126,7 @@ internal object TfModelHelper {
 
       val origin = dynamic.parentOfType<HCLBlock>(withSelf = false) ?: return fallback
       // origin is either ResourceRootBlock, DataSourceRootBlock, ProviderRootBlock or ProvisionerBlock
-      return getBlockProperties(origin)[dynamic.name] as? BlockType ?: return fallback
+      return getBlockProperties(origin)[dynamic.name] as? BlockType ?: fallback
     }
     if (TfPsiPatterns.DynamicBlock.accepts(block)) {
       // TODO: consider more specific content instead of AbstractResourceDynamicContent
@@ -275,6 +276,13 @@ internal object TfModelHelper {
     val type = block.getNameElementUnquoted(1)
     val ephemeralType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getEphemeralType(type) else null
     return getPropertiesWithDefaults(TfTypeModel.AbstractEphemeralResource, ephemeralType)
+  }
+
+  private fun getActionConfigProperties(configBlock: HCLBlock): Map<String, PropertyOrBlockType> {
+    val actionBlock = configBlock.parentOfType<HCLBlock>()
+    val type = actionBlock?.getNameElementUnquoted(1)
+    val actionType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(configBlock).getActionType(type, configBlock) else null
+    return actionType?.configs ?: emptyMap()
   }
 
   @RequiresReadLock
