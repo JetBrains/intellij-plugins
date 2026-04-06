@@ -177,7 +177,7 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
 
   private fun shouldSuggestCandidate(parent: HCLObject, candidate: PropertyOrBlockType): Boolean = when (candidate) {
     is PropertyType -> parent.findProperty(candidate.name) == null
-    is BlockType -> true
+    is BlockType -> parent.blockList.none { it.name == candidate.name }
     else -> false
   }
 

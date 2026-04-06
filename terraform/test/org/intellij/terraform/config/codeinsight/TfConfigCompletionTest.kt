@@ -118,10 +118,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     doBasicCompletionTest("resource abc {\n<caret> = true\n}", emptyList())
     doBasicCompletionTest("resource abc {\n<caret> {}\n}", listOf("lifecycle", "connection", "provisioner", "dynamic"))
 
-    doBasicCompletionTest(
-      "resource abc {\n<caret>lifecycle {}\n}",
-      listOf("connection", "dynamic", "lifecycle", "provisioner")
-    )
+    doBasicCompletionTest("resource abc {\n<caret>lifecycle {}\n}", listOf("connection", "dynamic", "provisioner"))
   }
 
   fun testResourceDynamicCompletion() {
@@ -260,11 +257,11 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
   }
 
   fun testResourcePropertyCompletionBeforeInnerBlock() {
-    doBasicCompletionTest("resource abc {\n<caret>\nlifecycle {}\n}", commonResourceProperties)
+    doBasicCompletionTest("resource abc {\n<caret>\nsome_block {}\n}", commonResourceProperties)
 
-    val propertiesWithoutId = commonResourceProperties.toMutableList().apply { remove("id") }
-    doBasicCompletionTest("resource \"x\" {\nid='a'\n<caret>\nlifecycle {}\n}", propertiesWithoutId)
-    doBasicCompletionTest("resource abc {\n<caret> = true\nlifecycle {}\n}", emptyList())
+    val propertiesWithoutId = commonResourceProperties.filter { it != "id" }
+    doBasicCompletionTest("resource \"x\" {\nid='a'\n<caret>\nsome_block {}\n}", propertiesWithoutId)
+    doBasicCompletionTest("resource abc {\n<caret> = true\nsome_block {}\n}", emptyList())
   }
 
   fun testResourceDependsOnCompletion() {
