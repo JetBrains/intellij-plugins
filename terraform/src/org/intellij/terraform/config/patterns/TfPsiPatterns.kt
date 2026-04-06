@@ -102,13 +102,13 @@ internal object TfPsiPatterns {
     })
 
   val ProvisionerBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_PROVISIONER_IDENTIFIER)
-    .withParent(or(ResourceRootBlock))
+    .withSuperParent(2, ResourceRootBlock)
 
   val ResourceLifecycleBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_LIFECYCLE_IDENTIFIER)
-    .withParent(or(ResourceRootBlock))
+    .withSuperParent(2, ResourceRootBlock)
 
   val ResourceConnectionBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_CONNECTION_IDENTIFIER)
-    .withParent(or(ResourceRootBlock, ProvisionerBlock))
+    .withSuperParent(2, or(ResourceRootBlock, ProvisionerBlock))
 
   val ActionBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_ACTION_IDENTIFIER).and(RootBlock)
 
