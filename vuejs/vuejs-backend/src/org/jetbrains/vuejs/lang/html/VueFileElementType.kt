@@ -18,7 +18,7 @@ class VueFileElementType : IFileElementType("vue", VueLanguage) {
     @JvmStatic
     val INSTANCE: VueFileElementType = VueFileElementType()
 
-    const val INJECTED_FILE_SUFFIX = ".#@injected@#.html"
+    const val INJECTED_FILE_SUFFIX: String = ".#@injected@#.html"
 
     fun readDelimiters(fileName: String?): Pair<String, String>? {
       if (fileName == null || !fileName.endsWith(INJECTED_FILE_SUFFIX)) return null
