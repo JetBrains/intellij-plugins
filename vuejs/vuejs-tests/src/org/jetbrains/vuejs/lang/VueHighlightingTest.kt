@@ -64,18 +64,15 @@ abstract class VueHighlightingTestBase(
     buildList {
       addAll(super.adjustConfigurators(configurators))
 
+      // TEMP
       when (name) {
-        // TODO: use base config instead
-        "testGlobalItemsAugmentedFromCompilerOptionsTypes",
-
-          // TEMP
         "testDataTypeTS",
         "testScriptSetupScopePriority",
-          -> {
-          // no ts-config file
-        }
+          -> return@buildList
+      }
 
-        else -> add(VueTsConfigFile())
+      if (none { it is VueTsConfigFile }) {
+        add(VueTsConfigFile())
       }
     }
 
@@ -282,6 +279,9 @@ abstract class VueHighlightingTestBase(
     doHighlightingTest(
       configureFileName = "App.vue",
       additionalDependencies = mapOf("my-vue-items-library" to "*"),
+      configurators = listOf(
+        VueTsConfigFile(types = listOf("my-vue-items-library/dist/volar")),
+      ),
     )
   }
 
