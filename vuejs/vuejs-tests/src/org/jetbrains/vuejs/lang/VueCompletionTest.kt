@@ -71,26 +71,6 @@ abstract class VueCompletionWithPluginTestBase(
     "testComputedTypeTS",
     "testTypedComponentsPropsAndEvents",
   )
-
-  @Ignore
-  // timeout
-  override fun testStyleVBindScriptSetupCss() {
-  }
-
-  @Ignore
-  // timeout
-  override fun testStyleVBindScriptSetupLess() {
-  }
-
-  @Ignore
-  // timeout
-  override fun testStyleVBindScriptSetupSass() {
-  }
-
-  @Ignore
-  // timeout
-  override fun testStyleVBindScriptSetupScss() {
-  }
 }
 
 @RunWith(JUnit4::class)
