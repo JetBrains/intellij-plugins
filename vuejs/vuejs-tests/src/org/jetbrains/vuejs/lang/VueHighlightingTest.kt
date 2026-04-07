@@ -64,13 +64,6 @@ abstract class VueHighlightingTestBase(
     buildList {
       addAll(super.adjustConfigurators(configurators))
 
-      // TEMP
-      when (name) {
-        "testDataTypeTS",
-        "testScriptSetupScopePriority",
-          -> return@buildList
-      }
-
       if (none { it is VueTsConfigFile }) {
         add(VueTsConfigFile())
       }
@@ -635,7 +628,13 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testDataTypeTS() {
-    doHighlightingTest(VueTestModule.VUE_2_6_10)
+    doHighlightingTest(
+      VueTestModule.VUE_2_6_10,
+      // TEMP
+      configurators = listOf(
+        VueTsConfigFile(enabled = false)
+      ),
+    )
   }
 
   @Test
@@ -729,7 +728,12 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testScriptSetupScopePriority() {
-    doHighlightingTest()
+    doHighlightingTest(
+      // TEMP
+      configurators = listOf(
+        VueTsConfigFile(enabled = false)
+      ),
+    )
   }
 
   @Test
