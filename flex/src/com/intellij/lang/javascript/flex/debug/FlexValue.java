@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
@@ -390,7 +390,7 @@ public final class FlexValue extends XValue {
         new XFullValueEvaluator() {
           @Override
           public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
-            callback.evaluated(StringUtil.convertLineSeparators(unquoted), isXml ? XmlObjectEvaluator.MONOSPACED_FONT : null);
+            callback.evaluated(StringUtil.convertLineSeparators(unquoted));
           }
         });
     }

@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.ui.SimpleTextAttributes;
@@ -74,7 +74,7 @@ public class XmlObjectEvaluator {
         value.computeChildren(node);
       }
 
-      getRootNode().myCallback.evaluated(getRootNode().toPresentableSting(0), MONOSPACED_FONT);
+      getRootNode().myCallback.evaluated(getRootNode().toPresentableSting(0));
     }
 
     private FakeCompositeNode getRootNode() {
