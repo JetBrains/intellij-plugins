@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.Plow.Companion.toPlow
 import com.intellij.util.ProcessingContext
 import com.intellij.util.Processor
+import org.intellij.terraform.config.Constants.HCL_ACTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
@@ -105,6 +106,10 @@ internal object HclBlockTypeNameCompletionProvider : CompletionProvider<Completi
           .map { buildProviderDefinedLookupElement(it, position) }
       HCL_EPHEMERAL_IDENTIFIER ->
         typeModel.allEphemeralResources().toPlow()
+          .filter { shouldSuggestByProvider(it.provider, localProviders, showAllProviders) }
+          .map { buildProviderDefinedLookupElement(it, position) }
+      HCL_ACTION_IDENTIFIER ->
+        typeModel.allActions().toPlow()
           .filter { shouldSuggestByProvider(it.provider, localProviders, showAllProviders) }
           .map { buildProviderDefinedLookupElement(it, position) }
       HCL_PROVIDER_IDENTIFIER ->

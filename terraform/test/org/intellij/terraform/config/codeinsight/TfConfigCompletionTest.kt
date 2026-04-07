@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.registry.Registry
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
+import org.intellij.terraform.config.model.ActionType
 import org.intellij.terraform.config.model.DataSourceType
 import org.intellij.terraform.config.model.EphemeralType
 import org.intellij.terraform.config.model.ProviderDefinedType
@@ -78,6 +79,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
                   ResourceType::class -> globalModel.allResources()
                   EphemeralType::class -> globalModel.allEphemeralResources()
                   DataSourceType::class -> globalModel.allDataSources()
+                  ActionType::class -> globalModel.allActions()
                   else -> null
                 } ?: return emptyList()
 
@@ -992,6 +994,15 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       }
     """.trimIndent(), expression
   )
+
+  fun testAllActionCompletion() {
+    val matcher = getPartialMatcher(collectTypeNames<ActionType>())
+
+    doBasicCompletionTest("action \"<caret>\"", matcher)
+    doBasicCompletionTest("action \"<caret>\" \"example\"", matcher)
+    doBasicCompletionTest("action \"<caret>\" \"example\" {}", matcher)
+    doBasicCompletionTest("action \"<caret>\" \"example\"\n{}", matcher)
+  }
 
   fun testActionPropertiesCompletion() {
     doBasicCompletionTest("action \"test_action\" \"example\" { <caret> }", 4, "config", "count", "for_each", "provider")
