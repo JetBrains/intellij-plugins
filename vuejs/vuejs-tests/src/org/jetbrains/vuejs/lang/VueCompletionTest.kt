@@ -69,7 +69,6 @@ abstract class VueCompletionWithPluginTestBase(
   val rule: TestRule = TrackFailedTestRule(
     "testComputedTypeJS",
     "testComputedTypeTS",
-    "testTypedComponentsPropsAndEvents",
   )
 }
 
@@ -95,6 +94,7 @@ abstract class VueCompletionTestBase(
         "testAliasedComponentImportKebabCase",
         "testAliasedComponentImportOptionsApi",
         "testGlobalItemsAugmentedFromCompilerOptionsTypes",
+        "testTypedComponentsPropsAndEvents",
           -> {
           // no ts-config file
         }
