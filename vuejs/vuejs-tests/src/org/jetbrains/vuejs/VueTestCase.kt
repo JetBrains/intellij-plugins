@@ -59,7 +59,7 @@ abstract class VueTestCase(
       waitEmptyServiceQueueForService(service)
     }
 
-    if (configuration.configurators.any { it is VueTsConfigFile }) {
+    if (configuration.configurators.any { it is VueTsConfigFile && it.enabled }) {
       TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(
         testRootDisposable,
         myFixture.tempDirFixture.getFile(VueTsConfigFile.FILE_NAME)!!,

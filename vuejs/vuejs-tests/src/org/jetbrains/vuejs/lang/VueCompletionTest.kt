@@ -89,17 +89,8 @@ abstract class VueCompletionTestBase(
     buildList {
       addAll(super.adjustConfigurators(configurators))
 
-      when (name) {
-        "testAliasedComponentImport",
-        "testAliasedComponentImportKebabCase",
-        "testAliasedComponentImportOptionsApi",
-        "testGlobalItemsAugmentedFromCompilerOptionsTypes",
-        "testTypedComponentsPropsAndEvents",
-          -> {
-          // no ts-config file
-        }
-
-        else -> add(VueTsConfigFile())
+      if (none { it is VueTsConfigFile }) {
+        add(VueTsConfigFile())
       }
     }
 
@@ -297,6 +288,9 @@ abstract class VueCompletionTestBase(
         "<main v-my-mutate.<caret>once>",
       ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
+      configurators = listOf(
+        VueTsConfigFile(enabled = false),
+      ),
     )
   }
 
@@ -1087,6 +1081,9 @@ abstract class VueCompletionTestBase(
         "el-affix v-on:<caret>"
       ),
       lookupItemFilter = filterOutAriaAttributes,
+      configurators = listOf(
+        VueTsConfigFile(enabled = false),
+      ),
     )
   }
 
@@ -1630,7 +1627,12 @@ abstract class VueCompletionTestBase(
     doAliasedComponentImportTest()
 
   private fun doAliasedComponentImportTest() =
-    doConfiguredTest(configureFileName = "apps/vue-app/src/App.vue") {
+    doConfiguredTest(
+      configureFileName = "apps/vue-app/src/App.vue",
+      configurators = listOf(
+        VueTsConfigFile(enabled = false),
+      ),
+    ) {
       completeBasic()
       checkResultByFile("$testName/apps/vue-app/src/App.after.vue")
     }

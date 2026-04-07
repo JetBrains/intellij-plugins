@@ -7,19 +7,30 @@ import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.junit.jupiter.api.assertNull
 
-class VueTsConfigFile :
-  PolySymbolsTestConfigurator {
+class VueTsConfigFile(
+  val enabled: Boolean = true,
+) : PolySymbolsTestConfigurator {
 
   override fun configure(
     fixture: CodeInsightTestFixture,
   ) {
+    if (!enabled)
+      return
+
     assertNull(fixture.tempDirFixture.getFile(FILE_NAME))
     assertNull(fixture.tempDirFixture.getFile("tsconfig.base.json"))
 
     fixture.configureByText(FILE_NAME, DEFAULT_TSCONFIG_CONTENT)
   }
 
-  override fun beforeDirectoryComparison(fixture: CodeInsightTestFixture, resultsDir: VirtualFile, goldDir: VirtualFile) {
+  override fun beforeDirectoryComparison(
+    fixture: CodeInsightTestFixture,
+    resultsDir: VirtualFile,
+    goldDir: VirtualFile,
+  ) {
+    if (!enabled)
+      return
+
     WriteAction.run<Throwable> {
       fixture.tempDirFixture
         .getFile(FILE_NAME)
