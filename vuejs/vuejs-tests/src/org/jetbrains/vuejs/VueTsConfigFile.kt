@@ -8,6 +8,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.junit.jupiter.api.assertNull
 
 class VueTsConfigFile(
+  val types: List<String> = emptyList(),
   val enabled: Boolean = true,
 ) : PolySymbolsTestConfigurator {
 
@@ -20,7 +21,11 @@ class VueTsConfigFile(
     assertNull(fixture.tempDirFixture.getFile(FILE_NAME))
     assertNull(fixture.tempDirFixture.getFile("tsconfig.base.json"))
 
-    fixture.configureByText(FILE_NAME, tsconfigContent())
+    val content = tsconfigContent(
+      types = types,  
+    )
+    
+    fixture.configureByText(FILE_NAME, content)
   }
 
   override fun beforeDirectoryComparison(
@@ -41,7 +46,11 @@ class VueTsConfigFile(
   companion object {
     const val FILE_NAME: String = "tsconfig.json"
 
-    fun tsconfigContent(): String {
+    val DEFAULT_TSCONFIG_CONTENT: String = tsconfigContent(types = emptyList())
+    
+    private fun tsconfigContent(
+      types: List<String>,
+    ): String {
       // language=jsonc
       return """
         {
@@ -52,6 +61,8 @@ class VueTsConfigFile(
             "**/*.vue"
           ]
           "compilerOptions": {
+            "types": [ ${types.joinToString(", ") { """"$it"""" } } ]   
+          
             // Extra safety for array and object lookups, but may have false positives.
             "noUncheckedIndexedAccess": true,
         
