@@ -289,7 +289,7 @@ abstract class VueCompletionTestBase(
       ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
       configurators = listOf(
-        VueTsConfigFile(enabled = false),
+        VueTsConfigFile(types = listOf("my-vue-items-library/dist/volar")),
       ),
     )
   }
