@@ -36,6 +36,7 @@ import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.ProviderDefinedType
 import org.intellij.terraform.config.model.ProviderTier
+import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.hcl.HCLBundle
@@ -86,52 +87,54 @@ internal object HclBlockTypeNameCompletionProvider : CompletionProvider<Completi
 
     val typeModel = TypeModelProvider.getModel(position)
     val localProviders = TfTypeModel.collectProviderLocalNames(position)
-    val tiers = ProviderTier.PreferedProviders
-
-    if (parameters.invocationCount == 1) {
+    val showAllProviders = parameters.invocationCount > 1
+    if (!showAllProviders) {
       val message = HCLBundle.message("popup.advertisement.press.to.show.partner.community.providers",
                                       KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CODE_COMPLETION))
       result.addLookupAdvertisement(message)
     }
-    return when (type) {
+
+    val lookupElements = when (type) {
       HCL_RESOURCE_IDENTIFIER ->
         typeModel.allResources().toPlow()
-          .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsValue(it.provider.fullName) }
+          .filter { shouldSuggestByProvider(it.provider, localProviders, showAllProviders) }
           .map { buildProviderDefinedLookupElement(it, position) }
-          .processWith(consumer)
       HCL_DATASOURCE_IDENTIFIER ->
         typeModel.allDataSources().toPlow()
-          .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsValue(it.provider.fullName) }
+          .filter { shouldSuggestByProvider(it.provider, localProviders, showAllProviders) }
           .map { buildProviderDefinedLookupElement(it, position) }
-          .processWith(consumer)
       HCL_EPHEMERAL_IDENTIFIER ->
         typeModel.allEphemeralResources().toPlow()
-          .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsValue(it.provider.fullName) }
+          .filter { shouldSuggestByProvider(it.provider, localProviders, showAllProviders) }
           .map { buildProviderDefinedLookupElement(it, position) }
-          .processWith(consumer)
       HCL_PROVIDER_IDENTIFIER ->
         typeModel.allProviders().toPlow()
-          .filter { parameters.invocationCount > 1 || it.tier in tiers || localProviders.containsValue(it.fullName) }
+          .filter { shouldSuggestByProvider(it, localProviders, showAllProviders) }
           .map { createProviderLookup(it, position, !isTfComponent) }
-          .processWith(consumer)
       HCL_PROVISIONER_IDENTIFIER ->
         typeModel.provisioners.toPlow()
-          .map { buildLookupElement(it, it.type, it.description, position) }
-          .processWith(consumer)
+          .map { buildLookupElement(it, it.type, position) }
       HCL_BACKEND_IDENTIFIER ->
         typeModel.backends.toPlow()
-          .map { buildLookupElement(it, it.type, it.description, position) }
-          .processWith(consumer)
+          .map { buildLookupElement(it, it.type, position) }
       TOFU_KEY_PROVIDER ->
         encryptionKeyProviders.values.toPlow()
-          .map { buildLookupElement(it, it.type, it.description, position) }
-          .processWith(consumer)
+          .map { buildLookupElement(it, it.type, position) }
       TOFU_ENCRYPTION_METHOD_BLOCK ->
         encryptionMethods.values.toPlow()
-          .map { buildLookupElement(it, it.type, it.description, position) }
-          .processWith(consumer)
-      else -> true
+          .map { buildLookupElement(it, it.type, position) }
+      else -> return true
     }
+
+    return lookupElements.processWith(consumer)
+  }
+
+  private fun shouldSuggestByProvider(
+    provider: ProviderType,
+    localProviders: Map<String, String>,
+    showAllProviders: Boolean,
+  ): Boolean {
+    return showAllProviders || provider.tier in ProviderTier.PreferedProviders || localProviders.containsValue(provider.fullName)
   }
 
   // Lookup element builders
@@ -150,9 +153,9 @@ internal object HclBlockTypeNameCompletionProvider : CompletionProvider<Completi
       .withPsiElement(fakeFactory(position).createFakeHclBlock(it, position.containingFile.originalFile))
   }
 
-  private fun buildLookupElement(it: BlockType, typeName: String, typeText: String?, position: PsiElement): LookupElementBuilder =
+  private fun buildLookupElement(it: BlockType, typeName: String, position: PsiElement): LookupElementBuilder =
     create(typeName)
-      .withTypeText(typeText, true)
+      .withTypeText(it.description, true)
       .withIcon(getLookupIcon(position))
       .withInsertHandler(BlockSubNameInsertHandler(it))
       .withPsiElement(fakeFactory(position).createFakeHclBlock(it.literal, typeName, position.containingFile.originalFile))
