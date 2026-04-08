@@ -10,8 +10,8 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.HeavyPlatformTestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import kotlinx.coroutines.runBlocking
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Locale
@@ -20,6 +20,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.pathString
 import kotlin.io.path.writeText
+import kotlin.time.Duration.Companion.minutes
 
 val DTS_TEST_ROOT_PATH: String = PathManager.getHomePath() + "/contrib/dts"
 val DTS_TEST_DATA_PATH: String = PathManager.getHomePath() + "/contrib/dts/testData"
@@ -69,7 +70,7 @@ abstract class DtsTestBase : BasePlatformTestCase() {
       zephyrBoard = "$zephyr/boards/xtensa/esp32"
     }
 
-    runBlocking {
+    timeoutRunBlocking(10.minutes) {
       DtsZephyrProvider.of(project).awaitInit()
     }
   }
