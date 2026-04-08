@@ -41,21 +41,6 @@ class VueCompletionTest :
 
       return super.getExpectedItemsLocation(dir) + "/items-no-service"
     }
-
-    @Test
-    fun testTypescriptVForItemCompletion() =
-      doLookupTest(
-        VueTestModule.VUE_2_7_14,
-        lookupItemFilter = filterOutJsKeywordsGlobalObjectsAndCommonProperties,
-      )
-
-    @Test
-    fun testDestructuringVariableTypeInVFor() =
-      doLookupTest(VueTestModule.VUE_2_5_3)
-
-    @Test
-    fun testComponentInsertionWithClassDefined() =
-      doLookupTest(VueTestModule.VUE_2_6_10, typeToFinishLookup = "")
   }
 }
 
@@ -1791,5 +1776,23 @@ abstract class VueCompletionTestBase(
       ),
     ) { it.priority >= 10 }
   }
+
+  @Test
+  fun testTypescriptVForItemCompletion() =
+    doLookupTest(
+      VueTestModule.VUE_2_7_14,
+      lookupItemFilter = filterOutJsKeywordsGlobalObjectsAndCommonProperties,
+    )
+
+  @Test
+  fun testDestructuringVariableTypeInVFor() =
+    doLookupTest(VueTestModule.VUE_2_5_3)
+
+  @Test
+  fun testComponentInsertionWithClassDefined() =
+    doLookupTest(
+      VueTestModule.VUE_2_6_10,
+      typeToFinishLookup = "",
+    )
 }
 

@@ -1,0 +1,1 @@
+ShortComponent (typeText=null; priority=1.0; typeGreyed)
