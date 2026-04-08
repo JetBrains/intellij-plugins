@@ -100,17 +100,15 @@ class Angular2FormattingTest : Angular2TestCase("formatting", false) {
 
   fun testLetBlock() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_18_2_1, extension = "html")
 
-  fun testEditorConfigWithInjection() = withEditorConfig { doFormattingTest(dir = true, useProjectCodeStyle = true) }
+  fun testEditorConfigWithInjection() = doFormattingTest(dir = true, editorConfigEnabled = true)
 
-  fun testEditorConfigWithinInjection() = withEditorConfig {
-    doConfiguredTest(dir = true, checkResult = true, useProjectCodeStyle = true) {
-      WriteCommandAction.runWriteCommandAction(project) {
-        PsiDocumentManager.getInstance(project).commitAllDocuments()
-        val injectedFile = InjectedLanguageUtil.findElementAtNoCommit(file, file.findOffsetBySignature("*<caret>cdkVirtualFor"))
-          .containingFile
-        val codeStyleManager = CodeStyleManager.getInstance(project)
-        codeStyleManager.reformat(injectedFile)
-      }
+  fun testEditorConfigWithinInjection() = doConfiguredTest(dir = true, checkResult = true, editorConfigEnabled = true) {
+    WriteCommandAction.runWriteCommandAction(project) {
+      PsiDocumentManager.getInstance(project).commitAllDocuments()
+      val injectedFile = InjectedLanguageUtil.findElementAtNoCommit(file, file.findOffsetBySignature("*<caret>cdkVirtualFor"))
+        .containingFile
+      val codeStyleManager = CodeStyleManager.getInstance(project)
+      codeStyleManager.reformat(injectedFile)
     }
   }
 
