@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.patterns
 
 import com.intellij.patterns.ElementPattern
@@ -8,6 +8,7 @@ import com.intellij.patterns.PsiElementPattern.Capture
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
+import org.intellij.terraform.config.Constants.HCL_ACTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.Scopes
@@ -46,39 +47,36 @@ internal object HILPatterns {
       .andNot(PlatformPatterns.psiElement().inside(DependsOnPattern))
   )
 
-  val VariableTypePosition: Capture<PsiElement> = PlatformPatterns.psiElement().withLanguages(HCLLanguage)
-    .withParent(PlatformPatterns.psiElement(HCLIdentifier::class.java).with(NotBlockIdentifier).with(InVariableBlock)).andNot(
-      PlatformPatterns.psiElement().withSuperParent(2, SelectExpression::class.java)
-    )
+  val VariableTypePosition: Capture<PsiElement> = PlatformPatterns.psiElement()
+    .withLanguages(HCLLanguage)
+    .withParent(PlatformPatterns.psiElement(HCLIdentifier::class.java).with(NotBlockIdentifier).with(InVariableBlock))
+    .andNot(PlatformPatterns.psiElement().withSuperParent(2, SelectExpression::class.java))
 
-  val ForEachIteratorPosition: Capture<PsiElement> = PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
+  val ForEachIteratorPosition: Capture<PsiElement> = PlatformPatterns.psiElement()
+    .withLanguages(HILLanguage, HCLLanguage)
     .withParent(PlatformPatterns.psiElement(Identifier::class.java).withHCLHost(
       PlatformPatterns.psiElement(HCLElement::class.java).inside(TfPsiPatterns.DynamicBlock))
     )
 
-  val IlseFromKnownScope: Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
-    .with(getScopeSelectPatternCondition(Scopes))
-  val IlseNotFromKnownScope: Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
-    .without(getScopeSelectPatternCondition(Scopes))
-  val IlseFromDataScope: Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
-    .with(getScopeSelectPatternCondition(setOf(HCL_DATASOURCE_IDENTIFIER)))
-  val IlseDataSource: Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
-    .with(object : PatternCondition<SelectExpression<*>?>(" SE_Data_Source()") {
-      override fun accepts(t: SelectExpression<*>, context: ProcessingContext): Boolean {
-        val from = t.from as? SelectExpression<*> ?: return false
-        return IlseFromDataScope.accepts(from)
-      }
-    })
+  val IlseFromKnownScope: Capture<SelectExpression<*>> =
+    createExpressionPattern().with(expressionScopeCondition(*Scopes.toTypedArray()))
+  val IlseNotFromKnownScope: Capture<SelectExpression<*>> =
+    createExpressionPattern().without(expressionScopeCondition(*Scopes.toTypedArray()))
 
-  val IlseFromEphemeralResource: Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
-    .with(getScopeSelectPatternCondition(setOf(HCL_EPHEMERAL_IDENTIFIER)))
-  val IlseEphemeralResource: Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
-    .with(object : PatternCondition<SelectExpression<*>?>("SE_Ephemeral_Resource()") {
-      override fun accepts(t: SelectExpression<*>, context: ProcessingContext): Boolean {
-        val from = t.from as? SelectExpression<*> ?: return false
-        return IlseFromEphemeralResource.accepts(from)
-      }
-    })
+  val IlseFromDataScope: Capture<SelectExpression<*>> = createExpressionPattern()
+    .with(expressionScopeCondition(HCL_DATASOURCE_IDENTIFIER))
+  val IlseDataSource: Capture<SelectExpression<*>> =
+    createChainedExpressionPattern("Data source expression", IlseFromDataScope)
+
+  val IlseFromEphemeralScope: Capture<SelectExpression<*>> = createExpressionPattern()
+    .with(expressionScopeCondition(HCL_EPHEMERAL_IDENTIFIER))
+  val IlseEphemeralResource: Capture<SelectExpression<*>> =
+    createChainedExpressionPattern("Ephemeral expression", IlseFromEphemeralScope)
+
+  val IlseFromActionScope: Capture<SelectExpression<*>> = createExpressionPattern()
+    .with(expressionScopeCondition(HCL_ACTION_IDENTIFIER))
+  val IlseAction: Capture<SelectExpression<*>> =
+    createChainedExpressionPattern("Action expression", IlseFromActionScope)
 
   val InsideForExpressionBody: Capture<PsiElement> = PlatformPatterns.psiElement()
     .withParent(PlatformPatterns.psiElement(BaseExpression::class.java)
@@ -91,14 +89,24 @@ internal object HILPatterns {
     }
   }
 
-  fun getScopeSelectPatternCondition(scopes: Set<String>): PatternCondition<SelectExpression<*>?> {
-    return object : PatternCondition<SelectExpression<*>?>("ScopeSelect($scopes)") {
+  fun createExpressionPattern(): Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
+
+  fun expressionScopeCondition(vararg scopes: String): PatternCondition<SelectExpression<*>?> {
+    return object : PatternCondition<SelectExpression<*>?>("Expression scope:${scopes.contentToString()}") {
       override fun accepts(t: SelectExpression<*>, context: ProcessingContext): Boolean {
         val from = t.from
         return from is Identifier && from.name in scopes
       }
     }
   }
+
+  private fun createChainedExpressionPattern(debugName: String, fromPattern: Capture<SelectExpression<*>>): Capture<SelectExpression<*>> =
+    createExpressionPattern().with(object : PatternCondition<SelectExpression<*>?>(debugName) {
+      override fun accepts(t: SelectExpression<*>, context: ProcessingContext): Boolean {
+        val from = t.from as? SelectExpression<*> ?: return false
+        return fromPattern.accepts(from)
+      }
+    })
 
   fun getMethodIdentifierPattern(hclHostPattern: ElementPattern<HCLElement>): Capture<PsiElement> =
     PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)

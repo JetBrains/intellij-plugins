@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.psi
 
 import com.intellij.codeInspection.LocalQuickFix
@@ -42,13 +42,13 @@ object ILSelectFromScopeReferenceProvider : PsiReferenceProvider() {
         // TODO: Resolve 'cwd' and 'root' paths
         if (element.name == HCL_MODULE_IDENTIFIER) {
           val file = host.containingFile.originalFile
-          return arrayOf(PsiReferenceBase.Immediate(element, true, file.containingDirectory ?: file))
+          arrayOf(PsiReferenceBase.Immediate(element, true, file.containingDirectory ?: file))
         }
         else PsiReference.EMPTY_ARRAY
       }
       HCL_MODULE_IDENTIFIER -> arrayOf(ModuleReference(element))
       HCL_LOCAL_IDENTIFIER -> arrayOf(LocalVariableReference(element))
-      else -> return PsiReference.EMPTY_ARRAY
+      else -> PsiReference.EMPTY_ARRAY
     }
   }
 

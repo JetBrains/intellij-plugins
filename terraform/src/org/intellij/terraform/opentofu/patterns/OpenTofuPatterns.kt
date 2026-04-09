@@ -13,7 +13,8 @@ import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.HCLSelectExpression
 import org.intellij.terraform.hcl.psi.common.SelectExpression
-import org.intellij.terraform.hil.patterns.HILPatterns
+import org.intellij.terraform.hil.patterns.HILPatterns.createExpressionPattern
+import org.intellij.terraform.hil.patterns.HILPatterns.expressionScopeCondition
 import org.intellij.terraform.opentofu.OpenTofuConstants
 
 internal object OpenTofuPatterns {
@@ -71,8 +72,7 @@ internal object OpenTofuPatterns {
 
 
   private val IlseFromKeyProvider: PsiElementPattern.Capture<SelectExpression<*>> =
-    PlatformPatterns.psiElement(SelectExpression::class.java)
-      .with(HILPatterns.getScopeSelectPatternCondition(setOf(OpenTofuConstants.TOFU_KEY_PROVIDER)))
+    createExpressionPattern().with(expressionScopeCondition(OpenTofuConstants.TOFU_KEY_PROVIDER))
 
   val IlseOpenTofuKeyProvider: PsiElementPattern.Capture<SelectExpression<*>> =
     PlatformPatterns.psiElement(SelectExpression::class.java)
@@ -84,8 +84,7 @@ internal object OpenTofuPatterns {
       })
 
   private val IlseFromEncryptionMethod: PsiElementPattern.Capture<SelectExpression<*>> =
-    PlatformPatterns.psiElement(SelectExpression::class.java)
-      .with(HILPatterns.getScopeSelectPatternCondition(setOf(OpenTofuConstants.TOFU_ENCRYPTION_METHOD_PROPERTY)))
+    createExpressionPattern().with(expressionScopeCondition(OpenTofuConstants.TOFU_ENCRYPTION_METHOD_PROPERTY))
 
   val IlseOpenTofuEncryptionMethod: PsiElementPattern.Capture<SelectExpression<*>> =
     PlatformPatterns.psiElement(SelectExpression::class.java)
