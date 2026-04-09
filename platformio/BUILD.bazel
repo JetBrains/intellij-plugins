@@ -156,12 +156,6 @@ exports_files([
 ### auto-generated section `iml intellij.clion.embedded.platformio` end
 
 ### auto-generated section `build intellij.clion.embedded.platformio.tests` start
-resourcegroup(
-  name = "clion-embedded-platformio-tests_test_resources",
-  srcs = glob(["test-resources/**/*"]),
-  strip_prefix = "test-resources"
-)
-
 jvm_library(
   name = "clion-embedded-platformio-tests",
   module_name = "intellij.clion.embedded.platformio.tests",
@@ -173,7 +167,6 @@ jvm_library(
   name = "clion-embedded-platformio-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  resources = [":clion-embedded-platformio-tests_test_resources"],
   associates = [
     "//contrib/platformio",
     "//contrib/platformio:platformio_test_lib",

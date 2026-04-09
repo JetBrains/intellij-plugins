@@ -5,9 +5,6 @@
     <content url="file://$MODULE_DIR$/test">
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/test-resources">
-      <sourceFolder url="file://$MODULE_DIR$/test-resources" type="java-test-resource" />
-    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="eclipse.lsp4j.jsonrpc" level="project" />
