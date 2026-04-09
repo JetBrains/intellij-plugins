@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionContributor
@@ -21,9 +21,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants
+import org.intellij.terraform.config.Constants.HCL_ACTION_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_LOCAL_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PATH_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SELF_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VAR_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.GlobalScopes
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createFunction
@@ -91,6 +97,7 @@ import org.intellij.terraform.terragrunt.patterns.TerragruntPsiPatterns.Terragru
 open class HilCompletionContributor : CompletionContributor(), DumbAware {
   private val scopeProviders = listOf(
     CountCompletionProvider,
+    ActionCompletionProvider,
     DataSourceCompletionProvider,
     EphemeralResourceProvider,
     LocalsCompletionProvider,
@@ -125,10 +132,11 @@ open class HilCompletionContributor : CompletionContributor(), DumbAware {
   }
 
   internal abstract class SelectFromScopeCompletionProvider(val scope: String) {
-    abstract fun doAddCompletions(variable: Identifier,
-                                  parameters: CompletionParameters,
-                                  context: ProcessingContext,
-                                  result: CompletionResultSet)
+    abstract fun doAddCompletions(
+      identifier: Identifier,
+      parameters: CompletionParameters,
+      result: CompletionResultSet,
+    )
   }
 
   inner class KnownScopeCompletionProvider : CompletionProvider<CompletionParameters>() {
@@ -139,16 +147,17 @@ open class HilCompletionContributor : CompletionContributor(), DumbAware {
       val from = pp.from as? Identifier ?: return
       val provider = this@HilCompletionContributor.scopeProviders[from.name] ?: return
       LOG.debug { "HIL.SelectFromScopeCompletionProvider(${from.name}){position=$position, parent=$parent, pp=$pp}" }
-      provider.doAddCompletions(parent, parameters, context, result)
+      provider.doAddCompletions(parent, parameters, result)
     }
   }
 
   private object VariableCompletionProvider : SelectFromScopeCompletionProvider(HCL_VAR_IDENTIFIER) {
-    override fun doAddCompletions(variable: Identifier,
-                                  parameters: CompletionParameters,
-                                  context: ProcessingContext,
-                                  result: CompletionResultSet) {
-      val variables: List<Variable> = getLocalDefinedVariables(variable)
+    override fun doAddCompletions(
+      identifier: Identifier,
+      parameters: CompletionParameters,
+      result: CompletionResultSet,
+    ) {
+      val variables: List<Variable> = getLocalDefinedVariables(identifier)
       for (v in variables) {
         result.addElement(create(v.name))
       }
@@ -157,12 +166,11 @@ open class HilCompletionContributor : CompletionContributor(), DumbAware {
 
   private object SelfCompletionProvider : SelectFromScopeCompletionProvider(HCL_SELF_IDENTIFIER) {
     override fun doAddCompletions(
-      variable: Identifier,
+      identifier: Identifier,
       parameters: CompletionParameters,
-      context: ProcessingContext,
       result: CompletionResultSet,
     ) {
-      val resource = getHclBlockForSelfContext(variable) ?: return
+      val resource = getHclBlockForSelfContext(identifier) ?: return
       val properties = TfModelHelper.getBlockProperties(resource).filter {
         it.key != Constants.HAS_DYNAMIC_ATTRIBUTES &&
         it.value.computed
@@ -174,53 +182,58 @@ open class HilCompletionContributor : CompletionContributor(), DumbAware {
   private object PathCompletionProvider : SelectFromScopeCompletionProvider(HCL_PATH_IDENTIFIER) {
     private val PATH_REFERENCES = sortedSetOf("root", "module", "cwd")
 
-    override fun doAddCompletions(variable: Identifier,
-                                  parameters: CompletionParameters,
-                                  context: ProcessingContext,
-                                  result: CompletionResultSet) {
+    override fun doAddCompletions(
+      identifier: Identifier,
+      parameters: CompletionParameters,
+      result: CompletionResultSet,
+    ) {
       result.addAllElements(PATH_REFERENCES.map { create(it) })
     }
   }
 
-  private object CountCompletionProvider : SelectFromScopeCompletionProvider("count") {
-    override fun doAddCompletions(variable: Identifier,
-                                  parameters: CompletionParameters,
-                                  context: ProcessingContext,
-                                  result: CompletionResultSet) {
-      getContainingResourceOrDataSourceOrModule(variable.getHCLHost()) ?: return
+  private object CountCompletionProvider : SelectFromScopeCompletionProvider(HCL_COUNT_IDENTIFIER) {
+    override fun doAddCompletions(
+      identifier: Identifier,
+      parameters: CompletionParameters,
+      result: CompletionResultSet,
+    ) {
+      getContainingResourceOrDataSourceOrModule(identifier.getHCLHost()) ?: return
       result.addElement(create("index"))
     }
   }
 
-  private object TfCompletionProvider : SelectFromScopeCompletionProvider("terraform") {
-    override fun doAddCompletions(variable: Identifier,
-                                  parameters: CompletionParameters,
-                                  context: ProcessingContext,
-                                  result: CompletionResultSet) {
+  private object TfCompletionProvider : SelectFromScopeCompletionProvider(HCL_TERRAFORM_IDENTIFIER) {
+    override fun doAddCompletions(
+      identifier: Identifier,
+      parameters: CompletionParameters,
+      result: CompletionResultSet,
+    ) {
       result.addElement(create("workspace"))
-      getContainingResourceOrDataSource(variable.getHCLHost()) ?: return
+      getContainingResourceOrDataSource(identifier.getHCLHost()) ?: return
       result.addElement(create("env"))
     }
   }
 
-  private object LocalsCompletionProvider : SelectFromScopeCompletionProvider("local") {
-    override fun doAddCompletions(variable: Identifier,
-                                  parameters: CompletionParameters,
-                                  context: ProcessingContext,
-                                  result: CompletionResultSet) {
-      val variables: List<String> = getDefinedLocalsInModule(variable)
+  private object LocalsCompletionProvider : SelectFromScopeCompletionProvider(HCL_LOCAL_IDENTIFIER) {
+    override fun doAddCompletions(
+      identifier: Identifier,
+      parameters: CompletionParameters,
+      result: CompletionResultSet,
+    ) {
+      val variables: List<String> = getDefinedLocalsInModule(identifier)
       for (v in variables) {
         result.addElement(create(v))
       }
     }
   }
 
-  private object ModuleCompletionProvider : SelectFromScopeCompletionProvider("module") {
-    override fun doAddCompletions(variable: Identifier,
-                                  parameters: CompletionParameters,
-                                  context: ProcessingContext,
-                                  result: CompletionResultSet) {
-      val module = getTerraformModule(variable) ?: return
+  private object ModuleCompletionProvider : SelectFromScopeCompletionProvider(HCL_MODULE_IDENTIFIER) {
+    override fun doAddCompletions(
+      identifier: Identifier,
+      parameters: CompletionParameters,
+      result: CompletionResultSet,
+    ) {
+      val module = getTerraformModule(identifier) ?: return
       val modules = module.getDefinedModules()
       for (m in modules) {
         val name = m.getNameElementUnquoted(1)
@@ -229,31 +242,44 @@ open class HilCompletionContributor : CompletionContributor(), DumbAware {
     }
   }
 
-  private object DataSourceCompletionProvider : SelectFromScopeCompletionProvider("data") {
-    override fun doAddCompletions(variable: Identifier,
-                                  parameters: CompletionParameters,
-                                  context: ProcessingContext,
-                                  result: CompletionResultSet) {
-      val module = getTerraformModule(variable) ?: return
+  private object DataSourceCompletionProvider : SelectFromScopeCompletionProvider(HCL_DATASOURCE_IDENTIFIER) {
+    override fun doAddCompletions(
+      identifier: Identifier,
+      parameters: CompletionParameters,
+      result: CompletionResultSet,
+    ) {
+      val module = getTerraformModule(identifier) ?: return
 
       val dataSources = module.getDefinedDataSources()
-      val types = dataSources.mapNotNull { it.getNameElementUnquoted(1) }.toSortedSet()
+      val types = dataSources.mapNotNull { it.getNameElementUnquoted(1) }
       result.addAllElements(types.map { create(it) })
     }
   }
 
   private object EphemeralResourceProvider : SelectFromScopeCompletionProvider(HCL_EPHEMERAL_IDENTIFIER) {
     override fun doAddCompletions(
-      variable: Identifier,
+      identifier: Identifier,
       parameters: CompletionParameters,
-      context: ProcessingContext,
       result: CompletionResultSet,
     ) {
-      val module = getTerraformModule(variable) ?: return
+      val module = getTerraformModule(identifier) ?: return
 
       val ephemeraResources = module.getDefinedEphemeralResources()
-      val types = ephemeraResources.mapNotNull { it.getNameElementUnquoted(1) }.toSortedSet()
+      val types = ephemeraResources.mapNotNull { it.getNameElementUnquoted(1) }
       result.addAllElements(types.map { create(it) })
+    }
+  }
+
+  private object ActionCompletionProvider : SelectFromScopeCompletionProvider(HCL_ACTION_IDENTIFIER) {
+    override fun doAddCompletions(
+      identifier: Identifier,
+      parameters: CompletionParameters,
+      result: CompletionResultSet,
+    ) {
+      val module = getTerraformModule(identifier) ?: return
+
+      val actionTypes = module.getDefinedActions().mapNotNull { it.getNameElementUnquoted(1) }
+      result.addAllElements(actionTypes.map { create(it) })
     }
   }
 

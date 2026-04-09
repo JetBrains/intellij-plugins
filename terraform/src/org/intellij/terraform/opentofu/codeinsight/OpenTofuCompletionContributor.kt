@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.opentofu.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionContributor
@@ -41,13 +41,13 @@ class OpenTofuCompletionContributor : CompletionContributor(), DumbAware {
 }
 
 internal object KeyProvidersCompletionProvider : SelectFromScopeCompletionProvider(TOFU_KEY_PROVIDER) {
-  override fun doAddCompletions(variable: Identifier, parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+  override fun doAddCompletions(identifier: Identifier, parameters: CompletionParameters, result: CompletionResultSet) {
     result.addAllElements(getEncryptionElementsTypeNames(parameters.position, KeyProviderBlock))
   }
 }
 
 internal object EncryptionMethodsCompletionProvider : SelectFromScopeCompletionProvider(TOFU_ENCRYPTION_METHOD_BLOCK) {
-  override fun doAddCompletions(variable: Identifier, parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+  override fun doAddCompletions(identifier: Identifier, parameters: CompletionParameters, result: CompletionResultSet) {
     result.addAllElements(getEncryptionElementsTypeNames(parameters.position, EncryptionMethodBlock))
   }
 }

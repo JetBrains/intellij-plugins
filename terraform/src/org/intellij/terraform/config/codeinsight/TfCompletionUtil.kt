@@ -15,6 +15,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.TerraformIcons
+import org.intellij.terraform.config.Constants.HCL_ACTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
@@ -50,6 +51,7 @@ import javax.swing.Icon
 
 internal object TfCompletionUtil {
   val Scopes: Set<String> = setOf(
+    HCL_ACTION_IDENTIFIER,
     HCL_DATASOURCE_IDENTIFIER,
     HCL_VAR_IDENTIFIER,
     HCL_SELF_IDENTIFIER,

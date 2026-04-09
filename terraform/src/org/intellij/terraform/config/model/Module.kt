@@ -26,6 +26,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
 import com.intellij.util.indexing.IndexingIteratorsProvider
+import org.intellij.terraform.config.Constants.HCL_ACTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
@@ -325,6 +326,10 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     return getDefinedHclBlocks(HCL_DATASOURCE_IDENTIFIER, numberOfArguments = 2, firstArgument = type, secondArgument = name)
   }
 
+  fun getDefinedActions(type: String? = null, name: String? = null): List<HCLBlock> {
+    return getDefinedHclBlocks(HCL_ACTION_IDENTIFIER, numberOfArguments = 2, firstArgument = type, secondArgument = name)
+  }
+
   fun getDefinedEphemeralResources(type: String? = null, name: String? = null): List<HCLBlock> {
     return getDefinedHclBlocks(HCL_EPHEMERAL_IDENTIFIER, numberOfArguments = 2, firstArgument = type, secondArgument = name)
   }
@@ -463,4 +468,3 @@ internal fun createDisableDeepVariableSearchQuickFix(): LocalQuickFix? {
 
   }
 }
-
