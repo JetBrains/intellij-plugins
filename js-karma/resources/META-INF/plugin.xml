@@ -25,7 +25,7 @@
   </dependencies>
   <!-- endregion -->
   <depends>com.intellij.modules.lang</depends>
-  <depends>com.intellij.modules.javascript</depends>
+  <depends>JavaScript</depends>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.modules.scriptDebugger.ui</depends>
 
