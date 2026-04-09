@@ -12,12 +12,12 @@ import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.VueProvide
 import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_PROVIDES
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent<*>) :
   PolySymbolScopeWithCache<VueSourceComponent<*>, Unit>(enclosingComponent.source.project, enclosingComponent, Unit) {
@@ -33,7 +33,7 @@ class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent<*>
     consumer(vueInjectStringSymbol)
     consumer(vueInjectPropertySymbol)
 
-    cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
+    cacheDependencies.addAll(getVueSymbolsCacheDependencies(enclosingComponent.source.project))
   }
 
   override fun getCodeCompletions(

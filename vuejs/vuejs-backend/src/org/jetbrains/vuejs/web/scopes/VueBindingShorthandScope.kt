@@ -22,7 +22,6 @@ import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.Processor
@@ -31,6 +30,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.web.VUE_BINDING_SHORTHANDS
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 class VueBindingShorthandScope(attribute: XmlAttribute) :
   PolySymbolScopeWithCache<XmlAttribute, Unit>(attribute.project, attribute, Unit) {
@@ -39,7 +39,7 @@ class VueBindingShorthandScope(attribute: XmlAttribute) :
     kind == VUE_BINDING_SHORTHANDS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
-    cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
+    cacheDependencies.addAll(getVueSymbolsCacheDependencies(dataHolder.project))
 
     val tag = dataHolder.context as? XmlTag ?: return
     VueAttributeNameParser.parse(dataHolder.name, tag)

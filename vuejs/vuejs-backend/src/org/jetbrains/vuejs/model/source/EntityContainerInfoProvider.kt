@@ -17,11 +17,9 @@ import com.intellij.lang.javascript.psi.types.JSBooleanLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.collectMembers
@@ -29,6 +27,7 @@ import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.codeInsight.processJSTypeMembers
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 import java.util.TreeMap
 import java.util.concurrent.ConcurrentHashMap
 
@@ -74,8 +73,7 @@ interface EntityContainerInfoProvider<T> {
         manager.getCachedValue(it, manager.getKeyForClass(this::class.java), {
           CachedValueProvider.Result.create(
             createInfo(it),
-            PsiModificationTracker.MODIFICATION_COUNT,
-            DumbService.getInstance(it.project)
+            getVueSymbolsCacheDependencies(it.project)
           )
         }, false)
       }

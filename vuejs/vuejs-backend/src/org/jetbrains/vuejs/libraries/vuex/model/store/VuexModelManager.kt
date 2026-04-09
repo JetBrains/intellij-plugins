@@ -13,7 +13,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtModelManager
@@ -22,6 +21,7 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STORE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isVuexContext
 import org.jetbrains.vuejs.libraries.vuex.index.VUEX_STORE_INDEX_JS_KEY
 import org.jetbrains.vuejs.libraries.vuex.index.VUEX_STORE_INDEX_KEY
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 object VuexModelManager {
 
@@ -51,7 +51,7 @@ object VuexModelManager {
         .map { VuexStoreImpl(it) }
         .toList()
 
-      CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
+      CachedValueProvider.Result.create(result, getVueSymbolsCacheDependencies(project))
     }
   }
 
@@ -64,7 +64,7 @@ object VuexModelManager {
           .asSequence()
           .filterIsInstance<JSCallExpression>()
           .mapNotNull { createRegisteredModule(it) }
-          .toList(), PsiModificationTracker.MODIFICATION_COUNT)
+          .toList(), getVueSymbolsCacheDependencies(project))
     }
   }
 

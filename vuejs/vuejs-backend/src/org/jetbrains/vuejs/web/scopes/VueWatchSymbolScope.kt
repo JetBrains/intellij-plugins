@@ -25,7 +25,6 @@ import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.VueComputedProperty
 import org.jetbrains.vuejs.model.VueDataProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -33,6 +32,7 @@ import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 import org.jetbrains.vuejs.web.symbols.VueAnySymbol
 
 class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent<*>) :
@@ -59,7 +59,7 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent<*>)
       consumer(anyJsDataSymbol)
     }
     consumer(VueWatchablePropertySymbol)
-    cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
+    cacheDependencies.addAll(getVueSymbolsCacheDependencies(enclosingComponent.source.project))
   }
 
   override fun createPointer(): Pointer<VueWatchSymbolScope> {

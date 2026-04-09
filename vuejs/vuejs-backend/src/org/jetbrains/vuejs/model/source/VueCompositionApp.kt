@@ -7,7 +7,6 @@ import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.VueApp
 import org.jetbrains.vuejs.model.VueComponent
@@ -20,6 +19,7 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VuePlugin
 import org.jetbrains.vuejs.model.source.VueComponents.getComponent
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 data class VueCompositionApp(
   override val source: JSCallExpression,
@@ -39,7 +39,7 @@ data class VueCompositionApp(
         else
           CachedValuesManager.getCachedValue(initializer) {
             val container = getComponent(initializer)
-            CachedValueProvider.Result.create(container, PsiModificationTracker.MODIFICATION_COUNT)
+            CachedValueProvider.Result.create(container, getVueSymbolsCacheDependencies(initializer.project))
           }
       }
 

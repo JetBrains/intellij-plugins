@@ -43,7 +43,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
@@ -79,6 +78,7 @@ import org.jetbrains.vuejs.model.analyzeInject
 import org.jetbrains.vuejs.model.analyzeProvide
 import org.jetbrains.vuejs.types.VueSourceModelPropType
 import org.jetbrains.vuejs.types.optionalIf
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
@@ -88,7 +88,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       ?.let { findModule(it, true) }
       ?.let { module ->
         CachedValuesManager.getCachedValue(module) {
-          CachedValueProvider.Result.create(VueScriptSetupInfo(module), PsiModificationTracker.MODIFICATION_COUNT)
+          CachedValueProvider.Result.create(VueScriptSetupInfo(module), getVueSymbolsCacheDependencies(module.project))
         }
       }
   }
@@ -129,12 +129,12 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     private val structure: VueScriptSetupStructure
       get() = CachedValuesManager.getCachedValue(module) {
-        CachedValueProvider.Result.create(analyzeModule(module), PsiModificationTracker.MODIFICATION_COUNT)
+        CachedValueProvider.Result.create(analyzeModule(module), getVueSymbolsCacheDependencies(module.project))
       }
 
     private val injectionCalls: List<VueSymbol>
       get() = CachedValuesManager.getCachedValue(module) {
-        CachedValueProvider.Result.create(getInjectionCalls(module), PsiModificationTracker.MODIFICATION_COUNT)
+        CachedValueProvider.Result.create(getInjectionCalls(module), getVueSymbolsCacheDependencies(module.project))
       }
 
     private fun getVueMode(module: JSExecutionScope): VueMode {

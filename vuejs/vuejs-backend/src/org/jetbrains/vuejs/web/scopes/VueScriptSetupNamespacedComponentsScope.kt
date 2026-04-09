@@ -14,8 +14,8 @@ import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.createSmartPointer
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 import org.jetbrains.vuejs.web.symbols.VueComponentNamespaceSymbol
 
 class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope) :
@@ -43,7 +43,7 @@ class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope) :
       },
       false
     )
-    cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
+    cacheDependencies.addAll(getVueSymbolsCacheDependencies(dataHolder.project))
   }
 
   override fun getCodeCompletions(

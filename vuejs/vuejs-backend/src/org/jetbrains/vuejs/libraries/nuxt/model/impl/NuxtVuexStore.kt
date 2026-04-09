@@ -10,11 +10,9 @@ import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.codeInsight.collectMembers
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils
@@ -32,6 +30,7 @@ import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStateProperty
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStatePropertyImpl
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStore
 import org.jetbrains.vuejs.model.VueImplicitElement
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 import java.util.concurrent.ConcurrentHashMap
 
 abstract class NuxtVuexContainer(override val source: PsiDirectory) : VuexContainer {
@@ -74,7 +73,7 @@ abstract class NuxtVuexContainer(override val source: PsiDirectory) : VuexContai
     val source = source
     return CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(ConcurrentHashMap<String, Map<String, *>>(),
-                                        arrayOf(PsiModificationTracker.MODIFICATION_COUNT, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS))
+                                        getVueSymbolsCacheDependencies(source.project))
     }.getOrPut(key) { provider() } as Map<String, T>
   }
 

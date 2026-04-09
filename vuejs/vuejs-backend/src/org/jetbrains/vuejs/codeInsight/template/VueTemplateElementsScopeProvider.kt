@@ -11,7 +11,6 @@ import com.intellij.psi.ResolveResult
 import com.intellij.psi.XmlRecursiveElementVisitor
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
@@ -23,6 +22,7 @@ import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSScriptSetupExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSSlotPropsExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 import java.util.function.Consumer
 
 class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
@@ -32,7 +32,7 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
     val templateRootScope = CachedValuesManager.getCachedValue(hostFile) {
       CachedValueProvider.Result.create(
         VueTemplateScopeBuilder(hostFile).topLevelScope,
-        PsiModificationTracker.MODIFICATION_COUNT)
+        getVueSymbolsCacheDependencies(hostFile.project))
     }
     return listOf(templateRootScope.findBestMatchingTemplateScope(hostElement ?: element)!!)
   }

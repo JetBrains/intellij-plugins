@@ -16,12 +16,12 @@ import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueDirectiveModifier
 import org.jetbrains.vuejs.model.VueMode
 import org.jetbrains.vuejs.model.typed.VueTypedDirectives.getDirectiveModifiers
 import org.jetbrains.vuejs.web.VUE_GLOBAL_DIRECTIVES
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 data class VueTypedDirective(
   override val source: TypeScriptPropertySignature,
@@ -41,7 +41,7 @@ data class VueTypedDirective(
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
         getDirectiveModifiers(source, VueMode.CLASSIC),
-        PsiModificationTracker.MODIFICATION_COUNT,
+        getVueSymbolsCacheDependencies(source.project),
       )
     }
 

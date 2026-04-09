@@ -9,7 +9,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.Processor
 import com.intellij.util.SmartList
 import org.jetbrains.vuejs.codeInsight.fromAsset
@@ -42,7 +41,7 @@ private const val INDEXED_ACCESS_HINT = "[]"
 private const val DELIMITER = ';'
 
 /**
- * Requires [PsiModificationTracker.MODIFICATION_COUNT] and [DumbService.modificationTracker] as dependencies for caches.
+ * Requires [org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies] as dependencies for caches.
  */
 fun getForAllKeys(
   scope: GlobalSearchScope,
@@ -58,7 +57,7 @@ fun getForAllKeys(
 }
 
 /**
- * Requires [PsiModificationTracker.MODIFICATION_COUNT] and [DumbService.modificationTracker] as dependencies for caches.
+ * Requires [org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies] as dependencies for caches.
  */
 fun resolve(
   name: String,
