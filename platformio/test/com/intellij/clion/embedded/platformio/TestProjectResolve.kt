@@ -1,6 +1,9 @@
 package com.intellij.clion.embedded.platformio
 
 import com.intellij.build.events.MessageEvent
+import com.intellij.clion.embedded.platformio.TestUtils.findExternalModule
+import com.intellij.clion.testFramework.nolang.junit5.core.clionProjectTestFixture
+import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.model.DataNode
@@ -11,35 +14,39 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotifica
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemBuildEvent
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.readText
-import com.intellij.testFramework.JUnit38AssumeSupportRunner
-import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.asSafely
 import com.intellij.util.system.OS
-import com.jetbrains.cidr.cpp.CPPTestUtil
+import com.jetbrains.cidr.assumptions.ToolSetKindAssumption
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTarget
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectResolver
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioRunConfigurationManagerHelper
-import com.intellij.clion.embedded.platformio.TestUtils.findExternalModule
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.external.system.model.ExternalModule
 import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.OCLanguageKind
 import com.jetbrains.cidr.lang.workspace.compiler.GCCCompilerKind
 import org.jetbrains.annotations.NonNls
-import org.junit.Assume
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
-import java.nio.file.Paths
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.div
+import kotlin.io.path.readText
 
-val BASE_TEST_DATA_PATH: Path = Paths.get(PathManager.getHomePath(), "contrib", "platformio", "testData")
+val BASE_TEST_DATA_PATH: Path = PathManager.getHomeDir() / "contrib" / "platformio" / "testData"
 
-@RunWith(JUnit38AssumeSupportRunner::class)
-class TestProjectResolve : LightPlatformTestCase() {
+@TestApplication
+class TestProjectResolve {
+  private val projectPathFixture = tempDirTestFixture(BASE_TEST_DATA_PATH / "project1")
+
+  private val projectPath by projectPathFixture
+  private val project by clionProjectTestFixture(projectPathFixture)
+
   private val EXPECTED_ACTIVE_INI_FILES = listOf(
     "platformio.ini",
     "pio_included_by_name.ini",
@@ -52,7 +59,7 @@ class TestProjectResolve : LightPlatformTestCase() {
     "configs/included_by_asterisk1.ini",
     "configs/included_by_asterisk12.ini"
   )
-  private val expectedSourceFiles = mapOf(
+  private val EXPECTED_SOURCE_FILES = mapOf(
     "main.cpp" to CLanguageKind.CPP,
     "nested.c" to CLanguageKind.C,
     "nested_nested.c" to CLanguageKind.C,
@@ -63,34 +70,31 @@ class TestProjectResolve : LightPlatformTestCase() {
     "extra.c" to CLanguageKind.C
   )
 
-  private lateinit var projectPath: String
-  private lateinit var projectDir: VirtualFile
-
-  override fun setUp() {
-    super.setUp()
-    projectPath = BASE_TEST_DATA_PATH.resolve("project1").toString()
-    projectDir = VfsUtil.findFile(Paths.get(projectPath), true)!!
+  @BeforeEach
+  fun beforeEach() {
     CLionRunConfigurationManager.getInstance(project).updateRunConfigurations(PlatformioRunConfigurationManagerHelper)
   }
 
+  @Test
   fun testScanFiles() = doTestScanFiles()
 
+  @Test
   fun testScanFiles2023() = doTestScanFiles("-2023")
 
   private fun doTestScanFiles(suffix: String = "") {
-    Assume.assumeFalse(CPPTestUtil.getTestToolSet().kind.isRemoteLike)
+    ToolSetKindAssumption.assumeToolSetKind().isNotRemoteLike()
 
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
     val testListener = TaskNotificationListerForTest()
     val projectNode = PlatformioProjectResolverForTest(suffix).resolveProjectInfo(
       id = taskId,
-      projectPath = projectPath,
+      projectPath = projectPath.absolutePathString(),
       isPreviewMode = true,
       settings = null,
       listener = testListener,
       resolverPolicy = null
     )
-    assertEquals("Error message counter", 1, testListener.errorMessagesCounter)
+    assertEquals(1, testListener.errorMessagesCounter, "Error message counter")
 
     val service = project.service<PlatformioService>()
 
@@ -98,13 +102,13 @@ class TestProjectResolve : LightPlatformTestCase() {
       "D:\\work\\platformio-test\\contrib\\platformio\\testData\\project1\\.pio\\build\\esp-wrover-kit\\firmware.elf"
     else
       "/home/user/platformio-test/contrib/platformio/testData/project1/.pio/build/esp-wrover-kit/firmware.elf"
-    assertEquals("Target Executable Path", expectedTargetExePath, service.targetExecutablePath)
+    assertEquals(expectedTargetExePath, service.targetExecutablePath, "Target Executable Path")
     val expectedSvdPath = if (OS.CURRENT == OS.Windows) "D:\\svd.svd" else "/tmp/svd.svd"
-    assertEquals("Svd Path", expectedSvdPath, service.svdPath)
+    assertEquals(expectedSvdPath, service.svdPath, "Svd Path")
 
 
-    assertEquals("Environments", listOf(PlatformioExecutionTarget("esp-wrover-kit")), service.envs)
-    assertEquals("Targets", listOf(
+    assertEquals(listOf(PlatformioExecutionTarget("esp-wrover-kit")), service.envs, "Environments")
+    assertEquals(listOf(
       "target-platformio-buildfs",
       "target-platformio-size",
       "target-platformio-upload",
@@ -112,9 +116,9 @@ class TestProjectResolve : LightPlatformTestCase() {
       "target-platformio-uploadfs",
       "target-platformio-uploadfsota",
       "target-platformio-erase"),
-                 service.getActiveActionIds().toList())
+                 service.getActiveActionIds().toList(), "Targets")
 
-    verifyIniFiles(projectDir)
+    verifyIniFiles()
 
     verifySources(projectNode!!)
 
@@ -143,10 +147,9 @@ class TestProjectResolve : LightPlatformTestCase() {
     assertEquals(GCCCompilerKind, languageConfig.compilerKind)
     val switches = languageConfig.compilerSwitches?.toSet() ?: emptySet()
     val missingSwitches = mandatorySwitches - switches
-    assertTrue("Missing switches for ${langKind.displayName}: ${missingSwitches.joinToString()}", missingSwitches.isEmpty())
-    val unexpectedSwitches = switches.intersect(undesiredSwitches)
-    assertTrue("Unexpected switches for ${langKind.displayName}: ${unexpectedSwitches.joinToString()}", unexpectedSwitches.isEmpty())
-
+    assertTrue(missingSwitches.isEmpty()) { "Missing switches for ${langKind.displayName}: ${missingSwitches.joinToString()}" }
+    val unexpectedSwitches = switches.intersect(undesiredSwitches.toSet())
+    assertTrue(unexpectedSwitches.isEmpty()) { "Unexpected switches for ${langKind.displayName}: ${unexpectedSwitches.joinToString()}" }
   }
 
   private fun verifySources(projectNode: DataNode<ProjectData>) {
@@ -156,13 +159,13 @@ class TestProjectResolve : LightPlatformTestCase() {
       .resolveConfigurations.first()
       .fileConfigurations
       .associate { it.file.name to it.languageKind }
-    assertEquals("Source file", expectedSourceFiles, actualSourceFiles)
+    assertEquals(EXPECTED_SOURCE_FILES, actualSourceFiles, "Source file")
   }
 
-  private fun verifyIniFiles(projectDir: VirtualFile) {
+  private fun verifyIniFiles() {
     val activeIniFiles = project.service<PlatformioService>().iniFiles
-    val expectedFiles = EXPECTED_ACTIVE_INI_FILES.map<String, @NonNls String> { projectDir.findFileByRelativePath(it)!!.path }.toSet()
-    assertEquals("Detected config files", expectedFiles, activeIniFiles)
+    val expectedFiles = EXPECTED_ACTIVE_INI_FILES.map<String, @NonNls String> { projectPath.resolve(it).toString() }.toSet()
+    assertEquals(expectedFiles, activeIniFiles, "Detected config files")
   }
 
   inner class PlatformioProjectResolverForTest(private val suffix: String) : PlatformioProjectResolver() {
@@ -175,7 +178,7 @@ class TestProjectResolve : LightPlatformTestCase() {
                                   pioRunEventId: String,
                                   project: Project,
                                   listener: ExternalSystemTaskNotificationListener): String {
-      return VfsUtil.loadText(projectDir.findChild("pio-project-config.json")!!)
+      return projectPath.resolve("pio-project-config.json").readText()
     }
 
     /**
@@ -190,7 +193,7 @@ class TestProjectResolve : LightPlatformTestCase() {
                                    activeEnvName: String,
                                    listener: ExternalSystemTaskNotificationListener): String {
       val osSuffix = if (OS.CURRENT == OS.Windows) "_win" else ""
-      return projectDir.findChild("pio-project-metadata-esp-wrover-kit${suffix}${osSuffix}.json")!!.readText()
+      return projectPath.resolve("pio-project-metadata-esp-wrover-kit${suffix}${osSuffix}.json").readText()
     }
 
     override fun createRunConfigurationIfRequired(project: Project) {}
@@ -203,10 +206,10 @@ class TestProjectResolve : LightPlatformTestCase() {
      */
     override fun gatherCompDB(id: ExternalSystemTaskId, pioRunEventId: String, project: Project, activeEnvName: String, listener: ExternalSystemTaskNotificationListener, projectPath: String): String {
       val compDbFileName = if (OS.CURRENT == OS.Windows) "compile_commands_win.json" else "compile_commands.json"
-      return projectDir.findChild(compDbFileName)!!.readText().injectProjectPath()
+      return this@TestProjectResolve.projectPath.resolve(compDbFileName).readText().injectProjectPath()
     }
 
-    private fun String.injectProjectPath() = this.replace("\"directory\": \"\"", "\"directory\": \"${projectPath.replace("\\", "\\\\")}\"")
+    private fun String.injectProjectPath() = this.replace("\"directory\": \"\"", "\"directory\": \"${projectPath.absolutePathString().replace("\\", "\\\\")}\"")
   }
 }
 
