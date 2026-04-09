@@ -76,14 +76,13 @@ abstract class VueHighlightingTestBase(
 
   override fun adjustModules(
     modules: Array<out WebFrameworkTestModule>,
-  ): Array<out WebFrameworkTestModule> =
-    when (name) {
-      // WA for `package.json`
-      "testLocalWebTypes",
-        -> modules
+  ): Array<out WebFrameworkTestModule> {
+    // WA for `package.json`
+    if (name == "testLocalWebTypes")
+      return modules
 
-      else -> super.adjustModules(modules)
-    }
+    return super.adjustModules(modules)
+  }
 
   @Test
   fun testDirectivesWithoutParameters() {
