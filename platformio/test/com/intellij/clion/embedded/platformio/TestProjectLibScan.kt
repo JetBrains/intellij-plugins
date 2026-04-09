@@ -1,31 +1,36 @@
 package com.intellij.clion.embedded.platformio
 
+import com.intellij.clion.embedded.platformio.TestUtils.findExternalModule
+import com.intellij.clion.testFramework.nolang.junit5.core.clionProjectTestFixture
+import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.readText
-import com.intellij.testFramework.JUnit38AssumeSupportRunner
-import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.system.OS
-import com.jetbrains.cidr.cpp.CPPTestUtil
+import com.jetbrains.cidr.assumptions.ToolSetKindAssumption
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectResolver
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioRunConfigurationManagerHelper
-import com.intellij.clion.embedded.platformio.TestUtils.findExternalModule
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
-import org.junit.Assume
-import org.junit.runner.RunWith
-import java.nio.file.Paths
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.div
+import kotlin.io.path.readText
 
-@RunWith(JUnit38AssumeSupportRunner::class)
-class TestProjectLibScan : LightPlatformTestCase() {
+@TestApplication
+class TestProjectLibScan {
+  private val projectDirFixture = tempDirTestFixture(BASE_TEST_DATA_PATH / "project-scan-libraries")
 
-  private lateinit var projectPath: String
-  private lateinit var projectDir: VirtualFile
-  private val expectedSourceFiles = setOf(
+  private val projectDir by projectDirFixture
+  private val project by clionProjectTestFixture(projectDirFixture)
+
+  private val EXPECTED_SOURCE_FILES = setOf(
     "/src/main.cpp",
     "/lib/confusing-name/src/confusing-name.cpp",
     "/lib/confusing-name-no-src/confusing-name-no-src.cpp",
@@ -33,21 +38,20 @@ class TestProjectLibScan : LightPlatformTestCase() {
     "/lib/confusing-name-nested-src/main/src/confusing-name-nested-src.cpp",
   )
 
-  override fun setUp() {
-    super.setUp()
-    projectPath = BASE_TEST_DATA_PATH.resolve("project-scan-libraries").toString()
-    projectDir = VfsUtil.findFile(Paths.get(projectPath), true)!!
+  @BeforeEach
+  fun beforeEach() {
     CLionRunConfigurationManager.getInstance(project).updateRunConfigurations(PlatformioRunConfigurationManagerHelper)
   }
 
+  @Test
   fun testScanLibraries() {
-    Assume.assumeFalse(CPPTestUtil.getTestToolSet().kind.isRemoteLike)
+    ToolSetKindAssumption.assumeToolSetKind().isNotRemoteLike()
 
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
     val testListener = ExternalSystemTaskNotificationListener.NULL_OBJECT
     val projectNode = PlatformioProjectResolverForTest().resolveProjectInfo(
       id = taskId,
-      projectPath = projectPath,
+      projectPath = projectDir.absolutePathString(),
       isPreviewMode = true,
       settings = null,
       listener = testListener,
@@ -55,15 +59,12 @@ class TestProjectLibScan : LightPlatformTestCase() {
     )!!
     val actualSourceFiles = projectNode.findExternalModule().data
       .resolveConfigurations.first()
-      .fileConfigurations
-      .associate {
-        it.file.path.replace(projectPath, "").replace('\\', '/') to it
-      }
-    assertEquals("Source file", expectedSourceFiles, actualSourceFiles.keys)
+      .fileConfigurations.associateBy { it.file.path.replace(projectDir.absolutePathString(), "").replace('\\', '/') }
+    assertEquals(this@TestProjectLibScan.EXPECTED_SOURCE_FILES, actualSourceFiles.keys, "Source file")
     val switchesWithDefines = actualSourceFiles["/lib/confusing-name-no-src/confusing-name-no-src.cpp"]!!.compilerSwitches
     assertNotNull(switchesWithDefines)
-    assertTrue("MANDATORY_DEFINE_B1", switchesWithDefines!!.contains("-DMANDATORY_DEFINE_B1"))
-    assertTrue("MANDATORY_DEFINE_B2", switchesWithDefines.contains("-DMANDATORY_DEFINE_B2"))
+    assertTrue(switchesWithDefines.contains("-DMANDATORY_DEFINE_B1"), "MANDATORY_DEFINE_B1")
+    assertTrue(switchesWithDefines.contains("-DMANDATORY_DEFINE_B2"), "MANDATORY_DEFINE_B2")
   }
 
   private inner class PlatformioProjectResolverForTest() : PlatformioProjectResolver() {
@@ -75,8 +76,9 @@ class TestProjectLibScan : LightPlatformTestCase() {
     override fun gatherConfigJson(id: ExternalSystemTaskId,
                                   pioRunEventId: String,
                                   project: Project,
-                                  listener: ExternalSystemTaskNotificationListener): String =
-      VfsUtil.loadText(projectDir.findChild("pio-project-config.json")!!)
+                                  listener: ExternalSystemTaskNotificationListener): String {
+      return projectDir.resolve("pio-project-config.json").readText()
+    }
 
     /**
      * Mock data is loaded from file pio-project-metadata-esp-wrover-kit.json
@@ -91,7 +93,7 @@ class TestProjectLibScan : LightPlatformTestCase() {
                                    activeEnvName: String,
                                    listener: ExternalSystemTaskNotificationListener): String {
       val osSuffix = if (OS.CURRENT == OS.Windows) "_win" else ""
-      return projectDir.findChild("pio-project-metadata${osSuffix}.json")!!.readText().replace("T:", projectDir.path)
+      return projectDir.resolve("pio-project-metadata${osSuffix}.json").readText().replace("T:", projectDir.absolutePathString())
     }
 
     override fun createRunConfigurationIfRequired(project: Project) {}
@@ -105,9 +107,9 @@ class TestProjectLibScan : LightPlatformTestCase() {
      */
     override fun gatherCompDB(id: ExternalSystemTaskId, pioRunEventId: String, project: Project, activeEnvName: String, listener: ExternalSystemTaskNotificationListener, projectPath: String): String {
       val compDbFileName = if (OS.CURRENT == OS.Windows) "compile_commands_win.json" else "compile_commands.json"
-      return projectDir.findChild(compDbFileName)!!.readText().injectProjectPath()
+      return projectDir.resolve(compDbFileName).readText().injectProjectPath()
     }
 
-    private fun String.injectProjectPath() = this.replace("\"directory\": \"\"", "\"directory\": \"${projectPath.replace("\\", "\\\\")}\"")
+    private fun String.injectProjectPath() = this.replace("\"directory\": \"\"", "\"directory\": \"${projectDir.absolutePathString().replace("\\", "\\\\")}\"")
   }
 }
