@@ -78,8 +78,7 @@ abstract class VueHighlightingTestBase(
     modules: Array<out WebFrameworkTestModule>,
   ): Array<out WebFrameworkTestModule> =
     when (name) {
-      "testCommonJSSupport",
-        // WA for `package.json`
+      // WA for `package.json`
       "testLocalWebTypes",
         -> modules
 
@@ -610,7 +609,10 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testCommonJSSupport() {
-    doHighlightingTest(VueTestModule.VUEX_3_1_0)
+    doHighlightingTest(
+      VueTestModule.VUE_2_6_10,
+      VueTestModule.VUEX_3_1_0,
+    )
   }
 
   @Test
