@@ -1026,6 +1026,39 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     """.trimIndent(), "command", "arguments", "stdin", "working_directory")
   }
 
+  fun testCompletionInActionTriggerBlock() {
+    doBasicCompletionTest("""
+      resource "aws_lambda_function" "example" {
+        lifecycle {
+          action_trigger {
+            events = [after_create]
+            actions = [action.<caret>]
+          }
+        }
+      }
+      
+      action "aws_lambda_invoke" "invoke_primary" { }
+      action "local_command" "bash_example" { }
+    """.trimIndent(), "aws_lambda_invoke", "local_command")
+
+    doBasicCompletionTest("""
+      resource "aws_lambda_function" "example" {
+        lifecycle {
+          action_trigger {
+            events = [after_create]
+            actions = [action.aws_lambda_invoke.<caret>]
+          }
+        }
+      }
+
+      action "aws_lambda_invoke" "invoke_primary" { }
+      action "aws_lambda_invoke" "invoke_secondary" { }
+      action "local_command" "bash_example" { }
+    """.trimIndent(), Matcher.and(Matcher.all("invoke_primary", "invoke_secondary"),
+                                  Matcher.not("bash_example", "non_existing_action"))
+    )
+  }
+
   fun testRequiredProvidersCompletion() {
     val matcher = getPartialMatcher(collectBundledProviders())
 

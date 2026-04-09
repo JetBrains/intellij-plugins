@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.psi
 
 import com.intellij.openapi.application.ApplicationManager
@@ -141,23 +141,29 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
     // Rest logic would try to find resource or data provider by element text
     val ev = getSelectFieldText(expression) ?: return PsiReference.EMPTY_ARRAY
 
-    if (HILPatterns.IlseDataSource.accepts(parent)) {
-      return arrayOf(HCLElementLazyReference(element, false) { _, _ ->
+    return if (HILPatterns.IlseDataSource.accepts(parent)) {
+      arrayOf(HCLElementLazyReference(element, false) { _, _ ->
         val module = this.element.getHCLHost()?.getTerraformModule()
         val dataSources = module?.getDefinedDataSources(ev, getSelectFieldText(element)!!) ?: emptyList()
         dataSources
       })
     }
-    if (HILPatterns.IlseEphemeralResource.accepts(parent)) {
-      return arrayOf(HCLElementLazyReference(element, false) { _, _ ->
+    else if (HILPatterns.IlseEphemeralResource.accepts(parent)) {
+      arrayOf(HCLElementLazyReference(element, false) { _, _ ->
         val module = this.element.getHCLHost()?.getTerraformModule()
         val ephemeralResource = module?.getDefinedEphemeralResources(ev, getSelectFieldText(element)) ?: emptyList()
         ephemeralResource
       })
     }
-
+    else if (HILPatterns.IlseAction.accepts(parent)) {
+      arrayOf(HCLElementLazyReference(element, false) { _, _ ->
+        val module = this.element.getHCLHost()?.getTerraformModule()
+        val actions = module?.getDefinedActions(ev, getSelectFieldText(element)!!) ?: emptyList()
+        actions
+      })
+    }
     // TODO: get suitable resource/provider/etc
-    return arrayOf(HCLElementLazyReference(element, false) { _, _ ->
+    else arrayOf(HCLElementLazyReference(element, false) { _, _ ->
       val module = this.element.getHCLHost()?.getTerraformModule()
       val resources = module?.getDefinedResources(ev, getSelectFieldText(element)!!) ?: emptyList()
       resources
@@ -178,7 +184,6 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
     }
 
   }
-
 
   private fun collectReferencesInner(
     r: PsiElement,
@@ -607,5 +612,4 @@ fun getGoodLeftElement(select: SelectExpression<*>, right: BaseExpression, skipS
 }
 
 fun isStarOrNumber(text: String): Boolean = text == "*" || text.toIntOrNull() != null
-
 

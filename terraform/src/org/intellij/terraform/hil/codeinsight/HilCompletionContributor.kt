@@ -72,6 +72,7 @@ import org.intellij.terraform.hil.HilContainingBlockType
 import org.intellij.terraform.hil.getResourceTypeAndName
 import org.intellij.terraform.hil.guessContainingBlockType
 import org.intellij.terraform.hil.patterns.HILPatterns.ForEachIteratorPosition
+import org.intellij.terraform.hil.patterns.HILPatterns.IlseAction
 import org.intellij.terraform.hil.patterns.HILPatterns.IlseDataSource
 import org.intellij.terraform.hil.patterns.HILPatterns.IlseEphemeralResource
 import org.intellij.terraform.hil.patterns.HILPatterns.IlseFromKnownScope
@@ -375,9 +376,14 @@ open class HilCompletionContributor : CompletionContributor(), DumbAware {
           val dataSources = module.getDefinedDataSources(expression.name, null)
           result.addAllElements(dataSources.mapNotNull { it.getNameElementUnquoted(2) }.map { create(it) })
         }
-        if (IlseEphemeralResource.accepts(parent)) {
+        else if (IlseEphemeralResource.accepts(parent)) {
           val ephemeraResources = module.getDefinedEphemeralResources(expression.name, null)
           result.addAllElements(ephemeraResources.mapNotNull { it.getNameElementUnquoted(2) }.map { create(it) })
+        }
+        else if (IlseAction.accepts(parent)) {
+          val actions = module.getDefinedActions(expression.name, null)
+          val actionNames = actions.mapNotNull { it.getNameElementUnquoted(2) }
+          result.addAllElements(actionNames.map { create(it) })
         }
         else if (IlseOpenTofuKeyProvider.accepts(parent)) {
           val keyProviderIds = findEncryptionBlocksIdsByType(parent, expression.name, KeyProviderBlock).toList()

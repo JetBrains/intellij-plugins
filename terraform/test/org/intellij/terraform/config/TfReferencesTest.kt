@@ -18,6 +18,7 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.hil.inspection.HILUnknownResourceTypeInspection
 import org.intellij.terraform.hil.inspection.HILUnresolvedReferenceInspection
 import org.junit.Test
@@ -583,6 +584,33 @@ class TfReferencesTest : BasePlatformTestCase() {
     targetResource as HCLBlock
     assertEquals("example1", targetResource.name)
     assertEquals("main.tf", targetResource.containingFile.name)
+  }
+
+  @Test
+  fun testResolveActionBlock() {
+    myFixture.enableInspections(HILUnresolvedReferenceInspection::class.java)
+    myFixture.configureByText("main.tf", """
+      resource "terraform_data" "test" {
+        lifecycle {
+          action_trigger {
+            events  = [after_create]
+            actions = [action.local_command.bash_<caret>example]
+          }
+        }
+      }
+      action "local_command" "bash_example" { }
+    """.trimIndent())
+
+    myFixture.checkHighlighting()
+    val targetAction = myFixture.file.findElementAt(myFixture.caretOffset)
+      ?.parentOfType<HCLIdentifier>()
+      ?.reference
+      ?.resolve()
+    assertInstanceOf(targetAction, HCLBlock::class.java)
+
+    targetAction as HCLBlock
+    assertEquals("local_command", targetAction.getNameElementUnquoted(1))
+    assertEquals("bash_example", targetAction.name)
   }
 
   @Test
