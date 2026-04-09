@@ -16,7 +16,6 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
@@ -29,6 +28,7 @@ import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.model.analyzeInject
 import org.jetbrains.vuejs.model.analyzeProvide
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 class VueCompositionInfoProvider : VueContainerInfoProvider {
 
@@ -58,12 +58,13 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
       get() = CachedValuesManager.getCachedValue(initializer) {
         CachedValueProvider.Result.create(VueCompositionInfoHelper.createRawBindings(
           initializer, initializer, ::getSetupFunctionType
-        ), PsiModificationTracker.MODIFICATION_COUNT)
+        ), getVueSymbolsCacheDependencies(initializer.project))
       }
 
     private val methodCalls: List<VueSymbol>
       get() = CachedValuesManager.getCachedValue(initializer) {
-        CachedValueProvider.Result.create(getSetupCalls(initializer), PsiModificationTracker.MODIFICATION_COUNT)
+        CachedValueProvider.Result.create(getSetupCalls(initializer),
+                                          getVueSymbolsCacheDependencies(initializer.project))
       }
 
     private fun getSetupCalls(initializer: JSObjectLiteralExpression): List<VueSymbol> =

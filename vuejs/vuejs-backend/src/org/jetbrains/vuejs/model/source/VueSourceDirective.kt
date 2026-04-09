@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.DumbService
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -11,7 +10,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueDirectiveModifier
@@ -19,6 +17,7 @@ import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueMode
 import org.jetbrains.vuejs.model.typed.VueTypedDirectives.getDirectiveModifiers
 import org.jetbrains.vuejs.web.VUE_DIRECTIVES
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 class VueSourceDirective(
   name: String,
@@ -41,8 +40,7 @@ class VueSourceDirective(
       return CachedValuesManager.getCachedValue(typeSource) {
         CachedValueProvider.Result.create(
           getDirectiveModifiers(typeSource, mode),
-          DumbService.getInstance(typeSource.project).modificationTracker,
-          PsiModificationTracker.MODIFICATION_COUNT,
+          getVueSymbolsCacheDependencies(typeSource.project),
         )
       }
     }

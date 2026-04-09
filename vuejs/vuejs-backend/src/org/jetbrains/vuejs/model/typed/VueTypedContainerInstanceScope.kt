@@ -13,6 +13,7 @@ import com.intellij.polySymbols.js.types.JSTypeProperty
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 internal class VueTypedContainerInstanceScope(container: VueTypedContainer) :
   PolySymbolScopeWithCache<PsiElement, Unit>(container.source.project, container.source, Unit) {
@@ -26,6 +27,8 @@ internal class VueTypedContainerInstanceScope(container: VueTypedContainer) :
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
 
     val container = containerPointer.dereference() ?: return
+
+    cacheDependencies.addAll(getVueSymbolsCacheDependencies(container.source.project))
 
     ContainerTypeWrapper(container)
       .getJSPropertySymbols()

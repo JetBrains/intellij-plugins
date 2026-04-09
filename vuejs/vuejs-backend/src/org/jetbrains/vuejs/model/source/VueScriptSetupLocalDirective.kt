@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueDirectiveModifier
@@ -19,6 +18,7 @@ import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueMode
 import org.jetbrains.vuejs.model.typed.VueTypedDirectives.getDirectiveModifiers
 import org.jetbrains.vuejs.web.VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 data class VueScriptSetupLocalDirective(
   override val name: String,
@@ -39,7 +39,7 @@ data class VueScriptSetupLocalDirective(
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
         getDirectiveModifiers(source, mode),
-        PsiModificationTracker.MODIFICATION_COUNT,
+        getVueSymbolsCacheDependencies(source.project),
       )
     }
 

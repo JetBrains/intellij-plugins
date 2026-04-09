@@ -28,7 +28,6 @@ import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
@@ -45,6 +44,7 @@ import org.jetbrains.vuejs.model.VueNamedComponent
 import org.jetbrains.vuejs.model.VueTemplateSymbol
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_SPECIAL_PROPERTIES
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 private const val SLOT_LOCAL_COMPONENT = "\$local"
 
@@ -62,7 +62,7 @@ class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(
 
     consumer(VueSlotPropertiesSymbol(getSlotName()))
 
-    cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
+    cacheDependencies.addAll(getVueSymbolsCacheDependencies(dataHolder.project))
   }
 
   private fun getSlotName(): String? {
