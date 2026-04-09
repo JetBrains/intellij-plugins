@@ -1,10 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryManager
 import com.intellij.javascript.nodejs.packages.NodePackageLinkResolver
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.openapi.util.UserDataHolderBase
@@ -29,6 +27,7 @@ import org.jetbrains.vuejs.model.VueMixin
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueNamedComponent
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 class VueLibraryImpl(
   private val project: Project,
@@ -55,11 +54,9 @@ class VueLibraryImpl(
 
   private val componentsWithProximity: Pair<VueModelVisitor.Proximity, Map<String, VueNamedComponent>>
     get() = CachedValuesManager.getManager(project).getCachedValue(this) {
-      val dependencies = mutableListOf<Any>(
-        NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
-        packageJsonFile,
-        DumbService.getInstance(project).modificationTracker,
-      )
+      val dependencies = getVueSymbolsCacheDependencies(project, withPsiModTracker = false)
+        .toMutableList()
+      dependencies.add(packageJsonFile)
       val psiDirectory = source
       val components: Pair<VueModelVisitor.Proximity, Map<String, VueNamedComponent>>
       if (psiDirectory == null) {

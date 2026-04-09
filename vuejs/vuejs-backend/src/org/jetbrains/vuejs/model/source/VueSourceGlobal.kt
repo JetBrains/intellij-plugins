@@ -5,9 +5,7 @@ import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -15,7 +13,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
@@ -44,6 +41,7 @@ import org.jetbrains.vuejs.model.VueMode
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueNamedComponent
 import org.jetbrains.vuejs.model.VueScopeElement
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 import java.util.TreeMap
 
 class VueSourceGlobal(override val project: Project, override val packageJsonUrl: String?) : VueGlobal {
@@ -178,9 +176,7 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
       {
         Result.create(
           provider(searchScope),
-          VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-          PsiModificationTracker.MODIFICATION_COUNT,
-          DumbService.getInstance(project),
+          getVueSymbolsCacheDependencies(project)
         )
       },
       false)

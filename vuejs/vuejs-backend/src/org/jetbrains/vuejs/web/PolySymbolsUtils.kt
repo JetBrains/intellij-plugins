@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
+import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -38,10 +39,11 @@ internal fun isVueComponentQuery(name: String): Boolean {
   return name.getOrNull(0)?.isUpperCase() == true || name.contains('-') || name == "slot"
 }
 
-internal fun getVueSymbolsCacheDependencies(project: Project): Set<Any> =
-  setOf<Any>(
-    PsiModificationTracker.MODIFICATION_COUNT,
+internal fun getVueSymbolsCacheDependencies(project: Project, withPsiModTracker: Boolean = true): Set<Any> =
+  setOfNotNull(
+    PsiModificationTracker.MODIFICATION_COUNT.takeIf { withPsiModTracker },
     VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
     DumbService.getInstance(project).modificationTracker,
+    StubIndex.getInstance().getStubIndexModificationTracker(project),
     NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
   )

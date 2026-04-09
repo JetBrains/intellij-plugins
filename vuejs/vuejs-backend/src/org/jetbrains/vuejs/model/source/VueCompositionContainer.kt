@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
-import com.intellij.openapi.project.DumbService
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
@@ -19,7 +18,6 @@ import com.intellij.psi.search.GlobalSearchScopeUtil
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
@@ -42,6 +40,7 @@ import org.jetbrains.vuejs.model.VuePlugin
 import org.jetbrains.vuejs.model.VueProvide
 import org.jetbrains.vuejs.model.VueScopeElement
 import org.jetbrains.vuejs.model.source.VueComponents.getComponent
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 import org.jetbrains.vuejs.web.unwrapVueSymbolWithProximity
 
 abstract class VueCompositionContainer(
@@ -103,8 +102,7 @@ abstract class VueCompositionContainer(
     CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
         analyzeCall(source, mode),
-        DumbService.getInstance(source.project).modificationTracker,
-        PsiModificationTracker.MODIFICATION_COUNT
+        getVueSymbolsCacheDependencies(source.project)
       )
     }
 

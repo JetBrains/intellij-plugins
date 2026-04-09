@@ -81,6 +81,7 @@ import org.jetbrains.vuejs.types.createStrictTypeSource
 import org.jetbrains.vuejs.web.VueProximityProperty
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 import org.jetbrains.vuejs.web.asPolySymbolPriority
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 
 interface VueInstanceOwner : VueScopeElement {
 
@@ -136,6 +137,8 @@ private class VueInstanceOwnerPropertiesScope(
 
     val instanceOwner = dataHolder as VueInstanceOwner
     val source = instanceOwner.source ?: return
+
+    cacheDependencies.addAll(getVueSymbolsCacheDependencies(source.project))
 
     RecursionManager.doPreventingRecursion(source, true) {
       val result = MultiMap<String, PolySymbol>()

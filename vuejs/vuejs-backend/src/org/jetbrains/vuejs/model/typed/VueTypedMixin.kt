@@ -17,10 +17,10 @@ import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.VueMixin
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 import java.util.Objects
 
 class VueTypedMixin(
@@ -36,7 +36,7 @@ class VueTypedMixin(
           ?.substitute()
           ?.asRecordType()
           ?.remapJSProperties(),
-        PsiModificationTracker.MODIFICATION_COUNT)
+        getVueSymbolsCacheDependencies(source.project))
     } ?: JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS)
 
   override fun createPointer(): Pointer<VueTypedMixin> {

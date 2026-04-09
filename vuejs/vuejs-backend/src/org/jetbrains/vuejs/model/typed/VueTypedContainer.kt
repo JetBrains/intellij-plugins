@@ -22,6 +22,7 @@ import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
@@ -49,6 +50,7 @@ import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.model.source.INSTANCE_EMIT_METHOD
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
 import org.jetbrains.vuejs.model.source.INSTANCE_SLOTS_PROP
+import org.jetbrains.vuejs.web.getVueSymbolsCacheDependencies
 import java.util.TreeMap
 import kotlin.reflect.KClass
 import kotlin.reflect.safeCast
@@ -81,13 +83,16 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
           .filter { !it.memberName.startsWith("$") && !toFilterOut.contains(it.memberName) }
           .forEach { props.putIfAbsent(it.memberName, it) }
 
-      CachedValueProvider.Result(props.values.map { VueTypedInputProperty(this, it) }, PsiModificationTracker.MODIFICATION_COUNT)
+      Result.create(
+        props.values.map { VueTypedInputProperty(this, it) },
+        getVueSymbolsCacheDependencies(source.project)
+      )
     }
 
 
   final override val emits: List<VueEmitCall>
     get() = CachedValuesManager.getCachedValue(source) {
-      CachedValueProvider.Result(
+      Result.create(
         thisType.asRecordType().findPropertySignature(INSTANCE_EMIT_METHOD)
           ?.jsType
           ?.asRecordType()
@@ -102,12 +107,12 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
                 VueTypedEmit(this, name, signature)
               }
           } ?: emptyList(),
-        PsiModificationTracker.MODIFICATION_COUNT)
+        getVueSymbolsCacheDependencies(source.project))
     }
 
   final override val slots: List<VueSlot>
     get() = CachedValuesManager.getCachedValue(source) {
-      CachedValueProvider.Result(
+      Result.create(
         thisType.asRecordType().findPropertySignature(INSTANCE_SLOTS_PROP)
           ?.jsType
           ?.asRecordType()
@@ -116,7 +121,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
             VueTypedSlot(this, signature.memberName, signature.memberSource.singleElement, signature.jsType)
           }
         ?: emptyList(),
-        PsiModificationTracker.MODIFICATION_COUNT)
+        getVueSymbolsCacheDependencies(source.project))
     }
 
   final override val model: VueModelDirectiveProperties
@@ -276,7 +281,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
         resolveSymbolFromNodeModule(containingFile, VUE_MODULE, "AllowedComponentProps", JSClass::class.java)
           ?.jsType?.asRecordType()?.properties?.mapTo(result) { it.memberName }
 
-        CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
+        Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
 
