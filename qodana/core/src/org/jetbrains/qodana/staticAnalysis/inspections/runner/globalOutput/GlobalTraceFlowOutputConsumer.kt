@@ -58,7 +58,9 @@ abstract class GlobalTraceFlowOutputConsumer : GlobalOutputConsumer {
     override suspend fun getSarif(macroManager: PathMacroManager, database: QodanaToolResultDatabase): Result {
       macroManager.collapsePathsRecursively(element)
       return convertTraceFromXmlFormat(element, macroManager).apply {
-        getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.REGULAR
+        if (!codeFlows.isNullOrEmpty()) {
+          getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.TAINT
+        }
       }
     }
 
