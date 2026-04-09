@@ -78,9 +78,6 @@ abstract class VueHighlightingTestBase(
     modules: Array<out WebFrameworkTestModule>,
   ): Array<out WebFrameworkTestModule> =
     when (name) {
-      "testWithPropsFromFunctionCall",
-      "testWithPropsFromFunctionCall2",
-      "testStandardBooleanAttributes",
       "testCommonJSSupport",
         // WA for `package.json`
       "testLocalWebTypes",

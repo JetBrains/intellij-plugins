@@ -23,8 +23,8 @@ const useSomeProps = (<warning descr="Unused parameter foo">foo</warning>) => ({
   },
 });
 
-export default defineComponent({
-                                 name:"FooBar",
-                                 props: useSomeProps('foobar'),
-                               });
+export default defineComponent<unknown>({
+  name: "FooBar",
+  props: useSomeProps('foobar'),
+});
 </script>

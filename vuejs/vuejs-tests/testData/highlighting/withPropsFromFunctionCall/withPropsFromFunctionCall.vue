@@ -19,14 +19,14 @@ const useSomeProps = (<warning descr="Unused parameter foo">foo</warning>) => ({
   },
 });
 
-export default defineComponent({
-                                 name:"FooBar",
-                                 props: {
-                                   ...useSomeProps('foobar'),
-                                   bar: {
-                                     type: Boolean,
-                                     default: true,
-                                   },
-                                 },
-                               });
+export default defineComponent<unknown>({
+  name: "FooBar",
+  props: {
+    ...useSomeProps('foobar'),
+    bar: {
+      type: Boolean,
+      default: true,
+    },
+  },
+});
 </script>
