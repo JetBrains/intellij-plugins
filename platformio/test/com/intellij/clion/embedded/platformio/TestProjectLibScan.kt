@@ -9,6 +9,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.system.OS
+import com.jetbrains.cidr.CidrTestDataFixture
 import com.jetbrains.cidr.assumptions.ToolSetKindAssumption
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectResolver
@@ -25,7 +26,7 @@ import kotlin.io.path.readText
 
 @TestApplication
 class TestProjectLibScan {
-  private val projectDirFixture = tempDirTestFixture(BASE_TEST_DATA_PATH / "project-scan-libraries")
+  private val projectDirFixture = tempDirTestFixture(CidrTestDataFixture.getPlatformioTestData()  / "project-scan-libraries")
 
   private val projectDir by projectDirFixture
   private val project by clionProjectTestFixture(projectDirFixture)

@@ -4,7 +4,6 @@ import com.intellij.build.events.MessageEvent
 import com.intellij.clion.embedded.platformio.TestUtils.findExternalModule
 import com.intellij.clion.testFramework.nolang.junit5.core.clionProjectTestFixture
 import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
@@ -17,6 +16,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.asSafely
 import com.intellij.util.system.OS
+import com.jetbrains.cidr.CidrTestDataFixture
 import com.jetbrains.cidr.assumptions.ToolSetKindAssumption
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
@@ -33,16 +33,13 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.div
 import kotlin.io.path.readText
 
-val BASE_TEST_DATA_PATH: Path = PathManager.getHomeDir() / "contrib" / "platformio" / "testData"
-
 @TestApplication
 class TestProjectResolve {
-  private val projectPathFixture = tempDirTestFixture(BASE_TEST_DATA_PATH / "project1")
+  private val projectPathFixture = tempDirTestFixture(CidrTestDataFixture.getPlatformioTestData() / "project1")
 
   private val projectPath by projectPathFixture
   private val project by clionProjectTestFixture(projectPathFixture)
