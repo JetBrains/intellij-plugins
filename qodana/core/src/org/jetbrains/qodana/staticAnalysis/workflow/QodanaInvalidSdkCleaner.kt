@@ -1,35 +1,27 @@
-package org.jetbrains.qodana.jvm.java
+package org.jetbrains.qodana.staticAnalysis.workflow
 
 import com.intellij.openapi.application.edtWriteAction
-import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkType
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 
-private val LOG = logger<QodanaJavaConfigurator>()
+private val LOG = logger<QodanaInvalidSdkCleaner>()
 
-class QodanaJavaConfigurator : QodanaWorkflowExtension {
+class QodanaInvalidSdkCleaner : QodanaWorkflowExtension {
   override suspend fun beforeProjectOpened(config: QodanaConfig) {
-    removeInvalidJdks()
-    service<QodanaConfigJdkService>().configureJdk(config)
-  }
-
-  private suspend fun removeInvalidJdks() {
     val jdkTable = ProjectJdkTable.getInstance()
-    val invalidSdks = jdkTable.allJdks
-      .filter { isInvalidSdk(it) }
-      .filter { it.sdkType is JavaSdkType }
+    val invalidSdks = jdkTable.allJdks.filter { isInvalidSdk(it) }
     if (invalidSdks.isEmpty()) return
+
+    for (sdk in invalidSdks) {
+      LOG.info("Removing invalid cached SDK '${sdk.name}' (homePath: ${sdk.homePath})")
+    }
 
     edtWriteAction {
       for (sdk in invalidSdks) {
-        LOG.info("Removing invalid cached SDK '${sdk.name}' (homePath: ${sdk.homePath})")
         jdkTable.removeJdk(sdk)
       }
     }
@@ -45,7 +37,6 @@ class QodanaJavaConfigurator : QodanaWorkflowExtension {
       homePath == null || !sdkType.isValidSdkHome(homePath)
     }
     catch (e: Exception) {
-      if (e is ControlFlowException) throw e
       LOG.warn("Failed to validate SDK '${sdk.name}': ${e.message}", e)
       false // match platform behavior: keep SDK if validation throws
     }
