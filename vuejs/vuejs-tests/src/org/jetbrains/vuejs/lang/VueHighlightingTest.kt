@@ -8,7 +8,6 @@ import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredTitleEl
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.JSTestUtils.checkHighlightingWithSymbolNames
 import com.intellij.lang.javascript.JavaScriptBundle
-import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
@@ -1183,13 +1182,11 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testPropsWithDefaults() {
-    TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
     doHighlightingTest()
   }
 
   @Test
   fun testPropsWithDefaultsInTs() {
-    TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
     doHighlightingTest(configureFileName = "propsWithDefaultsInTs.ts")
   }
 
