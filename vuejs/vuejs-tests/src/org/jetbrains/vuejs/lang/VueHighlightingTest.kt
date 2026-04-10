@@ -270,7 +270,9 @@ abstract class VueHighlightingTestBase(
       configurators = listOf(
         VueTsConfigFile(types = listOf("my-vue-items-library/dist/volar")),
       ),
-    )
+    ) {
+      disableAstLoadingFilterWhenPluginUsed()
+    }
   }
 
   @Test
@@ -611,7 +613,9 @@ abstract class VueHighlightingTestBase(
     doHighlightingTest(
       VueTestModule.VUE_2_6_10,
       VueTestModule.VUEX_3_1_0,
-    )
+    ) {
+      disableAstLoadingFilterWhenPluginUsed()
+    }
   }
 
   @Test
@@ -702,7 +706,9 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testSuperComponentMixin() {
-    doHighlightingTest()
+    doHighlightingTest {
+      disableAstLoadingFilterWhenPluginUsed()
+    }
   }
 
   @Test
@@ -743,7 +749,9 @@ abstract class VueHighlightingTestBase(
   fun testPropsValidation() {
     doHighlightingTest(
       additionalDependencies = mapOf("lib" to "*"),
-    )
+    ) {
+      disableAstLoadingFilterWhenPluginUsed()
+    }
   }
 
   @Test
@@ -831,7 +839,9 @@ abstract class VueHighlightingTestBase(
       VueTestModule.QUASAR_2_6_5,
       VueTestModule.VUE_3_5_0,
       configureFileName = "MyTable.vue",
-    )
+    ) {
+      disableAstLoadingFilterWhenPluginUsed()
+    }
   }
 
   @Test
@@ -880,7 +890,9 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testSourceScopedSlots() {
-    doHighlightingTest(configureFileName = "Catalogue.vue")
+    doHighlightingTest(configureFileName = "Catalogue.vue") {
+      disableAstLoadingFilterWhenPluginUsed()
+    }
   }
 
   @Test
