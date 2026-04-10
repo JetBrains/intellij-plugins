@@ -19,6 +19,8 @@ class AstroLspTypeScriptService(project: Project)
   override val name: String = "Astro LSP"
   override val prefix: String = "Astro"
 
+  override val expectedPushDiagnosticsCount: Int = 2
+
   override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): CompletionMergeStrategy = CompletionMergeStrategy.MERGE
 
   override fun isServiceNavigationEnabled(): Boolean = true
