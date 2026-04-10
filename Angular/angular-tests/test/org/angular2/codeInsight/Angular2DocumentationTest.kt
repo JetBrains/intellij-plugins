@@ -6,6 +6,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TestModule.NGRX_SIGNALS_20_1_0
+import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
 
 class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
@@ -148,4 +149,7 @@ class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
       checkDocumentationAtCaret()
     }
   }
+
+  fun testRxjsOperator() =
+    doTest(ANGULAR_CORE_20_1_4, RXJS_7_8_1, ext = "ts")
 }
