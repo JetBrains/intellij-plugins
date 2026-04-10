@@ -1086,26 +1086,22 @@ abstract class VueCompletionTestBase(
     doLookupTest(renderPriority = false, renderTypeText = false)
 
   @Test
-  open /* temp */
   fun testStyleVBindScriptSetupCss() =
     doLookupTest(renderPriority = false)
 
   @Test
-  open /* temp */
   fun testStyleVBindScriptSetupScss() =
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
       doLookupTest(renderPriority = false)
     }
 
   @Test
-  open /* temp */
   fun testStyleVBindScriptSetupSass() =
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
       doLookupTest(renderPriority = false)
     }
 
   @Test
-  open /* temp */
   fun testStyleVBindScriptSetupLess() =
     doLookupTest(renderPriority = false)
 
