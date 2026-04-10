@@ -33,6 +33,8 @@ class VueLspTakeoverModeTypeScriptService(
   override val prefix: String
     get() = VueBundle.message("vue.service.prefix")
 
+  override val expectedPushDiagnosticsCount: Int = 2
+
   override fun createQuickInfoResponse(
     markupContent: MarkupContent,
   ): TypeScriptQuickInfoResponse {
