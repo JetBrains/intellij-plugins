@@ -44,7 +44,6 @@ import org.junit.runners.JUnit4
 class VueHighlightingTest :
   VueHighlightingWithPluginTestBase() {
 
-  @Ignore
   class WithLegacyPluginTest :
     VueHighlightingWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
