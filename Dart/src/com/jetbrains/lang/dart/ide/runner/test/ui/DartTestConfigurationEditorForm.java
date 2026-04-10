@@ -14,7 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.RawCommandLineEditor;
-import com.intellij.ui.SimpleListCellRenderer;
+import com.intellij.ui.dsl.listCellRenderer.BuilderKt;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -33,7 +33,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.lang.reflect.Method;
@@ -161,7 +160,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     myScopeCombo.setModel(
       new DefaultComboBoxModel<>(new DartTestRunnerParameters.Scope[]{FOLDER, FILE, GROUP_OR_TEST_BY_NAME}));
 
-    myScopeCombo.setRenderer(SimpleListCellRenderer.create("", DartTestRunnerParameters.Scope::getPresentableName));
+    myScopeCombo.setRenderer(BuilderKt.textListCellRenderer("", DartTestRunnerParameters.Scope::getPresentableName));
 
     myScopeCombo.addActionListener(e -> onScopeChanged());
 

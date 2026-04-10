@@ -36,9 +36,9 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.RawCommandLineEditor;
-import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.ui.dsl.listCellRenderer.BuilderKt;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -812,7 +812,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   public static void initAppDescriptorForEmulatorCombo(final JComboBox<AppDescriptorForEmulator> appDescriptorForEmulatorCombo,
                                                        final NullableComputable<? extends FlexBuildConfiguration> bcComputable) {
     appDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel<>(AppDescriptorForEmulator.values()));
-    appDescriptorForEmulatorCombo.setRenderer(SimpleListCellRenderer.create(
+    appDescriptorForEmulatorCombo.setRenderer(BuilderKt.textListCellRenderer(
       "", value -> {
         FlexBuildConfiguration bc = bcComputable.compute();
         if (value == AppDescriptorForEmulator.Android) {
@@ -847,7 +847,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private void initEmulatorRelatedControls() {
     myEmulatorCombo.setModel(new DefaultComboBoxModel<>(Emulator.ALL_EMULATORS.toArray(new Emulator[0])));
 
-    myEmulatorCombo.setRenderer(SimpleListCellRenderer.create("", value -> value.name));
+    myEmulatorCombo.setRenderer(BuilderKt.textListCellRenderer("", value -> value.name));
 
     myEmulatorCombo.addActionListener(new ActionListener() {
       @Override

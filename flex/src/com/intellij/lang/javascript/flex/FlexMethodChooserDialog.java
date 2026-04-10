@@ -8,9 +8,9 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.ScrollingUtil;
-import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.SortedListModel;
 import com.intellij.ui.components.JBList;
+import com.intellij.ui.dsl.listCellRenderer.BuilderKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +42,7 @@ public class FlexMethodChooserDialog extends DialogWrapper {
     super(parent, false);
     createList(clazz.getFunctions(), filter);
     myWholePanel.add(ScrollPaneFactory.createScrollPane(myList));
-    myList.setCellRenderer(SimpleListCellRenderer.create("", JSFunction::getName));
+    myList.setCellRenderer(BuilderKt.textListCellRenderer("", JSFunction::getName));
 
     myList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     new DoubleClickListener() {

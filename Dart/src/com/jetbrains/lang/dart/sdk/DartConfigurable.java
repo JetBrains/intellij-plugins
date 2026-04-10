@@ -33,10 +33,10 @@ import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.PortField;
-import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.dsl.listCellRenderer.BuilderKt;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -424,7 +424,7 @@ public final class DartConfigurable implements SearchableConfigurable, NoScroll 
     });
 
     mySdkUpdateChannelCombo.setModel(new DefaultComboBoxModel<>(DartSdkUpdateOption.OPTIONS_TO_SHOW_IN_COMBO));
-    mySdkUpdateChannelCombo.setRenderer(SimpleListCellRenderer.create("", DartSdkUpdateOption::getPresentableName));
+    mySdkUpdateChannelCombo.setRenderer(BuilderKt.textListCellRenderer("", DartSdkUpdateOption::getPresentableName));
 
     myCheckSdkUpdateButton.addActionListener(e -> {
       final Runnable runnable = this::checkSdkUpdate;

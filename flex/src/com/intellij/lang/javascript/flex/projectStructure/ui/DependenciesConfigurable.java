@@ -83,13 +83,13 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleColoredText;
-import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
+import com.intellij.ui.dsl.listCellRenderer.BuilderKt;
 import com.intellij.ui.navigation.Place;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -302,9 +302,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     });
 
     myComponentSetCombo.setModel(new DefaultComboBoxModel<>(ComponentSet.values()));
-    myComponentSetCombo.setRenderer(SimpleListCellRenderer.create("", ComponentSet::getPresentableText));
+    myComponentSetCombo.setRenderer(BuilderKt.textListCellRenderer("", ComponentSet::getPresentableText));
 
-    myFrameworkLinkageCombo.setRenderer(SimpleListCellRenderer.create("", value -> {
+    myFrameworkLinkageCombo.setRenderer(BuilderKt.textListCellRenderer("", value -> {
       if (value == LinkageType.Default) {
         Sdk sdk = mySdkCombo.getSelectedJdk();
         String sdkVersion = sdk != null ? sdk.getVersionString() : null;

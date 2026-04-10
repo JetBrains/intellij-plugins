@@ -14,8 +14,8 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.ui.ComboboxWithBrowseButton;
-import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.dsl.listCellRenderer.BuilderKt;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -132,7 +132,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   public JComponent $$$getRootComponent$$$() { return myMainPanel; }
 
   private void initDartProjectsCombo(final @NotNull Project project) {
-    myDartProjectCombo.getComboBox().setRenderer(SimpleListCellRenderer.create("", NameAndPath::getPresentableText));
+    myDartProjectCombo.getComboBox().setRenderer(BuilderKt.textListCellRenderer("", NameAndPath::getPresentableText));
 
     if (!project.isDefault()) {
       for (VirtualFile pubspecFile : FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(project))) {

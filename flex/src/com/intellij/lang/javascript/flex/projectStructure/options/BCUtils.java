@@ -32,6 +32,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.dsl.listCellRenderer.BuilderKt;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
@@ -223,7 +224,7 @@ public final class BCUtils {
 
   public static void initOutputTypeCombo(final JComboBox<OutputType> outputTypeCombo) {
     outputTypeCombo.setModel(new DefaultComboBoxModel<>(OutputType.values()));
-    outputTypeCombo.setRenderer(SimpleListCellRenderer.create("", OutputType::getPresentableText));
+    outputTypeCombo.setRenderer(BuilderKt.textListCellRenderer("", OutputType::getPresentableText));
   }
 
   public static List<String> getThemes(final Module module, final FlexBuildConfiguration bc) {

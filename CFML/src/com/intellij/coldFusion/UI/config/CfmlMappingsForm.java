@@ -9,7 +9,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.IdeBorderFactory;
-import com.intellij.ui.SimpleListCellRenderer;
+import com.intellij.ui.dsl.listCellRenderer.BuilderKt;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.util.ui.AbstractTableCellEditor;
@@ -146,7 +146,7 @@ public class CfmlMappingsForm {
     myTablePanel.add(myTableEditor.getContentPane(), BorderLayout.CENTER);
 
     //noinspection SpellCheckingInspection
-    myLanguageLevel.setRenderer(SimpleListCellRenderer.create(
+    myLanguageLevel.setRenderer(BuilderKt.textListCellRenderer(
       "", value -> CfmlLanguage.CF8.equals(value) ? "ColdFusion 8" : //NON-NLS
                    CfmlLanguage.CF9.equals(value) ? "ColdFusion 9" : //NON-NLS
                    CfmlLanguage.CF10.equals(value) ? "ColdFusion 10" : //NON-NLS

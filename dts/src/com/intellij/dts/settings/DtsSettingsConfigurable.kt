@@ -11,13 +11,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.CollectionComboBoxModel
-import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.components.CheckBox
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.toMutableProperty
+import com.intellij.ui.dsl.listCellRenderer.textListCellRenderer
 import org.jetbrains.annotations.Nls
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
@@ -223,7 +223,7 @@ private class RootComboBox(disposable: Disposable?) : DtsSettingsPathInput<Strin
     configure()
 
     model = CollectionComboBoxModel(listOf(""))
-    renderer = SimpleListCellRenderer.create("") {
+    renderer = textListCellRenderer("") {
       DtsBundle.message("settings.zephyr.root.auto_detect", ApplicationInfo.getInstance().versionName)
     }
   }
@@ -263,7 +263,7 @@ private class BoardComboBox(disposable: Disposable?, initialValue: String) : Dts
 
     configure()
 
-    renderer = SimpleListCellRenderer.create("", ::presentableTextFromBoard)
+    renderer = textListCellRenderer("", ::presentableTextFromBoard)
     model = collectionModel
 
     // deselect item if text is edited
