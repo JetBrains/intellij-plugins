@@ -683,10 +683,6 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testScssBuiltInModules() {
-    // Tree access disabled
-    //  /plugins/sass/sass.jar!/org/jetbrains/plugins/sass/stdlib/sass_math.scss
-    disableAstLoadingFilter()
-
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
       doHighlightingTest(
         inspections = listOf(
@@ -694,7 +690,11 @@ abstract class VueHighlightingTestBase(
           SassScssResolvedByNameOnlyInspection::class.java,
           SassScssUnresolvedVariableInspection::class.java,
         ),
-      )
+      ) {
+        // Tree access disabled
+        //  /plugins/sass/sass.jar!/org/jetbrains/plugins/sass/stdlib/sass_math.scss
+        disableAstLoadingFilter()
+      }
     }
   }
 
@@ -916,13 +916,13 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testLocalWebTypes() {
-    // Tree access disabled
-    //  /Test2.vue
-    disableAstLoadingFilter()
-
     doHighlightingTest(
       configureFileName = "main.vue",
-    )
+    ) {
+      // Tree access disabled
+      //  /Test2.vue
+      disableAstLoadingFilter()
+    }
   }
 
   @Test
