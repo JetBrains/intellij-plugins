@@ -41,15 +41,19 @@ import org.junit.runners.JUnit4
  */
 @Ignore
 class VueHighlightingTest :
-  VueHighlightingTestBase() {
+  VueHighlightingWithPluginTestBase() {
 
   @Ignore
   class WithLegacyPluginTest :
-    VueHighlightingTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
+    VueHighlightingWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
   class WithoutServiceTest :
     VueHighlightingTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
+
+abstract class VueHighlightingWithPluginTestBase(
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+) : VueHighlightingTestBase(testMode = testMode)
 
 @RunWith(JUnit4::class)
 abstract class VueHighlightingTestBase(
