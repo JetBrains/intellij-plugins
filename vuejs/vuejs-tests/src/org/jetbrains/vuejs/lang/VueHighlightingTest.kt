@@ -53,7 +53,14 @@ class VueHighlightingTest :
 
 abstract class VueHighlightingWithPluginTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
-) : VueHighlightingTestBase(testMode = testMode)
+) : VueHighlightingTestBase(testMode = testMode) {
+
+  override fun setUp() {
+    super.setUp()
+
+    disableTypeScriptServiceWarnings()
+  }
+}
 
 @RunWith(JUnit4::class)
 abstract class VueHighlightingTestBase(
