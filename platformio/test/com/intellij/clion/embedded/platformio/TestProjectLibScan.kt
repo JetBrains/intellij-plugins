@@ -94,7 +94,8 @@ class TestProjectLibScan {
                                    activeEnvName: String,
                                    listener: ExternalSystemTaskNotificationListener): String {
       val osSuffix = if (OS.CURRENT == OS.Windows) "_win" else ""
-      return projectDir.resolve("pio-project-metadata${osSuffix}.json").readText().replace("T:", projectDir.absolutePathString())
+      val text = projectDir.resolve("pio-project-metadata${osSuffix}.json").readText()
+      return text.replace("T:", projectDir.absolutePathString().replace("\\", "\\\\"))
     }
 
     override fun createRunConfigurationIfRequired(project: Project) {}

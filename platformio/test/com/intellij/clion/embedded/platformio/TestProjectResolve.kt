@@ -14,7 +14,9 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemBuildEvent
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.util.PathUtil
 import com.intellij.util.asSafely
+import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.system.OS
 import com.jetbrains.cidr.CidrTestDataFixture
 import com.jetbrains.cidr.assumptions.ToolSetKindAssumption
@@ -161,7 +163,9 @@ class TestProjectResolve {
 
   private fun verifyIniFiles() {
     val activeIniFiles = project.service<PlatformioService>().iniFiles
-    val expectedFiles = EXPECTED_ACTIVE_INI_FILES.map<String, @NonNls String> { projectPath.resolve(it).toString() }.toSet()
+    val expectedFiles = EXPECTED_ACTIVE_INI_FILES.map<String, @NonNls String> {
+      PathUtil.toSystemIndependentName(projectPath.resolve (it).toString())
+    }.toSet()
     assertEquals(expectedFiles, activeIniFiles, "Detected config files")
   }
 
