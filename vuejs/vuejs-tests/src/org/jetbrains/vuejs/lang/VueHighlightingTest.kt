@@ -41,7 +41,6 @@ import org.junit.runners.JUnit4
  * @see VueControlFlowTest
  * @see NuxtHighlightingTest
  */
-@Ignore
 class VueHighlightingTest :
   VueHighlightingWithPluginTestBase() {
 
