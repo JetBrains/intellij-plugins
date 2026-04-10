@@ -168,7 +168,7 @@ private fun processCPPEnvironment(environment: CPPEnvironment): CppEnvironmentIn
   val tools = buildList {
     toolInfo(environment.cMake, "cmake")?.let { add(it) }
     toolInfo(environment.make, "make")?.let { add(it) }
-    toolInfo(environment.gdb, "cmake")?.let { add(it) } // TODO questionable. Why cmake?
+    toolInfo(environment.gdb, "gdb")?.let { add(it) }
   }
 
   var pathMappings: List<PathMappingItem>? = null
