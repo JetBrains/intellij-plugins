@@ -49,8 +49,11 @@ class MockSerialPortProvider : SerialPortProvider {
     }
   }
 
-  fun clearState() {
-    ports.store(emptyList())
+  suspend fun clearState() {
+    changePortsAndAwaitCondition(
+      action = { clear() },
+      condition = { it.isEmpty() }
+    )
     created.clear()
     failCreateFor.clear()
   }
