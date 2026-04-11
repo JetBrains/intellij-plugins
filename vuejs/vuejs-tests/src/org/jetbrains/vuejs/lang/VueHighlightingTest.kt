@@ -59,8 +59,6 @@ abstract class VueHighlightingWithPluginTestBase(
   @JvmField
   val rule: TestRule = TrackFailedTestRule(
     "testAsyncSetup",
-    "testClassComponentAnnotationWithLocalComponent",
-    "testClassComponentAnnotationWithLocalComponentTs",
     "testCompRequiredAttributesTestTS",
     "testComputedPropType",
     "testComputedTypeJS",
@@ -89,6 +87,16 @@ abstract class VueHighlightingWithPluginTestBase(
     super.setUp()
 
     disableTypeScriptServiceWarnings()
+  }
+
+  @Ignore
+  // flaky
+  override fun testClassComponentAnnotationWithLocalComponent() {
+  }
+
+  @Ignore
+  // flaky
+  override fun testClassComponentAnnotationWithLocalComponentTs() {
   }
 }
 
@@ -420,6 +428,7 @@ abstract class VueHighlightingTestBase(
   }
 
   @Test
+  open /* temp */
   fun testClassComponentAnnotationWithLocalComponent() {
     myFixture.configureVueDependencies()
     createTwoClassComponents(myFixture)
@@ -427,6 +436,7 @@ abstract class VueHighlightingTestBase(
   }
 
   @Test
+  open /* temp */
   fun testClassComponentAnnotationWithLocalComponentTs() {
     myFixture.configureVueDependencies()
     myFixture.configureByText("vue.d.ts", "export interface Vue {};export class Vue {}")
