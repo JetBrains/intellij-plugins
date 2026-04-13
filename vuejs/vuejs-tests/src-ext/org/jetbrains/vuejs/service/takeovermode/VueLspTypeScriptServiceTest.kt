@@ -9,7 +9,7 @@ import com.intellij.lang.typescript.service.TypeScriptServiceTestBase.Companion.
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.platform.lsp.tests.checkLspHighlighting
-import com.intellij.platform.lsp.tests.waitForDiagnosticsFromLspServer
+import com.intellij.platform.lsp.tests.checkLspHighlightingByText
 import com.intellij.psi.PsiManager
 import com.intellij.util.text.SemVer
 import com.intellij.util.xmlb.SettingsInternalApi
@@ -126,7 +126,7 @@ class VueLspTypeScriptServiceTest : VueLspServiceTestBase() {
     val elements = myFixture.completeBasic()
     myFixture.type('\t')
 
-    checkHighlightingByText(myFixture, loadAfterText("main.ts"), true)
+    myFixture.checkLspHighlightingByText(loadAfterText("main.ts"), true)
 
     val presentationTexts = getPresentationTexts(elements)
     assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar?"))
@@ -147,7 +147,7 @@ class VueLspTypeScriptServiceTest : VueLspServiceTestBase() {
     val elements = myFixture.completeBasic()
     myFixture.type('\t')
 
-    checkHighlightingByText(myFixture, loadAfterText("main.ts"), true)
+    myFixture.checkLspHighlightingByText(loadAfterText("main.ts"), true)
 
     val presentationTexts = getPresentationTexts(elements)
     assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar?"))
@@ -196,8 +196,7 @@ class VueLspTypeScriptServiceTest : VueLspServiceTestBase() {
     myFixture.type("spre")
     myFixture.completeBasic()
 
-    waitForDiagnosticsFromLspServer(project, file.virtualFile)
-    checkHighlightingByText(myFixture, loadAfterText("main.vue"), true)
+    myFixture.checkLspHighlightingByText(loadAfterText("main.vue"), true)
   }
 
   @Test
@@ -209,8 +208,7 @@ class VueLspTypeScriptServiceTest : VueLspServiceTestBase() {
     myFixture.checkLspHighlighting()
     myFixture.completeBasic()
 
-    waitForDiagnosticsFromLspServer(project, file.virtualFile)
-    checkHighlightingByText(myFixture, loadAfterText("main.ts"), true)
+    myFixture.checkLspHighlightingByText(loadAfterText("main.ts"), true)
   }
 
   @Test
