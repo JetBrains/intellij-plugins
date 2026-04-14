@@ -29,7 +29,7 @@ internal fun isTfOrTofuFile(file: VirtualFile?): Boolean {
   return fileType is TerraformFileType || fileType is OpenTofuFileType
 }
 
-internal fun isTfOrTofuPsiFile(file: PsiFile?): Boolean {
+fun isTfOrTofuPsiFile(file: PsiFile?): Boolean {
   return isTerraformFile(file) || isTofuFile(file)
 }
 

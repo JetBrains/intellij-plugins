@@ -1,0 +1,45 @@
+### auto-generated section `build intellij.terraform.watchers` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+resourcegroup(
+  name = "watchers_resources",
+  srcs = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "watchers",
+  module_name = "intellij.terraform.watchers",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":watchers_resources"],
+  deps = [
+    "@community//platform/macro",
+    "//contrib/terraform",
+    "@community//platform/core-api:core",
+    "//plugins/fileWatcher",
+    "@lib//:kotlin-stdlib",
+    "@lib//:jetbrains-annotations",
+  ]
+)
+
+jvm_library(
+  name = "watchers_test_lib",
+  module_name = "intellij.terraform.watchers",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":watchers",
+    "@community//platform/macro:macro_test_lib",
+    "//contrib/terraform:terraform_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "//plugins/fileWatcher:fileWatcher_test_lib",
+  ]
+)
+### auto-generated section `build intellij.terraform.watchers` end
+
+### auto-generated section `iml intellij.terraform.watchers` start
+exports_files([
+  "intellij.terraform.watchers.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.terraform.watchers` end

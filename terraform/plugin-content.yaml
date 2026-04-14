@@ -1,6 +1,12 @@
+- name: lib/modules/intellij.terraform.copyright.jar
+  contentModules:
+  - name: intellij.terraform.copyright
 - name: lib/modules/intellij.terraform.template.jar
   contentModules:
   - name: intellij.terraform.template
+- name: lib/modules/intellij.terraform.watchers.jar
+  contentModules:
+  - name: intellij.terraform.watchers
 - name: lib/terraform-metadata.jar
   library: terraform-metadata
   module: intellij.terraform

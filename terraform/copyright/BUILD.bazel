@@ -1,0 +1,97 @@
+### auto-generated section `build intellij.terraform.copyright` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+resourcegroup(
+  name = "copyright_resources",
+  srcs = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "copyright",
+  module_name = "intellij.terraform.copyright",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":copyright_resources"],
+  deps = [
+    "@community//platform/core-api:core",
+    "@community//platform/util",
+    "//contrib/terraform",
+    "@community//plugins/copyright",
+    "@lib//:kotlin-stdlib",
+  ]
+)
+
+jvm_library(
+  name = "copyright_test_lib",
+  module_name = "intellij.terraform.copyright",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":copyright",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/util:util_test_lib",
+    "//contrib/terraform:terraform_test_lib",
+    "@community//plugins/copyright:copyright_test_lib",
+  ]
+)
+### auto-generated section `build intellij.terraform.copyright` end
+
+### auto-generated section `iml intellij.terraform.copyright` start
+exports_files([
+  "intellij.terraform.copyright.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.terraform.copyright` end
+
+### auto-generated section `build intellij.terraform.copyright.tests` start
+jvm_library(
+  name = "copyright-tests",
+  module_name = "intellij.terraform.copyright.tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = ["//contrib/terraform/copyright"]
+)
+
+jvm_library(
+  name = "copyright-tests_test_lib",
+  visibility = ["//visibility:public"],
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
+  associates = [
+    "//contrib/terraform/copyright",
+    "//contrib/terraform/copyright:copyright_test_lib",
+  ],
+  deps = [
+    "@community//platform/core-api:core",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/util",
+    "@community//platform/util:util_test_lib",
+    "//contrib/terraform",
+    "//contrib/terraform:terraform_test_lib",
+    "@community//plugins/copyright",
+    "@community//plugins/copyright:copyright_test_lib",
+    "@lib//:kotlin-stdlib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/projectModel-impl",
+    "@community//platform/projectModel-impl:projectModel-impl_test_lib",
+  ],
+  runtime_deps = [":copyright-tests"]
+)
+### auto-generated section `build intellij.terraform.copyright.tests` end
+
+### auto-generated section `iml intellij.terraform.copyright.tests` start
+exports_files([
+  "intellij.terraform.copyright.tests.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.terraform.copyright.tests` end
+
+### auto-generated section `test intellij.terraform.copyright.tests` start
+load("@community//build:tests-options.bzl", "jps_test")
+
+jps_test(
+  name = "copyright-tests_test",
+  runtime_deps = [":copyright-tests_test_lib"]
+)
+### auto-generated section `test intellij.terraform.copyright.tests` end

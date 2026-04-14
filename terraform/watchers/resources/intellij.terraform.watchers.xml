@@ -1,9 +1,10 @@
-<idea-plugin visibility="internal" package="org.intellij.terraform.watchers">
+<idea-plugin visibility="internal">
   <dependencies>
     <plugin id="com.intellij.plugins.watcher"/>
+    <plugin id="org.intellij.plugins.hcl"/>
   </dependencies>
   
   <extensions defaultExtensionNs="com.intellij.plugins.watcher">
-    <consumer implementation="org.intellij.terraform.watchers.consumers.TfFmtTaskConsumer"/>
+    <consumer implementation="com.intellij.terraform.watchers.TfFmtTaskConsumer"/>
   </extensions>
 </idea-plugin>
