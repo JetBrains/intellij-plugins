@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.ivy
 
-import com.intellij.javascript.nodejs.library.node_modules.NodeModulesDirectoryManager
+import com.intellij.javascript.nodejs.library.nodeModulesDir.NodeModulesDirectoryManager
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
