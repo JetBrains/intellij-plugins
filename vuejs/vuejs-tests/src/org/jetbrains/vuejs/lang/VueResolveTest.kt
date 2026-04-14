@@ -19,6 +19,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.testFramework.assertUnresolvedReference
 import com.intellij.polySymbols.testFramework.checkGotoDeclaration
+import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.polySymbols.testFramework.multiResolvePolySymbolReference
 import com.intellij.polySymbols.testFramework.polySymbolSourceAtCaret
@@ -29,8 +30,9 @@ import com.intellij.polySymbols.utils.asSingleSymbol
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.xml.XmlAttribute
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
+import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
 import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_6_10
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
@@ -44,10 +46,7 @@ import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 class VueResolveTest :
-  BasePlatformTestCase() {
-
-  override fun getTestDataPath(): String =
-    getVueTestDataPath() + "/resolve/"
+  VueTestCase("resolve", testMode = VueTestMode.NO_PLUGIN) {
 
   @Test
   fun testResolveInjectionToPropInObject() {
@@ -2255,6 +2254,9 @@ export default class UsageComponent extends Vue {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+
+    disableAstLoadingFilter()
+
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.checkHighlighting()
     myFixture.checkGotoDeclaration("'provided<caret>InCall'", "provide(<caret>'providedInCall", "Provide.vue")
