@@ -69,6 +69,27 @@ class VueResolveTest :
       .plus(VueTsConfigFile())
   }
 
+  private fun doGotoDeclarationInternalTest(
+    fromSignature: String,
+    declarationSignature: String,
+    expectedFileName: String? = null,
+    vararg fileData: Pair<String, String>,
+  ) {
+    doConfiguredTest(
+      configureFile = false,
+    ) {
+      for ((fileName, fileContent) in fileData) {
+        configureByText(fileName, fileContent)
+      }
+
+      checkGotoDeclaration(
+        fromSignature = fromSignature,
+        declarationSignature = declarationSignature,
+        expectedFileName = expectedFileName,
+      )
+    }
+  }
+
   @Test
   fun testResolveInjectionToPropInObject() {
     doConfiguredTest(
@@ -106,10 +127,11 @@ class VueResolveTest :
 
   @Test
   fun testResolveUsageInAttributeToPropInArray() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("ResolveToPropInObject.vue", """
+    doGotoDeclarationInternalTest(
+      fromSignature = "+ <caret>message25620Arr",
+      declarationSignature = "props: ['<caret>message25620Arr']",
+      expectedFileName = "ResolveToPropInObject.vue",
+      "ResolveToPropInObject.vue" to """
 <template>
   <list25620 v-text="'prefix' + <caret>message25620Arr + 'postfix'">
   Text
@@ -121,14 +143,8 @@ class VueResolveTest :
     name: 'list25620',
     props: ['message25620Arr']
   }
-</script>""")
-
-      checkGotoDeclaration(
-        fromSignature = "+ <caret>message25620Arr",
-        declarationSignature = "props: ['<caret>message25620Arr']",
-        expectedFileName = "ResolveToPropInObject.vue",
-      )
-    }
+</script>""",
+    )
   }
 
   @Test
@@ -254,10 +270,11 @@ export default {
 
   @Test
   fun testResolveLocallyInsideComponentPropsArray() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("ResolveLocallyInsideComponentPropsArray.vue", """
+    doGotoDeclarationInternalTest(
+      fromSignature = "this.<caret>parentMsg",
+      declarationSignature = "['<caret>parentMsg'",
+      expectedFileName = "ResolveLocallyInsideComponentPropsArray.vue",
+      "ResolveLocallyInsideComponentPropsArray.vue" to """
 <script>
 export default {
   name: 'parent',
@@ -267,22 +284,17 @@ export default {
       return this.<caret>parentMsg.trim().toLowerCase()
     }
   }
-}</script>""")
-
-      checkGotoDeclaration(
-        fromSignature = "this.<caret>parentMsg",
-        declarationSignature = "['<caret>parentMsg'",
-        expectedFileName = "ResolveLocallyInsideComponentPropsArray.vue",
-      )
-    }
+}</script>""",
+    )
   }
 
   @Test
   fun testResolveLocallyInsideComponentPropsArrayRefVariant() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("ResolveLocallyInsideComponentPropsArrayRefVariant.vue", """
+    doGotoDeclarationInternalTest(
+      fromSignature = "this.<caret>parentMsg",
+      declarationSignature = "['<caret>parentMsg'",
+      expectedFileName = "ResolveLocallyInsideComponentPropsArrayRefVariant.vue",
+      "ResolveLocallyInsideComponentPropsArrayRefVariant.vue" to """
 <script>
 let props = ['parentMsg', 'parentSize'];
 export default {
@@ -293,22 +305,17 @@ export default {
       return this.<caret>parentMsg.trim().toLowerCase()
     }
   }
-}</script>""")
-
-      checkGotoDeclaration(
-        fromSignature = "this.<caret>parentMsg",
-        declarationSignature = "['<caret>parentMsg'",
-        expectedFileName = "ResolveLocallyInsideComponentPropsArrayRefVariant.vue",
-      )
-    }
+}</script>""",
+    )
   }
 
   @Test
   fun testResolveLocallyInsideComponentArrayFunctionInsideExport() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("ResolveLocallyInsideComponentArrayFunctionInsideExport.vue", """
+    doGotoDeclarationInternalTest(
+      fromSignature = "this.<caret>parentMsg",
+      declarationSignature = "['<caret>parentMsg'];",
+      expectedFileName = "ResolveLocallyInsideComponentArrayFunctionInsideExport.vue",
+      "ResolveLocallyInsideComponentArrayFunctionInsideExport.vue" to """
 <script>
 let props = ['parentMsg'];
 
@@ -320,14 +327,8 @@ export default {
       return this.<caret>parentMsg * 3;
     }
   }
-}</script>""")
-
-      checkGotoDeclaration(
-        fromSignature = "this.<caret>parentMsg",
-        declarationSignature = "['<caret>parentMsg'];",
-        expectedFileName = "ResolveLocallyInsideComponentArrayFunctionInsideExport.vue",
-      )
-    }
+}</script>""",
+    )
   }
 
   @Test
@@ -804,18 +805,19 @@ export default {
 
   @Test
   fun testResolveByMountedVueInstanceInData() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("ResolveByMountedVueInstanceInData.js", """
+    doGotoDeclarationInternalTest(
+      fromSignature = "<caret>messageToFind",
+      declarationSignature = "<caret>messageToFind: 'Parent'",
+      expectedFileName = "ResolveByMountedVueInstanceInData.js",
+      "ResolveByMountedVueInstanceInData.js" to """
 new Vue({
   el: '#ResolveByMountedVueInstanceInData',
   data: {
     messageToFind: 'Parent'
   }
 })
-""")
-      configureByText("ResolveByMountedVueInstanceInData.html", """
+""",
+      "ResolveByMountedVueInstanceInData.html" to """
 <!DOCTYPE html>
 <html lang="en">
 <body>
@@ -824,28 +826,23 @@ new Vue({
 </ul>
 </body>
 </html>
-""")
-
-      checkGotoDeclaration(
-        fromSignature = "<caret>messageToFind",
-        declarationSignature = "<caret>messageToFind: 'Parent'",
-        expectedFileName = "ResolveByMountedVueInstanceInData.js",
-      )
-    }
+""",
+    )
   }
 
   @Test
   fun testResolveByMountedVueInstanceInProps() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("ResolveByMountedVueInstanceInProps.js", """
+    doGotoDeclarationInternalTest(
+      fromSignature = "<caret>compProp",
+      declarationSignature = "props: ['<caret>compProp']",
+      expectedFileName = "ResolveByMountedVueInstanceInProps.js",
+      "ResolveByMountedVueInstanceInProps.js" to """
 new Vue({
   el: '#ResolveByMountedVueInstanceInProps',
   props: ['compProp']
 })
-""")
-      configureByText("ResolveByMountedVueInstanceInProps.html", """
+""",
+      "ResolveByMountedVueInstanceInProps.html" to """
 <!DOCTYPE html>
 <html lang="en">
 <body>
@@ -854,22 +851,17 @@ new Vue({
 </ul>
 </body>
 </html>
-""")
-
-      checkGotoDeclaration(
-        fromSignature = "<caret>compProp",
-        declarationSignature = "props: ['<caret>compProp']",
-        expectedFileName = "ResolveByMountedVueInstanceInProps.js",
-      )
-    }
+""",
+    )
   }
 
   @Test
   fun testResolveVForIterableByMountedVueInstance() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("ResolveVForIterableByMountedVueInstance.js", """
+    doGotoDeclarationInternalTest(
+      fromSignature = "<caret>mountedItems",
+      declarationSignature = "<caret>mountedItems: [",
+      expectedFileName = "ResolveVForIterableByMountedVueInstance.js",
+      "ResolveVForIterableByMountedVueInstance.js" to """
 new Vue({
   el: '#ResolveVForIterableByMountedVueInstance',
   data: {
@@ -880,8 +872,8 @@ new Vue({
     ]
   }
 })
-""")
-      configureByText("ResolveVForIterableByMountedVueInstance.html", """
+""",
+      "ResolveVForIterableByMountedVueInstance.html" to """
 <!DOCTYPE html>
 <html lang="en">
 <body>
@@ -892,14 +884,8 @@ new Vue({
 </ul>
 </body>
 </html>
-""")
-
-      checkGotoDeclaration(
-        fromSignature = "<caret>mountedItems",
-        declarationSignature = "<caret>mountedItems: [",
-        expectedFileName = "ResolveVForIterableByMountedVueInstance.js",
-      )
-    }
+""",
+    )
   }
 
   @Test
@@ -1046,30 +1032,22 @@ export default {
 
   @Test
   fun testGlobalComponentNameInReference() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("WiseComp.vue",
-                      """
+    doGotoDeclarationInternalTest(
+      fromSignature = "<<caret>wise-comp-alias",
+      declarationSignature = "export default <caret>{ name:",
+      expectedFileName = "WiseComp.vue",
+      "WiseComp.vue" to """
 <script>export default { name: 'wise-comp', props: {} }</script>
-""")
-      configureByText("register.es6",
-                      """
+""",
+      "register.es6" to """
 import WiseComp from 'WiseComp'
 const alias = 'wise-comp-alias'
 Vue.component(alias, WiseComp)
-""")
-      configureByText("use.vue",
-                      """
+""",
+      "use.vue" to """
 <template><<caret>wise-comp-alias</template>
-""")
-
-      checkGotoDeclaration(
-        fromSignature = "<<caret>wise-comp-alias",
-        declarationSignature = "export default <caret>{ name:",
-        expectedFileName = "WiseComp.vue"
-      )
-    }
+""",
+    )
   }
 
   @Test
@@ -1742,36 +1720,28 @@ Object.keys(obj).forEach(key => {
 
   @Test
   fun testResolveAliasedObjectMemberComponent() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("a.vue", "")
-      configureByText("lib-comp-for-alias.es6",
-                      """
+    doGotoDeclarationInternalTest(
+      fromSignature = "<<caret>alias/>",
+      declarationSignature = "export default <caret>{\n",
+      expectedFileName = "lib-comp-for-alias.es6",
+      "a.vue" to "",
+      "lib-comp-for-alias.es6" to """
 export default {
   name: 'lib-comp',
   template: '',
   render() {}
 }
-""")
-      configureByText("libAlias.es6",
-                      """
+""",
+      "libAlias.es6" to """
 import Alias from './lib-comp-for-alias';
 const obj = { Alias };
 
 Object.keys(obj).forEach(key => {
         Vue.component(key, obj[key]);
     });
-""")
-      configureByText("ResolveAliasedObjectMemberComponent.vue",
-                      """<template><<caret>alias/></template>""")
-
-      checkGotoDeclaration(
-        fromSignature = "<<caret>alias/>",
-        declarationSignature = "export default <caret>{\n",
-        expectedFileName = "lib-comp-for-alias.es6",
-      )
-    }
+""",
+      "ResolveAliasedObjectMemberComponent.vue" to """<template><<caret>alias/></template>""",
+    )
   }
 
   @Test
@@ -1806,20 +1776,19 @@ Object.keys(other).forEach(key => {
 
   @Test
   fun testResolveObjectWithSpreadComponentAliased() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("a.vue", "")
-      configureByText("lib-spread.es6",
-                      """
+    doGotoDeclarationInternalTest(
+      fromSignature = "<<caret>lib-spread-alias",
+      declarationSignature = "export default <caret>{\n",
+      expectedFileName = "lib-spread.es6",
+      "a.vue" to "",
+      "lib-spread.es6" to """
 export default {
   name: 'lib-spread',
   template: '',
   render() {}
 }
-""")
-      configureByText("lib-register-spread.es6",
-                      """
+""",
+      "lib-register-spread.es6" to """
 import LibSpreadAlias from './lib-spread';
 const obj = { LibSpreadAlias };
 const other = {...obj};
@@ -1827,16 +1796,10 @@ const other = {...obj};
 Object.keys(other).forEach(key => {
         Vue.component(key, other[key]);
     });
-""")
-      configureByText("ResolveObjectWithSpreadComponentAliased.vue",
-                      """<template><<caret>lib-spread-alias/></template>""")
-
-      checkGotoDeclaration(
-        fromSignature = "<<caret>lib-spread-alias",
-        declarationSignature = "export default <caret>{\n",
-        expectedFileName = "lib-spread.es6",
-      )
-    }
+""",
+      "ResolveObjectWithSpreadComponentAliased.vue" to
+        """<template><<caret>lib-spread-alias/></template>""",
+    )
   }
 
   @Test
@@ -2068,15 +2031,16 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testComponentExportDefault() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      addFileToProject("HelloWorld.vue", """
+    doGotoDeclarationInternalTest(
+      fromSignature = "<Hello<caret>World",
+      declarationSignature = "HelloWorld = <caret>{ name:",
+      expectedFileName = "HelloWorld.vue",
+      "HelloWorld.vue" to """
       <script>
         const HelloWorld = { name: 'HelloWorld' };
         export default HelloWorld;
-      </script>""")
-      configureByText("App.vue", """
+      </script>""",
+      "App.vue" to """
       <template>
         <HelloWorld<caret> msg="foo"></HelloWorld>
       </template>
@@ -2084,14 +2048,8 @@ export default class UsageComponent extends Vue {
         import HelloWorld from './HelloWorld.vue';
         export default app;
         const app = { name: 'app', components: { HelloWorld } };
-      </script>""")
-
-      checkGotoDeclaration(
-        fromSignature = "<Hello<caret>World",
-        declarationSignature = "HelloWorld = <caret>{ name:",
-        expectedFileName = "HelloWorld.vue",
-      )
-    }
+      </script>""",
+    )
   }
 
   @Test
@@ -2548,10 +2506,11 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testInjectLiteralLocal() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("InjectLiteral.vue", """
+    doGotoDeclarationInternalTest(
+      fromSignature = "{{me<caret>ssage}}",
+      declarationSignature = "inject: [<caret>'message']",
+      expectedFileName = "InjectLiteral.vue",
+      "InjectLiteral.vue" to """
       <script>
       export default {
         inject: ['message'],
@@ -2561,21 +2520,17 @@ export default class UsageComponent extends Vue {
       <template>
         {{message}}
       </template>
-    """.trimIndent())
-
-      checkGotoDeclaration(
-        fromSignature = "{{me<caret>ssage}}",
-        declarationSignature = "inject: [<caret>'message']",
-      )
-    }
+    """.trimIndent(),
+    )
   }
 
   @Test
   fun testInjectPropertyLocal() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("InjectProperty.vue", """
+    doGotoDeclarationInternalTest(
+      fromSignature = "{{mes<caret>sage}}",
+      declarationSignature = "<caret>message: {",
+      expectedFileName = "InjectProperty.vue",
+      "InjectProperty.vue" to """
       <script>
       export default {
         inject: {
@@ -2588,21 +2543,17 @@ export default class UsageComponent extends Vue {
       <template>
         {{message}}
       </template>
-    """.trimIndent())
-
-      checkGotoDeclaration(
-        fromSignature = "{{mes<caret>sage}}",
-        declarationSignature = "<caret>message: {",
-      )
-    }
+    """,
+    )
   }
 
   @Test
   fun testInjectAliasedLocal() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("InjectAliased.vue", """
+    doGotoDeclarationInternalTest(
+      fromSignature = "{{loc<caret>alMessage}}",
+      declarationSignature = "<caret>localMessage: {",
+      expectedFileName = "InjectAliased.vue",
+      "InjectAliased.vue" to """
       <script>
       export default {
         inject: {
@@ -2616,13 +2567,8 @@ export default class UsageComponent extends Vue {
       <template>
         {{localMessage}}
       </template>
-    """.trimIndent())
-
-      checkGotoDeclaration(
-        fromSignature = "{{loc<caret>alMessage}}",
-        declarationSignature = "<caret>localMessage: {",
-      )
-    }
+    """.trimIndent(),
+    )
   }
 
   @Test
@@ -2866,10 +2812,11 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testResolvePropFromComponentWithDefineOptionsAndRegularScript() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByText("HelloWorld.vue", """
+    doGotoDeclarationInternalTest(
+      fromSignature = "customPro<caret>perty=\"Hello!\"",
+      declarationSignature = "defineProps<{ <caret>customProperty: string }>",
+      expectedFileName = "HelloWorld.vue",
+      "HelloWorld.vue" to """
       <script lang="ts">
       export const exportedFromScript = 123;
       </script>
@@ -2883,8 +2830,8 @@ export default class UsageComponent extends Vue {
       </script>
       
       <template></template>
-    """.trimIndent())
-      configureByText("ComponentUsage.vue", """
+    """.trimIndent(),
+      "ComponentUsage.vue" to """
       <template>
         <best-component-of-my-life customProperty="Hello!"/>
       </template>
@@ -2894,14 +2841,8 @@ export default class UsageComponent extends Vue {
 
       defineOptions({ name: 'SuperComp' });
       </script>
-      """.trimIndent())
-
-      checkGotoDeclaration(
-        fromSignature = "customPro<caret>perty=\"Hello!\"",
-        declarationSignature = "defineProps<{ <caret>customProperty: string }>",
-        expectedFileName = "HelloWorld.vue",
-      )
-    }
+      """.trimIndent(),
+    )
   }
 
   @Test
