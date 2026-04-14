@@ -2208,10 +2208,9 @@ export default class UsageComponent extends Vue {
       additionalDependencies = mapOf(
         "some_lib" to "0.0.0",
       ),
-      configureFile = false,
+      configureFileName = "App.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject("filters/", ".")
-      configureFromTempProjectFile("App.vue")
       for ((filterName, resolvedItemText) in listOf(
         Pair("localFilter", "localFilter: function (arg1, arg2, arg3) { return true }"),
         Pair("globalFilter", "function (value) { return 12 }"),
@@ -2230,10 +2229,10 @@ export default class UsageComponent extends Vue {
   @Test
   fun testImportedProps() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "main.vue",
+      dirName = "props-import-resolve",
+      dir = true,
     ) {
-      copyDirectoryToProject("props-import-resolve", ".")
-      configureFromTempProjectFile("main.vue")
       val element = resolveReference("\"user<caret>Id\"")
       assertEquals("props.js", element.containingFile.name)
       assertUnresolvedReference("\"user<caret>Id2\"")
@@ -2244,10 +2243,10 @@ export default class UsageComponent extends Vue {
   fun testMixinExtend() {
     doConfiguredTest(
       VUE_2_6_10,
-      configureFile = false,
+      configureFileName = "test.vue",
+      dirName = "vue-sfc-extend-mixin",
+      dir = true,
     ) {
-      copyDirectoryToProject("vue-sfc-extend-mixin", ".")
-      configureFromTempProjectFile("test.vue")
       assertEquals(
         "test.vue",
         resolveReference("\"sty<caret>le\"").containingFile.name)
@@ -2270,10 +2269,10 @@ export default class UsageComponent extends Vue {
   fun testTypedMixins() {
     doConfiguredTest(
       VUE_2_6_10,
-      configureFile = false,
+      configureFileName = "component.vue",
+      dirName = "vue-sfc-typed-mixins",
+      dir = true,
     ) {
-      copyDirectoryToProject("vue-sfc-typed-mixins", ".")
-      configureFromTempProjectFile("component.vue")
       assertEquals(
         "mixin.ts",
         resolveReference("\"show<caret>1\"").containingFile.name)
@@ -2319,10 +2318,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testNoScriptSection() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "test.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject("noScriptSection", ".")
-      configureFromTempProjectFile("test.vue")
       checkGotoDeclaration("<no-script<caret>-section>", "<caret><template>", "noScriptSection.vue")
     }
   }
@@ -2330,9 +2328,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testLazyLoaded() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "main.vue",
+      dir = true,
     ) {
-      configureByFiles("lazyLoaded/main.vue", "lazyLoaded/index.vue")
       checkGotoDeclaration("<Hello<caret>World", "export default <caret>{", "index.vue")
     }
   }
@@ -2340,10 +2338,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testScriptSetupTagNavigation() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "HelloWorld.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject("scriptSetupTagNavigation", ".")
-      configureFromTempProjectFile("HelloWorld.vue")
       checkGotoDeclaration("<Sam<caret>ple/>", "<caret><template>", "Sample.vue")
     }
   }
@@ -2377,9 +2374,10 @@ export default class UsageComponent extends Vue {
   @Test
   fun testCreateApp() {
     doConfiguredTest(
+      dirName = "../common/createApp",
+      dir = true,
       configureFile = false,
     ) {
-      copyDirectoryToProject("../common/createApp", ".")
       sequenceOf(
         Triple("<B<caret>oo>", null, null),
         Triple("<B<caret>ar>", "export default <caret>{", "foo.vue"),
@@ -2405,10 +2403,12 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testGlobalComponentCompositionApiFromUnlinkedTemplate() {
+    // WEB-55665
     doConfiguredTest(
-      configureFile = false) { // WEB-55,
-      // 665
-      copyDirectoryToProject("../common/createApp", ".")
+      dirName = "../common/createApp",
+      dir = true,
+      configureFile = false,
+    ) {
       configureByText("AppUnlinked.vue", "<template>\n<Bar/>\n</template>")
       checkGotoDeclaration("<B<caret>ar/>", "export default <caret>{", "foo.vue")
     }
@@ -2444,12 +2444,13 @@ export default class UsageComponent extends Vue {
   @Test
   fun testMixinQualifiedReference() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "Test.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject("mixinQualifiedReference", ".")
-      configureFromTempProjectFile("Test.vue")
-      assertEquals("clickMixin.js",
-                   resolveReference("cl<caret>icked(").containingFile.name)
+      assertEquals(
+        "clickMixin.js",
+        resolveReference("cl<caret>icked(").containingFile.name,
+      )
     }
   }
 
@@ -2839,10 +2840,10 @@ export default class UsageComponent extends Vue {
   @Test
   fun testNavigateThroughTypeofReferenceToImport() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dirName = "globalComponentsWithTypeofImport",
+      dir = true,
     ) {
-      copyDirectoryToProject("globalComponentsWithTypeofImport", "")
-      configureFromTempProjectFile("${getTestName(false)}.vue")
       checkGotoDeclaration("ButtonS<caret>FC", "eComponent(<caret>{\n  props: {\n", "ButtonSFC.vue")
     }
   }
@@ -2850,10 +2851,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testResolveGlobalAppComponent() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "ForComponent.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject("resolveGlobalAppComponent", "")
-      configureFromTempProjectFile("ForComponent.vue")
       checkGotoDeclaration("<Global<caret>Component></GlobalComponent>", "defineComponent(<caret>{\n", "GlobalComponent.vue")
     }
   }
@@ -2861,10 +2861,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testComponentCustomProperties() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject("componentCustomProperties", "")
-      configureByFile("${getTestName(false)}.vue")
       checkGotoDeclaration("{{\$te<caret>st}}", "<caret>\$test: string", "index.ts")
     }
   }
