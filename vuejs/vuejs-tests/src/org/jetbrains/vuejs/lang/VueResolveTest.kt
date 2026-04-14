@@ -2372,44 +2372,35 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testNoScriptSection() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "test.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "<no-script<caret>-section>",
-        declarationSignature = "<caret><template>",
-        expectedFileName = "noScriptSection.vue",
-      )
-    }
+      fromSignature = "<no-script<caret>-section>",
+      declarationSignature = "<caret><template>",
+      expectedFileName = "noScriptSection.vue",
+    )
   }
 
   @Test
   fun testLazyLoaded() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "main.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "<Hello<caret>World",
-        declarationSignature = "export default <caret>{",
-        expectedFileName = "index.vue",
-      )
-    }
+      fromSignature = "<Hello<caret>World",
+      declarationSignature = "export default <caret>{",
+      expectedFileName = "index.vue",
+    )
   }
 
   @Test
   fun testScriptSetupTagNavigation() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "HelloWorld.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "<Sam<caret>ple/>",
-        declarationSignature = "<caret><template>",
-        expectedFileName = "Sample.vue",
-      )
-    }
+      fromSignature = "<Sam<caret>ple/>",
+      declarationSignature = "<caret><template>",
+      expectedFileName = "Sample.vue",
+    )
   }
 
   @Test
@@ -2636,86 +2627,68 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testInjectLiteral() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "'me<caret>ssage'",
-        declarationSignature = "<caret>message: 'hello",
-        expectedFileName = "Provide.vue",
-      )
-    }
+      fromSignature = "'me<caret>ssage'",
+      declarationSignature = "<caret>message: 'hello",
+      expectedFileName = "Provide.vue",
+    )
   }
 
   @Test
   fun testInjectLiteralProvidedInApp() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "'me<caret>ssage'",
-        declarationSignature = "<caret>message: 'hello",
-        expectedFileName = "App.vue",
-      )
-    }
+      fromSignature = "'me<caret>ssage'",
+      declarationSignature = "<caret>message: 'hello",
+      expectedFileName = "App.vue",
+    )
   }
 
   @Test
   fun testInjectAlias() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "'me<caret>ssage'",
-        declarationSignature = "<caret>message: 'msg'",
-        expectedFileName = "Provide.vue",
-      )
-    }
+      fromSignature = "'me<caret>ssage'",
+      declarationSignature = "<caret>message: 'msg'",
+      expectedFileName = "Provide.vue",
+    )
   }
 
   @Test
   fun testInjectAliasDuplicatedName() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "'me<caret>ssage'",
-        declarationSignature = "<caret>message: 'msg'",
-        expectedFileName = "Provide.vue",
-      )
-    }
+      fromSignature = "'me<caret>ssage'",
+      declarationSignature = "<caret>message: 'msg'",
+      expectedFileName = "Provide.vue",
+    )
   }
 
   @Test
   fun testInjectProperty() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "m<caret>essage",
-        declarationSignature = "<caret>message: 'msg'",
-        expectedFileName = "Provide.vue",
-      )
-    }
+      fromSignature = "m<caret>essage",
+      declarationSignature = "<caret>message: 'msg'",
+      expectedFileName = "Provide.vue",
+    )
   }
 
   @Test
   fun testInjectDeepNested() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "'provide<caret>Deep'",
-        declarationSignature = "<caret>provideDeep: 12",
-        expectedFileName = "ProvideB.vue",
-      )
-    }
+      fromSignature = "'provide<caret>Deep'",
+      declarationSignature = "<caret>provideDeep: 12",
+      expectedFileName = "ProvideB.vue",
+    )
   }
 
   @Test
@@ -2738,44 +2711,35 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testInjectAppGlobal() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "'global<caret>Provide'",
-        declarationSignature = "app.provide(<caret>'globalProvide'",
-        expectedFileName = "main.js",
-      )
-    }
+      fromSignature = "'global<caret>Provide'",
+      declarationSignature = "app.provide(<caret>'globalProvide'",
+      expectedFileName = "main.js",
+    )
   }
 
   @Test
   fun testInjectSetup() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "'inject<caret>Setup'",
-        declarationSignature = "provide(<caret>'injectSetup'",
-        expectedFileName = "Provide.vue",
-      )
-    }
+      fromSignature = "'inject<caret>Setup'",
+      declarationSignature = "provide(<caret>'injectSetup'",
+      expectedFileName = "Provide.vue",
+    )
   }
 
   @Test
   fun testImportFromContextScriptScope() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "items: IT<caret>est[]",
-        declarationSignature = "export interface <caret>ITest",
-        expectedFileName = "Button.vue",
-      )
-    }
+      fromSignature = "items: IT<caret>est[]",
+      declarationSignature = "export interface <caret>ITest",
+      expectedFileName = "Button.vue",
+    )
   }
 
   @Test
@@ -2962,45 +2926,36 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testNavigateThroughTypeofReferenceToImport() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "${getTestName(false)}.vue",
       dirName = "globalComponentsWithTypeofImport",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "ButtonS<caret>FC",
-        declarationSignature = "eComponent(<caret>{\n  props: {\n",
-        expectedFileName = "ButtonSFC.vue",
-      )
-    }
+      fromSignature = "ButtonS<caret>FC",
+      declarationSignature = "eComponent(<caret>{\n  props: {\n",
+      expectedFileName = "ButtonSFC.vue",
+    )
   }
 
   @Test
   fun testResolveGlobalAppComponent() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "ForComponent.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "<Global<caret>Component></GlobalComponent>",
-        declarationSignature = "defineComponent(<caret>{\n",
-        expectedFileName = "GlobalComponent.vue",
-      )
-    }
+      fromSignature = "<Global<caret>Component></GlobalComponent>",
+      declarationSignature = "defineComponent(<caret>{\n",
+      expectedFileName = "GlobalComponent.vue",
+    )
   }
 
   @Test
   fun testComponentCustomProperties() {
-    doConfiguredTest(
+    doGotoDeclarationTest(
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
-    ) {
-      checkGotoDeclaration(
-        fromSignature = "{{\$te<caret>st}}",
-        declarationSignature = "<caret>\$test: string",
-        expectedFileName = "index.ts",
-      )
-    }
+      fromSignature = "{{\$te<caret>st}}",
+      declarationSignature = "<caret>\$test: string",
+      expectedFileName = "index.ts",
+    )
   }
 }
 
