@@ -2379,7 +2379,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.configureByFiles("scriptSetupPropShadowing.vue")
       myFixture.checkGotoDeclaration("{{<caret>foo}}", "const <caret>foo = 2")
     }
@@ -2391,7 +2390,6 @@ export default class UsageComponent extends Vue {
       configureFile = false,
     ) {
       myFixture.copyDirectoryToProject("../common/createApp", ".")
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       sequenceOf(
         Triple("<B<caret>oo>", null, null),
         Triple("<B<caret>ar>", "export default <caret>{", "foo.vue"),
@@ -2421,7 +2419,6 @@ export default class UsageComponent extends Vue {
       configureFile = false) { // WEB-55,
       // 665
       myFixture.copyDirectoryToProject("../common/createApp", ".")
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.configureByText("AppUnlinked.vue", "<template>\n<Bar/>\n</template>")
       myFixture.checkGotoDeclaration("<B<caret>ar/>", "export default <caret>{", "foo.vue")
     }
@@ -2471,7 +2468,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.configureByFile("${getTestName(true)}.vue")
       sequenceOf(
         "@<caret>add" to "<caret>add,\n",
@@ -2488,7 +2484,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.configureByFile("${getTestName(true)}.vue")
       sequenceOf(
         "m<caret>sg=\"You did it!\"" to "<caret>msg: {type:",
@@ -2572,7 +2567,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject(getTestName(true), "")
       myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
       myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "Provide.vue")
@@ -2584,7 +2578,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject(getTestName(true), "")
       myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
       myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "App.vue")
@@ -2596,7 +2589,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject(getTestName(true), "")
       myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
       myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
@@ -2608,7 +2600,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject(getTestName(true), "")
       myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
       myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
@@ -2620,7 +2611,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject(getTestName(true), "")
       myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
       myFixture.checkGotoDeclaration("m<caret>essage", "<caret>message: 'msg'", "Provide.vue")
@@ -2632,7 +2622,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject(getTestName(true), "")
       myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
       myFixture.checkGotoDeclaration("'provide<caret>Deep'", "<caret>provideDeep: 12", "ProvideB.vue")
@@ -2644,7 +2633,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject(getTestName(true), "")
       myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
 
@@ -2661,7 +2649,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject(getTestName(true), "")
       myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
       myFixture.checkGotoDeclaration("'global<caret>Provide'", "app.provide(<caret>'globalProvide'", "main.js")
@@ -2673,7 +2660,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject(getTestName(true), "")
       myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
       myFixture.checkGotoDeclaration("'inject<caret>Setup'", "provide(<caret>'injectSetup'", "Provide.vue")
@@ -2685,7 +2671,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject(getTestName(true), "")
       myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
       myFixture.checkGotoDeclaration("items: IT<caret>est[]", "export interface <caret>ITest", "Button.vue")
@@ -2697,7 +2682,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.configureByText("DefineSlots.vue", """
       <script setup lang="ts">
       defineSlots<{
@@ -2738,7 +2722,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject("defineSlotDefault", "")
       myFixture.configureByText("Component.vue", """
       <script setup lang='ts'>
@@ -2765,7 +2748,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject("defineSlotDefault", "")
       myFixture.configureByText("Component.vue", """
       <script setup lang='ts'>
@@ -2794,7 +2776,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject("defineSlotDefault", "")
       myFixture.configureByText("Component.vue", """
       <script setup lang='ts'>
@@ -2861,7 +2842,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
       myFixture.copyDirectoryToProject(getTestName(true), "")
       myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
       val declarations = myFixture
