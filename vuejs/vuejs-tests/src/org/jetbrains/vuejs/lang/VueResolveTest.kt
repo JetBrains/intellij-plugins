@@ -31,6 +31,7 @@ import com.intellij.polySymbols.utils.asSingleSymbol
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
@@ -69,7 +70,7 @@ class VueResolveTest :
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("ResolveToPropInObject.vue", """
+      configureByText("ResolveToPropInObject.vue", """
 <template>
     <div class="list">
         <ul>
@@ -87,7 +88,7 @@ class VueResolveTest :
   }
   let message25620 = 111;
 </script>""")
-      val reference = myFixture.file.findReferenceAt(myFixture.editor.caretModel.offset)
+      val reference = file.findReferenceAt(editor.caretModel.offset)
       assertNotNull(reference)
       assertTrue(reference is JSReferenceExpression)
       val resolver = VueJSSpecificHandlersFactory().createReferenceExpressionResolver(
@@ -104,7 +105,7 @@ class VueResolveTest :
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("ResolveToPropInObject.vue", """
+      configureByText("ResolveToPropInObject.vue", """
 <template>
   <list25620 v-text="'prefix' + <caret>message25620Arr + 'postfix'">
   Text
@@ -117,8 +118,8 @@ class VueResolveTest :
     props: ['message25620Arr']
   }
 </script>""")
-      myFixture.checkGotoDeclaration("+ <caret>message25620Arr", "props: ['<caret>message25620Arr']",
-                                     "ResolveToPropInObject.vue")
+      checkGotoDeclaration("+ <caret>message25620Arr", "props: ['<caret>message25620Arr']",
+                           "ResolveToPropInObject.vue")
     }
   }
 
@@ -127,7 +128,7 @@ class VueResolveTest :
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("ResolveAttributeInPascalCaseUsageInPropsArray.vue", """
+      configureByText("ResolveAttributeInPascalCaseUsageInPropsArray.vue", """
 <template>
   <list25620 <caret>pascalCase">
   Text
@@ -141,7 +142,7 @@ class VueResolveTest :
   }
   let message25620 = 111;
 </script>""")
-      val literal = myFixture.polySymbolSourceAtCaret()
+      val literal = polySymbolSourceAtCaret()
       assertInstanceOf(literal, JSLiteralExpression::class.java)
       assertInstanceOf(literal!!.parent, JSArrayLiteralExpression::class.java)
       assertEquals("'pascalCase'", literal.text)
@@ -153,7 +154,7 @@ class VueResolveTest :
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("ResolveIntoComputedProperty.vue", """
+      configureByText("ResolveIntoComputedProperty.vue", """
 <template>
 {{<caret>testRight}}
 </template>
@@ -167,7 +168,7 @@ export default {
   }
 }
 </script>""")
-      val property = myFixture.polySymbolSourceAtCaret()
+      val property = polySymbolSourceAtCaret()
       assertTrue((property as JSImplicitElement).context is JSFunctionItem)
       assertEquals("testRight", (property.context as JSFunctionItem).name)
     }
@@ -178,7 +179,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("ResolveIntoComputedES6FunctionProperty.vue", """
+      configureByText("ResolveIntoComputedES6FunctionProperty.vue", """
 <template>
 {{<caret>testRight}}
 </template>
@@ -192,7 +193,7 @@ export default {
   }
 }
 </script>""")
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val property = reference!!.resolve()
       assertTrue((property as JSImplicitElement).context is JSFunctionItem)
@@ -205,7 +206,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("child.vue", """
+      configureByText("child.vue", """
 <template>
 </template>
 <script>
@@ -219,7 +220,7 @@ export default {
   }
 }
 </script>""")
-      myFixture.configureByText("ResolveIntoMethodsFromBoundAttributes.vue", """
+      configureByText("ResolveIntoMethodsFromBoundAttributes.vue", """
 <template>
     <child-comp v-bind:my-message="me215t<caret>hod"></child-comp>
 </template>
@@ -235,7 +236,7 @@ export default {
   }
 }
 </script>""")
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val property = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
       assertTrue(property is JSProperty)
@@ -248,7 +249,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("ResolveLocallyInsideComponentPropsArray.vue", """
+      configureByText("ResolveLocallyInsideComponentPropsArray.vue", """
 <script>
 export default {
   name: 'parent',
@@ -259,8 +260,8 @@ export default {
     }
   }
 }</script>""")
-      myFixture.checkGotoDeclaration("this.<caret>parentMsg", "['<caret>parentMsg'",
-                                     "ResolveLocallyInsideComponentPropsArray.vue")
+      checkGotoDeclaration("this.<caret>parentMsg", "['<caret>parentMsg'",
+                           "ResolveLocallyInsideComponentPropsArray.vue")
     }
   }
 
@@ -269,7 +270,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("ResolveLocallyInsideComponentPropsArrayRefVariant.vue", """
+      configureByText("ResolveLocallyInsideComponentPropsArrayRefVariant.vue", """
 <script>
 let props = ['parentMsg', 'parentSize'];
 export default {
@@ -281,8 +282,8 @@ export default {
     }
   }
 }</script>""")
-      myFixture.checkGotoDeclaration("this.<caret>parentMsg", "['<caret>parentMsg'",
-                                     "ResolveLocallyInsideComponentPropsArrayRefVariant.vue")
+      checkGotoDeclaration("this.<caret>parentMsg", "['<caret>parentMsg'",
+                           "ResolveLocallyInsideComponentPropsArrayRefVariant.vue")
     }
   }
 
@@ -291,7 +292,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("ResolveLocallyInsideComponentArrayFunctionInsideExport.vue", """
+      configureByText("ResolveLocallyInsideComponentArrayFunctionInsideExport.vue", """
 <script>
 let props = ['parentMsg'];
 
@@ -304,8 +305,8 @@ export default {
     }
   }
 }</script>""")
-      myFixture.checkGotoDeclaration("this.<caret>parentMsg", "['<caret>parentMsg'];",
-                                     "ResolveLocallyInsideComponentArrayFunctionInsideExport.vue")
+      checkGotoDeclaration("this.<caret>parentMsg", "['<caret>parentMsg'];",
+                           "ResolveLocallyInsideComponentArrayFunctionInsideExport.vue")
     }
   }
 
@@ -489,9 +490,9 @@ export default {
     }
   }
 
-  private fun doTestResolveLocallyInsideComponent(text: String, expectedPropertyName: String?) {
-    myFixture.configureByText("ResolveLocallyInsideComponent.vue", text)
-    val reference = myFixture.getReferenceAtCaretPosition()
+  private fun CodeInsightTestFixture.doTestResolveLocallyInsideComponent(text: String, expectedPropertyName: String?) {
+    configureByText("ResolveLocallyInsideComponent.vue", text)
+    val reference = getReferenceAtCaretPosition()
     assertNotNull(reference)
     val target = reference!!.resolve()
     if (expectedPropertyName == null) {
@@ -509,7 +510,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("IntoVForVar.vue", """
+      configureByText("IntoVForVar.vue", """
 <template>
   <ul>
     <li v-for="item in items">
@@ -518,7 +519,7 @@ export default {
   </ul>
 </template>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
@@ -531,7 +532,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("IntoVForDetailsResolve.vue", """
+      configureByText("IntoVForDetailsResolve.vue", """
 <template>
   <ul>
     <li v-for="item in items">
@@ -550,7 +551,7 @@ export default {
   }
 </script>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val part = reference!!.resolve()
       assertNotNull(part)
@@ -564,7 +565,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("VForIteratedExpressionResolve.vue", """
+      configureByText("VForIteratedExpressionResolve.vue", """
 <template>
   <ul>
     <li v-for="item in <caret>items">
@@ -583,7 +584,7 @@ export default {
   }
 </script>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val part = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
       assertNotNull(part)
@@ -597,13 +598,13 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("IntoVForVarInPug.vue", """
+      configureByText("IntoVForVarInPug.vue", """
 <template lang="pug">
   ul
     li(v-for="item in items") {{ <caret>item.message }}
 </template>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
@@ -616,7 +617,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("IntoVForDetailsResolveInPug.vue", """
+      configureByText("IntoVForDetailsResolveInPug.vue", """
 <template lang="pug">
   ul
     li(v-for="item in items") {{ item.<caret>message }}
@@ -632,7 +633,7 @@ export default {
   }
 </script>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val part = reference!!.resolve()
       assertNotNull(part)
@@ -646,7 +647,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("VForIteratedExpressionResolveInPug.vue", """
+      configureByText("VForIteratedExpressionResolveInPug.vue", """
 <template lang="pug">
   ul
     li(v-for="item in <caret>itemsPP") {{ item.message }}
@@ -662,7 +663,7 @@ export default {
   }
 </script>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val part = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
       assertNotNull(part)
@@ -676,8 +677,8 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies()
-      myFixture.configureByText("IntoVForVarInHtml.html", """
+      configureVueDependencies()
+      configureByText("IntoVForVarInHtml.html", """
 <html>
   <ul>
     <li v-for="itemHtml in itemsHtml">
@@ -686,7 +687,7 @@ export default {
   </ul>
 </html>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
@@ -699,7 +700,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("KeyIntoForResolve.vue", """
+      configureByText("KeyIntoForResolve.vue", """
 <template>
   <li v-for="(item1, index1) of items1" :key="<caret>item1" v-if="item1 > 0">
     {{ parentMessage1 }} - {{ index1 }} - {{ item1.message1 }}
@@ -717,7 +718,7 @@ export default {
   }
 </script>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
@@ -732,7 +733,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("VIfIntoForResolve.vue", """
+      configureByText("VIfIntoForResolve.vue", """
 <template>
   <li v-for="(item1, index1) in items1" :key="item1" v-if="<caret>item1 > 0">
     {{ parentMessage1 }} - {{ index1 }} - {{ item1.message1 }}
@@ -750,7 +751,7 @@ export default {
   }
 </script>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
@@ -765,15 +766,15 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies()
-      myFixture.configureByText("KeyIntoForResolveHtml.html", """
+      configureVueDependencies()
+      configureByText("KeyIntoForResolveHtml.html", """
 <html>
   <li id="id123" v-for="(item1, index1) in items1" :key="<caret>item1" v-if="item1 > 0">
     {{ parentMessage1 }} - {{ index1 }} - {{ item1.message1 }}
   </li>
 </html>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
@@ -788,8 +789,8 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies()
-      myFixture.configureByText("ResolveByMountedVueInstanceInData.js", """
+      configureVueDependencies()
+      configureByText("ResolveByMountedVueInstanceInData.js", """
 new Vue({
   el: '#ResolveByMountedVueInstanceInData',
   data: {
@@ -797,7 +798,7 @@ new Vue({
   }
 })
 """)
-      myFixture.configureByText("ResolveByMountedVueInstanceInData.html", """
+      configureByText("ResolveByMountedVueInstanceInData.html", """
 <!DOCTYPE html>
 <html lang="en">
 <body>
@@ -807,8 +808,8 @@ new Vue({
 </body>
 </html>
 """)
-      myFixture.checkGotoDeclaration("<caret>messageToFind", "<caret>messageToFind: 'Parent'",
-                                     "ResolveByMountedVueInstanceInData.js")
+      checkGotoDeclaration("<caret>messageToFind", "<caret>messageToFind: 'Parent'",
+                           "ResolveByMountedVueInstanceInData.js")
     }
   }
 
@@ -817,14 +818,14 @@ new Vue({
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies()
-      myFixture.configureByText("ResolveByMountedVueInstanceInProps.js", """
+      configureVueDependencies()
+      configureByText("ResolveByMountedVueInstanceInProps.js", """
 new Vue({
   el: '#ResolveByMountedVueInstanceInProps',
   props: ['compProp']
 })
 """)
-      myFixture.configureByText("ResolveByMountedVueInstanceInProps.html", """
+      configureByText("ResolveByMountedVueInstanceInProps.html", """
 <!DOCTYPE html>
 <html lang="en">
 <body>
@@ -834,8 +835,8 @@ new Vue({
 </body>
 </html>
 """)
-      myFixture.checkGotoDeclaration("<caret>compProp", "props: ['<caret>compProp']",
-                                     "ResolveByMountedVueInstanceInProps.js")
+      checkGotoDeclaration("<caret>compProp", "props: ['<caret>compProp']",
+                           "ResolveByMountedVueInstanceInProps.js")
     }
   }
 
@@ -844,8 +845,8 @@ new Vue({
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies()
-      myFixture.configureByText("ResolveVForIterableByMountedVueInstance.js", """
+      configureVueDependencies()
+      configureByText("ResolveVForIterableByMountedVueInstance.js", """
 new Vue({
   el: '#ResolveVForIterableByMountedVueInstance',
   data: {
@@ -857,7 +858,7 @@ new Vue({
   }
 })
 """)
-      myFixture.configureByText("ResolveVForIterableByMountedVueInstance.html", """
+      configureByText("ResolveVForIterableByMountedVueInstance.html", """
 <!DOCTYPE html>
 <html lang="en">
 <body>
@@ -869,8 +870,8 @@ new Vue({
 </body>
 </html>
 """)
-      myFixture.checkGotoDeclaration("<caret>mountedItems", "<caret>mountedItems: [",
-                                     "ResolveVForIterableByMountedVueInstance.js")
+      checkGotoDeclaration("<caret>mountedItems", "<caret>mountedItems: [",
+                           "ResolveVForIterableByMountedVueInstance.js")
     }
   }
 
@@ -879,13 +880,13 @@ new Vue({
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("KeyIntoForResolvePug.vue", """
+      configureByText("KeyIntoForResolvePug.vue", """
 <template lang="pug">
   ul
     li(id="id123" v-for="(item123, index1) in items1", :key="<caret>item123") {{ parentMessage1 }}
 </template>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
@@ -900,7 +901,7 @@ new Vue({
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("libComponent.vue", """
+      configureByText("libComponent.vue", """
 <template>text here</template>
 <script>
   export default {
@@ -909,11 +910,11 @@ new Vue({
   }
 </script>
 """)
-      myFixture.configureByText("main.js", """
+      configureByText("main.js", """
 import LibComponent from "./libComponent"
 Vue.component('renamed-component', LibComponent)
 """)
-      myFixture.configureByText("CompleteWithoutImportForRenamedGlobalComponent.vue", """
+      configureByText("CompleteWithoutImportForRenamedGlobalComponent.vue", """
 <template>
 <renamed-component <caret>lib-component-prop=1></renamed-component>
 </template>
@@ -923,7 +924,7 @@ export default {
 </script>
 """)
 
-      val literal = myFixture.polySymbolSourceAtCaret()
+      val literal = polySymbolSourceAtCaret()
       assertInstanceOf(literal, JSLiteralExpression::class.java)
       assertEquals("'libComponentProp'", literal!!.text)
       assertInstanceOf(literal.parent, JSArrayLiteralExpression::class.java)
@@ -936,7 +937,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("LocalQualifiedNameOfGlobalComponent.js", """
+      configureByText("LocalQualifiedNameOfGlobalComponent.js", """
       let CompDef = {
         props: {
           kuku: {}
@@ -945,13 +946,13 @@ export default {
 
       Vue.component('complex-ref', CompDef);
     """.trimIndent())
-      myFixture.configureByText("LocalQualifiedNameOfGlobalComponent.vue", """
+      configureByText("LocalQualifiedNameOfGlobalComponent.vue", """
       <template>
         <complex-ref <caret>kuku="e23"></complex-ref>
       </template>
     """.trimIndent())
 
-      val property = myFixture.polySymbolSourceAtCaret()
+      val property = polySymbolSourceAtCaret()
       assertInstanceOf(property, JSProperty::class.java)
       assertEquals("kuku", (property as JSProperty).name)
       assertInstanceOf(property.parent.parent, JSProperty::class.java)
@@ -964,14 +965,14 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByFile("vue-router.js")
-      myFixture.configureByText("ResolveVueRouterComponents.vue", """
+      configureByFile("vue-router.js")
+      configureByText("ResolveVueRouterComponents.vue", """
       <template>
         <router-link <caret>to="/post"></router-link>
       </template>
     """.trimIndent())
 
-      val property = myFixture.polySymbolSourceAtCaret()
+      val property = polySymbolSourceAtCaret()
       assertInstanceOf(property, JSProperty::class.java)
       assertEquals("to", (property as JSProperty).name)
       assertInstanceOf(property.parent.parent, JSProperty::class.java)
@@ -984,7 +985,7 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("ResolveIntoGlobalComponentInLocalVarComponent.js", """
+      configureByText("ResolveIntoGlobalComponentInLocalVarComponent.js", """
 (function(a, b, c) {/* ... */}
 (
   a,b,
@@ -1001,13 +1002,13 @@ export default {
   }
 ))
 """)
-      myFixture.configureByText("ResolveIntoGlobalComponentInLocalVarComponent.vue", """
+      configureByText("ResolveIntoGlobalComponentInLocalVarComponent.vue", """
       <template>
         <iffe-comp <caret>from="e23"></complex-ref>
       </template>
 """)
 
-      val property = myFixture.polySymbolSourceAtCaret()
+      val property = polySymbolSourceAtCaret()
       assertNotNull(property)
       assertTrue(property is JSProperty)
       assertEquals("from", (property as JSProperty).name)
@@ -1021,21 +1022,21 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("WiseComp.vue",
-                                """
+      configureByText("WiseComp.vue",
+                      """
 <script>export default { name: 'wise-comp', props: {} }</script>
 """)
-      myFixture.configureByText("register.es6",
-                                """
+      configureByText("register.es6",
+                      """
 import WiseComp from 'WiseComp'
 const alias = 'wise-comp-alias'
 Vue.component(alias, WiseComp)
 """)
-      myFixture.configureByText("use.vue",
-                                """
+      configureByText("use.vue",
+                      """
 <template><<caret>wise-comp-alias</template>
 """)
-      myFixture.checkGotoDeclaration("<<caret>wise-comp-alias", "export default <caret>{ name:", "WiseComp.vue")
+      checkGotoDeclaration("<<caret>wise-comp-alias", "export default <caret>{ name:", "WiseComp.vue")
     }
   }
 
@@ -1044,19 +1045,19 @@ Vue.component(alias, WiseComp)
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("index.js", """
+      configureByText("index.js", """
 Vue.component('global-comp-literal', {
   props: {
     insideGlobalCompLiteral: {}
   }
 });
 """)
-      myFixture.configureByText("GlobalComponentLiteral.vue", """
+      configureByText("GlobalComponentLiteral.vue", """
 <template>
   <global-comp-literal <caret>inside-global-comp-literal=222></global-comp-literal>
 </template>
 """)
-      val property = myFixture.polySymbolSourceAtCaret()
+      val property = polySymbolSourceAtCaret()
       assertInstanceOf(property, JSProperty::class.java)
       assertEquals("insideGlobalCompLiteral", (property as JSProperty).name)
       assertTrue(property.parent.parent is JSProperty)
@@ -1069,8 +1070,8 @@ Vue.component('global-comp-literal', {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("LocalPropsInArrayInCompAttrsAndWithKebabCaseAlso.vue",
-                                """
+      configureByText("LocalPropsInArrayInCompAttrsAndWithKebabCaseAlso.vue",
+                      """
 <template>
     <div id="app">
         <camelCase <caret>one-two="test" three-four=1></camelCase>
@@ -1083,9 +1084,9 @@ Vue.component('global-comp-literal', {
     }
 </script>
 """)
-      myFixture.checkHighlighting()
-      myFixture.doHighlighting()
-      val literal = myFixture.polySymbolSourceAtCaret()
+      checkHighlighting()
+      doHighlighting()
+      val literal = polySymbolSourceAtCaret()
       assertInstanceOf(literal, JSLiteralExpression::class.java)
       assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
       assertTrue(literal.parent is JSArrayLiteralExpression)
@@ -1097,8 +1098,8 @@ Vue.component('global-comp-literal', {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("LocalPropsInArrayInCompAttrsRef.vue",
-                                """
+      configureByText("LocalPropsInArrayInCompAttrsRef.vue",
+                      """
 <template>
     <div id="app">
         <camelCase <caret>one-two="test" three-four=1></camelCase>
@@ -1112,8 +1113,8 @@ const props = ['oneTwo']
     }
 </script>
 """)
-      myFixture.doHighlighting()
-      val literal = myFixture.polySymbolSourceAtCaret()
+      doHighlighting()
+      val literal = polySymbolSourceAtCaret()
       assertNotNull(literal)
       assertTrue(literal is JSLiteralExpression)
       assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
@@ -1126,7 +1127,7 @@ const props = ['oneTwo']
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("compUI.vue", """
+      configureByText("compUI.vue", """
 <script>
     export default {
         name: 'compUI',
@@ -1134,7 +1135,7 @@ const props = ['oneTwo']
     }
 </script>
 """)
-      myFixture.configureByText("ImportedComponentPropsAsArray.vue", """
+      configureByText("ImportedComponentPropsAsArray.vue", """
 <template>
     <div id="app">
         <comp-u-i <caret>see-me="12345" butNotThis="112"></comp-u-i>
@@ -1147,9 +1148,9 @@ const props = ['oneTwo']
     }
 </script>
 """)
-      myFixture.checkHighlighting()
-      myFixture.doHighlighting()
-      val literal = myFixture.polySymbolSourceAtCaret()
+      checkHighlighting()
+      doHighlighting()
+      val literal = polySymbolSourceAtCaret()
       assertInstanceOf(literal, JSLiteralExpression::class.java)
       assertEquals("seeMe", (literal as JSLiteralExpression).stringValue)
       assertEquals("compUI.vue", literal.containingFile.name)
@@ -1162,7 +1163,7 @@ const props = ['oneTwo']
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("compUI.vue", """
+      configureByText("compUI.vue", """
 <script>
 const props = {seeMe: {}}
     export default {
@@ -1171,7 +1172,7 @@ const props = {seeMe: {}}
     }
 </script>
 """)
-      myFixture.configureByText("ImportedComponentPropsAsObjectRef.vue", """
+      configureByText("ImportedComponentPropsAsObjectRef.vue", """
 <template>
     <div id="app">
         <comp-u-i <caret>see-me="12345" ></comp-u-i>
@@ -1184,8 +1185,8 @@ const props = {seeMe: {}}
     }
 </script>
 """)
-      myFixture.checkHighlighting()
-      val property = myFixture.polySymbolSourceAtCaret()
+      checkHighlighting()
+      val property = polySymbolSourceAtCaret()
       assertNotNull(property)
       assertTrue(property is JSProperty)
       assertEquals("seeMe", (property as JSProperty).name)
@@ -1198,7 +1199,7 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("compUI.vue", """
+      configureByText("compUI.vue", """
 <script>
     export default {
         name: 'compUI',
@@ -1208,7 +1209,7 @@ const props = {seeMe: {}}
     }
 </script>
 """)
-      myFixture.configureByText("ImportedComponentPropsAsObject.vue", """
+      configureByText("ImportedComponentPropsAsObject.vue", """
 <template>
     <div id="app">
         <comp-u-i <caret>see-me="12345" butNotThis="112"></comp-u-i>
@@ -1221,8 +1222,8 @@ const props = {seeMe: {}}
     }
 </script>
 """)
-      myFixture.checkHighlighting()
-      val property = myFixture.polySymbolSourceAtCaret()
+      checkHighlighting()
+      val property = polySymbolSourceAtCaret()
       assertNotNull(property)
       assertTrue(property is JSProperty)
       assertTrue(property!!.parent.parent is JSProperty)
@@ -1237,7 +1238,7 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("MixinWithProp.vue", """
+      configureByText("MixinWithProp.vue", """
 <script>
     export default {
         props: {
@@ -1253,7 +1254,7 @@ const props = {seeMe: {}}
     }
 </script>
 """)
-      myFixture.configureByText("CompWithMixin.vue", """
+      configureByText("CompWithMixin.vue", """
 <template>
     <div>
         <div>{{ mixinProp }}</div>
@@ -1267,7 +1268,7 @@ const props = {seeMe: {}}
     }
 </script>
 """)
-      myFixture.configureByText("ParentComp.vue", """
+      configureByText("ParentComp.vue", """
 <template>
   <comp-with-mixin <caret>mixin-prop=123>1</comp-with-mixin>
 </template>
@@ -1279,7 +1280,7 @@ const props = {seeMe: {}}
 </script>
 """)
 
-      val property = myFixture.polySymbolSourceAtCaret()
+      val property = polySymbolSourceAtCaret()
       assertInstanceOf(property, JSProperty::class.java)
       assertEquals("mixinProp", (property as JSProperty).name)
       assertInstanceOf(property.parent.parent, JSProperty::class.java)
@@ -1293,21 +1294,21 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("FirstMixin.vue", """
+      configureByText("FirstMixin.vue", """
 <script>
   export default {
     props: ['firstMixinProp']
   }
 </script>
 """)
-      myFixture.configureByText("SecondMixin.vue", """
+      configureByText("SecondMixin.vue", """
 <script>
   export default {
     props: ['secondMixinProp']
   }
 </script>
 """)
-      myFixture.configureByText("CompWithTwoMixins.vue", """
+      configureByText("CompWithTwoMixins.vue", """
 <template>
   <comp-with-two-mixins <caret>first-mixin-prop=1 second-mixin-prop=2 />
 </template>
@@ -1321,10 +1322,10 @@ const props = {seeMe: {}}
   }
 </script>
 """)
-      myFixture.checkHighlighting(true, false, true)
+      checkHighlighting(true, false, true)
 
       val checkResolve = { propName: String, file: String ->
-        val literal = myFixture.polySymbolSourceAtCaret()
+        val literal = polySymbolSourceAtCaret()
         assertInstanceOf(literal, JSLiteralExpression::class.java)
         assertEquals(propName, (literal as JSLiteralExpression).stringValue)
         assertInstanceOf(literal.parent.parent, JSProperty::class.java)
@@ -1333,9 +1334,9 @@ const props = {seeMe: {}}
       }
       checkResolve("firstMixinProp", "FirstMixin.vue")
 
-      val attribute = myFixture.findElementByText("second-mixin-prop", XmlAttribute::class.java)
+      val attribute = findElementByText("second-mixin-prop", XmlAttribute::class.java)
       assertNotNull(attribute)
-      myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
+      editor.caretModel.moveToOffset(attribute.textOffset)
       checkResolve("secondMixinProp", "SecondMixin.vue")
     }
   }
@@ -1345,7 +1346,7 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("ResolveIntoLocalMixin.vue", """
+      configureByText("ResolveIntoLocalMixin.vue", """
 <template>
     <local-mixin <caret>local-mixin-prop="1" local-prop="1"></local-mixin>
 </template>
@@ -1378,7 +1379,7 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("ResolveInMixinLiteral.vue", """
+      configureByText("ResolveInMixinLiteral.vue", """
 <template>
     <local-mixin <caret>prop-in-mixin-literal="11" local-prop="1"></local-mixin>
 </template>
@@ -1402,8 +1403,8 @@ const props = {seeMe: {}}
     }
   }
 
-  private fun doTestResolveIntoProperty(name: String) {
-    val property = myFixture.polySymbolSourceAtCaret()
+  private fun CodeInsightTestFixture.doTestResolveIntoProperty(name: String) {
+    val property = polySymbolSourceAtCaret()
     assertInstanceOf(property, JSProperty::class.java)
     assertEquals(name, (property as JSProperty).name)
     assertInstanceOf(property.parent.parent, JSProperty::class.java)
@@ -1415,8 +1416,8 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("GlobalMixins.js", globalMixinText())
-      myFixture.configureByText("ResolveIntoGlobalMixin1.vue", """
+      configureByText("GlobalMixins.js", globalMixinText())
+      configureByText("ResolveIntoGlobalMixin1.vue", """
 <template>
     <local-comp <caret>hi2dden="found" interesting-prop="777"</local-comp>
 </template>
@@ -1436,8 +1437,8 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("GlobalMixins.js", globalMixinText())
-      myFixture.configureByText("ResolveIntoGlobalMixin2.vue", """
+      configureByText("GlobalMixins.js", globalMixinText())
+      configureByText("ResolveIntoGlobalMixin2.vue", """
 <template>
     <local-comp hi2dden="found" <caret>interesting-prop="777"</local-comp>
 </template>
@@ -1457,10 +1458,10 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("TypeScriptResolve.vue", """
+      configureByText("TypeScriptResolve.vue", """
 <script lang="ts"><caret>encodeURI('a')</script>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val function = reference!!.resolve()
       assertNotNull(function)
@@ -1474,10 +1475,10 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("TypeScriptResolve.vue", """
+      configureByText("TypeScriptResolve.vue", """
 <script><caret>encodeURI('a')</script>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val function = reference!!.resolve()
       assertNotNull(function)
@@ -1491,7 +1492,7 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("VBindCommonResolve.vue", """
+      configureByText("VBindCommonResolve.vue", """
 <template>
     <for-v-bind :<caret>test-prop.camel="1"></for-v-bind>
 </template>
@@ -1513,13 +1514,13 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("../common/customDirectives", ".")
-      myFixture.configureFromTempProjectFile("CustomDirectives.vue")
-      val attribute = myFixture.findElementByText("v-focus", XmlAttribute::class.java)
+      copyDirectoryToProject("../common/customDirectives", ".")
+      configureFromTempProjectFile("CustomDirectives.vue")
+      val attribute = findElementByText("v-focus", XmlAttribute::class.java)
       assertNotNull(attribute)
-      myFixture.editor.caretModel.moveToOffset(attribute.textOffset + 2)
+      editor.caretModel.moveToOffset(attribute.textOffset + 2)
 
-      val callExpression = myFixture.polySymbolSourceAtCaret()
+      val callExpression = polySymbolSourceAtCaret()
       assertNotNull(callExpression)
       // unstub for test
       assertNotNull(callExpression!!.text)
@@ -1533,17 +1534,17 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("../common/customDirectives", ".")
-      myFixture.configureFromTempProjectFile("CustomDirectives.vue")
+      copyDirectoryToProject("../common/customDirectives", ".")
+      configureFromTempProjectFile("CustomDirectives.vue")
 
       arrayOf(Trinity("v-local-directive", "localDirective", "CustomDirectives.vue"),
               Trinity("v-some-other-directive", "someOtherDirective", "CustomDirectives.vue"),
               Trinity("v-click-outside", "click-outside", "CustomDirectives.js"),
               Trinity("v-imported-directive", "importedDirective", "importedDirective.js"))
         .forEach {
-          val attribute = myFixture.findElementByText(it.first, XmlAttribute::class.java)
+          val attribute = findElementByText(it.first, XmlAttribute::class.java)
           assertNotNull(attribute)
-          myFixture.editor.caretModel.moveToOffset(attribute.textOffset + 2)
+          editor.caretModel.moveToOffset(attribute.textOffset + 2)
           doTestResolveIntoDirective(it.second, it.third)
         }
     }
@@ -1554,25 +1555,25 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("../common/customDirectivesLinkedFiles", ".")
-      myFixture.configureVueDependencies()
-      myFixture.configureFromTempProjectFile("CustomDirectives.html")
+      copyDirectoryToProject("../common/customDirectivesLinkedFiles", ".")
+      configureVueDependencies()
+      configureFromTempProjectFile("CustomDirectives.html")
 
       arrayOf(Trinity("v-local-directive", "localDirective", "CustomDirectives.js"),
               Trinity("v-some-other-directive", "someOtherDirective", "CustomDirectives.js"),
               Trinity("v-click-outside", "click-outside", "GlobalCustomDirectives.js"),
               Trinity("v-imported-directive", "importedDirective", "importedDirective.js"))
         .forEach {
-          val attribute = myFixture.findElementByText(it.first, XmlAttribute::class.java)
+          val attribute = findElementByText(it.first, XmlAttribute::class.java)
           assertNotNull(attribute)
-          myFixture.editor.caretModel.moveToOffset(attribute.textOffset + 2)
+          editor.caretModel.moveToOffset(attribute.textOffset + 2)
           doTestResolveIntoDirective(it.second, it.third)
         }
     }
   }
 
-  private fun doTestResolveIntoDirective(directive: String, fileName: String) {
-    val property = myFixture.polySymbolSourceAtCaret()
+  private fun CodeInsightTestFixture.doTestResolveIntoDirective(directive: String, fileName: String) {
+    val property = polySymbolSourceAtCaret()
     assertNotNull(directive, property)
     when (property) {
       is JSProperty -> {
@@ -1598,14 +1599,14 @@ const props = {seeMe: {}}
       VUE_2_5_3,
       configureFile = false,
     ) {
-      myFixture.configureByText("ResolveIntoVueDefinitions.vue", """
+      configureByText("ResolveIntoVueDefinitions.vue", """
 <script>
   export default {
     <caret>mixins: []
   }
 </script>
 """)
-      val reference = myFixture.getReferenceAtCaretPosition()
+      val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val target = reference!!.resolve()
       assertNotNull(target)
@@ -1626,7 +1627,7 @@ const props = {seeMe: {}}
         Trinity("el-button-group", "ElButtonGroup", "button-group.vue")
       )
       testData.forEach {
-        myFixture.configureByText("ResolveElementUiComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
+        configureByText("ResolveElementUiComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
         doResolveIntoLibraryComponent(it.second, it.third)
       }
     }
@@ -1639,14 +1640,14 @@ const props = {seeMe: {}}
       VueTestModule.MINT_UI_2_2_3,
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies()
+      configureVueDependencies()
       val testData = arrayOf(
         Trinity("mt-field", "mt-field", "field.vue"),
         Trinity("mt-swipe", "mt-swipe", "swipe.vue"),
         Trinity("mt-swipe-item", "mt-swipe-item", "swipe-item.vue")
       )
       testData.forEach {
-        myFixture.configureByText("ResolveMintUiComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
+        configureByText("ResolveMintUiComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
         doResolveIntoLibraryComponent(it.second, it.third)
       }
     }
@@ -1671,7 +1672,7 @@ const props = {seeMe: {}}
         assertTrue(target.parent is JSCallExpression)
       }
       else {
-        doResolveIntoLibraryComponent(it.second, it.third)
+        myFixture.doResolveIntoLibraryComponent(it.second, it.third)
       }
     }
   }
@@ -1681,13 +1682,13 @@ const props = {seeMe: {}}
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("date-picker.js", """
+      configureByText("date-picker.js", """
 export default {
     name: 'ElDatePicker',
     mixins: []
 }
 """)
-      myFixture.configureByText("index.js", """
+      configureByText("index.js", """
 import DatePicker from './date-picker';
 
 /* istanbul ignore next */
@@ -1697,7 +1698,7 @@ DatePicker.install = function install(Vue) {
 
 export default DatePicker;
 """)
-      myFixture.configureByText("usage.vue", """
+      configureByText("usage.vue", """
 <template>
 <<caret>el-date-picker />
 </template>
@@ -1711,17 +1712,17 @@ export default DatePicker;
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("a.vue", "")
-      myFixture.configureByText("lib-comp.es6",
-                                """
+      configureByText("a.vue", "")
+      configureByText("lib-comp.es6",
+                      """
 export default {
   name: 'lib-comp',
   template: '',
   render() {}
 }
 """)
-      myFixture.configureByText("lib.es6",
-                                """
+      configureByText("lib.es6",
+                      """
 import LibComp from './lib-comp';
 const obj = { LibComp };
 
@@ -1729,8 +1730,8 @@ Object.keys(obj).forEach(key => {
         Vue.component(key, obj[key]);
     });
 """)
-      myFixture.configureByText("ResolveSimpleObjectMemberComponent.vue",
-                                """<template><<caret>lib-comp/></template>""")
+      configureByText("ResolveSimpleObjectMemberComponent.vue",
+                      """<template><<caret>lib-comp/></template>""")
       doResolveIntoLibraryComponent("lib-comp", "lib-comp.es6")
     }
   }
@@ -1740,17 +1741,17 @@ Object.keys(obj).forEach(key => {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("a.vue", "")
-      myFixture.configureByText("lib-comp-for-alias.es6",
-                                """
+      configureByText("a.vue", "")
+      configureByText("lib-comp-for-alias.es6",
+                      """
 export default {
   name: 'lib-comp',
   template: '',
   render() {}
 }
 """)
-      myFixture.configureByText("libAlias.es6",
-                                """
+      configureByText("libAlias.es6",
+                      """
 import Alias from './lib-comp-for-alias';
 const obj = { Alias };
 
@@ -1758,10 +1759,10 @@ Object.keys(obj).forEach(key => {
         Vue.component(key, obj[key]);
     });
 """)
-      myFixture.configureByText("ResolveAliasedObjectMemberComponent.vue",
-                                """<template><<caret>alias/></template>""")
+      configureByText("ResolveAliasedObjectMemberComponent.vue",
+                      """<template><<caret>alias/></template>""")
 
-      myFixture.checkGotoDeclaration("<<caret>alias/>", "export default <caret>{\n", "lib-comp-for-alias.es6")
+      checkGotoDeclaration("<<caret>alias/>", "export default <caret>{\n", "lib-comp-for-alias.es6")
     }
   }
 
@@ -1770,17 +1771,17 @@ Object.keys(obj).forEach(key => {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("a.vue", "")
-      myFixture.configureByText("lib-spread.es6",
-                                """
+      configureByText("a.vue", "")
+      configureByText("lib-spread.es6",
+                      """
 export default {
   name: 'lib-spread',
   template: '',
   render() {}
 }
 """)
-      myFixture.configureByText("lib-register-spread.es6",
-                                """
+      configureByText("lib-register-spread.es6",
+                      """
 import LibSpread from './lib-spread';
 const obj = { LibSpread };
 const other = {...obj};
@@ -1789,8 +1790,8 @@ Object.keys(other).forEach(key => {
         Vue.component(key, other[key]);
     });
 """)
-      myFixture.configureByText("ResolveObjectWithSpreadComponent.vue",
-                                """<template><<caret>lib-spread/></template>""")
+      configureByText("ResolveObjectWithSpreadComponent.vue",
+                      """<template><<caret>lib-spread/></template>""")
       doResolveIntoLibraryComponent("lib-spread", "lib-spread.es6")
     }
   }
@@ -1800,17 +1801,17 @@ Object.keys(other).forEach(key => {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("a.vue", "")
-      myFixture.configureByText("lib-spread.es6",
-                                """
+      configureByText("a.vue", "")
+      configureByText("lib-spread.es6",
+                      """
 export default {
   name: 'lib-spread',
   template: '',
   render() {}
 }
 """)
-      myFixture.configureByText("lib-register-spread.es6",
-                                """
+      configureByText("lib-register-spread.es6",
+                      """
 import LibSpreadAlias from './lib-spread';
 const obj = { LibSpreadAlias };
 const other = {...obj};
@@ -1819,9 +1820,9 @@ Object.keys(other).forEach(key => {
         Vue.component(key, other[key]);
     });
 """)
-      myFixture.configureByText("ResolveObjectWithSpreadComponentAliased.vue",
-                                """<template><<caret>lib-spread-alias/></template>""")
-      myFixture.checkGotoDeclaration("<<caret>lib-spread-alias", "export default <caret>{\n", "lib-spread.es6")
+      configureByText("ResolveObjectWithSpreadComponentAliased.vue",
+                      """<template><<caret>lib-spread-alias/></template>""")
+      checkGotoDeclaration("<<caret>lib-spread-alias", "export default <caret>{\n", "lib-spread.es6")
     }
   }
 
@@ -1830,17 +1831,17 @@ Object.keys(other).forEach(key => {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("a.vue", "")
-      myFixture.configureByText("lib-spread.es6",
-                                """
+      configureByText("a.vue", "")
+      configureByText("lib-spread.es6",
+                      """
 export default {
   name: 'lib-spread',
   template: '',
   render() {}
 }
 """)
-      myFixture.configureByText("lib-register-spread.es6",
-                                """
+      configureByText("lib-register-spread.es6",
+                      """
 import LibSpread from './lib-spread';
 const other = {...{ LibSpread }};
 
@@ -1848,8 +1849,8 @@ Object.keys(other).forEach(key => {
         Vue.component(key, other[key]);
     });
 """)
-      myFixture.configureByText("ResolveObjectWithSpreadLiteralComponent.vue",
-                                """<template><<caret>lib-spread/></template>""")
+      configureByText("ResolveObjectWithSpreadLiteralComponent.vue",
+                      """<template><<caret>lib-spread/></template>""")
       doResolveIntoLibraryComponent("lib-spread", "lib-spread.es6")
     }
   }
@@ -1859,13 +1860,13 @@ Object.keys(other).forEach(key => {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("a.vue", "")
-      myFixture.configureByText("CompForForIn.es6",
-                                """export default {
+      configureByText("a.vue", "")
+      configureByText("CompForForIn.es6",
+                      """export default {
 name: 'compForForIn',
 template: '',
 render() {}""")
-      myFixture.configureByText("register.es6", """
+      configureByText("register.es6", """
 import CompForForIn from './CompForForIn';
 
       const components = {
@@ -1882,8 +1883,8 @@ components.install = (Vue, options = {}) => {
     }
 }
 """)
-      myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
-                                """<template><<caret>CompForForIn/></template>""")
+      configureByText("ResolveWithExplicitForInComponentsBinding.vue",
+                      """<template><<caret>CompForForIn/></template>""")
       doResolveIntoLibraryComponent("compForForIn", "CompForForIn.es6")
     }
   }
@@ -1893,13 +1894,13 @@ components.install = (Vue, options = {}) => {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("a.vue", "")
-      myFixture.configureByText("CompForForIn.vue",
-                                """<script>export default {
+      configureByText("a.vue", "")
+      configureByText("CompForForIn.vue",
+                      """<script>export default {
 name: 'compForForIn',
 template: '',
 render() {}</script>""")
-      myFixture.configureByText("register.es6", """
+      configureByText("register.es6", """
 import CompForForIn from './CompForForIn';
 
       const components = {
@@ -1916,8 +1917,8 @@ components.install = (Vue, options = {}) => {
     }
 }
 """)
-      myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
-                                """<template><<caret>CompForForIn/></template>""")
+      configureByText("ResolveWithExplicitForInComponentsBinding.vue",
+                      """<template><<caret>CompForForIn/></template>""")
       doResolveIntoLibraryComponent("compForForIn", "CompForForIn.vue")
     }
   }
@@ -1928,8 +1929,8 @@ components.install = (Vue, options = {}) => {
       configureFile = false,
     ) {
       createTwoClassComponents(myFixture)
-      myFixture.configureByText("ResolveWithClassComponent.vue",
-                                """
+      configureByText("ResolveWithClassComponent.vue",
+                      """
 <template>
   <<caret>ShortVue/>
   <LongComponent/>
@@ -1949,7 +1950,7 @@ export default class UsageComponent extends Vue {
 }
 </script>
 """)
-      myFixture.checkGotoDeclaration("<Short<caret>Vue", "default class <caret>ShortComponent", "ShortComponent.vue")
+      checkGotoDeclaration("<Short<caret>Vue", "default class <caret>ShortComponent", "ShortComponent.vue")
     }
   }
 
@@ -1958,10 +1959,10 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies()
+      configureVueDependencies()
       createTwoClassComponents(myFixture, true)
-      myFixture.configureByText("ResolveWithClassComponentTs.vue",
-                                """
+      configureByText("ResolveWithClassComponentTs.vue",
+                      """
 <template>
   <ShortVue/>
   <<caret>LongComponent/>
@@ -1981,10 +1982,10 @@ export default class UsageComponent extends Vue {
 }
 </script>
 """)
-      val target = myFixture.resolveToPolySymbolSource("<<caret>LongComponent/>")
+      val target = resolveToPolySymbolSource("<<caret>LongComponent/>")
       assertEquals("ResolveWithClassComponentTs.vue", target.containingFile.name)
       assertInstanceOf(target, JSProperty::class.java)
-      myFixture.checkGotoDeclaration("<<caret>LongComponent/>", "export default class <caret>LongComponent", "LongComponent.vue")
+      checkGotoDeclaration("<<caret>LongComponent/>", "export default class <caret>LongComponent", "LongComponent.vue")
     }
   }
 
@@ -1994,14 +1995,14 @@ export default class UsageComponent extends Vue {
       configureFile = false,
     ) {
       createLocalComponentsExtendsData(myFixture, false)
-      myFixture.type("prop-from-a=\"\"")
-      myFixture.editor.caretModel.moveToOffset(myFixture.editor.caretModel.offset - 5)
+      type("prop-from-a=\"\"")
+      editor.caretModel.moveToOffset(editor.caretModel.offset - 5)
       doTestResolveIntoProperty("propFromA")
     }
   }
 
-  private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {
-    val target = myFixture.polySymbolSourceAtCaret()
+  private fun CodeInsightTestFixture.doResolveIntoLibraryComponent(compName: String, fileName: String) {
+    val target = polySymbolSourceAtCaret()
     assertEquals(fileName, target!!.containingFile.name)
     assertTrue(target.parent is JSProperty)
     assertEquals(compName, StringUtil.unquoteString((target.parent as JSProperty).value!!.text))
@@ -2013,18 +2014,18 @@ export default class UsageComponent extends Vue {
       configureFile = false,
     ) {
       defineRecursiveMixedMixins(myFixture)
-      myFixture.configureByText("ResolveWithRecursiveMixins.vue", """
+      configureByText("ResolveWithRecursiveMixins.vue", """
         <template>
           <<caret>HiddenComponent/>
         </template>
       """)
-      myFixture.checkGotoDeclaration("<Hidden<caret>Component/>", "export default <caret>{", "hidden-component.vue")
-      myFixture.configureByText("ResolveWithRecursiveMixins2.vue", """
+      checkGotoDeclaration("<Hidden<caret>Component/>", "export default <caret>{", "hidden-component.vue")
+      configureByText("ResolveWithRecursiveMixins2.vue", """
         <template>
           <<caret>OneMoreComponent/>
         </template>
       """)
-      myFixture.checkGotoDeclaration("<One<caret>MoreComponent/>", "default class <caret>Kuku extends", "OneMoreComponent.vue")
+      checkGotoDeclaration("<One<caret>MoreComponent/>", "default class <caret>Kuku extends", "OneMoreComponent.vue")
     }
   }
 
@@ -2033,13 +2034,13 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("foo.vue", "<template lang='pug'>\n" +
-                                           "    .someClass\n" +
-                                           "</template>\n" +
-                                           "<style>\n" +
-                                           "    .someClass<caret> {}\n" +
-                                           "</style>")
-      val usages = myFixture.findUsages(myFixture.elementAtCaret)
+      configureByText("foo.vue", "<template lang='pug'>\n" +
+                                 "    .someClass\n" +
+                                 "</template>\n" +
+                                 "<style>\n" +
+                                 "    .someClass<caret> {}\n" +
+                                 "</style>")
+      val usages = findUsages(elementAtCaret)
       assertEquals(2, usages.size)
     }
   }
@@ -2049,12 +2050,12 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.addFileToProject("HelloWorld.vue", """
+      addFileToProject("HelloWorld.vue", """
       <script>
         const HelloWorld = { name: 'HelloWorld' };
         export default HelloWorld;
       </script>""")
-      myFixture.configureByText("App.vue", """
+      configureByText("App.vue", """
       <template>
         <HelloWorld<caret> msg="foo"></HelloWorld>
       </template>
@@ -2063,8 +2064,8 @@ export default class UsageComponent extends Vue {
         export default app;
         const app = { name: 'app', components: { HelloWorld } };
       </script>""")
-      myFixture.checkGotoDeclaration("<Hello<caret>World", "HelloWorld = <caret>{ name:",
-                                     "HelloWorld.vue")
+      checkGotoDeclaration("<Hello<caret>World", "HelloWorld = <caret>{ name:",
+                           "HelloWorld.vue")
     }
   }
 
@@ -2074,7 +2075,7 @@ export default class UsageComponent extends Vue {
       VUE_2_6_10,
       configureFile = false,
     ) {
-      val file = myFixture.configureByText("a-component.vue", """
+      val file = configureByText("a-component.vue", """
       <script>
         export default {
           model: {
@@ -2094,7 +2095,7 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("a.vue", """
+      configureByText("a.vue", """
        <script>
         import Foo from "foo.vue"
         export default {
@@ -2103,7 +2104,7 @@ export default class UsageComponent extends Vue {
       </script>
       <template><Foo></Foo></template>
     """.trimIndent())
-      myFixture.resolveToPolySymbolSource("<F<caret>oo>")
+      resolveToPolySymbolSource("<F<caret>oo>")
         .parent.text
         .let { assertEquals("{ Foo }", it) }
     }
@@ -2115,7 +2116,7 @@ export default class UsageComponent extends Vue {
       VUE_2_6_10,
       configureFile = false,
     ) {
-      val file = myFixture.configureByFile("at_component.vue")
+      val file = configureByFile("at_component.vue")
       val component = VueModelManager.findEnclosingContainer(file) as VueComponent
 
       val getNames = { list: Collection<VueSymbol> -> list.map { it.name }.sorted() }
@@ -2136,7 +2137,7 @@ export default class UsageComponent extends Vue {
       VUE_2_6_10,
       configureFile = false,
     ) {
-      val file = myFixture.configureByFile("at_component_ts.vue")
+      val file = configureByFile("at_component_ts.vue")
       val component = VueModelManager.findEnclosingContainer(file) as VueComponent
 
       val getNames = { list: Collection<VueSymbol> -> list.map { it.name }.sorted() }
@@ -2156,8 +2157,8 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("web-types-source", ".")
-      myFixture.configureFromTempProjectFile("src/App.vue")
+      copyDirectoryToProject("web-types-source", ".")
+      configureFromTempProjectFile("src/App.vue")
 
       mapOf(
         Pair("<relative<caret>-module-ref-local>", "export class RelativeModuleRefLocal {\n\n}"),
@@ -2171,7 +2172,7 @@ export default class UsageComponent extends Vue {
         .forEach { testCase ->
           assertEquals(
             testCase.value,
-            myFixture.resolveToPolySymbolSource(testCase.key)
+            resolveToPolySymbolSource(testCase.key)
               .let {
                 (it as? JSImplicitElement)?.context ?: it
               }.text)
@@ -2185,10 +2186,10 @@ export default class UsageComponent extends Vue {
       VUE_2_5_3,
       configureFile = false,
     ) {
-      myFixture.configureByFile("vueDefaultSymbols.vue")
-      myFixture.checkGotoDeclaration("\$<caret>slots", "readonly <caret>\$slots", "vue.d.ts")
-      myFixture.configureByFile("vueDefaultSymbols.vue")
-      myFixture.checkGotoDeclaration("\$<caret>emit()", "<caret>\$emit(event:", "vue.d.ts")
+      configureByFile("vueDefaultSymbols.vue")
+      checkGotoDeclaration("\$<caret>slots", "readonly <caret>\$slots", "vue.d.ts")
+      configureByFile("vueDefaultSymbols.vue")
+      checkGotoDeclaration("\$<caret>emit()", "<caret>\$emit(event:", "vue.d.ts")
     }
   }
 
@@ -2197,10 +2198,10 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("resolve-vue-loader-url", ".")
-      myFixture.configureFromTempProjectFile("App.vue")
+      copyDirectoryToProject("resolve-vue-loader-url", ".")
+      configureFromTempProjectFile("App.vue")
       assertEquals("vue-multiselect.min.css",
-                   myFixture.resolveReference("vue-multiselect.<caret>min.css")
+                   resolveReference("vue-multiselect.<caret>min.css")
                      .containingFile.name)
     }
   }
@@ -2210,9 +2211,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("../completion/slotNames", ".")
-      myFixture.copyFileToProject("slotNames/test2.vue", "test2.vue")
-      myFixture.configureFromTempProjectFile("test2.vue")
+      copyDirectoryToProject("../completion/slotNames", ".")
+      copyFileToProject("slotNames/test2.vue", "test2.vue")
+      configureFromTempProjectFile("test2.vue")
 
       for ((tag, slotName, slotDeclText) in listOf(
         Triple("script-template-vue", "scriptTemplateVue1", "<slot name=\"scriptTemplateVue1\"></slot>"),
@@ -2224,7 +2225,7 @@ export default class UsageComponent extends Vue {
         val slotWithCaret = slotName.replaceRange(1, 1, "<caret>")
         for (signature in listOf("<$tag><template v-slot:$slotWithCaret",
                                  "<$tag><div slot=\"$slotWithCaret\"")) {
-          val element = myFixture.resolveToPolySymbolSource(signature)
+          val element = resolveToPolySymbolSource(signature)
           assertEquals(signature, slotDeclText, element.text)
         }
       }
@@ -2236,9 +2237,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies("some_lib" to "0.0.0")
-      myFixture.copyDirectoryToProject("filters/", ".")
-      myFixture.configureFromTempProjectFile("App.vue")
+      configureVueDependencies("some_lib" to "0.0.0")
+      copyDirectoryToProject("filters/", ".")
+      configureFromTempProjectFile("App.vue")
       for ((filterName, resolvedItemText) in listOf(
         Pair("localFilter", "localFilter: function (arg1, arg2, arg3) { return true }"),
         Pair("globalFilter", "function (value) { return 12 }"),
@@ -2246,11 +2247,11 @@ export default class UsageComponent extends Vue {
         Pair("globalQualifiedReferencedFilter", """Vue.filter("globalQualifiedReferencedFilter", danger.filterDefinition)"""),
         Pair("appFilter", """appFilter: function (value, param) { return "" }"""),
       )) {
-        val element = myFixture.resolveReference("<caret>${filterName}")
+        val element = resolveReference("<caret>${filterName}")
         val text = if (element is JSImplicitElement) element.parent.text else element.text
         assertEquals(filterName, resolvedItemText, text)
       }
-      myFixture.assertUnresolvedReference("<caret>wrongFilter")
+      assertUnresolvedReference("<caret>wrongFilter")
     }
   }
 
@@ -2259,12 +2260,12 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies()
-      myFixture.copyDirectoryToProject("props-import-resolve", ".")
-      myFixture.configureFromTempProjectFile("main.vue")
-      val element = myFixture.resolveReference("\"user<caret>Id\"")
+      configureVueDependencies()
+      copyDirectoryToProject("props-import-resolve", ".")
+      configureFromTempProjectFile("main.vue")
+      val element = resolveReference("\"user<caret>Id\"")
       assertEquals("props.js", element.containingFile.name)
-      myFixture.assertUnresolvedReference("\"user<caret>Id2\"")
+      assertUnresolvedReference("\"user<caret>Id2\"")
     }
   }
 
@@ -2274,23 +2275,23 @@ export default class UsageComponent extends Vue {
       VUE_2_6_10,
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("vue-sfc-extend-mixin", ".")
-      myFixture.configureFromTempProjectFile("test.vue")
+      copyDirectoryToProject("vue-sfc-extend-mixin", ".")
+      configureFromTempProjectFile("test.vue")
       assertEquals(
         "test.vue",
-        myFixture.resolveReference("\"sty<caret>le\"").containingFile.name)
-      myFixture.moveToOffsetBySignature("\"<caret>classes\"")
-      myFixture.completeBasic()
-      assertContainsElements(myFixture.renderLookupItems(true, true, true),
+        resolveReference("\"sty<caret>le\"").containingFile.name)
+      moveToOffsetBySignature("\"<caret>classes\"")
+      completeBasic()
+      assertContainsElements(renderLookupItems(true, true, true),
                              "classes (tailText=' (mixin.ts)'; typeText=null; priority=101.0; bold)",
                              "style (tailText=' (test.vue)'; typeText=null; priority=101.0; bold)"
       )
       assertEquals(
         "mixin.ts",
-        myFixture.resolveReference("{{ class<caret>es }}").containingFile.name)
+        resolveReference("{{ class<caret>es }}").containingFile.name)
       assertEquals(
         "mixin.ts",
-        myFixture.resolveReference("\"class<caret>es\"").containingFile.name)
+        resolveReference("\"class<caret>es\"").containingFile.name)
     }
   }
 
@@ -2300,20 +2301,20 @@ export default class UsageComponent extends Vue {
       VUE_2_6_10,
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("vue-sfc-typed-mixins", ".")
-      myFixture.configureFromTempProjectFile("component.vue")
+      copyDirectoryToProject("vue-sfc-typed-mixins", ".")
+      configureFromTempProjectFile("component.vue")
       assertEquals(
         "mixin.ts",
-        myFixture.resolveReference("\"show<caret>1\"").containingFile.name)
-      myFixture.moveToOffsetBySignature("\"show<caret>1\"")
-      myFixture.completeBasic()
-      assertContainsElements(myFixture.renderLookupItems(true, true, true),
+        resolveReference("\"show<caret>1\"").containingFile.name)
+      moveToOffsetBySignature("\"show<caret>1\"")
+      completeBasic()
+      assertContainsElements(renderLookupItems(true, true, true),
                              "show1 (tailText='() (test.methods, mixin.ts)'; typeText='void'; priority=101.0; bold)",
                              "show2 (tailText='() (component.vue)'; typeText='void'; priority=101.0; bold)",
                              "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=101.0; bold)")
-      myFixture.moveToOffsetBySignature("this.<caret>show2()")
-      myFixture.completeBasic()
-      assertContainsElements(myFixture.renderLookupItems(true, true, true),
+      moveToOffsetBySignature("this.<caret>show2()")
+      completeBasic()
+      assertContainsElements(renderLookupItems(true, true, true),
                              "show1 (tailText='() (test.methods, mixin.ts)'; typeText='void'; priority=101.0; bold)",
                              "show2 (tailText='() (component.vue)'; typeText='void'; priority=101.0; bold)",
                              "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=101.0; bold)")
@@ -2326,9 +2327,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByFile("gotoDeclarationDirectives.vue")
-      myFixture.performEditorAction("GotoDeclaration")
-      assertEquals(104, myFixture.caretOffset)
+      configureByFile("gotoDeclarationDirectives.vue")
+      performEditorAction("GotoDeclaration")
+      assertEquals(104, caretOffset)
     }
   }
 
@@ -2337,9 +2338,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByFile("gotoDeclarationTS.vue")
+      configureByFile("gotoDeclarationTS.vue")
       for (check in listOf("base", "watch", "computed", "methods")) {
-        myFixture.checkGotoDeclaration("fetch<caret>Tracks/*$check*/()", "async <caret>fetchTracks()")
+        checkGotoDeclaration("fetch<caret>Tracks/*$check*/()", "async <caret>fetchTracks()")
       }
     }
   }
@@ -2349,9 +2350,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("noScriptSection", ".")
-      myFixture.configureFromTempProjectFile("test.vue")
-      myFixture.checkGotoDeclaration("<no-script<caret>-section>", "<caret><template>", "noScriptSection.vue")
+      copyDirectoryToProject("noScriptSection", ".")
+      configureFromTempProjectFile("test.vue")
+      checkGotoDeclaration("<no-script<caret>-section>", "<caret><template>", "noScriptSection.vue")
     }
   }
 
@@ -2360,8 +2361,8 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByFiles("lazyLoaded/main.vue", "lazyLoaded/index.vue")
-      myFixture.checkGotoDeclaration("<Hello<caret>World", "export default <caret>{", "index.vue")
+      configureByFiles("lazyLoaded/main.vue", "lazyLoaded/index.vue")
+      checkGotoDeclaration("<Hello<caret>World", "export default <caret>{", "index.vue")
     }
   }
 
@@ -2370,9 +2371,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("scriptSetupTagNavigation", ".")
-      myFixture.configureFromTempProjectFile("HelloWorld.vue")
-      myFixture.checkGotoDeclaration("<Sam<caret>ple/>", "<caret><template>", "Sample.vue")
+      copyDirectoryToProject("scriptSetupTagNavigation", ".")
+      configureFromTempProjectFile("HelloWorld.vue")
+      checkGotoDeclaration("<Sam<caret>ple/>", "<caret><template>", "Sample.vue")
     }
   }
 
@@ -2381,13 +2382,13 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByFiles("scriptSetupRef.vue")
+      configureByFiles("scriptSetupRef.vue")
       for (check in listOf(
         Pair("ref='f<caret>oo2'", "const <caret>foo2 = ref("),
         Pair("\$refs.fo<caret>o2 ", "const <caret>foo2 = ref("),
         Pair("\$refs.fo<caret>o ", "<div ref='<caret>foo'>"))) {
 
-        myFixture.checkGotoDeclaration(check.first, check.second)
+        checkGotoDeclaration(check.first, check.second)
       }
     }
   }
@@ -2397,8 +2398,8 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByFiles("scriptSetupPropShadowing.vue")
-      myFixture.checkGotoDeclaration("{{<caret>foo}}", "const <caret>foo = 2")
+      configureByFiles("scriptSetupPropShadowing.vue")
+      checkGotoDeclaration("{{<caret>foo}}", "const <caret>foo = 2")
     }
   }
 
@@ -2407,7 +2408,7 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("../common/createApp", ".")
+      copyDirectoryToProject("../common/createApp", ".")
       sequenceOf(
         Triple("<B<caret>oo>", null, null),
         Triple("<B<caret>ar>", "export default <caret>{", "foo.vue"),
@@ -2420,12 +2421,12 @@ export default class UsageComponent extends Vue {
         Triple("w<div v-f<caret>oo", null, null),
         Triple("w<NonCha<caret>in>", null, null),
       ).forEach { (signature, offset, expectedFileName) ->
-        myFixture.configureFromTempProjectFile("index.html")
+        configureFromTempProjectFile("index.html")
         if (offset == null) {
-          assertEmpty("Expected empty for $signature", myFixture.multiResolvePolySymbolReference(signature))
+          assertEmpty("Expected empty for $signature", multiResolvePolySymbolReference(signature))
         }
         else {
-          myFixture.checkGotoDeclaration(signature, offset, expectedFileName)
+          checkGotoDeclaration(signature, offset, expectedFileName)
         }
       }
     }
@@ -2436,9 +2437,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false) { // WEB-55,
       // 665
-      myFixture.copyDirectoryToProject("../common/createApp", ".")
-      myFixture.configureByText("AppUnlinked.vue", "<template>\n<Bar/>\n</template>")
-      myFixture.checkGotoDeclaration("<B<caret>ar/>", "export default <caret>{", "foo.vue")
+      copyDirectoryToProject("../common/createApp", ".")
+      configureByText("AppUnlinked.vue", "<template>\n<Bar/>\n</template>")
+      checkGotoDeclaration("<B<caret>ar/>", "export default <caret>{", "foo.vue")
     }
   }
 
@@ -2447,7 +2448,7 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      val dir = myFixture.copyDirectoryToProject("../sameMixinsViaStubsAndViaPsi", ".")
+      val dir = copyDirectoryToProject("../sameMixinsViaStubsAndViaPsi", ".")
       val mixinJsFile = dir.findChild("mixin.spec.js")
       val mixinJsPsiFile = mixinJsFile?.let { PsiManager.getInstance(project).findFile(mixinJsFile) }
       if (mixinJsPsiFile == null) {
@@ -2460,7 +2461,7 @@ export default class UsageComponent extends Vue {
       assertNull(mixinJsPsiFile.treeElement)
       PsiManager.getInstance(project).dropPsiCaches()
 
-      myFixture.openFileInEditor(mixinJsFile)
+      openFileInEditor(mixinJsFile)
       assertNotNull(mixinJsPsiFile.calcTreeElement())
       assertNotNull(mixinJsPsiFile.treeElement)
       val mixinsViaPsi = VueModelManager.getGlobal(mixinJsPsiFile).mixins
@@ -2474,10 +2475,10 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("mixinQualifiedReference", ".")
-      myFixture.configureFromTempProjectFile("Test.vue")
+      copyDirectoryToProject("mixinQualifiedReference", ".")
+      configureFromTempProjectFile("Test.vue")
       assertEquals("clickMixin.js",
-                   myFixture.resolveReference("cl<caret>icked(").containingFile.name)
+                   resolveReference("cl<caret>icked(").containingFile.name)
     }
   }
 
@@ -2486,13 +2487,13 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByFile("${getTestName(true)}.vue")
+      configureByFile("${getTestName(true)}.vue")
       sequenceOf(
         "@<caret>add" to "<caret>add,\n",
         "@ch<caret>ange" to "<caret>change(ctx) {\n",
         "v-on:re<caret>move" to "<caret>remove: (ctx)"
       ).forEach { (signature, offset) ->
-        myFixture.checkGotoDeclaration(signature, offset)
+        checkGotoDeclaration(signature, offset)
       }
     }
   }
@@ -2502,13 +2503,13 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByFile("${getTestName(true)}.vue")
+      configureByFile("${getTestName(true)}.vue")
       sequenceOf(
         "m<caret>sg=\"You did it!\"" to "<caret>msg: {type:",
         "auto<caret>focus :value" to "<caret>autofocus: Boolean",
         "autofocus :va<caret>lue" to "<caret>value: {} as",
       ).forEach { (signature, offset) ->
-        myFixture.checkGotoDeclaration(signature, offset)
+        checkGotoDeclaration(signature, offset)
       }
     }
   }
@@ -2518,7 +2519,7 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("InjectLiteral.vue", """
+      configureByText("InjectLiteral.vue", """
       <script>
       export default {
         inject: ['message'],
@@ -2529,7 +2530,7 @@ export default class UsageComponent extends Vue {
         {{message}}
       </template>
     """.trimIndent())
-      myFixture.checkGotoDeclaration("{{me<caret>ssage}}", "inject: [<caret>'message']")
+      checkGotoDeclaration("{{me<caret>ssage}}", "inject: [<caret>'message']")
     }
   }
 
@@ -2538,7 +2539,7 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("InjectProperty.vue", """
+      configureByText("InjectProperty.vue", """
       <script>
       export default {
         inject: {
@@ -2552,7 +2553,7 @@ export default class UsageComponent extends Vue {
         {{message}}
       </template>
     """.trimIndent())
-      myFixture.checkGotoDeclaration("{{mes<caret>sage}}", "<caret>message: {")
+      checkGotoDeclaration("{{mes<caret>sage}}", "<caret>message: {")
     }
   }
 
@@ -2561,7 +2562,7 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("InjectAliased.vue", """
+      configureByText("InjectAliased.vue", """
       <script>
       export default {
         inject: {
@@ -2576,7 +2577,7 @@ export default class UsageComponent extends Vue {
         {{localMessage}}
       </template>
     """.trimIndent())
-      myFixture.checkGotoDeclaration("{{loc<caret>alMessage}}", "<caret>localMessage: {")
+      checkGotoDeclaration("{{loc<caret>alMessage}}", "<caret>localMessage: {")
     }
   }
 
@@ -2585,9 +2586,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject(getTestName(true), "")
-      myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-      myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "Provide.vue")
+      copyDirectoryToProject(getTestName(true), "")
+      configureFromTempProjectFile("${getTestName(false)}.vue")
+      checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "Provide.vue")
     }
   }
 
@@ -2596,9 +2597,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject(getTestName(true), "")
-      myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-      myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "App.vue")
+      copyDirectoryToProject(getTestName(true), "")
+      configureFromTempProjectFile("${getTestName(false)}.vue")
+      checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "App.vue")
     }
   }
 
@@ -2607,9 +2608,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject(getTestName(true), "")
-      myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-      myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
+      copyDirectoryToProject(getTestName(true), "")
+      configureFromTempProjectFile("${getTestName(false)}.vue")
+      checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
     }
   }
 
@@ -2618,9 +2619,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject(getTestName(true), "")
-      myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-      myFixture.checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
+      copyDirectoryToProject(getTestName(true), "")
+      configureFromTempProjectFile("${getTestName(false)}.vue")
+      checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
     }
   }
 
@@ -2629,9 +2630,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject(getTestName(true), "")
-      myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-      myFixture.checkGotoDeclaration("m<caret>essage", "<caret>message: 'msg'", "Provide.vue")
+      copyDirectoryToProject(getTestName(true), "")
+      configureFromTempProjectFile("${getTestName(false)}.vue")
+      checkGotoDeclaration("m<caret>essage", "<caret>message: 'msg'", "Provide.vue")
     }
   }
 
@@ -2640,9 +2641,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject(getTestName(true), "")
-      myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-      myFixture.checkGotoDeclaration("'provide<caret>Deep'", "<caret>provideDeep: 12", "ProvideB.vue")
+      copyDirectoryToProject(getTestName(true), "")
+      configureFromTempProjectFile("${getTestName(false)}.vue")
+      checkGotoDeclaration("'provide<caret>Deep'", "<caret>provideDeep: 12", "ProvideB.vue")
     }
   }
 
@@ -2651,14 +2652,14 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject(getTestName(true), "")
-      myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+      copyDirectoryToProject(getTestName(true), "")
+      configureFromTempProjectFile("${getTestName(false)}.vue")
 
       disableAstLoadingFilter()
 
-      myFixture.enableInspections(VueInspectionsProvider())
-      myFixture.checkHighlighting()
-      myFixture.checkGotoDeclaration("'provided<caret>InCall'", "provide(<caret>'providedInCall", "Provide.vue")
+      enableInspections(VueInspectionsProvider())
+      checkHighlighting()
+      checkGotoDeclaration("'provided<caret>InCall'", "provide(<caret>'providedInCall", "Provide.vue")
     }
   }
 
@@ -2667,9 +2668,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject(getTestName(true), "")
-      myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-      myFixture.checkGotoDeclaration("'global<caret>Provide'", "app.provide(<caret>'globalProvide'", "main.js")
+      copyDirectoryToProject(getTestName(true), "")
+      configureFromTempProjectFile("${getTestName(false)}.vue")
+      checkGotoDeclaration("'global<caret>Provide'", "app.provide(<caret>'globalProvide'", "main.js")
     }
   }
 
@@ -2678,9 +2679,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject(getTestName(true), "")
-      myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-      myFixture.checkGotoDeclaration("'inject<caret>Setup'", "provide(<caret>'injectSetup'", "Provide.vue")
+      copyDirectoryToProject(getTestName(true), "")
+      configureFromTempProjectFile("${getTestName(false)}.vue")
+      checkGotoDeclaration("'inject<caret>Setup'", "provide(<caret>'injectSetup'", "Provide.vue")
     }
   }
 
@@ -2689,9 +2690,9 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject(getTestName(true), "")
-      myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-      myFixture.checkGotoDeclaration("items: IT<caret>est[]", "export interface <caret>ITest", "Button.vue")
+      copyDirectoryToProject(getTestName(true), "")
+      configureFromTempProjectFile("${getTestName(false)}.vue")
+      checkGotoDeclaration("items: IT<caret>est[]", "export interface <caret>ITest", "Button.vue")
     }
   }
 
@@ -2700,7 +2701,7 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("DefineSlots.vue", """
+      configureByText("DefineSlots.vue", """
       <script setup lang="ts">
       defineSlots<{
         default: (props: { msg: string }) => any
@@ -2722,16 +2723,16 @@ export default class UsageComponent extends Vue {
         </div>
       </template>
     """.trimIndent())
-      myFixture.checkGotoDeclaration("name=\"hea<caret>der\"",
-                                     "<caret>header?: (props: { pageTitle?: string }) => any")
-      myFixture.checkGotoDeclaration("pageT<caret>itle=\"Hello!\"",
-                                     "<caret>pageTitle?: string }")
-      myFixture.checkGotoDeclaration("day-o<caret>f-week=\"2\"",
-                                     "<caret>dayOfWeek: number }")
-      myFixture.checkGotoDeclaration("m<caret>sg=\"hello\"",
-                                     "<caret>msg: string }")
-      myFixture.checkGotoDeclaration("ms<caret>g=\"template\"",
-                                     "<caret>msg: string }")
+      checkGotoDeclaration("name=\"hea<caret>der\"",
+                           "<caret>header?: (props: { pageTitle?: string }) => any")
+      checkGotoDeclaration("pageT<caret>itle=\"Hello!\"",
+                           "<caret>pageTitle?: string }")
+      checkGotoDeclaration("day-o<caret>f-week=\"2\"",
+                           "<caret>dayOfWeek: number }")
+      checkGotoDeclaration("m<caret>sg=\"hello\"",
+                           "<caret>msg: string }")
+      checkGotoDeclaration("ms<caret>g=\"template\"",
+                           "<caret>msg: string }")
     }
   }
 
@@ -2740,8 +2741,8 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("defineSlotDefault", "")
-      myFixture.configureByText("Component.vue", """
+      copyDirectoryToProject("defineSlotDefault", "")
+      configureByText("Component.vue", """
       <script setup lang='ts'>
       import TextField from './TextField.vue'
       </script>
@@ -2755,7 +2756,7 @@ export default class UsageComponent extends Vue {
 
       assertEquals(
         "default?: (props: { field: FieldSlotPropText }) => any",
-        myFixture.multiResolvePolySymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
+        multiResolvePolySymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
           ?.asSafely<PsiSourcedPolySymbol>()?.source?.text
       )
     }
@@ -2766,8 +2767,8 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("defineSlotDefault", "")
-      myFixture.configureByText("Component.vue", """
+      copyDirectoryToProject("defineSlotDefault", "")
+      configureByText("Component.vue", """
       <script setup lang='ts'>
       import TextField from './TextField.vue'
       </script>
@@ -2783,7 +2784,7 @@ export default class UsageComponent extends Vue {
 
       assertEquals(
         "default?: (props: { field: FieldSlotPropText }) => any",
-        myFixture.multiResolvePolySymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
+        multiResolvePolySymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
           ?.asSafely<PsiSourcedPolySymbol>()?.source?.text
       )
     }
@@ -2794,8 +2795,8 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject("defineSlotDefault", "")
-      myFixture.configureByText("Component.vue", """
+      copyDirectoryToProject("defineSlotDefault", "")
+      configureByText("Component.vue", """
       <script setup lang='ts'>
       import TextField from './TextField.vue'
       </script>
@@ -2811,7 +2812,7 @@ export default class UsageComponent extends Vue {
 
       assertEquals(
         "default?: (props: { field: FieldSlotPropText }) => any",
-        myFixture.multiResolvePolySymbolReference("v-slot:def<caret>ault='{ field }'").asSingleSymbol()
+        multiResolvePolySymbolReference("v-slot:def<caret>ault='{ field }'").asSingleSymbol()
           ?.asSafely<PsiSourcedPolySymbol>()?.source?.text
       )
     }
@@ -2822,7 +2823,7 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureByText("HelloWorld.vue", """
+      configureByText("HelloWorld.vue", """
       <script lang="ts">
       export const exportedFromScript = 123;
       </script>
@@ -2837,7 +2838,7 @@ export default class UsageComponent extends Vue {
       
       <template></template>
     """.trimIndent())
-      myFixture.configureByText("ComponentUsage.vue", """
+      configureByText("ComponentUsage.vue", """
       <template>
         <best-component-of-my-life customProperty="Hello!"/>
       </template>
@@ -2849,9 +2850,9 @@ export default class UsageComponent extends Vue {
       </script>
     """.trimIndent())
 
-      myFixture.checkGotoDeclaration("customPro<caret>perty=\"Hello!\"",
-                                     "defineProps<{ <caret>customProperty: string }>",
-                                     "HelloWorld.vue")
+      checkGotoDeclaration("customPro<caret>perty=\"Hello!\"",
+                           "defineProps<{ <caret>customProperty: string }>",
+                           "HelloWorld.vue")
     }
   }
 
@@ -2860,8 +2861,8 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.copyDirectoryToProject(getTestName(true), "")
-      myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+      copyDirectoryToProject(getTestName(true), "")
+      configureFromTempProjectFile("${getTestName(false)}.vue")
       val declarations = myFixture
         .multiResolvePolySymbolReference("v-bind:input<caret>Prop")
         .asSequence()
@@ -2881,10 +2882,10 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies()
-      myFixture.copyDirectoryToProject("globalComponentsWithTypeofImport", "")
-      myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
-      myFixture.checkGotoDeclaration("ButtonS<caret>FC", "eComponent(<caret>{\n  props: {\n", "ButtonSFC.vue")
+      configureVueDependencies()
+      copyDirectoryToProject("globalComponentsWithTypeofImport", "")
+      configureFromTempProjectFile("${getTestName(false)}.vue")
+      checkGotoDeclaration("ButtonS<caret>FC", "eComponent(<caret>{\n  props: {\n", "ButtonSFC.vue")
     }
   }
 
@@ -2893,10 +2894,10 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies()
-      myFixture.copyDirectoryToProject("resolveGlobalAppComponent", "")
-      myFixture.configureFromTempProjectFile("ForComponent.vue")
-      myFixture.checkGotoDeclaration("<Global<caret>Component></GlobalComponent>", "defineComponent(<caret>{\n", "GlobalComponent.vue")
+      configureVueDependencies()
+      copyDirectoryToProject("resolveGlobalAppComponent", "")
+      configureFromTempProjectFile("ForComponent.vue")
+      checkGotoDeclaration("<Global<caret>Component></GlobalComponent>", "defineComponent(<caret>{\n", "GlobalComponent.vue")
     }
   }
 
@@ -2905,10 +2906,10 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies()
-      myFixture.copyDirectoryToProject("componentCustomProperties", "")
-      myFixture.configureByFile("${getTestName(false)}.vue")
-      myFixture.checkGotoDeclaration("{{\$te<caret>st}}", "<caret>\$test: string", "index.ts")
+      configureVueDependencies()
+      copyDirectoryToProject("componentCustomProperties", "")
+      configureByFile("${getTestName(false)}.vue")
+      checkGotoDeclaration("{{\$te<caret>st}}", "<caret>\$test: string", "index.ts")
     }
   }
 }
