@@ -51,7 +51,6 @@ import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-@Ignore
 class VueResolveTest :
   VueResolveWithPluginTestBase() {
 
