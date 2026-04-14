@@ -43,13 +43,27 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.web.scopes.VueBindingShorthandSymbol
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
+@Ignore
 class VueResolveTest :
-  VueTestCase("resolve", testMode = VueTestMode.NO_PLUGIN) {
+  VueResolveTestBase() {
+
+  @Ignore
+  class WithLegacyPluginTest :
+    VueResolveTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
+
+  class WithoutServiceTest :
+    VueResolveTestBase(testMode = VueTestMode.NO_PLUGIN)
+}
+
+@RunWith(JUnit4::class)
+abstract class VueResolveTestBase(
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+) : VueTestCase("resolve", testMode = testMode) {
 
   override fun adjustConfigurators(
     configurators: List<PolySymbolsTestConfigurator>,
