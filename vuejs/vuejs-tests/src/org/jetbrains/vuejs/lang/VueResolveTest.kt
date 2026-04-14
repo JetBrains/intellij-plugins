@@ -44,7 +44,6 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.web.scopes.VueBindingShorthandSymbol
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
@@ -54,7 +53,6 @@ import org.junit.runners.JUnit4
 class VueResolveTest :
   VueResolveWithPluginTestBase() {
 
-  @Ignore
   class WithLegacyPluginTest :
     VueResolveWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
