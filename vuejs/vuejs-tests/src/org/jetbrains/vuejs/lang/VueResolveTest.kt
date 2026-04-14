@@ -2430,12 +2430,10 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testScriptSetupPropShadowing() {
-    doConfiguredTest(
-      configureFile = false,
-    ) {
-      configureByFiles("scriptSetupPropShadowing.vue")
-      checkGotoDeclaration("{{<caret>foo}}", "const <caret>foo = 2")
-    }
+    doGotoDeclarationTest(
+      fromSignature = "{{<caret>foo}}",
+      declarationSignature = "const <caret>foo = 2",
+    )
   }
 
   @Test
