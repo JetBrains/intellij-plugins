@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
@@ -1537,10 +1536,10 @@ const props = {seeMe: {}}
       copyDirectoryToProject("../common/customDirectives", ".")
       configureFromTempProjectFile("CustomDirectives.vue")
 
-      arrayOf(Trinity("v-local-directive", "localDirective", "CustomDirectives.vue"),
-              Trinity("v-some-other-directive", "someOtherDirective", "CustomDirectives.vue"),
-              Trinity("v-click-outside", "click-outside", "CustomDirectives.js"),
-              Trinity("v-imported-directive", "importedDirective", "importedDirective.js"))
+      arrayOf(Triple("v-local-directive", "localDirective", "CustomDirectives.vue"),
+              Triple("v-some-other-directive", "someOtherDirective", "CustomDirectives.vue"),
+              Triple("v-click-outside", "click-outside", "CustomDirectives.js"),
+              Triple("v-imported-directive", "importedDirective", "importedDirective.js"))
         .forEach {
           val attribute = findElementByText(it.first, XmlAttribute::class.java)
           assertNotNull(attribute)
@@ -1559,10 +1558,10 @@ const props = {seeMe: {}}
       configureVueDependencies()
       configureFromTempProjectFile("CustomDirectives.html")
 
-      arrayOf(Trinity("v-local-directive", "localDirective", "CustomDirectives.js"),
-              Trinity("v-some-other-directive", "someOtherDirective", "CustomDirectives.js"),
-              Trinity("v-click-outside", "click-outside", "GlobalCustomDirectives.js"),
-              Trinity("v-imported-directive", "importedDirective", "importedDirective.js"))
+      arrayOf(Triple("v-local-directive", "localDirective", "CustomDirectives.js"),
+              Triple("v-some-other-directive", "someOtherDirective", "CustomDirectives.js"),
+              Triple("v-click-outside", "click-outside", "GlobalCustomDirectives.js"),
+              Triple("v-imported-directive", "importedDirective", "importedDirective.js"))
         .forEach {
           val attribute = findElementByText(it.first, XmlAttribute::class.java)
           assertNotNull(attribute)
@@ -1622,9 +1621,9 @@ const props = {seeMe: {}}
       configureFile = false,
     ) {
       val testData = arrayOf(
-        Trinity("el-col", "ElCol", "col.js"),
-        Trinity("el-button", "ElButton", "button.vue"),
-        Trinity("el-button-group", "ElButtonGroup", "button-group.vue")
+        Triple("el-col", "ElCol", "col.js"),
+        Triple("el-button", "ElButton", "button.vue"),
+        Triple("el-button-group", "ElButtonGroup", "button-group.vue")
       )
       testData.forEach {
         configureByText("ResolveElementUiComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
@@ -1642,9 +1641,9 @@ const props = {seeMe: {}}
     ) {
       configureVueDependencies()
       val testData = arrayOf(
-        Trinity("mt-field", "mt-field", "field.vue"),
-        Trinity("mt-swipe", "mt-swipe", "swipe.vue"),
-        Trinity("mt-swipe-item", "mt-swipe-item", "swipe-item.vue")
+        Triple("mt-field", "mt-field", "field.vue"),
+        Triple("mt-swipe", "mt-swipe", "swipe.vue"),
+        Triple("mt-swipe-item", "mt-swipe-item", "swipe-item.vue")
       )
       testData.forEach {
         configureByText("ResolveMintUiComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
@@ -1658,8 +1657,8 @@ const props = {seeMe: {}}
   fun _testResolveVuetifyComponent() {
     myFixture.configureVueDependencies(VueTestModule.VUETIFY_0_17_2)
     val testData = arrayOf(
-      Trinity("v-list", "v-list", "VList.js"),
-      Trinity("v-list-tile-content", "v-list-tile-content", "index.js")
+      Triple("v-list", "v-list", "VList.js"),
+      Triple("v-list-tile-content", "v-list-tile-content", "index.js")
     )
     testData.forEach {
       myFixture.configureByText("ResolveVuetifyComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
