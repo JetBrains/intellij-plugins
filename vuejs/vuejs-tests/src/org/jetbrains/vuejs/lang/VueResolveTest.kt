@@ -34,6 +34,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
+import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
 import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_5_3
 import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_6_10
@@ -52,8 +53,8 @@ class VueResolveTest :
 
   override fun adjustConfigurators(
     configurators: List<PolySymbolsTestConfigurator>,
-  ): List<PolySymbolsTestConfigurator> =
-    when (name) {
+  ): List<PolySymbolsTestConfigurator> {
+    val baseConfigurators = when (name) {
       // WA for `package.json`
       //  exclude `WebFrameworkTestModulesConfigurator`
       "testResolveVueLoaderStyleReference",
@@ -63,6 +64,10 @@ class VueResolveTest :
 
       else -> super.adjustConfigurators(configurators)
     }
+    
+    return baseConfigurators
+      .plus(VueTsConfigFile())
+  }
 
   @Test
   fun testResolveInjectionToPropInObject() {
