@@ -34,6 +34,7 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
+import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_5_3
 import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_6_10
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.model.VueComponent
@@ -1579,9 +1580,9 @@ const props = {seeMe: {}}
   @Test
   fun testResolveIntoVueDefinitions() {
     doConfiguredTest(
+      VUE_2_5_3,
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
       myFixture.configureByText("ResolveIntoVueDefinitions.vue", """
 <script>
   export default {
@@ -1601,9 +1602,9 @@ const props = {seeMe: {}}
   @Test
   fun testResolveElementUiComponent() {
     doConfiguredTest(
+      VueTestModule.ELEMENT_UI_2_0_5,
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.ELEMENT_UI_2_0_5)
       val testData = arrayOf(
         Trinity("el-col", "ElCol", "col.js"),
         Trinity("el-button", "ElButton", "button.vue"),
@@ -1619,9 +1620,11 @@ const props = {seeMe: {}}
   @Test
   fun testResolveMintUiComponent() {
     doConfiguredTest(
+      VUE_2_5_3,
+      VueTestModule.MINT_UI_2_2_3,
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.MINT_UI_2_2_3)
+      myFixture.configureVueDependencies()
       val testData = arrayOf(
         Trinity("mt-field", "mt-field", "field.vue"),
         Trinity("mt-swipe", "mt-swipe", "swipe.vue"),
@@ -2053,9 +2056,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testComponentModelProperty() {
     doConfiguredTest(
+      VUE_2_6_10,
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VUE_2_6_10)
       val file = myFixture.configureByText("a-component.vue", """
       <script>
         export default {
@@ -2094,9 +2097,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testAtComponentResolution() {
     doConfiguredTest(
+      VUE_2_6_10,
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VUE_2_6_10)
       val file = myFixture.configureByFile("at_component.vue")
       val component = VueModelManager.findEnclosingContainer(file) as VueComponent
 
@@ -2115,9 +2118,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testAtComponentResolutionTs() {
     doConfiguredTest(
+      VUE_2_6_10,
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VUE_2_6_10)
       val file = myFixture.configureByFile("at_component_ts.vue")
       val component = VueModelManager.findEnclosingContainer(file) as VueComponent
 
@@ -2164,9 +2167,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testVueDefaultSymbols() {
     doConfiguredTest(
+      VUE_2_5_3,
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
       myFixture.configureByFile("vueDefaultSymbols.vue")
       myFixture.checkGotoDeclaration("\$<caret>slots", "readonly <caret>\$slots", "vue.d.ts")
       myFixture.configureByFile("vueDefaultSymbols.vue")
@@ -2253,9 +2256,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testMixinExtend() {
     doConfiguredTest(
+      VUE_2_6_10,
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VUE_2_6_10)
       myFixture.copyDirectoryToProject("vue-sfc-extend-mixin", ".")
       myFixture.configureFromTempProjectFile("test.vue")
       assertEquals(
@@ -2279,9 +2282,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testTypedMixins() {
     doConfiguredTest(
+      VUE_2_6_10,
       configureFile = false,
     ) {
-      myFixture.configureVueDependencies(VUE_2_6_10)
       myFixture.copyDirectoryToProject("vue-sfc-typed-mixins", ".")
       myFixture.configureFromTempProjectFile("component.vue")
       assertEquals(
