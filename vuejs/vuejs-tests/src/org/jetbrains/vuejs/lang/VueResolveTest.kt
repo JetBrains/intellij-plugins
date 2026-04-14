@@ -2555,10 +2555,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testInjectLiteral() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject(getTestName(true), "")
-      configureFromTempProjectFile("${getTestName(false)}.vue")
       checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "Provide.vue")
     }
   }
@@ -2566,10 +2565,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testInjectLiteralProvidedInApp() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject(getTestName(true), "")
-      configureFromTempProjectFile("${getTestName(false)}.vue")
       checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "App.vue")
     }
   }
@@ -2577,10 +2575,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testInjectAlias() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject(getTestName(true), "")
-      configureFromTempProjectFile("${getTestName(false)}.vue")
       checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
     }
   }
@@ -2588,10 +2585,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testInjectAliasDuplicatedName() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject(getTestName(true), "")
-      configureFromTempProjectFile("${getTestName(false)}.vue")
       checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
     }
   }
@@ -2599,10 +2595,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testInjectProperty() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject(getTestName(true), "")
-      configureFromTempProjectFile("${getTestName(false)}.vue")
       checkGotoDeclaration("m<caret>essage", "<caret>message: 'msg'", "Provide.vue")
     }
   }
@@ -2610,10 +2605,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testInjectDeepNested() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject(getTestName(true), "")
-      configureFromTempProjectFile("${getTestName(false)}.vue")
       checkGotoDeclaration("'provide<caret>Deep'", "<caret>provideDeep: 12", "ProvideB.vue")
     }
   }
@@ -2621,11 +2615,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testInjectScriptSetup() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject(getTestName(true), "")
-      configureFromTempProjectFile("${getTestName(false)}.vue")
-
       disableAstLoadingFilter()
 
       enableInspections(VueInspectionsProvider())
@@ -2637,10 +2629,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testInjectAppGlobal() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject(getTestName(true), "")
-      configureFromTempProjectFile("${getTestName(false)}.vue")
       checkGotoDeclaration("'global<caret>Provide'", "app.provide(<caret>'globalProvide'", "main.js")
     }
   }
@@ -2648,10 +2639,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testInjectSetup() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject(getTestName(true), "")
-      configureFromTempProjectFile("${getTestName(false)}.vue")
       checkGotoDeclaration("'inject<caret>Setup'", "provide(<caret>'injectSetup'", "Provide.vue")
     }
   }
@@ -2659,10 +2649,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testImportFromContextScriptScope() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject(getTestName(true), "")
-      configureFromTempProjectFile("${getTestName(false)}.vue")
       checkGotoDeclaration("items: IT<caret>est[]", "export interface <caret>ITest", "Button.vue")
     }
   }
@@ -2830,10 +2819,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testBindShorthand() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "${getTestName(false)}.vue",
+      dir = true,
     ) {
-      copyDirectoryToProject(getTestName(true), "")
-      configureFromTempProjectFile("${getTestName(false)}.vue")
       val declarations = myFixture
         .multiResolvePolySymbolReference("v-bind:input<caret>Prop")
         .asSequence()
