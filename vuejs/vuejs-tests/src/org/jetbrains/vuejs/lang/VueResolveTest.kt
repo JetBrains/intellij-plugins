@@ -1536,16 +1536,17 @@ const props = {seeMe: {}}
       copyDirectoryToProject("../common/customDirectives", ".")
       configureFromTempProjectFile("CustomDirectives.vue")
 
-      arrayOf(Triple("v-local-directive", "localDirective", "CustomDirectives.vue"),
-              Triple("v-some-other-directive", "someOtherDirective", "CustomDirectives.vue"),
-              Triple("v-click-outside", "click-outside", "CustomDirectives.js"),
-              Triple("v-imported-directive", "importedDirective", "importedDirective.js"))
-        .forEach {
-          val attribute = findElementByText(it.first, XmlAttribute::class.java)
-          assertNotNull(attribute)
-          editor.caretModel.moveToOffset(attribute.textOffset + 2)
-          doTestResolveIntoDirective(it.second, it.third)
-        }
+      sequenceOf(
+        Triple("v-local-directive", "localDirective", "CustomDirectives.vue"),
+        Triple("v-some-other-directive", "someOtherDirective", "CustomDirectives.vue"),
+        Triple("v-click-outside", "click-outside", "CustomDirectives.js"),
+        Triple("v-imported-directive", "importedDirective", "importedDirective.js"),
+      ).forEach {
+        val attribute = findElementByText(it.first, XmlAttribute::class.java)
+        assertNotNull(attribute)
+        editor.caretModel.moveToOffset(attribute.textOffset + 2)
+        doTestResolveIntoDirective(it.second, it.third)
+      }
     }
   }
 
@@ -1558,16 +1559,17 @@ const props = {seeMe: {}}
       configureVueDependencies()
       configureFromTempProjectFile("CustomDirectives.html")
 
-      arrayOf(Triple("v-local-directive", "localDirective", "CustomDirectives.js"),
-              Triple("v-some-other-directive", "someOtherDirective", "CustomDirectives.js"),
-              Triple("v-click-outside", "click-outside", "GlobalCustomDirectives.js"),
-              Triple("v-imported-directive", "importedDirective", "importedDirective.js"))
-        .forEach {
-          val attribute = findElementByText(it.first, XmlAttribute::class.java)
-          assertNotNull(attribute)
-          editor.caretModel.moveToOffset(attribute.textOffset + 2)
-          doTestResolveIntoDirective(it.second, it.third)
-        }
+      sequenceOf(
+        Triple("v-local-directive", "localDirective", "CustomDirectives.js"),
+        Triple("v-some-other-directive", "someOtherDirective", "CustomDirectives.js"),
+        Triple("v-click-outside", "click-outside", "GlobalCustomDirectives.js"),
+        Triple("v-imported-directive", "importedDirective", "importedDirective.js"),
+      ).forEach {
+        val attribute = findElementByText(it.first, XmlAttribute::class.java)
+        assertNotNull(attribute)
+        editor.caretModel.moveToOffset(attribute.textOffset + 2)
+        doTestResolveIntoDirective(it.second, it.third)
+      }
     }
   }
 
@@ -1620,12 +1622,11 @@ const props = {seeMe: {}}
       VueTestModule.ELEMENT_UI_2_0_5,
       configureFile = false,
     ) {
-      val testData = arrayOf(
+      sequenceOf(
         Triple("el-col", "ElCol", "col.js"),
         Triple("el-button", "ElButton", "button.vue"),
         Triple("el-button-group", "ElButtonGroup", "button-group.vue")
-      )
-      testData.forEach {
+      ).forEach {
         configureByText("ResolveElementUiComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
         doResolveIntoLibraryComponent(it.second, it.third)
       }
@@ -1640,12 +1641,11 @@ const props = {seeMe: {}}
       configureFile = false,
     ) {
       configureVueDependencies()
-      val testData = arrayOf(
+      sequenceOf(
         Triple("mt-field", "mt-field", "field.vue"),
         Triple("mt-swipe", "mt-swipe", "swipe.vue"),
         Triple("mt-swipe-item", "mt-swipe-item", "swipe-item.vue")
-      )
-      testData.forEach {
+      ).forEach {
         configureByText("ResolveMintUiComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
         doResolveIntoLibraryComponent(it.second, it.third)
       }
@@ -1656,11 +1656,10 @@ const props = {seeMe: {}}
   @Suppress("TestFunctionName", "unused")
   fun _testResolveVuetifyComponent() {
     myFixture.configureVueDependencies(VueTestModule.VUETIFY_0_17_2)
-    val testData = arrayOf(
+    sequenceOf(
       Triple("v-list", "v-list", "VList.js"),
       Triple("v-list-tile-content", "v-list-tile-content", "index.js")
-    )
-    testData.forEach {
+    ).forEach {
       myFixture.configureByText("ResolveVuetifyComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
       if (it.first == "v-list-tile-content") {
         val reference = myFixture.getReferenceAtCaretPosition()
