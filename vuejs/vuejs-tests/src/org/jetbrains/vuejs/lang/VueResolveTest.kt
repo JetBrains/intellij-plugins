@@ -64,7 +64,7 @@ class VueResolveTest :
 
       else -> super.adjustConfigurators(configurators)
     }
-    
+
     return baseConfigurators
       .plus(VueTsConfigFile())
   }
@@ -1511,10 +1511,10 @@ const props = {seeMe: {}}
   @Test
   fun testResolveGlobalCustomDirective() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "CustomDirectives.vue",
+      dirName = "../common/customDirectives",
+      dir = true,
     ) {
-      copyDirectoryToProject("../common/customDirectives", ".")
-      configureFromTempProjectFile("CustomDirectives.vue")
       val attribute = findElementByText("v-focus", XmlAttribute::class.java)
       assertNotNull(attribute)
       editor.caretModel.moveToOffset(attribute.textOffset + 2)
@@ -1531,11 +1531,10 @@ const props = {seeMe: {}}
   @Test
   fun testResolveLocalCustomDirective() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "CustomDirectives.vue",
+      dirName = "../common/customDirectives",
+      dir = true,
     ) {
-      copyDirectoryToProject("../common/customDirectives", ".")
-      configureFromTempProjectFile("CustomDirectives.vue")
-
       sequenceOf(
         Triple("v-local-directive", "localDirective", "CustomDirectives.vue"),
         Triple("v-some-other-directive", "someOtherDirective", "CustomDirectives.vue"),
@@ -1553,11 +1552,10 @@ const props = {seeMe: {}}
   @Test
   fun testResolveLocalCustomDirectiveLinkedFiles() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "CustomDirectives.html",
+      dirName = "../common/customDirectivesLinkedFiles",
+      dir = true,
     ) {
-      copyDirectoryToProject("../common/customDirectivesLinkedFiles", ".")
-      configureFromTempProjectFile("CustomDirectives.html")
-
       sequenceOf(
         Triple("v-local-directive", "localDirective", "CustomDirectives.js"),
         Triple("v-some-other-directive", "someOtherDirective", "CustomDirectives.js"),
@@ -2127,11 +2125,10 @@ export default class UsageComponent extends Vue {
   @Test
   fun testWebTypesSource() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "src/App.vue",
+      dirName = "web-types-source",
+      dir = true,
     ) {
-      copyDirectoryToProject("web-types-source", ".")
-      configureFromTempProjectFile("src/App.vue")
-
       mapOf(
         Pair("<relative<caret>-module-ref-local>", "export class RelativeModuleRefLocal {\n\n}"),
         Pair("<file<caret>-offset-local>", "export class FileOffsetLocal {\n\n}"),
@@ -2168,13 +2165,14 @@ export default class UsageComponent extends Vue {
   @Test
   fun testResolveVueLoaderStyleReference() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "App.vue",
+      dirName = "resolve-vue-loader-url",
+      dir = true,
     ) {
-      copyDirectoryToProject("resolve-vue-loader-url", ".")
-      configureFromTempProjectFile("App.vue")
-      assertEquals("vue-multiselect.min.css",
-                   resolveReference("vue-multiselect.<caret>min.css")
-                     .containingFile.name)
+      assertEquals(
+        "vue-multiselect.min.css",
+        resolveReference("vue-multiselect.<caret>min.css").containingFile.name,
+      )
     }
   }
 
