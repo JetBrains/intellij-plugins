@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.assertUnresolvedReference
 import com.intellij.polySymbols.testFramework.checkGotoDeclaration
 import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
@@ -48,6 +49,20 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class VueResolveTest :
   VueTestCase("resolve", testMode = VueTestMode.NO_PLUGIN) {
+
+  override fun adjustConfigurators(
+    configurators: List<PolySymbolsTestConfigurator>,
+  ): List<PolySymbolsTestConfigurator> =
+    when (name) {
+      // WA for `package.json`
+      //  exclude `WebFrameworkTestModulesConfigurator`
+      "testResolveVueLoaderStyleReference",
+      "testSlotName",
+      "testWebTypesSource",
+        -> configurators
+
+      else -> super.adjustConfigurators(configurators)
+    }
 
   @Test
   fun testResolveInjectionToPropInObject() {
