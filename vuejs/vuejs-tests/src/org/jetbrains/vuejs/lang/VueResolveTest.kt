@@ -676,7 +676,6 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      configureVueDependencies()
       configureByText("IntoVForVarInHtml.html", """
 <html>
   <ul>
@@ -765,7 +764,6 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      configureVueDependencies()
       configureByText("KeyIntoForResolveHtml.html", """
 <html>
   <li id="id123" v-for="(item1, index1) in items1" :key="<caret>item1" v-if="item1 > 0">
@@ -788,7 +786,6 @@ export default {
     doConfiguredTest(
       configureFile = false,
     ) {
-      configureVueDependencies()
       configureByText("ResolveByMountedVueInstanceInData.js", """
 new Vue({
   el: '#ResolveByMountedVueInstanceInData',
@@ -817,7 +814,6 @@ new Vue({
     doConfiguredTest(
       configureFile = false,
     ) {
-      configureVueDependencies()
       configureByText("ResolveByMountedVueInstanceInProps.js", """
 new Vue({
   el: '#ResolveByMountedVueInstanceInProps',
@@ -844,7 +840,6 @@ new Vue({
     doConfiguredTest(
       configureFile = false,
     ) {
-      configureVueDependencies()
       configureByText("ResolveVForIterableByMountedVueInstance.js", """
 new Vue({
   el: '#ResolveVForIterableByMountedVueInstance',
@@ -1556,7 +1551,6 @@ const props = {seeMe: {}}
       configureFile = false,
     ) {
       copyDirectoryToProject("../common/customDirectivesLinkedFiles", ".")
-      configureVueDependencies()
       configureFromTempProjectFile("CustomDirectives.html")
 
       sequenceOf(
@@ -1640,7 +1634,6 @@ const props = {seeMe: {}}
       VueTestModule.MINT_UI_2_2_3,
       configureFile = false,
     ) {
-      configureVueDependencies()
       sequenceOf(
         Triple("mt-field", "mt-field", "field.vue"),
         Triple("mt-swipe", "mt-swipe", "swipe.vue"),
@@ -1934,7 +1927,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      configureVueDependencies()
       createTwoClassComponents(myFixture, true)
       configureByText("ResolveWithClassComponentTs.vue",
                       """
@@ -2235,7 +2227,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      configureVueDependencies()
       copyDirectoryToProject("props-import-resolve", ".")
       configureFromTempProjectFile("main.vue")
       val element = resolveReference("\"user<caret>Id\"")
@@ -2857,7 +2848,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      configureVueDependencies()
       copyDirectoryToProject("globalComponentsWithTypeofImport", "")
       configureFromTempProjectFile("${getTestName(false)}.vue")
       checkGotoDeclaration("ButtonS<caret>FC", "eComponent(<caret>{\n  props: {\n", "ButtonSFC.vue")
@@ -2869,7 +2859,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      configureVueDependencies()
       copyDirectoryToProject("resolveGlobalAppComponent", "")
       configureFromTempProjectFile("ForComponent.vue")
       checkGotoDeclaration("<Global<caret>Component></GlobalComponent>", "defineComponent(<caret>{\n", "GlobalComponent.vue")
@@ -2881,7 +2870,6 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      configureVueDependencies()
       copyDirectoryToProject("componentCustomProperties", "")
       configureByFile("${getTestName(false)}.vue")
       checkGotoDeclaration("{{\$te<caret>st}}", "<caret>\$test: string", "index.ts")
