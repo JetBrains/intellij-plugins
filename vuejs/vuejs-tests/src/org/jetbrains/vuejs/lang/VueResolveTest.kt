@@ -122,8 +122,12 @@ class VueResolveTest :
     props: ['message25620Arr']
   }
 </script>""")
-      checkGotoDeclaration("+ <caret>message25620Arr", "props: ['<caret>message25620Arr']",
-                           "ResolveToPropInObject.vue")
+
+      checkGotoDeclaration(
+        fromSignature = "+ <caret>message25620Arr",
+        declarationSignature = "props: ['<caret>message25620Arr']",
+        expectedFileName = "ResolveToPropInObject.vue",
+      )
     }
   }
 
@@ -264,8 +268,12 @@ export default {
     }
   }
 }</script>""")
-      checkGotoDeclaration("this.<caret>parentMsg", "['<caret>parentMsg'",
-                           "ResolveLocallyInsideComponentPropsArray.vue")
+
+      checkGotoDeclaration(
+        fromSignature = "this.<caret>parentMsg",
+        declarationSignature = "['<caret>parentMsg'",
+        expectedFileName = "ResolveLocallyInsideComponentPropsArray.vue",
+      )
     }
   }
 
@@ -286,8 +294,12 @@ export default {
     }
   }
 }</script>""")
-      checkGotoDeclaration("this.<caret>parentMsg", "['<caret>parentMsg'",
-                           "ResolveLocallyInsideComponentPropsArrayRefVariant.vue")
+
+      checkGotoDeclaration(
+        fromSignature = "this.<caret>parentMsg",
+        declarationSignature = "['<caret>parentMsg'",
+        expectedFileName = "ResolveLocallyInsideComponentPropsArrayRefVariant.vue",
+      )
     }
   }
 
@@ -309,8 +321,12 @@ export default {
     }
   }
 }</script>""")
-      checkGotoDeclaration("this.<caret>parentMsg", "['<caret>parentMsg'];",
-                           "ResolveLocallyInsideComponentArrayFunctionInsideExport.vue")
+
+      checkGotoDeclaration(
+        fromSignature = "this.<caret>parentMsg",
+        declarationSignature = "['<caret>parentMsg'];",
+        expectedFileName = "ResolveLocallyInsideComponentArrayFunctionInsideExport.vue",
+      )
     }
   }
 
@@ -809,8 +825,12 @@ new Vue({
 </body>
 </html>
 """)
-      checkGotoDeclaration("<caret>messageToFind", "<caret>messageToFind: 'Parent'",
-                           "ResolveByMountedVueInstanceInData.js")
+
+      checkGotoDeclaration(
+        fromSignature = "<caret>messageToFind",
+        declarationSignature = "<caret>messageToFind: 'Parent'",
+        expectedFileName = "ResolveByMountedVueInstanceInData.js",
+      )
     }
   }
 
@@ -835,8 +855,12 @@ new Vue({
 </body>
 </html>
 """)
-      checkGotoDeclaration("<caret>compProp", "props: ['<caret>compProp']",
-                           "ResolveByMountedVueInstanceInProps.js")
+
+      checkGotoDeclaration(
+        fromSignature = "<caret>compProp",
+        declarationSignature = "props: ['<caret>compProp']",
+        expectedFileName = "ResolveByMountedVueInstanceInProps.js",
+      )
     }
   }
 
@@ -869,8 +893,12 @@ new Vue({
 </body>
 </html>
 """)
-      checkGotoDeclaration("<caret>mountedItems", "<caret>mountedItems: [",
-                           "ResolveVForIterableByMountedVueInstance.js")
+
+      checkGotoDeclaration(
+        fromSignature = "<caret>mountedItems",
+        declarationSignature = "<caret>mountedItems: [",
+        expectedFileName = "ResolveVForIterableByMountedVueInstance.js",
+      )
     }
   }
 
@@ -1035,7 +1063,12 @@ Vue.component(alias, WiseComp)
                       """
 <template><<caret>wise-comp-alias</template>
 """)
-      checkGotoDeclaration("<<caret>wise-comp-alias", "export default <caret>{ name:", "WiseComp.vue")
+
+      checkGotoDeclaration(
+        fromSignature = "<<caret>wise-comp-alias",
+        declarationSignature = "export default <caret>{ name:",
+        expectedFileName = "WiseComp.vue"
+      )
     }
   }
 
@@ -1733,7 +1766,11 @@ Object.keys(obj).forEach(key => {
       configureByText("ResolveAliasedObjectMemberComponent.vue",
                       """<template><<caret>alias/></template>""")
 
-      checkGotoDeclaration("<<caret>alias/>", "export default <caret>{\n", "lib-comp-for-alias.es6")
+      checkGotoDeclaration(
+        fromSignature = "<<caret>alias/>",
+        declarationSignature = "export default <caret>{\n",
+        expectedFileName = "lib-comp-for-alias.es6",
+      )
     }
   }
 
@@ -1793,7 +1830,12 @@ Object.keys(other).forEach(key => {
 """)
       configureByText("ResolveObjectWithSpreadComponentAliased.vue",
                       """<template><<caret>lib-spread-alias/></template>""")
-      checkGotoDeclaration("<<caret>lib-spread-alias", "export default <caret>{\n", "lib-spread.es6")
+
+      checkGotoDeclaration(
+        fromSignature = "<<caret>lib-spread-alias",
+        declarationSignature = "export default <caret>{\n",
+        expectedFileName = "lib-spread.es6",
+      )
     }
   }
 
@@ -1921,7 +1963,12 @@ export default class UsageComponent extends Vue {
 }
 </script>
 """)
-      checkGotoDeclaration("<Short<caret>Vue", "default class <caret>ShortComponent", "ShortComponent.vue")
+
+      checkGotoDeclaration(
+        fromSignature = "<Short<caret>Vue",
+        declarationSignature = "default class <caret>ShortComponent",
+        expectedFileName = "ShortComponent.vue",
+      )
     }
   }
 
@@ -1955,7 +2002,11 @@ export default class UsageComponent extends Vue {
       val target = resolveToPolySymbolSource("<<caret>LongComponent/>")
       assertEquals("ResolveWithClassComponentTs.vue", target.containingFile.name)
       assertInstanceOf(target, JSProperty::class.java)
-      checkGotoDeclaration("<<caret>LongComponent/>", "export default class <caret>LongComponent", "LongComponent.vue")
+      checkGotoDeclaration(
+        fromSignature = "<<caret>LongComponent/>",
+        declarationSignature = "export default class <caret>LongComponent",
+        expectedFileName = "LongComponent.vue",
+      )
     }
   }
 
@@ -2034,8 +2085,12 @@ export default class UsageComponent extends Vue {
         export default app;
         const app = { name: 'app', components: { HelloWorld } };
       </script>""")
-      checkGotoDeclaration("<Hello<caret>World", "HelloWorld = <caret>{ name:",
-                           "HelloWorld.vue")
+
+      checkGotoDeclaration(
+        fromSignature = "<Hello<caret>World",
+        declarationSignature = "HelloWorld = <caret>{ name:",
+        expectedFileName = "HelloWorld.vue",
+      )
     }
   }
 
@@ -2321,7 +2376,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "test.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("<no-script<caret>-section>", "<caret><template>", "noScriptSection.vue")
+      checkGotoDeclaration(
+        fromSignature = "<no-script<caret>-section>",
+        declarationSignature = "<caret><template>",
+        expectedFileName = "noScriptSection.vue",
+      )
     }
   }
 
@@ -2331,7 +2390,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "main.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("<Hello<caret>World", "export default <caret>{", "index.vue")
+      checkGotoDeclaration(
+        fromSignature = "<Hello<caret>World",
+        declarationSignature = "export default <caret>{",
+        expectedFileName = "index.vue",
+      )
     }
   }
 
@@ -2341,7 +2404,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "HelloWorld.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("<Sam<caret>ple/>", "<caret><template>", "Sample.vue")
+      checkGotoDeclaration(
+        fromSignature = "<Sam<caret>ple/>",
+        declarationSignature = "<caret><template>",
+        expectedFileName = "Sample.vue",
+      )
     }
   }
 
@@ -2809,11 +2876,13 @@ export default class UsageComponent extends Vue {
 
       defineOptions({ name: 'SuperComp' });
       </script>
-    """.trimIndent())
+      """.trimIndent())
 
-      checkGotoDeclaration("customPro<caret>perty=\"Hello!\"",
-                           "defineProps<{ <caret>customProperty: string }>",
-                           "HelloWorld.vue")
+      checkGotoDeclaration(
+        fromSignature = "customPro<caret>perty=\"Hello!\"",
+        declarationSignature = "defineProps<{ <caret>customProperty: string }>",
+        expectedFileName = "HelloWorld.vue",
+      )
     }
   }
 
@@ -2844,7 +2913,11 @@ export default class UsageComponent extends Vue {
       dirName = "globalComponentsWithTypeofImport",
       dir = true,
     ) {
-      checkGotoDeclaration("ButtonS<caret>FC", "eComponent(<caret>{\n  props: {\n", "ButtonSFC.vue")
+      checkGotoDeclaration(
+        fromSignature = "ButtonS<caret>FC",
+        declarationSignature = "eComponent(<caret>{\n  props: {\n",
+        expectedFileName = "ButtonSFC.vue",
+      )
     }
   }
 
@@ -2854,7 +2927,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "ForComponent.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("<Global<caret>Component></GlobalComponent>", "defineComponent(<caret>{\n", "GlobalComponent.vue")
+      checkGotoDeclaration(
+        fromSignature = "<Global<caret>Component></GlobalComponent>",
+        declarationSignature = "defineComponent(<caret>{\n",
+        expectedFileName = "GlobalComponent.vue",
+      )
     }
   }
 
@@ -2864,7 +2941,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("{{\$te<caret>st}}", "<caret>\$test: string", "index.ts")
+      checkGotoDeclaration(
+        fromSignature = "{{\$te<caret>st}}",
+        declarationSignature = "<caret>\$test: string",
+        expectedFileName = "index.ts",
+      )
     }
   }
 }
