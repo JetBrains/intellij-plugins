@@ -1652,29 +1652,6 @@ const props = {seeMe: {}}
     }
   }
 
-  // Resolve into web-types libraries not supported for now.
-  @Suppress("TestFunctionName", "unused")
-  fun _testResolveVuetifyComponent() {
-    myFixture.configureVueDependencies(VueTestModule.VUETIFY_0_17_2)
-    sequenceOf(
-      Triple("v-list", "v-list", "VList.js"),
-      Triple("v-list-tile-content", "v-list-tile-content", "index.js")
-    ).forEach {
-      myFixture.configureByText("ResolveVuetifyComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
-      if (it.first == "v-list-tile-content") {
-        val reference = myFixture.getReferenceAtCaretPosition()
-        assertNotNull(reference)
-        val target = reference!!.resolve()
-        assertNotNull(target)
-        assertEquals(it.third, target!!.containingFile.name)
-        assertTrue(target.parent is JSCallExpression)
-      }
-      else {
-        myFixture.doResolveIntoLibraryComponent(it.second, it.third)
-      }
-    }
-  }
-
   @Test
   fun testElementUiDatePickerLikeComponent() {
     doConfiguredTest(
