@@ -2475,7 +2475,11 @@ export default class UsageComponent extends Vue {
       configureFile = false,
     ) {
       configureByText("AppUnlinked.vue", "<template>\n<Bar/>\n</template>")
-      checkGotoDeclaration("<B<caret>ar/>", "export default <caret>{", "foo.vue")
+      checkGotoDeclaration(
+        fromSignature = "<B<caret>ar/>",
+        declarationSignature = "export default <caret>{",
+        expectedFileName = "foo.vue",
+      )
     }
   }
 
@@ -2567,7 +2571,11 @@ export default class UsageComponent extends Vue {
         {{message}}
       </template>
     """.trimIndent())
-      checkGotoDeclaration("{{me<caret>ssage}}", "inject: [<caret>'message']")
+
+      checkGotoDeclaration(
+        fromSignature = "{{me<caret>ssage}}",
+        declarationSignature = "inject: [<caret>'message']",
+      )
     }
   }
 
@@ -2590,7 +2598,11 @@ export default class UsageComponent extends Vue {
         {{message}}
       </template>
     """.trimIndent())
-      checkGotoDeclaration("{{mes<caret>sage}}", "<caret>message: {")
+
+      checkGotoDeclaration(
+        fromSignature = "{{mes<caret>sage}}",
+        declarationSignature = "<caret>message: {",
+      )
     }
   }
 
@@ -2614,7 +2626,11 @@ export default class UsageComponent extends Vue {
         {{localMessage}}
       </template>
     """.trimIndent())
-      checkGotoDeclaration("{{loc<caret>alMessage}}", "<caret>localMessage: {")
+
+      checkGotoDeclaration(
+        fromSignature = "{{loc<caret>alMessage}}",
+        declarationSignature = "<caret>localMessage: {",
+      )
     }
   }
 
@@ -2624,7 +2640,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "Provide.vue")
+      checkGotoDeclaration(
+        fromSignature = "'me<caret>ssage'",
+        declarationSignature = "<caret>message: 'hello",
+        expectedFileName = "Provide.vue",
+      )
     }
   }
 
@@ -2634,7 +2654,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'hello", "App.vue")
+      checkGotoDeclaration(
+        fromSignature = "'me<caret>ssage'",
+        declarationSignature = "<caret>message: 'hello",
+        expectedFileName = "App.vue",
+      )
     }
   }
 
@@ -2644,7 +2668,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
+      checkGotoDeclaration(
+        fromSignature = "'me<caret>ssage'",
+        declarationSignature = "<caret>message: 'msg'",
+        expectedFileName = "Provide.vue",
+      )
     }
   }
 
@@ -2654,7 +2682,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("'me<caret>ssage'", "<caret>message: 'msg'", "Provide.vue")
+      checkGotoDeclaration(
+        fromSignature = "'me<caret>ssage'",
+        declarationSignature = "<caret>message: 'msg'",
+        expectedFileName = "Provide.vue",
+      )
     }
   }
 
@@ -2664,7 +2696,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("m<caret>essage", "<caret>message: 'msg'", "Provide.vue")
+      checkGotoDeclaration(
+        fromSignature = "m<caret>essage",
+        declarationSignature = "<caret>message: 'msg'",
+        expectedFileName = "Provide.vue",
+      )
     }
   }
 
@@ -2674,7 +2710,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("'provide<caret>Deep'", "<caret>provideDeep: 12", "ProvideB.vue")
+      checkGotoDeclaration(
+        fromSignature = "'provide<caret>Deep'",
+        declarationSignature = "<caret>provideDeep: 12",
+        expectedFileName = "ProvideB.vue",
+      )
     }
   }
 
@@ -2688,7 +2728,11 @@ export default class UsageComponent extends Vue {
 
       enableInspections(VueInspectionsProvider())
       checkHighlighting()
-      checkGotoDeclaration("'provided<caret>InCall'", "provide(<caret>'providedInCall", "Provide.vue")
+      checkGotoDeclaration(
+        fromSignature = "'provided<caret>InCall'",
+        declarationSignature = "provide(<caret>'providedInCall",
+        expectedFileName = "Provide.vue",
+      )
     }
   }
 
@@ -2698,7 +2742,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("'global<caret>Provide'", "app.provide(<caret>'globalProvide'", "main.js")
+      checkGotoDeclaration(
+        fromSignature = "'global<caret>Provide'",
+        declarationSignature = "app.provide(<caret>'globalProvide'",
+        expectedFileName = "main.js",
+      )
     }
   }
 
@@ -2708,7 +2756,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("'inject<caret>Setup'", "provide(<caret>'injectSetup'", "Provide.vue")
+      checkGotoDeclaration(
+        fromSignature = "'inject<caret>Setup'",
+        declarationSignature = "provide(<caret>'injectSetup'",
+        expectedFileName = "Provide.vue",
+      )
     }
   }
 
@@ -2718,7 +2770,11 @@ export default class UsageComponent extends Vue {
       configureFileName = "${getTestName(false)}.vue",
       dir = true,
     ) {
-      checkGotoDeclaration("items: IT<caret>est[]", "export interface <caret>ITest", "Button.vue")
+      checkGotoDeclaration(
+        fromSignature = "items: IT<caret>est[]",
+        declarationSignature = "export interface <caret>ITest",
+        expectedFileName = "Button.vue",
+      )
     }
   }
 
