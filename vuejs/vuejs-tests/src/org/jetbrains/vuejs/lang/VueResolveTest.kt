@@ -2202,9 +2202,11 @@ export default class UsageComponent extends Vue {
   @Test
   fun testFilters() {
     doConfiguredTest(
+      additionalDependencies = mapOf(
+        "some_lib" to "0.0.0",
+      ),
       configureFile = false,
     ) {
-      configureVueDependencies("some_lib" to "0.0.0")
       copyDirectoryToProject("filters/", ".")
       configureFromTempProjectFile("App.vue")
       for ((filterName, resolvedItemText) in listOf(
