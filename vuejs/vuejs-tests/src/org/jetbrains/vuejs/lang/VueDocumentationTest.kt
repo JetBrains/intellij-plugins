@@ -29,7 +29,7 @@ class VueDocumentationTest :
   @Test
   fun testFromDefinitions() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
-    defaultTest()
+    doTest()
   }
 
   @Test
@@ -47,17 +47,17 @@ class VueDocumentationTest :
 
   @Test
   fun testTopLevelTemplate() {
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testInnerLevelTemplate() {
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testInnerLevelTemplateStdAttr() {
-    defaultTest()
+    doTest()
   }
 
   @Test
@@ -69,46 +69,46 @@ class VueDocumentationTest :
   @Test
   fun testInnerLevelTemplateCustomAttr() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testDynamicAttributes() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testScriptSetupDestructing() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testCustomComponentProperty() {
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testUnknownParentTag() {
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testRequiredPropertyTS() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testNotRequiredPropertyTS() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testNotRequiredPropertyJS() {
-    defaultTest()
+    doTest()
   }
 
   @Test
@@ -176,49 +176,49 @@ class VueDocumentationTest :
 
   @Test
   fun testPropertyTypeDoc() {
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testEmitEvents() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testGenericComponentProp() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testPropJsDoc() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testPropRefJsDoc() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testDataPropJsDoc() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testDataPropRefJsDoc() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    defaultTest()
+    doTest()
   }
 
   @Test
   fun testPropWithDefaults() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    defaultTest()
+    doTest()
   }
 
   @Test
@@ -230,7 +230,7 @@ class VueDocumentationTest :
     }
   }
 
-  private fun defaultTest() {
+  private fun doTest() {
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkDocumentationAtCaret()
   }
