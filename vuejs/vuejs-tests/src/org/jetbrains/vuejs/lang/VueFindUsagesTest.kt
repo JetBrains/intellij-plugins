@@ -86,15 +86,15 @@ class VueFindUsagesTest :
 
   @Test
   fun testCreateApp() {
-    myFixture.copyDirectoryToProject("../common/createApp", ".")
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    myFixture.configureFromTempProjectFile("main.ts")
-
-    checkUsages("\"f<caret>oo", "createApp.foo")
-    checkUsages("\"B<caret>ar", "createApp.bar")
-    checkUsages("\"C<caret>ar", "createApp.car")
-    checkUsages("\"Foo<caret>Bar", "createApp.foo-bar")
-
+    doConfiguredTest(
+      configureFileName = "main.ts",
+      dirName = "../common/createApp",
+    ) {
+      checkUsages("\"f<caret>oo", "createApp.foo")
+      checkUsages("\"B<caret>ar", "createApp.bar")
+      checkUsages("\"C<caret>ar", "createApp.car")
+      checkUsages("\"Foo<caret>Bar", "createApp.foo-bar")
+    }
   }
 
   @Test
