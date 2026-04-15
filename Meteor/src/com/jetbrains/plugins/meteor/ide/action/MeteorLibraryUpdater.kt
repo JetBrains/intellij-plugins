@@ -10,7 +10,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.RootsChangeRescanningInfo
 import com.intellij.openapi.roots.ModuleRootManager
@@ -54,12 +53,12 @@ internal class MeteorLibraryUpdater(private val project: Project, coroutineScope
     queue.queue(Unit)
   }
 
-  private fun performUpdate() {
-    DumbService.getInstance(project).runReadActionInSmartMode {
+  private suspend fun performUpdate() {
+    smartReadAction(project) {
       LOG.debug { "Check meteor libraries" }
       if (updateStoredMeteorFolders()) {
         refreshMeteorLibraries(project = project, removeDeprecated = true)
-        return@runReadActionInSmartMode
+        return@smartReadAction
       }
       updateMeteorLibraryIfRequired(project)
     }
