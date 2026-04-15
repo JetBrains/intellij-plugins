@@ -5,13 +5,27 @@ import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
+@Ignore
 class VueFindUsagesTest :
-  VueTestCase("findUsages", testMode = VueTestMode.NO_PLUGIN) {
+  VueFindUsagesTestBase() {
+
+  @Ignore
+  class WithLegacyPluginTest :
+    VueFindUsagesTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
+
+  class WithoutServiceTest :
+    VueFindUsagesTestBase(testMode = VueTestMode.NO_PLUGIN)
+}
+
+@RunWith(JUnit4::class)
+abstract class VueFindUsagesTestBase(
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+) : VueTestCase("findUsages", testMode = testMode) {
 
   override val dirModeByDefault: Boolean =
     true
