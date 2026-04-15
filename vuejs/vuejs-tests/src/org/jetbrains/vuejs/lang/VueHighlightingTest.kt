@@ -827,7 +827,6 @@ abstract class VueHighlightingTestBase(
     doHighlightingTest(
       VueTestModule.NAIVE_UI_2_19_11,
       VueTestModule.HEADLESS_UI_1_4_1,
-      VueTestModule.VUE_3_5_0,
       inspections = listOf(ES6UnusedImportsInspection::class.java),
     ) {
       disableAstLoadingFilterWhenPluginUsed()
@@ -839,7 +838,6 @@ abstract class VueHighlightingTestBase(
     doHighlightingTest(
       VueTestModule.NAIVE_UI_2_19_11,
       VueTestModule.HEADLESS_UI_1_4_1,
-      VueTestModule.VUE_3_5_0,
       inspections = listOf(ES6UnusedImportsInspection::class.java),
     ) {
       disableAstLoadingFilterWhenPluginUsed()
@@ -892,7 +890,6 @@ abstract class VueHighlightingTestBase(
   fun testSlotTypes() {
     doHighlightingTest(
       VueTestModule.QUASAR_2_6_5,
-      VueTestModule.VUE_3_5_0,
       configureFileName = "MyTable.vue",
     ) {
       disableAstLoadingFilterWhenPluginUsed()
