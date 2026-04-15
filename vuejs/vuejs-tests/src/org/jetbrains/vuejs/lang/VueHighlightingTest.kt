@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
-import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
@@ -106,17 +105,6 @@ abstract class VueHighlightingTestBase(
 ) : VueTestCase("highlighting", testMode = testMode) {
 
   override val dirModeByDefault: Boolean = true
-
-  override fun adjustConfigurators(
-    configurators: List<PolySymbolsTestConfigurator>,
-  ): List<PolySymbolsTestConfigurator> =
-    buildList {
-      addAll(super.adjustConfigurators(configurators))
-
-      if (none { it is VueTsConfigFile }) {
-        add(VueTsConfigFile())
-      }
-    }
 
   override fun setUp() {
     super.setUp()

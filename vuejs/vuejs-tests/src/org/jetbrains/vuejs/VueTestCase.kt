@@ -8,6 +8,7 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerSer
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.polySymbols.testFramework.HybridTestMode
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.vuejs.index.VUE_MODULE
@@ -32,6 +33,17 @@ abstract class VueTestCase(
 ) : WebFrameworkTestCase(
   mode = if (testMode != VueTestMode.NO_PLUGIN) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform,
 ) {
+
+  override fun adjustConfigurators(
+    configurators: List<PolySymbolsTestConfigurator>,
+  ): List<PolySymbolsTestConfigurator> =
+    buildList {
+      addAll(super.adjustConfigurators(configurators))
+
+      if (none { it is VueTsConfigFile }) {
+        add(VueTsConfigFile())
+      }
+    }
 
   override fun adjustModules(
     modules: Array<out WebFrameworkTestModule>,

@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.util.RecursionManager
-import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.and
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
@@ -66,17 +65,6 @@ abstract class VueCompletionTestBase(
     // Let's ensure we don't get PolySymbols registry stack overflows randomly
     this.enableIdempotenceChecksOnEveryCache()
   }
-
-  override fun adjustConfigurators(
-    configurators: List<PolySymbolsTestConfigurator>,
-  ): List<PolySymbolsTestConfigurator> =
-    buildList {
-      addAll(super.adjustConfigurators(configurators))
-
-      if (none { it is VueTsConfigFile }) {
-        add(VueTsConfigFile())
-      }
-    }
 
   override val dirModeByDefault: Boolean = true
 

@@ -17,7 +17,6 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
-import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.assertUnresolvedReference
 import com.intellij.polySymbols.testFramework.checkGotoDeclaration
 import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
@@ -35,7 +34,6 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
-import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
 import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_5_3
 import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_6_10
@@ -75,12 +73,6 @@ abstract class VueResolveWithPluginTestBase(
 abstract class VueResolveTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueTestCase("resolve", testMode = testMode) {
-
-  override fun adjustConfigurators(
-    configurators: List<PolySymbolsTestConfigurator>,
-  ): List<PolySymbolsTestConfigurator> =
-    super.adjustConfigurators(configurators)
-      .plus(VueTsConfigFile())
 
   private fun doGotoDeclarationInternalTest(
     fromSignature: String,

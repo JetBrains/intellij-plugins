@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import NewComponent from "./NewComponent.vue";
 </script>
 <template>

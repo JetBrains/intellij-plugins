@@ -26,10 +26,8 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
-import org.jetbrains.vuejs.VueTsConfigFile
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -48,12 +46,6 @@ class VueRenameTest :
 abstract class VueRenameTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueTestCase("rename", testMode = testMode) {
-
-  override fun adjustConfigurators(
-    configurators: List<PolySymbolsTestConfigurator>,
-  ): List<PolySymbolsTestConfigurator> =
-    super.adjustConfigurators(configurators)
-      .plus(VueTsConfigFile())
 
   override val dirModeByDefault: Boolean = true
 
