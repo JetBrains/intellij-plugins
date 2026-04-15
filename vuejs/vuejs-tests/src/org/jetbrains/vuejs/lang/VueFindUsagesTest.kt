@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.psi.search.GlobalSearchScopesCore
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.junit.Test
@@ -14,6 +15,10 @@ class VueFindUsagesTest :
 
   override val dirModeByDefault: Boolean =
     true
+
+  private fun CodeInsightTestFixture.useSeparateTestDataPath() {
+    testDataPath += "/" + getTestName(true)
+  }
 
   @Test
   fun testPrivateComponentGetter() {
@@ -38,7 +43,7 @@ class VueFindUsagesTest :
   @Test
   fun testScriptSetupRef() {
     doConfiguredTest {
-      testDataPath += "/" + getTestName(true)
+      useSeparateTestDataPath()
 
       sequenceOf(
         "ref='f<caret>oo2'",
@@ -65,7 +70,7 @@ class VueFindUsagesTest :
       VueTestModule.NAIVE_UI_2_19_11,
       configureFileName = "typedComponentsClassic.vue",
     ) {
-      testDataPath += "/" + getTestName(true)
+      useSeparateTestDataPath()
 
       checkUsages(" Dia<caret>log,", "usages.classic.headlessui")
       checkUsages(" N<caret>Affix,", "usages.classic.naive-ui")
@@ -90,6 +95,8 @@ class VueFindUsagesTest :
       configureFileName = "main.ts",
       dirName = "../common/createApp",
     ) {
+      useSeparateTestDataPath()
+
       checkUsages("\"f<caret>oo", "createApp.foo")
       checkUsages("\"B<caret>ar", "createApp.bar")
       checkUsages("\"C<caret>ar", "createApp.car")
@@ -102,6 +109,8 @@ class VueFindUsagesTest :
     doConfiguredTest(
       configureFile = false,
     ) {
+      useSeparateTestDataPath()
+
       configureFromTempProjectFile("defineComponent.vue")
       checkUsages("\"test<caret>-event", "$testName.test-event")
 
