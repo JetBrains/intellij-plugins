@@ -49,10 +49,10 @@ class PbPythonTypeTest : PbPythonTestBase() {
     from datetime import timedelta
     from google.protobuf.any$apiSuffix import Any
     
-    SomeMessage(<warning descr="Expected type 'Mapping[bool, google.protobuf.Duration (Protobuf Message) | Mapping] | None', got 'dict[bool, timedelta]' instead">bool_duration_map={False: timedelta(seconds=1)}</warning>)
-    
+    SomeMessage(<warning descr="Expected type 'Mapping[bool, google.protobuf.Duration (Protobuf Message) | Mapping] | None', got 'dict[Literal[False], timedelta]' instead">bool_duration_map={False: timedelta(seconds=1)}</warning>)
+
     SomeMessage(repeated_any_field=[Any()])
-    SomeMessage(<warning descr="Expected type 'Iterable[Any | Mapping] | None', got 'list[str]' instead">repeated_any_field=["not Any()"]</warning>)
+    SomeMessage(<warning descr="Expected type 'Iterable[Any | Mapping] | None', got 'list[Literal[\"not Any()\"]]' instead">repeated_any_field=["not Any()"]</warning>)
     
     SomeMessage(repeated_enum_field=[1, 2, 3])
     SomeMessage(<warning descr="Expected type 'Iterable[int | str] | None', got 'list[type[testing.all.SomeEnum (Protobuf Enum)]]' instead">repeated_enum_field=[$importName.SomeEnum]</warning>)
@@ -78,25 +78,25 @@ class PbPythonTypeTest : PbPythonTestBase() {
     msg.repeated_any_field.append(Any())
     msg.repeated_any_field.add()
     
-    msg.repeated_string_field.append(<warning descr="Expected type 'str' (matched generic type '_T'), got 'int' instead">123</warning>)
+    msg.repeated_string_field.append(<warning descr="Expected type 'str' (matched generic type '_T'), got 'Literal[123]' instead">123</warning>)
     """)
 
   fun testMismatchedMapKeyValueType() = doTest("""
-    msg.string_int32_map["key"] = <warning descr="Expected type 'int' (matched generic type '_VT'), got 'str' instead">"not an int"</warning>
-    msg.string_int32_map[<warning descr="Expected type 'str' (matched generic type '_KT'), got 'int' instead">123</warning>] = 456
+    msg.string_int32_map["key"] = <warning descr="Expected type 'int' (matched generic type '_VT'), got 'Literal[\"not an int\"]' instead">"not an int"</warning>
+    msg.string_int32_map[<warning descr="Expected type 'str' (matched generic type '_KT'), got 'Literal[123]' instead">123</warning>] = 456
     """)
 
   fun testFieldAssignmentTypeMismatch() = doTest("""
-    scalars.int32_field = <warning descr="Expected type 'int', got 'str' instead">"not an int"</warning>
+    scalars.int32_field = <warning descr="Expected type 'int', got 'Literal[\"not an int\"]' instead">"not an int"</warning>
     """)
 
   // TODO: shows 2 identical warnings instead of 1
   fun testWrapperMessageFieldAssignment() = doTest($$"""
     from google.protobuf.wrappers$apiSuffix import StringValue
 
-    wkt.<warning descr="'testing.all.WellKnownTypesMessage (Protobuf Message)' object has no attribute 'string_value_field'">string_value_field</warning> = <warning descr="Expected type 'google.protobuf.StringValue (Protobuf Message)', got 'str' instead">"direct assignment"</warning>
+    wkt.<warning descr="'testing.all.WellKnownTypesMessage (Protobuf Message)' object has no attribute 'string_value_field'">string_value_field</warning> = <warning descr="Expected type 'google.protobuf.StringValue (Protobuf Message)', got 'Literal[\"direct assignment\"]' instead">"direct assignment"</warning>
     wkt.<warning descr="'testing.all.WellKnownTypesMessage (Protobuf Message)' object has no attribute 'string_value_field'">string_value_field</warning> = StringValue(value="other")
-    wkt.int32_value_field.value = <warning descr="Expected type 'int', got 'str' instead">"not int"</warning>
+    wkt.int32_value_field.value = <warning descr="Expected type 'int', got 'Literal[\"not int\"]' instead">"not int"</warning>
     """)
 
   // TODO
