@@ -99,15 +99,15 @@ class VueFindUsagesTest :
 
   @Test
   fun testComponentEmitsDefinitions() {
-    val testName = getTestName(true)
-    myFixture.copyDirectoryToProject(testName, ".")
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
+    doConfiguredTest(
+      configureFile = false,
+    ) {
+      configureFromTempProjectFile("defineComponent.vue")
+      checkUsages("\"test<caret>-event", "$testName.test-event")
 
-    myFixture.configureFromTempProjectFile("defineComponent.vue")
-    checkUsages("\"test<caret>-event", "$testName.test-event")
-
-    myFixture.configureFromTempProjectFile("defineEmits.vue")
-    checkUsages("'f<caret>oo", "$testName.foo")
+      configureFromTempProjectFile("defineEmits.vue")
+      checkUsages("'f<caret>oo", "$testName.foo")
+    }
   }
 
   @Test
