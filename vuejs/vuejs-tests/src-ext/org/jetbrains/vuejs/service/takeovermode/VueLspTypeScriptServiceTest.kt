@@ -9,8 +9,8 @@ import com.intellij.lang.typescript.service.TypeScriptServiceTestBase.Companion.
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.platform.lsp.tests.checkLspHighlighting
-import com.intellij.platform.lsp.tests.checkLspHighlightingByText
 import com.intellij.psi.PsiManager
+import org.jetbrains.vuejs.service.checkLspHighlightingByText
 import com.intellij.util.text.SemVer
 import com.intellij.util.xmlb.SettingsInternalApi
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
