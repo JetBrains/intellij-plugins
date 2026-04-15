@@ -829,7 +829,9 @@ abstract class VueHighlightingTestBase(
       VueTestModule.HEADLESS_UI_1_4_1,
       VueTestModule.VUE_3_5_0,
       inspections = listOf(ES6UnusedImportsInspection::class.java),
-    )
+    ) {
+      disableAstLoadingFilterWhenPluginUsed()
+    }
   }
 
   @Test
@@ -839,7 +841,9 @@ abstract class VueHighlightingTestBase(
       VueTestModule.HEADLESS_UI_1_4_1,
       VueTestModule.VUE_3_5_0,
       inspections = listOf(ES6UnusedImportsInspection::class.java),
-    )
+    ) {
+      disableAstLoadingFilterWhenPluginUsed()
+    }
   }
 
   @Test
