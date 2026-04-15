@@ -9,7 +9,6 @@ import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.polySymbols.testFramework.HybridTestMode
 import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.VueTestModule
@@ -82,7 +81,7 @@ abstract class VueTestCase(
 
   override val defaultDependencies: Map<String, String>
     get() = mapOf()
-  
+
   protected fun disableAstLoadingFilterWhenPluginUsed() {
     if (testMode != VueTestMode.NO_PLUGIN)
       disableAstLoadingFilter()
