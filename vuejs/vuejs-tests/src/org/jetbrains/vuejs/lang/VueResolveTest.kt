@@ -78,21 +78,9 @@ abstract class VueResolveTestBase(
 
   override fun adjustConfigurators(
     configurators: List<PolySymbolsTestConfigurator>,
-  ): List<PolySymbolsTestConfigurator> {
-    val baseConfigurators = when (name) {
-      // WA for `package.json`
-      //  exclude `WebFrameworkTestModulesConfigurator`
-      "testResolveVueLoaderStyleReference",
-      "testSlotName",
-      "testWebTypesSource",
-        -> configurators
-
-      else -> super.adjustConfigurators(configurators)
-    }
-
-    return baseConfigurators
+  ): List<PolySymbolsTestConfigurator> =
+    super.adjustConfigurators(configurators)
       .plus(VueTsConfigFile())
-  }
 
   private fun doGotoDeclarationInternalTest(
     fromSignature: String,
@@ -2166,6 +2154,9 @@ export default class UsageComponent extends Vue {
       configureFileName = "src/App.vue",
       dirName = "web-types-source",
       dir = true,
+      configurators = listOf(
+        UseLocalPackageJsonConfigurator(),
+      ),
     ) {
       mapOf(
         Pair("<relative<caret>-module-ref-local>", "export class RelativeModuleRefLocal {\n\n}"),
@@ -2206,6 +2197,9 @@ export default class UsageComponent extends Vue {
       configureFileName = "App.vue",
       dirName = "resolve-vue-loader-url",
       dir = true,
+      configurators = listOf(
+        UseLocalPackageJsonConfigurator(),
+      ),
     ) {
       assertEquals(
         "vue-multiselect.min.css",
@@ -2217,6 +2211,9 @@ export default class UsageComponent extends Vue {
   @Test
   fun testSlotName() {
     doConfiguredTest(
+      configurators = listOf(
+        UseLocalPackageJsonConfigurator(),
+      ),
       configureFile = false,
     ) {
       copyDirectoryToProject("../completion/slotNames", ".")
