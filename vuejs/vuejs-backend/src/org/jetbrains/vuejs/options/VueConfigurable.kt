@@ -3,6 +3,7 @@
 
 package org.jetbrains.vuejs.options
 
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.typescript.lsp.bindPackage
 import com.intellij.lang.typescript.lsp.createBundledNodePackageField
 import com.intellij.lang.typescript.lsp.createNodePackageField
@@ -13,6 +14,7 @@ import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.SegmentedButton
 import com.intellij.ui.dsl.builder.bind
+import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.selected
 import com.intellij.ui.dsl.builder.toNullableProperty
 import com.intellij.ui.layout.ComponentPredicate
@@ -26,6 +28,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
 
   override fun Panel.createContent() {
     group(VueBundle.message("vue.configurable.service.group")) {
+      lateinit var autoModeSelected: ComponentPredicate
       lateinit var manualModeSelected: ComponentPredicate
 
       buttonsGroup {
@@ -36,6 +39,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
         row {
           radioButton(VueBundle.message("vue.configurable.service.auto"), VueLSMode.AUTO)
             .comment(VueBundle.message("vue.configurable.service.auto.help"))
+            .also { autoModeSelected = it.selected }
         }
         row {
           radioButton(VueBundle.message("vue.configurable.service.manual"), VueLSMode.MANUAL)
@@ -96,6 +100,20 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
         }.visibleIf(manualModeSelected)
 
       }.bind(settings::serviceType)
+
+      separator()
+
+      row {
+        checkBox(JavaScriptBundle.message("typescript.compiler.configurable.options.use.servicePoweredTypeEngine"))
+          .applyToComponent {
+            toolTipText = JavaScriptBundle.message("typescript.compiler.configurable.options.use.servicePoweredTypeEngine.comment")
+          }
+          .enabledIf(autoModeSelected)
+          .bindSelected(
+            { settings.useTypesFromServer },
+            { settings.useServicePoweredTypesManualOverride = it }
+          )
+      }
     }
 
     /**
