@@ -17,22 +17,22 @@ class VueFindUsagesTest :
 
   @Test
   fun testPrivateComponentGetter() {
-    doTest()
+    doFindUsagesTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testPrivateComponentSetter() {
-    doTest()
+    doFindUsagesTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testPrivateComponentMethod() {
-    doTest()
+    doFindUsagesTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testPrivateConstructorField() {
-    doTest()
+    doFindUsagesTest(configureFileName = "App.vue")
   }
 
   @Test
@@ -55,7 +55,7 @@ class VueFindUsagesTest :
 
   @Test
   fun testScriptSetupImportedDirective() {
-    doTest("vFocus.js")
+    doFindUsagesTest(configureFileName = "vFocus.js")
   }
 
   @Test
@@ -113,11 +113,5 @@ class VueFindUsagesTest :
   @Test
   fun testComponentFile() {
     doFileUsagesTest(fileName = "SomeComponent.vue")
-  }
-
-  private fun doTest(
-    fileName: String = "App.vue",
-  ) {
-    doFindUsagesTest(configureFileName = fileName)
   }
 }
