@@ -171,7 +171,7 @@ private fun Class<*>.ktLifetimeOwnerAdditionalApiMethods(): List<KtLifetimeOwner
           ktTypeApiMethod("getExpandedClassSymbol") { it.expandedSymbol },
           ktTypeApiMethod("getFullyExpandedType") { it.fullyExpandedType },
 
-          ktTypeApiMethod("getFunctionTypeKind") { it.functionTypeKind },
+          ktTypeApiMethod("getFunctionTypeFamily") { it.functionTypeFamily },
           ktTypeApiMethod("isFunctionalInterfaceType") { it.isFunctionalInterface },
           ktTypeApiMethod("isFunctionType") { it.isFunctionType },
           ktTypeApiMethod("isKFunctionType") { it.isKFunctionType },
