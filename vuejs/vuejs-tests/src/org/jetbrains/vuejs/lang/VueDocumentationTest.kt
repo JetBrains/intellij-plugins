@@ -3,21 +3,28 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.lang.javascript.TypeScriptTestUtil
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.polySymbols.testFramework.checkNoDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueTestMode
+import org.jetbrains.vuejs.VueTsConfigFile
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class VueDocumentationTest : BasePlatformTestCase() {
+class VueDocumentationTest :
+  VueTestCase("documentation", testMode = VueTestMode.NO_PLUGIN) {
 
-  override fun getBasePath(): String = "/"
-
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/documentation"
+  // for migration
+  override fun adjustConfigurators(
+    configurators: List<PolySymbolsTestConfigurator>,
+  ): List<PolySymbolsTestConfigurator> =
+    super.adjustConfigurators(configurators)
+      .filter { it !is VueTsConfigFile }
 
   @Test
   fun testFromDefinitions() {
