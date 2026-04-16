@@ -45,6 +45,6 @@ interface VueSymbol : HtmlFrameworkSymbol, VueElement {
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     PolySymbolDocumentationTarget.create(this, location) { symbol, _ ->
-      library = getLibraryNameForDocumentationOf(symbol.psiContext)
+      library(getLibraryNameForDocumentationOf(symbol.psiContext))
     }
 }

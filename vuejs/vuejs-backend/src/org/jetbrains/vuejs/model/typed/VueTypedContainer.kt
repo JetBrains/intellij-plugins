@@ -21,7 +21,6 @@ import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -175,8 +174,8 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
 
     override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
       PolySymbolDocumentationTarget.create(this, location) { symbol, _ ->
-        description = symbol.description
-        library = getLibraryNameForDocumentationOf(symbol.source)
+        description(symbol.description)
+        library(getLibraryNameForDocumentationOf(symbol.source))
       }
 
     fun <S : VueSymbol, T : S> createPointer(clazz: KClass<T>, listProvider: (VueTypedContainer) -> List<S>): Pointer<T> {
