@@ -2,6 +2,7 @@ package com.intellij.dts.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.dts.DtsTestBase
+import com.intellij.testFramework.runInEdtAndWait
 import kotlin.reflect.KClass
 
 abstract class DtsInspectionTest(private vararg val inspectionClass: KClass<out LocalInspectionTool>) : DtsTestBase() {
@@ -19,7 +20,7 @@ abstract class DtsInspectionTest(private vararg val inspectionClass: KClass<out 
     myFixture.configureByFile("$testName.${getTestFileExtension()}")
 
     val intention = myFixture.filterAvailableIntentions(name).single()
-    myFixture.checkPreviewAndLaunchAction(intention)
+    runInEdtAndWait { myFixture.checkPreviewAndLaunchAction(intention) }
     myFixture.checkResultByFile("$testName-after.${getTestFileExtension()}", true)
   }
 }

@@ -1,6 +1,7 @@
 package com.intellij.dts.resolve
 
 import com.intellij.dts.DtsTestBase
+import com.intellij.openapi.application.runReadActionBlocking
 
 class DtsFileReferenceTest : DtsTestBase() {
   fun `test relative dts include`() = doTest(
@@ -26,6 +27,6 @@ class DtsFileReferenceTest : DtsTestBase() {
     val file = configureByText(input)
 
     val reference = myFixture.getReferenceAtCaretPositionWithAssertion(file.name)
-    assertEquals(includedFile, reference.resolve())
+    assertEquals(includedFile, runReadActionBlocking { reference.resolve() })
   }
 }

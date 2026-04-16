@@ -3,6 +3,7 @@ package com.intellij.dts.ide
 import com.intellij.dts.DtsTestBase
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.util.DtsUtil
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.psi.TokenType
 import com.intellij.psi.impl.source.tree.LeafElement
 import com.intellij.psi.impl.source.tree.RecursiveTreeElementWalkingVisitor
@@ -57,8 +58,9 @@ class DtsIterateLeafsTest : DtsTestBase() {
     val file = myFixture.file
 
     val start = file.findElementAt(0)
-    val actual = DtsUtil.iterateLeafs(start!!, strict = false).map { it.text }.joinToString("")
-
+    val actual = runReadActionBlocking {
+      DtsUtil.iterateLeafs(start!!, strict = false).joinToString("") { it.text }
+    }
     val visitor = PsiToString()
     (file.node as TreeElement).acceptTree(visitor)
 
@@ -69,7 +71,7 @@ class DtsIterateLeafsTest : DtsTestBase() {
     configureByText(input)
 
     val start = myFixture.file.findElementAt(0)
-    val actual = DtsUtil.iterateLeafs(start!!, strict = false).map { it.text }.toList()
+    val actual = runReadActionBlocking { DtsUtil.iterateLeafs(start!!, strict = false).map { it.text }.toList() }
 
     assertOrderedEquals(actual, leafs)
   }

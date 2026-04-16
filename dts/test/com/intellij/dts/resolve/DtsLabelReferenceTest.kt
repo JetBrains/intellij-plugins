@@ -1,6 +1,7 @@
 package com.intellij.dts.resolve
 
 import com.intellij.dts.DtsTestBase
+import com.intellij.openapi.application.runReadActionBlocking
 
 class DtsLabelReferenceTest : DtsTestBase() {
   private val target = "label: target_node {};"
@@ -15,7 +16,7 @@ class DtsLabelReferenceTest : DtsTestBase() {
     configureByText(input)
 
     val reference = myFixture.getReferenceAtCaretPositionWithAssertion()
-    assertEquals("label: &ref {}", reference.resolve()?.text)
+    assertEquals("label: &ref {}", runReadActionBlocking { reference.resolve()?.text })
   }
 
   fun `test local`() {
@@ -82,7 +83,7 @@ class DtsLabelReferenceTest : DtsTestBase() {
         """
 
     configureByText(input)
-    assertNull(myFixture.getReferenceAtCaretPosition()!!.resolve())
+    assertNull(runReadActionBlocking { myFixture.getReferenceAtCaretPosition()!!.resolve() })
   }
 
   fun `test target included below ref node`() {
@@ -94,7 +95,7 @@ class DtsLabelReferenceTest : DtsTestBase() {
     addFile("test.dtsi", "/ { $target };")
 
     configureByText(input)
-    assertNull(myFixture.getReferenceAtCaretPosition()!!.resolve())
+    assertNull(runReadActionBlocking { myFixture.getReferenceAtCaretPosition()!!.resolve() })
   }
 
   fun `test target below ref value`() {
@@ -127,6 +128,6 @@ class DtsLabelReferenceTest : DtsTestBase() {
     configureByText(input)
 
     val reference = myFixture.getReferenceAtCaretPositionWithAssertion()
-    assertEquals(target.trimEnd(';'), reference.resolve()?.text)
+    assertEquals(target.trimEnd(';'), runReadActionBlocking { reference.resolve()?.text })
   }
 }

@@ -1,6 +1,7 @@
 package com.intellij.dts.resolve
 
 import com.intellij.dts.DtsTestBase
+import com.intellij.openapi.application.runReadActionBlocking
 
 class DtsPathReferenceTest : DtsTestBase() {
   private val target = "target_node {};"
@@ -13,8 +14,8 @@ class DtsPathReferenceTest : DtsTestBase() {
 
     configureByText(input)
 
-    val reference = myFixture.getReferenceAtCaretPositionWithAssertion()
-    assertEquals("/ {}", reference.resolve()?.text)
+    val reference = runReadActionBlocking { myFixture.getReferenceAtCaretPositionWithAssertion() }
+    assertEquals("/ {}", runReadActionBlocking { reference.resolve()?.text })
   }
 
   fun `test local`() {
@@ -81,7 +82,7 @@ class DtsPathReferenceTest : DtsTestBase() {
         """
 
     configureByText(input)
-    assertNull(myFixture.getReferenceAtCaretPosition()!!.resolve())
+    assertNull(runReadActionBlocking { myFixture.getReferenceAtCaretPosition()!!.resolve() })
   }
 
   fun `test target included below ref node`() {
@@ -93,7 +94,7 @@ class DtsPathReferenceTest : DtsTestBase() {
     addFile("test.dtsi", "/ { $target };")
 
     configureByText(input)
-    assertNull(myFixture.getReferenceAtCaretPosition()!!.resolve())
+    assertNull(runReadActionBlocking { myFixture.getReferenceAtCaretPosition()!!.resolve() })
   }
 
   fun `test target below ref value`() {
@@ -144,6 +145,6 @@ class DtsPathReferenceTest : DtsTestBase() {
     configureByText(input)
 
     val reference = myFixture.getReferenceAtCaretPositionWithAssertion()
-    assertEquals(target.trimEnd(';'), reference.resolve()?.text)
+    assertEquals(target.trimEnd(';'), runReadActionBlocking { reference.resolve()?.text })
   }
 }

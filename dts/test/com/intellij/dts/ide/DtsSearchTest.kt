@@ -3,6 +3,7 @@ package com.intellij.dts.ide
 import com.intellij.dts.DtsTestBase
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.getDtsPath
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.util.startOffset
 
@@ -192,7 +193,7 @@ class DtsSearchTest : DtsTestBase() {
     }
 
     val reference = myFixture.getReferenceAtCaretPosition() as PsiPolyVariantReference
-    val results = reference.multiResolve(false)
+    val results = runReadActionBlocking { reference.multiResolve(false) }
 
     assertSize(expected.size, results)
 
@@ -200,8 +201,8 @@ class DtsSearchTest : DtsTestBase() {
       val (offset, path) = item.split(':')
       val element = result.element as DtsNode
 
-      assertEquals(offset.toInt(), element.startOffset)
-      assertEquals(path, element.getDtsPath().toString())
+      assertEquals(offset.toInt(), runReadActionBlocking { element.startOffset })
+      assertEquals(path, runReadActionBlocking { element.getDtsPath().toString() })
     }
   }
 }

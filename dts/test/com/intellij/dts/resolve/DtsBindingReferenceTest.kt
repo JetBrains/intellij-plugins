@@ -2,6 +2,7 @@ package com.intellij.dts.resolve
 
 import com.intellij.dts.DtsTestBase
 import com.intellij.dts.lang.symbols.DtsBindingSymbol
+import com.intellij.openapi.application.runReadActionBlocking
 
 class DtsBindingReferenceTest : DtsTestBase() {
   fun `test one compatible string`() = doTest(
@@ -31,7 +32,7 @@ class DtsBindingReferenceTest : DtsTestBase() {
     """)
 
     val reference = myFixture.findSingleReferenceAtCaret()
-    val target = reference.resolveReference().filterIsInstance<DtsBindingSymbol>().first()
+    val target = runReadActionBlocking { reference.resolveReference().filterIsInstance<DtsBindingSymbol>().first() }
 
     assertEquals(bindingPath, makeRelativeToWorkingDirectory(target.binding.path!!))
   }

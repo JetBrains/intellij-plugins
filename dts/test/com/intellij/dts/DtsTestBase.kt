@@ -9,9 +9,9 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.psi.PsiFile
-import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Locale
@@ -26,6 +26,14 @@ val DTS_TEST_ROOT_PATH: String = PathManager.getHomePath() + "/contrib/dts"
 val DTS_TEST_DATA_PATH: String = PathManager.getHomePath() + "/contrib/dts/testData"
 
 abstract class DtsTestBase : BasePlatformTestCase() {
+  override fun runInDispatchThread(): Boolean {
+    return false
+  }
+
+  override fun runFromCoroutine(): Boolean {
+    return true
+  }
+
   override fun setUp() {
     super.setUp()
 
@@ -57,13 +65,14 @@ abstract class DtsTestBase : BasePlatformTestCase() {
     return myFixture.addFileToProject(path, text)
   }
 
+  @RequiresBackgroundThread
   protected fun addZephyr() {
     val zephyr = Path.of(DTS_TEST_DATA_PATH, "zephyr").absolute().pathString
 
     val manager = ModuleManager.getInstance(project)
     ModuleRootModificationUtil.addContentRoot(manager.modules.first(), zephyr)
 
-    HeavyPlatformTestCase.refreshRecursively(DtsUtil.findFile(zephyr)!!)
+    refreshRecursively(DtsUtil.findFile(zephyr)!!)
 
     DtsSettings.of(project).update {
       zephyrRoot = zephyr

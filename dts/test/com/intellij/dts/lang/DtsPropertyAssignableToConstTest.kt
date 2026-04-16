@@ -1,6 +1,7 @@
 package com.intellij.dts.lang
 
 import com.intellij.dts.DtsTestBase
+import com.intellij.openapi.application.runReadActionBlocking
 
 class DtsPropertyAssignableToConstTest : DtsTestBase() {
   val string = "\"string\""
@@ -46,14 +47,14 @@ class DtsPropertyAssignableToConstTest : DtsTestBase() {
     for (value in valid) {
       configureByText("name = $value;")
 
-      val property = (myFixture.file as DtsFile).dtsProperties.first()
+      val property = runReadActionBlocking { (myFixture.file as DtsFile).dtsProperties.first() }
       assertTrue("should be assignable: $value", property.dtsAssignableTo(type))
     }
 
     for (value in invalid) {
       configureByText("name = $value;")
 
-      val property = (myFixture.file as DtsFile).dtsProperties.first()
+      val property = runReadActionBlocking { (myFixture.file as DtsFile).dtsProperties.first() }
       assertFalse("should not be assignable: $value", property.dtsAssignableTo(type))
     }
   }

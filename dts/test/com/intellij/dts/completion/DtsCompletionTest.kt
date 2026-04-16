@@ -3,6 +3,7 @@ package com.intellij.dts.completion
 import com.intellij.dts.DtsTestBase
 import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
 import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.runInEdtAndWait
 import kotlin.time.Duration.Companion.seconds
 
 abstract class DtsCompletionTest : DtsTestBase() {
@@ -85,7 +86,7 @@ abstract class DtsCompletionTest : DtsTestBase() {
   private fun doCompletion(lookupString: String) {
     val items = myFixture.completeBasic() ?: return
     val lookupItem = items.find { it.lookupString == lookupString } ?: return
-    myFixture.lookup.currentItem = lookupItem
+    runInEdtAndWait { myFixture.lookup.currentItem = lookupItem }
     myFixture.type('\n')
   }
 
