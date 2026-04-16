@@ -115,8 +115,6 @@
                          nonDefaultProject="true"
     />
 
-    <postStartupActivity implementation="org.jetbrains.vuejs.lang.html.psi.arrangement.VueArrangementSettingsMigration"/>
-
     <!-- works in WebStorm and other SmallIDEs -->
     <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>
     <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.NuxtProjectGenerator"/>
