@@ -74,6 +74,11 @@ groups:
       - CheckDependencyLicenses
       - RiderSecurityErrorsInspection
       - OpenGrepGlobalInspection
+      - OpenGrepInspection
+
+  - groupId: QodanaOpengrepInspections
+    groups:
+      - "category:OpenGrep"
 
   # JavaScript inspections
   - groupId: JSRelatedInspections
@@ -122,6 +127,8 @@ inspections:
   - group: DotnetExcluded
     enabled: false
   - group: QodanaDotNetInspections  # Explicitly enable coverage and dependency vulnerability analysis by default
+    enabled: true
+  - group: QodanaOpengrepInspections
     enabled: true
   - inspection: HttpUrlsUsage # Spam
     enabled: false
