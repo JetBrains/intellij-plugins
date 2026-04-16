@@ -28,8 +28,7 @@ class VueDocumentationTest :
 
   @Test
   fun testFromDefinitions() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
-    doTest()
+    doTest(VueTestModule.VUE_2_5_3)
   }
 
   @Test
@@ -68,19 +67,16 @@ class VueDocumentationTest :
 
   @Test
   fun testInnerLevelTemplateCustomAttr() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
-    doTest()
+    doTest(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testDynamicAttributes() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
-    doTest()
+    doTest(VueTestModule.VUE_2_6_10)
   }
 
   @Test
   fun testScriptSetupDestructing() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     doTest()
   }
 
@@ -181,43 +177,36 @@ class VueDocumentationTest :
 
   @Test
   fun testEmitEvents() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     doTest()
   }
 
   @Test
   fun testGenericComponentProp() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     doTest()
   }
 
   @Test
   fun testPropJsDoc() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     doTest()
   }
 
   @Test
   fun testPropRefJsDoc() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     doTest()
   }
 
   @Test
   fun testDataPropJsDoc() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     doTest()
   }
 
   @Test
   fun testDataPropRefJsDoc() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     doTest()
   }
 
   @Test
   fun testPropWithDefaults() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     doTest()
   }
 
@@ -230,9 +219,15 @@ class VueDocumentationTest :
     }
   }
 
-  private fun doTest() {
-    myFixture.configureByFile("${getTestName(false)}.vue")
-    myFixture.checkDocumentationAtCaret()
+  private fun doTest(
+    vararg modules: VueTestModule,
+  ) {
+    doConfiguredTest(
+      modules = modules,
+      configureFileName = "${getTestName(false)}.vue",
+    ) {
+      checkDocumentationAtCaret()
+    }
   }
 
 }
