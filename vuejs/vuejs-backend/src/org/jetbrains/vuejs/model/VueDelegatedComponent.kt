@@ -3,33 +3,22 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.text.Strings
 import com.intellij.platform.backend.documentation.DocumentationTarget
-import com.intellij.polySymbols.documentation.PolySymbolDocumentation
-import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.psi.PsiElement
-import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 
 abstract class VueDelegatedComponent<T : VueComponent> : VueDelegatedContainer<T>(), VueNamedComponent {
 
   final override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
-    PolySymbolDocumentationTarget.create(
-      this, location,
-      PolySymbolDocumentationProvider<VueDelegatedComponent<*>> { symbol, location ->
-        val myDoc = PolySymbolDocumentation.create(symbol, location) {
-          library = getLibraryNameForDocumentationOf(symbol.source)
-        }
-        (symbol.delegate as? VueNamedComponent)
-          ?.getDocumentationTarget(location)
-          ?.asSafely<PolySymbolDocumentationTarget>()
-          ?.documentation
-          ?.withLibrary(myDoc.library)
-          ?.withName(myDoc.name)
-          ?.withDefinition(myDoc.definition)
-          ?.withIcon(myDoc.icon)
-        ?: myDoc
-      })
+    PolySymbolDocumentationTarget.create(this, location) { symbol, _ ->
+      copyFrom(symbol.delegate as? VueNamedComponent)
+      library(getLibraryNameForDocumentationOf(symbol.source))
+      name(symbol.name)
+      definition(Strings.escapeXmlEntities(symbol.name))
+      icon(symbol.icon)
+    }
 
   final override val typeParameters: List<TypeScriptTypeParameter>
     get() = delegate?.typeParameters ?: emptyList()

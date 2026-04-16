@@ -14,8 +14,6 @@ import com.intellij.model.Symbol
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.documentation.PolySymbolDocumentation
-import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.js.JS_EXPECTED_METHODS
 import com.intellij.polySymbols.js.JS_PARAMETERS
@@ -28,7 +26,6 @@ import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.asSafely
 import org.angular2.codeInsight.Angular2HighlightingUtils
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.web.NG_COMPONENT_LIFECYCLE_HOOKS
@@ -63,22 +60,16 @@ internal class Angular2ComponentExpectedMethodsScope(cls: TypeScriptClass) :
   ) : PolySymbolDelegate<PolySymbol> {
 
     override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
-      PolySymbolDocumentationTarget.create(
-        this, location,
-        PolySymbolDocumentationProvider<NgComponentLifecycleHookWrapper> { symbol, location ->
-          (symbol.delegate
-             .getDocumentationTarget(location)
-             .asSafely<PolySymbolDocumentationTarget>()
-             ?.documentation
-           ?: PolySymbolDocumentation.create(symbol, location) {})
-            .withDefinition(
-              "lifecycle hook".withColor(Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD, symbol.psiContext, false) +
-              " " + symbol.name.withColor(Angular2HighlightingUtils.TextAttributesKind.TS_INSTANCE_METHOD,
-                                          symbol.psiContext,
-                                          false) +
-              "(): " + "void".withColor(Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD, symbol.psiContext, false)
-            )
-        })
+      PolySymbolDocumentationTarget.create(this, location) { symbol, _ ->
+        copyFrom(symbol.delegate)
+        definition(
+          "lifecycle hook".withColor(Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD, symbol.psiContext, false) +
+          " " + symbol.name.withColor(Angular2HighlightingUtils.TextAttributesKind.TS_INSTANCE_METHOD,
+                                      symbol.psiContext,
+                                      false) +
+          "(): " + "void".withColor(Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD, symbol.psiContext, false)
+        )
+      }
 
     override val kind: PolySymbolKind
       get() = JS_EXPECTED_METHODS
