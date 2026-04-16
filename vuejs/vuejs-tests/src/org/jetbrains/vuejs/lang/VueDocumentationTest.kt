@@ -26,6 +26,9 @@ class VueDocumentationTest :
     super.adjustConfigurators(configurators)
       .filter { it !is VueTsConfigFile }
 
+  private val defaultTestFileName: String
+    get() = "${getTestName(false)}.vue"
+
   @Test
   fun testFromDefinitions() {
     doTest(VueTestModule.VUE_2_5_3)
@@ -61,7 +64,7 @@ class VueDocumentationTest :
 
   @Test
   fun testInnerLevelTemplateStdAttrNoDoc() {
-    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.configureByFile(defaultTestFileName)
     myFixture.checkNoDocumentationAtCaret()
   }
 
@@ -110,7 +113,7 @@ class VueDocumentationTest :
   @Test
   fun testMergedWebTypesComponents() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
-    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.configureByFile(defaultTestFileName)
     myFixture.checkLookupItems(renderPriority = true, checkDocumentation = true) {
       it.lookupString in setOf("n-affix", "n-bar", "n-a", "n-button", "n-alert")
     }
@@ -120,7 +123,7 @@ class VueDocumentationTest :
   fun testMergedWebTypesPropsGlobal() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
-    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.configureByFile(defaultTestFileName)
     myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true) {
       it.lookupString in setOf("bottom", "offset-top", "position", "trigger-bottom")
     }
@@ -130,7 +133,7 @@ class VueDocumentationTest :
   fun testMergedWebTypesPropsLocal() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
-    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.configureByFile(defaultTestFileName)
     myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true) {
       it.lookupString in setOf("bottom", "offset-top", "position", "trigger-bottom")
     }
@@ -139,7 +142,7 @@ class VueDocumentationTest :
   @Test
   fun testMergedWebTypesSlots() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
-    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.configureByFile(defaultTestFileName)
     myFixture.checkLookupItems(renderPriority = true, checkDocumentation = true)
   }
 
@@ -159,7 +162,7 @@ class VueDocumentationTest :
   @Test
   fun testPrimeVueMergedProps() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.PRIMEVUE_3_8_2)
-    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.configureByFile(defaultTestFileName)
     myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true,
                                fileName = "PrimeVueMergedPropsElement") {
       it.lookupString in setOf("Avatar", "BlockUI")
@@ -213,7 +216,7 @@ class VueDocumentationTest :
   @Test
   fun testNoComponentDocInCodeCompletion() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.configureByFile(defaultTestFileName)
     myFixture.checkLookupItems(checkDocumentation = true) {
       it.lookupString == "NoComponentDocInCodeCompletion" || it.lookupString == "Component"
     }
@@ -224,7 +227,7 @@ class VueDocumentationTest :
   ) {
     doConfiguredTest(
       modules = modules,
-      configureFileName = "${getTestName(false)}.vue",
+      configureFileName = defaultTestFileName,
     ) {
       checkDocumentationAtCaret()
     }
