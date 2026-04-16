@@ -8,6 +8,7 @@ import org.junit.runners.Suite
 @Suite.SuiteClasses(
   VueAutoPopupTest::class,
   VueCompletionTest::class,
+  VueDocumentationTest::class,
   VueExtractComponentTest::class,
   VueFindUsagesTest::class,
   VueHighlightingTest::class,
@@ -21,6 +22,7 @@ class VuePluginTestSuite
 @Suite.SuiteClasses(
   VueAutoPopupTest.WithLegacyPluginTest::class,
   VueCompletionTest.WithLegacyPluginTest::class,
+  VueDocumentationTest.WithLegacyPluginTest::class,
   VueExtractComponentTest.WithLegacyPluginTest::class,
   VueFindUsagesTest.WithLegacyPluginTest::class,
   VueHighlightingTest.WithLegacyPluginTest::class,
@@ -34,6 +36,7 @@ class VueLegacyPluginTestSuite
 @Suite.SuiteClasses(
   VueAutoPopupTest.WithoutServiceTest::class,
   VueCompletionTest.WithoutServiceTest::class,
+  VueDocumentationTest.WithoutServiceTest::class,
   VueExtractComponentTest.WithoutServiceTest::class,
   VueFindUsagesTest.WithoutServiceTest::class,
   VueHighlightingTest.WithoutServiceTest::class,

@@ -2,19 +2,50 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.lang.documentation.ExternalDocumentationProvider
+import com.intellij.lang.javascript.TrackFailedTestRule
 import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.polySymbols.testFramework.checkNoDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
+import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
+@Ignore
 class VueDocumentationTest :
-  VueTestCase("documentation", testMode = VueTestMode.NO_PLUGIN) {
+  VueDocumentationWithPluginTestBase() {
+
+  @Ignore
+  class WithLegacyPluginTest :
+    VueDocumentationWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
+
+  class WithoutServiceTest :
+    VueDocumentationTestBase(testMode = VueTestMode.NO_PLUGIN)
+}
+
+abstract class VueDocumentationWithPluginTestBase(
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+) : VueDocumentationTestBase(testMode = testMode) {
+
+  // TODO: use separate expected data
+  @Rule
+  @JvmField
+  val rule: TestRule = TrackFailedTestRule(
+    "testPropWithDefaults",
+    "testFromDefinitions",
+    "testPrimeVueMergedProps",
+  )
+}
+
+@RunWith(JUnit4::class)
+abstract class VueDocumentationTestBase(
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+) : VueTestCase("documentation", testMode = testMode) {
 
   private val defaultTestFileName: String
     get() = "${getTestName(false)}.vue"
