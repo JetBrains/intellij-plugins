@@ -71,6 +71,7 @@ import org.jetbrains.vuejs.model.VueModelDecl
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelOwner
 import org.jetbrains.vuejs.model.VueNamedComponent
+import org.jetbrains.vuejs.model.VuePrefixedEmitCall
 import org.jetbrains.vuejs.model.VueProvide
 import org.jetbrains.vuejs.model.VueSlot
 import org.jetbrains.vuejs.model.VueSymbol
@@ -236,7 +237,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
         modelDecls.values.forEach {
           modelProps.add(VueScriptSetupModelInputProperty(it))
-          modelEmits.add(VueScriptSetupModelEvent(it))
+          modelEmits.add(VuePrefixedEmitCall(EMIT_CALL_UPDATE_PREFIX, VueScriptSetupModelEvent(it)))
         }
 
         props = props + modelProps
@@ -706,7 +707,7 @@ private data class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl
   VueEmitCall, VueModelOwner, PsiSourcedPolySymbol {
 
   override val name: String
-    get() = "$EMIT_CALL_UPDATE_PREFIX${modelDecl.name}"
+    get() = modelDecl.name
 
   override val source: PsiElement
     get() = modelDecl.source

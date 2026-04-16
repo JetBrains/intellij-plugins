@@ -35,6 +35,7 @@ import org.jetbrains.vuejs.model.VueModelDecl
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueNamedComponent
+import org.jetbrains.vuejs.model.VuePrefixedEmitCall
 import org.jetbrains.vuejs.model.VueProperty
 import org.jetbrains.vuejs.model.VueScopeElement
 import org.jetbrains.vuejs.model.VueSlot
@@ -405,6 +406,10 @@ class VueComponentTest :
           printProperty(level, "pattern", (sourceElement as? PolySymbolWithPattern)?.pattern)
         }
         if (sourceElement is VueEmitCall) {
+          if (sourceElement is VuePrefixedEmitCall) {
+            printProperty(level, "delegateClass", sourceElement.delegate.javaClass.simpleName)
+            printProperty(level, "delegateName", sourceElement.delegate.name)
+          }
           printProperty(level, "type", sourceElement.type)
           printProperty(level, "params", sourceElement.params)
           printProperty(level, "hasStrictSignature", sourceElement.hasStrictSignature)

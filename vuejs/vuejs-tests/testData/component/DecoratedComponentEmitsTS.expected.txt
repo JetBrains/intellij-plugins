@@ -116,8 +116,10 @@
    callSignature: "(event: "promise", arg: number) => void",
   },
   {
-   class: "VueDecoratedPropSyncEmitCall",
+   class: "VuePrefixedEmitCall",
    name: "update:name",
+   delegateClass: "VueDecoratedPropSyncEmitCall",
+   delegateName: "name",
    type: "(arg: string) => void",
    params: [
     {
@@ -129,8 +131,10 @@
    callSignature: "(event: "update:name", arg: string) => void",
   },
   {
-   class: "VueDecoratedPropSyncEmitCall",
+   class: "VuePrefixedEmitCall",
    name: "update:name2",
+   delegateClass: "VueDecoratedPropSyncEmitCall",
+   delegateName: "name2",
    type: "(arg: ("a" | "b")) => void",
    params: [
     {
@@ -142,8 +146,10 @@
    callSignature: "(event: "update:name2", arg: ("a" | "b")) => void",
   },
   {
-   class: "VueDecoratedPropSyncEmitCall",
+   class: "VuePrefixedEmitCall",
    name: "update:name3",
+   delegateClass: "VueDecoratedPropSyncEmitCall",
+   delegateName: "name3",
    type: "(arg: any) => void",
    params: [
     {

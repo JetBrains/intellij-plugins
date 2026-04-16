@@ -43,8 +43,10 @@
  ],
  emits: [
   {
-   class: "VueScriptSetupModelEvent",
+   class: "VuePrefixedEmitCall",
    name: "update:count",
+   delegateClass: "VueScriptSetupModelEvent",
+   delegateName: "count",
    type: "(value: number) => void",
    params: [
     {
@@ -56,8 +58,10 @@
    callSignature: "(event: "update:count", value: number) => void",
   },
   {
-   class: "VueScriptSetupModelEvent",
+   class: "VuePrefixedEmitCall",
    name: "update:countAny",
+   delegateClass: "VueScriptSetupModelEvent",
+   delegateName: "countAny",
    type: "(value: any) => void",
    params: [
     {
@@ -69,8 +73,10 @@
    callSignature: "(event: "update:countAny", value: any) => void",
   },
   {
-   class: "VueScriptSetupModelEvent",
+   class: "VuePrefixedEmitCall",
    name: "update:countLocal",
+   delegateClass: "VueScriptSetupModelEvent",
+   delegateName: "countLocal",
    type: "(value: number) => void",
    params: [
     {
@@ -82,8 +88,10 @@
    callSignature: "(event: "update:countLocal", value: number) => void",
   },
   {
-   class: "VueScriptSetupModelEvent",
+   class: "VuePrefixedEmitCall",
    name: "update:countRequired",
+   delegateClass: "VueScriptSetupModelEvent",
+   delegateName: "countRequired",
    type: "(value: number | boolean) => void",
    params: [
     {
@@ -95,8 +103,10 @@
    callSignature: "(event: "update:countRequired", value: number | boolean) => void",
   },
   {
-   class: "VueScriptSetupModelEvent",
+   class: "VuePrefixedEmitCall",
    name: "update:countType",
+   delegateClass: "VueScriptSetupModelEvent",
+   delegateName: "countType",
    type: "(value: string) => void",
    params: [
     {
@@ -108,8 +118,10 @@
    callSignature: "(event: "update:countType", value: string) => void",
   },
   {
-   class: "VueScriptSetupModelEvent",
+   class: "VuePrefixedEmitCall",
    name: "update:modelValue",
+   delegateClass: "VueScriptSetupModelEvent",
+   delegateName: "modelValue",
    type: "(value: string) => void",
    params: [
     {

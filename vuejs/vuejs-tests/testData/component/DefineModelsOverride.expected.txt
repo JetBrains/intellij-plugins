@@ -19,8 +19,10 @@
  ],
  emits: [
   {
-   class: "VueScriptSetupModelEvent",
+   class: "VuePrefixedEmitCall",
    name: "update:count",
+   delegateClass: "VueScriptSetupModelEvent",
+   delegateName: "count",
    type: "(value: (number | boolean[])) => void",
    params: [
     {
@@ -32,8 +34,10 @@
    callSignature: "(event: "update:count", value: (number | boolean[])) => void",
   },
   {
-   class: "VueScriptSetupModelEvent",
+   class: "VuePrefixedEmitCall",
    name: "update:modelValue",
+   delegateClass: "VueScriptSetupModelEvent",
+   delegateName: "modelValue",
    type: "(value: number) => void",
    params: [
     {

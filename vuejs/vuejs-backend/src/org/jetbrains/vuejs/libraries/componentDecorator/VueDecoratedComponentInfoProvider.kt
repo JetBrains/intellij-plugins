@@ -42,6 +42,7 @@ import org.jetbrains.vuejs.model.VueMethod
 import org.jetbrains.vuejs.model.VueMixin
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VuePrefixedEmitCall
 import org.jetbrains.vuejs.model.VueProperty
 import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
@@ -105,7 +106,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
               computed.add(VueDecoratedComputedProperty(clazz, member.memberName, member, decorator, 1))
               getNameFromDecorator(decorator)?.let { name ->
                 props.add(VueDecoratedInputProperty(name, member, decorator, 1))
-                emits.add(VueDecoratedPropSyncEmitCall("$EMIT_CALL_UPDATE_PREFIX$name", decorator, member))
+                emits.add(VuePrefixedEmitCall(EMIT_CALL_UPDATE_PREFIX, VueDecoratedPropSyncEmitCall(name, decorator, member)))
               }
             }
             MODEL_DEC -> if (model === null) {

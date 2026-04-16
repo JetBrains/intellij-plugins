@@ -4,10 +4,14 @@ package org.jetbrains.vuejs.model
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.NlsSafe
+import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
+import com.intellij.polySymbols.CompositePolySymbol
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
+import com.intellij.polySymbols.PolySymbolNameSegment
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
@@ -19,10 +23,10 @@ import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
+import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.vuejs.VueBundle
@@ -38,6 +42,7 @@ import org.jetbrains.vuejs.web.VUE_MODEL_DECL
 import org.jetbrains.vuejs.web.VUE_PROVIDES
 import org.jetbrains.vuejs.web.VueModelEventProperty
 import org.jetbrains.vuejs.web.VueModelPropProperty
+import javax.swing.Icon
 
 const val EMIT_CALL_UPDATE_PREFIX: String = "update:"
 
@@ -157,19 +162,59 @@ interface VueEmitCall : VueTemplateSymbol {
     get() =
       PolySymbolHtmlAttributeValue.create(PolySymbolHtmlAttributeValue.Kind.EXPRESSION, PolySymbolHtmlAttributeValue.Type.OF_MATCH)
 
-  override fun adjustNameForRefactoring(
-    queryExecutor: PolySymbolQueryExecutor,
-    oldName: PolySymbolQualifiedName,
-    newName: String,
-    occurence: String,
-  ): String {
-    if (this is VueModelOwner && occurence.startsWith(EMIT_CALL_UPDATE_PREFIX) && !newName.startsWith(EMIT_CALL_UPDATE_PREFIX)) {
-      return "$EMIT_CALL_UPDATE_PREFIX$newName"
+  override fun createPointer(): Pointer<out VueEmitCall>
+}
+
+class VuePrefixedEmitCall(
+  val prefix: String,
+  override val delegate: VueEmitCall,
+) : VueEmitCall, CompositePolySymbol, PolySymbolDelegate<VueEmitCall> {
+
+  override val source: PsiElement?
+    get() = delegate.source
+
+  override val kind: PolySymbolKind
+    get() = super<VueEmitCall>.kind
+
+  override val name: @NlsSafe String
+    get() = prefix + delegate.name
+
+  override val icon: Icon?
+    get() = delegate.icon
+
+  override val priority: PolySymbol.Priority
+    get() = delegate.priority
+
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
+    delegate.getDocumentationTarget(location)
+
+  override val searchTarget: PolySymbolSearchTarget
+    get() = delegate.searchTarget
+
+  override val type: JSType?
+    get() = delegate.type
+
+  override val params: List<JSParameterTypeDecorator>
+    get() = delegate.params
+
+  override val hasStrictSignature: Boolean
+    get() = delegate.hasStrictSignature
+
+  override val nameSegments: List<PolySymbolNameSegment>
+    get() = listOf(
+      PolySymbolNameSegment.create(0, prefix.length),
+      PolySymbolNameSegment.create(prefix.length, prefix.length + delegate.name.length, delegate)
+    )
+
+  override fun createPointer(): Pointer<out VuePrefixedEmitCall> {
+    val prefix = prefix
+    val delegatePtr = delegate.createPointer()
+    return Pointer {
+      val delegate = delegatePtr.dereference() ?: return@Pointer null
+      VuePrefixedEmitCall(prefix, delegate)
     }
-    return super.adjustNameForRefactoring(queryExecutor, oldName, newName, occurence)
   }
 
-  override fun createPointer(): Pointer<out VueEmitCall>
 }
 
 /**
