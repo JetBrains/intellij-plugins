@@ -36,15 +36,17 @@ class VueDocumentationTest :
 
   @Test
   fun testTSLibraryElement() {
-    myFixture.configureVueDependencies()
-    myFixture.configureByFile("TSLibraryElement.vue")
-    val element = myFixture.file.findElementAt(myFixture.caretOffset)
-    val elementAtCaret = myFixture.elementAtCaret
-    val documentationProvider = DocumentationManager.getProviderFromElement(elementAtCaret, element)
-    documentationProvider as ExternalDocumentationProvider
-    val urls = documentationProvider.getUrlFor(elementAtCaret, element)
-    assertNotNull(urls)
-    assertNull("$urls", documentationProvider.fetchExternalDocumentation(project, elementAtCaret, urls, false))
+    doConfiguredTest(
+      configureFileName = defaultTestFileName,
+    ) {
+      val element = file.findElementAt(caretOffset)
+      val elementAtCaret = elementAtCaret
+      val documentationProvider = DocumentationManager.getProviderFromElement(elementAtCaret, element)
+      documentationProvider as ExternalDocumentationProvider
+      val urls = documentationProvider.getUrlFor(elementAtCaret, element)
+      assertNotNull(urls)
+      assertNull("$urls", documentationProvider.fetchExternalDocumentation(project, elementAtCaret, urls, false))
+    }
   }
 
   @Test
@@ -163,28 +165,55 @@ class VueDocumentationTest :
 
   @Test
   fun testMergedWebTypesPropsSource() {
-    myFixture.copyDirectoryToProject(getTestName(true), ".")
-    myFixture.configureFromTempProjectFile("src/MergedWebTypesPropsSource.vue")
-    myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true, expectedDataLocation = "") {
-      it.lookupString in setOf("test-prop-two", "test-prop")
-    }
-    myFixture.configureFromTempProjectFile("src/MergedWebTypesPropsScriptSource.vue")
-    myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true, expectedDataLocation = "") {
-      it.lookupString in setOf("test-prop-two", "test-prop")
+    doConfiguredTest(
+      dir = true,
+      configureFile = false,
+    ) {
+      configureFromTempProjectFile("src/MergedWebTypesPropsSource.vue")
+      checkLookupItems(
+        renderPriority = true,
+        renderTypeText = true,
+        checkDocumentation = true,
+        expectedDataLocation = "",
+      ) {
+        it.lookupString in setOf("test-prop-two", "test-prop")
+      }
+
+      configureFromTempProjectFile("src/MergedWebTypesPropsScriptSource.vue")
+      checkLookupItems(
+        renderPriority = true,
+        renderTypeText = true,
+        checkDocumentation = true,
+        expectedDataLocation = "",
+      ) {
+        it.lookupString in setOf("test-prop-two", "test-prop")
+      }
     }
   }
 
   @Test
   fun testPrimeVueMergedProps() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.PRIMEVUE_3_8_2)
-    myFixture.configureByFile(defaultTestFileName)
-    myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true,
-                               fileName = "PrimeVueMergedPropsElement") {
-      it.lookupString in setOf("Avatar", "BlockUI")
-    }
-    myFixture.moveToOffsetBySignature("Avatar <caret>>")
-    myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true) {
-      it.lookupString in setOf("icon", "size")
+    doConfiguredTest(
+      VueTestModule.PRIMEVUE_3_8_2,
+      configureFileName = defaultTestFileName,
+    ) {
+      checkLookupItems(
+        renderPriority = true,
+        renderTypeText = true,
+        checkDocumentation = true,
+        fileName = "PrimeVueMergedPropsElement",
+      ) {
+        it.lookupString in setOf("Avatar", "BlockUI")
+      }
+
+      moveToOffsetBySignature("Avatar <caret>>")
+      checkLookupItems(
+        renderPriority = true,
+        renderTypeText = true,
+        checkDocumentation = true,
+      ) {
+        it.lookupString in setOf("icon", "size")
+      }
     }
   }
 
