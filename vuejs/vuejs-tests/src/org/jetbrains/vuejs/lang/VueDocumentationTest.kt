@@ -2,15 +2,12 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.lang.documentation.ExternalDocumentationProvider
-import com.intellij.lang.javascript.TypeScriptTestUtil
-import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.polySymbols.testFramework.checkNoDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
-import org.jetbrains.vuejs.VueTsConfigFile
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -18,13 +15,6 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class VueDocumentationTest :
   VueTestCase("documentation", testMode = VueTestMode.NO_PLUGIN) {
-
-  // for migration
-  override fun adjustConfigurators(
-    configurators: List<PolySymbolsTestConfigurator>,
-  ): List<PolySymbolsTestConfigurator> =
-    super.adjustConfigurators(configurators)
-      .filter { it !is VueTsConfigFile }
 
   private val defaultTestFileName: String
     get() = "${getTestName(false)}.vue"
@@ -100,13 +90,11 @@ class VueDocumentationTest :
 
   @Test
   fun testRequiredPropertyTS() {
-    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     doTest()
   }
 
   @Test
   fun testNotRequiredPropertyTS() {
-    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     doTest()
   }
 
@@ -129,8 +117,6 @@ class VueDocumentationTest :
 
   @Test
   fun testMergedWebTypesPropsGlobal() {
-    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
-
     doLookupTest(
       VueTestModule.NAIVE_UI_2_33_2_PATCHED,
       configureFileName = defaultTestFileName,
@@ -142,8 +128,6 @@ class VueDocumentationTest :
 
   @Test
   fun testMergedWebTypesPropsLocal() {
-    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
-
     doLookupTest(
       VueTestModule.NAIVE_UI_2_33_2_PATCHED,
       configureFileName = defaultTestFileName,
@@ -167,6 +151,9 @@ class VueDocumentationTest :
   fun testMergedWebTypesPropsSource() {
     doConfiguredTest(
       dir = true,
+      configurators = listOf(
+        UseLocalPackageJsonConfigurator(),
+      ),
       configureFile = false,
     ) {
       configureFromTempProjectFile("src/MergedWebTypesPropsSource.vue")
