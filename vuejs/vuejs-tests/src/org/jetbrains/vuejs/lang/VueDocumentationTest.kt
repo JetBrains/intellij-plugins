@@ -9,7 +9,6 @@ import com.intellij.polySymbols.testFramework.checkNoDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
@@ -19,7 +18,6 @@ import org.junit.runners.JUnit4
 class VueDocumentationTest :
   VueDocumentationWithPluginTestBase() {
 
-  @Ignore
   class WithLegacyPluginTest :
     VueDocumentationWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
