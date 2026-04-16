@@ -75,6 +75,15 @@ groups:
       - RiderSecurityErrorsInspection
       - OpenGrepGlobalInspection
 
+  - groupId: QodanaOpengrepInspections
+    groups:
+      - "category:OpenGrep"
+      - "!QodanaOpengrepDisabledInspections"
+
+  - groupId: QodanaOpengrepDisabledInspections
+    inspections:
+      - OpenGrepInspection
+
   # JavaScript inspections
   - groupId: JSRelatedInspections
     inspections:
@@ -112,6 +121,7 @@ groups:
       - "JSRelatedInspections"
       - "JSInspections"
       - "FlakyInspections"
+      - "QodanaOpengrepDisabledInspections"
       - "ProofreadingInspections"
       - "UnsupportedInspections"
       - "RiderStaticSanityInspections" # Inspections that appear in sanity profile
@@ -122,6 +132,8 @@ inspections:
   - group: DotnetExcluded
     enabled: false
   - group: QodanaDotNetInspections  # Explicitly enable coverage and dependency vulnerability analysis by default
+    enabled: true
+  - group: QodanaOpengrepInspections
     enabled: true
   - inspection: HttpUrlsUsage # Spam
     enabled: false
