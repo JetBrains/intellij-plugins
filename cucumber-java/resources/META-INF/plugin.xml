@@ -59,7 +59,7 @@
                  description="Find glue using Cucumber for Java IntelliJ plugin instead of cucumber-jvm (applies only to cucumber-jvm v6 and newer)"
                  defaultValue="false"/>
 
-    <platform.backend.documentation.psiTargetProvider
+    <platform.backend.documentation.targetProvider
       implementation="org.jetbrains.plugins.cucumber.java.CucumberJavaStepDocumentationTargetProvider"/>
   </extensions>
 
