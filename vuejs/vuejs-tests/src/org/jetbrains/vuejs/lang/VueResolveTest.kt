@@ -30,6 +30,7 @@ import com.intellij.polySymbols.utils.asSingleSymbol
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.testFramework.assertInstanceOf
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.VueTestCase
@@ -198,7 +199,7 @@ export default {
 }
 </script>""")
       val property = polySymbolSourceAtCaret()
-      assertTrue((property as JSImplicitElement).context is JSFunctionItem)
+      assertInstanceOf<JSFunctionItem>((property as JSImplicitElement).context)
       assertEquals("testRight", (property.context as JSFunctionItem).name)
     }
   }
@@ -225,7 +226,7 @@ export default {
       val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val property = reference!!.resolve()
-      assertTrue((property as JSImplicitElement).context is JSFunctionItem)
+      assertInstanceOf<JSFunctionItem>((property as JSImplicitElement).context)
       assertEquals("testRight", (property.context as JSFunctionItem).name)
     }
   }
@@ -268,7 +269,7 @@ export default {
       val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val property = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
-      assertTrue(property is JSProperty)
+      assertInstanceOf<JSProperty>(property)
       assertEquals("me215thod", (property as JSProperty).name)
     }
   }
@@ -526,7 +527,7 @@ export default {
     }
     else {
       val property = if (target is JSImplicitElement) target.parent else target
-      assertTrue(property is JSProperty)
+      assertInstanceOf<JSProperty>(property)
       assertEquals(expectedPropertyName, (property as JSProperty).name)
     }
   }
@@ -549,7 +550,7 @@ export default {
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertTrue(variable!!.parent.parent is VueJSVForExpression)
+      assertInstanceOf<VueJSVForExpression>(variable!!.parent.parent)
     }
   }
 
@@ -581,8 +582,8 @@ export default {
       assertNotNull(reference)
       val part = reference!!.resolve()
       assertNotNull(part)
-      assertTrue(part is JSProperty)
-      assertTrue(part!!.parent is JSObjectLiteralExpression)
+      assertInstanceOf<JSProperty>(part)
+      assertInstanceOf<JSObjectLiteralExpression>(part!!.parent)
     }
   }
 
@@ -614,8 +615,8 @@ export default {
       assertNotNull(reference)
       val part = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
       assertNotNull(part)
-      assertTrue(part is JSProperty)
-      assertTrue(part!!.parent is JSObjectLiteralExpression)
+      assertInstanceOf<JSProperty>(part)
+      assertInstanceOf<JSObjectLiteralExpression>(part!!.parent)
     }
   }
 
@@ -634,7 +635,7 @@ export default {
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertTrue(variable!!.parent.parent is VueJSVForExpression)
+      assertInstanceOf<VueJSVForExpression>(variable!!.parent.parent)
     }
   }
 
@@ -663,8 +664,8 @@ export default {
       assertNotNull(reference)
       val part = reference!!.resolve()
       assertNotNull(part)
-      assertTrue(part is JSProperty)
-      assertTrue(part!!.parent is JSObjectLiteralExpression)
+      assertInstanceOf<JSProperty>(part)
+      assertInstanceOf<JSObjectLiteralExpression>(part!!.parent)
     }
   }
 
@@ -693,8 +694,8 @@ export default {
       assertNotNull(reference)
       val part = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
       assertNotNull(part)
-      assertTrue(part is JSProperty)
-      assertTrue(part!!.parent is JSObjectLiteralExpression)
+      assertInstanceOf<JSProperty>(part)
+      assertInstanceOf<JSObjectLiteralExpression>(part!!.parent)
     }
   }
 
@@ -716,7 +717,7 @@ export default {
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertTrue(variable!!.parent.parent is VueJSVForExpression)
+      assertInstanceOf<VueJSVForExpression>(variable!!.parent.parent)
     }
   }
 
@@ -747,9 +748,9 @@ export default {
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertTrue(variable!!.parent is JSVarStatement)
-      assertTrue(variable.parent.parent is JSParenthesizedExpression)
-      assertTrue(variable.parent.parent.parent is VueJSVForExpression)
+      assertInstanceOf<JSVarStatement>(variable!!.parent)
+      assertInstanceOf<JSParenthesizedExpression>(variable.parent.parent)
+      assertInstanceOf<VueJSVForExpression>(variable.parent.parent.parent)
     }
   }
 
@@ -780,9 +781,9 @@ export default {
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertTrue(variable!!.parent is JSVarStatement)
-      assertTrue(variable.parent.parent is JSParenthesizedExpression)
-      assertTrue(variable.parent.parent.parent is VueJSVForExpression)
+      assertInstanceOf<JSVarStatement>(variable!!.parent)
+      assertInstanceOf<JSParenthesizedExpression>(variable.parent.parent)
+      assertInstanceOf<VueJSVForExpression>(variable.parent.parent.parent)
     }
   }
 
@@ -802,9 +803,9 @@ export default {
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertTrue(variable!!.parent is JSVarStatement)
-      assertTrue(variable.parent.parent is JSParenthesizedExpression)
-      assertTrue(variable.parent.parent.parent is VueJSVForExpression)
+      assertInstanceOf<JSVarStatement>(variable!!.parent)
+      assertInstanceOf<JSParenthesizedExpression>(variable.parent.parent)
+      assertInstanceOf<VueJSVForExpression>(variable.parent.parent.parent)
     }
   }
 
@@ -908,9 +909,9 @@ new Vue({
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertTrue(variable!!.parent is JSVarStatement)
-      assertTrue(variable.parent.parent is JSParenthesizedExpression)
-      assertTrue(variable.parent.parent.parent is VueJSVForExpression)
+      assertInstanceOf<JSVarStatement>(variable!!.parent)
+      assertInstanceOf<JSParenthesizedExpression>(variable.parent.parent)
+      assertInstanceOf<VueJSVForExpression>(variable.parent.parent.parent)
     }
   }
 
@@ -1028,9 +1029,9 @@ export default {
 
       val property = polySymbolSourceAtCaret()
       assertNotNull(property)
-      assertTrue(property is JSProperty)
+      assertInstanceOf<JSProperty>(property)
       assertEquals("from", (property as JSProperty).name)
-      assertTrue(property.parent.parent is JSProperty)
+      assertInstanceOf<JSProperty>(property.parent.parent)
       assertEquals("props", (property.parent.parent as JSProperty).name)
     }
   }
@@ -1075,7 +1076,7 @@ Vue.component('global-comp-literal', {
       val property = polySymbolSourceAtCaret()
       assertInstanceOf(property, JSProperty::class.java)
       assertEquals("insideGlobalCompLiteral", (property as JSProperty).name)
-      assertTrue(property.parent.parent is JSProperty)
+      assertInstanceOf<JSProperty>(property.parent.parent)
       assertEquals("props", (property.parent.parent as JSProperty).name)
     }
   }
@@ -1104,7 +1105,7 @@ Vue.component('global-comp-literal', {
       val literal = polySymbolSourceAtCaret()
       assertInstanceOf(literal, JSLiteralExpression::class.java)
       assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
-      assertTrue(literal.parent is JSArrayLiteralExpression)
+      assertInstanceOf<JSArrayLiteralExpression>(literal.parent)
     }
   }
 
@@ -1131,9 +1132,9 @@ const props = ['oneTwo']
       doHighlighting()
       val literal = polySymbolSourceAtCaret()
       assertNotNull(literal)
-      assertTrue(literal is JSLiteralExpression)
+      assertInstanceOf<JSLiteralExpression>(literal)
       assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
-      assertTrue(literal.parent is JSArrayLiteralExpression)
+      assertInstanceOf<JSArrayLiteralExpression>(literal.parent)
     }
   }
 
@@ -1203,7 +1204,7 @@ const props = {seeMe: {}}
       checkHighlighting()
       val property = polySymbolSourceAtCaret()
       assertNotNull(property)
-      assertTrue(property is JSProperty)
+      assertInstanceOf<JSProperty>(property)
       assertEquals("seeMe", (property as JSProperty).name)
       assertEquals("compUI.vue", property.containingFile.name)
     }
@@ -1240,8 +1241,8 @@ const props = {seeMe: {}}
       checkHighlighting()
       val property = polySymbolSourceAtCaret()
       assertNotNull(property)
-      assertTrue(property is JSProperty)
-      assertTrue(property!!.parent.parent is JSProperty)
+      assertInstanceOf<JSProperty>(property)
+      assertInstanceOf<JSProperty>(property!!.parent.parent)
       assertEquals("props", (property.parent.parent as JSProperty).name)
       assertEquals("seeMe", (property as JSProperty).name)
       assertEquals("compUI.vue", property.containingFile.name)
@@ -1480,7 +1481,7 @@ const props = {seeMe: {}}
       assertNotNull(reference)
       val function = reference!!.resolve()
       assertNotNull(function)
-      assertTrue(function is TypeScriptFunction)
+      assertInstanceOf<TypeScriptFunction>(function)
       assertEquals("lib.es5.d.ts", function!!.containingFile.name)
     }
   }
@@ -1497,7 +1498,7 @@ const props = {seeMe: {}}
       assertNotNull(reference)
       val function = reference!!.resolve()
       assertNotNull(function)
-      assertTrue(function is TypeScriptFunction)
+      assertInstanceOf<TypeScriptFunction>(function)
       assertEquals("lib.es5.d.ts", function!!.containingFile.name)
     }
   }
@@ -1625,7 +1626,7 @@ const props = {seeMe: {}}
       val target = reference!!.resolve()
       assertNotNull(target)
       assertEquals("options.d.ts", target!!.containingFile.name)
-      assertTrue(target is TypeScriptPropertySignature)
+      assertInstanceOf<TypeScriptPropertySignature>(target)
     }
   }
 
@@ -1993,7 +1994,7 @@ export default class UsageComponent extends Vue {
   private fun CodeInsightTestFixture.doResolveIntoLibraryComponent(compName: String, fileName: String) {
     val target = polySymbolSourceAtCaret()
     assertEquals(fileName, target!!.containingFile.name)
-    assertTrue(target.parent is JSProperty)
+    assertInstanceOf<JSProperty>(target.parent)
     assertEquals(compName, StringUtil.unquoteString((target.parent as JSProperty).value!!.text))
   }
 
