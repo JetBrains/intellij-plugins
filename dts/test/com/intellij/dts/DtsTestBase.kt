@@ -11,27 +11,32 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
+import kotlinx.coroutines.CoroutineScope
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Locale
-import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.pathString
 import kotlin.io.path.writeText
 import kotlin.time.Duration.Companion.minutes
 
-val DTS_TEST_ROOT_PATH: String = PathManager.getHomePath() + "/contrib/dts"
-val DTS_TEST_DATA_PATH: String = PathManager.getHomePath() + "/contrib/dts/testData"
+val DTS_TEST_ROOT_PATH: Path = PathManager.getHomeDir().resolve("contrib/dts")
+val DTS_TEST_DATA_PATH: Path = PathManager.getHomeDir().resolve("contrib/dts/testData")
 
 abstract class DtsTestBase : BasePlatformTestCase() {
+  private val defaultTestTimeout = 5.minutes
+
   override fun runInDispatchThread(): Boolean {
     return false
   }
 
   override fun runFromCoroutine(): Boolean {
     return true
+  }
+
+  protected fun dtsTimeoutRunBlocking(action: suspend CoroutineScope.() -> Unit) {
+    timeoutRunBlocking(defaultTestTimeout, action = action)
   }
 
   override fun setUp() {
@@ -65,9 +70,8 @@ abstract class DtsTestBase : BasePlatformTestCase() {
     return myFixture.addFileToProject(path, text)
   }
 
-  @RequiresBackgroundThread
-  protected fun addZephyr() {
-    val zephyr = Path.of(DTS_TEST_DATA_PATH, "zephyr").absolute().pathString
+  protected suspend fun addZephyr() {
+    val zephyr = DTS_TEST_DATA_PATH.resolve("zephyr").absolutePathString()
 
     val manager = ModuleManager.getInstance(project)
     ModuleRootModificationUtil.addContentRoot(manager.modules.first(), zephyr)
@@ -79,13 +83,11 @@ abstract class DtsTestBase : BasePlatformTestCase() {
       zephyrBoard = "$zephyr/boards/xtensa/esp32"
     }
 
-    timeoutRunBlocking(10.minutes) {
-      DtsZephyrProvider.of(project).awaitInit()
-    }
+    DtsZephyrProvider.of(project).awaitInit()
   }
 
   protected fun getFixture(path: String): String {
-    return Files.readString(Path.of(DTS_TEST_DATA_PATH, path))
+    return Files.readString(DTS_TEST_DATA_PATH.resolve(path))
   }
 
   protected fun getTestFixture(extension: String): String {
@@ -93,7 +95,7 @@ abstract class DtsTestBase : BasePlatformTestCase() {
   }
 
   protected fun makeRelativeToWorkingDirectory(path: String): String {
-    return path.replace(DTS_TEST_DATA_PATH, "WORKING_DIRECTORY")
+    return path.replace(DTS_TEST_DATA_PATH.toString(), "WORKING_DIRECTORY")
   }
 
   protected fun compareWithTestFixture(extension: String, actual: String) {

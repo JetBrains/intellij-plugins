@@ -8,22 +8,20 @@ class DtsCreatePropertyFixTest : DtsInspectionTest(DtsRequiredPropertyInspection
 
   override fun getBasePath(): String = "inspections/fixes/createProperty"
 
-  override fun setUp() {
-    super.setUp()
+  fun `test in empty node`() = dtsTimeoutRunBlocking { doTest() }
+
+  fun `test after property`() = dtsTimeoutRunBlocking { doTest() }
+
+  fun `test after property with comment`() = dtsTimeoutRunBlocking { doTest() }
+
+  fun `test before node`() = dtsTimeoutRunBlocking { doTest() }
+
+  fun `test between property and node`() = dtsTimeoutRunBlocking { doTest() }
+
+  fun `test multiple`() = dtsTimeoutRunBlocking { doTest() }
+
+  private suspend fun doTest() {
     addZephyr()
+    doQuickfixTest("Create property")
   }
-
-  fun `test in empty node`() = doTest()
-
-  fun `test after property`() = doTest()
-
-  fun `test after property with comment`() = doTest()
-
-  fun `test before node`() = doTest()
-
-  fun `test between property and node`() = doTest()
-
-  fun `test multiple`() = doTest()
-
-  private fun doTest() = doQuickfixTest("Create property")
 }

@@ -3,11 +3,11 @@ package com.intellij.dts.inspections
 class DtsPropertyEnumInspectionTest : DtsInspectionTest(DtsPropertyEnumInspection::class) {
   override fun getBasePath(): String = "inspections/propertyEnum"
 
-  override fun setUp() {
-    super.setUp()
-    addZephyr()
-  }
+  fun `test valid`() = dtsTimeoutRunBlocking { doInspectionTest() }
+  fun `test invalid`() = dtsTimeoutRunBlocking { doInspectionTest() }
 
-  fun `test valid`() = doInspectionTest()
-  fun `test invalid`() = doInspectionTest()
+  override suspend fun doInspectionTest() {
+    addZephyr()
+    super.doInspectionTest()
+  }
 }

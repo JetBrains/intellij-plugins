@@ -10,32 +10,38 @@ class DtsPathReferenceTest : DtsCompletionTest() {
     myFixture.addFileToProject("b.dtsi", "/ { nodeB { subB {}; subA{}; }; };")
   }
 
-  fun testEmpty() = doTest(
-    input = "&{<caret>}",
-    paths = emptyList(),
-    useRootContentVariations = true,
-  )
+  fun testEmpty() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "&{<caret>}",
+      paths = emptyList(),
+      useRootContentVariations = true,
+    )
+  }
 
-  fun testRoot() = doTest(
-    input = "&{/<caret>}",
-    paths = listOf("/nodeA", "/nodeB"),
-    useRootContentVariations = true,
-  )
+  fun testRoot() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "&{/<caret>}",
+      paths = listOf("/nodeA", "/nodeB"),
+      useRootContentVariations = true,
+    )
+  }
 
-  fun testNested() = doTest(
-    input = "&{/nodeB/<caret>}",
-    paths = listOf("/nodeB/subB", "/nodeB/subA"),
-    useRootContentVariations = true,
-  )
+  fun testNested() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "&{/nodeB/<caret>}",
+      paths = listOf("/nodeB/subB", "/nodeB/subA"),
+      useRootContentVariations = true,
+    )
+  }
 
-  fun testEmptyOverlay() {
+  fun testEmptyOverlay() = dtsTimeoutRunBlocking {
     addZephyr()
     myFixture.configureByText("esp32.overlay", "&{/<caret>} {};")
 
     assertSize(10, myFixture.completeBasic())
   }
 
-  private fun doTest(
+  private suspend fun doTest(
     input: String,
     paths: List<String>,
     useRootContentVariations: Boolean = false,

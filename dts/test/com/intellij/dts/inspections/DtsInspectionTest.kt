@@ -2,7 +2,9 @@ package com.intellij.dts.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.dts.DtsTestBase
-import com.intellij.testFramework.runInEdtAndWait
+import com.intellij.openapi.application.EDT
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.reflect.KClass
 
 abstract class DtsInspectionTest(private vararg val inspectionClass: KClass<out LocalInspectionTool>) : DtsTestBase() {
@@ -11,16 +13,16 @@ abstract class DtsInspectionTest(private vararg val inspectionClass: KClass<out 
     myFixture.enableInspections(inspectionClass.map { it.java })
   }
 
-  protected fun doInspectionTest() {
+  protected open suspend fun doInspectionTest() {
     myFixture.configureByFile(testFile)
     myFixture.checkHighlighting()
   }
 
-  protected fun doQuickfixTest(name: String) {
+  protected suspend fun doQuickfixTest(name: String) {
     myFixture.configureByFile("$testName.${getTestFileExtension()}")
 
     val intention = myFixture.filterAvailableIntentions(name).single()
-    runInEdtAndWait { myFixture.checkPreviewAndLaunchAction(intention) }
+    withContext(Dispatchers.EDT) { myFixture.checkPreviewAndLaunchAction(intention) }
     myFixture.checkResultByFile("$testName-after.${getTestFileExtension()}", true)
   }
 }

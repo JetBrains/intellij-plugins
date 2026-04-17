@@ -2,8 +2,10 @@ package com.intellij.dts.completion
 
 import com.intellij.dts.DtsTestBase
 import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
+import com.intellij.openapi.application.EDT
 import com.intellij.testFramework.common.timeoutRunBlocking
-import com.intellij.testFramework.runInEdtAndWait
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.seconds
 
 abstract class DtsCompletionTest : DtsTestBase() {
@@ -42,10 +44,10 @@ abstract class DtsCompletionTest : DtsTestBase() {
     }
   }
 
-  fun applyVariations(
+  suspend fun applyVariations(
     useRootContentVariations: Boolean,
     useNodeContentVariations: Boolean,
-    callback: ((String) -> String) -> Unit
+    callback: suspend ((String) -> String) -> Unit
   ) {
     callback { it }
 
@@ -64,7 +66,7 @@ abstract class DtsCompletionTest : DtsTestBase() {
     }
   }
 
-  fun doTypeTest(
+  protected suspend fun doTypeTest(
     character: String,
     input: String,
     after: String,
@@ -83,14 +85,14 @@ abstract class DtsCompletionTest : DtsTestBase() {
     }
   }
 
-  private fun doCompletion(lookupString: String) {
+  private suspend fun doCompletion(lookupString: String) {
     val items = myFixture.completeBasic() ?: return
     val lookupItem = items.find { it.lookupString == lookupString } ?: return
-    runInEdtAndWait { myFixture.lookup.currentItem = lookupItem }
+    withContext(Dispatchers.EDT) { myFixture.lookup.currentItem = lookupItem }
     myFixture.type('\n')
   }
 
-  fun doCompletionTest(
+  protected suspend fun doCompletionTest(
     lookupString: String,
     input: String,
     after: String,
@@ -108,7 +110,7 @@ abstract class DtsCompletionTest : DtsTestBase() {
     }
   }
 
-  fun doNoCompletionTest(
+  protected suspend fun doNoCompletionTest(
     input: String,
     surrounding: String = "<embed>",
     useRootContentVariations: Boolean = false,

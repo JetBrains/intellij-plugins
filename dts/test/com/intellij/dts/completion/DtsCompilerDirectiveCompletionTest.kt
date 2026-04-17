@@ -1,47 +1,59 @@
 package com.intellij.dts.completion
 
 class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
-  fun testRootV1() = doTest(
-    variations = listOf("/d", "/dts-v1", "/v1"),
-    lookupString = "/dts-v1/",
-    input = "<caret>",
-    useRootContentVariations = true,
-  )
+  fun testRootV1() = dtsTimeoutRunBlocking {
+    doTest(
+      variations = listOf("/d", "/dts-v1", "/v1"),
+      lookupString = "/dts-v1/",
+      input = "<caret>",
+      useRootContentVariations = true,
+    )
+  }
 
-  fun testRootPlugin() = doTest(
-    variations = listOf("/p", "/plug"),
-    lookupString = "/plugin/",
-    input = "<caret>",
-    useRootContentVariations = true,
-  )
+  fun testRootPlugin() = dtsTimeoutRunBlocking {
+    doTest(
+      variations = listOf("/p", "/plug"),
+      lookupString = "/plugin/",
+      input = "<caret>",
+      useRootContentVariations = true,
+    )
+  }
 
-  fun testRootOmit() = doTest(
-    variations = listOf("/o", "/omit-", "/-no-ref"),
-    lookupString = "/omit-if-no-ref/",
-    input = "<caret>",
-    useRootContentVariations = true,
-  )
+  fun testRootOmit() = dtsTimeoutRunBlocking {
+    doTest(
+      variations = listOf("/o", "/omit-", "/-no-ref"),
+      lookupString = "/omit-if-no-ref/",
+      input = "<caret>",
+      useRootContentVariations = true,
+    )
+  }
 
-  fun testNodeOmit() = doTest(
-    variations = listOf("/o", "/omit-", "/-no-ref"),
-    lookupString = "/omit-if-no-ref/",
-    input = "<caret> node {}",
-    useNodeContentVariations = true,
-  )
+  fun testNodeOmit() = dtsTimeoutRunBlocking {
+    doTest(
+      variations = listOf("/o", "/omit-", "/-no-ref"),
+      lookupString = "/omit-if-no-ref/",
+      input = "<caret> node {}",
+      useNodeContentVariations = true,
+    )
+  }
 
-  fun testInclude() = doTest(
-    variations = listOf("/i", "/include"),
-    lookupString = "/include/",
-    input = "<caret>",
-    useRootContentVariations = true,
-    useNodeContentVariations = true,
-  )
+  fun testInclude() = dtsTimeoutRunBlocking {
+    doTest(
+      variations = listOf("/i", "/include"),
+      lookupString = "/include/",
+      input = "<caret>",
+      useRootContentVariations = true,
+      useNodeContentVariations = true,
+    )
+  }
 
-  fun testNodeInclude() = doTest(
-    variations = listOf("/i", "/include"),
-    lookupString = "/include/",
-    input = "/ { <caret> }"
-  )
+  fun testNodeInclude() = dtsTimeoutRunBlocking {
+    doTest(
+      variations = listOf("/i", "/include"),
+      lookupString = "/include/",
+      input = "/ { <caret> }"
+    )
+  }
 
   fun testNoLookup() {
     val contexts = listOf(
@@ -61,7 +73,7 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
     }
   }
 
-  private fun doTest(
+  private suspend fun doTest(
     variations: List<String>,
     lookupString: String,
     input: String,

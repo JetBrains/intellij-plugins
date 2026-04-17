@@ -1,12 +1,12 @@
 package com.intellij.dts.resolve
 
 import com.intellij.dts.DtsTestBase
-import com.intellij.openapi.application.runReadActionBlocking
+import com.intellij.openapi.application.readAction
 
 class DtsPathReferenceTest : DtsTestBase() {
   private val target = "target_node {};"
 
-  fun `test root`() {
+  fun `test root`() = dtsTimeoutRunBlocking {
     val input = """
             / {};
             &{<caret>/} {};
@@ -14,11 +14,11 @@ class DtsPathReferenceTest : DtsTestBase() {
 
     configureByText(input)
 
-    val reference = runReadActionBlocking { myFixture.getReferenceAtCaretPositionWithAssertion() }
-    assertEquals("/ {}", runReadActionBlocking { reference.resolve()?.text })
+    val reference = readAction { myFixture.getReferenceAtCaretPositionWithAssertion() }
+    assertEquals("/ {}", readAction { reference.resolve()?.text })
   }
 
-  fun `test local`() {
+  fun `test local`() = dtsTimeoutRunBlocking {
     val input = """
             / { $target };
             ${pathNode("/")}
@@ -27,7 +27,7 @@ class DtsPathReferenceTest : DtsTestBase() {
     doTest(input)
   }
 
-  fun `test local nested`() {
+  fun `test local nested`() = dtsTimeoutRunBlocking {
     val input = """
             / { 
                 subNode { $target };
@@ -39,7 +39,7 @@ class DtsPathReferenceTest : DtsTestBase() {
     doTest(input)
   }
 
-  fun `test include`() {
+  fun `test include`() = dtsTimeoutRunBlocking {
     val input = """
             /include/ "test.dtsi"
             ${pathNode("/")}
@@ -50,7 +50,7 @@ class DtsPathReferenceTest : DtsTestBase() {
     doTest(input)
   }
 
-  fun `test nested include`() {
+  fun `test nested include`() = dtsTimeoutRunBlocking {
     val input = """
             /include/ "test0.dtsi"
             ${pathNode("/")}
@@ -62,7 +62,7 @@ class DtsPathReferenceTest : DtsTestBase() {
     doTest(input)
   }
 
-  fun `test recursive include`() {
+  fun `test recursive include`() = dtsTimeoutRunBlocking {
     val input = """
             /include/ "test0.dtsi"
             ${pathNode("/")}
@@ -75,17 +75,17 @@ class DtsPathReferenceTest : DtsTestBase() {
     doTest(input)
   }
 
-  fun `test target below ref node`() {
+  fun `test target below ref node`() = dtsTimeoutRunBlocking {
     val input = """
             ${pathNode("/")}
             / { $target };
         """
 
     configureByText(input)
-    assertNull(runReadActionBlocking { myFixture.getReferenceAtCaretPosition()!!.resolve() })
+    assertNull(readAction { myFixture.getReferenceAtCaretPosition()!!.resolve() })
   }
 
-  fun `test target included below ref node`() {
+  fun `test target included below ref node`() = dtsTimeoutRunBlocking {
     val input = """
             ${pathNode("/")}
             /include/ "test.dtsi"
@@ -94,10 +94,10 @@ class DtsPathReferenceTest : DtsTestBase() {
     addFile("test.dtsi", "/ { $target };")
 
     configureByText(input)
-    assertNull(runReadActionBlocking { myFixture.getReferenceAtCaretPosition()!!.resolve() })
+    assertNull(readAction { myFixture.getReferenceAtCaretPosition()!!.resolve() })
   }
 
-  fun `test target below ref value`() {
+  fun `test target below ref value`() = dtsTimeoutRunBlocking {
     val input = """
             / {
                 prop = &{<caret>/target_node};
@@ -109,7 +109,7 @@ class DtsPathReferenceTest : DtsTestBase() {
     doTest(input)
   }
 
-  fun `test target included below ref value`() {
+  fun `test target included below ref value`() = dtsTimeoutRunBlocking {
     val input = """
             / {
                prop = &{<caret>/target_node};
@@ -123,7 +123,7 @@ class DtsPathReferenceTest : DtsTestBase() {
     doTest(input)
   }
 
-  fun `test target in ref node`() {
+  fun `test target in ref node`() = dtsTimeoutRunBlocking {
     val input = """
             / {
                 label: subNode {};
@@ -141,10 +141,10 @@ class DtsPathReferenceTest : DtsTestBase() {
 
   private fun pathNode(path: String) = "&{<caret>${path}target_node} {};"
 
-  private fun doTest(input: String) {
+  private suspend fun doTest(input: String) {
     configureByText(input)
 
     val reference = myFixture.getReferenceAtCaretPositionWithAssertion()
-    assertEquals(target.trimEnd(';'), runReadActionBlocking { reference.resolve()?.text })
+    assertEquals(target.trimEnd(';'), readAction { reference.resolve()?.text })
   }
 }

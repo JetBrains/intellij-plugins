@@ -3,11 +3,11 @@ package com.intellij.dts.inspections
 class DtsDuplicateElementInspectionTest : DtsInspectionTest(DtsDuplicateElementInspection::class) {
   override fun getBasePath(): String = "inspections/duplicateElement"
 
-  fun `test property`() = doInspectionTest()
+  fun `test property`() = dtsTimeoutRunBlocking { doInspectionTest() }
 
-  fun `test node`() = doInspectionTest()
+  fun `test node`() = dtsTimeoutRunBlocking { doInspectionTest() }
 
-  fun `test mixed`() = doInspectionTest()
+  fun `test mixed`() = dtsTimeoutRunBlocking { doInspectionTest() }
 
-  fun `test valid`() = doInspectionTest()
+  fun `test valid`() = dtsTimeoutRunBlocking { doInspectionTest() }
 }

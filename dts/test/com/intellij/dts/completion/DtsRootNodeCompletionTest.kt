@@ -1,50 +1,66 @@
 package com.intellij.dts.completion
 
 class DtsRootNodeCompletionTest : DtsCompletionTest() {
-  fun `test empty line`() = doTest(
-    input = "<caret>",
-    after = "/ {<caret>};",
-  )
+  fun `test empty line`() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "<caret>",
+      after = "/ {<caret>};",
+    )
+  }
 
-  fun `test single slash`() = doTest(
-    input = "/<caret>",
-    after = "/ {<caret>};",
-  )
+  fun `test single slash`() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "/<caret>",
+      after = "/ {<caret>};",
+    )
+  }
 
-  fun `test trailing semicolon`() = doTest(
-    input = "/<caret>;",
-    after = "/ {<caret>};",
-  )
+  fun `test trailing semicolon`() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "/<caret>;",
+      after = "/ {<caret>};",
+    )
+  }
 
-  fun `test trailing lbrace`() = doTest(
-    input = "/<caret>};",
-    after = "/ {<caret>};",
-  )
+  fun `test trailing lbrace`() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "/<caret>};",
+      after = "/ {<caret>};",
+    )
+  }
 
-  fun `test trailing rbrace`() = doTest(
-    input = "/<caret>{};",
-    after = "/<caret> {};",
-  )
+  fun `test trailing rbrace`() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "/<caret>{};",
+      after = "/<caret> {};",
+    )
+  }
 
-  fun `test trailing space`() = doTest(
-    input = "/<caret> {};",
-    after = "/<caret> {};",
-  )
+  fun `test trailing space`() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "/<caret> {};",
+      after = "/<caret> {};",
+    )
+  }
 
-  fun `test no completion in node`() = doTest(
-    input = "/<caret>",
-    after = "/<caret>",
-    surrounding = "/ {<embed>};",
-    useRootContentVariations = false,
-  )
+  fun `test no completion in node`() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "/<caret>",
+      after = "/<caret>",
+      surrounding = "/ {<embed>};",
+      useRootContentVariations = false,
+    )
+  }
 
-  fun `test no completion in node like file`() = doTest(
-    input = "prop;\n/<caret>",
-    after = "prop;\n/<caret>",
-    useRootContentVariations = false,
-  )
+  fun `test no completion in node like file`() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "prop;\n/<caret>",
+      after = "prop;\n/<caret>",
+      useRootContentVariations = false,
+    )
+  }
 
-  fun `test no completion after pp statement`() {
+  fun `test no completion after pp statement`() = dtsTimeoutRunBlocking {
     val ppStatements = listOf(
       "#define",
       "#endif",
@@ -57,16 +73,16 @@ class DtsRootNodeCompletionTest : DtsCompletionTest() {
       "undef",
     )
 
-   for (statement in ppStatements) {
-     doTest(
-       input = "#$statement<caret>",
-       after = "#$statement<caret>",
-       useRootContentVariations = false,
-     )
-   }
+    for (statement in ppStatements) {
+      doTest(
+        input = "#$statement<caret>",
+        after = "#$statement<caret>",
+        useRootContentVariations = false,
+      )
+    }
   }
 
-  private fun doTest(
+  private suspend fun doTest(
     input: String,
     after: String,
     surrounding: String = "<embed>",

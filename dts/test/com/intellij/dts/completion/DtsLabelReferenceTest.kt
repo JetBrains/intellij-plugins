@@ -10,51 +10,63 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
     myFixture.addFileToProject("b.dtsi", "/ { labelB: nodeB {}; };")
   }
 
-  fun testLabelAbove() = doTest(
-    input = "&<caret>",
-    labels = listOf("label"),
-    prefix = "/ { label: node {}; };",
-    useRootContentVariations = true,
-  )
+  fun testLabelAbove() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "&<caret>",
+      labels = listOf("label"),
+      prefix = "/ { label: node {}; };",
+      useRootContentVariations = true,
+    )
+  }
 
-  fun testLabelBelow() = doTest(
-    input = "&<caret>",
-    labels = emptyList(),
-    suffix = "/ { label: node {}; };",
-    useRootContentVariations = true,
-  )
+  fun testLabelBelow() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "&<caret>",
+      labels = emptyList(),
+      suffix = "/ { label: node {}; };",
+      useRootContentVariations = true,
+    )
+  }
 
-  fun testLabelAboveValue() = doTest(
-    input = "prop = &<caret>",
-    labels = listOf("label"),
-    prefix = "/ { label: node1 {}; node2 {",
-    suffix = "}; };",
-    useNodeContentVariations = true,
-  )
+  fun testLabelAboveValue() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "prop = &<caret>",
+      labels = listOf("label"),
+      prefix = "/ { label: node1 {}; node2 {",
+      suffix = "}; };",
+      useNodeContentVariations = true,
+    )
+  }
 
-  fun testLabelBelowValue() = doTest(
-    input = "prop = &<caret>",
-    labels = listOf("label"),
-    prefix = "/ { ",
-    suffix = "label: node {}; };",
-    useNodeContentVariations = true,
-  )
+  fun testLabelBelowValue() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "prop = &<caret>",
+      labels = listOf("label"),
+      prefix = "/ { ",
+      suffix = "label: node {}; };",
+      useNodeContentVariations = true,
+    )
+  }
 
-  fun testIncludeLabel() = doTest(
-    input = "&<caret>",
-    labels = listOf("labelA"),
-    prefix = "/include/ \"a.dtsi\"",
-    useRootContentVariations = true,
-  )
+  fun testIncludeLabel() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "&<caret>",
+      labels = listOf("labelA"),
+      prefix = "/include/ \"a.dtsi\"",
+      useRootContentVariations = true,
+    )
+  }
 
-  fun testIncludeLabels() = doTest(
-    input = "&<caret>",
-    labels = listOf("labelA", "labelB"),
-    prefix = "/include/ \"a.dtsi\" /include/ \"b.dtsi\"",
-    useRootContentVariations = true,
-  )
+  fun testIncludeLabels() = dtsTimeoutRunBlocking {
+    doTest(
+      input = "&<caret>",
+      labels = listOf("labelA", "labelB"),
+      prefix = "/include/ \"a.dtsi\" /include/ \"b.dtsi\"",
+      useRootContentVariations = true,
+    )
+  }
 
-  fun testIncludeIndirect() {
+  fun testIncludeIndirect() = dtsTimeoutRunBlocking {
     for (i in 0 until 100) {
       myFixture.addFileToProject("$i.dtsi", "/include/ \"${i + 1}.dtsi\" / { l$i: n$i {}; };")
     }
@@ -66,14 +78,14 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
     )
   }
 
-  fun testEmptyOverlay() {
+  fun testEmptyOverlay() = dtsTimeoutRunBlocking {
     addZephyr()
     myFixture.configureByText("esp32.overlay", "&<caret>")
 
     assertSize(56, myFixture.completeBasic())
   }
 
-  private fun doTest(
+  private suspend fun doTest(
     input: String,
     labels: List<String>,
     prefix: String = "",

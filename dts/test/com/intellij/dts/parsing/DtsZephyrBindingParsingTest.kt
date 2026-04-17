@@ -18,9 +18,13 @@ class DtsZephyrBindingParsingTest : DtsTestBase() {
 
   fun `test enum values`() = doTest()
 
-  fun `test zephyr espressif,esp32-pinctrl`() = doZephyrTest("espressif,esp32-pinctrl")
+  fun `test zephyr espressif,esp32-pinctrl`() = dtsTimeoutRunBlocking {
+    doZephyrTest("espressif,esp32-pinctrl")
+  }
 
-  fun `test zephyr espressif,esp32-ledc`() = doZephyrTest("espressif,esp32-ledc")
+  fun `test zephyr espressif,esp32-ledc`() = dtsTimeoutRunBlocking {
+    doZephyrTest("espressif,esp32-ledc")
+  }
 
   private fun loadBinding(): BindingFile {
     val binding = getTestFixture("yaml")
@@ -35,7 +39,7 @@ class DtsZephyrBindingParsingTest : DtsTestBase() {
     compareWithTestFixture("txt", binding.toString())
   }
 
-  private fun doZephyrTest(compatible: String) {
+  private suspend fun doZephyrTest(compatible: String) {
     addZephyr()
 
     val provider = DtsZephyrBindingProvider.of(project)

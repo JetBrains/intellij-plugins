@@ -12,7 +12,7 @@ abstract class DtsDocumentationTest : DtsTestBase() {
 
   override fun runFromCoroutine(): Boolean = true
 
-  protected fun doTest() {
+  protected open suspend fun doTest() {
     val content = getTestFixture("overlay")
 
     myFixture.configureByText("esp32.overlay", content)

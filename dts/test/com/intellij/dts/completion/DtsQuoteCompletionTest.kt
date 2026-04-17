@@ -20,47 +20,63 @@ class DtsIncludePathCompletionTest : DtsQuoteCompletionTestBase(
 )
 
 abstract class DtsQuoteCompletionTestBase(private val surrounding: String, private val quote: Char) : DtsCompletionTest() {
-  fun `test new string`() = doQuoteTest(
-    input = "<caret>",
-    after = "x<caret>x",
-  )
+  fun `test new string`() = dtsTimeoutRunBlocking {
+    doQuoteTest(
+      input = "<caret>",
+      after = "x<caret>x",
+    )
+  }
 
-  fun `test complete empty string closing`() = doQuoteTest(
-    input = "x<caret>",
-    after = "xx<caret>",
-  )
+  fun `test complete empty string closing`() = dtsTimeoutRunBlocking {
+    doQuoteTest(
+      input = "x<caret>",
+      after = "xx<caret>",
+    )
+  }
 
-  fun `test complete string closing`() = doQuoteTest(
-    input = "xc<caret>",
-    after = "xcx<caret>",
-  )
+  fun `test complete string closing`() = dtsTimeoutRunBlocking {
+    doQuoteTest(
+      input = "xc<caret>",
+      after = "xcx<caret>",
+    )
+  }
 
-  fun `test complete empty string opening`() = doQuoteTest(
-    input = "<caret>x",
-    after = "x<caret>x",
-  )
+  fun `test complete empty string opening`() = dtsTimeoutRunBlocking {
+    doQuoteTest(
+      input = "<caret>x",
+      after = "x<caret>x",
+    )
+  }
 
-  fun `test complete string opening`() = doQuoteTest(
-    input = "<caret>cx",
-    after = "x<caret>cx",
-  )
+  fun `test complete string opening`() = dtsTimeoutRunBlocking {
+    doQuoteTest(
+      input = "<caret>cx",
+      after = "x<caret>cx",
+    )
+  }
 
-  fun `test new string after string`() = doQuoteTest(
-    input = "xx<caret>",
-    after = "xxx<caret>x",
-  )
+  fun `test new string after string`() = dtsTimeoutRunBlocking {
+    doQuoteTest(
+      input = "xx<caret>",
+      after = "xxx<caret>x",
+    )
+  }
 
-  fun `test remove opening`() = doDeleteTest(
-    input = "x<caret>x",
-    after = "<caret>",
-  )
+  fun `test remove opening`() = dtsTimeoutRunBlocking {
+    doDeleteTest(
+      input = "x<caret>x",
+      after = "<caret>",
+    )
+  }
 
-  fun `test remove closing`() = doDeleteTest(
-    input = "xx<caret>",
-    after = "x<caret>",
-  )
+  fun `test remove closing`() = dtsTimeoutRunBlocking {
+    doDeleteTest(
+      input = "xx<caret>",
+      after = "x<caret>",
+    )
+  }
 
-  private fun doQuoteTest(
+  private suspend fun doQuoteTest(
     input: String,
     after: String,
   ) = doTypeTest(
@@ -70,7 +86,7 @@ abstract class DtsQuoteCompletionTestBase(private val surrounding: String, priva
     after = after.replace('x', quote),
   )
 
-  private fun doDeleteTest(
+  private suspend fun doDeleteTest(
     input: String,
     after: String,
   ) = doTypeTest(
