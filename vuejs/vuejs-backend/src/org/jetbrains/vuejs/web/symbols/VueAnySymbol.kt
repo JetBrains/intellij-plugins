@@ -8,7 +8,7 @@ import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import org.jetbrains.vuejs.model.VueSymbol
 
@@ -19,7 +19,7 @@ class VueAnySymbol(
 ) : PolySymbolWithPattern, VueSymbol {
 
   override val pattern: PolySymbolPattern
-    get() = PolySymbolPatternFactory.createRegExMatch(".*", false)
+    get() = polySymbolPattern { regex(".*") }
 
   @PolySymbol.Property(HideFromCompletionProperty::class)
   val hideFromCompletion: Boolean

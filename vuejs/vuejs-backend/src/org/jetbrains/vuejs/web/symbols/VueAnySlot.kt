@@ -7,7 +7,7 @@ import com.intellij.polySymbols.PolySymbol.DocHidePatternProperty
 import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueSlot
@@ -19,7 +19,7 @@ object VueAnySlot : PolySymbolWithPattern, VueSlot {
   override val type: JSType? = null
 
   override val pattern: PolySymbolPattern
-    get() = PolySymbolPatternFactory.createRegExMatch(".*", false)
+    get() = polySymbolPattern { regex(".*") }
 
   @PolySymbol.Property(HideFromCompletionProperty::class)
   val hideFromCompletion: Boolean

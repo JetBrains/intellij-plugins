@@ -7,7 +7,7 @@ import com.intellij.polySymbols.PolySymbol.DocHidePatternProperty
 import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
@@ -24,7 +24,7 @@ object Angular2UnknownFormGroup : PolySymbolWithPattern, PolySymbolScope, Angula
     get() = "Unknown form group"
 
   override val pattern: PolySymbolPattern =
-    PolySymbolPatternFactory.createRegExMatch(".*")
+    polySymbolPattern { regex(".*") }
 
   override fun getSymbols(kind: PolySymbolKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
     when (kind) {

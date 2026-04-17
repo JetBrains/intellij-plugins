@@ -7,7 +7,7 @@ import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
@@ -23,7 +23,7 @@ object AstroComponentWildcardAttribute : PolySymbolWithPattern, AstroSymbol {
     get() = PolySymbol.Priority.LOWEST
 
   override val pattern: PolySymbolPattern
-    get() = PolySymbolPatternFactory.createRegExMatch(".*")
+    get() = polySymbolPattern { regex(".*") }
 
   @PolySymbol.Property(HideFromCompletionProperty::class)
   val hideFromCompletion: Boolean

@@ -11,10 +11,8 @@ import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
-import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
-import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.createSmartPointer
@@ -62,15 +60,12 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
     override val name: String
       get() = "Astro Defined Script Variable"
 
-    override val pattern: PolySymbolPattern =
-      PolySymbolPatternFactory.createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = PolySymbolPatternReferenceResolver(
-          PolySymbolPatternReferenceResolver.Reference(kind = JS_PROPERTIES),
-        )
-        ),
-        false,
-        PolySymbolPatternFactory.createPatternSequence(PolySymbolPatternFactory.createSymbolReferencePlaceholder())
-      )
+    override val pattern: PolySymbolPattern = polySymbolPattern {
+      group {
+        symbols { from(JS_PROPERTIES) }
+        symbolReference()
+      }
+    }
 
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)
@@ -91,17 +86,15 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
     override val name: String
       get() = "Astro Defined CSS Variable"
 
-    override val pattern: PolySymbolPattern =
-      PolySymbolPatternFactory.createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = PolySymbolPatternReferenceResolver(
-          PolySymbolPatternReferenceResolver.Reference(kind = JS_PROPERTIES),
-        )),
-        false,
-        PolySymbolPatternFactory.createPatternSequence(
-          PolySymbolPatternFactory.createStringMatch("--"),
-          PolySymbolPatternFactory.createSymbolReferencePlaceholder()
-        )
-      )
+    override val pattern: PolySymbolPattern = polySymbolPattern {
+      group {
+        symbols { from(JS_PROPERTIES) }
+        sequence {
+          literal("--")
+          symbolReference()
+        }
+      }
+    }
 
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)

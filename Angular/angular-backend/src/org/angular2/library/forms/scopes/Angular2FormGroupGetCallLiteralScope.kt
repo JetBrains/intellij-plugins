@@ -7,14 +7,8 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
-import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createComplexPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createPatternSequence
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createStringMatch
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createSymbolReferencePlaceholder
-import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
@@ -22,7 +16,6 @@ import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
-import com.intellij.util.containers.map2Array
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
@@ -89,34 +82,22 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
         kind == JS_STRING_LITERALS
 
       override val pattern: PolySymbolPattern
-        get() = createComplexPattern(
-          ComplexPatternOptions(symbolsResolver = PolySymbolPatternReferenceResolver(
-            *NG_FORM_ANY_CONTROL_PROPS.map2Array {
-              PolySymbolPatternReferenceResolver.Reference(kind = it)
+        get() = polySymbolPattern {
+          group {
+            symbols { NG_FORM_ANY_CONTROL_PROPS.forEach { from(it) } }
+            sequence {
+              symbolReference()
+              optionalRepeating {
+                symbols { NG_FORM_ANY_CONTROL_PROPS.forEach { from(it) } }
+                sequence {
+                  literal(".")
+                  completionPopup()
+                  symbolReference()
+                }
+              }
             }
-          )),
-          false,
-          createPatternSequence(
-            createSymbolReferencePlaceholder(),
-            createComplexPattern(
-              ComplexPatternOptions(
-                symbolsResolver = PolySymbolPatternReferenceResolver(
-                  *NG_FORM_ANY_CONTROL_PROPS.map2Array {
-                    PolySymbolPatternReferenceResolver.Reference(kind = it)
-                  }
-                ),
-                repeats = true,
-                isRequired = false,
-              ),
-              false,
-              createPatternSequence(
-                createStringMatch("."),
-                PolySymbolPatternFactory.createCompletionAutoPopup(false),
-                createSymbolReferencePlaceholder(),
-              )
-            )
-          )
-        )
+          }
+        }
 
       override fun createPointer(): Pointer<out FormGroupGetPathSymbol> =
         Pointer.hardPointer(this)

@@ -17,12 +17,8 @@ import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue.Kind.EXPRESSION
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue.Type.OF_MATCH
 import com.intellij.polySymbols.js.JS_PROPERTIES
-import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createComplexPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createSymbolReferencePlaceholder
-import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver
-import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver.Reference
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolNameConversionRules
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -128,27 +124,31 @@ class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(
     override val attributeValue: PolySymbolHtmlAttributeValue =
       PolySymbolHtmlAttributeValue.create(kind = EXPRESSION, type = OF_MATCH)
 
-    override val pattern: PolySymbolPattern =
-      createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = PolySymbolPatternReferenceResolver(
-          if (slotName != null)
-            Reference(
+    override val pattern: PolySymbolPattern = polySymbolPattern {
+      group {
+        symbols {
+          if (slotName != null) {
+            from(
+              kind = JS_PROPERTIES,
               location = listOf(
                 VUE_COMPONENTS.withName(SLOT_LOCAL_COMPONENT),
                 HTML_SLOTS.withName(slotName),
               ),
-              kind = JS_PROPERTIES,
-              nameConversionRules = listOf(
+            ) {
+              nameConversion(
                 PolySymbolNameConversionRules.create(JS_PROPERTIES) {
                   listOf(fromAsset(it), toAsset(it))
                 }
               )
-            )
-          else
-            Reference(kind = VUE_SPECIAL_PROPERTIES)
-        )), false,
-        createSymbolReferencePlaceholder()
-      )
+            }
+          }
+          else {
+            from(VUE_SPECIAL_PROPERTIES)
+          }
+        }
+        symbolReference()
+      }
+    }
 
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)

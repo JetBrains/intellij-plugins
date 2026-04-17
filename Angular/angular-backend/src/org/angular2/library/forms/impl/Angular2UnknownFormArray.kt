@@ -7,7 +7,7 @@ import com.intellij.polySymbols.PolySymbol.DocHidePatternProperty
 import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
@@ -22,7 +22,7 @@ object Angular2UnknownFormArray : PolySymbolWithPattern, PolySymbolScope, Angula
     get() = "Unknown form array"
 
   override val pattern: PolySymbolPattern =
-    PolySymbolPatternFactory.createRegExMatch(".*")
+    polySymbolPattern { regex(".*") }
 
   override fun getSymbols(kind: PolySymbolKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
     if (kind == NG_FORM_CONTROL_PROPS)

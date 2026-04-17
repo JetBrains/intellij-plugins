@@ -12,15 +12,8 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_PROPERTIES
-import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createCompletionAutoPopup
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createComplexPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createPatternSequence
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createStringMatch
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createSymbolReferencePlaceholder
-import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver
-import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver.Reference
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolWithPattern
@@ -99,33 +92,31 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent<*>)
 
     override val name: String get() = "Vue Watchable Property"
 
-    override val pattern: PolySymbolPattern =
-      createComplexPattern(
-        ComplexPatternOptions(
-          symbolsResolver = PolySymbolPatternReferenceResolver(
-            Reference(kind = VUE_COMPONENT_DATA_PROPERTIES),
-            Reference(kind = VUE_COMPONENT_COMPUTED_PROPERTIES)),
-          additionalLastSegmentSymbol = object : VueSymbol {
-            override val kind: PolySymbolKind get() = JS_PROPERTIES
-            override val name: String get() = "watch property type provider"
-            override val type: JSType? get() = JSAnyType.get(null) // TODO return proper type
-            override fun createPointer(): Pointer<out PolySymbol> = hardPointer(this)
+    override val pattern: PolySymbolPattern = polySymbolPattern {
+      group {
+        symbols {
+          from(VUE_COMPONENT_DATA_PROPERTIES)
+          from(VUE_COMPONENT_COMPUTED_PROPERTIES)
+        }
+        additionalLastSegmentSymbol = object : VueSymbol {
+          override val kind: PolySymbolKind get() = JS_PROPERTIES
+          override val name: String get() = "watch property type provider"
+          override val type: JSType? get() = JSAnyType.get(null) // TODO return proper type
+          override fun createPointer(): Pointer<out PolySymbol> = hardPointer(this)
+        }
+        sequence {
+          symbolReference()
+          optionalRepeating {
+            symbols { from(JS_PROPERTIES) }
+            sequence {
+              literal(".")
+              completionPopup()
+              symbolReference()
+            }
           }
-        ), false,
-        createPatternSequence(
-          createSymbolReferencePlaceholder(),
-          createComplexPattern(
-            ComplexPatternOptions(repeats = true, isRequired = false, symbolsResolver = PolySymbolPatternReferenceResolver(
-              Reference(kind = JS_PROPERTIES)
-            )), false,
-            createPatternSequence(
-              createStringMatch("."),
-              createCompletionAutoPopup(false),
-              createSymbolReferencePlaceholder()
-            )
-          )
-        )
-      )
+        }
+      }
+    }
 
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)

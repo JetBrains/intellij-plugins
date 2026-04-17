@@ -7,7 +7,7 @@ import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.web.Angular2Symbol
@@ -18,7 +18,7 @@ object Angular2UnknownFormControl : PolySymbolWithPattern, Angular2Symbol {
     get() = "Unknown form control"
 
   override val pattern: PolySymbolPattern =
-    PolySymbolPatternFactory.createRegExMatch(".*")
+    polySymbolPattern { regex(".*") }
 
   override val kind: PolySymbolKind
     get() = NG_FORM_CONTROL_PROPS

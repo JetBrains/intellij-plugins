@@ -11,7 +11,7 @@ import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
@@ -23,7 +23,7 @@ import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_NAMESPACES
 
 class UnknownComponent(override val source: PsiElement, override val name: @NlsSafe String) : PolySymbolWithPattern, ComponentPolySymbol,
                                                                                               PolySymbolScope {
-  override val pattern: PolySymbolPattern = PolySymbolPatternFactory.createRegExMatch(".*")
+  override val pattern: PolySymbolPattern = polySymbolPattern { regex(".*") }
 
   override val kind: PolySymbolKind
     get() = UI_FRAMEWORK_COMPONENT_NAMESPACES

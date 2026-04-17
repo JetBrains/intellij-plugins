@@ -8,10 +8,9 @@ import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.js.JS_PROPERTIES
-import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.patterns.PolySymbolPatternSymbolsResolver
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolQueryStack
@@ -53,13 +52,13 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
     override fun createPointer(): Pointer<AttributeWithInterpolationsSymbol> =
       Pointer.hardPointer(this)
 
-    override val pattern: PolySymbolPattern = PolySymbolPatternFactory.createComplexPattern(
-      ComplexPatternOptions(
-        null, null, true,
-        PolySymbol.Priority.HIGHEST, false, false,
-        PropertiesResolver),
-      false,
-      PolySymbolPatternFactory.createSymbolReferencePlaceholder(null))
+    override val pattern: PolySymbolPattern = polySymbolPattern {
+      group {
+        priority = PolySymbol.Priority.HIGHEST
+        symbolsResolver = PropertiesResolver
+        symbolReference()
+      }
+    }
 
   }
 

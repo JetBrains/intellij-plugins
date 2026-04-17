@@ -28,7 +28,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
+import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
@@ -435,7 +435,7 @@ private data class VueSourceRegexSlot(
     get() = "Dynamic slot"
 
   override val pattern: PolySymbolPattern =
-    PolySymbolPatternFactory.createRegExMatch(regex, true)
+    polySymbolPattern { regex(regex, caseSensitive = true) }
 
   override val type: JSType
     get() = VueSourceSlotScopeType(source, "$name /$pattern/")
