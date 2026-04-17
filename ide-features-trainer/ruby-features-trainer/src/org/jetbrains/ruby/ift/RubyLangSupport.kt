@@ -10,13 +10,14 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.plugins.ruby.RBundle
 import org.jetbrains.plugins.ruby.ruby.RModuleUtil
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkType
 import org.jetbrains.plugins.ruby.ruby.sdk.RubyVersionUtil
-import org.jetbrains.plugins.ruby.version.management.refreshAll
+import org.jetbrains.plugins.ruby.version.management.SdkRefreshManager
 import training.FeaturesTrainerIcons
 import training.lang.AbstractLangSupport
 import training.learn.LearnBundle
@@ -57,7 +58,9 @@ internal class RubyLangSupport : AbstractLangSupport() {
       super.getSdkForProject(project, selectedSdk)
     }
     catch (e: NoSdkException) {
-      refreshAll()
+      runWithModalProgressBlocking(project, RBundle.message("ruby.sdk.scanning.in", project.name)) {
+        SdkRefreshManager.getInstance().refreshSdks(project)
+      }
       try {
         super.getSdkForProject(project, selectedSdk)
       }
