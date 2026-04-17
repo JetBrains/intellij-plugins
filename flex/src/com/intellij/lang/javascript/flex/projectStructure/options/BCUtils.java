@@ -30,9 +30,10 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.SimpleColoredText;
-import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.dsl.listCellRenderer.BuilderKt;
+import com.intellij.ui.dsl.listCellRenderer.LcrJavaHelper;
+import com.intellij.ui.dsl.listCellRenderer.RendererPresentation;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
@@ -216,10 +217,10 @@ public final class BCUtils {
 
   public static void initTargetPlatformCombo(final JComboBox<TargetPlatform> targetPlatformCombo) {
     targetPlatformCombo.setModel(new DefaultComboBoxModel<>(TargetPlatform.values()));
-    targetPlatformCombo.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
-      label.setText(value.getPresentableText());
-      label.setIcon(value.getIcon());
-    }));
+    targetPlatformCombo.setRenderer(LcrJavaHelper.create(
+      "",
+      value -> new RendererPresentation(value.getIcon(), value.getPresentableText())
+    ));
   }
 
   public static void initOutputTypeCombo(final JComboBox<OutputType> outputTypeCombo) {

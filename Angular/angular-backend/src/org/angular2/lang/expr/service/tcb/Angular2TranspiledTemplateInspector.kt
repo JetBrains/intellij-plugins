@@ -29,7 +29,7 @@ import com.intellij.ui.AncestorListenerAdapter
 import com.intellij.ui.CollectionComboBoxModel
 import com.intellij.ui.JBColor
 import com.intellij.ui.JBSplitter
-import com.intellij.ui.SimpleListCellRenderer
+import com.intellij.ui.dsl.listCellRenderer.textListCellRenderer
 import com.intellij.util.SingleAlarm
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.ui.UIUtil
@@ -152,10 +152,8 @@ internal class Angular2TranspiledTemplateInspector(
 
   fun createMainComponent(): JComponent {
 
-    comboBox.renderer = SimpleListCellRenderer.create { label, value, _ ->
-      if (value != null) {
-        label.text = value.sourceFile.name
-      }
+    comboBox.renderer = textListCellRenderer("") {
+      it.sourceFile.name
     }
     comboBox.addItemListener {
       showSource(it.item as SourceInfo)

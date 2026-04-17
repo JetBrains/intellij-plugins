@@ -12,7 +12,8 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
-import com.intellij.ui.SimpleListCellRenderer;
+import com.intellij.ui.dsl.listCellRenderer.LcrJavaHelper;
+import com.intellij.ui.dsl.listCellRenderer.RendererPresentation;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -242,15 +243,13 @@ public final class HbConfigurationPage implements SearchableConfigurable {
       model.addElement(language);
     }
 
-    myCommenterLanguage.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
-      label.setText(value == null ? "" : value.getDisplayName());
-      if (value != null) {
+    myCommenterLanguage.setRenderer(LcrJavaHelper.create(
+      "",
+      value -> {
         FileType type = value.getAssociatedFileType();
-        if (type != null) {
-          label.setIcon(type.getIcon());
-        }
+        return new RendererPresentation(type != null ? type.getIcon() : null, value.getDisplayName());
       }
-    }));
+    ));
     myCommenterLanguage.setSelectedItem(commentLanguage);
   }
 }

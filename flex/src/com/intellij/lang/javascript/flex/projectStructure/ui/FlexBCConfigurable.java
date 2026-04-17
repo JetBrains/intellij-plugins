@@ -44,9 +44,9 @@ import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.HyperlinkAdapter;
-import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
+import com.intellij.ui.dsl.listCellRenderer.BuilderKt;
 import com.intellij.ui.navigation.Place;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -466,10 +466,8 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     initCSSControls();
 
     myOptimizeForCombo.setModel(new CollectionComboBoxModel(new ArrayList<>(Collections.singletonList("")), ""));
-    myOptimizeForCombo.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
-      if ("".equals(value)) {
-        label.setText("<no optimization>");
-      }
+    myOptimizeForCombo.setRenderer(BuilderKt.textListCellRenderer("", value -> {
+      return "".equals(value) ? "<no optimization>" : null;
     }));
 
     myMainClassWarning.setIcon(AllIcons.General.BalloonWarning12);
