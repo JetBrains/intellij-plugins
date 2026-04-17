@@ -38,7 +38,7 @@
     <registryKey defaultValue="" description="Vue service version for downloading" key="vue.language.server.default.version"/>
     <registryKey defaultValue="" description="Vue TypeScript plugin version for downloading" key="vue.ts.plugin.default.version"/>
     <registryKey defaultValue="true" description="Use bundled Vue TypeScript plugin" key="vue.ts.plugin.bundled.enabled"/>
-    <registryKey defaultValue="false" description="Enable Vue service-powered type engine by default."
+    <registryKey defaultValue="true" description="Enable Vue service-powered type engine by default."
                  key="vue.service.powered.type.engine.enabled.by.default"/>
 
     <css.embeddedCssProvider implementation="org.jetbrains.vuejs.css.VueEmbeddedCssProvider"/>
