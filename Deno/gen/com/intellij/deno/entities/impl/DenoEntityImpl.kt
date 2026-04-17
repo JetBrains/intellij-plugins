@@ -1,3 +1,5 @@
+@file:OptIn(EntityStorageInstrumentationApi::class)
+
 package com.intellij.deno.entities.impl
 
 import com.intellij.deno.entities.DenoEntity
@@ -143,7 +145,6 @@ internal class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
     return modifiable
   }
 
-  @OptIn(EntityStorageInstrumentationApi::class)
   override fun createEntity(snapshot: EntityStorageInstrumentation): DenoEntity {
     val entityId = createEntityId()
     return snapshot.initializeEntity(entityId) {
