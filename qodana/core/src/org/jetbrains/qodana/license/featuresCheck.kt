@@ -15,7 +15,8 @@ private val ULTIMATE_PLUS_PLUGINS: Set<String> = setOf(
 )
 
 private val ULTIMATE_PLUS_INSPECTIONS: Set<String> = setOf(
-  "RiderSecurityErrorsInspection"
+  "RiderSecurityErrorsInspection",
+  "OpenGrepInspection"
 )
 
 internal fun QodanaLicenseType.isInspectionLicensed(from: ToolsImpl): Boolean {
