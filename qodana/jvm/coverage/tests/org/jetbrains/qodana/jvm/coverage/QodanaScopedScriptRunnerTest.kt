@@ -12,7 +12,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.writeText
 
-@TestDataPath($$"$CONTENT_ROOT/test-data/QodanaScopedScriptRunnerTest")
+@TestDataPath($$"$CONTENT_ROOT/../test-data/QodanaScopedScriptRunnerTest")
 class QodanaScopedScriptRunnerTest : QodanaRunnerTestCase() {
   override val testData: Path = Paths.get(PluginPathManager.getPluginHomePath("qodana"), "jvm", "coverage", "test-data")
 

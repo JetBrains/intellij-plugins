@@ -5,7 +5,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
-@TestDataPath("$CONTENT_ROOT/testData/inspections/customMedia/")
+@TestDataPath("$CONTENT_ROOT/../testData/inspections/customMedia/")
 public class PostCssCustomMediaInspectionTest extends PostCssFixtureTestCase {
 
   @Override

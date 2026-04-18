@@ -6,7 +6,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
-@TestDataPath("$CONTENT_ROOT/testData/inspections/nesting/")
+@TestDataPath("$CONTENT_ROOT/../testData/inspections/nesting/")
 public class PostCssNestingInspectionTest extends PostCssFixtureTestCase {
 
   @Override

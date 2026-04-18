@@ -16,7 +16,7 @@ import org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-@TestDataPath("$CONTENT_ROOT/testData/parser/")
+@TestDataPath("$CONTENT_ROOT/../testData/parser/")
 public abstract class PostCssParsingTest extends ParsingTestCase {
   public PostCssParsingTest(@NonNls @NotNull String dataPath) {
     super(dataPath, "pcss", new PostCssParserDefinition(), new CSSParserDefinition());

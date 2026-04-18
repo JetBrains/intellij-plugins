@@ -7,7 +7,7 @@ import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 
 import java.util.List;
 
-@TestDataPath("$CONTENT_ROOT/testData/editor/breadcrumbs/")
+@TestDataPath("$CONTENT_ROOT/../testData/editor/breadcrumbs/")
 public class PostCssBreadcrumbsTest extends PostCssFixtureTestCase {
   public void testCustomSelector() {
     doTest(":--selector");

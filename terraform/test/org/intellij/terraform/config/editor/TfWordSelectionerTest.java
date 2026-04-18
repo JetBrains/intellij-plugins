@@ -6,7 +6,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.intellij.terraform.TfTestUtils;
 
-@TestDataPath("$CONTENT_ROOT/selectWord")
+@TestDataPath("$CONTENT_ROOT/../selectWord")
 public class TfWordSelectionerTest extends BasePlatformTestCase {
 
   public void testStringLiteral1() { doTest(); }

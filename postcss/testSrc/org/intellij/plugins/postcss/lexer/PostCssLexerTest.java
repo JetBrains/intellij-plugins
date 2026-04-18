@@ -6,7 +6,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssTestUtils;
 import org.jetbrains.annotations.NotNull;
 
-@TestDataPath("$CONTENT_ROOT/testData/lexer/")
+@TestDataPath("$CONTENT_ROOT/../testData/lexer/")
 public class PostCssLexerTest extends LexerTestCase {
   public void testComments() {
     doTest();

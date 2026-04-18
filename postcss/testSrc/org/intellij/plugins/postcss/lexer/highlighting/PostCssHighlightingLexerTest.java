@@ -7,7 +7,7 @@ import org.intellij.plugins.postcss.PostCssTestUtils;
 import org.intellij.plugins.postcss.lexer.PostCssHighlightingLexer;
 import org.jetbrains.annotations.NotNull;
 
-@TestDataPath("$CONTENT_ROOT/testData/lexer/highlighting/")
+@TestDataPath("$CONTENT_ROOT/../testData/lexer/highlighting/")
 public class PostCssHighlightingLexerTest extends LexerTestCase {
   public void testNestedRules() {
     doTest();

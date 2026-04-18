@@ -17,7 +17,7 @@ import org.jetbrains.qodana.ui.ci.providers.jenkins.SetupJenkinsViewModel
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
-@TestDataPath("\$CONTENT_ROOT/test-data/SetupJenkinsViewModelTest")
+@TestDataPath("\$CONTENT_ROOT/../../../core/test-data/SetupJenkinsViewModelTest")
 class SetupJenkinsViewModelTest : QodanaPluginHeavyTestBase() {
   private val emptyProjectVcsDataProvider = ProjectVcsDataProviderMock()
 

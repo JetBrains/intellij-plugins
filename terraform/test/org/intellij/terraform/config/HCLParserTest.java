@@ -12,7 +12,7 @@ import org.intellij.terraform.hcl.HCLParserDefinition;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-@TestDataPath("$CONTENT_ROOT/test-data/psi/")
+@TestDataPath("$CONTENT_ROOT/../test-data/psi/")
 public class HCLParserTest extends ParsingTestCase {
   protected HCLParserTest(@NonNls @NotNull String dataPath, @NotNull String fileExt, final boolean lowercaseFirstLetter, ParserDefinition @NotNull ... definitions) {
     super(dataPath, fileExt, lowercaseFirstLetter, definitions);

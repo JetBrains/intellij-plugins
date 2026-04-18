@@ -14,7 +14,7 @@ import org.jetbrains.qodana.ui.ci.providers.teamcity.SetupTeamcityDslViewModel
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
-@TestDataPath("\$CONTENT_ROOT/test-data/SetupTeamcityDslViewModelTest")
+@TestDataPath("\$CONTENT_ROOT/../test-data/SetupTeamcityDslViewModelTest")
 class SetupTeamcityDslViewModelTest : QodanaPluginHeavyTestBase() {
 
   override fun getBasePath(): String = Path(super.getBasePath(), "SetupTeamcityDslViewModelTest").pathString

@@ -4,7 +4,7 @@ import com.intellij.testFramework.FileStructureTestBase;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssTestUtils;
 
-@TestDataPath("$CONTENT_ROOT/testData/fileStructure/")
+@TestDataPath("$CONTENT_ROOT/../testData/fileStructure/")
 public class PostCssFileStructureTest extends FileStructureTestBase {
 
   public void testNestAtRules() {

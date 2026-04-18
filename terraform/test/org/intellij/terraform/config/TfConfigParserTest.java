@@ -6,7 +6,7 @@ import org.intellij.terraform.hcl.HCLParserDefinition;
 
 import java.io.IOException;
 
-@TestDataPath("$CONTENT_ROOT/test-data/psi/")
+@TestDataPath("$CONTENT_ROOT/../test-data/psi/")
 public class TfConfigParserTest extends HCLParserTest {
   public TfConfigParserTest() {
     super("psi", "hcl", false, new TfParserDefinition(), new HCLParserDefinition());

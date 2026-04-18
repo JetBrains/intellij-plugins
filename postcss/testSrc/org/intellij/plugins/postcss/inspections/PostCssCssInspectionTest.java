@@ -12,7 +12,7 @@ import com.intellij.psi.css.inspections.invalid.CssUnresolvedClassInComposesRule
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 
-@TestDataPath("$CONTENT_ROOT/testData/inspections/")
+@TestDataPath("$CONTENT_ROOT/../testData/inspections/")
 public class PostCssCssInspectionTest extends PostCssFixtureTestCase {
 
   @Override

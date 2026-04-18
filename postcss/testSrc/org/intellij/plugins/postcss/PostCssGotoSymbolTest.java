@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-@TestDataPath("$CONTENT_ROOT/testData/goto/")
+@TestDataPath("$CONTENT_ROOT/../testData/goto/")
 public class PostCssGotoSymbolTest extends PostCssFixtureTestCase {
   public void testSelector() {
     doTest("selector", "#selector test.pcss:1", ".selector test.pcss:2", "#selector test.pcss:7", ".selector test.pcss:7");

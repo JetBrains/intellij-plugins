@@ -6,7 +6,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-@TestDataPath("$CONTENT_ROOT/testData/selectWord")
+@TestDataPath("$CONTENT_ROOT/../testData/selectWord")
 public class GherkinStepParameterSelectionerTest extends BasePlatformTestCase {
 
   @Override

@@ -10,7 +10,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
-@TestDataPath("$CONTENT_ROOT/testData/resolve/simpleVars")
+@TestDataPath("$CONTENT_ROOT/../testData/resolve/simpleVars")
 public class PostCssSimpleVarsTest extends PostCssFixtureTestCase {
   private void doResolveTest(@NotNull String text, @NotNull String expectedTarget) {
     myFixture.configureByText("foo.pcss", text);

@@ -3,7 +3,7 @@ package org.intellij.plugins.postcss.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.annotations.NotNull;
 
-@TestDataPath("$CONTENT_ROOT/testData/resolve/customSelectors")
+@TestDataPath("$CONTENT_ROOT/../testData/resolve/customSelectors")
 public class PostCssCustomSelectorResolveTest extends PostCssResolveTest {
 
   public void testResolve() {

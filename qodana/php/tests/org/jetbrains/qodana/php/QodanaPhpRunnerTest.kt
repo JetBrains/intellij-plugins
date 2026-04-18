@@ -9,7 +9,7 @@ import org.junit.Test
 import java.nio.file.Path
 import java.nio.file.Paths
 
-@TestDataPath($$"$CONTENT_ROOT/test-data/QodanaPhpRunnerTest")
+@TestDataPath($$"$CONTENT_ROOT/../test-data/QodanaPhpRunnerTest")
 class QodanaPhpRunnerTest : QodanaRunnerTestCase() {
   override val testData: Path = Paths.get(PluginPathManager.getPluginHomePath("qodana"), "php", "test-data")
 

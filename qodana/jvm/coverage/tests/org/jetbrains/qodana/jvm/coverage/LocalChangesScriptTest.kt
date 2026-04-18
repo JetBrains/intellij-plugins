@@ -6,7 +6,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_DAT
 import org.jetbrains.qodana.staticAnalysis.script.LocalChangesScriptBaseTest
 import org.junit.Test
 
-@TestDataPath("\$CONTENT_ROOT/testData/LocalChangesScriptTest")
+@TestDataPath("\$CONTENT_ROOT/../testData/LocalChangesScriptTest")
 class LocalChangesScriptTest : LocalChangesScriptBaseTest() {
   @Test
   fun coverage() {

@@ -14,7 +14,7 @@ import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.Test
 import java.nio.file.Path
 
-@TestDataPath($$"$CONTENT_ROOT/test-data/QodanaRunnerTest")
+@TestDataPath($$"$CONTENT_ROOT/../test-data/QodanaRunnerTest")
 class QodanaRunnerTest : QodanaRunnerTestCase() {
   override val testData: Path = Path.of(PluginPathManager.getPluginHomePath("qodana"), "js", "test-data")
 

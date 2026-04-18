@@ -9,7 +9,7 @@ import org.junit.Test
 import java.nio.file.Path
 import java.nio.file.Paths
 
-@TestDataPath($$"$CONTENT_ROOT/test-data/QodanaKotlinSanityInspectionTest")
+@TestDataPath($$"$CONTENT_ROOT/../test-data/QodanaKotlinSanityInspectionTest")
 class QodanaKotlinSanityInspectionTest : QodanaRunnerTestCase() {
   override val testData: Path = Paths.get(PluginPathManager.getPluginHomePath("qodana"), "jvm", "kotlin", "test-data")
 

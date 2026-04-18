@@ -12,7 +12,7 @@ import org.jetbrains.qodana.ui.ci.providers.jenkins.JenkinsCIFileChecker
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
-@TestDataPath("\$CONTENT_ROOT/test-data/QodanaCIConfigServiceTest")
+@TestDataPath("\$CONTENT_ROOT/../../../core/test-data/QodanaCIConfigServiceTest")
 class QodanaCIConfigServiceTest : QodanaPluginHeavyTestBase() {
   override fun getBasePath(): String = Path(super.getBasePath(), "QodanaCIConfigServiceTest").pathString
 

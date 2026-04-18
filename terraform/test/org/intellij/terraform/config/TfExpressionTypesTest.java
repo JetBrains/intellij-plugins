@@ -39,7 +39,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @SuppressWarnings("unused")
-@TestDataPath("$CONTENT_ROOT/test-data/terraform/types/")
+@TestDataPath("$CONTENT_ROOT/../test-data/terraform/types/")
 public abstract class TfExpressionTypesTest extends ParsingTestCase {
 
   public void testForListExpression() {

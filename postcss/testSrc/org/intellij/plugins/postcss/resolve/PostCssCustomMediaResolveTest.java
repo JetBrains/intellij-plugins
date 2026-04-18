@@ -3,7 +3,7 @@ package org.intellij.plugins.postcss.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.annotations.NotNull;
 
-@TestDataPath("$CONTENT_ROOT/testData/resolve/customMedia")
+@TestDataPath("$CONTENT_ROOT/../testData/resolve/customMedia")
 public class PostCssCustomMediaResolveTest extends PostCssResolveTest {
 
   public void testResolve() {
