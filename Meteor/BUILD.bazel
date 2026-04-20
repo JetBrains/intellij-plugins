@@ -241,6 +241,8 @@ jvm_library(
     "@community//platform/util/concurrency:concurrency_test_lib",
     "//contrib/handlebars:handlebars-tests",
     "//contrib/handlebars:handlebars-tests_test_lib",
+    "//plugins/LiveEdit:js-liveEdit-tests",
+    "//plugins/LiveEdit:js-liveEdit-tests_test_lib",
   ],
   runtime_deps = [
     ":meteor-tests",
