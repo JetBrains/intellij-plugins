@@ -73,7 +73,7 @@ abstract class VueGotoDeclarationWithPluginTestBase(
 @RunWith(JUnit4::class)
 abstract class VueGotoDeclarationTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
-) : VueTestCase("resolve", testMode = testMode) {
+) : VueTestCase("gotoDeclaration", testMode = testMode) {
 
   private fun doGotoDeclarationInternalTest(
     fromSignature: String,
