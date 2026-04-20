@@ -262,7 +262,9 @@ class TfTypeModel(
       BlockType(HCL_WORKSPACES_BLOCK_IDENTIFIER, required = true, properties = listOf(
         PropertyType("name", Types.String, conflictsWith = listOf("tags")),
         PropertyType("tags", ListType(Types.String), conflictsWith = listOf("name"))
-      ).toMap())
+      ).toMap()),
+      PropertyType("hostname", Types.String),
+      PropertyType("token", Types.String)
     ).toMap())
     val RequiredProviders: BlockType = BlockType(HCL_TERRAFORM_REQUIRED_PROVIDERS)
     val Terraform: BlockType = BlockType(HCL_TERRAFORM_IDENTIFIER, properties = listOf<PropertyOrBlockType>(
