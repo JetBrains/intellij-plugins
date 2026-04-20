@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
+import org.jetbrains.annotations.NotNull;
 
 public final class DartQuoteHandler extends SimpleTokenSetQuoteHandler {
 
@@ -13,7 +14,7 @@ public final class DartQuoteHandler extends SimpleTokenSetQuoteHandler {
   }
 
   @Override
-  public boolean isOpeningQuote(final HighlighterIterator iterator, final int offset) {
+  public boolean isOpeningQuote(final @NotNull HighlighterIterator iterator, final int offset) {
     final IElementType type = iterator.getTokenType();
 
     if (type == DartTokenTypes.OPEN_QUOTE) return true;
@@ -27,7 +28,7 @@ public final class DartQuoteHandler extends SimpleTokenSetQuoteHandler {
   }
 
   @Override
-  public boolean isClosingQuote(final HighlighterIterator iterator, final int offset) {
+  public boolean isClosingQuote(final @NotNull HighlighterIterator iterator, final int offset) {
     final IElementType type = iterator.getTokenType();
 
     if (type == DartTokenTypes.CLOSING_QUOTE) return true;
