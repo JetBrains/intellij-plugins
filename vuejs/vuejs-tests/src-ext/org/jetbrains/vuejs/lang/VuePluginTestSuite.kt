@@ -11,10 +11,10 @@ import org.junit.runners.Suite
   VueDocumentationTest::class,
   VueExtractComponentTest::class,
   VueFindUsagesTest::class,
+  VueGotoDeclarationTest::class,
   VueHighlightingTest::class,
   VueNewComponentTest::class,
   VueRenameTest::class,
-  VueResolveTest::class,
 )
 class VuePluginTestSuite
 
@@ -25,10 +25,10 @@ class VuePluginTestSuite
   VueDocumentationTest.WithLegacyPluginTest::class,
   VueExtractComponentTest.WithLegacyPluginTest::class,
   VueFindUsagesTest.WithLegacyPluginTest::class,
+  VueGotoDeclarationTest.WithLegacyPluginTest::class,
   VueHighlightingTest.WithLegacyPluginTest::class,
   VueNewComponentTest.WithLegacyPluginTest::class,
   VueRenameTest.WithLegacyPluginTest::class,
-  VueResolveTest.WithLegacyPluginTest::class,
 )
 class VueLegacyPluginTestSuite
 
@@ -39,9 +39,9 @@ class VueLegacyPluginTestSuite
   VueDocumentationTest.WithoutServiceTest::class,
   VueExtractComponentTest.WithoutServiceTest::class,
   VueFindUsagesTest.WithoutServiceTest::class,
+  VueGotoDeclarationTest.WithoutServiceTest::class,
   VueHighlightingTest.WithoutServiceTest::class,
   VueNewComponentTest.WithoutServiceTest::class,
   VueRenameTest.WithoutServiceTest::class,
-  VueResolveTest.WithoutServiceTest::class,
 )
 class VueWithoutServiceTestSuite

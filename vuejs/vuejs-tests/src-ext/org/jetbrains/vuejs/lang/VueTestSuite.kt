@@ -32,7 +32,7 @@ import org.junit.runners.Suite
   VueNewComponentTest::class,
   VueTypedHandlerTest::class,
   VueAttributeNameParserTest::class,
-  VueResolveTest::class,
+  VueGotoDeclarationTest::class,
   VueFindUsagesTest::class,
   VueRenameTest::class,
   VueRenameTest.WithoutServiceTest::class,

@@ -49,19 +49,19 @@ import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-class VueResolveTest :
-  VueResolveWithPluginTestBase() {
+class VueGotoDeclarationTest :
+  VueGotoDeclarationWithPluginTestBase() {
 
   class WithLegacyPluginTest :
-    VueResolveWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
+    VueGotoDeclarationWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
   class WithoutServiceTest :
-    VueResolveTestBase(testMode = VueTestMode.NO_PLUGIN)
+    VueGotoDeclarationTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
 
-abstract class VueResolveWithPluginTestBase(
+abstract class VueGotoDeclarationWithPluginTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
-) : VueResolveTestBase(testMode = testMode) {
+) : VueGotoDeclarationTestBase(testMode = testMode) {
 
   @Rule
   @JvmField
@@ -71,7 +71,7 @@ abstract class VueResolveWithPluginTestBase(
 }
 
 @RunWith(JUnit4::class)
-abstract class VueResolveTestBase(
+abstract class VueGotoDeclarationTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueTestCase("resolve", testMode = testMode) {
 
