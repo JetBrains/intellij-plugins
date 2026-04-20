@@ -30,7 +30,7 @@ class Angular2FormsComponentImpl(private val componentClass: TypeScriptClass) : 
       ?.let { return getInfo().fields2Symbols[it] }
 
   private fun PsiElement.getFieldFromResolveResult(): TypeScriptField? =
-    ((this as? TSSymbolDeclaration)?.explicitElement ?: this) as? TypeScriptField
+    ((this as? TSSymbolDeclaration)?.psiElement ?: this) as? TypeScriptField
 
   private fun getInfo(): FormsInfo {
     val componentClass = this.componentClass

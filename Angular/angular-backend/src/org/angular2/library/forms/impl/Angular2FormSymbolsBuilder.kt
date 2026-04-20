@@ -16,7 +16,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptNewExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSNamedType
-import com.intellij.lang.javascript.psi.types.typescript.getTSSymbolExplicitElement
+import com.intellij.lang.javascript.psi.types.typescript.getTSSymbolPsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.angular2.library.forms.Angular2FormAbstractControl
@@ -54,7 +54,7 @@ class Angular2FormSymbolsBuilder(private val consumer: (Angular2FormGroup) -> Un
           ?.asSafely<JSReferenceExpression>()
           ?.takeIf { it.qualifier is JSThisExpression }
           ?.resolve()
-          ?.let(::getTSSymbolExplicitElement)
+          ?.let(::getTSSymbolPsiElement)
           ?.asSafely<TypeScriptField>()
         ?: return
       buildFormSymbolFromCallExpression(source, node)
