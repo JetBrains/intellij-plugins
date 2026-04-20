@@ -6,7 +6,10 @@ import com.intellij.lang.javascript.inspections.TypeScriptCheckImportInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
+@RunWith(JUnit4::class)
 class MdxHighlightTest : MdxTestBase() {
     private fun doTestHighlighting(text: String) {
         myFixture.enableInspections(

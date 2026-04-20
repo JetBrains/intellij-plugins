@@ -20,6 +20,6 @@ abstract class MdxTestBase : BasePlatformTestCase() {
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/testData"
+        return MdxTestUtil.testDataPath
     }
 }

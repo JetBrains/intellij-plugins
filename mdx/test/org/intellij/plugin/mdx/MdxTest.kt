@@ -3,9 +3,11 @@ package org.intellij.plugin.mdx
 import com.intellij.codeInsight.actions.OptimizeImportsAction
 import com.intellij.ide.DataManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import junit.framework.TestCase
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
+@RunWith(JUnit4::class)
 class MdxTest : MdxTestBase() {
 
     @Test
@@ -13,13 +15,13 @@ class MdxTest : MdxTestBase() {
         myFixture.configureByText("my.mdx", "export const hello = \"hello\"")
         myFixture.configureByText("test.mdx", "import {hello} from \'my.mdx\'\n<div>{h<caret>ello}</div>")
         val ref = myFixture.getReferenceAtCaretPosition()
-        TestCase.assertNotNull(ref?.resolve())
+        assertNotNull(ref?.resolve())
     }
 
     @Test
     fun testFindUsages() {
         val usageInfos = myFixture.testFindUsages("FindUsagesTestData.mdx", "FindUsagesTestData.kt")
-        TestCase.assertEquals(1, usageInfos.size)
+        assertEquals(1, usageInfos.size)
     }
 
     @Test

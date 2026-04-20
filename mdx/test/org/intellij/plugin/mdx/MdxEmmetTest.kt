@@ -3,9 +3,14 @@ package org.intellij.plugin.mdx
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.codeInsight.template.impl.TemplateSettings
+import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.testFramework.PlatformTestUtil
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
+@RunWith(JUnit4::class)
 class MdxEmmetTest : MdxTestBase() {
     
     @Test
@@ -21,9 +26,9 @@ class MdxEmmetTest : MdxTestBase() {
     <li></li>
 </ul>""")
         doTest("<ul>.item*3<caret></ul>", """<ul>
-    <li className="item"></li>
-    <li className="item"></li>
-    <li className="item"></li></ul>""")
+    <li class="item"></li>
+    <li class="item"></li>
+    <li class="item"></li></ul>""")
     }
 
     @Test
@@ -34,8 +39,11 @@ class MdxEmmetTest : MdxTestBase() {
     private fun doTest(input: String, expectedOutput: String) {
         myFixture.configureByText("a.mdx", input)
         TemplateManagerImpl.setTemplateTesting(testRootDisposable)
-        WriteCommandAction.runWriteCommandAction(myFixture.project) { TemplateManager.getInstance(myFixture.project)
-            .startTemplate(myFixture.editor, TemplateSettings.TAB_CHAR) }
+        WriteCommandAction.runWriteCommandAction(myFixture.project) {
+            TemplateManager.getInstance(myFixture.project).startTemplate(myFixture.editor, TemplateSettings.TAB_CHAR)
+        }
+        NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
+        PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
         myFixture.checkResult(expectedOutput)
     }
 }

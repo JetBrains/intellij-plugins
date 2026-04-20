@@ -1,3 +1,2 @@
 MDX File(0,0)
-  ASTWrapperPsiElement(Markdown:Markdown:MARKDOWN_FILE)(0,0)
-    <empty list>
+  <empty list>

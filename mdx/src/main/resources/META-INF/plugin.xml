@@ -20,6 +20,7 @@
     <module name="intellij.xml.impl"/>
     <module name="intellij.xml.parser"/>
     <module name="intellij.xml.psi"/>
+    <module name="intellij.xml.emmet"/>
   </dependencies>
   <!-- endregion -->
   <depends>com.intellij.modules.ultimate</depends>
@@ -59,6 +60,7 @@
                             id="MdxImportExportCompletionContributor"
                             implementationClass="org.intellij.plugin.mdx.completion.MdxImportExportCompletionContributor"
     />
+    <xml.zenCodingGenerator implementation="org.intellij.plugin.mdx.emmet.MdxZenCodingGenerator"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

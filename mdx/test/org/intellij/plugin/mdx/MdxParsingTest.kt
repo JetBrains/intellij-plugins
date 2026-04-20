@@ -16,8 +16,12 @@ import org.intellij.plugins.markdown.lang.MarkdownFileViewProviderFactory
 import org.intellij.plugins.markdown.lang.MarkdownLanguage
 import org.intellij.plugins.markdown.lang.parser.MarkdownParserDefinition
 import org.intellij.plugins.markdown.lang.psi.MarkdownAstFactory
+import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElementProvider
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
+@RunWith(JUnit4::class)
 class MdxParsingTest : ParsingTestCase(
   "",
   "mdx",
@@ -28,7 +32,7 @@ class MdxParsingTest : ParsingTestCase(
 ) {
 
   override fun getTestDataPath(): String {
-    return "src/test/testData/parsing"
+    return MdxTestUtil.testDataPath + "/parsing"
   }
 
   override fun checkAllPsiRoots(): Boolean {
@@ -37,6 +41,7 @@ class MdxParsingTest : ParsingTestCase(
 
   override fun setUp() {
     super.setUp()
+    registerExtensionPoint(MarkdownPsiElementProvider.extensionPoint, MarkdownPsiElementProvider::class.java)
     addExplicitExtension(LanguageFileViewProviders.INSTANCE, MdxLanguage, MdxFileViewProviderFactory())
     addExplicitExtension(LanguageFileViewProviders.INSTANCE, MdxLanguage, MarkdownFileViewProviderFactory())
     addExplicitExtension(LanguageASTFactory.INSTANCE, MarkdownLanguage.INSTANCE, MarkdownAstFactory())
