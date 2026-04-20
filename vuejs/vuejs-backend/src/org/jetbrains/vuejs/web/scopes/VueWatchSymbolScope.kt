@@ -2,16 +2,15 @@
 package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.lang.javascript.DialectDetector
-import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
-import com.intellij.model.Pointer.hardPointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.types.JSTypeProperty
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
@@ -98,11 +97,11 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent<*>)
           from(VUE_COMPONENT_DATA_PROPERTIES)
           from(VUE_COMPONENT_COMPUTED_PROPERTIES)
         }
-        additionalLastSegmentSymbol = object : VueSymbol {
-          override val kind: PolySymbolKind get() = JS_PROPERTIES
-          override val name: String get() = "watch property type provider"
-          override val type: JSType? get() = JSAnyType.get(null) // TODO return proper type
-          override fun createPointer(): Pointer<out PolySymbol> = hardPointer(this)
+        overrideMatchProperties {
+          property(JSTypeProperty) {
+            // TODO return proper type
+            JSAnyType.get(null)
+          }
         }
         sequence {
           symbolReference()
