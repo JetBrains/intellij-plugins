@@ -7,13 +7,11 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.css.CSS_PROPERTIES
+import com.intellij.polySymbols.dsl.buildPolySymbol
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
-import com.intellij.polySymbols.patterns.PolySymbolPattern
-import com.intellij.polySymbols.patterns.polySymbolPattern
-import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
@@ -52,23 +50,13 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
     return Pointer { ptr.dereference()?.let(::AstroScriptDefineVarsScope) }
   }
 
-  override val providedSymbol: PolySymbol = object : PolySymbolWithPattern {
-
-    override val kind: PolySymbolKind
-      get() = JS_SYMBOLS
-
-    override val name: String
-      get() = "Astro Defined Script Variable"
-
-    override val pattern: PolySymbolPattern = polySymbolPattern {
+  override val providedSymbol: PolySymbol = buildPolySymbol(JS_SYMBOLS, "Astro Defined Script Variable") {
+    pattern {
       group {
         symbols { from(JS_PROPERTIES) }
         symbolReference()
       }
     }
-
-    override fun createPointer(): Pointer<out PolySymbol> =
-      Pointer.hardPointer(this)
   }
 }
 
@@ -78,15 +66,8 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
     return Pointer { ptr.dereference()?.let(::AstroStyleDefineVarsScope) }
   }
 
-  override val providedSymbol: PolySymbol = object : PolySymbolWithPattern {
-
-    override val kind: PolySymbolKind
-      get() = CSS_PROPERTIES
-
-    override val name: String
-      get() = "Astro Defined CSS Variable"
-
-    override val pattern: PolySymbolPattern = polySymbolPattern {
+  override val providedSymbol: PolySymbol = buildPolySymbol(CSS_PROPERTIES, "Astro Defined CSS Variable") {
+    pattern {
       group {
         symbols { from(JS_PROPERTIES) }
         sequence {
@@ -95,8 +76,5 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
         }
       }
     }
-
-    override fun createPointer(): Pointer<out PolySymbol> =
-      Pointer.hardPointer(this)
   }
 }
