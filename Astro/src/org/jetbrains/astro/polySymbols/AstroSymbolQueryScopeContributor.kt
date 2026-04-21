@@ -19,11 +19,11 @@ import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.lang.AstroFileImpl
-import org.jetbrains.astro.polySymbols.scope.AstroAvailableComponentsScope
-import org.jetbrains.astro.polySymbols.scope.AstroFrontmatterScope
-import org.jetbrains.astro.polySymbols.scope.AstroNamespacedComponentsScope
-import org.jetbrains.astro.polySymbols.scope.AstroScriptDefineVarsScope
-import org.jetbrains.astro.polySymbols.scope.AstroStyleDefineVarsScope
+import org.jetbrains.astro.polySymbols.scope.astroAvailableComponentsScope
+import org.jetbrains.astro.polySymbols.scope.astroFrontmatterScope
+import org.jetbrains.astro.polySymbols.scope.astroNamespacedComponentsScope
+import org.jetbrains.astro.polySymbols.scope.astroScriptDefineVarsScope
+import org.jetbrains.astro.polySymbols.scope.astroStyleDefineVarsScope
 
 val ASTRO_COMPONENTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "astro-components"]
 val ASTRO_COMPONENT_PROPS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "props"]
@@ -51,35 +51,35 @@ class AstroSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
         // Default scopes
         forAnyPsiLocationInFile()
           .contributeScopeProvider {
-            mutableListOf(AstroFrontmatterScope(it.containingFile as AstroFileImpl),
-                          AstroAvailableComponentsScope(it.project))
+            mutableListOf(astroFrontmatterScope(it.containingFile as AstroFileImpl),
+                          astroAvailableComponentsScope(it.project))
           }
 
-        // AstroStyleDefineVarsScope
+        // astroStyleDefineVarsScope
         forPsiLocation(CssElement::class.java)
           .contributeScopeProvider { location ->
             location.parentOfType<XmlTag>()
               ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.STYLE_TAG_NAME) }
-              ?.let { listOf(AstroStyleDefineVarsScope(it)) }
+              ?.let { listOf(astroStyleDefineVarsScope(it)) }
             ?: emptyList()
           }
 
-        // AstroScriptDefineVarsScope
+        // astroScriptDefineVarsScope
         forPsiLocation(JSElement::class.java)
           .contributeScopeProvider { location ->
             location.parentOfType<XmlTag>()
               ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.SCRIPT_TAG_NAME) }
-              ?.let { listOf(AstroScriptDefineVarsScope(it)) }
+              ?.let { listOf(astroScriptDefineVarsScope(it)) }
             ?: emptyList()
           }
 
-        // AstroNamespacedComponentsScope
+        // astroNamespacedComponentsScope
         forPsiLocation(XmlPatterns.xmlTag().withName(StandardPatterns.string().contains(".")))
           .inFile(AstroFileImpl::class.java)
           .contributeScopeProvider { element ->
             (element.containingFile as AstroFileImpl)
               .frontmatterScript()
-              ?.let { listOf(AstroNamespacedComponentsScope(it)) }
+              ?.let { listOf(astroNamespacedComponentsScope(it)) }
             ?: emptyList()
           }
       }

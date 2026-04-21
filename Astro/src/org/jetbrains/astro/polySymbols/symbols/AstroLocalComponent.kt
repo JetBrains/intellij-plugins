@@ -7,13 +7,11 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
-import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolQueryStack
-import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
+import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.polySymbolScopeCached
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
@@ -31,38 +29,32 @@ class AstroLocalComponent(
   override val name: String,
   override val source: PsiElement,
   override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH,
-) : ComponentPolySymbol, PolySymbolScopeWithCache<PsiElement, Unit>(source.project, source, Unit) {
-
-  override fun getMatchingSymbols(
-    qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolNameMatchQueryParams,
-    stack: PolySymbolQueryStack,
-  ): List<PolySymbol> =
-    if (qualifiedName.matches(HTML_ATTRIBUTES) && name.contains(":"))
-      emptyList()
-    else
-      super.getMatchingSymbols(qualifiedName, params, stack)
-
-  override fun provides(kind: PolySymbolKind): Boolean =
-    kind == ASTRO_COMPONENT_PROPS
-
-  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
-    cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
-
-    dataHolder
-      .asSafely<ES6ImportedBinding>()
-      ?.findReferencedElements()
-      ?.firstOrNull()
-      ?.containingFile
-      ?.takeIf { it is AstroFileImpl }
-      ?.astroContentRoot()
-      ?.frontmatterScript()
-      ?.propsInterfaceOrTypeAlias()
-      ?.asJSSymbol()
-      ?.getJSPropertySymbols()
-      ?.map(::AstroComponentPropSymbol)
-      ?.forEach(consumer)
-  }
+) : ComponentPolySymbol,
+    PolySymbolScope by polySymbolScopeCached(source, {
+      provides(ASTRO_COMPONENT_PROPS)
+      initialize {
+        cacheDependencies(PsiModificationTracker.MODIFICATION_COUNT)
+        element
+          .asSafely<ES6ImportedBinding>()
+          ?.findReferencedElements()
+          ?.firstOrNull()
+          ?.containingFile
+          ?.takeIf { it is AstroFileImpl }
+          ?.astroContentRoot()
+          ?.frontmatterScript()
+          ?.propsInterfaceOrTypeAlias()
+          ?.asJSSymbol()
+          ?.getJSPropertySymbols()
+          ?.map(::AstroComponentPropSymbol)
+          ?.forEach(::add)
+      }
+      filterNameMatches { qualifiedName, matches ->
+        if (qualifiedName.matches(HTML_ATTRIBUTES) && name.contains(":"))
+          emptyList()
+        else
+          matches
+      }
+    }) {
 
   override val kind: PolySymbolKind
     get() = ASTRO_COMPONENTS
