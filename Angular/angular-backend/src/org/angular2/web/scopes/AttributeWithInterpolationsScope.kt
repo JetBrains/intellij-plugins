@@ -54,8 +54,8 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
 
     override val pattern: PolySymbolPattern = polySymbolPattern {
       group {
-        priority = PolySymbol.Priority.HIGHEST
-        symbolsResolver = PropertiesResolver
+        priority(PolySymbol.Priority.HIGHEST)
+        symbolsResolver(PropertiesResolver)
         symbolReference()
       }
     }
