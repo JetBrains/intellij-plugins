@@ -129,6 +129,11 @@ internal class QodanaRustLoader(private val project: Project, coroutineScope: Co
             }
         }.toString())
 
+        // Do NOT skip macro expansion even when cargo projects fail. The macro expansion pipeline
+        // (MacroExpansionTask → DefCollector → DefMap) handles both declarative macros (macro_rules!)
+        // and proc macros. Declarative macros expand successfully without build scripts and provide
+        // value for inspections. Proc macro expansion times out individually but the pipeline always
+        // completes. Skipping this wait would degrade analysis quality.
         macroExpansionCompleted.await()
 
         // Awaits a service that is responsible for attaching extra sources to projects using #![feature(rustc_private)]

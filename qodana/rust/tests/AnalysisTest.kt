@@ -82,6 +82,7 @@ class AnalysisTest : IntegrationTest() {
     val result = analyze(workdir)
 
     result.ok.shouldBeTrue()
+    result.findSanityIssues("QodanaRustSanity").shouldBeEmpty()
     result.findIssue("RsUnusedImport", "src/lib.rs:3").shouldNotBeNull()
     result.findIssue("RsUnnecessaryReturn", "src/lib.rs:6").shouldNotBeNull()
     result.findIssues("RsUnusedImport").shouldHaveSize(1)
@@ -89,15 +90,9 @@ class AnalysisTest : IntegrationTest() {
   }
 
   /**
-   * Reproduces the intermittent CI failure where `basic` and `dirty project` produce zero results.
-   *
-   * Root cause (from CI build 905876656 logs):
-   * Some CI agents have an old Cargo that doesn't support `edition = "2024"`.
-   * `cargo metadata` fails with: "this version of Cargo is older than the `2024` edition,
-   * and only supports `2015`, `2018`, and `2021` editions."
-   * The Cargo project model fails to load, and Qodana analysis produces zero inspection results.
-   *
-   * This test simulates the same failure by using `edition = "2099"` (unsupported by any Cargo version).
+   * Verifies that when cargo fails to load a project (e.g., unsupported edition),
+   * the analysis still completes (no hang from macroExpansionCompleted) and the
+   * QodanaRustSanity inspection reports the failure.
    */
   @Test
   fun `no results when cargo does not support the project edition`() {
@@ -114,6 +109,8 @@ class AnalysisTest : IntegrationTest() {
     val result = analyze(workdir)
 
     result.ok.shouldBeTrue()
+    result.findSanityIssue("QodanaRustSanity", "Cargo.toml").shouldNotBeNull()
+    result.findSanityIssues("QodanaRustSanity").shouldHaveSize(1)
     result.results!!.filter { it.ruleId?.startsWith("Rs") == true }.shouldBeEmpty()
   }
 

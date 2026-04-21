@@ -10,6 +10,16 @@
   <extensions defaultExtensionNs="com.intellij">
     <activityTracker implementation="org.intellij.qodana.rust.QodanaRustLoaderActivityTracker"/>
     <registryKey defaultValue="10" description="Timeout in minutes for Qodana Rust project configuration" key="qd.rust.configuration.timeout.minutes"/>
+    <globalInspection hasStaticDescription="true"
+                      language="Rust"
+                      shortName="QodanaRustSanity"
+                      key="inspection.rust.sanity.inspection"
+                      bundle="messages.QodanaRustBundle"
+                      groupKey="inspection.qodana.tools.group.name"
+                      groupBundle="messages.QodanaBundle"
+                      enabledByDefault="false"
+                      level="ERROR"
+                      implementationClass="org.intellij.qodana.rust.QodanaRustSanityInspection"/>
   </extensions>
   <extensions defaultExtensionNs="org.intellij">
     <qodana.workflowExtension implementation="org.intellij.qodana.rust.QodanaRustWorkflow"/>

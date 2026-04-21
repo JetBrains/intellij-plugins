@@ -2,5 +2,6 @@
 groups:
   - groupId: RustSanity
     inspections:
+      - QodanaRustSanity
       - RsUnresolvedPath
       - RsUnresolvedMethod
