@@ -667,15 +667,18 @@ class ModuleType(override val name: String, properties: List<PropertyOrBlockType
 
 internal fun withDefaults(properties: List<PropertyOrBlockType>, default: BlockType): Map<String, PropertyOrBlockType> {
   if (properties.isEmpty()) return default.properties
-  return properties.toMap() + default.properties
+
+  // Custom properties override defaults when keys collide
+  return default.properties + properties.toMap()
 }
 
 internal fun withDefaults(origin: BlockType?, default: BlockType): Map<String, PropertyOrBlockType> {
   val properties = origin?.properties
   val defaultProperties = default.properties
 
+  // Custom properties override defaults when keys collide.
   return if (properties.isNullOrEmpty()) defaultProperties
-  else properties + defaultProperties
+  else defaultProperties + properties
 }
 
 internal fun getContainingFile(psiElement: PsiElement): PsiFile? {

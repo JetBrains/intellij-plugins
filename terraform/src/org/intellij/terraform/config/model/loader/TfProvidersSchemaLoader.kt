@@ -16,7 +16,10 @@ import org.intellij.terraform.config.model.obj
 import org.intellij.terraform.config.model.string
 
 internal class TfProvidersSchemaLoader : VersionedMetadataLoader {
-  override fun isSupportedVersion(version: String): Boolean = version in listOf("0.1", "0.2", "1.0")
+  private val supportedVersions: Set<String> = setOf("0.1", "0.2", "1.0")
+
+  override fun isSupportedVersion(version: String): Boolean = version in supportedVersions
+
   override fun isSupportedType(type: String): Boolean = type == "terraform-providers-schema-json"
 
   override fun load(context: LoadContext, json: ObjectNode, fileName: String) {

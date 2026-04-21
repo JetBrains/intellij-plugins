@@ -120,7 +120,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     doBasicCompletionTest("resource abc {\n<caret> = true\n}", emptyList())
     doBasicCompletionTest("resource abc {\n<caret> {}\n}", listOf("lifecycle", "connection", "provisioner", "dynamic"))
 
-    doBasicCompletionTest("resource abc {\n<caret>lifecycle {}\n}", listOf("connection", "dynamic", "provisioner"))
+    doBasicCompletionTest("resource abc {\n<caret>lifecycle {}\n}", listOf("connection", "dynamic", "lifecycle", "provisioner"))
   }
 
   fun testResourceDynamicCompletion() {

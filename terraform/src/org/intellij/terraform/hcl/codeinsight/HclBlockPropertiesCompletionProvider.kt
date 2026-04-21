@@ -177,7 +177,13 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
 
   private fun shouldSuggestCandidate(parent: HCLObject, candidate: PropertyOrBlockType): Boolean = when (candidate) {
     is PropertyType -> parent.findProperty(candidate.name) == null
-    is BlockType -> parent.blockList.none { it.name == candidate.name }
+    is BlockType -> {
+      // If a block has max_items == 1, it is treated as a singleton block in Terraform schema.
+      // In that case we only suggest it if it does not already exist in the parent
+      if (candidate.nesting?.max == 1)
+        parent.blockList.none { it.name == candidate.name }
+      else true
+    }
     else -> false
   }
 
