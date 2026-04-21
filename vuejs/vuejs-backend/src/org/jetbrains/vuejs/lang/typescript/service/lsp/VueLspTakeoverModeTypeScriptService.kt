@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.service.lsp
 
 import com.google.gson.JsonElement
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
+import com.intellij.lang.typescript.compiler.TypeScriptServiceQueueCommand
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer.LspCustomTypeScriptCommandRequest
@@ -60,15 +61,14 @@ class VueLspTakeoverModeTypeScriptService(
   }
 
   override suspend fun handleCustomTsServerCommand(
-    commandName: String,
-    args: JSLanguageServiceObject,
+    command: TypeScriptServiceQueueCommand<out JSLanguageServiceObject, out Any>,
     requiresNewEval: Boolean,
   ): JsonElement? {
     if (requiresNewEval) return null
     val server = getServer() ?: return null
     awaitServerRunningState(server)
     return server.sendRequest {
-      (it as JSFrameworkLsp4jServer).handleCustomTsServerCommand(LspCustomTypeScriptCommandRequest(commandName, args))
+      (it as JSFrameworkLsp4jServer).handleCustomTsServerCommand(LspCustomTypeScriptCommandRequest(command.command, command.arguments))
     }
   }
 
