@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.patterns
 
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns
@@ -11,6 +12,7 @@ import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants.HCL_ACTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.Scopes
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
@@ -73,10 +75,17 @@ internal object HILPatterns {
   val IlseEphemeralResource: Capture<SelectExpression<*>> =
     createChainedExpressionPattern("Ephemeral expression", IlseFromEphemeralScope)
 
+  val InTerraformFile = object : PatternCondition<PsiElement>("In Terraform file") {
+    override fun accepts(t: PsiElement, context: ProcessingContext?): Boolean {
+      val file = InjectedLanguageManager.getInstance(t.project).getTopLevelFile(t)
+      return file.fileType is TerraformFileType
+    }
+  }
+
   val IlseFromActionScope: Capture<SelectExpression<*>> = createExpressionPattern()
     .with(expressionScopeCondition(HCL_ACTION_IDENTIFIER))
   val IlseAction: Capture<SelectExpression<*>> =
-    createChainedExpressionPattern("Action expression", IlseFromActionScope)
+    createChainedExpressionPattern("Action expression", IlseFromActionScope).with(InTerraformFile)
 
   val InsideForExpressionBody: Capture<PsiElement> = PlatformPatterns.psiElement()
     .withParent(PlatformPatterns.psiElement(BaseExpression::class.java)

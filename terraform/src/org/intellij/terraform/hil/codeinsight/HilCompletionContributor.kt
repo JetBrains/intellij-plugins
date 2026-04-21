@@ -11,6 +11,7 @@ import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder.create
 import com.intellij.lang.Language
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.project.DumbAware
@@ -31,6 +32,7 @@ import org.intellij.terraform.config.Constants.HCL_PATH_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SELF_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VAR_IDENTIFIER
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.GlobalScopes
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createFunction
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createScopeLookup
@@ -277,8 +279,10 @@ open class HilCompletionContributor : CompletionContributor(), DumbAware {
       parameters: CompletionParameters,
       result: CompletionResultSet,
     ) {
-      val module = getTerraformModule(identifier) ?: return
+      val file = InjectedLanguageManager.getInstance(identifier.project).getTopLevelFile(identifier)
+      if (file.fileType !is TerraformFileType) return
 
+      val module = getTerraformModule(identifier) ?: return
       val actionTypes = module.getDefinedActions().mapNotNull { it.getNameElementUnquoted(1) }
       result.addAllElements(actionTypes.map { create(it) })
     }
