@@ -21,6 +21,12 @@
   ]]></description>
   <vendor>JetBrains</vendor>
   <category>Languages</category>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.xml.parser"/>
+    <module name="intellij.xml.psi"/>
+  </dependencies>
+  <!-- endregion -->
   <depends>com.intellij.modules.xml</depends>
   <depends>com.intellij.modules.spellchecker</depends>
   <depends optional="true" config-file="dart-js-debugger-support.xml">JavaScriptDebugger</depends>

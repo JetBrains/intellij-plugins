@@ -24,6 +24,11 @@
     </ul>
     ]]></description>
 
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <dependencies>
+      <module name="intellij.xml.parser"/>
+    </dependencies>
+    <!-- endregion -->
     <depends>com.intellij.modules.ultimate</depends>
     <depends>JavaScript</depends>
 

@@ -12,6 +12,12 @@
     ]]>
   </description>
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.xml.parser"/>
+    <module name="intellij.xml.psi"/>
+  </dependencies>
+  <!-- endregion -->
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.modules.platform</depends>
   <depends>org.intellij.plugins.markdown</depends>

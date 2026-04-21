@@ -19,6 +19,13 @@
     ]]></description>
   <vendor>JetBrains</vendor>
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.xml.parser"/>
+    <module name="intellij.xml.psi"/>
+    <module name="intellij.xml.psi.impl"/>
+  </dependencies>
+  <!-- endregion -->
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.modules.platform</depends>

@@ -3,7 +3,6 @@
   <dependencies>
     <plugin id="org.intellij.plugins.markdown"/>
     <module name="intellij.markdown"/>
-    <module name="intellij.xml.parser"/>
     <module name="intellij.javascript.web"/>
     <module name="intellij.vuejs.backend"/>
     <module name="intellij.vuejs.common"/>

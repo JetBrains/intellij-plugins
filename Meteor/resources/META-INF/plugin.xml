@@ -18,6 +18,12 @@
     ]]>
   </description>
   <vendor>JetBrains</vendor>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.xml.parser"/>
+    <module name="intellij.xml.psi"/>
+  </dependencies>
+  <!-- endregion -->
   <depends>JavaScript</depends>
   <depends>JavaScriptDebugger</depends>
   <depends>com.dmarcotte.handlebars</depends>

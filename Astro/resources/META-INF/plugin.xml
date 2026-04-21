@@ -32,6 +32,9 @@
     <module name="intellij.javascript.ultimate"/>
     <module name="intellij.javascript.web"/>
     <module name="intellij.xml.emmet"/>
+    <module name="intellij.xml.parser"/>
+    <module name="intellij.xml.psi"/>
+    <module name="intellij.xml.psi.impl"/>
     <!-- endregion -->
   </dependencies>
 
