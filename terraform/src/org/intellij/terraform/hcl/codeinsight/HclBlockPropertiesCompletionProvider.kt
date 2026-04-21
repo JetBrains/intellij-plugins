@@ -161,7 +161,7 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
       .map { toLookupElement(it, parent, fakeFactory) }
       .asIterable()
 
-    addResultsWithCustomSorter(result, candidates)
+    result.withRelevanceSorter(HclPropertiesSorter).addAllElements(candidates)
   }
 
   private fun isApplicableInContext(context: HclPositionContext, candidate: PropertyOrBlockType): Boolean = when {
@@ -230,24 +230,9 @@ private data class HclPositionContext(
   val rightType: HclType? = null,
 )
 
-private val HclElementsSorter = CompletionSorter.emptySorter().weigh(
-  object : LookupElementWeigher("hcl.required.property") {
-    override fun weigh(element: LookupElement): Comparable<Nothing> {
-      val obj = element.`object`
-      if (obj !is PropertyOrBlockType) return 100
-
-      val requiredWeight = if (obj.required) 0 else 1
-      val typeWeight = when (obj) {
-        is BlockType -> 0
-        is PropertyType -> 1
-        else -> 2
-      }
-
-      return requiredWeight * 10 + typeWeight
-    }
+private val HclPropertiesSorter = CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("hcl.property.weigher") {
+  override fun weigh(element: LookupElement): Comparable<*> {
+    val propertyOrBlock = element.`object` as? PropertyOrBlockType ?: return 10
+    return if (propertyOrBlock.required) 0 else 1
   }
-)
-
-internal fun addResultsWithCustomSorter(result: CompletionResultSet, toAdd: Iterable<LookupElement>) {
-  result.withRelevanceSorter(HclElementsSorter).addAllElements(toAdd)
-}
+})

@@ -5,7 +5,10 @@ import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.patterns.PsiFilePattern
@@ -13,6 +16,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockSorted
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createPropertyOrBlockType
+import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Block
 import org.intellij.terraform.hcl.patterns.HCLPatterns.File
@@ -46,7 +51,7 @@ internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionPa
     }
 
     val rootLookups = rootBlocks.map { createPropertyOrBlockType(it) }
-    addResultsWithCustomSorter(result, rootLookups)
+    result.withRelevanceSorter(HclRootElementsSorter).addAllElements(rootLookups)
   }
 
   private fun getRootBlockPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> {
@@ -70,3 +75,13 @@ internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionPa
     contributor.extend(CompletionType.BASIC, getBlockHeaderPattern(filePattern), this)
   }
 }
+
+private val HclRootElementsSorter = CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("hcl.root.element.weigher") {
+  override fun weigh(element: LookupElement): Comparable<*> {
+    return when (element.`object`) {
+      is BlockType -> 0
+      is PropertyType -> 1
+      else -> 10
+    }
+  }
+})
