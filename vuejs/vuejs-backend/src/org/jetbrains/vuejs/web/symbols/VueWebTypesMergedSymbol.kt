@@ -71,7 +71,7 @@ class VueWebTypesMergedSymbol(
       )
       docUrl(symbolsDocs.firstNotNullOfOrNull { it.docUrl })
       defaultValue(symbolsDocs.firstNotNullOfOrNull { it.defaultValue })
-      symbol.originalName?.let { definition(StringUtil.escapeXmlEntities(it) + " as " + definition) }
+      symbol.originalName?.let { definition(StringUtil.escapeXmlEntities(it + " as " + symbol.name)) }
 
       library(symbolsDocs.firstNotNullOfOrNull { it.library })
     }
