@@ -67,8 +67,6 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
       JS_PROPERTIES, NG_DIRECTIVE_INPUTS
     )
 
-    override val delegate: PolySymbol? get() = null
-
     override fun codeCompletion(
       name: String,
       position: Int,
