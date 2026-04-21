@@ -13,9 +13,9 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfTypes
 import org.intellij.terraform.config.actions.createQuickFixNotInitialized
-import org.intellij.terraform.config.codeinsight.TfCompletionUtil
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.BlockType
+import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -48,9 +48,10 @@ class TfUnknownBlockTypeInspection : LocalInspectionTool() {
     // It could be a root block or block inside Object
     // Object could be the value of some property or right part of another object
     val parent = block.parentOfTypes(HCLBlock::class, HCLFile::class) ?: return
+    val isRootBlock = TfTypeModel.findRootBlock(type, block) != null
     when (parent) {
       is HCLFile -> {
-        if (TfCompletionUtil.RootBlockKeywords.contains(type))
+        if (isRootBlock)
           return
 
         registerUnknownBlockProblem(block, holder, type)
@@ -65,7 +66,7 @@ class TfUnknownBlockTypeInspection : LocalInspectionTool() {
         if (properties[type] is BlockType) return
 
         // Check for non-closed root block (issue #93)
-        if (TfPsiPatterns.RootBlock.accepts(parent) && TfCompletionUtil.RootBlockKeywords.contains(type)) {
+        if (TfPsiPatterns.RootBlock.accepts(parent) && isRootBlock) {
           holder.problem(block.nameElements.first(),
                          HCLBundle.message("unknown.block.type.inspection.missing.closing.brace.error.message"))
             .highlight(ProblemHighlightType.GENERIC_ERROR)

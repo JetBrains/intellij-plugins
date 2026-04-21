@@ -49,6 +49,7 @@ import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.local.LocalProviderNamesService
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLFile
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.isTfOrTofuPsiFile
@@ -106,7 +107,7 @@ class TfTypeModel(
     actionsByProvider = actions.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
   }
 
-  companion object {
+  internal companion object {
 
     private val VersionProperty = PropertyType("version", Types.String, hint = SimpleValueHint("VersionRange"), injectionAllowed = false)
     val TerraformRequiredVersion: PropertyType = PropertyType("required_version", Types.String, hint = SimpleValueHint("VersionRange"),
@@ -321,7 +322,7 @@ class TfTypeModel(
     ).toMap())
     val RemovedBlock: BlockType = BlockType(HCL_REMOVED_BLOCK_IDENTIFIER, properties = listOf(FromProperty, RemovedLifecycle).toMap())
 
-    val RootBlocks: List<BlockType> = listOf(
+    private val RootBlocks: List<BlockType> = listOf(
       Action,
       AbstractDataSource,
       AbstractEphemeralResource,
@@ -337,9 +338,16 @@ class TfTypeModel(
       RemovedBlock,
       Terraform,
       Variable
-    )
+    ).sortedBy { it.literal }
 
-    val RootBlocksMap: Map<String, BlockType> = RootBlocks.associateBy(BlockType::literal)
+    private val RootBlocksMap: Map<String, BlockType> = RootBlocks.associateBy(BlockType::literal)
+
+    fun getAllRootBlocks(fileType: FileType): List<BlockType> = RootBlocks.filter { it.canBeUsedIn(fileType) }
+
+    fun findRootBlock(type: String, element: HCLElement): BlockType? {
+      val fileType = element.containingFile.originalFile.fileType
+      return RootBlocksMap[type]?.takeIf { it.canBeUsedIn(fileType) }
+    }
 
     fun getResourcePrefix(identifier: String): String {
       val stringList = identifier.split("_", limit = 2)

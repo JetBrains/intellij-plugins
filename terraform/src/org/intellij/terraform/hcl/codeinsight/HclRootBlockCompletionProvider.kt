@@ -14,10 +14,10 @@ import com.intellij.patterns.PsiElementPattern
 import com.intellij.patterns.PsiFilePattern
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockSorted
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createPropertyOrBlockType
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Block
 import org.intellij.terraform.hcl.patterns.HCLPatterns.File
@@ -43,7 +43,7 @@ internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionPa
 
     val psiFile = position.containingFile.originalFile
     val rootBlocks = when {
-      isTfOrTofuPsiFile(psiFile) -> RootBlockSorted
+      isTfOrTofuPsiFile(psiFile) -> TfTypeModel.getAllRootBlocks(psiFile.fileType)
       isTfComponentPsiFile(psiFile) -> TfComponentRootBlocks
       isTfDeployPsiFile(psiFile) -> TfDeployRootBlocks
       isTerragruntPsiFile(psiFile) -> if (isTerragruntStack(psiFile)) StackRootBlocks else TerragruntBlocksAndAttributes

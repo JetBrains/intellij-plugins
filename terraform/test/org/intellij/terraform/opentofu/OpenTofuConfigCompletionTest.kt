@@ -23,6 +23,7 @@ internal class OpenTofuConfigCompletionTest : TfBaseCompletionTestCase() {
     val file = myFixture.configureByText("main.tofu", "<caret>")
     val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name).orEmpty()
     assertNotEmpty(completionVariants)
+    assertFalse("Terraform-only action block should not appear in .tofu file", "action" in completionVariants)
 
     val fileExtension = OpenTofuFileType.defaultExtension
     assertNoTerragruntBlocks(fileExtension, completionVariants, listOf("terraform", "locals"))

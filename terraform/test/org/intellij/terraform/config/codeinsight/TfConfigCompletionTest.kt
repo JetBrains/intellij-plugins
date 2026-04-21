@@ -4,13 +4,13 @@ package org.intellij.terraform.config.codeinsight
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.registry.Registry
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
 import org.intellij.terraform.config.model.ActionType
 import org.intellij.terraform.config.model.DataSourceType
 import org.intellij.terraform.config.model.EphemeralType
 import org.intellij.terraform.config.model.ProviderDefinedType
 import org.intellij.terraform.config.model.ProviderTier
 import org.intellij.terraform.config.model.ResourceType
+import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.config.model.TypeModelProvider.Companion.globalModel
 import org.intellij.terraform.stack.TfComponentCompletionTest.Companion.assertNoTfComponentBlocks
 import org.intellij.terraform.stack.TfDeployCompletionTest.Companion.assertNoTfDeployBlocks
@@ -29,21 +29,21 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
   }
 
   fun testBlockKeywordCompletion() {
-    doBasicCompletionTest("<caret> {}", RootBlockKeywords)
-    doBasicCompletionTest("a=1\n<caret> {}", RootBlockKeywords)
+    doBasicCompletionTest("<caret> {}", TfRootBlockKeywords)
+    doBasicCompletionTest("a=1\n<caret> {}", TfRootBlockKeywords)
 
-    doBasicCompletionTest("<caret> ", RootBlockKeywords)
-    doBasicCompletionTest("a=1\n<caret> ", RootBlockKeywords)
+    doBasicCompletionTest("<caret> ", TfRootBlockKeywords)
+    doBasicCompletionTest("a=1\n<caret> ", TfRootBlockKeywords)
 
-    doBasicCompletionTest("\"<caret>\" {}", RootBlockKeywords)
-    doBasicCompletionTest("\"<caret> {}", RootBlockKeywords)
-    doBasicCompletionTest("a=1\n\"<caret>\" {}", RootBlockKeywords)
-    doBasicCompletionTest("a=1\n\"<caret> {}", RootBlockKeywords)
+    doBasicCompletionTest("\"<caret>\" {}", TfRootBlockKeywords)
+    doBasicCompletionTest("\"<caret> {}", TfRootBlockKeywords)
+    doBasicCompletionTest("a=1\n\"<caret>\" {}", TfRootBlockKeywords)
+    doBasicCompletionTest("a=1\n\"<caret> {}", TfRootBlockKeywords)
 
-    doBasicCompletionTest("\"<caret>\" ", RootBlockKeywords)
-    doBasicCompletionTest("\"<caret> ", RootBlockKeywords)
-    doBasicCompletionTest("a=1\n\"<caret>\" ", RootBlockKeywords)
-    doBasicCompletionTest("a=1\n\"<caret> ", RootBlockKeywords)
+    doBasicCompletionTest("\"<caret>\" ", TfRootBlockKeywords)
+    doBasicCompletionTest("\"<caret> ", TfRootBlockKeywords)
+    doBasicCompletionTest("a=1\n\"<caret>\" ", TfRootBlockKeywords)
+    doBasicCompletionTest("a=1\n\"<caret> ", TfRootBlockKeywords)
   }
 
   fun testNoBlockKeywordCompletion() {
@@ -1138,6 +1138,8 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
   }
 
   companion object {
+    private val TfRootBlockKeywords = TfTypeModel.getAllRootBlocks(TerraformFileType).map { it.literal }
+
     fun collectBundledProviders(): List<String> = globalModel.allProviders().filter { it.tier in ProviderTier.PreferedProviders }
       .map { it.type }
       .sorted()
@@ -1150,7 +1152,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       completionVariants: List<String>,
       commonRootBlocks: List<String> = emptyList(),
     ) {
-      val unexpectedBlocks = RootBlockKeywords.filter { it in completionVariants && it !in commonRootBlocks }
+      val unexpectedBlocks = TfRootBlockKeywords.filter { it in completionVariants && it !in commonRootBlocks }
       assertTrue(
         "These Terraform-only root blocks should not appear in $fileExtension file: $unexpectedBlocks",
         unexpectedBlocks.isEmpty()

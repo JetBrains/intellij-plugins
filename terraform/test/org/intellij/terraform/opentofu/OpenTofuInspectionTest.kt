@@ -2,6 +2,7 @@
 package org.intellij.terraform.opentofu
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.intellij.terraform.config.inspection.TfUnknownBlockTypeInspection
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.opentofu.inspection.OpenTofuUnknownEncryptionMethodInspection
 import org.intellij.terraform.opentofu.inspection.OpenTofuUnknownKeyProviderInspection
@@ -65,5 +66,13 @@ internal class OpenTofuInspectionTest: BasePlatformTestCase() {
     myFixture.checkHighlighting(true, false, true)
   }
 
-
+  fun testDetectTerraformOnlyRootBlock() {
+    myFixture.enableInspections(TfUnknownBlockTypeInspection::class.java)
+    val errorMessage = HCLBundle.message("unknown.block.type.inspection.unknown.block.type.error.message", "action")
+    myFixture.configureByText("test.tofu", """
+      <warning descr="$errorMessage">action</warning> "local_command" "bash_example" {
+      }
+    """.trimIndent())
+    myFixture.checkHighlighting(true, false, true)
+  }
 }

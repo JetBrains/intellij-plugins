@@ -72,9 +72,6 @@ internal object TfCompletionUtil {
     HCL_EPHEMERAL_IDENTIFIER
   ) + OpenTofuScopes).toSortedSet()
 
-  val RootBlockKeywords: Set<String> = TfTypeModel.RootBlocksMap.keys
-  val RootBlockSorted: List<BlockType> = TfTypeModel.RootBlocks.sortedBy { it.literal }
-
   fun createPropertyOrBlockType(value: PropertyOrBlockType, lookupString: String? = null, psiElement: PsiElement? = null): LookupElementBuilder {
     val elementBuilder = when {
       psiElement == null -> create(value, lookupString ?: value.name)

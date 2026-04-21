@@ -80,7 +80,7 @@ internal object LocalTfDocumentationProvider {
   }
 
   @Nls
-  private fun getOutputBlockDocumentation(element: HCLBlock, bundleKey: String): String? {
+  private fun getOutputBlockDocumentation(element: HCLBlock, bundleKey: String): String {
     val descriptionProperty = element.`object`?.children
       ?.firstOrNull { TfPsiPatterns.DescriptionProperty.accepts(it) } as? HCLProperty
 
@@ -90,8 +90,10 @@ internal object LocalTfDocumentationProvider {
 
   @Nls
   private fun getTypedBlockDocumentation(element: HCLBlock, bundleKey: String): String? {
-    val block = TfTypeModel.RootBlocks.firstOrNull { it.literal == element.getNameElementUnquoted(0) }
-    val resourceType = element.getNameElementUnquoted(0)?.lowercase() ?: return null
+    val blockType = element.getNameElementUnquoted(0) ?: return null
+    TfTypeModel.findRootBlock(blockType, element) ?: return null
+
+    val resourceType = blockType.lowercase()
     val identifier = element.getNameElementUnquoted(1) ?: return null
 
     val model = TypeModelProvider.getModel(element)
@@ -103,9 +105,7 @@ internal object LocalTfDocumentationProvider {
     }
     val description = type?.description
 
-    return block?.let {
-      HCLBundle.message(bundleKey, element.name, identifier, description ?: "")
-    }
+    return HCLBundle.message(bundleKey, element.name, identifier, description ?: "")
   }
 
   @Nls

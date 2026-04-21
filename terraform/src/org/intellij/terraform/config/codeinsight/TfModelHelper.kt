@@ -88,7 +88,7 @@ internal object TfModelHelper {
       HCL_DATASOURCE_IDENTIFIER -> getDataSourceProperties(block)
       HCL_EPHEMERAL_IDENTIFIER -> getEphemeralProperties(block)
       HCL_MODULE_IDENTIFIER -> getModuleProperties(block)
-      else -> TfTypeModel.RootBlocksMap[type]?.properties ?: emptyMap()
+      else -> TfTypeModel.findRootBlock(type, block)?.properties ?: emptyMap()
     }
     return props
   }
@@ -96,7 +96,7 @@ internal object TfModelHelper {
   fun getAbstractBlockType(block: HCLBlock): BlockType? {
     val type = block.getNameElementUnquoted(0) ?: return null
     if (block.parent is PsiFile) {
-      return TfTypeModel.RootBlocksMap[type]
+      return TfTypeModel.findRootBlock(type, block)
     }
 
     // non-root blocks, match using patterns
@@ -144,7 +144,8 @@ internal object TfModelHelper {
       return TfTypeModel.Connection
     }
 
-    if (type !in TfTypeModel.RootBlocksMap.keys || block.parent !is PsiFile) {
+    val rootBlock = TfTypeModel.findRootBlock(type, block)
+    if (rootBlock == null || block.parent !is PsiFile) {
       return null
     }
 
@@ -195,7 +196,7 @@ internal object TfModelHelper {
       return value.getType()
     }
 
-    return TfTypeModel.RootBlocksMap[type]
+    return rootBlock
   }
 
   private fun wrapIfCountForEach(type: BlockType, block: HCLBlock): HclType {
