@@ -7,7 +7,7 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.css.CSS_PROPERTIES
-import com.intellij.polySymbols.dsl.buildPolySymbol
+import com.intellij.polySymbols.dsl.polySymbol
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.js.symbols.asJSSymbol
@@ -50,7 +50,7 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
     return Pointer { ptr.dereference()?.let(::AstroScriptDefineVarsScope) }
   }
 
-  override val providedSymbol: PolySymbol = buildPolySymbol(JS_SYMBOLS, "Astro Defined Script Variable") {
+  override val providedSymbol: PolySymbol = polySymbol(JS_SYMBOLS, "Astro Defined Script Variable") {
     pattern {
       group {
         symbols { from(JS_PROPERTIES) }
@@ -66,7 +66,7 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
     return Pointer { ptr.dereference()?.let(::AstroStyleDefineVarsScope) }
   }
 
-  override val providedSymbol: PolySymbol = buildPolySymbol(CSS_PROPERTIES, "Astro Defined CSS Variable") {
+  override val providedSymbol: PolySymbol = polySymbol(CSS_PROPERTIES, "Astro Defined CSS Variable") {
     pattern {
       group {
         symbols { from(JS_PROPERTIES) }

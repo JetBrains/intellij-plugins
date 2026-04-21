@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes
 
-import com.intellij.polySymbols.dsl.buildPolySymbol
+import com.intellij.polySymbols.dsl.polySymbol
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
 import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolInfo
@@ -48,7 +48,7 @@ class Angular2AttributeDescriptor(info: HtmlAttributeSymbolInfo, tag: XmlTag?) :
       @Suppress("UNUSED_PARAMETER")
       element: PsiElement,
     ): Angular2AttributeDescriptor {
-      val symbol = buildPolySymbol(HTML_ATTRIBUTES, "Fake symbol") {}
+      val symbol = polySymbol(HTML_ATTRIBUTES, "Fake symbol") {}
       return Angular2AttributeDescriptor(HtmlAttributeSymbolInfo.create(attributeName, symbol), tag)
     }
   }

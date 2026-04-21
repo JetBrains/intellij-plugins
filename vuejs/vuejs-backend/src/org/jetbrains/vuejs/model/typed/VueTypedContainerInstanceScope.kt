@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.model.typed
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.dsl.buildPolySymbol
+import com.intellij.polySymbols.dsl.polySymbol
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
@@ -29,7 +29,7 @@ internal class VueTypedContainerInstanceScope(container: VueTypedContainer) :
 
     cacheDependencies.addAll(getVueSymbolsCacheDependencies(container.source.project))
 
-    buildPolySymbol(JS_SYMBOLS, "wrapper") {
+    polySymbol(JS_SYMBOLS, "wrapper") {
       val container by dependency(container, VueTypedContainer::createPointer)
       property(JSTypeProperty) {
         container.thisType
