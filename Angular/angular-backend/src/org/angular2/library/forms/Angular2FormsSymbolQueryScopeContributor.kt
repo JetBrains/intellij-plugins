@@ -19,6 +19,7 @@ import com.intellij.polySymbols.query.PolySymbolQueryScopeContributor
 import com.intellij.polySymbols.query.PolySymbolQueryScopeProviderRegistrar
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.polySymbolScope
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
@@ -45,15 +46,15 @@ class Angular2FormsSymbolQueryScopeContributor : PolySymbolQueryScopeContributor
             when (name) {
               FORM_CONTROL_NAME_ATTRIBUTE -> listOf(
                 Angular2FormSymbolScopeInAttributeValue(attribute),
-                SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL),
+                ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL_SCOPE,
               )
               FORM_ARRAY_NAME_ATTRIBUTE -> listOf(
                 Angular2FormSymbolScopeInAttributeValue(attribute),
-                SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL),
+                ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL_SCOPE,
               )
               FORM_GROUP_NAME_ATTRIBUTE -> listOf(
                 Angular2FormSymbolScopeInAttributeValue(attribute),
-                SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL),
+                ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL_SCOPE,
               )
               else -> emptyList()
             }
@@ -73,42 +74,33 @@ class Angular2FormsSymbolQueryScopeContributor : PolySymbolQueryScopeContributor
       }
   }
 
-  private val ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL = ReferencingPolySymbol.create(
-    HTML_ATTRIBUTE_VALUES, "Angular Form control name", NG_FORM_CONTROL_PROPS,
+  private val ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL_SCOPE = attributeValueMappingScope(
+    "Angular Form control name", NG_FORM_CONTROL_PROPS,
   )
 
-  private val ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL = ReferencingPolySymbol.create(
-    HTML_ATTRIBUTE_VALUES, "Angular Form array name", NG_FORM_ARRAY_PROPS,
+  private val ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL_SCOPE = attributeValueMappingScope(
+    "Angular Form array name", NG_FORM_ARRAY_PROPS,
   )
 
-  private val ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL = ReferencingPolySymbol.create(
-    HTML_ATTRIBUTE_VALUES, "Angular Form group name", NG_FORM_GROUP_PROPS,
+  private val ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL_SCOPE = attributeValueMappingScope(
+    "Angular Form group name", NG_FORM_GROUP_PROPS,
   )
 
-  private class SingleSymbolExclusiveScope(private val symbol: PolySymbol) : PolySymbolScope {
-
-    override fun getSymbols(kind: PolySymbolKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
-      if (symbol.kind == kind)
-        listOf(symbol)
-      else
-        emptyList()
-
-    override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
-      symbol.kind == kind
-
-    override fun createPointer(): Pointer<out PolySymbolScope> {
-      val symbolPtr = symbol.createPointer()
-      return Pointer {
-        symbolPtr.dereference()?.let { SingleSymbolExclusiveScope(it) }
+  fun attributeValueMappingScope(name: String, referencedKind: PolySymbolKind): PolySymbolScope =
+    polySymbolScope {
+      provides(HTML_ATTRIBUTE_VALUES)
+      exclusiveFor(HTML_ATTRIBUTE_VALUES)
+      initialize {
+        addSymbol(HTML_ATTRIBUTE_VALUES, name) {
+          pattern {
+            group {
+              symbols { from(referencedKind) }
+              symbolReference(name)
+            }
+          }
+        }
       }
     }
-
-    override fun equals(other: Any?): Boolean =
-      other === this || (other is SingleSymbolExclusiveScope && other.symbol == symbol)
-
-    override fun hashCode(): Int =
-      symbol.hashCode()
-  }
 }
 
 fun findFormGroupForGetCallParameter(element: JSExpression): Angular2FormGroup? =
