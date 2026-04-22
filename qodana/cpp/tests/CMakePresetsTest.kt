@@ -1,69 +1,69 @@
 package org.jetbrains.qodana.cpp
 
-import org.assertj.core.api.Assertions.assertThat
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import org.junit.jupiter.api.Test
+import utilities.qodana.QodanaAnalysisResult
 import kotlin.io.path.appendText
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.div
 
-class CMakePresetsTest : IntegrationTest() {
+class CMakePresetsTest : CppIntegrationTest() {
+
   @Test
-  fun testBugsPreset() {
-    doTest("cpp:\n  cmakePreset: bugs", listOf("CppDFANullDereference"))
+  fun `bugs preset finds issues`() = withAndWithoutIdea("\ncpp:\n  cmakePreset: bugs") {
+    it.ok shouldBe true
+    it.findIssue("CppDFANullDereference").shouldNotBeNull()
   }
 
   @Test
-  fun testNobugsPreset() {
-    doTest("cpp:\n  cmakePreset: nobugs", emptyList())
+  fun `nobugs preset finds no issues`() = withAndWithoutIdea("\ncpp:\n  cmakePreset: nobugs") {
+    it.ok shouldBe true
+    it.results!!.shouldBeEmpty()
   }
 
   @Test
-  fun testNoPreset() {
-    doTest("", emptyList())
+  fun `no preset specified finds no issues`() = withAndWithoutIdea {
+    it.ok shouldBe true
+    it.results!!.shouldBeEmpty()
   }
 
   @Test
-  fun testMissingPreset() {
-    // Without .idea
-    val test1 = checkout("cpp-presets-test")
-    (test1 / "qodana.yaml").appendText("\ncpp:\n  cmakePreset: missing")
-    (test1 / ".idea").deleteRecursively()
-    val result1 = analyze(test1)
-    assertThat(result1.ok).isFalse()
-    assertThat(result1.ideaLog).contains("Cannot select CMake preset: preset \"missing\" was not found")
-
-    // With .idea
-    val test2 = checkout("cpp-presets-test")
-    (test2 / "qodana.yaml").appendText("\ncpp:\n  cmakePreset: missing")
-    val result2 = analyze(test2)
-    assertThat(result2.ok).isFalse()
-    assertThat(result2.ideaLog).contains("Cannot select CMake preset: preset \"missing\" was not found")
+  fun `missing preset fails with error`() = withAndWithoutIdea("\ncpp:\n  cmakePreset: missing") {
+    it.ok shouldBe false
+    it.stdout.shouldContain("Cannot select CMake preset: preset \"missing\" was not found")
   }
 
   @Test
-  fun testNoYaml() {
+  fun `no qodana yaml finds no issues`() {
     val cwd = checkout("cpp-presets-test")
     (cwd / "qodana.yaml").deleteIfExists()
+
     val result = analyze(cwd)
-    assertThat(result.ok).isTrue()
-    assertThat(result.results!!.map { it.ruleId }).isEmpty()
+    result.ok shouldBe true
+    result.results!!.shouldBeEmpty()
   }
 
-  private fun doTest(yamlSuffix: String, expectedProblems: List<String>) {
+  private fun withAndWithoutIdea(
+    yamlSuffix: String = "",
+    check: (QodanaAnalysisResult) -> Unit,
+  ) {
     // Without .idea
     val test1 = checkout("cpp-presets-test")
-    (test1 / "qodana.yaml").appendText("\n$yamlSuffix")
+    if (yamlSuffix.isNotEmpty()) {
+      (test1 / "qodana.yaml").appendText(yamlSuffix)
+    }
     (test1 / ".idea").deleteRecursively()
-    val result1 = analyze(test1)
-    assertThat(result1.ok).isTrue()
-    assertThat(result1.results!!.map { it.ruleId }).containsExactlyInAnyOrder(*expectedProblems.toTypedArray())
+    check(analyze(test1))
 
     // With .idea
     val test2 = checkout("cpp-presets-test")
-    (test2 / "qodana.yaml").appendText("\n$yamlSuffix")
-    val result2 = analyze(test2)
-    assertThat(result2.ok).isTrue()
-    assertThat(result2.results!!.map { it.ruleId }).containsExactlyInAnyOrder(*expectedProblems.toTypedArray())
+    if (yamlSuffix.isNotEmpty()) {
+      (test2 / "qodana.yaml").appendText(yamlSuffix)
+    }
+    check(analyze(test2))
   }
 }
