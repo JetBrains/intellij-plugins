@@ -3,11 +3,10 @@ package org.angular2.codeInsight.attributes
 
 import com.intellij.html.impl.providers.HtmlAttributeValueProvider
 import com.intellij.javascript.backend.css.polySymbols.CssClassListInJSLiteralInHtmlAttributeScope.Companion.getClassesFromEmbeddedContent
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.xml.util.getCustomHtmlClassAttributeValue
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.ANIMATE_ENTER_ATTR
@@ -27,22 +26,10 @@ class Angular2AttributeValueProvider : HtmlAttributeValueProvider() {
 
   override fun getCustomAttributeValues(tag: XmlTag, attributeName: String): String? {
     if (attributeName.equals(HtmlUtil.CLASS_ATTRIBUTE_NAME, ignoreCase = true) && Angular2LangUtil.isAngular2Context(tag)) {
-      val result = SmartList<String>()
-      var classAttr: String? = null
-      for (attribute in tag.attributes) {
-        val attrName = attribute.name
-        if (HtmlUtil.CLASS_ATTRIBUTE_NAME.equals(attrName, ignoreCase = true)) {
-          classAttr = attribute.value
-        }
-        else {
-          getCustomAttributeValues(tag, attrName)?.let { result.add(it) }
-        }
+      return getCustomHtmlClassAttributeValue(tag) { attribute ->
+        if (HtmlUtil.CLASS_ATTRIBUTE_NAME.equals(attribute.name, ignoreCase = true)) null
+        else getCustomAttributeValues(tag, attribute.name)
       }
-      if (!result.isEmpty()) {
-        classAttr?.let { result.add(it) }
-        return StringUtil.join(result, " ")
-      }
-      return null
     }
     else {
       val info = parse(attributeName, tag)

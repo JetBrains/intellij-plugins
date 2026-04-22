@@ -3,11 +3,10 @@ package org.jetbrains.vuejs.codeInsight.attributes
 
 import com.intellij.html.impl.providers.HtmlAttributeValueProvider
 import com.intellij.javascript.backend.css.polySymbols.CssClassListInJSLiteralInHtmlAttributeScope.Companion.getClassesFromEmbeddedContent
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.xml.util.getCustomHtmlClassAttributeValue
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.SmartList
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.Companion.parse
 import org.jetbrains.vuejs.context.isVueContext
@@ -19,22 +18,10 @@ class VueCustomAttributeValueProvider : HtmlAttributeValueProvider() {
   override fun getCustomAttributeValues(tag: XmlTag, attributeName: String): String? {
     if (attributeName.equals(HtmlUtil.CLASS_ATTRIBUTE_NAME, ignoreCase = true)
         && isVueContext(tag)) {
-      val result = SmartList<String>()
-      var classAttr: String? = null
-      for (attribute in tag.attributes) {
-        val attrName = attribute.name
-        if (HtmlUtil.CLASS_ATTRIBUTE_NAME.equals(attrName, ignoreCase = true)) {
-          classAttr = attribute.value
-        }
-        else {
-          getCustomAttributeValues(tag, attrName)?.let { result.add(it) }
-        }
+      return getCustomHtmlClassAttributeValue(tag) { attribute ->
+        if (HtmlUtil.CLASS_ATTRIBUTE_NAME.equals(attribute.name, ignoreCase = true)) null
+        else getCustomAttributeValues(tag, attribute.name)
       }
-      if (!result.isEmpty()) {
-        classAttr?.let { result.add(it) }
-        return StringUtil.join(result, " ")
-      }
-      return null
     }
     else if (isVBindClassAttribute(parse(attributeName, tag))) {
       return getClassNames(tag.getAttribute(attributeName))
