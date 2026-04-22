@@ -31,7 +31,9 @@ class UiFrameworkComponent(
       else
         matches
     }
-    add(AstroComponentWildcardAttribute)
+    initialize {
+      add(AstroComponentWildcardAttribute)
+    }
   }) {
 
   override val kind: PolySymbolKind

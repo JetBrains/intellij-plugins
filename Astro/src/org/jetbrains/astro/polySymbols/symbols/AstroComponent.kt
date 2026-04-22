@@ -22,7 +22,9 @@ class AstroComponent(private val file: PsiFile) :
   PolySymbolScope by polySymbolScope(
     {
       provides(UI_FRAMEWORK_COMPONENT_PROPS)
-      +AstroComponentWildcardAttribute
+      initialize {
+        +AstroComponentWildcardAttribute
+      }
     }) {
 
   override val source: PsiElement
