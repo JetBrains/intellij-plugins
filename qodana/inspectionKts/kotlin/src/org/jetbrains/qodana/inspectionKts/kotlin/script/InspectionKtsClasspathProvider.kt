@@ -210,7 +210,7 @@ private fun pluginJars(pluginClassLoader: PluginClassLoader): List<File> {
     }
   }
 
-  val pluginJars = pluginClassLoader.baseUrls.toSet()
+  val pluginJars = pluginClassLoader.files.toSet()
 
   val pluginXmlPath = pluginClassLoader.getResource("META-INF/plugin.xml")?.let { pluginXml ->
     Path(URLDecoder.decode(pluginXml.path.substringAfterLast(":"), StandardCharsets.UTF_8)).toAbsolutePath()
