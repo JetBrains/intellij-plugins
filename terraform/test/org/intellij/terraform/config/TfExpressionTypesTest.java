@@ -111,7 +111,7 @@ public abstract class TfExpressionTypesTest extends ParsingTestCase {
     final ASTNode node = ((PsiElement) file).getNode();
     assertNotNull(node);
     assertInstanceOf(node, TreeElement.class);
-    ((TreeElement) node).acceptTree(new TreeToBuffer(buffer));
+    ((TreeElement) node).acceptTree(new TreeToBuffer(node, buffer));
     String actual = buffer.toString().trim();
     UsefulTestCase.assertSameLinesWithFile(expectedFileName, actual);
   }
@@ -121,7 +121,7 @@ public abstract class TfExpressionTypesTest extends ParsingTestCase {
     private int indent;
     private boolean myOut = true;
 
-    TreeToBuffer(StringBuilder buffer) {
+    TreeToBuffer(ASTNode node, StringBuilder buffer) {
       this.buffer = buffer;
       this.indent = 0;
     }

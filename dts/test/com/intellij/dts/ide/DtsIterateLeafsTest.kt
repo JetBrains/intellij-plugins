@@ -3,13 +3,14 @@ package com.intellij.dts.ide
 import com.intellij.dts.DtsTestBase
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.util.DtsUtil
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.application.readAction
 import com.intellij.psi.TokenType
 import com.intellij.psi.impl.source.tree.LeafElement
 import com.intellij.psi.impl.source.tree.RecursiveTreeElementWalkingVisitor
 import com.intellij.psi.impl.source.tree.TreeElement
 
-private class PsiToString : RecursiveTreeElementWalkingVisitor() {
+private class PsiToString(node: ASTNode) : RecursiveTreeElementWalkingVisitor(node) {
   val buffer = StringBuffer()
 
   override fun visitLeaf(leaf: LeafElement) {
@@ -69,7 +70,7 @@ class DtsIterateLeafsTest : DtsTestBase() {
     val actual = readAction {
       DtsUtil.iterateLeafs(start!!, strict = false).joinToString("") { it.text }
     }
-    val visitor = PsiToString()
+    val visitor = PsiToString(file.node)
     (file.node as TreeElement).acceptTree(visitor)
 
     assertEquals(visitor.buffer.toString(), actual)

@@ -14,7 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.prevLeaf
 
-private class TreeToBuffer(private val buffer: Appendable, private val ignore: TokenSet) : RecursiveTreeElementWalkingVisitor() {
+private class TreeToBuffer(node: ASTNode, private val buffer: Appendable, private val ignore: TokenSet) : RecursiveTreeElementWalkingVisitor(node) {
   private var indent = 0
 
   private fun fixWhiteSpaces(text: String): String {
@@ -60,7 +60,7 @@ class PpRollbackParsingTest : DtsParsingTestBase("ppRollback") {
 
   private fun psiToString(element: PsiElement, ignore: TokenSet): String {
     val buffer = StringBuilder()
-    (element.node as TreeElement).acceptTree(TreeToBuffer(buffer, ignore))
+    (element.node as TreeElement).acceptTree(TreeToBuffer(element.node, buffer, ignore))
 
     return buffer.toString()
   }
