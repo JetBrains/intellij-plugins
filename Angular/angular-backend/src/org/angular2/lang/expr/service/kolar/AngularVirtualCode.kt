@@ -14,11 +14,12 @@ import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappi
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 import java.util.EnumSet
 
-internal class AngularVirtualCode(val fileName: String) : KolarVirtualCode {
+internal class AngularVirtualCode(val file: VirtualFile) : KolarVirtualCode {
   override val id: String = "main"
 
-  override var virtualFile: VirtualFile = createLightVirtualFileWithParent(fileName, "")
-    private set
+  private val fileName: String get() = file.path
+
+  override var virtualFile: VirtualFile = file
 
   override val languageId: String = "typescript"
 
@@ -115,8 +116,7 @@ internal class AngularVirtualCode(val fileName: String) : KolarVirtualCode {
       this.snapshot = snapshot
 
       // Point to the existing virtual file from the local filesystem if possible
-      this.virtualFile = LocalFileSystem.getInstance().findFileByPath(fileName)
-        ?: createLightVirtualFileWithParent(fileName, snapshot.text)
+      this.virtualFile = file
 
       this.mappings = listOf(
         KolarMapping(
