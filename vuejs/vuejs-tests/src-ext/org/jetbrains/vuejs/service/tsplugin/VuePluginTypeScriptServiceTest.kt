@@ -3,14 +3,20 @@ package org.jetbrains.vuejs.service.tsplugin
 
 import com.intellij.lang.javascript.JSAbstractDocumentationTest
 import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
+import com.intellij.lang.typescript.lsp.JSBundledServiceNodePackage
 import com.intellij.lang.typescript.service.TypeScriptServiceTestBase
 import com.intellij.platform.testFramework.core.FileComparisonFailedError
+import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
+import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
+import org.jetbrains.vuejs.lang.typescript.service.vueTSPluginPackageName
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
+import org.jetbrains.vuejs.options.VueLSMode
+import org.jetbrains.vuejs.options.VueSettings
 import java.io.File
 
 class VuePluginTypeScriptServiceTest :
@@ -29,6 +35,13 @@ class VuePluginTypeScriptServiceTest :
 
   override fun setUp() {
     super.setUp()
+    val vueSettings = VueSettings.instance(project)
+    vueSettings.serviceType = VueLSMode.MANUAL
+    vueSettings.manualSettings.mode = VueSettings.ManualMode.ONLY_TS_PLUGIN
+    vueSettings.manualSettings.tsPluginPackage = JSBundledServiceNodePackage(
+      packageName = vueTSPluginPackageName,
+      packageVersion = SemVer.parseFromText(VueLanguageToolsVersion.DEFAULT.versionString),
+    )
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByText(VueTsConfigFile.Companion.FILE_NAME, VueTsConfigFile.Companion.DEFAULT_TSCONFIG_CONTENT)
   }
