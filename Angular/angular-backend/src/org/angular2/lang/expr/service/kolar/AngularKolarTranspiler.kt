@@ -84,7 +84,7 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
         getTranspiledDirectiveFile(file)
       }
     val fileName = file.path
-    if (transpiledFile != null && isTemplateInSync(snapshot, ctx, transpiledFile, fileName)) {
+    if (transpiledFile != null /*&& isTemplateInSync(snapshot, ctx, transpiledFile, fileName)*/) {
       val newMappings = mutableListOf<CodeMapping>()
       val newAssociatedScriptMappings = mutableMapOf<String, MutableList<CodeMapping>>()
 
@@ -156,7 +156,6 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
         virtualFile = createLightVirtualFileWithParent(fileName, transpiledFile.generatedCode),
         languageId = "typescript",
         snapshot = KolarScriptSnapshot.create(transpiledFile.generatedCode),
-        preventLeadingOffset = !requiresTrailingSpaces(snapshot, transpiledFile),
         mappings = newMappings,
         associatedScriptMappings = newAssociatedScriptMappings,
       )
@@ -169,7 +168,6 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
         virtualFile = file,
         languageId = "typescript",
         snapshot = snapshot,
-        preventLeadingOffset = false,
         mappings = listOf(
           KolarMapping(
             generatedOffsets = intArrayOf(0),
@@ -219,14 +217,6 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
         //associatedSnapshot.getText(0, associatedSnapshot.getLength()) != fileMapping.sourceFile.text
       }
     }
-  }
-
-  private fun requiresTrailingSpaces(
-    snapshot: KolarScriptSnapshot,
-    transpiledFile: Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile,
-  ): Boolean {
-    val sourceText = snapshot.text
-    return !transpiledFile.generatedCode.startsWith(sourceText)
   }
 
   private fun createCodeInformation(flags: EnumSet<SourceMappingFlag>, verification: Boolean): KolarCodeInformation {
