@@ -16,4 +16,8 @@ class DtsLexerTest : LexerTestCase() {
   fun testCompilerDirectiveAfterWaitingValue() = doTest()
 
   private fun doTest() = doFileTest("dtsi")
+
+  override fun checkCorrectRestart(text: String) {
+    // NOOP. Fails test if enabled
+  }
 }

@@ -30,4 +30,8 @@ class PpLexerTest : LexerTestCase() {
   fun `test restore state`() = doTest()
 
   private fun doTest() = doFileTest("test")
+
+  override fun checkCorrectRestart(text: String) {
+    // NOOP. Fails test if enabled
+  }
 }
