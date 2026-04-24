@@ -41,6 +41,7 @@ import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptPluginServiceWrapper
 import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptServiceProtocol
 import org.jetbrains.vuejs.options.VueConfigurable
+import org.jetbrains.vuejs.options.VueLSMode
 import org.jetbrains.vuejs.options.VueSettings
 import java.lang.reflect.Type
 
@@ -208,8 +209,11 @@ open class VuePluginTypeScriptService(
   override fun getProcessName(): String =
     "Vue + TypeScript"
 
-  override fun isTypeEvaluationEnabled(): Boolean =
-    VueSettings.instance(project).useTypesFromServer
+  override fun isTypeEvaluationEnabled(): Boolean {
+    val settings = VueSettings.instance(project)
+    return settings.serviceType == VueLSMode.AUTO
+           && settings.useTypesFromServer
+  }
 
   override val typeEvaluationSupport: TypeScriptServiceEvaluationSupport =
     VueCompilerServiceEvaluationSupport(project)
