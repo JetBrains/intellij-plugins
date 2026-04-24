@@ -9,6 +9,11 @@ Provides integration with <a href="https://bower.io/">Bower</a>.
 Note that this plugin is not actively maintained and may stop working in future IDE releases.
   ]]></description>
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.platform.webide.impl"/>
+  </dependencies>
+  <!-- endregion -->
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>JavaScript</depends>
