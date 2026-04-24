@@ -411,6 +411,8 @@
                                       hostLanguage="Angular2"
                                       implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingKeyReferenceProvider"/>
     <typescript.kolar.transpiler implementation="org.angular2.lang.expr.service.kolar.AngularKolarTranspiler"/>
+    <lang.documentationProvider language="Angular2"
+                                implementationClass="com.intellij.lang.typescript.documentation.TypeScriptDocumentationProvider"/>
 
     <!-- CSS support -->
     <css.inclusionContext implementation="org.angular2.css.Angular2CssInclusionContext"/>
