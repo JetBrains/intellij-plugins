@@ -4,6 +4,7 @@
     <plugin id="org.intellij.qodana"/>
     <module name="intellij.libraries.gson"/>
     <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.analysis.impl"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.core.ui"/>
     <module name="intellij.platform.ide.core"/>
