@@ -34,7 +34,7 @@ class TftplHighlightingTest : BasePlatformTestCase() {
     """.trimIndent())
     val errorMessage = TftplBundle.message("inspection.possible.template.name")
     myFixture.configureByText("noExtension.json", """
-      <warning descr="$errorMessage"><error descr="<value> expected, got '%'">%</error>{if condition}
+      <warning descr="$errorMessage"><error descr="<literal>, IDENTIFIER, '[' or '{' expected, got '%'">%</error>{if condition}
         console.log("Hello world!")
         debugger
       %{endif}</warning>
