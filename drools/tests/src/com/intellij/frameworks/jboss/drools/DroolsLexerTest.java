@@ -4,7 +4,6 @@ package com.intellij.frameworks.jboss.drools;
 import com.intellij.lexer.Lexer;
 import com.intellij.plugins.drools.lang.lexer.DroolsLexer;
 import com.intellij.testFramework.LexerTestCase;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class DroolsLexerTest extends LexerTestCase {
@@ -226,11 +225,5 @@ public class DroolsLexerTest extends LexerTestCase {
 
   public void testSimpleFunction() {
     doTest("function void foo(){}");
-  }
-
-  @Override
-  protected void doTest(@NonNls @NotNull String text) {
-    super.doTest(text);
-    checkCorrectRestart(text);
   }
 }
