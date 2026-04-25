@@ -2,10 +2,10 @@
 package org.intellij.terraform.hil;
 
 import com.intellij.lexer.Lexer;
-import org.intellij.terraform.BaseLexerTestCase;
+import com.intellij.testFramework.LexerTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public class HILLexerTest extends BaseLexerTestCase {
+public class HILLexerTest extends LexerTestCase {
   @Override
   protected @NotNull Lexer createLexer() {
     return new HILLexer();

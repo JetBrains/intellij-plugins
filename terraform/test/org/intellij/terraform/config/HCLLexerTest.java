@@ -4,7 +4,7 @@ package org.intellij.terraform.config;
 import com.google.common.base.Strings;
 import com.intellij.lexer.Lexer;
 import com.intellij.psi.tree.IElementType;
-import org.intellij.terraform.BaseLexerTestCase;
+import com.intellij.testFramework.LexerTestCase;
 import org.intellij.terraform.hcl.HCLElementTypes;
 import org.intellij.terraform.hcl.HCLParserDefinitionKt;
 import org.intellij.terraform.hcl.refactoring.HCLElementRenameValidator;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-public class HCLLexerTest extends BaseLexerTestCase {
+public class HCLLexerTest extends LexerTestCase {
   @Override
   protected @NotNull Lexer createLexer() {
     return HCLParserDefinitionKt.createHclLexer();
