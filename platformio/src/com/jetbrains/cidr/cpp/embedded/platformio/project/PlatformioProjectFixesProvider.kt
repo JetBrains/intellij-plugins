@@ -47,9 +47,10 @@ class ExternalProjectStatusAndFixesProvider : ExternalProjectStatusAndFixesProvi
     }
   }
 
-  override fun createSelectAndLoadAction(project: Project, rootDirectory: VirtualFile): AnAction = SelectAndLoadPlatformioAction(project, rootDirectory).asProjectFixAction(ProjectFixKinds.PLATFORMIO_SELECT_AND_LOAD_PROJECT)
+  override fun createSelectAndLoadAction(project: Project, rootDirectory: VirtualFile): AnAction = SelectAndLoadPlatformioAction(
+    rootDirectory).asProjectFixAction(ProjectFixKinds.PLATFORMIO_SELECT_AND_LOAD_PROJECT)
 
-  private class SelectAndLoadPlatformioAction(project: Project, rootDirectory: VirtualFile) : SelectAndLoadProjectActionBase(project, rootDirectory, @Suppress("DialogTitleCapitalization") ClionEmbeddedPlatformioBundle.message("project.status.action.select")) {
+  private class SelectAndLoadPlatformioAction(rootDirectory: VirtualFile) : SelectAndLoadProjectActionBase(rootDirectory, @Suppress("DialogTitleCapitalization") ClionEmbeddedPlatformioBundle.message("project.status.action.select")) {
     override fun isBuildFile(file: VirtualFile): Boolean = PlatformioFileType.isFileOfType(file)
 
     override fun linkProject(project: Project, rootDirectory: VirtualFile) {
