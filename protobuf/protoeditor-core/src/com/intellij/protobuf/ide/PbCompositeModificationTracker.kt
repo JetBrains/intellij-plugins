@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 
 @Service(Service.Level.PROJECT)
-internal class PbCompositeModificationTracker(val project: Project) : ModificationTracker, Disposable {
+class PbCompositeModificationTracker(val project: Project) : ModificationTracker, Disposable {
   companion object {
     @JvmStatic
     fun byElement(psiElement: PsiElement): PbCompositeModificationTracker {

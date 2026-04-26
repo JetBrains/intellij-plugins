@@ -5,4 +5,9 @@
   </dependencies>
   <!-- endregion -->
 
+  <extensions defaultExtensionNs="Pythonid">
+    <typeProvider implementation="com.intellij.protobuf.python.types.PbPythonTypeProvider"/>
+    <pyModuleMembersProvider implementation="com.intellij.protobuf.python.types.PbPythonModuleMembersProvider"/>
+    <typeCheckerExtension implementation="com.intellij.protobuf.python.types.PbPythonTypeCheckerExtension"/>
+  </extensions>
 </idea-plugin>
