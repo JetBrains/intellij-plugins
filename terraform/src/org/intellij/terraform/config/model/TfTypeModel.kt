@@ -24,6 +24,7 @@ import org.intellij.terraform.config.Constants.HCL_DEPENDS_ON_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_ERROR_MESSAGE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_FOR_EACH_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_ID_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_IMPORT_IDENTIFIER
@@ -137,7 +138,7 @@ class TfTypeModel(
       PropertyType("providers", MapType(Types.String))
     ).toMap())
 
-    val ErrorMessageProperty: PropertyType = PropertyType("error_message", Types.String)
+    val ErrorMessageProperty: PropertyType = PropertyType(HCL_ERROR_MESSAGE_IDENTIFIER, Types.String)
     val ConditionProperty: PropertyType = PropertyType(HCL_CONDITION_IDENTIFIER, Types.Boolean, injectionAllowed = false)
     val VariableType: PropertyType = PropertyType(HCL_TYPE_IDENTIFIER, Types.Any, injectionAllowed = false)
     val VariableDefault: PropertyType = PropertyType(HCL_DEFAULT_IDENTIFIER, Types.Any)

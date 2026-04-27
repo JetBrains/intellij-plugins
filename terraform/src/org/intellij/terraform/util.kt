@@ -15,6 +15,7 @@ import org.intellij.terraform.opentofu.OpenTofuFileType
 import org.intellij.terraform.stack.component.isTfComponentPsiFile
 import org.intellij.terraform.stack.deployment.isTfDeployPsiFile
 import org.intellij.terraform.terragrunt.isTerragruntPsiFile
+import org.intellij.terraform.test.isTfTestPsiFile
 
 internal fun isTerraformFileExtension(extension: String?): Boolean {
   return extension == TerraformFileType.defaultExtension || extension == TFVARS_EXTENSION
@@ -37,7 +38,8 @@ internal fun isHclCompatiblePsiFile(file: PsiFile?): Boolean {
   return isTfOrTofuPsiFile(file) ||
          isTfComponentPsiFile(file) ||
          isTfDeployPsiFile(file) ||
-         isTerragruntPsiFile(file)
+         isTerragruntPsiFile(file) ||
+         isTfTestPsiFile(file)
 }
 
 internal fun isTerraformFile(psiFile: PsiFile?): Boolean {

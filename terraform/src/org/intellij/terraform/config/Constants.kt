@@ -49,6 +49,7 @@ internal object Constants {
   const val HCL_TYPE_IDENTIFIER: String = "type"
   const val HCL_CONFIG_IDENTIFIER: String = "config"
   const val HCL_CONDITION_IDENTIFIER: String = "condition"
+  const val HCL_ERROR_MESSAGE_IDENTIFIER: String = "error_message"
   const val HCL_ID_IDENTIFIER: String = "id"
   const val HCL_STACK_IDENTIFIER: String = "stack"
   const val HCL_COMPONENT_IDENTIFIER = "component"

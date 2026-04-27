@@ -4,6 +4,7 @@ package org.intellij.terraform.test
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.psi.PsiFile
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
@@ -25,3 +26,5 @@ internal object TfTestFileType : LanguageFileType(HCLLanguage) {
 
   override fun getDisplayName(): @Nls String = HCLBundle.message("terraform.test.name")
 }
+
+internal fun isTfTestPsiFile(file: PsiFile?): Boolean = file?.fileType == TfTestFileType
