@@ -93,7 +93,7 @@ internal fun getDescriptorPathSuggestions(project: Project): Collection<String> 
            .toSet() + BUNDLED_DESCRIPTOR
 }
 
-internal const val BUNDLED_DESCRIPTOR: String = "google/protobuf/descriptor.proto"
+const val BUNDLED_DESCRIPTOR: String = "google/protobuf/descriptor.proto"
 
 internal fun computeWellKnownProtos(project: Project): List<ImportPathEntry> {
   val bundledEntry = getBuiltInIncludeEntry() ?: return emptyList()
