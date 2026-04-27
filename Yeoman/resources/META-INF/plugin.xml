@@ -16,6 +16,8 @@
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="JavaScript"/>
+    <module name="intellij.javascript.backend"/>
+    <module name="intellij.javascript.psi.impl"/>
   </dependencies>
   <!-- endregion -->
 

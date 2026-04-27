@@ -16,7 +16,6 @@
             <arrayArg name="pluginClasspaths">
               <args>$KOTLIN_BUNDLED$/lib/kotlinx-serialization-compiler-plugin.jar</args>
             </arrayArg>
-            <arrayArg name="pluginOptions" />
           </arrayArguments>
         </compilerArguments>
       </configuration>
@@ -71,6 +70,7 @@
     <orderEntry type="module" module-name="intellij.platform.polySymbols" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.prisma" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.prisma" />
 </module>

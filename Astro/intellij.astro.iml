@@ -51,5 +51,7 @@
     <orderEntry type="module" module-name="intellij.xml.emmet" />
     <orderEntry type="module" module-name="intellij.javascript.codeinsight" />
     <orderEntry type="module" module-name="intellij.javascript.ultimate" />
+    <orderEntry type="module" module-name="intellij.javascript.analysis.impl" />
+    <orderEntry type="module" module-name="intellij.json" />
   </component>
 </module>

@@ -22,6 +22,7 @@
     <orderEntry type="module" module-name="intellij.platform.execution.impl" />
     <orderEntry type="module" module-name="intellij.platform.execution" />
     <orderEntry type="module" module-name="intellij.javascript.backend" />
+    <orderEntry type="module" module-name="intellij.javascript.analysis.impl" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" />
     <orderEntry type="module" module-name="intellij.qodana" />
     <orderEntry type="module" module-name="intellij.qodana.coverage" />
@@ -36,5 +37,6 @@
     <orderEntry type="module" module-name="intellij.javascript.common" />
     <orderEntry type="module" module-name="intellij.javascript.codeinsight" />
     <orderEntry type="module" module-name="intellij.javascript.coverage" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
   </component>
 </module>

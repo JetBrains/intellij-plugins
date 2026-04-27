@@ -104,6 +104,8 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "//plugins/JavaScriptLanguage/javascript-ultimate",
     "@community//libraries/kotlinx/serialization/json",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "@community//json",
   ]
 )
 
@@ -180,6 +182,8 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
     "//plugins/JavaScriptLanguage/javascript-ultimate:javascript-ultimate_test_lib",
     "@community//libraries/kotlinx/serialization/json:json_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
+    "@community//json:json_test_lib",
   ]
 )
 ### auto-generated section `build intellij.vuejs.backend` end

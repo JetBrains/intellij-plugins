@@ -31,6 +31,7 @@
     <orderEntry type="module" module-name="intellij.css.psi" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.codeinsight" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.analysis.impl" />
     <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.plugin" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />
@@ -109,6 +110,7 @@
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.collections.immutable" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.concurrency" scope="TEST" />
     <orderEntry type="module" module-name="intellij.angularJS" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.angularJS" />
 </module>

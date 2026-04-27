@@ -58,6 +58,8 @@
     <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />
     <orderEntry type="module" module-name="intellij.jade" scope="TEST" />
     <orderEntry type="module" module-name="intellij.fileWatcher.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.analysis.impl" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.jade" />
 </module>

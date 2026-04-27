@@ -48,8 +48,10 @@ jvm_library(
     "@community//platform/util:util-ui",
     "@community//json/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     "@community//platform/core-impl",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
   ]
 )
 
@@ -90,8 +92,10 @@ jvm_library(
     "@community//platform/util:util-ui_test_lib",
     "@community//json/backend:backend_test_lib",
     "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     "@community//platform/core-impl:core-impl_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
   ]
 )
 ### auto-generated section `build intellij.tslint` end
@@ -107,7 +111,8 @@ jvm_library(
   name = "tslint-tests",
   module_name = "intellij.tslint.tests",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+  srcs = glob([], allow_empty = True),
+  runtime_deps = ["//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl"]
 )
 
 jvm_library(
@@ -169,6 +174,10 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
   ],
   runtime_deps = [
     ":tslint-tests",

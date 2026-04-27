@@ -55,6 +55,8 @@ jvm_library(
     "@community//xml/emmet",
     "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "//plugins/JavaScriptLanguage/javascript-ultimate",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "@community//json",
   ]
 )
 
@@ -105,6 +107,8 @@ jvm_library(
     "@community//xml/emmet:emmet_test_lib",
     "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
     "//plugins/JavaScriptLanguage/javascript-ultimate:javascript-ultimate_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
+    "@community//json:json_test_lib",
   ]
 )
 ### auto-generated section `build intellij.astro` end

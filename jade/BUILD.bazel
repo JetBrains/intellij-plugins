@@ -39,6 +39,7 @@ jvm_library(
     "@community//RegExpSupport:regexp",
     "@community//xml/xml-parser:parser",
     "//plugins/JavaScriptLanguage/javascript-parser",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//plugins/css/psi",
     "@community//platform/execution-impl",
     "@community//platform/ide-core-impl",
@@ -60,6 +61,7 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     "@community//jps/model-api:model",
     "@community//platform/util-ex",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
   ]
 )
 
@@ -89,6 +91,7 @@ jvm_library(
     "@community//RegExpSupport:regexp_test_lib",
     "@community//xml/xml-parser:parser_test_lib",
     "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
     "//plugins/css/psi:psi_test_lib",
     "@community//platform/execution-impl:execution-impl_test_lib",
     "@community//platform/ide-core-impl:ide-core-impl_test_lib",
@@ -126,6 +129,7 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     "@community//jps/model-api:model_test_lib",
     "@community//platform/util-ex:util-ex_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
   ]
 )
 ### auto-generated section `build intellij.jade` end
@@ -147,7 +151,8 @@ jvm_library(
   name = "jade-tests",
   module_name = "intellij.jade.tests",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+  srcs = glob([], allow_empty = True),
+  runtime_deps = ["//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl"]
 )
 
 jvm_library(
@@ -252,6 +257,10 @@ jvm_library(
     "@community//jps/model-api:model_test_lib",
     "//plugins/fileWatcher:fileWatcher-tests",
     "//plugins/fileWatcher:fileWatcher-tests_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
   ],
   runtime_deps = [
     ":jade-tests",

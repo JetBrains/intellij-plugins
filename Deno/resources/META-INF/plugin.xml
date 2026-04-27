@@ -16,6 +16,14 @@
 
   <vendor>JetBrains</vendor>
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.javascript.analysis.impl"/>
+    <module name="intellij.javascript.backend"/>
+    <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.json"/>
+  </dependencies>
+  <!-- endregion -->
   <depends>JavaScript</depends>
   <depends>com.intellij.css</depends>
   <depends>com.intellij.modules.platform</depends>

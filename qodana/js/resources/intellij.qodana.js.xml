@@ -1,8 +1,13 @@
 <idea-plugin package="org.jetbrains.qodana.js">
   <dependencies>
     <plugin id="JavaScript"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="NodeJS"/>
+    <module name="intellij.javascript.analysis.impl"/>
+    <module name="intellij.javascript.backend"/>
+    <module name="intellij.javascript.psi.impl"/>
     <module name="intellij.qodana.coverage"/>
+    <!-- endregion -->
   </dependencies>
   <extensions defaultExtensionNs="org.intellij.qodana">
     <reportMetadataArtifact implementation="org.jetbrains.qodana.js.JestCoverageReportMetadataArtifact"/>

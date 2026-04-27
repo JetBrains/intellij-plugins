@@ -18,6 +18,7 @@
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.javascript.backend"/>
   </dependencies>
   <!-- endregion -->
   <depends>com.intellij.modules.platform</depends>

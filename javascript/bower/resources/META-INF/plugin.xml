@@ -11,6 +11,8 @@ Note that this plugin is not actively maintained and may stop working in future 
 
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
+    <module name="intellij.javascript.common"/>
+    <module name="intellij.javascript.backend"/>
     <module name="intellij.platform.webide.impl"/>
   </dependencies>
   <!-- endregion -->

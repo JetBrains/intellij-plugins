@@ -2,6 +2,7 @@
 <idea-plugin>
   <dependencies>
     <plugin id="training"/>
+    <module name="intellij.javascript.psi.impl"/>
   </dependencies>
 
   <extensions defaultExtensionNs="training">

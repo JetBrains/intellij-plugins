@@ -40,6 +40,8 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-common",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     "@community//platform/util:util-ui",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
   ]
 )
 
@@ -91,6 +93,8 @@ jvm_library(
     "//plugins/js/react/plugin:plugin_test_lib",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     "@community//platform/util:util-ui_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
   ]
 )
 ### auto-generated section `build intellij.mdx` end
@@ -106,7 +110,8 @@ jvm_library(
   name = "mdx-tests",
   module_name = "intellij.mdx.tests",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+  srcs = glob([], allow_empty = True),
+  runtime_deps = ["//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl"]
 )
 
 jvm_library(
@@ -181,6 +186,10 @@ jvm_library(
     "//plugins/js/react/plugin:plugin_test_lib",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
   ],
   runtime_deps = [
     ":mdx-tests",

@@ -83,6 +83,8 @@ jvm_library(
     "@community//xml/xml-analysis-api:analysis",
     "//contrib/Angular/angular-free",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "@community//json",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
   ]
 )
 
@@ -153,6 +155,8 @@ jvm_library(
     "@community//xml/xml-analysis-api:analysis_test_lib",
     "//contrib/Angular/angular-free:angular-free_test_lib",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "@community//json:json_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
   ]
 )
 ### auto-generated section `build intellij.angular.backend` end

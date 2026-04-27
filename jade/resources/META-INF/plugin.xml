@@ -31,9 +31,12 @@
     <plugin id="com.intellij.modules.ultimate"/>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.css.backend"/>
+    <module name="intellij.javascript.analysis.impl"/>
+    <module name="intellij.javascript.backend"/>
     <module name="intellij.javascript.codeinsight"/>
     <module name="intellij.javascript.common"/>
     <module name="intellij.javascript.parser"/>
+    <module name="intellij.javascript.psi.impl"/>
     <module name="intellij.javascript.web"/>
     <module name="intellij.spellchecker"/>
     <!-- endregion -->

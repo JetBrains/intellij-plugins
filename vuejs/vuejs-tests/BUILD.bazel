@@ -150,8 +150,12 @@ jvm_library(
     "@community//platform/util:util-ui_test_lib",
     "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
     "//plugins/webpack:webpack-tests",
     "//plugins/webpack:webpack-tests_test_lib",
+    "//plugins/JSIntentionPowerPack:javascript-intentions",
+    "//plugins/JSIntentionPowerPack:javascript-intentions_test_lib",
   ],
   runtime_deps = [
     ":tests",

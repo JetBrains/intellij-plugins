@@ -96,7 +96,8 @@ jvm_library(
   name = "nextjs-tests",
   module_name = "intellij.nextjs.tests",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+  srcs = glob([], allow_empty = True),
+  runtime_deps = ["//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl"]
 )
 
 jvm_library(
@@ -135,6 +136,8 @@ jvm_library(
     "@community//xml/impl:impl_test_lib",
     "@community//xml/xml-analysis-api:analysis",
     "@community//xml/xml-analysis-api:analysis_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",

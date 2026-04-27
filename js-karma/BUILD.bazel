@@ -63,6 +63,8 @@ jvm_library(
     "@community//platform/lang-api:lang",
     "@community//jps/model-api:model",
     "@community//platform/testRunner",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
   ]
 )
 
@@ -121,6 +123,8 @@ jvm_library(
     "@community//platform/lang-api:lang_test_lib",
     "@community//jps/model-api:model_test_lib",
     "@community//platform/testRunner:testRunner_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
   ]
 )
 ### auto-generated section `build intellij.karma` end

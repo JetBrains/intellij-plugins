@@ -46,6 +46,7 @@ jvm_library(
     "@community//libraries/icu4j",
     "@community//platform/code-style-impl:codeStyle-impl",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@community//platform/polySymbols",
@@ -56,6 +57,7 @@ jvm_library(
     "@lib//:opentelemetry",
     "//plugins/css/common/psi",
     "//contrib/Angular/angular-backend",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
   ]
 )
 
@@ -170,6 +172,8 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl_test_lib",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@community//platform/util/jdom:jdom_test_lib",
@@ -210,10 +214,14 @@ jvm_library(
     "//plugins/css/codeinsight/analysis:analysis_test_lib",
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
     "//plugins/sass/backend",
     "//plugins/sass/backend:backend_test_lib",
     "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
+    "@community//json",
+    "@community//json:json_test_lib",
   ],
   runtime_deps = [
     ":angular-tests",

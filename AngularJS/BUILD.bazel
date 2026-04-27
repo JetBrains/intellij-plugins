@@ -63,6 +63,9 @@ jvm_library(
     "@community//libraries/guava",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     "@community//platform/util/concurrency",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "@community//json",
   ]
 )
 
@@ -155,6 +158,9 @@ jvm_library(
     "@community//libraries/guava:guava_test_lib",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     "@community//platform/util/concurrency:concurrency_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
+    "@community//json:json_test_lib",
   ]
 )
 ### auto-generated section `build intellij.angularJS` end
@@ -176,7 +182,8 @@ jvm_library(
   name = "angularJS-tests",
   module_name = "intellij.angularJS.tests",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+  srcs = glob([], allow_empty = True),
+  runtime_deps = ["//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl"]
 )
 
 jvm_library(
@@ -231,6 +238,8 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
     "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
     "@community//xml/impl",
     "@community//xml/impl:impl_test_lib",
     "//plugins/css/plugin",
@@ -314,6 +323,8 @@ jvm_library(
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     "@community//platform/util/concurrency",
     "@community//platform/util/concurrency:concurrency_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
   ],
   runtime_deps = [
     ":angularJS-tests",

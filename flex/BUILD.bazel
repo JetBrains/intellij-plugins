@@ -92,6 +92,9 @@ jvm_library(
     "@community//xml/xml-analysis-api:analysis",
     "@community//platform/execution",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "//plugins/JavaScriptLanguage/javascript-structure-view:javascript-structureView",
   ],
   runtime_deps = ["//contrib/flex/jps-plugin:jps"]
 )
@@ -183,6 +186,9 @@ jvm_library(
     "@community//xml/xml-analysis-api:analysis_test_lib",
     "@community//platform/execution:execution_test_lib",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-structure-view:javascript-structureView_test_lib",
   ]
 )
 ### auto-generated section `build intellij.flex` end

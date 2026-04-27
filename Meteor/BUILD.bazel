@@ -63,6 +63,8 @@ jvm_library(
     "@community//platform/execution",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     "@community//platform/util/concurrency",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "@community//json",
   ]
 )
 
@@ -122,6 +124,8 @@ jvm_library(
     "@community//platform/execution:execution_test_lib",
     "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     "@community//platform/util/concurrency:concurrency_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
+    "@community//json:json_test_lib",
   ]
 )
 ### auto-generated section `build intellij.meteor` end

@@ -6,7 +6,10 @@ jvm_library(
   module_name = "intellij.astro.tests",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
-  runtime_deps = ["//plugins/JavaScriptLanguage/javascript-parser"]
+  runtime_deps = [
+    "//plugins/JavaScriptLanguage/javascript-parser",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+  ]
 )
 
 jvm_library(
@@ -48,6 +51,8 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
     "//plugins/JavaScriptLanguage/tests/unitTests:javascript-tests",
     "//plugins/JavaScriptLanguage/tests/unitTests:javascript-tests_test_lib",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+    "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
     "@community//xml/xml-parser:parser",
     "@community//xml/xml-parser:parser_test_lib",
     "@community//xml/xml-psi-api:psi",
