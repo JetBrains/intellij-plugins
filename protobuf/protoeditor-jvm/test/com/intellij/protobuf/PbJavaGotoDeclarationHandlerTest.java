@@ -24,7 +24,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.protobuf.gencodeutils.GotoExpectationMarker;
-import com.intellij.protobuf.gencodeutils.ReferenceGotoExpectation;
 import com.intellij.protobuf.jvm.PbJavaGotoDeclarationHandler;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -290,15 +289,16 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
     String text = psiFile.getText();
 
     for (GotoExpectationMarker expectation : expectations) {
-      String substring = text.substring(expectation.startIndex, expectation.endIndex);
+      String substring = expectation.textRange.substring(text);
       int caretOffset = substring.indexOf(CARET_MARKER);
       assertWithMessage(
         String.format(
-          "Caret to check is in %s within range %s", substring, expectation.rangeString()))
+          "Caret to check is in %s within range %s", substring, expectation.textRange))
         .that(caretOffset)
         .isNotEqualTo(-1);
       final int bumpedCaret =
-        expectation.startIndex + caretOffset + CARET_MARKER.length() + CARET_BUMP;
+        expectation.textRange.getStartOffset() + caretOffset + CARET_MARKER.length() + CARET_BUMP;
+      final int lineNumber = editor.getDocument().getLineNumber(bumpedCaret) + 1;
       ApplicationManager.getApplication()
         .runReadAction(
           () -> {
@@ -306,11 +306,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
             PsiReference refElement =
               PsiTreeUtil.getParentOfType(srcElement, PsiQualifiedReferenceElement.class);
             assertThat(refElement).isNotNull();
-            ReferenceGotoExpectation referenceGotoExpectation =
-              ReferenceGotoExpectation.create(refElement.getCanonicalText(), expectation);
             PsiElement[] elements =
               GotoDeclarationAction.findAllTargetElements(project, editor, bumpedCaret);
-            referenceGotoExpectation.assertCorrectTarget(elements);
+            expectation.checkGotoTargets(refElement.getCanonicalText(), elements, lineNumber);
           });
     }
     return expectations.size();

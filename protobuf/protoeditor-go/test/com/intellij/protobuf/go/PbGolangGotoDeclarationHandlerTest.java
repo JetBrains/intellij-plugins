@@ -25,7 +25,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.gencodeutils.GotoExpectationMarker;
-import com.intellij.protobuf.gencodeutils.ReferenceGotoExpectation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
@@ -138,25 +137,25 @@ public class PbGolangGotoDeclarationHandlerTest extends GoCodeInsightFixtureTest
     String text = psiFile.getText();
 
     for (GotoExpectationMarker expectation : expectations) {
-      String subtestText = text.substring(expectation.startIndex, expectation.endIndex);
+      String subtestText = expectation.textRange.substring(text);
       int caretOffset = subtestText.indexOf(CARET_MARKER);
       assertWithMessage(
               String.format(
                   "Caret to check is in %s within range %s",
-                  subtestText, expectation.rangeString()))
+                  subtestText, expectation.textRange))
           .that(caretOffset)
           .isNotEqualTo(-1);
       final int bumpedCaret =
-          expectation.startIndex + caretOffset + CARET_MARKER.length() + CARET_BUMP;
+          expectation.textRange.getStartOffset() + caretOffset + CARET_MARKER.length() + CARET_BUMP;
+      final int lineNumber = editor.getDocument().getLineNumber(bumpedCaret) + 1;
+
       ApplicationManager.getApplication()
           .runReadAction(
               () -> {
                 PsiElement srcElement = notNull(psiFile.findElementAt(bumpedCaret));
-                ReferenceGotoExpectation referenceGotoExpectation =
-                    ReferenceGotoExpectation.create(srcElement.getText(), expectation);
                 PsiElement[] elements =
                     GotoDeclarationAction.findAllTargetElements(project, editor, bumpedCaret);
-                referenceGotoExpectation.assertCorrectTarget(elements);
+                expectation.checkGotoTargets(srcElement.getText(), elements, lineNumber);
               });
     }
     return expectations.size();
