@@ -1,0 +1,16 @@
+from $importName import SomeMessage, SomeEnum, ScalarTypesMessage as ScalarsMessage
+
+# EXPECT-PARAM-INFO: scalar_types_message | scalar_types_message, some_enum, repeated_string_field, unpacked_int32_field, repeated_enum_field, repeated_any_field, string_int32_map, int32_any_map, bool_duration_map, int32_shared_map, int32_recursive_message_map, int32_enum_map, oneof_string, oneof_int32, oneof_message, wkt_message, old_string_data, hidden_int32_metadata
+msg = SomeMessage(<caret>)
+
+# EXPECT-PARAM-INFO: some_enum
+SomeMessage(ScalarsMessage(), <caret>)
+
+# EXPECT-PARAM-INFO: bool_field | bool_field, bytes_field, int32_field, int64_field, uint32_field, uint64_field, sint32_field, sint64_field, fixed32_field, fixed64_field, sfixed32_field, sfixed64_field, float_field, double_field, string_field
+ScalarsMessage(<caret>)
+
+# EXPECT-PARAM-INFO: nested_string_field | nested_string_field
+SomeMessage.Nested_Message(<caret>)
+
+# EXPECT-PARAM-INFO: nested_string_field | nested_string_field
+msg.Nested_Message(<caret>)

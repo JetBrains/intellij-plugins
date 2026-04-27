@@ -1,0 +1,26 @@
+from $importName import *
+
+def run():
+  # EXPECT-NEXT: all.proto / SomeMessage
+  msg = <caret>SomeMessage()
+
+  # EXPECT-NEXT: all.proto / SomeMessage.scalar_types_message
+  msg.scalar_types_<caret>message
+
+  # EXPECT-NEXT: all.proto / SomeEnum
+  value = <caret>SomeEnum.ENUM_VALUE_1
+
+  # EXPECT-NEXT: all.proto / ENUM_VALUE_1
+  value = SomeEnum.ENUM_VALUE_<caret>1
+
+  # EXPECT-NEXT: all.proto / WellKnownTypesMessage
+  wkt = <caret>WellKnownTypesMessage()
+
+  # EXPECT-NEXT: all.proto / WellKnownTypesMessage.timestamp_field
+  wkt.timestamp_<caret>field
+
+  # EXPECT-NEXT: import_from.proto / SharedMessage
+  shared = <caret>SharedMessage()
+
+  # EXPECT-NEXT: import_from.proto / SharedMessage.shared_content
+  shared.shared_<caret>content

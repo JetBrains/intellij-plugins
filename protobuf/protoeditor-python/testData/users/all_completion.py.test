@@ -1,0 +1,211 @@
+# EXPECT-COMPLETE: SomeMessage, ScalarTypesMessage, SomeEnum, WellKnownTypesMessage, MyOptions, SharedMessage, file_opt, message_opt, complex_message_opt, field_opt, source_retention_opt, enum_opt, enum_value_opt
+from $importName import <caret>
+
+# EXPECT-COMPLETE: Timestamp
+from google.protobuf.timestamp_pb2 import <caret>
+
+# EXPECT-COMPLETE: protobuf
+from google.<caret>
+
+# EXPECT-COMPLETE: any_pb2, api_pb2, duration_pb2, empty_pb2, field_mask_pb2, source_context_pb2, struct_pb2, timestamp_pb2, type_pb2, wrappers_pb2
+from google.protobuf.<caret>
+
+# Actual imports to use later
+import $importName
+from $importName import SharedMessage, MyOptions, SomeEnum, ScalarTypesMessage, SomeMessage, WellKnownTypesMessage, MyOptions
+
+def run():
+  # EXPECT-COMPLETE: SomeMessage, ScalarTypesMessage, SomeEnum, WellKnownTypesMessage, MyOptions, SharedMessage, file_opt, message_opt, complex_message_opt, field_opt, source_retention_opt, enum_opt, enum_value_opt
+  $importName.<caret>
+
+  msg = SomeMessage()
+
+  # --- Message fields ---
+  # EXPECT-COMPLETE: scalar_types_message, some_enum, Nested_Message, Nested_Enum, repeated_string_field, unpacked_int32_field, repeated_enum_field, repeated_any_field, string_int32_map, int32_any_map, bool_duration_map, int32_shared_map, int32_recursive_message_map, int32_enum_map, oneof_string, oneof_int32, oneof_message, wkt_message, old_string_data, hidden_int32_metadata, MessageFunction
+  msg.<caret>
+
+  # Via variable (+ nested)
+  nested = SomeMessage.Nested_Message()
+  # EXPECT-COMPLETE: nested_string_field, MessageFunction
+  nested.<caret>
+
+  # --- Half-typed field ---
+  # EXPECT-COMPLETE: oneof_string, oneof_int32, oneof_message
+  msg.oneof_<caret>
+
+  # --- Scalar fields ---
+  scalars = msg.scalar_types_message
+  # EXPECT-COMPLETE: bool_field, bytes_field, int32_field, int64_field, uint32_field, uint64_field, sint32_field, sint64_field, fixed32_field, fixed64_field, sfixed32_field, sfixed64_field, float_field, double_field, string_field, MessageFunction
+  scalars.<caret>
+
+  # --- Enums values ---
+  # EXPECT-COMPLETE: ENUM_VALUE_UNSPECIFIED, ENUM_VALUE_1, ENUM_VALUE_ALIAS, ENUM_VALUE_DEPRECATED, ENUM_VALUE_CUSTOM_OPT, EnumTypeWrapperFunction
+  val = SomeEnum.<caret>
+
+  # EXPECT-COMPLETE: NESTED_ENUM_UNSPECIFIED, NESTED_ENUM_VALUE_1, EnumTypeWrapperFunction
+  nested_enum = SomeMessage.Nested_Enum.<caret>
+
+  # --- Repeated fields ---
+  # EXPECT-COMPLETE: clear, count, index, RepeatedScalarFieldContainerFunction, BaseContainerFunction
+  msg.repeated_string_field.<caret>
+  msg.repeated_enum_field.<caret>
+  msg.unpacked_int32_field.<caret>
+
+  # EXPECT-COMPLETE: clear, count, index, RepeatedCompositeFieldContainerFunction, BaseContainerFunction
+  msg.repeated_any_field.<caret>
+
+  # --- Map fields (Container methods) ---
+  # EXPECT-COMPLETE: get, items, keys, values, update, clear, pop, setdefault, ScalarMapFunction
+  msg.string_int32_map.<caret>
+  msg.int32_enum_map.<caret>
+
+  # EXPECT-COMPLETE: get, items, keys, values, update, clear, pop, setdefault, MessageMapFunction
+  msg.int32_any_map.<caret>
+  msg.bool_duration_map.<caret>
+  msg.int32_shared_map.<caret>
+  msg.int32_recursive_message_map.<caret>
+
+  # --- Map fields (Value access) ---
+  # EXPECT-COMPLETE: bit_count, bit_length, from_bytes, to_bytes, imag, real
+  msg.string_int32_map["key"].<caret>  # int
+
+  # EXPECT-COMPLETE: AnyFunction, MessageFunction
+  msg.int32_any_map[100].<caret>
+
+  # EXPECT-COMPLETE: shared_content, MessageFunction
+  msg.int32_shared_map[1].<caret>
+
+  # EXPECT-COMPLETE: scalar_types_message, some_enum, Nested_Message, Nested_Enum, repeated_string_field, unpacked_int32_field, repeated_enum_field, repeated_any_field, string_int32_map, int32_any_map, bool_duration_map, int32_shared_map, int32_recursive_message_map, int32_enum_map, oneof_string, oneof_int32, oneof_message, wkt_message, old_string_data, hidden_int32_metadata, MessageFunction
+  msg.int32_recursive_message_map[1].<caret>
+
+  # EXPECT-COMPLETE: bit_count, bit_length, from_bytes, to_bytes, imag, real
+  msg.int32_enum_map[1].<caret>  # int
+
+  # --- Custom Option Message ---
+  opt_msg = MyOptions()
+  # EXPECT-COMPLETE: info, message_only, MessageFunction
+  opt_msg.<caret>
+
+  # --- Extensions ---
+  # EXPECT-COMPLETE: FieldDescriptorFunction
+  $importName.file_opt.<caret>
+
+  # EXPECT-COMPLETE: FieldDescriptorFunction
+  $importName.message_opt.<caret>
+
+  # EXPECT-COMPLETE: FieldDescriptorFunction
+  $importName.complex_message_opt.<caret>
+
+  # EXPECT-COMPLETE: FieldDescriptorFunction
+  $importName.field_opt.<caret>
+
+  # EXPECT-COMPLETE: FieldDescriptorFunction
+  $importName.source_retention_opt.<caret>
+
+  # EXPECT-COMPLETE: FieldDescriptorFunction
+  $importName.enum_opt.<caret>
+
+  # EXPECT-COMPLETE: FieldDescriptorFunction
+  $importName.enum_value_opt.<caret>
+
+  # --- Imported Message ---
+  shared = SharedMessage()
+  # EXPECT-COMPLETE: shared_content, MessageFunction
+  shared.<caret>
+
+  # --- Oneof ---
+  # EXPECT-COMPLETE: bit_count, bit_length, from_bytes, to_bytes, imag, real
+  msg.oneof_int32.<caret>
+
+  # EXPECT-COMPLETE: capitalize, casefold, center, count, encode, endswith, expandtabs, find, format, format_map, index, isalnum, isalpha, isascii, isdecimal, isdigit, isidentifier, islower, isnumeric, isprintable, isspace, istitle, isupper, join, ljust, lower, lstrip, maketrans, partition, removeprefix, removesuffix, replace, rfind, rindex, rjust, rpartition, rsplit, rstrip, split, splitlines, startswith, strip, swapcase, title, translate, upper, zfill
+  msg.oneof_string.<caret>
+
+  # EXPECT-COMPLETE: bool_field, bytes_field, int32_field, int64_field, uint32_field, uint64_field, sint32_field, sint64_field, fixed32_field, fixed64_field, sfixed32_field, sfixed64_field, float_field, double_field, string_field, MessageFunction
+  msg.oneof_message.<caret>
+
+  # --- Well Known Types ---
+  wkt = WellKnownTypesMessage()
+
+  # EXPECT-COMPLETE: double_value_field, float_value_field, int64_value_field, uint64_value_field, int32_value_field, uint32_value_field, bool_value_field, string_value_field, bytes_value_field, timestamp_field, duration_field, any_field, struct_field, value_field, list_value_field, empty_field, field_mask_field, api_field, type_field, method_field, enum_descriptor_field, enum_value_descriptor_field, field_descriptor_field, option_field, mixin_field, source_context_field, MessageFunction
+  wkt.<caret>
+
+  # --- Wrapper types ---
+  # EXPECT-COMPLETE: value, MessageFunction
+  wkt.double_value_field.<caret>
+  wkt.float_value_field.<caret>
+  wkt.int64_value_field.<caret>
+  wkt.uint64_value_field.<caret>
+  wkt.int32_value_field.<caret>
+  wkt.uint32_value_field.<caret>
+  wkt.bool_value_field.<caret>
+  wkt.string_value_field.<caret>
+  wkt.bytes_value_field.<caret>
+
+  # --- Timestamp ---
+  # EXPECT-COMPLETE: seconds, nanos, TimestampFunction, MessageFunction
+  wkt.timestamp_field.<caret>
+
+  # --- Duration ---
+  # EXPECT-COMPLETE: seconds, nanos, DurationFunction, MessageFunction
+  wkt.duration_field.<caret>
+
+  # --- Any ---
+  # EXPECT-COMPLETE: type_url, value, AnyFunction, MessageFunction
+  wkt.any_field.<caret>
+
+  # --- Struct ---
+  # EXPECT-COMPLETE: fields, StructFunction, MessageFunction
+  wkt.struct_field.<caret>
+
+  # --- Value ---
+  # EXPECT-COMPLETE: null_value, number_value, string_value, bool_value, struct_value, list_value, ValueFunction, MessageFunction
+  wkt.value_field.<caret>
+
+  # --- ListValue ---
+  # EXPECT-COMPLETE: values, ListValueFunction, MessageFunction
+  wkt.list_value_field.<caret>
+
+  # --- Empty ---
+  # EXPECT-COMPLETE: EmptyFunction, MessageFunction
+  wkt.empty_field.<caret>
+
+  # --- FieldMask ---
+  # EXPECT-COMPLETE: paths, FieldMaskFunction, MessageFunction
+  wkt.field_mask_field.<caret>
+
+  # --- Api ---
+  # EXPECT-COMPLETE: name, methods, options, version, source_context, mixins, syntax, ApiFunction, MessageFunction
+  wkt.api_field.<caret>
+
+  # --- Type ---
+  # EXPECT-COMPLETE: name, fields, oneofs, options, source_context, syntax, TypeFunction, MessageFunction
+  wkt.type_field.<caret>
+
+  # --- Method ---
+  # EXPECT-COMPLETE: name, request_type_url, request_streaming, response_type_url, response_streaming, options, syntax, MethodFunction, MessageFunction
+  wkt.method_field.<caret>
+
+  # --- Enum Descriptor ---
+  # EXPECT-COMPLETE: name, enumvalue, options, source_context, syntax, EnumFunction, MessageFunction
+  wkt.enum_descriptor_field.<caret>
+
+  # --- EnumValue ---
+  # EXPECT-COMPLETE: name, number, options, EnumValueFunction, MessageFunction
+  wkt.enum_value_descriptor_field.<caret>
+
+  # --- Field ---
+  # EXPECT-COMPLETE: number, name, type_url, oneof_index, packed, options, json_name, default_value, FieldFunction, MessageFunction
+  # Here we should have added `kind` and `cardinality` fields, but they require internal classes for Field. IMHO we don't really need to check them, FieldFunction should suffice
+  wkt.field_descriptor_field.<caret>
+
+  # --- Option ---
+  # EXPECT-COMPLETE: name, value, OptionFunction, MessageFunction
+  wkt.option_field.<caret>
+
+  # --- Mixin ---
+  # EXPECT-COMPLETE: name, root, MixinFunction, MessageFunction
+  wkt.mixin_field.<caret>
+
+  # --- SourceContext ---
+  # EXPECT-COMPLETE: file_name, SourceContextFunction, MessageFunction
+  wkt.source_context_field.<caret>
