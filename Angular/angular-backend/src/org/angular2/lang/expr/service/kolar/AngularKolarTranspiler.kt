@@ -22,6 +22,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
 import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
@@ -30,11 +31,20 @@ import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.EnumSet
 
 private const val ANGULAR_HTML_LANG = "angular-html"
+private const val ANGULAR_TYPESCRIPT_LANG = "angular-typescript"
 
 internal class AngularKolarTranspiler(private val project: Project) : KolarTranspiler {
 
+  override fun isEnabled(file: VirtualFile): Boolean =
+    Angular2LangUtil.isAngular2Context(project, file)
+
   override fun getLanguageId(file: VirtualFile): String? =
-    if (isAcceptableHtmlFile(file)) ANGULAR_HTML_LANG else null
+    when {
+      isAcceptableHtmlFile(file) -> ANGULAR_HTML_LANG
+      file.name.let { it.endsWith(".ts") && !it.endsWith(".d.ts") }
+      && !NodeModuleUtil.hasNodeModulesDirInPath(file, null) -> ANGULAR_TYPESCRIPT_LANG
+      else -> null
+    }
 
   override fun isAssociatedFileOnly(file: VirtualFile, languageId: String): Boolean =
     languageId == ANGULAR_HTML_LANG
@@ -52,15 +62,11 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
     languageId: String,
     snapshot: KolarScriptSnapshot,
     ctx: KolarCodegenContext,
-  ): KolarVirtualCode? {
-    val fileName = file.name
-    if (languageId == "typescript" &&
-        !fileName.endsWith(".d.ts") &&
-        !NodeModuleUtil.hasNodeModulesDirInPath(file, null)) {
-      return buildVirtualCode(file, snapshot, ctx)
-    }
-    return null
-  }
+  ): KolarVirtualCode? =
+    if (languageId == ANGULAR_TYPESCRIPT_LANG)
+      buildVirtualCode(file, snapshot, ctx)
+    else
+      null
 
   private fun getTranspiledDirectiveFile(file: VirtualFile): Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile? =
     PsiManager.getInstance(project).findFile(file)
@@ -185,37 +191,6 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
         ),
         associatedScriptMappings = emptyMap(),
       )
-    }
-  }
-
-  private fun isTemplateInSync(
-    snapshot: KolarScriptSnapshot,
-    ctx: KolarCodegenContext,
-    transpiledFile: Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile,
-    fileName: String,
-  ): Boolean {
-    val sourceText = snapshot.text
-    val normalizedFileName = fileName.replace('\\', '/')
-
-    // Find the file mapping for the current file
-    val currentFileMapping = transpiledFile.fileMappings.values.find {
-      it.fileName.replace('\\', '/') == normalizedFileName
-    } ?: return false
-
-    if (sourceText != currentFileMapping.sourceFile.text) {
-      return false
-    }
-
-    return transpiledFile.fileMappings.values.none { fileMapping ->
-      if (fileMapping.externalFile) {
-        false
-      }
-      else {
-        false
-        //val associatedSnapshot = ctx.getAssociatedScript(fileMapping.fileName)?.snapshot
-        //associatedSnapshot != null &&
-        //associatedSnapshot.getText(0, associatedSnapshot.getLength()) != fileMapping.sourceFile.text
-      }
     }
   }
 
