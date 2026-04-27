@@ -4,9 +4,12 @@ import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.lang.javascript.TypeScriptFileType
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.typescript.kolar.CodeMapping
+import com.intellij.lang.typescript.kolar.KolarAssociatedFile
 import com.intellij.lang.typescript.kolar.KolarCodeInformation
 import com.intellij.lang.typescript.kolar.KolarCodegenContext
+import com.intellij.lang.typescript.kolar.KolarFileInfo
 import com.intellij.lang.typescript.kolar.KolarScriptSnapshot
+import com.intellij.lang.typescript.kolar.KolarTranspiledFile
 import com.intellij.lang.typescript.kolar.KolarTranspiler
 import com.intellij.lang.typescript.kolar.KolarVirtualCode
 import com.intellij.lang.typescript.kolar.sourceMap.KolarMapping
@@ -30,24 +33,18 @@ import org.angular2.lang.html.Angular2HtmlDialect
 import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.EnumSet
 
-private const val ANGULAR_HTML_LANG = "angular-html"
-private const val ANGULAR_TYPESCRIPT_LANG = "angular-typescript"
-
 internal class AngularKolarTranspiler(private val project: Project) : KolarTranspiler {
 
   override fun isEnabled(file: VirtualFile): Boolean =
     Angular2LangUtil.isAngular2Context(project, file)
 
-  override fun getLanguageId(file: VirtualFile): String? =
+  override fun getFileInfo(file: VirtualFile): KolarFileInfo? =
     when {
-      isAcceptableHtmlFile(file) -> ANGULAR_HTML_LANG
+      isAcceptableHtmlFile(file) -> KolarAssociatedFile
       file.name.let { it.endsWith(".ts") && !it.endsWith(".d.ts") }
-      && !NodeModuleUtil.hasNodeModulesDirInPath(file, null) -> ANGULAR_TYPESCRIPT_LANG
+      && !NodeModuleUtil.hasNodeModulesDirInPath(file, null) -> AngularTranspiledFile(project, file)
       else -> null
     }
-
-  override fun isAssociatedFileOnly(file: VirtualFile, languageId: String): Boolean =
-    languageId == ANGULAR_HTML_LANG
 
   override fun supportsInjectedFile(file: PsiFile): Boolean =
     file.language is Angular2ExprDialect || file.language is Angular2HtmlDialect
@@ -57,29 +54,16 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
     && Angular2EntitiesProvider.findTemplateComponent(file) == null
     && !isHostBindingExpression(file)
 
-  override fun createVirtualCode(
-    file: VirtualFile,
-    languageId: String,
-    snapshot: KolarScriptSnapshot,
-    ctx: KolarCodegenContext,
-  ): KolarVirtualCode? =
-    if (languageId == ANGULAR_TYPESCRIPT_LANG)
-      buildVirtualCode(file, snapshot, ctx)
-    else
-      null
-
-  private fun getTranspiledDirectiveFile(file: VirtualFile): Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile? =
-    PsiManager.getInstance(project).findFile(file)
-      ?.let { Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(it) }
-
   private fun isAcceptableHtmlFile(file: VirtualFile): Boolean =
     file.isInLocalFileSystem && file.fileType.let {
       (it is HtmlFileType || it is SvgFileType) && SubstitutedFileType.substituteFileType(file, it, project)
         .asSafely<SubstitutedFileType>()?.language is Angular2HtmlDialect
     }
+}
 
-  fun buildVirtualCode(
-    file: VirtualFile,
+private class AngularTranspiledFile(val project: Project, val file: VirtualFile): KolarTranspiledFile {
+
+  override fun createVirtualCode(
     snapshot: KolarScriptSnapshot,
     ctx: KolarCodegenContext,
   ): KolarVirtualCode {
@@ -156,11 +140,9 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
         }
       }
       return KolarVirtualCode(
-        transpiler = this,
         id = "main",
         // Create a new non-physical VirtualFile for the transpiled template
         virtualFile = createLightVirtualFileWithParent(fileName, transpiledFile.generatedCode),
-        languageId = "typescript",
         snapshot = KolarScriptSnapshot.create(transpiledFile.generatedCode),
         mappings = newMappings,
         associatedScriptMappings = newAssociatedScriptMappings,
@@ -168,11 +150,9 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
     }
     else {
       return KolarVirtualCode(
-        transpiler = this,
         id = "main",
         // Point to the existing virtual file from the local filesystem if possible
         virtualFile = file,
-        languageId = "typescript",
         snapshot = snapshot,
         mappings = listOf(
           KolarMapping(
@@ -193,6 +173,10 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
       )
     }
   }
+
+  private fun getTranspiledDirectiveFile(file: VirtualFile): Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile? =
+    PsiManager.getInstance(project).findFile(file)
+      ?.let { Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(it) }
 
   private fun createCodeInformation(flags: EnumSet<SourceMappingFlag>, verification: Boolean): KolarCodeInformation {
     return KolarCodeInformation(
@@ -225,4 +209,12 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
       LightVirtualFile(normalizedPath, TypeScriptFileType, content)
     }
   }
+
+  override fun equals(other: Any?): Boolean =
+    other === this || other is AngularTranspiledFile
+    && other.file == file
+    && other.project == project
+
+  override fun hashCode(): Int =
+    file.hashCode() * 31 + project.hashCode()
 }
