@@ -549,6 +549,7 @@
     <internalFileTemplate name="Config"/>
     <internalFileTemplate name="Component"/>
     <internalFileTemplate name="Deploy"/>
+    <internalFileTemplate name="Test"/>
     <internalFileTemplate name="OpenTofu"/>
     <internalFileTemplate name="Terragrunt Config"/>
     <internalFileTemplate name="Terragrunt Stack"/>
