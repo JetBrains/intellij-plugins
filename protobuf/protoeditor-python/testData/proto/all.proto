@@ -1,0 +1,182 @@
+syntax = "proto3";
+
+package testing.all;
+
+import "google/protobuf/source_context.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/type.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/api.proto";
+
+import "google/protobuf/descriptor.proto";
+
+import public "import_from.proto";
+
+option java_package = "com.example.testing.all";
+option java_outer_classname = "CompleteProto3Test";
+option java_multiple_files = true;
+option optimize_for = SPEED;
+option cc_enable_arenas = true;
+option objc_class_prefix = "TEST";
+option csharp_namespace = "Testing.All";
+option php_namespace = "Testing\\All";
+option go_package = "example.com/testing/all";
+
+option cc_generic_services = false;
+option java_generic_services = false;
+option py_generic_services = false;
+
+option (file_opt) = "File level custom option";
+
+extend google.protobuf.FileOptions {
+  optional string file_opt = 50000;
+}
+
+extend google.protobuf.MessageOptions {
+  optional int32 message_opt = 50001;
+  optional MyOptions complex_message_opt = 50002;
+}
+
+extend google.protobuf.FieldOptions {
+  optional float field_opt = 50003;
+  optional int32 source_retention_opt = 50004 [retention = RETENTION_SOURCE];
+}
+
+extend google.protobuf.EnumOptions {
+  optional bool enum_opt = 50005;
+}
+
+extend google.protobuf.EnumValueOptions {
+  optional string enum_value_opt = 50006;
+}
+
+message MyOptions {
+  string info = 1;
+  bool message_only = 2 [targets = TARGET_TYPE_MESSAGE];
+}
+
+enum SomeEnum {
+  option allow_alias = true;
+  option (enum_opt) = true;
+
+  ENUM_VALUE_UNSPECIFIED = 0;
+  ENUM_VALUE_1 = 1;
+  ENUM_VALUE_ALIAS = 1;
+
+  ENUM_VALUE_DEPRECATED = 3 [deprecated = true];
+  ENUM_VALUE_CUSTOM_OPT = 4 [(enum_value_opt) = "custom_value"];
+
+  reserved 2, 15, 9 to 11, 40 to max;
+  reserved "FOO", "BAR";
+}
+
+message ScalarTypesMessage {
+  optional bool bool_field = 1;
+  optional bytes bytes_field = 2;
+
+  int32 int32_field = 3;
+  int64 int64_field = 4;
+  uint32 uint32_field = 5;
+  uint64 uint64_field = 6;
+  sint32 sint32_field = 7;
+  sint64 sint64_field = 8;
+  fixed32 fixed32_field = 9;
+  fixed64 fixed64_field = 10;
+  sfixed32 sfixed32_field = 11;
+  sfixed64 sfixed64_field = 12;
+  float float_field = 13;
+  double double_field = 14;
+  string string_field = 15;
+}
+
+/*
+ * SomeMessage demonstrates the usage of various field types,
+ * options, and nested definitions available in Proto3.
+ * This text is an example of a multi-line comment.
+ */
+message SomeMessage {
+  option (message_opt) = 1234;
+  option (complex_message_opt).info = "Complex Data";
+
+  ScalarTypesMessage scalar_types_message = 1;
+  SomeEnum some_enum = 2;
+
+  reserved 3, 4 to 7;
+  reserved "old_field", "removed_field";
+
+  message Nested_Message {
+    string nested_string_field = 1;
+  }
+
+  // This is an example of a single-line comment
+  enum Nested_Enum {
+    NESTED_ENUM_UNSPECIFIED = 0;
+    NESTED_ENUM_VALUE_1 = 1;
+  }
+
+  repeated string repeated_string_field = 8;
+  repeated int32 unpacked_int32_field = 9 [packed = false];
+  repeated SomeEnum repeated_enum_field = 10;
+  repeated google.protobuf.Any repeated_any_field = 11;
+
+  map<string, int32> string_int32_map = 12;
+  map<int32, google.protobuf.Any> int32_any_map = 13;
+  map<bool, google.protobuf.Duration> bool_duration_map = 14;
+  map<int32, testing.import_from.SharedMessage> int32_shared_map = 15;
+  map<int32, SomeMessage> int32_recursive_message_map = 16;
+  map<int32, SomeEnum> int32_enum_map = 17;
+
+  oneof test_oneof {
+    string oneof_string = 18;
+    int32 oneof_int32 = 19;
+    ScalarTypesMessage oneof_message = 20;
+  }
+
+  WellKnownTypesMessage wkt_message = 21;
+
+  string old_string_data = 22 [deprecated = true];
+  int32 hidden_int32_metadata = 23 [(source_retention_opt) = 42];
+}
+
+message WellKnownTypesMessage {
+  google.protobuf.DoubleValue double_value_field = 1;
+  google.protobuf.FloatValue float_value_field = 2;
+  google.protobuf.Int64Value int64_value_field = 3;
+  google.protobuf.UInt64Value uint64_value_field = 4;
+  google.protobuf.Int32Value int32_value_field = 5;
+  google.protobuf.UInt32Value uint32_value_field = 6;
+  google.protobuf.BoolValue bool_value_field = 7;
+  google.protobuf.StringValue string_value_field = 8;
+  google.protobuf.BytesValue bytes_value_field = 9;
+
+  google.protobuf.Timestamp timestamp_field = 10;
+  google.protobuf.Duration duration_field = 11;
+
+  google.protobuf.Any any_field = 12;
+  google.protobuf.Struct struct_field = 13;
+  google.protobuf.Value value_field = 14;
+  google.protobuf.ListValue list_value_field = 15;
+
+  google.protobuf.Empty empty_field = 16;
+  google.protobuf.FieldMask field_mask_field = 17;
+
+  google.protobuf.Api api_field = 18;
+  google.protobuf.Type type_field = 19;
+  google.protobuf.Method method_field = 20;
+  google.protobuf.Enum enum_descriptor_field = 21;
+  google.protobuf.EnumValue enum_value_descriptor_field = 22;
+  google.protobuf.Field field_descriptor_field = 23;
+  google.protobuf.Option option_field = 24;
+  google.protobuf.Mixin mixin_field = 25;
+  google.protobuf.SourceContext source_context_field = 26;
+}
+
+service SearchService {
+  rpc Search(SomeMessage) returns (SomeMessage.Nested_Message);
+  rpc StreamSearch(stream SomeMessage) returns (stream SomeMessage.Nested_Message);
+}

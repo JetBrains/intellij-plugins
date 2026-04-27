@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package testing.import_from;
+
+message SharedMessage {
+  string shared_content = 1;
+}
