@@ -17,7 +17,7 @@ jvm_library(
     "//contrib/Angular/angular-backend",
     "//contrib/Angular/angular-free",
     "//contrib/Angular/angular-tslint",
-    "//plugins/JavaScriptLanguage:javascript-plugin",
+    "//plugins/JavaScriptLanguage/plugin",
   ]
 )
 
@@ -31,7 +31,7 @@ jvm_library(
     "//contrib/Angular/angular-backend:angular-backend_test_lib",
     "//contrib/Angular/angular-free:angular-free_test_lib",
     "//contrib/Angular/angular-tslint:angular-tslint_test_lib",
-    "//plugins/JavaScriptLanguage:javascript-plugin_test_lib",
+    "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
   ]
 )
 ### auto-generated section `build intellij.angular.plugin` end

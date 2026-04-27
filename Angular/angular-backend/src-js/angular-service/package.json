@@ -4,7 +4,7 @@
   "private": true,
   "main": "index.js",
   "workspaces": [
-    "../../../../../plugins/JavaScriptLanguage/resources/tscplugin"
+    "../../../../../plugins/JavaScriptLanguage/javascript-backend/resources/tscplugin"
   ],
   "dependencies": {
     "typescript": "5.4.5",

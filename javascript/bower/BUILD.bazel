@@ -14,7 +14,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   resources = [":bower_resources"],
   deps = [
-    "//plugins/JavaScriptLanguage:javascript-backend",
+    "//plugins/JavaScriptLanguage/javascript-backend",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/platform-util-io:ide-util-io",
@@ -45,7 +45,7 @@ jvm_library(
   srcs = glob([], allow_empty = True),
   runtime_deps = [
     ":bower",
-    "//plugins/JavaScriptLanguage:javascript-backend_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
     "@community//platform/analysis-api:analysis_test_lib",
     "@community//platform/core-api:core_test_lib",
     "@community//platform/platform-util-io:ide-util-io_test_lib",
