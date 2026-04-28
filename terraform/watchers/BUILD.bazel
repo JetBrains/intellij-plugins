@@ -25,6 +25,7 @@ jvm_library(
 
 jvm_library(
   name = "watchers_test_lib",
+  testonly = True,
   module_name = "intellij.terraform.watchers",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),

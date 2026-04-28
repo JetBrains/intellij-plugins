@@ -46,6 +46,7 @@ jvm_library(
 
 jvm_library(
   name = "javascript-debugger-featuresTrainer_test_lib",
+  testonly = True,
   module_name = "intellij.javascript.debugger.featuresTrainer",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),

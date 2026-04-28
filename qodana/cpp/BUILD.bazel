@@ -60,6 +60,7 @@ jvm_library(
 
 jvm_library(
   name = "cpp_test_lib",
+  testonly = True,
   module_name = "intellij.qodana.cpp",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
@@ -125,6 +126,7 @@ jvm_library(
 
 jvm_library(
   name = "cpp-tests_test_lib",
+  testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
   resources = [":cpp-tests_test_resources"],

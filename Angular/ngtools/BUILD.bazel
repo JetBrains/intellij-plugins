@@ -28,6 +28,7 @@ jvm_library(
 
 jvm_library(
   name = "ngtools_test_lib",
+  testonly = True,
   module_name = "intellij.angular.ngtools",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),

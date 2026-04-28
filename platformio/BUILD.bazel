@@ -72,6 +72,7 @@ jvm_library(
 
 jvm_library(
   name = "platformio_test_lib",
+  testonly = True,
   module_name = "intellij.clion.embedded.platformio",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
@@ -165,6 +166,7 @@ jvm_library(
 
 jvm_library(
   name = "clion-embedded-platformio-tests_test_lib",
+  testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   associates = [

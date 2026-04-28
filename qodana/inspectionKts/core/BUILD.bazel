@@ -48,6 +48,7 @@ jvm_library(
 
 jvm_library(
   name = "qodana-inspectionKts_test_lib",
+  testonly = True,
   module_name = "intellij.qodana.inspectionKts",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),

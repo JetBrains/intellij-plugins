@@ -27,6 +27,7 @@ jvm_library(
 
 jvm_library(
   name = "jps_test_lib",
+  testonly = True,
   module_name = "intellij.flex.jps",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),

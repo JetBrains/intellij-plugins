@@ -29,6 +29,7 @@ jvm_library(
 
 jvm_library(
   name = "prettier_test_lib",
+  testonly = True,
   module_name = "intellij.vuejs.prettier",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),

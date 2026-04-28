@@ -38,6 +38,7 @@ jvm_library(
 
 jvm_library(
   name = "qodana-testFramework_test_lib",
+  testonly = True,
   module_name = "intellij.qodana.testFramework",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),

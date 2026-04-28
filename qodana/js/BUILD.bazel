@@ -40,6 +40,7 @@ jvm_library(
 
 jvm_library(
   name = "js_test_lib",
+  testonly = True,
   module_name = "intellij.qodana.js",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
@@ -99,6 +100,7 @@ jvm_library(
 
 jvm_library(
   name = "js-tests_test_lib",
+  testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
   associates = [

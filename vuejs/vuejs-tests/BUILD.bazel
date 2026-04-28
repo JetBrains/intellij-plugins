@@ -25,6 +25,7 @@ jvm_library(
 
 jvm_library(
   name = "tests_test_lib",
+  testonly = True,
   module_name = "intellij.vuejs.tests",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "src-ext/**/*.kt", "src-ext/**/*.java", "src-ext/**/*.form"], allow_empty = True),

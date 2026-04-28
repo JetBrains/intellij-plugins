@@ -44,6 +44,7 @@ jvm_library(
 
 jvm_library(
   name = "vcs-perforce_test_lib",
+  testonly = True,
   module_name = "intellij.vcs.perforce",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
@@ -112,6 +113,7 @@ jvm_library(
 
 jvm_library(
   name = "vcs-perforce-tests_test_lib",
+  testonly = True,
   module_name = "intellij.vcs.perforce.tests",
   visibility = ["//visibility:public"],
   srcs = glob(["testSource/**/*.kt", "testSource/**/*.java", "testSource/**/*.form"], allow_empty = True),

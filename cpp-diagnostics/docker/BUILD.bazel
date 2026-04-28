@@ -27,6 +27,7 @@ jvm_library(
 
 jvm_library(
   name = "docker_test_lib",
+  testonly = True,
   module_name = "intellij.clion.diagnostics.docker",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),

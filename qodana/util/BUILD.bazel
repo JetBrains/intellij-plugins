@@ -25,6 +25,7 @@ jvm_library(
 
 jvm_library(
   name = "util_test_lib",
+  testonly = True,
   module_name = "intellij.qodana.util",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),

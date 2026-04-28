@@ -44,6 +44,7 @@ jvm_library(
 
 jvm_library(
   name = "drools_test_lib",
+  testonly = True,
   module_name = "intellij.jboss.drools",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
@@ -98,6 +99,7 @@ jvm_library(
 
 jvm_library(
   name = "jboss-drools-tests_test_lib",
+  testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["tests/src/**/*.kt", "tests/src/**/*.java", "tests/src/**/*.form"], allow_empty = True),
   associates = [

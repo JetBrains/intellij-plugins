@@ -45,6 +45,7 @@ jvm_library(
 
 jvm_library(
   name = "rust_test_lib",
+  testonly = True,
   module_name = "intellij.qodana.rust",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
@@ -93,6 +94,7 @@ jvm_library(
 
 jvm_library(
   name = "rust-tests_test_lib",
+  testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
   kotlinc_opts = ":custom_rust-tests",

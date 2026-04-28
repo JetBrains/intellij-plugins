@@ -120,6 +120,7 @@ jvm_library(
 
 jvm_library(
   name = "qodana_test_lib",
+  testonly = True,
   module_name = "intellij.qodana",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
@@ -241,6 +242,7 @@ jvm_library(
 
 jvm_library(
   name = "qodana-core-tests_test_lib",
+  testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["core/tests/**/*.kt", "core/tests/**/*.java", "core/tests/**/*.form"], allow_empty = True),
   resources = [":qodana-core-tests_test_resources"],

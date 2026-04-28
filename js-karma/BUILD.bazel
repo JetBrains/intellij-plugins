@@ -68,6 +68,7 @@ jvm_library(
 
 jvm_library(
   name = "karma_test_lib",
+  testonly = True,
   module_name = "intellij.karma",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
@@ -146,6 +147,7 @@ jvm_library(
 
 jvm_library(
   name = "karma-tests_test_lib",
+  testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   resources = [":karma-tests_test_resources"],

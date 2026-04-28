@@ -58,6 +58,7 @@ jvm_library(
 
 jvm_library(
   name = "gherkin_test_lib",
+  testonly = True,
   module_name = "intellij.gherkin",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
@@ -127,6 +128,7 @@ jvm_library(
 
 jvm_library(
   name = "gherkin-tests_test_lib",
+  testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   associates = [

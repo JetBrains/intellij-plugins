@@ -31,6 +31,7 @@ jvm_library(
 
 jvm_library(
   name = "webassembly_test_lib",
+  testonly = True,
   module_name = "intellij.webassembly",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
@@ -76,6 +77,7 @@ jvm_library(
 
 jvm_library(
   name = "webassembly-tests_test_lib",
+  testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java", "src/test/kotlin/**/*.form"], allow_empty = True),
   resources = [":webassembly-tests_test_resources"],

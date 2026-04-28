@@ -36,6 +36,7 @@ jvm_library(
 
 jvm_library(
   name = "gradle_test_lib",
+  testonly = True,
   module_name = "intellij.qodana.jvm.gradle",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
