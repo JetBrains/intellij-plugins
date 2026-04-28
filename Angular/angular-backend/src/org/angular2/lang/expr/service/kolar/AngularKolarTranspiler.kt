@@ -61,7 +61,10 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
     }
 }
 
-private class AngularTranspiledFile(val project: Project, val file: VirtualFile): KolarTranspiledFile {
+private class AngularTranspiledFile(
+  val project: Project,
+  val file: VirtualFile,
+): KolarTranspiledFile {
 
   override fun createVirtualCode(
     snapshot: KolarScriptSnapshot,
@@ -143,6 +146,7 @@ private class AngularTranspiledFile(val project: Project, val file: VirtualFile)
         id = "main",
         // Create a new non-physical VirtualFile for the transpiled template
         virtualFile = createLightVirtualFileWithParent(fileName, transpiledFile.generatedCode),
+        fsVirtualFile = file,
         snapshot = KolarScriptSnapshot.create(transpiledFile.generatedCode),
         mappings = newMappings,
         associatedScriptMappings = newAssociatedScriptMappings,
@@ -151,8 +155,8 @@ private class AngularTranspiledFile(val project: Project, val file: VirtualFile)
     else {
       return KolarVirtualCode(
         id = "main",
-        // Point to the existing virtual file from the local filesystem if possible
         virtualFile = file,
+        fsVirtualFile = file,
         snapshot = snapshot,
         mappings = listOf(
           KolarMapping(
