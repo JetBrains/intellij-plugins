@@ -7,7 +7,6 @@ import com.intellij.psi.css.inspections.CssApiBaseInspection;
 import com.intellij.psi.css.inspections.CssInspectionFilter;
 import com.intellij.psi.css.inspections.invalid.CssInvalidAtRuleInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidImportInspection;
-import com.intellij.psi.css.inspections.invalid.CssInvalidNestedSelectorInspection;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
@@ -19,8 +18,7 @@ import java.util.Set;
 public class PostCssInspectionFilter extends CssInspectionFilter {
   private static final Set<Class<? extends CssApiBaseInspection>> UNSUPPORTED_INSPECTIONS = ContainerUtil.newHashSet(
     CssInvalidImportInspection.class,
-    CssInvalidAtRuleInspection.class,
-    CssInvalidNestedSelectorInspection.class
+    CssInvalidAtRuleInspection.class
   );
 
   @Override
