@@ -18,6 +18,7 @@ import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.runInInitMode
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import com.intellij.xml.util.CheckTagEmptyBodyInspection
@@ -86,6 +87,9 @@ abstract class VueHighlightingWithPluginTestBase(
     super.setUp()
 
     disableTypeScriptServiceWarnings()
+
+    (myFixture as CodeInsightTestFixtureImpl)
+      .canChangeDocumentDuringHighlighting(true)
   }
 
   @Ignore

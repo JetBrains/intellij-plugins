@@ -56,7 +56,7 @@ private class ActivationHelper(
         && settings.manualSettings.mode == VueSettings.ManualMode.HYBRID_MODE
 
       is VueServiceRuntime.Bundled ->
-        false // check that settings.serviceType == VueLSMode.AUTO when ready to enable hybrid mode in AUTO
+        settings.serviceType == VueLSMode.AUTO
     }
   }
 }
