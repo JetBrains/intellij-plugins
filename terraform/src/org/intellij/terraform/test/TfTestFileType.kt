@@ -21,8 +21,7 @@ internal object TfTestFileType : LanguageFileType(HCLLanguage) {
 
   override fun getDefaultExtension(): @NlsSafe String = HCL_DEFAULT_EXTENSION
 
-  // TODO: replace with new icon: UX-3758
-  override fun getIcon(): Icon = TerraformIcons.Terraform
+  override fun getIcon(): Icon = TerraformIcons.TerraformTest
 
   override fun getDisplayName(): @Nls String = HCLBundle.message("terraform.test.name")
 }

@@ -1,0 +1,17 @@
+<!-- Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license. -->
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M15.38 12.712C15.544 12.869 15.544 13.131 15.38 13.288L12.677 15.888C12.423 16.132 12 15.952 12 15.599L12 10.404C12 10.051 12.423 9.871 12.677 10.115L15.38 12.712Z"
+        fill="#57965C" color-fill-key="icon-green-solid"/>
+  <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M7.623 13.288C7.459 13.131 7.459 12.869 7.623 12.712L10.322 10.116C10.576 9.872 10.999 10.052 10.999 10.405V15.599C10.999 15.951 10.576 16.131 10.321 15.887L7.623 13.288Z"
+        fill="#DB5C5C" color-fill-key="icon-red-solid"/>
+  <path d="M8.896 10.099L6.929 11.991C6.51 12.394 6.397 12.995 6.594 13.505L5.949 13.133V8.397L8.896 10.099Z" fill="#A571E6"
+        color-fill-key="icon-purple-solid"/>
+  <path d="M10.049 5.51V9.114C9.9 9.178 9.757 9.271 9.627 9.396L9.232 9.773L5.949 7.878V3.143L10.049 5.51Z" fill="#A571E6"
+        color-fill-key="icon-purple-solid"/>
+  <path
+    d="M14.6 7.878L12.654 9H10.999V9.002C10.872 9.002 10.737 9.003 10.589 9.003C10.559 9.003 10.528 9.004 10.498 9.006V5.51L14.6 3.143V7.878Z"
+    fill="#A571E6" color-fill-key="icon-purple-solid"/>
+  <path d="M5.498 2.867V7.603L1.398 5.235V0.5L5.498 2.867Z" fill="#A571E6" color-fill-key="icon-purple-solid"/>
+</svg>

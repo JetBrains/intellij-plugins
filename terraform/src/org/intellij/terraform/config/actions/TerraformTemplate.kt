@@ -20,8 +20,7 @@ enum class TerraformTemplate(
   COMPONENT("Component", HCLBundle.message("action.new.component.file.description"), AllIcons.FileTypes.Terraform, "tfcomponent"),
   DEPLOY("Deploy", HCLBundle.message("action.new.deploy.file.description"), AllIcons.FileTypes.Terraform, "tfdeploy"),
 
-  // TODO: replace with new icon: UX-3758
-  TEST("Test", HCLBundle.message("action.new.test.file.description"), TerraformIcons.Terraform, "tftest"),
+  TEST("Test", HCLBundle.message("action.new.test.file.description"), TerraformIcons.TerraformTest, "tftest"),
 
   OPEN_TOFU("OpenTofu", HCLBundle.message("action.new.tofu.file.description"), TerraformIcons.Opentofu),
 
