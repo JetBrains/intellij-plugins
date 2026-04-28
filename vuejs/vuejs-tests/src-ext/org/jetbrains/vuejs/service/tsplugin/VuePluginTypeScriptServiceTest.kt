@@ -30,7 +30,7 @@ class VuePluginTypeScriptServiceTest :
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(VueInspectionsProvider())
-    myFixture.configureByText(VueTsConfigFile.Companion.FILE_NAME, VueTsConfigFile.Companion.DEFAULT_TSCONFIG_CONTENT)
+    myFixture.configureByText(VueTsConfigFile.FILE_NAME, VueTsConfigFile.DEFAULT_TSCONFIG_CONTENT)
   }
 
   private fun configureVueDependencies(
