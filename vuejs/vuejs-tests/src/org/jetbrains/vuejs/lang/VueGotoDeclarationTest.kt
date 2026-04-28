@@ -32,7 +32,6 @@ import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.assertInstanceOf
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
@@ -69,13 +68,6 @@ abstract class VueGotoDeclarationWithPluginTestBase(
   val rule: TestRule = TrackFailedTestRule(
     "testResolveLocallyInsideComponent",
   )
-
-  override fun setUp() {
-    super.setUp()
-
-    (myFixture as CodeInsightTestFixtureImpl)
-      .canChangeDocumentDuringHighlighting(true)
-  }
 }
 
 @RunWith(JUnit4::class)
