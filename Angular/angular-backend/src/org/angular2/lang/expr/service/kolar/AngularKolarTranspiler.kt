@@ -1,7 +1,6 @@
 package org.angular2.lang.expr.service.kolar
 
 import com.intellij.ide.highlighter.HtmlFileType
-import com.intellij.lang.javascript.TypeScriptFileType
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.typescript.kolar.CodeMapping
 import com.intellij.lang.typescript.kolar.KolarAssociatedFile
@@ -16,11 +15,9 @@ import com.intellij.lang.typescript.kolar.sourceMap.KolarMapping
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
@@ -64,12 +61,12 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
 private class AngularTranspiledFile(
   val project: Project,
   val file: VirtualFile,
-): KolarTranspiledFile {
+) : KolarTranspiledFile {
 
   override fun createVirtualCode(
     snapshot: KolarScriptSnapshot,
     ctx: KolarCodegenContext,
-  ): KolarVirtualCode {
+  ): KolarVirtualCode? {
     val transpiledFile = if (ApplicationManager.getApplication().isReadAccessAllowed)
       getTranspiledDirectiveFile(file)
     else
@@ -77,7 +74,7 @@ private class AngularTranspiledFile(
         getTranspiledDirectiveFile(file)
       }
     val fileName = file.path
-    if (transpiledFile != null /*&& isTemplateInSync(snapshot, ctx, transpiledFile, fileName)*/) {
+    if (transpiledFile != null) {
       val newMappings = mutableListOf<CodeMapping>()
       val newAssociatedScriptMappings = mutableMapOf<String, MutableList<CodeMapping>>()
 
@@ -144,46 +141,22 @@ private class AngularTranspiledFile(
       }
       return KolarVirtualCode(
         id = "main",
-        // Create a new non-physical VirtualFile for the transpiled template
-        virtualFile = createLightVirtualFileWithParent(fileName, transpiledFile.generatedCode),
         fsVirtualFile = file,
         snapshot = KolarScriptSnapshot.create(transpiledFile.generatedCode),
         mappings = newMappings,
         associatedScriptMappings = newAssociatedScriptMappings,
       )
     }
-    else {
-      return KolarVirtualCode(
-        id = "main",
-        virtualFile = file,
-        fsVirtualFile = file,
-        snapshot = snapshot,
-        mappings = listOf(
-          KolarMapping(
-            generatedOffsets = intArrayOf(0),
-            sourceOffsets = intArrayOf(0),
-            lengths = intArrayOf(snapshot.length),
-            data = KolarCodeInformation(
-              format = true,
-              completion = KolarCodeInformation.CompletionInfo.Enabled,
-              navigation = KolarCodeInformation.NavigationInfo.Enabled,
-              semantic = KolarCodeInformation.SemanticInfo.Enabled,
-              structure = true,
-              verification = KolarCodeInformation.VerificationInfo.Enabled
-            )
-          )
-        ),
-        associatedScriptMappings = emptyMap(),
-      )
-    }
+    else
+      return null
   }
 
   private fun getTranspiledDirectiveFile(file: VirtualFile): Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile? =
     PsiManager.getInstance(project).findFile(file)
       ?.let { Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(it) }
 
-  private fun createCodeInformation(flags: EnumSet<SourceMappingFlag>, verification: Boolean): KolarCodeInformation {
-    return KolarCodeInformation(
+  private fun createCodeInformation(flags: EnumSet<SourceMappingFlag>, verification: Boolean): KolarCodeInformation =
+    KolarCodeInformation(
       format = flags.contains(SourceMappingFlag.FORMAT),
       completion = if (flags.contains(SourceMappingFlag.COMPLETION)) KolarCodeInformation.CompletionInfo.Enabled else null,
       navigation = if (flags.contains(SourceMappingFlag.NAVIGATION)) KolarCodeInformation.NavigationInfo.Enabled else null,
@@ -193,26 +166,6 @@ private class AngularTranspiledFile(
       types = flags.contains(SourceMappingFlag.TYPES),
       reverseTypes = flags.contains(SourceMappingFlag.REVERSE_TYPES),
     )
-  }
-
-  private fun createLightVirtualFileWithParent(fullPath: String, content: String): VirtualFile {
-    val normalizedPath = fullPath.replace('\\', '/')
-    val lastSlashIndex = normalizedPath.lastIndexOf('/')
-
-    return if (lastSlashIndex > 0) {
-      val parentPath = normalizedPath.substring(0, lastSlashIndex)
-      val fileName = normalizedPath.substring(lastSlashIndex + 1)
-      val parentDir = LocalFileSystem.getInstance().findFileByPath(parentPath)
-
-      object : LightVirtualFile(fileName, TypeScriptFileType, content) {
-        override fun getParent(): VirtualFile? = parentDir
-        override fun getPath(): String = normalizedPath
-      }
-    }
-    else {
-      LightVirtualFile(normalizedPath, TypeScriptFileType, content)
-    }
-  }
 
   override fun equals(other: Any?): Boolean =
     other === this || other is AngularTranspiledFile
