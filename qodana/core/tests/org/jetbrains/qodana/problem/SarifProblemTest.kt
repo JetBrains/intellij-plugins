@@ -36,6 +36,8 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
 
   private val problemsWithMixedPaths by lazy { getReport(sarifProblemTestDir.resolve("reportWithMixedPaths.sarif.json")) }
 
+  private val problemsWithVersionControlProvenance by lazy { getReport(sarifProblemTestDir.resolve("reportWithVersionControlProvenance.sarif.json")) }
+
   private val gitlabReport by lazy { getReport(sarifProblemTestDir.resolve("gitlab.sarif.json")) }
   
   private fun projectPath() = Path(myFixture.testDataPath, PROJECT_PATH)
@@ -283,6 +285,18 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
 
     val problem4 = problemsWithMixedPaths[3]
     assertThat(problem4.relativePathToFile).isEqualTo("Main.java")
+  }
+
+  fun `test report with versionControlProvenance is parsed and revisionId is propagated`() {
+    // Light test fixture has no GitRepositoryManager-registered repos that match the SARIF
+    // repositoryUri, so pickVcsContentRoot returns null. Parsing must still succeed and
+    // the revisionId from versionControlProvenance must be propagated to each problem.
+    assertThat(problemsWithVersionControlProvenance.size).isEqualTo(1)
+
+    val problem = problemsWithVersionControlProvenance[0]
+    assertThat(problem.relativePathToFile).isEqualTo("Main.java")
+    assertThat(problem.inspectionId).isEqualTo("INSPECTION_ID")
+    assertThat(problem.revisionId).isEqualTo("abc1234567890")
   }
 
   private fun getDocument(documentName: String): Document? {

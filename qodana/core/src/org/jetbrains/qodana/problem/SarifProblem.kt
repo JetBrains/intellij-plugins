@@ -6,16 +6,19 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.qodana.sarif.model.Location
 import com.jetbrains.qodana.sarif.model.OriginalUriBaseIds
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
+import git4idea.repo.GitRepositoryManager
 import kotlinx.serialization.Serializable
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.QodanaBundle
@@ -54,7 +57,8 @@ data class SarifProblem(
   companion object {
     fun fromReport(project: Project, sarif: ValidatedSarif): List<SarifProblem> {
       return sarif.runsToResults.flatMap { (run, reportResults) ->
-        val (absolutePrefixToRemove, relativePrefixToRemove) = getPrefixesToRemove(project, reportResults, run.originalUriBaseIds)
+        val preferredContentRoot = pickVcsContentRoot(project, run)
+        val (absolutePrefixToRemove, relativePrefixToRemove) = getPrefixesToRemove(project, reportResults, run.originalUriBaseIds, preferredContentRoot)
         val revisionId = run.revisionId()
 
         val resultsWithRelationshipsTaint = reportResults.associateWith { result ->
@@ -65,15 +69,15 @@ data class SarifProblem(
 
         val problemsForTaintAnalysisSinks = getPossibleTaintAnalysisSinksResultsAndLocations(
           reportResults, resultsWithRelationshipsTaint
-        ).mapNotNull { 
+        ).mapNotNull {
           fromResultWithLocation(
-            run, 
-            it.first, 
-            it.second, 
-            absolutePrefixToRemove, 
+            run,
+            it.first,
+            it.second,
+            absolutePrefixToRemove,
             relativePrefixToRemove,
             revisionId
-          ) 
+          )
         }
 
         val otherProblems = reportResults.flatMap { result ->
@@ -82,9 +86,9 @@ data class SarifProblem(
           }?.mapNotNull { location ->
             fromResultWithLocation(
               run,
-              result, 
+              result,
               location,
-              absolutePrefixToRemove, 
+              absolutePrefixToRemove,
               relativePrefixToRemove,
               revisionId
             )
@@ -107,7 +111,14 @@ data class SarifProblem(
   val defaultProperties: SarifProblemProperties =
     SarifProblemProperties(true, false, false, startLine ?: -1, startColumn ?: -1)
 
-  fun getVirtualFile(project: Project): VirtualFile? = project.findRelativeVirtualFile(relativePathToFile)
+  fun getVirtualFile(project: Project, preferredContentRootUrl: String? = null): VirtualFile? {
+    preferredContentRootUrl?.let { url ->
+      VirtualFileManager.getInstance().findFileByUrl(url)
+        ?.findFileByRelativePath(relativePathToFile)
+        ?.let { return it }
+    }
+    return project.findRelativeVirtualFile(relativePathToFile)
+  }
 
   fun getTextRangeInDocument(document: Document): TextRange? {
     val lineStartOffset = startLine?.let { line ->
@@ -162,8 +173,12 @@ private fun Result.buildProblemMessage(): String {
          ?: QodanaBundle.message("qodana.problem.default.message")
 }
 
-internal fun Project.findRelativeVirtualFile(relativePath: String): VirtualFile? =
-  guessProjectDir()?.findFileByRelativePath(relativePath) ?: basePath?.let { VfsUtil.findFile(Path.of(it, relativePath), true) }
+internal fun Project.findRelativeVirtualFile(relativePath: String): VirtualFile? {
+  guessProjectDir()?.findFileByRelativePath(relativePath)?.let { return it }
+  basePath?.let { VfsUtil.findFile(Path.of(it, relativePath), true) }?.let { return it }
+  return ProjectRootManager.getInstance(this).contentRoots
+    .firstNotNullOfOrNull { it.findFileByRelativePath(relativePath) }
+}
 
 private fun fromResultWithLocation(
   run: Run,
@@ -209,11 +224,11 @@ private fun getLocationWithoutPrefix(
   val uriBaseId = location.physicalLocation?.artifactLocation?.uriBaseId
   val uri = location.physicalLocation?.artifactLocation?.uri
   if (uri == null) return null
-  
+
   val resolvedPath = uriBaseId?.let { resolveUriBaseId(originalUriBaseIds, uriBaseId) + uri } ?: uri
   return try {
-    Paths.get(resolvedPath).run { 
-      if (isAbsolute) pathString.removePrefix(absolutePrefixToRemove) 
+    Paths.get(resolvedPath).run {
+      if (isAbsolute) pathString.removePrefix(absolutePrefixToRemove)
       else pathString.removePrefix(relativePrefixToRemove)
     }
   }
@@ -268,14 +283,19 @@ private fun Location.stringPath(macroManager: PathMacroManager, originalUriBaseI
   }
 }
 
-private fun getPrefixesToRemove(project: Project, reportResults: List<Result>, originalUriBaseIds: OriginalUriBaseIds?): Pair<String, String> {
-  val projectDir = project.guessProjectDir() ?: return "" to ""
+private fun getPrefixesToRemove(
+  project: Project,
+  reportResults: List<Result>,
+  originalUriBaseIds: OriginalUriBaseIds?,
+  preferredContentRoot: VirtualFile?
+): Pair<String, String> {
+  val anchorRoot = preferredContentRoot ?: project.guessProjectDir() ?: return "" to ""
   val macroManager = PathMacroManager.getInstance(project)
   val paths = reportResults.flatMap { result ->
     result.locations?.mapNotNull { it.stringPath(macroManager, originalUriBaseIds) } ?: emptyList()
   }
-  val absolutePrefixToRemove = findPrefixToRemove(paths.filter { Path.of(it).isAbsolute }.toSet(), projectDir)
-  val relativePrefixToRemove = findPrefixToRemove(paths.filter { !Path.of(it).isAbsolute }.toSet(), projectDir)
+  val absolutePrefixToRemove = findPrefixToRemove(paths.filter { Path.of(it).isAbsolute }.toSet(), anchorRoot)
+  val relativePrefixToRemove = findPrefixToRemove(paths.filter { !Path.of(it).isAbsolute }.toSet(), anchorRoot)
   return absolutePrefixToRemove to relativePrefixToRemove
 }
 
@@ -287,7 +307,7 @@ private fun findPrefixToRemove(files: Set<String>, contentRoot: VirtualFile, che
     StringUtil.countChars(o, '/')
   }
   val sortedFiles = ContainerUtil.reverse(ContainerUtil.sorted(files, comparator))
-  
+
   // we want to find a prefix from which ALL checkFilesCount files are resolvable
   var commonPrefixes: Set<String>? = null
 
@@ -355,6 +375,27 @@ private fun Result.buildTraces(
 
 @VisibleForTesting
 fun Run.revisionId(): String? = versionControlProvenance?.firstOrNull()?.revisionId
+
+private fun pickVcsContentRoot(project: Project, run: Run): VirtualFile? {
+  val reportRepoUri = run.versionControlProvenance?.firstOrNull()?.repositoryUri?.toString()
+                        ?.takeIf { it.isNotBlank() } ?: return null
+  val normalizedReport = normalizeRepoUrl(reportRepoUri)
+  return GitRepositoryManager.getInstance(project).repositories
+    .firstOrNull { repo ->
+      repo.remotes.any { remote -> remote.urls.any { normalizeRepoUrl(it) == normalizedReport } }
+    }
+    ?.root
+}
+
+@VisibleForTesting
+fun normalizeRepoUrl(url: String): String {
+  var u = url.trim().lowercase()
+  u = u.removePrefix("ssh://").removePrefix("git://").removePrefix("https://").removePrefix("http://")
+  u = u.replace(Regex("^git@([^:/]+):"), "$1/")
+  u = u.removePrefix("git@")
+  u = u.removeSuffix("/").removeSuffix(".git")
+  return u
+}
 
 @Serializable
 data class SarifTrace(val description: String, val nodes: Collection<Node>) {
