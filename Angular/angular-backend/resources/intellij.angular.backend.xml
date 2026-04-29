@@ -410,6 +410,7 @@
     <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2TemplateBindingKey"
                                       hostLanguage="Angular2"
                                       implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingKeyReferenceProvider"/>
+    <typescript.kolar.transpiler implementation="org.angular2.lang.expr.service.kolar.AngularKolarTranspiler"/>
 
     <!-- CSS support -->
     <css.inclusionContext implementation="org.angular2.css.Angular2CssInclusionContext"/>
