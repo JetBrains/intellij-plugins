@@ -32,6 +32,9 @@ import java.util.EnumSet
 
 internal class AngularKolarTranspiler(private val project: Project) : KolarTranspiler {
 
+  override fun isHighlightingCandidate(file: VirtualFile): Boolean =
+    file.isInLocalFileSystem && file.fileType.let { it is HtmlFileType || it is SvgFileType }
+
   override fun isEnabled(file: VirtualFile): Boolean =
     Angular2LangUtil.isAngular2Context(project, file)
 
