@@ -27,7 +27,7 @@ import com.intellij.openapi.vcs.versionBrowser.ChangeBrowserSettings;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl;
+import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
@@ -1695,7 +1695,7 @@ public final class PerforceRunner implements PerforceRunnerI {
       return retVal;
     }
 
-    PersistentFSImpl.flushPendingUpdatesOrNotify();
+    ManagingFS.getInstance().flushPendingUpdatesOrNotify();
 
     File tempFile = null;
     try {
