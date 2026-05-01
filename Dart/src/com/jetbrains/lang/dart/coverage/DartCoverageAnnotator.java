@@ -8,7 +8,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public class DartCoverageAnnotator extends SimpleCoverageAnnotator {
   public DartCoverageAnnotator(@NotNull Project project) {
@@ -20,7 +20,7 @@ public class DartCoverageAnnotator extends SimpleCoverageAnnotator {
   }
 
   @Override
-  protected @Nullable FileCoverageInfo fillInfoForUncoveredFile(final @NotNull File file) {
+  protected @Nullable FileCoverageInfo fillInfoForUncoveredFile(final @NotNull Path file) {
     return new FileCoverageInfo();
   }
 

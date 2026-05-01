@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -93,7 +93,7 @@ public final class DartCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  protected @NotNull String getQualifiedName(@NotNull File outputFile, @NotNull PsiFile sourceFile) {
+  protected @NotNull String getQualifiedName(@NotNull Path outputFile, @NotNull PsiFile sourceFile) {
     return getQName(sourceFile);
   }
 

@@ -37,7 +37,7 @@ interface CoverageCloudArtifactsProcessor {
     fun getCoverageRunner(file: File): CoverageRunner? {
       for (runner in CoverageRunner.EP_NAME.extensionList) {
         for (extension in runner.dataFileExtensions) {
-          if (Comparing.strEqual(file.extension, extension) && runner.canBeLoaded(file)) return runner
+          if (Comparing.strEqual(file.extension, extension) && runner.canBeLoaded(file.toPath())) return runner
         }
       }
       return null

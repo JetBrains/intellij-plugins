@@ -217,7 +217,7 @@ private fun computeProblemDescriptor(element: PsiElement, @InspectionMessage des
 private fun getCoverageRunner(file: File, engine: CoverageEngine): CoverageRunner? {
   for (runner in CoverageRunner.EP_NAME.extensionList) {
     for (extension in runner.dataFileExtensions) {
-      if (Comparing.strEqual(file.extension, extension) && runner.canBeLoaded(file) && runner.acceptsCoverageEngine(engine)) return runner
+      if (Comparing.strEqual(file.extension, extension) && runner.canBeLoaded(file.toPath()) && runner.acceptsCoverageEngine(engine)) return runner
     }
   }
   return null

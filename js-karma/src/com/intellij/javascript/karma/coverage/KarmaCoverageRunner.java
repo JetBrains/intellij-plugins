@@ -13,7 +13,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -28,14 +27,14 @@ public final class KarmaCoverageRunner extends CoverageRunner {
 
   @Override
   public @NotNull CoverageLoadingResult loadCoverageData(
-    @NotNull File sessionDataFile,
+    @NotNull Path sessionDataFile,
     @Nullable CoverageSuite baseCoverageSuite,
     @NotNull CoverageLoadErrorReporter reporter
   ) {
     Path localProjectRoot = myLocalProjectRoot;
     if (localProjectRoot != null) {
       try {
-        return CoverageProjectDataLoader.readProjectData(sessionDataFile.toPath(), localProjectRoot, myTargetRun, reporter);
+        return CoverageProjectDataLoader.readProjectData(sessionDataFile, localProjectRoot, myTargetRun, reporter);
       }
       catch (Exception e) {
         LOG.warn("Can't read coverage data", e);

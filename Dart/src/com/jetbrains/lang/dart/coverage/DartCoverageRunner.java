@@ -27,11 +27,9 @@ import com.jetbrains.lang.dart.analyzer.DartLocalFileInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -41,7 +39,7 @@ public final class DartCoverageRunner extends CoverageRunner {
 
   @Override
   public @NotNull CoverageLoadingResult loadCoverageData(
-    final @NotNull File sessionDataFile,
+    final @NotNull Path sessionDataFile,
     @Nullable CoverageSuite baseCoverageSuite,
     @NotNull CoverageLoadErrorReporter reporter
   ) {
@@ -66,7 +64,7 @@ public final class DartCoverageRunner extends CoverageRunner {
   }
 
   private static CoverageLoadingResult doLoadCoverageData(
-    final @NotNull File sessionDataFile,
+    final @NotNull Path sessionDataFile,
     final @NotNull DartCoverageSuite coverageSuite,
     final @NotNull CoverageLoadErrorReporter reporter
   ) {
@@ -108,7 +106,7 @@ public final class DartCoverageRunner extends CoverageRunner {
 
     try {
       DartCoverageData data =
-        new Gson().fromJson(new BufferedReader(new FileReader(sessionDataFile, StandardCharsets.UTF_8)), DartCoverageData.class);
+        new Gson().fromJson(Files.newBufferedReader(sessionDataFile), DartCoverageData.class);
       if (data == null) {
         String message = "Coverage file does not contain valid data.";
         LOG.warn(message);

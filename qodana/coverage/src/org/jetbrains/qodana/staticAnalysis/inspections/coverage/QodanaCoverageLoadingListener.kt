@@ -5,13 +5,13 @@ import com.intellij.coverage.CoverageLoadingResult
 import com.intellij.coverage.FailedCoverageLoadingResult
 import com.intellij.coverage.SuccessCoverageLoadingResult
 import org.jetbrains.qodana.util.QodanaMessageReporter
-import java.io.File
+import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
 const val PRINTED_EXCEPTION_LIMIT: Int = 10
 
-class QodanaCoverageLoadingListener: CoverageLoadingListener {
+class QodanaCoverageLoadingListener : CoverageLoadingListener {
 
   companion object {
     fun buildTooManyErrorMessage(filePath: String): String =
@@ -19,13 +19,13 @@ class QodanaCoverageLoadingListener: CoverageLoadingListener {
   }
 
   private val reporter = QodanaMessageReporter.DEFAULT
-  private val reportedErrors = ConcurrentHashMap<File, AtomicInteger>()
+  private val reportedErrors = ConcurrentHashMap<Path, AtomicInteger>()
 
-  override fun coverageLoadingStarted(coverageFile: File) {
+  override fun coverageLoadingStarted(coverageFile: Path) {
     reporter.reportMessage(1, "Started loading coverage from $coverageFile...")
   }
 
-  override fun reportCoverageLoaded(result: CoverageLoadingResult, coverageFile: File) {
+  override fun reportCoverageLoaded(result: CoverageLoadingResult, coverageFile: Path) {
     when (result) {
       is FailedCoverageLoadingResult ->
         reportError(coverageFile, "Could not load coverage from file $coverageFile: ${result.reason}", result.exception)
@@ -33,12 +33,12 @@ class QodanaCoverageLoadingListener: CoverageLoadingListener {
     }
   }
 
-  override fun reportCoverageLoadException(reason: String, coverageFile: File, e: Exception?) {
+  override fun reportCoverageLoadException(reason: String, coverageFile: Path, e: Exception?) {
     val message = "The coverage data from $coverageFile may be loaded incorrectly because of: $reason"
     reportError(coverageFile, message, e)
   }
 
-  private fun reportError(coverageFile: File, message: String, e: Exception? = null) {
+  private fun reportError(coverageFile: Path, message: String, e: Exception? = null) {
     val problemCounter = reportedErrors.getOrPut(coverageFile) { AtomicInteger(0) }
     val currentProblemCount = problemCounter.incrementAndGet()
     if (currentProblemCount <= PRINTED_EXCEPTION_LIMIT) {

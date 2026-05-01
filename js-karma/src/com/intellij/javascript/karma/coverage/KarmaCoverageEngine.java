@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -89,7 +90,7 @@ public final class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  protected String getQualifiedName(@NotNull File outputFile, @NotNull PsiFile sourceFile) {
+  protected String getQualifiedName(@NotNull Path outputFile, @NotNull PsiFile sourceFile) {
     return getQName(sourceFile);
   }
 
