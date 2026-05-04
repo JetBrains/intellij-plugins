@@ -239,6 +239,7 @@ class QodanaProblemsViewPanel(
       label.apply {
         border = JBUI.Borders.empty(4)
         font = Fonts.label().asBold()
+        setCopyable(true)
       }
       val gc = GridBagConstraints()
       gc.weightx = 1.0
