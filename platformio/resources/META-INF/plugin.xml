@@ -31,7 +31,6 @@
     <module name="intellij.cidr.debugger.backend"/>
     <module name="intellij.cidr.debugger.core"/>
     <module name="intellij.cidr.execution"/>
-    <module name="intellij.cidr.externalSystem"/>
     <module name="intellij.cidr.lang.base"/>
     <module name="intellij.cidr.profiling"/>
     <module name="intellij.cidr.projectModel"/>

@@ -15,7 +15,6 @@
     <orderEntry type="module" module-name="intellij.cidr.debugger.backend" />
     <orderEntry type="module" module-name="intellij.cidr.debugger.core" />
     <orderEntry type="module" module-name="intellij.cidr.execution" />
-    <orderEntry type="module" module-name="intellij.cidr.externalSystem" />
     <orderEntry type="module" module-name="intellij.cidr.lang.base" />
     <orderEntry type="module" module-name="intellij.cidr.profiling" />
     <orderEntry type="module" module-name="intellij.cidr.projectModel" />
