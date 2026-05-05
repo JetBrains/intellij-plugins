@@ -294,9 +294,10 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testCustomDirectives() {
-    myFixture.copyDirectoryToProject("../common/customDirectives", ".")
-    myFixture.configureFromTempProjectFile("CustomDirectives.vue")
-    myFixture.checkHighlighting(true, false, true)
+    doHighlightingTest(
+      configureFileName = "${getTestName(false)}.vue",
+      dirName = "../common/customDirectives",
+    )
   }
 
   @Test
