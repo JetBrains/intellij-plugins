@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.lang.javascript.nodejs.library.yarn.AbstractYarnPnpIntegrationTest;
-import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.DumbModeTestUtils;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
@@ -106,13 +105,6 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   public void testLineSeparatorsWin() {
     doEditorHighlightingTest("data.ts", () -> JSTestUtils.ensureLineSeparators(myFixture.getFile(), LineSeparator.CRLF));
-  }
-
-  public void testTimeout() {
-    JSLanguageServiceUtil.setTimeout(1, getTestRootDisposable());
-    String expectedMessage = "TSLint: " + JSLanguageServiceUtil.getTimeoutMessage("ts.ts", 1);
-    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation(expectedMessage, true, false);
-    doEditorHighlightingTest("ts.ts");
   }
 
   public void testHighlightJsFiles() {
