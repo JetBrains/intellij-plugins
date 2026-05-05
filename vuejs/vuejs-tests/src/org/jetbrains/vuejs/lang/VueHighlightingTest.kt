@@ -580,12 +580,15 @@ abstract class VueHighlightingTestBase(
 
   @Test
   fun testEmptyTags() {
-    myFixture.configureVueDependencies()
-    myFixture.enableInspections(CheckTagEmptyBodyInspection())
-    myFixture.copyDirectoryToProject("emptyTags", ".")
-    for (file in listOf("test.vue", "test-html.html", "test-reg.html")) {
-      myFixture.configureFromTempProjectFile(file)
-      myFixture.checkHighlighting()
+    doConfiguredTest(
+      configureFile = false,
+    ) {
+      enableInspections(CheckTagEmptyBodyInspection())
+
+      for (file in listOf("test.vue", "test-html.html", "test-reg.html")) {
+        configureFromTempProjectFile(file)
+        checkHighlighting()
+      }
     }
   }
 
