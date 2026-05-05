@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
@@ -22,6 +23,7 @@ import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUti
 import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspection
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
+import org.jetbrains.vuejs.VueLspConfigurator
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
@@ -61,6 +63,12 @@ abstract class VueHighlightingWithPluginTestBase(
     disableTypeScriptServiceWarnings()
   }
 
+  override fun adjustConfigurators(
+    configurators: List<PolySymbolsTestConfigurator>,
+  ): List<PolySymbolsTestConfigurator> =
+    super.adjustConfigurators(configurators)
+      .plus(VueLspConfigurator())
+
   @Ignore
   // flaky
   override fun testInferPropType() {
@@ -70,7 +78,7 @@ abstract class VueHighlightingWithPluginTestBase(
   // flaky
   override fun testSourceScopedSlots() {
   }
-  
+
   @Ignore
   // flaky
   override fun testClassComponentAnnotationWithLocalComponent() {
