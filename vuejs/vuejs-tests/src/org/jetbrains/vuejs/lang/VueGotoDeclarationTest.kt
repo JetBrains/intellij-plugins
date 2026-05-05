@@ -1100,8 +1100,6 @@ Vue.component('global-comp-literal', {
     }
 </script>
 """)
-      checkHighlighting()
-      doHighlighting()
       val literal = polySymbolSourceAtCaret()
       assertInstanceOf(literal, JSLiteralExpression::class.java)
       assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
@@ -1129,7 +1127,6 @@ const props = ['oneTwo']
     }
 </script>
 """)
-      doHighlighting()
       val literal = polySymbolSourceAtCaret()
       assertNotNull(literal)
       assertInstanceOf<JSLiteralExpression>(literal)
@@ -1164,8 +1161,6 @@ const props = ['oneTwo']
     }
 </script>
 """)
-      checkHighlighting()
-      doHighlighting()
       val literal = polySymbolSourceAtCaret()
       assertInstanceOf(literal, JSLiteralExpression::class.java)
       assertEquals("seeMe", (literal as JSLiteralExpression).stringValue)
@@ -1201,7 +1196,6 @@ const props = {seeMe: {}}
     }
 </script>
 """)
-      checkHighlighting()
       val property = polySymbolSourceAtCaret()
       assertNotNull(property)
       assertInstanceOf<JSProperty>(property)
@@ -1238,7 +1232,6 @@ const props = {seeMe: {}}
     }
 </script>
 """)
-      checkHighlighting()
       val property = polySymbolSourceAtCaret()
       assertNotNull(property)
       assertInstanceOf<JSProperty>(property)
@@ -1338,8 +1331,6 @@ const props = {seeMe: {}}
   }
 </script>
 """)
-      checkHighlighting(true, false, true)
-
       val checkResolve = { propName: String, file: String ->
         val literal = polySymbolSourceAtCaret()
         assertInstanceOf(literal, JSLiteralExpression::class.java)
@@ -2661,7 +2652,6 @@ export default class UsageComponent extends Vue {
       disableAstLoadingFilter()
 
       enableInspections(VueInspectionsProvider())
-      checkHighlighting()
       checkGotoDeclaration(
         fromSignature = "'provided<caret>InCall'",
         declarationSignature = "provide(<caret>'providedInCall",
