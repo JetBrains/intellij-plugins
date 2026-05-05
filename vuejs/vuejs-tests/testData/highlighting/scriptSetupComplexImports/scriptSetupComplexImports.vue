@@ -20,12 +20,12 @@
 <script setup lang="ts">
 import {TreeModal, BasicModal, ComplexModal, DefaultModal, Bar, eventHandler} from './hooks/Modal'
 
-import BasicModalDirect from "./hooks/Modal/BasicModal.vue"
-import TreeModalDirect from "./hooks/Modal/BasicModal.vue"
-import ComplexModalDirect from "./hooks/Modal/BasicModal.vue"
-import DefaultModalDirect from "./hooks/Modal/BasicModal.vue"
+import BasicModalDirect from "./hooks/Modal/components/BasicModal.vue"
+import TreeModalDirect from "./hooks/Modal/components/BasicModal.vue"
+import ComplexModalDirect from "./hooks/Modal/components/BasicModal.vue"
+import DefaultModalDirect from "./hooks/Modal/components/BasicModal.vue"
 
-<warning descr="Unused import FooBar from \"./hooks/Modal/BasicModal.vue\"">import FooBar from "./hooks/Modal/BasicModal.vue"</warning>
+<warning descr="Unused import FooBar from \"./hooks/Modal/components/BasicModal.vue\"">import FooBar from "./hooks/Modal/components/BasicModal.vue"</warning>
 
 import { <warning descr="Unused import specifier Tab">Tab</warning>, TabGroup, TabList } from "@headlessui/vue";
 
