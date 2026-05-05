@@ -13,11 +13,13 @@ import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.actions.VcsContextFactory;
 import com.intellij.openapi.vcs.changes.ChangeList;
+import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.ChangeListManagerGate;
 import com.intellij.openapi.vcs.changes.ChangeProvider;
 import com.intellij.openapi.vcs.changes.ChangelistBuilder;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vcs.changes.VcsDirtyScope;
+import com.intellij.openapi.vfs.VFileProperty;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
@@ -285,6 +287,37 @@ public class PerforceChangeProvider implements ChangeProvider {
 
   public static Set<VirtualFile> collectWritableFiles(PerforceReadOnlyFileStateManager readOnlyFileStateManager, VcsDirtyScope dirtyScope,
                                                       boolean withIgnored) {
+    if (!dirtyScope.wasEveryThingDirty()) {
+      Collection<FilePath> dirtyFiles = dirtyScope.getDirtyFilesNoExpand();
+
+      // Fast path: all dirty entries are specific files (most common case: single p4 edit).
+      // Read writability directly from the VirtualFile — no cache scan needed.
+      if (dirtyScope.getRecursivelyDirtyDirectories().isEmpty() &&
+          dirtyFiles.stream().noneMatch(FilePath::isDirectory)) {
+        Project project = dirtyScope.getProject();
+        ChangeListManager changeListManager = ChangeListManager.getInstance(project);
+        Set<VirtualFile> writableFiles = new HashSet<>();
+        for (FilePath fp : dirtyFiles) {
+          VirtualFile vf = fp.getVirtualFile();
+          if (vf == null || !vf.isWritable() || vf.is(VFileProperty.SYMLINK)) continue;
+          if (!withIgnored && changeListManager.isIgnoredFile(vf)) continue;
+          writableFiles.add(vf);
+        }
+        logRefreshDebug("fast path: %d writable files from dirty scope".formatted(writableFiles.size()));
+        return writableFiles;
+      }
+
+      // Scoped path: dirty scope contains directories — scan the cached writable-file set but
+      // pre-filter by dirtyScope.belongsTo() before the expensive isIgnoredFile() call.
+      Set<VirtualFile> writableFiles = new HashSet<>();
+      for (VirtualFile root : dirtyScope.getAffectedContentRoots()) {
+        readOnlyFileStateManager.addWritableFiles(root, writableFiles, withIgnored, dirtyScope);
+      }
+      logRefreshDebug("scoped path: %d writable files from dirty scope".formatted(writableFiles.size()));
+      return writableFiles;
+    }
+
+    // Full-scan path: everything is dirty (startup, focus-regain, manual full refresh).
     Stopwatch sw = Stopwatch.createStarted();
     Collection<VirtualFile> dirtyRoots = dirtyScope.getAffectedContentRoots();
     Set<VirtualFile> writableFiles = new HashSet<>();
