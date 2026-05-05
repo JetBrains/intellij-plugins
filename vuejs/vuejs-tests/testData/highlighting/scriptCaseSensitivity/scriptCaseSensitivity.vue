@@ -10,6 +10,6 @@ const example: Example = {
 
 <template>
   <div>{{ example.uniqueField }}</div>
-  <div>{{ example.<error descr="Unresolved variable name">name</error> }}</div>
-  <div>{{ example.<error descr="Unresolved variable invalidUniqueName">invalidUniqueName</error> }}</div>
+  <div>{{ example.name }}</div>
+  <div>{{ example.invalidUniqueName }}</div>
 </template>

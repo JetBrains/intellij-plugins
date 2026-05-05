@@ -3,7 +3,7 @@ import * as Vue from "vue" // load defineProps
 interface TopObj {
   b: string
 }
-let foo: <error descr="Unresolved type Clearable">Clearable</error>
+let foo: Clearable
 foo.a;
 foo.b;
 </script>
@@ -22,27 +22,27 @@ const {clearable, value} = defineProps<{
   value: ValueType;
 }>()
 
-clearable.<error descr="Unresolved variable a">a</error>;
+clearable.a;
 clearable.b;
 value.a;
-value.<error descr="Unresolved variable b">b</error>;
+value.b;
 
 </script>
 <template>
-  <div v-if="(value as Clearable).<error descr="Unresolved variable a">a</error>"></div>
+  <div v-if="(value as Clearable).a"></div>
   <div v-if="(value as Clearable).b"></div>
-  {{ (value as Clearable).<error descr="Unresolved variable a">a</error> }}
+  {{ (value as Clearable).a }}
   {{ (value as Clearable).b }}
   <div v-if="value.a"></div>
-  <div v-if="value.<error descr="Unresolved variable b">b</error>"></div>
+  <div v-if="value.b"></div>
   {{ value.a }}
-  {{ value.<error descr="Unresolved variable b">b</error> }}
+  {{ value.b }}
   <div v-if="(clearable as ValueType).a"></div>
-  <div v-if="(clearable as ValueType).<error descr="Unresolved variable b">b</error>"></div>
+  <div v-if="(clearable as ValueType).b"></div>
   {{ (clearable as ValueType).a }}
-  {{ (clearable as ValueType).<error descr="Unresolved variable b">b</error> }}
-  <div v-if="clearable.<error descr="Unresolved variable a">a</error>"></div>
+  {{ (clearable as ValueType).b }}
+  <div v-if="clearable.a"></div>
   <div v-if="clearable.b"></div>
-  {{ clearable.<error descr="Unresolved variable a">a</error> }}
+  {{ clearable.a }}
   {{ clearable.b }}
 </template>

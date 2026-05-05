@@ -1,10 +1,10 @@
 <template>
-  <div :title="'foo' | localFilter<error descr="Invalid number of filter arguments, expected 2">(12)</error>"></div>
-  <div :title="false | localFilter('ss',<error descr="Argument type \"ss\" is not assignable to parameter type number">'ss'</error>)"></div>
-  <div :title="<error descr="Argument type number is not assignable to parameter type boolean">true | localFilter('str', 12)</error> | localFilter2('sss', 12)"></div>
-  <div :title="true | <error descr="Filter function should accept at least one argument">badFilter</error>"></div>
-  <div :title="12 | <error descr="Unresolved filter unknownFilter">unknownFilter</error>(123)"></div>
-  <div :title="'foo' | get<error descr="Invalid number of filter arguments, expected 1">()</error>"/>
+  <div :title="'foo' | localFilter(12)"></div>
+  <div :title="false | localFilter('ss','ss')"></div>
+  <div :title="true | localFilter('str', 12) | localFilter2('sss', 12)"></div>
+  <div :title="true | badFilter"></div>
+  <div :title="12 | unknownFilter(123)"></div>
+  <div :title="'foo' | get()"/>
 </template>
 
 <script lang="ts">

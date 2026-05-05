@@ -1,5 +1,5 @@
 <template>
-  <div id="scroller" v-on:click="<error descr="Attempt to assign to const or readonly variable">foo</error> = <error descr="Assigned expression type 12 is not assignable to type boolean">12</error>"></div>
+  <div id="scroller" v-on:click="foo = 12"></div>
   <div id="scrollers" v-on:click="onScrolled"></div>
   {{12 + foo}}
   {{bar}}
@@ -10,7 +10,7 @@
 
   export default
   @Component({})
-  class Index extends <error descr="No base constructor has the specified number of type arguments">Vue</error> {
+  class Index extends Vue {
 
     constructor(props, private bar: boolean, private <warning descr="Unused field unusedBar">unusedBar</warning>) {
       super(props)

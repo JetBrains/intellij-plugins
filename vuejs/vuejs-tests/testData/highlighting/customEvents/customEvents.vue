@@ -33,10 +33,10 @@ function handleNotAssignable(value: number, more: string): void {
 <template>
     <CustomEvents
           v-on:add="handle"
-          @change="<error descr="Type (value: number, more: string) => void is not assignable to type () => void">handleNotAssignable</error>"
+          @change="handleNotAssignable"
           v-on:delete="count--"
-          v-on:insert="<error descr="Type (idx: any, extraArg: any) => void is not assignable to type (idx: number) => void">(idx, extraArg) => { console.log(idx, extraArg); }</error>"
+          v-on:insert="(idx, extraArg) => { console.log(idx, extraArg); }"
           v-on:save="idx => { console.log(idx); }"
-          v-on:reload="<error descr="Type (uuid: string) => void is not assignable to type (idx: number) => void  Type number is not assignable to type string    Type string is not assignable to type number">handlers.nested['handle']</error>"
+          v-on:reload="handlers.nested['handle']"
           v-on:something="handlers.nested['handle']"/>
 </template>

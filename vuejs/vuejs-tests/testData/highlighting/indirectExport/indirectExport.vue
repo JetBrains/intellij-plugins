@@ -10,7 +10,7 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
 
 @Component
-class HelloWorld2 extends <error descr="No base constructor has the specified number of type arguments">Vue</error> {
+class HelloWorld2 extends Vue {
   fooString: string | number = 'some string';
   barString: string | number | undefined;
 

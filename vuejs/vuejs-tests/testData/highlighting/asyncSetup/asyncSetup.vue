@@ -1,7 +1,7 @@
 <template>
   <div>
     <p>{{ stories }}</p>
-    <p>{{ <error descr="Unresolved variable or type fooBar">fooBar</error> }}</p>
+    <p>{{ fooBar }}</p>
     <div @input="getFoo()" />
   </div>
 </template>
