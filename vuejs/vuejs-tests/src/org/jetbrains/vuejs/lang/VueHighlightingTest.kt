@@ -47,7 +47,11 @@ class VueHighlightingTest :
     VueHighlightingWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
   class WithoutServiceTest :
-    VueHighlightingTestBase(testMode = VueTestMode.NO_PLUGIN)
+    VueHighlightingTestBase(testMode = VueTestMode.NO_PLUGIN) {
+
+    override val defaultDirName: String
+      get() = super.defaultDirName + "_legacy"
+  }
 }
 
 abstract class VueHighlightingWithPluginTestBase(

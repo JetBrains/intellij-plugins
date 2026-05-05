@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+<body>
+
+<header>
+    <h1>Test</h1>
+    <p>{{<weak_warning descr="Unresolved variable or type counter">counter</weak_warning>}}</p>
+</header>
+
+<section id="test">
+    <button @click="add(1)">Add</button>
+    <p>{{counter}}</p>
+    <p>{{<weak_warning descr="Unresolved variable or type foo">foo</weak_warning>}}</p>
+</section>
+<script src="app.js"></script>
+</body>
+</html>
