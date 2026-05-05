@@ -102,6 +102,32 @@ public final class PerforceReadOnlyFileStateManager {
     }
   }
 
+  public void addWritableFiles(VirtualFile root, Collection<VirtualFile> writableFiles, boolean withIgnored,
+                               @NotNull VcsDirtyScope scopeFilter) {
+    Set<VirtualFile> writablesUnderRoot = new HashSet<>();
+    boolean needInit = false;
+    synchronized (myWritableFiles) {
+      if (!myWritableFiles.containsKey(root)) {
+        needInit = true;
+      }
+      Set<VirtualFile> currentFilesUnderRoot = myWritableFiles.get(root);
+      if (currentFilesUnderRoot != null) {
+        writablesUnderRoot = new HashSet<>(currentFilesUnderRoot);
+      }
+    }
+
+    if (needInit) {
+      writablesUnderRoot = initializeWritableFiles(root);
+    }
+
+    for (VirtualFile vf : writablesUnderRoot) {
+      if (!scopeFilter.belongsTo(VcsUtil.getFilePath(vf))) continue;
+      if (withIgnored || !ChangeListManager.getInstance(myProject).isIgnoredFile(vf)) {
+        writableFiles.add(vf);
+      }
+    }
+  }
+
   private Set<VirtualFile> initializeWritableFiles(VirtualFile root) {
     Set<VirtualFile> newWritableFiles = new HashSet<>();
     myVcsManager.iterateVfUnderVcsRoot(root, vf -> {
