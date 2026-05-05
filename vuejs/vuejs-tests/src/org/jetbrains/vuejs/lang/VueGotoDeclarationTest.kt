@@ -2492,7 +2492,7 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      configureByFile("${getTestName(true)}.vue")
+      configureByFile("${testName}.vue")
       sequenceOf(
         "@<caret>add" to "<caret>add,\n",
         "@ch<caret>ange" to "<caret>change(ctx) {\n",
@@ -2508,7 +2508,7 @@ export default class UsageComponent extends Vue {
     doConfiguredTest(
       configureFile = false,
     ) {
-      configureByFile("${getTestName(true)}.vue")
+      configureByFile("${testName}.vue")
       sequenceOf(
         "m<caret>sg=\"You did it!\"" to "<caret>msg: {type:",
         "auto<caret>focus :value" to "<caret>autofocus: Boolean",

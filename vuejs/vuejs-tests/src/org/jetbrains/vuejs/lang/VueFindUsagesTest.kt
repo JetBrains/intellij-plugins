@@ -31,7 +31,7 @@ abstract class VueFindUsagesTestBase(
     true
 
   private fun CodeInsightTestFixture.useSeparateTestDataPath() {
-    testDataPath += "/" + getTestName(true)
+    testDataPath += "/$defaultDirName"
   }
 
   @Test
