@@ -140,7 +140,7 @@ jvm_library(
     "//plugins/css/common/psi",
     "//plugins/tailwindcss",
     "//plugins/tailwindcss:tailwindcss_test_lib",
-    "//platform/lsp/testFramework",
+    "@community//platform/lsp/testFramework",
     "//contrib/Angular/angular-plugin",
     "//contrib/Angular/angular-backend",
     "//contrib/Angular/angular-tslint",
