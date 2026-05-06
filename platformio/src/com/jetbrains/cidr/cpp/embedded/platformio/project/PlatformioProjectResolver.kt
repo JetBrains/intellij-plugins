@@ -59,11 +59,11 @@ import com.jetbrains.cidr.cpp.embedded.platformio.ui.showUntrustedProjectLoadDia
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.cpp.external.system.project.attachExternalModule
 import com.jetbrains.cidr.cpp.toolchains.CPPCompilerSwitchesUtil
-import com.jetbrains.cidr.external.system.model.ExternalLanguageConfiguration
-import com.jetbrains.cidr.external.system.model.ExternalModule
-import com.jetbrains.cidr.external.system.model.impl.ExternalLanguageConfigurationImpl
-import com.jetbrains.cidr.external.system.model.impl.ExternalModuleImpl
-import com.jetbrains.cidr.external.system.model.impl.ExternalResolveConfigurationBuilder
+import com.jetbrains.cidr.cpp.external.system.model.ExternalLanguageConfiguration
+import com.jetbrains.cidr.cpp.external.system.model.ExternalModule
+import com.jetbrains.cidr.cpp.external.system.model.impl.ExternalLanguageConfigurationImpl
+import com.jetbrains.cidr.cpp.external.system.model.impl.ExternalModuleImpl
+import com.jetbrains.cidr.cpp.external.system.model.impl.ExternalResolveConfigurationBuilder
 import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.toolchains.CidrSwitchBuilder
 import com.jetbrains.cidr.lang.workspace.compiler.GCCCompilerKind

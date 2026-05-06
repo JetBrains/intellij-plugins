@@ -19,7 +19,7 @@ import com.jetbrains.cidr.cpp.external.system.linkExternalProject
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cidr.cpp.toolchains.TrivialNativeToolchain
-import com.jetbrains.cidr.external.system.workspace.ExternalWorkspace
+import com.jetbrains.cidr.cpp.external.system.workspace.ExternalWorkspace
 import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
 import com.jetbrains.cidr.project.workspace.CidrWorkspaceProvider
 import com.jetbrains.cidr.project.workspace.WorkspaceWithEnvironment

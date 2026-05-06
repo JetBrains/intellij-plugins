@@ -3,7 +3,7 @@ package com.intellij.clion.embedded.platformio
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ProjectData
-import com.jetbrains.cidr.external.system.model.ExternalModule
+import com.jetbrains.cidr.cpp.external.system.model.ExternalModule
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 

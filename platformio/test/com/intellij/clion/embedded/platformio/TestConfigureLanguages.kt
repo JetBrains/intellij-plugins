@@ -6,7 +6,7 @@ import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.tempPathFixture
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectResolver
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspace
-import com.jetbrains.cidr.external.system.model.impl.ExternalResolveConfigurationBuilder
+import com.jetbrains.cidr.cpp.external.system.model.impl.ExternalResolveConfigurationBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.io.path.Path

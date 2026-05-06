@@ -21,8 +21,8 @@ import com.jetbrains.cidr.cpp.external.system.project.command.CPPCompilationComm
 import com.jetbrains.cidr.cpp.external.system.project.command.CPPCompilationCommandParser
 import com.jetbrains.cidr.cpp.external.system.project.command.CantFindCompilerExecutable
 import com.jetbrains.cidr.cpp.toolchains.CPPCompilerSwitchesUtil
-import com.jetbrains.cidr.external.system.model.ExternalLanguageConfiguration
-import com.jetbrains.cidr.external.system.model.impl.ExternalResolveConfigurationBuilder
+import com.jetbrains.cidr.cpp.external.system.model.ExternalLanguageConfiguration
+import com.jetbrains.cidr.cpp.external.system.model.impl.ExternalResolveConfigurationBuilder
 import com.jetbrains.cidr.lang.OCFileTypeHelpers
 import com.jetbrains.cidr.lang.toolchains.CidrSwitchBuilder
 import org.jetbrains.annotations.Nls

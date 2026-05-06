@@ -26,7 +26,7 @@ import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTar
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectResolver
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioRunConfigurationManagerHelper
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
-import com.jetbrains.cidr.external.system.model.ExternalModule
+import com.jetbrains.cidr.cpp.external.system.model.ExternalModule
 import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.OCLanguageKind
 import com.jetbrains.cidr.lang.workspace.compiler.GCCCompilerKind

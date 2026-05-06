@@ -10,8 +10,8 @@ import com.jetbrains.cidr.project.workspace.CidrWorkspaceState
 /**
  * Marks workspaces as Loaded when an external system import fails at the resolve phase.
  *
- * When the resolver throws (e.g. broken Makefile), [com.jetbrains.cidr.external.system.service.ExternalModuleDataService.postProcess]
- * is never called, so [com.jetbrains.cidr.external.system.workspace.ExternalWorkspace.doUpdate] never runs and the workspace stays
+ * When the resolver throws (e.g. broken Makefile), `ExternalModuleDataService.postProcess`
+ * is never called, so `ExternalWorkspace.doUpdate` never runs and the workspace stays
  * stuck in [CidrWorkspaceState.Initialized]. Per the ExternalWorkspace doc comment:
  * "In that case you must call CidrWorkspaceManager.markLoaded yourself."
  *
