@@ -1,1 +1,1 @@
-<template><div <warning descr="v-if requires value">v-if</warning>></div></template>
+<template><div <error descr="Vue: v-if/v-else-if is missing expression."><warning descr="v-if requires value">v-if</warning></error>></div></template>

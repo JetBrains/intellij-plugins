@@ -1,3 +1,3 @@
 <template>
-  <div v-for=></div>
+  <div <error descr="Vue: v-for has invalid expression.">v-for=</error>></div>
 </template>

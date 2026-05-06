@@ -6,7 +6,7 @@
       <span v-if="isFolder">[{{ open ? "-" : "+" }}]</span>
     </div>
     <ul v-if="isFolder" v-show="open">
-      <tree-item class="item" v-for="model in model.children" :model="model" :foo="123"></tree-item>
+      <tree-item class="item" <warning descr="Vue: <tree-item v-for=\"model in model.children\">: component lists rendered with v-for should have explicit keys. See https://v2.vuejs.org/v2/guide/list.html#key for more info.">v-for="model in model.children"</warning> :model="model" :foo="123"></tree-item>
       <<warning descr="Unknown html tag tree-items">tree-items</warning>>{{<weak_warning descr="Unresolved variable or type clossed">clossed</weak_warning>}}</<warning descr="Unknown html tag tree-items">tree-items</warning>>
       <li class="add" @click="addChild" @show="<weak_warning descr="Unresolved variable or type doShow">doShow</weak_warning>">+</li>
     </ul>

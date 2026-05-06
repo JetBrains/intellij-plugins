@@ -7,7 +7,7 @@ const count = ref(0)
 </script>
 
 <template>
-  <with-slots @[bar] :[foo]>
+  <with-slots <error descr="Vue: v-on is missing expression.">@[bar]</error> <error descr="Vue: v-bind is missing expression.">:<error descr="Vue: v-bind with same-name shorthand only allows static argument.">[foo]</error></error>>
     <template #[fooBar]="{}">
       Test
     </template>

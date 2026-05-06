@@ -79,6 +79,10 @@ abstract class VueTestCase(
         myFixture.tempDirFixture.getFile(VueTsConfigFile.FILE_NAME)!!,
       )
     }
+    
+    configuration.configurators
+      .filterIsInstance<VueLspConfigurator>()
+      .forEach { it.waitForLspServer(myFixture) }
 
     runInEdtAndWait {
       FileDocumentManager.getInstance().saveAllDocuments()

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>
+    <error descr="Vue: Element is missing end tag."></error><p>
     <<warning descr="Element p is not allowed here">p</warning>>
       <<warning descr="Element div is not allowed here">div</warning>></<warning descr="Element div is not allowed here">div</warning>>
     </<warning descr="Element p is not allowed here">p</warning>>

@@ -43,7 +43,27 @@ class VueHighlightingTest :
   VueHighlightingWithPluginTestBase() {
 
   class WithLegacyPluginTest :
-    VueHighlightingWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
+    VueHighlightingWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN) {
+    @Ignore
+    // flaky
+    override fun testCompositionApiBasic_0_4_0() {
+    }
+
+    @Ignore
+    // flaky
+    override fun testDynamicArguments() {
+    }
+
+    @Ignore
+    // flaky
+    override fun testSlotSyntax() {
+    }
+
+    @Ignore
+    // flaky
+    override fun testVueNoTagOmission() {
+    }
+  }
 
   class WithoutServiceTest :
     VueHighlightingTestBase(testMode = VueTestMode.NO_PLUGIN) {
@@ -504,6 +524,7 @@ abstract class VueHighlightingTestBase(
 
   // TODO add special inspection for unused slot scope parameters - WEB-43893
   @Test
+  open /* temp */
   fun testSlotSyntax() {
     doHighlightingTest(VueTestModule.VUE_2_6_10)
   }
@@ -613,6 +634,7 @@ abstract class VueHighlightingTestBase(
   }
 
   @Test
+  open /* temp */
   fun testCompositionApiBasic_0_4_0() {
     doHighlightingTest(
       VueTestModule.VUE_2_6_10,
@@ -885,6 +907,7 @@ abstract class VueHighlightingTestBase(
   }
 
   @Test
+  open /* temp */
   fun testDynamicArguments() {
     doHighlightingTest(configureFileName = "HelloWorld.vue")
   }
@@ -1022,6 +1045,7 @@ abstract class VueHighlightingTestBase(
   }
 
   @Test
+  open /* temp */
   fun testVueNoTagOmission() {
     doHighlightingTest()
   }

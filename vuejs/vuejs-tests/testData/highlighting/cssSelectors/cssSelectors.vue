@@ -1,22 +1,36 @@
 <style scoped>
 /* deprecated selector */
-::<weak_warning descr="v-deep is deprecated, consult docs for better alternative">v-deep</weak_warning> .foo {}
+::<weak_warning descr="v-deep is deprecated, consult docs for better alternative">v-deep</weak_warning> .foo {
+  color: aqua;  
+}
 /* deep selectors */
-::v-deep(.foo) {}
+::v-deep(.foo) {
+  color: aqua;  
+}
 /* shorthand */
-:deep(.foo) {}
+:deep(.foo) {
+  color: aqua;  
+}
 
 /* targeting slot content */
-::v-slotted(.foo) {}
+::v-slotted(.foo) {
+  color: aqua;  
+}
 /* shorthand */
-:slotted(.foo) {}
+:slotted(.foo) {
+  color: aqua;  
+}
 
 /* one-off global rule */
-::v-global(.foo) {}
+::v-global(.foo) {
+  color: aqua;  
+}
 /* shorthand */
-:global(.foo) {}
+:global(.foo) {
+  color: aqua;  
+}
 
-::<error descr="Unknown pseudo selector 'v-glob'">v-glob</error> {
+<warning descr="Vue: Do not use empty rulesets">::<error descr="Unknown pseudo selector 'v-glob'">v-glob</error></warning> {
 
 }
 </style>
