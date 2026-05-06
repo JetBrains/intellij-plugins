@@ -9,7 +9,7 @@ jvm_library(
   resources = glob(["resources/**/*"]),
   resource_strip_prefix = "resources",
   deps = [
-    "@ultimate_lib//:eclipse-lsp4j-jsonrpc",
+    "@lib//:eclipse-lsp4j-jsonrpc",
     "//CIDR/cidr-core",
     "//CIDR/cidr-debugger/backend-api:cidr-debugger-backend",
     "//CIDR/cidr-debugger/core",
@@ -167,7 +167,7 @@ jvm_library(
     "//contrib/platformio:platformio_test_lib",
   ],
   deps = [
-    "@ultimate_lib//:eclipse-lsp4j-jsonrpc",
+    "@lib//:eclipse-lsp4j-jsonrpc",
     "//CIDR/cidr-common-testFramework/core",
     "//CIDR/cidr-common-testFramework/core:core_test_lib",
     "//CIDR/cidr-common-testFramework/nolang",

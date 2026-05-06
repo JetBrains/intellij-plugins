@@ -13,7 +13,7 @@ jvm_library(
     "@community//xml/xml-parser:parser",
     "@community//spellchecker",
     "@community//platform/indexing-impl",
-    "//platform/lsp",
+    "@community//platform/lsp",
   ]
 )
 
@@ -104,14 +104,14 @@ jvm_library(
     "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
     "//plugins/webpack",
     "//plugins/webpack:webpack_test_lib",
-    "//platform/lsp",
-    "//platform/lsp:lsp_test_lib",
+    "@community//platform/lsp",
+    "@community//platform/lsp:lsp_test_lib",
     "@community//platform/lang-core",
     "@community//platform/lang-core:lang-core_test_lib",
     "@community//platform/polySymbols",
     "@community//platform/polySymbols:polySymbols_test_lib",
-    "//platform/lsp/testFramework",
-    "//platform/lsp/testFramework:testFramework_test_lib",
+    "@community//platform/lsp/testFramework",
+    "@community//platform/lsp/testFramework:testFramework_test_lib",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
     "@community//platform/polySymbols:polySymbols-testFramework",
