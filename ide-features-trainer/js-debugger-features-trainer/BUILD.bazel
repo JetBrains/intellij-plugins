@@ -1,11 +1,5 @@
 ### auto-generated section `build intellij.javascript.debugger.featuresTrainer` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library", "resourcegroup")
-
-resourcegroup(
-  name = "javascript-debugger-featuresTrainer_resources",
-  srcs = glob(["resources/**/*"]),
-  strip_prefix = "resources"
-)
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
 jvm_provided_library(
   name = "plugins_JavaScriptLanguage_javascript-backend_provided",
@@ -22,7 +16,8 @@ jvm_library(
   module_name = "intellij.javascript.debugger.featuresTrainer",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = [":javascript-debugger-featuresTrainer_resources"],
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
   deps = [
     "@lib//:kotlin-stdlib",
     "//plugins/JavaScriptLanguage/javascript-parser",

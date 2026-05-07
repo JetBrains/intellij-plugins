@@ -3,12 +3,6 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 resourcegroup(
   name = "deno_resources",
-  srcs = glob(["resources/**/*"]),
-  strip_prefix = "resources"
-)
-
-resourcegroup(
-  name = "deno_resources_1",
   srcs = glob(["gen-resources/**/*"]),
   strip_prefix = "gen-resources"
 )
@@ -18,10 +12,9 @@ jvm_library(
   module_name = "intellij.deno",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
-  resources = [
-    ":deno_resources",
-    ":deno_resources_1",
-  ],
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
+  resource_jars = [":deno_resources"],
   deps = [
     "@community//libraries/guava",
     "@community//libraries/gson",
@@ -118,12 +111,6 @@ exports_files([
 ### auto-generated section `iml intellij.deno` end
 
 ### auto-generated section `build intellij.deno.tests` start
-resourcegroup(
-  name = "deno-tests_test_resources",
-  srcs = glob(["testResources/**/*"]),
-  strip_prefix = "testResources"
-)
-
 jvm_library(
   name = "deno-tests",
   module_name = "intellij.deno.tests",
@@ -136,7 +123,8 @@ jvm_library(
   testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["test/src/**/*.kt", "test/src/**/*.java", "test/src/**/*.form"], allow_empty = True),
-  resources = [":deno-tests_test_resources"],
+  resources = glob(["testResources/**/*"]),
+  resource_strip_prefix = "testResources",
   associates = [
     "//contrib/Deno:deno",
     "//contrib/Deno:deno_test_lib",

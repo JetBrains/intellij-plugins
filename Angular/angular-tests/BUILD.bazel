@@ -1,11 +1,5 @@
 ### auto-generated section `build intellij.angular.tests` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
-
-resourcegroup(
-  name = "angular-tests_test_resources",
-  srcs = glob(["testData/**/*"]),
-  strip_prefix = "testData"
-)
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 jvm_library(
   name = "angular-tests",
@@ -67,7 +61,8 @@ jvm_library(
   module_name = "intellij.angular.tests",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form", "test-ex/**/*.kt", "test-ex/**/*.java", "test-ex/**/*.form"], allow_empty = True),
-  resources = [":angular-tests_test_resources"],
+  resources = glob(["testData/**/*"]),
+  resource_strip_prefix = "testData",
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-api:analysis_test_lib",

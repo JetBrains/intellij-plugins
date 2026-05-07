@@ -1,18 +1,13 @@
 ### auto-generated section `build intellij.dts.pp` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
-
-resourcegroup(
-  name = "pp_resources",
-  srcs = glob(["resources/**/*"]),
-  strip_prefix = "resources"
-)
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 jvm_library(
   name = "pp",
   module_name = "intellij.dts.pp",
   visibility = ["//visibility:public"],
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = [":pp_resources"],
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
@@ -60,12 +55,6 @@ exports_files([
 ### auto-generated section `iml intellij.dts.pp` end
 
 ### auto-generated section `build intellij.dts.pp.tests` start
-resourcegroup(
-  name = "pp-tests_test_resources",
-  srcs = glob(["testData/**/*"]),
-  strip_prefix = "testData"
-)
-
 jvm_library(
   name = "pp-tests",
   module_name = "intellij.dts.pp.tests",
@@ -79,7 +68,8 @@ jvm_library(
   testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form", "testGen/**/*.kt", "testGen/**/*.java"], allow_empty = True),
-  resources = [":pp-tests_test_resources"],
+  resources = glob(["testData/**/*"]),
+  resource_strip_prefix = "testData",
   associates = [
     "//contrib/dts/pp",
     "//contrib/dts/pp:pp_test_lib",

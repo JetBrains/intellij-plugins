@@ -1,6 +1,6 @@
 ### auto-generated section `build intellij.qodana` start
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 create_kotlinc_options(
   name = "custom_qodana",
@@ -12,18 +12,13 @@ create_kotlinc_options(
   x_sam_conversions = "class"
 )
 
-resourcegroup(
-  name = "qodana_resources",
-  srcs = glob(["core/resources/**/*"]),
-  strip_prefix = "core/resources"
-)
-
 jvm_library(
   name = "qodana",
   module_name = "intellij.qodana",
   visibility = ["//visibility:public"],
   srcs = glob(["core/src/**/*.kt", "core/src/**/*.java", "core/src/**/*.form"], allow_empty = True),
-  resources = [":qodana_resources"],
+  resources = glob(["core/resources/**/*"]),
+  resource_strip_prefix = "core/resources",
   kotlinc_opts = ":custom_qodana",
   deps = [
     "//contrib/qodana/util",
@@ -227,12 +222,6 @@ create_kotlinc_options(
   x_sam_conversions = "class"
 )
 
-resourcegroup(
-  name = "qodana-core-tests_test_resources",
-  srcs = glob(["core/test-data/**/*"]),
-  strip_prefix = "core/test-data"
-)
-
 jvm_library(
   name = "qodana-core-tests",
   module_name = "intellij.qodana.core.tests",
@@ -245,7 +234,8 @@ jvm_library(
   testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["core/tests/**/*.kt", "core/tests/**/*.java", "core/tests/**/*.form"], allow_empty = True),
-  resources = [":qodana-core-tests_test_resources"],
+  resources = glob(["core/test-data/**/*"]),
+  resource_strip_prefix = "core/test-data",
   kotlinc_opts = ":custom_qodana-core-tests",
   associates = [
     "//contrib/qodana",

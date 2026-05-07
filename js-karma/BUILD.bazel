@@ -7,21 +7,14 @@ resourcegroup(
   strip_prefix = "compatibilityResources"
 )
 
-resourcegroup(
-  name = "karma_resources_1",
-  srcs = glob(["resources/**/*"]),
-  strip_prefix = "resources"
-)
-
 jvm_library(
   name = "karma",
   module_name = "intellij.karma",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = [
-    ":karma_resources",
-    ":karma_resources_1",
-  ],
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
+  resource_jars = [":karma_resources"],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/util/concurrency",
@@ -136,12 +129,6 @@ exports_files([
 ### auto-generated section `iml intellij.karma` end
 
 ### auto-generated section `build intellij.karma.tests` start
-resourcegroup(
-  name = "karma-tests_test_resources",
-  srcs = glob(["testData/**/*"]),
-  strip_prefix = "testData"
-)
-
 jvm_library(
   name = "karma-tests",
   module_name = "intellij.karma.tests",
@@ -154,7 +141,8 @@ jvm_library(
   testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  resources = [":karma-tests_test_resources"],
+  resources = glob(["testData/**/*"]),
+  resource_strip_prefix = "testData",
   associates = [
     "//contrib/js-karma:karma",
     "//contrib/js-karma:karma_test_lib",

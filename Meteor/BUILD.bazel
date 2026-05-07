@@ -7,21 +7,14 @@ resourcegroup(
   strip_prefix = "compatibilityResources"
 )
 
-resourcegroup(
-  name = "meteor_resources_1",
-  srcs = glob(["resources/**/*"]),
-  strip_prefix = "resources"
-)
-
 jvm_library(
   name = "meteor",
   module_name = "intellij.meteor",
   visibility = ["//visibility:public"],
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = [
-    ":meteor_resources",
-    ":meteor_resources_1",
-  ],
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
+  resource_jars = [":meteor_resources"],
   deps = [
     "@community//libraries/gson",
     "@community//platform/analysis-api:analysis",

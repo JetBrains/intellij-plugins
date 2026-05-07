@@ -16,12 +16,6 @@ create_kotlinc_options(
 
 resourcegroup(
   name = "prisma_resources",
-  srcs = glob(["resources/**/*"]),
-  strip_prefix = "resources"
-)
-
-resourcegroup(
-  name = "prisma_resources_1",
   srcs = glob(["gen-resources/**/*"]),
   strip_prefix = "gen-resources"
 )
@@ -31,10 +25,9 @@ jvm_library(
   module_name = "intellij.prisma",
   visibility = ["//visibility:public"],
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = [
-    ":prisma_resources",
-    ":prisma_resources_1",
-  ],
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
+  resource_jars = [":prisma_resources"],
   kotlinc_opts = ":custom_prisma",
   deps = [
     "@lib//:kotlin-stdlib",
@@ -154,12 +147,6 @@ create_kotlinc_options(
   x_context_parameters = True
 )
 
-resourcegroup(
-  name = "prisma-tests_test_resources",
-  srcs = glob(["testData/**/*"]),
-  strip_prefix = "testData"
-)
-
 jvm_library(
   name = "prisma-tests",
   module_name = "intellij.prisma.tests",
@@ -172,7 +159,8 @@ jvm_library(
   testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  resources = [":prisma-tests_test_resources"],
+  resources = glob(["testData/**/*"]),
+  resource_strip_prefix = "testData",
   kotlinc_opts = ":custom_prisma-tests",
   associates = [
     "//contrib/prisma",

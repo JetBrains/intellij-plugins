@@ -1,18 +1,13 @@
 ### auto-generated section `build intellij.angularJS` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
-
-resourcegroup(
-  name = "angularJS_resources",
-  srcs = glob(["resources/**/*"]),
-  strip_prefix = "resources"
-)
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 jvm_library(
   name = "angularJS",
   module_name = "intellij.angularJS",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
-  resources = [":angularJS_resources"],
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -172,12 +167,6 @@ exports_files([
 ### auto-generated section `iml intellij.angularJS` end
 
 ### auto-generated section `build intellij.angularJS.tests` start
-resourcegroup(
-  name = "angularJS-tests_test_resources",
-  srcs = glob(["testResources/**/*"]),
-  strip_prefix = "testResources"
-)
-
 jvm_library(
   name = "angularJS-tests",
   module_name = "intellij.angularJS.tests",
@@ -191,7 +180,8 @@ jvm_library(
   testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  resources = [":angularJS-tests_test_resources"],
+  resources = glob(["testResources/**/*"]),
+  resource_strip_prefix = "testResources",
   associates = [
     "//contrib/AngularJS:angularJS",
     "//contrib/AngularJS:angularJS_test_lib",

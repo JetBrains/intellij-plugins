@@ -1,6 +1,6 @@
 ### auto-generated section `build intellij.qodana.cpp` start
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 create_kotlinc_options(
   name = "custom_cpp",
@@ -12,18 +12,13 @@ create_kotlinc_options(
   x_context_parameters = True
 )
 
-resourcegroup(
-  name = "cpp_resources",
-  srcs = glob(["resources/**/*"]),
-  strip_prefix = "resources"
-)
-
 jvm_library(
   name = "cpp",
   module_name = "intellij.qodana.cpp",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = [":cpp_resources"],
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
   kotlinc_opts = ":custom_cpp",
   deps = [
     "@lib//:kotlin-stdlib",
@@ -111,12 +106,6 @@ create_kotlinc_options(
   opt_in = ["kotlin.io.path.ExperimentalPathApi"]
 )
 
-resourcegroup(
-  name = "cpp-tests_test_resources",
-  srcs = glob(["test-data/**/*"]),
-  strip_prefix = "test-data"
-)
-
 jvm_library(
   name = "cpp-tests",
   module_name = "intellij.qodana.cpp.tests",
@@ -129,7 +118,8 @@ jvm_library(
   testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  resources = [":cpp-tests_test_resources"],
+  resources = glob(["test-data/**/*"]),
+  resource_strip_prefix = "test-data",
   kotlinc_opts = ":custom_cpp-tests",
   associates = [
     "//contrib/qodana/cpp",

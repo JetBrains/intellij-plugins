@@ -7,21 +7,14 @@ resourcegroup(
   strip_prefix = "compatibilityResources"
 )
 
-resourcegroup(
-  name = "jade_resources_1",
-  srcs = glob(["resources/**/*"]),
-  strip_prefix = "resources"
-)
-
 jvm_library(
   name = "jade",
   module_name = "intellij.jade",
   visibility = ["//visibility:public"],
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = [
-    ":jade_resources",
-    ":jade_resources_1",
-  ],
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
+  resource_jars = [":jade_resources"],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -141,12 +134,6 @@ exports_files([
 ### auto-generated section `iml intellij.jade` end
 
 ### auto-generated section `build intellij.jade.tests` start
-resourcegroup(
-  name = "jade-tests_test_resources",
-  srcs = glob(["testResources/**/*"]),
-  strip_prefix = "testResources"
-)
-
 jvm_library(
   name = "jade-tests",
   module_name = "intellij.jade.tests",
@@ -160,7 +147,8 @@ jvm_library(
   testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  resources = [":jade-tests_test_resources"],
+  resources = glob(["testResources/**/*"]),
+  resource_strip_prefix = "testResources",
   associates = [
     "//contrib/jade",
     "//contrib/jade:jade_test_lib",

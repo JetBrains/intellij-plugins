@@ -1,18 +1,13 @@
 ### auto-generated section `build intellij.terraform.template` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
-
-resourcegroup(
-  name = "template_resources",
-  srcs = glob(["resource/**/*"]),
-  strip_prefix = "resource"
-)
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 jvm_library(
   name = "template",
   module_name = "intellij.terraform.template",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
-  resources = [":template_resources"],
+  resources = glob(["resource/**/*"]),
+  resource_strip_prefix = "resource",
   deps = [
     "@community//platform/core-api:core",
     "@community//platform/core-impl",
@@ -66,12 +61,6 @@ exports_files([
 ### auto-generated section `iml intellij.terraform.template` end
 
 ### auto-generated section `build intellij.terraform.template.tests` start
-resourcegroup(
-  name = "template-tests_test_resources",
-  srcs = glob(["test-data/**/*"]),
-  strip_prefix = "test-data"
-)
-
 jvm_library(
   name = "template-tests",
   module_name = "intellij.terraform.template.tests",
@@ -84,7 +73,8 @@ jvm_library(
   testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  resources = [":template-tests_test_resources"],
+  resources = glob(["test-data/**/*"]),
+  resource_strip_prefix = "test-data",
   associates = [
     "//contrib/terraform/terraform-template:template",
     "//contrib/terraform/terraform-template:template_test_lib",

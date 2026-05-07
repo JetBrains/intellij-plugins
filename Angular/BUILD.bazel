@@ -1,18 +1,13 @@
 ### auto-generated section `build intellij.angular` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
-
-resourcegroup(
-  name = "angular_resources",
-  srcs = glob(["compatibilityResources/**/*"]),
-  strip_prefix = "compatibilityResources"
-)
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 jvm_library(
   name = "angular",
   module_name = "intellij.angular",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
-  resources = [":angular_resources"]
+  resources = glob(["compatibilityResources/**/*"]),
+  resource_strip_prefix = "compatibilityResources"
 )
 
 jvm_library(

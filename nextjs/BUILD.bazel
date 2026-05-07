@@ -1,18 +1,13 @@
 ### auto-generated section `build intellij.nextjs` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
-
-resourcegroup(
-  name = "nextjs_resources",
-  srcs = glob(["resources/**/*"]),
-  strip_prefix = "resources"
-)
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 jvm_library(
   name = "nextjs",
   module_name = "intellij.nextjs",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = [":nextjs_resources"],
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
@@ -86,12 +81,6 @@ exports_files([
 ### auto-generated section `iml intellij.nextjs` end
 
 ### auto-generated section `build intellij.nextjs.tests` start
-resourcegroup(
-  name = "nextjs-tests_test_resources",
-  srcs = glob(["testData/**/*"]),
-  strip_prefix = "testData"
-)
-
 jvm_library(
   name = "nextjs-tests",
   module_name = "intellij.nextjs.tests",
@@ -105,7 +94,8 @@ jvm_library(
   testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java", "testSrc/**/*.form"], allow_empty = True),
-  resources = [":nextjs-tests_test_resources"],
+  resources = glob(["testData/**/*"]),
+  resource_strip_prefix = "testData",
   associates = [
     "//contrib/nextjs",
     "//contrib/nextjs:nextjs_test_lib",

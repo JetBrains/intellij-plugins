@@ -1,18 +1,13 @@
 ### auto-generated section `build intellij.tsr` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
-
-resourcegroup(
-  name = "tsr_resources",
-  srcs = glob(["resources/**/*"]),
-  strip_prefix = "resources"
-)
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 jvm_library(
   name = "tsr",
   module_name = "intellij.tsr",
   visibility = ["//visibility:public"],
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = [":tsr_resources"],
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -62,12 +57,6 @@ exports_files([
 ### auto-generated section `iml intellij.tsr` end
 
 ### auto-generated section `build intellij.tsr.tests` start
-resourcegroup(
-  name = "tsr-tests_test_resources",
-  srcs = glob(["test-resources/**/*"]),
-  strip_prefix = "test-resources"
-)
-
 jvm_library(
   name = "tsr-tests",
   module_name = "intellij.tsr.tests",
@@ -80,7 +69,8 @@ jvm_library(
   testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  resources = [":tsr-tests_test_resources"],
+  resources = glob(["test-resources/**/*"]),
+  resource_strip_prefix = "test-resources",
   associates = [
     "//contrib/tostring-reader:tsr",
     "//contrib/tostring-reader:tsr_test_lib",

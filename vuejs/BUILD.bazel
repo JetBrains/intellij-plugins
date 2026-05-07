@@ -1,18 +1,13 @@
 ### auto-generated section `build intellij.vuejs.plugin` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
-
-resourcegroup(
-  name = "vuejs-plugin_resources",
-  srcs = glob(["vuejs-plugin/resources/**/*"]),
-  strip_prefix = "vuejs-plugin/resources"
-)
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 jvm_library(
   name = "vuejs-plugin",
   module_name = "intellij.vuejs.plugin",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
-  resources = [":vuejs-plugin_resources"],
+  resources = glob(["vuejs-plugin/resources/**/*"]),
+  resource_strip_prefix = "vuejs-plugin/resources",
   runtime_deps = [
     "@lib//:kotlin-stdlib",
     "//contrib/vuejs/vuejs-backend:backend",
