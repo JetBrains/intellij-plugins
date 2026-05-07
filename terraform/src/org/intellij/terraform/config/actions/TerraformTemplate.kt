@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.actions
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.util.NlsContexts
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hcl.HCLBundle
@@ -15,9 +16,9 @@ enum class TerraformTemplate(
   val icon: Icon,
   val fileNamePattern: String? = null,
 ) {
-  CONFIG("Config", HCLBundle.message("action.new.terraform.file.description"), TerraformIcons.Terraform),
-  COMPONENT("Component", HCLBundle.message("action.new.component.file.description"), TerraformIcons.Terraform, "tfcomponent"),
-  DEPLOY("Deploy", HCLBundle.message("action.new.deploy.file.description"), TerraformIcons.Terraform, "tfdeploy"),
+  CONFIG("Config", HCLBundle.message("action.new.terraform.file.description"), AllIcons.FileTypes.Terraform),
+  COMPONENT("Component", HCLBundle.message("action.new.component.file.description"), AllIcons.FileTypes.Terraform, "tfcomponent"),
+  DEPLOY("Deploy", HCLBundle.message("action.new.deploy.file.description"), AllIcons.FileTypes.Terraform, "tfdeploy"),
 
   OPEN_TOFU("OpenTofu", HCLBundle.message("action.new.tofu.file.description"), TerraformIcons.Opentofu),
 

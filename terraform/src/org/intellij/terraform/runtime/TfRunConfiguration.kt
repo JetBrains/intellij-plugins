@@ -1,11 +1,11 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
+import com.intellij.icons.AllIcons
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.install.TfToolType
 import javax.swing.Icon
 
@@ -21,6 +21,6 @@ internal class TfRunConfiguration(
   }
 
   override fun getIcon(): Icon? {
-    return TerraformIcons.Terraform
+    return AllIcons.FileTypes.Terraform
   }
 }

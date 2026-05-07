@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.terraform.template
 
+import com.intellij.icons.AllIcons
 import com.intellij.codeInsight.highlighting.HighlightedReference
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
@@ -25,7 +26,6 @@ import com.intellij.psi.search.PsiFileSystemItemProcessor
 import com.intellij.psi.util.parentOfType
 import com.intellij.terraform.template.psi.TftplFile
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.config.model.Module
 import org.intellij.terraform.hcl.psi.HCLMethodCallExpression
 import org.intellij.terraform.hcl.psi.HCLParameterList
@@ -74,7 +74,7 @@ internal class HclFileReference(psiElement: PsiElement) : PsiPolyVariantReferenc
         val (locator, relativePath) = computeTemplatePathWithRespectToModuleRoot(templateFile, terraformModule)
         context.run { document.replaceString(startOffset, tailOffset, "$locator/$relativePath") }
       }
-      .withIcon(TerraformIcons.Terraform)
+      .withIcon(AllIcons.FileTypes.Terraform)
   }
 
   private fun computeTemplatePathWithRespectToModuleRoot(templateFile: TftplFile, module: Module): TemplateCompletionData {

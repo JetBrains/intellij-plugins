@@ -179,7 +179,7 @@ internal object TfCompletionUtil {
   }
 
   fun getLookupIcon(element: PsiElement): Icon = when (element.containingFile.fileType) {
-    is TerraformFileType, TfComponentFileType, TfDeployFileType -> TerraformIcons.Terraform
+    is TerraformFileType, TfComponentFileType, TfDeployFileType -> AllIcons.FileTypes.Terraform
     is OpenTofuFileType -> TerraformIcons.Opentofu
     is TerragruntFileType -> TerraformIcons.Terragrunt
     else -> TerraformIcons.HashiCorp

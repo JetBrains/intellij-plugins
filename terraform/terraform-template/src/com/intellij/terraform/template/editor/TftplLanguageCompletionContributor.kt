@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.terraform.template.editor
 
+import com.intellij.icons.AllIcons
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionProvider
@@ -14,7 +15,6 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
-import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hil.HILElementTypes
 
 internal class TftplLanguageCompletionContributor : CompletionContributor() {
@@ -39,6 +39,6 @@ private class HilTemplateAvailableSyntaxCompletionProvider : CompletionProvider<
 
   private fun createLookup(lookupText: String): LookupElement {
     return LookupElementBuilder.create(lookupText)
-      .withIcon(TerraformIcons.Terraform)
+      .withIcon(AllIcons.FileTypes.Terraform)
   }
 }

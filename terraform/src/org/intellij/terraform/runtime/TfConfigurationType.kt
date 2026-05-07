@@ -1,10 +1,10 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
+import com.intellij.icons.AllIcons
 import com.intellij.execution.RunConfigurationConverter
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.project.Project
-import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
 import org.jdom.Element
@@ -23,7 +23,7 @@ internal class TfConfigurationType : TfToolConfigurationTypeBase(), RunConfigura
 
   override fun getDisplayName(): String = HCLBundle.message("terraform.name")
   override fun getConfigurationTypeDescription(): String = HCLBundle.message("terraform.configuration.type.description", TfToolType.TERRAFORM.displayName)
-  override fun getIcon(): Icon = TerraformIcons.Terraform
+  override fun getIcon(): Icon = AllIcons.FileTypes.Terraform
   override fun getConfigurationFactories(): Array<ConfigurationFactory> = arrayOf(
     baseFactory, initFactory, validateFactory, planFactory, applyFactory, destroyFactory
   )
