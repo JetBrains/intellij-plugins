@@ -64,14 +64,12 @@ class ModulesDescriber : QodanaProjectDescriber {
 
   @Suppress("unused")
   class ContentEntryDescription(contentEntry: ContentEntry, macroManager: PathMacroManager) {
-    val path: String = macroManager.collapsePath(contentEntry.url)
+    val path: String = macroManager.collapsePathNonNull(contentEntry.url)
     val excludePatterns: List<String> = contentEntry.excludePatterns
     val excludeFolders: List<SourceFolderDescription> =
-      contentEntry.excludeFolders.map { SourceFolderDescription(macroManager.collapsePath(it.url), "Exclude", "") }
+      contentEntry.excludeFolders.map { SourceFolderDescription(macroManager.collapsePathNonNull(it.url), "Exclude", "") }
     val sourceFolders: List<SourceFolderDescription> =
-      contentEntry.sourceFolders.map { SourceFolderDescription(macroManager.collapsePath(it.url), it.type(), it.packagePrefix) }
-
-
+      contentEntry.sourceFolders.map { SourceFolderDescription(macroManager.collapsePathNonNull(it.url), it.type(), it.packagePrefix) }
   }
 
   @Suppress("unused")

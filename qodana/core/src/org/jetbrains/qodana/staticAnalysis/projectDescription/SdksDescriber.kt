@@ -27,7 +27,7 @@ class SdksDescriber : QodanaProjectDescriber {
   @Suppress("unused")
   class SdkDescription(sdkEntry: JdkOrderEntry, macroManager: PathMacroManager) {
     val name: String? = sdkEntry.jdkName
-    val roots: List<String> = sdkEntry.getRootUrls(OrderRootType.CLASSES).map { macroManager.collapsePath(it) }
+    val roots: List<String> = sdkEntry.getRootUrls(OrderRootType.CLASSES).map { macroManager.collapsePathNonNull(it) }
     val sdkType = sdkEntry.jdk?.sdkType?.name
     val sdkVersion = sdkEntry.jdk?.versionString
   }

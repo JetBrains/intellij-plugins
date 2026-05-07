@@ -201,7 +201,7 @@ internal fun getLocationByAttributes(fileUrl: String,
                                      macroManager: PathMacroManager, skipContextRegion: Boolean): Location? {
   val artifactLocation = getArtifactLocation(fileUrl)
   val physicalLocation = PhysicalLocation().withArtifactLocation(artifactLocation)
-  val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPath(fileUrl))
+  val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPathNonNull(fileUrl))
   val text = loadTextFromVirtualFile(virtualFile)
   if (text != null) {
     val startOffset = StringUtil.lineColToOffset(text, line - 1, column - 1)

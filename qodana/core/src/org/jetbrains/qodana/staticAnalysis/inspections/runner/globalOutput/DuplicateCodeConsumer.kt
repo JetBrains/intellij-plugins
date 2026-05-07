@@ -87,7 +87,7 @@ class DuplicateCodeConsumer: GlobalOutputConsumer {
   }
 
   private fun findOffset(macroManager: PathMacroManager, file: String, descriptor: CommonDescriptor): Int? {
-    val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPath(file))
+    val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPathNonNull(file))
     if (virtualFile == null || virtualFile.isDirectory) return null
     val text = VfsUtil.loadText(virtualFile)
     return getProblemOffset(text, descriptor)

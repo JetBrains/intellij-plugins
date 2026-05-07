@@ -20,7 +20,7 @@ class SingleScopeTestTarget(override val name: String,
 ) : TestTarget {
 
   override fun contains(inspection: String, url: String): Boolean {
-    val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPath(url)) ?: return false
+    val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPathNonNull(url)) ?: return false
     return inspections.contains(inspection) && scope.contains(virtualFile)
   }
 }
@@ -33,7 +33,7 @@ class MultiScopeTestTarget(override val name: String,
   override val inspections = tools.keys.toList()
 
   override fun contains(inspection: String, url: String): Boolean {
-    val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPath(url)) ?: return false
+    val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPathNonNull(url)) ?: return false
     val scope = tools[inspection] ?: return false
     return scope.contains(virtualFile)
   }

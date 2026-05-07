@@ -178,7 +178,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
 
     val macroManager = PathMacroManager.getInstance(project)
 
-    val localMakefile = macroManager.expandPath(filename)
+    val localMakefile = macroManager.expandPathNonNull(filename)
     val remoteMakefile = distribution.getWslPath(localMakefile)
 
     val localWorkDirectory = when {

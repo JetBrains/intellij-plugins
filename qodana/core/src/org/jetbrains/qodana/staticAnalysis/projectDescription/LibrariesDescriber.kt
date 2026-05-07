@@ -28,7 +28,7 @@ class LibrariesDescriber : QodanaProjectDescriber {
   @Suppress("unused")
   class LibraryDescription(libraryOrderEntry: LibraryOrderEntry, macroManager: PathMacroManager) {
     val name: String? = libraryOrderEntry.libraryName
-    val roots: List<String> = libraryOrderEntry.getRootUrls(OrderRootType.CLASSES).map { macroManager.collapsePath(it) }
+    val roots: List<String> = libraryOrderEntry.getRootUrls(OrderRootType.CLASSES).map { macroManager.collapsePathNonNull(it) }
     val libraryKind = (libraryOrderEntry as? LibraryEx)?.kind?.kindId
     val properties: LibraryProperties<*>? = (libraryOrderEntry.library as? LibraryEx)?.properties
   }

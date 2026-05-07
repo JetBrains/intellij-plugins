@@ -337,7 +337,7 @@ internal suspend fun getPhysicalLocation(problem: CommonDescriptor,
   val physicalLocation = PhysicalLocation().withArtifactLocation(artifactLocation)
 
   val (text, virtualFile) = withContext(StaticAnalysisDispatchers.IO) {
-    val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPath(problem.file))
+    val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPathNonNull(problem.file))
     val text = loadTextFromVirtualFile(virtualFile)
     text to virtualFile
   }
