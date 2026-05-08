@@ -5,9 +5,9 @@
     <content url="file://$MODULE_DIR$/test">
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
     </content>
-        <content url="file://$MODULE_DIR$/testData">
-          <sourceFolder url="file://$MODULE_DIR$/testData" type="java-test-resource" />
-        </content>
+    <content url="file://$MODULE_DIR$/testData">
+      <sourceFolder url="file://$MODULE_DIR$/testData" type="java-test-resource" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.coroutines.core" scope="TEST" />
