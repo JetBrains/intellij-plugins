@@ -8,15 +8,17 @@
     <qodanaYamlItemProvider implementation="org.jetbrains.qodana.jvm.java.QodanaYamlJdkItemProvider"/>
     <qodanaScriptFactory implementation="org.jetbrains.qodana.jvm.java.migrate.MigrateClassesScriptFactory"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.jvm.java.JvmLocalTaintOutputConsumer"/>
-    <workflowExtension implementation="org.jetbrains.qodana.jvm.java.QodanaJavaConfigApplier" />
-    <workflowExtension implementation="org.jetbrains.qodana.jvm.java.workflow.JvmProjectStructureChecker"/>
+    <workflowExtension implementation="org.jetbrains.qodana.jvm.java.workflow.QodanaResolveProjectJdkFromMiscXml"/>
+    <workflowExtension implementation="org.jetbrains.qodana.jvm.java.workflow.QodanaResolveProjectJdkFromQodanaConfig"/>
+    <workflowExtension implementation="org.jetbrains.qodana.jvm.java.workflow.QodanaCheckJvmProjectStructure"/>
+    <workflowExtension implementation="org.jetbrains.qodana.jvm.java.workflow.QodanaRefreshProjectJdkTable"/>
     <cyclomaticComplexityFileVisitor
       implementation="org.jetbrains.qodana.jvm.java.metrics.cyclomaticComplexity.JavaCyclomaticComplexityMetricFileVisitor"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity implementation="org.jetbrains.qodana.jvm.java.QodanaJdkProjectActivity"/>
-    <commandLineInspectionProjectConfigurator implementation="org.jetbrains.qodana.jvm.java.JdkConfigurator"/>
-    <jarRepositoryAuthenticationDataProvider implementation="org.jetbrains.qodana.jvm.java.jps.QodanaSpaceJarRepositoryAuthenticationDataProvider"/>
+    <jarRepositoryAuthenticationDataProvider
+      implementation="org.jetbrains.qodana.jvm.java.jps.QodanaSpaceJarRepositoryAuthenticationDataProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.qodana.jvm.java.ui.QodanaGithubCIPromoNotificationProvider"/>
     <localInspection language="JAVA" shortName="QodanaJavaSanity"
                      groupKey="inspection.general.tools.group.name" groupBundle="messages.InspectionsBundle"

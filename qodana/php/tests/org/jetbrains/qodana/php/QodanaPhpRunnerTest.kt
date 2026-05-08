@@ -27,7 +27,9 @@ class QodanaPhpRunnerTest : QodanaRunnerTestCase() {
         profile = QodanaProfileConfig.named("qodana.single:PhpConstructorStyleInspection"),
       )
     }
-
+    runBeforeAnalysis { config, project ->
+      QodanaUpdatePhpLanguageLevel().configureForQodana(config, project)
+    }
     runAnalysis()
     assertSarifResults()
   }
@@ -40,7 +42,9 @@ class QodanaPhpRunnerTest : QodanaRunnerTestCase() {
         profile = QodanaProfileConfig.named("qodana.single:PhpConstructorStyleInspection"),
       )
     }
-
+    runBeforeAnalysis { config, project ->
+      QodanaUpdatePhpLanguageLevel().configureForQodana(config, project)
+    }
     runAnalysis()
     assertSarifResults()
   }

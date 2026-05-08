@@ -10,7 +10,8 @@
 
   <extensions defaultExtensionNs="org.intellij.qodana">
     <reportMetadataArtifact implementation="org.jetbrains.qodana.go.GoCoverageReportMetadataArtifact"/>
-    <workflowExtension implementation="org.jetbrains.qodana.go.GoSdkWorkflowExtension"/>
+    <workflowExtension implementation="org.jetbrains.qodana.go.QodanaValidateGoSdk"/>
+    <workflowExtension implementation="org.jetbrains.qodana.go.QodanaRestoreGoSdk"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <qodana.coverage.cloudArtifactsProcessor implementation="org.jetbrains.qodana.go.GoCoverageArtifactProcessor"/>

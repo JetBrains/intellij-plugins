@@ -17,7 +17,7 @@ class QodanaJdkProjectActivity : QodanaLinterProjectActivity() {
   }
 
   private suspend fun configureJdk(project: Project) {
-    val sdk = service<QodanaConfigJdkService>().deferredSdk.await() ?: return
+    val sdk = service<QodanaConfigJdkService>().getJdk() ?: return
     ConsoleLog.info("Setting project JDK ${sdk.name}")
     edtWriteAction {
       ProjectRootManager.getInstance(project).projectSdk = sdk

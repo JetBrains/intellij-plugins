@@ -23,6 +23,6 @@
                       implementationClass="org.intellij.qodana.rust.QodanaRustSanityInspection"/>
   </extensions>
   <extensions defaultExtensionNs="org.intellij">
-    <qodana.workflowExtension implementation="org.intellij.qodana.rust.QodanaRustWorkflow"/>
+    <qodana.workflowExtension implementation="org.intellij.qodana.rust.QodanaLogRustAnalysisScope"/>
   </extensions>
 </idea-plugin>

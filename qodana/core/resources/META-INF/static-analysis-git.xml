@@ -1,7 +1,7 @@
 <idea-plugin>
   <extensions defaultExtensionNs="org.intellij.qodana">
     <sarifReportContributor implementation="org.jetbrains.qodana.staticAnalysis.sarif.GitReportContributor"/>
-    <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.workflow.GitCommitsSummaryLogger"/>
+    <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.workflow.QodanaSendGitCommitsSummaryToFus"/>
     <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.LocalChangesScriptFactory"/>
     <repositoryRevisionProvider implementation="org.jetbrains.qodana.extensions.GitRepositoryRevisionProvider"/>
     <repositoryInfoProvider implementation="org.jetbrains.qodana.extensions.GitRepositoryInfoProvider"/>

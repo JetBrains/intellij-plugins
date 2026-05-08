@@ -11,8 +11,9 @@ import com.jetbrains.cidr.cpp.compdb.wizard.CompDBProjectOpenProcessor
 import com.jetbrains.cidr.meson.wizard.MesonProjectOpenProcessor
 import org.jdom.Element
 import org.jetbrains.annotations.VisibleForTesting
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaProjectLoaderExtension
+import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.io.path.createDirectories
@@ -32,7 +33,7 @@ private val log = logger<QodanaCppProjectLoaderExtension>()
  * schema for `cpp.buildSystem`.
  */
 /** Display names of supported build systems, in selection priority order. */
-val supportedBuildSystems = listOf("CMake", "CompDB", "Meson", "Make")
+val supportedBuildSystems: List<String> = listOf("CMake", "CompDB", "Meson", "Make")
 
 private val supportedProcessors = mapOf(
     "CMake" to CMakeProjectOpenProcessor::class,
@@ -41,7 +42,7 @@ private val supportedProcessors = mapOf(
     "Make" to MakefileProjectOpenProcessor::class,
 ).map { (key, value) -> key.lowercase() to value }.toMap() // keys are always lowercase
 
-/** Maps processor class → workspace component name (the `@State(name)` of the corresponding [CidrWorkspace]). */
+/** Maps processor class → workspace component name (the `@State(name)` of the corresponding CIDR workspace). */
 private val processorToWorkspaceComponent = mapOf(
     CMakeProjectOpenProcessor::class to "CMakeWorkspace",
     CompDBProjectOpenProcessor::class to "CompDBWorkspace",
@@ -60,17 +61,17 @@ private val processorToWorkspaceComponent = mapOf(
 private val selectedWorkspaceComponentNameRef = AtomicReference<String?>(null)
 val selectedWorkspaceComponentName: String? get() = selectedWorkspaceComponentNameRef.get()
 
-fun selectProcessor(processors: List<ProjectOpenProcessor>): ProjectOpenProcessor {
+fun selectProcessor(config: QodanaConfig, processors: List<ProjectOpenProcessor>): ProjectOpenProcessor {
     selectedWorkspaceComponentNameRef.set(null)  // reset for this analysis run
     log.debugValues(
-        "Qodana C++ is selecting a ProjectOpenProcessor for ${qodanaConfig.projectPath}. Available processors are:",
+        "Qodana C++ is selecting a ProjectOpenProcessor for ${config.projectPath}. Available processors are:",
         processors.map { it.name }
     )
 
-    val projectPath = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(qodanaConfig.projectPath)
-    if (projectPath == null) throw QodanaException("Project path '${qodanaConfig.projectPath}' was not found")
+    val projectPath = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(config.projectPath)
+    if (projectPath == null) throw QodanaException("Project path '${config.projectPath}' was not found")
 
-    val requestedBuildSystem = qodanaConfig.cpp?.buildSystem
+    val requestedBuildSystem = config.cpp?.buildSystem
     if (requestedBuildSystem != null) {
         log.debug("Build system specified in qodana.yaml: '$requestedBuildSystem'")
         val requestedProcessor = supportedProcessors.getOrElse(requestedBuildSystem.lowercase()) {
@@ -102,12 +103,12 @@ fun selectProcessor(processors: List<ProjectOpenProcessor>): ProjectOpenProcesso
             println("Build system: ${it.name} (auto-detected)")
         }
     } catch (_: NoSuchElementException) {
-        throw QodanaException("No build systems were detected in '${qodanaConfig.projectPath}'")
+        throw QodanaException("No build systems were detected in '${config.projectPath}'")
     }
 }
 
 /**
- * Maps `cpp.buildSystem` values to the `@State(name)` of the corresponding [CidrWorkspace] component in `.idea/misc.xml`.
+ * Maps `cpp.buildSystem` values to the `@State(name)` of the corresponding CIDR workspace component in `.idea/misc.xml`.
  * Keys are pre-lowercased — lookups must use `.lowercase()`.
  */
 private val buildSystemToWorkspaceComponent = mapOf(
@@ -120,7 +121,7 @@ private val buildSystemToWorkspaceComponent = mapOf(
 @VisibleForTesting
 internal val allWorkspaceComponentNames = buildSystemToWorkspaceComponent.values.toSet()
 
-class QodanaCppProjectLoaderExtension : QodanaProjectLoaderExtension {
+class QodanaCppProjectLoaderExtension : QodanaWorkflowExtension {
     /**
      * QD-13184: Prepare `.idea` so that `qodana.yaml` build system and preset settings take effect.
      *
@@ -128,13 +129,9 @@ class QodanaCppProjectLoaderExtension : QodanaProjectLoaderExtension {
      * We fix this by surgically editing `.idea` state so that the correct CIDR workspace is linked
      * and CMake profiles are reset, while preserving user-authored config (inspection profiles, etc.).
      */
-    override fun prepareProjectDirectory(projectPath: Path) {
-        val cppConfig = try {
-            qodanaConfig.cpp
-        } catch (e: IllegalStateException) {
-            log.debug("Qodana config not available, skipping .idea preparation", e)
-            null
-        } ?: return
+    override suspend fun beforeProjectOpened(config: QodanaConfig) {
+        val cppConfig = config.cpp ?: return
+        val projectPath = config.projectPath
         val ideaDir = projectPath / ".idea"
         if (!ideaDir.exists()) return
 
@@ -158,11 +155,11 @@ class QodanaCppProjectLoaderExtension : QodanaProjectLoaderExtension {
         }
     }
 
-    override val buildProjectOpenTask: OpenProjectTaskBuilder.() -> Unit = {
+    override suspend fun configureProjectOpening(config: QodanaConfig, openProjectTaskBuilder: OpenProjectTaskBuilder) {
         // The List<Any> type comes from CLion's ProjectOpenProcessor API.
         // This cast is exercised by BuildSystemSelectionTest integration tests (every analyze() call triggers it).
         @Suppress("UNCHECKED_CAST")
-        processorChooser = { selectProcessor(it as List<ProjectOpenProcessor>) }
+        openProjectTaskBuilder.processorChooser = { selectProcessor(config, it as List<ProjectOpenProcessor>) }
     }
 }
 
@@ -188,7 +185,7 @@ internal fun ensureWorkspaceComponentInMiscXml(miscXml: Path, targetName: String
     root.addContent(
         Element("component")
             .setAttribute("name", targetName)
-            .setAttribute("PROJECT_DIR", "\$PROJECT_DIR$")
+            .setAttribute("PROJECT_DIR", "\$PROJECT_DIR\$")
     )
 
     JDOMUtil.write(root, miscXml)

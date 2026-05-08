@@ -4,6 +4,7 @@ import com.intellij.codeInspection.InspectionsBundle
 import com.intellij.openapi.application.smartReadAction
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.module.ModuleType
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.modules
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.LibraryOrderEntry
@@ -12,28 +13,27 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.createSanityNotification
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 
-class JvmProjectStructureChecker : QodanaWorkflowExtension {
-  override suspend fun beforeLaunch(context: QodanaRunContext) {
-    val project = context.project
+class QodanaCheckJvmProjectStructure : QodanaWorkflowExtension {
+  override suspend fun afterConfiguration(config: QodanaConfig, project: Project) {
     val notificationCollector = project.serviceAsync<RuntimeNotificationCollector>()
     for (module in project.modules) {
       val rootManager = ModuleRootManager.getInstance(module)
       val entries = rootManager.getOrderEntries()
       for (entry in entries) {
-        when {
-          entry is JdkOrderEntry && smartReadAction(project) { !ModuleType.get(module).isValidSdk(module, null) } -> {
+        when (entry) {
+          is JdkOrderEntry if smartReadAction(project) { !ModuleType.get(module).isValidSdk(module, null) } -> {
             val message = InspectionsBundle.message("offline.inspections.module.jdk.not.found",
                                                     entry.getJdkName(),
                                                     module.getName()
             )
             notificationCollector.add(createSanityNotification(message))
           }
-          entry is LibraryOrderEntry -> {
+          is LibraryOrderEntry -> {
             val library = entry.getLibrary()
             if (library == null) {
               val message = QodanaBundle.message("offline.inspections.library.was.not.resolved",

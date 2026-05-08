@@ -3,7 +3,6 @@ package org.jetbrains.qodana.staticAnalysis.sarif.notifications
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.toNioPathOrNull
@@ -14,7 +13,6 @@ import org.jetbrains.qodana.staticAnalysis.profile.SanityInspectionGroup.Compani
 import org.jetbrains.qodana.staticAnalysis.sarif.SRCROOT_URI_BASE
 import org.jetbrains.qodana.staticAnalysis.sarif.SarifReportContributor
 import org.jetbrains.qodana.staticAnalysis.sarif.qodanaKind
-import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.AtomicInteger
@@ -27,7 +25,7 @@ class RuntimeNotificationCollector {
 
   val notifications: List<Notification> get() = _notifications.toList()
 
-  fun configure(config: QodanaConfig) {
+  fun initializeForRun(config: QodanaConfig) {
     projectPath = config.projectPath
     _notifications.clear()
     capacity.set(config.maxRuntimeNotifications)
@@ -49,13 +47,6 @@ class RuntimeNotificationCollector {
       original.physicalLocation.artifactLocation
         .withUriBaseId(SRCROOT_URI_BASE)
         .withUri(projectPath.relativize(path).toString())
-    }
-  }
-
-  class NotificationWorkflowExtension : QodanaWorkflowExtension {
-    override suspend fun afterConfiguration(config: QodanaConfig, project: Project) {
-      project.serviceAsync<RuntimeNotificationCollector>()
-        .configure(config)
     }
   }
 

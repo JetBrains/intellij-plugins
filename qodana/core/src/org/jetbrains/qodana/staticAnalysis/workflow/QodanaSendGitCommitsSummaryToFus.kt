@@ -1,12 +1,13 @@
 package org.jetbrains.qodana.staticAnalysis.workflow
 
 import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.VcsException
 import git4idea.repo.GitRepositoryManager
 import git4idea.statistics.GitCommitterCounter
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.stat.QodanaProjectInfoCollector.logAbsentHistorySummary
 import org.jetbrains.qodana.staticAnalysis.stat.QodanaProjectInfoCollector.logCommitsSummary
 import java.time.Period
@@ -16,11 +17,10 @@ import java.time.Period
  * Numbers are obtained with 'git shortlog -s --since "%since%"' command.
  * Since syntax https://github.com/git/git/blob/master/date.c#L131
  */
-private class GitCommitsSummaryLogger : QodanaWorkflowExtension {
-  override suspend fun beforeLaunch(context: QodanaRunContext) {
-    val project = context.project
+internal class QodanaSendGitCommitsSummaryToFus : QodanaWorkflowExtension {
+  override suspend fun afterConfiguration(config: QodanaConfig, project: Project) {
     val repos = GitRepositoryManager.getInstance(project).repositories
-    if (repos.size == 0) {
+    if (repos.isEmpty()) {
       logAbsentHistorySummary(project)
       return
     }
