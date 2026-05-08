@@ -74,11 +74,15 @@ groups:
       - CheckDependencyLicenses
       - RiderSecurityErrorsInspection
       - OpenGrepGlobalInspection
-      - OpenGrepInspection
 
   - groupId: QodanaOpengrepInspections
     groups:
       - "category:OpenGrep"
+      - "!QodanaOpengrepDisabledInspections"
+
+  - groupId: QodanaOpengrepDisabledInspections
+    inspections:
+      - OpenGrepInspection
 
   # JavaScript inspections
   - groupId: JSRelatedInspections
@@ -117,6 +121,7 @@ groups:
       - "JSRelatedInspections"
       - "JSInspections"
       - "FlakyInspections"
+      - "QodanaOpengrepDisabledInspections"
       - "ProofreadingInspections"
       - "UnsupportedInspections"
       - "RiderStaticSanityInspections" # Inspections that appear in sanity profile
