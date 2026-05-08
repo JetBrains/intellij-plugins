@@ -113,7 +113,9 @@ jvm_library(
   name = "mdx-tests_test_lib",
   testonly = True,
   visibility = ["//visibility:public"],
-  srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java", "src/test/kotlin/**/*.form"], allow_empty = True),
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
+  resources = glob(["testData/**/*"]),
+  resource_strip_prefix = "testData",
   associates = [
     "//contrib/mdx",
     "//contrib/mdx:mdx_test_lib",

@@ -2,9 +2,12 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$/src/test/kotlin">
-      <sourceFolder url="file://$MODULE_DIR$/src/test/kotlin" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/test">
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
     </content>
+        <content url="file://$MODULE_DIR$/testData">
+          <sourceFolder url="file://$MODULE_DIR$/testData" type="java-test-resource" />
+        </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.coroutines.core" scope="TEST" />
