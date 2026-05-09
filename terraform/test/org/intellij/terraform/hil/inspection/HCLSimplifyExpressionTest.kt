@@ -2,6 +2,7 @@
 package org.intellij.terraform.hil.inspection
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.intellij.terraform.hcl.HCLBundle
 
 internal class HCLSimplifyExpressionTest: BasePlatformTestCase() {
 
@@ -24,7 +25,7 @@ internal class HCLSimplifyExpressionTest: BasePlatformTestCase() {
     """.trimIndent())
     myFixture.enableInspections(HCLSimplifyExpressionInspection())
     myFixture.checkHighlighting()
-    myFixture.availableIntentions.firstOrNull()?.asIntention()?.invoke(myFixture.project, myFixture.editor, myFixture.file)
+    myFixture.launchAction(myFixture.findSingleIntention(replaceWithListIndexingQuickFixText))
     myFixture.checkResult("""
       variable "instance_types" {
         type        = list(string)
@@ -52,7 +53,10 @@ internal class HCLSimplifyExpressionTest: BasePlatformTestCase() {
     """.trimIndent())
     myFixture.enableInspections(HCLSimplifyExpressionInspection())
     myFixture.checkHighlighting()
-    assertEmpty(myFixture.availableIntentions)
+    assertEmpty(myFixture.filterAvailableIntentions(replaceWithListIndexingQuickFixText))
   }
+
+  private val replaceWithListIndexingQuickFixText: String
+    get() = HCLBundle.message("hcl.simplify.expression.inspection.replace.with.list.indexing.quick.fix.text")
 
 }
