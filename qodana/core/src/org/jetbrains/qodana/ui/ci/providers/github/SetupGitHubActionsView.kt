@@ -27,7 +27,6 @@ import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.ui.ci.providers.CIConfigFileState
 import org.jetbrains.qodana.ui.ci.providers.bannerWithEditorComponent
 import org.jetbrains.qodana.ui.ci.providers.withBottomInsetBeforeComment
-import org.jetbrains.yaml.YAMLFileType
 import javax.swing.JComponent
 import javax.swing.event.DocumentEvent
 
@@ -97,8 +96,10 @@ class SetupGitHubActionsView(private val viewScope: CoroutineScope, val viewMode
 
     val chooserRoot = workflowsDir ?: dotGithubDir ?: projectDir
 
-    var chooser = FileChooserDescriptorFactory.createSingleFileDescriptor(YAMLFileType.YML)
-      .withFileFilter { viewModel.isConfigPath(it.toNioPath()) }
+    var chooser = FileChooserDescriptorFactory.singleFile().withExtensionFilter(
+      QodanaBundle.message("qodana.add.to.ci.github.actions.workflow.file.extension.filter"),
+      *GITHUB_WORKFLOWS_EXTENSIONS.toTypedArray()
+    ).withFileFilter { viewModel.isConfigPath(it.toNioPath()) }
     if (chooserRoot != null) {
       chooser = chooser.withRoots(chooserRoot)
     }
