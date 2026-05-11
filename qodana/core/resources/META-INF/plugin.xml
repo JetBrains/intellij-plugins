@@ -19,6 +19,7 @@
 
   <content namespace="jetbrains">
     <module name="intellij.qodana.sarif" loading="embedded"/>
+    <module name="intellij.qodana/json"/>
     <module name="intellij.qodana.yaml"/>
     <module name="intellij.qodana.coverage"/>
     <module name="intellij.qodana.go"/>
@@ -47,14 +48,12 @@
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
-    <module name="intellij.json.backend"/>
     <module name="intellij.platform.collaborationTools"/>
     <module name="intellij.platform.collaborationTools.auth"/>
     <module name="intellij.platform.inspect"/>
     <module name="intellij.platform.sqlite"/>
     <module name="intellij.platform.vcs.log"/>
     <module name="intellij.vcs.git.shared"/>
-    <module name="intellij.yaml"/>
     <!-- endregion -->
   </dependencies>
 
@@ -73,8 +72,6 @@
     <highlightingPassFactory implementation="org.jetbrains.qodana.highlight.QodanaHighlightingPassRegistrar"/>
     <jbProtocolCommand implementation="org.jetbrains.qodana.protocol.JBProtocolQodanaCommand"/>
     <inspectionResultsExportActionProvider implementation="org.jetbrains.qodana.actions.ExportToSarifAction"/>
-    <fileType name="SARIF" extensions="sarif" patterns="*.sarif.json;*.sarif*.json"
-              implementationClass="org.jetbrains.qodana.filetype.SarifFileType" fieldName="INSTANCE" language="JSON"/>
     <applicationService serviceInterface="org.jetbrains.qodana.cloud.authorization.QodanaCloudOAuthService"
                         serviceImplementation="org.jetbrains.qodana.cloud.authorization.QodanaCloudOAuthServiceImpl"/>
     <httpRequestHandler implementation="org.jetbrains.qodana.cloud.authorization.QodanaCloudOAuthCallbackHandler"/>

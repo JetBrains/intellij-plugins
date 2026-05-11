@@ -1,6 +1,8 @@
 <idea-plugin visibility="public">
   <dependencies>
     <plugin id="com.intellij.modules.ultimate"/>
+    <module name="intellij.yaml"/>
+    <module name="intellij.json.backend"/>
   </dependencies>
   <resource-bundle>messages.InspectionKtsBundle</resource-bundle>
 

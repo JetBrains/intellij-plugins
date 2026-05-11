@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.filetype
+package org.jetbrains.qodana.json
 
 import com.intellij.json.JsonFileType
 import com.intellij.openapi.fileEditor.OpenFileDescriptor

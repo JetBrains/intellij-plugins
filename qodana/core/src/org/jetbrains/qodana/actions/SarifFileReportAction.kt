@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.coroutines.qodanaProjectScope
-import org.jetbrains.qodana.filetype.SarifFileType
+import org.jetbrains.qodana.filetype.QodanaSarifFileMatcher
 import org.jetbrains.qodana.highlight.QodanaHighlightedReportService
 import org.jetbrains.qodana.highlight.highlightedReportDataIfSelected
 import org.jetbrains.qodana.report.FileReportDescriptor
@@ -24,12 +24,12 @@ import java.nio.file.Path
 
 class SarifFileReportAction : DumbAwareAction() {
 
-  override fun getActionUpdateThread() = ActionUpdateThread.BGT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
     val project = e.project
     val file = e.file
-    if (project == null || file == null || file.fileType != SarifFileType) {
+    if (project == null || file == null || !QodanaSarifFileMatcher.isSarifFile(file)) {
       e.presentation.isEnabledAndVisible = false
       return
     }

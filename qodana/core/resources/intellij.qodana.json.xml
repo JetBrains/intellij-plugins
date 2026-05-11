@@ -1,0 +1,12 @@
+<idea-plugin>
+  <dependencies>
+    <module name="intellij.json.backend"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType name="SARIF" extensions="sarif" patterns="*.sarif.json;*.sarif*.json"
+              implementationClass="org.jetbrains.qodana.json.SarifFileType" fieldName="INSTANCE" language="JSON"/>
+    <applicationService serviceInterface="org.jetbrains.qodana.filetype.QodanaSarifFileMatcher"
+                        serviceImplementation="org.jetbrains.qodana.json.QodanaSarifFileMatcherImpl"/>
+  </extensions>
+</idea-plugin>

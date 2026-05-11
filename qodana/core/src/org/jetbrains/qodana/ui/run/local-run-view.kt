@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.ui.run
 
-import com.intellij.json.JsonFileType
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
@@ -24,7 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
-import org.jetbrains.qodana.filetype.SarifFileType
+import org.jetbrains.qodana.filetype.QodanaSarifFileMatcher
 import org.jetbrains.qodana.ui.ci.providers.withBottomInsetBeforeComment
 import javax.swing.event.DocumentEvent
 
@@ -167,5 +166,5 @@ private val JBPasswordField.passwordString: String
 
 private fun createBaselineFileChooser(project: Project): FileChooserDescriptor =
   FileChooserDescriptorFactory.createSingleFileDescriptor()
-    .withExtensionFilter(QodanaBundle.message("local.run.baseline.filter"), SarifFileType, JsonFileType.INSTANCE)
+    .withExtensionFilter(QodanaBundle.message("local.run.baseline.filter"), *QodanaSarifFileMatcher.getSarifExtensions())
     .withRoots(listOfNotNull(project.guessProjectDir()))
