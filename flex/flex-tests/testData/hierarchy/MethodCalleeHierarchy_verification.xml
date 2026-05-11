@@ -5,7 +5,7 @@
   <node text="IEventDispatcher.addEventListener(String, Function, Boolean, int, Boolean) (flash.events)">
     <any/>
   </node>
-  <node text="global(Array)(2 usages)">
+  <node text="global(Array) (2 usages)">
     <node text="global(Array)">
       <any/>
     </node>
@@ -18,7 +18,7 @@
         </node>
       </node>
       <node text="Class3.foo() (pack2)">
-        <node text="Class2.foo()(2 usages) (pack.subpack)">
+        <node text="Class2.foo() (2 usages) (pack.subpack)">
           <any/>
         </node>
       </node>
