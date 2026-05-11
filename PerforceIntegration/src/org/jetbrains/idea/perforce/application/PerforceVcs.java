@@ -488,17 +488,6 @@ public final class PerforceVcs extends AbstractVcs {
   }
 
   @Override
-  public boolean isVersionedDirectory(VirtualFile dir) {
-    //return PerforceManager.getInstance(myProject).isUnderPerforceDefaultYes(dir);
-    try {
-      return PerforceManager.getInstance(myProject).isUnderPerforceRoot(dir);
-    }
-    catch (VcsException e) {
-      return false;
-    }
-  }
-
-  @Override
   public VcsExceptionsHotFixer getVcsExceptionsHotFixer() {
     return myProject.getService(PerforceExceptionsHotFixer.class);
   }
