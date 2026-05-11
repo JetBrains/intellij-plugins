@@ -24,7 +24,6 @@ internal suspend fun getStatus(project: Project): List<GitStatusEntry> {
     .apply {
       addParameters("--no-renames", "--porcelain=1", "--ignore-submodules")
       ignoreAuthenticationMode = AuthenticationMode.SILENT
-      setWithMediator(false)
     }
   val output = runInterruptible(StaticAnalysisDispatchers.IO) {
     Git.getInstance().runCommand(handler).getOutputOrThrow()
@@ -50,7 +49,6 @@ internal suspend fun restoreTrackedFiles(project: Project) {
         endOptions()
         addParameters(".")
         ignoreAuthenticationMode = AuthenticationMode.SILENT
-        setWithMediator(false)
       }
 
     runInterruptible(StaticAnalysisDispatchers.IO) {
