@@ -1,7 +1,7 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.css.refs
 
-import com.intellij.javascript.web.css.CssClassInJSLiteralOrIdentifierReferenceProvider
+import com.intellij.javascript.backend.css.web.CssClassInJSLiteralOrIdentifierReferenceProvider
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.psi.JSFunctionItem
 import com.intellij.lang.javascript.psi.JSFunctionType

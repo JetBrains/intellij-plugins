@@ -99,6 +99,7 @@ jvm_library(
     "@community//libraries/kotlinx/serialization/json",
     "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
     "@community//json",
+    "//plugins/JavaScriptLanguage/css/backend:javascript-backend-css",
   ]
 )
 
@@ -177,6 +178,7 @@ jvm_library(
     "@community//libraries/kotlinx/serialization/json:json_test_lib",
     "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
     "@community//json:json_test_lib",
+    "//plugins/JavaScriptLanguage/css/backend:javascript-backend-css_test_lib",
   ]
 )
 ### auto-generated section `build intellij.vuejs.backend` end

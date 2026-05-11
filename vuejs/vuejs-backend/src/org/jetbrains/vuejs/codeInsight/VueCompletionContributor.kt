@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider
+import com.intellij.javascript.backend.css.web.CssInBindingExpressionCompletionProvider
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
