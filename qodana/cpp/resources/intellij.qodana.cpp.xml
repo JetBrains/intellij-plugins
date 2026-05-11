@@ -37,7 +37,14 @@
     <qodana.workflowExtension implementation="org.jetbrains.qodana.cpp.QodanaCppProjectLoaderExtension" />
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
-    <activityTracker implementation="org.jetbrains.qodana.cpp.QodanaCppProjectAwaiter"/>
+    <!-- order="first": QodanaCppProjectAwaiter must run before RadProjectAwaiter in the
+         Observation.awaitConfiguration() serial loop. RadProjectAwaiter has no timeouts and
+         blocks indefinitely on Radler's `fullStartupFinished` Rd property when a broken build
+         system (e.g. Makefile with no compile_commands.json — QD-14621) leaves the project
+         model empty. QodanaCppProjectAwaiter, in contrast, races the listener-driven failure
+         signal in QodanaCppStartupManager and fails fast with a build-system-aware diagnostic,
+         which terminates the Observation loop before RadProjectAwaiter's turn. -->
+    <activityTracker order="first" implementation="org.jetbrains.qodana.cpp.QodanaCppProjectAwaiter"/>
     <registryKey defaultValue="5" description="Timeout in minutes for Qodana C++ startup sequence" key="qd.cpp.startup.timeout.minutes" restartRequired="false"/>
     <registryKey defaultValue="60" description="Timeout in seconds for waiting for CIDR workspaces to become ready" key="qd.cpp.workspace.ready.timeout.seconds" restartRequired="false"/>
     <registryKey defaultValue="60" description="Timeout in seconds for waiting for ProgressManager tasks to complete" key="qd.cpp.progress.manager.timeout.seconds" restartRequired="false"/>

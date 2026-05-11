@@ -59,6 +59,17 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTime
 
+/**
+ * Project-scoped, **single-shot** startup orchestrator for Qodana C++.
+ *
+ * Lifecycle assumption: one instance per [Project], and each [Project] is created and disposed by
+ * a single Qodana analysis run (Qodana C++ runs only headless / CLI, see [QodanaCppProjectAwaiter]).
+ * In particular, [startupDeferred] is [CoroutineStart.LAZY] and effectively single-assignment —
+ * once [awaitStartup] completes (success or failure), subsequent calls return the cached result.
+ * Likewise, [buildSystemImportFailureSignal] is a non-rearmable [CompletableDeferred] tied to that
+ * single run. If a future code path begins reusing a Project across analyses, this class needs to
+ * be rebuilt around per-run signal instances.
+ */
 @Service(Service.Level.PROJECT)
 class QodanaCppStartupManager(private val project: Project, private val coroutineScope: CoroutineScope) {
   companion object {
@@ -71,6 +82,39 @@ class QodanaCppStartupManager(private val project: Project, private val coroutin
   private val lockTasksOperations = ReentrantLock()
   private val completableDeferred = CompletableDeferred<Unit>()
   @Volatile private var currentPhase = "initializing"
+
+  // Signaled by QodanaCppImportFailureListener when the selected build system's import fails.
+  // Used by the failure monitor in monitoringBackendHealth to short-circuit doAwaitStartup
+  // with a build-system-aware diagnostic before the Radler backend's fullStartupFinished times out
+  // (or never fires, on a broken Makefile project — QD-14621). Carries the build system's
+  // workspace component name *as observed by the listener* so the diagnostic in
+  // failWithBuildSystemError doesn't depend on a separate read of selectedWorkspaceComponentName
+  // (which can race with selectProcessor resetting the AtomicReference on a subsequent run).
+  private val buildSystemImportFailureSignal = CompletableDeferred<BuildSystemImportFailure>()
+
+  private data class BuildSystemImportFailure(val workspaceComponentName: String?, val reason: String)
+
+  /**
+   * Invoked from [QodanaCppImportFailureListener] when the *selected* build system's external-system
+   * import fails. Causes [monitoringBackendHealth]'s failure monitor to throw via
+   * [failWithBuildSystemError] so the user-facing diagnostic surfaces fast (~import time) rather
+   * than waiting the full backend-startup or workspace-ready timeout.
+   *
+   * Thread-safe; callable from any thread (typically the External System task notification thread).
+   *
+   * Safe to call before this service's startup coroutine has begun: the signal is a
+   * [CompletableDeferred] field, so the monitor will see the completion immediately when it
+   * subscribes inside [monitoringBackendHealth].
+   *
+   * Idempotent — extra completions are silently ignored.
+   *
+   * @param workspaceComponentName the @State name of the CIDR workspace that failed to import
+   *   (e.g. "MakefileWorkspace"), captured by the listener before any subsequent run could
+   *   reset [selectedWorkspaceComponentName].
+   */
+  fun notifyBuildSystemImportFailure(workspaceComponentName: String?, reason: String) {
+    buildSystemImportFailureSignal.complete(BuildSystemImportFailure(workspaceComponentName, reason))
+  }
 
   private val startupDeferred: Deferred<Unit> = coroutineScope.async(start = CoroutineStart.LAZY) {
     project.lifetime.usingNested { lt ->
@@ -155,10 +199,17 @@ class QodanaCppStartupManager(private val project: Project, private val coroutin
     QodanaCppHeadlessStartupExtension().afterCidrWorkspacesReadyImpl(project)
   }
 
-  /** Reports a build system configuration failure with a user-facing message and throws [QodanaException]. */
-  private fun failWithBuildSystemError(reason: String): Nothing {
+  /**
+   * Reports a build system configuration failure with a user-facing message and throws [QodanaException].
+   *
+   * @param workspaceComponentName the @State name of the failed CIDR workspace (e.g.
+   *   "MakefileWorkspace"). Defaults to [selectedWorkspaceComponentName]; callers that capture
+   *   the name earlier (e.g. the listener via [notifyBuildSystemImportFailure]) pass it explicitly
+   *   to avoid races with [selectProcessor] resetting the AtomicReference on a subsequent run.
+   */
+  private fun failWithBuildSystemError(reason: String, workspaceComponentName: String? = selectedWorkspaceComponentName): Nothing {
     val ideaLogPath = PathManager.getLogDir() / "idea.log"
-    val selectedName = selectedWorkspaceComponentName
+    val selectedName = workspaceComponentName
     logDiagnostics()
 
     if (selectedName != null) {
@@ -233,13 +284,31 @@ class QodanaCppStartupManager(private val project: Project, private val coroutin
   }
 
   /**
-   * Runs [block] while monitoring the Radler backend process. If the backend dies during
-   * execution, throws [QodanaException] and cancels [block] via structured concurrency.
+   * Runs [block] while monitoring (a) the Radler backend process for unexpected death and
+   * (b) the [buildSystemImportFailureSignal] for a build-system import failure. Either signal
+   * throws [QodanaException] and cancels [block] via structured concurrency.
    */
   private suspend fun monitoringBackendHealth(block: suspend () -> Unit) = coroutineScope {
-    val monitor = launch { awaitBackendDeath() }
+    val backendMonitor = launch { awaitBackendDeath() }
+    val importFailureMonitor = launch { awaitBuildSystemImportFailure() }
     block()
-    monitor.cancel()
+    backendMonitor.cancel()
+    importFailureMonitor.cancel()
+  }
+
+  /**
+   * Suspends until [notifyBuildSystemImportFailure] signals a build-system import failure, then
+   * throws via [failWithBuildSystemError] so the user-facing diagnostic
+   * ("Failed to configure project as a $buildSystem workspace.") is printed immediately instead
+   * of waiting for the Radler backend's `fullStartupFinished` (which never fires for broken
+   * Makefile projects — QD-14621). Uses the workspace name captured by the listener rather than
+   * re-reading [selectedWorkspaceComponentName] (which could race with [selectProcessor]).
+   */
+  private suspend fun awaitBuildSystemImportFailure(): Nothing {
+    val failure = buildSystemImportFailureSignal.await()
+    currentPhase = "build system import failed"
+    log.warn("Build system import failure signaled: ${failure.reason}")
+    failWithBuildSystemError("build system import failed: ${failure.reason}", failure.workspaceComponentName)
   }
 
   /** Suspends until the backend process terminates, then throws [QodanaException]. */
