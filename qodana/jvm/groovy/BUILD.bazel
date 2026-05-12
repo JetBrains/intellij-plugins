@@ -58,7 +58,11 @@ jvm_library(
   name = "qodana-jvm-groovy-tests",
   module_name = "intellij.qodana.jvm.groovy.tests",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    "@community//plugins/groovy-scripting",
+    "@community//plugins/groovy/structuralsearch-groovy:structuralSearch",
+  ]
 )
 
 jvm_library(
@@ -95,7 +99,11 @@ jvm_library(
     "//contrib/qodana:qodana-core-tests",
     "//contrib/qodana:qodana-core-tests_test_lib",
   ],
-  runtime_deps = [":qodana-jvm-groovy-tests"]
+  runtime_deps = [
+    ":qodana-jvm-groovy-tests",
+    "@community//plugins/groovy-scripting:groovy-scripting_test_lib",
+    "@community//plugins/groovy/structuralsearch-groovy:structuralSearch_test_lib",
+  ]
 )
 ### auto-generated section `build intellij.qodana.jvm.groovy.tests` end
 
