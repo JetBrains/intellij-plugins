@@ -37,6 +37,7 @@ import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueGlobal
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueNamedComponent
+import org.jetbrains.vuejs.model.source.VueSourceContainer
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_DIRECTIVES
 import org.jetbrains.vuejs.web.VUE_GLOBAL_DIRECTIVES
@@ -59,13 +60,25 @@ private constructor(
   companion object {
 
     fun create(container: VueEntitiesContainer, proximity: VueModelVisitor.Proximity): VueCodeModelSymbolScope<*>? {
-      container.source
-        ?.let {
-          return VueCodeModelSymbolScope(container, it.project, it, proximity, proximity)
-        }
-      return if (container is VueGlobal)
-        VueCodeModelSymbolScope(container, container.project, container.project, proximity, container.packageJsonUrl ?: "")
-      else null
+      // We must use `initializer` or `class` as a data holder here, if possible,
+      // because `CachedValue` keeps the reference to `VueCodeModelSymbolScope`.
+      // When `initialize` runs, it is not called on the newest `VueCodeModelSymbolScope`
+      // instance, but on the original one, of which the container instance may have
+      // an outdated (invalid) `initializer` PSI element. The most correct solution would be to
+      // store a pointer to a container inside `VueCodeModelSymbolScope`, but creating pointers
+      // is not cheap. So, I think it's better to use the best possible data holder here.
+      val dataHolder = if (container is VueSourceContainer<*>)
+        container.initializer ?: container.clazz ?: container.source
+      else
+        container.source
+
+      return when {
+        dataHolder != null ->
+          VueCodeModelSymbolScope(container, dataHolder.project, dataHolder, proximity, proximity)
+        container is VueGlobal ->
+          VueCodeModelSymbolScope(container, container.project, container.project, proximity, container.packageJsonUrl ?: "")
+        else -> null
+      }
     }
 
   }
