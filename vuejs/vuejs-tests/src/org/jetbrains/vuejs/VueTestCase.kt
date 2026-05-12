@@ -40,6 +40,8 @@ abstract class VueTestCase(
     buildList {
       addAll(super.adjustConfigurators(configurators))
 
+      add(VueToolsConfigurator(testMode))
+
       if (none { it is VueTsConfigFile }) {
         add(VueTsConfigFile())
       }
@@ -57,8 +59,14 @@ abstract class VueTestCase(
       add(VueTestModule.VUE_TSCONFIG_0_9_1)
     }.toTypedArray()
 
+  private fun TestConfiguration.getVueLanguageToolsVersion(): VueLanguageToolsVersion? =
+    configurators
+      .filterIsInstance<VueToolsConfigurator>()
+      .single()
+      .getBundledVersion()
+
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
-    val bundledVersion = getRequiredHybridModeBundledVersion(myFixture, testMode)
+    val bundledVersion = configuration.getVueLanguageToolsVersion()
                          ?: return
 
     setForceLegacyPluginUsage(bundledVersion == VueLanguageToolsVersion.LEGACY, testRootDisposable)
@@ -79,7 +87,7 @@ abstract class VueTestCase(
         myFixture.tempDirFixture.getFile(VueTsConfigFile.FILE_NAME)!!,
       )
     }
-    
+
     configuration.configurators
       .filterIsInstance<VueLspConfigurator>()
       .forEach { it.waitForLspServer(myFixture) }
