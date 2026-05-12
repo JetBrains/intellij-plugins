@@ -43,7 +43,7 @@ internal fun getVueSymbolsCacheDependencies(project: Project, withPsiModTracker:
   setOfNotNull(
     PsiModificationTracker.MODIFICATION_COUNT.takeIf { withPsiModTracker },
     VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-    DumbService.getInstance(project).modificationTracker,
-    StubIndex.getInstance().getStubIndexModificationTracker(project),
+    DumbService.getInstance(project).modificationTracker.takeIf { !withPsiModTracker },
+    StubIndex.getInstance().getStubIndexModificationTracker(project).takeIf { !withPsiModTracker },
     NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
   )

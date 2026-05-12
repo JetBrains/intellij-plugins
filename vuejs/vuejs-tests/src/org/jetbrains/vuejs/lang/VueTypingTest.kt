@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.ReadResult
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.platform.testFramework.core.FileComparisonFailedError
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.sass.SASSLanguage
@@ -202,6 +203,15 @@ class VueTypingTest : VueTestCase("typing") {
       moveToOffsetBySignature("\"foo\"<caret>>")
       type(" title=\"")
       performEditorAction(IdeActions.ACTION_EDITOR_PASTE)
+    }
+
+  fun testInvalidElementOnTyping() =
+    doEditorTypingTest(checkResult = false) {
+      // It is possible to get PsiInvalidElement exception here,
+      // if caching of source component info is incorrect.
+      performHighlighting()
+      type("}")
+      performHighlighting()
     }
 
 }
