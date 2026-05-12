@@ -2,215 +2,206 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.application.ReadResult
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.sass.SASSLanguage
 import org.jetbrains.plugins.scss.SCSSLanguage
 import org.jetbrains.plugins.stylus.StylusLanguage
+import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 
-class VueTypingTest : BasePlatformTestCase() {
+class VueTypingTest : VueTestCase("typing") {
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/typing"
+  override val testName: String get() = getTestName(false)
 
-  fun testStylusEnterEnd() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+  fun testStylusEnterEnd() =
+    // For some weird reason, doEditorTypingTest does not work here...
+    doConfiguredTest(configureCodeStyleSettings = {
+      getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
       }
-      styleSettings.getLanguageIndentOptions(StylusLanguage.INSTANCE).INDENT_SIZE = 1
-      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
-      styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
-      doTest("\n")
+      getLanguageIndentOptions(StylusLanguage.INSTANCE).INDENT_SIZE = 1
+      getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
+      getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
+    }) {
+      type("\n")
     }
-  }
 
-  fun testSassEnterEnd() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+  fun testSassEnterEnd() =
+    // For some weird reason, doEditorTypingTest does not work here...
+    doConfiguredTest(configureCodeStyleSettings = {
+      getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
       }
-      styleSettings.getLanguageIndentOptions(SASSLanguage.INSTANCE).INDENT_SIZE = 4
-      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 1
-      styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 1
-      doTest("\n")
+      getLanguageIndentOptions(SASSLanguage.INSTANCE).INDENT_SIZE = 4
+      getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 1
+      getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 1
+    }) {
+      type("\n")
     }
-  }
 
-  fun testPugEnterEnd() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+  fun testPugEnterEnd() =
+    doCompletionAutoPopupTest(configureCodeStyleSettings = {
+      getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
       }
-      styleSettings.getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 6
-      styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 6
-      doTest("\n")
+      getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 2
+      getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 6
+      getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 6
+    }) {
+      type("\n")
     }
-  }
 
-  fun testJSEnterStart() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+  fun testJSEnterStart() =
+    doCompletionAutoPopupTest(configureCodeStyleSettings = {
+      getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
       }
-      styleSettings.getLanguageIndentOptions(JavascriptLanguage).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 6
-      styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 6
-      doTest("\n")
+      getLanguageIndentOptions(JavascriptLanguage).INDENT_SIZE = 2
+      getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 6
+      getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 6
+    }) {
+      type("\n")
     }
-  }
 
-  fun testStylusBackspace() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+  fun testStylusBackspace() =
+    doCompletionAutoPopupTest(configureCodeStyleSettings = {
+      getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
       }
-      styleSettings.getLanguageIndentOptions(StylusLanguage.INSTANCE).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
-      styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
-      doTest("\b\b")
+      getLanguageIndentOptions(StylusLanguage.INSTANCE).INDENT_SIZE = 2
+      getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
+      getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
+    }) {
+      type("\b\b")
     }
-  }
 
-  fun testStylusBackspace2() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+  fun testStylusBackspace2() =
+    doCompletionAutoPopupTest(configureCodeStyleSettings = {
+      getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = true
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
       }
-      styleSettings.getLanguageIndentOptions(StylusLanguage.INSTANCE).INDENT_SIZE = 5
-      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
-      doTest("StylusBackspace", "\b\b")
+      getLanguageIndentOptions(StylusLanguage.INSTANCE).INDENT_SIZE = 5
+      getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 2
+      getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
+    }, configureFileName = "StylusBackspace.vue") {
+      type("\b\b")
     }
-  }
 
-  fun testPugBackspace() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+  fun testPugBackspace() =
+    doCompletionAutoPopupTest(configureCodeStyleSettings = {
+      getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
       }
-      styleSettings.getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
-      styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
-      doTest("\b\b")
+      getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 2
+      getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
+      getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
+    }) {
+      type("\b\b")
     }
-  }
 
-  fun testPugBackspace2() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+  fun testPugBackspace2() =
+    doCompletionAutoPopupTest(configureCodeStyleSettings = {
+      getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = true
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
       }
-      styleSettings.getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 5
-      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
-      doTest("PugBackspace", "\b\b")
+      getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 5
+      getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 2
+      getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
+    }, configureFileName = "PugBackspace.vue") {
+      type("\b\b")
     }
-  }
 
-  fun testSassBackspace() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+  fun testSassBackspace() =
+    doCompletionAutoPopupTest(configureCodeStyleSettings = {
+      getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
       }
-      styleSettings.getLanguageIndentOptions(SASSLanguage.INSTANCE).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
-      styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
-      doTest("\b\b")
+      getLanguageIndentOptions(SASSLanguage.INSTANCE).INDENT_SIZE = 2
+      getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
+      getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
+    }) {
+      type("\b\b")
     }
-  }
 
-  fun testJSBackspace() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+  fun testJSBackspace() =
+    doCompletionAutoPopupTest(configureCodeStyleSettings = {
+      getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
       }
-      styleSettings.getLanguageIndentOptions(JavascriptLanguage).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
-      styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
-      doTest("\b")
+      getLanguageIndentOptions(JavascriptLanguage).INDENT_SIZE = 2
+      getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
+      getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
+    }) {
+      type("\b")
     }
-  }
 
-  fun testHtmlBackspace() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+  fun testHtmlBackspace() =
+    doCompletionAutoPopupTest(configureCodeStyleSettings = {
+      getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
       }
-      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
-      styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
-      doTest("\b")
+      getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
+      getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
+    }) {
+      type("\b")
     }
-  }
 
-  fun testScssBackspace() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+  fun testScssBackspace() =
+    doCompletionAutoPopupTest(configureCodeStyleSettings = {
+      getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
       }
-      styleSettings.getLanguageIndentOptions(SCSSLanguage.INSTANCE).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
-      styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
-      doTest("\b")
+      getLanguageIndentOptions(SCSSLanguage.INSTANCE).INDENT_SIZE = 2
+      getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
+      getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
+    }) {
+      type("\b")
     }
-  }
 
-  fun testInjectedJsonEnterHandler() {
-    doTest("{\n\"foo\":12\n")
-  }
+  fun testInjectedJsonEnterHandler() =
+    doCompletionAutoPopupTest {
+      type("{\n\"foo\":12\n")
+    }
 
   // WEB-61505
-  fun testAutoStringInterpolation() {
-    doTest("{")
-  }
+  fun testAutoStringInterpolation() =
+    doCompletionAutoPopupTest {
+      type("{")
 
-  fun testAutoStringInterpolationDirective() {
-    doTest("{")
-  }
+    }
 
-  fun testPasteIntoJsxFreshlyTypedAttr() {
-    myFixture.configureByText("test.vue", """
-      <script lang="jsx">
-      const <selection>drop</selection>down = () => (<div style="foo">a</div>)
-      </script>
-    """.trimIndent())
-    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY)
-    myFixture.editor.caretModel.primaryCaret.setSelection(0, 0)
-    myFixture.moveToOffsetBySignature("\"foo\"<caret>>")
-    myFixture.type(" title=\"")
-    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_PASTE)
-    myFixture.checkResult("""
-      <script lang="jsx">
-      const dropdown = () => (<div style="foo" title="drop">a</div>)
-      </script>
-    """.trimIndent())
-  }
+  fun testAutoStringInterpolationDirective() =
+    doCompletionAutoPopupTest {
+      type("{")
+    }
 
-  private fun doTest(toType: String) {
-    doTest(getTestName(false), toType)
-  }
+  fun testPasteIntoJsxFreshlyTypedAttr() =
+    doCompletionAutoPopupTest {
+      performEditorAction(IdeActions.ACTION_EDITOR_COPY)
+      invokeAndWaitIfNeeded {
+        editor.caretModel.primaryCaret.setSelection(0, 0)
+      }
+      moveToOffsetBySignature("\"foo\"<caret>>")
+      type(" title=\"")
+      performEditorAction(IdeActions.ACTION_EDITOR_PASTE)
+    }
 
-  private fun doTest(fileName: String, toType: String) {
-    myFixture.configureByFile("$fileName.vue")
-    myFixture.type(toType)
-    myFixture.checkResultByFile("${fileName}_after.vue")
-  }
 }
