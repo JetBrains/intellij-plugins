@@ -19,7 +19,6 @@ import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
-import java.util.Collections;
 
 /**
  * @author Maxim.Mossienko
@@ -39,7 +38,7 @@ public final class SwfFileStubBuilder implements BinaryFileStubBuilder {
   }
 
   static PsiFileStub<?> buildFileStub(VirtualFile file, byte[] content) {
-    PsiFileStubImpl<?> stub = new JSFileStubImpl(FlexFileElementTypes.ECMA4_FILE, new JSFileCachedData(), Collections.emptySet());
+    PsiFileStubImpl<?> stub = new JSFileStubImpl(FlexFileElementTypes.ECMA4_FILE, new JSFileCachedData());
     try {
 
       FlexImporter.buildStubsInterfaceFromStream(
