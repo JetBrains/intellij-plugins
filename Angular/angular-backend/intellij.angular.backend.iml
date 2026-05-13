@@ -60,7 +60,7 @@
     <orderEntry type="module" module-name="intellij.platform.images" />
     <orderEntry type="module" module-name="intellij.javascript.common" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />
-    <orderEntry type="library" name="opentelemetry" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.opentelemetry" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
     <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.backend" />
