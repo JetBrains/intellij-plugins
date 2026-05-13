@@ -226,6 +226,7 @@ class VueSettings(private val project: Project) :
     val lspHybridModePackage: ManualServicePackage? = null,
     val tsPluginPackage: ManualServicePackage? = null,
   )
+
   @Serializable
   enum class ManualMode(
     @param:NlsSafe
