@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
+import com.intellij.openapi.application.WriteAction
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
@@ -1261,6 +1262,26 @@ abstract class VueHighlightingTestBase(
   @Test
   fun testTypedMixins() {
     doHighlightingTest(configureFileName = "index.js")
+  }
+
+  @Test
+  fun testGlobalComponentFileReplacement() {
+    doConfiguredTest(checkResult = false, configureFileName = "index.vue") {
+      checkHighlighting()
+      val file = tempDirFixture.getFile("components.d.ts")!!
+      WriteAction.run<Exception> {
+        file.setBinaryContent(("""
+        interface _GlobalComponents {
+          AppLogo: typeof import("./app-logo.vue")['default']
+        }
+        declare module 'vue' {
+          export interface GlobalComponents extends _GlobalComponents { }
+        }
+        export {}
+      """).toByteArray())
+      }
+      checkHighlighting()
+    }
   }
 
   @Test
