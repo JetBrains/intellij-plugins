@@ -22,9 +22,9 @@ class VueTsConfigFile(
     assertNull(fixture.tempDirFixture.getFile("tsconfig.base.json"))
 
     val content = tsconfigContent(
-      types = types,  
+      types = types,
     )
-    
+
     fixture.configureByText(FILE_NAME, content)
   }
 
@@ -47,7 +47,7 @@ class VueTsConfigFile(
     const val FILE_NAME: String = "tsconfig.json"
 
     val DEFAULT_TSCONFIG_CONTENT: String = tsconfigContent(types = emptyList())
-    
+
     private fun tsconfigContent(
       types: List<String>,
     ): String {
@@ -61,7 +61,7 @@ class VueTsConfigFile(
             "**/*.vue"
           ]
           "compilerOptions": {
-            "types": [ ${types.joinToString(", ") { """"$it"""" } } ]   
+            "types": [ ${types.joinToString(", ") { """"$it"""" }} ]   
           
             // Extra safety for array and object lookups, but may have false positives.
             "noUncheckedIndexedAccess": true,
