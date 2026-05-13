@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
+import com.intellij.openapi.application.WriteAction
 import com.intellij.psi.PsiFile
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
@@ -1089,6 +1090,26 @@ const props = {seeMe: {}}
       fileName = "index.js",
       addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
+  }
+
+  @Test
+  fun testGlobalComponentFileReplacement() {
+    doConfiguredTest(checkResult = false, configureFileName = "index.vue") {
+      checkHighlighting()
+      val file = tempDirFixture.getFile("components.d.ts")!!
+      WriteAction.run<Exception> {
+        file.setBinaryContent(("""
+        interface _GlobalComponents {
+          AppLogo: typeof import("./app-logo.vue")['default']
+        }
+        declare module 'vue' {
+          export interface GlobalComponents extends _GlobalComponents { }
+        }
+        export {}
+      """).toByteArray())
+      }
+      checkHighlighting()
+    }
   }
 
   @Test

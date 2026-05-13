@@ -1,0 +1,1 @@
+<app-logo @foo="$event"></app-logo>
