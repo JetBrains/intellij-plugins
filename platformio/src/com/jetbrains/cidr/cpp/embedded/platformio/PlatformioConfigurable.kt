@@ -144,7 +144,7 @@ class PlatformioConfigurable : SearchableConfigurable {
   }
 
   companion object {
-    private const val ID = "PlatformIO.settings"
+    const val ID: String = "PlatformIO.settings"
     private const val PIO_LOCATION_KEY = "$ID.platformio.location"
     private const val PIO_VENV_FOLDER = "penv"
 
