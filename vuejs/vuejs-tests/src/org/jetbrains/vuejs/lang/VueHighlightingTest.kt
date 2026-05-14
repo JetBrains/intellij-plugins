@@ -1094,11 +1094,13 @@ const props = {seeMe: {}}
 
   @Test
   fun testGlobalComponentFileReplacement() {
-    doConfiguredTest(checkResult = false, configureFileName = "index.vue") {
-      checkHighlighting()
-      val file = tempDirFixture.getFile("components.d.ts")!!
-      WriteAction.run<Exception> {
-        file.setBinaryContent(("""
+    val testName = getTestName(true)
+    myFixture.copyDirectoryToProject(testName, ".")
+    myFixture.configureByFile("index.vue")
+    myFixture.checkHighlighting()
+    val file = myFixture.tempDirFixture.getFile("components.d.ts")!!
+    WriteAction.run<Exception> {
+      file.setBinaryContent(("""
         interface _GlobalComponents {
           AppLogo: typeof import("./app-logo.vue")['default']
         }
@@ -1107,9 +1109,8 @@ const props = {seeMe: {}}
         }
         export {}
       """).toByteArray())
-      }
-      checkHighlighting()
     }
+    myFixture.checkHighlighting()
   }
 
   @Test
