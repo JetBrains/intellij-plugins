@@ -172,6 +172,10 @@ jvm_library(
     "//python/plugin:plugin_test_lib",
     "//contrib/qodana/coverage:coverage-tests",
     "//contrib/qodana/coverage:coverage-tests_test_lib",
+    "@community//python/pluginCore:community-plugin",
+    "@community//python/pluginCore:community-plugin_test_lib",
+    "@community//python/aliasProvider",
+    "@community//python/aliasProvider:aliasProvider_test_lib",
   ],
   runtime_deps = [":qodana-python-coverage-tests"]
 )
