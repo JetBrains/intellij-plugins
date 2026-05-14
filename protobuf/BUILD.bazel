@@ -8,7 +8,10 @@ jvm_library(
   srcs = glob([], allow_empty = True),
   resources = glob(["resources/**/*"]),
   resource_strip_prefix = "resources",
-  runtime_deps = ["//contrib/protobuf/protoeditor-core"]
+  runtime_deps = [
+    "//contrib/protobuf/protoeditor-core",
+    "@community//platform/structure-view-impl:structureView-impl",
+  ]
 )
 
 jvm_library(
@@ -20,6 +23,7 @@ jvm_library(
   runtime_deps = [
     ":protoeditor",
     "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
+    "@community//platform/structure-view-impl:structureView-impl_test_lib",
     "//contrib/protobuf/protoeditor-jvm",
     "//contrib/protobuf/protoeditor-jvm:protoeditor-jvm_test_lib",
     "//contrib/protobuf/protoeditor-python",
