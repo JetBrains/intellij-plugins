@@ -1,312 +1,297 @@
-package org.jetbrains.idea.perforce.application;
+package org.jetbrains.idea.perforce.application
 
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationActivationListener;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vcs.AbstractVcs;
-import com.intellij.openapi.vcs.FilePath;
-import com.intellij.openapi.vcs.FileStatus;
-import com.intellij.openapi.vcs.ProjectLevelVcsManager;
-import com.intellij.openapi.vcs.VcsException;
-import com.intellij.openapi.vcs.changes.Change;
-import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vcs.changes.ChangeListManagerGate;
-import com.intellij.openapi.vcs.changes.ChangelistBuilder;
-import com.intellij.openapi.vcs.changes.ContentRevision;
-import com.intellij.openapi.vcs.changes.LocalChangeList;
-import com.intellij.openapi.vcs.changes.VcsDirtyScope;
-import com.intellij.openapi.vfs.VFileProperty;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileCopyEvent;
-import com.intellij.openapi.vfs.VirtualFileEvent;
-import com.intellij.openapi.vfs.VirtualFileListener;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.VirtualFileMoveEvent;
-import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
-import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.util.messages.MessageBusConnection;
-import com.intellij.vcsUtil.VcsUtil;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationActivationListener
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vcs.FilePath
+import com.intellij.openapi.vcs.FileStatus
+import com.intellij.openapi.vcs.ProjectLevelVcsManager
+import com.intellij.openapi.vcs.VcsException
+import com.intellij.openapi.vcs.changes.ChangeListManager
+import com.intellij.openapi.vcs.changes.ChangeListManagerGate
+import com.intellij.openapi.vcs.changes.ChangelistBuilder
+import com.intellij.openapi.vcs.changes.VcsDirtyScope
+import com.intellij.openapi.vfs.VFileProperty
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileCopyEvent
+import com.intellij.openapi.vfs.VirtualFileEvent
+import com.intellij.openapi.vfs.VirtualFileListener
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.VirtualFileMoveEvent
+import com.intellij.openapi.vfs.VirtualFilePropertyEvent
+import com.intellij.openapi.wm.IdeFrame
+import com.intellij.vcsUtil.VcsUtil
+import java.io.File
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
+import kotlin.collections.MutableCollection
+import kotlin.collections.MutableMap
+import kotlin.collections.MutableSet
+import kotlin.concurrent.Volatile
 
-import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-public final class PerforceReadOnlyFileStateManager {
-  private static final Logger LOG = Logger.getInstance(PerforceReadOnlyFileStateManager.class);
-
-  private final Project myProject;
-  private final PerforceDirtyFilesHandler myDirtyFilesHandler;
-  private final ProjectLevelVcsManager myVcsManager;
-  private final Object myLock = new Object();
-  private final ApplicationActivationListener myFrameStateListener = new ApplicationActivationListener() {
-    @Override
-    public void applicationDeactivated(@NotNull IdeFrame ideFrame) {
-      processFocusLost();
+class PerforceReadOnlyFileStateManager(private val myProject: Project, private val myDirtyFilesHandler: PerforceDirtyFilesHandler) {
+  private val myVcsManager = ProjectLevelVcsManager.getInstance(myProject)
+  private val myLock = Any()
+  private val myFrameStateListener = object : ApplicationActivationListener {
+    override fun applicationDeactivated(ideFrame: IdeFrame) {
+      processFocusLost()
     }
-  };
-  private final Set<FilePath> myPreviousAddedSnapshot = new HashSet<>();
+  }
+  private val myPreviousAddedSnapshot: MutableSet<FilePath> = HashSet()
 
-  private final Map<VirtualFile, Set<VirtualFile>> myWritableFiles = new HashMap<>();
+  private val myWritableFiles: MutableMap<VirtualFile, MutableSet<VirtualFile>> = HashMap()
 
-  private volatile boolean myHasLostFocus;
+  @Volatile
+  private var myHasLostFocus = false
 
-  public PerforceReadOnlyFileStateManager(Project project, PerforceDirtyFilesHandler dirtyFilesHandler) {
-    myProject = project;
-    myDirtyFilesHandler = dirtyFilesHandler;
-    myVcsManager = ProjectLevelVcsManager.getInstance(myProject);
+  fun activate(parentDisposable: Disposable) {
+    Disposer.register(parentDisposable) { this.deactivate() }
+
+    VirtualFileManager.getInstance().addVirtualFileListener(MyVfsListener(), parentDisposable)
+    val appConnection = ApplicationManager.getApplication().getMessageBus().connect(parentDisposable)
+    appConnection.subscribe<ApplicationActivationListener>(ApplicationActivationListener.TOPIC, myFrameStateListener)
   }
 
-  public void activate(@NotNull Disposable parentDisposable) {
-    Disposer.register(parentDisposable, this::deactivate);
-
-    VirtualFileManager.getInstance().addVirtualFileListener(new MyVfsListener(), parentDisposable);
-    MessageBusConnection appConnection = ApplicationManager.getApplication().getMessageBus().connect(parentDisposable);
-    appConnection.subscribe(ApplicationActivationListener.TOPIC, myFrameStateListener);
+  private fun deactivate() {
+    myHasLostFocus = true
   }
 
-  private void deactivate() {
-    myHasLostFocus = true;
-  }
-
-  public void addWritableFiles(VirtualFile root, Collection<VirtualFile> writableFiles, boolean withIgnored) {
-    Set<VirtualFile> writablesUnderRoot = new HashSet<>();
-    boolean needInit = false;
-    synchronized (myWritableFiles) {
+  fun addWritableFiles(root: VirtualFile, writableFiles: MutableCollection<VirtualFile>, withIgnored: Boolean) {
+    var writablesUnderRoot: MutableSet<VirtualFile> = HashSet()
+    var needInit = false
+    synchronized(myWritableFiles) {
       // do not collect init files under lock
       if (!myWritableFiles.containsKey(root)) {
-        needInit = true;
+        needInit = true
       }
 
-      Set<VirtualFile> currentFilesUnderRoot = myWritableFiles.get(root);
+      val currentFilesUnderRoot = myWritableFiles[root]
       if (currentFilesUnderRoot != null) {
-        writablesUnderRoot = new HashSet<>(currentFilesUnderRoot);
+        writablesUnderRoot = HashSet(currentFilesUnderRoot)
       }
     }
 
     if (needInit) {
-      writablesUnderRoot = initializeWritableFiles(root);
+      writablesUnderRoot = initializeWritableFiles(root)
     }
 
-    for (VirtualFile vf : writablesUnderRoot) {
+    for (vf in writablesUnderRoot) {
       if (withIgnored || !ChangeListManager.getInstance(myProject).isIgnoredFile(vf)) {
-        writableFiles.add(vf);
+        writableFiles.add(vf)
       }
     }
   }
 
-  public void addWritableFiles(VirtualFile root, Collection<VirtualFile> writableFiles, boolean withIgnored,
-                               @NotNull VcsDirtyScope scopeFilter) {
-    Set<VirtualFile> writablesUnderRoot = new HashSet<>();
-    boolean needInit = false;
-    synchronized (myWritableFiles) {
+  fun addWritableFiles(
+    root: VirtualFile, writableFiles: MutableCollection<VirtualFile>, withIgnored: Boolean,
+    scopeFilter: VcsDirtyScope,
+  ) {
+    var writablesUnderRoot: MutableSet<VirtualFile> = HashSet()
+    var needInit = false
+    synchronized(myWritableFiles) {
       if (!myWritableFiles.containsKey(root)) {
-        needInit = true;
+        needInit = true
       }
-      Set<VirtualFile> currentFilesUnderRoot = myWritableFiles.get(root);
+      val currentFilesUnderRoot = myWritableFiles[root]
       if (currentFilesUnderRoot != null) {
-        writablesUnderRoot = new HashSet<>(currentFilesUnderRoot);
+        writablesUnderRoot = HashSet(currentFilesUnderRoot)
       }
     }
 
     if (needInit) {
-      writablesUnderRoot = initializeWritableFiles(root);
+      writablesUnderRoot = initializeWritableFiles(root)
     }
 
-    for (VirtualFile vf : writablesUnderRoot) {
-      if (!scopeFilter.belongsTo(VcsUtil.getFilePath(vf))) continue;
+    for (vf in writablesUnderRoot) {
+      if (!scopeFilter.belongsTo(VcsUtil.getFilePath(vf))) continue
       if (withIgnored || !ChangeListManager.getInstance(myProject).isIgnoredFile(vf)) {
-        writableFiles.add(vf);
+        writableFiles.add(vf)
       }
     }
   }
 
-  private Set<VirtualFile> initializeWritableFiles(VirtualFile root) {
-    Set<VirtualFile> newWritableFiles = new HashSet<>();
-    myVcsManager.iterateVfUnderVcsRoot(root, vf -> {
-      addFileIfWritable(newWritableFiles, vf);
-      return true;
-    });
-    synchronized (myWritableFiles) {
+  private fun initializeWritableFiles(root: VirtualFile): MutableSet<VirtualFile> {
+    val newWritableFiles: MutableSet<VirtualFile> = HashSet()
+    myVcsManager.iterateVfUnderVcsRoot(root) { vf: VirtualFile ->
+      addFileIfWritable(newWritableFiles, vf)
+      true
+    }
+    synchronized(myWritableFiles) {
       if (!myWritableFiles.containsKey(root)) {
-        myWritableFiles.put(root, newWritableFiles);
+        myWritableFiles[root] = newWritableFiles
       }
-      return new HashSet<>(myWritableFiles.get(root));
+      return HashSet(myWritableFiles[root]!!)
     }
   }
 
-  private static void addFileIfWritable(Set<VirtualFile> collection, VirtualFile vf) {
-    ApplicationManager.getApplication().runReadAction(() -> {
-      if (!vf.isValid() || vf.isDirectory() || !vf.isWritable() || vf.is(VFileProperty.SYMLINK))
-        return;
-
-      collection.add(vf);
-    });
-  }
-
-  public void getChanges(final VcsDirtyScope dirtyScope, final ChangelistBuilder builder, final ProgressIndicator progress,
-                         final ChangeListManagerGate addGate) throws VcsException {
-    final Set<FilePath> newAdded = getAddedFilesInCurrentChangesView(addGate);
-    synchronized (myLock) {
-      progress.checkCanceled();
-      recheckPreviouslyAddedFiles(newAdded);
-      recheckWhatUnversionedRefreshNeeded(dirtyScope);
+  @Throws(VcsException::class)
+  fun getChanges(
+    dirtyScope: VcsDirtyScope, builder: ChangelistBuilder, progress: ProgressIndicator,
+    addGate: ChangeListManagerGate,
+  ) {
+    val newAdded = getAddedFilesInCurrentChangesView(addGate)
+    synchronized(myLock) {
+      progress.checkCanceled()
+      recheckPreviouslyAddedFiles(newAdded)
+      recheckWhatUnversionedRefreshNeeded(dirtyScope)
     }
 
-    Set<String> missingFiles = myDirtyFilesHandler.scanAndGetMissingFiles(addGate, progress);
+    val missingFiles = myDirtyFilesHandler.scanAndGetMissingFiles(addGate, progress)
 
-    Set<String> locallyDeleted = findLocallyDeletedMissingFiles(addGate, missingFiles);
-    for (String path : locallyDeleted) {
-      builder.processLocallyDeletedFile(VcsUtil.getFilePath(path, false));
+    val locallyDeleted = findLocallyDeletedMissingFiles(addGate, missingFiles)
+    for (path in locallyDeleted) {
+      builder.processLocallyDeletedFile(VcsUtil.getFilePath(path, false))
     }
   }
 
-  private Set<FilePath> getAddedFilesInCurrentChangesView(ChangeListManagerGate addGate) {
-    final Set<FilePath> set = new HashSet<>();
-    for (LocalChangeList list : addGate.getListsCopy()) {
-      for (Change change : list.getChanges()) {
-        ContentRevision afterRevision = change.getAfterRevision();
-        if (FileStatus.ADDED.equals(change.getFileStatus()) && afterRevision != null) {
-          final FilePath file = afterRevision.getFile();
+  private fun getAddedFilesInCurrentChangesView(addGate: ChangeListManagerGate): Set<FilePath> {
+    val set = HashSet<FilePath>()
+    for (list in addGate.getListsCopy()) {
+      for (change in list.getChanges()) {
+        val afterRevision = change.afterRevision
+        if (FileStatus.ADDED == change.fileStatus && afterRevision != null) {
+          val file = afterRevision.getFile()
           if (fileIsUnderP4Root(file)) {
-            set.add(file);
+            set.add(file)
           }
         }
       }
     }
-    return set;
+    return set
   }
 
-  private void recheckWhatUnversionedRefreshNeeded(VcsDirtyScope dirtyScope) {
+  private fun recheckWhatUnversionedRefreshNeeded(dirtyScope: VcsDirtyScope) {
     if (myHasLostFocus && dirtyScope.wasEveryThingDirty()) {
-      LOG.info("--- recheck missing");
-      myHasLostFocus = false;
-      myDirtyFilesHandler.rescanIfProblems();
+      LOG.info("--- recheck missing")
+      myHasLostFocus = false
+      myDirtyFilesHandler.rescanIfProblems()
     }
   }
 
-  private void recheckPreviouslyAddedFiles(Set<FilePath> newAdded) {
-    final HashSet<FilePath> copy = new HashSet<>(myPreviousAddedSnapshot);
-    copy.removeAll(newAdded);
-    myPreviousAddedSnapshot.clear();
-    myPreviousAddedSnapshot.addAll(newAdded);
+  private fun recheckPreviouslyAddedFiles(newAdded: Set<FilePath>) {
+    val copy = HashSet(myPreviousAddedSnapshot)
+    copy.removeAll(newAdded)
+    myPreviousAddedSnapshot.clear()
+    myPreviousAddedSnapshot.addAll(newAdded)
     if (!copy.isEmpty()) {
-      myDirtyFilesHandler.reportRecheck(copy);
+      myDirtyFilesHandler.reportRecheck(copy)
     }
   }
 
-  private static Set<String> findLocallyDeletedMissingFiles(ChangeListManagerGate addGate, Set<String> missingFiles) {
-    Set<String> locallyDeleted = new HashSet<>();
-    for (String path : missingFiles) {
-      if (!FileStatus.DELETED.equals(addGate.getStatus(VcsUtil.getFilePath(new File(path))))) {
-        locallyDeleted.add(path);
-      }
+  fun processFocusLost() {
+    myHasLostFocus = true
+  }
+
+  fun discardUnversioned() {
+    synchronized(myWritableFiles) {
+      myWritableFiles.clear()
     }
-    return locallyDeleted;
+    myDirtyFilesHandler.scheduleTotalRescan()
   }
 
-  public void processFocusLost() {
-    myHasLostFocus = true;
-  }
+  private inner class MyVfsListener : VirtualFileListener {
+    override fun propertyChanged(event: VirtualFilePropertyEvent) {
+      val file = event.file
+      val path = VcsUtil.getFilePath(file)
+      if (VirtualFile.PROP_WRITABLE == event.propertyName && fileIsUnderP4Root(path)) {
+        myDirtyFilesHandler.reportRecheck(path)
 
-  public void discardUnversioned() {
-    synchronized (myWritableFiles) {
-      myWritableFiles.clear();
-    }
-    myDirtyFilesHandler.scheduleTotalRescan();
-  }
-
-  private class MyVfsListener implements VirtualFileListener {
-
-    @Override
-    public void propertyChanged(@NotNull VirtualFilePropertyEvent event) {
-      VirtualFile file = event.getFile();
-      FilePath path = VcsUtil.getFilePath(file);
-      if (VirtualFile.PROP_WRITABLE.equals(event.getPropertyName()) && fileIsUnderP4Root(path)) {
-        myDirtyFilesHandler.reportRecheck(path);
-
-        VirtualFile root = myVcsManager.getVcsRootFor(path);
-        synchronized (myWritableFiles) {
+        val root = myVcsManager.getVcsRootFor(path)
+        synchronized(myWritableFiles) {
           if (myWritableFiles.containsKey(root)) {
-            Set<VirtualFile> writableFiles = myWritableFiles.get(root);
-            if ((boolean)event.getNewValue()) {
-              writableFiles.add(file);
+            val writableFiles = myWritableFiles[root]!!
+            if (event.newValue as Boolean) {
+              writableFiles.add(file)
             }
             else {
-              writableFiles.remove(file);
+              writableFiles.remove(file)
             }
           }
         }
       }
     }
 
-    @Override
-    public void contentsChanged(@NotNull VirtualFileEvent event) {
-      VirtualFile file = event.getFile();
-      FilePath path = VcsUtil.getFilePath(file);
+    override fun contentsChanged(event: VirtualFileEvent) {
+      val file = event.file
+      val path = VcsUtil.getFilePath(file)
       if (!file.isWritable() && fileIsUnderP4Root(path)) {
-        myDirtyFilesHandler.reportRecheck(path);
+        myDirtyFilesHandler.reportRecheck(path)
       }
     }
 
-    @Override
-    public void fileCreated(final @NotNull VirtualFileEvent event) {
-      VirtualFile file = event.getFile();
-      FilePath path = VcsUtil.getFilePath(file);
-      if (!fileIsUnderP4Root(path)) return;
-      myDirtyFilesHandler.reportRecheck(path);
+    override fun fileCreated(event: VirtualFileEvent) {
+      val file = event.file
+      val path = VcsUtil.getFilePath(file)
+      if (!fileIsUnderP4Root(path)) return
+      myDirtyFilesHandler.reportRecheck(path)
     }
 
-    @Override
-    public void fileMoved(@NotNull VirtualFileMoveEvent event) {
-      VirtualFile file = event.getFile();
-      FilePath path = VcsUtil.getFilePath(file);
-      if (!fileIsUnderP4Root(path)) return;
-      myDirtyFilesHandler.reportRecheck(path);
+    override fun fileMoved(event: VirtualFileMoveEvent) {
+      val file = event.file
+      val path = VcsUtil.getFilePath(file)
+      if (!fileIsUnderP4Root(path)) return
+      myDirtyFilesHandler.reportRecheck(path)
     }
 
-    @Override
-    public void fileCopied(@NotNull VirtualFileCopyEvent event) {
-      VirtualFile file = event.getFile();
-      FilePath path = VcsUtil.getFilePath(file);
-      if (!fileIsUnderP4Root(path)) return;
-      myDirtyFilesHandler.reportRecheck(path);
+    override fun fileCopied(event: VirtualFileCopyEvent) {
+      val file = event.file
+      val path = VcsUtil.getFilePath(file)
+      if (!fileIsUnderP4Root(path)) return
+      myDirtyFilesHandler.reportRecheck(path)
     }
 
-    @Override
-    public void beforeFileDeletion(@NotNull VirtualFileEvent event) {
-      VirtualFile file = event.getFile();
-      FilePath path = VcsUtil.getFilePath(file);
-      if (!fileIsUnderP4Root(path)) return;
-      myDirtyFilesHandler.reportDelete(path);
+    override fun beforeFileDeletion(event: VirtualFileEvent) {
+      val file = event.file
+      val path = VcsUtil.getFilePath(file)
+      if (!fileIsUnderP4Root(path)) return
+      myDirtyFilesHandler.reportDelete(path)
     }
 
-    @Override
-    public void beforeFileMovement(@NotNull VirtualFileMoveEvent event) {
-      VirtualFile file = event.getFile();
-      FilePath path = VcsUtil.getFilePath(file);
-      if (!fileIsUnderP4Root(path)) return;
-      myDirtyFilesHandler.reportDelete(path);
+    override fun beforeFileMovement(event: VirtualFileMoveEvent) {
+      val file = event.file
+      val path = VcsUtil.getFilePath(file)
+      if (!fileIsUnderP4Root(path)) return
+      myDirtyFilesHandler.reportDelete(path)
     }
   }
 
-  private boolean fileIsUnderP4Root(final FilePath file) {
+  private fun fileIsUnderP4Root(file: FilePath): Boolean {
     if (myProject.isDisposed()) {
-      return false;
+      return false
     }
 
     if (ChangeListManager.getInstance(myProject).isIgnoredFile(file)) {
-      return false;
+      return false
     }
 
-    AbstractVcs vcs = myVcsManager.getVcsFor(file);
-    return vcs != null && PerforceVcs.getKey().equals(vcs.getKeyInstanceMethod());
+    val vcs = myVcsManager.getVcsFor(file)
+    return vcs != null && PerforceVcs.getKey() == vcs.keyInstanceMethod
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(PerforceReadOnlyFileStateManager::class.java)
+
+    private fun addFileIfWritable(collection: MutableSet<VirtualFile>, vf: VirtualFile) {
+      ApplicationManager.getApplication().runReadAction {
+        if (!vf.isValid() || vf.isDirectory() || !vf.isWritable() || vf.`is`(VFileProperty.SYMLINK)) {
+          return@runReadAction
+        }
+        collection.add(vf)
+      }
+    }
+
+    private fun findLocallyDeletedMissingFiles(addGate: ChangeListManagerGate, missingFiles: Set<String>): Set<String> {
+      val locallyDeleted = HashSet<String>()
+      for (path in missingFiles) {
+        if (FileStatus.DELETED != addGate.getStatus(VcsUtil.getFilePath(File(path)))) {
+          locallyDeleted.add(path)
+        }
+      }
+      return locallyDeleted
+    }
   }
 }
