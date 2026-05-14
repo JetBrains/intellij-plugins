@@ -8,6 +8,7 @@ import com.intellij.ide.starter.ide.IDETestContext
 import com.intellij.ide.starter.ide.IdeProductProvider
 import com.intellij.ide.starter.models.TestCase
 import com.intellij.ide.starter.project.LocalProjectInfo
+import com.intellij.ide.starter.runner.AdditionalModulesForDevBuildServer
 import com.intellij.openapi.application.PathManager
 import utilities.qodana.IntegrationTest
 import java.nio.file.Path
@@ -18,11 +19,13 @@ abstract class CppIntegrationTest : IntegrationTest() {
   override val testDataPath: Path
     get() = PathManager.getHomeDir() / "contrib/qodana/cpp/test-data"
 
-  override fun createTestContext(projectDir: Path): IDETestContext =
-    getCLionContext(
+  override fun createTestContext(projectDir: Path): IDETestContext {
+    AdditionalModulesForDevBuildServer.addAdditionalModules("intellij.qodana")
+    return getCLionContext(
       testName,
       TestCase(IdeProductProvider.CL, LocalProjectInfo(projectDir)),
       context = CppTestContext.CLION,
       engine = LanguageEngine.NOVA,
     )
+  }
 }
