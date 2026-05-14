@@ -211,8 +211,11 @@
 
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
-    <module name="intellij.spellchecker"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.platform.structureView.impl"/>
     <module name="intellij.platform.vcs.impl"/>
+    <module name="intellij.spellchecker"/>
+    <!-- endregion -->
   </dependencies>
 
   <resource-bundle>messages.HCLBundle</resource-bundle>
