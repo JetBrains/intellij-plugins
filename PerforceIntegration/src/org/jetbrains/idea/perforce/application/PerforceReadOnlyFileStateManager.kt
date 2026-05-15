@@ -25,7 +25,6 @@ import com.intellij.openapi.vfs.VirtualFileMoveEvent
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.vcsUtil.VcsUtil
-import java.io.File
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 import kotlin.collections.MutableCollection
@@ -142,9 +141,11 @@ class PerforceReadOnlyFileStateManager(private val myProject: Project, private v
 
     val missingFiles = myDirtyFilesHandler.scanAndGetMissingFiles(addGate, progress)
 
-    val locallyDeleted = findLocallyDeletedMissingFiles(addGate, missingFiles)
-    for (path in locallyDeleted) {
-      builder.processLocallyDeletedFile(VcsUtil.getFilePath(path, false))
+    for (path in missingFiles) {
+      val filePath = VcsUtil.getFilePath(path, false)
+      if (FileStatus.DELETED != addGate.getStatus(filePath)) {
+        builder.processLocallyDeletedFile(filePath)
+      }
     }
   }
 
@@ -282,16 +283,6 @@ class PerforceReadOnlyFileStateManager(private val myProject: Project, private v
         }
         collection.add(vf)
       }
-    }
-
-    private fun findLocallyDeletedMissingFiles(addGate: ChangeListManagerGate, missingFiles: Set<String>): Set<String> {
-      val locallyDeleted = HashSet<String>()
-      for (path in missingFiles) {
-        if (FileStatus.DELETED != addGate.getStatus(VcsUtil.getFilePath(File(path)))) {
-          locallyDeleted.add(path)
-        }
-      }
-      return locallyDeleted
     }
   }
 }
