@@ -19,18 +19,16 @@
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
 
-  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.javascript.analysis.impl"/>
     <module name="intellij.javascript.backend"/>
     <module name="intellij.javascript.common"/>
     <module name="intellij.javascript.parser"/>
     <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.json.backend"/>
+    <!-- endregion -->
   </dependencies>
-  <!-- endregion -->
-  <depends>JavaScript</depends>
-  <depends>com.intellij.modules.platform</depends>
-  <depends>com.intellij.modules.json</depends>
 
   <resource-bundle>messages.PrettierBundle</resource-bundle>
 
