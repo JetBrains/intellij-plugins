@@ -59,78 +59,70 @@ class PerforceReadOnlyFileStateManager(private val myProject: Project, private v
     myHasLostFocus = true
   }
 
-  fun addWritableFiles(root: VirtualFile, writableFiles: MutableCollection<VirtualFile>, withIgnored: Boolean) {
-    var writablesUnderRoot: MutableSet<VirtualFile> = HashSet()
-    var needInit = false
-    synchronized(myWritableFiles) {
-      // do not collect init files under lock
-      if (!myWritableFiles.containsKey(root)) {
-        needInit = true
-      }
-
-      val currentFilesUnderRoot = myWritableFiles[root]
-      if (currentFilesUnderRoot != null) {
-        writablesUnderRoot = HashSet(currentFilesUnderRoot)
-      }
-    }
-
-    if (needInit) {
-      writablesUnderRoot = initializeWritableFiles(root)
-    }
-
-    for (vf in writablesUnderRoot) {
-      if (withIgnored || !ChangeListManager.getInstance(myProject).isIgnoredFile(vf)) {
-        writableFiles.add(vf)
-      }
-    }
+  fun addWritableFiles(root: VirtualFile, filesCollection: MutableCollection<VirtualFile>, withIgnored: Boolean) {
+    filesCollection.addWritableFilesFromRoot(root, withIgnored, scopeFilter = null)
   }
 
   fun addWritableFiles(
-    root: VirtualFile, writableFiles: MutableCollection<VirtualFile>, withIgnored: Boolean,
+    root: VirtualFile,
+    filesCollection: MutableCollection<VirtualFile>,
+    withIgnored: Boolean,
     scopeFilter: VcsDirtyScope,
   ) {
-    var writablesUnderRoot: MutableSet<VirtualFile> = HashSet()
-    var needInit = false
-    synchronized(myWritableFiles) {
-      if (!myWritableFiles.containsKey(root)) {
-        needInit = true
-      }
-      val currentFilesUnderRoot = myWritableFiles[root]
-      if (currentFilesUnderRoot != null) {
-        writablesUnderRoot = HashSet(currentFilesUnderRoot)
-      }
-    }
+    filesCollection.addWritableFilesFromRoot(root, withIgnored, scopeFilter)
+  }
 
-    if (needInit) {
-      writablesUnderRoot = initializeWritableFiles(root)
-    }
+  private fun MutableCollection<VirtualFile>.addWritableFilesFromRoot(
+    root: VirtualFile,
+    withIgnored: Boolean,
+    scopeFilter: VcsDirtyScope?,
+  ) {
+    val writableFilesUnderRoot = getWritableFilesUnderRoot(root)
+    val changeListManager = ChangeListManager.getInstance(myProject)
 
-    for (vf in writablesUnderRoot) {
-      if (!scopeFilter.belongsTo(VcsUtil.getFilePath(vf))) continue
-      if (withIgnored || !ChangeListManager.getInstance(myProject).isIgnoredFile(vf)) {
-        writableFiles.add(vf)
+    for (file in writableFilesUnderRoot) {
+      if (shouldIncludeFile(file, withIgnored, scopeFilter, changeListManager)) {
+        add(file)
       }
     }
   }
 
-  private fun initializeWritableFiles(root: VirtualFile): MutableSet<VirtualFile> {
-    val newWritableFiles: MutableSet<VirtualFile> = HashSet()
-    myVcsManager.iterateVfUnderVcsRoot(root) { vf: VirtualFile ->
-      addFileIfWritable(newWritableFiles, vf)
-      true
+  private fun getWritableFilesUnderRoot(root: VirtualFile): Set<VirtualFile> {
+    synchronized(myWritableFiles) {
+      // do not collect init files under lock
+      myWritableFiles[root]?.let { return HashSet(it) }
+    }
+
+    return initializeWritableFiles(root)
+  }
+
+  private fun shouldIncludeFile(
+    file: VirtualFile,
+    withIgnored: Boolean,
+    scopeFilter: VcsDirtyScope?,
+    changeListManager: ChangeListManager,
+  ): Boolean {
+    if (scopeFilter?.belongsTo(VcsUtil.getFilePath(file)) == false) return false
+    return withIgnored || !changeListManager.isIgnoredFile(file)
+  }
+
+  private fun initializeWritableFiles(root: VirtualFile): Set<VirtualFile> {
+    val newWritableFiles = buildSet {
+      myVcsManager.iterateVfUnderVcsRoot(root) { virtualFile ->
+        addFileIfWritable(virtualFile)
+        true
+      }
     }
     synchronized(myWritableFiles) {
-      if (!myWritableFiles.containsKey(root)) {
-        myWritableFiles[root] = newWritableFiles
-      }
-      return HashSet(myWritableFiles[root]!!)
+      myWritableFiles[root]?.let { return HashSet(it) }
+      myWritableFiles[root] = newWritableFiles.toMutableSet()
+      return newWritableFiles
     }
   }
 
   private fun updateWritableFiles(root: VirtualFile?, isWritable: Boolean, file: VirtualFile) {
     synchronized(myWritableFiles) {
-      if (myWritableFiles.containsKey(root)) {
-        val writableFiles = myWritableFiles[root]!!
+      myWritableFiles[root]?.let { writableFiles ->
         if (isWritable) {
           writableFiles.add(file)
         }
@@ -284,12 +276,12 @@ class PerforceReadOnlyFileStateManager(private val myProject: Project, private v
   companion object {
     private val LOG = Logger.getInstance(PerforceReadOnlyFileStateManager::class.java)
 
-    private fun addFileIfWritable(collection: MutableSet<VirtualFile>, vf: VirtualFile) {
+    private fun MutableSet<VirtualFile>.addFileIfWritable(vf: VirtualFile) {
       ApplicationManager.getApplication().runReadAction {
         if (!vf.isValid() || vf.isDirectory() || !vf.isWritable() || vf.`is`(VFileProperty.SYMLINK)) {
           return@runReadAction
         }
-        collection.add(vf)
+        add(vf)
       }
     }
   }
