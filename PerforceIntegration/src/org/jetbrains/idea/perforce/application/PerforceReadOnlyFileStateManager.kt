@@ -3,6 +3,7 @@ package org.jetbrains.idea.perforce.application
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationActivationListener
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -155,20 +156,18 @@ class PerforceReadOnlyFileStateManager(private val myProject: Project, private v
     }
   }
 
-  private fun getAddedFilesInCurrentChangesView(addGate: ChangeListManagerGate): Set<FilePath> {
-    val set = HashSet<FilePath>()
+  private fun getAddedFilesInCurrentChangesView(addGate: ChangeListManagerGate): Set<FilePath> = buildSet {
     for (list in addGate.getListsCopy()) {
       for (change in list.getChanges()) {
         val afterRevision = change.afterRevision
         if (FileStatus.ADDED == change.fileStatus && afterRevision != null) {
           val file = afterRevision.getFile()
           if (fileIsUnderP4Root(file)) {
-            set.add(file)
+            add(file)
           }
         }
       }
     }
-    return set
   }
 
   private fun recheckWhatUnversionedRefreshNeeded(dirtyScope: VcsDirtyScope) {
@@ -269,19 +268,18 @@ class PerforceReadOnlyFileStateManager(private val myProject: Project, private v
       return false
     }
 
-    val vcs = myVcsManager.getVcsFor(file)
-    return vcs != null && PerforceVcs.getKey() == vcs.keyInstanceMethod
+    myVcsManager.getVcsFor(file)?.let { return it.keyInstanceMethod == PerforceVcs.getKey() }
+    return false
   }
 
   companion object {
     private val LOG = Logger.getInstance(PerforceReadOnlyFileStateManager::class.java)
 
     private fun MutableSet<VirtualFile>.addFileIfWritable(vf: VirtualFile) {
-      ApplicationManager.getApplication().runReadAction {
-        if (!vf.isValid() || vf.isDirectory() || !vf.isWritable() || vf.`is`(VFileProperty.SYMLINK)) {
-          return@runReadAction
+      runReadActionBlocking {
+        if (vf.isValid() && !vf.isDirectory() && vf.isWritable() && !vf.`is`(VFileProperty.SYMLINK)) {
+          add(vf)
         }
-        add(vf)
       }
     }
   }
