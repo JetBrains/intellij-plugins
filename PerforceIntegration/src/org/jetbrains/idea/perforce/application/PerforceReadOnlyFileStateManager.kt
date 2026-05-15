@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vcs.FilePath
@@ -16,21 +17,19 @@ import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.ChangeListManagerGate
 import com.intellij.openapi.vcs.changes.ChangelistBuilder
 import com.intellij.openapi.vcs.changes.VcsDirtyScope
+import com.intellij.openapi.vfs.AsyncFileListener
 import com.intellij.openapi.vfs.VFileProperty
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileCopyEvent
-import com.intellij.openapi.vfs.VirtualFileEvent
-import com.intellij.openapi.vfs.VirtualFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.VirtualFileMoveEvent
-import com.intellij.openapi.vfs.VirtualFilePropertyEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileCopyEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent
+import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.vcsUtil.VcsUtil
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
-import kotlin.collections.MutableCollection
-import kotlin.collections.MutableMap
-import kotlin.collections.MutableSet
 import kotlin.concurrent.Volatile
 
 class PerforceReadOnlyFileStateManager(private val myProject: Project, private val myDirtyFilesHandler: PerforceDirtyFilesHandler) {
@@ -51,7 +50,7 @@ class PerforceReadOnlyFileStateManager(private val myProject: Project, private v
   fun activate(parentDisposable: Disposable) {
     Disposer.register(parentDisposable) { this.deactivate() }
 
-    VirtualFileManager.getInstance().addVirtualFileListener(MyVfsListener(), parentDisposable)
+    VirtualFileManager.getInstance().addAsyncFileListenerBackgroundable(MyVfsListener(), parentDisposable)
     val appConnection = ApplicationManager.getApplication().getMessageBus().connect(parentDisposable)
     appConnection.subscribe<ApplicationActivationListener>(ApplicationActivationListener.TOPIC, myFrameStateListener)
   }
@@ -162,7 +161,7 @@ class PerforceReadOnlyFileStateManager(private val myProject: Project, private v
         val afterRevision = change.afterRevision
         if (FileStatus.ADDED == change.fileStatus && afterRevision != null) {
           val file = afterRevision.getFile()
-          if (fileIsUnderP4Root(file)) {
+          if (file.fileIsUnderP4Root()) {
             add(file)
           }
         }
@@ -199,76 +198,116 @@ class PerforceReadOnlyFileStateManager(private val myProject: Project, private v
     myDirtyFilesHandler.scheduleTotalRescan()
   }
 
-  private inner class MyVfsListener : VirtualFileListener {
-    override fun propertyChanged(event: VirtualFilePropertyEvent) {
-      if (VirtualFile.PROP_WRITABLE == event.propertyName) {
-        val isWritable = event.newValue as Boolean
-        recheckAndUpdateWritableFilesIfUnderP4Root(event.file, isWritable)
+  private inner class MyVfsListener : AsyncFileListener {
+    override fun prepareChange(events: MutableList<out VFileEvent>): AsyncFileListener.ChangeApplier? {
+      val beforeActions = ArrayList<VfsAction>()
+      val afterActions = ArrayList<VfsAction>()
+
+      for (event in events) {
+        ProgressManager.checkCanceled()
+        when (event) {
+          is VFilePropertyChangeEvent -> {
+            if (VirtualFile.PROP_WRITABLE == event.propertyName) {
+              val isWritable = event.newValue as? Boolean ?: continue
+              event.file.getPathUnderP4Root()?.let { path ->
+                val root = myVcsManager.getVcsRootFor(path)
+                afterActions.add(WritableChange(path, root, isWritable, event.file))
+              }
+            }
+          }
+          is VFileContentChangeEvent -> {
+            val file = event.file
+            if (!file.isWritable) {
+              event.file.getPathUnderP4Root()?.let { path ->
+                afterActions.add(ReportRecheck(path))
+              }
+            }
+          }
+          is VFileCreateEvent -> {
+            val newPath = VcsUtil.getFilePath(event.path, event.isDirectory)
+            newPath.takeIf { it.fileIsUnderP4Root() }?.let { path ->
+              afterActions.add(ReportRecheck(path))
+            }
+          }
+          is VFileMoveEvent -> {
+            val isDirectory = event.file.isDirectory
+            val newPath = VcsUtil.getFilePath(event.newPath, isDirectory)
+            val oldPath = VcsUtil.getFilePath(event.oldPath, isDirectory)
+            newPath.takeIf { it.fileIsUnderP4Root() }?.let { path ->
+              afterActions.add(ReportRecheck(path))
+            }
+            oldPath.takeIf { it.fileIsUnderP4Root() }?.let { path ->
+              beforeActions.add(ReportDelete(path))
+            }
+          }
+          is VFileCopyEvent -> {
+            val copiedPath = VcsUtil.getFilePath(event.path, event.file.isDirectory)
+            copiedPath.takeIf { it.fileIsUnderP4Root() }?.let { path ->
+              afterActions.add(ReportRecheck(path))
+            }
+          }
+          is VFileDeleteEvent -> {
+            event.file.getPathUnderP4Root()?.let { path ->
+              beforeActions.add(ReportDelete(path))
+            }
+          }
+        }
+      }
+
+      if (beforeActions.isEmpty() && afterActions.isEmpty()) return null
+
+      return object : AsyncFileListener.ChangeApplier {
+        override fun beforeVfsChange() {
+          beforeActions.forEach { it.process(this@PerforceReadOnlyFileStateManager) }
+        }
+
+        override fun afterVfsChange() {
+          afterActions.forEach { it.process(this@PerforceReadOnlyFileStateManager) }
+        }
       }
     }
 
-    override fun contentsChanged(event: VirtualFileEvent) {
-      val file = event.file
-      if (!file.isWritable) {
-        recheckIfUnderP4Root(file)
-      }
-    }
+    private fun VirtualFile.getPathUnderP4Root(): FilePath? = VcsUtil.getFilePath(this).takeIf { it.fileIsUnderP4Root() }
+  }
 
-    override fun fileCreated(event: VirtualFileEvent) {
-      recheckIfUnderP4Root(event.file)
-    }
+  private sealed interface VfsAction {
+    fun process(manager: PerforceReadOnlyFileStateManager)
+  }
 
-    override fun fileMoved(event: VirtualFileMoveEvent) {
-      recheckIfUnderP4Root(event.file)
-    }
-
-    override fun fileCopied(event: VirtualFileCopyEvent) {
-      recheckIfUnderP4Root(event.file)
-    }
-
-    override fun beforeFileDeletion(event: VirtualFileEvent) {
-      deleteIfUnderP4Root(event.file)
-    }
-
-    override fun beforeFileMovement(event: VirtualFileMoveEvent) {
-      deleteIfUnderP4Root(event.file)
+  private data class WritableChange(
+    val path: FilePath,
+    val root: VirtualFile?,
+    val isWritable: Boolean,
+    val file: VirtualFile,
+  ) : VfsAction {
+    override fun process(manager: PerforceReadOnlyFileStateManager) {
+      manager.myDirtyFilesHandler.reportRecheck(path)
+      manager.updateWritableFiles(root, isWritable, file)
     }
   }
 
-  private fun recheckAndUpdateWritableFilesIfUnderP4Root(file: VirtualFile, isWritable: Boolean) {
-    val path = VcsUtil.getFilePath(file)
-    if (fileIsUnderP4Root(path)) {
-      myDirtyFilesHandler.reportRecheck(path)
-
-      val root = myVcsManager.getVcsRootFor(path)
-      updateWritableFiles(root, isWritable, file)
+  private data class ReportRecheck(val path: FilePath) : VfsAction {
+    override fun process(manager: PerforceReadOnlyFileStateManager) {
+      manager.myDirtyFilesHandler.reportRecheck(path)
     }
   }
 
-  private fun recheckIfUnderP4Root(file: VirtualFile) {
-    val path = VcsUtil.getFilePath(file)
-    if (fileIsUnderP4Root(path)) {
-      myDirtyFilesHandler.reportRecheck(path)
+  private data class ReportDelete(val path: FilePath) : VfsAction {
+    override fun process(manager: PerforceReadOnlyFileStateManager) {
+      manager.myDirtyFilesHandler.reportDelete(path)
     }
   }
 
-  private fun deleteIfUnderP4Root(file: VirtualFile) {
-    val path = VcsUtil.getFilePath(file)
-    if (fileIsUnderP4Root(path)) {
-      myDirtyFilesHandler.reportDelete(path)
-    }
-  }
-
-  private fun fileIsUnderP4Root(file: FilePath): Boolean {
+  private fun FilePath.fileIsUnderP4Root(): Boolean {
     if (myProject.isDisposed()) {
       return false
     }
 
-    if (ChangeListManager.getInstance(myProject).isIgnoredFile(file)) {
+    if (ChangeListManager.getInstance(myProject).isIgnoredFile(this)) {
       return false
     }
 
-    myVcsManager.getVcsFor(file)?.let { return it.keyInstanceMethod == PerforceVcs.getKey() }
+    myVcsManager.getVcsFor(this)?.let { return it.keyInstanceMethod == PerforceVcs.getKey() }
     return false
   }
 
