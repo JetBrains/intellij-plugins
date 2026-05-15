@@ -1,0 +1,1 @@
+<error descr="JSHint: 'a' is not defined. (W117)">a</error> = 1;

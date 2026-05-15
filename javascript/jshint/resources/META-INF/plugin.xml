@@ -1,0 +1,64 @@
+<idea-plugin>
+  <id>jshint</id>
+  <name>JSHint</name>
+  <vendor>JetBrains</vendor>
+  <category>JavaScript Frameworks and Tools</category>
+  <description><![CDATA[
+    <p>Provides integration with <a href="https://jshint.com/">JSHint</a>, a linter for JavaScript.</p>
+    <ul>
+      <li>Shows errors reported by JSHint in the editor</li>
+    </ul>
+  ]]></description>
+
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="com.intellij.modules.spellchecker"/>
+    <module name="intellij.javascript.analysis.impl"/>
+    <module name="intellij.javascript.backend"/>
+    <module name="intellij.javascript.common"/>
+    <module name="intellij.javascript.parser"/>
+    <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.json.backend"/>
+    <module name="intellij.spellchecker"/>
+  </dependencies>
+  <!-- endregion -->
+  <resource-bundle>messages.JSHintBundle</resource-bundle>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectConfigurable id="Settings.JavaScript.Linters.JSHint"
+                         parentId="Settings.JavaScript.Linters"
+                         instance="com.intellij.lang.javascript.linter.jshint.JSHintConfigurable"
+                         key="settings.javascript.linters.jshint.configurable.name"
+                         bundle="messages.JSHintBundle"/>
+    <localInspection language="JavaScript"
+                     bundle="messages.JSHintBundle"
+                     key="settings.javascript.linters.jshint.configurable.name"
+                     groupPathKey="js.inspection.group.path"
+                     groupKey="js.linters.inspection.group.name"
+                     enabledByDefault="false"
+                     level="ERROR"
+                     implementationClass="com.intellij.lang.javascript.linter.jshint.JSHintInspection"
+                     unfair="true"/>
+    <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.jshint.JSHintExternalAnnotator"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.jshint.JSHintConfiguration"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.jshint.config.JSHintConfigFileChangeTracker"/>
+    <completion.contributor order="first" language="JSON"
+                            implementationClass="com.intellij.lang.javascript.linter.jshint.config.JSHintConfigCompletionContributor"/>
+    <annotator language="JSON" implementationClass="com.intellij.lang.javascript.linter.jshint.config.JSHintConfigFileAnnotator"/>
+    <lang.documentationProvider language="JSON"
+                                implementationClass="com.intellij.lang.javascript.linter.jshint.config.JSHintConfigDocumentationProvider"/>
+    <psi.referenceContributor language="JSON"
+                              implementation="com.intellij.lang.javascript.linter.jshint.config.JSHintConfigReferenceContributor"/>
+    <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.linter.jshint.JSHintRefactoringElementListenerProvider"/>
+
+    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.jshint.config.JSHintDescriptor"/>
+
+    <projectSettings service="com.intellij.lang.javascript.linter.jshint.JSHintConfiguration"/>
+
+    <fileType name="JSHint" fieldName="INSTANCE" implementationClass="com.intellij.lang.javascript.linter.jshint.config.JSHintConfigFileType" extensions="jshintrc" fileNames="jshint.json"/>
+
+    <spellchecker.support language="JSON" order="first"
+                          implementationClass="com.intellij.lang.javascript.linter.jshint.JSHintConfigSpellcheckingStrategy"/>
+  </extensions>
+
+</idea-plugin>
