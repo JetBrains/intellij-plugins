@@ -1,10 +1,12 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider.Result.create
@@ -21,6 +23,7 @@ import org.angular2.entities.Angular2DirectiveSelector
 import org.angular2.entities.Angular2Entity
 import org.angular2.entities.Angular2ModuleResolver
 import org.angular2.entities.source.Angular2SourceUtil.getReferencedFile
+import java.lang.ref.WeakReference
 
 class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplicitElement)
   : Angular2SourceDirective(decorator, implicitElement), Angular2ClassBasedComponent {
@@ -51,7 +54,16 @@ class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplic
 
   override val templateFile: PsiFile?
     get() = getCachedValue {
-      create(findAngularComponentTemplate(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator)
+      val template = findAngularComponentTemplate()
+      if (template?.virtualFile is VirtualFileWindow) {
+        // If we cache a file coming from an injection, we need to invalidate the cache when the file gets invalidated.
+        // Let's use a weak reference to avoid memory leaks through cache dependencies.
+        val templateRefHolder = WeakReference(template)
+        create(template, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator,
+               ModificationTracker { if (templateRefHolder.get()?.isValid == true) 0 else -1 })
+      } else {
+        create(template, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator)
+      }
     }
 
   override val cssFiles: List<PsiFile>
