@@ -127,6 +127,20 @@ class PerforceReadOnlyFileStateManager(private val myProject: Project, private v
     }
   }
 
+  private fun updateWritableFiles(root: VirtualFile?, isWritable: Boolean, file: VirtualFile) {
+    synchronized(myWritableFiles) {
+      if (myWritableFiles.containsKey(root)) {
+        val writableFiles = myWritableFiles[root]!!
+        if (isWritable) {
+          writableFiles.add(file)
+        }
+        else {
+          writableFiles.remove(file)
+        }
+      }
+    }
+  }
+
   @Throws(VcsException::class)
   fun getChanges(
     dirtyScope: VcsDirtyScope, builder: ChangelistBuilder, progress: ProgressIndicator,
@@ -196,66 +210,60 @@ class PerforceReadOnlyFileStateManager(private val myProject: Project, private v
 
   private inner class MyVfsListener : VirtualFileListener {
     override fun propertyChanged(event: VirtualFilePropertyEvent) {
-      val file = event.file
-      val path = VcsUtil.getFilePath(file)
-      if (VirtualFile.PROP_WRITABLE == event.propertyName && fileIsUnderP4Root(path)) {
-        myDirtyFilesHandler.reportRecheck(path)
-
-        val root = myVcsManager.getVcsRootFor(path)
-        synchronized(myWritableFiles) {
-          if (myWritableFiles.containsKey(root)) {
-            val writableFiles = myWritableFiles[root]!!
-            if (event.newValue as Boolean) {
-              writableFiles.add(file)
-            }
-            else {
-              writableFiles.remove(file)
-            }
-          }
-        }
+      if (VirtualFile.PROP_WRITABLE == event.propertyName) {
+        val isWritable = event.newValue as Boolean
+        recheckAndUpdateWritableFilesIfUnderP4Root(event.file, isWritable)
       }
     }
 
     override fun contentsChanged(event: VirtualFileEvent) {
       val file = event.file
-      val path = VcsUtil.getFilePath(file)
-      if (!file.isWritable() && fileIsUnderP4Root(path)) {
-        myDirtyFilesHandler.reportRecheck(path)
+      if (!file.isWritable) {
+        recheckIfUnderP4Root(file)
       }
     }
 
     override fun fileCreated(event: VirtualFileEvent) {
-      val file = event.file
-      val path = VcsUtil.getFilePath(file)
-      if (!fileIsUnderP4Root(path)) return
-      myDirtyFilesHandler.reportRecheck(path)
+      recheckIfUnderP4Root(event.file)
     }
 
     override fun fileMoved(event: VirtualFileMoveEvent) {
-      val file = event.file
-      val path = VcsUtil.getFilePath(file)
-      if (!fileIsUnderP4Root(path)) return
-      myDirtyFilesHandler.reportRecheck(path)
+      recheckIfUnderP4Root(event.file)
     }
 
     override fun fileCopied(event: VirtualFileCopyEvent) {
-      val file = event.file
-      val path = VcsUtil.getFilePath(file)
-      if (!fileIsUnderP4Root(path)) return
-      myDirtyFilesHandler.reportRecheck(path)
+      recheckIfUnderP4Root(event.file)
     }
 
     override fun beforeFileDeletion(event: VirtualFileEvent) {
-      val file = event.file
-      val path = VcsUtil.getFilePath(file)
-      if (!fileIsUnderP4Root(path)) return
-      myDirtyFilesHandler.reportDelete(path)
+      deleteIfUnderP4Root(event.file)
     }
 
     override fun beforeFileMovement(event: VirtualFileMoveEvent) {
-      val file = event.file
-      val path = VcsUtil.getFilePath(file)
-      if (!fileIsUnderP4Root(path)) return
+      deleteIfUnderP4Root(event.file)
+    }
+  }
+
+  private fun recheckAndUpdateWritableFilesIfUnderP4Root(file: VirtualFile, isWritable: Boolean) {
+    val path = VcsUtil.getFilePath(file)
+    if (fileIsUnderP4Root(path)) {
+      myDirtyFilesHandler.reportRecheck(path)
+
+      val root = myVcsManager.getVcsRootFor(path)
+      updateWritableFiles(root, isWritable, file)
+    }
+  }
+
+  private fun recheckIfUnderP4Root(file: VirtualFile) {
+    val path = VcsUtil.getFilePath(file)
+    if (fileIsUnderP4Root(path)) {
+      myDirtyFilesHandler.reportRecheck(path)
+    }
+  }
+
+  private fun deleteIfUnderP4Root(file: VirtualFile) {
+    val path = VcsUtil.getFilePath(file)
+    if (fileIsUnderP4Root(path)) {
       myDirtyFilesHandler.reportDelete(path)
     }
   }
