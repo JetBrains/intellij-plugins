@@ -15,6 +15,8 @@ import com.jetbrains.cidr.cpp.external.system.fus.CidrExternalUsageUtil
 class PlatformioProjectOpenProcessor : CidrProjectOpenProcessor(PlatformioProjectOpenHelper) {
   override val name: String = "PlatformIO"
 
+  @Deprecated("Use openProjectAsync(VirtualFile, ProjectOpenOptions) instead",
+              replaceWith = ReplaceWith("openProjectAsync(virtualFile, projectOpenOptions)"))
   override suspend fun openProjectAsync(virtualFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
     val platformioIniFile = PlatformioProjectOpenHelper.findSupportedSubFile(virtualFile) ?: return null
 
