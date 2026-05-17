@@ -1,7 +1,7 @@
 package com.jetbrains.cidr.cpp.embedded.platformio
 
 import com.intellij.clion.embedded.debugger.peripheralview.SvdPanel.Companion.registerPeripheralTab
-import com.intellij.clion.embedded.execution.custom.McuResetAction.Companion.addResetMcuAction
+import com.intellij.clion.embedded.execution.custom.McuActionUtil
 import com.intellij.execution.CantRunException.CustomProcessedCantRunException
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.CommandLineState
@@ -158,6 +158,6 @@ class PlatformioLauncher(
     actions: MutableList<in AnAction?>
   ) {
     super.collectAdditionalActions(state, processHandler, console, actions)
-    addResetMcuAction(actions, processHandler, "pio_reset_halt_target")
+    McuActionUtil.addResetMcuAction(actions, processHandler, "pio_reset_halt_target")
   }
 }
