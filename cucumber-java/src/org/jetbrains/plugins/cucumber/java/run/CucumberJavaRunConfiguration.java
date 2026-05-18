@@ -251,7 +251,7 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
                   }
                 };
 
-                ApplicationManager.getApplication().runReadAction(() -> myCucumberGlueProvider.calculateGlue(consumer));
+                ReadAction.runBlocking(() -> myCucumberGlueProvider.calculateGlue(consumer));
               }
             };
             task.setCancelText(CucumberJavaBundle.message("cucumber.java.glue.calculation.stop.title"));
@@ -259,7 +259,7 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
             ProgressManager.getInstance().run(task);
           }
           else {
-            ApplicationManager.getApplication().runReadAction(() -> myCucumberGlueProvider.calculateGlue(glue -> {
+            ReadAction.runBlocking(() -> myCucumberGlueProvider.calculateGlue(glue -> {
               CucumberJavaUtil.addGlue(glue, glues);
             }));
           }

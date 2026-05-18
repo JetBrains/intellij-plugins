@@ -48,6 +48,7 @@ import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -1016,7 +1017,7 @@ public final class DartAnalysisServerService implements Disposable {
 
   public void updateFilesContent() {
     if (myServer != null) {
-      ApplicationManager.getApplication().runReadAction(this::doUpdateFilesContent);
+      ReadAction.runBlocking(this::doUpdateFilesContent);
     }
   }
 

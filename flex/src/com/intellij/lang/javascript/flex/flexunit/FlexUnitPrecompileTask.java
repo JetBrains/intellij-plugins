@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -129,7 +130,7 @@ public final class FlexUnitPrecompileTask implements CompileTask {
     final Ref<FlexBuildConfiguration> bcRef = new Ref<>();
     final Ref<FlexUnitSupport> supportRef = new Ref<>();
 
-    ApplicationManager.getApplication().runReadAction(() -> {
+    ReadAction.runBlocking(() -> {
       if (DumbService.getInstance(myProject).isDumb()) return;
 
       try {

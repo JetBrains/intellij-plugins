@@ -1,8 +1,8 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.ide.actions;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -59,7 +59,7 @@ public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, 
 
     if (fileRef.isNull() || offsetRef.isNull() || componentTypeRef.isNull()) return;
 
-    ApplicationManager.getApplication().runReadAction(() -> {
+    ReadAction.runBlocking(() -> {
       List<TypeHierarchyItem> hierarchyItems = getHierarchyItems(parameters.getElement().getProject(), fileRef.get(), offsetRef.get());
       final Set<DartComponent> components = componentTypeRef.get() == DartComponentType.CLASS
                                             ? getSubClasses(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems)
@@ -93,7 +93,7 @@ public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, 
                               final @NotNull Ref<VirtualFile> fileRef,
                               final @NotNull Ref<Integer> offsetRef,
                               final @NotNull Ref<DartComponentType> componentTypeRef) {
-    ApplicationManager.getApplication().runReadAction(() -> {
+    ReadAction.runBlocking(() -> {
       final PsiElement element = parameters.getElement();
       if (element.getLanguage() != DartLanguage.INSTANCE) return;
 

@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.IconManager;
@@ -167,7 +168,7 @@ public final class DartVmServiceValue extends XNamedValue {
 
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       final XSourcePosition sourcePosition = debugProcess.getSourcePosition(isolateId, script, tokenPos);
-      ApplicationManager.getApplication().runReadAction(() -> navigatable.setSourcePosition(sourcePosition));
+      ReadAction.runBlocking(() -> navigatable.setSourcePosition(sourcePosition));
     });
   }
 

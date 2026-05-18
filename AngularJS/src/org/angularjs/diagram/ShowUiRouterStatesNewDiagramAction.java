@@ -48,7 +48,7 @@ final class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
 
     List<Pair<String, AngularUiRouterGraphBuilder>> graphBuilders = new ArrayList<>();
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
-      () -> ApplicationManager.getApplication().runReadAction(() -> {
+      () -> ReadAction.runBlocking(() -> {
         final AngularUiRouterDiagramBuilder builder = new AngularUiRouterDiagramBuilder(project);
         builder.build();
         final Map<VirtualFile, RootTemplate> rootTemplates = builder.getRootTemplates();

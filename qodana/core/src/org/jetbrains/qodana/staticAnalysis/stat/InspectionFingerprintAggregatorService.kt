@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.stat
 
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.project.Project
@@ -25,10 +25,8 @@ class InspectionFingerprintAggregatorService(val project: Project) {
 
   private fun iterateFilesAndAct(action: (PsiFile) -> Unit) {
     val psiManager = PsiManager.getInstance(project)
-
-    ApplicationManager.getApplication().runReadAction {
-      ProjectFileIndex.getInstance(project).iterateContent { fileOrDir ->
-        psiManager.findFile(fileOrDir)?.let { action.invoke(it) }
+    runReadActionBlocking {
+      ProjectFileIndex.getInstance(project).iterateContent { fileOrDir -> psiManager.findFile(fileOrDir)?.let { action.invoke(it) }
         true
       }
     }

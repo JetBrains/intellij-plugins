@@ -24,6 +24,7 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
@@ -126,7 +127,7 @@ public class JSHintExternalAnnotator extends JSDumbAwareLinterExternalAnnotator<
           configFile = null;
         }
         else {
-          ApplicationManager.getApplication().runReadAction(() -> {
+          ReadAction.runBlocking(() -> {
             if (!project.isDisposed()) {
               JSHintConfigFileChangeTracker.getInstance(project).startIfNeeded();
             }

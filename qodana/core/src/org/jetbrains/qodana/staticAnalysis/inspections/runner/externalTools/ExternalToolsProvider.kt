@@ -2,6 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools
 
 import com.intellij.codeInspection.ex.InspectListener
 import com.intellij.codeInspection.ex.JobDescriptor
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName.Companion.create
 import com.intellij.openapi.extensions.PluginDescriptor
@@ -11,7 +12,6 @@ import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
-import com.intellij.util.application
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.XmlProblem
 import java.util.function.Consumer
@@ -72,7 +72,7 @@ interface ExternalToolsProvider {
                 val virtualFile = VirtualFileManager.getInstance().findFileByUrl(issue.file)
                 val tools = context.effectiveProfile.getToolsOrNull(issue.inspectionId, context.project)
                 if (virtualFile != null && tools != null) {
-                  application.runReadAction {
+                  runReadActionBlocking {
                     if (tools.getEnabledTool(PsiManager.getInstance(context.project).findFile(virtualFile), true) != null) {
                       context.consumer.consume(listOf(element).map { XmlProblem(it) }, issue.inspectionId)
                     }

@@ -6,7 +6,7 @@ import com.intellij.execution.PsiLocation;
 import com.intellij.execution.junit2.info.LocationUtil;
 import com.intellij.find.findUsages.JavaFindUsagesHelper;
 import com.intellij.find.findUsages.JavaMethodFindUsagesOptions;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -184,8 +184,8 @@ public final class CucumberJavaUtil {
   }
 
   private static @Nullable String getAnnotationName(PsiAnnotation annotation) {
-    final Ref<@Nullable String> qualifiedAnnotationName = new Ref<>();
-    ApplicationManager.getApplication().runReadAction(() -> {
+    Ref<@Nullable String> qualifiedAnnotationName = new Ref<>();
+    ReadAction.runBlocking(() -> {
       String qualifiedName = annotation.getQualifiedName();
       qualifiedAnnotationName.set(qualifiedName);
     });

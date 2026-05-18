@@ -21,6 +21,7 @@ import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.ide.util.SuperMethodWarningUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.usageView.UsageInfo;
@@ -45,7 +46,7 @@ final class StepFindUsagesHandler extends FindUsagesHandler {
 
   private void runFindUsageReadAction(PsiElement psiElement, Processor<? super UsageInfo> processor,
                                       FindUsagesOptions findUsagesOptions) {
-    ApplicationManager.getApplication().runReadAction(() -> {
+    ReadAction.runBlocking(() -> {
       if (psiElement instanceof PsiMethod) {
         PsiMethod[] psiMethods = SuperMethodWarningUtil.checkSuperMethods((PsiMethod)psiElement,
                                                                           FindBundle.message("find.super.method.warning.action.verb"));

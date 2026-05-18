@@ -17,8 +17,8 @@
 package com.thoughtworks.gauge.findUsages;
 
 import com.intellij.find.FindBundle;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -40,11 +40,12 @@ public final class GaugeReferenceSearch extends QueryExecutorBase<PsiReference, 
   @Override
   public void processQuery(@NotNull ReferencesSearch.SearchParameters searchParameters,
                            @NotNull Processor<? super PsiReference> processor) {
-    ApplicationManager.getApplication().runReadAction(() -> {
+    ReadAction.runBlocking(() -> {
       if (!helper.shouldFindReferences(searchParameters, searchParameters.getElementToSearch())) return;
       if (EDT.isCurrentThreadEdt()) {
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
           () -> processElements(searchParameters, processor),
+          // todo do not use FindBundle
           FindBundle.message("find.usages.progress.title"), true, searchParameters.getElementToSearch().getProject()
         );
       }
@@ -55,7 +56,7 @@ public final class GaugeReferenceSearch extends QueryExecutorBase<PsiReference, 
   }
 
   private void processElements(final ReferencesSearch.SearchParameters searchParameters, final Processor<? super PsiReference> processor) {
-    ApplicationManager.getApplication().runReadAction(() -> {
+    ReadAction.runBlocking(() -> {
       StepCollector collector = helper.getStepCollector(searchParameters.getElementToSearch());
       collector.collect();
       List<PsiElement> elements = ReferenceSearchHelper.getPsiElements(collector, searchParameters.getElementToSearch());

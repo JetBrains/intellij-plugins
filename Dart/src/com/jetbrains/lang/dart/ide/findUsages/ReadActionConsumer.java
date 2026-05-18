@@ -16,13 +16,13 @@
 
 package com.jetbrains.lang.dart.ide.findUsages;
 
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.util.Consumer;
 
 public abstract class ReadActionConsumer<T> implements Consumer<T> {
   @Override
   public void consume(final T t) {
-    ApplicationManager.getApplication().runReadAction(() -> consumeInReadAction(t));
+    ReadAction.runBlocking(() -> consumeInReadAction(t));
   }
 
   public abstract void consumeInReadAction(T t);
