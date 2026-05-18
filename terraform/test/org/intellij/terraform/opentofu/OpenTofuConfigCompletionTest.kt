@@ -19,7 +19,7 @@ internal class OpenTofuConfigCompletionTest : TfBaseCompletionTestCase() {
                                      "required_providers", "required_version")
   }
 
-  fun testNotAllowedRootBlockInTofu() {
+  fun testAllowedRootBlockInTofu() {
     val file = myFixture.configureByText("main.tofu", "<caret>")
     val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name).orEmpty()
     assertNotEmpty(completionVariants)

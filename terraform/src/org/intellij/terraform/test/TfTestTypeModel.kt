@@ -65,11 +65,73 @@ private val TfTestRunBlock: BlockType = BlockType(
   ).toMap()
 )
 
+private val TargetProperty: PropertyType = PropertyType(HCL_TARGET_IDENTIFIER, Types.Identifier, required = true)
+private val ValuesProperty: PropertyType = PropertyType("values", Types.Object)
+
+private val OverrideDuringProperty: PropertyType = PropertyType(
+  "override_during",
+  Types.Identifier,
+  hint = SimpleValueHint("apply", "plan")
+)
+
+private val DefaultsProperty: PropertyType = PropertyType("defaults", Types.Object)
+
+// Override blocks
+private val TfOverrideResourceBlock: BlockType = BlockType(
+  HCL_OVERRIDE_RESOURCE_IDENTIFIER,
+  properties = listOf(TargetProperty, ValuesProperty, OverrideDuringProperty).toMap()
+)
+
+private val TfOverrideDataBlock: BlockType = BlockType(
+  HCL_OVERRIDE_DATA_IDENTIFIER,
+  properties = listOf(TargetProperty, ValuesProperty, OverrideDuringProperty).toMap()
+)
+
+private val TfOverrideModuleBlock: BlockType = BlockType(
+  HCL_OVERRIDE_MODULE_IDENTIFIER,
+  properties = listOf(TargetProperty, PropertyType("outputs", Types.Object), OverrideDuringProperty).toMap()
+)
+
+// Mock blocks
+private val TfMockResourceBlock: BlockType = BlockType(
+  HCL_MOCK_RESOURCE_IDENTIFIER,
+  1,
+  properties = listOf(DefaultsProperty, OverrideDuringProperty).toMap()
+)
+
+private val TfMockDataBlock: BlockType = BlockType(
+  HCL_MOCK_DATA_IDENTIFIER,
+  1,
+  properties = listOf(DefaultsProperty, OverrideDuringProperty).toMap()
+)
+
+private val TfMockProviderBlock: BlockType = BlockType(
+  HCL_MOCK_PROVIDER_IDENTIFIER,
+  1,
+  properties = listOf(
+    PropertyType("alias", Types.String),
+    PropertyType(HCL_SOURCE_IDENTIFIER, Types.String),
+    OverrideDuringProperty,
+    TfMockResourceBlock,
+    TfMockDataBlock,
+    TfOverrideResourceBlock,
+    TfOverrideDataBlock
+  ).toMap()
+)
+
 internal val TfTestRootBlocks: List<BlockType> = listOf(
   TfTestBlock,
   TfTestRunBlock,
   TfTestVariablesBlock,
   TfTypeModel.AbstractProvider,
+  // Mocks
+  TfMockProviderBlock,
+  TfMockResourceBlock,
+  TfMockDataBlock,
+  // Overrides
+  TfOverrideResourceBlock,
+  TfOverrideDataBlock,
+  TfOverrideModuleBlock,
 ).sortedBy { it.literal }
 
 internal val TfTestRootBlocksMap: Map<String, BlockType> = TfTestRootBlocks.associateBy { it.literal }

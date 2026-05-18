@@ -8,3 +8,11 @@ internal const val HCL_RUN_IDENTIFIER = "run"
 internal const val HCL_VARIABLES_IDENTIFIER = "variables"
 internal const val HCL_PARALLEL_IDENTIFIER = "parallel"
 internal const val HCL_TARGET_IDENTIFIER = "target"
+
+internal const val HCL_MOCK_PROVIDER_IDENTIFIER = "mock_provider"
+internal const val HCL_MOCK_RESOURCE_IDENTIFIER = "mock_resource"
+internal const val HCL_MOCK_DATA_IDENTIFIER = "mock_data"
+
+internal const val HCL_OVERRIDE_RESOURCE_IDENTIFIER = "override_resource"
+internal const val HCL_OVERRIDE_DATA_IDENTIFIER = "override_data"
+internal const val HCL_OVERRIDE_MODULE_IDENTIFIER = "override_module"

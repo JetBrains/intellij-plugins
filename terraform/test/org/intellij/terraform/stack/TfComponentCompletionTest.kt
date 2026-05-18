@@ -48,7 +48,7 @@ internal class TfComponentCompletionTest : CompletionTestCase() {
     doBasicCompletionTest("locals {}\n<caret> {}", TfComponentBlockKeywords)
   }
 
-  fun testNotAllowedRootBlocksInTfComponent() {
+  fun testAllowedRootBlocksInTfComponent() {
     val file = myFixture.configureByText(fileName, "<caret>")
     val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name).orEmpty()
     assertNotEmpty(completionVariants)

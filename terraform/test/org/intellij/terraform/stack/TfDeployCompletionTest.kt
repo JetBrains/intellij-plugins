@@ -35,7 +35,7 @@ internal class TfDeployCompletionTest : CompletionTestCase() {
     """.trimIndent(), TfDeployBlockKeywords)
   }
 
-  fun testNotAllowedRootBlocksInTfDeploy() {
+  fun testAllowedRootBlocksInTfDeploy() {
     val file = myFixture.configureByText(fileName, "<caret>")
     val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name).orEmpty()
     assertNotEmpty(completionVariants)

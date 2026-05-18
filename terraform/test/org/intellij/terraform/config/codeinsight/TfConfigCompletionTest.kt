@@ -50,7 +50,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     doBasicCompletionTest("a={\n<caret>\n}", 0)
   }
 
-  fun testNotAllowedRootBlockInTerraform() {
+  fun testAllowedRootBlockInTerraform() {
     val file = myFixture.configureByText("test.tf", "<caret>")
     val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name).orEmpty()
     assertNotEmpty(completionVariants)

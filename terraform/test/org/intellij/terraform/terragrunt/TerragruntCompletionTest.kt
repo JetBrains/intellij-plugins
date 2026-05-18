@@ -46,7 +46,7 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
     """.trimIndent(), "null", "true", "false")
   }
 
-  fun testNotAllowedRootBlocksInTerragrunt() {
+  fun testAllowedRootBlocksInTerragrunt() {
     val file = myFixture.configureByText("test.terragrunt.hcl", "<caret>")
     val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name).orEmpty()
     assertNotEmpty(completionVariants)
