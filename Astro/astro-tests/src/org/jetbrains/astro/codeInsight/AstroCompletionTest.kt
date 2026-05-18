@@ -67,14 +67,14 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", u
       checkResultByFile("$testName/src/layout/App.after.astro")
     }
 
-  fun testAwait() = doLookupTest(
-    lookupItemFilter = run {
-      var accepted = 0
-      { _ ->
-        accepted++ < 100
-      }
-    }
-  )
+  fun testAwait() = doEditorTypingTest(
+    checkResult = false,
+  ) {
+    type("awa")
+    checkLookupItems(
+      lookupItemFilter = { it.lookupString == "await" }
+    )
+  }
 
   fun testReactComponent() = doLookupTest(
     dir = true,
