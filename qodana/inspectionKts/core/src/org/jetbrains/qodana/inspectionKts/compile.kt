@@ -1,8 +1,6 @@
 package org.jetbrains.qodana.inspectionKts
 
 import com.intellij.codeInspection.ex.DynamicInspectionDescriptor
-import com.intellij.ide.script.IdeScriptEngine
-import com.intellij.ide.script.IdeScriptEngineManager
 import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.ide.trustedProjects.TrustedProjectsListener
 import com.intellij.openapi.application.readAction
@@ -186,6 +184,3 @@ private class KeepAliveKotlinCompileService(scope: CoroutineScope) {
   }
 }
 
-fun getKotlinScriptingEngine(classLoader: ClassLoader?): IdeScriptEngine? {
-  return IdeScriptEngineManager.getInstance().getEngineByName("Kotlin - Beta", classLoader)
-}

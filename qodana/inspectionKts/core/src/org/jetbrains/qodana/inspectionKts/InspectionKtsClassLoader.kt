@@ -114,8 +114,8 @@ internal class InspectionKtsClassLoader : ClassLoader(null) {
   @Suppress("unused")
   fun getUrls(): List<URL> {
     return JBIterable.of(*plugins)
-      .map { obj: IdeaPluginDescriptor -> obj.classLoader }
-      .unique()
+      .mapNotNull { obj: IdeaPluginDescriptor -> obj.pluginClassLoader }
+      .distinct()
       .flatMap { o: ClassLoader ->
         try {
           return@flatMap o.javaClass.getMethod("getUrls").invoke(o) as List<URL>
@@ -124,9 +124,8 @@ internal class InspectionKtsClassLoader : ClassLoader(null) {
           return@flatMap emptyList<URL>()
         }
       }
-      .unique()
+      .distinct()
       .toList()
-      .filterNotNull()
   }
 
   companion object {
