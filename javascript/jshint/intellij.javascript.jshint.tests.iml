@@ -26,6 +26,5 @@
     <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.guava" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.libraries.rhino" scope="TEST" />
   </component>
 </module>

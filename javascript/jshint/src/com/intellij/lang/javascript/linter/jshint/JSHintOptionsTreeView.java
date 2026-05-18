@@ -182,6 +182,7 @@ public class JSHintOptionsTreeView {
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
     TreeUtil.installActions(tree);
+    tree.setBorder(JBUI.Borders.empty());
 
 
     tree.setSelectionModel(new DefaultTreeSelectionModel());

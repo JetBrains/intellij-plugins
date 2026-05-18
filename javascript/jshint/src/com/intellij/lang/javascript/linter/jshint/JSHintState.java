@@ -1,37 +1,38 @@
 package com.intellij.lang.javascript.linter.jshint;
 
-import com.intellij.lang.javascript.linter.JSLinterState;
-import com.intellij.lang.javascript.linter.jshint.version.JSHintVersionUtil;
+import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.javascript.nodejs.util.NodePackageRef;
+import com.intellij.lang.javascript.linter.JSNpmLinterState;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Immutable state of JSHint:
  * <ul>
  *   <li>enable/disable</li>
- *   <li>version</li>
+ *   <li>npm package</li>
  *   <li>option's value list</li>
  * </ul>.
  *
  * @author Sergey Simonchik
  */
-public final class JSHintState implements JSLinterState {
+public final class JSHintState implements JSNpmLinterState<JSHintState> {
 
   private final JSHintOptionsState myOptionsState;
-  private final String myVersion;
   private final boolean myConfigFileUsed;
   private final boolean myCustomConfigFileUsed;
   private final String myCustomConfigFilePath;
+  private final @NotNull NodePackageRef myPackageRef;
 
   private JSHintState(@NotNull JSHintOptionsState optionsState,
-                      @NotNull String version,
                       boolean configFileUsed,
                       boolean customConfigFileUsed,
-                      @NotNull String customConfigFilePath) {
+                      @NotNull String customConfigFilePath,
+                      @NotNull NodePackageRef packageRef) {
     myOptionsState = optionsState;
-    myVersion = version;
     myConfigFileUsed = configFileUsed;
     myCustomConfigFileUsed = customConfigFileUsed;
     myCustomConfigFilePath = customConfigFilePath;
+    myPackageRef = packageRef;
   }
 
   public @NotNull JSHintOptionsState getOptionsState() {
@@ -46,38 +47,41 @@ public final class JSHintState implements JSLinterState {
     return myCustomConfigFilePath;
   }
 
-  public @NotNull String getVersion() {
-    return myVersion;
-  }
-
   public boolean isConfigFileUsed() {
     return myConfigFileUsed;
   }
 
+  @Override
+  public @NotNull NodePackageRef getNodePackageRef() {
+    return myPackageRef;
+  }
+
+  @Override
+  public JSHintState withLinterPackage(@NotNull NodePackageRef nodePackage) {
+    return new Builder(this)
+      .setPackageRef(nodePackage)
+      .build();
+  }
+
   public static class Builder {
     private JSHintOptionsState myOptionsState;
-    private String myVersion = JSHintVersionUtil.BUNDLED_VERSION;
     private boolean myConfigFileUsed = false;
     private boolean myCustomConfigFileUsed = false;
     private String myCustomConfigFilePath = "";
+    private NodePackageRef myPackageRef = NodePackageRef.create(new NodePackage(""));
 
     public Builder() {}
 
     public Builder(@NotNull JSHintState state) {
       setOptionsState(state.getOptionsState());
-      setVersion(state.getVersion());
       setConfigFileUsed(state.isConfigFileUsed());
       setCustomConfigFileUsed(state.isCustomConfigFileUsed());
       setCustomConfigFilePath(state.getCustomConfigFilePath());
+      setPackageRef(state.getNodePackageRef());
     }
 
     public Builder setOptionsState(@NotNull JSHintOptionsState optionsState) {
       myOptionsState = optionsState;
-      return this;
-    }
-
-    public @NotNull Builder setVersion(@NotNull String version) {
-      myVersion = version;
       return this;
     }
 
@@ -96,14 +100,19 @@ public final class JSHintState implements JSLinterState {
       return this;
     }
 
+    public @NotNull Builder setPackageRef(@NotNull NodePackageRef packageRef) {
+      myPackageRef = packageRef;
+      return this;
+    }
+
     public JSHintState build() {
-      return new JSHintState(myOptionsState, myVersion, myConfigFileUsed, myCustomConfigFileUsed, myCustomConfigFilePath);
+      return new JSHintState(myOptionsState, myConfigFileUsed, myCustomConfigFileUsed, myCustomConfigFilePath, myPackageRef);
     }
   }
 
   @Override
   public String toString() {
-    return "JSHintState{version=" + myVersion +
+    return "JSHintState{packageRef=" + myPackageRef +
            ", options=" + myOptionsState +
            ", configFileUsed=" + myConfigFileUsed +
            ", customConfigFileUsed=" + myCustomConfigFileUsed +
@@ -118,20 +127,20 @@ public final class JSHintState implements JSLinterState {
 
     JSHintState state = (JSHintState)o;
 
-    if (!myVersion.equals(state.getVersion())) return false;
     if (myConfigFileUsed != state.isConfigFileUsed()) return false;
     if (myCustomConfigFileUsed != state.isCustomConfigFileUsed()) return false;
     if (!myCustomConfigFilePath.equals(state.getCustomConfigFilePath())) return false;
+    if (!myPackageRef.equals(state.getNodePackageRef())) return false;
     return myOptionsState.equals(state.myOptionsState);
   }
 
   @Override
   public int hashCode() {
     int result = myOptionsState.hashCode();
-    result = 31 * result + myVersion.hashCode();
     result = 31 * result + (myConfigFileUsed ? 1 : 0);
     result = 31 * result + (myCustomConfigFileUsed ? 1 : 0);
     result = 31 * result + myCustomConfigFilePath.hashCode();
+    result = 31 * result + myPackageRef.hashCode();
     return result;
   }
 }

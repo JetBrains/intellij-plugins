@@ -1,19 +1,14 @@
 package com.intellij.lang.javascript.linter.jshint;
 
-import com.intellij.lang.javascript.linter.jshint.JSHintBundle;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
+import com.intellij.javascript.nodejs.util.NodePackageField;
 import com.intellij.lang.javascript.linter.JSLinterBaseView;
-import com.intellij.lang.javascript.linter.jshint.version.JSHintVersionView;
+import com.intellij.lang.javascript.linter.jshint.config.JSHintDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 
@@ -24,13 +19,15 @@ public class JSHintView extends JSLinterBaseView<JSHintState> {
 
   private final JCheckBox myConfigFileUsedCheckBox;
   private final JSHintOptionsTreeView myOptionsTreeView;
-  private final JSHintVersionView myVersionView;
   private final JPanel myCardPanel;
   private final JSHintConfigFileView myConfigFileView;
+  private final NodePackageField myJSHintPackageField;
 
   public JSHintView(@NotNull Project project, boolean fullModeDialog) {
     myConfigFileUsedCheckBox = new JCheckBox(JSHintBundle.message("jshint.use.config.files"));
-    myVersionView = new JSHintVersionView(project);
+    myJSHintPackageField = new NodePackageField(project, JSHintDescriptor.PACKAGE_NAME, () -> {
+      return NodeJsInterpreterManager.getInstance(project).getInterpreter();
+    });
 
     myOptionsTreeView = new JSHintOptionsTreeView(fullModeDialog);
 
@@ -49,25 +46,13 @@ public class JSHintView extends JSLinterBaseView<JSHintState> {
   }
 
   @Override
-  protected @Nullable Component createTopRightComponent() {
-    return SwingHelper.newHorizontalPanel(
-      Component.CENTER_ALIGNMENT,
-      myConfigFileUsedCheckBox,
-      Box.createHorizontalStrut(20),
-      myVersionView.getComponent()
-    );
-  }
-
-  @Override
   protected @NotNull Component createCenterComponent() {
-    JPanel panel = new JPanel(new BorderLayout(0, 0));
-    panel.add(myCardPanel, BorderLayout.CENTER);
-    panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
-    return panel;
+    return new JSHintViewContent(myJSHintPackageField, myConfigFileUsedCheckBox, myCardPanel).getPanel();
   }
 
   @Override
   protected void handleEnableStatusChanged(boolean enabled) {
+    myJSHintPackageField.setEnabled(enabled);
     myOptionsTreeView.setEnabled(enabled);
     myConfigFileView.onEnabledStateChange(enabled);
   }
@@ -76,7 +61,7 @@ public class JSHintView extends JSLinterBaseView<JSHintState> {
   protected @NotNull JSHintState getState() {
     JSHintState.Builder builder = new JSHintState.Builder();
     builder
-      .setVersion(myVersionView.getVersion())
+      .setPackageRef(myJSHintPackageField.getSelectedRef())
       .setOptionsState(myOptionsTreeView.getOptionsState())
       .setConfigFileUsed(myConfigFileUsedCheckBox.isSelected())
       .setCustomConfigFileUsed(myConfigFileView.isCustomConfigFileUsed())
@@ -86,7 +71,7 @@ public class JSHintView extends JSLinterBaseView<JSHintState> {
 
   @Override
   protected void setState(@NotNull JSHintState state) {
-    myVersionView.setVersion(state.getVersion());
+    myJSHintPackageField.setSelectedRef(state.getNodePackageRef());
     myOptionsTreeView.setOptionsState(state.getOptionsState());
     myConfigFileUsedCheckBox.setSelected(state.isConfigFileUsed());
     myConfigFileView.setCustomConfigFileUsed(state.isCustomConfigFileUsed());
@@ -97,7 +82,6 @@ public class JSHintView extends JSLinterBaseView<JSHintState> {
   @Override
   public void disposeResources() {
     myOptionsTreeView.disposeUI();
-    Disposer.dispose(myVersionView);
   }
 
   private enum ConfigFileUsed { ON, OFF }

@@ -1,31 +1,43 @@
 package com.intellij.lang.javascript.linter.jshint;
 
+import com.intellij.codeInspection.InspectionProfileEntry;
+import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.linter.LinterHighlightingTest;
+import com.intellij.lang.javascript.linter.jshint.config.JSHintDescriptor;
 import com.intellij.testFramework.DumbModeTestUtils;
-import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import org.jetbrains.annotations.NotNull;
 
-public class JSHintHighlightingTest extends BasePlatformTestCase {
+import java.util.HashMap;
+import java.util.Map;
+
+public class JSHintHighlightingTest extends LinterHighlightingTest {
+
+  @Override
+  protected @NotNull InspectionProfileEntry getInspection() {
+    return new JSHintInspection();
+  }
+
+  @Override
+  protected @NotNull Map<String, String> getGlobalPackageVersionsToInstall() {
+    HashMap<String, String> map = new HashMap<>();
+    map.put(JSHintDescriptor.PACKAGE_NAME, null);
+    return map;
+  }
+
+  @Override
+  protected @NotNull String getPackageName() {
+    return JSHintDescriptor.PACKAGE_NAME;
+  }
 
   @Override
   protected String getBasePath() {
-    return "/highlighting/";
-  }
-
-  @Override
-  protected String getTestDataPath() {
-    return JSHintTestUtil.BASE_TEST_DATA_PATH + getBasePath();
-  }
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    myFixture.enableInspections(new JSHintInspection());
+    return "/contrib/javascript/jshint/test/data/highlighting/";
   }
 
   public void testSample() {
-    JSHintState state = new JSHintState.Builder()
+    doTestWithState(new JSHintState.Builder()
       .setOptionsState(
         new JSHintOptionsState.Builder()
           .put(JSHintOption.STRICT, false)
@@ -33,11 +45,7 @@ public class JSHintHighlightingTest extends BasePlatformTestCase {
           .put(JSHintOption.UNDEF, true)
           .put(JSHintOption.PREDEF, "foo:true, bar")
           .build())
-      .build();
-
-    JSHintConfiguration configuration = JSHintConfiguration.getInstance(getProject());
-    configuration.setExtendedState(true, state);
-    doTestDefault();
+      .build());
   }
 
   public void testSampleInDumbMode() {
@@ -51,24 +59,17 @@ public class JSHintHighlightingTest extends BasePlatformTestCase {
           .build())
       .build();
 
-    JSHintConfiguration configuration = JSHintConfiguration.getInstance(getProject());
-    configuration.setExtendedState(true, state);
-
     CodeInsightTestFixtureImpl.mustWaitForSmartMode(false, getTestRootDisposable());
     DumbModeTestUtils.runInDumbModeSynchronously(getProject(), () -> {
-      doTestDefault();
+      doTestWithState(state);
     });
   }
 
   public void testCheck_predef() {
-    JSHintState state = new JSHintState.Builder()
+    doTestWithState(new JSHintState.Builder()
       .setConfigFileUsed(true)
       .setOptionsState(new JSHintOptionsState.Builder().build())
-      .build();
-
-    JSHintConfiguration configuration = JSHintConfiguration.getInstance(getProject());
-    configuration.setExtendedState(true, state);
-    doTestDefault();
+      .build());
   }
 
   public void testIgnoreDistBuild() {
@@ -88,7 +89,7 @@ public class JSHintHighlightingTest extends BasePlatformTestCase {
   }
 
   public void testIndent() {
-    JSHintState state = new JSHintState.Builder()
+    doTestWithState(new JSHintState.Builder()
       .setOptionsState(
         new JSHintOptionsState.Builder()
           .put(JSHintOption.UNDEF, true)
@@ -96,10 +97,7 @@ public class JSHintHighlightingTest extends BasePlatformTestCase {
           .put(JSHintOption.ESVERSION, 6)
           .put(JSHintOption.INDENT, 2)
           .build())
-      .build();
-    JSHintConfiguration configuration = JSHintConfiguration.getInstance(getProject());
-    configuration.setExtendedState(true, state);
-    doTestDefault();
+      .build());
   }
 
   public void testJSHintWithNodeJS() {
@@ -111,14 +109,13 @@ public class JSHintHighlightingTest extends BasePlatformTestCase {
           .build())
       .build();
 
-    JSHintConfiguration configuration = JSHintConfiguration.getInstance(getProject());
-    configuration.setExtendedState(true, state);
-
+    configureWithState(state);
     JSTestUtils.setMockNodeCoreModulesLib(getProject(), getTestRootDisposable());
     myFixture.testHighlighting(true, false, true, "JSHint.js");
   }
 
-  private void doTestDefault() {
+  private void doTestWithState(@NotNull JSHintState state) {
+    configureWithState(state);
     myFixture.configureByFiles(getTestName(true) + ".js");
     myFixture.copyFileToProject(".jshintrc");
     myFixture.testHighlighting(true, false, true);
@@ -130,12 +127,16 @@ public class JSHintHighlightingTest extends BasePlatformTestCase {
       .setOptionsState(new JSHintOptionsState.Builder().build())
       .build();
 
-    JSHintConfiguration configuration = JSHintConfiguration.getInstance(getProject());
-    configuration.setExtendedState(true, state);
+    configureWithState(state);
     myFixture.copyDirectoryToProject(directoryToCopy, directoryToCopy);
     myFixture.copyFileToProject(".jshintrc");
     myFixture.copyFileToProject(".jshintignore");
     myFixture.configureByFile(filePathToTest);
     myFixture.testHighlighting(true, false, true);
+  }
+
+  private void configureWithState(@NotNull JSHintState state) {
+    JSHintConfiguration configuration = JSHintConfiguration.getInstance(getProject());
+    configuration.setExtendedState(true, state.withLinterPackage(NodePackageRef.create(getNodePackage())));
   }
 }

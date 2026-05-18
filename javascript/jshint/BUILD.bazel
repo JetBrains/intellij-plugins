@@ -32,9 +32,9 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
     "@community//json/backend",
+    "@community//platform/execution",
     "@community//libraries/gson",
     "@community//libraries/guava",
-    "@community//libraries/rhino",
     "@community//spellchecker",
   ]
 )
@@ -70,9 +70,9 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
     "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
     "@community//json/backend:backend_test_lib",
+    "@community//platform/execution:execution_test_lib",
     "@community//libraries/gson:gson_test_lib",
     "@community//libraries/guava:guava_test_lib",
-    "@community//libraries/rhino:rhino_test_lib",
     "@community//spellchecker:spellchecker_test_lib",
   ]
 )
@@ -136,8 +136,6 @@ jvm_library(
     "//plugins/JavaScriptLanguage/testFramework:testFramework_test_lib",
     "@community//libraries/guava",
     "@community//libraries/guava:guava_test_lib",
-    "@community//libraries/rhino",
-    "@community//libraries/rhino:rhino_test_lib",
   ],
   runtime_deps = [
     ":jshint-tests",

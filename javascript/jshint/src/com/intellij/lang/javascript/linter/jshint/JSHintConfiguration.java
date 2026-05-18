@@ -1,8 +1,9 @@
 package com.intellij.lang.javascript.linter.jshint;
 
+import com.intellij.javascript.nodejs.util.JSLinterPackage;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
 import com.intellij.lang.javascript.linter.JSLinterInspection;
-import com.intellij.lang.javascript.linter.jshint.version.JSHintVersionUtil;
+import com.intellij.lang.javascript.linter.jshint.config.JSHintDescriptor;
 import com.intellij.lang.javascript.linter.option.OptionEnumVariant;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -25,13 +26,11 @@ import java.util.List;
 public class JSHintConfiguration extends JSLinterConfiguration<JSHintState> {
 
   private static final String JSHINT_ELEMENT_NAME = "jshint";
-  private static final String JSHINT_VERSION_ATTRIBUTE_NAME = "version";
   private static final String IS_CONFIG_FILE_USED_ATTRIBUTE_NAME = "use-config-file";
   private static final String IS_CUSTOM_CONFIG_FILE_USED_ATTRIBUTE_NAME = "use-custom-config-file";
   private static final String CUSTOM_CONFIG_FILE_PATH_ATTRIBUTE_NAME = "custom-config-file-path";
   private static final String OPTION_ELEMENT_NAME = "option";
   private static final JSHintState DEFAULT_STATE = new JSHintState.Builder()
-    .setVersion(JSHintVersionUtil.BUNDLED_VERSION)
     .setOptionsState(
       new JSHintOptionsState.Builder()
         .put(JSHintOption.FORIN, true)
@@ -48,17 +47,22 @@ public class JSHintConfiguration extends JSLinterConfiguration<JSHintState> {
         .build()
     ).build();
 
+  private final JSLinterPackage myPackage;
+
   public JSHintConfiguration(@NotNull Project project) {
     super(project);
+    myPackage = new JSLinterPackage(project, JSHintDescriptor.PACKAGE_NAME);
   }
 
   @Override
   protected void savePrivateSettings(@NotNull JSHintState state) {
+    myPackage.force(state.getNodePackageRef());
   }
 
   @Override
   protected @NotNull JSHintState loadPrivateSettings(@NotNull JSHintState state) {
-    return state;
+    myPackage.readOrDetect();
+    return state.withLinterPackage(myPackage.getPackage());
   }
 
   public static @NotNull JSHintConfiguration getInstance(@NotNull Project project) {
@@ -73,7 +77,6 @@ public class JSHintConfiguration extends JSLinterConfiguration<JSHintState> {
   @Override
   protected @NotNull Element toXml(@NotNull JSHintState state) {
     Element root = new Element(JSHINT_ELEMENT_NAME);
-    root.setAttribute(JSHINT_VERSION_ATTRIBUTE_NAME, state.getVersion());
     root.setAttribute(IS_CONFIG_FILE_USED_ATTRIBUTE_NAME, String.valueOf(state.isConfigFileUsed()));
     if (state.isCustomConfigFileUsed()) {
       root.setAttribute(IS_CUSTOM_CONFIG_FILE_USED_ATTRIBUTE_NAME, Boolean.TRUE.toString());
@@ -117,10 +120,6 @@ public class JSHintConfiguration extends JSLinterConfiguration<JSHintState> {
     JSHintState.Builder builder = new JSHintState.Builder();
     JSHintOptionsState optionsState = loadOptionsValues(element.getChildren());
     builder.setOptionsState(optionsState);
-    String version = element.getAttributeValue(JSHINT_VERSION_ATTRIBUTE_NAME);
-    if (StringUtil.isNotEmpty(version)) {
-      builder.setVersion(version);
-    }
     builder.setConfigFileUsed(Boolean.parseBoolean(element.getAttributeValue(IS_CONFIG_FILE_USED_ATTRIBUTE_NAME)));
     builder.setCustomConfigFileUsed(Boolean.parseBoolean(element.getAttributeValue(IS_CUSTOM_CONFIG_FILE_USED_ATTRIBUTE_NAME)));
     String customConfigFilePath = StringUtil.notNullize(element.getAttributeValue(CUSTOM_CONFIG_FILE_PATH_ATTRIBUTE_NAME));

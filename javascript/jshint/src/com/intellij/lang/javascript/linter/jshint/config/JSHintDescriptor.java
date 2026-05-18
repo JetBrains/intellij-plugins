@@ -13,11 +13,21 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.util.CommonProcessors;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
 public class JSHintDescriptor extends JSLinterDescriptor {
+
+  @ApiStatus.Internal
+  public static final String PACKAGE_NAME = "jshint";
+
+  @Override
+  public @Nullable String packageName() {
+    return PACKAGE_NAME;
+  }
 
   @Override
   public @NotNull String getDisplayName() {

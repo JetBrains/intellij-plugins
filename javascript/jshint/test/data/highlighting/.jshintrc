@@ -1,5 +1,8 @@
 {
   "undef" : true,
   "-W034" : true,
-  "globals" : ["myF", "bbb"]
+  "globals" : {
+    "myF": false,
+    "bbb": false
+  }
 }
