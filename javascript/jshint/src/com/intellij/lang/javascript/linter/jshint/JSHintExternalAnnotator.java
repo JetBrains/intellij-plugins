@@ -16,10 +16,10 @@ import com.intellij.lang.javascript.linter.jshint.config.JSHintConfigFileChangeT
 import com.intellij.lang.javascript.linter.jshint.config.JSHintConfigFileUtil;
 import com.intellij.lang.javascript.linter.jshint.config.JSHintConfigLookupResult;
 import com.intellij.lang.javascript.linter.jshint.version.JSHintVersionUtil;
-import com.intellij.lang.javascript.linter.rhino.FunctionWithScope;
-import com.intellij.lang.javascript.linter.rhino.RhinoFunctionManager;
-import com.intellij.lang.javascript.linter.rhino.RhinoUtil;
-import com.intellij.lang.javascript.linter.rhino.WrappedRhinoException;
+import com.intellij.lang.javascript.linter.jshint.rhino.FunctionWithScope;
+import com.intellij.lang.javascript.linter.jshint.rhino.RhinoFunctionManager;
+import com.intellij.lang.javascript.linter.jshint.rhino.RhinoUtil;
+import com.intellij.lang.javascript.linter.jshint.rhino.WrappedRhinoException;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.application.Application;

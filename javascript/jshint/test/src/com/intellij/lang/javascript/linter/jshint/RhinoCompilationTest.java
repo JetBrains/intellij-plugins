@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.linter.jshint;
 
 import com.intellij.lang.javascript.linter.jshint.version.JSHintVersionUtil;
-import com.intellij.lang.javascript.linter.rhino.FunctionWithScope;
-import com.intellij.lang.javascript.linter.rhino.RhinoFunctionManager;
+import com.intellij.lang.javascript.linter.jshint.rhino.FunctionWithScope;
+import com.intellij.lang.javascript.linter.jshint.rhino.RhinoFunctionManager;
 import org.junit.Test;
 
 import java.io.IOException;
