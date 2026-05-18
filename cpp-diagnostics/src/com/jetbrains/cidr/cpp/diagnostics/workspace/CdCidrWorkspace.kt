@@ -13,13 +13,14 @@ import com.jetbrains.cidr.project.workspace.CidrWorkspaceManager
  * CidrWorkspace represents a buildsystem-specific data, and makes sure IntelliJ project model and OCWorkspace stays in sync with it
  */
 fun collectCidrWorkspaces(project: Project): CidrWorkspacesSection {
-  val workspaces = CidrWorkspaceManager.getInstance(project).initializedWorkspaces
-  val infos = workspaces.map { workspace ->
+  val workspaces = CidrWorkspaceManager.getInstance(project).workspaces
+  val infos = workspaces.map { (workspace, state) ->
     WorkspaceInfo(
       className = workspace.javaClass.toString(),
+      state = state,
       projectPath = "${workspace.projectPath}",
       contentRoot = "${workspace.contentRoot}",
-      sections = WorkspaceDescriptionProvider.describe(workspace)
+      sections = if (state.exists) WorkspaceDescriptionProvider.describe(workspace) else null
     )
   }
   return CidrWorkspacesSection(infos)

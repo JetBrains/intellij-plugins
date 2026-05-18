@@ -1,6 +1,7 @@
 package com.jetbrains.cidr.cpp.diagnostics.model
 
 import com.jetbrains.cidr.cpp.diagnostics.CdIndenter
+import com.jetbrains.cidr.project.workspace.CidrWorkspaceState
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -194,17 +195,19 @@ data class CidrWorkspacesSection(
 @Serializable
 data class WorkspaceInfo(
   val className: String,
+  val state: CidrWorkspaceState,
   val projectPath: String?,
   val contentRoot: String?,
   // sections are ordered exactly as printed by EP providers
-  val sections: List<WorkspaceSection>
+  val sections: List<WorkspaceSection>?
 ) {
   fun appendTo(log: CdIndenter) {
     log.put(className)
     log.scope {
+      log.put("State: ${state}")
       log.put("Project path: ${projectPath}")
       log.put("Content root: ${contentRoot}")
-      sections.forEach { it.appendTo(log) }
+      sections?.forEach { it.appendTo(log) }
     }
   }
 }
