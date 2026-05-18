@@ -78,12 +78,12 @@ class PbPythonTypeTest : PbPythonTestBase() {
     msg.repeated_any_field.append(Any())
     msg.repeated_any_field.add()
     
-    msg.repeated_string_field.append(<warning descr="Expected type 'str' (matched generic type '_T'), got 'Literal[123]' instead">123</warning>)
+    msg.repeated_string_field.append(<warning descr="Expected type 'str', got 'Literal[123]' instead">123</warning>)
     """)
 
   fun testMismatchedMapKeyValueType() = doTest("""
-    msg.string_int32_map["key"] = <warning descr="Expected type 'int' (matched generic type '_VT'), got 'Literal[\"not an int\"]' instead">"not an int"</warning>
-    msg.string_int32_map[<warning descr="Expected type 'str' (matched generic type '_KT'), got 'Literal[123]' instead">123</warning>] = 456
+    msg.string_int32_map["key"] = <warning descr="Expected type 'int', got 'Literal[\"not an int\"]' instead">"not an int"</warning>
+    msg.string_int32_map[<warning descr="Expected type 'str', got 'Literal[123]' instead">123</warning>] = 456
     """)
 
   fun testFieldAssignmentTypeMismatch() = doTest("""
