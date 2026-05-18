@@ -1,5 +1,5 @@
 ﻿#AutomaticCompletion:
-# 741 ITEMS #
+# 753 ITEMS #
 
 + accelerator
 + accent-color
@@ -270,6 +270,7 @@
 + flex-direction
 + flex-flow
 + flex-grow
++ flex-line-count
 + flex-shrink
 + flex-wrap
 + float
@@ -313,6 +314,7 @@
 + footnote-display
 + footnote-policy
 + forced-color-adjust
++ frame-sizing
 + gap
 + glyph-orientation-vertical
 + grid
@@ -341,6 +343,7 @@
 + hyphenate-limit-lines
 + hyphenate-limit-zone
 + hyphens
++ image-animation
 + image-orientation
 + image-rendering
 + image-resolution
@@ -364,12 +367,6 @@
 + interest-delay-start
 + interpolate-size
 + isolation
-+ item-cross
-+ item-direction
-+ item-flow
-+ item-pack
-+ item-track
-+ item-wrap
 + justify-content
 + justify-items
 + justify-self
@@ -506,6 +503,7 @@
 + padding-right
 + padding-top
 + page
++ page-margin-safety
 + page-orientation
 + paint-order
 + pause
@@ -605,7 +603,6 @@
 + shape-outside
 + shape-padding
 + shape-rendering
-+ shape-subtract
 + size
 + size-adjust
 + slider-orientation
@@ -673,6 +670,7 @@
 + text-emphasis-position
 + text-emphasis-skip
 + text-emphasis-style
++ text-fit
 + text-group-align
 + text-indent
 + text-justify
@@ -691,13 +689,13 @@
 + text-wrap-style
 + timeline-scope
 + timeline-trigger
-+ timeline-trigger-exit-range
-+ timeline-trigger-exit-range-end
-+ timeline-trigger-exit-range-start
++ timeline-trigger-activation-range
++ timeline-trigger-activation-range-end
++ timeline-trigger-activation-range-start
++ timeline-trigger-active-range
++ timeline-trigger-active-range-end
++ timeline-trigger-active-range-start
 + timeline-trigger-name
-+ timeline-trigger-range
-+ timeline-trigger-range-end
-+ timeline-trigger-range-start
 + timeline-trigger-source
 + top
 + touch-action
@@ -741,6 +739,7 @@
 + widows
 + width
 + will-change
++ window-drag
 + word-break
 + word-space-transform
 + word-spacing
