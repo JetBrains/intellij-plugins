@@ -11,7 +11,6 @@ import org.intellij.terraform.config.Constants.HCL_CONFIG_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_INPUTS_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDERS_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
-import org.intellij.terraform.config.Constants.HCL_REMOVED_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_STACK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.patterns.TfPsiPatterns.createBlockPattern
@@ -33,12 +32,6 @@ internal object TfComponentPsiPatterns {
 
   val TfStackBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_STACK_IDENTIFIER)
     .withParent(TfComponentFile)
-
-  val TfComponentRemovedBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_REMOVED_BLOCK_IDENTIFIER)
-    .withParent(TfComponentFile)
-
-  val TfComponentBlocksWithSource: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
-    .andOr(TfComponentBlock, TfStackBlock, TfComponentRemovedBlock)
 
   val InputsPropertyBlock: PsiElementPattern.Capture<HCLProperty> = propertyWithName(HCL_INPUTS_IDENTIFIER)
     .withParent(HCLPatterns.Object)

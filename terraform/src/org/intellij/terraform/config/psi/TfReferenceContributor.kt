@@ -36,7 +36,8 @@ import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
-import org.intellij.terraform.hcl.psi.reference.SourcePropertyReferenceProvider
+import org.intellij.terraform.hcl.psi.reference.HclSourceLiteralPattern
+import org.intellij.terraform.hcl.psi.reference.HclSourcePropertyReferenceProvider
 import org.intellij.terraform.hil.psi.HCLElementLazyReference
 import org.intellij.terraform.hil.psi.HCLElementLazyReferenceBase
 
@@ -77,8 +78,8 @@ class TfReferenceContributor : PsiReferenceContributor() {
             .withSuperParent(3, HCLProperty::class.java)
         , MapVariableIndexReferenceProvider)
 
-    // 'module' source
-    SourcePropertyReferenceProvider.register(registrar, TfPsiPatterns.ModuleRootBlock)
+    // source property resolution
+    registrar.registerReferenceProvider(HclSourceLiteralPattern, HclSourcePropertyReferenceProvider)
 
     // 'module' variable setter
     registrar.registerReferenceProvider(

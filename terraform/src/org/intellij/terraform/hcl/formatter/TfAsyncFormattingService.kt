@@ -29,6 +29,7 @@ import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.isTfOrTofuPsiFile
 import org.intellij.terraform.runtime.TfToolPathDetector
+import org.intellij.terraform.test.isTfTestPsiFile
 import java.util.concurrent.CancellationException
 import kotlin.io.path.Path
 
@@ -43,7 +44,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     if (ApplicationManager.getApplication().isUnitTestMode) return false
 
     val settings = CodeStyle.getCustomSettings(file, HclCodeStyleSettings::class.java)
-    return (isTfOrTofuPsiFile(file) || file.name.endsWith(TestsExtension)) && settings.RUN_TF_FMT_ON_REFORMAT
+    return (isTfOrTofuPsiFile(file) || isTfTestPsiFile(file)) && settings.RUN_TF_FMT_ON_REFORMAT
   }
 
   override fun createFormattingTask(request: AsyncFormattingRequest): FormattingTask? {
@@ -125,5 +126,4 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
 
 internal fun normalizeAnsiText(text: String): String = AnsiCsiUtil.stripAnsi(text).replace(BoxDrawingRegex, "").trim()
 
-private const val TestsExtension = "tftest.hcl"
 private val BoxDrawingRegex: Regex = Regex("[\u2500-\u257F]")

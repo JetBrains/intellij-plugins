@@ -6,17 +6,17 @@ import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
-import com.intellij.psi.PsiReferenceRegistrar
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
 import org.intellij.terraform.config.patterns.TfPsiPatterns.propertyWithName
+import org.intellij.terraform.hcl.patterns.HCLPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 
-internal object SourcePropertyReferenceProvider : PsiReferenceProvider() {
+internal object HclSourcePropertyReferenceProvider : PsiReferenceProvider() {
 
   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference?> {
     if (element !is HCLStringLiteral || !HCLPsiUtil.isPropertyValue(element)) {
@@ -24,14 +24,11 @@ internal object SourcePropertyReferenceProvider : PsiReferenceProvider() {
     }
     return FileReferenceSet.createSet(element, true, false, false).allReferences
   }
-
-  fun register(registrar: PsiReferenceRegistrar, sourceBlockPattern: PsiElementPattern.Capture<HCLBlock>) {
-    registrar.registerReferenceProvider(getSourceLiteralPattern(sourceBlockPattern), this)
-  }
-
-  private fun getSourceLiteralPattern(sourceBlockPattern: PsiElementPattern.Capture<HCLBlock>) =
-    PlatformPatterns.psiElement(HCLStringLiteral::class.java)
-      .withParent(propertyWithName(HCL_SOURCE_IDENTIFIER))
-      .withSuperParent(2, HCLObject::class.java)
-      .withSuperParent(3, sourceBlockPattern)
 }
+
+internal val HclSourceLiteralPattern: PsiElementPattern.Capture<HCLStringLiteral> =
+  PlatformPatterns.psiElement(HCLStringLiteral::class.java)
+    .withParent(propertyWithName(HCL_SOURCE_IDENTIFIER))
+    .withSuperParent(2, HCLObject::class.java)
+    .withSuperParent(3, HCLBlock::class.java)
+    .withSuperParent(4, HCLPatterns.File)
