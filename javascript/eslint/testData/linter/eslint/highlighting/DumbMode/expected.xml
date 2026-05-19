@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <line>2</line>
+    <file>warn.js</file>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">ESLint</problem_class>
+    <description>ESLint: Unexpected console statement. (no-console)</description>
+  </problem>
+  <problem>
+    <line>3</line>
+    <file>warn.js</file>
+    <problem_class severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">ESLint</problem_class>
+    <description>ESLint: Unexpected 'debugger' statement. (no-debugger)</description>
+  </problem>
+</problems>

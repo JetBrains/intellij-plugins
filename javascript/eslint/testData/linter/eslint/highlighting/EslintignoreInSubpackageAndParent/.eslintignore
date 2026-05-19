@@ -1,0 +1,3 @@
+#this is to ignore inner package when linting outer from the console because inner has a different configuration
+#see WEB-36096
+packages/inner

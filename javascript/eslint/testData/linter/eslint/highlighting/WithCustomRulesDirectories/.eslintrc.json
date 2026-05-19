@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "avoid-foo": ["error"],
+    "avoid-bar": ["error"]
+  }
+}

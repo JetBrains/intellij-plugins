@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<checkstyle version="4.3">
+  <file name="karma.conf.js">
+    <error line="2" column="18" severity="error" message="&quot;requir&quot; is not defined. (no-undef)" source="eslint.rules.no-undef"/>
+    <error line="2" column="62" severity="error" message="Missing semicolon. (semi)" source="eslint.rules.semi"/>
+    <error line="3" column="1" severity="error" message="Expected consistent spacing (standard/object-curly-even-spacing)"
+           source="eslint.rules.standard/object-curly-even-spacing"/>
+  </file>
+</checkstyle>

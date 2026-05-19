@@ -1,0 +1,5 @@
+export = {
+  rules: {
+    "semi": "error"
+  }
+}

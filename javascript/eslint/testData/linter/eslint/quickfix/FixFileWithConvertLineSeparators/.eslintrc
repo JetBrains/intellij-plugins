@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "quotes": ["error", "single"],
+    "linebreak-style": ["error", "windows"]
+  }
+}

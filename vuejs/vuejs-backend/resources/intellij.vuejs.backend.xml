@@ -1,6 +1,7 @@
 <idea-plugin visibility="internal">
-  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
+    <plugin id="intellij.javascript.eslint"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="com.intellij.modules.ultimate"/>
     <plugin id="com.intellij.modules.xml"/>
     <plugin id="com.intellij.css"/>
@@ -22,8 +23,8 @@
     <module name="intellij.spellchecker"/>
     <module name="intellij.vuejs.common"/>
     <module name="intellij.vuejs.free"/>
+    <!-- endregion -->
   </dependencies>
-  <!-- endregion -->
 
   <extensionPoints>
     <extensionPoint qualifiedName="com.intellij.vuejs.containerInfoProvider"

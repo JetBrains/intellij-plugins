@@ -1,0 +1,7 @@
+{
+  "name": "parent-project",
+  "version": "1.0.0",
+  "dependencies": {
+    "eslint":  "5.12.0"
+  }
+}

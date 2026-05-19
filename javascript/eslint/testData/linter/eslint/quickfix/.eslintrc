@@ -1,0 +1,9 @@
+{
+  "rules": {
+    "comma-spacing": "error",
+    "one-var": [
+      "error",
+      "never"
+    ]
+  }
+}

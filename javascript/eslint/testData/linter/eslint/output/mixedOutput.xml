@@ -1,0 +1,9 @@
+The react/jsx-quotes rule is deprecated. Please use the jsx-quotes rule instead.
+<?xml version="1.0" encoding="utf-8"?>
+<checkstyle version="4.3">
+  <file name="D:\projekty\arc-wc-components\gulpfile.js">
+    <error line="1" column="1" severity="error" message="Unexpected var, use let or const instead. (no-var)" source="eslint.rules.no-var"/>
+    <error line="1" column="1" severity="error" message="Split &apos;var&apos; declarations into multiple statements. (one-var)" source="eslint.rules.one-var"/>
+    <error line="33" column="24" severity="error" message="Strings must use singlequote. (quotes)" source="eslint.rules.quotes"/>
+  </file>
+</checkstyle>

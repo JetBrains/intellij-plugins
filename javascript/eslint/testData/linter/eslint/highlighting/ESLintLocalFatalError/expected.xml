@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <line>4</line>
+    <file>test.js</file>
+    <problem_class severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">ESLint</problem_class>
+    <description>ESLint: Parsing error: Unexpected token i</description>
+  </problem>
+</problems>

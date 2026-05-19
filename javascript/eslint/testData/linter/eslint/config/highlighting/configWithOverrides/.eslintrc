@@ -1,0 +1,43 @@
+{
+  "rules": {
+    "array-bracket-spacing": [
+      "error",
+      "never",
+      {
+        "objectsInArrays": false
+      }
+    ]
+  },
+  "extends": "aaa",
+  "overrides": [
+    <warning descr="Missing required property 'files'">{
+      "excludedFiles": "*.config.json",
+      "extends": "bbb",
+      "rules": {
+        "no-console": "error"
+      }
+    }</warning>,
+    {
+      "files": [
+        "foo/*.js"
+      ],
+      "overrides": <warning descr="Incompatible types.
+ Required: array. Actual: string.">""</warning>,
+      <warning descr="Property 'root' is not allowed">"root"</warning>: ""
+    },
+    {
+      "files": [
+        "bar/*.js"
+      ],
+      "excludedFiles": [],
+      "rules": {
+        "semicolon": "error",
+        "unknown-rule": "error"
+      }
+    },
+    {
+      "files": <warning descr="Array is shorter than 1">[]</warning>,
+      "excludedFiles": []
+    }
+  ]
+}

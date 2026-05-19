@@ -1,0 +1,12 @@
+{
+  "name": "foobar",
+  "version": "0.0.1",
+  "dependencies": {
+    "standard": "9.0.2"
+  },
+  "standard": {
+    "ignore": [
+      "ignored.js"
+    ]
+  }
+}

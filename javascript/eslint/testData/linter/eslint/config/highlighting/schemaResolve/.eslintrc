@@ -1,0 +1,5 @@
+{
+  "rules": {
+    "c<caret>omma-dangle": 2
+  }
+}

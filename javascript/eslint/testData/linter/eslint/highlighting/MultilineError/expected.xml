@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <line>2</line>
+    <file>test.js</file>
+    <problem_class id="Eslint" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">ESLint</problem_class>
+    <description>ESLint: Unexpected var, use let or const instead. (no-var)</description>
+  </problem>
+  <problem>
+    <line>7</line>
+    <file>test.js</file>
+    <problem_class id="Eslint" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">ESLint</problem_class>
+    <description>ESLint: Unexpected var, use let or const instead. (no-var)</description>
+  </problem>
+</problems>

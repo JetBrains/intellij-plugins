@@ -1,0 +1,13 @@
+{
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser"
+  },
+  "extends": ["plugin:vue/base"],
+  "rules": {
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": ["error", "always"]
+  }
+}

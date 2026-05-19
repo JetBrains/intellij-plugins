@@ -1,0 +1,1 @@
+<warning descr="Standard code style: Unexpected var, use let or const instead. (no-var)">var <error descr="Standard code style: 'ttt' is assigned a value but never used. (no-unused-vars)">ttt</error> = foo</warning>

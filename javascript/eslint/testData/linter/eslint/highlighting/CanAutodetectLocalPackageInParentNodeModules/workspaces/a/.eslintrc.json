@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "semi": [
+      "error",
+      "always"
+    ]
+  }
+}

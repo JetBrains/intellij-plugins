@@ -1,0 +1,120 @@
+<idea-plugin allow-bundled-update="true">
+  <id>intellij.javascript.eslint</id>
+  <name>ESLint</name>
+  <description><![CDATA[
+    <p>Provides <a href="https://eslint.org/">ESLint</a> and <a href="https://standardjs.com/">StandardJS</a> linter integration for JavaScript and TypeScript.</p>
+  ]]></description>
+  <vendor>JetBrains</vendor>
+  <category>JavaScript Frameworks and Tools</category>
+
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.javascript.analysis.impl"/>
+    <module name="intellij.javascript.backend"/>
+    <module name="intellij.javascript.common"/>
+    <module name="intellij.javascript.parser"/>
+    <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.json.backend"/>
+    <module name="intellij.spellchecker"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <resource-bundle>messages.EslintBundle</resource-bundle>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.eslint.ruleMappersFactory"
+                    interface="com.intellij.lang.javascript.linter.eslint.importer.EslintRuleMappersFactory"
+                    dynamic="true"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- ESLint -->
+    <projectConfigurable id="settings.javascript.linters.eslint"
+                         parentId="Settings.JavaScript.Linters"
+                         instance="com.intellij.lang.javascript.linter.eslint.EslintConfigurable"
+                         key="settings.javascript.linters.eslint.configurable.name"/>
+    <actionOnSaveInfoProvider id="EsLintOnSaveInfoProvider"
+                              implementation="com.intellij.lang.javascript.linter.eslint.EsLintOnSaveInfoProvider"
+                              order="after FormatOnSaveInfoProvider, after StylelintOnSaveInfoProvider, before PrettierOnSaveInfoProvider, before BuildOnSaveInfoProvider, before FileWatcherOnSaveInfoProvider, before UploadOnSaveInfoProvider"/>
+    <actionOnSave id="ESLintActionOnSave"
+                  implementation="com.intellij.lang.javascript.linter.eslint.ESLintActionOnSave"
+                  order="after FormatOnSaveAction, after StylelintOnSaveAction, before PrettierActionOnSave"/>
+    <localInspection language="JavaScript"
+                     key="settings.javascript.linters.eslint.configurable.name"
+                     groupPathKey="js.inspection.group.path"
+                     groupKey="js.linters.inspection.group.name"
+                     enabledByDefault="false"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.linter.eslint.EslintInspection"
+                     unfair="true"/>
+    <externalAnnotator language="" implementationClass="com.intellij.lang.javascript.linter.eslint.EslintExternalAnnotator"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.EslintConfiguration"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.config.EslintConfigFileChangeTracker"/>
+    <platform.lang.lsWidget.itemsProvider id="EsLintWidgetItemsProvider" implementation="com.intellij.lang.javascript.linter.eslint.lsWidget.EsLintWidgetItemsProvider"/>
+    <registryKey key="eslint.additional.file.extensions" description="ESLint: comma-separated list of additional file extensions to lint"/>
+    <registryKey key="eslint.language.service.full.log" description="ESLint: include source code fragments with errors info language service messages"
+                 defaultValue="false"/>
+    <registryKey key="eslint.service.node.path" description="Value of NODE_PATH for ESLint service process" defaultValue=""/>
+    <registryKey key="eslint.service.node.arguments" description="Command line options for ESLint service process"/>
+    <registryKey key="eslint.service.expiration.timeout.ms"
+                 defaultValue="120000"
+                 description="The IDE will stop the ESLint service process if it is not used for the specified period of time (in milliseconds)"/>
+    <registryKey key="eslint.service.request.timeout.ms"
+                 defaultValue="-1"
+                 description="Maximum time to wait for a single request to the ESLint language service (in milliseconds)"/>
+    <iconProvider implementation="com.intellij.lang.javascript.linter.eslint.config.EslintConfigIconProvider"/>
+    <json.jsonStandardComplianceProvider implementation="com.intellij.lang.javascript.linter.eslint.config.EslintConfigStandardComplianceProvider"/>
+    <lang.substitutor language="JSON" implementationClass="com.intellij.lang.javascript.linter.eslint.config.EslintConfigLangSubstitutor"/>
+    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.eslint.EsLintDescriptor" id="eslint"/>
+    <editorNotificationProvider implementation="com.intellij.lang.javascript.linter.eslint.importer.EslintImportCodeStyleEditorNotificationProvider"/>
+    <statistics.projectUsagesCollector implementation="com.intellij.lang.javascript.linter.eslint.EslintOptionsUsageCollector"/>
+    <javascript.json.schema.provider implementation="com.intellij.lang.javascript.linter.eslint.EsLintJSJsonSchemaProvider"/>
+    <eslint.ruleMappersFactory implementation="com.intellij.lang.javascript.linter.eslint.importer.EslintStandardRuleMappersFactory"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.lang.javascript.linter.eslint.ESLintEventCollector"/>
+    <projectSettings service="com.intellij.lang.javascript.linter.eslint.EslintConfiguration"/>
+    <spellchecker.support language="JSON" order="first"
+                          implementationClass="com.intellij.lang.javascript.linter.eslint.EslintConfigFileSpellcheckingStrategy"/>
+
+    <!-- StandardJS -->
+    <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSExternalAnnotator"/>
+    <externalAnnotator language="HTML" implementationClass="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSExternalAnnotator"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSConfiguration"/>
+    <editorNotificationProvider implementation="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSCodeStyleNotifierProvider"/>
+    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSDescriptor" order="before eslint"/>
+    <localInspection language="JavaScript"
+                     key="standardjs.name"
+                     groupPathKey="js.inspection.group.path"
+                     groupKey="js.linters.inspection.group.name"
+                     enabledByDefault="false"
+                     level="ERROR"
+                     implementationClass="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSInspection"
+                     unfair="true"/>
+    <projectSettings service="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSConfiguration"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij.json">
+    <jsonSchemaEnabler implementation="com.intellij.lang.javascript.linter.eslint.EsLintJsJsonSchemaEnabler"/>
+  </extensions>
+
+  <actions>
+    <action class="com.intellij.lang.javascript.linter.eslint.EsLintFixAction" id="Javascript.Linters.EsLint.Fix">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+
+    <action class="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSFixAction" id="Javascript.Linters.StandardJS.Fix">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+
+    <action class="com.intellij.lang.javascript.linter.eslint.importer.EslintImportCodeStyleAction"
+            id="EslintImportCodeStyle" icon="icons.JavaScriptLanguageIcons.FileTypes.Eslint">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+
+    <action id="RestartEsLintServiceAction"
+            class="com.intellij.lang.javascript.linter.eslint.RestartEsLintServiceAction"
+            icon="AllIcons.Actions.StopAndRestart"/>
+  </actions>
+</idea-plugin>

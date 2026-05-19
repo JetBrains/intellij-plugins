@@ -1,0 +1,11 @@
+{
+  "plugins": ["vue"],
+  "parser": "vue-eslint-parser",
+  "rules": {
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": ["error", "always"]
+  }
+}

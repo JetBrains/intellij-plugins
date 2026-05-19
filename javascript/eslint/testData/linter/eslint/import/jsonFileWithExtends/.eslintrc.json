@@ -1,0 +1,7 @@
+{
+  "extends": "./.eslintrc-main.json",
+  "rules": {
+    "semi": ["error", "never"],
+    "indent": ["error", 7]
+  }
+}

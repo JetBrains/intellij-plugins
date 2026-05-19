@@ -21,6 +21,7 @@
 
   <dependencies>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <plugin id="intellij.javascript.eslint"/>
     <module name="intellij.javascript.analysis.impl"/>
     <module name="intellij.javascript.backend"/>
     <module name="intellij.javascript.common"/>

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "noImplicitReturns": true,
+    "module": "commonjs",
+    // "Node16" mode is needed to make sure that dynamic import() in standard17-plugin.ts stays import() and not compiled as require()
+    "moduleResolution": "Node16",
+    "strict": true,
+    "outDir": "bin",
+    "sourceMap": true
+  },
+  "compileOnSave": false
+}

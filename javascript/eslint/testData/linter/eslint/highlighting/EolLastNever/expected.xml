@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <line>2</line>
+    <file>test.js</file>
+    <problem_class severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">ESLint</problem_class>
+    <description>ESLint: No magic number: 1117. (no-magic-numbers)</description>
+  </problem>
+  <problem>
+    <line>4</line>
+    <file>test.js</file>
+    <problem_class severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">ESLint</problem_class>
+    <description>ESLint: Newline not allowed at end of file. (eol-last)</description>
+  </problem>
+</problems>

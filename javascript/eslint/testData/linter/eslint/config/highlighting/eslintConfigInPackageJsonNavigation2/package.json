@@ -1,0 +1,17 @@
+{
+  "name": "application-name",
+  "version": "0.0.1",
+  "eslintConfig": {
+    "rules": {
+      "eol-last": "error",
+      "no-console": "off",
+      "no-undef": "off",
+      "comma-spacing": "error",
+      "<caret>arrow-spacing": "warn",
+      "indent": 2
+    },
+    "env": {
+      "browser": false
+    }
+}
+}

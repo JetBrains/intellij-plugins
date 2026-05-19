@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/test">
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+    </content>
+    <content url="file://$MODULE_DIR$/testData">
+      <sourceFolder url="file://$MODULE_DIR$/testData" type="java-test-resource" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="jetbrains-annotations" level="project" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="module" module-name="intellij.javascript.eslint" />
+    <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.backend" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.plugin" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.parser" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.analysis.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.common" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.intentions" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.codeinsight" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core.ui" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lang" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lang.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lang.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.analysis" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.analysis.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.codeStyle" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.editor.ex" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.editor.ui" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.execution" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.indexing" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.refactoring" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.ide.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.ide.util.io" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.util" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.util.ui" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.util.ex" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.statistics.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.webide" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.webide.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.wsl.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.json" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.json.backend" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.fastutil" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.gson" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.guava" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.stream" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.rhino" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.nodeJS" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.spellchecker" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.psi" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.psi.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.parser" scope="TEST" />
+  </component>
+</module>

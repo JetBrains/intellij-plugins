@@ -1,0 +1,9 @@
+{
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser"
+  },
+  "parser": "vue-eslint-parser",
+  "rules": {
+    "no-console": "error"
+  }
+}

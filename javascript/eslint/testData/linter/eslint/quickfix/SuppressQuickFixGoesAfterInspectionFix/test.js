@@ -1,0 +1,1 @@
+var <error descr="ESLint: 'foo' is defined but never used. (no-unused-vars)"><warning descr="Unused variable foo">foo<caret></warning></error>;

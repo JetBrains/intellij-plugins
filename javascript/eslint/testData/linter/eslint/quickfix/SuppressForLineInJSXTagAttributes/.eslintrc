@@ -1,0 +1,16 @@
+{
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    "quotes": ["error", "single"],
+    "react/jsx-curly-brace-presence": "error"
+  }
+}

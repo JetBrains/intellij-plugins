@@ -1,0 +1,1 @@
+<error descr="ESLint: Unexpected console statement. (no-console)">console.log</error>('hello')

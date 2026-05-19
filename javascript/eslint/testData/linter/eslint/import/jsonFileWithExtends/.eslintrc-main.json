@@ -1,0 +1,7 @@
+{
+  "rules": {
+    "indent": [
+      "error",
+      9
+    ]}
+}
