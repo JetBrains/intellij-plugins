@@ -35,7 +35,9 @@ import org.intellij.terraform.terragrunt.isTerragruntPsiFile
 import org.intellij.terraform.terragrunt.isTerragruntStack
 import org.intellij.terraform.terragrunt.model.StackRootBlocks
 import org.intellij.terraform.terragrunt.model.TerragruntBlocksAndAttributes
+import org.intellij.terraform.test.TfMockRootBlocks
 import org.intellij.terraform.test.TfTestRootBlocks
+import org.intellij.terraform.test.isTfMockPsiFile
 import org.intellij.terraform.test.isTfTestPsiFile
 
 internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionParameters>() {
@@ -48,7 +50,7 @@ internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionPa
       isTfOrTofuPsiFile(psiFile) -> TfTypeModel.getAllRootBlocks(psiFile.fileType)
       isTfComponentPsiFile(psiFile) -> TfComponentRootBlocks
       isTfDeployPsiFile(psiFile) -> TfDeployRootBlocks
-      isTfTestPsiFile(psiFile) -> TfTestRootBlocks
+      isTfTestPsiFile(psiFile) -> if (isTfMockPsiFile(psiFile)) TfMockRootBlocks else TfTestRootBlocks
       isTerragruntPsiFile(psiFile) -> if (isTerragruntStack(psiFile)) StackRootBlocks else TerragruntBlocksAndAttributes
       else -> return
     }

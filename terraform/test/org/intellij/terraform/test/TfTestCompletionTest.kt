@@ -37,6 +37,19 @@ internal class TfTestCompletionTest : CompletionTestCase() {
     assertNoStackBlocks(fileExtension, completionVariants)
   }
 
+  fun testAllowedRootBlocksInTfMock() {
+    val file = myFixture.configureByText("aws.$TF_MOCK_EXTENSION", "<caret>")
+    val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name).orEmpty()
+    assertNotEmpty(completionVariants)
+
+    assertContainsElements(completionVariants, "mock_resource", "mock_data")
+
+    val fileExtension = TF_MOCK_EXTENSION
+    assertNoTfRootBlocks(fileExtension, completionVariants)
+    assertNoTfComponentBlocks(fileExtension, completionVariants)
+    assertNoTfDeployBlocks(fileExtension, completionVariants, emptyList())
+  }
+
   fun testAutoInsertCompletion() {
     doAutoInsertCompletionTest(myFixture, fileName, "run \"valid_string_concat\" {\n  as<caret>\n}", """
       run "valid_string_concat" {

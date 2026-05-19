@@ -2,6 +2,7 @@
 package org.intellij.terraform.test
 
 internal const val TF_TEST_EXTENSION = "tftest.hcl"
+internal const val TF_MOCK_EXTENSION = "tfmock.hcl"
 
 internal const val HCL_TEST_IDENTIFIER = "test"
 internal const val HCL_RUN_IDENTIFIER = "run"

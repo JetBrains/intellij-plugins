@@ -27,3 +27,6 @@ internal object TfTestFileType : LanguageFileType(HCLLanguage) {
 }
 
 internal fun isTfTestPsiFile(file: PsiFile?): Boolean = file?.fileType == TfTestFileType
+
+internal fun isTfMockPsiFile(file: PsiFile?): Boolean =
+  isTfTestPsiFile(file) && file?.virtualFile?.name?.endsWith(TF_MOCK_EXTENSION) == true

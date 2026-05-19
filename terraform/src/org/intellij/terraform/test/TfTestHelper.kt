@@ -14,6 +14,8 @@ internal object TfTestHelper {
       return TfModelHelper.traverseParentBlockProperties(block, type)
     }
 
-    return TfTestRootBlocksMap[type]?.properties ?: emptyMap()
+    val file = block.containingFile.originalFile
+    val rootBlocks = if (isTfMockPsiFile(file)) TfMockRootBlocksMap else TfTestRootBlocksMap
+    return rootBlocks[type]?.properties.orEmpty()
   }
 }

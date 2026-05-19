@@ -135,3 +135,6 @@ internal val TfTestRootBlocks: List<BlockType> = listOf(
 ).sortedBy { it.literal }
 
 internal val TfTestRootBlocksMap: Map<String, BlockType> = TfTestRootBlocks.associateBy { it.literal }
+
+internal val TfMockRootBlocks: List<BlockType> = listOf(TfMockResourceBlock, TfMockDataBlock)
+internal val TfMockRootBlocksMap: Map<String, BlockType> = TfMockRootBlocks.associateBy { it.literal }
