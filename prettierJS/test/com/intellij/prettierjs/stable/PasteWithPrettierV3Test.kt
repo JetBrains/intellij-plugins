@@ -55,6 +55,10 @@ class PasteWithPrettierV3Test : PrettierPackageLockTest() {
     configuration.state.runOnPaste = true
     configure.run()
 
+    // Warm up the Prettier language service (starts Node.js process) before paste action.
+    // Without this, the service cold start on Windows can cause formatting to fail.
+    warmUpPrettierService(myFixture.findFileInTempDir("package.json") ?: myFixture.tempDirFixture.getFile(".")!!)
+
     try {
       // Test data already copied by withInstallation
       myFixture.tempDirFixture.copyAll(getNodePackage().systemIndependentPath, "node_modules/prettier")

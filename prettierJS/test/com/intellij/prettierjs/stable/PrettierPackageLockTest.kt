@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.prettierjs.PrettierConfiguration
 import com.intellij.prettierjs.PrettierJSTestUtil
+import com.intellij.prettierjs.PrettierLanguageService
 import com.intellij.prettierjs.PrettierLanguageServiceManager
 import com.intellij.prettierjs.PrettierUtil
 import com.intellij.prettierjs.ReformatWithPrettierAction
@@ -179,6 +180,20 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
 
   protected fun getNodePackage(): NodePackage {
     return localNodePackage ?: error("NodePackage not initialized. Call setUp() first.")
+  }
+
+  /**
+   * Warms up the Prettier language service by calling resolveConfig without a timeout.
+   * On Windows, the Node.js process cold start can exceed the 500ms timeout used by
+   * [com.intellij.prettierjs.codeStyle.PrettierCodeStyleSettingsModifier],
+   * causing it to silently return default settings.
+   * Call this before querying code style settings to ensure the service is ready.
+   */
+  protected fun warmUpPrettierService(contextFile: VirtualFile) {
+    val nodePackage = getNodePackage()
+    val service = PrettierLanguageService.getInstance(project, contextFile, nodePackage)
+    // Just wait for the result — the goal is to start the Node.js process, not to validate the config.
+    service.resolveConfig(contextFile.path, nodePackage).get()
   }
 
   /**

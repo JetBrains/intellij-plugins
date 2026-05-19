@@ -304,6 +304,10 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
     state.configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL
     state.codeStyleSettingsModifierEnabled = true
 
+    // Warm up the Prettier language service (starts Node.js process) before querying code style.
+    // Without this, the 500ms timeout in PrettierCodeStyleSettingsModifier may fire on Windows.
+    warmUpPrettierService(myFixture.findFileInTempDir("package.json") ?: myFixture.tempDirFixture.getFile(".")!!)
+
     try {
      block()
     }
