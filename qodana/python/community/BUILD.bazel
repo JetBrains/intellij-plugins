@@ -17,6 +17,7 @@ jvm_library(
     "@community//platform/lang-impl",
     "@community//python:python-community-impl",
     "@community//platform/backend/observation",
+    "@community//python/python-sdk:sdk",
   ]
 )
 
@@ -35,6 +36,7 @@ jvm_library(
     "@community//platform/lang-impl:lang-impl_test_lib",
     "@community//python:python-community-impl_test_lib",
     "@community//platform/backend/observation:observation_test_lib",
+    "@community//python/python-sdk:sdk_test_lib",
   ]
 )
 ### auto-generated section `build intellij.qodana.python.community` end

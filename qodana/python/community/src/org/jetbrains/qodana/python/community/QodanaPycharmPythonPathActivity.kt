@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.platform.backend.observation.ActivityKey
 import com.intellij.platform.backend.observation.trackActivity
+import com.jetbrains.python.sdk.ModuleOrProject
 import com.jetbrains.python.sdk.PySdkFromEnvironmentVariable
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.coroutineScope
@@ -32,8 +33,10 @@ class QodanaPycharmPythonPathActivity : QodanaLinterProjectActivity() {
         }
 
         val pycharmPythonPathSdk = withContext(QodanaDispatchers.Ui) {
-          PySdkFromEnvironmentVariable.findOrCreateSdkByPath(pycharmPythonPath)
-        } ?: return@trackActivity
+          PySdkFromEnvironmentVariable.findOrCreateSdkByPath(pycharmPythonPath, ModuleOrProject.ProjectOnly(project))
+        }.getOr {
+          return@trackActivity
+        }
         val projectSdk = ProjectRootManager.getInstance(project).projectSdk
 
         fun setSdkForModules(modules: List<Module>) {
