@@ -76,8 +76,8 @@ class VueLspTakeoverModeTypeScriptService(
     virtualFile: VirtualFile,
     element: PsiElement,
   ): Boolean {
-    return virtualFile.extension == "vue"
-           || super.supportsTypeEvaluation(virtualFile, element)
+    return /*virtualFile.extension == "vue"
+           || */super.supportsTypeEvaluation(virtualFile, element)
   }
 
   override fun supportsInjectedFile(file: PsiFile): Boolean {

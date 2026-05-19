@@ -33,7 +33,6 @@ abstract class VueDocumentationWithPluginTestBase(
   @Rule
   @JvmField
   val rule: TestRule = TrackFailedTestRule(
-    "testPropWithDefaults",
     "testFromDefinitions",
     "testPrimeVueMergedProps",
   )
