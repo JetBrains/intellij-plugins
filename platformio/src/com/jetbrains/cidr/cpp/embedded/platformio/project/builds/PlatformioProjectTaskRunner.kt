@@ -55,37 +55,33 @@ const val EXECUTION_TIMEOUT_MS: Int = 10 * 3600 * 1000 /*10 hrs*/
 
 class PlatformioProjectTaskRunner : CidrProjectTaskRunner() {
   override val buildSystemId: String = ID.id
-  override fun canRun(project: Project, projectTask: ProjectTask): Boolean {
-    return project.service<PlatformioWorkspace>().isInitialized
-           && TrustedProjects.isProjectTrusted(project) && canRun(projectTask)
-  }
 
-  override fun canRun(task: ProjectTask): Boolean {
-    return when (task) {
+  override fun canRun(project: Project, projectTask: ProjectTask, context: ProjectTaskContext?): Boolean =
+    project.service<PlatformioWorkspace>().isInitialized &&
+    TrustedProjects.isProjectTrusted(project) &&
+    when (projectTask) {
       is PlatformioTargetTask -> true
-      is ProjectModelBuildTask<*> -> task.buildableElement == PlatformioBuildConfiguration
-      is ModuleFilesBuildTask -> ExternalSystemApiUtil.isExternalSystemAwareModule(ID, task.module)
-      is ModuleBuildTask -> ExternalSystemApiUtil.isExternalSystemAwareModule(ID, task.module)
-      is CidrCleanTask -> task.buildConfiguration == PlatformioBuildConfiguration
+      is ProjectModelBuildTask<*> -> projectTask.buildableElement == PlatformioBuildConfiguration
+      is ModuleFilesBuildTask -> ExternalSystemApiUtil.isExternalSystemAwareModule(ID, projectTask.module)
+      is ModuleBuildTask -> ExternalSystemApiUtil.isExternalSystemAwareModule(ID, projectTask.module)
+      is CidrCleanTask -> projectTask.buildConfiguration == PlatformioBuildConfiguration
       else -> false
     }
-  }
 
-  override fun runnerForTask(task: ProjectTask, project: Project): CidrTaskRunner? {
-    return when (task) {
-      is ModuleFilesBuildTask -> PlatformioCompileTaskRunner
-      is ModuleBuildTask, is CidrCleanTask, is ProjectModelBuildTask<*>, is PlatformioTargetTask -> PlatformioTaskRunner()
-      else -> null
-    }
+  override fun runnerForTask(task: ProjectTask, project: Project): CidrTaskRunner? = when (task) {
+    is ModuleFilesBuildTask -> PlatformioCompileTaskRunner
+    is ModuleBuildTask, is CidrCleanTask, is ProjectModelBuildTask<*>, is PlatformioTargetTask -> PlatformioTaskRunner()
+    else -> null
   }
-
 }
 
 class PlatformioTaskRunner : CidrTaskRunner {
-  override suspend fun executeTask(project: Project,
-                                   task: ProjectTask,
-                                   sessionId: Any,
-                                   context: ProjectTaskContext): Promise<ProjectTaskRunner.Result> {
+  override suspend fun executeTask(
+    project: Project,
+    task: ProjectTask,
+    sessionId: Any,
+    context: ProjectTaskContext,
+  ): Promise<ProjectTaskRunner.Result> {
     val promise = AsyncPromise<ProjectTaskRunner.Result>()
     val buildProgress = BuildViewManager.createBuildProgress(project)
     val basePath = project.basePath
