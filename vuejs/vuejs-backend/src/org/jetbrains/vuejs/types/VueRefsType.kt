@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.types
 
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.types.JSCodeBasedType
@@ -54,12 +53,10 @@ class VueRefsType(
       (findAttribute(tag, REF_ATTRIBUTE_NAME) as? VueRefAttribute)
         ?.implicitElement
         ?.let {
-          if (it is JSTypeOwner) {
-            // For multiple elements with the same ref name, the last one is taken by Vue engine
-            members[it.name] = PropertySignatureImpl(it.name,
-                                                     it.jsType, false,
-                                                     true, it)
-          }
+          // For multiple elements with the same ref name, the last one is taken by Vue engine
+          members[it.name] = PropertySignatureImpl(it.name,
+                                                   it.jsType, false,
+                                                   true, it)
         }
     }
     getDefaultVueComponentInstanceType(instanceOwner.source)
