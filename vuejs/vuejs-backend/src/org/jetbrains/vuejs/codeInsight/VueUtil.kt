@@ -90,6 +90,8 @@ import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.resolveLocally
+import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -228,6 +230,11 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
   val visited = HashSet<PsiElement>()
   loop@ while (!queue.isEmpty()) {
     val cur = queue.removeFirst()
+    // If JS resolve takes us into Vue expressions, just ignore these.
+    // It may lead to stack overflow, and, in any case, you can't have
+    // components defined in Vue expressions.
+    if (cur.language.let { it == VueJSLanguage || it == VueTSLanguage })
+      continue@loop
     if (visited.add(cur)) {
       if (cur !is JSEmbeddedContent && cur !is JSVariable && classes.any { it.isInstance(cur) }) {
         @Suppress("UNCHECKED_CAST")
@@ -293,6 +300,9 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
 }
 
 private fun getFromType(cur: PsiElement?): PsiElement? {
+  // Trying to resolve using JSDefinitionExpression may lead
+  // to stack overflow
+  //if (cur is JSDefinitionExpression) return null
   val jsType = (cur as? JSTypeOwner)?.jsType
                  // Functional components do not have source - save on substitution time
                  ?.takeIf { it !is JSGenericTypeImpl || it.type.typeText != FUNCTIONAL_COMPONENT_TYPE }
