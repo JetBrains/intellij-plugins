@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.getElementInfoInjectionAware
 import com.intellij.lang.typescript.compiler.languageService.TS_ERROR_IMPLICIT_ANY_TYPE
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationRangeError
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceErrorFilter
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationErrorFilter
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
@@ -14,10 +14,10 @@ import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Compan
 import org.angular2.inspections.Angular2InspectionSuppressor.isUnderscoredLocalVariableIdentifierInAngularTemplate
 import kotlin.math.max
 
-object Angular2LanguageServiceErrorFilter : TypeScriptLanguageServiceErrorFilter() {
+object Angular2AnnotationErrorFilter : TypeScriptAnnotationErrorFilter() {
 
-  override fun invoke(file: PsiFile, error: TypeScriptAnnotationRangeError): Boolean =
-    super.invoke(file, error) && when (error.errorCode) {
+  override fun accept(file: PsiFile, error: TypeScriptAnnotationRangeError): Boolean =
+    super.accept(file, error) && when (error.errorCode) {
       TS_ERROR_IMPLICIT_ANY_TYPE -> !shouldIgnoreImplicitAnyTypeError(error, file)
       else -> true
     }
