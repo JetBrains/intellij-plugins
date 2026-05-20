@@ -222,8 +222,8 @@ open class VuePluginTypeScriptService(
     virtualFile: VirtualFile,
     element: PsiElement,
   ): Boolean =
-    /*virtualFile.isVueFile
-    || */super.supportsTypeEvaluation(virtualFile, element)
+    element.language is VueTSLanguage
+    || super.supportsTypeEvaluation(virtualFile, element)
 
   private inner class VueCompilerServiceEvaluationSupport(
     project: Project,
