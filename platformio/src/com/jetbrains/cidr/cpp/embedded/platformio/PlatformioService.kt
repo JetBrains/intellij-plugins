@@ -3,7 +3,7 @@ package com.jetbrains.cidr.cpp.embedded.platformio
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.application.EDT
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.PersistentStateComponentWithModificationTracker
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
@@ -154,7 +154,7 @@ class PlatformioService(val project: Project, val cs: CoroutineScope) : Persiste
   fun refreshProject(cleanCache: Boolean) {
     cs.launch(Dispatchers.EDT) {
       ensureProjectIsTrusted(project)
-      writeAction {
+      edtWriteAction {
         val policy = if (cleanCache) PlatformioProjectResolvePolicyCleanCache else PlatformioProjectResolvePolicyPreserveCache
         ExternalSystemUtil.refreshProject(project.basePath!!, ImportSpecBuilder(project, ID).projectResolverPolicy(policy))
       }
@@ -168,7 +168,7 @@ class PlatformioService(val project: Project, val cs: CoroutineScope) : Persiste
       // No need to initialize on the first-ever opening, the external system handles the first reload
       if (project.isNewlyLinkedPlatformioProject()) return@launch
 
-      writeAction {
+      edtWriteAction {
         val policy = PlatformioProjectResolvePolicyInitialize
         ExternalSystemUtil.refreshProject(project.basePath!!, ImportSpecBuilder(project, ID).projectResolverPolicy(policy))
       }
