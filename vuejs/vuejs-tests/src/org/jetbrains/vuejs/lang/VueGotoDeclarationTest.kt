@@ -2386,6 +2386,24 @@ export default class UsageComponent extends Vue {
   }
 
   @Test
+  fun testScriptSetupRefTS() {
+    doConfiguredTest(
+      dir = true,
+    ) {
+      sequenceOf(
+        Pair("ref='f<caret>oo2'", "const <caret>foo2 = ref("),
+        Pair("\$refs.fo<caret>o2 ", "const <caret>foo2 = ref("),
+        Pair("\$refs.fo<caret>o ", "<div ref='<caret>foo'>"),
+      ).forEach { (fromSignature, declarationSignature) ->
+        checkGotoDeclaration(
+          fromSignature = fromSignature,
+          declarationSignature = declarationSignature,
+        )
+      }
+    }
+  }
+
+  @Test
   fun testScriptSetupPropShadowing() {
     doGotoDeclarationTest(
       fromSignature = "{{<caret>foo}}",

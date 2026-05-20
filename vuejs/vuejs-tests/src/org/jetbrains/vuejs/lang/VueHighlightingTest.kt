@@ -822,6 +822,16 @@ abstract class VueHighlightingTestBase(
   }
 
   @Test
+  fun testScriptSetupRefTS() {
+    doHighlightingTest(
+      inspections = listOf(
+        JSUnusedLocalSymbolsInspection::class.java,
+        JSUnusedGlobalSymbolsInspection::class.java,
+      ),
+    )
+  }
+
+  @Test
   fun testScriptSetupImportedDirective() {
     doHighlightingTest(
       inspections = listOf(ES6UnusedImportsInspection::class.java),
