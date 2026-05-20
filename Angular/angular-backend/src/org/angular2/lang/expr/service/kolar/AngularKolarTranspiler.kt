@@ -2,6 +2,7 @@ package org.angular2.lang.expr.service.kolar
 
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.lang.javascript.modules.NodeModuleUtil
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationErrorFilter
 import com.intellij.lang.typescript.kolar.CodeMapping
 import com.intellij.lang.typescript.kolar.KolarAssociatedFile
 import com.intellij.lang.typescript.kolar.KolarCodeInformation
@@ -24,6 +25,7 @@ import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.Angular2ExprDialect
+import org.angular2.lang.expr.service.Angular2AnnotationErrorFilter
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 import org.angular2.lang.html.Angular2HtmlDialect
@@ -40,7 +42,7 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
 
   override fun getFileInfo(file: VirtualFile): KolarFileInfo? =
     when {
-      isAcceptableHtmlFile(file) -> KolarAssociatedFile
+      isAcceptableHtmlFile(file) -> AngularAssociatedHtmlFile
       file.name.let { it.endsWith(".ts") && !it.endsWith(".d.ts") }
       && !NodeModuleUtil.hasNodeModulesDirInPath(file, null) -> AngularTranspiledFile(project, file)
       else -> null
@@ -59,6 +61,11 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
       (it is HtmlFileType || it is SvgFileType) && SubstitutedFileType.substituteFileType(file, it, project)
         .asSafely<SubstitutedFileType>()?.language is Angular2HtmlDialect
     }
+}
+
+private object AngularAssociatedHtmlFile : KolarAssociatedFile {
+  override fun createAnnotationErrorFilter(): TypeScriptAnnotationErrorFilter =
+    Angular2AnnotationErrorFilter
 }
 
 private class AngularTranspiledFile(
@@ -153,6 +160,9 @@ private class AngularTranspiledFile(
     else
       return null
   }
+
+  override fun createAnnotationErrorFilter(): TypeScriptAnnotationErrorFilter =
+    Angular2AnnotationErrorFilter
 
   private fun getTranspiledDirectiveFile(file: VirtualFile): Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile? =
     PsiManager.getInstance(project).findFile(file)
