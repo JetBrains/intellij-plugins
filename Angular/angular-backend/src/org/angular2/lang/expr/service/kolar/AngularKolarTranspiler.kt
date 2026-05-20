@@ -13,6 +13,7 @@ import com.intellij.lang.typescript.kolar.KolarTranspiledFile
 import com.intellij.lang.typescript.kolar.KolarTranspiler
 import com.intellij.lang.typescript.kolar.KolarVirtualCode
 import com.intellij.lang.typescript.kolar.sourceMap.KolarMapping
+import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
@@ -28,6 +29,8 @@ import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.service.Angular2AnnotationErrorFilter
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile
+import org.angular2.lang.expr.service.translateNamesInErrors
 import org.angular2.lang.html.Angular2HtmlDialect
 import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.EnumSet
@@ -66,12 +69,22 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
 private object AngularAssociatedHtmlFile : KolarAssociatedFile {
   override fun createAnnotationErrorFilter(): TypeScriptAnnotationErrorFilter =
     Angular2AnnotationErrorFilter
+
+  override fun postProcessErrors(file: PsiFile, errors: List<LspAnnotationError>): List<LspAnnotationError> =
+    super.postProcessErrors(file, errors).translateNamesInErrors(file)
+
 }
 
 private class AngularTranspiledFile(
   val project: Project,
   val file: VirtualFile,
 ) : KolarTranspiledFile {
+
+  override fun createAnnotationErrorFilter(): TypeScriptAnnotationErrorFilter =
+    Angular2AnnotationErrorFilter
+
+  override fun postProcessErrors(file: PsiFile, errors: List<LspAnnotationError>): List<LspAnnotationError> =
+    super.postProcessErrors(file, errors).translateNamesInErrors(file)
 
   override fun createVirtualCode(
     snapshot: KolarScriptSnapshot,
@@ -161,9 +174,6 @@ private class AngularTranspiledFile(
       return null
   }
 
-  override fun createAnnotationErrorFilter(): TypeScriptAnnotationErrorFilter =
-    Angular2AnnotationErrorFilter
-
   private fun getTranspiledDirectiveFile(file: VirtualFile): Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile? =
     PsiManager.getInstance(project).findFile(file)
       ?.let { Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(it) }
@@ -188,3 +198,19 @@ private class AngularTranspiledFile(
   override fun hashCode(): Int =
     file.hashCode() * 31 + project.hashCode()
 }
+
+private fun List<LspAnnotationError>.translateNamesInErrors(file: PsiFile): List<LspAnnotationError> =
+  getTranspiledDirectiveAndTopLevelSourceFile(file)
+    ?.let { (transpiledDirectiveFile, topLevelFile) ->
+      translateNamesInErrors(
+        this, transpiledDirectiveFile,
+        topLevelFile, LspAnnotationError::class,
+      ) { error, newDescription, newTooltip ->
+        error.copyWith(
+          description = newDescription,
+          tooltip = newTooltip,
+        )
+      }
+    }
+  ?: this
+

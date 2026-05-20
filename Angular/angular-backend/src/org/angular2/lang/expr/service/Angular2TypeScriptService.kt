@@ -9,7 +9,6 @@ import com.intellij.javascript.types.TSType
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.integration.JSAnnotationError
-import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
@@ -19,8 +18,8 @@ import com.intellij.lang.javascript.service.withScopedServiceTraceSpan
 import com.intellij.lang.javascript.service.withServiceTraceSpan
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.TypeScriptServiceEvaluationSupport.UpdateContextInfo
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationErrorFilter
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceQueueImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
@@ -38,7 +37,6 @@ import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction.computeCancellable
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.DumbService
@@ -46,7 +44,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.psi.PsiDocumentManager
@@ -79,7 +76,6 @@ import org.angular2.options.AngularServiceSettings
 import org.angular2.options.AngularSettings
 import org.angular2.options.getAngularSettings
 import org.intellij.images.fileTypes.impl.SvgFileType
-import java.nio.file.Path
 import java.util.concurrent.Future
 
 class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "AngularService") {
@@ -139,9 +135,15 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
     val result = getTranspiledDirectiveAndTopLevelSourceFile(file)
                    ?.let { (transpiledDirectiveFile, topLevelFile) ->
-                     translateNamesInErrors(errors,
-                                            transpiledDirectiveFile,
-                                            topLevelFile)
+                     translateNamesInErrors(
+                       errors, transpiledDirectiveFile,
+                       topLevelFile, TypeScriptLanguageServiceAnnotationResult::class,
+                     ) { error, newDescription, newTooltip ->
+                       TypeScriptLanguageServiceAnnotationResult(
+                         newDescription, error.absoluteFilePath, error.category, error.source, newTooltip,
+                         error.errorCode, error.line + 1, error.column + 1, error.endLine + 1, error.endColumn + 1,
+                       )
+                     }
                    }
                  ?: errors
     return super.postprocessErrors(file, result)
@@ -225,48 +227,6 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       return@readAction parameters.position.takeIf { it.elementType == JSTokenTypes.STRING_LITERAL }
         ?.parent?.asSafely<JSLiteralExpression>() != null
     }
-
-  private fun translateNamesInErrors(
-    errors: List<JSAnnotationError>,
-    file: TranspiledDirectiveFile,
-    templateFile: PsiFile,
-  ): List<JSAnnotationError> = withServiceTraceSpan("translateNamesInErrors") {
-    val document = PsiDocumentManager.getInstance(templateFile.project).getDocument(templateFile)
-                   ?: return@withServiceTraceSpan emptyList()
-    val absoluteFilePath = templateFile.virtualFile?.toNioPathOrNull() ?: return@withServiceTraceSpan errors
-    val checkCache = mutableMapOf<String, Boolean>()
-    return@withServiceTraceSpan errors.map { error ->
-      if (error is TypeScriptLanguageServiceAnnotationResult) {
-        if (error.line < 0 || !checkCache.computeIfAbsent(error.absoluteFilePath ?: "") { absoluteFilePath == Path.of(it) })
-          return@map error
-        val textRange =
-          try {
-            error.getTextRange(document)
-          }
-          catch (e: Exception) {
-            thisLogger().error(e)
-            null
-          } ?: return@map error
-        val nameMap = file.nameMaps[templateFile]
-          ?.subMap(textRange.startOffset, true, textRange.endOffset, false)
-          ?.values
-          ?.asSequence()
-          ?.flatMap { it.entries }
-          ?.associate { (key, value) -> key to value }
-        if (nameMap != null) {
-          return@map TypeScriptLanguageServiceAnnotationResult(
-            error.description.replaceNames("'", nameMap, "'"),
-            error.absoluteFilePath,
-            error.category,
-            error.source,
-            error.tooltipText?.replaceNames(">", nameMap, "<"),
-            error.errorCode, error.line + 1, error.column + 1, error.endLine + 1, error.endColumn + 1,
-          )
-        }
-      }
-      return@map error
-    }
-  }
 
   private fun transformInlayHints(file: PsiFile, document: Document, hint: InlayHintItem): InlayHintItem? {
     if (hint.kind.let { it != InlayHintKind.Type && it != InlayHintKind.Parameter }) return hint
@@ -400,20 +360,6 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   private fun commitDocuments(virtualFile: VirtualFile) {
     update(createUpdateContext(virtualFile))
   }
-}
-
-private fun JSAnnotationRangeError.getTextRange(document: Document): TextRange? {
-  val startOffset = document.getLineStartOffset(this.line) + this.column
-  val endOffset = document.getLineStartOffset(this.endLine) + this.endColumn
-  return if (startOffset in 0..endOffset) TextRange(startOffset, endOffset) else null
-}
-
-private fun String.replaceNames(prefix: String, nameMap: Map<String, String>, suffix: String): String {
-  var result = this
-  for ((generatedName, originalName) in nameMap) {
-    result = result.replace(Regex("$prefix${Regex.escape(generatedName)}([.$suffix])"), "$prefix$originalName\$1")
-  }
-  return result
 }
 
 fun isAngularTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
