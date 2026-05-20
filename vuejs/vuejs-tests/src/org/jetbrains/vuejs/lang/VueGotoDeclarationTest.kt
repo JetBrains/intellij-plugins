@@ -2369,7 +2369,9 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testScriptSetupRef() {
-    doConfiguredTest {
+    doConfiguredTest(
+      dir = true,
+    ) {
       sequenceOf(
         Pair("ref='f<caret>oo2'", "const <caret>foo2 = ref("),
         Pair("\$refs.fo<caret>o2 ", "const <caret>foo2 = ref("),
