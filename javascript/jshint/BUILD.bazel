@@ -32,9 +32,11 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
     "@community//json/backend",
+    "@community//libraries/caffeine",
     "@community//platform/execution",
     "@community//libraries/gson",
     "@community//libraries/guava",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     "@community//spellchecker",
   ]
 )
@@ -70,9 +72,11 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
     "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
     "@community//json/backend:backend_test_lib",
+    "@community//libraries/caffeine:caffeine_test_lib",
     "@community//platform/execution:execution_test_lib",
     "@community//libraries/gson:gson_test_lib",
     "@community//libraries/guava:guava_test_lib",
+    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     "@community//spellchecker:spellchecker_test_lib",
   ]
 )
