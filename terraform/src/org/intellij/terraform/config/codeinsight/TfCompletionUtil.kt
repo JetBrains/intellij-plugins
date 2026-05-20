@@ -33,7 +33,6 @@ import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.config.model.ProviderDefinedType
 import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.TfFunction
-import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLIdentifier
@@ -46,6 +45,7 @@ import org.intellij.terraform.opentofu.OpenTofuFileType
 import org.intellij.terraform.stack.component.TfComponentFileType
 import org.intellij.terraform.stack.deployment.TfDeployFileType
 import org.intellij.terraform.terragrunt.TerragruntFileType
+import org.intellij.terraform.test.TfTestFileType
 import java.util.SortedSet
 import javax.swing.Icon
 
@@ -103,13 +103,11 @@ internal object TfCompletionUtil {
     .withTypeText(function.returnType.presentableText)
     .withIcon(if (isTerragrunt) TerraformIcons.Terragrunt else AllIcons.Nodes.Function)
 
-  fun createProviderLookup(
-    provider: ProviderType,
-    element: PsiElement,
-    withInsertHandler: Boolean = true,
-  ): LookupElementBuilder {
+  fun createProviderLookup(provider: ProviderType, element: PsiElement): LookupElementBuilder {
     val baseLookup = createProviderLookupElement(provider, element)
-    if (!withInsertHandler) return baseLookup
+
+    val fileType = element.containingFile.fileType
+    if (fileType is TfComponentFileType || fileType is TfTestFileType) return baseLookup
 
     val fakeService = element.project.service<HclFakeElementPsiFactory>()
     return baseLookup
@@ -149,23 +147,6 @@ internal object TfCompletionUtil {
     """${provider.fullName}${if (provider.version.isNotBlank()) " ${provider.version}" else ""}"""
 
   @NlsSafe
-  internal fun buildResourceDisplayString(block: BlockType, providerLocalNames: Map<String, String>): String {
-    return when (block) {
-      is ProviderDefinedType -> {
-        val providerLocalName = providerLocalNames[block.provider.fullName] ?: return block.type
-        "${providerLocalName}_${TfTypeModel.getResourceName(block.type)}"
-      }
-      is ProviderType -> {
-        val providerLocalName = providerLocalNames[block.fullName] ?: return block.type
-        providerLocalName
-      }
-      else -> {
-        block.literal
-      }
-    }
-  }
-
-  @NlsSafe
   internal fun buildResourceFullString(block: BlockType): String = when (block) {
     is ProviderDefinedType -> {
       "${block.type} (${buildProviderTypeText(block.provider)})"
@@ -179,7 +160,7 @@ internal object TfCompletionUtil {
   }
 
   fun getLookupIcon(element: PsiElement): Icon = when (element.containingFile.fileType) {
-    is TerraformFileType, TfComponentFileType, TfDeployFileType -> AllIcons.FileTypes.Terraform
+    is TerraformFileType, TfComponentFileType, TfDeployFileType, TfTestFileType -> AllIcons.FileTypes.Terraform
     is OpenTofuFileType -> TerraformIcons.Opentofu
     is TerragruntFileType -> TerraformIcons.Terragrunt
     else -> TerraformIcons.HashiCorp

@@ -9,8 +9,6 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementBuilder.create
-import com.intellij.codeInsight.lookup.LookupElementPresentation
-import com.intellij.codeInsight.lookup.LookupElementRenderer
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.components.service
 import com.intellij.openapi.keymap.KeymapUtil
@@ -55,7 +53,9 @@ import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION_METHOD_
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_KEY_PROVIDER
 import org.intellij.terraform.opentofu.model.encryptionKeyProviders
 import org.intellij.terraform.opentofu.model.encryptionMethods
-import org.intellij.terraform.stack.component.TfComponentFileType
+import org.intellij.terraform.test.HCL_MOCK_DATA_IDENTIFIER
+import org.intellij.terraform.test.HCL_MOCK_PROVIDER_IDENTIFIER
+import org.intellij.terraform.test.HCL_MOCK_RESOURCE_IDENTIFIER
 
 internal object HclBlockTypeNameCompletionProvider : CompletionProvider<CompletionParameters>() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
@@ -82,9 +82,6 @@ internal object HclBlockTypeNameCompletionProvider : CompletionProvider<Completi
     }
     val previousNonSpace = obj.getPrevSiblingNonWhiteSpace()
     val type = getClearTextValue(previousNonSpace) ?: return true
-
-    val isTfComponent = position.containingFile.fileType == TfComponentFileType
-    if (isTfComponent && type != HCL_PROVIDER_IDENTIFIER) return true
 
     val typeModel = TypeModelProvider.getModel(position)
     val localProviders = TfTypeModel.collectProviderLocalNames(position)
@@ -115,7 +112,19 @@ internal object HclBlockTypeNameCompletionProvider : CompletionProvider<Completi
       HCL_PROVIDER_IDENTIFIER ->
         typeModel.allProviders().toPlow()
           .filter { shouldSuggestByProvider(it, localProviders, showAllProviders) }
-          .map { createProviderLookup(it, position, !isTfComponent) }
+          .map { createProviderLookup(it, position) }
+      HCL_MOCK_PROVIDER_IDENTIFIER ->
+        typeModel.allProviders().toPlow()
+          .filter { shouldSuggestByProvider(it, localProviders, showAllProviders) }
+          .map { createProviderLookup(it, position) }
+      HCL_MOCK_RESOURCE_IDENTIFIER ->
+        typeModel.allResources().toPlow()
+          .filter { shouldSuggestByProvider(it.provider, localProviders, showAllProviders) }
+          .map { buildProviderDefinedLookupElement(it, position, needToInsertProvider = false) }
+      HCL_MOCK_DATA_IDENTIFIER ->
+        typeModel.allDataSources().toPlow()
+          .filter { shouldSuggestByProvider(it.provider, localProviders, showAllProviders) }
+          .map { buildProviderDefinedLookupElement(it, position, needToInsertProvider = false) }
       HCL_PROVISIONER_IDENTIFIER ->
         typeModel.provisioners.toPlow()
           .map { buildLookupElement(it, it.type, position) }
@@ -143,17 +152,18 @@ internal object HclBlockTypeNameCompletionProvider : CompletionProvider<Completi
   }
 
   // Lookup element builders
-  private fun buildProviderDefinedLookupElement(it: ProviderDefinedType, position: PsiElement): LookupElementBuilder {
-    val providerLocalNamesReversed = TfTypeModel.collectProviderLocalNames(position).entries.associateBy({ it.value }) { it.key }
-    return create(it, it.type)
-      .withRenderer(object : LookupElementRenderer<LookupElement>() {
-        override fun renderElement(element: LookupElement, presentation: LookupElementPresentation) {
-          presentation.setItemText(TfCompletionUtil.buildResourceDisplayString(it as BlockType, providerLocalNamesReversed))
-          presentation.typeText = TfCompletionUtil.buildProviderTypeText(it.provider)
-          presentation.isTypeGrayed = true
-          presentation.icon = getLookupIcon(position)
-        }
-      })
+  private fun buildProviderDefinedLookupElement(
+    it: ProviderDefinedType,
+    position: PsiElement,
+    needToInsertProvider: Boolean = true,
+  ): LookupElementBuilder {
+    val lookupElement = create(it, it.type)
+      .withTypeText(TfCompletionUtil.buildProviderTypeText(it.provider))
+      .withIcon(getLookupIcon(position))
+
+    if (!needToInsertProvider) return lookupElement
+
+    return lookupElement
       .withInsertHandler(BlockSubNameInsertHandler(it as BlockType))
       .withPsiElement(fakeFactory(position).createFakeHclBlock(it, position.containingFile.originalFile))
   }

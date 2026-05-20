@@ -3,6 +3,7 @@ package org.intellij.terraform.test
 
 import com.intellij.lang.Language
 import org.intellij.terraform.config.CompletionTestCase
+import org.intellij.terraform.config.codeinsight.TfConfigCompletionTest
 import org.intellij.terraform.config.codeinsight.TfConfigCompletionTest.Companion.assertNoTfRootBlocks
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.stack.TfComponentCompletionTest.Companion.assertNoTfComponentBlocks
@@ -89,6 +90,27 @@ internal class TfTestCompletionTest : CompletionTestCase() {
         override_during = <caret>
       }
     """.trimIndent(), "apply", "plan")
+  }
+
+  fun testBlockTypeNameCompletion() {
+    val providers = getPartialMatcher(TfConfigCompletionTest.collectBundledProviders())
+    doBasicCompletionTest("provider <caret>", providers)
+    doBasicCompletionTest("mock_provider <caret>", providers)
+    doBasicCompletionTest("provider \"<caret>\"", providers)
+    doBasicCompletionTest("mock_provider \"<caret>\"", providers)
+
+    doBasicCompletionTest("resource \"aws_s3<caret>\"", "aws_s3_bucket", "aws_s3_access_point", "aws_s3_bucket_acl")
+    doBasicCompletionTest("""
+      mock_provider "aws" {
+        mock_resource "aws_vp<caret>" {
+      }  
+    """.trimIndent(), "aws_vpc", "aws_vpc_endpoint")
+
+    doBasicCompletionTest("""
+      mock_provider "google" {
+        mock_data "google_compute<>" { }
+      }
+    """.trimIndent(), "google_compute_address", "google_compute_disk", "google_compute_image", "google_compute_instance")
   }
 
   companion object {
