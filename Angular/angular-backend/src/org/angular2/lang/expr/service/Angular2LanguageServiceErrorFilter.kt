@@ -1,11 +1,10 @@
 package org.angular2.lang.expr.service
 
-import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.psi.JSParameter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.getElementInfoInjectionAware
 import com.intellij.lang.typescript.compiler.languageService.TS_ERROR_IMPLICIT_ANY_TYPE
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationRangeError
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceErrorFilter
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
@@ -17,12 +16,11 @@ import kotlin.math.max
 
 object Angular2LanguageServiceErrorFilter : TypeScriptLanguageServiceErrorFilter() {
 
-  override fun invoke(file: PsiFile, error: JSAnnotationError): Boolean =
-    super.invoke(file, error) &&
-    (error !is TypeScriptLanguageServiceAnnotationResult || when (error.errorCode) {
+  override fun invoke(file: PsiFile, error: TypeScriptAnnotationRangeError): Boolean =
+    super.invoke(file, error) && when (error.errorCode) {
       TS_ERROR_IMPLICIT_ANY_TYPE -> !shouldIgnoreImplicitAnyTypeError(error, file)
       else -> true
-    })
+    }
 
   override fun shouldIgnoreUnusedDeclarationError(document: Document, elementInfo: JSLanguageServiceUtil.PsiElementInfo): Boolean =
     super.shouldIgnoreUnusedDeclarationError(document, elementInfo)
@@ -30,7 +28,7 @@ object Angular2LanguageServiceErrorFilter : TypeScriptLanguageServiceErrorFilter
     || isNgAnimateBinding(document, elementInfo)
     || elementInfo.element?.let { isUnderscoredLocalVariableIdentifierInAngularTemplate(it) } == true
 
-  private fun shouldIgnoreImplicitAnyTypeError(error: TypeScriptLanguageServiceAnnotationResult, file: PsiFile): Boolean {
+  private fun shouldIgnoreImplicitAnyTypeError(error: TypeScriptAnnotationRangeError, file: PsiFile): Boolean {
     val document = file.viewProvider.document ?: return false
     val elementInfo = getElementInfoInjectionAware(file, document, error) ?: return false
     return isArrowFunctionParameter(document, elementInfo)

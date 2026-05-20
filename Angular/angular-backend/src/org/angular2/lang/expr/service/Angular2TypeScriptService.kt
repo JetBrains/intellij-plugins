@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.service.withScopedServiceTraceSpan
 import com.intellij.lang.javascript.service.withServiceTraceSpan
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.TypeScriptServiceEvaluationSupport.UpdateContextInfo
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationRangeError
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceQueueImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
@@ -132,7 +133,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       super.getCompletionItemsSuspending(virtualFile, document, offset, parameters)
     }
 
-  override fun createErrorFilter(): (PsiFile, JSAnnotationError) -> Boolean =
+  override fun createErrorFilter(): (PsiFile, TypeScriptAnnotationRangeError) -> Boolean =
     Angular2LanguageServiceErrorFilter
 
   override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
