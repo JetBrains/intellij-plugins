@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.inspectionKts.kotlin.fileFactory
 
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -25,7 +25,7 @@ class KotlinCustomPsiFileFactory : CustomPsiFileFactory {
 
   @OptIn(KaExperimentalApi::class)
   override suspend fun createFile(project: Project, contextPath: Path, content: String): PsiFile? {
-    return writeAction {
+    return edtWriteAction {
 
         val factory = KtPsiFactory(project)
         val ktFile = factory.createFile(content)
@@ -36,9 +36,9 @@ class KotlinCustomPsiFileFactory : CustomPsiFileFactory {
 
         val ktVirtualFile =
           FilenameIndex.firstVirtualFileWithName(contextPath.fileName.toString(), false, scope, null) //TODO: fix finding context
-          ?: return@writeAction null
+          ?: return@edtWriteAction null
 
-        val psi = psiManager.findFile(ktVirtualFile) ?: return@writeAction null
+        val psi = psiManager.findFile(ktVirtualFile) ?: return@edtWriteAction null
         val contextModuleFromProject = KaModuleProvider.Companion.getModule(project, psi, useSiteModule = null)
 
         ktFile.contextModule = contextModuleFromProject

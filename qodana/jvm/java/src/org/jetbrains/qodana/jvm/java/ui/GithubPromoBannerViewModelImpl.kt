@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.jvm.java.ui
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -125,7 +125,7 @@ class GithubPromoBannerViewModelImpl(
       LOG.warn("Failed to create file at $location")
       return null
     }
-    writeAction {
+    edtWriteAction {
       file.writeText(content)
     }
     return file

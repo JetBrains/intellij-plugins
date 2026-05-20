@@ -5,7 +5,7 @@ package org.jetbrains.qodana.inspectionKts.mcp.impl
 import com.intellij.codeInspection.ex.DynamicInspectionDescriptor
 import com.intellij.mcpserver.util.resolveInProject
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -38,7 +38,7 @@ internal suspend fun generatePsiTreeImpl(project: Project, code: String, languag
     else -> return "Error: Unsupported language '$language'. Supported: Java, Kotlin"
   }
 
-  val psiFile = writeAction {
+  val psiFile = edtWriteAction {
     val fileType = FileTypeRegistry.getInstance().getFileTypeByExtension(fileExtension)
     PsiFileFactory.getInstance(project).createFileFromText("Placeholder.$fileExtension", fileType, code)
   }

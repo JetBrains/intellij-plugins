@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.inspectionKts.fileFactory
 
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
@@ -68,7 +68,7 @@ interface CustomPsiFileFactory {
  */
 internal object DefaultPsiFileFactory {
   suspend fun createFile(project: Project, contextPath: Path, content: String): PsiFile {
-    return writeAction {
+    return edtWriteAction {
       val fileName = contextPath.fileName.toString()
       val fileType = FileTypeRegistry.getInstance().getFileTypeByFileName(fileName)
       PsiFileFactory.getInstance(project).createFileFromText(fileName, fileType, content)
