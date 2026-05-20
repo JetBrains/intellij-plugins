@@ -3,9 +3,9 @@ package com.intellij.prettierjs
 
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.packageJson.PackageJsonFileManager
+import com.intellij.openapi.application.ReadAndWriteScope
 import com.intellij.openapi.application.ReadConstraint
 import com.intellij.openapi.application.ReadResult
-import com.intellij.openapi.application.ReadResult.Companion.writeAction
 import com.intellij.openapi.application.constrainedReadAndWriteAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
@@ -28,11 +28,11 @@ class PrettierConfiguratorService(private val project: Project, @VisibleForTesti
     }
   }
 
-  private fun detectAndSetUp(baseDir: VirtualFile): ReadResult<Unit> {
+  private fun ReadAndWriteScope.detectAndSetUp(baseDir: VirtualFile): ReadResult<Unit> {
     val config = PrettierConfiguration.getInstance(project)
 
     // checking default configuration mode for preventing overriding after unexpected IDE closing
-    if (!config.isDefaultConfigurationMode) return ReadResult.value(Unit)
+    if (!config.isDefaultConfigurationMode) return value(Unit)
 
     val (packageDeclarationLocation, configLocation) = getDetectionInfo(baseDir)
 
@@ -59,7 +59,7 @@ class PrettierConfiguratorService(private val project: Project, @VisibleForTesti
       }
     }
 
-    return ReadResult.value(Unit)
+    return value(Unit)
   }
 
   @RequiresBackgroundThread
