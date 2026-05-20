@@ -18,6 +18,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.asSafely
@@ -27,6 +28,7 @@ import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.service.Angular2AnnotationErrorFilter
+import org.angular2.lang.expr.service.Angular2LanguageServiceQuickFixFilter
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile
@@ -71,7 +73,9 @@ private object AngularAssociatedHtmlFile : KolarAssociatedFile {
     Angular2AnnotationErrorFilter
 
   override fun postProcessErrors(file: PsiFile, errors: List<LspAnnotationError>): List<LspAnnotationError> =
-    super.postProcessErrors(file, errors).translateNamesInErrors(file)
+    super.postProcessErrors(file, errors)
+      .translateNamesInErrors(file)
+      .filterQuickFixes(file)
 
 }
 
@@ -84,7 +88,9 @@ private class AngularTranspiledFile(
     Angular2AnnotationErrorFilter
 
   override fun postProcessErrors(file: PsiFile, errors: List<LspAnnotationError>): List<LspAnnotationError> =
-    super.postProcessErrors(file, errors).translateNamesInErrors(file)
+    super.postProcessErrors(file, errors)
+      .translateNamesInErrors(file)
+      .filterQuickFixes(file)
 
   override fun createVirtualCode(
     snapshot: KolarScriptSnapshot,
@@ -213,4 +219,17 @@ private fun List<LspAnnotationError>.translateNamesInErrors(file: PsiFile): List
       }
     }
   ?: this
+
+
+private fun List<LspAnnotationError>.filterQuickFixes(file: PsiFile): List<LspAnnotationError> {
+  val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
+                 ?: return this
+  return this.map {
+    if (Angular2LanguageServiceQuickFixFilter.accept(file, document, it))
+      it
+    else
+      it.copyWith(quickFixes = emptyList())
+  }
+}
+
 
