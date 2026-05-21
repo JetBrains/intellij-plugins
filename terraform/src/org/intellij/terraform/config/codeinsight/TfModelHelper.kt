@@ -222,7 +222,7 @@ internal object TfModelHelper {
     return candidate?.properties ?: emptyMap()
   }
 
-  private fun getProviderProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
+  fun getProviderProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(1)
     val providerType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getProviderType(type, block) else null
     return withDefaults(providerType, TfTypeModel.AbstractProvider)

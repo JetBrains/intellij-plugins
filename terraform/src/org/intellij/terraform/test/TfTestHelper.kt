@@ -2,6 +2,7 @@
 package org.intellij.terraform.test
 
 import com.intellij.psi.PsiFile
+import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -12,6 +13,9 @@ internal object TfTestHelper {
     val type = block.getNameElementUnquoted(0) ?: return emptyMap()
     if (block.parent !is PsiFile) {
       return TfModelHelper.traverseParentBlockProperties(block, type)
+    }
+    if (type == HCL_PROVIDER_IDENTIFIER) {
+      return TfModelHelper.getProviderProperties(block)
     }
 
     val file = block.containingFile.originalFile

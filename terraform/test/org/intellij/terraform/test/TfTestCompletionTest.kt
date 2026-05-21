@@ -113,6 +113,28 @@ internal class TfTestCompletionTest : CompletionTestCase() {
     """.trimIndent(), "google_compute_address", "google_compute_disk", "google_compute_image", "google_compute_instance")
   }
 
+  fun testProviderPropertiesCompletionInTfTest() {
+    doBasicCompletionTest("""
+      provider "aws" {
+        access_key = "dev-tfstate-backend"
+        secret_key = "dev-tfstate-backend"
+        <caret>
+      }
+    """.trimIndent(), Matcher.and(Matcher.all("region", "assume_role", "skip_credentials_validation", "skip_requesting_account_id"),
+                                  Matcher.not("access_key", "secret_key"))
+    )
+
+    doBasicCompletionTest("""
+      provider "aws" {
+        endpoints {
+          iam = "http://localhost:4566"
+          sts = "http://localhost:4566"
+          <caret>
+        }
+      }
+    """.trimIndent(), "acm", "amg", "amp")
+  }
+
   companion object {
     private val TfTestRootBlockKeywords: List<String> = TfTestRootBlocks.map { it.name }
   }
