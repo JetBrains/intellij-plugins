@@ -12,6 +12,7 @@ import com.intellij.lang.typescript.kolar.KolarScriptSnapshot
 import com.intellij.lang.typescript.kolar.KolarTranspiledFile
 import com.intellij.lang.typescript.kolar.KolarTranspiler
 import com.intellij.lang.typescript.kolar.KolarVirtualCode
+import com.intellij.lang.typescript.kolar.TypeScriptInlayHint
 import com.intellij.lang.typescript.kolar.sourceMap.KolarMapping
 import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.openapi.application.ApplicationManager
@@ -29,6 +30,7 @@ import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.service.Angular2AnnotationErrorFilter
 import org.angular2.lang.expr.service.Angular2LanguageServiceQuickFixFilter
+import org.angular2.lang.expr.service.repositionInlayHint
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile
@@ -36,6 +38,7 @@ import org.angular2.lang.expr.service.translateNamesInErrors
 import org.angular2.lang.html.Angular2HtmlDialect
 import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.EnumSet
+import java.util.concurrent.Callable
 
 internal class AngularKolarTranspiler(private val project: Project) : KolarTranspiler {
 
@@ -47,7 +50,7 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
 
   override fun getFileInfo(file: VirtualFile): KolarFileInfo? =
     when {
-      isAcceptableHtmlFile(file) -> AngularAssociatedHtmlFile
+      isAcceptableHtmlFile(file) -> AngularAssociatedHtmlFile(project, file)
       file.name.let { it.endsWith(".ts") && !it.endsWith(".d.ts") }
       && !NodeModuleUtil.hasNodeModulesDirInPath(file, null) -> AngularTranspiledFile(project, file)
       else -> null
@@ -68,22 +71,10 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
     }
 }
 
-private object AngularAssociatedHtmlFile : KolarAssociatedFile {
-  override fun createAnnotationErrorFilter(): TypeScriptAnnotationErrorFilter =
-    Angular2AnnotationErrorFilter
-
-  override fun postProcessErrors(file: PsiFile, errors: List<LspAnnotationError>): List<LspAnnotationError> =
-    super.postProcessErrors(file, errors)
-      .translateNamesInErrors(file)
-      .filterQuickFixes(file)
-
-}
-
-private class AngularTranspiledFile(
+private abstract class AngularFileInfo(
   val project: Project,
   val file: VirtualFile,
-) : KolarTranspiledFile {
-
+) : KolarFileInfo {
   override fun createAnnotationErrorFilter(): TypeScriptAnnotationErrorFilter =
     Angular2AnnotationErrorFilter
 
@@ -91,6 +82,23 @@ private class AngularTranspiledFile(
     super.postProcessErrors(file, errors)
       .translateNamesInErrors(file)
       .filterQuickFixes(file)
+
+  override fun postProcessInlayHints(hints: List<TypeScriptInlayHint>): List<TypeScriptInlayHint> =
+    ReadAction.nonBlocking(Callable {
+      super.postProcessInlayHints(hints)
+        .reposition(project, file)
+    }).executeSynchronously()
+}
+
+private class AngularAssociatedHtmlFile(
+  project: Project,
+  file: VirtualFile,
+) : AngularFileInfo(project, file), KolarAssociatedFile
+
+private class AngularTranspiledFile(
+  project: Project,
+  file: VirtualFile,
+) : AngularFileInfo(project, file), KolarTranspiledFile {
 
   override fun createVirtualCode(
     snapshot: KolarScriptSnapshot,
@@ -220,6 +228,13 @@ private fun List<LspAnnotationError>.translateNamesInErrors(file: PsiFile): List
     }
   ?: this
 
+private fun List<TypeScriptInlayHint>.reposition(project: Project, file: VirtualFile): List<TypeScriptInlayHint> {
+  val psiFile = PsiManager.getInstance(project).findFile(file) ?: return this
+  val document = PsiDocumentManager.getInstance(project).getDocument(psiFile) ?: return this
+  return mapNotNull {
+    repositionInlayHint(psiFile, document, it)
+  }
+}
 
 private fun List<LspAnnotationError>.filterQuickFixes(file: PsiFile): List<LspAnnotationError> {
   val document = PsiDocumentManager.getInstance(file.project).getDocument(file)

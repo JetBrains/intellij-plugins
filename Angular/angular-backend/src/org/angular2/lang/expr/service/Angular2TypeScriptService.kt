@@ -29,7 +29,6 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.P
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.Range
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptTypeRequestKind
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintItem
-import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintKind
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptInlayHintsResult
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
@@ -50,9 +49,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.elementType
-import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
 import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresReadLock
@@ -173,8 +170,10 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   private fun repositionInlayHints(file: PsiFile, hints: Array<InlayHintItem>): Array<InlayHintItem> =
     withServiceTraceSpan("repositionInlayHints") {
       val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return@withServiceTraceSpan hints
-      return@withServiceTraceSpan hints.mapNotNull {
-        transformInlayHints(file, document, it)
+      hints.mapNotNull { item ->
+        wrapInlayHintItem(item) {
+          repositionInlayHint(file, document, it)
+        }
       }.toTypedArray()
     }
 
@@ -227,38 +226,6 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       return@readAction parameters.position.takeIf { it.elementType == JSTokenTypes.STRING_LITERAL }
         ?.parent?.asSafely<JSLiteralExpression>() != null
     }
-
-  private fun transformInlayHints(file: PsiFile, document: Document, hint: InlayHintItem): InlayHintItem? {
-    if (hint.kind.let { it != InlayHintKind.Type && it != InlayHintKind.Parameter }) return hint
-    val line = hint.position?.line ?: return hint
-    val column = hint.position?.offset ?: return hint
-    val offset = document.getLineStartOffset(line - 1) + column - 1
-    val injectedLanguageManager = InjectedLanguageManager.getInstance(file.project)
-    val injectedElement = injectedLanguageManager.findInjectedElementAt(file, offset)
-    when (hint.kind) {
-      InlayHintKind.Type -> {
-        val textRange = if (injectedElement != null)
-          injectedElement.takeIf(::acceptElementToRepositionHint)?.textRange?.let {
-            injectedLanguageManager.injectedToHost(injectedElement, it)
-          }
-        else
-          file.findElementAt(offset)?.takeIf(::acceptElementToRepositionHint)?.textRange
-        if (textRange == null || textRange.endOffset == offset || textRange.startOffset == offset) return hint
-        // Reposition hint
-        hint.position!!.offset += textRange.endOffset - offset
-        return hint
-      }
-      InlayHintKind.Parameter -> {
-        val element = injectedElement ?: file.findElementAt(offset)
-        return hint.takeIf { element !is XmlAttribute && element?.parent !is XmlAttribute }
-      }
-      else -> return hint
-    }
-  }
-
-  private fun acceptElementToRepositionHint(element: PsiElement): Boolean =
-    element is LeafPsiElement
-    && element.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2ExprDialect }
 
   @RequiresReadLock
   private suspend fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledDirectiveFile? =

@@ -2,19 +2,30 @@
 
 package org.angular2.lang.expr.service
 
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationRangeError
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintItem
+import com.intellij.lang.typescript.kolar.TypeScriptInlayHint
+import com.intellij.lang.typescript.kolar.TypeScriptInlayHint.InlayHintKind
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.xml.XmlAttribute
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
+import org.angular2.lang.html.Angular2HtmlDialect
 import java.nio.file.Path
 import kotlin.reflect.KClass
 import kotlin.reflect.safeCast
+
+typealias ResponseInlayHintKind = com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintKind
 
 fun <Items : JSAnnotationError, T : TypeScriptAnnotationRangeError> translateNamesInErrors(
   errors: List<Items>,
@@ -58,6 +69,58 @@ fun <Items : JSAnnotationError, T : TypeScriptAnnotationRangeError> translateNam
   }
 }
 
+fun repositionInlayHint(file: PsiFile, document: Document, hint: TypeScriptInlayHint): TypeScriptInlayHint? {
+  if (hint.kind.let { it != InlayHintKind.Type && it != InlayHintKind.Parameter }) return hint
+  val offset = document.getLineStartOffset(hint.position.line) + hint.position.column
+  val injectedLanguageManager = InjectedLanguageManager.getInstance(file.project)
+  val injectedElement = injectedLanguageManager.findInjectedElementAt(file, offset)
+  when (hint.kind) {
+    InlayHintKind.Type -> {
+      val textRange = if (injectedElement != null)
+        injectedElement.takeIf(::acceptElementToRepositionHint)?.textRange?.let {
+          injectedLanguageManager.injectedToHost(injectedElement, it)
+        }
+      else
+        file.findElementAt(offset)?.takeIf(::acceptElementToRepositionHint)?.textRange
+      if (textRange == null || textRange.endOffset == offset || textRange.startOffset == offset) return hint
+      // Reposition hint
+      hint.position = hint.position.copy(column = hint.position.column + textRange.endOffset - offset)
+      return hint
+    }
+    InlayHintKind.Parameter -> {
+      val element = injectedElement ?: file.findElementAt(offset)
+      return hint.takeIf { element !is XmlAttribute && element?.parent !is XmlAttribute }
+    }
+    else -> return hint
+  }
+}
+
+fun wrapInlayHintItem(item: InlayHintItem, transformer: (TypeScriptInlayHint) -> TypeScriptInlayHint?): InlayHintItem? {
+  val itemKind = item.kind ?: return item
+  val itemPosition = item.position ?: return item
+
+  val wrapper = object: TypeScriptInlayHint {
+    override var position: TypeScriptInlayHint.InlayHintLocation
+      get() = TypeScriptInlayHint.InlayHintLocation(itemPosition.line - 1, itemPosition.offset - 1)
+      set(value) {
+        itemPosition.let {
+          it.line = value.line + 1
+          it.offset = value.column + 1
+        }
+      }
+    override val kind: InlayHintKind
+      get() = when (itemKind) {
+        ResponseInlayHintKind.Type -> InlayHintKind.Type
+        ResponseInlayHintKind.Parameter -> InlayHintKind.Parameter
+        ResponseInlayHintKind.Enum -> InlayHintKind.Enum
+      }
+  }
+  if (transformer(wrapper) == null) {
+    return null
+  }
+  return item
+}
+
 private fun JSAnnotationRangeError.getTextRange(document: Document): TextRange? {
   val startOffset = document.getLineStartOffset(this.line) + this.column
   val endOffset = document.getLineStartOffset(this.endLine) + this.endColumn
@@ -71,3 +134,7 @@ private fun String.replaceNames(prefix: String, nameMap: Map<String, String>, su
   }
   return result
 }
+
+private fun acceptElementToRepositionHint(element: PsiElement): Boolean =
+  element is LeafPsiElement
+  && element.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2ExprDialect }
