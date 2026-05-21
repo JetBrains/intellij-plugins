@@ -15,7 +15,6 @@ import com.intellij.lang.typescript.kolar.KolarVirtualCode
 import com.intellij.lang.typescript.kolar.TypeScriptInlayHint
 import com.intellij.lang.typescript.kolar.sourceMap.KolarMapping
 import com.intellij.lang.typescript.lsp.LspAnnotationError
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -104,12 +103,7 @@ private class AngularTranspiledFile(
     snapshot: KolarScriptSnapshot,
     ctx: KolarCodegenContext,
   ): KolarVirtualCode? {
-    val transpiledFile = if (ApplicationManager.getApplication().isReadAccessAllowed)
-      getTranspiledDirectiveFile(file)
-    else
-      ReadAction.computeCancellable<Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile?, Throwable> {
-        getTranspiledDirectiveFile(file)
-      }
+    val transpiledFile = getTranspiledDirectiveFile(file)
     val fileName = file.path
     if (transpiledFile != null) {
       val newMappings = mutableListOf<CodeMapping>()
