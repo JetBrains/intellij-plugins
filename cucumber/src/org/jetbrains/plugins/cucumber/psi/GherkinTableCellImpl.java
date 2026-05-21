@@ -15,7 +15,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNullByDefault;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinPsiElementBase;
 
 @ApiStatus.Internal
@@ -53,11 +52,6 @@ public class GherkinTableCellImpl extends GherkinPsiElementBase implements Gherk
   @Override
   public String getName() {
     return getText();
-  }
-
-  @Override
-  public @Nullable PsiElement getNameIdentifier() {
-    return PsiTreeUtil.getChildOfType(this, LeafPsiElement.class);
   }
 
   @Override

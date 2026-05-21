@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.cucumber.psi;
 
-import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.PsiNamedElement;
 
-public interface GherkinTableCell extends GherkinPsiElement, PsiNameIdentifierOwner {
+public interface GherkinTableCell extends GherkinPsiElement, PsiNamedElement {
 }
