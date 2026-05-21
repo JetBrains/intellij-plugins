@@ -16,6 +16,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.qodana.sarif.model.ArtifactContent
 import com.jetbrains.qodana.sarif.model.ArtifactLocation
 import com.jetbrains.qodana.sarif.model.Location
@@ -87,13 +88,16 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     super.setUp()
 
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
-    setStressTestToEnablePsiCachingInTests()
 
     copyProjectTestData("project")
     configureGit()
     initPlatformInspections()
 
     reinstansiateService(project, QodanaHighlightedReportService(project, scope))
+  }
+
+  override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+    ApplicationManagerEx.runInStressTest<Exception>(true) { super.runTestRunnable(testRunnable) }
   }
 
   private val reportLatestRevision = ReportDescriptorTestMock(
@@ -539,14 +543,6 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     val realHighlightingInfo2 = myFixture.doHighlighting()
     assertThat(realHighlightingInfo1.size).isEqualTo(realHighlightingInfo2.size + 1)
     expectedHighlightingData2.checkResult(currentFile, realHighlightingInfo2, currentFile.text)
-  }
-
-  private fun setStressTestToEnablePsiCachingInTests() {
-    val oldStressTestStatus = ApplicationManagerEx.isInStressTest()
-    ApplicationManagerEx.setInStressTest(true)
-    Disposer.register(testRootDisposable) {
-      ApplicationManagerEx.setInStressTest(oldStressTestStatus)
-    }
   }
 
   private fun configureGit() {
