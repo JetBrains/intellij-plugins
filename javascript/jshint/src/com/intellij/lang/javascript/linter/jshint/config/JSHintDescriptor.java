@@ -1,11 +1,11 @@
 package com.intellij.lang.javascript.linter.jshint.config;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
-import com.intellij.lang.javascript.linter.jshint.JSHintBundle;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
 import com.intellij.lang.javascript.linter.JSLinterDescriptor;
+import com.intellij.lang.javascript.linter.jshint.JSHintBundle;
 import com.intellij.lang.javascript.linter.jshint.JSHintConfiguration;
 import com.intellij.lang.javascript.linter.jshint.JSHintState;
 import com.intellij.openapi.project.Project;
@@ -15,7 +15,6 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.util.CommonProcessors;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -23,11 +22,6 @@ public class JSHintDescriptor extends JSLinterDescriptor {
 
   @ApiStatus.Internal
   public static final String PACKAGE_NAME = "jshint";
-
-  @Override
-  public @Nullable String packageName() {
-    return PACKAGE_NAME;
-  }
 
   @Override
   public @NotNull String getDisplayName() {

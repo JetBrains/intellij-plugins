@@ -3,11 +3,14 @@ package com.intellij.lang.javascript.linter.jshint;
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.linter.JSLinterDescriptor;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.jshint.config.JSHintDescriptor;
 import com.intellij.testFramework.DumbModeTestUtils;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +37,13 @@ public class JSHintHighlightingTest extends LinterHighlightingTest {
   @Override
   protected String getBasePath() {
     return "/contrib/javascript/jshint/test/data/highlighting/";
+  }
+
+  @Override
+  protected @NotNull JSLinterDescriptor findLinterDescriptor() {
+    JSHintDescriptor descriptor = ContainerUtil.findInstance(JSLinterDescriptor.EP_NAME.getExtensionList(), JSHintDescriptor.class);
+    Assert.assertNotNull(descriptor);
+    return descriptor;
   }
 
   public void testSample() {
