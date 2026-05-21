@@ -16,7 +16,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesNavigator;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinPsiElementBase;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinTableHeaderRowImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinTableImpl;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinTableNavigator;
 
 @ApiStatus.Internal
 @NotNullByDefault
@@ -57,7 +61,13 @@ public class GherkinTableCellImpl extends GherkinPsiElementBase implements Gherk
 
   @Override
   public @Nullable PsiElement getNameIdentifier() {
-    return PsiTreeUtil.getChildOfType(this, LeafPsiElement.class);
+    if (getParent() instanceof GherkinTableHeaderRowImpl headerRow) {
+      GherkinTableImpl table = GherkinTableNavigator.getTableByRow(headerRow);
+      if (table != null && GherkinExamplesNavigator.getExamplesByTable(table) != null) {
+        return PsiTreeUtil.getChildOfType(this, LeafPsiElement.class);
+      }
+    }
+    return null;
   }
 
   @Override

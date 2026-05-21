@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.inspections;
 
+import com.intellij.codeInspection.NonAsciiCharactersInspection;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
@@ -87,6 +88,28 @@ public class CucumberTableInspectionTest extends BasePlatformTestCase {
             | param |
             | hello |
             | there |
+      """);
+
+    myFixture.checkHighlighting();
+  }
+
+  public void testOnlyHeaderRowCellsHaveNameIdentifiers() {
+    // Only header row cells in Examples hold identifiers, other cells and all cells in data tables do not hold identifiers.
+    // Enable NonAsciiCharacterInspection to detect which cells are treated as identifiers.
+    myFixture.enableInspections(NonAsciiCharactersInspection.class);
+    myFixture.configureByText(GherkinFileType.INSTANCE, """
+      Feature: My feature
+        Scenario Outline: My scenario
+        Given following data table
+            | name   | ü|
+            | Aslak  | ü  |
+        When I ask user <ü> for input
+        Then something happens
+          Examples:
+            | <warning descr="Non-ASCII characters">ü</warning> |
+            | Alice |
+            | Bob |
+            | ü |
       """);
 
     myFixture.checkHighlighting();
