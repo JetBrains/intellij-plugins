@@ -11,7 +11,7 @@ import com.intellij.ide.starter.project.LocalProjectInfo
 import com.intellij.ide.starter.runner.AdditionalModulesForDevBuildServer
 import com.intellij.openapi.application.PathManager
 import com.intellij.tools.ide.starter.product.clion.CLion
-import utilities.qodana.IntegrationTest
+import org.jetbrains.qodana.tests.utils.IntegrationTest
 import java.nio.file.Path
 import kotlin.io.path.div
 

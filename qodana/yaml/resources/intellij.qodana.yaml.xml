@@ -1,6 +1,11 @@
-<idea-plugin package="org.jetbrains.qodana.yaml">
+<idea-plugin>
   <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <plugin id="org.intellij.qodana"/>
+    <module name="intellij.json.backend"/>
+    <module name="intellij.yaml"/>
     <module name="intellij.yaml.backend"/>
+    <!-- endregion -->
   </dependencies>
 
   <extensions defaultExtensionNs="JavaScript.JsonSchema">

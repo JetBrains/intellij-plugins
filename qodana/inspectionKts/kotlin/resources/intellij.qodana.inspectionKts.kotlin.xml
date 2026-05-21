@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.inspectionKts.kotlin">
+<idea-plugin>
   <dependencies>
     <plugin id="org.jetbrains.kotlin"/>
     <module name="intellij.kotlin.base.scripting.shared"/>

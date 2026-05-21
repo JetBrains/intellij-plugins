@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.inspectionKts.js">
+<idea-plugin>
   <dependencies>
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.dev"/>

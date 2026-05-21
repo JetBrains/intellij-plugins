@@ -193,6 +193,8 @@ class QodanaTestManager {
       .thenBy { it.locations.getOrNull(0)?.physicalLocation?.artifactLocation?.uri }
       .thenBy { it.locations.getOrNull(0)?.physicalLocation?.region?.startLine }
       .thenBy { it.locations.getOrNull(0)?.physicalLocation?.region?.charOffset }
+      .thenByDescending { it.graphs?.firstOrNull()?.nodes?.size ?: 0 }
+      .thenByDescending { it.locations.getOrNull(0)?.relationships?.size ?: 0 }
 
     val sortedMainResults = sarifRun.results.distinct().sortedWith(comparator)
 

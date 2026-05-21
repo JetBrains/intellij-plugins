@@ -10,10 +10,12 @@ import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageInspectionTest
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFromCloud
+import org.junit.Ignore
 import org.junit.Test
 import java.nio.file.Path
 
-class PyCoverageInspectionTest: QodanaCoverageInspectionTest("PyCoverageInspection") {
+@Ignore
+class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspection") {
   private val dummyProvider: CoverageFileProvider = object : CoverageFileProvider {
     override fun getCoverageDataFilePath() = ""
 

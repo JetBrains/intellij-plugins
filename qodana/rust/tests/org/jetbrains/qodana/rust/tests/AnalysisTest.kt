@@ -1,4 +1,4 @@
-package org.intellij.qodana.rust
+package org.jetbrains.qodana.rust.tests
 
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldBeEmpty

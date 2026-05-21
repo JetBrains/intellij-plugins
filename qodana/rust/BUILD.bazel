@@ -92,6 +92,8 @@ jvm_library(
   testonly = True,
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
+  resources = glob(["test-data/**/*"]),
+  resource_strip_prefix = "test-data",
   kotlinc_opts = ":custom_rust-tests",
   associates = [
     "//contrib/qodana/rust",

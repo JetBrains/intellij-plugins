@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.jvm.swagger">
+<idea-plugin>
   <dependencies>
     <plugin id="com.intellij.swagger"/>
   </dependencies>

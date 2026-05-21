@@ -9,7 +9,7 @@
   <!-- endregion -->
 
   <extensions defaultExtensionNs="com.intellij">
-    <activityTracker implementation="org.intellij.qodana.rust.QodanaRustLoaderActivityTracker"/>
+    <activityTracker implementation="org.jetbrains.qodana.rust.QodanaRustLoaderActivityTracker"/>
     <registryKey defaultValue="10" description="Timeout in minutes for Qodana Rust project configuration" key="qd.rust.configuration.timeout.minutes"/>
     <globalInspection hasStaticDescription="true"
                       language="Rust"
@@ -20,9 +20,9 @@
                       groupBundle="messages.QodanaBundle"
                       enabledByDefault="false"
                       level="ERROR"
-                      implementationClass="org.intellij.qodana.rust.QodanaRustSanityInspection"/>
+                      implementationClass="org.jetbrains.qodana.rust.QodanaRustSanityInspection"/>
   </extensions>
   <extensions defaultExtensionNs="org.intellij">
-    <qodana.workflowExtension implementation="org.intellij.qodana.rust.QodanaLogRustAnalysisScope"/>
+    <qodana.workflowExtension implementation="org.jetbrains.qodana.rust.QodanaLogRustAnalysisScope"/>
   </extensions>
 </idea-plugin>

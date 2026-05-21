@@ -1,4 +1,4 @@
-package org.intellij.qodana.rust
+package org.jetbrains.qodana.rust
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.Nls

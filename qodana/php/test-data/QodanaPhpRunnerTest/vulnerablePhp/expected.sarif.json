@@ -100,8 +100,8 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "77553aa0c2fb8c22",
-            "equalIndicator/v1": "43d09d582bd80e598a7d0323bad5a1bdab7c04c2b5c7622feed9695a95bd4ae3"
+            "equalIndicator/v2": "013ff66695602215",
+            "equalIndicator/v1": "ba2d745a0c9f2beddcbcf985de8bcd9e2f2bf4d9768eda119b26372a71c0cb25"
           },
           "graphs": [
             {
@@ -123,6 +123,15 @@
                           "text": "$_POST['anyKey']"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 18,
+                        "startColumn": 1,
+                        "charOffset": 238,
+                        "charLength": 27,
+                        "snippet": {
+                          "text": " }\n foo1($_POST['anyKey']);"
+                        }
                       }
                     }
                   },
@@ -130,8 +139,8 @@
                     "successors": [
                       "2"
                     ],
-                    "predecessors": [],
-                    "sanitized_vulnerabilities": []
+                    "sanitized_vulnerabilities": [],
+                    "predecessors": []
                   }
                 },
                 {
@@ -151,6 +160,15 @@
                           "text": "$param"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 13,
+                        "startColumn": 1,
+                        "charOffset": 164,
+                        "charLength": 41,
+                        "snippet": {
+                          "text": "\n function foo1($param) {\n   bar($param);"
+                        }
                       }
                     }
                   },
@@ -160,10 +178,10 @@
                       "6",
                       "9"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "1"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -183,6 +201,15 @@
                           "text": "$param"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 14,
+                        "startColumn": 1,
+                        "charOffset": 165,
+                        "charLength": 56,
+                        "snippet": {
+                          "text": " function foo1($param) {\n   bar($param);\n   baz($param);"
+                        }
                       }
                     }
                   },
@@ -190,10 +217,10 @@
                     "successors": [
                       "4"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "2"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -213,6 +240,15 @@
                           "text": "$a"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 1,
+                        "startColumn": 1,
+                        "charOffset": 0,
+                        "charLength": 38,
+                        "snippet": {
+                          "text": " <?php\n function bar($a) {\n   baz($a);"
+                        }
                       }
                     }
                   },
@@ -220,10 +256,10 @@
                     "successors": [
                       "5"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "3"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -243,6 +279,15 @@
                           "text": "$a"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 2,
+                        "startColumn": 1,
+                        "charOffset": 7,
+                        "charLength": 34,
+                        "snippet": {
+                          "text": " function bar($a) {\n   baz($a);\n }"
+                        }
                       }
                     }
                   },
@@ -250,10 +295,10 @@
                     "successors": [
                       "7"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "4"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -273,6 +318,15 @@
                           "text": "$param"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 15,
+                        "startColumn": 1,
+                        "charOffset": 190,
+                        "charLength": 47,
+                        "snippet": {
+                          "text": "   bar($param);\n   baz($param);\n   foo($param);"
+                        }
                       }
                     }
                   },
@@ -280,10 +334,10 @@
                     "successors": [
                       "7"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "2"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -303,6 +357,15 @@
                           "text": "$b"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 4,
+                        "startColumn": 1,
+                        "charOffset": 39,
+                        "charLength": 34,
+                        "snippet": {
+                          "text": " }\n function baz($b) {\n   foo($b);"
+                        }
                       }
                     }
                   },
@@ -310,11 +373,11 @@
                     "successors": [
                       "8"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "5",
                       "6"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -334,6 +397,15 @@
                           "text": "$b"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 5,
+                        "startColumn": 1,
+                        "charOffset": 42,
+                        "charLength": 34,
+                        "snippet": {
+                          "text": " function baz($b) {\n   foo($b);\n }"
+                        }
                       }
                     }
                   },
@@ -341,10 +413,10 @@
                     "successors": [
                       "10"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "7"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -364,6 +436,15 @@
                           "text": "$param"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 16,
+                        "startColumn": 1,
+                        "charOffset": 206,
+                        "charLength": 34,
+                        "snippet": {
+                          "text": "   baz($param);\n   foo($param);\n }"
+                        }
                       }
                     }
                   },
@@ -371,10 +452,10 @@
                     "successors": [
                       "10"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "2"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -394,6 +475,15 @@
                           "text": "$param"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 7,
+                        "startColumn": 1,
+                        "charOffset": 74,
+                        "charLength": 42,
+                        "snippet": {
+                          "text": " }\n function foo($param) {\n   echo $param;"
+                        }
                       }
                     }
                   },
@@ -401,11 +491,11 @@
                     "successors": [
                       "11"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "8",
                       "9"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -425,15 +515,24 @@
                           "text": "$param"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 8,
+                        "startColumn": 1,
+                        "charOffset": 77,
+                        "charLength": 42,
+                        "snippet": {
+                          "text": " function foo($param) {\n   echo $param;\n }"
+                        }
                       }
                     }
                   },
                   "properties": {
                     "successors": [],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "10"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 }
               ],
@@ -598,8 +697,8 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "71a822f0480ae452",
-            "equalIndicator/v1": "504af60d7acd0dca83c6d62782ac437b23e7a145aa2d3275b76a70c8c3351a53"
+            "equalIndicator/v2": "001f29e540853a6b",
+            "equalIndicator/v1": "aa59a144772bc0d133c66cd831c5c88127bfbc5e1004894c79762663a07b5ba6"
           },
           "graphs": [
             {
@@ -621,6 +720,15 @@
                           "text": "$_POST['anyKey']"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 10,
+                        "startColumn": 1,
+                        "charOffset": 117,
+                        "charLength": 46,
+                        "snippet": {
+                          "text": " }\n bar($_POST['anyKey']);\n bar('safeString');"
+                        }
                       }
                     }
                   },
@@ -628,8 +736,8 @@
                     "successors": [
                       "2"
                     ],
-                    "predecessors": [],
-                    "sanitized_vulnerabilities": []
+                    "sanitized_vulnerabilities": [],
+                    "predecessors": []
                   }
                 },
                 {
@@ -649,6 +757,15 @@
                           "text": "$a"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 1,
+                        "startColumn": 1,
+                        "charOffset": 0,
+                        "charLength": 38,
+                        "snippet": {
+                          "text": " <?php\n function bar($a) {\n   baz($a);"
+                        }
                       }
                     }
                   },
@@ -656,10 +773,10 @@
                     "successors": [
                       "3"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "1"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -679,6 +796,15 @@
                           "text": "$a"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 2,
+                        "startColumn": 1,
+                        "charOffset": 7,
+                        "charLength": 34,
+                        "snippet": {
+                          "text": " function bar($a) {\n   baz($a);\n }"
+                        }
                       }
                     }
                   },
@@ -686,10 +812,10 @@
                     "successors": [
                       "4"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "2"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -709,6 +835,15 @@
                           "text": "$b"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 4,
+                        "startColumn": 1,
+                        "charOffset": 39,
+                        "charLength": 34,
+                        "snippet": {
+                          "text": " }\n function baz($b) {\n   foo($b);"
+                        }
                       }
                     }
                   },
@@ -716,10 +851,10 @@
                     "successors": [
                       "5"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "3"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -739,6 +874,15 @@
                           "text": "$b"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 5,
+                        "startColumn": 1,
+                        "charOffset": 42,
+                        "charLength": 34,
+                        "snippet": {
+                          "text": " function baz($b) {\n   foo($b);\n }"
+                        }
                       }
                     }
                   },
@@ -746,10 +890,10 @@
                     "successors": [
                       "6"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "4"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -769,6 +913,15 @@
                           "text": "$param"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 7,
+                        "startColumn": 1,
+                        "charOffset": 74,
+                        "charLength": 42,
+                        "snippet": {
+                          "text": " }\n function foo($param) {\n   echo $param;"
+                        }
                       }
                     }
                   },
@@ -776,10 +929,10 @@
                     "successors": [
                       "7"
                     ],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "5"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 },
                 {
@@ -799,15 +952,24 @@
                           "text": "$param"
                         },
                         "sourceLanguage": "PHP"
+                      },
+                      "contextRegion": {
+                        "startLine": 8,
+                        "startColumn": 1,
+                        "charOffset": 77,
+                        "charLength": 42,
+                        "snippet": {
+                          "text": " function foo($param) {\n   echo $param;\n }"
+                        }
                       }
                     }
                   },
                   "properties": {
                     "successors": [],
+                    "sanitized_vulnerabilities": [],
                     "predecessors": [
                       "6"
-                    ],
-                    "sanitized_vulnerabilities": []
+                    ]
                   }
                 }
               ],

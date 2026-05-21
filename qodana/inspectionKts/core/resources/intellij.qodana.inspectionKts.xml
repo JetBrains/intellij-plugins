@@ -1,4 +1,4 @@
-<idea-plugin visibility="public" package="org.jetbrains.qodana.inspectionKts">
+<idea-plugin visibility="public">
   <dependencies>
     <plugin id="com.intellij.modules.ultimate"/>
   </dependencies>

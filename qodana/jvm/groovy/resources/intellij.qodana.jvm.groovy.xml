@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.jvm.groovy">
+<idea-plugin>
   <dependencies>
     <plugin id="org.intellij.groovy"/>
   </dependencies>

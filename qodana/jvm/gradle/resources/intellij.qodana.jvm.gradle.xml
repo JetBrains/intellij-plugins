@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.jvm.gradle">
+<idea-plugin>
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <module name="intellij.gradle"/>

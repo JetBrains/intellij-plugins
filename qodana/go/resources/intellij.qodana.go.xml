@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.go">
+<idea-plugin>
   <dependencies>
     <plugin id="org.jetbrains.plugins.go"/>
     <module name="intellij.go.coverage"/>

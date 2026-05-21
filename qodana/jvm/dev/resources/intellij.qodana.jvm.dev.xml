@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.jvm.dev">
+<idea-plugin>
   <dependencies>
     <module name="intellij.java.dev"/>
   </dependencies>

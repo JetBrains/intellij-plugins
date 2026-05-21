@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.inspectionKts.java">
+<idea-plugin>
   <dependencies>
     <module name="intellij.java.dev"/>
     <module name="intellij.qodana.inspectionKts"/>

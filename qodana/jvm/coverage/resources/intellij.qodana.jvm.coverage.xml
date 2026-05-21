@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.jvm.coverage">
+<idea-plugin>
   <dependencies>
     <module name="intellij.java.backend"/>
     <plugin id="Coverage"/>

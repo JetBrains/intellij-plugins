@@ -90,6 +90,66 @@
   files:
   - name: $MAVEN_REPOSITORY$/org/jline/jline/3/jline-3.jar
   reason: <- intellij.qodana
+- name: lib/modules/intellij.qodana.coverage.jar
+  contentModules:
+  - name: intellij.qodana.coverage
+- name: lib/modules/intellij.qodana.cpp.jar
+  contentModules:
+  - name: intellij.qodana.cpp
+- name: lib/modules/intellij.qodana.go.jar
+  contentModules:
+  - name: intellij.qodana.go
+- name: lib/modules/intellij.qodana.inspectionKts.jar
+  contentModules:
+  - name: intellij.qodana.inspectionKts
+- name: lib/modules/intellij.qodana.inspectionKts.java.jar
+  contentModules:
+  - name: intellij.qodana.inspectionKts.java
+- name: lib/modules/intellij.qodana.inspectionKts.js.jar
+  contentModules:
+  - name: intellij.qodana.inspectionKts.js
+- name: lib/modules/intellij.qodana.inspectionKts.kotlin.jar
+  contentModules:
+  - name: intellij.qodana.inspectionKts.kotlin
+- name: lib/modules/intellij.qodana.inspectionKts.mcp.jar
+  contentModules:
+  - name: intellij.qodana.inspectionKts.mcp
+- name: lib/modules/intellij.qodana.js.jar
+  contentModules:
+  - name: intellij.qodana.js
+- name: lib/modules/intellij.qodana.jvm.coverage.jar
+  contentModules:
+  - name: intellij.qodana.jvm.coverage
+- name: lib/modules/intellij.qodana.jvm.dev.jar
+  contentModules:
+  - name: intellij.qodana.jvm.dev
+- name: lib/modules/intellij.qodana.jvm.gradle.jar
+  contentModules:
+  - name: intellij.qodana.jvm.gradle
+- name: lib/modules/intellij.qodana.jvm.groovy.jar
+  contentModules:
+  - name: intellij.qodana.jvm.groovy
+- name: lib/modules/intellij.qodana.jvm.java.jar
+  contentModules:
+  - name: intellij.qodana.jvm.java
+- name: lib/modules/intellij.qodana.jvm.kotlin.jar
+  contentModules:
+  - name: intellij.qodana.jvm.kotlin
+- name: lib/modules/intellij.qodana.jvm.maven.jar
+  contentModules:
+  - name: intellij.qodana.jvm.maven
+- name: lib/modules/intellij.qodana.jvm.swagger.jar
+  contentModules:
+  - name: intellij.qodana.jvm.swagger
+- name: lib/modules/intellij.qodana.php.jar
+  contentModules:
+  - name: intellij.qodana.php
+- name: lib/modules/intellij.qodana.python.community.jar
+  contentModules:
+  - name: intellij.qodana.python.community
+- name: lib/modules/intellij.qodana.python.coverage.jar
+  contentModules:
+  - name: intellij.qodana.python.coverage
 - name: lib/modules/intellij.qodana.rust.jar
   contentModules:
   - name: intellij.qodana.rust
@@ -97,6 +157,9 @@
   files:
   - name: $MAVEN_REPOSITORY$/com/jetbrains/qodana/qodana-sarif/0/qodana-sarif-0.jar
   reason: <- intellij.qodana.rust
+- name: lib/modules/intellij.qodana.yaml.jar
+  contentModules:
+  - name: intellij.qodana.yaml
 - name: lib/qodana-frontend.jar
   contentModules:
   - name: intellij.qodana.util
@@ -110,23 +173,3 @@
   - name: intellij.qodana
   contentModules:
   - name: intellij.qodana.sarif
-  - name: intellij.qodana.coverage
-  - name: intellij.qodana.go
-  - name: intellij.qodana.cpp
-  - name: intellij.qodana.inspectionKts
-  - name: intellij.qodana.inspectionKts.js
-  - name: intellij.qodana.inspectionKts.kotlin
-  - name: intellij.qodana.inspectionKts.java
-  - name: intellij.qodana.js
-  - name: intellij.qodana.php
-  - name: intellij.qodana.python.community
-  - name: intellij.qodana.python.coverage
-  - name: intellij.qodana.jvm.dev
-  - name: intellij.qodana.jvm.gradle
-  - name: intellij.qodana.jvm.groovy
-  - name: intellij.qodana.jvm.kotlin
-  - name: intellij.qodana.jvm.java
-  - name: intellij.qodana.jvm.maven
-  - name: intellij.qodana.jvm.swagger
-  - name: intellij.qodana.jvm.coverage
-  - name: intellij.qodana.inspectionKts.mcp

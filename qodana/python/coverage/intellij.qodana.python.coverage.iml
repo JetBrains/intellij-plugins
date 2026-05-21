@@ -16,6 +16,8 @@
     <orderEntry type="module" module-name="intellij.platform.core" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.python" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.python.community.aliasProvider" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.python.community.plugin" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.platform.coverage" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.platform.coverage.agent" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />

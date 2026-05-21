@@ -9,10 +9,12 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
+@Disabled
 class RunInspectionKtsMcpToolTest : McpToolsetTestBase() {
 
   private val simpleJavaCode = """

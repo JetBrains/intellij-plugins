@@ -425,6 +425,8 @@ jvm_library(
     "@community//platform/external-system-impl:externalSystem-impl_test_lib",
     "@community//platform/external-system-api:externalSystem",
     "@community//platform/external-system-api:externalSystem_test_lib",
+    "//contrib/qodana/yaml",
+    "//contrib/qodana/yaml:yaml_test_lib",
     "@community//plugins/git4idea:vcs-git-tests",
     "@community//plugins/git4idea:vcs-git-tests_test_lib",
     "@community//plugins/lombok:lombok-tests",

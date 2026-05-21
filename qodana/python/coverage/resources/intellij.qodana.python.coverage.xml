@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.python.coverage">
+<idea-plugin>
   <dependencies>
     <plugin id="com.intellij.modules.python"/>
     <plugin id="Pythonid"/>

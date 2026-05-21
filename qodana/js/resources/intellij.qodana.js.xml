@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.js">
+<idea-plugin>
   <dependencies>
     <plugin id="JavaScript"/>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->

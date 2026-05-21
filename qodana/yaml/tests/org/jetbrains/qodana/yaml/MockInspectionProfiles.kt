@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.LoadingOrder
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManager
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider
@@ -36,7 +37,16 @@ internal val PROFILE_RECOMMENDED = ProfileDescriptor("test.qodana.recommended", 
 internal val ALL_PROFILES: List<ProfileDescriptor> = listOf(PROFILE_EMPTY, PROFILE_SANITY, PROFILE_STARTER, PROFILE_RECOMMENDED)
 
 internal fun setupMockProfiles(project: Project, testRootDisposable: Disposable) {
+  val previousDefaultProfile = System.getProperty("qodana.default.profile")
   System.setProperty("qodana.default.profile", "test.qodana.recommended")
+  Disposer.register(testRootDisposable) {
+    if (previousDefaultProfile == null) {
+      System.clearProperty("qodana.default.profile")
+    }
+    else {
+      System.setProperty("qodana.default.profile", previousDefaultProfile)
+    }
+  }
   reinstantiateInspectionRelatedServices(project, testRootDisposable)
 
   val profileManager = QodanaInspectionProfileManager.getInstance(project)

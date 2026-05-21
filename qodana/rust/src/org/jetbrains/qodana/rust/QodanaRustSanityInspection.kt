@@ -1,4 +1,4 @@
-package org.intellij.qodana.rust
+package org.jetbrains.qodana.rust
 
 import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInspection.GlobalInspectionContext

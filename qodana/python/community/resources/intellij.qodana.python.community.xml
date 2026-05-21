@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.python.community">
+<idea-plugin>
   <dependencies>
     <plugin id="com.intellij.modules.python"/>
   </dependencies>

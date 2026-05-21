@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.jvm.kotlin">
+<idea-plugin>
   <dependencies>
     <plugin id="org.jetbrains.kotlin"/>
   </dependencies>

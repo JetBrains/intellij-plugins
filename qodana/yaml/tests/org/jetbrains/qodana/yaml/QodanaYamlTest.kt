@@ -2,7 +2,7 @@ package org.jetbrains.qodana.yaml
 
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInspection.ex.InspectionProfileImpl
-import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.observable.util.whenDisposed
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase
 import org.junit.Test
@@ -13,7 +13,7 @@ class QodanaYamlTest : LightPlatformCodeInsightFixture4TestCase() {
     val initInspections = InspectionProfileImpl.INIT_INSPECTIONS
 
     InspectionProfileImpl.INIT_INSPECTIONS = true
-    Disposer.register(testRootDisposable) {
+    testRootDisposable.whenDisposed {
       InspectionProfileImpl.INIT_INSPECTIONS = initInspections
     }
   }
@@ -137,14 +137,14 @@ class QodanaYamlTest : LightPlatformCodeInsightFixture4TestCase() {
 
   private fun checkCompletionVariantsContain(vararg expected: String, extraChecks: (List<String>) -> Unit = {}) {
     val variants = myFixture.completeBasic()
-    val actual = variants.map { it.allLookupStrings }.flatten().sorted()
+    val actual = variants.flatMap { it.allLookupStrings }.distinct().sorted()
     assertEquals(expected.toList().sorted().distinct(), actual.filter { it in expected })
     extraChecks(actual)
   }
 
   private fun checkCompletionVariantsEqual(vararg expected: String, extraChecks: (List<String>) -> Unit = {}) {
     val variants = myFixture.completeBasic()
-    val actual = variants.map { it.allLookupStrings }.flatten().sorted()
+    val actual = variants.flatMap { it.allLookupStrings }.distinct().sorted()
     assertEquals(expected.toList().sorted(), actual)
     extraChecks(actual)
   }

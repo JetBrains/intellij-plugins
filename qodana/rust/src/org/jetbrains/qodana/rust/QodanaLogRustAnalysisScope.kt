@@ -1,4 +1,4 @@
-package org.intellij.qodana.rust
+package org.jetbrains.qodana.rust
 
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
