@@ -19,10 +19,7 @@ import org.intellij.terraform.hcl.psi.HCLProperty
 
 internal object TfComponentObjectKeyCompletionProvider : HclObjectKeyCompletionProvider() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-    val position = parameters.position
-    val parent = position.parent
-
-    val hclObject = parent as? HCLObject ?: parent.parent as? HCLObject ?: return
+    val hclObject = getParentHclObject(parameters) ?: return
     val componentProperty = hclObject.parent as? HCLProperty ?: return
     val componentBlock = componentProperty.parentOfType<HCLBlock>() ?: return
 

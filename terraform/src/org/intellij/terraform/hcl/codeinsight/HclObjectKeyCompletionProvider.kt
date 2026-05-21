@@ -17,12 +17,20 @@ import org.intellij.terraform.hcl.patterns.HCLPatterns.Object
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Property
 import org.intellij.terraform.hcl.patterns.HCLPatterns.PropertyOrBlock
 import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.hcl.psi.HCLObject
 
 internal abstract class HclObjectKeyCompletionProvider : CompletionProvider<CompletionParameters>() {
   fun registerTo(contributor: CompletionContributor, filePattern: PsiFilePattern.Capture<HCLFile>) {
     contributor.extend(CompletionType.BASIC, objectKeyInEmptyObjectPattern(filePattern), this)
     contributor.extend(CompletionType.BASIC, objectKeyWhileTypingPattern(filePattern), this)
     contributor.extend(CompletionType.BASIC, objectKeyAfterPropertyPattern(filePattern), this)
+  }
+
+  protected fun getParentHclObject(parameters: CompletionParameters): HCLObject? {
+    val position = parameters.position
+    val parent = position.parent
+
+    return parent as? HCLObject ?: parent.parent as? HCLObject
   }
 
   // property = { <caret> }

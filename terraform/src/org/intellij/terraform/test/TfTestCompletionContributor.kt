@@ -14,5 +14,6 @@ internal class TfTestCompletionContributor : CompletionContributor(), DumbAware 
     HclBlockPropertiesCompletionProvider.registerTo(this, TfTestFile)
 
     HclBlockTypeNameCompletionProvider.registerTo(this, TfTestFile)
+    TfTestObjectKeyCompletionProvider.registerTo(this, TfTestFile)
   }
 }

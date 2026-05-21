@@ -17,3 +17,5 @@ internal const val HCL_MOCK_DATA_IDENTIFIER = "mock_data"
 internal const val HCL_OVERRIDE_RESOURCE_IDENTIFIER = "override_resource"
 internal const val HCL_OVERRIDE_DATA_IDENTIFIER = "override_data"
 internal const val HCL_OVERRIDE_MODULE_IDENTIFIER = "override_module"
+
+internal const val HCL_DEFAULTS_IDENTIFIER = "defaults"

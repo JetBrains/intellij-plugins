@@ -74,7 +74,7 @@ private val OverrideDuringProperty: PropertyType = PropertyType(
   hint = SimpleValueHint("apply", "plan")
 )
 
-private val DefaultsProperty: PropertyType = PropertyType("defaults", Types.Object)
+private val DefaultsProperty: PropertyType = PropertyType(HCL_DEFAULTS_IDENTIFIER, Types.Object)
 
 // Override blocks
 private val TfOverrideResourceBlock: BlockType = BlockType(

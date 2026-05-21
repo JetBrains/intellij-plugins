@@ -135,6 +135,28 @@ internal class TfTestCompletionTest : CompletionTestCase() {
     """.trimIndent(), "acm", "amg", "amp")
   }
 
+  fun testDefaultsPropertiesCompletion() {
+    doBasicCompletionTest("""
+      mock_provider "aws" {
+        mock_resource "aws_vpc" {
+          defaults = {
+            id = "vpc-mock00001"
+            <caret>
+          }
+        }     
+      }
+    }
+    """.trimIndent(), Matcher.and(Matcher.all("arn", "cidr_block", "region"),
+                                  Matcher.not("id"))
+    )
+
+    doBasicCompletionTest("""
+      mock_data "azurerm_storage_account" {
+        defaults = { primary_web_<caret> }
+      }
+    """.trimIndent(), "primary_web_host", "primary_web_endpoint", "primary_web_internet_host")
+  }
+
   companion object {
     private val TfTestRootBlockKeywords: List<String> = TfTestRootBlocks.map { it.name }
   }
