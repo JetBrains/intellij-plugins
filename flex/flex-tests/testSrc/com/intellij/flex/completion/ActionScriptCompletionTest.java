@@ -621,6 +621,23 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTest("_2");
   }
 
+  public void testSeeFunctionInSamePackage() {
+    String prefix = getTestName(false);
+    myFixture.configureByFiles(prefix + ".as", prefix + "_2.as", prefix + "_3.as");
+    LookupElement[] elements = complete();
+    assertNotNull(elements);
+    assertEquals(2, elements.length);
+    assertEquals("fooInPackage", elements[0].getLookupString());
+    assertEquals("fooTopLevel", elements[1].getLookupString());
+    selectItem(elements[0]);
+    checkResultByFile(prefix + "_after.as");
+  }
+
+  public void testSeeTopLevelFunction() {
+    String name = getTestName(false);
+    doTestForFiles(new String[]{name + ".as", name + "_2.as", name + "_3.as"}, "as");
+  }
+
   public final void testCompleteSkipsUnopenedNamespaces() {
     doTest("");
     doTest("_2");
