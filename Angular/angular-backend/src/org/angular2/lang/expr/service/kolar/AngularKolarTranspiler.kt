@@ -12,6 +12,7 @@ import com.intellij.lang.typescript.kolar.KolarScriptSnapshot
 import com.intellij.lang.typescript.kolar.KolarTranspiledFile
 import com.intellij.lang.typescript.kolar.KolarTranspiler
 import com.intellij.lang.typescript.kolar.KolarVirtualCode
+import com.intellij.lang.typescript.kolar.TypeScriptHover
 import com.intellij.lang.typescript.kolar.TypeScriptInlayHint
 import com.intellij.lang.typescript.kolar.sourceMap.KolarMapping
 import com.intellij.lang.typescript.lsp.LspAnnotationError
@@ -86,6 +87,11 @@ private abstract class AngularFileInfo(
     ReadAction.nonBlocking(Callable {
       super.postProcessInlayHints(hints)
         .reposition(project, file)
+    }).executeSynchronously()
+
+  override fun postProcessHover(hover: TypeScriptHover): TypeScriptHover? =
+    ReadAction.nonBlocking(Callable {
+      hover.translateNamesInDefinition(project, file)
     }).executeSynchronously()
 }
 
@@ -239,6 +245,29 @@ private fun List<LspAnnotationError>.filterQuickFixes(file: PsiFile): List<LspAn
     else
       it.copyWith(quickFixes = emptyList())
   }
+}
+
+private fun TypeScriptHover.translateNamesInDefinition(project: Project, file: VirtualFile): TypeScriptHover {
+  val content = markdownContent ?: return this
+  val definitionStart = content.indexOf("```")
+  val definitionEnd = content.indexOf("```", definitionStart + 4)
+  if (definitionStart < 0 || definitionEnd < 0) return this
+
+  val psiFile = PsiManager.getInstance(project).findFile(file) ?: return this
+  val transpiledFile = Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(psiFile) ?: return this
+  val mappings = mutableMapOf<String, String>()
+  transpiledFile.nameMaps[psiFile]?.values?.forEach { map ->
+    mappings.putAll(map)
+  }
+  if (mappings.isEmpty()) return this
+
+  val definition = content.substring(definitionStart + 3, definitionEnd)
+  val newDefinition = definition.replace(Regex("(?<=[.<>():+=!*\\s-]|^)(_t[0-9]+)(?=[.<>():+=!*\\s-]|$)")) {
+    val id = it.value
+    mappings[id] ?: id
+  }
+  markdownContent = content.replaceRange(definitionStart + 3, definitionEnd, newDefinition)
+  return this
 }
 
 
