@@ -799,6 +799,10 @@
         "type": "string"
       }
     },
+    "mavenSettingsPath": {
+      "description": "Path to the Maven settings.xml file to use during Maven project import",
+      "type": "string"
+    },
     "onlyDirectory": {
       "description": "Path to the project directory to be analyzed. By default, the entire project is analyzed.",
       "type": "string"

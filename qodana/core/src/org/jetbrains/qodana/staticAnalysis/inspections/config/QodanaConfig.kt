@@ -187,6 +187,7 @@ data class QodanaConfig(
   val coverage: QodanaCoverageConfig,
   val hardcodedPasswords: HardcodedPasswords,
   val rootJavaProjects: List<Path>,
+  val mavenSettingsPath: Path?,
 
   val dotnet: DotNetProjectConfiguration?,
   val cpp: QodanaCppConfig?,
@@ -234,7 +235,8 @@ data class QodanaConfig(
         reportProblems = yaml.coverage.reportProblems,
         coveragePath = outPath.resolve("$COVERAGE_OUTPUT_DIR/")
       ),
-      rootJavaProjects: List<Path> = yaml.rootJavaProjects
+      rootJavaProjects: List<Path> = yaml.rootJavaProjects,
+      mavenSettingsPath: Path? = yaml.mavenSettingsPath?.let { if (it.isAbsolute) it.normalize() else projectPath.resolve(it).normalize() }
     ): QodanaConfig {
       val dotnet = yaml.dotnet
       val php = yaml.php
@@ -273,7 +275,8 @@ data class QodanaConfig(
         php = php,
         jvm = jvm,
         dependencyAnalysis = dependencyAnalysis,
-        rootJavaProjects = rootJavaProjects
+        rootJavaProjects = rootJavaProjects,
+        mavenSettingsPath = mavenSettingsPath
       )
     }
   }

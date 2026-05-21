@@ -16,13 +16,17 @@ import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenSimpleProjectComponent
 import org.jetbrains.idea.maven.utils.MavenUtil
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowCapability
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 
 
 class QodanaReimportMavenProjects : QodanaWorkflowExtension {
   companion object {
-    val LOG = Logger.getInstance(QodanaReimportMavenProjects::class.java)
+    val LOG: Logger = Logger.getInstance(QodanaReimportMavenProjects::class.java)
   }
+
+  override val dependsOn: Set<QodanaWorkflowCapability>
+    get() = setOf(QODANA_MAVEN_SETTINGS_CONFIGURED)
 
   override suspend fun configureForQodana(config: QodanaConfig, project: Project) {
     val forceReimport = java.lang.Boolean.getBoolean("qodana.trigger.maven.import")
@@ -117,5 +121,3 @@ class QodanaReimportMavenProjects : QodanaWorkflowExtension {
     }
   }
 }
-
-

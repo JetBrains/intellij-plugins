@@ -233,6 +233,16 @@ class QodanaConfigTest {
   }
 
   @Test
+  fun `yaml maven settings path`() {
+    val config = load("""
+      version: "1.0"
+      mavenSettingsPath: "maven/settings.xml"
+      """.trimIndent())
+
+    assertEquals(Path.of("maven/settings.xml"), config.mavenSettingsPath)
+  }
+
+  @Test
   fun `yaml failThreshold`() {
     val config = load("""
       version: "1.0"
@@ -402,6 +412,7 @@ ${pathPart.prependIndent("")}
       rootJavaProjects:
         - ./projA
         - /abs/projB
+      mavenSettingsPath: .m2/settings.xml
       failThreshold: 5
       """.trimIndent()
     )
@@ -448,6 +459,7 @@ ${pathPart.prependIndent("")}
     // paths
     assertEquals(Path.of("subdir"), config.onlyDirectory)
     assertEquals(listOf(Path.of("./projA"), Path.of("/abs/projB")), config.rootJavaProjects)
+    assertEquals(Path.of(".").toAbsolutePath().resolve(".m2/settings.xml").normalize(), config.mavenSettingsPath)
 
     // failure conditions (from legacy failThreshold)
     assertEquals(
