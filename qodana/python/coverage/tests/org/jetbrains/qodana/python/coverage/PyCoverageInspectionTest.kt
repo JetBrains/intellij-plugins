@@ -8,11 +8,9 @@ import com.intellij.python.pro.coverage.PyCoverageEngine
 import com.intellij.rt.coverage.util.ProjectDataLoader
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageInspectionTest
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFromCloud
-import org.junit.Ignore
 import org.junit.Test
 import java.nio.file.Path
 
-@Ignore
 class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspection") {
   private val dummyProvider: CoverageFileProvider = object : CoverageFileProvider {
     override fun getCoverageDataFilePath() = ""
