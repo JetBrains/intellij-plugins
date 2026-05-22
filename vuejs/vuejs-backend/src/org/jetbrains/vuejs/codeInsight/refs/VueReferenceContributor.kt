@@ -30,7 +30,7 @@ import com.intellij.xml.util.HtmlUtil.SRC_ATTRIBUTE_NAME
 import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import com.intellij.xml.util.HtmlUtil.hasHtmlPrefix
-import org.jetbrains.vuejs.lang.html.lexer.VueTagEmbeddedContentProvider
+import org.jetbrains.vuejs.lang.html.lexer.styleLanguage
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 
 private class VueReferenceContributor : PsiReferenceContributor() {
@@ -60,7 +60,7 @@ private val STYLE_REF_PROVIDER = object : PsiReferenceProvider() {
           ?.getAttribute(LANG_ATTRIBUTE_NAME)
           ?.value
           ?.trim()
-          ?.let { VueTagEmbeddedContentProvider.styleLanguage(it) }
+          ?.let { styleLanguage(it) }
           ?.associatedFileType
           ?.let { arrayOf(it) }
         ?: emptyArray()

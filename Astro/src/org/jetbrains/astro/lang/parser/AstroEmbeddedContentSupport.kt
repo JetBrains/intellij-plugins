@@ -7,13 +7,12 @@ import com.intellij.html.embedding.HtmlEmbeddedContentSupport.Companion.getStyle
 import com.intellij.html.embedding.HtmlEmbedmentInfo
 import com.intellij.html.embedding.HtmlTagEmbeddedContentProvider
 import com.intellij.lang.Language
-import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lexer.BaseHtmlLexer
 import com.intellij.lexer.Lexer
 import com.intellij.psi.tree.IElementType
 import com.intellij.xml.util.HtmlUtil
-import org.intellij.plugins.postcss.PostCssLanguage
+import org.intellij.plugins.postcss.styleLanguageOrPostCss
 import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
 import org.jetbrains.astro.codeInsight.ASTRO_INLINE_DIRECTIVE
 import org.jetbrains.astro.lang.lexer.AstroLexer
@@ -47,7 +46,7 @@ class AstroTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedCon
     val tagName = tagName ?: return null
     val attributeValue = attributeValue?.trim()?.toString()
     return when {
-      namesEqual(tagName, HtmlUtil.STYLE_TAG_NAME) -> styleLanguage(attributeValue)?.let { getStyleTagEmbedmentInfo(it) }
+      namesEqual(tagName, HtmlUtil.STYLE_TAG_NAME) -> getStyleTagEmbedmentInfo(styleLanguageOrPostCss(attributeValue))
                                                       ?: HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
       namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME) -> createScriptEmbedmentInfo()
       else -> null
@@ -70,23 +69,6 @@ class AstroTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedCon
       }
       else ->
         HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavaScriptSupportLoader.TYPESCRIPT)
-    }
-  }
-
-  companion object {
-    fun styleLanguage(styleLang: String?): Language? {
-      val cssLanguage = CSSLanguage.INSTANCE
-      if (styleLang != null) {
-        if (styleLang.equals("text/css", ignoreCase = true)) return cssLanguage
-        cssLanguage
-          .dialects
-          .firstOrNull { dialect ->
-            dialect.id.equals(styleLang, ignoreCase = true)
-            || dialect.mimeTypes.any { it.equals(styleLang, ignoreCase = true) }
-          }
-          ?.let { return it }
-      }
-      return PostCssLanguage.INSTANCE
     }
   }
 }

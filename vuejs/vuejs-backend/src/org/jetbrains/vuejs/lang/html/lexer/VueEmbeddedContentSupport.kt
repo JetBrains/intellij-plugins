@@ -9,7 +9,6 @@ import com.intellij.html.embedding.HtmlEmbedmentInfo
 import com.intellij.html.embedding.HtmlTagEmbeddedContentProvider
 import com.intellij.html.embedding.HtmlTokenEmbeddedContentProvider
 import com.intellij.lang.Language
-import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSModuleContentType
 import com.intellij.lang.javascript.JavaScriptSupportLoader
@@ -25,7 +24,6 @@ import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import com.intellij.xml.util.HtmlUtil.TYPE_ATTRIBUTE_NAME
-import org.intellij.plugins.postcss.PostCssLanguage
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
@@ -142,7 +140,7 @@ internal class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbe
     val attributeName = attributeName?.trim()?.toString()
     val attributeValue = attributeValue?.trim()?.toString()
     return when {
-      namesEqual(tagName, HtmlUtil.STYLE_TAG_NAME) -> styleLanguage(attributeValue)?.let { getStyleTagEmbedmentInfo(it) }
+      namesEqual(tagName, HtmlUtil.STYLE_TAG_NAME) -> getStyleTagEmbedmentInfo(styleLanguage(attributeValue))
                                                       ?: HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
       isBoundLang(tagName, attributeName, attributeValue) -> getBoundScriptLangTagInfo()
       namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME)
@@ -224,22 +222,5 @@ internal class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbe
     scriptType.equals(language.id, ignoreCase = true)
     || FileTypeManager.getInstance().getFileTypeByExtension(scriptType) === language.associatedFileType
 
-
-  companion object {
-    fun styleLanguage(styleLang: String?): Language? {
-      val cssLanguage = CSSLanguage.INSTANCE
-      if (styleLang != null) {
-        if (styleLang.equals("text/css", ignoreCase = true)) return cssLanguage
-        cssLanguage
-          .dialects
-          .firstOrNull { dialect ->
-            dialect.id.equals(styleLang, ignoreCase = true)
-            || dialect.mimeTypes.any { it.equals(styleLang, ignoreCase = true) }
-          }
-          ?.let { return it }
-      }
-      return PostCssLanguage.INSTANCE
-    }
-  }
 
 }
