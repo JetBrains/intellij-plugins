@@ -9,6 +9,7 @@ import org.junit.jupiter.api.assertNull
 
 class VueTsConfigFile(
   val types: List<String> = emptyList(),
+  val vueCompilerOptions: VueCompilerOptions? = null,
   val enabled: Boolean = true,
 ) : PolySymbolsTestConfigurator {
 
@@ -23,6 +24,7 @@ class VueTsConfigFile(
 
     val content = tsconfigContent(
       types = types,
+      vueCompilerOptions = vueCompilerOptions,
     )
 
     fixture.configureByText(FILE_NAME, content)
@@ -46,10 +48,15 @@ class VueTsConfigFile(
   companion object {
     const val FILE_NAME: String = "tsconfig.json"
 
-    val DEFAULT_TSCONFIG_CONTENT: String = tsconfigContent(types = emptyList())
+    val DEFAULT_TSCONFIG_CONTENT: String = 
+      tsconfigContent(
+        types = emptyList(),
+        vueCompilerOptions = null,
+        )
 
     private fun tsconfigContent(
       types: List<String>,
+      vueCompilerOptions: VueCompilerOptions?
     ): String {
       // language=jsonc
       return """
@@ -69,7 +76,8 @@ class VueTsConfigFile(
             // `vue-tsc --build` produces a .tsbuildinfo file for incremental type-checking.
             // Specified here to keep it out of the root directory.
             "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo"
-          }
+          },
+          ${vueCompilerOptions?.toJson() ?: ""}
         }
         """.trimIndent()
     }
