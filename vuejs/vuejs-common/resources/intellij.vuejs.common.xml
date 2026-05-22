@@ -10,4 +10,9 @@
   <!-- endregion -->
 
   <resource-bundle>messages.VueBundle</resource-bundle>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <lang.syntaxHighlighterFactory language="VueJS"
+                                   implementationClass="org.jetbrains.vuejs.lang.expr.highlighting.VueJSHighlighterFactory"/>
+  </extensions>
 </idea-plugin>

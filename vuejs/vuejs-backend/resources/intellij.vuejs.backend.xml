@@ -241,8 +241,6 @@
     <lang.rearranger language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.psi.arrangement.VueRearranger"/>
     <multiLangCommenter implementation="org.jetbrains.vuejs.editor.VueCommenterProvider"/>
 
-    <lang.syntaxHighlighterFactory language="VueJS"
-                                   implementationClass="org.jetbrains.vuejs.lang.expr.highlighting.VueJSHighlighterFactory"/>
     <lang.syntaxHighlighterFactory language="VueTS"
                                    implementationClass="org.jetbrains.vuejs.lang.expr.highlighting.VueTSHighlighterFactory"/>
     <idIndexer filetype="Vue.js" implementationClass="org.jetbrains.vuejs.lang.html.index.VueIdIndexer"/>
