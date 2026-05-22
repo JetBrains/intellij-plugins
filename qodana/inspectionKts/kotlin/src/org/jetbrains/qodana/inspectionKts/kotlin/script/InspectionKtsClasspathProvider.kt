@@ -3,6 +3,7 @@ package org.jetbrains.qodana.inspectionKts.kotlin.script
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.ide.plugins.PluginMainDescriptor
 import com.intellij.ide.plugins.cl.PluginClassLoader
 import com.intellij.idea.AppMode
 import com.intellij.lang.LanguageParserDefinitions
@@ -124,14 +125,15 @@ private class InspectionKtsClasspathHolder(scope: CoroutineScope) {
     val classPath = mutableSetOf<File>()
 
     val platformClassLoader: ClassLoader = application::class.java.classLoader
-    val qodanaPluginClassLoader: ClassLoader = InspectionKtsRegistry::class.java.classLoader
+    val qodanaPluginClassLoaders = pluginAndContentModuleClassLoadersFor(InspectionKtsRegistry::class.java)
     val pluginsWithLanguageParserClassLoaders = LanguageParserDefinitions.INSTANCE.point?.extensionList?.mapNotNull { it.instance.javaClass.classLoader }
     val distributionPluginsClassLoaders = PluginManager.getPlugins()
       .filter { useAllDistributionForDependencies || !it.isJetBrainsOrBundledPlugin }.map { it.classLoader }
     val customPluginClassLoaders = CustomPluginsForKtsClasspathProvider.provide().map { it.classLoader }
 
     listOf(
-      listOf(platformClassLoader, qodanaPluginClassLoader),
+      listOf(platformClassLoader),
+      qodanaPluginClassLoaders,
       pluginsWithLanguageParserClassLoaders ?: emptyList(),
       distributionPluginsClassLoaders,
       customPluginClassLoaders
@@ -236,6 +238,23 @@ private fun platformJars(classLoader: ClassLoader): List<File> {
   }
 
   return scriptCompilationClasspathFromContext(classLoader = classLoader, wholeClasspath = true).filter { isPlatformJarAccepted(it.name) }
+}
+
+private fun pluginAndContentModuleClassLoadersFor(pluginClass: Class<*>): List<ClassLoader> {
+  val classLoader = pluginClass.classLoader
+  val plugin = PluginManagerCore.plugins
+    .filterIsInstance<PluginMainDescriptor>()
+    .firstOrNull { descriptor ->
+      descriptor.pluginClassLoader == classLoader || descriptor.contentModules.any { it.pluginClassLoader == classLoader }
+    }
+  return plugin?.pluginAndContentModuleClassLoaders() ?: listOf(classLoader)
+}
+
+private fun PluginMainDescriptor.pluginAndContentModuleClassLoaders(): List<ClassLoader> {
+  return buildList {
+    pluginClassLoader?.let(::add)
+    contentModules.mapNotNullTo(this) { it.pluginClassLoader }
+  }
 }
 
 private val PluginDescriptor.isJetBrainsOrBundledPlugin: Boolean

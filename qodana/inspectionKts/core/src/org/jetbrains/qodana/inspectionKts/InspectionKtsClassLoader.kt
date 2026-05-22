@@ -1,9 +1,8 @@
 package org.jetbrains.qodana.inspectionKts
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.ide.plugins.IdeaPluginDescriptorImpl
 import com.intellij.ide.plugins.PluginManagerCore.plugins
-import com.intellij.ide.plugins.contentModules
+import com.intellij.ide.plugins.PluginMainDescriptor
 import com.intellij.openapi.util.text.StringHash
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.JBIterable
@@ -113,16 +112,13 @@ internal class InspectionKtsClassLoader : ClassLoader(null) {
   // used by kotlin engine
   @Suppress("unused")
   fun getUrls(): List<URL> {
-    return JBIterable.of(*plugins)
-      .mapNotNull { obj: IdeaPluginDescriptor -> obj.pluginClassLoader }
+    return plugins
+      .flatMap { plugin -> plugin.pluginAndContentModuleClassLoaders() }
       .distinct()
-      .flatMap { o: ClassLoader ->
-        try {
-          return@flatMap o.javaClass.getMethod("getUrls").invoke(o) as List<URL>
-        }
-        catch (e: Exception) {
-          return@flatMap emptyList<URL>()
-        }
+      .flatMap { classLoader ->
+        @Suppress("UNCHECKED_CAST")
+        runCatching { classLoader.javaClass.getMethod("getUrls").invoke(classLoader) as Iterable<URL> }
+          .getOrElse { emptyList() }
       }
       .distinct()
       .toList()
@@ -136,36 +132,62 @@ internal class InspectionKtsClassLoader : ClassLoader(null) {
   }
 }
 
+private fun IdeaPluginDescriptor.pluginAndContentModuleClassLoaders(): List<ClassLoader> {
+  return buildList {
+    pluginClassLoader?.let(::add)
+    if (this@pluginAndContentModuleClassLoaders is PluginMainDescriptor) {
+      contentModules.mapNotNullTo(this) { it.pluginClassLoader }
+    }
+  }
+}
+
 private class InspectionKtsPluginWithSubModulesClassLoader(
-  val mainPluginClassLoader: ClassLoader,
+  val mainPluginClassLoader: ClassLoader?,
   val subModulesClassLoaders: List<SubModuleClassLoader>
 ) : ClassLoader(null) {
   class SubModuleClassLoader(
-    val modulePackage: String,
+    val modulePackage: String?,
     val classLoader: ClassLoader
   )
 
   companion object {
     fun forPlugin(plugin: IdeaPluginDescriptor): InspectionKtsPluginWithSubModulesClassLoader? {
-      val pluginClassLoader = plugin.pluginClassLoader ?: return null
-      val pluginImpl = (plugin as? IdeaPluginDescriptorImpl) ?: return null
-      val subModulesClassLoaders = pluginImpl.contentModules.mapNotNull {
-        val modulePackage = it.packagePrefix ?: return@mapNotNull null
-        SubModuleClassLoader(modulePackage, it.classLoader)
-      }.sortedBy { -it.modulePackage.length }
+      val pluginClassLoader = plugin.pluginClassLoader
+      val subModulesClassLoaders = (plugin as? PluginMainDescriptor)?.contentModules?.mapNotNull {
+        SubModuleClassLoader(it.packagePrefix, it.pluginClassLoader ?: return@mapNotNull null)
+      }?.sortedBy { -(it.modulePackage?.length ?: 0) } ?: emptyList()
+      if (pluginClassLoader == null && subModulesClassLoaders.isEmpty()) return null
       return InspectionKtsPluginWithSubModulesClassLoader(pluginClassLoader, subModulesClassLoaders)
     }
   }
 
   override fun loadClass(name: String?): Class<*> {
-    val matchingModule = subModulesClassLoaders.find { name?.startsWith(it.modulePackage) ?: false }
+    val matchingModule = subModulesClassLoaders.find { module ->
+      val modulePackage = module.modulePackage ?: return@find false
+      name?.startsWith(modulePackage) ?: false
+    }
     if (matchingModule != null) {
       try {
         return matchingModule.classLoader.loadClass(name)
       }
-      catch (_ : ClassNotFoundException) {
+      catch (_: ClassNotFoundException) {
       }
     }
-    return mainPluginClassLoader.loadClass(name)
+    mainPluginClassLoader?.let {
+      try {
+        return it.loadClass(name)
+      }
+      catch (_: ClassNotFoundException) {
+      }
+    }
+    for (subModule in subModulesClassLoaders) {
+      if (subModule == matchingModule) continue
+      try {
+        return subModule.classLoader.loadClass(name)
+      }
+      catch (_: ClassNotFoundException) {
+      }
+    }
+    throw ClassNotFoundException(name)
   }
 }
