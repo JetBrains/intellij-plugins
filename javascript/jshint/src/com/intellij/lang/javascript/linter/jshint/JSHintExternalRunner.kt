@@ -2,6 +2,8 @@ package com.intellij.lang.javascript.linter.jshint
 
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.process.CapturingProcessRunner
+import com.intellij.execution.process.ProcessHandler
+import com.intellij.execution.process.ProcessOutput
 import com.intellij.javascript.nodejs.execution.NodeTargetRun
 import com.intellij.javascript.nodejs.execution.NodeTargetRunOptions
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter
@@ -15,6 +17,7 @@ import com.intellij.lang.javascript.linter.jshint.config.JSHintConfigFileUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.colors.EditorColorsScheme
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.IOException
@@ -134,7 +137,7 @@ internal class JSHintExternalRunner {
       throw ExecutionException(JSHintBundle.message("jshint.inspection.message.file.content.not.written"), e)
     }
 
-    val output = CapturingProcessRunner(processHandler).runProcess(TIMEOUT.inWholeMilliseconds.toInt(), true)
+    val output = captureOutput(processHandler)
 
     // Check for execution errors
     when {
@@ -151,6 +154,17 @@ internal class JSHintExternalRunner {
     }
 
     return JSHintResultParser.parse(output.stdout)
+  }
+
+  private fun captureOutput(processHandler: ProcessHandler): ProcessOutput {
+    val runner = CapturingProcessRunner(processHandler)
+    val progress = ProgressManager.getGlobalProgressIndicator()
+    return if (progress != null) {
+      runner.runProcess(progress, TIMEOUT.inWholeMilliseconds.toInt(), true)
+    }
+    else {
+      runner.runProcess(TIMEOUT.inWholeMilliseconds.toInt(), true)
+    }
   }
 
   class JSHintAnnotationResult(
