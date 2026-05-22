@@ -634,11 +634,11 @@
     <action icon="AllIcons.General.Warning" id="TfInitRequiredAction" class="org.intellij.terraform.config.actions.TfInitRequiredAction"/>
 
     <action id="NewTerraformFile" class="org.intellij.terraform.config.actions.TfCreateFileFromTemplateAction"
-            icon="org.intellij.terraform.TerraformIcons.Terraform">
+            icon="AllIcons.FileTypes.Terraform">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewWebDevelopment"/>
     </action>
 
-    <group id="TfTools" popup="true" icon="org.intellij.terraform.TerraformIcons.Terraform"
+    <group id="TfTools" popup="true" icon="AllIcons.FileTypes.Terraform"
            class="org.intellij.terraform.config.actions.TfToolsActionGroup">
       <action id="TfInitAction" class="org.intellij.terraform.config.actions.TfInitAction"/>
       <action id="TfFmtFileAction" class="org.intellij.terraform.config.actions.TfFmtFileAction">

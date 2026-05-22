@@ -158,7 +158,73 @@ internal class TfTestCompletionTest : CompletionTestCase() {
     """.trimIndent(), "primary_web_host", "primary_web_endpoint", "primary_web_internet_host")
   }
 
+  fun testVariablesBlockPropertiesCompletion() {
+    addTerraformVariables()
+
+    doBasicCompletionTest("""
+      variables {
+        <caret>
+      }
+    """.trimIndent(), "region", "instance_count", "tags")
+
+    doBasicCompletionTest("""
+      run "create_test_infrastructure" {
+        variables {
+          instance_count = 1
+          <caret>
+        }
+      }
+    """.trimIndent(), Matcher.and(Matcher.all("region", "tags"), Matcher.not("instance_count", "undeclared")))
+  }
+
+  fun testVariablesCompletionBasedOnModuleSource() {
+    addTerraformVariables()
+    addCredentialsModuleVariables()
+
+    doBasicCompletionTest("""
+      run "credentials" {
+        module {
+          source = "./credentials"
+        }
+
+        variables {
+          <caret>
+        }
+      }
+    """.trimIndent(), Matcher.and(Matcher.all("access_key", "secret_key"),
+                                  Matcher.not("region", "instance_count", "tags"))
+    )
+  }
+
   companion object {
     private val TfTestRootBlockKeywords: List<String> = TfTestRootBlocks.map { it.name }
+  }
+
+  private fun addTerraformVariables() {
+    myFixture.addFileToProject("variables.tf", """
+      variable "region" {
+        type = string
+      }
+      
+      variable "instance_count" {
+        type = number
+      }
+
+      variable "tags" {
+        type = map(string)
+      }
+    """.trimIndent())
+  }
+
+  private fun addCredentialsModuleVariables() {
+    myFixture.addFileToProject("credentials/variables.tf", """
+      variable "access_key" {
+        type = string
+      }
+
+      variable "secret_key" {
+        type = string
+      }
+    """.trimIndent())
   }
 }
