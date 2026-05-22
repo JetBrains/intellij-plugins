@@ -30,8 +30,8 @@
   </extensions>
   <extensions defaultExtensionNs="org.intellij">
     <qodana.externalToolsConfigurationProvider implementation="org.jetbrains.qodana.cpp.QodanaRadlerScopeLimitator"/>
-    <qodana.workflowExtension implementation="org.jetbrains.qodana.cpp.QodanaCppWorkflow"/>
-    <qodana.projectLoaderExtension implementation="org.jetbrains.qodana.cpp.QodanaCppProjectLoaderExtension" />
+    <qodana.workflowExtension implementation="org.jetbrains.qodana.cpp.QodanaLogCppAnalysisScope"/>
+    <qodana.workflowExtension implementation="org.jetbrains.qodana.cpp.QodanaCppProjectLoaderExtension" />
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <activityTracker implementation="org.jetbrains.qodana.cpp.QodanaCppProjectAwaiter"/>

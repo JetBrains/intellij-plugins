@@ -12,6 +12,6 @@
     <registryKey defaultValue="10" description="Timeout in minutes for Qodana Rust project configuration" key="qd.rust.configuration.timeout.minutes"/>
   </extensions>
   <extensions defaultExtensionNs="org.intellij">
-    <qodana.workflowExtension implementation="org.intellij.qodana.rust.QodanaRustWorkflow"/>
+    <qodana.workflowExtension implementation="org.intellij.qodana.rust.QodanaLogRustAnalysisScope"/>
   </extensions>
 </idea-plugin>

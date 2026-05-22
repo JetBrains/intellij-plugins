@@ -10,7 +10,7 @@
     <projectDescriber implementation="org.jetbrains.qodana.php.PhpInterpreterProjectDescriber"/>
     <projectDescriber implementation="org.jetbrains.qodana.php.PhpComposerProjectDescriber"/>
     <qodanaScriptFactory implementation="org.jetbrains.qodana.php.PhpMigrationScriptFactory"/>
-    <workflowExtension implementation="org.jetbrains.qodana.php.QodanaPhpConfigApplier"/>
+    <workflowExtension implementation="org.jetbrains.qodana.php.QodanaUpdatePhpLanguageLevel"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.php.PhpGlobalOutputConsumer"/>
     <qodanaYamlItemProvider implementation="org.jetbrains.qodana.php.QodanaYamlPhpLanguageLevelItemProvider"/>
     <reportMetadataArtifact implementation="org.jetbrains.qodana.php.PhpUnitCoverageReportMetadataArtifact"/>

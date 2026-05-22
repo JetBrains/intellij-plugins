@@ -1,5 +1,5 @@
 <idea-plugin>
   <extensions defaultExtensionNs="org.intellij.qodana">
-    <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.inspections.injections.CodeInjectionManager"/>
+    <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.inspections.injections.QodanaDisableHtmlInJsInjections"/>
   </extensions>
 </idea-plugin>

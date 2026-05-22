@@ -2,26 +2,25 @@ package org.jetbrains.qodana.jvm.java
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.ui.configuration.SdkLookup
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.PlatformUtils
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.withTimeout
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
-import java.nio.file.InvalidPathException
-import java.nio.file.Path
 import kotlin.time.Duration.Companion.minutes
 
 private val LOG = logger<QodanaConfigJdkService>()
 private val QODANA_JDK_TIMEOUT = 5.minutes
 
+/**
+ * Service responsible for managing and configuring the JDK for Qodana.
+ * Ensures that JDK specified in the Qodana configuration `projectJDK` is resolved and available.
+ */
 @Service
 class QodanaConfigJdkService {
-  val deferredSdk: CompletableDeferred<Sdk?> = CompletableDeferred()
+  private val deferredSdk: CompletableDeferred<Sdk?> = CompletableDeferred()
 
   init {
     if (!PlatformUtils.isQodana()) {
@@ -48,19 +47,7 @@ class QodanaConfigJdkService {
 
   private fun setupSdk(jdkName: String) {
     LOG.info("Setting up JDK '$jdkName' from Qodana config")
-    SdkLookup
-      .newLookupBuilder()
-      .withSdkName(jdkName)
-      .withSdkType(JavaSdk.getInstance())
-      .withSdkHomeFilter { homePath ->
-        try {
-          val path = Path.of(homePath)
-          JdkUtil.checkForJdk(path) && JdkUtil.checkForJre(path)
-        }
-        catch (_: InvalidPathException) {
-          false
-        }
-      }
+    buildJavaSdkLookup(jdkName)
       .onSdkResolved { sdk ->
         if (sdk == null) {
           deferredSdk.completeExceptionally(

@@ -338,9 +338,6 @@
     <extensionPoint name="scopeExtender"
                     interface="org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender"
                     dynamic="true"/>
-    <extensionPoint name="projectLoaderExtension"
-                    interface="org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaProjectLoaderExtension"
-                    dynamic="true"/>
     <extensionPoint name="dynamicInspectionsInitializer"
                     interface="org.jetbrains.qodana.util.DynamicInspectionInitializer"
                     dynamic="true"/>
@@ -362,9 +359,8 @@
     <globalOutputConsumer implementation="org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.OpenGrepGlobalInspectionOutputConsumer"/>
 
     <workflowExtension
-      implementation="org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector$NotificationWorkflowExtension"/>
+      implementation="org.jetbrains.qodana.staticAnalysis.sarif.notifications.QodanaConfigureNotificationCollector"/>
     <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.stat.InspectionStatisticsLogger"/>
-    <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.profile.ProfileDescriptionWriter"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.github.SetupGitHubActionsProviderFactory"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.gitlab.SetupGitLabCIProviderFactory"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.teamcity.SetupTeamcityDslProviderFactory"/>

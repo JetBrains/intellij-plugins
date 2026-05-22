@@ -19,12 +19,12 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 
 
-class QodanaMavenReimporter : QodanaWorkflowExtension {
+class QodanaReimportMavenProjects : QodanaWorkflowExtension {
   companion object {
-    val LOG = Logger.getInstance(QodanaMavenReimporter::class.java)
+    val LOG = Logger.getInstance(QodanaReimportMavenProjects::class.java)
   }
 
-  override suspend fun afterConfiguration(config: QodanaConfig, project: Project) {
+  override suspend fun configureForQodana(config: QodanaConfig, project: Project) {
     val forceReimport = java.lang.Boolean.getBoolean("qodana.trigger.maven.import")
     if (MavenSimpleProjectComponent.isNormalProjectInHeadless() && !forceReimport) {
       return
@@ -36,7 +36,7 @@ class QodanaMavenReimporter : QodanaWorkflowExtension {
     val alreadyImported = project.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) == true
 
     if (!alreadyImported && !mavenProjects.isEmpty()) {
-        reimportMavenProjects(mavenProjects, project, projectsManager)
+      reimportMavenProjects(mavenProjects, project, projectsManager)
     }
     else {
       if (forceReimport) {
@@ -51,7 +51,8 @@ class QodanaMavenReimporter : QodanaWorkflowExtension {
           else {
             LOG.info("Consider projects as reimported")
           }
-        } else {
+        }
+        else {
           reimportMavenProjects(mavenProjects, project, projectsManager)
         }
       }
@@ -65,7 +66,6 @@ class QodanaMavenReimporter : QodanaWorkflowExtension {
     futureDumb.await()
     LOG.info("Now running in smart mode")
   }
-
 
   private suspend fun reimportMavenProjects(
     mavenProjects: List<MavenProject>,

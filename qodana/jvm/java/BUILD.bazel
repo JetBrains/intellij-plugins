@@ -1,3 +1,9 @@
+### auto-generated section `iml intellij.qodana.jvm.java` start
+exports_files([
+  "intellij.qodana.jvm.java.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.qodana.jvm.java` end
+
 ### auto-generated section `build intellij.qodana.jvm.java` start
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
@@ -21,6 +27,8 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/ide-core-impl",
+    "@community//platform/ide-core",
     "@community//platform/lang-core",
     "@community//platform/lang-impl",
     "@community//platform/execution",
@@ -60,6 +68,8 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/ide-core-impl",
+    "@community//platform/ide-core",
     "@community//platform/lang-core",
     "@community//platform/lang-impl",
     "@community//platform/execution",

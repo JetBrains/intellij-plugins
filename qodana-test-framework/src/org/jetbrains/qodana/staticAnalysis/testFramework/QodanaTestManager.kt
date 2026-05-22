@@ -38,7 +38,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProf
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.PreconfiguredRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider
 import org.jetbrains.qodana.staticAnalysis.sarif.SARIF_AUTOMATION_GUID_PROPERTY
-import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.StringWriter
 import java.nio.file.Path
@@ -49,12 +48,14 @@ import kotlin.io.path.readText
 class QodanaTestManager {
   private lateinit var testData: TestData
 
+  private val beforeAnalysisActions: MutableList<suspend (QodanaConfig, Project) -> Unit> = mutableListOf()
+
   class TestData(
     val project: Project,
     val testRootDisposable: Disposable,
     val projectPath: Path,
     val outputPath: Path,
-    val getTestDataPath: (String) -> Path
+    val getTestDataPath: (String) -> Path,
   )
 
   private var qodanaApp: QodanaInspectionApplication? = null
@@ -126,10 +127,12 @@ class QodanaTestManager {
     )
   }
 
-  fun updateQodanaConfig(projectPath: Path,
-                         outputPath: Path,
-                         configured: (config: QodanaConfig) -> QodanaConfig)
-  : Pair<QodanaConfig, QodanaInspectionApplication> {
+  fun updateQodanaConfig(
+    projectPath: Path,
+    outputPath: Path,
+    configured: (config: QodanaConfig) -> QodanaConfig,
+  )
+    : Pair<QodanaConfig, QodanaInspectionApplication> {
     qodanaConfig = configured(qodanaConfig).copy(
       projectPath = projectPath,
       outPath = outputPath
@@ -143,6 +146,10 @@ class QodanaTestManager {
     qodanaApp = QodanaInspectionApplication(qodanaConfig, api)
   }
 
+  fun addBeforeAnalysisAction(action: suspend (QodanaConfig, Project) -> Unit) {
+    beforeAnalysisActions.add(action)
+  }
+
   fun runAnalysis(project: Project, messageReporter: QodanaMessageReporter = QodanaMessageReporter.DEFAULT): SarifReport {
     return ProgressManager.getInstance().runProcess(
       Computable { runBlockingCancellable { doRunAnalysis(project, messageReporter) } },
@@ -152,7 +159,7 @@ class QodanaTestManager {
 
   private suspend fun doRunAnalysis(project: Project, messageReporter: QodanaMessageReporter): SarifReport {
     return coroutineScope {
-      QodanaWorkflowExtension.callAfterConfiguration(qodanaConfig, project)
+      beforeAnalysisActions.forEach { it(qodanaConfig, project) }
       val app = qodanaApp!!
       val loadedProfile = loadInspectionProfile(project)
       val runner = app.constructQodanaRunner(
@@ -175,7 +182,7 @@ class QodanaTestManager {
     }
   }
 
-  fun getProjectMetadataJson() : String {
+  fun getProjectMetadataJson(): String {
     return qodanaConfig.outPath.resolve("projectStructure/projectMetadata.json").readText()
   }
 
@@ -190,10 +197,12 @@ class QodanaTestManager {
     val sortedMainResults = sarifRun.results.distinct().sortedWith(comparator)
 
     val sanityResultsKey = "qodana.sanity.results"
-    val sortedSanityResults = sarifRun.properties!![sanityResultsKey]?.let { SarifUtil.readResultsFromObject(it) }?.distinct()?.sortedWith(comparator)
+    val sortedSanityResults =
+      sarifRun.properties!![sanityResultsKey]?.let { SarifUtil.readResultsFromObject(it) }?.distinct()?.sortedWith(comparator)
 
     val promoResultsKey = "qodana.promo.results"
-    val sortedPromoResults = sarifRun.properties!![promoResultsKey]?.let { SarifUtil.readResultsFromObject(it) }?.distinct()?.sortedWith(comparator)
+    val sortedPromoResults =
+      sarifRun.properties!![promoResultsKey]?.let { SarifUtil.readResultsFromObject(it) }?.distinct()?.sortedWith(comparator)
 
     val run = Run().withResults(sortedMainResults).withAutomationDetails(sarifRun.automationDetails)
 

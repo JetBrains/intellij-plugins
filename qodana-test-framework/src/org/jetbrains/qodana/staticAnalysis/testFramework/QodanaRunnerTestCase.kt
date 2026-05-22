@@ -16,6 +16,7 @@ import com.intellij.testFramework.JavaPsiTestCase
 import com.jetbrains.qodana.sarif.model.Result
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
+import com.intellij.openapi.project.Project
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.junit.runner.RunWith
@@ -94,6 +95,10 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
 
   fun runAnalysis() {
     manager.runAnalysis(project)
+  }
+
+  fun runBeforeAnalysis(action: suspend (QodanaConfig, Project) -> Unit) {
+    manager.addBeforeAnalysisAction(action)
   }
 
   @Suppress("RAW_RUN_BLOCKING")

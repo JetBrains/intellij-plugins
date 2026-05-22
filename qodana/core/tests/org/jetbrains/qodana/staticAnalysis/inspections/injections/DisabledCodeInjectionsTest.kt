@@ -10,6 +10,9 @@ class DisabledCodeInjectionsTest: QodanaRunnerTestCase() {
 
   @Test
   fun `html in js strings disabled`(): Unit = runBlocking {
+    runBeforeAnalysis { config, project ->
+      QodanaDisableHtmlInJsInjections().configureForQodana(config, project)
+    }
     runAnalysis()
     assertSarifResults()
   }

@@ -8,7 +8,6 @@ import com.intellij.ide.CommandLineInspectionProgressReporter
 import com.intellij.ide.CommandLineInspectionProjectAsyncConfigurator
 import com.intellij.ide.CommandLineInspectionProjectConfigurator
 import com.intellij.ide.impl.OpenProjectTask
-import com.intellij.ide.impl.OpenProjectTaskBuilder
 import com.intellij.ide.impl.PatchProjectUtil
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
@@ -17,9 +16,9 @@ import com.intellij.openapi.application.WriteIntentReadAction
 import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
@@ -48,6 +47,9 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsCollector.QodanaActivityKind
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
+import org.jetbrains.qodana.staticAnalysis.workflow.callQodanaWorkflowExtensions
+import org.jetbrains.qodana.staticAnalysis.workflow.callQodanaWorkflowExtensionsSequentially
+import org.jetbrains.qodana.staticAnalysis.workflow.appendBeforeOpen
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.nio.file.Path
 import java.util.function.Predicate
@@ -60,36 +62,10 @@ val DISABLE_PROJECT_IMPORTS: Key<Boolean> = Key.create("qodana.skip.project.impo
 private const val LOG_CONFIGURATION_ACTIVITIES_PERIOD_MINUTES = "qodana.log.configuration.period.minutes"
 private val LOG = logger<QodanaProjectLoader>()
 
-/**
- * Extension point for customizing [QodanaProjectLoader].
- */
-interface QodanaProjectLoaderExtension {
-  companion object {
-    val EP_NAME: ExtensionPointName<QodanaProjectLoaderExtension> =
-      ExtensionPointName<QodanaProjectLoaderExtension>("org.intellij.qodana.projectLoaderExtension")
-
-    val buildProjectOpenTask: OpenProjectTaskBuilder.() -> Unit = {
-      EP_NAME.extensionList.forEach { it.buildProjectOpenTask.invoke(this) }
-    }
-  }
-
-  /**
-   * Called before the project is opened. Extensions can clean up stale IDE configuration (e.g., `.idea` state)
-   * that would interfere with Qodana settings from `qodana.yaml`.
-   */
-  fun prepareProjectDirectory(projectPath: Path) {}
-
-  /**
-   * Modify a [OpenProjectTask] used to open a project during [QodanaProjectLoader.openProjectManually] or
-   * [QodanaProjectLoader.openProjectAutomatically].
-   */
-  val buildProjectOpenTask: OpenProjectTaskBuilder.() -> Unit
-}
-
 class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   suspend fun openProject(config: QodanaConfig): Project {
     verifyConfig(config)
-    QodanaWorkflowExtension.callBeforeProjectOpened(config)
+    callQodanaWorkflowExtensions(QodanaWorkflowExtension::beforeProjectOpened, config)
 
     reporter.reportMessageNoLineBreak(1, InspectionsBundle.message("inspection.application.opening.project"))
     val project = doOpen(config)
@@ -104,7 +80,8 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
       tryConvertProject(config.projectPath)
       if (config.rootJavaProjects.isEmpty()) {
         openProjectAutomatically(config)
-      } else {
+      }
+      else {
         openProjectManually(config)
       }
     }
@@ -122,42 +99,47 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   }
 
   private suspend fun openProjectManually(config: QodanaConfig): Project {
-    QodanaProjectLoaderExtension.EP_NAME.extensionList.forEach { it.prepareProjectDirectory(config.projectPath) }
-    val options = OpenProjectTask {
-      beforeOpen = { project ->
-        project.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, true)
-        project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
-        true
-      }
-      QodanaProjectLoaderExtension.buildProjectOpenTask(this)
-    }
+    val options = buildOpenProjectTask(config, isManualOpen = true)
     val project = ProjectManagerEx.getInstanceEx().openProjectAsync(config.projectPath, options) ?: throw QodanaException(
       InspectionsBundle.message("inspection.application.unable.open.project")
     )
     doConfigure(project)
     if (!project.isProjectImportsProhibited()) {
-      QodanaWorkflowExtension.callManualProjectsImport(config, project)
+      callQodanaWorkflowExtensions(QodanaWorkflowExtension::manualProjectsImport, project)
     }
     return project
   }
 
   private suspend fun openProjectAutomatically(config: QodanaConfig): Project {
-    QodanaProjectLoaderExtension.EP_NAME.extensionList.forEach { it.prepareProjectDirectory(config.projectPath) }
-    val openedProject = ProjectUtil.openOrImportAsync(
+    val project = ProjectUtil.openOrImportAsync(
       file = config.projectPath,
-      options = OpenProjectTask {
-        QodanaProjectLoaderExtension.buildProjectOpenTask(this)
-      }
+      options = buildOpenProjectTask(config, isManualOpen = false)
     ) ?: throw QodanaException(InspectionsBundle.message("inspection.application.unable.open.project"))
 
-    doConfigure(openedProject)
-    if (isOpenedByPlatformProcessor(openedProject) && !openedProject.isProjectImportsProhibited()) {
-      QodanaWorkflowExtension.callAutomaticProjectsImport(config, openedProject)
+    doConfigure(project)
+    if (isOpenedByPlatformProcessor(project) && !project.isProjectImportsProhibited()) {
+      callQodanaWorkflowExtensions(QodanaWorkflowExtension::automaticProjectsImport, project)
     }
-    return openedProject
+    return project
   }
 
   private fun Project.isProjectImportsProhibited() = this.getUserData(DISABLE_PROJECT_IMPORTS) == true
+
+  private fun buildOpenProjectTask(config: QodanaConfig, isManualOpen: Boolean): OpenProjectTask {
+    return OpenProjectTask builder@{
+      runBlockingCancellable {
+        callQodanaWorkflowExtensionsSequentially(QodanaWorkflowExtension::configureProjectOpening, config, this@builder)
+      }
+
+      if (isManualOpen) {
+        appendBeforeOpen { project ->
+          project.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, true)
+          project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
+          true
+        }
+      }
+    }
+  }
 
   suspend fun configureProjectWithConfigurators(config: QodanaConfig, project: Project) {
     runConfigurators(config, project)
@@ -167,8 +149,11 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   suspend fun configureProject(config: QodanaConfig, project: Project) {
     runActivityWithTiming(QodanaActivityKind.PROJECT_CONFIGURATION) {
       doConfigure(project)
-      LOG.info("Configured project")
-      QodanaWorkflowExtension.callAfterConfiguration(config, project)
+      LOG.info("Project configured")
+      callQodanaWorkflowExtensions(QodanaWorkflowExtension::configureForQodana, config, project)
+      doConfigure(project)
+      LOG.info("Qodana configurations applied")
+      callQodanaWorkflowExtensions(QodanaWorkflowExtension::afterConfiguration, config, project)
     }
   }
 
@@ -180,7 +165,8 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
     runApplicableConfigurators(config.projectPath) { ctx ->
       if (this is CommandLineInspectionProjectAsyncConfigurator) {
         configureProjectAsync(project, ctx)
-      } else {
+      }
+      else {
         // In tests, we're on EDT with write-intent, in prod we're on Dispatchers.Default without any lock
         // The go configurator wants to run blocking code via invokeAndWait.
         // In tests, we have to call blockingContext in the current (=EDT) thread else we deadlock,
@@ -208,7 +194,8 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
 
     if (ApplicationManager.getApplication().isUnitTestMode) { // should throw away
       blockOn(EmptyCoroutineContext) { PatchProjectUtil.patchProject(project) }
-    } else {
+    }
+    else {
       blockOn(StaticAnalysisDispatchers.UI) { PatchProjectUtil.patchProject(project) }
     }
   }
@@ -243,14 +230,14 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   }
 
   suspend fun closeProject(config: QodanaConfig, project: Project) {
-    QodanaWorkflowExtension.callBeforeProjectClose(project)
+    callQodanaWorkflowExtensions(QodanaWorkflowExtension::beforeProjectClose, project)
     val service = serviceAsync<ProjectManager>()
     blockOn(StaticAnalysisDispatchers.UI) {
       WriteIntentReadAction.run {
         service.closeAndDispose(project)
       }
     }
-    QodanaWorkflowExtension.callAfterProjectClosed(config)
+    callQodanaWorkflowExtensions(QodanaWorkflowExtension::afterProjectClosed, config)
   }
 
   fun dumpThreadsAfterConfiguration() {
@@ -297,7 +284,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
 
   private inline fun runApplicableConfigurators(
     projectPath: Path,
-    f: CommandLineInspectionProjectConfigurator.(CommandLineInspectionProjectConfigurator.ConfiguratorContext) -> Unit
+    f: CommandLineInspectionProjectConfigurator.(CommandLineInspectionProjectConfigurator.ConfiguratorContext) -> Unit,
   ) {
     val ctx = object : CommandLineInspectionProjectConfigurator.ConfiguratorContext {
       override fun getLogger(): CommandLineInspectionProgressReporter = reporter

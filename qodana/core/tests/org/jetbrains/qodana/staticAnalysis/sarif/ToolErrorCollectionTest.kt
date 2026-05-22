@@ -23,6 +23,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.FULL_SARIF_REPORT_NAME
 import org.jetbrains.qodana.staticAnalysis.profile.SanityInspectionGroup
+import org.jetbrains.qodana.staticAnalysis.sarif.notifications.QodanaConfigureNotificationCollector
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Test
@@ -90,6 +91,7 @@ class ToolErrorCollectionTest : QodanaRunnerTestCase() {
       )
     }
 
+    runBeforeAnalysis{ config, project -> QodanaConfigureNotificationCollector().configureForQodana(config, project) }
     LoggedErrorProcessor.executeWith<Nothing>(TestAwareErrorProcessor, ::runAnalysis)
 
     val actual = SarifUtil.readReport(qodanaConfig.outPath / FULL_SARIF_REPORT_NAME)

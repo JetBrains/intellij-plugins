@@ -8,15 +8,13 @@ import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
-import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 
-class ProfileDescriptionWriter : QodanaWorkflowExtension {
-  override val requireHeadless: Boolean = true
+class ProfileDescriptionWriter {
 
-  override suspend fun beforeLaunch(context: QodanaRunContext) {
+  suspend fun writeInspectionsReport(context: QodanaRunContext) {
     val converter = ReportConverterUtil.getReportConverter("json")
 
     if (converter == null) {

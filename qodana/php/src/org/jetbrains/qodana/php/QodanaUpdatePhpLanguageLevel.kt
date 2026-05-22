@@ -7,14 +7,14 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 
-private val LOG = logger<QodanaPhpConfigApplier>()
+private val LOG = logger<QodanaUpdatePhpLanguageLevel>()
 
-class QodanaPhpConfigApplier : QodanaWorkflowExtension {
-  override suspend fun afterConfiguration(config: QodanaConfig, project: Project) {
+class QodanaUpdatePhpLanguageLevel : QodanaWorkflowExtension {
+  override suspend fun configureForQodana(config: QodanaConfig, project: Project) {
     val phpLanguageLevel = config.php
-      ?.version
-      ?.takeUnless(String::isBlank)
-      ?.toPhpLanguageLevel() ?: return
+                             ?.version
+                             ?.takeUnless(String::isBlank)
+                             ?.toPhpLanguageLevel() ?: return
 
     LOG.info("Applying ${phpLanguageLevel.presentableName} as PHP Language Level")
     edtWriteAction {
