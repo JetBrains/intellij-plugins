@@ -144,8 +144,8 @@ class PlatformioConfigurable : SearchableConfigurable {
   }
 
   companion object {
-    const val ID: String = "PlatformIO.settings"
-    private const val PIO_LOCATION_KEY = "$ID.platformio.location"
+    const val ID: String = "clion.platformio.config"
+    private const val PIO_LOCATION_KEY = "PlatformIO.settings.platformio.location"
     private const val PIO_VENV_FOLDER = "penv"
 
     private val PIO_EXECUTABLE = "pio" + if (SystemInfo.isWindows) { ".exe" } else { "" }
