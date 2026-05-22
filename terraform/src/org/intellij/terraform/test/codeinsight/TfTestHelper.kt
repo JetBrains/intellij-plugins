@@ -40,13 +40,7 @@ internal object TfTestHelper {
   }
 
   private fun getVariablesOfTfModule(block: HCLBlock): Map<String, PropertyOrBlockType> {
-    val file = block.containingFile.originalFile
-    if (isTfMockPsiFile(file)) return emptyMap()
-
-    val moduleBlock = findDeclaredModuleInRunBlock(block)
-    val computedModule = if (moduleBlock != null) Module.getAsModuleBlock(moduleBlock) else block.getTerraformModule()
-
-    return computedModule?.getAllVariables()
+    return getVariablesModule(block)?.getAllVariables()
       .orEmpty()
       .distinctBy { it.name }
       .associate { variable ->
@@ -60,5 +54,13 @@ internal object TfTestHelper {
       return null
 
     return runBlock.`object`?.blockList?.firstOrNull { TfTestPsiPatterns.TfModuleBlock.accepts(it) }
+  }
+
+  fun getVariablesModule(block: HCLBlock): Module? {
+    val file = block.containingFile.originalFile
+    if (isTfMockPsiFile(file)) return null
+
+    val moduleBlock = findDeclaredModuleInRunBlock(block)
+    return if (moduleBlock != null) Module.getAsModuleBlock(moduleBlock) else block.getTerraformModule()
   }
 }

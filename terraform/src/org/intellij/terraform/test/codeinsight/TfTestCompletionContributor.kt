@@ -6,14 +6,14 @@ import com.intellij.openapi.project.DumbAware
 import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclBlockTypeNameCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
-import org.intellij.terraform.test.patterns.TfTestPsiPatterns
+import org.intellij.terraform.test.patterns.TfTestPsiPatterns.TfTestFile
 
 internal class TfTestCompletionContributor : CompletionContributor(), DumbAware {
   init {
-    HclRootBlockCompletionProvider.registerTo(this, TfTestPsiPatterns.TfTestFile)
-    HclBlockPropertiesCompletionProvider.registerTo(this, TfTestPsiPatterns.TfTestFile)
+    HclRootBlockCompletionProvider.registerTo(this, TfTestFile)
+    HclBlockPropertiesCompletionProvider.registerTo(this, TfTestFile)
 
-    HclBlockTypeNameCompletionProvider.registerTo(this, TfTestPsiPatterns.TfTestFile)
-    TfTestObjectKeyCompletionProvider.registerTo(this, TfTestPsiPatterns.TfTestFile)
+    HclBlockTypeNameCompletionProvider.registerTo(this, TfTestFile)
+    TfTestObjectKeyCompletionProvider.registerTo(this, TfTestFile)
   }
 }
