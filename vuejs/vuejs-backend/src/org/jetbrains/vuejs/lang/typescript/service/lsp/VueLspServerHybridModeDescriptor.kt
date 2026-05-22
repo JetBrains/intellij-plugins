@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.lsp
 
+import com.intellij.javascript.nodejs.execution.NodeTargetRun
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptServiceCompletionSupport
 import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
 import com.intellij.lang.typescript.lsp.getTypeScriptServiceDirectory
@@ -96,8 +97,9 @@ class VueLspServerHybridModeDescriptor(
     )
   }
 
-  override fun getArgumentsForLspServer(): List<String> {
+  override fun getArgumentsForLspServer(target: NodeTargetRun): List<String> {
     val tsPath = runReadActionBlocking { getTypeScriptServiceDirectory(project) }
-    return listOf("--tsdk=$tsPath") + super.getArgumentsForLspServer()
+    val targetPath = convertLocalPathToTargetPath(target, tsPath)
+    return listOf("--tsdk=$targetPath") + super.getArgumentsForLspServer(target)
   }
 }
