@@ -35,10 +35,10 @@ import org.intellij.terraform.terragrunt.isTerragruntPsiFile
 import org.intellij.terraform.terragrunt.isTerragruntStack
 import org.intellij.terraform.terragrunt.model.StackRootBlocks
 import org.intellij.terraform.terragrunt.model.TerragruntBlocksAndAttributes
-import org.intellij.terraform.test.TfMockRootBlocks
-import org.intellij.terraform.test.TfTestRootBlocks
 import org.intellij.terraform.test.isTfMockPsiFile
 import org.intellij.terraform.test.isTfTestPsiFile
+import org.intellij.terraform.test.model.TfMockRootBlocks
+import org.intellij.terraform.test.model.TfTestRootBlocks
 
 internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionParameters>() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {

@@ -1,5 +1,5 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.intellij.terraform.test
+package org.intellij.terraform.test.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
@@ -12,6 +12,9 @@ import org.intellij.terraform.hcl.codeinsight.HclObjectKeyCompletionProvider
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
+import org.intellij.terraform.test.HCL_MOCK_DATA_IDENTIFIER
+import org.intellij.terraform.test.HCL_MOCK_RESOURCE_IDENTIFIER
+import org.intellij.terraform.test.patterns.TfTestPsiPatterns
 
 internal object TfTestObjectKeyCompletionProvider : HclObjectKeyCompletionProvider() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {

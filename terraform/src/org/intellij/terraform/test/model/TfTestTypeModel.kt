@@ -1,5 +1,5 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.intellij.terraform.test
+package org.intellij.terraform.test.model
 
 import org.intellij.terraform.config.Constants.HCL_ASSERT_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONDITION_IDENTIFIER
@@ -14,6 +14,18 @@ import org.intellij.terraform.config.model.SimpleValueHint
 import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.toMap
+import org.intellij.terraform.test.HCL_DEFAULTS_IDENTIFIER
+import org.intellij.terraform.test.HCL_MOCK_DATA_IDENTIFIER
+import org.intellij.terraform.test.HCL_MOCK_PROVIDER_IDENTIFIER
+import org.intellij.terraform.test.HCL_MOCK_RESOURCE_IDENTIFIER
+import org.intellij.terraform.test.HCL_OVERRIDE_DATA_IDENTIFIER
+import org.intellij.terraform.test.HCL_OVERRIDE_MODULE_IDENTIFIER
+import org.intellij.terraform.test.HCL_OVERRIDE_RESOURCE_IDENTIFIER
+import org.intellij.terraform.test.HCL_PARALLEL_IDENTIFIER
+import org.intellij.terraform.test.HCL_RUN_IDENTIFIER
+import org.intellij.terraform.test.HCL_TARGET_IDENTIFIER
+import org.intellij.terraform.test.HCL_TEST_IDENTIFIER
+import org.intellij.terraform.test.HCL_VARIABLES_IDENTIFIER
 
 private val ParallelProperty: PropertyType = PropertyType(HCL_PARALLEL_IDENTIFIER, Types.Boolean)
 

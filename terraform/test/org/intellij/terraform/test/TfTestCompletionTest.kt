@@ -11,6 +11,7 @@ import org.intellij.terraform.stack.TfDeployCompletionTest.Companion.assertNoTfD
 import org.intellij.terraform.terragrunt.TerragruntCompletionTest.Companion.assertNoStackBlocks
 import org.intellij.terraform.terragrunt.TerragruntCompletionTest.Companion.assertNoTerragruntBlocks
 import org.intellij.terraform.terragrunt.doAutoInsertCompletionTest
+import org.intellij.terraform.test.model.TfTestRootBlocks
 
 internal class TfTestCompletionTest : CompletionTestCase() {
   override fun getFileName(): String = "main.$TF_TEST_EXTENSION"

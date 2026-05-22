@@ -43,7 +43,7 @@ import org.intellij.terraform.stack.deployment.TfDeployHelper
 import org.intellij.terraform.terragrunt.TerragruntFileType
 import org.intellij.terraform.terragrunt.codeinsight.TerragruntUnitHelper
 import org.intellij.terraform.test.TfTestFileType
-import org.intellij.terraform.test.TfTestHelper
+import org.intellij.terraform.test.codeinsight.TfTestHelper
 import java.util.Locale
 
 internal object TfModelHelper {
