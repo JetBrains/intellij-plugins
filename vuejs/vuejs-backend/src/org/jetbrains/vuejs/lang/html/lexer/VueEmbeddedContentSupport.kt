@@ -170,11 +170,6 @@ internal class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbe
     }
   }
 
-  class VueScriptEmbedmentInfo(private val elementType: IElementType) : HtmlEmbedmentInfo {
-    override fun getElementType(): IElementType = elementType
-    override fun createHighlightingLexer(): Lexer = error("VueEmbeddedContentSupport did something unexpected")
-  }
-
   private fun findEmbedmentInfo(language: String?): HtmlEmbedmentInfo = when (language) {
     null -> {
       HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(languageLevel.dialect)
