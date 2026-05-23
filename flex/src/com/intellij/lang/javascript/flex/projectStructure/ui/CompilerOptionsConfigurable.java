@@ -470,7 +470,7 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
 
     myIncludeInSWCPanel.setVisible(myMode == Mode.BC && myNature.isLib());
     myIncludeInSWCField.getTextField().setEditable(false);
-    myIncludeInSWCField.setButtonIcon(AllIcons.Actions.ShowViewer);
+    myIncludeInSWCField.setButtonIcon(AllIcons.Actions.Preview);
     myIncludeInSWCField.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
@@ -1212,7 +1212,7 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
       myProject = project;
 
       getTextField().setEditable(false);
-      setButtonIcon(AllIcons.Actions.ShowViewer);
+      setButtonIcon(AllIcons.Actions.Preview);
 
       addActionListener(new ActionListener() {
         @Override

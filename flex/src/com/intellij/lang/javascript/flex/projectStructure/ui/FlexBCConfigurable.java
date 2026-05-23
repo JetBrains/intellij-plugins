@@ -518,7 +518,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
   private void initRLMControls() {
     myRLMTextWithBrowse.getTextField().setEditable(false);
-    myRLMTextWithBrowse.setButtonIcon(AllIcons.Actions.ShowViewer);
+    myRLMTextWithBrowse.setButtonIcon(AllIcons.Actions.Preview);
     myRLMTextWithBrowse.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
@@ -533,7 +533,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
   private void initCSSControls() {
     myCssFilesTextWithBrowse.getTextField().setEditable(false);
-    myCssFilesTextWithBrowse.setButtonIcon(AllIcons.Actions.ShowViewer);
+    myCssFilesTextWithBrowse.setButtonIcon(AllIcons.Actions.Preview);
     myCssFilesTextWithBrowse.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
