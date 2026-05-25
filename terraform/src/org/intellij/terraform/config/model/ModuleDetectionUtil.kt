@@ -194,8 +194,7 @@ object ModuleDetectionUtil {
   }
 
   private fun doGetAsModuleBlock(moduleBlock: HCLBlock): CachedValueProvider.Result<Result<Module>> {
-    val name = moduleBlock.getNameElementUnquoted(1)
-               ?: return CachedValueProvider.Result(Result.Failure(HCLBundle.message("module.detection.error.name.not.defined")), moduleBlock)
+    val name = moduleBlock.getNameElementUnquoted(1) ?: ""
     val sourceVal = moduleBlock.`object`?.findProperty("source")?.value
                     ?: return CachedValueProvider.Result(Result.Failure(HCLBundle.message("module.detection.error.no.source.property")), moduleBlock)
 
