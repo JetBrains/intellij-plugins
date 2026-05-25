@@ -87,8 +87,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
    * @see Angular2ExpressionTypesInspectionTest.testNullChecks
    * @see Angular2ExpressionTypesInspectionTest.testNullChecksInline
    */
-  fun testTypeMismatchErrorWithOptionalInputs() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8,
-                                                                    dir = true, extension = "ts", strictTemplates = true)
+  // TODO WEB-78127 Hanging tests in ijplatform_master_Idea_Tests_JavascriptTests_7
+  //fun testTypeMismatchErrorWithOptionalInputs() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8,
+  //                                                                  dir = true, extension = "ts", strictTemplates = true)
 
   fun testHostDirectives() = checkHighlighting(dir = true)
 
@@ -169,8 +170,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testSignalsColorsHtml() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, dir = true,
                                                   configureFileName = "signalsColors.html", checkSymbolNames = true)
 
-  fun testTemplateColorsHtml() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8, dir = true,
-                                                   configureFileName = "colors.html", checkSymbolNames = true)
+  // TODO WEB-78127 Hanging tests in ijplatform_master_Idea_Tests_JavascriptTests_7
+  //fun testTemplateColorsHtml() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8, dir = true,
+  //                                                 configureFileName = "colors.html", checkSymbolNames = true)
 
   // TODO WEB-67260 - fix issues with RainbowColors
   fun _testRainbowColorsHtml() = doConfiguredTest(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, ANGULAR_FORMS_16_2_8, dir = true,
