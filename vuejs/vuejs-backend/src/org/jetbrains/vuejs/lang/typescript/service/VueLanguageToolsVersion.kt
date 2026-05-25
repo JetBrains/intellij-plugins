@@ -9,7 +9,7 @@ enum class VueLanguageToolsVersion(
   @param:NlsSafe
   val versionString: String,
 ) {
-  DEFAULT("3.3.1"),
+  DEFAULT("3.3.2"),
   LEGACY("3.0.10"),
 
   ;
