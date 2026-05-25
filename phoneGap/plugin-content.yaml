@@ -1,3 +1,9 @@
+- name: lib/modules/intellij.phoneGap.core.jar
+  contentModules:
+  - name: intellij.phoneGap.core
+- name: lib/modules/intellij.phoneGap.javascript.jar
+  contentModules:
+  - name: intellij.phoneGap.javascript
 - name: lib/phoneGap.jar
   modules:
   - name: intellij.phoneGap

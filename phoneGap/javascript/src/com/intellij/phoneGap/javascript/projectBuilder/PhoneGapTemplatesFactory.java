@@ -1,4 +1,5 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package com.intellij.phoneGap.javascript.projectBuilder;
 
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.module.WebModuleBuilder;

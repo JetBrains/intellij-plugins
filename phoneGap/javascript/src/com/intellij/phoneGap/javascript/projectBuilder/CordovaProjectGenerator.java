@@ -1,7 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
+package com.intellij.phoneGap.javascript.projectBuilder;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
@@ -22,6 +21,7 @@ import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.phoneGap.javascript.JavaScriptPhoneGapBundle;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ThreeState;
 import icons.PhoneGapIcons;
@@ -77,7 +77,7 @@ public final class CordovaProjectGenerator extends NpmPackageProjectGenerator {
 
   @Override
   public @Nls @NotNull String getName() {
-    return PhoneGapBundle.message("phonegap.app.name");
+    return JavaScriptPhoneGapBundle.message("phonegap.app.name");
   }
 
   @Override
@@ -97,7 +97,7 @@ public final class CordovaProjectGenerator extends NpmPackageProjectGenerator {
 
   @Override
   protected @NotNull String presentablePackageName() {
-    return PhoneGapBundle.message("phonegap.conf.name");
+    return JavaScriptPhoneGapBundle.message("phonegap.conf.name");
   }
 
   private static void createRunConfiguration(@NotNull Project project) {
@@ -107,7 +107,7 @@ public final class CordovaProjectGenerator extends NpmPackageProjectGenerator {
     String name = isIonicPath(path) == ThreeState.YES ? "Ionic" : "Cordova";
     RunnerAndConfigurationSettings configuration =
       runManager.createConfiguration(
-        PhoneGapBundle.message("phonegap.project.template.create.run.configuration.title", name),
+        JavaScriptPhoneGapBundle.message("phonegap.project.template.create.run.configuration.title", name),
         configurationType.getConfigurationFactories()[0]);
 
     PhoneGapRunConfiguration runConfiguration = (PhoneGapRunConfiguration)configuration.getConfiguration();
@@ -147,6 +147,6 @@ public final class CordovaProjectGenerator extends NpmPackageProjectGenerator {
 
   @Override
   public @NlsContexts.DetailedDescription String getDescription() {
-    return PhoneGapBundle.message("phonegap.app.name.description");
+    return JavaScriptPhoneGapBundle.message("phonegap.app.name.description");
   }
 }

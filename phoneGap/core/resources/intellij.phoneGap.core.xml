@@ -1,38 +1,13 @@
 <idea-plugin>
-  <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
-  <name>Cordova</name>
-  <vendor>JetBrains</vendor>
-  <category>JavaScript Frameworks and Tools</category>
-  <resource-bundle>messages.PhoneGapBundle</resource-bundle>
-
-  <description><![CDATA[  
-Adds Cordova support to IntelliJ-based IDEs. Here's what's included in this support:
-<ul>
-<li>Cordova project template </li>
-<li>Run/debug configuration template </li>
-<li>Code completion for event types </li>
-<li>PhoneGap support </li>
-</ul>
-<p>For more information, check out our <a href="https://www.jetbrains.com/help/webstorm/using-phonegap-cordova.html">documentation</a>.
-    ]]></description>
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <module name="intellij.javascript.backend"/>
-    <module name="intellij.javascript.parser"/>
     <module name="intellij.regexp"/>
     <module name="intellij.xml.psi"/>
   </dependencies>
   <!-- endregion -->
-  i
-  <depends>com.intellij.modules.lang</depends>
-  <depends>com.intellij.modules.regexp</depends>
-
-  <depends optional="true" config-file="javascript-plugin.xml">JavaScript</depends>
-
   <extensions defaultExtensionNs="com.intellij">
     <configurationType
       implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapConfigurationType"/>
-    <!--<programRunner implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunner"/>-->
 
     <applicationService serviceImplementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings"/>
 
@@ -46,6 +21,4 @@ Adds Cordova support to IntelliJ-based IDEs. Here's what's included in this supp
                        key="notification.group.phonegap.notification"/>
     <applicationSettings service="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings"/>
   </extensions>
-
-
 </idea-plugin>

@@ -28,7 +28,7 @@
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.execution" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.phoneGap" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.phoneGap.core" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.phoneGap" />
+  <component name="TestModuleProperties" production-module="intellij.phoneGap.core" />
 </module>

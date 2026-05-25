@@ -1,4 +1,5 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.javascriptDependency.codecompletion;
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package com.intellij.phoneGap.javascript.completion;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.intellij.codeInsight.completion.CompletionContributor;
@@ -13,11 +14,6 @@ import com.intellij.patterns.PlatformPatterns;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * PhoneGapCodeCompletion.java
- * <p/>
- * Created by Masahiro Suzuka on 2014/05/25.
- */
 public final class PhoneGapEventLiteralsCompletionContributor extends CompletionContributor {
 
   public PhoneGapEventLiteralsCompletionContributor() {

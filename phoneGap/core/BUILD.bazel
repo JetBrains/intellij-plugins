@@ -1,0 +1,75 @@
+### auto-generated section `build intellij.phoneGap.core` start
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+jvm_library(
+  name = "core",
+  module_name = "intellij.phoneGap.core",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
+  deps = [
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/indexing-api:indexing",
+    "@community//jps/model-api:model",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-core",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "@community//platform/projectModel-api:projectModel",
+    "@community//RegExpSupport:regexp",
+    "@community//xml/xml-psi-api:psi",
+    "@community//libraries/gson",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/core-ui",
+    "@community//platform/core-impl",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/ide-core",
+    "@community//platform/util/jdom",
+    "@community//platform/util:util-ui",
+    "@community//platform/execution",
+  ]
+)
+
+jvm_library(
+  name = "core_test_lib",
+  testonly = True,
+  module_name = "intellij.phoneGap.core",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":core",
+    "@community//platform/analysis-api:analysis_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/editor-ui-api:editor-ui_test_lib",
+    "@community//platform/indexing-api:indexing_test_lib",
+    "@community//jps/model-api:model_test_lib",
+    "@community//platform/lang-api:lang_test_lib",
+    "@community//platform/lang-core:lang-core_test_lib",
+    "@community//platform/lang-impl:lang-impl_test_lib",
+    "@community//platform/execution-impl:execution-impl_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//RegExpSupport:regexp_test_lib",
+    "@community//xml/xml-psi-api:psi_test_lib",
+    "@community//libraries/gson:gson_test_lib",
+    "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/core-ui:core-ui_test_lib",
+    "@community//platform/core-impl:core-impl_test_lib",
+    "@community//platform/platform-util-io:ide-util-io_test_lib",
+    "@community//platform/ide-core:ide-core_test_lib",
+    "@community//platform/util/jdom:jdom_test_lib",
+    "@community//platform/util:util-ui_test_lib",
+    "@community//platform/execution:execution_test_lib",
+  ]
+)
+### auto-generated section `build intellij.phoneGap.core` end
+
+### auto-generated section `iml intellij.phoneGap.core` start
+exports_files([
+  "intellij.phoneGap.core.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.phoneGap.core` end

@@ -1,0 +1,19 @@
+<idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.javascript.backend"/>
+    <module name="intellij.javascript.parser"/>
+    <module name="intellij.phoneGap.core"/>
+  </dependencies>
+  <!-- endregion -->
+  <extensions defaultExtensionNs="com.intellij">
+    <completion.contributor language="JavaScript"
+                            implementationClass="com.intellij.phoneGap.javascript.completion.PhoneGapEventLiteralsCompletionContributor"/>
+    <projectConfigurable id="settings.phonegap" bundle="messages.JavaScriptPhoneGapBundle"
+                         key="phonegap.conf.name"
+                         parentId="Settings.JavaScript"
+                         instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.PhoneGapConfigurable" order="last"/>
+    <projectTemplatesFactory implementation="com.intellij.phoneGap.javascript.projectBuilder.PhoneGapTemplatesFactory"/>
+    <directoryProjectGenerator implementation="com.intellij.phoneGap.javascript.projectBuilder.CordovaProjectGenerator"/>
+  </extensions>
+</idea-plugin>
