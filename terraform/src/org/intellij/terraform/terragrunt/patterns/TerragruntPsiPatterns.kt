@@ -5,13 +5,10 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiElementPattern.Capture
 import com.intellij.patterns.PsiFilePattern
 import com.intellij.patterns.StandardPatterns
-import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.Constants.HCL_STACK_IDENTIFIER
 import org.intellij.terraform.config.patterns.TfPsiPatterns.createBlockPattern
 import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLFile
-import org.intellij.terraform.hil.patterns.HILPatterns.getMethodIdentifierPattern
 import org.intellij.terraform.terragrunt.TERRAGRUNT_DEPENDENCY
 import org.intellij.terraform.terragrunt.TERRAGRUNT_FEATURE
 import org.intellij.terraform.terragrunt.TERRAGRUNT_GENERATE
@@ -25,11 +22,6 @@ internal object TerragruntPsiPatterns {
     .withFileType(StandardPatterns.instanceOf(TerragruntFileType::class.java))
 
   val StackFile: PsiFilePattern.Capture<HCLFile> = TerragruntFile.withName(StandardPatterns.string().equalTo(TERRAGRUNT_STACK_FILE))
-
-  val TerragruntMethodPosition: Capture<PsiElement> = getMethodIdentifierPattern(
-    PlatformPatterns.psiElement(HCLElement::class.java)
-      .inFile(TerragruntFile)
-  )
 
   val IncludeBlockPattern: Capture<HCLBlock> = getTerragruntRootBlockPattern(TERRAGRUNT_INCLUDE)
   val DependencyBlockPattern: Capture<HCLBlock> = getTerragruntRootBlockPattern(TERRAGRUNT_DEPENDENCY)

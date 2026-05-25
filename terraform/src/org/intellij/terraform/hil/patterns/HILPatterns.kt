@@ -42,7 +42,7 @@ internal object HILPatterns {
     }
   }
 
-  val TfMethodPosition: Capture<PsiElement> = getMethodIdentifierPattern(
+  val TfMethodPosition: Capture<PsiElement> = getExpressionPattern(
     PlatformPatterns.psiElement(HCLElement::class.java)
       .inFile(TfPsiPatterns.TerraformConfigFile)
       .without(InVariableBlock)
@@ -117,7 +117,7 @@ internal object HILPatterns {
       }
     })
 
-  fun getMethodIdentifierPattern(hclHostPattern: ElementPattern<HCLElement>): Capture<PsiElement> =
+  fun getExpressionPattern(hclHostPattern: ElementPattern<HCLElement>): Capture<PsiElement> =
     PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
       .withParent(PlatformPatterns.psiElement(Identifier::class.java)
                     .with(NotBlockIdentifier)

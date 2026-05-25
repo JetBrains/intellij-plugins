@@ -94,8 +94,8 @@ import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.EncryptionMetho
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.IlseOpenTofuEncryptionMethod
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.IlseOpenTofuKeyProvider
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.KeyProviderBlock
-import org.intellij.terraform.terragrunt.codeinsight.TerragruntMethodCompletionProvider
-import org.intellij.terraform.terragrunt.patterns.TerragruntPsiPatterns.TerragruntMethodPosition
+import org.intellij.terraform.terragrunt.codeinsight.TerragruntExpressionCompletionProvider
+import org.intellij.terraform.test.codeinsight.TfTestExpressionCompletionProvider
 
 open class HilCompletionContributor : CompletionContributor(), DumbAware {
   private val scopeProviders = listOf(
@@ -115,8 +115,10 @@ open class HilCompletionContributor : CompletionContributor(), DumbAware {
 
   init {
     extend(CompletionType.BASIC, TfMethodPosition, MethodsCompletionProvider)
-    extend(CompletionType.BASIC, TerragruntMethodPosition, TerragruntMethodCompletionProvider)
     extend(CompletionType.BASIC, TfMethodPosition, ResourceTypesCompletionProvider)
+
+    TfTestExpressionCompletionProvider.registerTo(this)
+    TerragruntExpressionCompletionProvider.registerTo(this)
 
     extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
       .withParent(Identifier::class.java).withSuperParent(2, IlseFromKnownScope), KnownScopeCompletionProvider())

@@ -93,6 +93,18 @@ internal class TfTestCompletionTest : CompletionTestCase() {
     """.trimIndent(), "apply", "plan")
   }
 
+  fun testFunctionCompletionInTfTest() {
+    doBasicCompletionTest("""
+      run "create_test_infrastructure" {
+        assert {
+          condition = <caret>
+        }
+      }
+    """.trimIndent(), Matcher.and(Matcher.all("abs", "concat", "length", "provider::aws::arn_parse"),
+                                  Matcher.not("var", "path", "module"))
+    )
+  }
+
   fun testBlockTypeNameCompletion() {
     val providers = getPartialMatcher(TfConfigCompletionTest.collectBundledProviders())
     doBasicCompletionTest("provider <caret>", providers)
