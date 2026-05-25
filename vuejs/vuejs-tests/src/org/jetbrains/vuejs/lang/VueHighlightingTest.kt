@@ -24,6 +24,7 @@ import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUti
 import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspection
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
+import org.jetbrains.vuejs.VueCompilerOptions
 import org.jetbrains.vuejs.VueLspConfigurator
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
@@ -818,6 +819,13 @@ abstract class VueHighlightingTestBase(
         JSUnusedLocalSymbolsInspection::class.java,
         JSUnusedGlobalSymbolsInspection::class.java,
       ),
+      configurators = listOf(
+        VueTsConfigFile(
+          vueCompilerOptions = VueCompilerOptions(
+            inferTemplateDollarRefs = true,
+          ),
+        ),
+      ),
     )
   }
 
@@ -827,6 +835,13 @@ abstract class VueHighlightingTestBase(
       inspections = listOf(
         JSUnusedLocalSymbolsInspection::class.java,
         JSUnusedGlobalSymbolsInspection::class.java,
+      ),
+      configurators = listOf(
+        VueTsConfigFile(
+          vueCompilerOptions = VueCompilerOptions(
+            inferTemplateDollarRefs = true,
+          ),
+        ),
       ),
     )
   }

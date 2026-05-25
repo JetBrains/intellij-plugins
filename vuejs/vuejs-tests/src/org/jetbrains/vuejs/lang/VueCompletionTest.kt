@@ -12,6 +12,7 @@ import com.intellij.openapi.util.RecursionManager
 import com.intellij.polySymbols.testFramework.and
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
+import org.jetbrains.vuejs.VueCompilerOptions
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
@@ -1016,7 +1017,15 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testScriptSetupRef() =
-    doLookupTest()
+    doLookupTest(
+      configurators = listOf(
+        VueTsConfigFile(
+          vueCompilerOptions = VueCompilerOptions(
+            inferTemplateDollarRefs = true,
+          ),
+        ),
+      ),
+    )
 
   @Test
   fun testScriptSetupGlobals() =
