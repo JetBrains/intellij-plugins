@@ -23,7 +23,7 @@ export function createReverseMapper(
     const sourceRange = toSourceRange(ts, language, sourceFile, generatedRange)
 
     if (!sourceRange)
-      return undefined
+      return "no-mapping"
 
     return {
       sourceRange,
