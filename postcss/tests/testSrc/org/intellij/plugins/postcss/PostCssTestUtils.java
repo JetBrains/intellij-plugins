@@ -21,7 +21,7 @@ public final class PostCssTestUtils {
 
   @NotNull
   public static String getRootTestDataPath() {
-    return FileUtil.join(IdeaTestExecutionPolicy.getHomePathWithPolicy(), "contrib", "postcss", "testData");
+    return FileUtil.join(IdeaTestExecutionPolicy.getHomePathWithPolicy(), "contrib", "postcss", "tests", "testData");
   }
 
   /**
