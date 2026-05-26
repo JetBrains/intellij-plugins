@@ -67,8 +67,6 @@ jvm_library(
         "@community//platform/editor-ui-ex:editor-ex_test_lib",
         "//contrib/terraform:terraform_test_lib",
         "@community//platform/util:util-ui_test_lib",
-        "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
         "@community//platform/lang-api:lang_test_lib",
         "@community//platform/util/jdom:jdom_test_lib",

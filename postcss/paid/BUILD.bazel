@@ -105,11 +105,7 @@ jvm_library(
         "@community//platform/util:util-ui_test_lib",
         "//plugins/css/common/psi:psi_test_lib",
         "//plugins/css/backend:backend_test_lib",
-        "@community//plugins/copyright",
-        "@community//plugins/copyright:copyright_test_lib",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
-        "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
     ],
 )
 ### auto-generated section `build intellij.postcss.paid` end
