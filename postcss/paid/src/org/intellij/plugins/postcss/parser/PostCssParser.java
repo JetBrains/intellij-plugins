@@ -218,7 +218,7 @@ public final class PostCssParser extends CssParser2 {
     if (getTokenType() == PostCssTokenTypes.AMPERSAND) {
       return parseRuleset();
     }
-    //// Lookahead
+    // Lookahead
     final PsiBuilder.Marker position = myBuilder.mark();
     IElementType prevTokenType = null;
     boolean first = true;
@@ -253,7 +253,6 @@ public final class PostCssParser extends CssParser2 {
             position.rollbackTo();
             return parseRuleset();
           }
-          first = false;
           continue;
         }
         else {
