@@ -1,50 +1,17 @@
-<idea-plugin package="org.intellij.plugins.postcss">
-  <name>PostCSS</name>
-  <id>org.intellij.plugins.postcss</id>
-  <category>Style Sheets</category>
-  <vendor>JetBrains</vendor>
-  <description><![CDATA[
-    <p>Provides <a href="https://postcss.org/">PostCSS</a> support to all JetBrains IDEs that
-    <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.
-
-    <h2>Features</h2>
-    <ul>
-      <li>Option to enable PostCSS support for <code>.css</code> files
-      <li>Syntax highlighting, code completion, and other code insight features for the following PostCSS plugins:
-      <ul>
-        <li><a href="https://github.com/postcss/postcss-custom-properties">postcss-custom-properties</a><
-        <li><a href="https://github.com/pascalduez/postcss-apply">postcss-apply</a></li>
-        <li><a href="https://github.com/postcss/postcss-custom-media">postcss-custom-media</a></li>
-        <li><a href="https://github.com/postcss/postcss-media-minmax">postcss-media-minmax</a></li>
-        <li><a href="https://github.com/postcss/postcss-custom-selectors">postcss-custom-selectors</a></li>
-        <li><a href="https://github.com/jonathantneal/postcss-nesting">postcss-nesting</a></li>
-        <li><a href="https://github.com/postcss/postcss-nested">postcss-nested</a></li>
-      </ul>
-    </ul>
-
-    <h2>Getting started</h2>
-    <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
-      For WebStorm, you can check out this section in the
-      <a href="https://www.jetbrains.com/help/webstorm/style-sheets.html">documentation</a>.
-  ]]></description>
-
+<idea-plugin visibility="internal">
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <plugin id="com.intellij.modules.lang"/>
     <plugin id="com.intellij.modules.ultimate"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="com.intellij.css"/>
     <module name="intellij.css.analysis"/>
     <module name="intellij.css.backend"/>
+    <module name="intellij.css.common"/>
+    <module name="intellij.css.common.psi"/>
+    <module name="intellij.css.psi"/>
     <module name="intellij.platform.structureView.impl"/>
-    <!-- endregion -->
   </dependencies>
-
-  <content>
-    <module name="intellij.postcss.copyright"/>
-  </content>
-
+  <!-- endregion -->
   <extensions defaultExtensionNs="com.intellij">
-    <dependencySupport kind="javascript" coordinate="npm:postcss" displayName="PostCSS"/>
     <css.dialect implementation="org.intellij.plugins.postcss.PostCssDialect"/>
     <lang.substitutor language="CSS" implementationClass="org.intellij.plugins.postcss.PostCssLanguageSubstitutor"/>
     <embeddedTokenTypesProvider implementation="org.intellij.plugins.postcss.PostCssEmbeddedTokenTypesProvider"/>

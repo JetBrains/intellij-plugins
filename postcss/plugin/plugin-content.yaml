@@ -1,0 +1,9 @@
+- name: lib/modules/intellij.postcss.copyright.jar
+  contentModules:
+  - name: intellij.postcss.copyright
+- name: lib/modules/intellij.postcss.paid.jar
+  contentModules:
+  - name: intellij.postcss.paid
+- name: lib/postcss-plugin.jar
+  modules:
+  - name: intellij.postcss.plugin

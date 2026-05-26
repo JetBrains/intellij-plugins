@@ -79,7 +79,8 @@
     <orderEntry type="module" module-name="intellij.libraries.caffeine" />
     <orderEntry type="module" module-name="intellij.javascript.web" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols" />
-    <orderEntry type="module" module-name="intellij.postcss" />
+    <orderEntry type="module" module-name="intellij.postcss.plugin" />
+    <orderEntry type="module" module-name="intellij.postcss.paid" />
     <orderEntry type="module" module-name="intellij.platform.lsp.impl" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
     <orderEntry type="library" name="eclipse.lsp4j" level="project" />

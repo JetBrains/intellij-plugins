@@ -9,6 +9,7 @@ jvm_library(
   resources = glob(["vuejs-plugin/resources/**/*"]),
   resource_strip_prefix = "vuejs-plugin/resources",
   runtime_deps = [
+    "//contrib/postcss/plugin",
     "@lib//:kotlin-stdlib",
     "//contrib/vuejs/vuejs-backend:backend",
     "//contrib/vuejs/vuejs-common:common",
@@ -28,6 +29,7 @@ jvm_library(
   srcs = glob([], allow_empty = True),
   runtime_deps = [
     ":vuejs-plugin",
+    "//contrib/postcss/plugin:plugin_test_lib",
     "//contrib/vuejs/vuejs-backend:backend_test_lib",
     "//contrib/vuejs/vuejs-common:common_test_lib",
     "//contrib/vuejs/vuejs-copyright:copyright_test_lib",

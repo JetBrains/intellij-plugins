@@ -19,6 +19,7 @@
     <module name="intellij.json"/>
     <module name="intellij.libraries.commons.text"/>
     <module name="intellij.platform.backend"/>
+    <module name="intellij.postcss.paid"/>
     <module name="intellij.spellchecker"/>
     <module name="intellij.vuejs.common"/>
     <module name="intellij.vuejs.free"/>

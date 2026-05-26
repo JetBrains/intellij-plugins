@@ -1,0 +1,31 @@
+### auto-generated section `build intellij.postcss.plugin` start
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+jvm_library(
+  name = "plugin",
+  module_name = "intellij.postcss.plugin",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
+  runtime_deps = ["//plugins/css/plugin"]
+)
+
+jvm_library(
+  name = "plugin_test_lib",
+  testonly = True,
+  module_name = "intellij.postcss.plugin",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":plugin",
+    "//plugins/css/plugin:plugin_test_lib",
+  ]
+)
+### auto-generated section `build intellij.postcss.plugin` end
+
+### auto-generated section `iml intellij.postcss.plugin` start
+exports_files([
+  "intellij.postcss.plugin.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.postcss.plugin` end
