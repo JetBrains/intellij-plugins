@@ -17,12 +17,13 @@ import java.nio.file.Paths
 @RunWith(JUnit4::class)
 abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleTestCase() {
   private val testData: Path = Paths.get(PluginPathManager.getPluginHomePath("qodana"), "core", "test-data")
-  private val manager: QodanaTestManager = QodanaTestManager()
+  private lateinit var manager: QodanaTestManager
   private val outputBasePath: Path = FileUtil.generateRandomTemporaryPath().toPath()
   private val testDataBasePath: Path get() = Path.of(javaClass.simpleName, getTestName(true))
   protected lateinit var qodanaConfig: QodanaConfig
 
   override fun setUpProject() {
+    manager = QodanaTestManager()
     myProject = PlatformTestUtil.loadAndOpenProject(testData.resolve(javaClass.simpleName).resolve("sources"), testRootDisposable)
     val managerTestData = QodanaTestManager.TestData(
       myProject,
