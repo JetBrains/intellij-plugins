@@ -66,7 +66,8 @@ class SarifInspectionDescriptionLinkHandlerTest : QodanaPluginLightTestBase() {
       inspectionProfileManager.setCurrentProfile(previousProfile)
       inspectionProfileManager.deleteProfile(profile)
     }
-    inspectionFromPlatformWithDescription = profile.tools.asSequence().map { it.tool }.first { it.loadDescription() != null }
+    inspectionFromPlatformWithDescription =
+      profile.tools.asSequence().map { it.tool }.first { it.id == it.shortName && it.loadDescription() != null }
   }
 
   private val highlightedReportService: QodanaHighlightedReportService
