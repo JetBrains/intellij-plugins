@@ -77,18 +77,18 @@ class SarifInspectionDescriptionLinkHandlerTest : QodanaPluginLightTestBase() {
     get() = ImaginaryEditor(project, MockDocument())
 
   fun `test inspection available from platform get description from platform`() = runDispatchingOnUi {
-    val inspectionId = inspectionFromPlatformWithDescription.id
+    val inspectionShortName = inspectionFromPlatformWithDescription.shortName
     val expectedInspectionDescription = inspectionFromPlatformWithDescription.loadDescription()
 
     val reportDescriptor = SingleInspectionProblemReportDescriptor(
-      inspectionId = inspectionId,
+      inspectionId = inspectionShortName,
       markdownDescription = "instead of this must be loaded platform inspection description",
       textDescription = "instead of this must be loaded platform inspection description"
     )
     highlightedReportService.highlightReport(reportDescriptor)
     dispatchAllTasksOnUi()
 
-    assertThat(TooltipLinkHandlerEP.getDescription(SarifInspectionDescriptionLinkHandler.getLinkReferenceToInspection(inspectionId), editorMock))
+    assertThat(TooltipLinkHandlerEP.getDescription(SarifInspectionDescriptionLinkHandler.getLinkReferenceToInspection(inspectionShortName), editorMock))
       .isEqualTo(expectedInspectionDescription)
   }
 
@@ -210,20 +210,20 @@ class SarifInspectionDescriptionLinkHandlerTest : QodanaPluginLightTestBase() {
   }
 
   fun `test inspection from platform no description because no report is highlighted`() = runDispatchingOnUi {
-    val inspectionId = inspectionFromPlatformWithDescription.id
-    assertThat(TooltipLinkHandlerEP.getDescription(SarifInspectionDescriptionLinkHandler.getLinkReferenceToInspection(inspectionId), editorMock))
+    val inspectionShortName = inspectionFromPlatformWithDescription.shortName
+    assertThat(TooltipLinkHandlerEP.getDescription(SarifInspectionDescriptionLinkHandler.getLinkReferenceToInspection(inspectionShortName), editorMock))
       .isEqualTo(null)
   }
 
   fun `test inspection from platform no description during loading of report`() = runDispatchingOnUi {
-    val inspectionId = inspectionFromPlatformWithDescription.id
+    val inspectionShortName = inspectionFromPlatformWithDescription.shortName
 
     scope.launch(QodanaDispatchers.Default) {
       highlightedReportService.highlightReport(InfiniteLoadingReportDescriptorMock)
     }
     dispatchAllTasksOnUi()
 
-    assertThat(TooltipLinkHandlerEP.getDescription(SarifInspectionDescriptionLinkHandler.getLinkReferenceToInspection(inspectionId), editorMock))
+    assertThat(TooltipLinkHandlerEP.getDescription(SarifInspectionDescriptionLinkHandler.getLinkReferenceToInspection(inspectionShortName), editorMock))
       .isEqualTo(null)
   }
 }
