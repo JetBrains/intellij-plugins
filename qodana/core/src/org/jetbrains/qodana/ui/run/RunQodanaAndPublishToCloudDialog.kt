@@ -27,6 +27,9 @@ import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector
 import org.jetbrains.qodana.stats.SourceHighlight
 import org.jetbrains.qodana.stats.toStatsReportType
 import org.jetbrains.qodana.ui.ProjectVcsDataProviderImpl
+import org.jetbrains.qodana.ui.run.wizard.QODANA_RUN_WIZARD_DIALOG_HEIGHT
+import org.jetbrains.qodana.ui.run.wizard.QODANA_RUN_WIZARD_DIALOG_WIDTH
+import java.awt.Dimension
 import java.nio.file.Path
 import javax.swing.JComponent
 
@@ -50,6 +53,8 @@ class RunQodanaAndPublishToCloudDialog(project: Project, linked: LinkState.Linke
   }
 
   override fun createCenterPanel(): JComponent = localRunQodanaMainView(scope, viewModel.localRunQodanaViewModel, showCloudTokenField = false)
+
+  override fun getInitialSize(): Dimension = Dimension(QODANA_RUN_WIZARD_DIALOG_WIDTH, QODANA_RUN_WIZARD_DIALOG_HEIGHT)
 
   override fun doOKAction() {
     viewModel.launchAnalysisPublishAndHighlight()

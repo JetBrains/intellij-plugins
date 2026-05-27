@@ -27,6 +27,7 @@ class LinkedCloudReportDescriptor(
   private val project: Project,
   private val isUploadedFromIde: Boolean = false,
   private val doDownload: Boolean = true,
+  private val skipArtifactsDownload: Boolean = false,
 ) : ReportDescriptor {
   val projectId: String
     get() = linked.projectDataProvider.projectPrimaryData.id
@@ -50,7 +51,7 @@ class LinkedCloudReportDescriptor(
   }
 
   override suspend fun loadReport(project: Project): LoadedReport.Sarif? {
-    return QodanaReportDownloader.getInstance(project).getReport(linked.authorized, reportId, projectId, doDownload)
+    return QodanaReportDownloader.getInstance(project).getReport(linked.authorized, reportId, projectId, doDownload, skipArtifactsDownload)
   }
 
   private fun createBannerContentProviderFlow(): Flow<BannerContentProvider?> {

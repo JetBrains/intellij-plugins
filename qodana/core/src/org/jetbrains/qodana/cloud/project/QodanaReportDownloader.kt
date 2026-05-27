@@ -87,6 +87,7 @@ private sealed interface DownloaderRequest {
     val reportId: String,
     val projectId: String,
     val doDownload: Boolean,
+    val skipArtifactsDownload: Boolean,
     val progressReporter: ProgressReporter0? = null
   ) : DownloaderRequest {
     val loadedReportDeferred = CompletableDeferred<Deferred<LoadedReport.Sarif?>>()
@@ -181,8 +182,9 @@ internal class QodanaReportDownloader(private val project: Project, private val 
     reportId: String,
     projectId: String,
     doDownload: Boolean,
+    skipArtifactsDownload: Boolean = false,
   ): LoadedReport.Sarif? {
-    val request = DownloaderRequest.DownloadReport(authorized, reportId, projectId, doDownload, coroutineContext.progressReporter)
+    val request = DownloaderRequest.DownloadReport(authorized, reportId, projectId, doDownload, skipArtifactsDownload, coroutineContext.progressReporter)
     val loadedReport = try {
       downloadReportRequestsChannel.send(request)
       request.loadedReportDeferred.await()
@@ -260,8 +262,13 @@ internal class QodanaReportDownloader(private val project: Project, private val 
           if (report == null) {
             return@async null
           }
-          val artifacts = progressStep(1.0, QodanaBundle.message("progress.title.qodana.loading.coverage.data.from.cloud")) {
-            processDownloadReportArtifacts(request, reportsMapToUpdate.toMap())
+          val artifacts = if (request.skipArtifactsDownload) {
+            emptyMap()
+          }
+          else {
+            progressStep(1.0, QodanaBundle.message("progress.title.qodana.loading.coverage.data.from.cloud")) {
+              processDownloadReportArtifacts(request, reportsMapToUpdate.toMap())
+            }
           }
           LoadedReport.Sarif(report, AggregatedReportMetadata(artifacts), projectName)
         }

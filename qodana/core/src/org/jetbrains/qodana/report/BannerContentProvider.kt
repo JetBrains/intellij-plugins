@@ -5,13 +5,14 @@ import com.intellij.openapi.util.NlsContexts
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.stats.PanelActions
 import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector
 import org.jetbrains.qodana.stats.SetupCiDialogSource
+import org.jetbrains.qodana.ui.ci.QodanaCIConfigService
 import org.jetbrains.qodana.ui.ci.showSetupCIDialogOrWizardWithYaml
 
 class BannerContentProvider(
@@ -28,14 +29,17 @@ class BannerContentProvider(
       browserViewProviderFlow: Flow<BrowserViewProvider?>
     ): Flow<BannerContentProvider?> {
       val isBannerVisible = MutableStateFlow(true)
+      val presentCIFileFlow = QodanaCIConfigService.getInstance(project).presentCIFile
       return isBannerVisible.flatMapLatest { isVisible ->
         if (!isVisible) return@flatMapLatest flowOf(null)
 
-        browserViewProviderFlow.map { it?.let {
-          openBrowserAndSetupCIBanner(project, text, browserText, it, onClose = {
-            isBannerVisible.value = false
-          })
-        } }
+        combine(browserViewProviderFlow, presentCIFileFlow) { browserViewProvider, ciFile ->
+          browserViewProvider?.let {
+            openBrowserAndSetupCIBanner(project, text, browserText, it, showSetupCIAction = ciFile == null, onClose = {
+              isBannerVisible.value = false
+            })
+          }
+        }
       }
     }
 
@@ -44,6 +48,7 @@ class BannerContentProvider(
       @NlsContexts.Label text: String,
       @NlsContexts.LinkLabel browserText: String,
       browserViewProvider: BrowserViewProvider,
+      showSetupCIAction: Boolean,
       onClose: () -> Unit,
     ): BannerContentProvider {
       val openBrowserAction = Action(browserText) {
@@ -57,7 +62,8 @@ class BannerContentProvider(
         onClose.invoke()
         logCloseBannerStats(project)
       }
-      return BannerContentProvider(text, listOf(openBrowserAction, setupCIAction), onCloseWithStats)
+      val actions = listOfNotNull(openBrowserAction, setupCIAction.takeIf { showSetupCIAction })
+      return BannerContentProvider(text, actions, onCloseWithStats)
     }
   }
 

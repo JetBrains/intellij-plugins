@@ -38,7 +38,7 @@ class CloudReportDescriptorBuilder(
   suspend fun createPublishedReportDescriptor(sarifPath: Path): LinkedCloudReportDescriptor? {
     val reportId = getLatestReportId() ?: return null
     QodanaReportDownloader.getInstance(project).addPublishedReport(sarifPath, cloudProjectId, reportId)
-    return LinkedCloudReportDescriptor(linked, reportId, project)
+    return LinkedCloudReportDescriptor(linked, reportId, project, skipArtifactsDownload = true)
   }
 
   suspend fun getLatestReportId(): String? {
@@ -48,12 +48,12 @@ class CloudReportDescriptorBuilder(
         if (reportId == null) {
           getNoAnyRunsFoundNotification().notify(project)
         }
-        return reportId
+        reportId
       }
       is QDCloudResponse.Error -> {
         thisLogger().warn("Failed loading Qodana Cloud report", reportIdResponse.exception)
         reportIdResponse.getErrorNotification(QodanaBundle.message("notification.title.cloud.report.failed.load")).notify(project)
-        return null
+        null
       }
       null -> {
         null
