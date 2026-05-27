@@ -5,7 +5,7 @@ import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.execution.process.BaseOSProcessHandler;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessListener;
-import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.execution.process.ProcessOutputType;
 import com.intellij.flex.model.JpsFlexCompilerProjectExtension;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.CompilerOptionInfo;
@@ -944,7 +944,7 @@ public final class FlexCommonUtils {
       handler.addProcessListener(new ProcessListener() {
         @Override
         public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
-          if (outputType != ProcessOutputTypes.SYSTEM) {
+          if (!ProcessOutputType.isSystem(outputType)) {
             parseAirVersionFromAdtOutput(event.getText().trim(), versionRef);
           }
         }

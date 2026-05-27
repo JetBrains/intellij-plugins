@@ -11,6 +11,7 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.execution.process.ProcessOutputType;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -362,7 +363,7 @@ public final class PhoneGapCommandLine {
         if (outputType == ProcessOutputTypes.STDERR) {
           output.appendStderr(event.getText());
         }
-        else if (outputType != ProcessOutputTypes.SYSTEM) {
+        else if (!ProcessOutputType.isSystem(outputType)) {
           output.appendStdout(event.getText());
         }
       }
