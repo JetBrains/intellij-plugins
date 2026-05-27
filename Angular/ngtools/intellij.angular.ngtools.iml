@@ -16,7 +16,6 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework" />
     <orderEntry type="module" module-name="intellij.webstorm" />
     <orderEntry type="module" module-name="intellij.platform.commercial" />
-    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" />
     <orderEntry type="module" module-name="intellij.libraries.commons.compress" />
     <orderEntry type="module" module-name="intellij.libraries.gson" />
     <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
