@@ -22,6 +22,8 @@ import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.coverageStats
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.hasCoverageFiles
+import org.jetbrains.qodana.coverage.buildChangedLinesPayload
+import org.jetbrains.qodana.coverage.writeChangedLinesArtifact
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.CodeQualityMetrics
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.MetricAggregator
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.codeQualityMetrics
@@ -226,6 +228,11 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
       val stat = coverageStatistics.computeStat()
       if (!stat.isNullOrEmpty()) {
         sarifRun.coverageStats = stat.mapKeys { (k, _) -> k.prop }
+      }
+      val changedRanges = coverageStatistics.exposeChangedRanges()
+      if (changedRanges != null) {
+        val payload = buildChangedLinesPayload(changedRanges, config.projectPath)
+        writeChangedLinesArtifact(config.coverage.coveragePath, payload)
       }
     }
   }

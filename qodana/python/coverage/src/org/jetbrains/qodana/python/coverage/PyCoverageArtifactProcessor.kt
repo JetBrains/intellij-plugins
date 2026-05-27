@@ -23,7 +23,7 @@ class PyCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
         val suite = engine.createCoverageSuite(artifact.id, project, runner, dummyProvider, -1) ?: return@withContext null
         val coverageData = ProjectDataLoader.load(artifact.path) ?: return@withContext null
         suite.setCoverageData(coverageData)
-        remapCoverageFromCloud(CoverageSuitesBundle(suite))
+        remapCoverageFromCloud(CoverageSuitesBundle(suite), artifacts)
       }
     }
     return null

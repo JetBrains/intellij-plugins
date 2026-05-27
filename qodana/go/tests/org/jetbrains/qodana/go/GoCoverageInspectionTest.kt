@@ -77,7 +77,7 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
     assertFalse(data.classes.any { Path.of(it.key).startsWith(projectDir) })
     val suite = engine.createCoverageSuite("test", project, coverageRunner, dummyProvider, -1)!!
     suite.setCoverageData(data)
-    val bundle = remapCoverageFromCloud(CoverageSuitesBundle(suite))
+    val bundle = remapCoverageFromCloud(CoverageSuitesBundle(suite), emptyMap())
     val coverageData = bundle?.coverageData
     TestCase.assertNotNull(coverageData)
     UsefulTestCase.assertSize(2, coverageData!!.classes.entries)

@@ -370,6 +370,7 @@
     <projectDescriber implementation="org.jetbrains.qodana.staticAnalysis.projectDescription.SdksDescriber"/>
     <projectDescriber implementation="org.jetbrains.qodana.staticAnalysis.projectDescription.ModulesDescriber"/>
     <projectDescriber implementation="org.jetbrains.qodana.staticAnalysis.projectDescription.ProjectFingerprintDescriber"/>
+    <reportMetadataArtifact implementation="org.jetbrains.qodana.coverage.ChangedLinesReportMetadataArtifact"/>
     <inspectionProfileProvider implementation="org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmbeddedProfilesProvider"/>
     <inspectionProfileProvider implementation="org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaSingleInspectionProfileProvider"/>
     <inspectionProfileProvider implementation="org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmptyProfileProvider"/>

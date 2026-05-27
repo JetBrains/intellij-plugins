@@ -34,7 +34,7 @@ class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspect
     assertFalse(data.classes.any { Path.of(it.key).startsWith(projectDir) })
     val suite = engine.createCoverageSuite("test", project, coverageRunner, dummyProvider, -1)
     suite.setCoverageData(data)
-    val bundle = remapCoverageFromCloud(CoverageSuitesBundle(suite))
+    val bundle = remapCoverageFromCloud(CoverageSuitesBundle(suite), emptyMap())
     val coverageData = bundle?.coverageData
     assertNotNull(coverageData)
     assertSize(3, coverageData!!.classes.entries)

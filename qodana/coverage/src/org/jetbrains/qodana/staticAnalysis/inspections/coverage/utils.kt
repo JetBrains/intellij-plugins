@@ -35,6 +35,9 @@ import com.intellij.rt.coverage.data.ProjectData
 import com.intellij.rt.coverage.report.XMLProjectData
 import com.intellij.util.containers.ComparatorUtil.min
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.qodana.coverage.ChangedLinesMetaDataArtifact
+import org.jetbrains.qodana.coverage.readChangedLinesPayload
+import org.jetbrains.qodana.report.ReportMetadata
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_DATA
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import java.io.File
@@ -159,10 +162,54 @@ fun removePrefixFromCoverage(data: ProjectData, prefix: Path): ProjectData {
   return newData
 }
 
-fun remapCoverageFromCloud(bundle: CoverageSuitesBundle): CoverageSuitesBundle? {
+fun remapCoverageFromCloud(bundle: CoverageSuitesBundle, artifacts: Map<String, ReportMetadata>): CoverageSuitesBundle? {
   val projectDir = bundle.project.guessProjectDir() ?: return null
-  applyNewDataToBundle(bundle, remapDataToProjectDir(bundle.coverageData!!, projectDir))
+  val remapped = remapDataToProjectDir(bundle.coverageData!!, projectDir)
+  val filtered = (artifacts["changedLines"] as? ChangedLinesMetaDataArtifact)
+                   ?.let { filterByChangedLines(remapped, it, projectDir) }
+                 ?: remapped
+  applyNewDataToBundle(bundle, filtered)
   return bundle
+}
+
+/**
+ * Prune [data] to only the lines listed in the changed-lines artifact.
+ *
+ * The artifact stores project-relative paths, the [projectDir]`is used to resolve them in a project
+ */
+private fun filterByChangedLines(
+  data: ProjectData,
+  artifact: ChangedLinesMetaDataArtifact,
+  projectDir: VirtualFile,
+): ProjectData {
+  val payload = readChangedLinesPayload(artifact.path) ?: return data
+  if (payload.files.isEmpty()) return data
+
+  val keep = HashMap<String, Set<Int>>(payload.files.size)
+  for ((rel, lines) in payload.files) {
+    val resolved = projectDir.findFileByRelativePath(FileUtil.toSystemIndependentName(rel)) ?: continue
+    keep[resolved.path] = lines
+  }
+  if (keep.isEmpty()) return data
+  return filterClassLinesByAllowed(data, keep)
+}
+
+
+internal fun filterClassLinesByAllowed(data: ProjectData, allowed: Map<String, Set<Int>>): ProjectData {
+  val newData = ProjectData()
+  data.classes.forEach { (path, oldClass) ->
+    val allowedLines = allowed[path] ?: return@forEach
+    val newClass = newData.getOrCreateClassData(path)
+    @Suppress("UNCHECKED_CAST")
+    val oldLines = oldClass.lines as Array<LineData?>
+    val newLines = arrayOfNulls<LineData>(oldLines.size)
+    for (i in oldLines.indices) {
+      val ld = oldLines[i] ?: continue
+      if (ld.lineNumber in allowedLines) newLines[i] = ld
+    }
+    newClass.setLines(newLines)
+  }
+  return newData
 }
 
 fun reportProblemsNeeded(globalContext: QodanaGlobalInspectionContext): Boolean {
