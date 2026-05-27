@@ -5,7 +5,7 @@
     // "Node16" mode is needed to make sure that dynamic import() in standard17-plugin.ts stays import() and not compiled as require()
     "moduleResolution": "Node16",
     "strict": true,
-    "outDir": "bin",
+    "outDir": "../../../plugin-resources/languageService/eslint/bin",
     "sourceMap": true
   },
   "compileOnSave": false

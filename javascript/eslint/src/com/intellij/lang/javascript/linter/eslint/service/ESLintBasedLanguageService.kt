@@ -273,7 +273,7 @@ abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStore
       get() = JSPluginPathManager.getPluginResource(
         this.javaClass,
         "languageService/eslint",
-        if (AppMode.isRunningFromDevBuild()) "javascript/eslint" else "javascript/eslint/resources"
+        if (AppMode.isRunningFromDevBuild()) "javascript/eslint" else "javascript/eslint/plugin-resources"
       )
 
     override fun createState(): ESLintLanguageServiceInitialState {

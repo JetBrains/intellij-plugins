@@ -179,7 +179,7 @@ public final class EslintUtil {
   }
 
   /**
-   * Used in <code>languageService/eslint/src/eslint-plugin.ts</code> to check presence of the required plugin or parser.
+   * Used in <code>src-js/languageService/eslint/src/eslint-plugin.ts</code> to check presence of the required plugin or parser.
    * See <code>isFileKindAcceptedByConfig()</code> in that file. No checks are performed for <code>JavaScriptAndOther</code> kind.
    */
   public enum FileKind {
