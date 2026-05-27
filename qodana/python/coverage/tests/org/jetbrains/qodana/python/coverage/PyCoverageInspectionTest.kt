@@ -3,7 +3,6 @@ package org.jetbrains.qodana.python.coverage
 import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageFileProvider
 import com.intellij.coverage.CoverageRunner
-import com.intellij.coverage.CoverageSuitesBundle
 import com.intellij.python.pro.coverage.PyCoverageEngine
 import com.intellij.rt.coverage.util.ProjectDataLoader
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageInspectionTest
@@ -33,8 +32,7 @@ class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspect
     // assert that prefix was removed before storing the data
     assertFalse(data.classes.any { Path.of(it.key).startsWith(projectDir) })
     val suite = engine.createCoverageSuite("test", project, coverageRunner, dummyProvider, -1)
-    suite.setCoverageData(data)
-    val bundle = remapCoverageFromCloud(CoverageSuitesBundle(suite), emptyMap())
+    val bundle = remapCoverageFromCloud(suite, data, emptyMap())
     val coverageData = bundle?.coverageData
     assertNotNull(coverageData)
     assertSize(3, coverageData!!.classes.entries)

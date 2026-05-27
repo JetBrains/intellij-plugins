@@ -21,8 +21,7 @@ class JSCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
       return withContext(QodanaDispatchers.IO) {
         val suite = engine.createCoverageSuite(artifact.id, project, runner, dummyProvider, -1) ?: return@withContext null
         val coverageData = ProjectDataLoader.load(artifact.path) ?: return@withContext null
-        suite.setCoverageData(coverageData)
-        remapCoverageFromCloud(CoverageSuitesBundle(suite), artifacts)
+        remapCoverageFromCloud(suite, coverageData, artifacts)
       }
     }
     return null

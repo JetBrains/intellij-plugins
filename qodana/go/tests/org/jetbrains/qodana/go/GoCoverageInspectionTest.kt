@@ -7,7 +7,6 @@ import com.goide.sdk.GoSdkVersion
 import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageFileProvider
 import com.intellij.coverage.CoverageRunner
-import com.intellij.coverage.CoverageSuitesBundle
 import com.intellij.openapi.util.io.toCanonicalPath
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -76,8 +75,7 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
     // assert that prefix was removed before storing the data
     assertFalse(data.classes.any { Path.of(it.key).startsWith(projectDir) })
     val suite = engine.createCoverageSuite("test", project, coverageRunner, dummyProvider, -1)!!
-    suite.setCoverageData(data)
-    val bundle = remapCoverageFromCloud(CoverageSuitesBundle(suite), emptyMap())
+    val bundle = remapCoverageFromCloud(suite, data, emptyMap())
     val coverageData = bundle?.coverageData
     TestCase.assertNotNull(coverageData)
     UsefulTestCase.assertSize(2, coverageData!!.classes.entries)

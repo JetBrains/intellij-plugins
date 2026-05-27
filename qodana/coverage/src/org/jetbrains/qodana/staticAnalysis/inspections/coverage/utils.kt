@@ -162,14 +162,13 @@ fun removePrefixFromCoverage(data: ProjectData, prefix: Path): ProjectData {
   return newData
 }
 
-fun remapCoverageFromCloud(bundle: CoverageSuitesBundle, artifacts: Map<String, ReportMetadata>): CoverageSuitesBundle? {
-  val projectDir = bundle.project.guessProjectDir() ?: return null
-  val remapped = remapDataToProjectDir(bundle.coverageData!!, projectDir)
+fun remapCoverageFromCloud(suite: CoverageSuite, rawData: ProjectData, artifacts: Map<String, ReportMetadata>): CoverageSuitesBundle? {
+  val projectDir = suite.project.guessProjectDir() ?: return null
+  val remapped = remapDataToProjectDir(rawData, projectDir)
   val filtered = (artifacts["changedLines"] as? ChangedLinesMetaDataArtifact)
                    ?.let { filterByChangedLines(remapped, it, projectDir) }
                  ?: remapped
-  applyNewDataToBundle(bundle, filtered)
-  return bundle
+  return QodanaCoverageBundle(suite, filtered)
 }
 
 /**
