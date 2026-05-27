@@ -78,5 +78,9 @@ class PlatformioDebugConfiguration(project: Project, configurationFactory: Confi
   override fun clone(): PlatformioDebugConfiguration {
     return super.clone() as PlatformioDebugConfiguration
   }
+
+  override fun debugProfilesEnabled(): Boolean {
+    return false
+  }
 }
 
