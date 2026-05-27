@@ -25,7 +25,7 @@
     <plugin id="org.intellij.plugins.postcss"/>
     <plugin id="com.intellij.modules.ultimate"/>
     <module name="intellij.css.common"/>
-    <module name="intellij.css.psi"/>
+    <module name="intellij.css.common.psi"/>
     <module name="intellij.javascript.analysis.impl"/>
     <module name="intellij.javascript.backend"/>
     <module name="intellij.javascript.codeinsight"/>

@@ -7,7 +7,6 @@
     <module name="intellij.css.backend"/>
     <module name="intellij.css.common"/>
     <module name="intellij.css.common.psi"/>
-    <module name="intellij.css.psi"/>
     <module name="intellij.platform.structureView"/>
   </dependencies>
   <!-- endregion -->

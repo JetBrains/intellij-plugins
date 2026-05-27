@@ -51,7 +51,6 @@
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.xml.structureView.impl" />
     <orderEntry type="module" module-name="intellij.css.plugin" />
-    <orderEntry type="module" module-name="intellij.css.psi" />
     <orderEntry type="module" module-name="intellij.platform.testRunner" />
     <orderEntry type="module" module-name="intellij.java.execution.impl" />
     <orderEntry type="module" module-name="intellij.platform.smRunner" />

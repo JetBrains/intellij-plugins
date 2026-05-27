@@ -44,7 +44,7 @@
     <orderEntry type="module" module-name="intellij.postcss.paid" />
     <orderEntry type="module" module-name="intellij.platform.lsp" />
     <orderEntry type="library" name="eclipse.lsp4j" level="project" />
-    <orderEntry type="module" module-name="intellij.css.psi" />
+    <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.backend" />
     <orderEntry type="module" module-name="intellij.platform.util.ui" />
     <orderEntry type="module" module-name="intellij.javascript.common" />

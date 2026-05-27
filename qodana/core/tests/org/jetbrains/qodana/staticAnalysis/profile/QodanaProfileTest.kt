@@ -23,7 +23,7 @@ class QodanaProfileTest : QodanaTestCase() {
           <option name="MODULES_SETS_LOADED_TOGETHER">
             <modules-set>
               <module name="intellij.css.impl" />
-              <module name="intellij.css.psi" />
+              <module name="intellij.css.common.psi" />
               <module name="intellij.css" />
               <module name="intellij.css.analysis" />
             </modules-set>
