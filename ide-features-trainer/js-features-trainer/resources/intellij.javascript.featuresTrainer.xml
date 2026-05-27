@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <idea-plugin>
   <dependencies>
-    <plugin id="training"/>
     <module name="intellij.javascript.psi.impl"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <plugin id="training"/>
+    <module name="intellij.platform.smRunner"/>
+    <module name="intellij.platform.testRunner"/>
+    <!-- endregion -->
   </dependencies>
 
   <extensions defaultExtensionNs="training">

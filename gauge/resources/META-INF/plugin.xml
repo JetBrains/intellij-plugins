@@ -13,6 +13,8 @@
     <module name="intellij.libraries.grpc"/>
     <module name="intellij.libraries.grpc.netty.shaded"/>
     <module name="intellij.maven"/>
+    <module name="intellij.platform.smRunner"/>
+    <module name="intellij.platform.testRunner"/>
     <!-- endregion -->
   </dependencies>
   <!--suppress PluginXmlValidity -->
