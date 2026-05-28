@@ -115,23 +115,27 @@ class ChangedLinesArtifactTest {
   }
 
   @Test
-  fun `filterClassLinesByAllowed drops classes whose path is not in the allowed map`() {
+  fun `filterClassLinesByAllowed stubs classes whose path is not in the allowed map`() {
     val data = ProjectData()
     data.getOrCreateClassData("/abs/proj/src/Kept.go").setLines(linesArray(mapOf(1 to "()V")))
     data.getOrCreateClassData("/abs/proj/src/Dropped.go").setLines(linesArray(mapOf(1 to "()V")))
 
     val filtered = filterClassLinesByAllowed(data, mapOf("/abs/proj/src/Kept.go" to setOf(1)))
     assertNotNull(filtered.getClassData("/abs/proj/src/Kept.go"))
-    assertNull(filtered.getClassData("/abs/proj/src/Dropped.go"))
+    val stub = filtered.getClassData("/abs/proj/src/Dropped.go")
+    assertNotNull("out-of-scope classes must be preserved as stubs", stub)
+    // Stub shape: 1-element lines array -> count = lines.length - 1 = 0 -> fileInfoForCoveredFile returns null.
+    assertEquals(1, stub.lines.size)
   }
 
   @Test
-  fun `filterClassLinesByAllowed returns an empty result when no classes match`() {
+  fun `filterClassLinesByAllowed returns stub-only result when no classes match`() {
     val data = ProjectData()
     data.getOrCreateClassData("/abs/proj/src/Foo.go").setLines(linesArray(mapOf(1 to "()V")))
 
     val filtered = filterClassLinesByAllowed(data, mapOf("/abs/proj/src/Bar.go" to setOf(1)))
-    assertTrue(filtered.classes.isEmpty())
+    assertEquals(setOf("/abs/proj/src/Foo.go"), filtered.classes.keys)
+    assertEquals(1, filtered.getClassData("/abs/proj/src/Foo.go").lines.size)
   }
 
   private fun linesArray(lineToMethodSig: Map<Int, String>): Array<LineData?> {
