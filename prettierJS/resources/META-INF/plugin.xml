@@ -21,7 +21,6 @@
 
   <dependencies>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
-    <plugin id="intellij.javascript.eslint"/>
     <module name="intellij.javascript.analysis.impl"/>
     <module name="intellij.javascript.backend"/>
     <module name="intellij.javascript.common"/>
@@ -30,6 +29,10 @@
     <module name="intellij.json.backend"/>
     <!-- endregion -->
   </dependencies>
+
+  <content>
+    <module name="intellij.prettierJS.eslint"/>
+  </content>
 
   <resource-bundle>messages.PrettierBundle</resource-bundle>
 
@@ -86,7 +89,6 @@
 
     <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.JSPrettierCodeStyleInstaller"/>
     <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.HtmlPrettierCodeStyleInstaller"/>
-    <eslint.ruleMappersFactory implementation="com.intellij.prettierjs.eslint.PrettierEslintRuleMappersFactory"/>
     <implicitUsageProvider implementation="com.intellij.prettierjs.codeInsight.PrettierConfigImplicitUsageProvider"/>
     <statistics.counterUsagesCollector implementationClass="com.intellij.prettierjs.PrettierConfigurationCollector"/>
     <projectSettings service="com.intellij.prettierjs.PrettierConfiguration"/>

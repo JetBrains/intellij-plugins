@@ -1,3 +1,6 @@
+- name: lib/modules/intellij.prettierJS.eslint.jar
+  contentModules:
+  - name: intellij.prettierJS.eslint
 - name: lib/prettierJS.jar
   modules:
   - name: intellij.prettierJS

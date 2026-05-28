@@ -1,0 +1,54 @@
+### auto-generated section `build intellij.prettierJS.eslint` start
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+jvm_library(
+  name = "eslint",
+  module_name = "intellij.prettierJS.eslint",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = glob(["resources/**/*"]),
+  resource_strip_prefix = "resources",
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "//contrib/prettierJS",
+    "//contrib/javascript/eslint",
+    "//plugins/JavaScriptLanguage/javascript-backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
+    "//plugins/JavaScriptLanguage/javascript-parser",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "@community//json/backend",
+    "@community//platform/code-style-api:codeStyle",
+    "@community//platform/core-api:core",
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/util",
+  ]
+)
+
+jvm_library(
+  name = "eslint_test_lib",
+  testonly = True,
+  module_name = "intellij.prettierJS.eslint",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    ":eslint",
+    "//contrib/prettierJS:prettierJS_test_lib",
+    "//contrib/javascript/eslint:eslint_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+    "@community//json/backend:backend_test_lib",
+    "@community//platform/code-style-api:codeStyle_test_lib",
+    "@community//platform/core-api:core_test_lib",
+    "@community//platform/projectModel-api:projectModel_test_lib",
+    "@community//platform/util:util_test_lib",
+  ]
+)
+### auto-generated section `build intellij.prettierJS.eslint` end
+
+### auto-generated section `iml intellij.prettierJS.eslint` start
+exports_files([
+  "intellij.prettierJS.eslint.iml",
+], visibility = ["//visibility:public"])
+### auto-generated section `iml intellij.prettierJS.eslint` end
