@@ -48,6 +48,7 @@
                      implementationClass="com.intellij.lang.javascript.linter.eslint.EslintInspection"
                      unfair="true"/>
     <externalAnnotator language="" implementationClass="com.intellij.lang.javascript.linter.eslint.EslintExternalAnnotator"/>
+    <consoleFilterProvider implementation="com.intellij.lang.javascript.linter.eslint.filter.EslintConsoleFilterProvider"/>
     <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.EslintConfiguration"/>
     <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.config.EslintConfigFileChangeTracker"/>
     <platform.lang.lsWidget.itemsProvider id="EsLintWidgetItemsProvider" implementation="com.intellij.lang.javascript.linter.eslint.lsWidget.EsLintWidgetItemsProvider"/>
