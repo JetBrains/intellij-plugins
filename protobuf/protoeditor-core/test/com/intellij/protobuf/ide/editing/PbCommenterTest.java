@@ -15,7 +15,6 @@
  */
 package com.intellij.protobuf.ide.editing;
 
-import com.google.common.collect.ImmutableList;
 import com.intellij.codeInsight.generation.actions.CommentByLineCommentAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -28,6 +27,8 @@ import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.common.EditorCaretTestUtil.CaretAndSelectionState;
 import com.intellij.testFramework.common.EditorCaretTestUtil.CaretInfo;
+
+import java.util.List;
 
 /** Tests for {@link PbCommenter} */
 public class PbCommenterTest extends PbCodeInsightFixtureTestCase {
@@ -70,7 +71,7 @@ public class PbCommenterTest extends PbCodeInsightFixtureTestCase {
     EdtTestUtil.runInEdtAndWait(
         () ->
             EditorTestUtil.setCaretsAndSelection(
-                editor, new CaretAndSelectionState(ImmutableList.of(info), null)));
+                editor, new CaretAndSelectionState(List.of(info), null)));
   }
 
   private void performTypingAction(Editor editor, char typedChar) {
