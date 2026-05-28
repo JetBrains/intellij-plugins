@@ -15,14 +15,14 @@ private val ULTIMATE_PLUS_PLUGINS: Set<String> = setOf(
 )
 
 private val ULTIMATE_PLUS_INSPECTIONS: Set<String> = setOf(
-  "RiderSecurityErrorsInspection",
-  "OpenGrepInspection"
+  "RiderSecurityErrorsInspection"
 )
 
 internal fun QodanaLicenseType.isInspectionLicensed(from: ToolsImpl): Boolean {
   if (this == ULTIMATE_PLUS || this == PREMIUM || this == PREMIUM_LIGHT) return true
   if (this == NONE) return false
   if (from.tool.shortName in ULTIMATE_PLUS_INSPECTIONS) return false
+  if (CustomInspectionLicenseRule.requiresUltimatePlus(from.tool)) return false
 
   val pluginId = from.tool.extension?.pluginDescriptor?.pluginId?.idString
   return pluginId !in ULTIMATE_PLUS_PLUGINS
