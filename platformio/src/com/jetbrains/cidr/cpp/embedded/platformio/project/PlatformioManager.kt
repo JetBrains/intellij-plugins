@@ -61,11 +61,14 @@ class PlatformioManager :
     return if (project.service<PlatformioService>().iniFiles.contains(changedFileOrDirPath)) project.projectFilePath else null
   }
 
-  override fun getAffectedExternalProjectFiles(projectPath: String?, project: Project): List<File> {
+  override fun getAffectedExternalProjectFilePaths(projectPath: String?, project: Project): List<Path> {
     if (projectPath == null) return emptyList()
     val projectNioPath = Path.of(projectPath)
-    return project.service<PlatformioService>().iniFiles.map { projectNioPath.resolve(it).toFile() }
+    return project.service<PlatformioService>().iniFiles.map(projectNioPath::resolve)
   }
+
+  override fun getAffectedExternalProjectFiles(projectPath: String?, project: Project): List<File> =
+    getAffectedExternalProjectFilePaths(projectPath, project).map(Path::toFile)
 
   override fun runActivity(project: Project) {
     project.runAfterPlatformioInitialized {
