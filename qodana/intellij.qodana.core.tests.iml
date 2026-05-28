@@ -69,7 +69,7 @@
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.builtInServer" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.builtInServer.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.vcs.git" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.vcs.git.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.vcs.git.shared" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.jackson" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ide.concurrency" scope="TEST" />
@@ -128,7 +128,7 @@
     <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.vcs.git.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.vcs.git.backend.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.lombok.tests" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana" />
