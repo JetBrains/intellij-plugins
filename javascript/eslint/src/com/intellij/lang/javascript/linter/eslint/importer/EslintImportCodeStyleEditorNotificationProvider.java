@@ -1,10 +1,11 @@
 package com.intellij.lang.javascript.linter.eslint.importer;
 
+import com.intellij.ide.trustedProjects.TrustedProjects;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.json.psi.JsonFile;
-import com.intellij.lang.javascript.linter.eslint.EslintBundle;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonCommonUtil;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
+import com.intellij.lang.javascript.linter.eslint.EslintBundle;
 import com.intellij.lang.javascript.linter.eslint.EslintUtil;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.openapi.editor.colors.EditorColors;
@@ -45,6 +46,7 @@ public class EslintImportCodeStyleEditorNotificationProvider implements EditorNo
   @Override
   public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
                                                                                                                  @NotNull VirtualFile file) {
+    if (!TrustedProjects.isProjectTrusted(project)) return null;
     PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
     if (!(psiFile instanceof JsonFile)) return null;
     if (!psiFile.isWritable() || JSProjectUtil.isInLibrary(psiFile) || JSLibraryUtil.isProbableLibraryFile(file)) return null;
