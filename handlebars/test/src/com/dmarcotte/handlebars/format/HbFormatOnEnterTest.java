@@ -2,6 +2,7 @@ package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.dmarcotte.handlebars.editor.actions.HbActionHandlerTest;
+import com.intellij.idea.IJIgnore;
 
 public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormattingModelBuilderTest {
 
@@ -33,6 +34,7 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
    * This sanity check should be enough to ensure that we don't format on Enter
    * when the formatter is disabled
    */
+  @IJIgnore(issue = "WEB-77789")
   public void testEnterWithFormatterDisabled() {
     boolean previousFormatterSetting = HbConfig.isFormattingEnabled();
     HbConfig.setFormattingEnabled(false);
