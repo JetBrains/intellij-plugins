@@ -197,8 +197,15 @@ private fun filterByChangedLines(
 internal fun filterClassLinesByAllowed(data: ProjectData, allowed: Map<String, Set<Int>>): ProjectData {
   val newData = ProjectData()
   data.classes.forEach { (path, oldClass) ->
-    val allowedLines = allowed[path] ?: return@forEach
     val newClass = newData.getOrCreateClassData(path)
+    val allowedLines = allowed[path]
+    if (allowedLines == null) {
+      // See com.intellij.coverage.SimpleCoverageAnnotator.fillInfoForUncoveredFile(java.nio.file.Path)
+      // This function means that some coverage annotators (e.g. Python) count missing files as "uncovered"
+      // To prevent this, for files we don't want to show coverage we explicitly say, "There is nothing to show here"
+      newClass.setLines(arrayOfNulls<LineData>(1))
+      return@forEach
+    }
     @Suppress("UNCHECKED_CAST")
     val oldLines = oldClass.lines as Array<LineData?>
     val newLines = arrayOfNulls<LineData>(oldLines.size)
