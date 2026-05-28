@@ -26,6 +26,7 @@ class VueLspTakeoverModeTypeScriptService(
   project = project,
   providerClass = VueLspServerTakeoverModeSupportProvider::class.java,
   activationRule = VueLspServerTakeoverModeActivationRule,
+  diagnosticsConfiguration = PublishDiagnostics(2),
 ) {
 
   override val name: String
@@ -33,8 +34,6 @@ class VueLspTakeoverModeTypeScriptService(
 
   override val prefix: String
     get() = VueBundle.message("vue.service.prefix")
-
-  override val expectedPushDiagnosticsCount: Int = 2
 
   override fun createQuickInfoResponse(
     markupContent: MarkupContent,

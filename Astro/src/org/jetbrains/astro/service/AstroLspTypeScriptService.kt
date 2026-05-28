@@ -14,12 +14,14 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
 
-class AstroLspTypeScriptService(project: Project)
-  : JSFrameworkLspTypeScriptService(project, AstroLspServerSupportProvider::class.java, AstroLspServerActivationRule) {
+class AstroLspTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService(
+  project,
+  AstroLspServerSupportProvider::class.java,
+  AstroLspServerActivationRule,
+  PublishDiagnostics(2),
+) {
   override val name: String = "Astro LSP"
   override val prefix: String = "Astro"
-
-  override val expectedPushDiagnosticsCount: Int = 2
 
   override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): CompletionMergeStrategy = CompletionMergeStrategy.MERGE
 
