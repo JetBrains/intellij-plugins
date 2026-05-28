@@ -194,7 +194,7 @@ private fun filterByChangedLines(
 }
 
 
-internal fun filterClassLinesByAllowed(data: ProjectData, allowed: Map<String, Set<Int>>): ProjectData {
+fun filterClassLinesByAllowed(data: ProjectData, allowed: Map<String, Set<Int>>): ProjectData {
   val newData = ProjectData()
   data.classes.forEach { (path, oldClass) ->
     val newClass = newData.getOrCreateClassData(path)
