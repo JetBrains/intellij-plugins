@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "types": [
+      "node",
+    ],
+  },
+  "include": [
+    "run.ts",
+  ]
+}
