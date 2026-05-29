@@ -8,7 +8,7 @@ import com.intellij.execution.filters.UrlFilter;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.execution.process.ProcessOutputType;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationGroupManager;
@@ -400,7 +400,7 @@ final class PubServerService extends NetService {
         }
       }
 
-      if (outputType == ProcessOutputTypes.STDERR || text.startsWith("[error] ")) {
+      if (ProcessOutputType.isStderr(outputType) || text.startsWith("[error] ")) {
         final boolean error = text.contains("error");
 
         ApplicationManager.getApplication().invokeLater(() -> showNotificationIfNeeded(error));

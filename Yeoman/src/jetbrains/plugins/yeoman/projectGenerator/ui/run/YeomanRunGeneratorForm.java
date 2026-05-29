@@ -6,7 +6,7 @@ import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.KillableColoredProcessHandler;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessListener;
-import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.execution.process.ProcessOutputType;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
@@ -183,7 +183,7 @@ public class YeomanRunGeneratorForm implements Disposable {
         @Override
         public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
           LOGGER.debug(event.getText());
-          if (outputType == ProcessOutputTypes.STDOUT) {
+          if (ProcessOutputType.isStdout(outputType)) {
             final String text = StringUtil.notNullize(event.getText()).trim();
             if (text.contains("{") && text.endsWith("}") && !text.startsWith("--debug")) {
               renderStepForm(text.substring(text.indexOf("{")));

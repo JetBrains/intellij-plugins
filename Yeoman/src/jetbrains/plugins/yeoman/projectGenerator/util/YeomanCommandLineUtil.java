@@ -8,7 +8,6 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.execution.process.ProcessOutputType;
-import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.npm.NpmUtil;
@@ -53,7 +52,7 @@ public final class YeomanCommandLineUtil {
             @Override
             public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
               String text = event.getText().trim();
-              if (outputType == ProcessOutputTypes.STDERR || outputType == ProcessOutputTypes.STDOUT) {
+              if (ProcessOutputType.isStderr(outputType) || ProcessOutputType.isStdout(outputType)) {
                 indicator.setText2(text);
               }
             }
@@ -81,7 +80,7 @@ public final class YeomanCommandLineUtil {
           processHandler.addProcessListener(new ProcessListener() {
             @Override
             public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
-              if (outputType == ProcessOutputTypes.STDERR) {
+              if (ProcessOutputType.isStderr(outputType)) {
                 output.appendStderr(event.getText());
               }
               else if (!ProcessOutputType.isSystem(outputType)) {
