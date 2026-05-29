@@ -47,5 +47,13 @@ class AstroComponent(private val file: PsiFile) :
     }
   }
 
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is AstroComponent
+    && other.file == file
+
+  override fun hashCode(): Int =
+    file.hashCode()
+
   override fun computeNavigationElement(project: Project): PsiElement = source
 }

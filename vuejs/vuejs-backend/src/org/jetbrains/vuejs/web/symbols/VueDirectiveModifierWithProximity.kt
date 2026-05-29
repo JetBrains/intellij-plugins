@@ -80,6 +80,18 @@ internal open class VueDirectiveModifierWithProximity private constructor(
       super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
       || super<VueDirectiveModifierWithProximity>.isEquivalentTo(symbol)
 
+    override fun equals(other: Any?): Boolean =
+      other === this ||
+      other is VuePsiSourcedDirectiveModifierWithProximity
+      && other.delegate == delegate
+      && other.vueProximity == vueProximity
+
+    override fun hashCode(): Int {
+      var result = delegate.hashCode()
+      result = 31 * result + vueProximity.hashCode()
+      return result
+    }
+
     override fun createPointer(): Pointer<VuePsiSourcedDirectiveModifierWithProximity> {
       val delegatePtr = delegate.createPointer()
       val vueProximity = vueProximity

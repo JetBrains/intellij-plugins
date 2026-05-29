@@ -25,6 +25,18 @@ class Angular2FormGroupImpl(
     assert(source is TypeScriptField || source is JSProperty)
   }
 
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is Angular2FormGroupImpl
+    && other.source == source
+    && other.initializer == initializer
+
+  override fun hashCode(): Int {
+    var result = source.hashCode()
+    result = 31 * result + initializer.hashCode()
+    return result
+  }
+
   override fun getSymbols(
     kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,

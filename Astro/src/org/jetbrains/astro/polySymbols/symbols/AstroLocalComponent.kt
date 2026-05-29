@@ -63,6 +63,15 @@ class AstroLocalComponent(
   val astroProximity: AstroProximity
     get() = AstroProximity.LOCAL
 
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is AstroLocalComponent
+    && other.name == name
+    && other.source == source
+
+  override fun hashCode(): Int =
+    name.hashCode() * 31 + source.hashCode()
+
   override fun createPointer(): Pointer<out AstroLocalComponent> {
     val name = name
     val sourcePtr = source.createSmartPointer()

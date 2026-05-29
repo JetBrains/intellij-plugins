@@ -91,6 +91,18 @@ internal open class VueFilterWithProximity private constructor(
       super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
       || super<VueFilterWithProximity>.isEquivalentTo(symbol)
 
+    override fun equals(other: Any?): Boolean =
+      other === this
+      || other is VuePsiSourcedFilterWithProximity
+      && other.delegate == delegate
+      && other.vueProximity == vueProximity
+
+    override fun hashCode(): Int {
+      var result = delegate.hashCode()
+      result = 31 * result + vueProximity.hashCode()
+      return result
+    }
+
     override fun createPointer(): Pointer<VuePsiSourcedFilterWithProximity> {
       val delegatePtr = delegate.createPointer()
       val vueProximity = vueProximity

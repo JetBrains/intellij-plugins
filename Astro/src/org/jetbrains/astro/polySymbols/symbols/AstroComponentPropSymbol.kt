@@ -43,6 +43,14 @@ class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol) : P
   private val required: Boolean
     get() = !(propertySymbol.psiContext.asSafely<PropertySignature>()?.isOptional ?: false)
 
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is AstroComponentPropSymbol
+    && other.propertySymbol == propertySymbol
+
+  override fun hashCode(): Int =
+    propertySymbol.hashCode()
+
   override fun createPointer(): Pointer<out PsiSourcedPolySymbol> {
     val sourcePtr = propertySymbol.createPointer()
     return Pointer {

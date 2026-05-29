@@ -184,6 +184,18 @@ class VueWebTypesMergedSymbol(
         }
       }
 
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is VueWebTypesMergedSymbol
+    && other.name == name
+    && other.delegate == delegate
+
+  override fun hashCode(): Int {
+    var result = name.hashCode()
+    result = 31 * result + delegate.hashCode()
+    return result
+  }
+
   override fun createPointer(): Pointer<out VueWebTypesMergedSymbol> {
     val pointers = symbols.map { it.createPointer() }
     val matchedName = name

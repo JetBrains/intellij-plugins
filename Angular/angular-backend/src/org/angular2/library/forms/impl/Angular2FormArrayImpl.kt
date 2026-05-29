@@ -28,6 +28,14 @@ class Angular2FormArrayImpl(
     else
       emptyList()
 
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is Angular2FormArrayImpl
+    && other.source == source
+
+  override fun hashCode(): Int =
+    source.hashCode()
+
   override fun createPointer(): Pointer<Angular2FormArrayImpl> {
     val sourcePtr = (source as JSProperty).createSmartPointer()
     return Pointer {

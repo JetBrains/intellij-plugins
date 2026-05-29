@@ -51,6 +51,18 @@ class UnknownComponent(override val source: PsiElement, override val name: @NlsS
   val docHidePattern: Boolean
     get() = true
 
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is UnknownComponent
+    && other.name == name
+    && other.source == source
+
+  override fun hashCode(): Int {
+    var result = name.hashCode()
+    result = 31 * result + source.hashCode()
+    return result
+  }
+
   override fun createPointer(): Pointer<UnknownComponent> {
     val filePtr = source.createSmartPointer()
     return Pointer {

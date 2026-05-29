@@ -14,6 +14,14 @@ class Angular2FormControlImpl(
   override val kind: PolySymbolKind
     get() = NG_FORM_CONTROL_PROPS
 
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is Angular2FormControlImpl
+    && other.source == source
+
+  override fun hashCode(): Int =
+    source.hashCode()
+
   override fun createPointer(): Pointer<Angular2FormControlImpl> {
     val sourcePtr = (source as JSProperty).createSmartPointer()
     return Pointer {
