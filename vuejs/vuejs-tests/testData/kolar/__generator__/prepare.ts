@@ -1,4 +1,4 @@
-import {cpSync, existsSync, readdirSync, rmSync} from 'node:fs'
+import {cpSync, existsSync, readdirSync, rmSync, writeFileSync} from 'node:fs'
 import {parse, resolve} from 'node:path'
 import {cwd} from 'node:process'
 
@@ -8,15 +8,32 @@ if (existsSync(rootTempDir)) {
 }
 
 const rootSourceDir = resolve(cwd(), '..')
-readdirSync(rootSourceDir, {withFileTypes: true})
+const projectDirs = readdirSync(rootSourceDir, {withFileTypes: true})
   .filter(entry => entry.isDirectory())
   .filter(entry => entry.name !== '__generator__')
   .filter(entry => !entry.name.endsWith('__transpiled'))
   .map(entry => resolve(rootSourceDir, entry.name))
   .filter(path => existsSync(resolve(path, 'src')))
-  .forEach(createTempProject)
+  .map(createTempProject)
 
-function createTempProject(sourcePath: string) {
+const scriptContent = projectDirs
+  .map(path => parse(path).name)
+  .flatMap(dirName => [
+    `cd ${dirName}/`,
+    'node generate.ts',
+    'cd ../',
+    '',
+  ])
+  .toSpliced(0, 0,
+    '#!/bin/bash',
+    'set -e',
+    '',
+  )
+  .join('\n');
+
+writeFileSync(resolve(rootTempDir, 'generate-all.sh'), scriptContent)
+
+function createTempProject(sourcePath: string): string {
   const projectDir = resolve(rootTempDir, parse(sourcePath).name)
 
   cpSync(
@@ -42,4 +59,6 @@ function createTempProject(sourcePath: string) {
     resolve(projectDir, 'node_modules/vue-transpiled-data-plugin'),
     {recursive: true},
   )
+
+  return projectDir
 }
