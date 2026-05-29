@@ -16,6 +16,7 @@
 
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
+    <module name="intellij.java.execution.impl"/>
     <module name="intellij.platform.smRunner"/>
     <module name="intellij.platform.testRunner"/>
   </dependencies>
