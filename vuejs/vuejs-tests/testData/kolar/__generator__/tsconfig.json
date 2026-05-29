@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "moduleResolution": "bundler",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
     "types": [
       "node",
     ],
   },
   "include": [
-    "run.ts",
+    "prepare.ts",
   ]
 }
