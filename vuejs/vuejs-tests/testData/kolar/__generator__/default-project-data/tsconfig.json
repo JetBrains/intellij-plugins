@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+  },
+  "include": [
+    "src/*.vue",
+    "src/*.ts",
+  ]
+}
