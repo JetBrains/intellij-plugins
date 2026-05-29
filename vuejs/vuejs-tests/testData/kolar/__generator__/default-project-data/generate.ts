@@ -1,13 +1,12 @@
 import {spawn} from 'node:child_process'
-import * as process from 'node:process'
-import * as path from 'node:path'
+import { parse, resolve } from 'node:path'
+import {cwd, execPath, exit} from 'node:process'
 
-const currentDir = process.cwd()
-const currentDirName = path.parse(currentDir).name
-const transpiledDir = path.resolve(currentDir, '../..', currentDirName + "__transpiled")
+const currentDirName = parse(cwd()).name
+const transpiledDir = resolve(cwd(), '../..', currentDirName + "__transpiled")
 
 const tsserver = spawn(
-    process.execPath,
+    execPath,
     [
         "./node_modules/typescript/lib/tsserver.js",
         '--globalPlugins',
@@ -33,12 +32,12 @@ function processResponse(
     if (response.success !== true) {
         console.error("INVALID RESPONSE:", content)
         tsserver.kill()
-        process.exit(1)
+        exit(1)
     }
 
     if (response.request_seq === 36) {
         sendRequest(38, 'typeDefinition', {
-            file: process.cwd() + '/src/force-vue-transpiler-data-generation.ts',
+            file: cwd() + '/src/force-vue-transpiler-data-generation.ts',
             line: 1,
             offset: 0,
         })
@@ -48,7 +47,7 @@ function processResponse(
     if (response.request_seq === 38) {
         console.log("Processing finished! SUCCESS!")
         tsserver.kill()
-        process.exit()
+        exit()
     }
 }
 
@@ -67,7 +66,11 @@ tsserver.stdout.on('data', (data) => {
         .forEach(s => processResponse(s))
 })
 
-function sendRequest(seq, command, args) {
+function sendRequest(
+  seq: number, 
+  command: string, 
+  args: Record<string, unknown>,
+) {
     const payload = {
         seq,
         type: 'request',
@@ -81,5 +84,5 @@ function sendRequest(seq, command, args) {
 }
 
 sendRequest(36, 'open', {
-    file: process.cwd() + '/src/force-vue-transpiler-data-generation.ts',
+    file: cwd() + '/src/force-vue-transpiler-data-generation.ts',
 })
