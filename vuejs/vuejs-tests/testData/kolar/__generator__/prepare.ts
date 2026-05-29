@@ -25,8 +25,12 @@ const projectDirs = readdirSync(rootSourceDir, {withFileTypes: true})
 const scriptContent = projectDirs
   .map(path => parse(path).name)
   .flatMap(dirName => [
+    `echo "Project [${dirName}]"`,
+    `echo "Generating transpiled data..."`,
     `cd ${dirName}/`,
     'node generate.ts',
+    `echo "Generation finished!"`,
+    `echo ""`,
     'cd ../',
     '',
   ])

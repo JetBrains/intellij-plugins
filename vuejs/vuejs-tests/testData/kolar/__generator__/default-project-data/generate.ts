@@ -45,7 +45,6 @@ function processResponse(
   }
 
   if (response.request_seq === 38) {
-    console.log("Processing finished! SUCCESS!")
     tsserver.kill()
     exit()
   }
@@ -55,10 +54,6 @@ tsserver.stdout.on('data', (data) => {
   const dataString = data.toString().trim()
   if (!dataString.startsWith('Content-Length: '))
     return
-
-  console.log("---------------")
-  console.log(dataString)
-  console.log("---------------")
 
   dataString.split('\r\n\r\n')
     .slice(1)
