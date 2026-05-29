@@ -8,10 +8,16 @@ if (existsSync(rootTempDir)) {
 }
 
 const rootSourceDir = resolve(cwd(), '..')
+
+readdirSync(rootSourceDir, {withFileTypes: true})
+  .filter(entry => entry.isDirectory())
+  .filter(entry => entry.name.endsWith('__transpiled'))
+  .map(entry => resolve(rootSourceDir, entry.name))
+  .forEach(path => rmSync(path, {recursive: true}))
+
 const projectDirs = readdirSync(rootSourceDir, {withFileTypes: true})
   .filter(entry => entry.isDirectory())
   .filter(entry => entry.name !== '__generator__')
-  .filter(entry => !entry.name.endsWith('__transpiled'))
   .map(entry => resolve(rootSourceDir, entry.name))
   .filter(path => existsSync(resolve(path, 'src')))
   .map(createTempProject)
