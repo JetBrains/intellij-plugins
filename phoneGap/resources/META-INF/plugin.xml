@@ -3,7 +3,6 @@
   <name>Cordova</name>
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
-  <resource-bundle>messages.PhoneGapBundle</resource-bundle>
 
   <description><![CDATA[  
 Adds Cordova support to IntelliJ-based IDEs. Here's what's included in this support:
