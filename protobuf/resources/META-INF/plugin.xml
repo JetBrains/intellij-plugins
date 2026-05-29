@@ -26,7 +26,7 @@
 
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
-    <module name="intellij.platform.structureView.impl"/>
+    <module name="intellij.platform.structureView"/>
     <module name="intellij.spellchecker"/>
   </dependencies>
 

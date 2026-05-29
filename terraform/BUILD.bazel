@@ -72,7 +72,7 @@ jvm_library(
         "@community//platform/util-ex",
         "@community//platform/execution",
         "@community//platform/lang-api:lang",
-        "@community//platform/structure-view-impl:structureView-impl",
+        "@community//platform/structure-view-impl:structureView",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     ],
 )
@@ -144,7 +144,7 @@ jvm_library(
         "@community//platform/util-ex:util-ex_test_lib",
         "@community//platform/execution:execution_test_lib",
         "@community//platform/lang-api:lang_test_lib",
-        "@community//platform/structure-view-impl:structureView-impl_test_lib",
+        "@community//platform/structure-view-impl:structureView_test_lib",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     ],
 )
@@ -299,8 +299,8 @@ jvm_library(
         "@community//platform/execution:execution_test_lib",
         "@community//platform/lang-api:lang",
         "@community//platform/lang-api:lang_test_lib",
-        "@community//platform/structure-view-impl:structureView-impl",
-        "@community//platform/structure-view-impl:structureView-impl_test_lib",
+        "@community//platform/structure-view-impl:structureView",
+        "@community//platform/structure-view-impl:structureView_test_lib",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     ],

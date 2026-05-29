@@ -17,7 +17,7 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         "//contrib/protobuf/protoeditor-core",
-        "@community//platform/structure-view-impl:structureView-impl",
+        "@community//platform/structure-view-impl:structureView",
     ],
 )
 
@@ -34,7 +34,7 @@ jvm_library(
         # do not sort,
         ":protoeditor",
         "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
-        "@community//platform/structure-view-impl:structureView-impl_test_lib",
+        "@community//platform/structure-view-impl:structureView_test_lib",
         "//contrib/protobuf/protoeditor-jvm",
         "//contrib/protobuf/protoeditor-jvm:protoeditor-jvm_test_lib",
         "//contrib/protobuf/protoeditor-python",

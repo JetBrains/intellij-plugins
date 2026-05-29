@@ -16,7 +16,7 @@ To configure path mappings, open the <b>Settings / Preferences</b> dialog and se
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <module name="intellij.platform.smRunner"/>
-    <module name="intellij.platform.structureView.impl"/>
+    <module name="intellij.platform.structureView"/>
     <module name="intellij.platform.testRunner"/>
     <module name="intellij.xml.impl"/>
     <module name="intellij.xml.parser"/>
