@@ -75,6 +75,8 @@ jvm_library(
     "//contrib/javascript/eslint:eslint_test_lib",
     "//contrib/javascript/eslint:eslint-tests",
     "//contrib/javascript/eslint:eslint-tests_test_lib",
+    "//contrib/vuejs/vuejs-eslint:eslint",
+    "//contrib/vuejs/vuejs-eslint:eslint_test_lib",
     "@community//platform/analysis-impl",
     "@community//platform/analysis-impl:analysis-impl_test_lib",
     "@community//platform/lang-impl",

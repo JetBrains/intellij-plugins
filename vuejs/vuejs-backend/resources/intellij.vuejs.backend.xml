@@ -1,6 +1,5 @@
 <idea-plugin visibility="internal">
   <dependencies>
-    <plugin id="intellij.javascript.eslint"/>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="com.intellij.modules.ultimate"/>
     <plugin id="com.intellij.modules.xml"/>
@@ -249,8 +248,6 @@
     <codeInsight.parameterInfo language="VueExpr" implementationClass="com.intellij.javascript.JSParameterInfoHandler"/>
     <codeInsight.parameterNameHints language="Vue"
                                     implementationClass="org.jetbrains.vuejs.editor.VueInlayParameterHintsProvider"/>
-
-    <eslint.ruleMappersFactory implementation="org.jetbrains.vuejs.libraries.eslint.VueEslintRuleMappersFactory"/>
 
     <polySymbols.psiReferenceProvider hostElementClass="com.intellij.psi.xml.XmlAttributeValue"
                                       hostLanguage="HtmlCompatible"

@@ -10,6 +10,9 @@
 - name: lib/modules/intellij.vuejs.debugger.jar
   contentModules:
   - name: intellij.vuejs.debugger
+- name: lib/modules/intellij.vuejs.eslint.jar
+  contentModules:
+  - name: intellij.vuejs.eslint
 - name: lib/modules/intellij.vuejs.free.jar
   contentModules:
   - name: intellij.vuejs.free

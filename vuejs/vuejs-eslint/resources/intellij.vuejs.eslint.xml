@@ -1,0 +1,15 @@
+<idea-plugin>
+  <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <plugin id="intellij.javascript.eslint"/>
+    <module name="intellij.javascript.web"/>
+    <module name="intellij.json"/>
+    <module name="intellij.vuejs.backend"/>
+    <module name="intellij.vuejs.common"/>
+    <!-- endregion -->
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <eslint.ruleMappersFactory implementation="com.intellij.vuejs.eslint.VueEslintRuleMappersFactory"/>
+  </extensions>
+</idea-plugin>
