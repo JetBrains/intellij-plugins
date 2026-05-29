@@ -1,0 +1,7 @@
+{
+  "name": "vue-transpiled-data-plugin",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  }
+}
