@@ -22,8 +22,8 @@
 
   <dependencies>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
-    <plugin id="com.intellij.modules.ultimate"/>
     <plugin id="org.intellij.plugins.postcss"/>
+    <plugin id="com.intellij.modules.ultimate"/>
     <module name="intellij.css.common"/>
     <module name="intellij.css.psi"/>
     <module name="intellij.javascript.analysis.impl"/>
@@ -37,6 +37,7 @@
     <module name="intellij.json"/>
     <module name="intellij.postcss.paid"/>
     <module name="intellij.xml.emmet"/>
+    <module name="intellij.xml.impl"/>
     <module name="intellij.xml.parser"/>
     <module name="intellij.xml.psi"/>
     <module name="intellij.xml.psi.impl"/>

@@ -26,6 +26,7 @@
     <module name="intellij.json"/>
     <module name="intellij.platform.webide"/>
     <module name="intellij.platform.webide.impl"/>
+    <module name="intellij.xml.impl"/>
     <module name="intellij.xml.parser"/>
     <module name="intellij.xml.psi"/>
   </dependencies>

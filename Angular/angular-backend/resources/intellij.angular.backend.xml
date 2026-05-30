@@ -3,7 +3,6 @@
   <dependencies>
     <plugin id="com.intellij.modules.ultimate"/>
     <plugin id="HtmlTools"/>
-    <module name="intellij.xml.impl"/>
     <module name="intellij.angular.free"/>
     <module name="intellij.css.backend"/>
     <module name="intellij.javascript.analysis.impl"/>
