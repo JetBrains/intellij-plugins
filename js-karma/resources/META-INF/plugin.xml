@@ -26,6 +26,7 @@
     <module name="intellij.javascript.common"/>
     <module name="intellij.javascript.psi.impl"/>
     <module name="intellij.javascript.testing"/>
+    <module name="intellij.platform.scriptDebugger.ui"/>
   </dependencies>
   <!-- endregion -->
   <depends>com.intellij.modules.lang</depends>
