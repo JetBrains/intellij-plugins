@@ -1,9 +1,15 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.ide.plugins.IdeaPluginDescriptor
+import com.intellij.ide.plugins.ContentModuleDescriptor
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl
+import com.intellij.ide.plugins.PluginMainDescriptor
 import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.ide.plugins.PluginModuleDescriptor
+import com.intellij.ide.plugins.PluginModuleId
+import com.intellij.ide.plugins.PluginSet
+import com.intellij.ide.plugins.ResolvedPluginSet
+import com.intellij.ide.plugins.getMainDescriptor
 import com.intellij.openapi.application.ApplicationStarter
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.Logger
@@ -14,7 +20,7 @@ import kotlinx.coroutines.delay
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
-import java.util.LinkedList
+import java.util.ArrayDeque
 import kotlin.io.path.appendText
 import kotlin.io.path.exists
 import kotlin.io.path.readLines
@@ -74,26 +80,41 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
     exitProcess(1)
   }
 
-  private fun calculateActual(included: List<String>): Pair<MutableSet<IdeaPluginDescriptor>, List<String>> {
-    val plugins = PluginManagerCore.loadedPlugins
-    val pluginIds = plugins.map { it.pluginId.idString }
-    val processed = mutableSetOf<String>()
-    val toProcess = LinkedList(included)
-    val include = mutableSetOf<IdeaPluginDescriptor>()
+  private fun calculateActual(included: List<String>): Pair<Set<PluginMainDescriptor>, List<String>> {
+    val pluginSet = PluginManagerCore.getPluginSet()
+    val resolvedPluginSet = pluginSet.resolvedPluginSet ?: error("Resolved plugin set is not available")
+    val pluginIds = pluginSet.enabledPlugins.map { it.pluginId.idString }
+    val toProcess = ArrayDeque<IdeaPluginDescriptorImpl>()
+    for (idString in included) {
+      val descriptor = pluginSet.findIncludedDescriptor(idString)
+      if (descriptor == null) {
+        LOG.error("Can't find enabled plugin or content module for id '$idString'")
+        continue
+      }
+      toProcess.add(descriptor)
+    }
+
+    val processed = mutableSetOf<IdeaPluginDescriptorImpl>()
+    val include = linkedSetOf<PluginMainDescriptor>()
 
     while (toProcess.isNotEmpty()) {
-      val idString = toProcess.pop()
-      val pluginId = PluginId.findId(idString)
-      if (pluginId == null) {
-        LOG.error("Can't find plugin id '$idString'")
-        continue
+      val descriptor = toProcess.removeFirst()
+      if (!processed.add(descriptor)) continue
+
+      include.add(descriptor.getMainDescriptor())
+      if (descriptor is PluginMainDescriptor) {
+        for (contentModule in descriptor.contentModules) {
+          if (contentModule.moduleLoadingRule.required && resolvedPluginSet.isResolved(contentModule)) {
+            toProcess.add(contentModule)
+          }
+        }
       }
-      val descriptor = PluginManagerCore.getPlugin(pluginId)
-      if (descriptor == null) {
-        LOG.error("Can't find plugin descriptor for id '$idString'")
-        continue
+      if (descriptor is ContentModuleDescriptor) {
+        toProcess.add(descriptor.parent)
       }
-      toProcess += processPlugin(descriptor, include, processed)
+      for (dependency in resolvedPluginSet.getDirectResolvedDependencies(descriptor)) {
+        toProcess.add(dependency)
+      }
     }
 
     println("=====INCLUDED=======")
@@ -109,18 +130,16 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
     return include to disabled
   }
 
-  private fun processPlugin(descriptor: IdeaPluginDescriptor, include: MutableSet<IdeaPluginDescriptor>, processed: MutableSet<String>): List<String> {
-    val idString = descriptor.pluginId.idString
-    if (processed.contains(idString)) return emptyList()
-    processed.add(idString)
-    include.add(descriptor)
+  private fun PluginSet.findIncludedDescriptor(idString: String): PluginModuleDescriptor? {
+    val pluginId = PluginId.getId(idString)
+    return findEnabledPlugin(pluginId)
+           ?: findEnabledModule(PluginModuleId(idString, PluginModuleId.JETBRAINS_NAMESPACE))
+           ?: getEnabledModules().asSequence()
+             .filterIsInstance<ContentModuleDescriptor>()
+             .firstOrNull { it.moduleId.name == idString }
+  }
 
-    val required = if (descriptor is IdeaPluginDescriptorImpl) {
-      descriptor.moduleDependencies.plugins.mapNotNull { reference -> if (processed.contains(reference.idString)) null else reference.idString}
-    } else emptyList()
-
-    return descriptor.dependencies.mapNotNull {
-      if (processed.contains(it.pluginId.idString) || it.isOptional) null else it.pluginId.idString
-    } + required
+  private fun ResolvedPluginSet.isResolved(descriptor: IdeaPluginDescriptorImpl): Boolean {
+    return descriptor in sortedResolvedDescriptors
   }
 }
