@@ -12,27 +12,16 @@ import com.intellij.lexer.MergingLexerAdapterBase
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.xml.XmlTokenType.TAG_WHITE_SPACE
-import com.intellij.psi.xml.XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER
-import com.intellij.psi.xml.XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN
-import com.intellij.psi.xml.XmlTokenType.XML_CHAR_ENTITY_REF
-import com.intellij.psi.xml.XmlTokenType.XML_COMMENT_CHARACTERS
-import com.intellij.psi.xml.XmlTokenType.XML_DATA_CHARACTERS
-import com.intellij.psi.xml.XmlTokenType.XML_REAL_WHITE_SPACE
-import com.intellij.psi.xml.XmlTokenType.XML_TAG_CHARACTERS
-import com.intellij.psi.xml.XmlTokenType.XML_WHITE_SPACE
+import com.intellij.psi.xml.XmlTokenType
 import org.jetbrains.vuejs.lang.LangMode
-import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
-import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_EXPR
-import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
 class VueLexer(
-  val languageLevel: JSLanguageLevel,
-  val project: Project?,
-  val interpolationConfig: Pair<String, String>?,
-  val htmlCompatMode: Boolean,
-  highlightMode: Boolean,
-  val langMode: LangMode = LangMode.PENDING,
+    val languageLevel: JSLanguageLevel,
+    val project: Project?,
+    val interpolationConfig: Pair<String, String>?,
+    val htmlCompatMode: Boolean,
+    highlightMode: Boolean,
+    val langMode: LangMode = LangMode.PENDING,
 ) : HtmlLexer(VueMergingLexer(FlexAdapter(_VueLexer(interpolationConfig)), highlightMode), true, highlightMode) {
 
   var lexedLangMode: LangMode = LangMode.PENDING
@@ -61,16 +50,20 @@ class VueLexer(
   override fun getTokenType(): IElementType? {
     val type = super.getTokenType()
     if (isHighlighting
-        && (type === TAG_WHITE_SPACE && (VueMergingLexer.getBaseLexerState(state) == 0
+        && (type === XmlTokenType.TAG_WHITE_SPACE && (VueMergingLexer.getBaseLexerState(state) == 0
                                          || VueMergingLexer.isLexerWithinUnterminatedInterpolation(state)))) {
-      return XML_REAL_WHITE_SPACE
+      return XmlTokenType.XML_REAL_WHITE_SPACE
     }
     return type
   }
 
   companion object {
-    internal val ATTRIBUTE_TOKENS = TokenSet.create(INTERPOLATION_START, INTERPOLATION_EXPR, INTERPOLATION_END)
-    internal val TAG_TOKENS = TokenSet.create(INTERPOLATION_START)
+    internal val ATTRIBUTE_TOKENS = TokenSet.create(
+        VueTokenTypes.INTERPOLATION_START,
+        VueTokenTypes.INTERPOLATION_EXPR,
+        VueTokenTypes.INTERPOLATION_END
+    )
+    internal val TAG_TOKENS = TokenSet.create(VueTokenTypes.INTERPOLATION_START)
 
     /**
     There are heavily-used Vue components called like 'Col', 'Input' or 'Title'.
@@ -93,13 +86,14 @@ class VueLexer(
     private fun merge(type: IElementType?, originalLexer: Lexer): IElementType? {
       var tokenType = type
       val next = originalLexer.tokenType
-      if (tokenType === INTERPOLATION_START
-          && next !== INTERPOLATION_EXPR
-          && next !== INTERPOLATION_END) {
-        tokenType = if (next === XML_ATTRIBUTE_VALUE_TOKEN || next === XML_ATTRIBUTE_VALUE_END_DELIMITER)
-          XML_ATTRIBUTE_VALUE_TOKEN
+      if (tokenType === VueTokenTypes.INTERPOLATION_START
+          && next !== VueTokenTypes.INTERPOLATION_EXPR
+          && next !== VueTokenTypes.INTERPOLATION_END
+      ) {
+        tokenType = if (next === XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN || next === XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER)
+            XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN
         else
-          XML_DATA_CHARACTERS
+            XmlTokenType.XML_DATA_CHARACTERS
       }
       if (TOKENS_TO_MERGE.contains(tokenType)) {
         while (true) {
@@ -110,12 +104,12 @@ class VueLexer(
           originalLexer.advance()
         }
       }
-      if (highlightMode && tokenType === XML_CHAR_ENTITY_REF) {
-        while (originalLexer.tokenType === XML_CHAR_ENTITY_REF) {
+      if (highlightMode && tokenType === XmlTokenType.XML_CHAR_ENTITY_REF) {
+        while (originalLexer.tokenType === XmlTokenType.XML_CHAR_ENTITY_REF) {
           originalLexer.advance()
         }
-        if (originalLexer.tokenType === XML_ATTRIBUTE_VALUE_TOKEN) {
-          return XML_ATTRIBUTE_VALUE_TOKEN
+        if (originalLexer.tokenType === XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
+          return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN
         }
       }
       return tokenType
@@ -123,12 +117,12 @@ class VueLexer(
 
     companion object {
       private val TOKENS_TO_MERGE = TokenSet.create(
-        XML_COMMENT_CHARACTERS,
-        XML_WHITE_SPACE,
-        XML_REAL_WHITE_SPACE,
-        XML_ATTRIBUTE_VALUE_TOKEN,
-        XML_DATA_CHARACTERS,
-        XML_TAG_CHARACTERS,
+          XmlTokenType.XML_COMMENT_CHARACTERS,
+          XmlTokenType.XML_WHITE_SPACE,
+          XmlTokenType.XML_REAL_WHITE_SPACE,
+          XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN,
+          XmlTokenType.XML_DATA_CHARACTERS,
+          XmlTokenType.XML_TAG_CHARACTERS,
       )
 
       fun isLexerWithinUnterminatedInterpolation(state: Int): Boolean {
@@ -141,4 +135,3 @@ class VueLexer(
     }
   }
 }
-
