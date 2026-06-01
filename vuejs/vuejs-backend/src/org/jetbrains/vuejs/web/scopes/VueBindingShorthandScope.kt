@@ -106,13 +106,13 @@ data class VueBindingShorthandSymbol(
 
   override fun createPointer(): Pointer<out VueBindingShorthandSymbol> {
     val contextPtr = context.createSmartPointer()
-    val psiSourcedSymbolPtr = delegate.createPointer()
+    val psiLinkedSymbolPtr = delegate.createPointer()
     val attrSymbolPtr = attrSymbol.createPointer()
     return Pointer {
       val context = contextPtr.dereference() ?: return@Pointer null
-      val psiSourcedSymbol = psiSourcedSymbolPtr.dereference() ?: return@Pointer null
+      val psiLinkedSymbol = psiLinkedSymbolPtr.dereference() ?: return@Pointer null
       val attrSymbol = attrSymbolPtr.dereference() ?: return@Pointer null
-      VueBindingShorthandSymbol(context, psiSourcedSymbol, attrSymbol)
+      VueBindingShorthandSymbol(context, psiLinkedSymbol, attrSymbol)
     }
   }
 }

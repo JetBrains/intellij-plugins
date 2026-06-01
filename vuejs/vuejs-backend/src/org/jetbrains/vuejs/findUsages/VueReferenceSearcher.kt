@@ -25,7 +25,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
 import com.intellij.openapi.application.QueryExecutorBase
-import com.intellij.polySymbols.search.PsiSourcedPolySymbolRequestResultProcessor
+import com.intellij.polySymbols.search.PsiLinkedPolySymbolRequestResultProcessor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
@@ -94,7 +94,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
               UsageSearchContext.IN_CODE,
               false,
               element,
-              PsiSourcedPolySymbolRequestResultProcessor(element, emptyList(), true)
+              PsiLinkedPolySymbolRequestResultProcessor(element, emptyList(), true)
             )
           }
 
@@ -184,7 +184,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
             (UsageSearchContext.IN_CODE + UsageSearchContext.IN_FOREIGN_LANGUAGES + UsageSearchContext.IN_COMMENTS).toShort(),
             false,
             searchTarget,
-            PsiSourcedPolySymbolRequestResultProcessor(element, emptyList(), true)
+            PsiLinkedPolySymbolRequestResultProcessor(element, emptyList(), true)
           )
         }
         return
@@ -198,7 +198,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
             (UsageSearchContext.IN_CODE + UsageSearchContext.IN_FOREIGN_LANGUAGES + UsageSearchContext.IN_COMMENTS).toShort(),
             false,
             element,
-            PsiSourcedPolySymbolRequestResultProcessor(element, emptyList(), true)
+            PsiLinkedPolySymbolRequestResultProcessor(element, emptyList(), true)
           )
         }
         return
@@ -259,7 +259,7 @@ private class ScriptSetupImportProcessor(target: PsiElement, queryParameters: Re
           UsageSearchContext.IN_CODE,
           false,
           localElement,
-          PsiSourcedPolySymbolRequestResultProcessor(localElement, emptyList(), true)
+          PsiLinkedPolySymbolRequestResultProcessor(localElement, emptyList(), true)
         )
       }
 

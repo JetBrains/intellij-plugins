@@ -177,7 +177,7 @@
                                         implementation="org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol$Factory"/>
     <polySymbols.webTypes.symbolFactory namespace="html" kindName="ng-block-parameter-prefixes"
                                         implementation="org.angular2.codeInsight.blocks.Angular2BlockParameterPrefixSymbol$Factory"/>
-    <polySymbols.psiSourcedSymbolProvider implementation="org.angular2.web.findUsages.Angular2PsiSourcedPolySymbolProvider"/>
+    <polySymbols.psiLinkedSymbolProvider implementation="org.angular2.web.findUsages.Angular2PsiLinkedPolySymbolProvider"/>
     <polySymbols.documentationCustomizer implementation="org.angular2.web.Angular2SymbolDocumentationCustomizer"/>
     <polySymbols.highlightingCustomizer id="angular2"
                                         implementation="org.angular2.web.Angular2SymbolHighlightingCustomizer"
