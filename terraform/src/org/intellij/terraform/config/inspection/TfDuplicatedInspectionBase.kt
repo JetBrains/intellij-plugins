@@ -9,7 +9,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter
 import com.intellij.modcommand.ModPsiUpdater
 import com.intellij.modcommand.PsiUpdateModCommandQuickFix
-import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.pom.Navigatable
@@ -101,7 +101,7 @@ internal class ShowDuplicatesQuickFix(psiElement: PsiElement, duplicates: Collec
       scopeText = descriptor.psiElement.getTerraformSearchScope().displayName
     }
 
-    val usageInfos = runReadAction {
+    val usageInfos = runReadActionBlocking {
       duplicatePointers.mapNotNull { pointer ->
         pointer.element?.let { UsageInfo(it) }
       }

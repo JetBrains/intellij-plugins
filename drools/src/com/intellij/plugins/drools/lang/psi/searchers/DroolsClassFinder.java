@@ -28,7 +28,7 @@ public final class DroolsClassFinder extends PsiElementFinder {
     if (scope.getProject() == null) return null;
 
     String packageName = StringUtil.getPackageName(qualifiedName);
-    Collection<VirtualFile> filesByExt = ReadAction.compute(
+    Collection<VirtualFile> filesByExt = ReadAction.computeBlocking(
       () -> FileBasedIndex.getInstance().getContainingFiles(DroolsDeclareStatementScalarIndex.Companion.getId(), packageName, scope));
     if (filesByExt.isEmpty()) return null;
     PsiManager psiManager = PsiManager.getInstance(scope.getProject());
