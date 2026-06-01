@@ -12,7 +12,7 @@ import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.js.JsSymbolSymbolKind
 import com.intellij.polySymbols.js.jsKind
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import org.angular2.Angular2DecoratorUtil.isHostBinding
 import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
@@ -46,7 +46,7 @@ class Angular2SymbolHighlightingCustomizer : PolySymbolHighlightingCustomizer {
     when (symbol.kind) {
       JS_SYMBOLS ->
         if (symbol.jsKind == JsSymbolSymbolKind.Variable
-            && symbol is PsiSourcedPolySymbol
+            && symbol is PsiLinkedPolySymbol
             && symbol.source?.language is Angular2ExprDialect
         )
           return Angular2HighlighterColors.NG_VARIABLE

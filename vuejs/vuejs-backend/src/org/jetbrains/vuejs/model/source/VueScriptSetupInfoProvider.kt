@@ -38,7 +38,7 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
@@ -437,7 +437,7 @@ private class VueScriptSetupInputProperty(
   private val sourceType: JSTypeDeclaration,
   private val propertySignature: JSRecordType.PropertySignature,
   private val hasOuterDefault: Boolean,
-) : VueInputProperty, PsiSourcedPolySymbol {
+) : VueInputProperty, PsiLinkedPolySymbol {
 
   override val name: String
     get() = propertySignature.memberName
@@ -490,7 +490,7 @@ private class VueScriptSetupInputProperty(
 private class VueScriptSetupLiteralBasedEvent(
   override val name: String,
   override val source: PsiElement,
-) : VueEmitCall, PsiSourcedPolySymbol {
+) : VueEmitCall, PsiLinkedPolySymbol {
   companion object {
     fun create(literal: PsiElement): VueScriptSetupLiteralBasedEvent? =
       (literal as? JSLiteralExpression)
@@ -520,7 +520,7 @@ private class VueScriptSetupCallSignatureEvent(
   override val name: String,
   override val source: PsiElement?,
   private val eventSignature: JSFunctionType,
-) : VueEmitCall, PsiSourcedPolySymbol {
+) : VueEmitCall, PsiLinkedPolySymbol {
   override val params: List<JSParameterTypeDecorator>
     get() = eventSignature.parameters.drop(1)
 
@@ -555,7 +555,7 @@ private class VueScriptSetupCallSignatureEvent(
 private class VueScriptSetupPropertyContractEvent(
   private val typeArgument: JSTypeDeclaration,
   private val signature: JSRecordType.PropertySignature,
-) : VueEmitCall, PsiSourcedPolySymbol {
+) : VueEmitCall, PsiLinkedPolySymbol {
   override val name: String
     get() = signature.memberName
 
@@ -684,7 +684,7 @@ private class VueScriptSetupModelDecl(
 
 private data class VueScriptSetupModelInputProperty(
   override val modelDecl: VueScriptSetupModelDecl,
-) : VueInputProperty, VueModelOwner, PsiSourcedPolySymbol {
+) : VueInputProperty, VueModelOwner, PsiLinkedPolySymbol {
   override val name: String
     get() = modelDecl.name
 
@@ -704,7 +704,7 @@ private data class VueScriptSetupModelInputProperty(
 }
 
 private data class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl) :
-  VueEmitCall, VueModelOwner, PsiSourcedPolySymbol {
+  VueEmitCall, VueModelOwner, PsiLinkedPolySymbol {
 
   override val name: String
     get() = modelDecl.name
@@ -731,7 +731,7 @@ private data class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl
 private class VueScriptSetupSlot(
   private val typeDeclaration: JSTypeDeclaration,
   signature: JSRecordType.PropertySignature,
-) : VueSlot, PsiSourcedPolySymbol {
+) : VueSlot, PsiLinkedPolySymbol {
   override val name: String =
     signature.memberName
 

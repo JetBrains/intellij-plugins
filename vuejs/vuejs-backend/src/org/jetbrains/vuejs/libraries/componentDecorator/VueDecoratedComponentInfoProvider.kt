@@ -22,7 +22,7 @@ import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.ReadWriteAccessProperty
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.parentOfType
@@ -170,7 +170,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     private abstract class VueDecoratedNamedSymbol<T : TypeMember>(
       override val name: String,
       protected val member: T,
-    ) : VueSymbol, PsiSourcedPolySymbol {
+    ) : VueSymbol, PsiLinkedPolySymbol {
       override val source: PsiElement?
         get() = member.memberSource.singleElement
 
@@ -194,7 +194,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       name: String,
       member: PropertySignature,
     ) : VueDecoratedNamedSymbol<PropertySignature>(name, member),
-        VueProperty, PsiSourcedPolySymbol {
+        VueProperty, PsiLinkedPolySymbol {
       override val type: JSType?
         get() = member.jsType
 

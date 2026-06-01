@@ -11,7 +11,7 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueDirectiveModifier
@@ -28,8 +28,8 @@ internal open class VueDirectiveWithProximity private constructor(
 
   companion object {
     fun create(delegate: VueDirective, proximity: VueModelVisitor.Proximity): VueDirective =
-      if (delegate is PsiSourcedPolySymbol)
-        VuePsiSourcedDirectiveWithProximity(delegate, proximity)
+      if (delegate is PsiLinkedPolySymbol)
+        VuePsiLinkedDirectiveWithProximity(delegate, proximity)
       else
         VueDirectiveWithProximity(delegate, proximity)
   }
@@ -91,26 +91,26 @@ internal open class VueDirectiveWithProximity private constructor(
     }
   }
 
-  private class VuePsiSourcedDirectiveWithProximity(
+  private class VuePsiLinkedDirectiveWithProximity(
     delegate: VueDirective,
     vueProximity: VueModelVisitor.Proximity,
-  ) : VueDirectiveWithProximity(delegate, vueProximity), PsiSourcedPolySymbol {
+  ) : VueDirectiveWithProximity(delegate, vueProximity), PsiLinkedPolySymbol {
 
     override val source: PsiElement?
-      get() = (delegate as PsiSourcedPolySymbol).source
+      get() = (delegate as PsiLinkedPolySymbol).source
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       delegate.getNavigationTargets(project)
 
     override fun isEquivalentTo(symbol: Symbol): Boolean =
-      super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
+      super<PsiLinkedPolySymbol>.isEquivalentTo(symbol)
       || super<VueDirectiveWithProximity>.isEquivalentTo(symbol)
 
-    override fun createPointer(): Pointer<VuePsiSourcedDirectiveWithProximity> {
+    override fun createPointer(): Pointer<VuePsiLinkedDirectiveWithProximity> {
       val delegatePtr = delegate.createPointer()
       val vueProximity = vueProximity
       return Pointer {
-        VuePsiSourcedDirectiveWithProximity(delegatePtr.dereference() ?: return@Pointer null, vueProximity)
+        VuePsiLinkedDirectiveWithProximity(delegatePtr.dereference() ?: return@Pointer null, vueProximity)
       }
     }
   }

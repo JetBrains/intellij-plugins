@@ -9,7 +9,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationCustomizer
 import com.intellij.polySymbols.html.framework
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.kindName
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
@@ -85,7 +85,7 @@ class Angular2SymbolDocumentationCustomizer : PolySymbolDocumentationCustomizer 
       }
 
   private fun PolySymbolDocumentation.withAngularLibrary(symbol: PolySymbol): PolySymbolDocumentation {
-    val source = if (symbol is PsiSourcedPolySymbol)
+    val source = if (symbol is PsiLinkedPolySymbol)
       symbol.source
     else
       null

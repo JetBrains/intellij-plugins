@@ -13,7 +13,7 @@ import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
@@ -116,7 +116,7 @@ class Angular2DirectiveProperties(
 
   private abstract class AbstractFromInOutDirectiveProperty(inOut: Angular2DirectiveProperty) :
     Angular2SymbolDelegate<Angular2DirectiveProperty>(inOut),
-    Angular2DirectiveProperty, PsiSourcedPolySymbol {
+    Angular2DirectiveProperty, PsiLinkedPolySymbol {
 
     override val modifiers: Set<PolySymbolModifier>
       get() = super<Angular2SymbolDelegate>.modifiers + super<Angular2DirectiveProperty>.modifiers
@@ -128,7 +128,7 @@ class Angular2DirectiveProperties(
       get() = delegate.psiContext
 
     override val source: PsiElement?
-      get() = (delegate as? PsiSourcedPolySymbol)?.source
+      get() = (delegate as? PsiLinkedPolySymbol)?.source
 
     override val rawJsType: JSType?
       get() = delegate.rawJsType

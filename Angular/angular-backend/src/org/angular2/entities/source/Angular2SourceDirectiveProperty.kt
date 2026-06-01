@@ -22,7 +22,7 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.js.apiStatus
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.polySymbols.utils.coalesceApiStatus
 import com.intellij.polySymbols.utils.coalesceWith
@@ -162,7 +162,7 @@ abstract class Angular2SourceDirectiveProperty(
     isSignalProperty: Boolean,
     declarationSource: PsiElement?,
   ) : Angular2SourceDirectiveProperty(owner, signature, kind, name, required, isSignalProperty, declarationSource),
-      PsiSourcedPolySymbol {
+      PsiLinkedPolySymbol {
     override val sourceElement: PsiElement
       get() = sources[0]
 

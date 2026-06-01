@@ -12,7 +12,7 @@ import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.html.HtmlAttributeValueProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -41,7 +41,7 @@ open class Angular2DirectiveSymbolWrapper private constructor(
       forcedPriority: PolySymbol.Priority? = null,
     ): Angular2DirectiveSymbolWrapper =
       when (delegate) {
-        is PsiSourcedPolySymbol -> Angular2PsiSourcedDirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective)
+        is PsiLinkedPolySymbol -> Angular2PsiLinkedDirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective)
         else -> Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective)
       }
   }
@@ -111,16 +111,16 @@ open class Angular2DirectiveSymbolWrapper private constructor(
     }
   }
 
-  private class Angular2PsiSourcedDirectiveSymbolWrapper(
+  private class Angular2PsiLinkedDirectiveSymbolWrapper(
     directive: Angular2Directive,
     delegate: Angular2Symbol,
     forcedPriority: PolySymbol.Priority?,
     location: PsiFile,
     isMatchedDirective: Boolean,
-  ) : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective), PsiSourcedPolySymbol {
+  ) : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective), PsiLinkedPolySymbol {
 
     override val source: PsiElement?
-      get() = (this.delegate as PsiSourcedPolySymbol).source
+      get() = (this.delegate as PsiLinkedPolySymbol).source
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<Angular2DirectiveSymbolWrapper>.getNavigationTargets(project)
@@ -128,8 +128,8 @@ open class Angular2DirectiveSymbolWrapper private constructor(
     override fun isEquivalentTo(symbol: Symbol): Boolean =
       super<Angular2DirectiveSymbolWrapper>.isEquivalentTo(symbol)
 
-    override fun createPointer(): Pointer<Angular2PsiSourcedDirectiveSymbolWrapper> =
-      createPointer(::Angular2PsiSourcedDirectiveSymbolWrapper)
+    override fun createPointer(): Pointer<Angular2PsiLinkedDirectiveSymbolWrapper> =
+      createPointer(::Angular2PsiLinkedDirectiveSymbolWrapper)
 
     override val psiContext: PsiElement?
       get() = super<Angular2DirectiveSymbolWrapper>.psiContext

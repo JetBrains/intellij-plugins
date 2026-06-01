@@ -23,7 +23,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.webTypes.WebTypesSymbol
 import com.intellij.psi.PsiElement
@@ -178,7 +178,7 @@ private constructor(
   }
 
   private fun PolySymbol.tryMergeWithWebTypes(webTypesContributions: MultiMap<WebTypesSymbolLocation, PolySymbol>): List<PolySymbol> {
-    if (this !is PsiSourcedPolySymbol || webTypesContributions.isEmpty)
+    if (this !is PsiLinkedPolySymbol || webTypesContributions.isEmpty)
       return listOf(this)
     val source =
       ((this as? VueComponent)?.elementToImport?.takeIf { it !is ES6ExportSpecifierAlias } ?: this.source)

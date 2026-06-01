@@ -2,10 +2,10 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiFile
 
-interface VueFileComponent : VuePsiSourcedComponent, PsiSourcedPolySymbol {
+interface VueFileComponent : VuePsiLinkedComponent, PsiLinkedPolySymbol {
 
   override val source: PsiFile
 

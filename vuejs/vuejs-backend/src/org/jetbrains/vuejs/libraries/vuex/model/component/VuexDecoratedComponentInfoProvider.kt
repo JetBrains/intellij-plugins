@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.codeInsight.findDecorator
@@ -69,7 +69,7 @@ class VuexDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecorated
     private abstract class VuexMappedProperty(
       protected val clazz: JSClass,
       protected val member: JSRecordType.PropertySignature,
-    ) : VueProperty, PsiSourcedPolySymbol {
+    ) : VueProperty, PsiLinkedPolySymbol {
       override val source: PsiElement? get() = member.memberSource.singleElement
 
       override val type: JSType? get() = member.jsType

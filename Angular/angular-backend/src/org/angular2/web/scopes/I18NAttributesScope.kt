@@ -20,7 +20,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
-import org.angular2.web.Angular2PsiSourcedSymbol
+import org.angular2.web.Angular2PsiLinkedSymbol
 import org.angular2.web.NG_I18N_ATTRIBUTES
 import org.jetbrains.annotations.NonNls
 
@@ -84,7 +84,7 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolScope {
     }
   }
 
-  private class Angular2I18nAttributeSymbol(private val attribute: XmlAttribute) : Angular2PsiSourcedSymbol, CompositePolySymbol {
+  private class Angular2I18nAttributeSymbol(private val attribute: XmlAttribute) : Angular2PsiLinkedSymbol, CompositePolySymbol {
 
     override val source: PsiElement
       get() = attribute

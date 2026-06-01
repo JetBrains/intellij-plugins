@@ -31,13 +31,13 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueNamedComponent
-import org.jetbrains.vuejs.model.VuePsiSourcedComponent
+import org.jetbrains.vuejs.model.VuePsiLinkedComponent
 import org.jetbrains.vuejs.model.source.VueComponents
 
 class VueTypedComponent private constructor(
   override val source: JSQualifiedNamedElement,
   override val name: String,
-) : VueTypedContainer(source), VuePsiSourcedComponent {
+) : VueTypedContainer(source), VuePsiLinkedComponent {
 
   companion object {
     fun create(source: JSQualifiedNamedElement): VueNamedComponent? {

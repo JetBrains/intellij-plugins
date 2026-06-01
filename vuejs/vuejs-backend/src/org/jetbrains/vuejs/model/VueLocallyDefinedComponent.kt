@@ -135,7 +135,7 @@ private class VuePsiNamedElementLocallyDefinedComponent(
   delegate: VueComponent,
   sourceElement: JSPsiNamedElementBase,
 ) : VueLocallyDefinedComponent<JSPsiNamedElementBase>(name, delegate, sourceElement),
-    VuePsiSourcedComponent {
+    VuePsiLinkedComponent {
 
   override val elementToImport: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     sourceElement.resolveIfImportSpecifier().takeIf { it !is JSProperty }
@@ -147,7 +147,7 @@ private class VuePsiNamedElementLocallyDefinedComponent(
       .ifEmpty { listOf(VueComponentSourceNavigationTarget(sourceElement)) }
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
-    super<VuePsiSourcedComponent>.isEquivalentTo(symbol)
+    super<VuePsiLinkedComponent>.isEquivalentTo(symbol)
     || super<VueLocallyDefinedComponent>.isEquivalentTo(symbol)
 
   override fun createPointer(): Pointer<VuePsiNamedElementLocallyDefinedComponent> =
@@ -159,7 +159,7 @@ private class VuePsiNamedElementLocallyDefinedLazyComponent(
   private val delegateProvider: VueLocallyDefinedComponent.DelegateComponentProvider,
   override val source: JSPsiNamedElementBase,
 ) : VueDelegatedComponent<VueComponent>(),
-    VuePsiSourcedComponent {
+    VuePsiLinkedComponent {
 
   override val delegate: VueComponent? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     delegateProvider.getDelegate()
@@ -175,7 +175,7 @@ private class VuePsiNamedElementLocallyDefinedLazyComponent(
       .ifEmpty { listOf(VueComponentSourceNavigationTarget(source)) }
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
-    super<VuePsiSourcedComponent>.isEquivalentTo(symbol)
+    super<VuePsiLinkedComponent>.isEquivalentTo(symbol)
 
   override fun equals(other: Any?): Boolean =
     other === this ||

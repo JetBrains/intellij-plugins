@@ -10,7 +10,7 @@ import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.html.HtmlAttributeValueProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -35,8 +35,8 @@ open class Angular2StructuralDirectiveSymbol private constructor(
       location: PsiFile,
     ): Angular2StructuralDirectiveSymbol =
       when (sourceSymbol) {
-        is PsiSourcedPolySymbol ->
-          Angular2PsiSourcedStructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind, location)
+        is PsiLinkedPolySymbol ->
+          Angular2PsiLinkedStructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind, location)
         else -> Angular2StructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind, location)
       }
   }
@@ -89,15 +89,15 @@ open class Angular2StructuralDirectiveSymbol private constructor(
   override fun hashCode(): Int =
     delegate.hashCode()
 
-  private class Angular2PsiSourcedStructuralDirectiveSymbol(
+  private class Angular2PsiLinkedStructuralDirectiveSymbol(
     directive: Angular2Directive,
     sourceSymbol: Angular2Symbol,
     hasInputsToBind: Boolean,
     location: PsiFile,
-  ) : Angular2StructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind, location), PsiSourcedPolySymbol {
+  ) : Angular2StructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind, location), PsiLinkedPolySymbol {
 
     override val source: PsiElement?
-      get() = (delegate as PsiSourcedPolySymbol).source
+      get() = (delegate as PsiLinkedPolySymbol).source
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<Angular2StructuralDirectiveSymbol>.getNavigationTargets(project)
@@ -105,7 +105,7 @@ open class Angular2StructuralDirectiveSymbol private constructor(
     override val psiContext: PsiElement?
       get() = super<Angular2StructuralDirectiveSymbol>.psiContext
 
-    override fun createPointer(): Pointer<Angular2PsiSourcedStructuralDirectiveSymbol> =
-      createPointer(::Angular2PsiSourcedStructuralDirectiveSymbol)
+    override fun createPointer(): Pointer<Angular2PsiLinkedStructuralDirectiveSymbol> =
+      createPointer(::Angular2PsiLinkedStructuralDirectiveSymbol)
   }
 }

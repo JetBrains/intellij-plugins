@@ -6,7 +6,7 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlTag
@@ -26,7 +26,7 @@ class AstroMissingComponentImportInspection : LocalInspectionTool() {
           return
 
         val symbol = descriptor.symbol
-        if (symbol !is PsiSourcedPolySymbol
+        if (symbol !is PsiLinkedPolySymbol
             || symbol[AstroProximityProperty] != AstroProximity.OUT_OF_SCOPE)
           return
 

@@ -30,7 +30,7 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.polySymbolPattern
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -62,7 +62,7 @@ import org.jetbrains.vuejs.model.VueFileComponent
 import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
 import org.jetbrains.vuejs.model.VueMode
 import org.jetbrains.vuejs.model.VueNamedComponent
-import org.jetbrains.vuejs.model.VuePsiSourcedComponent
+import org.jetbrains.vuejs.model.VuePsiLinkedComponent
 import org.jetbrains.vuejs.model.VueSlot
 import org.jetbrains.vuejs.model.VueTemplate
 import org.jetbrains.vuejs.model.source.VueComponents.getComponentDecorator
@@ -318,7 +318,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
   private class VueNamedClassSourceComponent(
     clazz: JSClass,
     override val initializer: JSObjectLiteralExpression?,
-  ) : VueSourceComponent<JSClass>(clazz, initializer, clazz), VuePsiSourcedComponent {
+  ) : VueSourceComponent<JSClass>(clazz, initializer, clazz), VuePsiLinkedComponent {
 
     override val name: @NlsSafe String = clazz.name!!
 
@@ -429,7 +429,7 @@ private fun getSlotNameRegex(expr: JSExpression): String {
 private data class VueSourceRegexSlot(
   private val regex: String,
   override val source: XmlTag,
-) : VueSlot, PolySymbolWithPattern, PsiSourcedPolySymbol {
+) : VueSlot, PolySymbolWithPattern, PsiLinkedPolySymbol {
 
   override val name: String
     get() = "Dynamic slot"
@@ -453,7 +453,7 @@ private data class VueSourceRegexSlot(
 private data class VueSourceSlot(
   override val name: String,
   override val source: XmlTag,
-) : VueSlot, PsiSourcedPolySymbol {
+) : VueSlot, PsiLinkedPolySymbol {
   override val type: JSType
     get() = VueSourceSlotScopeType(source, name)
 

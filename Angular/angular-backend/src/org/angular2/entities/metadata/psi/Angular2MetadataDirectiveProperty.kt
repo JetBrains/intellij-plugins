@@ -13,7 +13,7 @@ import com.intellij.openapi.util.NullableLazyValue.lazyNullable
 import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.js.apiStatus
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.coalesceApiStatus
 import com.intellij.polySymbols.utils.coalesceWith
 import com.intellij.psi.PsiElement
@@ -28,7 +28,7 @@ class Angular2MetadataDirectiveProperty internal constructor(
   private val myFieldName: String,
   override val name: String,
   override val kind: PolySymbolKind,
-) : Angular2ClassBasedDirectiveProperty, PsiSourcedPolySymbol {
+) : Angular2ClassBasedDirectiveProperty, PsiLinkedPolySymbol {
 
   private val mySignature: NullableLazyValue<JSRecordType.PropertySignature> =
     lazyNullable { myOwner.getPropertySignature(myFieldName) }

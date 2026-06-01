@@ -4,16 +4,16 @@ package org.jetbrains.vuejs.model
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 
-interface VuePsiSourcedComponent : VueNamedComponent, PsiSourcedPolySymbol {
+interface VuePsiLinkedComponent : VueNamedComponent, PsiLinkedPolySymbol {
 
   override val source: PsiElement
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     listOf(VueComponentSourceNavigationTarget(source))
 
-  override fun createPointer(): Pointer<out VuePsiSourcedComponent>
+  override fun createPointer(): Pointer<out VuePsiLinkedComponent>
 }

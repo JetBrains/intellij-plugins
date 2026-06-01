@@ -6,7 +6,7 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.model.psi.PsiSymbolService
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
@@ -24,7 +24,7 @@ data class VueScriptSetupLocalDirective(
   override val name: String,
   private val rawSource: JSPsiNamedElementBase,
   private val mode: VueMode,
-) : VueDirective, PsiSourcedPolySymbol {
+) : VueDirective, PsiLinkedPolySymbol {
 
   override val parents: List<VueEntitiesContainer> = emptyList()
 
@@ -54,7 +54,7 @@ data class VueScriptSetupLocalDirective(
   }
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
-    super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
+    super<PsiLinkedPolySymbol>.isEquivalentTo(symbol)
     || PsiSymbolService.getInstance().extractElementFromSymbol(symbol)
       ?.let { it.manager.areElementsEquivalent(it, rawSource) } == true
 

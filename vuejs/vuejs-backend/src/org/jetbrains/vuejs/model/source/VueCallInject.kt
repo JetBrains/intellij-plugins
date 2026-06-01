@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.createSmartPointer
@@ -17,7 +17,7 @@ data class VueCallInject(
   override val name: String,
   override val source: PsiElement,
   private val symbolSource: PsiNamedElement? = null,
-) : VueInject, PsiSourcedPolySymbol {
+) : VueInject, PsiLinkedPolySymbol {
 
   override val injectionKey: PsiNamedElement?
     get() = resolveInjectionSymbol(symbolSource)

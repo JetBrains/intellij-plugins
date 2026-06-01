@@ -54,7 +54,7 @@ import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.utils.asSingleSymbol
@@ -507,8 +507,8 @@ private constructor(
       vueProximity: VueModelVisitor.Proximity,
       typeProvider: VueTypeProvider? = null,
     ): VueJsPropertyWithProximity =
-      if (delegate is PsiSourcedPolySymbol)
-        VuePsiSourcedJsPropertyWithProximity(delegate, vueProximity, typeProvider)
+      if (delegate is PsiLinkedPolySymbol)
+        VuePsiLinkedJsPropertyWithProximity(delegate, vueProximity, typeProvider)
       else
         VueJsPropertyWithProximity(delegate, vueProximity, typeProvider)
   }
@@ -555,15 +555,15 @@ private constructor(
     }
   }
 
-  private class VuePsiSourcedJsPropertyWithProximity(
-    delegate: PsiSourcedPolySymbol,
+  private class VuePsiLinkedJsPropertyWithProximity(
+    delegate: PsiLinkedPolySymbol,
     proximity: VueModelVisitor.Proximity,
     typeProvider: VueTypeProvider?,
   ) : VueJsPropertyWithProximity(delegate, proximity, typeProvider),
-      PsiSourcedPolySymbol {
+      PsiLinkedPolySymbol {
 
     override val source: PsiElement?
-      get() = (delegate as PsiSourcedPolySymbol).source
+      get() = (delegate as PsiLinkedPolySymbol).source
 
     override val psiContext: PsiElement?
       get() = delegate.psiContext
@@ -573,15 +573,15 @@ private constructor(
 
     override fun isEquivalentTo(symbol: Symbol): Boolean =
       super<VueJsPropertyWithProximity>.isEquivalentTo(symbol)
-      || super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
+      || super<PsiLinkedPolySymbol>.isEquivalentTo(symbol)
 
-    override fun createPointer(): Pointer<VuePsiSourcedJsPropertyWithProximity> {
+    override fun createPointer(): Pointer<VuePsiLinkedJsPropertyWithProximity> {
       val delegatePtr = delegate.createPointer()
       val typeProviderPtr = typeProvider?.createPointer()
       return Pointer {
         val delegate = delegatePtr.dereference() ?: return@Pointer null
         val typeProvider = typeProviderPtr?.let { it.dereference() ?: return@Pointer null }
-        VuePsiSourcedJsPropertyWithProximity(delegate as PsiSourcedPolySymbol, vueProximity, typeProvider)
+        VuePsiLinkedJsPropertyWithProximity(delegate as PsiLinkedPolySymbol, vueProximity, typeProvider)
       }
     }
   }

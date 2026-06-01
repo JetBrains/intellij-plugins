@@ -18,7 +18,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil.getPresentableAccessModifier
 import com.intellij.lang.javascript.validation.fixes.JSRemoveReadonlyModifierFix
 import com.intellij.openapi.util.text.StringUtil.capitalize
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.psi.HintedPsiElementVisitor
 import com.intellij.psi.PsiElement
@@ -131,7 +131,7 @@ fun getInputSourceElements(element: Angular2HtmlPropertyBinding): List<JSAttribu
   element.descriptor?.asSafely<Angular2AttributeDescriptor>()?.symbol
     ?.unwrapMatchedSymbols()
     ?.filter { it.kind == NG_DIRECTIVE_INPUTS }
-    ?.filterIsInstance<PsiSourcedPolySymbol>()
+    ?.filterIsInstance<PsiLinkedPolySymbol>()
     ?.mapNotNull { it.source }
     ?.filterIsInstance<JSAttributeListOwner>()
     ?.toList()

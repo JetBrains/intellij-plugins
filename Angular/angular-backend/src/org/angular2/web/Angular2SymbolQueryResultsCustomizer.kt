@@ -19,7 +19,7 @@ import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizerFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.polySymbols.utils.withSegments
@@ -254,7 +254,7 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
       ): Angular2ScopedSymbol? =
         when (symbol) {
           is PolySymbolWithPattern -> null
-          is PsiSourcedPolySymbol -> Angular2PsiSourcedScopedSymbol(symbol, scopeProximity)
+          is PsiLinkedPolySymbol -> Angular2PsiLinkedScopedSymbol(symbol, scopeProximity)
           else -> Angular2ScopedSymbol(symbol, scopeProximity)
         }
 
@@ -291,13 +291,13 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
     override fun hashCode(): Int =
       31 * delegate.hashCode() + scopeProximity.hashCode()
 
-    private class Angular2PsiSourcedScopedSymbol(
+    private class Angular2PsiLinkedScopedSymbol(
       symbol: PolySymbol,
       scopeProximity: DeclarationProximity,
-    ) : Angular2ScopedSymbol(symbol, scopeProximity), PsiSourcedPolySymbol {
+    ) : Angular2ScopedSymbol(symbol, scopeProximity), PsiLinkedPolySymbol {
 
       override val source: PsiElement?
-        get() = (delegate as PsiSourcedPolySymbol).source
+        get() = (delegate as PsiLinkedPolySymbol).source
 
       override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
         super<Angular2ScopedSymbol>.getNavigationTargets(project)
@@ -308,8 +308,8 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
       override fun isEquivalentTo(symbol: Symbol): Boolean =
         super<Angular2ScopedSymbol>.isEquivalentTo(symbol)
 
-      override fun createPointer(): Pointer<Angular2PsiSourcedScopedSymbol> =
-        createPointer(::Angular2PsiSourcedScopedSymbol)
+      override fun createPointer(): Pointer<Angular2PsiLinkedScopedSymbol> =
+        createPointer(::Angular2PsiLinkedScopedSymbol)
     }
   }
 }

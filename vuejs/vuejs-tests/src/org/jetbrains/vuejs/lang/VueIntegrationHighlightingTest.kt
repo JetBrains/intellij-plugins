@@ -6,7 +6,7 @@ import com.intellij.javascript.debugger.NodeJsAppRule
 import com.intellij.javascript.nodejs.npm.NpmUtil
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest
 import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.inspections.VueMissingComponentImportInspection
@@ -31,7 +31,7 @@ class VueIntegrationHighlightingTest: JSExternalToolIntegrationTest() {
     val polySymbolDescriptor = tagAtCaret?.descriptor.asSafely<HtmlElementSymbolDescriptor>()
     assertNotNull(polySymbolDescriptor)
 
-    val polySymbol = polySymbolDescriptor?.symbol.asSafely<PsiSourcedPolySymbol>()
+    val polySymbol = polySymbolDescriptor?.symbol.asSafely<PsiLinkedPolySymbol>()
     val polySymbolSource = polySymbol?.source
     assertNotNull(polySymbolSource)
 

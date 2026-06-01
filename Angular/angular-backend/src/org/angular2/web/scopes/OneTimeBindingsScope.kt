@@ -30,7 +30,7 @@ import com.intellij.polySymbols.js.jsType
 import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
@@ -116,7 +116,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
       }
       if ((property as? Angular2DirectiveProperty)?.virtualProperty == true) return true
       val type = property.jsType ?: return true
-      val source = (property as? PsiSourcedPolySymbol)?.source ?: return true
+      val source = (property as? PsiLinkedPolySymbol)?.source ?: return true
 
       return CachedValuesManager.getCachedValue(source) {
         CachedValueProvider.Result.create(ConcurrentHashMap<PolySymbol, Boolean>(),
@@ -139,9 +139,9 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
     val typeEvaluationLocation: PsiElement,
     val requiresValue: Boolean,
     val resolveOnly: Boolean = false,
-  ) : PolySymbolDelegate<PolySymbol>, PsiSourcedPolySymbol {
+  ) : PolySymbolDelegate<PolySymbol>, PsiLinkedPolySymbol {
     override val source: PsiElement?
-      get() = (delegate as? PsiSourcedPolySymbol)?.source
+      get() = (delegate as? PsiLinkedPolySymbol)?.source
 
     override val kind: PolySymbolKind
       get() = NG_DIRECTIVE_ONE_TIME_BINDINGS
@@ -217,7 +217,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
     }
 
     override fun isEquivalentTo(symbol: Symbol): Boolean =
-      super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
+      super<PsiLinkedPolySymbol>.isEquivalentTo(symbol)
       || delegate.isEquivalentTo(symbol)
 
     override fun equals(other: Any?): Boolean =

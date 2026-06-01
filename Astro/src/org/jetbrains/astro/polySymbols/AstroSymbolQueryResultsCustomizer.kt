@@ -10,7 +10,7 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizerFactory
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
@@ -43,7 +43,7 @@ class AstroSymbolQueryResultsCustomizer(private val context: PsiElement) : PolyS
     if (kind == ASTRO_COMPONENTS) {
       if (isHtmlTagName(item.name)) return null
       val proximity = item.symbol?.get(AstroProximityProperty)
-      val element = (item.symbol as? PsiSourcedPolySymbol)?.source
+      val element = (item.symbol as? PsiLinkedPolySymbol)?.source
       if (proximity == AstroProximity.OUT_OF_SCOPE && element is AstroFileImpl) {
         return if (element != context.containingFile.originalFile)
           item.withInsertHandlerAdded(AstroImportInsertHandler, PolySymbol.Priority.LOWEST)

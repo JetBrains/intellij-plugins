@@ -70,7 +70,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.namespace
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.psi.PsiElement
@@ -526,11 +526,11 @@ fun PolySymbol.extractComponentSymbol(): PolySymbol? =
     ?.let {
       if (it is VueWebTypesMergedSymbol) it.delegate else it
     }
-    ?.takeIf { it is VueNamedComponent || it is PsiSourcedPolySymbol }
+    ?.takeIf { it is VueNamedComponent || it is PsiLinkedPolySymbol }
 
 val PolySymbol.elementToImport: PsiElement?
   get() = (this as? VueNamedComponent)?.elementToImport
-          ?: (this as? PsiSourcedPolySymbol)?.source
+          ?: (this as? PsiLinkedPolySymbol)?.source
 
 inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
   val host = InjectedLanguageManager.getInstance(project).getInjectionHost(this) ?: this

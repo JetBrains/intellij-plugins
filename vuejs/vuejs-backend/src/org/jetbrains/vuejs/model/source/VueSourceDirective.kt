@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
@@ -24,7 +24,7 @@ class VueSourceDirective(
   override val source: PsiElement,
   private val typeSource: PsiElement? = null,
   private val mode: VueMode = VueMode.CLASSIC,
-) : VueDirective, PsiSourcedPolySymbol {
+) : VueDirective, PsiLinkedPolySymbol {
 
   override val kind: PolySymbolKind
     get() = VUE_DIRECTIVES

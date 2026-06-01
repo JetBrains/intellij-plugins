@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.createSmartPointer
@@ -18,7 +18,7 @@ data class VueSourceProvide(
   override val name: String,
   private val sourceElement: PsiElement,
   private val symbolSource: PsiNamedElement? = null,
-) : VueProvide, PsiSourcedPolySymbol {
+) : VueProvide, PsiLinkedPolySymbol {
 
   override val injectionKey: PsiNamedElement?
     get() = resolveInjectionSymbol(symbolSource)

@@ -22,8 +22,8 @@ import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
-import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
+import com.intellij.polySymbols.utils.PsiLinkedPolySymbolDelegate
 import com.intellij.polySymbols.utils.coalesceApiStatus
 import com.intellij.polySymbols.utils.merge
 import com.intellij.psi.PsiElement
@@ -32,9 +32,9 @@ import javax.swing.Icon
 
 class VueWebTypesMergedSymbol(
   override val name: String,
-  override val delegate: PsiSourcedPolySymbol,
+  override val delegate: PsiLinkedPolySymbol,
   val webTypesSymbols: Collection<PolySymbol>,
-) : PsiSourcedPolySymbolDelegate<PsiSourcedPolySymbol>,
+) : PsiLinkedPolySymbolDelegate<PsiLinkedPolySymbol>,
     CompositePolySymbol, PolySymbolScope {
 
   private val symbols: List<PolySymbol> = sequenceOf(delegate)
@@ -110,9 +110,9 @@ class VueWebTypesMergedSymbol(
       .flatMap { it.getMatchingSymbols(qualifiedName, params, stack) }
       .toList()
       .let { list ->
-        val psiSourcedPolySymbol = list.firstNotNullOfOrNull { it as? PsiSourcedPolySymbol }
-        if (psiSourcedPolySymbol != null) {
-          listOf(VueWebTypesMergedSymbol(psiSourcedPolySymbol.name, psiSourcedPolySymbol, list))
+        val psiLinkedPolySymbol = list.firstNotNullOfOrNull { it as? PsiLinkedPolySymbol }
+        if (psiLinkedPolySymbol != null) {
+          listOf(VueWebTypesMergedSymbol(psiLinkedPolySymbol.name, psiLinkedPolySymbol, list))
         }
         else {
           list
@@ -133,21 +133,21 @@ class VueWebTypesMergedSymbol(
       ?.groupBy { it.name }
       ?.mapValues { (_, list) ->
         val containers = mutableListOf<PolySymbol>()
-        var psiSourcedPolySymbol: PsiSourcedPolySymbol? = null
+        var psiLinkedPolySymbol: PsiLinkedPolySymbol? = null
         val polySymbols = mutableListOf<PolySymbol>()
         for (item in list) {
           when (item) {
-            is PsiSourcedPolySymbol -> {
-              if (psiSourcedPolySymbol == null) {
-                psiSourcedPolySymbol = item
+            is PsiLinkedPolySymbol -> {
+              if (psiLinkedPolySymbol == null) {
+                psiLinkedPolySymbol = item
               }
               else polySymbols.add(item)
             }
             else -> polySymbols.add(item)
           }
         }
-        if (psiSourcedPolySymbol != null) {
-          containers.add(VueWebTypesMergedSymbol(psiSourcedPolySymbol.name, psiSourcedPolySymbol, polySymbols))
+        if (psiLinkedPolySymbol != null) {
+          containers.add(VueWebTypesMergedSymbol(psiLinkedPolySymbol.name, psiLinkedPolySymbol, polySymbols))
         }
         else {
           containers.addAll(polySymbols)
@@ -171,14 +171,14 @@ class VueWebTypesMergedSymbol(
         if (items.size == 1)
           items[0]
         else {
-          var psiSourcedPolySymbol: PsiSourcedPolySymbol? = null
+          var psiLinkedPolySymbol: PsiLinkedPolySymbol? = null
           val symbols = mutableListOf<PolySymbol>()
           items.asSequence().mapNotNull { it.symbol }.distinct().forEach {
-            if (it is PsiSourcedPolySymbol && psiSourcedPolySymbol == null)
-              psiSourcedPolySymbol = it
+            if (it is PsiLinkedPolySymbol && psiLinkedPolySymbol == null)
+              psiLinkedPolySymbol = it
             else symbols.add(it)
           }
-          psiSourcedPolySymbol?.let {
+          psiLinkedPolySymbol?.let {
             items[0].withSymbol(VueWebTypesMergedSymbol(it.name, it, symbols))
           } ?: items[0]
         }
@@ -202,7 +202,7 @@ class VueWebTypesMergedSymbol(
     return Pointer {
       val symbols = pointers.map { it.dereference() ?: return@Pointer null }
       VueWebTypesMergedSymbol(matchedName,
-                              symbols[0] as? PsiSourcedPolySymbol ?: return@Pointer null,
+                              symbols[0] as? PsiLinkedPolySymbol ?: return@Pointer null,
                               symbols.subList(1, symbols.size))
     }
   }

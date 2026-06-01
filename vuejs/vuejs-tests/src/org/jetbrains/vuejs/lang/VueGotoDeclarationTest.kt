@@ -16,7 +16,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.testFramework.assertUnresolvedReference
 import com.intellij.polySymbols.testFramework.checkGotoDeclaration
 import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
@@ -2790,7 +2790,7 @@ export default class UsageComponent extends Vue {
       assertEquals(
         "default?: (props: { field: FieldSlotPropText }) => any",
         multiResolvePolySymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
-          ?.asSafely<PsiSourcedPolySymbol>()?.source?.text
+          ?.asSafely<PsiLinkedPolySymbol>()?.source?.text
       )
     }
   }
@@ -2818,7 +2818,7 @@ export default class UsageComponent extends Vue {
       assertEquals(
         "default?: (props: { field: FieldSlotPropText }) => any",
         multiResolvePolySymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
-          ?.asSafely<PsiSourcedPolySymbol>()?.source?.text
+          ?.asSafely<PsiLinkedPolySymbol>()?.source?.text
       )
     }
   }
@@ -2846,7 +2846,7 @@ export default class UsageComponent extends Vue {
       assertEquals(
         "default?: (props: { field: FieldSlotPropText }) => any",
         multiResolvePolySymbolReference("v-slot:def<caret>ault='{ field }'").asSingleSymbol()
-          ?.asSafely<PsiSourcedPolySymbol>()?.source?.text
+          ?.asSafely<PsiLinkedPolySymbol>()?.source?.text
       )
     }
   }
@@ -2898,7 +2898,7 @@ export default class UsageComponent extends Vue {
         .filterIsInstance<VueBindingShorthandSymbol>()
         .flatMap { it.nameSegments }
         .flatMap { it.symbols }
-        .filterIsInstance<PsiSourcedPolySymbol>()
+        .filterIsInstance<PsiLinkedPolySymbol>()
         .mapNotNull { if (it.source is JSImplicitElement) it.source?.context else it.source }
         .map { it.text }
         .toList()

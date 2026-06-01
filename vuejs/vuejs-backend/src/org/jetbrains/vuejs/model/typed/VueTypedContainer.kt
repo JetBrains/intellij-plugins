@@ -19,7 +19,7 @@ import com.intellij.model.Pointer
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.query.PolySymbolScope
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
@@ -155,7 +155,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
   private abstract class VueTypedDocumentedElement(
     private val container: VueTypedContainer,
     override val name: String,
-  ) : VueSymbol, PsiSourcedPolySymbol {
+  ) : VueSymbol, PsiLinkedPolySymbol {
 
     val description: String? by lazy {
       val doc = JSDocumentationProvider()

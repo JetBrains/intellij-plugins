@@ -39,7 +39,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.ReadWriteAccessProperty
 import com.intellij.polySymbols.js.expandJSElementWithReadWriteAccess
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
@@ -81,7 +81,7 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueNamedComponent
 import org.jetbrains.vuejs.model.VueProperty
 import org.jetbrains.vuejs.model.VueProvide
-import org.jetbrains.vuejs.model.VuePsiSourcedComponent
+import org.jetbrains.vuejs.model.VuePsiLinkedComponent
 import org.jetbrains.vuejs.model.VueSlot
 import org.jetbrains.vuejs.model.getSlotsTypeFromTypedProperty
 import org.jetbrains.vuejs.model.isInjectionSymbolType
@@ -241,7 +241,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
               is HtmlFileImpl -> getComponent(meaningfulElement)
               else -> getComponent(meaningfulElement as? JSElement)
             } ?: VueUnresolvedComponent(element)
-          if (element is JSPsiNamedElementBase && !(component is VuePsiSourcedComponent && component.source == element))
+          if (element is JSPsiNamedElementBase && !(component is VuePsiLinkedComponent && component.source == element))
             VueLocallyDefinedComponent.create(component, element)
           else
             component as? VueNamedComponent
@@ -358,7 +358,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     private val access: ReadWriteAccessDetector.Access,
     hasOuterDefault: Boolean,
   ) : VueSourceInputProperty<PsiNamedElement>(name, sourceElement, hasOuterDefault),
-      PsiSourcedPolySymbol {
+      PsiLinkedPolySymbol {
 
     override val source: PsiNamedElement get() = sourceElement
 
@@ -410,7 +410,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   private abstract class VueSourceProperty(
     override val name: String,
     private val originalSource: PsiElement,
-  ) : VueProperty, PsiSourcedPolySymbol {
+  ) : VueProperty, PsiLinkedPolySymbol {
 
     override val source: PsiElement = originalSource
 
@@ -514,7 +514,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   private data class VueSourceEmitDefinition(
     override val name: String,
     override val source: PsiElement,
-  ) : VueEmitCall, PsiSourcedPolySymbol {
+  ) : VueEmitCall, PsiLinkedPolySymbol {
 
     override val searchTarget: PolySymbolSearchTarget
       get() = PolySymbolSearchTarget.create(this)
@@ -532,7 +532,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   private data class VueSourceSlot(
     override val name: String,
     override val source: PsiElement,
-  ) : VueSlot, PsiSourcedPolySymbol {
+  ) : VueSlot, PsiLinkedPolySymbol {
     override val type: JSType? = source.asSafely<JSTypeOwner>()?.jsType
 
     override fun createPointer(): Pointer<VueSourceSlot> {
@@ -548,7 +548,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   private data class VueSourceInject(
     override val name: String,
     override val source: PsiElement,
-  ) : VueInject, PsiSourcedPolySymbol {
+  ) : VueInject, PsiLinkedPolySymbol {
 
     private val keyType: VueInjectKey? by lazy(LazyThreadSafetyMode.PUBLICATION) {
       getInjectionKeyType(source.asSafely<JSProperty>()?.initializerOrStub)

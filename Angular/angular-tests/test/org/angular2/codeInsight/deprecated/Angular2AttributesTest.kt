@@ -19,7 +19,7 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceIns
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.testFramework.checkListByFile
 import com.intellij.polySymbols.testFramework.doCompletionItemsTest
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
@@ -866,7 +866,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
       UsefulTestCase.assertSameElements(
         myFixture.multiResolvePolySymbolReference(location)
           .map {
-            if (it is PsiSourcedPolySymbol) {
+            if (it is PsiLinkedPolySymbol) {
               val source = it.source
               when {
                 source == null -> "<null>"

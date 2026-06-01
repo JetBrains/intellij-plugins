@@ -12,7 +12,7 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.declarations.PolySymbolDeclaration
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueDelegatedComponent
@@ -30,7 +30,7 @@ internal open class VueComponentWithProximity private constructor(
   companion object {
     fun create(delegate: VueNamedComponent, proximity: VueModelVisitor.Proximity): VueNamedComponent =
       when (delegate) {
-        is PsiSourcedPolySymbol -> VuePsiSourcedComponentWithProximity(delegate, proximity)
+        is PsiLinkedPolySymbol -> VuePsiLinkedComponentWithProximity(delegate, proximity)
         is PolySymbolDeclaredInPsi -> VueComponentDeclaredInPsiWithProximity(delegate, proximity)
         else -> VueComponentWithProximity(delegate, proximity)
       }
@@ -99,10 +99,10 @@ internal open class VueComponentWithProximity private constructor(
     }
   }
 
-  private class VuePsiSourcedComponentWithProximity(
+  private class VuePsiLinkedComponentWithProximity(
     delegate: VueNamedComponent,
     vueProximity: VueModelVisitor.Proximity,
-  ) : VueComponentWithProximity(delegate, vueProximity), PsiSourcedPolySymbol {
+  ) : VueComponentWithProximity(delegate, vueProximity), PsiLinkedPolySymbol {
 
     override val source: PsiElement?
       get() = delegate.source
@@ -111,14 +111,14 @@ internal open class VueComponentWithProximity private constructor(
       delegate.getNavigationTargets(project)
 
     override fun isEquivalentTo(symbol: Symbol): Boolean =
-      super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
+      super<PsiLinkedPolySymbol>.isEquivalentTo(symbol)
       || super<VueComponentWithProximity>.isEquivalentTo(symbol)
 
-    override fun createPointer(): Pointer<VuePsiSourcedComponentWithProximity> {
+    override fun createPointer(): Pointer<VuePsiLinkedComponentWithProximity> {
       val delegatePtr = delegate.createPointer()
       val vueProximity = vueProximity
       return Pointer {
-        VuePsiSourcedComponentWithProximity(delegatePtr.dereference() ?: return@Pointer null, vueProximity)
+        VuePsiLinkedComponentWithProximity(delegatePtr.dereference() ?: return@Pointer null, vueProximity)
       }
     }
 

@@ -19,12 +19,12 @@ import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
-import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
+import com.intellij.polySymbols.utils.PsiLinkedPolySymbolDelegate
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
-import org.jetbrains.vuejs.model.VuePsiSourcedComponent
+import org.jetbrains.vuejs.model.VuePsiLinkedComponent
 import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
@@ -33,7 +33,7 @@ import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
 data class VueComponentNamespaceSymbol(
   override val name: String,
   override val source: JSPsiNamedElementBase,
-) : PsiSourcedPolySymbol, PolySymbolScope, VueSymbol {
+) : PsiLinkedPolySymbol, PolySymbolScope, VueSymbol {
   override fun createPointer(): Pointer<out VueComponentNamespaceSymbol> {
     val name = name
     val sourcePtr = source.createSmartPointer()
@@ -85,7 +85,7 @@ data class VueComponentNamespaceSymbol(
       val component = VueComponents.getComponent(source)
       if (component != null && kind == VUE_COMPONENTS) {
         VueLocallyDefinedComponent.create(component, source)
-          ?.asSafely<VuePsiSourcedComponent>()
+          ?.asSafely<VuePsiLinkedComponent>()
           ?.let { VueNamespacedComponent(it) }
       }
       else if (component == null && kind == VUE_COMPONENT_NAMESPACES) {
@@ -94,8 +94,8 @@ data class VueComponentNamespaceSymbol(
       else null
     }
 
-  private data class VueNamespacedComponent(override val delegate: VuePsiSourcedComponent) :
-    PsiSourcedPolySymbolDelegate<VuePsiSourcedComponent> {
+  private data class VueNamespacedComponent(override val delegate: VuePsiLinkedComponent) :
+    PsiLinkedPolySymbolDelegate<VuePsiLinkedComponent> {
 
     private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.source as JSPsiNamedElementBase)
 

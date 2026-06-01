@@ -17,7 +17,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutionContextImpl
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.createSmartPointer
@@ -128,7 +128,7 @@ object VueCompositionInfoHelper {
     override val psiContext: PsiElement,
     private val setupTypeSource: T,
     private val setupTypeProvider: (T) -> JSType?,
-  ) : VueProperty, PsiSourcedPolySymbol {
+  ) : VueProperty, PsiLinkedPolySymbol {
 
     abstract override fun createPointer(): Pointer<out VueComposedProperty<T>>
 

@@ -21,7 +21,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.JSObjectLiteralExpressionStub
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.js.references.JSSymbolImplicitElement
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.stubs.StubElement
@@ -155,7 +155,7 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
 private abstract class VuexMappedSourceProperty(
   override val name: String,
   protected val element: JSElement,
-) : VueProperty, PsiSourcedPolySymbol {
+) : VueProperty, PsiLinkedPolySymbol {
 
   override val type: JSType? get() = (source as? JSTypeOwner)?.jsType
 

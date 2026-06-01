@@ -10,7 +10,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueDirectiveModifier
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -60,29 +60,29 @@ internal open class VueDirectiveModifierWithProximity private constructor(
     fun create(delegate: VueDirectiveModifier, proximity: VueModelVisitor.Proximity?): VueDirectiveModifier =
       when {
         proximity == null -> delegate
-        delegate is PsiSourcedPolySymbol -> VuePsiSourcedDirectiveModifierWithProximity(delegate, proximity)
+        delegate is PsiLinkedPolySymbol -> VuePsiLinkedDirectiveModifierWithProximity(delegate, proximity)
         else -> VueDirectiveModifierWithProximity(delegate, proximity)
       }
   }
 
-  private class VuePsiSourcedDirectiveModifierWithProximity(
+  private class VuePsiLinkedDirectiveModifierWithProximity(
     delegate: VueDirectiveModifier,
     proximity: VueModelVisitor.Proximity,
-  ) : VueDirectiveModifierWithProximity(delegate, proximity), PsiSourcedPolySymbol {
+  ) : VueDirectiveModifierWithProximity(delegate, proximity), PsiLinkedPolySymbol {
 
     override val source: PsiElement?
-      get() = (delegate as PsiSourcedPolySymbol).source
+      get() = (delegate as PsiLinkedPolySymbol).source
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       delegate.getNavigationTargets(project)
 
     override fun isEquivalentTo(symbol: Symbol): Boolean =
-      super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
+      super<PsiLinkedPolySymbol>.isEquivalentTo(symbol)
       || super<VueDirectiveModifierWithProximity>.isEquivalentTo(symbol)
 
     override fun equals(other: Any?): Boolean =
       other === this ||
-      other is VuePsiSourcedDirectiveModifierWithProximity
+      other is VuePsiLinkedDirectiveModifierWithProximity
       && other.delegate == delegate
       && other.vueProximity == vueProximity
 
@@ -92,11 +92,11 @@ internal open class VueDirectiveModifierWithProximity private constructor(
       return result
     }
 
-    override fun createPointer(): Pointer<VuePsiSourcedDirectiveModifierWithProximity> {
+    override fun createPointer(): Pointer<VuePsiLinkedDirectiveModifierWithProximity> {
       val delegatePtr = delegate.createPointer()
       val vueProximity = vueProximity
       return Pointer {
-        delegatePtr.dereference()?.let { VuePsiSourcedDirectiveModifierWithProximity(it, vueProximity) }
+        delegatePtr.dereference()?.let { VuePsiLinkedDirectiveModifierWithProximity(it, vueProximity) }
       }
     }
 

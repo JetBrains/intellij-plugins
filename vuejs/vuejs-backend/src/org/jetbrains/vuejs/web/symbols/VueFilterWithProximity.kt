@@ -11,7 +11,7 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueFilter
@@ -71,15 +71,15 @@ internal open class VueFilterWithProximity private constructor(
     fun create(delegate: VueFilter, proximity: VueModelVisitor.Proximity?): VueFilter =
       when {
         proximity == null -> delegate
-        delegate is PsiSourcedPolySymbol -> VuePsiSourcedFilterWithProximity(delegate, proximity)
+        delegate is PsiLinkedPolySymbol -> VuePsiLinkedFilterWithProximity(delegate, proximity)
         else -> VueFilterWithProximity(delegate, proximity)
       }
   }
 
-  private class VuePsiSourcedFilterWithProximity(
+  private class VuePsiLinkedFilterWithProximity(
     delegate: VueFilter,
     proximity: VueModelVisitor.Proximity,
-  ) : VueFilterWithProximity(delegate, proximity), PsiSourcedPolySymbol {
+  ) : VueFilterWithProximity(delegate, proximity), PsiLinkedPolySymbol {
 
     override val source: PsiElement
       get() = delegate.source
@@ -88,12 +88,12 @@ internal open class VueFilterWithProximity private constructor(
       delegate.getNavigationTargets(project)
 
     override fun isEquivalentTo(symbol: Symbol): Boolean =
-      super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
+      super<PsiLinkedPolySymbol>.isEquivalentTo(symbol)
       || super<VueFilterWithProximity>.isEquivalentTo(symbol)
 
     override fun equals(other: Any?): Boolean =
       other === this
-      || other is VuePsiSourcedFilterWithProximity
+      || other is VuePsiLinkedFilterWithProximity
       && other.delegate == delegate
       && other.vueProximity == vueProximity
 
@@ -103,11 +103,11 @@ internal open class VueFilterWithProximity private constructor(
       return result
     }
 
-    override fun createPointer(): Pointer<VuePsiSourcedFilterWithProximity> {
+    override fun createPointer(): Pointer<VuePsiLinkedFilterWithProximity> {
       val delegatePtr = delegate.createPointer()
       val vueProximity = vueProximity
       return Pointer {
-        delegatePtr.dereference()?.let { VuePsiSourcedFilterWithProximity(it, vueProximity) }
+        delegatePtr.dereference()?.let { VuePsiLinkedFilterWithProximity(it, vueProximity) }
       }
     }
 

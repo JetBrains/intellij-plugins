@@ -17,9 +17,9 @@ import com.intellij.polySymbols.html.HtmlAttributeValueProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
-import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
+import com.intellij.polySymbols.utils.PsiLinkedPolySymbolDelegate
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlAttribute
@@ -60,7 +60,7 @@ class VueBindingShorthandScope(attribute: XmlAttribute) :
       .associateBy { it.name }
 
     VueTemplateScopesResolver.resolve(tag, Processor { resolveResult ->
-      val jsSymbol = resolveResult.element.asSafely<JSElement>()?.asJSSymbol() as? PsiSourcedPolySymbol
+      val jsSymbol = resolveResult.element.asSafely<JSElement>()?.asJSSymbol() as? PsiLinkedPolySymbol
       if (jsSymbol != null) {
         attributes[fromAsset(jsSymbol.name)]?.let {
           consumer(VueBindingShorthandSymbol(dataHolder, jsSymbol, it))
@@ -79,10 +79,10 @@ class VueBindingShorthandScope(attribute: XmlAttribute) :
 }
 
 data class VueBindingShorthandSymbol(
-  private val context: XmlAttribute,
-  override val delegate: PsiSourcedPolySymbol,
-  private val attrSymbol: PolySymbol,
-) : PsiSourcedPolySymbolDelegate<PsiSourcedPolySymbol>,
+    private val context: XmlAttribute,
+    override val delegate: PsiLinkedPolySymbol,
+    private val attrSymbol: PolySymbol,
+) : PsiLinkedPolySymbolDelegate<PsiLinkedPolySymbol>,
     CompositePolySymbol {
 
   override val nameSegments: List<PolySymbolNameSegment>
@@ -102,7 +102,7 @@ data class VueBindingShorthandSymbol(
     attrSymbol.getDocumentationTarget(location)
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-    super<PsiSourcedPolySymbolDelegate>.getNavigationTargets(project) + attrSymbol.getNavigationTargets(project)
+    super<PsiLinkedPolySymbolDelegate>.getNavigationTargets(project) + attrSymbol.getNavigationTargets(project)
 
   override fun createPointer(): Pointer<out VueBindingShorthandSymbol> {
     val contextPtr = context.createSmartPointer()

@@ -32,7 +32,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.types.Angular2TypeUtils
-import org.angular2.web.Angular2PsiSourcedSymbol
+import org.angular2.web.Angular2PsiLinkedSymbol
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.EVENT_ATTR_PREFIX
 
@@ -168,7 +168,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     override val project: Project,
     override val source: TypeScriptPropertySignature?,
     private val templateFile: PsiFile,
-  ) : Angular2PsiSourcedSymbol {
+  ) : Angular2PsiLinkedSymbol {
 
 
     override fun createPointer(): Pointer<Angular2StandardProperty> {
@@ -219,7 +219,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     private val mainSource: TypeScriptPropertySignature?,
     private val mapSource: TypeScriptPropertySignature?,
     private val templateFile: PsiFile,
-  ) : StandardHtmlSymbol(), Angular2PsiSourcedSymbol {
+  ) : StandardHtmlSymbol(), Angular2PsiLinkedSymbol {
 
     override val source: PsiElement?
       get() = mainSource ?: mapSource

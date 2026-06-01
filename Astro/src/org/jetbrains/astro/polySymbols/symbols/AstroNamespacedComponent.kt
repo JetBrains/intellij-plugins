@@ -18,8 +18,8 @@ import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
-import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
+import com.intellij.polySymbols.utils.PsiLinkedPolySymbolDelegate
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.astro.codeInsight.resolveIfImportSpecifier
@@ -85,8 +85,8 @@ data class AstroNamespacedComponent(
       }
     }
 
-  private data class UiFrameworkNamespacedComponent(override val delegate: PsiSourcedPolySymbol) :
-    PsiSourcedPolySymbolDelegate<PsiSourcedPolySymbol> {
+  private data class UiFrameworkNamespacedComponent(override val delegate: PsiLinkedPolySymbol) :
+    PsiLinkedPolySymbolDelegate<PsiLinkedPolySymbol> {
 
     private val namespaceSymbol = AstroNamespacedComponent(delegate.name, delegate.source as PsiElement)
 

@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.testFramework.DebugOutputPrinter
 import com.intellij.polySymbols.testFramework.checkTextByFile
 import com.intellij.psi.PsiDocumentManager
@@ -362,7 +362,7 @@ class VueComponentTest :
           val elementToImport = (sourceElement as? VueComponent)?.elementToImport
                                 ?: (sourceElement as? VueDirective)?.source
           val source = (sourceElement as? VueScopeElement)?.source
-                       ?: (sourceElement as? PsiSourcedPolySymbol)?.source
+                       ?: (sourceElement as? PsiLinkedPolySymbol)?.source
           printProperty(level, "source", source)
           printProperty(level, "elementToImport", elementToImport.takeIf { it != source })
         }

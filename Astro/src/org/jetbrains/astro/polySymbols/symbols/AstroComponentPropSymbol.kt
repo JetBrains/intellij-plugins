@@ -11,12 +11,12 @@ import com.intellij.polySymbols.html.HtmlAttributeValueProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.symbols.JSPropertySymbol
 import com.intellij.polySymbols.js.types.JSTypeProperty
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENT_PROPS
 
-class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol) : PsiSourcedPolySymbol, AstroSymbol {
+class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol) : PsiLinkedPolySymbol, AstroSymbol {
 
   override val kind: PolySymbolKind
     get() = ASTRO_COMPONENT_PROPS
@@ -51,7 +51,7 @@ class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol) : P
   override fun hashCode(): Int =
     propertySymbol.hashCode()
 
-  override fun createPointer(): Pointer<out PsiSourcedPolySymbol> {
+  override fun createPointer(): Pointer<out PsiLinkedPolySymbol> {
     val sourcePtr = propertySymbol.createPointer()
     return Pointer {
       sourcePtr.dereference()?.let { AstroComponentPropSymbol(propertySymbol) }

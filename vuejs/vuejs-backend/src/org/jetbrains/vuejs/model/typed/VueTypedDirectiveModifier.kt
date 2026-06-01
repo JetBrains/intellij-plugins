@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.model.typed
 
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.model.VueDirectiveModifier
@@ -10,7 +10,7 @@ import org.jetbrains.vuejs.model.VueDirectiveModifier
 data class VueTypedDirectiveModifier(
   override val name: String,
   override val source: PsiElement?,
-) : VueDirectiveModifier, PsiSourcedPolySymbol {
+) : VueDirectiveModifier, PsiLinkedPolySymbol {
   override fun createPointer(): Pointer<out VueTypedDirectiveModifier> {
     val name = this.name
     val sourcePointer = source?.createSmartPointer()

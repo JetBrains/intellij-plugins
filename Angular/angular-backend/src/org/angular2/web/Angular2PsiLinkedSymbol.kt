@@ -3,11 +3,11 @@ package org.angular2.web
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 
-interface Angular2PsiSourcedSymbol : Angular2Symbol, PsiSourcedPolySymbol {
+interface Angular2PsiLinkedSymbol : Angular2Symbol, PsiLinkedPolySymbol {
 
   val project: Project
 
-  override fun createPointer(): Pointer<out Angular2PsiSourcedSymbol>
+  override fun createPointer(): Pointer<out Angular2PsiLinkedSymbol>
 }
