@@ -1,15 +1,15 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.html.lexer
 
 interface VueTokenTypes {
   companion object {
     @JvmField
-    val INTERPOLATION_START = VueTokenType("VUE:INTERPOLATION_START")
+    val INTERPOLATION_START: VueTokenType = VueTokenType("VUE:INTERPOLATION_START")
 
     @JvmField
-    val INTERPOLATION_END = VueTokenType("VUE:INTERPOLATION_END")
+    val INTERPOLATION_END: VueTokenType = VueTokenType("VUE:INTERPOLATION_END")
 
     @JvmField
-    val INTERPOLATION_EXPR = VueTokenType("VUE:INTERPOLATION_EXPR")
+    val INTERPOLATION_EXPR: VueTokenType = VueTokenType("VUE:INTERPOLATION_EXPR")
   }
 }
