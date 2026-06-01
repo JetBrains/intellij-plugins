@@ -1,64 +1,102 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.models.Coordinates
+
 apply(from = "../contrib-configuration/common.gradle.kts")
 
 plugins {
   id("java")
   id("org.jetbrains.kotlin.jvm")
-  id("org.jetbrains.intellij")
+  id("org.jetbrains.intellij.platform")
 }
 
-intellij {
-  version.set("LATEST-EAP-SNAPSHOT")
-  type.set("IU")
-  pluginName.set("Vue.js")
-  downloadSources.set(true)
-  plugins.set(listOf("JavaScript", "JSIntentionPowerPack", "JavaScriptDebugger", "com.intellij.css", "HtmlTools",
-                     "org.jetbrains.plugins.sass", "org.jetbrains.plugins.less", "intellij.webpack",
-                     // Needed for tests-only
-                     //"org.jetbrains.plugins.stylus:233.11799.172",
-                     "org.intellij.plugins.postcss",
-                     // Needed for tests-only
-                     //"com.jetbrains.plugins.Jade:$targetVersion",
-                     "intellij.prettierJS"
-                     ))
+repositories {
+  intellijPlatform {
+    defaultRepositories()
+    snapshots()
+  }
+}
+
+intellijPlatform {
+  pluginConfiguration {
+    name = "Vue.js"
+  }
+}
+
+dependencies {
+  intellijPlatform {
+    jetbrainsRuntime()
+    intellijIdeaUltimate(ext("platform.version")) {
+      useInstaller = false
+    }
+    // Bundled IDEA plugins on the test/sandbox classpath. JavaScript and postcss back the Vue
+    // plugin itself; the rest are only exercised by vuejs-tests.
+    bundledPlugins(
+      "JavaScript",
+      "org.intellij.plugins.postcss",
+      "com.intellij.css",
+      "org.jetbrains.plugins.sass",
+      "org.jetbrains.plugins.less",
+      "HtmlTools",
+      "com.intellij.copyright",
+      "intellij.webpack",
+      "JSIntentionPowerPack",
+      "JavaScriptDebugger",
+    )
+
+    pluginModule(implementation(project(":vuejs-common")))
+    pluginModule(implementation(project(":vue-free")))
+    pluginModule(implementation(project(":vuejs-backend")))
+    pluginModule(implementation(project(":vuejs-webpack")))
+    pluginModule(implementation(project(":vuejs-debugger")))
+    pluginModule(implementation(project(":vuejs-markdown")))
+    pluginModule(implementation(project(":vuejs-prettier")))
+    pluginModule(implementation(project(":vuejs-copyright")))
+
+    // Marketplace-only plugins used by some tests (not bundled in IDEA Ultimate); set a version to enable:
+    // plugin("org.jetbrains.plugins.stylus", "<version>")
+    // plugin("com.jetbrains.plugins.Jade", "<version>")
+    testFramework(TestFrameworkType.Platform)
+    testFramework(TestFrameworkType.Plugin.XML)
+    testFramework(TestFrameworkType.Plugin.JavaScript)
+    platformDependency(Coordinates("com.jetbrains.intellij.platform", "poly-symbols-test-framework"))
+    platformDependency(Coordinates("com.jetbrains.intellij.platform", "lsp-test-framework"))
+  }
+
+  testImplementation("junit:junit:${ext("junit.version")}")
+}
+
+kotlin {
+  jvmToolchain(25)
+  compilerOptions {
+    jvmTarget.set(JvmTarget.JVM_25)
+    @Suppress("UNCHECKED_CAST")
+    freeCompilerArgs.addAll(rootProject.extensions["kotlin.freeCompilerArgs"] as List<String>)
+  }
 }
 
 tasks {
-  compileKotlin {
-    kotlinOptions.jvmTarget = ext("kotlin.jvmTarget")
-    @Suppress("UNCHECKED_CAST")
-    kotlinOptions.freeCompilerArgs = rootProject.extensions["kotlin.freeCompilerArgs"] as List<String>
-  }
-  java {
-    sourceCompatibility = JavaVersion.toVersion(ext("java.sourceCompatibility"))
-    targetCompatibility = JavaVersion.toVersion(ext("java.targetCompatibility"))
-  }
   wrapper {
-    gradleVersion = ext("gradle.version")
-  }
-  runIde {
-    autoReloadPlugins.set(false)
+    // Vue-local override of the shared gradle.version (8.14.3): plugin 2.16.0 requires Gradle 9.0+.
+    gradleVersion = "9.5.1"
   }
 }
 
 sourceSets {
   main {
-    java {
-      setSrcDirs(listOf("src", "gen"))
-    }
     resources {
-      setSrcDirs(listOf("resources"))
+      setSrcDirs(listOf("vuejs-plugin/resources"))
     }
   }
   test {
     java {
-      //setSrcDirs(listOf("vuejs-tests/src"))
+      setSrcDirs(listOf("vuejs-tests/src", "vuejs-tests/src-ext"))
+    }
+    resources {
+      setSrcDirs(listOf("vuejs-tests/testData"))
     }
   }
-}
-
-dependencies {
-  //testImplementation("com.jetbrains.intellij.javascript:javascript-test-framework:LATEST-EAP-SNAPSHOT")
 }
 
 fun ext(name: String): String =
