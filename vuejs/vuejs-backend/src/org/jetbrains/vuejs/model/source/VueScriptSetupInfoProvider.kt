@@ -442,7 +442,7 @@ private class VueScriptSetupInputProperty(
   override val name: String
     get() = propertySignature.memberName
 
-  override val source: PsiElement? = propertySignature.memberSource.singleElement
+  override val linkedElement: PsiElement? = propertySignature.memberSource.singleElement
 
   override val required: Boolean
     get() {
@@ -489,7 +489,7 @@ private class VueScriptSetupInputProperty(
 
 private class VueScriptSetupLiteralBasedEvent(
   override val name: String,
-  override val source: PsiElement,
+  override val linkedElement: PsiElement,
 ) : VueEmitCall, PsiLinkedPolySymbol {
   companion object {
     fun create(literal: PsiElement): VueScriptSetupLiteralBasedEvent? =
@@ -498,21 +498,24 @@ private class VueScriptSetupLiteralBasedEvent(
         ?.let { VueScriptSetupLiteralBasedEvent(unquoteWithoutUnescapingStringLiteralValue(it), literal) }
   }
 
+  override val source: PsiElement?
+    get() = linkedElement
+
   override val searchTarget: PolySymbolSearchTarget
     get() = PolySymbolSearchTarget.create(this)
 
   override fun createPointer(): Pointer<VueScriptSetupLiteralBasedEvent> {
-    val sourcePtr = source.createSmartPointer()
+    val sourcePtr = linkedElement.createSmartPointer()
     return Pointer { sourcePtr.element?.let { create(it) } }
   }
 
   override fun equals(other: Any?): Boolean =
     other === this
     || other is VueScriptSetupLiteralBasedEvent
-    && other.source == source
+    && other.linkedElement == linkedElement
 
   override fun hashCode(): Int =
-    source.hashCode()
+    linkedElement.hashCode()
 }
 
 private class VueScriptSetupCallSignatureEvent(
@@ -526,6 +529,9 @@ private class VueScriptSetupCallSignatureEvent(
 
   override val hasStrictSignature: Boolean
     get() = true
+
+  override val linkedElement: PsiElement?
+    get() = source
 
   override fun equals(other: Any?): Boolean =
     other === this
@@ -561,6 +567,9 @@ private class VueScriptSetupPropertyContractEvent(
 
   override val source: PsiElement?
     get() = signature.memberSource.singleElement
+
+  override val linkedElement: PsiElement?
+    get() = source
 
   private val parametersType: JSType?
     get() = signature.jsType
@@ -688,7 +697,7 @@ private data class VueScriptSetupModelInputProperty(
   override val name: String
     get() = modelDecl.name
 
-  override val source: PsiElement
+  override val linkedElement: PsiElement
     get() = modelDecl.source
 
   override val required: Boolean
@@ -706,10 +715,13 @@ private data class VueScriptSetupModelInputProperty(
 private data class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl) :
   VueEmitCall, VueModelOwner, PsiLinkedPolySymbol {
 
+  override val source: PsiElement
+    get() = linkedElement
+
   override val name: String
     get() = modelDecl.name
 
-  override val source: PsiElement
+  override val linkedElement: PsiElement
     get() = modelDecl.source
 
   override val searchTarget: PolySymbolSearchTarget
@@ -737,6 +749,9 @@ private class VueScriptSetupSlot(
 
   override val source: PsiElement? =
     signature.memberSource.singleElement
+
+  override val linkedElement: PsiElement?
+    get() = source
 
   override val type: JSType? =
     signature.jsType?.asSafely<JSFunctionType>()?.parameters?.firstOrNull()?.inferredType

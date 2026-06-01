@@ -116,7 +116,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
       }
       if ((property as? Angular2DirectiveProperty)?.virtualProperty == true) return true
       val type = property.jsType ?: return true
-      val source = (property as? PsiLinkedPolySymbol)?.source ?: return true
+      val source = (property as? PsiLinkedPolySymbol)?.linkedElement ?: return true
 
       return CachedValuesManager.getCachedValue(source) {
         CachedValueProvider.Result.create(ConcurrentHashMap<PolySymbol, Boolean>(),
@@ -140,8 +140,8 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
     val requiresValue: Boolean,
     val resolveOnly: Boolean = false,
   ) : PolySymbolDelegate<PolySymbol>, PsiLinkedPolySymbol {
-    override val source: PsiElement?
-      get() = (delegate as? PsiLinkedPolySymbol)?.source
+    override val linkedElement: PsiElement?
+      get() = (delegate as? PsiLinkedPolySymbol)?.linkedElement
 
     override val kind: PolySymbolKind
       get() = NG_DIRECTIVE_ONE_TIME_BINDINGS

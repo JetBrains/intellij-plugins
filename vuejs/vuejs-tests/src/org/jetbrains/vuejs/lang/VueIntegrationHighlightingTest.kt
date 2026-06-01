@@ -32,7 +32,7 @@ class VueIntegrationHighlightingTest: JSExternalToolIntegrationTest() {
     assertNotNull(polySymbolDescriptor)
 
     val polySymbol = polySymbolDescriptor?.symbol.asSafely<PsiLinkedPolySymbol>()
-    val polySymbolSource = polySymbol?.source
+    val polySymbolSource = polySymbol?.linkedElement
     assertNotNull(polySymbolSource)
 
     val sourceFileName = polySymbolSource!!.containingFile.name

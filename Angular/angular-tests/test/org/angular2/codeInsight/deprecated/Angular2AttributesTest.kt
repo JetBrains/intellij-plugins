@@ -867,7 +867,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
         myFixture.multiResolvePolySymbolReference(location)
           .map {
             if (it is PsiLinkedPolySymbol) {
-              val source = it.source
+              val source = it.linkedElement
               when {
                 source == null -> "<null>"
                 source.getText() != null -> source.getText()

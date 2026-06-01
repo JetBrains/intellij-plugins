@@ -96,8 +96,8 @@ open class Angular2StructuralDirectiveSymbol private constructor(
     location: PsiFile,
   ) : Angular2StructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind, location), PsiLinkedPolySymbol {
 
-    override val source: PsiElement?
-      get() = (delegate as PsiLinkedPolySymbol).source
+    override val linkedElement: PsiElement?
+      get() = (delegate as PsiLinkedPolySymbol).linkedElement
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<Angular2StructuralDirectiveSymbol>.getNavigationTargets(project)

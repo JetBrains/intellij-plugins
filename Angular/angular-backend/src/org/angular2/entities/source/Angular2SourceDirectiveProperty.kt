@@ -166,7 +166,7 @@ abstract class Angular2SourceDirectiveProperty(
     override val sourceElement: PsiElement
       get() = sources[0]
 
-    override val source: PsiElement
+    override val linkedElement: PsiElement
       get() = sourceElement
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> {

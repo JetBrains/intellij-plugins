@@ -2790,7 +2790,7 @@ export default class UsageComponent extends Vue {
       assertEquals(
         "default?: (props: { field: FieldSlotPropText }) => any",
         multiResolvePolySymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
-          ?.asSafely<PsiLinkedPolySymbol>()?.source?.text
+          ?.asSafely<PsiLinkedPolySymbol>()?.linkedElement?.text
       )
     }
   }
@@ -2818,7 +2818,7 @@ export default class UsageComponent extends Vue {
       assertEquals(
         "default?: (props: { field: FieldSlotPropText }) => any",
         multiResolvePolySymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
-          ?.asSafely<PsiLinkedPolySymbol>()?.source?.text
+          ?.asSafely<PsiLinkedPolySymbol>()?.linkedElement?.text
       )
     }
   }
@@ -2846,7 +2846,7 @@ export default class UsageComponent extends Vue {
       assertEquals(
         "default?: (props: { field: FieldSlotPropText }) => any",
         multiResolvePolySymbolReference("v-slot:def<caret>ault='{ field }'").asSingleSymbol()
-          ?.asSafely<PsiLinkedPolySymbol>()?.source?.text
+          ?.asSafely<PsiLinkedPolySymbol>()?.linkedElement?.text
       )
     }
   }
@@ -2899,7 +2899,7 @@ export default class UsageComponent extends Vue {
         .flatMap { it.nameSegments }
         .flatMap { it.symbols }
         .filterIsInstance<PsiLinkedPolySymbol>()
-        .mapNotNull { if (it.source is JSImplicitElement) it.source?.context else it.source }
+        .mapNotNull { if (it.linkedElement is JSImplicitElement) it.linkedElement?.context else it.linkedElement }
         .map { it.text }
         .toList()
       assertSameElements(declarations, "inputProp = 'abc'", "inputProp?: string")

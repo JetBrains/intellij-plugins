@@ -86,7 +86,7 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolScope {
 
   private class Angular2I18nAttributeSymbol(private val attribute: XmlAttribute) : Angular2PsiLinkedSymbol, CompositePolySymbol {
 
-    override val source: PsiElement
+    override val linkedElement: PsiElement
       get() = attribute
 
     override val name: String

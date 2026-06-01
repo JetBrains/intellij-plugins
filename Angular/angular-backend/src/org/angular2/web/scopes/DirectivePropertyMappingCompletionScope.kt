@@ -14,7 +14,6 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolNameSegment
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.js.symbols.JSPropertySymbol
@@ -99,7 +98,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
               ?.asJSSymbol()
               ?.getJSPropertySymbols()
               ?.filter { property ->
-                val sources = Angular2SourceDirective.getPropertySources(property.source)
+                val sources = Angular2SourceDirective.getPropertySources(property.linkedElement)
                 sources.isNotEmpty()
                 && sources.none { source ->
                   source.attributeList?.decorators?.any { dec -> dec.decoratorName == INPUT_DEC || dec.decoratorName == OUTPUT_DEC } == true

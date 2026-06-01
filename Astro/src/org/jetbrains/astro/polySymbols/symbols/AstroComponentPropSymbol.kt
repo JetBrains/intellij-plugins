@@ -24,8 +24,8 @@ class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol) : P
   override val name: String
     get() = propertySymbol.name
 
-  override val source: PsiElement?
-    get() = propertySymbol.source
+  override val linkedElement: PsiElement?
+    get() = propertySymbol.linkedElement
 
   @PolySymbol.Property(JSTypeProperty::class)
   private val type: JSType?

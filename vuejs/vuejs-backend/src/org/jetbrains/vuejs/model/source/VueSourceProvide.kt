@@ -25,7 +25,7 @@ data class VueSourceProvide(
 
   override val type: JSType = VueSourceProvideType(sourceElement, symbolSource)
 
-  override val source: PsiElement = when (sourceElement) {
+  override val linkedElement: PsiElement = when (sourceElement) {
     is JSLiteralExpression -> VueImplicitElement(name, type, sourceElement, JSImplicitElement.Type.Property, true)
     else -> sourceElement
   }

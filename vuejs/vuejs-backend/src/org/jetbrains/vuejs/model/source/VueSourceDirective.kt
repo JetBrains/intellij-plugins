@@ -26,6 +26,9 @@ class VueSourceDirective(
   private val mode: VueMode = VueMode.CLASSIC,
 ) : VueDirective, PsiLinkedPolySymbol {
 
+  override val linkedElement: PsiElement
+    get() = source
+
   override val kind: PolySymbolKind
     get() = VUE_DIRECTIVES
 

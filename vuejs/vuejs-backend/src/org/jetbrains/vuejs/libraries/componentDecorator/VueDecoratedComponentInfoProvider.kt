@@ -171,7 +171,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       override val name: String,
       protected val member: T,
     ) : VueSymbol, PsiLinkedPolySymbol {
-      override val source: PsiElement?
+      override val linkedElement: PsiElement?
         get() = member.memberSource.singleElement
 
       abstract override fun createPointer(): Pointer<out VueDecoratedNamedSymbol<T>>
@@ -260,7 +260,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       override val type: JSType =
         VueDecoratedComponentPropType(member, decorator, decoratorArgumentIndex)
 
-      override val source: PsiElement =
+      override val linkedElement: PsiElement =
         VueImplicitElement(
           name = name,
           jsType = type,
@@ -343,6 +343,9 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     ) : VueDecoratedNamedSymbol<PropertySignature>(name, member),
         VueEmitCall {
 
+      override val source: PsiElement?
+        get() = linkedElement
+
       override val params: List<JSParameterTypeDecorator> = run {
         val functionType = member.jsType?.asSafely<JSFunctionType>() ?: return@run super.params
         val returnType = functionType.returnType
@@ -378,6 +381,9 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       member: PropertySignature,
     ) : VueDecoratedNamedSymbol<PropertySignature>(name, member),
         VueEmitCall {
+
+      override val source: PsiElement?
+        get() = linkedElement
 
       override val params: List<JSParameterTypeDecorator> = listOf(
         JSParameterTypeDecoratorImpl("arg", member.jsType ?: VueDecoratedComponentPropType(member, decorator, 1), false, false, true)

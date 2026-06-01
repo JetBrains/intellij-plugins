@@ -47,7 +47,7 @@ class Angular2SymbolHighlightingCustomizer : PolySymbolHighlightingCustomizer {
       JS_SYMBOLS ->
         if (symbol.jsKind == JsSymbolSymbolKind.Variable
             && symbol is PsiLinkedPolySymbol
-            && symbol.source?.language is Angular2ExprDialect
+            && symbol.linkedElement?.language is Angular2ExprDialect
         )
           return Angular2HighlighterColors.NG_VARIABLE
       HTML_ATTRIBUTES ->

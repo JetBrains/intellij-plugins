@@ -123,7 +123,7 @@ object VueCompositionInfoHelper {
 
   private abstract class VueComposedProperty<T : PsiElement>(
     override val name: String,
-    override val source: PsiNamedElement,
+    override val linkedElement: PsiNamedElement,
     override val type: JSType?,
     override val psiContext: PsiElement,
     private val setupTypeSource: T,

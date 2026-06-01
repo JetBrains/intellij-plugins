@@ -20,7 +20,7 @@ import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 class UiFrameworkComponent(
   override val name: String,
-  override val source: PsiElement,
+  override val linkedElement: PsiElement,
   override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH,
 ) : ComponentPolySymbol, PolySymbolScope by polySymbolScope(
   {
@@ -47,14 +47,14 @@ class UiFrameworkComponent(
     other === this
     || other is UiFrameworkComponent
     && other.name == name
-    && other.source == source
+    && other.linkedElement == linkedElement
 
   override fun hashCode(): Int =
-    name.hashCode() * 31 + source.hashCode()
+    name.hashCode() * 31 + linkedElement.hashCode()
 
   override fun createPointer(): Pointer<out UiFrameworkComponent> {
     val name = name
-    val sourcePtr = source.createSmartPointer()
+    val sourcePtr = linkedElement.createSmartPointer()
     return Pointer {
       sourcePtr.dereference()?.let { UiFrameworkComponent(name, it) }
     }

@@ -49,6 +49,9 @@ class VueTypedComponent private constructor(
     }
   }
 
+  override val linkedElement: PsiElement
+    get() = source
+
   override val elementToImport: PsiElement
     get() = source
 

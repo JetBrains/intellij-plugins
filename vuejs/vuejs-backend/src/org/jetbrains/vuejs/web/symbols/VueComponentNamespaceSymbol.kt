@@ -32,11 +32,11 @@ import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
 
 data class VueComponentNamespaceSymbol(
   override val name: String,
-  override val source: JSPsiNamedElementBase,
+  override val linkedElement: JSPsiNamedElementBase,
 ) : PsiLinkedPolySymbol, PolySymbolScope, VueSymbol {
   override fun createPointer(): Pointer<out VueComponentNamespaceSymbol> {
     val name = name
-    val sourcePtr = source.createSmartPointer()
+    val sourcePtr = linkedElement.createSmartPointer()
     return Pointer {
       sourcePtr.dereference()?.let { VueComponentNamespaceSymbol(name, it) }
     }
@@ -44,14 +44,14 @@ data class VueComponentNamespaceSymbol(
 
   override val type: JSType
     get() = JSPsiBasedTypeOfType(
-      when (val source = source) {
+      when (val source = linkedElement) {
         is ES6ImportedBinding -> source.multiResolve(false)
         is ES6ImportSpecifier -> source.multiResolve(false)
         else -> null
       }
         ?.asSequence()
         ?.firstNotNullOfOrNull { it.takeIf { it.isValidResult }?.element }
-      ?: source, false)
+      ?: linkedElement, false)
 
   override val kind: PolySymbolKind
     get() = VUE_COMPONENT_NAMESPACES
@@ -81,7 +81,7 @@ data class VueComponentNamespaceSymbol(
 
   private fun List<JSPropertySymbol>.adaptToNamespaceComponents(kind: PolySymbolKind): List<PolySymbol> =
     mapNotNull { symbol ->
-      val source = symbol.source as? JSPsiNamedElementBase ?: return@mapNotNull null
+      val source = symbol.linkedElement as? JSPsiNamedElementBase ?: return@mapNotNull null
       val component = VueComponents.getComponent(source)
       if (component != null && kind == VUE_COMPONENTS) {
         VueLocallyDefinedComponent.create(component, source)
@@ -97,7 +97,7 @@ data class VueComponentNamespaceSymbol(
   private data class VueNamespacedComponent(override val delegate: VuePsiLinkedComponent) :
     PsiLinkedPolySymbolDelegate<VuePsiLinkedComponent> {
 
-    private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.source as JSPsiNamedElementBase)
+    private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.linkedElement as JSPsiNamedElementBase)
 
     override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
       isNamespacedKind(kind) || super.isExclusiveFor(kind)

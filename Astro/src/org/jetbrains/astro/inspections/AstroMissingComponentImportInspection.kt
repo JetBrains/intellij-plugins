@@ -30,7 +30,7 @@ class AstroMissingComponentImportInspection : LocalInspectionTool() {
             || symbol[AstroProximityProperty] != AstroProximity.OUT_OF_SCOPE)
           return
 
-        val elementToImport = symbol.source ?: return
+        val elementToImport = symbol.linkedElement ?: return
         val tagNameToken = XmlTagUtil.getStartTagNameElement(tag) ?: return
 
         val tagName = tagNameToken.text

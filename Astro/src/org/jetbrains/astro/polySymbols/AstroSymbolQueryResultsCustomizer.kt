@@ -33,7 +33,7 @@ class AstroSymbolQueryResultsCustomizer(private val context: PsiElement) : PolyS
       emptyList()
     else
       matches.filter { symbol ->
-        symbol.asSafely<AstroComponent>()?.source != context.containingFile.originalFile
+        symbol.asSafely<AstroComponent>()?.linkedElement != context.containingFile.originalFile
         && (!strict || symbol[AstroProximityProperty].let {
           it == null || it == AstroProximity.LOCAL
         })
@@ -43,7 +43,7 @@ class AstroSymbolQueryResultsCustomizer(private val context: PsiElement) : PolyS
     if (kind == ASTRO_COMPONENTS) {
       if (isHtmlTagName(item.name)) return null
       val proximity = item.symbol?.get(AstroProximityProperty)
-      val element = (item.symbol as? PsiLinkedPolySymbol)?.source
+      val element = (item.symbol as? PsiLinkedPolySymbol)?.linkedElement
       if (proximity == AstroProximity.OUT_OF_SCOPE && element is AstroFileImpl) {
         return if (element != context.containingFile.originalFile)
           item.withInsertHandlerAdded(AstroImportInsertHandler, PolySymbol.Priority.LOWEST)

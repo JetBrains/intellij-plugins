@@ -35,6 +35,9 @@ data class VueScriptSetupLocalDirective(
     rawSource.resolveIfImportSpecifier()
   }
 
+  override val linkedElement: PsiElement
+    get() = source
+
   override val directiveModifiers: List<VueDirectiveModifier>
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(

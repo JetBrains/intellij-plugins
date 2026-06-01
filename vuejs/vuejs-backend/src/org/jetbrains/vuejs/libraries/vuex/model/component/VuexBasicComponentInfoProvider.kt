@@ -157,9 +157,9 @@ private abstract class VuexMappedSourceProperty(
   protected val element: JSElement,
 ) : VueProperty, PsiLinkedPolySymbol {
 
-  override val type: JSType? get() = (source as? JSTypeOwner)?.jsType
+  override val type: JSType? get() = (linkedElement as? JSTypeOwner)?.jsType
 
-  abstract override val source: PsiElement?
+  abstract override val linkedElement: PsiElement?
 
   abstract override fun createPointer(): Pointer<out VuexMappedSourceProperty>
 
@@ -190,7 +190,7 @@ private class VuexMappedSourceComputedStateProperty(
   name: String,
   element: JSElement,
 ) : VuexMappedSourceProperty(name, element), VueComputedProperty {
-  override val source: JSElement
+  override val linkedElement: JSElement
     get() = getCachedVuexImplicitElement(element, true, name, JSImplicitElement.Type.Property) { name, resolved ->
       when (resolved) {
         is JSProperty -> resolved.jsType
@@ -209,7 +209,7 @@ private class VuexMappedSourceComputedGetterProperty(
   name: String,
   element: JSElement,
 ) : VuexMappedSourceProperty(name, element), VueComputedProperty {
-  override val source: JSElement
+  override val linkedElement: JSElement
     get() = getCachedVuexImplicitElement(element, false, name, JSImplicitElement.Type.Property) { name, resolved ->
       (resolved as? JSFunctionItem)?.let { function ->
         VueImplicitElement(name, function.returnType, function, JSImplicitElement.Type.Property, true)
@@ -224,7 +224,7 @@ private class VuexMappedSourceMethod(
   name: String,
   element: JSElement,
 ) : VuexMappedSourceProperty(name, element), VueMethod {
-  override val source: JSElement
+  override val linkedElement: JSElement
     get() = getCachedVuexImplicitElement(element, false, name, JSImplicitElement.Type.Function) { name, resolved ->
       (resolved as? JSFunctionItem)?.let { function ->
         VueImplicitFunction(

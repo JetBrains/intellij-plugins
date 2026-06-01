@@ -159,7 +159,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
 
     val description: String? by lazy {
       val doc = JSDocumentationProvider()
-                  .generateDoc(source ?: return@lazy null, null) ?: return@lazy null
+                  .generateDoc(linkedElement ?: return@lazy null, null) ?: return@lazy null
       val contentStart = doc.indexOf(DocumentationMarkup.CONTENT_START)
       val sectionsStart = doc.indexOf(DocumentationMarkup.SECTIONS_START)
       if (contentStart !in 0..sectionsStart)
@@ -175,7 +175,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
     override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
       PolySymbolDocumentationTarget.create(this, location) { symbol, _ ->
         description(symbol.description)
-        library(getLibraryNameForDocumentationOf(symbol.source))
+        library(getLibraryNameForDocumentationOf(symbol.linkedElement))
       }
 
     fun <S : VueSymbol, T : S> createPointer(clazz: KClass<T>, listProvider: (VueTypedContainer) -> List<S>): Pointer<T> {
@@ -211,7 +211,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
 
     override val type: JSType? get() = property.jsType
 
-    override val source: PsiElement?
+    override val linkedElement: PsiElement?
       get() = property.memberSource.singleElement.let {
         if (it is JSProperty)
           VueImplicitElement(property.memberName, property.jsType, it, JSImplicitElement.Type.Property, true)
@@ -243,11 +243,14 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
     override val params: List<JSParameterTypeDecorator>
       get() = callSignature.functionType.parameters.drop(1)
 
-    override val source: PsiElement?
+    override val linkedElement: PsiElement?
       get() = callSignature.functionType.parameters.getOrNull(0)
                 ?.inferredType?.asSafely<JSTypeKeyTypeImpl>()
                 ?.keySourceElements?.firstOrNull()
               ?: callSignature.memberSource.singleElement
+
+    override val source: PsiElement?
+      get() = linkedElement
 
     override val hasStrictSignature: Boolean
       get() = true
@@ -259,9 +262,13 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
   private class VueTypedSlot(
     container: VueTypedContainer,
     name: String,
-    override val source: PsiElement?,
+    override val linkedElement: PsiElement?,
     typeSignature: JSType?,
   ) : VueTypedDocumentedElement(container, name), VueSlot {
+
+    override val source: PsiElement?
+      get() = linkedElement
+
     override val type: JSType? = (typeSignature as? JSFunctionType)?.parameters?.getOrNull(0)?.simpleType
 
     override fun createPointer(): Pointer<VueTypedSlot> =

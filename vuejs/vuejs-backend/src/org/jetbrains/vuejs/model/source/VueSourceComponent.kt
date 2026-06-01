@@ -292,6 +292,9 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
     constructor(clazz: JSClass, initializer: JSObjectLiteralExpression?)
       : this(clazz.containingFile, initializer, clazz)
 
+    override val linkedElement: PsiFile
+      get() = source
+
     override val name: @NlsSafe String =
       toAsset(FileUtilRt.getNameWithoutExtension(this@VueFileSourceComponent.source.name), true)
 
@@ -321,6 +324,9 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
   ) : VueSourceComponent<JSClass>(clazz, initializer, clazz), VuePsiLinkedComponent {
 
     override val name: @NlsSafe String = clazz.name!!
+
+    override val linkedElement: PsiElement
+      get() = source
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<VueSourceComponent>.getNavigationTargets(project)
@@ -431,6 +437,9 @@ private data class VueSourceRegexSlot(
   override val source: XmlTag,
 ) : VueSlot, PolySymbolWithPattern, PsiLinkedPolySymbol {
 
+  override val linkedElement: PsiElement
+    get() = source
+
   override val name: String
     get() = "Dynamic slot"
 
@@ -454,6 +463,10 @@ private data class VueSourceSlot(
   override val name: String,
   override val source: XmlTag,
 ) : VueSlot, PsiLinkedPolySymbol {
+
+  override val linkedElement: PsiElement
+    get() = source
+
   override val type: JSType
     get() = VueSourceSlotScopeType(source, name)
 

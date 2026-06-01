@@ -80,7 +80,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
       ?.extractComponentSymbol()
       ?.let { if (it is VueComponentWithProximity) it.delegate else it }
       ?.asSafely<VueFileComponent>()
-      ?.source
+      ?.linkedElement
       ?.asSafely<XmlFile>()
       .let { it == null || it != file || findScriptTag(it, true) != null }
 

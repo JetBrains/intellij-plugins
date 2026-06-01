@@ -28,12 +28,12 @@ import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_NAMESPACES
 
 data class AstroNamespacedComponent(
   override val name: String,
-  override val source: PsiElement,
+  override val linkedElement: PsiElement,
 ) : ComponentPolySymbol, PolySymbolScope {
 
   override fun createPointer(): Pointer<out AstroNamespacedComponent> {
     val name = name
-    val sourcePtr = source.createSmartPointer()
+    val sourcePtr = linkedElement.createSmartPointer()
     return Pointer {
       sourcePtr.dereference()?.let { AstroNamespacedComponent(name, it) }
     }
@@ -42,7 +42,7 @@ data class AstroNamespacedComponent(
   @PolySymbol.Property(JSTypeProperty::class)
   private val type: JSType
     get() = JSPsiBasedTypeOfType(
-      (source as? JSPsiNamedElementBase)?.resolveIfImportSpecifier() ?: source, false)
+      (linkedElement as? JSPsiNamedElementBase)?.resolveIfImportSpecifier() ?: linkedElement, false)
 
   override val kind: PolySymbolKind
     get() = UI_FRAMEWORK_COMPONENT_NAMESPACES
@@ -58,7 +58,7 @@ data class AstroNamespacedComponent(
     if (isNamespacedKind(qualifiedName.kind) && qualifiedName.name.getOrNull(0)?.isUpperCase() != false) {
       getMatchingJSPropertySymbols(qualifiedName.name, params.queryExecutor.namesProvider)
         .adaptToNamespaceComponents(qualifiedName.kind)
-        .ifEmpty { listOf(UiFrameworkNamespacedComponent(UnknownComponent(params.queryExecutor.location ?: source, qualifiedName.name))) }
+        .ifEmpty { listOf(UiFrameworkNamespacedComponent(UnknownComponent(params.queryExecutor.location ?: linkedElement, qualifiedName.name))) }
     }
     else
       emptyList()
@@ -76,7 +76,7 @@ data class AstroNamespacedComponent(
 
   private fun List<JSPropertySymbol>.adaptToNamespaceComponents(kind: PolySymbolKind): List<PolySymbol> =
     mapNotNull { symbol ->
-      val source = symbol.source as? PsiElement ?: return@mapNotNull null
+      val source = symbol.linkedElement as? PsiElement ?: return@mapNotNull null
       when {
         kind == UI_FRAMEWORK_COMPONENTS -> {
           UiFrameworkNamespacedComponent(UiFrameworkComponent(symbol.name, source))
@@ -88,7 +88,7 @@ data class AstroNamespacedComponent(
   private data class UiFrameworkNamespacedComponent(override val delegate: PsiLinkedPolySymbol) :
     PsiLinkedPolySymbolDelegate<PsiLinkedPolySymbol> {
 
-    private val namespaceSymbol = AstroNamespacedComponent(delegate.name, delegate.source as PsiElement)
+    private val namespaceSymbol = AstroNamespacedComponent(delegate.name, delegate.linkedElement as PsiElement)
 
     override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
       isNamespacedKind(kind) || kind == UI_FRAMEWORK_COMPONENTS || super.isExclusiveFor(kind)

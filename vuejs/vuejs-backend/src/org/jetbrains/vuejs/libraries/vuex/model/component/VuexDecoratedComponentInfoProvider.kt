@@ -70,7 +70,7 @@ class VuexDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecorated
       protected val clazz: JSClass,
       protected val member: JSRecordType.PropertySignature,
     ) : VueProperty, PsiLinkedPolySymbol {
-      override val source: PsiElement? get() = member.memberSource.singleElement
+      override val linkedElement: PsiElement? get() = member.memberSource.singleElement
 
       override val type: JSType? get() = member.jsType
 

@@ -19,6 +19,9 @@ data class VueCallInject(
   private val symbolSource: PsiNamedElement? = null,
 ) : VueInject, PsiLinkedPolySymbol {
 
+  override val linkedElement: PsiElement
+    get() = source
+
   override val injectionKey: PsiNamedElement?
     get() = resolveInjectionSymbol(symbolSource)
 

@@ -166,7 +166,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
   private class Angular2StandardProperty(
     override val name: String,
     override val project: Project,
-    override val source: TypeScriptPropertySignature?,
+    override val linkedElement: TypeScriptPropertySignature?,
     private val templateFile: PsiFile,
   ) : Angular2PsiLinkedSymbol {
 
@@ -174,7 +174,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     override fun createPointer(): Pointer<Angular2StandardProperty> {
       val name = name
       val project = project
-      val source = source?.createSmartPointer()
+      val source = linkedElement?.createSmartPointer()
       val templateFilePtr = templateFile.createSmartPointer()
       return Pointer {
         val newSource = source?.let {
@@ -186,11 +186,11 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     }
 
     override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
-      source?.asJSSymbol()?.getDocumentationTarget(location)
+      linkedElement?.asJSSymbol()?.getDocumentationTarget(location)
 
     @PolySymbol.Property(JSTypeProperty::class)
     val jsType: JSType?
-      get() = source?.getJSType(templateFile)
+      get() = linkedElement?.getJSType(templateFile)
 
     override val kind: PolySymbolKind
       get() = JS_PROPERTIES
@@ -200,13 +200,13 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
       || other is Angular2StandardProperty
       && other.name == name
       && other.project == project
-      && other.source == source
+      && other.linkedElement == linkedElement
       && other.templateFile == templateFile
 
     override fun hashCode(): Int {
       var result = name.hashCode()
       result = 31 * result + project.hashCode()
-      result = 31 * result + source.hashCode()
+      result = 31 * result + linkedElement.hashCode()
       result = 31 * result + templateFile.hashCode()
       return result
     }
@@ -221,7 +221,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     private val templateFile: PsiFile,
   ) : StandardHtmlSymbol(), Angular2PsiLinkedSymbol {
 
-    override val source: PsiElement?
+    override val linkedElement: PsiElement?
       get() = mainSource ?: mapSource
 
     override fun getMdnDocumentation(): MdnSymbolDocumentation? =

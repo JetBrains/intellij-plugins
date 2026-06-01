@@ -296,8 +296,8 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
       scopeProximity: DeclarationProximity,
     ) : Angular2ScopedSymbol(symbol, scopeProximity), PsiLinkedPolySymbol {
 
-      override val source: PsiElement?
-        get() = (delegate as PsiLinkedPolySymbol).source
+      override val linkedElement: PsiElement?
+        get() = (delegate as PsiLinkedPolySymbol).linkedElement
 
       override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
         super<Angular2ScopedSymbol>.getNavigationTargets(project)

@@ -21,8 +21,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_NAMESPACES
 
-class UnknownComponent(override val source: PsiElement, override val name: @NlsSafe String) : PolySymbolWithPattern, ComponentPolySymbol,
-                                                                                              PolySymbolScope {
+class UnknownComponent(override val linkedElement: PsiElement, override val name: @NlsSafe String) : PolySymbolWithPattern, ComponentPolySymbol,
+                                                                                                     PolySymbolScope {
   override val pattern: PolySymbolPattern = polySymbolPattern { regex(".*") }
 
   override val kind: PolySymbolKind
@@ -55,23 +55,23 @@ class UnknownComponent(override val source: PsiElement, override val name: @NlsS
     other === this
     || other is UnknownComponent
     && other.name == name
-    && other.source == source
+    && other.linkedElement == linkedElement
 
   override fun hashCode(): Int {
     var result = name.hashCode()
-    result = 31 * result + source.hashCode()
+    result = 31 * result + linkedElement.hashCode()
     return result
   }
 
   override fun createPointer(): Pointer<UnknownComponent> {
-    val filePtr = source.createSmartPointer()
+    val filePtr = linkedElement.createSmartPointer()
     return Pointer {
       filePtr.dereference()?.let { UnknownComponent(it, name) }
     }
   }
 
   override fun computeNavigationElement(project: Project): PsiElement? {
-    val offsetInSourceElement = source.text.indexOf(name)
-    return getNavigationFromService(project, source, null, offsetInSourceElement)?.firstOrNull()
+    val offsetInSourceElement = linkedElement.text.indexOf(name)
+    return getNavigationFromService(project, linkedElement, null, offsetInSourceElement)?.firstOrNull()
   }
 }

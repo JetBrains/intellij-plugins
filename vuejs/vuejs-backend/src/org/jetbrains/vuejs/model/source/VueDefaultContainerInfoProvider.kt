@@ -241,7 +241,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
               is HtmlFileImpl -> getComponent(meaningfulElement)
               else -> getComponent(meaningfulElement as? JSElement)
             } ?: VueUnresolvedComponent(element)
-          if (element is JSPsiNamedElementBase && !(component is VuePsiLinkedComponent && component.source == element))
+          if (element is JSPsiNamedElementBase && !(component is VuePsiLinkedComponent && component.linkedElement == element))
             VueLocallyDefinedComponent.create(component, element)
           else
             component as? VueNamedComponent
@@ -360,7 +360,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   ) : VueSourceInputProperty<PsiNamedElement>(name, sourceElement, hasOuterDefault),
       PsiLinkedPolySymbol {
 
-    override val source: PsiNamedElement get() = sourceElement
+    override val linkedElement: PsiNamedElement get() = sourceElement
 
     @PolySymbol.Property(ReadWriteAccessProperty::class)
     val readWriteAccess: ReadWriteAccessDetector.Access
@@ -412,7 +412,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     private val originalSource: PsiElement,
   ) : VueProperty, PsiLinkedPolySymbol {
 
-    override val source: PsiElement = originalSource
+    override val linkedElement: PsiElement = originalSource
 
     abstract override fun createPointer(): Pointer<out VueSourceProperty>
 
@@ -445,9 +445,9 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   ) : VueSourceProperty(name, source), VueDataProperty {
 
     override val type: JSType?
-      get() = when (source) {
-        is JSProperty -> JSResolveUtil.getElementJSType(source)
-        is JSImplicitElement -> source.jsType
+      get() = when (linkedElement) {
+        is JSProperty -> JSResolveUtil.getElementJSType(linkedElement)
+        is JSImplicitElement -> linkedElement.jsType
         else -> null
       }
 
@@ -460,7 +460,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     sourceElement: PsiElement,
   ) : VueSourceProperty(name, sourceElement), VueComputedProperty {
 
-    override val source: VueImplicitElement
+    override val linkedElement: VueImplicitElement
     override val type: JSType?
 
     init {
@@ -487,8 +487,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         }
         else -> null
       }
-      source = VueImplicitElement(name, returnType, provider, JSImplicitElement.Type.Property, true)
-      type = source.jsType
+      linkedElement = VueImplicitElement(name, returnType, provider, JSImplicitElement.Type.Property, true)
+      type = linkedElement.jsType
     }
 
     override fun createPointer(): Pointer<VueSourceComputedProperty> =
@@ -502,10 +502,10 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   ) : VueSourceProperty(name, source), VueMethod {
 
     override val type: JSType?
-      get() = JSResolveUtil.getElementJSType(source)
+      get() = JSResolveUtil.getElementJSType(linkedElement)
                 ?.takeIf { it !is JSNamedType || it.isStaticOrInstance != JSContext.STATIC }
-              ?: source.asSafely<JSTypedEntity>()?.jsType
-              ?: source.asSafely<JSTypeOwner>()?.jsType
+              ?: linkedElement.asSafely<JSTypedEntity>()?.jsType
+              ?: linkedElement.asSafely<JSTypeOwner>()?.jsType
 
     override fun createPointer(): Pointer<VueSourceMethod> =
       createPointer(::VueSourceMethod)
@@ -515,6 +515,9 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val name: String,
     override val source: PsiElement,
   ) : VueEmitCall, PsiLinkedPolySymbol {
+
+    override val linkedElement: PsiElement
+      get() = source
 
     override val searchTarget: PolySymbolSearchTarget
       get() = PolySymbolSearchTarget.create(this)
@@ -533,6 +536,10 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val name: String,
     override val source: PsiElement,
   ) : VueSlot, PsiLinkedPolySymbol {
+
+    override val linkedElement: PsiElement
+      get() = source
+
     override val type: JSType? = source.asSafely<JSTypeOwner>()?.jsType
 
     override fun createPointer(): Pointer<VueSourceSlot> {
@@ -549,6 +556,9 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val name: String,
     override val source: PsiElement,
   ) : VueInject, PsiLinkedPolySymbol {
+
+    override val linkedElement: PsiElement
+      get() = source
 
     private val keyType: VueInjectKey? by lazy(LazyThreadSafetyMode.PUBLICATION) {
       getInjectionKeyType(source.asSafely<JSProperty>()?.initializerOrStub)

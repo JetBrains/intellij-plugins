@@ -27,10 +27,10 @@ import org.jetbrains.astro.polySymbols.AstroProximityProperty
 
 class AstroLocalComponent(
   override val name: String,
-  override val source: PsiElement,
+  override val linkedElement: PsiElement,
   override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH,
 ) : ComponentPolySymbol,
-    PolySymbolScope by polySymbolScopeCached(source, {
+    PolySymbolScope by polySymbolScopeCached(linkedElement, {
       provides(ASTRO_COMPONENT_PROPS)
       initialize {
         cacheDependencies(PsiModificationTracker.MODIFICATION_COUNT)
@@ -67,19 +67,19 @@ class AstroLocalComponent(
     other === this
     || other is AstroLocalComponent
     && other.name == name
-    && other.source == source
+    && other.linkedElement == linkedElement
 
   override fun hashCode(): Int =
-    name.hashCode() * 31 + source.hashCode()
+    name.hashCode() * 31 + linkedElement.hashCode()
 
   override fun createPointer(): Pointer<out AstroLocalComponent> {
     val name = name
-    val sourcePtr = source.createSmartPointer()
+    val sourcePtr = linkedElement.createSmartPointer()
     return Pointer {
       sourcePtr.dereference()?.let { AstroLocalComponent(name, it) }
     }
   }
 
   override fun computeNavigationElement(project: Project): PsiElement =
-    JSDeclarationEvaluator.adjustDeclaration(source, null) ?: source
+    JSDeclarationEvaluator.adjustDeclaration(linkedElement, null) ?: linkedElement
 }

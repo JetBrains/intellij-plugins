@@ -31,13 +31,13 @@ class Angular2FormArrayImpl(
   override fun equals(other: Any?): Boolean =
     other === this
     || other is Angular2FormArrayImpl
-    && other.source == source
+    && other.linkedElement == linkedElement
 
   override fun hashCode(): Int =
-    source.hashCode()
+    linkedElement.hashCode()
 
   override fun createPointer(): Pointer<Angular2FormArrayImpl> {
-    val sourcePtr = (source as JSProperty).createSmartPointer()
+    val sourcePtr = (linkedElement as JSProperty).createSmartPointer()
     return Pointer {
       sourcePtr.element?.let { Angular2FormArrayImpl(it) }
     }

@@ -119,8 +119,8 @@ open class Angular2DirectiveSymbolWrapper private constructor(
     isMatchedDirective: Boolean,
   ) : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective), PsiLinkedPolySymbol {
 
-    override val source: PsiElement?
-      get() = (this.delegate as PsiLinkedPolySymbol).source
+    override val linkedElement: PsiElement?
+      get() = (this.delegate as PsiLinkedPolySymbol).linkedElement
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<Angular2DirectiveSymbolWrapper>.getNavigationTargets(project)

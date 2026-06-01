@@ -13,6 +13,7 @@ import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PsiLinkedPolySymbol
+import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -27,6 +28,9 @@ data class VueTypedDirective(
   override val source: TypeScriptPropertySignature,
   override val name: String,
 ) : VueTypedContainer(source), VueDirective, PsiLinkedPolySymbol {
+
+  override val linkedElement: PsiElement
+    get() = source
 
   override val kind: PolySymbolKind
     get() = VUE_GLOBAL_DIRECTIVES

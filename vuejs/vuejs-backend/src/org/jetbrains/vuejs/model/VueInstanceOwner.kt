@@ -562,8 +562,8 @@ private constructor(
   ) : VueJsPropertyWithProximity(delegate, proximity, typeProvider),
       PsiLinkedPolySymbol {
 
-    override val source: PsiElement?
-      get() = (delegate as PsiLinkedPolySymbol).source
+    override val linkedElement: PsiElement?
+      get() = (delegate as PsiLinkedPolySymbol).linkedElement
 
     override val psiContext: PsiElement?
       get() = delegate.psiContext

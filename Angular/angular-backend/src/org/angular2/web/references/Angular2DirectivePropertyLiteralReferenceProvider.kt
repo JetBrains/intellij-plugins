@@ -56,7 +56,7 @@ class Angular2DirectivePropertyLiteralReferenceProvider : PsiPolySymbolReference
                      ?.typeScriptClass
                      ?.asJSSymbol()
                      ?.getMatchingJSPropertySymbols(name, null)
-                     ?.find { it.source is JSAttributeListOwner }
+                     ?.find { it.linkedElement is JSAttributeListOwner }
                    ?: return emptyMap()
       mapOf(startOffset + 1 to symbol)
     }

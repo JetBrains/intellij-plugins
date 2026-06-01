@@ -81,7 +81,7 @@ internal open class VueFilterWithProximity private constructor(
     proximity: VueModelVisitor.Proximity,
   ) : VueFilterWithProximity(delegate, proximity), PsiLinkedPolySymbol {
 
-    override val source: PsiElement
+    override val linkedElement: PsiElement
       get() = delegate.source
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =

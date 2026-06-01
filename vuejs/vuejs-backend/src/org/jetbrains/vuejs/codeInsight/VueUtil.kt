@@ -530,7 +530,7 @@ fun PolySymbol.extractComponentSymbol(): PolySymbol? =
 
 val PolySymbol.elementToImport: PsiElement?
   get() = (this as? VueNamedComponent)?.elementToImport
-          ?: (this as? PsiLinkedPolySymbol)?.source
+          ?: (this as? PsiLinkedPolySymbol)?.linkedElement
 
 inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
   val host = InjectedLanguageManager.getInstance(project).getInjectionHost(this) ?: this

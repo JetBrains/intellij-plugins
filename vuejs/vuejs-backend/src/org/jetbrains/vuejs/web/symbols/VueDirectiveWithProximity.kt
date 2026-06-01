@@ -96,8 +96,8 @@ internal open class VueDirectiveWithProximity private constructor(
     vueProximity: VueModelVisitor.Proximity,
   ) : VueDirectiveWithProximity(delegate, vueProximity), PsiLinkedPolySymbol {
 
-    override val source: PsiElement?
-      get() = (delegate as PsiLinkedPolySymbol).source
+    override val linkedElement: PsiElement?
+      get() = (delegate as PsiLinkedPolySymbol).linkedElement
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       delegate.getNavigationTargets(project)

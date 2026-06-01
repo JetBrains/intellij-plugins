@@ -132,7 +132,7 @@ fun getInputSourceElements(element: Angular2HtmlPropertyBinding): List<JSAttribu
     ?.unwrapMatchedSymbols()
     ?.filter { it.kind == NG_DIRECTIVE_INPUTS }
     ?.filterIsInstance<PsiLinkedPolySymbol>()
-    ?.mapNotNull { it.source }
+    ?.mapNotNull { it.linkedElement }
     ?.filterIsInstance<JSAttributeListOwner>()
     ?.toList()
   ?: emptyList()

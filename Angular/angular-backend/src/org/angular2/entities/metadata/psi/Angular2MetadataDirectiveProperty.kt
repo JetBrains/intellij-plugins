@@ -50,7 +50,7 @@ class Angular2MetadataDirectiveProperty internal constructor(
     get() = coalesceApiStatus(mySignature.value?.memberSource?.allSourceElements) { (it as? JSElementBase)?.apiStatus }
       .coalesceWith(myOwner.sourceElement.asSafely<JSElementBase>()?.apiStatus)
 
-  override val source: PsiElement
+  override val linkedElement: PsiElement
     get() = sourceElement
 
   override val sourceElement: PsiElement

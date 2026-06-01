@@ -142,6 +142,9 @@ private class VuePsiNamedElementLocallyDefinedComponent(
     ?: delegate.elementToImport
   }
 
+  override val linkedElement: PsiElement
+    get() = sourceElement
+
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     delegate.getNavigationTargets(project)
       .ifEmpty { listOf(VueComponentSourceNavigationTarget(sourceElement)) }
@@ -160,6 +163,9 @@ private class VuePsiNamedElementLocallyDefinedLazyComponent(
   override val source: JSPsiNamedElementBase,
 ) : VueDelegatedComponent<VueComponent>(),
     VuePsiLinkedComponent {
+
+  override val linkedElement: PsiElement
+    get() = source
 
   override val delegate: VueComponent? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     delegateProvider.getDelegate()
@@ -208,8 +214,11 @@ private class VueFileLocallyDefinedComponent(
   override val source: PsiFile
     get() = sourceElement
 
+  override val linkedElement: PsiFile
+    get() = sourceElement
+
   override val elementToImport: PsiElement
-    get() = source
+    get() = sourceElement
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     delegate.getNavigationTargets(project)

@@ -27,7 +27,7 @@ class AstroComponent(private val file: PsiFile) :
       }
     }) {
 
-  override val source: PsiElement
+  override val linkedElement: PsiElement
     get() = file
 
   override val kind: PolySymbolKind
@@ -55,5 +55,5 @@ class AstroComponent(private val file: PsiFile) :
   override fun hashCode(): Int =
     file.hashCode()
 
-  override fun computeNavigationElement(project: Project): PsiElement = source
+  override fun computeNavigationElement(project: Project): PsiElement = linkedElement
 }

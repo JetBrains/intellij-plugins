@@ -362,7 +362,7 @@ class VueComponentTest :
           val elementToImport = (sourceElement as? VueComponent)?.elementToImport
                                 ?: (sourceElement as? VueDirective)?.source
           val source = (sourceElement as? VueScopeElement)?.source
-                       ?: (sourceElement as? PsiLinkedPolySymbol)?.source
+                       ?: (sourceElement as? PsiLinkedPolySymbol)?.linkedElement
           printProperty(level, "source", source)
           printProperty(level, "elementToImport", elementToImport.takeIf { it != source })
         }

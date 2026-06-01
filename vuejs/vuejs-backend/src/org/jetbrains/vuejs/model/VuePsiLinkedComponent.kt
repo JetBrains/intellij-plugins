@@ -10,10 +10,10 @@ import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 
 interface VuePsiLinkedComponent : VueNamedComponent, PsiLinkedPolySymbol {
 
-  override val source: PsiElement
+  override val linkedElement: PsiElement
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-    listOf(VueComponentSourceNavigationTarget(source))
+    listOf(VueComponentSourceNavigationTarget(linkedElement))
 
   override fun createPointer(): Pointer<out VuePsiLinkedComponent>
 }

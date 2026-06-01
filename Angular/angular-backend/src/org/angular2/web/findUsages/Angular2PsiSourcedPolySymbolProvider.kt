@@ -16,7 +16,7 @@ class Angular2PsiSourcedPolySymbolProvider : PsiSourcedPolySymbolProvider {
       JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) {
         Angular2EntitiesProvider.getDirective(element.contextOfType<TypeScriptClass>())
           ?.let { it.inOuts + it.inputs }
-          ?.find { (it as? PsiLinkedPolySymbol)?.source == element }
+          ?.find { (it as? PsiLinkedPolySymbol)?.linkedElement == element }
           ?.let {
             listOf(it as PsiLinkedPolySymbol)
           }

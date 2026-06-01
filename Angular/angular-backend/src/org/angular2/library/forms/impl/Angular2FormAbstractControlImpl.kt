@@ -12,15 +12,15 @@ import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_FIELDS
 
 abstract class Angular2FormAbstractControlImpl(
-  override val source: PsiElement,
+  override val linkedElement: PsiElement,
 ) : Angular2FormControl {
 
   override val project: Project
-    get() = source.project
+    get() = linkedElement.project
 
   override val name: @NlsSafe String
-    get() = source.asSafely<TypeScriptField>()?.name
-            ?: source.asSafely<JSProperty>()?.name
+    get() = linkedElement.asSafely<TypeScriptField>()?.name
+            ?: linkedElement.asSafely<JSProperty>()?.name
             ?: "<error>"
 
   override fun isExclusiveFor(kind: PolySymbolKind): Boolean =

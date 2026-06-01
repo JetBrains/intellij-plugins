@@ -48,7 +48,7 @@ class Angular2FormsComponentImpl(private val componentClass: TypeScriptClass) : 
           }
         }
       }
-      CachedValueProvider.Result.create(FormsInfo(formGroups, formGroups.associateBy { it.source as TypeScriptField }),
+      CachedValueProvider.Result.create(FormsInfo(formGroups, formGroups.associateBy { it.linkedElement as TypeScriptField }),
                                         PsiModificationTracker.MODIFICATION_COUNT)
     }
   }

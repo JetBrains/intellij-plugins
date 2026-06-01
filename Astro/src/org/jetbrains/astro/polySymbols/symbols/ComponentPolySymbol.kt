@@ -16,7 +16,7 @@ interface ComponentPolySymbol : PsiLinkedPolySymbol, AstroSymbol {
     return listOf(SymbolNavigationService.getInstance().psiElementNavigationTarget(target))
   }
 
-  fun computeNavigationElement(project: Project): PsiElement? = when (val s = source) {
+  fun computeNavigationElement(project: Project): PsiElement? = when (val s = linkedElement) {
     is ES6ImportedBinding -> JSDeclarationEvaluator.GO_TO_DECLARATION.getDeclarations(s)?.singleOrNull()
     is JSPsiReferenceElement -> JSDeclarationEvaluator.GO_TO_DECLARATION.getDeclarations(s)?.singleOrNull()
     else -> s

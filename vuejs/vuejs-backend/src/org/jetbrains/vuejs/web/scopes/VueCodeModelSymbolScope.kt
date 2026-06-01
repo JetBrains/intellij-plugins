@@ -181,7 +181,7 @@ private constructor(
     if (this !is PsiLinkedPolySymbol || webTypesContributions.isEmpty)
       return listOf(this)
     val source =
-      ((this as? VueComponent)?.elementToImport?.takeIf { it !is ES6ExportSpecifierAlias } ?: this.source)
+      ((this as? VueComponent)?.elementToImport?.takeIf { it !is ES6ExportSpecifierAlias } ?: this.linkedElement)
         ?.let { source ->
           if (source is JSProperty)
             JSPsiImplUtils.getInitializerReference(source)?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, source) }

@@ -28,11 +28,11 @@ class Angular2FormGroupImpl(
   override fun equals(other: Any?): Boolean =
     other === this
     || other is Angular2FormGroupImpl
-    && other.source == source
+    && other.linkedElement == linkedElement
     && other.initializer == initializer
 
   override fun hashCode(): Int {
-    var result = source.hashCode()
+    var result = linkedElement.hashCode()
     result = 31 * result + initializer.hashCode()
     return result
   }
@@ -45,10 +45,10 @@ class Angular2FormGroupImpl(
     members.filter { it.kind == kind }
 
   override val kind: PolySymbolKind
-    get() = if (source is TypeScriptField) NG_FORM_GROUP_FIELDS else NG_FORM_GROUP_PROPS
+    get() = if (linkedElement is TypeScriptField) NG_FORM_GROUP_FIELDS else NG_FORM_GROUP_PROPS
 
   override fun createPointer(): Pointer<Angular2FormGroupImpl> {
-    val sourcePtr = source.createSmartPointer()
+    val sourcePtr = linkedElement.createSmartPointer()
     val initializerPtr = initializer?.createSmartPointer()
     val membersPtr = members.map { it.createPointer() }
     return Pointer {

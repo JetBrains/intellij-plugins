@@ -9,11 +9,11 @@ import org.jetbrains.vuejs.model.VueDirectiveModifier
 
 data class VueTypedDirectiveModifier(
   override val name: String,
-  override val source: PsiElement?,
+  override val linkedElement: PsiElement?,
 ) : VueDirectiveModifier, PsiLinkedPolySymbol {
   override fun createPointer(): Pointer<out VueTypedDirectiveModifier> {
     val name = this.name
-    val sourcePointer = source?.createSmartPointer()
+    val sourcePointer = linkedElement?.createSmartPointer()
     return Pointer {
       val source = sourcePointer?.let { it.dereference() ?: return@Pointer null }
       VueTypedDirectiveModifier(name, source)

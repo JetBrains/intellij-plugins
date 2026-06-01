@@ -86,7 +86,7 @@ class Angular2SymbolDocumentationCustomizer : PolySymbolDocumentationCustomizer 
 
   private fun PolySymbolDocumentation.withAngularLibrary(symbol: PolySymbol): PolySymbolDocumentation {
     val source = if (symbol is PsiLinkedPolySymbol)
-      symbol.source
+      symbol.linkedElement
     else
       null
     val psiFile = source?.containingFile

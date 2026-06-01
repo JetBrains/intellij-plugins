@@ -9,6 +9,8 @@ interface VueFileComponent : VuePsiLinkedComponent, PsiLinkedPolySymbol {
 
   override val source: PsiFile
 
+  override val linkedElement: PsiFile
+
   override fun createPointer(): Pointer<out VueFileComponent>
 
 }
