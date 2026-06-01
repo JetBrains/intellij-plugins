@@ -499,7 +499,8 @@
 
     <!-- Angular2 TypeScript contributions -->
     <frameworkSpecificHandler language="TypeScript" implementationClass="org.angular2.lang.Angular2TSFrameworkSpecificHandler"/>
-    <languageServiceProvider implementation="org.angular2.lang.expr.service.Angular2LanguageServiceProvider" order="first"/>
+    <languageServiceProvider implementation="org.angular2.lang.expr.service.Angular2LanguageServiceProvider"
+                             order="after typescriptGoLsp, before typescript"/>
     <languageServiceQuickFixProvider implementation="org.angular2.lang.expr.service.Angular2LanguageServiceQuickFixProvider"/>
     <commonHandlersFactory language="Angular2" implementationClass="org.angular2.lang.expr.formatter.Angular2CommonHandlersFactory"/>
   </extensions>
