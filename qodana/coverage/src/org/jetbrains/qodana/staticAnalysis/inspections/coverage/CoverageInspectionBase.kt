@@ -5,6 +5,7 @@ import com.intellij.codeInspection.GlobalSimpleInspectionTool
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ProblemDescriptionsProcessor
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.options.OptCheckbox
 import com.intellij.codeInspection.options.OptPane
 import com.intellij.codeInspection.options.OptPane.checkbox
 import com.intellij.codeInspection.options.OptPane.number
@@ -26,8 +27,9 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.precomputedC
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.COVERAGE_LANGUAGE_FIELD
 import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.INPUT_COVERAGE_LOADED
-import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.walk
@@ -35,15 +37,13 @@ import kotlin.reflect.KClass
 
 internal val logger = logger<CoverageInspectionBase>()
 
-abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
+abstract class CoverageInspectionBase : GlobalSimpleInspectionTool() {
   @Suppress("MemberVisibilityCanBePrivate")
-  var methodThreshold = 50
-
+  var methodThreshold: Int = 50
   @Suppress("MemberVisibilityCanBePrivate")
-  var classThreshold = 50
-
+  var classThreshold: Int = 50
   @Suppress("MemberVisibilityCanBePrivate")
-  var warnMissingCoverage = false
+  var warnMissingCoverage: Boolean = false
 
   abstract fun loadCoverage(globalContext: QodanaGlobalInspectionContext)
 
@@ -59,20 +59,24 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
   abstract fun validateFileType(file: PsiFile): Boolean
   abstract fun cleanup(globalContext: QodanaGlobalInspectionContext)
 
-  override fun inspectionStarted(manager: InspectionManager,
-                                 globalContext: GlobalInspectionContext,
-                                 problemDescriptionsProcessor: ProblemDescriptionsProcessor) {
+  override fun inspectionStarted(
+    manager: InspectionManager,
+    globalContext: GlobalInspectionContext,
+    problemDescriptionsProcessor: ProblemDescriptionsProcessor,
+  ) {
     if (globalContext !is QodanaGlobalInspectionContext
         || isUnderLocalChangesOnOldCode(globalContext)) return
     loadCoverage(globalContext)
     loadReportForIncrementalAnalysis(globalContext)
   }
 
-  override fun checkFile(psiFile: PsiFile,
-                         manager: InspectionManager,
-                         problemsHolder: ProblemsHolder,
-                         globalContext: GlobalInspectionContext,
-                         problemDescriptionsProcessor: ProblemDescriptionsProcessor) {
+  override fun checkFile(
+    psiFile: PsiFile,
+    manager: InspectionManager,
+    problemsHolder: ProblemsHolder,
+    globalContext: GlobalInspectionContext,
+    problemDescriptionsProcessor: ProblemDescriptionsProcessor,
+  ) {
     if (globalContext !is QodanaGlobalInspectionContext
         || isUnderLocalChangesOnOldCode(globalContext)
         || !validateFileType(psiFile)
@@ -80,9 +84,11 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
     checker(psiFile, problemsHolder, globalContext)
   }
 
-  override fun inspectionFinished(manager: InspectionManager,
-                                  globalContext: GlobalInspectionContext,
-                                  problemDescriptionsProcessor: ProblemDescriptionsProcessor) {
+  override fun inspectionFinished(
+    manager: InspectionManager,
+    globalContext: GlobalInspectionContext,
+    problemDescriptionsProcessor: ProblemDescriptionsProcessor,
+  ) {
     if (globalContext !is QodanaGlobalInspectionContext) return
     cleanup(globalContext)
   }
@@ -98,7 +104,7 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
     )
   }
 
-  protected fun missingCoverageOpt() = checkbox("warnMissingCoverage", QodanaBundle.message("missing.coverage.tracking.message"))
+  protected fun missingCoverageOpt(): OptCheckbox = checkbox("warnMissingCoverage", QodanaBundle.message("missing.coverage.tracking.message"))
 
   protected fun getClassData(
     file: PsiFile,
@@ -133,8 +139,12 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
     data.classes.forEach { x -> stat.processReportClassData(x.value) }
   }
 
-  fun computeCoverageData(globalContext: QodanaGlobalInspectionContext, engineType : KClass<out CoverageEngine>): ProjectData? {
-    val coverageFiles = provideCoverageFiles(globalContext)
+  fun computeCoverageData(
+    globalContext: QodanaGlobalInspectionContext,
+    engineType: KClass<out CoverageEngine>,
+    coverageFileProvider: QodanaCoverageFileProvider
+  ): ProjectData? {
+    val coverageFiles = provideCoverageFilesWithDiscovery(globalContext, coverageFileProvider)
     logger.info("Coverage for ${engineType.java.simpleName} - provided ${coverageFiles.size} files")
     if (coverageFiles.isEmpty()) return null
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(engineType.java)
@@ -148,16 +158,31 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
     return data
   }
 
-  @OptIn(ExperimentalPathApi::class)
-  protected fun provideCoverageFiles(globalContext: QodanaGlobalInspectionContext): List<File> = synchronized(globalContext) {
-    globalContext.getUserData(precomputedCoverageFiles)?.let { return@synchronized it }
-    val coverageFiles = sequenceOf(reportsInExternalPath(), reportsInProjectPath(globalContext.project))
-      .filterNotNull()
-      .flatMap { it.walk().filter { f -> f.isRegularFile() }.map { f -> f.toFile() } }
-      .toList()
+  protected fun provideCoverageFilesWithDiscovery(
+    globalContext: QodanaGlobalInspectionContext,
+    coverageFileProvider: QodanaCoverageFileProvider,
+  ): List<Path> {
+    val cache = globalContext.putUserDataIfAbsent(precomputedCoverageFiles, ConcurrentHashMap())
+    return cache.computeIfAbsent(coverageFileProvider.engineType) {
+      lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        // files stored in .qodana/code-coverage or in directory specified via system variable
+        explicitCoverageFiles(globalContext).ifEmpty { coverageFileProvider.getCoverageFiles(globalContext.project) }
+      }
+    }.value
+  }
 
-    globalContext.putUserData(precomputedCoverageFiles, coverageFiles)
-    return coverageFiles
+  @OptIn(ExperimentalPathApi::class)
+  private fun explicitCoverageFiles(globalContext: QodanaGlobalInspectionContext): List<Path> {
+    return sequenceOf(reportsInExternalPath(), reportsInProjectPath(globalContext.project))
+      .filterNotNull()
+      .flatMap { it.walk().filter { f -> f.isRegularFile() } }
+      .toList()
+  }
+
+  @Suppress("IO_FILE_USAGE")
+  @Deprecated("Use version with Path instead")
+  protected fun provideCoverageFiles(globalContext: QodanaGlobalInspectionContext): List<java.io.File> {
+    return explicitCoverageFiles(globalContext).map { it.toFile() }
   }
 
   protected fun highlightedElement(element: PsiElement): PsiElement {

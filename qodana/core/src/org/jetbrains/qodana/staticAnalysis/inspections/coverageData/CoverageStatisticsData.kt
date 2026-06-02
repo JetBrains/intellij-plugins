@@ -13,14 +13,16 @@ import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Run
 import org.jetbrains.annotations.Nls
 import org.jetbrains.qodana.QodanaBundle
-import java.io.File
+import org.jetbrains.qodana.coverage.CoverageEngineType
+import java.nio.file.Path
 import java.util.Collections
+import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val COV_FIELD_NAME = "coverage"
 private const val COVERAGE_FILES_PROVIDED = "qodana.coverage.files.provided"
-const val COVERAGE_DATA = "qodana.coverage.input"
-val precomputedCoverageFiles = Key.create<List<File>>("qodana.coverage.files")
+const val COVERAGE_DATA: String = "qodana.coverage.input"
+val precomputedCoverageFiles: Key<ConcurrentMap<CoverageEngineType, Lazy<List<Path>>>> = Key.create("qodana.coverage.files")
 
 internal var Run.hasCoverageFiles: Boolean
   set(value) {
@@ -52,7 +54,11 @@ enum class CoverageData(val prop: String, @Nls val title: String, @Nls val dim: 
   Responsible for coverage statistics based on the Coverage global tools input.
   Lifetime is bound to Qodana context lifetime.
  */
-class CoverageStatisticsData(val coverageComputationState: QodanaCoverageComputationState, project: Project, changedRanges: Map<String, Set<Int>>? = null) {
+class CoverageStatisticsData(
+  val coverageComputationState: QodanaCoverageComputationState,
+  project: Project,
+  changedRanges: Map<String, Set<Int>>? = null,
+) {
   private val totalLines = AtomicInteger()
   private val coveredLines = AtomicInteger()
   private val freshLines = AtomicInteger()
@@ -66,12 +72,25 @@ class CoverageStatisticsData(val coverageComputationState: QodanaCoverageComputa
     if (!isIncremental && totalLines.get() == 0 || isIncremental && reportTotalLines.get() == 0) return null
     if (!isIncremental) {
       val totalCoverage = coveredLines.get() * 100 / totalLines.get()
-      return mapOf(CoverageData.TOTAL_COV to totalCoverage, CoverageData.TOTAL_LINES to totalLines.get(), CoverageData.TOTAL_COV_LINES to coveredLines.get())
-    } else {
+      return mapOf(
+        CoverageData.TOTAL_COV to totalCoverage,
+        CoverageData.TOTAL_LINES to totalLines.get(),
+        CoverageData.TOTAL_COV_LINES to coveredLines.get()
+      )
+    }
+    else {
       val reportTotalCoverage = reportCoveredLines.get() * 100 / reportTotalLines.get()
-      val totalCovData = mapOf(CoverageData.TOTAL_COV to reportTotalCoverage, CoverageData.TOTAL_LINES to reportTotalLines.get(), CoverageData.TOTAL_COV_LINES to reportCoveredLines.get())
+      val totalCovData = mapOf(
+        CoverageData.TOTAL_COV to reportTotalCoverage,
+        CoverageData.TOTAL_LINES to reportTotalLines.get(),
+        CoverageData.TOTAL_COV_LINES to reportCoveredLines.get()
+      )
       val freshCodeCoverage = if (freshLines.get() != 0) freshCoveredLines.get() * 100 / freshLines.get() else 100
-      return totalCovData + mapOf(CoverageData.FRESH_COV to freshCodeCoverage, CoverageData.FRESH_LINES to freshLines.get(), CoverageData.FRESH_COV_LINES to freshCoveredLines.get())
+      return totalCovData + mapOf(
+        CoverageData.FRESH_COV to freshCodeCoverage,
+        CoverageData.FRESH_LINES to freshLines.get(),
+        CoverageData.FRESH_COV_LINES to freshCoveredLines.get()
+      )
     }
   }
 
@@ -79,17 +98,21 @@ class CoverageStatisticsData(val coverageComputationState: QodanaCoverageComputa
     val changedLinesDataMap = mutableMapOf<String, Set<Int>>()
     val changeListManager = ChangeListManager.getInstance(project)
     val psiManager = PsiManager.getInstance(project)
-    val changedFiles = ReadAction.compute<List<PsiFile>, Throwable> { changeListManager.allChanges
-      .filter { it.afterRevision != null && it.virtualFile != null }
-      .mapNotNull { psiManager.findFile(it.virtualFile!!) } }
+    val changedFiles = ReadAction.computeBlocking<List<PsiFile>, Throwable> {
+      changeListManager.allChanges
+        .filter { it.afterRevision != null && it.virtualFile != null }
+        .mapNotNull { psiManager.findFile(it.virtualFile!!) }
+    }
     for (changedFile in changedFiles) {
       val lines = mutableSetOf<Int>()
-      val ranges = ReadAction.compute<ChangedRangesInfo?, Throwable> { VcsFacade.getInstance().getChangedRangesInfo(changedFile) } ?: continue
+      val ranges = ReadAction.computeBlocking<ChangedRangesInfo?, Throwable> {
+        VcsFacade.getInstance().getChangedRangesInfo(changedFile)
+      } ?: continue
       val document = PsiDocumentManager.getInstance(project).getDocument(changedFile) ?: continue
       for (range in ranges.allChangedRanges) {
         val startLine = document.getLineNumber(range.startOffset) + 1
         val endLine = document.getLineNumber(range.endOffset) + 1
-        for (line in startLine .. endLine) {
+        for (line in startLine..endLine) {
           lines.add(line)
         }
       }
@@ -123,7 +146,7 @@ class CoverageStatisticsData(val coverageComputationState: QodanaCoverageComputa
     reportCoveredLines.incrementAndGet()
   }
 
-  fun getChangedRanges(virtualFileUrl: String) = changedRanges.value.getOrDefault(virtualFileUrl, null)
+  fun getChangedRanges(virtualFileUrl: String): Set<Int>? = changedRanges.value.getOrDefault(virtualFileUrl, null)
 
   fun exposeChangedRanges(): Map<String, Set<Int>>? {
     if (!changedRanges.isInitialized()) return null
@@ -137,7 +160,7 @@ enum class QodanaCoverageComputationState {
   SKIP_REPORT,
   DEFAULT;
 
-  fun isIncrementalAnalysis() = this != DEFAULT
+  fun isIncrementalAnalysis(): Boolean = this != DEFAULT
 
-  fun isFirstStage() = this == SKIP_COMPUTE
+  fun isFirstStage(): Boolean = this == SKIP_COMPUTE
 }

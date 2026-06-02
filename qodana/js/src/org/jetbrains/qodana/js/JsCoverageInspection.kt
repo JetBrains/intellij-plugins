@@ -36,13 +36,15 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspec
 private val jest = Key.create<Lazy<ProjectData?>>("qodana.jest.coverage")
 private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.js.normalizedPaths")
 
-private class JsCoverageInspection : CoverageInspectionBase() {
+internal class JsCoverageInspection : CoverageInspectionBase() {
   @Suppress("MemberVisibilityCanBePrivate")
   var fileThreshold = 50
 
-  override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
+    override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(jest, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      computeCoverageData(globalContext, JestCoverageEngine::class)?.let { remapCoverage(globalContext.project, it) }?.also { loadNormalizedPaths(globalContext, it) }
+      computeCoverageData(globalContext, JestCoverageEngine::class, JsCoverageFileProvider())?.let {
+        remapCoverage(globalContext.project, it)
+      }?.also { loadNormalizedPaths(globalContext, it) }
     })
   }
 

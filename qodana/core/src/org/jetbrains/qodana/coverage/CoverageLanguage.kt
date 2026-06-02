@@ -11,13 +11,16 @@ enum class CoverageEngineType {
   MochaCoverageEngine,
   PyCoverageEngine,
   GoCoverageEngine,
+  // non-existent engines, fine for now as we don't have cloud artifacts for .NET
+  NetLcovCoverageEngine,
+  NetCoberturaCoverageEngine,
   Other;
 
   companion object {
     fun tryCompute(input: String): CoverageEngineType {
       try {
         return CoverageEngineType.valueOf(input)
-      } catch (e: IllegalArgumentException) {
+      } catch (_: IllegalArgumentException) {
         return Other
       }
     }
@@ -33,11 +36,12 @@ enum class CoverageLanguage {
   JavaScript,
   Python,
   Go,
+  Net,
   None, // when no coverage was received
   Other;
 
   companion object {
-    fun mapEngine(engine: String) = mapEngine(CoverageEngineType.tryCompute(engine))
+    fun mapEngine(engine: String): CoverageLanguage = mapEngine(CoverageEngineType.tryCompute(engine))
 
     private fun mapEngine(engine: CoverageEngineType) = when(engine) {
       CoverageEngineType.JavaCoverageEngine, CoverageEngineType.XMLReportEngine -> JVM
@@ -45,6 +49,7 @@ enum class CoverageLanguage {
       CoverageEngineType.JestCoverageEngine, CoverageEngineType.MochaCoverageEngine -> JavaScript
       CoverageEngineType.PyCoverageEngine -> Python
       CoverageEngineType.GoCoverageEngine -> Go
+      CoverageEngineType.NetLcovCoverageEngine, CoverageEngineType.NetCoberturaCoverageEngine -> Net
       else -> Other
     }
   }

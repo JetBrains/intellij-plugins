@@ -33,18 +33,15 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportElement
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportProblemsNeeded
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 
-private class PhpCoverageInspection : CoverageInspectionBase() {
+internal class PhpCoverageInspection : CoverageInspectionBase() {
   @Suppress("MemberVisibilityCanBePrivate")
   var fileThreshold = 50
 
-  companion object {
-    private val phpunit = Key.create<Lazy<ProjectData?>>("qodana.phpunit.coverage")
-    private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.php.normalizedPaths")
-  }
-
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(phpunit, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      computeCoverageData(globalContext, PhpUnitCoverageEngine::class)?.let { remapCoverage(globalContext.project, it) }?.also { loadNormalizedPaths(globalContext, it) }
+      computeCoverageData(globalContext, PhpUnitCoverageEngine::class, PhpCoverageFileProvider())?.let {
+        remapCoverage(globalContext.project, it)
+      }?.also { loadNormalizedPaths(globalContext, it) }
     })
   }
 
@@ -153,7 +150,7 @@ private class PhpCoverageInspection : CoverageInspectionBase() {
     var currentElement: PsiElement? = node
 
     while (currentElement != null) {
-      if (currentElement is PhpNamedElement && !currentElement.name.isNullOrEmpty()) {
+      if (currentElement is PhpNamedElement && currentElement.name.isNotEmpty()) {
         return "(anonymous ${type} in ${currentElement.name})"
       }
       currentElement = currentElement.parent
@@ -161,3 +158,6 @@ private class PhpCoverageInspection : CoverageInspectionBase() {
     return "(anonymous ${type} in ${file.name})"
   }
 }
+
+private val phpunit = Key.create<Lazy<ProjectData?>>("qodana.phpunit.coverage")
+private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.php.normalizedPaths")

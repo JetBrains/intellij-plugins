@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.asJava.elements.isSetter
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.coverage.CoverageLanguage
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageInspectionBase
-import org.jetbrains.qodana.staticAnalysis.inspections.coverage.computeSuites
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.computeSuitesPaths
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.issueWithCoverage
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.iterateContents
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadClassData
@@ -70,14 +70,9 @@ private enum class MethodType(val printName: String) {
 class JvmCoverageInspection : CoverageInspectionBase() {
   private val languages = setOf("Java", "Kotlin")
 
-  companion object {
-    private val javacov = Key.create<Lazy<ProjectData?>>("qodana.javacov.coverage")
-    private val xmlcov = Key.create<Lazy<XMLProjectData?>>("qodana.xml.coverage")
-  }
-
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(javacov, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      computeCoverageData(globalContext, JavaCoverageEngine::class)
+      computeCoverageData(globalContext, JavaCoverageEngine::class, JvmIcCoverageFileProvider())
     })
     globalContext.putUserData(xmlcov, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
       val data = computeXmlCoverageData(globalContext, XMLReportEngine::class)
@@ -134,7 +129,7 @@ class JvmCoverageInspection : CoverageInspectionBase() {
     ))
   }
 
-  override fun validateFileType(file: PsiFile) = languages.contains(file.language.displayName)
+  override fun validateFileType(file: PsiFile): Boolean = languages.contains(file.language.displayName)
 
   override fun cleanup(globalContext: QodanaGlobalInspectionContext) {
     val data = globalContext.getUserData(javacov)?.value
@@ -145,14 +140,16 @@ class JvmCoverageInspection : CoverageInspectionBase() {
     globalContext.putUserData(xmlcov, null)
   }
 
-  private class JVMDefVisitor(private val globalContext: QodanaGlobalInspectionContext,
-                              private val problemsHolder: ProblemsHolder,
-                              private val methodThreshold: Int,
-                              private val classThreshold: Int,
-                              private val warnMissingCoverage: Boolean,
-                              private val report: ProjectData?,
-                              private val xmlReport: XMLProjectData?,
-                              private val highlightedElement: (PsiElement) -> PsiElement) : AbstractUastNonRecursiveVisitor() {
+  private class JVMDefVisitor(
+    private val globalContext: QodanaGlobalInspectionContext,
+    private val problemsHolder: ProblemsHolder,
+    private val methodThreshold: Int,
+    private val classThreshold: Int,
+    private val warnMissingCoverage: Boolean,
+    private val report: ProjectData?,
+    private val xmlReport: XMLProjectData?,
+    private val highlightedElement: (PsiElement) -> PsiElement,
+  ) : AbstractUastNonRecursiveVisitor() {
     private val anonymousClasses = mutableSetOf<UClass>()
     private val visitedMethods = mutableSetOf<UMethod>()
     private val xmlFileDataLoaded = AtomicBoolean(false)
@@ -231,7 +228,11 @@ class JvmCoverageInspection : CoverageInspectionBase() {
       return true
     }
 
-    private fun loadXmlFileData(fileInfo: XMLProjectData.FileInfo?, virtualFile: VirtualFile, globalContext: QodanaGlobalInspectionContext) {
+    private fun loadXmlFileData(
+      fileInfo: XMLProjectData.FileInfo?,
+      virtualFile: VirtualFile,
+      globalContext: QodanaGlobalInspectionContext,
+    ) {
       if (fileInfo == null) return
       if (xmlFileDataLoaded.getAndSet(true)) return
       globalContext.coverageStatisticsData.loadXmlLineData(fileInfo, virtualFile)
@@ -294,7 +295,7 @@ class JvmCoverageInspection : CoverageInspectionBase() {
       psiFile: PsiFile,
       textRange: TextRange,
       project: Project,
-      threshold: Int
+      threshold: Int,
     ): Boolean {
       if (data == null) {
         return warnMissingCoverage
@@ -329,7 +330,7 @@ class JvmCoverageInspection : CoverageInspectionBase() {
     private fun computeName(node: UDeclaration, type: String, file: PsiFile): String {
       val psiName = (node.javaPsi as? PsiNameIdentifierOwner)?.name
       if (psiName != null) {
-        return "$psiName"
+        return psiName
       }
       var currentClass = node.getContainingUClass()
       while (currentClass != null) {
@@ -341,17 +342,22 @@ class JvmCoverageInspection : CoverageInspectionBase() {
     }
   }
 
-  private fun computeXmlCoverageData(globalContext: QodanaGlobalInspectionContext, engineType : KClass<out CoverageEngine>): XMLProjectData? {
-    val coverageFiles = provideCoverageFiles(globalContext)
+  private fun computeXmlCoverageData(
+    globalContext: QodanaGlobalInspectionContext,
+    engineType: KClass<out CoverageEngine>,
+  ): XMLProjectData? {
+    val coverageFiles = provideCoverageFilesWithDiscovery(globalContext, JvmXmlCoverageFileProvider())
     logger.info("Coverage for ${engineType.java.simpleName} - provided ${coverageFiles.size} files")
     if (coverageFiles.isEmpty()) return null
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(engineType.java)
-    val suites = computeSuites(engine, coverageFiles, globalContext.project)
+    val suites = computeSuitesPaths(engine, coverageFiles, globalContext.project)
     if (suites.any()) {
       val firstSuite = suites.first()
-      val report = (firstSuite as? XMLReportSuite)?.getReportData() ?: throw QodanaException("JaCoCo suite ${firstSuite.presentableName} is missing report data")
+      val report = (firstSuite as? XMLReportSuite)?.getReportData()
+                   ?: throw QodanaException("JaCoCo suite ${firstSuite.presentableName} is missing report data")
       for (suite in suites.drop(1)) {
-        val add = (suite as? XMLReportSuite)?.getReportData() ?: throw QodanaException("JaCoCo suite ${suite.presentableName} is missing report data")
+        val add = (suite as? XMLReportSuite)?.getReportData()
+                  ?: throw QodanaException("JaCoCo suite ${suite.presentableName} is missing report data")
         report.merge(add)
       }
       return report
@@ -359,3 +365,6 @@ class JvmCoverageInspection : CoverageInspectionBase() {
     return null
   }
 }
+
+private val javacov = Key.create<Lazy<ProjectData?>>("qodana.javacov.coverage")
+private val xmlcov = Key.create<Lazy<XMLProjectData?>>("qodana.xml.coverage")
