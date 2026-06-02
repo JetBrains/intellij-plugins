@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import kotlinx.serialization.json.Json
+import org.jetbrains.vuejs.VueTsConfig.CompilerOptions
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.junit.jupiter.api.assertNull
 
@@ -60,28 +61,27 @@ class VueTsConfigFile(
       types: List<String>,
       vueCompilerOptions: VueCompilerOptions?,
     ): String {
-      // language=jsonc
-      return """
-        {
-          "extends": "@vue/tsconfig/tsconfig.dom.json",
-          "include": [
-            "**/*.ts", 
-            "**/*.tsx",
-            "**/*.vue"
-          ]
-          "compilerOptions": {
-            "types": [ ${types.joinToString(", ") { """"$it"""" }} ]   
-          
-            // Extra safety for array and object lookups, but may have false positives.
-            "noUncheckedIndexedAccess": true,
-        
-            // `vue-tsc --build` produces a .tsbuildinfo file for incremental type-checking.
-            // Specified here to keep it out of the root directory.
-            "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo"
-          },
-          ${vueCompilerOptions?.let { """"vueCompilerOptions": ${Json.encodeToString(it)},""" } ?: ""}
-        }
-        """.trimIndent()
+      val config = VueTsConfig(
+        extends = "@vue/tsconfig/tsconfig.dom.json",
+        include = listOf(
+          "**/*.ts",
+          "**/*.tsx",
+          "**/*.vue"
+        ),
+        compilerOptions = CompilerOptions(
+          types = types,
+
+          // Extra safety for array and object lookups, but may have false positives.
+          noUncheckedIndexedAccess = true,
+
+          // `vue-tsc --build` produces a .tsbuildinfo file for incremental type-checking.
+          // Specified here to keep it out of the root directory.
+          tsBuildInfoFile = "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+        ),
+        vueCompilerOptions = vueCompilerOptions,
+      )
+
+      return Json.encodeToString(config)
     }
   }
 }
