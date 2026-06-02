@@ -328,22 +328,3 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     update(createUpdateContext(virtualFile))
   }
 }
-
-fun isAngularTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
-  val isAngularServiceContext = if (EDT.isCurrentThreadEdt())
-    isAngular2Context(project, context) && isAngularServiceSupport(project, context)
-  else
-    computeCancellable<Boolean, Throwable> {
-      isAngular2Context(project, context) && isAngularServiceSupport(project, context)
-    }
-
-  if (!isAngularServiceContext) return false
-
-  return when (getAngularSettings(project).serviceType) {
-    AngularServiceSettings.AUTO -> true
-    AngularServiceSettings.DISABLED -> false
-  }
-}
-
-private fun isAngularServiceSupport(project: Project, context: VirtualFile): Boolean =
-  PolyContext.get("angular-service-support", context, project) != "false"

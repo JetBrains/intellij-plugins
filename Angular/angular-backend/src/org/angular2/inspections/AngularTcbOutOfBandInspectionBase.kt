@@ -6,13 +6,12 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ex.ProblemDescriptorImpl
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.startOffset
-import org.angular2.lang.expr.service.Angular2TypeScriptService
+import org.angular2.lang.expr.service.isAngularTypeScriptServiceEnabled
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.DiagnosticKind
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 import org.angular2.lang.html.Angular2HtmlDialect
@@ -20,8 +19,7 @@ import org.angular2.lang.html.Angular2HtmlDialect
 abstract class AngularTcbOutOfBandInspectionBase(private val kind: DiagnosticKind) : LocalInspectionTool() {
 
   override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
-    if (file.language !is Angular2HtmlDialect
-        || TypeScriptServiceHolder.getForElement(file)?.service !is Angular2TypeScriptService)
+    if (file.language !is Angular2HtmlDialect || !isAngularTypeScriptServiceEnabled(file))
       return null
 
     val (transpiledFile, topLevelTemplateFile) = Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile(file)

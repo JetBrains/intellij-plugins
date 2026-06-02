@@ -20,16 +20,17 @@ import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
 import org.angular2.entities.Angular2EntitiesProvider
-import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.service.Angular2AnnotationErrorFilter
 import org.angular2.lang.expr.service.Angular2LanguageServiceQuickFixFilter
+import org.angular2.lang.expr.service.isAngularTypeScriptServiceEnabled
 import org.angular2.lang.expr.service.repositionInlayHint
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
@@ -46,7 +47,7 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
     file.isInLocalFileSystem && file.fileType.let { it is HtmlFileType || it is SvgFileType }
 
   override fun isEnabled(file: VirtualFile): Boolean =
-    Angular2LangUtil.isAngular2Context(project, file)
+    isAngularTypeScriptServiceEnabled(project, file)
 
   override fun getFileInfo(file: VirtualFile): KolarFileInfo? =
     when {
@@ -55,6 +56,10 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
       && !NodeModuleUtil.hasNodeModulesDirInPath(file, null) -> AngularTranspiledFile(project, file)
       else -> null
     }
+
+  override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean =
+    (element.language.let { it is Angular2ExprDialect || it is Angular2HtmlDialect }
+     && Angular2EntitiesProvider.findTemplateComponent(element) != null)
 
   override fun supportsInjectedFile(file: PsiFile): Boolean =
     file.language is Angular2ExprDialect || file.language is Angular2HtmlDialect
