@@ -371,12 +371,15 @@
     <projectFileScanner implementation="org.intellij.terraform.config.model.local.TfIndexableFileScanner"/>
 
     <lang.inspectionSuppressor language="HCL" implementationClass="org.intellij.terraform.config.inspection.HCLInspectionSuppressor"/>
-    <!-- HCL compatible inspections: Terraform, OpenTofu and Terragrunt -->
+    <!-- HCL compatible inspections: Terraform, Terraform Stack and Test, OpenTofu and Terragrunt -->
     <localInspection language="HCL" applyToDialects="true" shortName="HclBlockMissingProperty" bundle="messages.HCLBundle"
                      key="missing.resource.property.inspection.display.name"
                      groupKey="hcl.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
-                     suppressId="MissingProperty"
                      implementationClass="org.intellij.terraform.config.inspection.HclBlockMissingPropertyInspection"/>
+    <localInspection language="HCL" applyToDialects="true" shortName="HclBlockNameValidness" bundle="messages.HCLBundle"
+                     key="block.name.validness.inspection.display.name"
+                     groupKey="hcl.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="org.intellij.terraform.config.inspection.HclBlockNameValidnessInspection"/>
 
     <!-- Terraform/OpenTofu inspections -->
     <localInspection language="HCL" applyToDialects="true" shortName="HCLBlockConflictingProperties" bundle="messages.HCLBundle"
@@ -410,11 +413,6 @@
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="false" level="WARNING"
                      suppressId="NotInitialized"
                      implementationClass="org.intellij.terraform.config.inspection.TfNotInitializedInspection"/>
-    <localInspection language="HCL" applyToDialects="true" shortName="TfBlockNameValidness" bundle="messages.HCLBundle"
-                     key="block.name.validness.inspection.display.name"
-                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
-                     suppressId="BlockNameValidness"
-                     implementationClass="org.intellij.terraform.config.inspection.TfBlockNameValidnessInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="HCLLiteralValidness" bundle="messages.HCLBundle"
                      key="hcl.literal.inspection.display.name"
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"

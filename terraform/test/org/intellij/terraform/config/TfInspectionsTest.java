@@ -8,7 +8,7 @@ import org.intellij.terraform.TfTestUtils;
 import org.intellij.terraform.config.inspection.HCLBlockConflictingPropertiesInspection;
 import org.intellij.terraform.config.inspection.HCLLiteralValidnessInspection;
 import org.intellij.terraform.config.inspection.HclBlockMissingPropertyInspection;
-import org.intellij.terraform.config.inspection.TfBlockNameValidnessInspection;
+import org.intellij.terraform.config.inspection.HclBlockNameValidnessInspection;
 import org.intellij.terraform.config.inspection.TfDuplicatedBlockPropertyInspection;
 import org.intellij.terraform.config.inspection.TfDuplicatedOutputInspection;
 import org.intellij.terraform.config.inspection.TfDuplicatedProviderInspection;
@@ -205,6 +205,6 @@ public class TfInspectionsTest extends TfInspectionFixtureTestCase {
 
   public void testHclBlockWithEmptyName() {
     UiInterceptors.register(new RenameDialogInterceptor("new_name"));
-    doTest("hcl_block_with_empty_name", new TfBlockNameValidnessInspection());
+    doTest("hcl_block_with_empty_name", new HclBlockNameValidnessInspection());
   }
 }

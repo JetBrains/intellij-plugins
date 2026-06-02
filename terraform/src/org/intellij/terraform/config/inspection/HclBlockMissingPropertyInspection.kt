@@ -50,10 +50,6 @@ internal class HclBlockMissingPropertyInspection : LocalInspectionTool() {
     return MissingPropertyVisitor.create(holder, false)
   }
 
-  override fun getID(): String {
-    return "MissingProperty"
-  }
-
   override fun getBatchSuppressActions(element: PsiElement?): Array<SuppressQuickFix> {
     return super.getBatchSuppressActions(PsiTreeUtil.getParentOfType(element, HCLBlock::class.java, false))
   }

@@ -33,7 +33,7 @@ import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.isHclCompatiblePsiFile
 
-class TfBlockNameValidnessInspection : LocalInspectionTool() {
+class HclBlockNameValidnessInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
     return isHclCompatiblePsiFile(file)
@@ -41,10 +41,6 @@ class TfBlockNameValidnessInspection : LocalInspectionTool() {
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return MyEV(holder)
-  }
-
-  override fun getID(): String {
-    return "BlockNameValidness"
   }
 
   override fun getBatchSuppressActions(element: PsiElement?): Array<SuppressQuickFix> {
