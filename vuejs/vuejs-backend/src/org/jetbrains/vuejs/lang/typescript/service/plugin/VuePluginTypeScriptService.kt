@@ -223,7 +223,6 @@ open class VuePluginTypeScriptService(
     element: PsiElement,
   ): Boolean =
     element.language is VueTSLanguage
-    || element.language is VueJSLanguage
     || super.supportsTypeEvaluation(virtualFile, element)
 
   private inner class VueCompilerServiceEvaluationSupport(
