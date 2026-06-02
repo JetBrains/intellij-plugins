@@ -262,7 +262,7 @@ data class VueCompilerOptions(
    * 
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#macros)
    */
-  val macros: Map<String, List<String>>? = null,
+  val macros: Macros = Macros(),
 
   /**
    * Since v2.2.0
@@ -271,7 +271,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#composables)
    */
-  val composables: Map<String, List<String>>? = null,
+  val composables: Composables = Composables(),
 
   /**
    * Default: []
@@ -287,4 +287,24 @@ data class VueCompilerOptions(
    */
   val experimentalModelPropName: Map<String, Map<String, String>>? = null,
   /* Record<string, Record<string, boolean | Record<string, string> | Record<string, string>[]>> */
-)
+) {
+
+  @Serializable
+  data class Macros(
+    val defineProps: List<String> = listOf("defineProps"),
+    val defineSlots: List<String> = listOf("defineSlots"),
+    val defineEmits: List<String> = listOf("defineEmits"),
+    val defineExpose: List<String> = listOf("defineExpose"),
+    val defineModel: List<String> = listOf("defineModel"),
+    val defineOptions: List<String> = listOf("defineOptions"),
+    val withDefaults: List<String> = listOf("withDefaults"),
+  )
+
+  @Serializable
+  data class Composables(
+    val useAttrs: List<String> = listOf("useAttrs"),
+    val useCssModule: List<String> = listOf("useCssModule"),
+    val useSlots: List<String> = listOf("useSlots"),
+    val useTemplateRef: List<String> = listOf("useTemplateRef", "templateRef"),
+  )
+}
