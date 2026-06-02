@@ -1,9 +1,12 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.config
 
+import kotlinx.serialization.Serializable
+
 /**
  * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options)
  */
+@Serializable
 class VueCompilerOptions(
 
   /**
@@ -232,7 +235,7 @@ class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#resolveStyleClassNames)
    */
-  val resolveStyleClassNames: Any? = null,
+  val resolveStyleClassNames: String? = null,
   /* boolean | "scoped" */
 
   /**
