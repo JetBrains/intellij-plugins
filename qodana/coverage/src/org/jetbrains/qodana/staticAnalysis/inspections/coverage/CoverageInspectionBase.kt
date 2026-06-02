@@ -11,6 +11,7 @@ import com.intellij.codeInspection.options.OptPane.checkbox
 import com.intellij.codeInspection.options.OptPane.number
 import com.intellij.codeInspection.options.OptRegularComponent
 import com.intellij.coverage.CoverageEngine
+import com.intellij.openapi.diagnostic.Logger.shouldRethrow
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.roots.TestSourcesFilter
 import com.intellij.psi.PsiElement
@@ -22,20 +23,26 @@ import com.intellij.rt.coverage.data.ProjectData
 import com.intellij.rt.coverage.instrumentation.InstrumentationOptions
 import com.intellij.rt.coverage.util.CoverageReport
 import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.coverage.CoverageEngineType
 import org.jetbrains.qodana.coverage.CoverageLanguage
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.precomputedCoverageFiles
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.COVERAGE_LANGUAGE_FIELD
 import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.INPUT_COVERAGE_LOADED
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.StandardOpenOption
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createDirectories
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.walk
 import kotlin.reflect.KClass
 
 internal val logger = logger<CoverageInspectionBase>()
+
+private const val COLLECTED_COVERAGE_REPORTS_FILE = "collected_coverage_reports.txt"
 
 abstract class CoverageInspectionBase : GlobalSimpleInspectionTool() {
   @Suppress("MemberVisibilityCanBePrivate")
@@ -166,7 +173,10 @@ abstract class CoverageInspectionBase : GlobalSimpleInspectionTool() {
     return cache.computeIfAbsent(coverageFileProvider.engineType) {
       lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         // files stored in .qodana/code-coverage or in directory specified via system variable
-        explicitCoverageFiles(globalContext).ifEmpty { coverageFileProvider.getCoverageFiles(globalContext.project) }
+        val files = explicitCoverageFiles(globalContext)
+          .ifEmpty { coverageFileProvider.getCoverageFiles(globalContext.project) }
+        reportCollectedReports(globalContext, coverageFileProvider.engineType, files)
+        files
       }
     }.value
   }
@@ -196,4 +206,29 @@ abstract class CoverageInspectionBase : GlobalSimpleInspectionTool() {
      */
     fun getCoverageDirectory(coverageEngine: Class<out CoverageEngine>): String = coverageEngine.simpleName
   }
+}
+
+/**
+ * Records every coverage report used for [engineType] into a user-visible artifact
+ * ([COLLECTED_COVERAGE_REPORTS_FILE] under the run output directory) and echoes the first paths to stdout
+ */
+private fun reportCollectedReports(
+  globalContext: QodanaGlobalInspectionContext,
+  engineType: CoverageEngineType,
+  files: List<Path>,
+) {
+  if (files.isEmpty()) return
+  try {
+    val reportFile = globalContext.getOutputPath().resolve(COLLECTED_COVERAGE_REPORTS_FILE)
+    reportFile.parent?.createDirectories()
+    Files.write(reportFile, files.map { "$engineType\t$it" }, StandardOpenOption.CREATE, StandardOpenOption.APPEND)
+  }
+  catch (e: Exception) {
+    if (shouldRethrow(e)) throw e
+    logger.warn("Failed to write $COLLECTED_COVERAGE_REPORTS_FILE", e)
+  }
+  val reporter = QodanaMessageReporter.DEFAULT
+  reporter.reportMessage(1, "Collected ${files.size} coverage report(s) for $engineType:")
+  files.take(10).forEach { reporter.reportMessage(1, "  $it") }
+  if (files.size > 10) reporter.reportMessage(1, "  ... and ${files.size - 10} more")
 }
