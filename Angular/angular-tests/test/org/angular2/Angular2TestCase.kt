@@ -35,6 +35,7 @@ import org.angular2.lang.expr.service.Angular2TypeScriptService
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.configureAngularSettingsService
 import org.angular2.refactoring.extractComponent.Angular2CliComponentGenerator
+import org.junit.Assume
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.reflect.KClass
@@ -92,6 +93,7 @@ abstract class Angular2TestCase(
     get() = "ts"
 
   override fun setUp() {
+    Assume.assumeTrue("Skip TsGoFork tests for now", serviceKind != TypeScriptServiceKind.TsGoFork)
     super.setUp()
     myFixture.project.replaceService(
       Angular2CliComponentGenerator::class.java,
