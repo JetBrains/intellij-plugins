@@ -1,12 +1,16 @@
-package org.jetbrains.qodana.staticAnalysis.inspections.runner
+package org.jetbrains.qodana.jvm.java
 
+import com.intellij.openapi.application.PluginPathManager
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.Test
+import java.nio.file.Path
+import java.nio.file.Paths
 
+@TestDataPath($$"$CONTENT_ROOT/../test-data/QodanaStructuralSearchTest")
+class QodanaStructuralSearchTest : QodanaRunnerTestCase() {
+  override val testData: Path = Paths.get(PluginPathManager.getPluginHomePath("qodana"), "jvm", "java", "test-data")
 
-@TestDataPath($$"$CONTENT_ROOT/testData/QodanaStructuralSearchTest")
-class QodanaStructuralSearchTest : QodanaRunnerTestCase(){
   @Test
   fun testProfileWithDisabledRule() {
     runAnalysis()
