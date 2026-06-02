@@ -31,12 +31,12 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
-import org.intellij.terraform.isTfOrTofuPsiFile
+import org.intellij.terraform.isHclCompatiblePsiFile
 
 class TfBlockNameValidnessInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTfOrTofuPsiFile(file)
+    return isHclCompatiblePsiFile(file)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -62,10 +62,9 @@ class TfBlockNameValidnessInspection : LocalInspectionTool() {
     }
 
     override fun visitBlock(o: HCLBlock) {
-      if (!TfPsiPatterns.TerraformConfigFile.accepts(o.containingFile)) return
       val validator = TfElementRenameValidator()
       val identifier = o.nameIdentifier
-      if (identifier != null && validator.pattern.accepts(o)) {
+      if (identifier != null) {
         if (!validator.isInputValid(o.name, o)) {
           holder.registerProblem(identifier, HCLBundle.message("block.name.validness.inspection.invalid.name.error.message"),
                                  ProblemHighlightType.GENERIC_ERROR_OR_WARNING, RenameBlockFix)
@@ -141,5 +140,3 @@ class TfBlockNameValidnessInspection : LocalInspectionTool() {
     }
   }
 }
-
-

@@ -24,11 +24,10 @@ internal class TfElementRenameValidator : RenameInputValidator {
   }
 
   override fun isInputValid(name: String, element: PsiElement, context: ProcessingContext): Boolean {
-    return isInputValid(name, element)
+    return pattern.accepts(element) && isInputValid(name, element)
   }
 
   fun isInputValid(name: String, element: PsiElement): Boolean {
-    if (!pattern.accepts(element)) return false
     if (TfPsiPatterns.VariableRootBlock.accepts(element)) {
       if (HCLPsiUtil.stripQuotes(name).lowercase(Locale.getDefault()) in reservedKeywords) return false
     }
