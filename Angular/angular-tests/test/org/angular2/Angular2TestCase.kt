@@ -26,6 +26,7 @@ import com.intellij.platform.lsp.impl.LspServerImpl
 import com.intellij.platform.lsp.impl.LspServerManagerImpl
 import com.intellij.polySymbols.testFramework.HybridTestMode
 import com.intellij.testFramework.PlatformTestUtil.dispatchAllEventsInIdeEventQueue
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.replaceService
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.application
@@ -120,6 +121,9 @@ abstract class Angular2TestCase(
         thisLogger().info("Downloading embedded TS GO")
         embeddedService.downloadEmbeddedTSGo(project)
       }
+
+      // TODO remove once LSP does not restart analyzer for inlay hints
+      (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
     }
     val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
       it::class == expectedServerClass
