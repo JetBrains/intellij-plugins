@@ -4,14 +4,32 @@ package org.angular2
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import com.intellij.lang.javascript.waitEmptyServiceQueueForService
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings.TypeScriptCompilerVersionType
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
+import com.intellij.lang.typescript.lsp.TypeScriptGoEmbeddedService
+import com.intellij.lang.typescript.lsp.TypeScriptGoLspServerDescriptor
+import com.intellij.lang.typescript.lsp.TypeScriptGoLspServerSupportProvider
+import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.platform.lsp.api.LspServerDescriptor
+import com.intellij.platform.lsp.api.LspServerManager
+import com.intellij.platform.lsp.api.LspServerSupportProvider
+import com.intellij.platform.lsp.impl.LspServerImpl
+import com.intellij.platform.lsp.impl.LspServerManagerImpl
 import com.intellij.polySymbols.testFramework.HybridTestMode
+import com.intellij.testFramework.EdtTestUtil
+import com.intellij.testFramework.PlatformTestUtil.dispatchAllEventsInIdeEventQueue
 import com.intellij.testFramework.replaceService
 import com.intellij.testFramework.runInEdtAndWait
+import com.intellij.util.application
 import org.angular2.codeInsight.refactoring.Angular2CliComponentGeneratorMockImpl
 import org.angular2.lang.expr.service.Angular2TypeScriptService
 import org.angular2.options.AngularServiceSettings
@@ -32,9 +50,14 @@ abstract class Angular2TestCase(
   enum class TypeScriptServiceKind {
     None,
     TsNode,
+    TsGoFork,
   }
 
-  private var expectedServerClass: KClass<out TypeScriptService> = Angular2TypeScriptService::class
+  private var expectedServerClass: KClass<out TypeScriptService> = when (serviceKind) {
+    TypeScriptServiceKind.TsNode -> Angular2TypeScriptService::class
+    TypeScriptServiceKind.TsGoFork -> TypeScriptGoLspService::class
+    TypeScriptServiceKind.None -> Angular2TypeScriptService::class
+  }
 
   override val testDataRoot: String
     get() = Angular2TestUtil.getBaseTestDataPath()
@@ -56,26 +79,50 @@ abstract class Angular2TestCase(
   }
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
+    if (serviceKind == TypeScriptServiceKind.None) return
+    configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
+
+    if (serviceKind == TypeScriptServiceKind.TsGoFork) {
+      Registry.get("typescript.ts-go.enabled").setValue(true, testRootDisposable)
+
+      val settings = TypeScriptCompilerSettings.getSettings(project)
+      val oldType = settings.versionType
+      settings.versionType = TypeScriptCompilerVersionType.EMBEDDED_TS_GO
+
+      Disposer.register(testRootDisposable) {
+        settings.versionType = oldType
+      }
+
+      val embeddedService = TypeScriptGoEmbeddedService.get()
+      if (!embeddedService.isDownloaded()) {
+        thisLogger().info("Downloading embedded TS GO")
+        embeddedService.downloadEmbeddedTSGo(project)
+      }
+    }
+    val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
+      it::class == expectedServerClass
+    }
+    thisLogger().info("Using $service for the test")
     when (serviceKind) {
       TypeScriptServiceKind.TsNode -> {
-        configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
-        val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
-          it::class == expectedServerClass
-        }
         (service as TypeScriptServerServiceImpl).assertProcessStarted()
         runInEdtAndWait {
           waitEmptyServiceQueueForService(service)
         }
-
-        if (configuration.configurators.any { it is Angular2TsConfigFile }) {
-          TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(testRootDisposable,
-                                                                        myFixture.tempDirFixture.getFile("tsconfig.json")!!)
-        }
-        runInEdtAndWait {
-          FileDocumentManager.getInstance().saveAllDocuments()
-        }
       }
-      else -> {}
+      TypeScriptServiceKind.TsGoFork -> {
+        triggerLspServerInit(project, TypeScriptGoLspServerSupportProvider::class.java,
+                             TypeScriptGoLspServerDescriptor(project))
+      }
+    }
+
+    if (configuration.configurators.any { it is Angular2TsConfigFile }) {
+      TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(
+        testRootDisposable,
+        myFixture.tempDirFixture.getFile("tsconfig.json")!!)
+    }
+    runInEdtAndWait {
+      FileDocumentManager.getInstance().saveAllDocuments()
     }
   }
 
@@ -103,5 +150,41 @@ abstract class Angular2TestCase(
     enableInspections(inspections)
     this.checkHighlighting(true, false, true)
     this.launchAction(findSingleIntention(quickFixName))
+  }
+
+  private fun triggerLspServerInit(
+    project: Project,
+    providerClass: Class<out LspServerSupportProvider>,
+    descriptor: LspServerDescriptor,
+  ) {
+    val getServer = {
+      LspServerManager.getInstance(project)
+        .getServersForProvider(providerClass)
+        .firstOrNull()
+        .let { it as? LspServerImpl }
+    }
+
+    val state = getServer()?.state
+    if (state == null) {
+      LspServerManagerImpl.getInstanceImpl(project)
+        .ensureServerStarted(providerClass, descriptor)
+    }
+    else {
+      return
+    }
+    val isEDT = ApplicationManager.getApplication().isDispatchThread
+    val start = System.currentTimeMillis()
+    while (System.currentTimeMillis() - start < 4000) {
+      val state = getServer()?.state
+      if (state != null)
+        return
+      if (isEDT) {
+        dispatchAllEventsInIdeEventQueue()
+      }
+      Thread.sleep(10)
+    }
+
+    if (application.isUnitTestMode)
+      throw IllegalStateException("Server didn't initialize in 4000 ms")
   }
 }
