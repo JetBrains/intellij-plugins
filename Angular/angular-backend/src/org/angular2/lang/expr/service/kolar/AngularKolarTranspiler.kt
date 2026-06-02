@@ -98,7 +98,14 @@ private abstract class AngularFileInfo(
 private class AngularAssociatedHtmlFile(
   project: Project,
   file: VirtualFile,
-) : AngularFileInfo(project, file), KolarAssociatedFile
+) : AngularFileInfo(project, file), KolarAssociatedFile {
+  override fun getTargetFile(): VirtualFile? =
+    PsiManager.getInstance(project).findFile(file)
+      ?.let { getTranspiledDirectiveAndTopLevelSourceFile(it) }
+      ?.first
+      ?.originalFile
+      ?.virtualFile
+}
 
 private class AngularTranspiledFile(
   project: Project,
@@ -254,7 +261,7 @@ private fun TypeScriptHover.translateNamesInDefinition(project: Project, file: V
   if (definitionStart < 0 || definitionEnd < 0) return this
 
   val psiFile = PsiManager.getInstance(project).findFile(file) ?: return this
-  val transpiledFile = Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(psiFile) ?: return this
+  val (transpiledFile, _) = getTranspiledDirectiveAndTopLevelSourceFile(psiFile) ?: return this
   val mappings = mutableMapOf<String, String>()
   transpiledFile.nameMaps[psiFile]?.values?.forEach { map ->
     mappings.putAll(map)
