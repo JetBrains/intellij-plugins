@@ -1,5 +1,18 @@
 ### auto-generated section `build intellij.vuejs.tests` start
+load("@community//build:compiler-options.bzl", "create_kotlinc_options")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+create_kotlinc_options(
+  name = "custom_tests",
+  opt_in = [
+    "kotlin.uuid.ExperimentalUuidApi",
+    "com.intellij.openapi.util.IntellijInternalApi",
+    "org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction",
+    "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+    "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+  ],
+  x_context_parameters = True
+)
 
 jvm_library(
   name = "tests",
@@ -26,6 +39,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "src-ext/**/*.kt", "src-ext/**/*.java", "src-ext/**/*.form"], allow_empty = True),
   resources = glob(["testData/**/*"]),
   resource_strip_prefix = "testData",
+  kotlinc_opts = ":custom_tests",
   deps = [
     "//contrib/vuejs/vuejs-webpack:webpack",
     "//contrib/vuejs/vuejs-webpack:webpack_test_lib",
