@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
  * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options)
  */
 @Serializable
-class VueCompilerOptions(
+data class VueCompilerOptions(
 
   /**
    * Default: Automatically detected from the installed vue version, otherwise 3.3.
@@ -60,6 +60,22 @@ class VueCompilerOptions(
   /**
    * Default: false
    * 
+   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#jsxSlots)
+   */
+  val jsxSlots: Boolean? = null,
+
+  /**
+   * Since v3.0.0
+   *
+   * Default: false
+   *
+   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#strictCssModules)
+   */
+  val strictCssModules: Boolean? = null,
+
+  /**
+   * Default: false
+   * 
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#strictTemplates)
    */
   val strictTemplates: Boolean? = null,
@@ -72,15 +88,6 @@ class VueCompilerOptions(
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#strictVModel)
    */
   val strictVModel: Boolean? = null,
-
-  /**
-   * Since v3.0.0
-   *
-   * Default: false
-   *
-   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#strictCssModules)
-   */
-  val strictCssModules: Boolean? = null,
 
   /**
    * Since v2.2.2
@@ -189,35 +196,11 @@ class VueCompilerOptions(
   val fallthroughAttributes: Boolean? = null,
 
   /**
-   * Default: []
-   * 
-   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#dataAttributes)
-   */
-  val dataAttributes: List<String>? = null,
-
-  /**
-   * Default: ["aria-*"]
-   * 
-   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#htmlAttributes)
-   */
-  val htmlAttributes: List<String>? = null,
-
-  /**
-   * Default: ["(await import('${lib}')).defineComponent(", ")"]
-   * 
-   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#optionsWrapper)
-   */
-  val optionsWrapper: List<String>? = null,
-  /* [string, string] | [] */
-
-  /**
-   * Since v2.2.4
+   * Default: false
    *
-   * Default: ["Transition", "KeepAlive", "Teleport", "Suspense"]
-   *
-   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#fallthroughComponentNames)
+   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#checkRequiredFallthroughAttributes)
    */
-  val fallthroughComponentNames: List<String>? = null,
+  val checkRequiredFallthroughAttributes: Boolean? = null,
 
   /**
    * Since v3.0.0
@@ -239,11 +222,35 @@ class VueCompilerOptions(
   /* boolean | "scoped" */
 
   /**
-   * Default: false
-   * 
-   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#jsxSlots)
+   * Since v2.2.4
+   *
+   * Default: ["Transition", "KeepAlive", "Teleport", "Suspense"]
+   *
+   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#fallthroughComponentNames)
    */
-  val jsxSlots: Boolean? = null,
+  val fallthroughComponentNames: List<String>? = null,
+
+  /**
+   * Default: []
+   * 
+   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#dataAttributes)
+   */
+  val dataAttributes: List<String>? = null,
+
+  /**
+   * Default: ["aria-*"]
+   * 
+   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#htmlAttributes)
+   */
+  val htmlAttributes: List<String>? = null,
+
+  /**
+   * Default: ["(await import('${lib}')).defineComponent(", ")"]
+   * 
+   * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#optionsWrapper)
+   */
+  val optionsWrapper: List<String>? = null,
+  /* [string, string] | [] */
 
   /**
    * Default: { defineProps: ['defineProps'], defineSlots: ['defineSlots'], defineEmits: ['defineEmits'], defineExpose: ['defineExpose'], defineModel: ['defineModel'], defineOptions: ['defineOptions'], withDefaults: ['withDefaults'] }
