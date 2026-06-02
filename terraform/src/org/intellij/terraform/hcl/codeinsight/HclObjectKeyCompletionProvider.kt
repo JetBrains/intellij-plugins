@@ -27,10 +27,8 @@ internal abstract class HclObjectKeyCompletionProvider : CompletionProvider<Comp
   }
 
   protected fun getParentHclObject(parameters: CompletionParameters): HCLObject? {
-    val position = parameters.position
-    val parent = position.parent
-
-    return parent as? HCLObject ?: parent.parent as? HCLObject
+    val parent = parameters.position.parent
+    return parent as? HCLObject ?: (parent?.parent) as? HCLObject
   }
 
   // property = { <caret> }
