@@ -14,14 +14,14 @@ data class VueCompilerOptions(
    * 
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#target)
    */
-  val target: String? = null,
+  val target: Double = 99.0,
 
   /**
    * Default: "vue"
    * 
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#lib)
    */
-  val lib: String? = null,
+  val lib: String = "vue",
 
   /**
    * Since v3.2.0
@@ -30,14 +30,14 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#typesRoot)
    */
-  val typesRoot: String? = null,
+  val typesRoot: String = "@vue/language-core/types",
 
   /**
    * Default: [".vue"]
    * 
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#extensions)
    */
-  val extensions: List<String>? = null,
+  val extensions: List<String> = listOf(".vue"),
 
   /**
    * Since v2.0.15
@@ -46,7 +46,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#vitePressExtensions)
    */
-  val vitePressExtensions: List<String>? = null,
+  val vitePressExtensions: List<String> = emptyList(),
 
   /**
    * Since v2.0.15
@@ -55,14 +55,14 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#petiteVueExtensions)
    */
-  val petiteVueExtensions: List<String>? = null,
+  val petiteVueExtensions: List<String> = emptyList(),
 
   /**
    * Default: false
    * 
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#jsxSlots)
    */
-  val jsxSlots: Boolean? = null,
+  val jsxSlots: Boolean = false,
 
   /**
    * Since v3.0.0
@@ -71,14 +71,14 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#strictCssModules)
    */
-  val strictCssModules: Boolean? = null,
+  val strictCssModules: Boolean = false,
 
   /**
    * Default: false
    * 
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#strictTemplates)
    */
-  val strictTemplates: Boolean? = null,
+  val strictTemplates: Boolean = false,
 
   /**
    * Since v3.0.0
@@ -87,7 +87,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#strictVModel)
    */
-  val strictVModel: Boolean? = null,
+  val strictVModel: Boolean = strictTemplates,
 
   /**
    * Since v2.2.2
@@ -96,7 +96,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#checkUnknownProps)
    */
-  val checkUnknownProps: Boolean? = null,
+  val checkUnknownProps: Boolean = strictTemplates,
 
   /**
    * Since v2.2.2
@@ -105,7 +105,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#checkUnknownEvents)
    */
-  val checkUnknownEvents: Boolean? = null,
+  val checkUnknownEvents: Boolean = strictTemplates,
 
   /**
    * Since v2.2.2
@@ -114,7 +114,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#checkUnknownDirectives)
    */
-  val checkUnknownDirectives: Boolean? = null,
+  val checkUnknownDirectives: Boolean = strictTemplates,
 
   /**
    * Since v2.2.2
@@ -123,7 +123,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#checkUnknownComponents)
    */
-  val checkUnknownComponents: Boolean? = null,
+  val checkUnknownComponents: Boolean = strictTemplates,
 
   /**
    * Since v2.2.4
@@ -132,7 +132,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#inferComponentDollarEl)
    */
-  val inferComponentDollarEl: Boolean? = null,
+  val inferComponentDollarEl: Boolean = false,
 
   /**
    * Since v2.2.4
@@ -141,7 +141,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#inferComponentDollarRefs)
    */
-  val inferComponentDollarRefs: Boolean? = null,
+  val inferComponentDollarRefs: Boolean = false,
 
   /**
    * Since v2.2.4
@@ -150,7 +150,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#inferTemplateDollarAttrs)
    */
-  val inferTemplateDollarAttrs: Boolean? = null,
+  val inferTemplateDollarAttrs: Boolean = false,
 
   /**
    * Since v2.2.4
@@ -159,7 +159,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#inferTemplateDollarEl)
    */
-  val inferTemplateDollarEl: Boolean? = null,
+  val inferTemplateDollarEl: Boolean = false,
 
   /**
    * Since v2.2.4
@@ -168,7 +168,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#inferTemplateDollarRefs)
    */
-  val inferTemplateDollarRefs: Boolean? = null,
+  val inferTemplateDollarRefs: Boolean = false,
 
   /**
    * Since v2.2.4
@@ -177,14 +177,14 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#inferTemplateDollarSlots)
    */
-  val inferTemplateDollarSlots: Boolean? = null,
+  val inferTemplateDollarSlots: Boolean = false,
 
   /**
    * Default: false
    * 
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#skipTemplateCodegen)
    */
-  val skipTemplateCodegen: Boolean? = null,
+  val skipTemplateCodegen: Boolean = false,
 
   /**
    * Since v2.1.0
@@ -193,14 +193,14 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#fallthroughAttributes)
    */
-  val fallthroughAttributes: Boolean? = null,
+  val fallthroughAttributes: Boolean = false,
 
   /**
    * Default: false
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#checkRequiredFallthroughAttributes)
    */
-  val checkRequiredFallthroughAttributes: Boolean? = null,
+  val checkRequiredFallthroughAttributes: Boolean = false,
 
   /**
    * Since v3.0.0
@@ -209,7 +209,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#resolveStyleImports)
    */
-  val resolveStyleImports: Boolean? = null,
+  val resolveStyleImports: Boolean = false,
 
   /**
    * Since v3.0.0
@@ -218,7 +218,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#resolveStyleClassNames)
    */
-  val resolveStyleClassNames: String? = null,
+  val resolveStyleClassNames: String = "scoped",
   /* boolean | "scoped" */
 
   /**
@@ -228,28 +228,33 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#fallthroughComponentNames)
    */
-  val fallthroughComponentNames: List<String>? = null,
+  val fallthroughComponentNames: List<String> = listOf(
+    "Transition",
+    "KeepAlive",
+    "Teleport",
+    "Suspense",
+  ),
 
   /**
    * Default: []
    * 
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#dataAttributes)
    */
-  val dataAttributes: List<String>? = null,
+  val dataAttributes: List<String> = emptyList(),
 
   /**
    * Default: ["aria-*"]
    * 
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#htmlAttributes)
    */
-  val htmlAttributes: List<String>? = null,
+  val htmlAttributes: List<String> = listOf("aria-*"),
 
   /**
    * Default: ["(await import('${lib}')).defineComponent(", ")"]
    * 
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#optionsWrapper)
    */
-  val optionsWrapper: List<String>? = null,
+  val optionsWrapper: List<String> = listOf("(await import('$lib')).defineComponent(", ")"),
   /* [string, string] | [] */
 
   /**
@@ -273,7 +278,7 @@ data class VueCompilerOptions(
    * 
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#plugins)
    */
-  val plugins: List<String>? = null,
+  val plugins: List<String> = emptyList(),
 
   /**
    * Default: { '': { input: true }, value: { input: { type: 'text' }, textarea: true, select: true } }
