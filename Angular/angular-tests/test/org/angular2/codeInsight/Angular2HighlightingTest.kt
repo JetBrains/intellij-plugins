@@ -701,7 +701,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     configurators: List<PolySymbolsTestConfigurator> = listOf(Angular2TsConfigFile(strictTemplates = strictTemplates)),
   ) {
     doHighlightingTest(
-      *modules, dir = dir, extension = extension, configureFileName = configureFileName,
+      *modules,
+      dir = dir,
+      extension = extension,
+      configureFileName = calculateFileName(configureFileName),
       configurators = configurators,
       checkInjections = checkInjections,
       checkSymbolNames = checkSymbolNames,
@@ -723,6 +726,17 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     }
 
     return result.toTypedArray()
+  }
+
+  private fun calculateFileName(configureFileName: String): String {
+    if (serviceKind == TypeScriptServiceKind.TsGoFork) {
+      val extension = configureFileName.substringAfterLast('.', "")
+        .let { if (!it.isEmpty()) ".$it" else "" }
+      val tsgoConfigureFileName = configureFileName.substring(0, configureFileName.length - extension.length) + ".tsgo" + extension
+      if (File("$testDataPath/$tsgoConfigureFileName").exists())
+        return tsgoConfigureFileName
+    }
+    return configureFileName
   }
 
   private fun checkHighlightingWithCrLfEnsured() {

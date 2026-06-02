@@ -1,0 +1,38 @@
+import {Component} from '@angular/core';
+
+export interface User {
+  name: string,
+  pictureUrl: string,
+  isHuman?: boolean,
+  isRobot?: boolean,
+}
+
+@Component({
+  selector: 'robot-profile',
+  standalone: true,
+  template: `
+    @switch (user.name; <error descr="@switch does not support parameter ff">ff</error>) {
+        @case ("foo") {
+            <a (click)="use(user.name)">test</a>
+        }
+        <error descr="Matching multiple switch conditions for a single block is supported only in Angular 21.1 and above.">@case ("foo1")</error>
+        @case ("bar"; <error descr="@case does not support parameter foo">foo</error>) {
+            <a (click)="use(<error descr="TS2345: Argument of type '\"bar\" | \"foo1\"' is not assignable to parameter of type '\"foo\"'.
+  Type '\"bar\"' is not assignable to type '\"foo\"'.">user.name</error>)">test</a>
+        }
+        @default {
+            <a (click)="use(<error descr="TS2345: Argument of type 'string' is not assignable to parameter of type '\"foo\"'.">user.name</error>)">test</a>
+        }
+    }
+    <error descr="@case block must be nested under primary block @switch">@case</error>("foo2")<EOLError descr="Incomplete @case block - expected { or another @case or @default condition"></EOLError>
+    <error descr="@else block must be a sibling of primary block @if">@else</error> {
+    
+    }
+  `
+})
+export class RobotProfileComponent {
+  user!: User
+  use(<warning descr="Unused parameter value"><weak_warning descr="TS6133: 'value' is declared but its value is never read.">value</weak_warning></warning>: "foo") {
+
+  }
+}
