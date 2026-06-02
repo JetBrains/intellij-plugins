@@ -11,7 +11,7 @@ import org.angular2.Angular2TsConfigFile
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 
-class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", true) {
+class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", TypeScriptServiceKind.TsNode) {
 
   fun testBasic() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_16_2_8,

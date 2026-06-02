@@ -6,7 +6,7 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TestModule.NGRX_SIGNALS_20_1_0
 import org.angular2.Angular2TsConfigFile
 
-class Angular2TscRenameTest : Angular2TestCase("refactoring/rename", true) {
+class Angular2TscRenameTest : Angular2TestCase("refactoring/rename", TypeScriptServiceKind.TsNode) {
 
   fun testSignalStore() =
     doSymbolRename("signalStore.ts", "newName", ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0,

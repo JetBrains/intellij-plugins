@@ -7,7 +7,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 
-class Angular2ServiceInlayHintsTest : Angular2TestCase("inlayHints", true) {
+class Angular2ServiceInlayHintsTest : Angular2TestCase("inlayHints", TypeScriptServiceKind.TsNode) {
 
   fun testBasic() = doConfiguredTest(
     Angular2TestModule.ANGULAR_CORE_18_2_1, Angular2TestModule.ANGULAR_COMMON_18_2_1,

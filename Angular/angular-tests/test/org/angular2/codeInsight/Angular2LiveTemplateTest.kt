@@ -13,7 +13,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.codeInsight.Angular2LiveTemplateTest.TestMode.NO_COMPLETION
 import org.angular2.codeInsight.Angular2LiveTemplateTest.TestMode.WITH_COMPLETION
 
-class Angular2LiveTemplateTest : Angular2TestCase("liveTemplate", false) {
+class Angular2LiveTemplateTest : Angular2TestCase("liveTemplate", TypeScriptServiceKind.None) {
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()

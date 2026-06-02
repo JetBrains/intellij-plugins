@@ -28,7 +28,7 @@ import java.io.IOException
 /**
  * Also tests completion InsertHandlers.
  */
-class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngModuleImport", true) {
+class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngModuleImport", TypeScriptServiceKind.TsNode) {
 
   fun testNgFor() {
     doMultiFileTest("angular-commons",

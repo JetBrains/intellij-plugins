@@ -6,7 +6,7 @@ import com.intellij.polySymbols.testFramework.checkGTDUOutcome
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
-class Angular2GotoDeclarationTest : Angular2TestCase("navigation/declaration", false) {
+class Angular2GotoDeclarationTest : Angular2TestCase("navigation/declaration", TypeScriptServiceKind.None) {
 
   fun testExportAs() = doGotoDeclarationTest("exportAs: \"<caret>test\"")
 

@@ -6,7 +6,7 @@ import com.intellij.javascript.testFramework.web.performCopyPaste
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
-class Angular2CopyPasteTest : Angular2TestCase("copyPaste", false) {
+class Angular2CopyPasteTest : Angular2TestCase("copyPaste", TypeScriptServiceKind.None) {
 
   fun testBasic() {
     doTest("html", "html")

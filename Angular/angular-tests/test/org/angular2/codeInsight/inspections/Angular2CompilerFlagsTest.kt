@@ -6,7 +6,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 
-class Angular2CompilerFlagsTest : Angular2TestCase("inspections/compilerFlags", true) {
+class Angular2CompilerFlagsTest : Angular2TestCase("inspections/compilerFlags", TypeScriptServiceKind.TsNode) {
 
   override fun setUp() {
     super.setUp()

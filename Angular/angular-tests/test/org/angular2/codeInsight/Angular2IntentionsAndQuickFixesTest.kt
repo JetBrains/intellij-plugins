@@ -22,7 +22,7 @@ import org.angular2.Angular2TsConfigFile
 import org.angular2.lang.Angular2Bundle
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
 
-class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuickFixes", true) {
+class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuickFixes", TypeScriptServiceKind.TsNode) {
 
   fun testBooleanTransformAttr() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "booleanAttribute"),

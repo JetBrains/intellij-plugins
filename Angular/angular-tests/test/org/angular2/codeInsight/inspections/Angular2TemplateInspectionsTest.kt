@@ -48,7 +48,7 @@ import org.angular2.lang.Angular2Bundle
  *
  * @see Angular2DecoratorInspectionsTest
  */
-class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template", true) {
+class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template", TypeScriptServiceKind.TsNode) {
 
   fun testEmptyEventBinding1() {
     doTest(1, "onc<caret>lick", "Add attribute value", AngularMissingEventHandlerInspection::class.java,

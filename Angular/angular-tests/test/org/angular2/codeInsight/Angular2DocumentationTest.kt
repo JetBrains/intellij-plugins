@@ -9,7 +9,7 @@ import org.angular2.Angular2TestModule.NGRX_SIGNALS_20_1_0
 import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
 
-class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
+class Angular2DocumentationTest : Angular2TestCase("documentation", TypeScriptServiceKind.TsNode) {
 
   fun testTagName() = doTestWithDeps()
 

@@ -52,7 +52,7 @@ import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTes
 import java.io.File
 import java.io.IOException
 
-class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
+class Angular2HighlightingTest : Angular2TestCase("highlighting", TypeScriptServiceKind.TsNode) {
 
   fun testSvgTags() = checkHighlighting(ANGULAR_COMMON_16_2_8, extension = "ts")
 

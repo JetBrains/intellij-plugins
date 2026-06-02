@@ -3,7 +3,7 @@ package org.angular2.codeInsight
 
 import org.angular2.Angular2TestCase
 
-class Angular2UsageHighlightingTest : Angular2TestCase("usageHighlighting", false) {
+class Angular2UsageHighlightingTest : Angular2TestCase("usageHighlighting", TypeScriptServiceKind.None) {
 
   fun testPrivateComponentField() = doUsageHighlightingTest()
 

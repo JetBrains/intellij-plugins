@@ -18,7 +18,7 @@ import org.angular2.Angular2TestModule.IONIC_ANGULAR_8_4_3
 import org.angular2.Angular2TsConfigFile
 import org.angular2.lang.Angular2Bundle
 
-class Angular2CompletionTest : Angular2TestCase("completion", true) {
+class Angular2CompletionTest : Angular2TestCase("completion", TypeScriptServiceKind.TsNode) {
 
   override fun setUp() {
     super.setUp()

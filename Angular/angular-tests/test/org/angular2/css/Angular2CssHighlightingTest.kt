@@ -5,7 +5,7 @@ import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
-class Angular2CssHighlightingTest: Angular2TestCase("css/highlighting", false) {
+class Angular2CssHighlightingTest: Angular2TestCase("css/highlighting", TypeScriptServiceKind.None) {
 
   // WEB-63400
   fun testCssAmpersandSelector() = checkHighlighting()

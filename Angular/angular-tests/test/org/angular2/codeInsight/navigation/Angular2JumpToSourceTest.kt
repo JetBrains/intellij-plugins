@@ -3,7 +3,7 @@ package org.angular2.codeInsight.navigation
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
-class Angular2JumpToSourceTest : Angular2TestCase("navigation/jumpToSource/", true) {
+class Angular2JumpToSourceTest : Angular2TestCase("navigation/jumpToSource/", TypeScriptServiceKind.TsNode) {
 
   fun testDirectiveInput() =
     doJumpToSourceTest(

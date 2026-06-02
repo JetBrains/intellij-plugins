@@ -10,7 +10,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.refactoring.inline.Angular2InlineHandler
 
-class Angular2InlineTest : Angular2TestCase("refactoring/inline", false) {
+class Angular2InlineTest : Angular2TestCase("refactoring/inline", TypeScriptServiceKind.None) {
 
   fun testLetVariableMulti() =
     doTest(false, Angular2TestModule.ANGULAR_CORE_18_2_1)

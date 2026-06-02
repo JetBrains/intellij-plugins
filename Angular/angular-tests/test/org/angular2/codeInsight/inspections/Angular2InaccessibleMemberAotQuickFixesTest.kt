@@ -7,7 +7,7 @@ import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 import org.angular2.inspections.AngularInaccessibleSymbolInspection
 
-class Angular2InaccessibleMemberAotQuickFixesTest : Angular2TestCase("inspections/inaccessibleSymbol", true) {
+class Angular2InaccessibleMemberAotQuickFixesTest : Angular2TestCase("inspections/inaccessibleSymbol", TypeScriptServiceKind.TsNode) {
 
   fun testPrivateFieldFix() {
     doMultiFileTest("private.html", "private<caret>Used")

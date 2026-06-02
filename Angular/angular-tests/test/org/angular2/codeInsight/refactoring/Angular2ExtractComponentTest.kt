@@ -7,7 +7,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 
-class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractComponent", true) {
+class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractComponent", TypeScriptServiceKind.TsNode) {
 
   // TODO WEB-67260 - fails on server
   fun _testSingleElementMultiLineFromCaret() {

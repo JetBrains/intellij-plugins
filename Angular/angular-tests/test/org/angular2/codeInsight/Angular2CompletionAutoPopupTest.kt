@@ -6,7 +6,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_21_2_0
 
-class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", false) {
+class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", TypeScriptServiceKind.None) {
 
   fun testForBlockTyping1() =
     doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_17_3_0) {

@@ -6,7 +6,7 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TestModule.NGRX_SIGNALS_20_1_0
 import org.angular2.Angular2TsConfigFile
 
-class Angular2TscGotoDeclarationTest : Angular2TestCase("navigation/declaration", true) {
+class Angular2TscGotoDeclarationTest : Angular2TestCase("navigation/declaration", TypeScriptServiceKind.TsNode) {
 
   fun testSignalStore() = doGotoDeclarationTest("<caret>books: Book[];",
                                                 ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0,

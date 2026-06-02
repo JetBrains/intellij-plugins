@@ -16,7 +16,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
 
-class Angular2FormattingTest : Angular2TestCase("formatting", false) {
+class Angular2FormattingTest : Angular2TestCase("formatting", TypeScriptServiceKind.None) {
 
   fun testStyles() = doFormattingTest()
 

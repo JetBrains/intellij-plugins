@@ -5,7 +5,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 
-class Angular2ExpressionTypesInspectionWithoutServiceTest : Angular2TestCase("inspections/expressionType", false) {
+class Angular2ExpressionTypesInspectionWithoutServiceTest : Angular2TestCase("inspections/expressionType", TypeScriptServiceKind.None) {
 
   @Throws(Exception::class)
   override fun setUp() {

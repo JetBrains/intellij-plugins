@@ -9,7 +9,7 @@ import com.intellij.psi.css.CssBundle
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
-class Angular2RenameTest : Angular2TestCase("refactoring/rename", false) {
+class Angular2RenameTest : Angular2TestCase("refactoring/rename", TypeScriptServiceKind.None) {
 
   fun testRenameComponentFromStringUsage() =
     doSymbolRenameTest("test.component.ts", "newName", searchCommentsAndText = true)

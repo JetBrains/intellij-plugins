@@ -12,7 +12,7 @@ import junit.framework.Test
 import junit.framework.TestSuite
 import org.angular2.Angular2TestCase
 
-class Angular2GotoSymbolTest : Angular2TestCase("navigation/symbol/", false), TestIndexingModeSupporter {
+class Angular2GotoSymbolTest : Angular2TestCase("navigation/symbol/", TypeScriptServiceKind.None), TestIndexingModeSupporter {
 
   companion object {
     @JvmStatic

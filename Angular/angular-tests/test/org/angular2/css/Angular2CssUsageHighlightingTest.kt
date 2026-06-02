@@ -2,7 +2,7 @@ package org.angular2.css
 
 import org.angular2.Angular2TestCase
 
-class Angular2CssUsageHighlightingTest : Angular2TestCase("css/usageHighlighting", false) {
+class Angular2CssUsageHighlightingTest : Angular2TestCase("css/usageHighlighting", TypeScriptServiceKind.None) {
 
   fun testClassFromBinding() = doUsageHighlightingTest()
 

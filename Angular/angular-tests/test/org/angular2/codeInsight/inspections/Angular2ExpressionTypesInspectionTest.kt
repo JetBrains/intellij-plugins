@@ -8,7 +8,7 @@ import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 import org.angular2.codeInsight.deprecated.Angular2AttributesTest
 
-class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expressionType", true) {
+class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expressionType", TypeScriptServiceKind.TsNode) {
 
   @Throws(Exception::class)
   override fun setUp() {

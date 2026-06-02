@@ -18,7 +18,7 @@ import org.angular2.entities.Angular2Module
 import org.angular2.entities.Angular2Pipe
 import org.angular2.web.Angular2Symbol
 
-class Angular2ModelStructureTest : Angular2TestCase("modelStructure", false) {
+class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScriptServiceKind.None) {
 
   fun testCommonModuleResolution() {
     doResolutionTest("common",

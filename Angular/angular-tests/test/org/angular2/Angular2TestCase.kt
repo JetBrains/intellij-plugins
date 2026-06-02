@@ -21,8 +21,18 @@ import kotlin.reflect.KClass
 
 abstract class Angular2TestCase(
   override val testCasePath: String,
-  private val useTsc: Boolean = true,
-) : WebFrameworkTestCase(if (useTsc) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform) {
+  private val serviceKind: TypeScriptServiceKind = TypeScriptServiceKind.TsNode,
+) : WebFrameworkTestCase(
+  if (serviceKind == TypeScriptServiceKind.None)
+    HybridTestMode.BasePlatform
+  else
+    HybridTestMode.CodeInsightFixture
+) {
+
+  enum class TypeScriptServiceKind {
+    None,
+    TsNode,
+  }
 
   private var expectedServerClass: KClass<out TypeScriptService> = Angular2TypeScriptService::class
 
@@ -46,22 +56,26 @@ abstract class Angular2TestCase(
   }
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
-    if (useTsc) {
-      configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
-      val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
-        it::class == expectedServerClass
-      }
-      (service as TypeScriptServerServiceImpl).assertProcessStarted()
-      runInEdtAndWait {
-        waitEmptyServiceQueueForService(service)
-      }
+    when (serviceKind) {
+      TypeScriptServiceKind.TsNode -> {
+        configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
+        val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
+          it::class == expectedServerClass
+        }
+        (service as TypeScriptServerServiceImpl).assertProcessStarted()
+        runInEdtAndWait {
+          waitEmptyServiceQueueForService(service)
+        }
 
-      if (configuration.configurators.any { it is Angular2TsConfigFile }) {
-        TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(testRootDisposable, myFixture.tempDirFixture.getFile("tsconfig.json")!!)
+        if (configuration.configurators.any { it is Angular2TsConfigFile }) {
+          TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(testRootDisposable,
+                                                                        myFixture.tempDirFixture.getFile("tsconfig.json")!!)
+        }
+        runInEdtAndWait {
+          FileDocumentManager.getInstance().saveAllDocuments()
+        }
       }
-      runInEdtAndWait {
-        FileDocumentManager.getInstance().saveAllDocuments()
-      }
+      else -> {}
     }
   }
 
