@@ -66,7 +66,7 @@ class VueTsConfigFile(
         include = listOf(
           "**/*.ts",
           "**/*.tsx",
-          "**/*.vue"
+          "**/*.vue",
         ),
         compilerOptions = CompilerOptions(
           types = types,
