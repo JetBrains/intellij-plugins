@@ -9,7 +9,7 @@ plugins {
 
 intellij {
   pluginName.set("Deno")
-  plugins.set(listOf("JavaScript", "JavaScriptDebugger", "com.intellij.css"))
+  plugins.set(listOf("JavaScript", "JavaScriptDebugger"))
 
   version.set("LATEST-EAP-SNAPSHOT")
   type.set("IU")

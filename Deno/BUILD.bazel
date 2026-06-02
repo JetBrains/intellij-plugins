@@ -49,6 +49,11 @@ jvm_library(
     "@community//json",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+  ],
+  runtime_deps = [
+    "//plugins/ultimate-plugin",
+    "//plugins/JavaScriptLanguage/plugin",
+    "//plugins/JavaScriptDebugger:javascript-debugger",
   ]
 )
 
@@ -60,6 +65,9 @@ jvm_library(
   srcs = glob([], allow_empty = True),
   runtime_deps = [
     ":deno",
+    "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+    "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
+    "//plugins/JavaScriptDebugger:javascript-debugger_test_lib",
     "@community//libraries/guava:guava_test_lib",
     "@community//libraries/gson:gson_test_lib",
     "@community//platform/analysis-api:analysis_test_lib",
