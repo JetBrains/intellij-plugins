@@ -26,6 +26,7 @@ import org.intellij.terraform.config.codeinsight.TfInsertHandlerService
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.refactoring.TfElementRenameValidator
+import org.intellij.terraform.config.refactoring.isValidHclIdentifier
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
@@ -135,7 +136,7 @@ class TfBlockNameValidnessInspection : LocalInspectionTool() {
 
     override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
       val block = (element as? HCLStringLiteral)?.parent as? HCLBlock ?: return
-      val newName = UniqueNameGenerator.generateUniqueName("new_name") { name -> TfElementRenameValidator.isInputValid(name) }
+      val newName = UniqueNameGenerator.generateUniqueName("new_name") { name -> isValidHclIdentifier(name) }
       updater.rename(block, listOf(newName))
     }
   }
