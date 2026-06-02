@@ -116,16 +116,15 @@ class PhpMigrationScriptFactoryTest : QodanaTestCase() {
   @Test
   fun `createScript default PHP version`() = runTest {
     // The default PHP version must be accepted if it is written correctly.
-    assertEquals(PhpLanguageLevel.DEFAULT.versionString, "5.6.0")
     buildScript("php-migration", "fromLevel" to PhpLanguageLevel.DEFAULT.versionString, "toLevel" to "8.0")
   }
 
   @Test
   fun `createScript unknown PHP version 5_6`() = runTest {
     // There is no PHP language level with the version string '5.6',
-    // even though there is one that has '5.6' as its 'presentable name'.
-    assertEquals(PhpLanguageLevel.DEFAULT.versionString, "5.6.0")
-    assertEquals(PhpLanguageLevel.DEFAULT.presentableName, "5.6")
+    // even though there is one (PHP 5.6) that has '5.6' as its 'presentable name'.
+    assertEquals(PhpLanguageLevel.PHP560.versionString, "5.6.0")
+    assertEquals(PhpLanguageLevel.PHP560.presentableName, "5.6")
 
     val e = assertThrows<QodanaException> {
       buildScript("php-migration", "fromLevel" to "5.6", "toLevel" to "8.0")
