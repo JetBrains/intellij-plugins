@@ -12,10 +12,10 @@ import com.intellij.openapi.util.RecursionManager
 import com.intellij.polySymbols.testFramework.and
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
-import org.jetbrains.vuejs.VueCompilerOptions
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
+import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test

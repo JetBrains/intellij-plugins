@@ -5,6 +5,7 @@ import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.junit.jupiter.api.assertNull
 
 class VueTsConfigFile(
@@ -48,15 +49,15 @@ class VueTsConfigFile(
   companion object {
     const val FILE_NAME: String = "tsconfig.json"
 
-    val DEFAULT_TSCONFIG_CONTENT: String = 
+    val DEFAULT_TSCONFIG_CONTENT: String =
       tsconfigContent(
         types = emptyList(),
         vueCompilerOptions = null,
-        )
+      )
 
     private fun tsconfigContent(
       types: List<String>,
-      vueCompilerOptions: VueCompilerOptions?
+      vueCompilerOptions: VueCompilerOptions?,
     ): String {
       // language=jsonc
       return """

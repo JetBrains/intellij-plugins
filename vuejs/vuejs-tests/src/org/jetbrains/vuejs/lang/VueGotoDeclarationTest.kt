@@ -33,11 +33,11 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.assertInstanceOf
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.asSafely
-import org.jetbrains.vuejs.VueCompilerOptions
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
+import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_5_3
 import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_6_10
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
