@@ -26,8 +26,8 @@ class VueLspTakeoverModeTypeScriptService(
   project = project,
   providerClass = VueLspClientTakeoverModeProvider::class.java,
   activationRule = VueLspServerTakeoverModeActivationRule,
-  diagnosticsConfiguration = PublishDiagnostics(2),
 ) {
+  override val diagnosticsConfiguration: DiagnosticsConfiguration get() = PublishDiagnostics(2)
 
   override val name: String
     get() = VueBundle.message("vue.service.name")
