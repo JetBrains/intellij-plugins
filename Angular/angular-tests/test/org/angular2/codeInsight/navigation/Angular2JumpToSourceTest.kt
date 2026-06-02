@@ -2,9 +2,15 @@ package org.angular2.codeInsight.navigation
 
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.TestTsGoFork
+import org.angular2.TestTsNode
+import org.junit.Test
 
-class Angular2JumpToSourceTest : Angular2TestCase("navigation/jumpToSource/", TypeScriptServiceKind.TsNode) {
+@TestTsNode
+@TestTsGoFork
+class Angular2JumpToSourceTest : Angular2TestCase("navigation/jumpToSource/") {
 
+  @Test
   fun testDirectiveInput() =
     doJumpToSourceTest(
       "<caret>test = input<string>(\"\")",
@@ -14,6 +20,7 @@ class Angular2JumpToSourceTest : Angular2TestCase("navigation/jumpToSource/", Ty
       dir = true,
     )
 
+  @Test
   fun testElementSelector() =
     doJumpToSourceTest(
       "selector: '<caret>app-root'",
@@ -23,6 +30,7 @@ class Angular2JumpToSourceTest : Angular2TestCase("navigation/jumpToSource/", Ty
       dir = true,
     )
 
+  @Test
   fun testJsReference() =
     doJumpToSourceTest(
       "<caret>test = input<string>(\"\")",

@@ -3,38 +3,58 @@ package org.angular2.codeInsight.inspections
 
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.TestNoService
+import org.angular2.TestTsGoFork
 import org.angular2.inspections.AngularIncorrectBlockUsageInspection
+import org.junit.Test
 
-class Angular2BlockInspectionsTest : Angular2TestCase("inspections/blocks", TypeScriptServiceKind.None) {
+@TestNoService
+@TestTsGoFork
+class Angular2BlockInspectionsTest : Angular2TestCase("inspections/blocks") {
 
+  @Test
   fun testUnknown() = doHighlightingTest()
 
+  @Test
   fun testMisplaced() = doHighlightingTest()
 
+  @Test
   fun testMultipleElse() = doHighlightingTest()
 
+  @Test
   fun testElseNotLast() = doHighlightingTest()
 
+  @Test
   fun testElseWithParameters() = doHighlightingTest()
 
+  @Test
   fun testIfParameters() = doHighlightingTest()
 
+  @Test
   fun testElseIfParameters() = doHighlightingTest()
 
+  @Test
   fun testMultipleEmpty() = doHighlightingTest()
 
+  @Test
   fun testEmptyWithParameters() = doHighlightingTest()
 
+  @Test
   fun testMultipleError() = doHighlightingTest()
 
+  @Test
   fun testErrorWithParameters() = doHighlightingTest()
 
+  @Test
   fun testMultiplePlaceholder() = doHighlightingTest()
 
+  @Test
   fun testMultipleLoading() = doHighlightingTest()
 
+  @Test
   fun testMultipleDefault() = doHighlightingTest()
 
+  @Test
   fun testDefaultWithParameters() = doHighlightingTest()
 
   override fun setUp() {

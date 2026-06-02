@@ -6,9 +6,14 @@ import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
+import org.angular2.TestTsGoFork
+import org.angular2.TestTsNode
 import org.angular2.codeInsight.deprecated.Angular2AttributesTest
+import org.junit.Test
 
-class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expressionType", TypeScriptServiceKind.TsNode) {
+@TestTsNode
+@TestTsGoFork
+class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expressionType") {
 
   @Throws(Exception::class)
   override fun setUp() {
@@ -26,6 +31,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
       )
     }
 
+  @Test
   fun testExpressions() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
                        Angular2TestModule.ANGULAR_FORMS_16_2_8, Angular2TestModule.RXJS_7_8_1,
@@ -33,6 +39,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
                        dir = true,
                        configureFileName = "expressions.html")
 
+  @Test
   fun testTemplateBindings() =
     withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
       doHighlightingTest(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
@@ -40,6 +47,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
                          configureFileName = "template.html")
     }
 
+  @Test
   fun testGenericsValidation() =
     withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
       doHighlightingTest(Angular2TestModule.ANGULAR_CORE_8_2_14,
@@ -47,11 +55,13 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
                          configureFileName = "generics.html")
     }
 
+  @Test
   fun testGenericsValidationStrict() =
     doHighlightingTest(Angular2TestModule.TS_LIB,
                        Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
                        configurators = listOf(Angular2TsConfigFile()))
 
+  @Test
   fun testNgForOfAnyTypeNonStrictTemplates() =
     withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
       doHighlightingTest(Angular2TestModule.TS_LIB,
@@ -60,9 +70,11 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
     }
 
 
+  @Test
   fun testNgForOfAnyTypeStrict() =
     checkHighlightingNg15()
 
+  @Test
   fun testInputValue() =
     withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
       doHighlightingTest(Angular2TestModule.ANGULAR_CORE_8_2_14,
@@ -73,55 +85,71 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
   /**
    * @see Angular2AttributesTest.testTypeMismatchErrorWithOptionalInputs
    */
+  @Test
   fun testNullChecks() =
     checkHighlightingNg15(dir = true)
 
   /**
    * @see Angular2AttributesTest.testTypeMismatchErrorWithOptionalInputs
    */
+  @Test
   fun testNullChecksInline() =
     checkHighlightingNg15()
 
+  @Test
   fun testNgIfAsContextGuardStrictNullChecks() =
     checkHighlightingNg15()
 
+  @Test
   fun testNgIfAsContextGuardRemovesFalsy() =
     checkHighlightingNg15()
 
+  @Test
   fun testNgForContextGuard() =
     checkHighlightingNg15()
 
+  @Test
   fun testNgrxLetContextGuard() =
     checkHighlightingNg15(dir = true, extension = "ts")
 
+  @Test
   fun testNgTemplateContextGuardNonGeneric() =
     checkHighlightingNg15()
 
+  @Test
   fun testNgTemplateContextGuardDoubleGeneric() =
     checkHighlightingNg15()
 
+  @Test
   fun testNgTemplateContextGuardPartialGeneric() =
     checkHighlightingNg15()
 
+  @Test
   fun testNgTemplateContextGuardOmitted() =
     checkHighlightingNg15()
 
+  @Test
   fun testNgTemplateContextGuardOmittedGenericType() =
     checkHighlightingNg15()
 
+  @Test
   fun testNgTemplateContextGuardMalformed() =
     checkHighlightingNg15()
 
+  @Test
   fun testNgTemplateContextGuardEmptyInputs() =
     checkHighlightingNg15()
 
+  @Test
   fun testNgTemplateContextGuardTwoDirectivesOneGuard() =
     checkHighlightingNg15()
 
+  @Test
   fun testNgTemplateContextGuardTwoGuards() =
     // the test documents an edge case, in Angular language-tools results are different, we have false-negative
     checkHighlightingNg15()
 
+  @Test
   fun testNgTemplateContextGuardInferenceFromTwoInputs() =
   // There are 2 things of interest:
   // * type of person
@@ -130,15 +158,19 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
     //        which will not infer person type as `any` when other inputs are missing improving type checking
     checkHighlightingNg15()
 
+  @Test
   fun testExpectedTypeTwoDirectives() =
     checkHighlightingNg15()
 
+  @Test
   fun testExpectedTypeTwoDirectivesWithCommonType() =
     checkHighlightingNg15()
 
+  @Test
   fun testExpectedTypeGenericInferenceFromTwoInputs() =
     checkHighlightingNg15()
 
+  @Test
   fun testGenericDirectiveReferenceNonStrict() =
     doHighlightingTest(Angular2TestModule.TS_LIB,
                        Angular2TestModule.ANGULAR_MATERIAL_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8,
@@ -146,6 +178,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
                        configurators = listOf(Angular2TsConfigFile(strict = false, strictTemplates = false)),
                        configureFileName = "genericDirectiveReference.ts")
 
+  @Test
   fun testGenericDirectiveReferenceStrictTemplates() =
     doHighlightingTest(Angular2TestModule.TS_LIB,
                        Angular2TestModule.ANGULAR_MATERIAL_16_2_8, Angular2TestModule.ANGULAR_CORE_16_2_8,
@@ -153,6 +186,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
                        configurators = listOf(Angular2TsConfigFile()),
                        configureFileName = "genericDirectiveReference.ts")
 
+  @Test
   fun testGenericDirectiveReferenceUnsubstitutedFallsBackToAny() =
     checkHighlightingNg15()
 

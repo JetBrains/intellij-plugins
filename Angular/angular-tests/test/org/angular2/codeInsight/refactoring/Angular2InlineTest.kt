@@ -8,16 +8,24 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.TestNoService
+import org.angular2.TestTsGoFork
 import org.angular2.refactoring.inline.Angular2InlineHandler
+import org.junit.Test
 
-class Angular2InlineTest : Angular2TestCase("refactoring/inline", TypeScriptServiceKind.None) {
+@TestNoService
+@TestTsGoFork
+class Angular2InlineTest : Angular2TestCase("refactoring/inline") {
 
+  @Test
   fun testLetVariableMulti() =
     doTest(false, Angular2TestModule.ANGULAR_CORE_18_2_1)
 
+  @Test
   fun testLetVariableSingle() =
     doTest(true, Angular2TestModule.ANGULAR_CORE_18_2_1)
 
+  @Test
   fun testLetVariableComplexExpr() =
     doTest(false, Angular2TestModule.ANGULAR_CORE_18_2_1)
 

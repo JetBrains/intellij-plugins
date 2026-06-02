@@ -5,8 +5,13 @@ import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
+import org.angular2.TestTsGoFork
+import org.angular2.TestTsNode
+import org.junit.Test
 
-class Angular2CompilerFlagsTest : Angular2TestCase("inspections/compilerFlags", TypeScriptServiceKind.TsNode) {
+@TestTsNode
+@TestTsGoFork
+class Angular2CompilerFlagsTest : Angular2TestCase("inspections/compilerFlags") {
 
   override fun setUp() {
     super.setUp()
@@ -18,6 +23,7 @@ class Angular2CompilerFlagsTest : Angular2TestCase("inspections/compilerFlags", 
     doFlagTest(Angular2TsConfigFile(strictNullInputTypes = true, strictNullChecks = true))
   }
 
+  @Test
   fun testStrictNullInputTypesOnStrictNullChecksOff() {
     doFlagTest(Angular2TsConfigFile(strictNullInputTypes = true, strictNullChecks = false))
   }
@@ -42,10 +48,12 @@ class Angular2CompilerFlagsTest : Angular2TestCase("inspections/compilerFlags", 
     doFlagTest(Angular2TsConfigFile(strictTemplates = false, strictInputAccessModifiers = true))
   }
 
+  @Test
   fun testStrictInputAccessModifiersOff() {
     doFlagTest(Angular2TsConfigFile(strictTemplates = true, strictInputAccessModifiers = false))
   }
 
+  @Test
   fun testStrictInputAccessModifiersAbsent() {
     doFlagTest(Angular2TsConfigFile(strictTemplates = true, strictInputAccessModifiers = null))
   }

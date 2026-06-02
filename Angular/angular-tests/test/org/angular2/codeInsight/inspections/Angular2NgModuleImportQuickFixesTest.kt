@@ -18,18 +18,24 @@ import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.TestTsGoFork
+import org.angular2.TestTsNode
 import org.angular2.inspections.AngularInvalidTemplateReferenceVariableInspection
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.inspections.AngularUndefinedTagInspection
 import org.angular2.inspections.AngularUnresolvedPipeInspection
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
+import org.junit.Test
 import java.io.IOException
 
 /**
  * Also tests completion InsertHandlers.
  */
-class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngModuleImport", TypeScriptServiceKind.TsNode) {
+@TestTsNode
+@TestTsGoFork
+class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngModuleImport") {
 
+  @Test
   fun testNgFor() {
     doMultiFileTest("angular-commons",
                     "test.html",
@@ -39,6 +45,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     modules = ANGULAR_13)
   }
 
+  @Test
   fun testNgForCompletion() {
     doCompletionTest("angular-commons",
                      "test.html",
@@ -48,6 +55,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      modules = ANGULAR_13)
   }
 
+  @Test
   fun testNgClass() {
     doMultiFileTest("angular-commons",
                     "test.html",
@@ -57,6 +65,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     modules = ANGULAR_13)
   }
 
+  @Test
   fun testNgClassCompletion() {
     doCompletionTest("angular-commons",
                      "test.html",
@@ -66,6 +75,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      modules = ANGULAR_13)
   }
 
+  @Test
   fun testLowercasePipe() {
     doMultiFileTest("angular-commons",
                     "test.html",
@@ -75,6 +85,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     modules = ANGULAR_13)
   }
 
+  @Test
   fun testLowercasePipeCompletion() {
     doCompletionTest("angular-commons",
                      "test.html",
@@ -84,73 +95,88 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      modules = ANGULAR_13)
   }
 
+  @Test
   fun testImportDirective() {
     doMultiFileTest("test.html",
                     "Import Module2")
   }
 
+  @Test
   fun testImportDirectiveCompletion() {
     doTagCompletionTest("test.html", "Module2 - \"./module2\"")
   }
 
+  @Test
   fun testUndeclaredDirective() {
     doMultiFileTest("test.html",
                     "Declare MyDirective in MyModule")
   }
 
+  @Test
   fun testUndeclaredDirectiveCompletion() {
     doTagCompletionTest("test.html", "MyModule - \"./module\"")
   }
 
+  @Test
   fun testUndeclaredDirectiveDifferentModule() {
     doMultiFileTest("test.html",
                     "Declare MyDirective in Angular module",
                     "Module2 - \"./module2\"")
   }
 
+  @Test
   fun testUndeclaredDirectiveDifferentModuleCompletion() {
     doTagCompletionTest("test.html",
                         "Module2 - \"./module2\"")
   }
 
+  @Test
   fun testNotExportedDirectiveNoModuleImport() {
     doMultiFileTest("test.html",
                     "Export MyDirective")
   }
 
+  @Test
   fun testNotExportedDirectiveNoModuleImportCompletion() {
     doTagCompletionTest("test.html", null)
   }
 
+  @Test
   fun testNotExportedDirectiveSingleModuleImport() {
     doMultiFileTest("test.html",
                     "Export MyDirective")
   }
 
+  @Test
   fun testNotExportedDirectiveSingleModuleImportCompletion() {
     doTagCompletionTest("test.html", "Module2 - \"./module2\"")
   }
 
+  @Test
   fun testNotExportedDirectiveMultiModuleImport() {
     doMultiFileTest("test.html",
                     "Export MyDirective",
                     "Module3 - \"./module3\"")
   }
 
+  @Test
   fun testNotExportedDirectiveMultiModuleImportCompletion() {
     doTagCompletionTest("test.html",
                         "Module3 - \"./module3\"")
   }
 
+  @Test
   fun testInlineTemplate() {
     doMultiFileTest("component.ts",
                     "Declare MyDirective in MyModule")
   }
 
+  @Test
   fun testInlineTemplateCompletion() {
     doTagCompletionTest("component.ts", "MyModule - \"./module\"")
   }
 
+  @Test
   fun testFormsModule1() {
     doMultiFileTest("formsModule",
                     "test.html",
@@ -159,6 +185,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "FormsModule - \"@angular/forms\"")
   }
 
+  @Test
   fun testFormsModule2() {
     doMultiFileTest("formsModule",
                     "test.html",
@@ -167,6 +194,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "FormsModule - \"@angular/forms\"")
   }
 
+  @Test
   fun testFormsModule3() {
     doMultiFileTest("formsModule",
                     "test.html",
@@ -176,6 +204,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     checkQuickFixList = true)
   }
 
+  @Test
   fun testFormsModule4() {
     doMultiFileTest("formsModule",
                     "test.html",
@@ -184,6 +213,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     null)
   }
 
+  @Test
   fun testFormsModuleCompletion1() {
     doCompletionTest("formsModule",
                      "test.html",
@@ -192,6 +222,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "FormsModule - \"@angular/forms\"")
   }
 
+  @Test
   fun testFormsModuleCompletion2() {
     doCompletionTest("formsModule",
                      "test.html",
@@ -200,6 +231,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "FormsModule - \"@angular/forms\"")
   }
 
+  @Test
   fun testFormsModuleCompletion3() {
     doCompletionTest("formsModule",
                      "test.html",
@@ -208,6 +240,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "FormsModule - \"@angular/forms\"")
   }
 
+  @Test
   fun testFormsModuleCompletion4() {
     doCompletionTest("formsModule",
                      "test.html",
@@ -216,6 +249,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "FormsModule - \"@angular/forms\"")
   }
 
+  @Test
   fun testReactiveFormsModule1() {
     doMultiFileTest("reactiveFormsModule",
                     "test.html",
@@ -224,6 +258,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "ReactiveFormsModule - \"@angular/forms\"")
   }
 
+  @Test
   fun testReactiveFormsModule2() {
     doMultiFileTest("reactiveFormsModule",
                     "test.html",
@@ -232,6 +267,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "ReactiveFormsModule - \"@angular/forms\"")
   }
 
+  @Test
   fun testReactiveFormsModuleCompletion1() {
     doCompletionTest("reactiveFormsModule",
                      "test.html",
@@ -240,6 +276,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "ReactiveFormsModule - \"@angular/forms\"")
   }
 
+  @Test
   fun testReactiveFormsModuleCompletion2() {
     doCompletionTest("reactiveFormsModule",
                      "test.html",
@@ -248,6 +285,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                      "ReactiveFormsModule - \"@angular/forms\"")
   }
 
+  @Test
   fun testLocalLib() {
     doMultiFileTest("src/app/app.component.html",
                     "Import MyLibModule") {
@@ -255,6 +293,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
     }
   }
 
+  @Test
   fun testLocalLibCompletion() {
     doCompletionTest("localLib", "src/app/app.component.html",
                      "lib-my-lib", "lib-my-l\n",
@@ -263,6 +302,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
     }
   }
 
+  @Test
   fun testImportStandaloneComponentToStandaloneComponent() {
     doMultiFileTest("standaloneComponent",
                     "test.ts",
@@ -271,6 +311,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "StandaloneComponent - \"./standalone.component\"")
   }
 
+  @Test
   fun testImportStandalonePipeToStandaloneComponent() {
     doMultiFileTest("standalonePipe",
                     "test.ts",
@@ -279,6 +320,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "StandalonePipe - \"./standalone.pipe\"")
   }
 
+  @Test
   fun testImportStandaloneComponentToModule() {
     doMultiFileTest("standaloneComponentToModule",
                     "test.ts",
@@ -287,6 +329,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "StandaloneComponent - \"./standalone.component\"")
   }
 
+  @Test
   fun testImportStandaloneComponentImportModule() {
     doMultiFileTest("standaloneComponentImportModule",
                     "test.ts",
@@ -295,23 +338,27 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     "ClassicModule - \"./classic\"")
   }
 
+  @Test
   fun testLocalLibraryWithAlias() {
     doMultiFileTest("projects/demo/src/app/app.component.html",
                     "Import Lib1Module"
     )
   }
 
+  @Test
   fun testSameFileStandaloneDirectiveToComponent() {
     doMultiFileTest("test.ts",
                     "Import TestDir"
     )
   }
 
+  @Test
   fun testImportDirectiveFromInterpolationBinding() {
     doMultiFileTest("hero-search.component.html",
                     "Import RouterLink")
   }
 
+  @Test
   fun testImportStandalonePseudoModuleToStandaloneComponent() {
     doMultiFileTest("standalonePseudoModule",
                     "check.html",
@@ -325,6 +372,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                                             "FOO_COMPONENT_EXPORT_CONST_AS_CONST - \"./foo\""))
   }
 
+  @Test
   fun testLibComponent() {
     doMultiFileTest("app.component.ts",
                     "Import SharedComponent") {
@@ -332,6 +380,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
     }
   }
 
+  @Test
   fun testIonicStandaloneComponent() {
     doMultiFileTest("ionicStandaloneComponent",
                     "folder.page.html",
@@ -347,6 +396,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
     )
   }
 
+  @Test
   fun testImportFromCdk() {
     doMultiFileTest(
       testName = "importFromCdk",

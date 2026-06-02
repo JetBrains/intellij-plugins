@@ -5,32 +5,31 @@ import com.intellij.ide.util.gotoByName.GotoSymbolModel2
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.navigation.NavigationItem
 import com.intellij.polySymbols.testFramework.checkListByFile
-import com.intellij.testFramework.TestFrameworkUtil
-import com.intellij.testFramework.TestIndexingModeSupporter
 import com.intellij.testFramework.TestIndexingModeSupporter.IndexingMode
-import junit.framework.Test
-import junit.framework.TestSuite
 import org.angular2.Angular2TestCase
+import org.angular2.TestNoService
+import org.angular2.TestTsGoFork
+import org.junit.Test
+import org.junit.runners.Parameterized
 
-class Angular2GotoSymbolTest : Angular2TestCase("navigation/symbol/", TypeScriptServiceKind.None), TestIndexingModeSupporter {
+@TestNoService
+@TestTsGoFork
+class Angular2GotoSymbolTest : Angular2TestCase("navigation/symbol/") {
 
   companion object {
+    @com.intellij.testFramework.Parameterized.Parameters(name = "ServiceKind={0}, IndexingMode={1}")
     @JvmStatic
-    fun suite(): Test {
-      val suite = TestSuite()
-      suite.addTestSuite(Angular2GotoSymbolTest::class.java)
-      TestIndexingModeSupporter.addTest(Angular2GotoSymbolTest::class.java, TestIndexingModeSupporter.FullIndexSuite(), suite);
-      return TestFrameworkUtil.flattenSuite(suite)
-    }
+    fun data(clazz: Class<*>): Collection<Any> =
+      Angular2TestCase.data(clazz).flatMap { serviceParams ->
+        listOf(IndexingMode.SMART, IndexingMode.DUMB_FULL_INDEX).map { indexingMode ->
+          arrayOf((serviceParams as Array<*>)[0], indexingMode)
+        }
+      }
   }
 
-  private var indexingMode: IndexingMode  = IndexingMode.SMART
-
-  override fun setIndexingMode(mode: IndexingMode) {
-    this.indexingMode = mode
-  }
-
-  override fun getIndexingMode(): IndexingMode = indexingMode
+  @JvmField
+  @Parameterized.Parameter(1)
+  var indexingMode: IndexingMode = IndexingMode.SMART
 
   private fun checkGotoSymbol(name: String, vararg modules: WebFrameworkTestModule, detailed: Boolean = true) {
     doConfiguredTest(*modules) {
@@ -50,11 +49,15 @@ class Angular2GotoSymbolTest : Angular2TestCase("navigation/symbol/", TypeScript
     }
   }
 
+  @Test
   fun testElementSelector() = checkGotoSymbol("app-my-table")
 
+  @Test
   fun testAttributeSelector() = checkGotoSymbol("app-my-table")
 
+  @Test
   fun testAttrAndElementSelector() = checkGotoSymbol("app-my-table")
 
+  @Test
   fun testPipe() = checkGotoSymbol("foo", detailed = false)
 }

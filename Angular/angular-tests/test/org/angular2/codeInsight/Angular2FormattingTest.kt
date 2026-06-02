@@ -14,26 +14,36 @@ import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.TestNoService
+import org.angular2.TestTsGoFork
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
+import org.junit.Test
 
-class Angular2FormattingTest : Angular2TestCase("formatting", TypeScriptServiceKind.None) {
+@TestNoService
+@TestTsGoFork
+class Angular2FormattingTest : Angular2TestCase("formatting") {
 
+  @Test
   fun testStyles() = doFormattingTest()
 
+  @Test
   fun testTemplate() = doFormattingTest()
 
+  @Test
   fun testAttrs() = doFormattingTest(extension = "html") {
     val htmlSettings = getCustomSettings(HtmlCodeStyleSettings::class.java)
     htmlSettings.HTML_ATTRIBUTE_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
     htmlSettings.HTML_SPACE_AROUND_EQUALITY_IN_ATTRIBUTE = true
   }
 
+  @Test
   fun testInnerAttrs() = doFormattingTest {
     val htmlSettings = getCustomSettings(HtmlCodeStyleSettings::class.java)
     htmlSettings.HTML_ATTRIBUTE_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
     htmlSettings.HTML_SPACE_AROUND_EQUALITY_IN_ATTRIBUTE = true
   }
 
+  @Test
   fun testNoKeepLineBreaks() = doFormattingTest(extension = "html") {
     val htmlSettings = getCustomSettings(HtmlCodeStyleSettings::class.java)
     htmlSettings.HTML_ATTRIBUTE_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED
@@ -42,66 +52,80 @@ class Angular2FormattingTest : Angular2TestCase("formatting", TypeScriptServiceK
     htmlSettings.HTML_KEEP_BLANK_LINES = 0
   }
 
+  @Test
   fun testAttributeTyping() = doConfiguredTest(extension = "html", checkResult = true) {
     myFixture.type("\ntest2\n[test]=\"\"\n[(banana)]=\"\"\nother\n")
   }
 
+  @Test
   fun testInterpolationNoNewLineDoNotWrap() = testInterpolation(
     newLineAfterStart = false,
     newLineBeforeEnd = false,
     wrap = CommonCodeStyleSettings.DO_NOT_WRAP
   )
 
+  @Test
   fun testInterpolationNoNewLineWrapAsNeeded() = testInterpolation(
     newLineAfterStart = false,
     newLineBeforeEnd = false,
     wrap = CommonCodeStyleSettings.WRAP_AS_NEEDED
   )
 
+  @Test
   fun testInterpolationNoNewLineWrapAlways() = testInterpolation(
     newLineAfterStart = false,
     newLineBeforeEnd = false,
     wrap = CommonCodeStyleSettings.WRAP_ALWAYS
   )
 
+  @Test
   fun testInterpolationNewLineDoNotWrap() = testInterpolation(
     newLineAfterStart = true,
     newLineBeforeEnd = true,
     wrap = CommonCodeStyleSettings.DO_NOT_WRAP
   )
 
+  @Test
   fun testInterpolationNewLineWrapAsNeeded() = testInterpolation(
     newLineAfterStart = true,
     newLineBeforeEnd = true,
     wrap = CommonCodeStyleSettings.WRAP_AS_NEEDED
   )
 
+  @Test
   fun testInterpolationNewLineWrapAlways() = testInterpolation(
     newLineAfterStart = true,
     newLineBeforeEnd = true,
     wrap = CommonCodeStyleSettings.WRAP_ALWAYS
   )
 
+  @Test
   fun testInterpolationNewLineBeforeEnd() = testInterpolation(
     newLineAfterStart = false,
     newLineBeforeEnd = true,
     wrap = CommonCodeStyleSettings.WRAP_AS_NEEDED
   )
 
+  @Test
   fun testInterpolationNewLineAfterStart() = testInterpolation(
     newLineAfterStart = true,
     newLineBeforeEnd = false,
     wrap = CommonCodeStyleSettings.WRAP_AS_NEEDED
   )
 
+  @Test
   fun testBasicBlocks() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
+  @Test
   fun testDeferBlock() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
+  @Test
   fun testLetBlock() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_18_2_1, extension = "html")
 
+  @Test
   fun testEditorConfigWithInjection() = doFormattingTest(dir = true, editorConfigEnabled = true)
 
+  @Test
   fun testEditorConfigWithinInjection() = doConfiguredTest(dir = true, checkResult = true, editorConfigEnabled = true) {
     WriteCommandAction.runWriteCommandAction(project) {
       PsiDocumentManager.getInstance(project).commitAllDocuments()
@@ -112,6 +136,7 @@ class Angular2FormattingTest : Angular2TestCase("formatting", TypeScriptServiceK
     }
   }
 
+  @Test
   fun testUnusedComponentImports() =
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0,
                      checkResult = true,
@@ -123,6 +148,7 @@ class Angular2FormattingTest : Angular2TestCase("formatting", TypeScriptServiceK
       }
     }
 
+  @Test
   fun testReferenceDeclaration() = doFormattingTest(extension = "html") {
     val tsSettings = getCustomSettings(TypeScriptCodeStyleSettings::class.java)
     tsSettings.VAR_DECLARATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
@@ -130,6 +156,7 @@ class Angular2FormattingTest : Angular2TestCase("formatting", TypeScriptServiceK
     jsSettings.VAR_DECLARATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
   }
 
+  @Test
   fun testForBlockVariableDeclaration() = doFormattingTest(extension = "html") {
     val tsSettings = getCustomSettings(TypeScriptCodeStyleSettings::class.java)
     tsSettings.VAR_DECLARATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS

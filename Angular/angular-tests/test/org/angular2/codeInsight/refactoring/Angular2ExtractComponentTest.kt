@@ -6,14 +6,20 @@ import com.intellij.testFramework.UsefulTestCase
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
+import org.angular2.TestTsGoFork
+import org.angular2.TestTsNode
+import org.junit.Test
 
-class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractComponent", TypeScriptServiceKind.TsNode) {
+@TestTsNode
+@TestTsGoFork
+class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractComponent") {
 
   // TODO WEB-67260 - fails on server
   fun _testSingleElementMultiLineFromCaret() {
     doMultiFileTest()
   }
 
+  @Test
   fun testSingleElementSingleLine() {
     doMultiFileTest()
   }
@@ -23,30 +29,37 @@ class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractCompon
     doMultiFileTest()
   }
 
+  @Test
   fun testNoElement() {
     doMultiFileTest()
   }
 
+  @Test
   fun testNameClashes() {
     doMultiFileTest()
   }
 
+  @Test
   fun testExtractFromInlineTemplate() {
     doMultiFileTest("src/app/app.component.ts")
   }
 
+  @Test
   fun testUnsupportedSelection() {
     doFailedTest()
   }
 
+  @Test
   fun testUnsupportedSelection2() {
     doFailedTest()
   }
 
+  @Test
   fun testUnsupportedSelection3() {
     doFailedTest()
   }
 
+  @Test
   fun testUnsupportedSelection4() {
     doFailedTest()
   }

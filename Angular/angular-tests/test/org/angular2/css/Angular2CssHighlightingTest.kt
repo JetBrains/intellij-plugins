@@ -4,22 +4,33 @@ package org.angular2.css
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.TestNoService
+import org.angular2.TestTsGoFork
+import org.junit.Test
 
-class Angular2CssHighlightingTest: Angular2TestCase("css/highlighting", TypeScriptServiceKind.None) {
+@TestNoService
+@TestTsGoFork
+class Angular2CssHighlightingTest: Angular2TestCase("css/highlighting") {
 
   // WEB-63400
+  @Test
   fun testCssAmpersandSelector() = checkHighlighting()
 
   // WEB-63587
+  @Test
   fun testLessParentSelector() = checkHighlighting(extension = "less")
 
   // WEB-63587
+  @Test
   fun testPcssAmpersand() = checkHighlighting(extension = "pcss")
 
+  @Test
   fun testHostBindingClassBindingUnused() = checkHighlighting(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
+  @Test
   fun testHostBindingClassAttributeUnused() = checkHighlighting(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
+  @Test
   fun testHostBindingDecoratorClassUnused() = checkHighlighting(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
   override fun setUp() {

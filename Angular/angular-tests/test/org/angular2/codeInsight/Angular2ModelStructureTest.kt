@@ -8,6 +8,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestUtil
+import org.angular2.TestNoService
+import org.angular2.TestTsGoFork
 import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider.getEntity
@@ -17,9 +19,13 @@ import org.angular2.entities.Angular2ImportsOwner
 import org.angular2.entities.Angular2Module
 import org.angular2.entities.Angular2Pipe
 import org.angular2.web.Angular2Symbol
+import org.junit.Test
 
-class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScriptServiceKind.None) {
+@TestNoService
+@TestTsGoFork
+class Angular2ModelStructureTest : Angular2TestCase("modelStructure") {
 
+  @Test
   fun testCommonModuleResolution() {
     doResolutionTest("common",
                      "common_module.ts",
@@ -27,6 +33,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt")
   }
 
+  @Test
   fun testCommonModuleResolutionMetadata() {
     doResolutionTest("common-metadata",
                      "myModule.ts",
@@ -34,6 +41,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt")
   }
 
+  @Test
   fun testRouterModuleResolution() {
     doResolutionTest("router",
                      "myModule.ts",
@@ -41,6 +49,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check-full.txt")
   }
 
+  @Test
   fun testRouterModuleResolutionMetadata() {
     doResolutionTest("router-metadata",
                      "myModule.ts",
@@ -48,6 +57,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check-full.txt")
   }
 
+  @Test
   fun testRouterModuleResolutionNotFull() {
     doResolutionTest("router",
                      "myModule.ts",
@@ -55,6 +65,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check-not-full.txt")
   }
 
+  @Test
   fun testRouterModuleResolutionNotFullMetadata() {
     doResolutionTest("router-metadata",
                      "myModule.ts",
@@ -62,6 +73,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check-not-full.txt")
   }
 
+  @Test
   fun testBrowserModuleResolutionNotFull() {
     doResolutionTest("browser",
                      "myModule.ts",
@@ -69,6 +81,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt")
   }
 
+  @Test
   fun testIonicResolutionMetadata() {
     doResolutionTest("ionic-metadata",
                      "myIonicModule.ts",
@@ -76,6 +89,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check-no-common.txt")
   }
 
+  @Test
   fun testIonicResolutionMetadataWithCommon() {
     myFixture.copyDirectoryToProject("common-metadata/common", "/common")
     doResolutionTest("ionic-metadata",
@@ -84,6 +98,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check-with-common.txt")
   }
 
+  @Test
   fun testSourceForRootResolution() {
     doResolutionTest("source-forRoot",
                      "mainModule.ts",
@@ -91,6 +106,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt", Angular2TestModule.ANGULAR_CORE_8_2_14)
   }
 
+  @Test
   fun testJsonMetadataForRootResolution() {
     doResolutionTest("metadata-forRoot",
                      "mainModule.ts",
@@ -98,6 +114,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt", Angular2TestModule.ANGULAR_CORE_8_2_14)
   }
 
+  @Test
   fun testIvyMetadataForRootResolution() {
     doResolutionTest("ivy-forRoot",
                      "mainModule.ts",
@@ -105,6 +122,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt", Angular2TestModule.ANGULAR_CORE_8_2_14)
   }
 
+  @Test
   fun testFormsResolution() {
     doResolutionTest("forms",
                      "myModule.ts",
@@ -112,6 +130,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt", Angular2TestModule.ANGULAR_FORMS_8_2_14)
   }
 
+  @Test
   fun testNgModuleWithConstant() {
     doResolutionTest("ng-module-with-constant",
                      "module.ts",
@@ -119,6 +138,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt")
   }
 
+  @Test
   fun testAgmCore() {
     doResolutionTest("agm-core",
                      "module.ts",
@@ -126,6 +146,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt", Angular2TestModule.AGM_CORE_1_0_0_BETA_5)
   }
 
+  @Test
   fun testFunctionCalls() {
     doResolutionTest("function-calls",
                      "my-test-lib.module.ts",
@@ -133,6 +154,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt")
   }
 
+  @Test
   fun testEvoUiKit() {
     doResolutionTest("evo-ui-kit",
                      "module.ts",
@@ -140,6 +162,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt", Angular2TestModule.EVO_UI_KIT_1_17_0)
   }
 
+  @Test
   fun testCommonNgClassModules() {
     doDeclarationModulesCheckText("common",
                                   "directives/ng_class.ts",
@@ -147,6 +170,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                                   "CommonModule")
   }
 
+  @Test
   fun testCommonDatePipeModules() {
     doDeclarationModulesCheckText("common",
                                   "pipes/date_pipe.ts",
@@ -154,6 +178,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                                   "CommonModule")
   }
 
+  @Test
   fun testAsyncPipeModulesMetadata() {
     doDeclarationModulesCheckText("common-metadata",
                                   "common/src/pipes/async_pipe.d.ts",
@@ -162,6 +187,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                                   "CommonModuleMetadataTest")
   }
 
+  @Test
   fun testCommonNg12() {
     doResolutionTest("ng12-common",
                      "mainModule.ts",
@@ -169,6 +195,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt")
   }
 
+  @Test
   fun testCommonNg13() {
     doResolutionTest("ng13-common",
                      "app.module.ts",
@@ -176,6 +203,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt")
   }
 
+  @Test
   fun testPrivateModuleExportMetadata() {
     doResolutionTest("private-module-export-metadata",
                      "module.ts",
@@ -183,6 +211,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt", Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.NGXS_STORE_3_6_2)
   }
 
+  @Test
   fun testPrivateModuleExportIvy() {
     doResolutionTest("private-module-export-ivy",
                      "module.ts",
@@ -190,6 +219,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt", Angular2TestModule.ANGULAR_CORE_9_1_1_MIXED, Angular2TestModule.NGXS_STORE_3_6_2_MIXED)
   }
 
+  @Test
   fun testModuleReexport() {
     doResolutionTest("module-reexport",
                      "app.module.ts",
@@ -197,6 +227,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      "check.txt", Angular2TestModule.ANGULAR_CORE_9_1_1_MIXED)
   }
 
+  @Test
   fun testRequiredProperties() {
     doResolutionTest("required-properties",
                      "app.module.ts",
@@ -205,6 +236,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
                      true, Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8)
   }
 
+  @Test
   fun testHostDirectives() {
     doResolutionTest(
       "host-directives",
@@ -216,6 +248,7 @@ class Angular2ModelStructureTest : Angular2TestCase("modelStructure", TypeScript
     )
   }
 
+  @Test
   fun testModuleWithExportDefault() {
     doResolutionTest(
       "export-default",

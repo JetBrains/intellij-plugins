@@ -25,7 +25,6 @@ import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.impl.LspServerImpl
 import com.intellij.platform.lsp.impl.LspServerManagerImpl
 import com.intellij.polySymbols.testFramework.HybridTestMode
-import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.PlatformTestUtil.dispatchAllEventsInIdeEventQueue
 import com.intellij.testFramework.replaceService
 import com.intellij.testFramework.runInEdtAndWait
@@ -35,17 +34,26 @@ import org.angular2.lang.expr.service.Angular2TypeScriptService
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.configureAngularSettingsService
 import org.angular2.refactoring.extractComponent.Angular2CliComponentGenerator
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import kotlin.reflect.KClass
 
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class TestNoService
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class TestTsNode
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class TestTsGoFork
+
+@RunWith(com.intellij.testFramework.Parameterized::class)
 abstract class Angular2TestCase(
   override val testCasePath: String,
-  private val serviceKind: TypeScriptServiceKind = TypeScriptServiceKind.TsNode,
-) : WebFrameworkTestCase(
-  if (serviceKind == TypeScriptServiceKind.None)
-    HybridTestMode.BasePlatform
-  else
-    HybridTestMode.CodeInsightFixture
-) {
+) : WebFrameworkTestCase() {
 
   enum class TypeScriptServiceKind {
     None,
@@ -53,11 +61,25 @@ abstract class Angular2TestCase(
     TsGoFork,
   }
 
-  private var expectedServerClass: KClass<out TypeScriptService> = when (serviceKind) {
-    TypeScriptServiceKind.TsNode -> Angular2TypeScriptService::class
-    TypeScriptServiceKind.TsGoFork -> TypeScriptGoLspService::class
-    TypeScriptServiceKind.None -> Angular2TypeScriptService::class
+  @Parameterized.Parameter
+  @JvmField
+  var serviceKind: TypeScriptServiceKind = TypeScriptServiceKind.None
+
+  private val expectedServerClass: KClass<out TypeScriptService> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    when (serviceKind) {
+      TypeScriptServiceKind.TsNode -> Angular2TypeScriptService::class
+      TypeScriptServiceKind.TsGoFork -> TypeScriptGoLspService::class
+      TypeScriptServiceKind.None -> Angular2TypeScriptService::class
+    }
   }
+
+  override fun initializeTestMode(): HybridTestMode =
+    if (serviceKind == TypeScriptServiceKind.None) {
+      HybridTestMode.BasePlatform
+    }
+    else {
+      HybridTestMode.CodeInsightFixture
+    }
 
   override val testDataRoot: String
     get() = Angular2TestUtil.getBaseTestDataPath()
@@ -114,6 +136,7 @@ abstract class Angular2TestCase(
         triggerLspServerInit(project, TypeScriptGoLspServerSupportProvider::class.java,
                              TypeScriptGoLspServerDescriptor(project))
       }
+      TypeScriptServiceKind.None -> {}
     }
 
     if (configuration.configurators.any { it is Angular2TsConfigFile }) {
@@ -130,12 +153,12 @@ abstract class Angular2TestCase(
   }
 
   fun withTypeScriptServerService(clazz: KClass<out TypeScriptService>, runnable: () -> Unit) {
-    expectedServerClass = clazz
+    //expectedServerClass = clazz
     try {
       runnable()
     }
     finally {
-      expectedServerClass = Angular2TypeScriptService::class
+      // expectedServerClass = Angular2TypeScriptService::class
     }
   }
 
@@ -186,5 +209,24 @@ abstract class Angular2TestCase(
 
     if (application.isUnitTestMode)
       throw IllegalStateException("Server didn't initialize in 4000 ms")
+  }
+
+  companion object {
+    @com.intellij.testFramework.Parameterized.Parameters(name = "ServiceKind={0}")
+    @JvmStatic
+    fun data(clazz: Class<*>): Collection<Any> {
+      return listOfNotNull(
+        arrayOf<Any>(TypeScriptServiceKind.None)
+          .takeIf { clazz.getAnnotation(TestNoService::class.java) != null },
+        arrayOf<Any>(TypeScriptServiceKind.TsNode)
+          .takeIf { clazz.getAnnotation(TestTsNode::class.java) != null },
+        arrayOf<Any>(TypeScriptServiceKind.TsGoFork)
+          .takeIf { clazz.getAnnotation(TestTsGoFork::class.java) != null },
+      )
+    }
+
+    @Parameterized.Parameters
+    @JvmStatic
+    fun data(): Collection<Any> = emptyList()
   }
 }

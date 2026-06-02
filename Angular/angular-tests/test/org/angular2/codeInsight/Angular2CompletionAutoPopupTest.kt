@@ -5,9 +5,13 @@ import com.intellij.polySymbols.testFramework.checkLookupItems
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_21_2_0
+import org.angular2.TestNoService
+import org.junit.Test
 
-class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", TypeScriptServiceKind.None) {
+@TestNoService
+class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup") {
 
+  @Test
   fun testForBlockTyping1() =
     doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_17_3_0) {
       type("item ")
@@ -45,6 +49,7 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", 
       type("\$in\n")
     }
 
+  @Test
   fun testForBlockTyping2() =
     doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_17_3_0) {
       type("item ")
@@ -77,6 +82,7 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", 
       assertLookupShown()
     }
 
+  @Test
   fun testDeferBlockTyping() =
     doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_19_2_0, extension = "html") {
       type("prefetch ")
@@ -95,6 +101,7 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", 
       assertLookupNotShown()
     }
 
+  @Test
   fun testCompletionInExpression() {
     doEditorTypingTest(
       Angular2TestModule.ANGULAR_CORE_13_3_5, Angular2TestModule.ANGULAR_CDK_14_2_0, dir = true,
@@ -125,6 +132,7 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", 
     }
   }
 
+  @Test
   fun testKeyupCodeModifierTyping() =
     doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", checkResult = false) {
       type("(keyup.")
@@ -135,11 +143,13 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", 
       checkLookupItems()
     }
 
+  @Test
   fun testComponentLifecycleHooks() =
     doEditorTypingTest(ANGULAR_CORE_21_2_0, extension = "ts") {
       type("ngOnCh\n")
     }
 
+  @Test
   fun testComponentLifecycleHooksV_17() =
     doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts") {
       type("ngOnCh\n")

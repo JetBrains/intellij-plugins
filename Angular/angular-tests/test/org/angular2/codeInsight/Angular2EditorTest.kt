@@ -5,9 +5,15 @@ import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.TestNoService
+import org.angular2.TestTsGoFork
+import org.junit.Test
 
-class Angular2EditorTest : Angular2TestCase("editor", TypeScriptServiceKind.None) {
+@TestNoService
+@TestTsGoFork
+class Angular2EditorTest : Angular2TestCase("editor") {
 
+  @Test
   fun testBlockTyping() =
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0,
                      fileContents = "<div></div><!--within tag-->\n <!--space-->\ntext", extension = "html", checkResult = true) {
@@ -21,37 +27,45 @@ class Angular2EditorTest : Angular2TestCase("editor", TypeScriptServiceKind.None
       type("@if (")
     }
 
+  @Test
   fun testBlockFolding() {
     doFoldingTest(Angular2TestModule.ANGULAR_CORE_17_3_0,
                   extension = "html")
   }
 
+  @Test
   fun testClosingBraceWithInterpolation() =
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0,
                      fileContents = "@if (foo) { {{foo}} } @else { <caret>", extension = "html", checkResult = true) {
       type("}")
     }
 
+  @Test
   fun testDeletingParenInParams() =
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0,
                      fileContents = "@if (((<caret>))) { }", extension = "html", checkResult = true) {
       type("\b\b\b")
     }
 
+  @Test
   fun testIfBlockExtendSelection() =
     doWordSelectionTest()
 
+  @Test
   fun testIfElseBlockExtendSelection() =
     doWordSelectionTest()
 
+  @Test
   fun testSwitchBlockExtendSelection() =
     doWordSelectionTest()
 
+  @Test
   fun testTopLevelBlockEmmetExpansion() =
     doEditorTypingTest(checkResult = true, extension = "html") {
       type("\t")
     }
 
+  @Test
   fun testIncompleteStringInInterpolation() =
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0,
                      fileContents = "<main>{{ <caret> }}</main>", extension = "html", checkResult = true) {

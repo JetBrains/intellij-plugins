@@ -23,6 +23,8 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_8_2_14
 import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestModule.TS_LIB
 import org.angular2.Angular2TsConfigFile
+import org.angular2.TestTsGoFork
+import org.angular2.TestTsNode
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection
 import org.angular2.inspections.AngularDeferBlockOnTriggerInspection
 import org.angular2.inspections.AngularInaccessibleSymbolInspection
@@ -42,39 +44,48 @@ import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.inspections.AngularUndefinedTagInspection
 import org.angular2.inspections.AngularUnsupportedSyntaxInspection
 import org.angular2.lang.Angular2Bundle
+import org.junit.Test
 
 /**
  * @see Angular2TsInspectionsTest
  *
  * @see Angular2DecoratorInspectionsTest
  */
-class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template", TypeScriptServiceKind.TsNode) {
+@TestTsNode
+@TestTsGoFork
+class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template") {
 
+  @Test
   fun testEmptyEventBinding1() {
     doTest(1, "onc<caret>lick", "Add attribute value", AngularMissingEventHandlerInspection::class.java,
            "empty-event-binding.html")
   }
 
+  @Test
   fun testEmptyEventBinding2() {
     doTest(2, "on<caret>tap", "Add attribute value", AngularMissingEventHandlerInspection::class.java,
            "empty-event-binding.html")
   }
 
+  @Test
   fun testBindingToEvent1() {
     doTest(1, "[on<caret>foo]", "Bind to event (foo)", AngularInsecureBindingToEventInspection::class.java,
            "binding-to-event.html", "component.ts")
   }
 
+  @Test
   fun testBindingToEvent2() {
     doTest(2, "[on<caret>foo]", "Remove attribute [onfoo]", AngularInsecureBindingToEventInspection::class.java,
            "binding-to-event.html", "component.ts")
   }
 
+  @Test
   fun testBindingToEvent3() {
     doTest(3, "[attr.on<caret>Foo]", "Bind to event (Foo)", AngularInsecureBindingToEventInspection::class.java,
            "binding-to-event.html", "component.ts")
   }
 
+  @Test
   fun testNonEmptyNgContent() {
     doTest(1, "ff<caret>f", "Remove content",
            inspections = listOf(AngularNonEmptyNgContentInspection::class.java),
@@ -82,67 +93,80 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("non-empty-ng-content.html"))
   }
 
+  @Test
   fun testNonEmptyNgContentNg18() {
     doTest(inspections = listOf(AngularNonEmptyNgContentInspection::class.java),
            dependencies = listOf(ANGULAR_CORE_18_2_1),
            files = listOf("non-empty-ng-content-ng18.html"))
   }
 
+  @Test
   fun testMultipleTemplateBindings() {
     doTest(1, "*some<caret>thing", "Remove attribute *something", AngularMultipleStructuralDirectivesInspection::class.java,
            "multiple-template-bindings.html")
   }
 
+  @Test
   fun testAnimationTriggerAssignment1() {
     doTest(1, "@trigger=\"<caret>foo", "Bind to property [@trigger]", AngularInvalidAnimationTriggerAssignmentInspection::class.java,
            "animation-trigger-assignment.html")
   }
 
+  @Test
   fun testAnimationTriggerAssignment2() {
     doTest(2, "@trigger=\"<caret>foo", "Remove attribute value", AngularInvalidAnimationTriggerAssignmentInspection::class.java,
            "animation-trigger-assignment.html")
   }
 
+  @Test
   fun testTemplateReferenceVariable() {
     doTest(1, "#abc=\"fo<caret>o\"", "Remove attribute #abc", AngularInvalidTemplateReferenceVariableInspection::class.java,
            "template-reference-variable.html", "component.ts")
   }
 
+  @Test
   fun testTemplateReferenceVariableWithModule() {
     doTest(1, "#abc=\"fo<caret>o\"", "Remove attribute #abc", AngularInvalidTemplateReferenceVariableInspection::class.java,
            "template-reference-variable-with-module.html", "component.ts", "template-reference-variable-module.ts", "forms.d.ts")
   }
 
+  @Test
   fun testMatchingComponents() {
     doTest(AngularAmbiguousComponentTagInspection::class.java,
            "matching-components.html", "component.ts")
   }
 
+  @Test
   fun testMatchingComponentsWithModule() {
     doTest(AngularAmbiguousComponentTagInspection::class.java,
            "matching-components-with-module.html", "component.ts", "matching-components-module.ts")
   }
 
+  @Test
   fun testBindings() {
     doTest(inspections = listOf(AngularUndefinedBindingInspection::class.java, HtmlUnknownAttributeInspection::class.java),
            files = listOf("bindings.html", "component.ts"))
   }
 
+  @Test
   fun testBindingsWithModule() {
     doTest(inspections = listOf(AngularUndefinedBindingInspection::class.java, HtmlUnknownAttributeInspection::class.java),
            files = listOf("bindings-with-module.html", "component.ts", "bindings-module.ts"))
   }
 
+  @Test
   fun testTags() {
     doTest(inspections = listOf(AngularUndefinedTagInspection::class.java, HtmlUnknownTagInspection::class.java),
            files = listOf("tags.html", "component.ts"))
   }
 
+  @Test
   fun testTagsWithModule() {
     doTest(inspections = listOf(AngularUndefinedTagInspection::class.java, HtmlUnknownTagInspection::class.java),
            files = listOf("tags-with-module.html", "component.ts", "tags-module.ts"))
   }
 
+  @Test
   fun testStandaloneDeclarables() {
     doTest(inspections = listOf(TypeScriptUnresolvedReferenceInspection::class.java, HtmlUnknownTagInspection::class.java,
                                 HtmlUnknownAttributeInspection::class.java, AngularUndefinedTagInspection::class.java,
@@ -150,6 +174,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("standalone-declarables.html", "standalone-declarables.ts", "component.ts"))
   }
 
+  @Test
   fun testStandaloneDeclarablesInClassic() {
     doTest(inspections = listOf(TypeScriptUnresolvedReferenceInspection::class.java, HtmlUnknownTagInspection::class.java,
                                 HtmlUnknownAttributeInspection::class.java, AngularUndefinedTagInspection::class.java,
@@ -157,31 +182,37 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("standalone-declarables-in-classic.html", "standalone-declarables-in-classic.ts", "component.ts"))
   }
 
+  @Test
   fun testNgContentSelector() {
     doTest(AngularInvalidSelectorInspection::class.java,
            "ng-content-selector.html")
   }
 
+  @Test
   fun testI18n1() {
     doTest(1, "i18n<caret>-\n", "Rename attribute to 'i18n-bar'", AngularInvalidI18nAttributeInspection::class.java,
            "i18n.html")
   }
 
+  @Test
   fun testI18n2() {
     doTest(2, "i18n-<caret>boo", "Create 'boo' attribute", AngularInvalidI18nAttributeInspection::class.java,
            "i18n.html")
   }
 
+  @Test
   fun testI18n3() {
     doTest(3, "i18n-<caret>b:boo", "Rename attribute to 'i18n-c:boo'", AngularInvalidI18nAttributeInspection::class.java,
            "i18n.html")
   }
 
+  @Test
   fun testHammerJS() {
     doTest(inspections = listOf(AngularUndefinedBindingInspection::class.java, HtmlUnknownAttributeInspection::class.java),
            files = listOf("hammerJs.html"))
   }
 
+  @Test
   fun testMissingRequiredInputBinding1() {
     doTest(1, "<ng-<caret>template", "Create '[ngForOf]' attribute",
            inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java,
@@ -192,6 +223,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
                           "foo-bar.directive.ts"))
   }
 
+  @Test
   fun testMissingRequiredInputBinding2() {
     doTest(2, "<d<caret>iv appFooBar>", "Create '[appFooBar2]' attribute",
            inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java,
@@ -202,6 +234,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
                           "foo-bar.directive.ts"))
   }
 
+  @Test
   fun testMissingRequiredInputBinding3() {
     myFixture.enableInspections(HtmlUnknownBooleanAttributeInspection::class.java)
     doTest(3, "<d<caret>iv appFooBar=\"foo\"", "Create 'appFooBar2' attribute",
@@ -213,24 +246,28 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
                           "foo-bar.directive.ts"))
   }
 
+  @Test
   fun testTypeScriptSpecifyTypeNoFix() {
     doTestNoFix("no-specify-type-variable.html",
                 TypeScriptExplicitMemberTypeInspection::class.java,
                 JavaScriptBundle.message("typescript.specify.type.explicitly"))
   }
 
+  @Test
   fun testTypeScriptSpecifyTypeNoFixNgFor() {
     doTestNoFix("no-specify-type-variable-ng-for.html",
                 TypeScriptExplicitMemberTypeInspection::class.java,
                 JavaScriptBundle.message("typescript.specify.type.explicitly"))
   }
 
+  @Test
   fun testTypeScriptNoIntroduceVariable() {
     doTestNoFix("no-introduce-variable.html",
                 null,
                 JavaScriptBundle.message("javascript.introduce.variable.title.local"))
   }
 
+  @Test
   fun testInaccessibleSymbolHtmlAot() {
     doTest(inspections = listOf(AngularInaccessibleSymbolInspection::class.java),
            dependencies = listOf(ANGULAR_CORE_13_3_5),
@@ -238,6 +275,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("private-html.html", "private-html.ts"))
   }
 
+  @Test
   fun testInaccessibleSymbolInlineAot() {
     doTest(inspections = listOf(AngularInaccessibleSymbolInspection::class.java),
            dependencies = listOf(ANGULAR_CORE_13_3_5, TS_LIB),
@@ -245,6 +283,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("private-inline.ts"))
   }
 
+  @Test
   fun testInaccessibleSymbolStrict() {
     doTest(inspections = listOf(AngularInaccessibleSymbolInspection::class.java),
            dependencies = listOf(ANGULAR_CORE_17_3_0, TS_LIB),
@@ -252,6 +291,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("inaccessibleSymbolStrict.ts"))
   }
 
+  @Test
   fun testUnknownBlock1() {
     doTest(1,
            "foo@b<caret>ar.com",
@@ -261,6 +301,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("unknownBlock.html"))
   }
 
+  @Test
   fun testUnknownBlock2() {
     doTest(2,
            "something@f<caret>or.change.com",
@@ -270,6 +311,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("unknownBlock.html"))
   }
 
+  @Test
   fun testUnknownBlock3() {
     doTest(3,
            "to @foo o<caret>n",
@@ -279,6 +321,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("unknownBlock.html"))
   }
 
+  @Test
   fun testUnknownBlock4() {
     doTest(4,
            "no @<caret> block name",
@@ -288,6 +331,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("unknownBlock.html"))
   }
 
+  @Test
   fun testUnknownBlockInjected() {
     doTest(1,
            "the @<caret>unknown block",
@@ -297,6 +341,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("unknownBlockInjected.ts"))
   }
 
+  @Test
   fun testBraceEscape() {
     doTest(1,
            "e {<caret> a",
@@ -306,6 +351,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("braceEscape.html"))
   }
 
+  @Test
   fun testBraceEscapeNg17_1() {
     doTest(1,
            "e {<caret> a",
@@ -315,6 +361,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("braceEscapeNg17.html"))
   }
 
+  @Test
   fun testBraceEscapeNg17_2() {
     doTest(2,
            "closing }<caret>",
@@ -324,12 +371,14 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
            files = listOf("braceEscapeNg17.html"))
   }
 
+  @Test
   fun testDeferBlockOnParameter() {
     doTest(inspections = listOf(AngularDeferBlockOnTriggerInspection::class.java),
            dependencies = listOf(ANGULAR_CORE_17_3_0),
            files = listOf("defer-block-on-trigger.html"))
   }
 
+  @Test
   fun testCreateSignalInput() {
     doTest(
       location = "[te<caret>st]=\"test\"",
@@ -340,6 +389,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
     )
   }
 
+  @Test
   fun testCreateRequiredSignalInput() {
     doTest(
       location = "[te<caret>st]=\"test\"",
@@ -350,6 +400,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
     )
   }
 
+  @Test
   fun testCreateModelInput() {
     doTest(
       location = "[te<caret>st]=\"test\"",
@@ -360,6 +411,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
     )
   }
 
+  @Test
   fun testCreateRequiredModelInput() {
     doTest(
       location = "[te<caret>st]=\"test\"",
@@ -370,6 +422,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
     )
   }
 
+  @Test
   fun testUncalledSignalLengthPropertyAccess1() =
     doTest(
       testNr = 1,
@@ -381,6 +434,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
 
+  @Test
   fun testUncalledSignalLengthPropertyAccess2() =
     doTest(
       testNr = 2,
@@ -392,6 +446,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
 
+  @Test
   fun testArrowFunctionWithBlockBody1() =
     doTest(
       testNr = 1,
@@ -403,6 +458,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
 
+  @Test
   fun testArrowFunctionWithBlockBody2() =
     doTest(
       testNr = 2,
@@ -414,6 +470,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
 
+  @Test
   fun testArrowFunctionWithBlockBody3() =
     doTest(
       testNr = 3,
@@ -425,6 +482,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
 
+  @Test
   fun testMisconfiguredDeferTriggers1() =
     doTest(
       testNr = 1,
@@ -436,6 +494,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
 
+  @Test
   fun testMisconfiguredDeferTriggers2() =
     doTest(
       testNr = 2,
@@ -447,6 +506,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
 
+  @Test
   fun testMisconfiguredDeferTriggers3() =
     doTest(
       testNr = 3,
@@ -458,6 +518,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
 
+  @Test
   fun testMisconfiguredDeferTriggers4() =
     doTest(
       testNr = 4,
@@ -470,6 +531,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
     )
 
 
+  @Test
   fun testMisconfiguredDeferTriggers5() =
     doTest(
       testNr = 5,

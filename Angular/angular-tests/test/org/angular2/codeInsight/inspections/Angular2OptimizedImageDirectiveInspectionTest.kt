@@ -4,32 +4,42 @@ package org.angular2.codeInsight.inspections
 import com.intellij.xml.analysis.XmlAnalysisBundle
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.TestNoService
+import org.angular2.TestTsGoFork
 import org.angular2.inspections.AngularNgOptimizedImageInspection
 import org.angular2.lang.Angular2Bundle
+import org.junit.Test
 
-class Angular2OptimizedImageDirectiveInspectionTest : Angular2TestCase("inspections/ngSrc", TypeScriptServiceKind.None) {
+@TestNoService
+@TestTsGoFork
+class Angular2OptimizedImageDirectiveInspectionTest : Angular2TestCase("inspections/ngSrc") {
 
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(AngularNgOptimizedImageInspection())
   }
 
+  @Test
   fun testConvert() {
     doMultiFileTest(Angular2Bundle.message("angular.quickfix.template.covert-to-ng-src.family"))
   }
 
+  @Test
   fun testAddWidthHeight() {
     doMultiFileTest(Angular2Bundle.message("angular.quickfix.template.create-height-width-attributes.name"))
   }
 
+  @Test
   fun testAddFill() {
     doMultiFileTest(Angular2Bundle.message("angular.quickfix.template.create-attribute.name", AngularNgOptimizedImageInspection.FILL_ATTR))
   }
 
+  @Test
   fun testAddWidth() {
     doMultiFileTest(Angular2Bundle.message("angular.quickfix.template.create-attribute.name", AngularNgOptimizedImageInspection.WIDTH_ATTR))
   }
 
+  @Test
   fun testRemoveWidth() {
     doMultiFileTest(XmlAnalysisBundle.message("xml.quickfix.remove.attribute.text", AngularNgOptimizedImageInspection.WIDTH_ATTR))
   }

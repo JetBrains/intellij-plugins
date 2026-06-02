@@ -5,57 +5,75 @@ import com.intellij.javascript.testFramework.web.configureAndCopyPaste
 import com.intellij.javascript.testFramework.web.performCopyPaste
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.TestNoService
+import org.angular2.TestTsGoFork
+import org.junit.Test
 
-class Angular2CopyPasteTest : Angular2TestCase("copyPaste", TypeScriptServiceKind.None) {
+@TestNoService
+@TestTsGoFork
+class Angular2CopyPasteTest : Angular2TestCase("copyPaste") {
 
+  @Test
   fun testBasic() {
     doTest("html", "html")
   }
 
+  @Test
   fun testBasicToInjected() {
     doTest("html", "ts")
   }
 
+  @Test
   fun testInjected() {
     doTest("ts", "ts")
   }
 
+  @Test
   fun testInjectedToBasic() {
     doTest("ts", "html")
   }
 
+  @Test
   fun testExpression() {
     doTest("html", "html")
   }
 
+  @Test
   fun testExpressionFromInjected() {
     doTest("ts", "html")
   }
 
+  @Test
   fun testExpressionToInjected() {
     doTest("html", "ts")
   }
 
+  @Test
   fun testExpressionToHtml() {
     doTest("html", "html")
   }
 
+  @Test
   fun testHtmlToExpression() {
     doTest("html", "html")
   }
 
+  @Test
   fun testNgFor() {
     doTest("html", "html")
   }
 
+  @Test
   fun testSelf() {
     doSameFileTest("html", "</div >\n<caret>")
   }
 
+  @Test
   fun testUndefined() {
     doTest("html", "html")
   }
 
+  @Test
   fun testAliased() {
     doTest("html", "html")
   }

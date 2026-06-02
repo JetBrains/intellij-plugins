@@ -8,11 +8,17 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TsConfigFile
+import org.angular2.TestTsGoFork
+import org.angular2.TestTsNode
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
+import org.junit.Test
 
-class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", TypeScriptServiceKind.TsNode) {
+@TestTsNode
+@TestTsGoFork
+class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
 
+  @Test
   fun testBasic() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_16_2_8,
     Angular2TestModule.ANGULAR_COMMON_16_2_8,
@@ -20,6 +26,7 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", Ty
     dir = true,
   )
 
+  @Test
   fun testTemplateColorsHtml() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_16_2_8,
     Angular2TestModule.ANGULAR_COMMON_16_2_8,
@@ -28,49 +35,60 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", Ty
     configureFileName = "colors.ts"
   )
 
+  @Test
   fun testNgAcceptInputTypeOverride() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_16_2_8,
   )
 
+  @Test
   fun testNgAcceptInputTypeOverrideGenericDirectives() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_20_1_4,
     dir = true,
     configureFileName = "app.component.ts"
   )
 
+  @Test
   fun testHostDirectives() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_16_2_8,
     dir = true,
   )
 
+  @Test
   fun testSafeAccess() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )
 
+  @Test
   fun testModelSignals() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )
 
+  @Test
   fun testBlockDefer() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )
 
+  @Test
   fun testBlockFor() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )
 
+  @Test
   fun testBlockIf() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )
 
+  @Test
   fun testBlockSwitch() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )
 
+  @Test
   fun testEscapedString() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )
 
+  @Test
   fun testDirectiveReferences() = checkTranspilation(
     Angular2TestModule.ANGULAR_MATERIAL_17_3_0,
     Angular2TestModule.ANGULAR_CORE_17_3_0,
@@ -78,20 +96,24 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", Ty
     Angular2TestModule.ANGULAR_FORMS_17_3_0,
   )
 
+  @Test
   fun testBlockLet() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_18_2_1,
     Angular2TestModule.ANGULAR_COMMON_18_2_1,
   )
 
+  @Test
   fun testInputSignal() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
     Angular2TestModule.ANGULAR_COMMON_17_3_0,
   )
 
+  @Test
   fun testTypeof() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_19_2_0
   )
 
+  @Test
   fun testObjectInitializer() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_18_2_1,
     Angular2TestModule.ANGULAR_COMMON_18_2_1,
@@ -99,24 +121,29 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", Ty
     dir = true
   )
 
+  @Test
   fun testNumberValueAccessor() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
     Angular2TestModule.ANGULAR_FORMS_17_3_0,
   )
 
+  @Test
   fun testHostBindings() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )
 
+  @Test
   fun testEs6ShorthandProperty() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_19_2_0,
   )
 
+  @Test
   fun testStructuralDirective() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_18_2_1,
     Angular2TestModule.ANGULAR_COMMON_18_2_1,
   )
 
+  @Test
   fun testTemplateLiteralExternal() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_19_2_0,
     Angular2TestModule.ANGULAR_COMMON_19_2_0,
@@ -124,6 +151,7 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", Ty
     configureFileName = "templateLiteral.ts"
   )
 
+  @Test
   fun testTemplateLiteralUnclosed() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_19_2_0,
     Angular2TestModule.ANGULAR_COMMON_19_2_0,
@@ -131,98 +159,121 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", Ty
     configureFileName = "templateLiteral.ts"
   )
 
+  @Test
   fun testTemplateLiteralInline() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_19_2_0,
     Angular2TestModule.ANGULAR_COMMON_19_2_0,
     configureFileName = "templateLiteralInline.ts"
   )
 
+  @Test
   fun testCreateComponentBindings() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_20_0_0_NEXT_3
   )
 
+  @Test
   fun testNgTemplateWithStructuralDirective() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_19_2_0,
     Angular2TestModule.ANGULAR_COMMON_19_2_0,
   )
 
+  @Test
   fun testPower() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_20_0_0_NEXT_3
   )
 
+  @Test
   fun testVoidKeyword() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_20_0_0_NEXT_3
   )
 
+  @Test
   fun testVoidKeywordNg19() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_19_2_0
   )
 
+  @Test
   fun testAssignmentOperators() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_20_1_4
   )
 
+  @Test
   fun testGenericDirectiveWithExtendsNonNullable() =
     checkTranspilation(
       Angular2TestModule.ANGULAR_CORE_20_1_4,
       dir = true,
     )
 
+  @Test
   fun testListenerInNestedIfBlocks() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_20_1_4
   )
 
+  @Test
   fun testNewAnimateEvents() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_20_2_2
   )
 
+  @Test
   fun testAnyInCallArgs() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_20_2_2
   )
 
+  @Test
   fun testLibraryWithSignals() =
     checkTranspilation(ANGULAR_CORE_20_1_4, configureFileName = "my-component.ts", dir = true)
 
+  @Test
   fun testSpreadSyntax() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_21_1_3
   )
 
+  @Test
   fun testArrowFunctions() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_21_2_0, dir = true
   )
 
+  @Test
   fun testArrowFunctionDefinedLet() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_21_2_0
   )
 
+  @Test
   fun testArrowFunctionDollarEvents() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_21_2_0
   )
 
+  @Test
   fun testArrowFunctionHostBinding() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_21_2_0
   )
 
+  @Test
   fun testArrowFunctionLoopVariables() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_21_2_0
   )
 
+  @Test
   fun testArrowFunctionSafeAccess() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_21_2_0
   )
 
+  @Test
   fun testRegexes() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_21_0_9
   )
 
+  @Test
   fun testRegexesExt() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_21_0_9, dir = true
   )
 
+  @Test
   fun testRelativeImports() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_21_0_9, Angular2TestModule.IONIC_ANGULAR_7_7_3
   )
 
+  @Test
   fun testExtendedKeyEvents() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_21_0_9
   )

@@ -6,7 +6,12 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule.ANGULAR_COMMON_18_2_1
 import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
 import org.angular2.Angular2TestModule.ANGULAR_CORE_19_2_0
+import org.angular2.TestTsGoFork
+import org.angular2.TestTsNode
+import org.junit.Test
 
+@TestTsNode
+@TestTsGoFork
 class Angular2ParameterInfoTest : Angular2TestCase("parameterInfo") {
   private lateinit var myHintFixture: EditorHintFixture
 
@@ -15,55 +20,71 @@ class Angular2ParameterInfoTest : Angular2TestCase("parameterInfo") {
     myHintFixture = EditorHintFixture(testRootDisposable)
   }
 
+  @Test
   fun testPipe() =
     doParameterInfoTest(extension = "ts")
 
+  @Test
   fun testTemplateBindingsNgIfEmpty() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
                         extension = "ts")
 
+  @Test
   fun testTemplateBindingsNgIf1() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
                         extension = "ts")
 
+  @Test
   fun testTemplateBindingsNgIf2() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
                         extension = "ts")
 
+  @Test
   fun testTemplateBindingsNgIf3() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
                         extension = "ts")
 
+  @Test
   fun testForBlock1() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
+  @Test
   fun testForBlock2() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
+  @Test
   fun testForBlock3() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
+  @Test
   fun testIfBlock1() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
+  @Test
   fun testIfBlock2() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
+  @Test
   fun testIfBlock3() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
+  @Test
   fun testIfBlock4() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, extension = "html")
 
+  @Test
   fun testDeferBlock1() =
     doParameterInfoTest(ANGULAR_CORE_19_2_0, extension = "html")
 
+  @Test
   fun testDeferBlock2() =
     doParameterInfoTest(ANGULAR_CORE_19_2_0, extension = "html")
 
+  @Test
   fun testDeferBlock3() =
     doParameterInfoTest(ANGULAR_CORE_19_2_0, extension = "html")
 
+  @Test
   fun testDeferBlock4() =
     doParameterInfoTest(ANGULAR_CORE_19_2_0, extension = "html")
 

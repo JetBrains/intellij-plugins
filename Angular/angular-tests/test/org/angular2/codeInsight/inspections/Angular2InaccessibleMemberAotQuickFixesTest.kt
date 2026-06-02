@@ -5,44 +5,58 @@ import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
+import org.angular2.TestTsGoFork
+import org.angular2.TestTsNode
 import org.angular2.inspections.AngularInaccessibleSymbolInspection
+import org.junit.Test
 
-class Angular2InaccessibleMemberAotQuickFixesTest : Angular2TestCase("inspections/inaccessibleSymbol", TypeScriptServiceKind.TsNode) {
+@TestTsNode
+@TestTsGoFork
+class Angular2InaccessibleMemberAotQuickFixesTest : Angular2TestCase("inspections/inaccessibleSymbol") {
 
+  @Test
   fun testPrivateFieldFix() {
     doMultiFileTest("private.html", "private<caret>Used")
   }
 
+  @Test
   fun testPrivateFieldInlineFix() {
     doMultiFileTest("private-inline.ts", "private<caret>Used")
   }
 
+  @Test
   fun testPrivateGetterFix() {
     doMultiFileTest("private.html", "private<caret>UsedGet")
   }
 
+  @Test
   fun testPrivateConstructorFieldFix() {
     doMultiFileTest("private.html", "private<caret>Field")
   }
 
+  @Test
   fun testPrivateConstructorDecoratedFieldFix() {
     doMultiFileTest("private.html", "private<caret>Field")
   }
 
+  @Test
   fun testPrivateConstructorDecoratedFieldFix2() {
     doMultiFileTest("private.html", "private<caret>Field")
   }
 
+  @Test
   fun testPrivateInputFix() {
     doMultiFileTest("private-input.ts", "[private<caret>Field]", "public",
                     strict = true)
   }
 
+  @Test
   fun testProtectedInputFix() {
     doMultiFileTest("protected-input.ts", "[protected<caret>Field]", "public",
                     strict = true)
   }
 
+  @Test
   fun testReadonlyInputFix() {
     doMultiFileTest("readonly-input.ts", "[readonly<caret>Field]", hint = "Remove readonly modifier",
                     strict = true)

@@ -5,9 +5,15 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TestModule.NGRX_SIGNALS_20_1_0
 import org.angular2.Angular2TsConfigFile
+import org.angular2.TestTsGoFork
+import org.angular2.TestTsNode
+import org.junit.Test
 
-class Angular2TscRenameTest : Angular2TestCase("refactoring/rename", TypeScriptServiceKind.TsNode) {
+@TestTsNode
+@TestTsGoFork
+class Angular2TscRenameTest : Angular2TestCase("refactoring/rename") {
 
+  @Test
   fun testSignalStore() =
     doSymbolRename("signalStore.ts", "newName", ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0,
                    dir = false, configurators = listOf(Angular2TsConfigFile()))

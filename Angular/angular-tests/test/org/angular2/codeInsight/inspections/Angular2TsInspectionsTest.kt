@@ -14,15 +14,21 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceIns
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.TestNoService
+import org.angular2.TestTsGoFork
 import org.angular2.inspections.AngularUncalledSignalLengthPropertyAccessInspection
 import org.angular2.lang.Angular2Bundle
+import org.junit.Test
 
 /**
  * @see Angular2DecoratorInspectionsTest
  * @see Angular2TemplateInspectionsTest
  */
-class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts", TypeScriptServiceKind.None) {
+@TestNoService
+@TestTsGoFork
+class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
 
+  @Test
   fun testUnusedSymbol() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                        configureFileName = "unused.ts",
@@ -30,6 +36,7 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts", TypeScriptS
                        inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
                                            JSUnusedLocalSymbolsInspection::class.java))
 
+  @Test
   fun testUnusedSymbolNg17() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_17_3_0,
                        configureFileName = "unused.ts",
@@ -37,12 +44,14 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts", TypeScriptS
                        inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
                                            JSUnusedLocalSymbolsInspection::class.java))
 
+  @Test
   fun testUnusedSetter() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                        dir = true,
                        inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
                                            JSUnusedLocalSymbolsInspection::class.java))
 
+  @Test
   fun testMethodCanBeStatic() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8, dir = true) {
       val canBeStaticInspection = JSMethodCanBeStaticInspection()
@@ -50,10 +59,12 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts", TypeScriptS
       enableInspections(canBeStaticInspection)
     }
 
+  @Test
   fun testUnterminated() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                        inspections = listOf(UnterminatedStatementJSInspection::class.java))
 
+  @Test
   fun testUnusedReference() =
     doConfiguredTest(dir = true, checkResult = true, extension = "html") {
       enableInspections(JSUnusedGlobalSymbolsInspection::class.java,
@@ -71,38 +82,46 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts", TypeScriptS
       }
     }
 
+  @Test
   fun testId() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                        inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
                                            JSUnusedLocalSymbolsInspection::class.java))
 
+  @Test
   fun testPipeAndArgResolution() =
     doHighlightingTest(inspections = listOf(TypeScriptUnresolvedReferenceInspection::class.java),
                        dir = true,
                        extension = "html")
 
+  @Test
   fun testHtmlTargetWithInterpolation() =
     doHighlightingTest(inspections = listOf(HtmlUnknownTargetInspection::class.java),
                        extension = "html")
 
+  @Test
   fun testDuplicateDeclarationOff() =
     doHighlightingTest(inspections = listOf(JSDuplicatedDeclarationInspection::class.java),
                        dir = true,
                        extension = "html")
 
+  @Test
   fun testDuplicateDeclarationOffTemplate() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                        inspections = listOf(JSDuplicatedDeclarationInspection::class.java))
 
+  @Test
   fun testEmptyVarDefinition() =
     doHighlightingTest(inspections = listOf(JSUnusedLocalSymbolsInspection::class.java),
                        extension = "html")
 
+  @Test
   fun testMissingLabelSuppressed() =
     doHighlightingTest(inspections = listOf(HtmlFormInputWithoutLabelInspection::class.java),
                        dir = true,
                        extension = "html")
 
+  @Test
   fun testUncalledSignalLengthPropertyAccess() =
     checkHighlightingAndQuickFix(
       Angular2TestModule.ANGULAR_CORE_20_1_4,
