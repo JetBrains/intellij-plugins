@@ -40,9 +40,10 @@ import org.jetbrains.qodana.coverage.readChangedLinesPayload
 import org.jetbrains.qodana.report.ReportMetadata
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_DATA
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
-import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.exists
+import kotlin.io.path.extension
+import kotlin.io.path.name
 
 
 internal val COVERAGE_INSPECTIONS_NAMES = setOf("JsCoverageInspection", "JvmCoverageInspection", "PhpCoverageInspection",
@@ -75,8 +76,10 @@ fun reportElement(problemsHolder: ProblemsHolder, element: PsiElement, @Inspecti
   problemsHolder.registerProblem(computeProblemDescriptor(element, problem))
 }
 
-fun issueWithCoverage(data: ClassData?, psiFile: PsiFile, textRange: TextRange, project: Project, threshold: Int,
-                      warnMissingCoverage: Boolean, fullScanNeeded: Boolean = false): Boolean {
+fun issueWithCoverage(
+  data: ClassData?, psiFile: PsiFile, textRange: TextRange, project: Project, threshold: Int,
+  warnMissingCoverage: Boolean, fullScanNeeded: Boolean = false,
+): Boolean {
   if (data == null) {
     return warnMissingCoverage
   }
@@ -105,7 +108,8 @@ internal fun computeCoverage(data: ClassData, document: Document, textRange: Tex
       totalLines++
       if (lineData.status.toByte() != LineCoverage.NONE) {
         coveredLines++
-      } else if (firstLine && !fullScanNeeded) { //if first line is not covered then no need to look further
+      }
+      else if (firstLine && !fullScanNeeded) { //if first line is not covered then no need to look further
         return 0
       }
       firstLine = false
@@ -116,26 +120,36 @@ internal fun computeCoverage(data: ClassData, document: Document, textRange: Tex
   return coveredLines * 100 / totalLines
 }
 
-internal fun retrieveCoverageData(engine: CoverageEngine, coverageFiles: List<File>, globalContext: QodanaGlobalInspectionContext): ProjectData? {
-  val suites = computeSuites(engine, coverageFiles, globalContext.project)
+internal fun retrieveCoverageData(
+  engine: CoverageEngine,
+  coverageFiles: List<Path>,
+  globalContext: QodanaGlobalInspectionContext,
+): ProjectData? {
+  val suites = computeSuitesPaths(engine, coverageFiles, globalContext.project)
   if (!suites.any()) return null
   val bundle = CoverageSuitesBundle(suites.toTypedArray())
   return bundle.coverageData
 }
 
-fun computeSuites(engine: CoverageEngine, coverageFiles: List<File>, project: Project): List<CoverageSuite> {
-  val runnersAndCovers = mutableListOf<Pair<CoverageRunner, File>>()
+@Suppress("IO_FILE_USAGE")
+@Deprecated("Use version with Path instead")
+fun computeSuites(engine: CoverageEngine, coverageFiles: List<java.io.File>, project: Project): List<CoverageSuite> {
+  return computeSuitesPaths(engine, coverageFiles.map { it.toPath() }, project)
+}
+
+fun computeSuitesPaths(engine: CoverageEngine, coverageFiles: List<Path>, project: Project): List<CoverageSuite> {
+  val runnersAndCovers = mutableListOf<Pair<CoverageRunner, Path>>()
   for (coverageFile in coverageFiles) {
     val runner = getCoverageRunner(coverageFile, engine) ?: continue
     if (runner.acceptsCoverageEngine(engine)) runnersAndCovers.add(Pair(runner, coverageFile))
   }
   logger.info("Engine ${engine.presentableText} - accepted ${runnersAndCovers.size} files")
   if (runnersAndCovers.any() && System.getProperty("qodana.coverage.debug.info", "false").toBoolean()) {
-    logger.info("Engine ${engine.presentableText} - accepted : " + runnersAndCovers.joinToString(", ") { "${it.first.presentableName} - ${it.second.path}" })
+    logger.info("Engine ${engine.presentableText} - accepted : " + runnersAndCovers.joinToString(", ") { "${it.first.presentableName} - ${it.second}" })
   }
   val suites = mutableListOf<CoverageSuite>()
   for ((runner, cover) in runnersAndCovers) {
-    val fileProvider: CoverageFileProvider = DefaultCoverageFileProvider(cover.path)
+    val fileProvider: CoverageFileProvider = DefaultCoverageFileProvider(cover)
     val suite = engine.createCoverageSuite(cover.name, project, runner, fileProvider, -1) ?: continue
     suites.add(suite)
   }
@@ -222,8 +236,10 @@ fun isLocalChanges(context: QodanaGlobalInspectionContext): Boolean {
   return context.coverageComputationState().isIncrementalAnalysis()
 }
 
-fun loadMissingData(project: Project, textRange: TextRange, psiFile: PsiFile, warnMissingCoverage: Boolean,
-                    globalContext: QodanaGlobalInspectionContext): Boolean {
+fun loadMissingData(
+  project: Project, textRange: TextRange, psiFile: PsiFile, warnMissingCoverage: Boolean,
+  globalContext: QodanaGlobalInspectionContext,
+): Boolean {
   // if the warnMissingCoverage flag is not set, it is not needed to load missing data
   if (warnMissingCoverage) {
     val doc = PsiDocumentManager.getInstance(project).getDocument(psiFile) ?: return false
@@ -258,10 +274,10 @@ private fun computeProblemDescriptor(element: PsiElement, @InspectionMessage des
     .createProblemDescriptor(element, TextRange(0, endOffsetFirstLine), descriptionTemplate, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true)
 }
 
-private fun getCoverageRunner(file: File, engine: CoverageEngine): CoverageRunner? {
+private fun getCoverageRunner(file: Path, engine: CoverageEngine): CoverageRunner? {
   for (runner in CoverageRunner.EP_NAME.extensionList) {
     for (extension in runner.dataFileExtensions) {
-      if (Comparing.strEqual(file.extension, extension) && runner.canBeLoaded(file.toPath()) && runner.acceptsCoverageEngine(engine)) return runner
+      if (Comparing.strEqual(file.extension, extension) && runner.canBeLoaded(file) && runner.acceptsCoverageEngine(engine)) return runner
     }
   }
   return null

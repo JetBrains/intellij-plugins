@@ -29,16 +29,13 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspec
 
 class PyCoverageInspection : CoverageInspectionBase() {
   @Suppress("MemberVisibilityCanBePrivate")
-  var fileThreshold = 50
-
-  companion object {
-    private val py = Key.create<Lazy<ProjectData?>>("qodana.python.coverage")
-    private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.python.normalizedPaths")
-  }
+  var fileThreshold: Int = 50
 
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(py, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      computeCoverageData(globalContext, PyCoverageEngine::class)?.let { remapCoverage(globalContext.project, it) }?.also { loadNormalizedPaths(globalContext, it) }
+      computeCoverageData(globalContext, PyCoverageEngine::class, PyCoverageFileProvider())?.let {
+        remapCoverage(globalContext.project, it)
+      }?.also { loadNormalizedPaths(globalContext, it) }
     })
   }
 
@@ -53,7 +50,7 @@ class PyCoverageInspection : CoverageInspectionBase() {
     file.iterateContents(buildVisitor(file as PyFile, problemsHolder, data, globalContext))
   }
 
-  override fun validateFileType(file: PsiFile) = file is PyFile
+  override fun validateFileType(file: PsiFile): Boolean = file is PyFile
 
   override fun cleanup(globalContext: QodanaGlobalInspectionContext) {
     val data = globalContext.getUserData(py)?.value
@@ -133,3 +130,6 @@ class PyCoverageInspection : CoverageInspectionBase() {
     return range
   }
 }
+
+private val py = Key.create<Lazy<ProjectData?>>("qodana.python.coverage")
+private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.python.normalizedPaths")

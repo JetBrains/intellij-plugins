@@ -33,7 +33,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspec
 
 class GoCoverageInspection : CoverageInspectionBase() {
   @Suppress("MemberVisibilityCanBePrivate")
-  var fileThreshold = 50
+  var fileThreshold: Int = 50
 
   companion object {
     private val go = Key.create<Lazy<ProjectData?>>("qodana.go.coverage")
@@ -43,7 +43,7 @@ class GoCoverageInspection : CoverageInspectionBase() {
 
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(go, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      val data = computeCoverageData(globalContext, GoCoverageEngine::class) ?: return@lazy null
+      val data = computeCoverageData(globalContext, GoCoverageEngine::class, GoCoverageFileProvider()) ?: return@lazy null
       // Store GoProjectData for later serialisation of Go coverage data for IDE
       (data as? GoCoverageProjectData)?.let { globalContext.putUserData(goProjectData, it) }
       remapCoverage(globalContext.project, data).also { loadNormalizedPaths(globalContext, it) }
@@ -61,7 +61,7 @@ class GoCoverageInspection : CoverageInspectionBase() {
     file.iterateContents(buildVisitor(file as GoFile, problemsHolder, data, globalContext))
   }
 
-  override fun validateFileType(file: PsiFile) = file is GoFile
+  override fun validateFileType(file: PsiFile): Boolean = file is GoFile
 
   override fun cleanup(globalContext: QodanaGlobalInspectionContext) {
     val data = globalContext.getUserData(go)?.value
@@ -174,3 +174,6 @@ class GoCoverageInspection : CoverageInspectionBase() {
     return "(anonymous function in ${file.name})"
   }
 }
+
+private val go = Key.create<Lazy<ProjectData?>>("qodana.go.coverage")
+private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.go.normalizedPaths")

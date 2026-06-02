@@ -25,8 +25,7 @@ data class QodanaScriptResult(
       outputPath = ctx.outputPath,
       coverageStats = ctx.coverageStatisticsData,
       coverageFilesPresent = ctx.getUserData(precomputedCoverageFiles)
-        .orEmpty()
-        .any()
+        ?.values?.any { it.isInitialized() && it.value.isNotEmpty() } ?: false
     )
   }
 }
