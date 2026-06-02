@@ -18,8 +18,6 @@ interface QodanaGroupByModuleSupport {
   }
 }
 
-class QodanaGroupByModuleSupportImpl : QodanaGroupByModuleSupport
-
 @Service(Service.Level.APP)
 class QodanaGroupByModuleSupportService : Disposable {
   companion object {

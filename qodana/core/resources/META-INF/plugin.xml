@@ -61,7 +61,6 @@
   <depends optional="true" config-file="static-analysis-intellijLang.xml">org.intellij.intelliLang</depends>
   <depends optional="true" config-file="static-analysis-git.xml">Git4Idea</depends>
   <depends optional="true" config-file="static-analysis-yaml.xml">org.jetbrains.plugins.yaml</depends>
-  <depends optional="true" config-file="static-analysis-java.xml">com.intellij.java</depends>
 
   <resource-bundle>messages.QodanaBundle</resource-bundle>
 

@@ -1,5 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="org.intellij.qodana">
-    <problemsViewModuleSupport implementation="org.jetbrains.qodana.ui.problemsView.QodanaGroupByModuleSupportImpl"/>
-  </extensions>
-</idea-plugin>

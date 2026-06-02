@@ -5,6 +5,7 @@
   </dependencies>
   <extensions defaultExtensionNs="org.intellij.qodana">
     <projectDescriber implementation="org.jetbrains.qodana.jvm.java.JavaDescriber"/>
+    <problemsViewModuleSupport implementation="org.jetbrains.qodana.jvm.java.QodanaGroupByModuleSupportImpl"/>
     <qodanaYamlItemProvider implementation="org.jetbrains.qodana.jvm.java.QodanaYamlJdkItemProvider"/>
     <qodanaScriptFactory implementation="org.jetbrains.qodana.jvm.java.migrate.MigrateClassesScriptFactory"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.jvm.java.JvmLocalTaintOutputConsumer"/>
