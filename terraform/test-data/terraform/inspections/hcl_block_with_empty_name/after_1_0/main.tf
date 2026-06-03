@@ -1,4 +1,4 @@
-# intention: "TfBlockNameValidness"
+# intention: "HclBlockNameValidness"
 # fix: "Rename"
 # position: 13: """"
 #
