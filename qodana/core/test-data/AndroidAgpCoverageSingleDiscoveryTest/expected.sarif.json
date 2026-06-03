@@ -1,0 +1,142 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'toSnakeCase' coverage is below the threshold 50%",
+            "markdown": "Method `toSnakeCase` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/java/com/example/lib/StringFormatter.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 19,
+                  "charOffset": 398,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "toSnakeCase"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 17,
+                  "startColumn": 1,
+                  "charOffset": 380,
+                  "charLength": 45,
+                  "snippet": {
+                    "text": "    public String toSnakeCase(String input) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "4e8e4435766121da",
+            "equalIndicator/v1": "89d3726036e6f1dbe14947104aae8626f9c83ba13e4358eb9cee6e599215e707"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'isBlank' coverage is below the threshold 50%",
+            "markdown": "Method `isBlank` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/java/com/example/lib/StringFormatter.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 21,
+                  "startColumn": 20,
+                  "charOffset": 512,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "isBlank"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 21,
+                  "startColumn": 1,
+                  "charOffset": 493,
+                  "charLength": 42,
+                  "snippet": {
+                    "text": "    public boolean isBlank(String input) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "32708c5c269fe404",
+            "equalIndicator/v1": "4d1e2f2dbad1d33df4bc44cf7b7199b1a71a4e5a1910cdebe71f424fa0fa67ae"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 75,
+          "totalLines": 8,
+          "totalCoveredLines": 6
+        }
+      }
+    }
+  ]
+}

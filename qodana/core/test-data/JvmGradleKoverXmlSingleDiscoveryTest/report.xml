@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<report name="Kover Gradle Plugin XML report for :">
+<package name="com/example/math">
+<class name="com/example/math/MathUtil" sourcefilename="MathUtil.kt">
+<method name="divide" desc="(II)I">
+<counter type="INSTRUCTION" missed="14" covered="0"/>
+<counter type="BRANCH" missed="2" covered="0"/>
+<counter type="LINE" missed="2" covered="0"/>
+</method>
+<method name="multiply" desc="(II)I">
+<counter type="INSTRUCTION" missed="3" covered="0"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="1" covered="0"/>
+</method>
+<method name="subtract" desc="(II)I">
+<counter type="INSTRUCTION" missed="0" covered="3"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="0" covered="1"/>
+</method>
+<method name="&lt;init&gt;" desc="()V">
+<counter type="INSTRUCTION" missed="0" covered="2"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="0" covered="1"/>
+</method>
+<method name="add" desc="(II)I">
+<counter type="INSTRUCTION" missed="0" covered="3"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="0" covered="1"/>
+</method>
+<method name="isEven" desc="(I)Z">
+<counter type="INSTRUCTION" missed="0" covered="4"/>
+<counter type="BRANCH" missed="0" covered="0"/>
+<counter type="LINE" missed="0" covered="1"/>
+</method>
+<counter type="INSTRUCTION" missed="17" covered="12"/>
+<counter type="BRANCH" missed="2" covered="0"/>
+<counter type="LINE" missed="3" covered="4"/>
+<counter type="METHOD" missed="2" covered="4"/>
+</class>
+<sourcefile name="MathUtil.kt">
+<line nr="3" mi="0" ci="2" mb="0" cb="0"/>
+<line nr="5" mi="0" ci="3" mb="0" cb="0"/>
+<line nr="7" mi="0" ci="3" mb="0" cb="0"/>
+<line nr="9" mi="3" ci="0" mb="0" cb="0"/>
+<line nr="12" mi="11" ci="0" mb="2" cb="0"/>
+<line nr="13" mi="3" ci="0" mb="0" cb="0"/>
+<line nr="16" mi="0" ci="4" mb="0" cb="0"/>
+<counter type="INSTRUCTION" missed="17" covered="12"/>
+<counter type="BRANCH" missed="2" covered="0"/>
+<counter type="LINE" missed="3" covered="4"/>
+</sourcefile>
+<counter type="INSTRUCTION" missed="17" covered="12"/>
+<counter type="BRANCH" missed="2" covered="0"/>
+<counter type="LINE" missed="3" covered="4"/>
+<counter type="METHOD" missed="2" covered="4"/>
+<counter type="CLASS" missed="0" covered="1"/>
+</package>
+<counter type="INSTRUCTION" missed="17" covered="12"/>
+<counter type="BRANCH" missed="2" covered="0"/>
+<counter type="LINE" missed="3" covered="4"/>
+<counter type="METHOD" missed="2" covered="4"/>
+<counter type="CLASS" missed="0" covered="1"/>
+</report>

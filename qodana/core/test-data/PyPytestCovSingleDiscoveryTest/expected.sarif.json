@@ -1,0 +1,199 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'ops.py' coverage is below the threshold 50%",
+            "markdown": "File `ops.py` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mathlib/ops.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 72,
+                  "snippet": {
+                    "text": "\"\"\"Arithmetic operations. Only some of these are exercised by the tests,"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 72,
+                  "snippet": {
+                    "text": "\"\"\"Arithmetic operations. Only some of these are exercised by the tests,"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "c452bf84e75b01d8",
+            "equalIndicator/v1": "4961c98dbf54d5c4a94a853db51a03f8b50492ec836009ae062698479055e359"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "Python"
+            ]
+          }
+        },
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'factorial' coverage is below the threshold 50%",
+            "markdown": "Method `factorial` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mathlib/ops.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 5,
+                  "charOffset": 341,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "factorial"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 23,
+                  "startColumn": 1,
+                  "charOffset": 337,
+                  "charLength": 17,
+                  "snippet": {
+                    "text": "def factorial(n):"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "b7dddc190bcb9e2c",
+            "equalIndicator/v1": "f0567772efe80f95beac82d015a6a268a7aef903a71b1fde28ca04a29ed94e92"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "Python"
+            ]
+          }
+        },
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'is_prime' coverage is below the threshold 50%",
+            "markdown": "Method `is_prime` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mathlib/ops.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "charOffset": 509,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "is_prime"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 32,
+                  "startColumn": 1,
+                  "charOffset": 505,
+                  "charLength": 16,
+                  "snippet": {
+                    "text": "def is_prime(n):"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "95f3b8af189c7220",
+            "equalIndicator/v1": "ab7df8b7e357aeca2b6b4b89a5a8150b34f6ba6f11c3301285b8b851514bda8a"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "Python"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 46,
+          "totalLines": 26,
+          "totalCoveredLines": 12
+        }
+      }
+    }
+  ]
+}

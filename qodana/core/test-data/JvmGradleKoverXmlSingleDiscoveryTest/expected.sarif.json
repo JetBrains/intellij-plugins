@@ -1,0 +1,142 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'multiply' coverage is below the threshold 50%",
+            "markdown": "Method `multiply` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/kotlin/com/example/math/MathUtil.kt",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 9,
+                  "charOffset": 141,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "multiply"
+                  },
+                  "sourceLanguage": "kotlin"
+                },
+                "contextRegion": {
+                  "startLine": 9,
+                  "startColumn": 1,
+                  "charOffset": 133,
+                  "charLength": 45,
+                  "snippet": {
+                    "text": "    fun multiply(a: Int, b: Int): Int = a * b"
+                  },
+                  "sourceLanguage": "kotlin"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "ebcdd0b576f13f2b",
+            "equalIndicator/v1": "0b4a7cba537f352026305f57796827e34b1b9c6b620e4ac5c3578b0c4a30904a"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "kotlin"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'divide' coverage is below the threshold 50%",
+            "markdown": "Method `divide` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/kotlin/com/example/math/MathUtil.kt",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 9,
+                  "charOffset": 188,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "divide"
+                  },
+                  "sourceLanguage": "kotlin"
+                },
+                "contextRegion": {
+                  "startLine": 11,
+                  "startColumn": 1,
+                  "charOffset": 180,
+                  "charLength": 37,
+                  "snippet": {
+                    "text": "    fun divide(a: Int, b: Int): Int {"
+                  },
+                  "sourceLanguage": "kotlin"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "73c61bb9ad5969b0",
+            "equalIndicator/v1": "5c4c46598b8ac94e5c3d6a932b5e56991540afd5118d20981036f805a9c99d90"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "kotlin"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 57,
+          "totalLines": 7,
+          "totalCoveredLines": 4
+        }
+      }
+    }
+  ]
+}

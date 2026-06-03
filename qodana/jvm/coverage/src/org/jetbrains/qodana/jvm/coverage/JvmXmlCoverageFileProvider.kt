@@ -31,7 +31,7 @@ internal class JvmXmlCoverageFileProvider : BaseQodanaCoverageFileProvider() {
       project,
       names = listOf("report.xml", "coverage.xml"),
       dirs = listOf(
-        "build/reports/kover", "build/reports/kover/xml", "reports/kover/project-xml", "build/reports/coverage/*",
+        "build/reports/kover", "build/reports/kover/xml", "reports/kover/project-xml", "build/reports/coverage/**",
       ),
     )
 }

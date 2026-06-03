@@ -1,0 +1,85 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'multiply' coverage is below the threshold 50%",
+            "markdown": "Method `multiply` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/Calculator.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 21,
+                  "charOffset": 269,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "multiply"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 19,
+                  "startColumn": 1,
+                  "charOffset": 249,
+                  "charLength": 49,
+                  "snippet": {
+                    "text": "    public function multiply(int $a, int $b): int"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "666d312ae69d7e60",
+            "equalIndicator/v1": "b55f15ec66a57926d3472d82fb93e5a0240e3a14fe1d2f17ef5a57a2aebd63ce"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "PHP"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 66,
+          "totalLines": 6,
+          "totalCoveredLines": 4
+        }
+      }
+    }
+  ]
+}
