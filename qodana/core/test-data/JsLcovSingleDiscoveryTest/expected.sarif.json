@@ -1,0 +1,199 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'math.js' coverage is below the threshold 50%",
+            "markdown": "File `math.js` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/math.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "'use strict';"
+                  },
+                  "sourceLanguage": "ECMAScript 6"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "'use strict';"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "907903cbd09e9e97",
+            "equalIndicator/v1": "b3f24bf8bd6ebb36a9bf691a039377d06e54d5cd21b755a50073c7d3f70ed9d2"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "ECMAScript 6"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'multiply' coverage is below the threshold 50%",
+            "markdown": "Method `multiply` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/math.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 10,
+                  "charOffset": 109,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "multiply"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 11,
+                  "startColumn": 1,
+                  "charOffset": 100,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "function multiply(a, b) {"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "9e445f703a79d400",
+            "equalIndicator/v1": "2f7d9eaff70ecf3e8718638bb5448b50dce9978fa2e786df08eefced27fc3c41"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'divide' coverage is below the threshold 50%",
+            "markdown": "Method `divide` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/math.js",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 10,
+                  "charOffset": 154,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "divide"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 15,
+                  "startColumn": 1,
+                  "charOffset": 145,
+                  "charLength": 23,
+                  "snippet": {
+                    "text": "function divide(a, b) {"
+                  },
+                  "sourceLanguage": "JavaScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "62e40a79943f9585",
+            "equalIndicator/v1": "da1b15d67bb7c96428a5d375883fa1a2025edf39084c5b7fdd98caf4246078ac"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 42,
+          "totalLines": 7,
+          "totalCoveredLines": 3
+        }
+      }
+    }
+  ]
+}

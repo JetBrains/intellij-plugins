@@ -1,0 +1,370 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class 'Calculator' coverage is below the threshold 50%",
+            "markdown": "Class `Calculator` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/java/com/example/Calculator.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 14,
+                  "charOffset": 35,
+                  "charLength": 10,
+                  "snippet": {
+                    "text": "Calculator"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 22,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "public class Calculator {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "3e3ce8d4ca805ba1",
+            "equalIndicator/v1": "ba52319e9f32e22e52f8a578fdfd4dc15aa5152401cdbae4323a2210dd5361cf"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'multiply' coverage is below the threshold 50%",
+            "markdown": "Method `multiply` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/java/com/example/Calculator.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 16,
+                  "charOffset": 197,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "multiply"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 13,
+                  "startColumn": 1,
+                  "charOffset": 182,
+                  "charLength": 39,
+                  "snippet": {
+                    "text": "    public int multiply(int a, int b) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "cdda43320d682c53",
+            "equalIndicator/v1": "d4e583d5c980f7b88df0e963f2bf14e7db9f8e9b1ea4e75c0ef3b69697009216"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'divide' coverage is below the threshold 50%",
+            "markdown": "Method `divide` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/java/com/example/Calculator.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 16,
+                  "charOffset": 266,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "divide"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 17,
+                  "startColumn": 1,
+                  "charOffset": 251,
+                  "charLength": 37,
+                  "snippet": {
+                    "text": "    public int divide(int a, int b) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "32c8a468a63cf8db",
+            "equalIndicator/v1": "14341bf2b6d25bedd3be2ad91ae0e0f41516025bd653ce8f84a46df1e2e594c5"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class 'Greeter' coverage is below the threshold 50%",
+            "markdown": "Class `Greeter` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/java/com/example/Greeter.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 14,
+                  "charOffset": 35,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "Greeter"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 22,
+                  "charLength": 22,
+                  "snippet": {
+                    "text": "public class Greeter {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "c5b997d2a4000783",
+            "equalIndicator/v1": "8a2846cf9591d65f8b5aa3ab8527a86c4475ceeecbec34b0a7120ce2bcfd8589"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'greet' coverage is below the threshold 50%",
+            "markdown": "Method `greet` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/java/com/example/Greeter.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 19,
+                  "charOffset": 64,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "greet"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "charOffset": 46,
+                  "charLength": 38,
+                  "snippet": {
+                    "text": "    public String greet(String name) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "941287a45d456137",
+            "equalIndicator/v1": "93b0236156ae8ecced6a45ae1bfbe2b1a560624aa9581e3e77dc251ccc150a26"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'farewell' coverage is below the threshold 50%",
+            "markdown": "Method `farewell` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/java/com/example/Greeter.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 19,
+                  "charOffset": 244,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "farewell"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 12,
+                  "startColumn": 1,
+                  "charOffset": 226,
+                  "charLength": 41,
+                  "snippet": {
+                    "text": "    public String farewell(String name) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "3dc779c1ea222124",
+            "equalIndicator/v1": "4975a053d022aa4fee2205fb3b7f23aee03162be4aaff71d6abeac53e7c33c12"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 25,
+          "totalLines": 12,
+          "totalCoveredLines": 3
+        }
+      }
+    }
+  ]
+}

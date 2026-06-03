@@ -1,0 +1,199 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'greet' coverage is below the threshold 50%",
+            "markdown": "Method `greet` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "projects/app/src/app/app.component.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 3,
+                  "charOffset": 260,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "greet"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 15,
+                  "startColumn": 1,
+                  "charOffset": 258,
+                  "charLength": 32,
+                  "snippet": {
+                    "text": "  greet(other: string): string {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "a1febac05b5885d3",
+            "equalIndicator/v1": "a5f16916b6ef9066aa10934060abdcd410de345f439aa5f87a4a99145dc1013d"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'subtract' coverage is below the threshold 50%",
+            "markdown": "Method `subtract` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "projects/lib/src/lib/calc.service.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 3,
+                  "charOffset": 171,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "subtract"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 9,
+                  "startColumn": 1,
+                  "charOffset": 169,
+                  "charLength": 42,
+                  "snippet": {
+                    "text": "  subtract(a: number, b: number): number {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "c57b12fe7033b370",
+            "equalIndicator/v1": "0bfca85355a6b6b2c1fb9191ca2b3e4c2b608373949f44d5ca15672ab9588851"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'multiply' coverage is below the threshold 50%",
+            "markdown": "Method `multiply` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "projects/lib/src/lib/calc.service.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 3,
+                  "charOffset": 237,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "multiply"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 13,
+                  "startColumn": 1,
+                  "charOffset": 235,
+                  "charLength": 42,
+                  "snippet": {
+                    "text": "  multiply(a: number, b: number): number {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "bb68760ae93ef478",
+            "equalIndicator/v1": "0f04e77906e8a57ea57cdf3cebc1807bbd8e85194a305d3ba0214be963529867"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 62,
+          "totalLines": 8,
+          "totalCoveredLines": 5
+        }
+      }
+    }
+  ]
+}

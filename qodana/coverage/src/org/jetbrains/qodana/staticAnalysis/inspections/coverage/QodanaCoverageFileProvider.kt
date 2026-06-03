@@ -18,6 +18,7 @@ import kotlin.io.path.isRegularFile
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.useLines
+import kotlin.streams.asSequence
 
 interface QodanaCoverageFileProvider {
   val engineType: CoverageEngineType
@@ -48,8 +49,8 @@ abstract class BaseQodanaCoverageFileProvider : QodanaCoverageFileProvider {
   /**
    * Resolves candidate reports under every project anchor root as [names] x [dirs].
    *
-   * Each [dirs] entry is a relative path whose segments are either a literal directory name or a single-level `*`
-   * wildcard. [names] are exact basenames (`lcov.info`) or `*.ext` globs.
+   * Each [dirs] entry is a relative path whose segments are a literal directory name, a single-level `*` wildcard,
+   * or a depth-bounded `**` (see [GLOBSTAR_MAX_DEPTH]). [names] are exact basenames (`lcov.info`) or `*.ext` globs.
    */
   protected fun discover(project: Project, names: List<String>, dirs: List<String>): List<Path> {
     val result = LinkedHashSet<Path>()
@@ -97,22 +98,30 @@ private fun anchorRoots(project: Project): List<Path> =
       .toList()
   }
 
+private const val GLOBSTAR_MAX_DEPTH = 5
+
 private fun expandDir(root: Path, dir: String): List<Path> {
   if (dir.isEmpty() || dir == ".") return listOf(root)
   var current = listOf(root)
   for (segment in dir.split('/')) {
     if (segment.isEmpty() || segment == ".") continue
-    current = if (segment == "*") {
-      current.flatMap { base ->
+    current = when (segment) {
+      "*" -> current.flatMap { base ->
         if (base.isDirectory()) base.listDirectoryEntries().filter { it.isDirectory() } else emptyList()
       }
-    }
-    else {
-      current.map { it.resolve(segment) }
+      "**" -> current.flatMap { base -> expandRecursively(base) }
+      else -> current.map { it.resolve(segment) }
     }
     if (current.isEmpty()) break
   }
   return current.filter { it.isDirectory() }
+}
+
+private fun expandRecursively(base: Path): List<Path> {
+  if (!base.isDirectory()) return emptyList()
+  return Files.walk(base, GLOBSTAR_MAX_DEPTH).use { stream ->
+    stream.asSequence().filter { it.isDirectory() }.toList()
+  }
 }
 
 private fun matchName(base: Path, name: String): List<Path> {

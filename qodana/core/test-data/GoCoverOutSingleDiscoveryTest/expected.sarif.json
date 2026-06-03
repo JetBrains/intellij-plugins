@@ -1,0 +1,142 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'Sub' coverage is below the threshold 50%",
+            "markdown": "Method `Sub` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mathx.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 6,
+                  "charOffset": 155,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "Sub"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 9,
+                  "startColumn": 1,
+                  "charOffset": 150,
+                  "charLength": 24,
+                  "snippet": {
+                    "text": "func Sub(a, b int) int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "cf1795b7d9f8eeeb",
+            "equalIndicator/v1": "dfbfabfee3a0592df471c0d9d7ecd6542b250172f0b730f6d21f19272602e71f"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'Sign' coverage is below the threshold 50%",
+            "markdown": "Method `Sign` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mathx.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 6,
+                  "charOffset": 309,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "Sign"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 15,
+                  "startColumn": 1,
+                  "charOffset": 304,
+                  "charLength": 22,
+                  "snippet": {
+                    "text": "func Sign(n int) int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "20b6fd2da72e5b6c",
+            "equalIndicator/v1": "2d1a979b9e00ab0e90463d9279c5de0f895ccafe2a2c654e569388004e7d4ab9"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "go"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 50,
+          "totalLines": 14,
+          "totalCoveredLines": 7
+        }
+      }
+    }
+  ]
+}

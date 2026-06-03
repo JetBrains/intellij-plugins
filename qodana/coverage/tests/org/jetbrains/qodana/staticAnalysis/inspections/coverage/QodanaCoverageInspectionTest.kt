@@ -25,15 +25,17 @@ import java.nio.file.Paths
 
 @RunWith(JUnit4::class)
 abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleTestCase() {
-  private val testData: Path = Paths.get(PluginPathManager.getPluginHomePath("qodana"), "core", "test-data")
+  protected val testData: Path = Paths.get(PluginPathManager.getPluginHomePath("qodana"), "core", "test-data")
   private lateinit var manager: QodanaTestManager
   private val outputBasePath: Path = FileUtil.generateRandomTemporaryPath().toPath()
-  private val testDataBasePath: Path get() = Path.of(javaClass.simpleName, getTestName(true))
+  protected open val testDataBasePath: Path get() = Path.of(javaClass.simpleName, getTestName(true))
   protected lateinit var qodanaConfig: QodanaConfig
+
+  protected open fun getProjectSourcesPath(): Path = testData.resolve(javaClass.simpleName).resolve("sources")
 
   override fun setUpProject() {
     manager = QodanaTestManager()
-    myProject = PlatformTestUtil.loadAndOpenProject(testData.resolve(javaClass.simpleName).resolve("sources"), testRootDisposable)
+    myProject = PlatformTestUtil.loadAndOpenProject(getProjectSourcesPath(), testRootDisposable)
     val managerTestData = QodanaTestManager.TestData(
       myProject,
       testRootDisposable,
@@ -45,7 +47,7 @@ abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleT
     qodanaConfig = manager.setUp(managerTestData)
   }
 
-  protected fun getTestDataPath(relativePath: String): Path = testData.resolve(testDataBasePath).resolve(relativePath)
+  protected open fun getTestDataPath(relativePath: String): Path = testData.resolve(testDataBasePath).resolve(relativePath)
 
   private fun getProfileConfig(relativePath: String): QodanaProfileConfig {
     return QodanaProfileConfig.fromPath(getTestDataPath(relativePath).toString())

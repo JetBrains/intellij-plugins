@@ -1,0 +1,142 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'capitalize' coverage is below the threshold 50%",
+            "markdown": "Method `capitalize` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/kotlin/com/example/text/TextUtil.kt",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 9,
+                  "charOffset": 183,
+                  "charLength": 10,
+                  "snippet": {
+                    "text": "capitalize"
+                  },
+                  "sourceLanguage": "kotlin"
+                },
+                "contextRegion": {
+                  "startLine": 9,
+                  "startColumn": 1,
+                  "charOffset": 175,
+                  "charLength": 43,
+                  "snippet": {
+                    "text": "    fun capitalize(input: String): String ="
+                  },
+                  "sourceLanguage": "kotlin"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "f492b9ae54f4c068",
+            "equalIndicator/v1": "ceba3a7f1a9706d1af4f4549f0d0660f38577918189147dd830fad4a702ccd1a"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "kotlin"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'countVowels' coverage is below the threshold 50%",
+            "markdown": "Method `countVowels` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/kotlin/com/example/text/TextUtil.kt",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 9,
+                  "charOffset": 310,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "countVowels"
+                  },
+                  "sourceLanguage": "kotlin"
+                },
+                "contextRegion": {
+                  "startLine": 12,
+                  "startColumn": 1,
+                  "charOffset": 302,
+                  "charLength": 41,
+                  "snippet": {
+                    "text": "    fun countVowels(input: String): Int ="
+                  },
+                  "sourceLanguage": "kotlin"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "dc845d4b91840fa7",
+            "equalIndicator/v1": "e0f53777da9709eb3fb107dcb0288bcba81d8c481ab00aa77b718005c0a3bf69"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "kotlin"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 60,
+          "totalLines": 5,
+          "totalCoveredLines": 3
+        }
+      }
+    }
+  ]
+}

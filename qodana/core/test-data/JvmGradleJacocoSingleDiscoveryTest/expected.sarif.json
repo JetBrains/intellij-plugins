@@ -1,0 +1,199 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class 'Calculator' coverage is below the threshold 50%",
+            "markdown": "Class `Calculator` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/java/com/example/calc/Calculator.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 14,
+                  "charOffset": 40,
+                  "charLength": 10,
+                  "snippet": {
+                    "text": "Calculator"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 27,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "public class Calculator {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "6ad0a6f0750fe4b6",
+            "equalIndicator/v1": "220ff6d1815a9f43769ac95e9734ef65c5f1d75bafef8a7b3a539ac52943f0d8"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'multiply' coverage is below the threshold 50%",
+            "markdown": "Method `multiply` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/java/com/example/calc/Calculator.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 16,
+                  "charOffset": 202,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "multiply"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 13,
+                  "startColumn": 1,
+                  "charOffset": 187,
+                  "charLength": 39,
+                  "snippet": {
+                    "text": "    public int multiply(int a, int b) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "2d33951023b8fd6b",
+            "equalIndicator/v1": "f3c3e6c83eed919db612d566154a6f578681a95185592b39cad5dead9bae5f4a"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'divide' coverage is below the threshold 50%",
+            "markdown": "Method `divide` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/main/java/com/example/calc/Calculator.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 16,
+                  "charOffset": 271,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "divide"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 17,
+                  "startColumn": 1,
+                  "charOffset": 256,
+                  "charLength": 37,
+                  "snippet": {
+                    "text": "    public int divide(int a, int b) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "4ea6ef5409de04ea",
+            "equalIndicator/v1": "72e8cb65301c06bfd6d0e061d1ef8571be418fc8e4ac99632abfccee4baa36ec"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 42,
+          "totalLines": 7,
+          "totalCoveredLines": 3
+        }
+      }
+    }
+  ]
+}
