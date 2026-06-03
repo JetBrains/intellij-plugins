@@ -4,19 +4,23 @@ package org.intellij.terraform.config.inspection
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
+import org.intellij.terraform.isHclCompatiblePsiFile
 
 // TODO: Support overrides in separate files
-class TfDuplicatedBlockPropertyInspection : TfDuplicatedInspectionBase() {
+internal class TfDuplicatedBlockPropertyInspection : TfDuplicatedInspectionBase() {
 
-  override fun createVisitor(holder: ProblemsHolder): PsiElementVisitor {
-    return MyEV(holder)
-  }
+  override fun isAvailableForFile(file: PsiFile): Boolean = isHclCompatiblePsiFile(file)
+
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = createVisitor(holder)
+
+  override fun createVisitor(holder: ProblemsHolder): PsiElementVisitor = MyEV(holder)
 
   inner class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitBlock(block: HCLBlock) {
