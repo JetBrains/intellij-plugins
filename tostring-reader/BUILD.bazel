@@ -1,123 +1,161 @@
-### auto-generated section `build intellij.tsr` start
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.tsr` start
+
 jvm_library(
-  name = "tsr",
-  module_name = "intellij.tsr",
-  visibility = ["//visibility:public"],
-  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/code-style-api:codeStyle",
-    "@community//platform/core-api:core",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/platform-api:ide",
-    "@community//platform/lang-impl",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/code-style-impl:codeStyle-impl",
-    "@community//platform/core-impl",
-    "@community//platform/util:util-ui",
-    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
-  ]
+    name = "tsr",
+    srcs = glob(
+        [
+            "gen/**/*.kt",
+            "gen/**/*.java",
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.tsr",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/code-style-api:codeStyle",
+        "@community//platform/core-api:core",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/platform-api:ide",
+        "@community//platform/lang-impl",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/code-style-impl:codeStyle-impl",
+        "@community//platform/core-impl",
+        "@community//platform/util:util-ui",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    ],
 )
 
 jvm_library(
-  name = "tsr_test_lib",
-  testonly = True,
-  module_name = "intellij.tsr",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":tsr",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/code-style-api:codeStyle_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//java/testFramework",
-    "@community//java/testFramework:testFramework_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/platform-api:ide_test_lib",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//platform/code-style-impl:codeStyle-impl_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/util:util-ui_test_lib",
-    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
-  ]
+    name = "tsr_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.tsr",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":tsr",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/code-style-api:codeStyle_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//java/testFramework",
+        "@community//java/testFramework:testFramework_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.tsr` end
 
 ### auto-generated section `iml intellij.tsr` start
-exports_files([
-  "intellij.tsr.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.tsr.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.tsr` end
 
 ### auto-generated section `build intellij.tsr.tests` start
+
 jvm_library(
-  name = "tsr-tests",
-  module_name = "intellij.tsr.tests",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+    name = "tsr-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.tsr.tests",
+    visibility = ["//visibility:public"],
 )
 
 jvm_library(
-  name = "tsr-tests_test_lib",
-  testonly = True,
-  visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  resources = glob(["test-resources/**/*"]),
-  resource_strip_prefix = "test-resources",
-  associates = [
-    "//contrib/tostring-reader:tsr",
-    "//contrib/tostring-reader:tsr_test_lib",
-  ],
-  deps = [
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/code-style-api:codeStyle",
-    "@community//platform/code-style-api:codeStyle_test_lib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//java/testFramework",
-    "@community//java/testFramework:testFramework_test_lib",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/platform-api:ide",
-    "@community//platform/platform-api:ide_test_lib",
-    "@community//platform/lang-impl",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//platform/code-style-impl:codeStyle-impl",
-    "@community//platform/code-style-impl:codeStyle-impl_test_lib",
-    "@community//platform/core-impl",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
-    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
-  ],
-  runtime_deps = [
-    ":tsr-tests",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-  ]
+    name = "tsr-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "test/**/*.kt",
+            "test/**/*.java",
+            "test/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/tostring-reader:tsr",
+        "//contrib/tostring-reader:tsr_test_lib",
+    ],
+    resource_strip_prefix = "test-resources",
+    resources = glob(
+        ["test-resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":tsr-tests",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/code-style-api:codeStyle",
+        "@community//platform/code-style-api:codeStyle_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//java/testFramework",
+        "@community//java/testFramework:testFramework_test_lib",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/platform-api:ide",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/lang-impl",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/code-style-impl:codeStyle-impl",
+        "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+        "@community//platform/core-impl",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.tsr.tests` end
 
 ### auto-generated section `iml intellij.tsr.tests` start
-exports_files([
-  "intellij.tsr.tests.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.tsr.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.tsr.tests` end
 
 ### auto-generated section `test intellij.tsr.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "tsr-tests_test",
-  runtime_deps = [":tsr-tests_test_lib"]
+    name = "tsr-tests_test",
+    runtime_deps = [":tsr-tests_test_lib"],
 )
 ### auto-generated section `test intellij.tsr.tests` end

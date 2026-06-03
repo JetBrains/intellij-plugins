@@ -1,73 +1,91 @@
-### auto-generated section `build intellij.serial.monitor` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.serial.monitor` start
+
 jvm_library(
-  name = "serial-monitor",
-  module_name = "intellij.serial.monitor",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/main/java/**/*.kt", "src/main/java/**/*.java", "src/main/java/**/*.form"], allow_empty = True),
-  resources = glob(["src/main/resources/**/*"]),
-  resource_strip_prefix = "src/main/resources",
-  deps = [
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/core-api:core",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/platform-api:ide",
-    "@community//platform/lang-core",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/util:util-ui",
-    "@community//platform/core-ui",
-    "@community//platform/execution-impl",
-    "@community//platform/lang-api:lang",
-    "@lib//:kotlin-stdlib",
-    "@community//platform/lang-impl",
-    "@community//libraries/guava",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/ide-core",
-    "@community//platform/statistics",
-    "@community//libraries/jediterm-core",
-    "@community//libraries/jediterm-ui",
-    "@community//libraries/commons/io",
-    "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
-    "@community//platform/execution",
-    "@community//platform/forms_rt:java-guiForms-rt",
-  ]
+    name = "serial-monitor",
+    srcs = glob(
+        [
+            "src/main/java/**/*.kt",
+            "src/main/java/**/*.java",
+            "src/main/java/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.serial.monitor",
+    resource_strip_prefix = "src/main/resources",
+    resources = glob(
+        ["src/main/resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/platform-api:ide",
+        "@community//platform/lang-core",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/util:util-ui",
+        "@community//platform/core-ui",
+        "@community//platform/execution-impl",
+        "@community//platform/lang-api:lang",
+        "@lib//:kotlin-stdlib",
+        "@community//platform/lang-impl",
+        "@community//libraries/guava",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/ide-core",
+        "@community//platform/statistics",
+        "@community//libraries/jediterm-core",
+        "@community//libraries/jediterm-ui",
+        "@community//libraries/commons/io",
+        "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
+        "@community//platform/execution",
+        "@community//platform/forms_rt:java-guiForms-rt",
+    ],
 )
 
 jvm_library(
-  name = "serial-monitor_test_lib",
-  testonly = True,
-  module_name = "intellij.serial.monitor",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":serial-monitor",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/platform-api:ide_test_lib",
-    "@community//platform/lang-core:lang-core_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/util:util-ui_test_lib",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/execution-impl:execution-impl_test_lib",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//libraries/guava:guava_test_lib",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "@community//platform/statistics:statistics_test_lib",
-    "@community//libraries/jediterm-core:jediterm-core_test_lib",
-    "@community//libraries/jediterm-ui:jediterm-ui_test_lib",
-    "@community//libraries/commons/io:io_test_lib",
-    "@community//platform/execution:execution_test_lib",
-    "@community//platform/forms_rt:java-guiForms-rt_test_lib",
-  ]
+    name = "serial-monitor_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.serial.monitor",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":serial-monitor",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/lang-core:lang-core_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/execution-impl:execution-impl_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//libraries/guava:guava_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/statistics:statistics_test_lib",
+        "@community//libraries/jediterm-core:jediterm-core_test_lib",
+        "@community//libraries/jediterm-ui:jediterm-ui_test_lib",
+        "@community//libraries/commons/io:io_test_lib",
+        "@community//platform/execution:execution_test_lib",
+        "@community//platform/forms_rt:java-guiForms-rt_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.serial.monitor` end
 
 ### auto-generated section `iml intellij.serial.monitor` start
-exports_files([
-  "intellij.serial.monitor.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.serial.monitor.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.serial.monitor` end

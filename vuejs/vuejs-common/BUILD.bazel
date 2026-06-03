@@ -1,62 +1,82 @@
-### auto-generated section `build intellij.vuejs.common` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.vuejs.common` start
+
 jvm_library(
-  name = "common",
-  module_name = "intellij.vuejs.common",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@community//platform/core-api:core",
-    "@community//platform/core-impl",
-    "@lib//:kotlin-stdlib",
-    "@community//platform/util",
-    "//plugins/JavaScriptLanguage/web-platform:javascript-web",
-    "@community//xml/xml-parser:parser",
-    "//plugins/JavaScriptLanguage/javascript-parser",
-    "@community//xml/xml-psi-api:psi",
-    "@community//libraries/stream",
-    "@community//platform/polySymbols",
-    "@community//xml/xml-psi-impl:psi-impl",
-    "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "@community//platform/ide-core",
-    "//plugins/JavaScriptLanguage/plugin",
-    "@community//platform/editor-ui-api:editor-ui",
-    "//plugins/css",
-  ]
+    name = "common",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+            "gen/**/*.kt",
+            "gen/**/*.java",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.vuejs.common",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@community//platform/core-api:core",
+        "@community//platform/core-impl",
+        "@lib//:kotlin-stdlib",
+        "@community//platform/util",
+        "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+        "@community//xml/xml-parser:parser",
+        "//plugins/JavaScriptLanguage/javascript-parser",
+        "@community//xml/xml-psi-api:psi",
+        "@community//libraries/stream",
+        "@community//platform/polySymbols",
+        "@community//xml/xml-psi-impl:psi-impl",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "@community//platform/ide-core",
+        "//plugins/JavaScriptLanguage/plugin",
+        "@community//platform/editor-ui-api:editor-ui",
+        "//plugins/css",
+    ],
 )
 
 jvm_library(
-  name = "common_test_lib",
-  testonly = True,
-  module_name = "intellij.vuejs.common",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":common",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/util:util_test_lib",
-    "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
-    "@community//xml/xml-parser:parser_test_lib",
-    "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
-    "@community//xml/xml-psi-api:psi_test_lib",
-    "@community//libraries/stream:stream_test_lib",
-    "@community//platform/polySymbols:polySymbols_test_lib",
-    "@community//xml/xml-psi-impl:psi-impl_test_lib",
-    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "//plugins/css:css_test_lib",
-  ]
+    name = "common_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.vuejs.common",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":common",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/util:util_test_lib",
+        "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
+        "@community//xml/xml-parser:parser_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+        "@community//xml/xml-psi-api:psi_test_lib",
+        "@community//libraries/stream:stream_test_lib",
+        "@community//platform/polySymbols:polySymbols_test_lib",
+        "@community//xml/xml-psi-impl:psi-impl_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "//plugins/css:css_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.vuejs.common` end
 
 ### auto-generated section `iml intellij.vuejs.common` start
-exports_files([
-  "intellij.vuejs.common.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.vuejs.common.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.vuejs.common` end

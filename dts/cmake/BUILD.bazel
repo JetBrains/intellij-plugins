@@ -1,48 +1,66 @@
-### auto-generated section `build intellij.dts.cmake` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.dts.cmake` start
+
 jvm_library(
-  name = "cmake",
-  module_name = "intellij.dts.cmake",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "//CIDR/cidr-workspaceModel",
-    "//CIDR/clion-cmake/core",
-    "//contrib/dts",
-    "@community//platform/core-api:core",
-    "@community//platform/execution",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/util",
-    "@community//platform/util/jdom",
-  ]
+    name = "cmake",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.dts.cmake",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//CIDR/cidr-workspaceModel",
+        "//CIDR/clion-cmake/core",
+        "//contrib/dts",
+        "@community//platform/core-api:core",
+        "@community//platform/execution",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/util",
+        "@community//platform/util/jdom",
+    ],
 )
 
 jvm_library(
-  name = "cmake_test_lib",
-  testonly = True,
-  module_name = "intellij.dts.cmake",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":cmake",
-    "//CIDR/cidr-workspaceModel:cidr-workspaceModel_test_lib",
-    "//CIDR/clion-cmake/core:core_test_lib",
-    "//contrib/dts:dts_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/execution:execution_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/util:util_test_lib",
-    "@community//platform/util/jdom:jdom_test_lib",
-  ]
+    name = "cmake_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.dts.cmake",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":cmake",
+        "//CIDR/cidr-workspaceModel:cidr-workspaceModel_test_lib",
+        "//CIDR/clion-cmake/core:core_test_lib",
+        "//contrib/dts:dts_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/execution:execution_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/util/jdom:jdom_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.dts.cmake` end
 
 ### auto-generated section `iml intellij.dts.cmake` start
-exports_files([
-  "intellij.dts.cmake.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.dts.cmake.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.dts.cmake` end

@@ -1,42 +1,60 @@
-### auto-generated section `build intellij.qodana.jvm.swagger` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.qodana.jvm.swagger` start
+
 jvm_library(
-  name = "swagger",
-  module_name = "intellij.qodana.jvm.swagger",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//platform/core-api:core",
-    "@community//platform/platform-api:ide",
-    "@community//platform/ide-core",
-    "//contrib/qodana",
-    "//plugins/frameworks/swagger",
-  ]
+    name = "swagger",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.jvm.swagger",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//platform/core-api:core",
+        "@community//platform/platform-api:ide",
+        "@community//platform/ide-core",
+        "//contrib/qodana",
+        "//plugins/frameworks/swagger",
+    ],
 )
 
 jvm_library(
-  name = "swagger_test_lib",
-  testonly = True,
-  module_name = "intellij.qodana.jvm.swagger",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":swagger",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/platform-api:ide_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "//contrib/qodana:qodana_test_lib",
-    "//plugins/frameworks/swagger:swagger_test_lib",
-  ]
+    name = "swagger_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.jvm.swagger",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":swagger",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "//contrib/qodana:qodana_test_lib",
+        "//plugins/frameworks/swagger:swagger_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.jvm.swagger` end
 
 ### auto-generated section `iml intellij.qodana.jvm.swagger` start
-exports_files([
-  "intellij.qodana.jvm.swagger.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.jvm.swagger.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.jvm.swagger` end

@@ -1,39 +1,53 @@
-### auto-generated section `build intellij.angular.plugin` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.angular.plugin` start
+
 jvm_library(
-  name = "angular-plugin",
-  module_name = "intellij.angular.plugin",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  runtime_deps = [
-    "//contrib/Angular/angular-backend",
-    "//contrib/Angular/angular-free",
-    "//contrib/Angular/angular-tslint",
-    "//plugins/JavaScriptLanguage/plugin",
-  ]
+    name = "angular-plugin",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.angular.plugin",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//contrib/Angular/angular-backend",
+        "//contrib/Angular/angular-free",
+        "//contrib/Angular/angular-tslint",
+        "//plugins/JavaScriptLanguage/plugin",
+    ],
 )
 
 jvm_library(
-  name = "angular-plugin_test_lib",
-  testonly = True,
-  module_name = "intellij.angular.plugin",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":angular-plugin",
-    "//contrib/Angular/angular-backend:angular-backend_test_lib",
-    "//contrib/Angular/angular-free:angular-free_test_lib",
-    "//contrib/Angular/angular-tslint:angular-tslint_test_lib",
-    "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
-  ]
+    name = "angular-plugin_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.angular.plugin",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":angular-plugin",
+        "//contrib/Angular/angular-backend:angular-backend_test_lib",
+        "//contrib/Angular/angular-free:angular-free_test_lib",
+        "//contrib/Angular/angular-tslint:angular-tslint_test_lib",
+        "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.angular.plugin` end
 
 ### auto-generated section `iml intellij.angular.plugin` start
-exports_files([
-  "intellij.angular.plugin.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.angular.plugin.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.angular.plugin` end

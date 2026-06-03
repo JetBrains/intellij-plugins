@@ -1,85 +1,108 @@
-### auto-generated section `build intellij.appcode.reveal` start
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
+### auto-generated section `build intellij.appcode.reveal` start
+
 resourcegroup(
-  name = "appcode-reveal_resources",
-  srcs = glob(["compatibilityResources/**/*"]),
-  strip_prefix = "compatibilityResources"
+    name = "appcode-reveal_resources",
+    srcs = glob(
+        ["compatibilityResources/**/*"],
+    ),
+    strip_prefix = "compatibilityResources",
 )
 
 jvm_library(
-  name = "appcode-reveal",
-  module_name = "intellij.appcode.reveal",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  resource_jars = [":appcode-reveal_resources"],
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "//CIDR-appcode/apple-sdk",
-    "//CIDR-appcode/appcode",
-    "@community//platform/core-api:core",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/statistics",
-    "@community//platform/ide-core-impl",
-    "@community//platform/ide-core",
-    "@community//platform/platform-util-io:ide-util-io",
-    "//CIDR/cidr-debugger/core",
-    "@community//platform/util/jdom",
-    "@community//platform/util:util-ui",
-    "//CIDR/cidr-projectModel",
-    "//CIDR/cidr-runner",
-    "//CIDR/cidr-workspaceModel",
-    "@community//platform/core-impl",
-    "@community//platform/platform-api:ide",
-    "@community//platform/execution",
-    "@community//platform/execution-impl",
-    "//CIDR/cidr-util/execution",
-    "@community//libraries/guava",
-    "@community//platform/core-ui",
-  ],
-  runtime_deps = ["//CIDR-appcode/appcode/swiftDebugger"]
+    name = "appcode-reveal",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.appcode.reveal",
+    resource_jars = [":appcode-reveal_resources"],
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//CIDR-appcode/appcode/swiftDebugger",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//CIDR-appcode/apple-sdk",
+        "//CIDR-appcode/appcode",
+        "@community//platform/core-api:core",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/statistics",
+        "@community//platform/ide-core-impl",
+        "@community//platform/ide-core",
+        "@community//platform/platform-util-io:ide-util-io",
+        "//CIDR/cidr-debugger/core",
+        "@community//platform/util/jdom",
+        "@community//platform/util:util-ui",
+        "//CIDR/cidr-projectModel",
+        "//CIDR/cidr-runner",
+        "//CIDR/cidr-workspaceModel",
+        "@community//platform/core-impl",
+        "@community//platform/platform-api:ide",
+        "@community//platform/execution",
+        "@community//platform/execution-impl",
+        "//CIDR/cidr-util/execution",
+        "@community//libraries/guava",
+        "@community//platform/core-ui",
+    ],
 )
 
 jvm_library(
-  name = "appcode-reveal_test_lib",
-  testonly = True,
-  module_name = "intellij.appcode.reveal",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":appcode-reveal",
-    "//CIDR-appcode/apple-sdk:apple-sdk_test_lib",
-    "//CIDR-appcode/appcode:appcode_test_lib",
-    "//CIDR-appcode/appcode/swiftDebugger:swiftDebugger_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/statistics:statistics_test_lib",
-    "@community//platform/ide-core-impl:ide-core-impl_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "@community//platform/platform-util-io:ide-util-io_test_lib",
-    "//CIDR/cidr-debugger/core:core_test_lib",
-    "@community//platform/util/jdom:jdom_test_lib",
-    "@community//platform/util:util-ui_test_lib",
-    "//CIDR/cidr-projectModel:cidr-projectModel_test_lib",
-    "//CIDR/cidr-runner:cidr-runner_test_lib",
-    "//CIDR/cidr-workspaceModel:cidr-workspaceModel_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/platform-api:ide_test_lib",
-    "@community//platform/execution:execution_test_lib",
-    "@community//platform/execution-impl:execution-impl_test_lib",
-    "//CIDR/cidr-util/execution:execution_test_lib",
-    "@community//libraries/guava:guava_test_lib",
-    "@community//platform/core-ui:core-ui_test_lib",
-  ]
+    name = "appcode-reveal_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.appcode.reveal",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":appcode-reveal",
+        "//CIDR-appcode/apple-sdk:apple-sdk_test_lib",
+        "//CIDR-appcode/appcode:appcode_test_lib",
+        "//CIDR-appcode/appcode/swiftDebugger:swiftDebugger_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/statistics:statistics_test_lib",
+        "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "//CIDR/cidr-debugger/core:core_test_lib",
+        "@community//platform/util/jdom:jdom_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+        "//CIDR/cidr-projectModel:cidr-projectModel_test_lib",
+        "//CIDR/cidr-runner:cidr-runner_test_lib",
+        "//CIDR/cidr-workspaceModel:cidr-workspaceModel_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/execution:execution_test_lib",
+        "@community//platform/execution-impl:execution-impl_test_lib",
+        "//CIDR/cidr-util/execution:execution_test_lib",
+        "@community//libraries/guava:guava_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.appcode.reveal` end
 
 ### auto-generated section `iml intellij.appcode.reveal` start
-exports_files([
-  "intellij.appcode.reveal.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.appcode.reveal.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.appcode.reveal` end

@@ -1,46 +1,64 @@
-### auto-generated section `build intellij.clion.diagnostics.docker` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.clion.diagnostics.docker` start
+
 jvm_library(
-  name = "docker",
-  module_name = "intellij.clion.diagnostics.docker",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "//CIDR/cidr-util",
-    "//CIDR/cidr-util/execution",
-    "//CIDR/clion-docker",
-    "//contrib/cpp-diagnostics:clion-diagnostics",
-    "//CIDR/clion-toolchains",
-    "@community//libraries/kotlinx/serialization/core",
-    "@community//libraries/kotlinx/serialization/json",
-  ]
+    name = "docker",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.clion.diagnostics.docker",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//CIDR/cidr-util",
+        "//CIDR/cidr-util/execution",
+        "//CIDR/clion-docker",
+        "//contrib/cpp-diagnostics:clion-diagnostics",
+        "//CIDR/clion-toolchains",
+        "@community//libraries/kotlinx/serialization/core",
+        "@community//libraries/kotlinx/serialization/json",
+    ],
 )
 
 jvm_library(
-  name = "docker_test_lib",
-  testonly = True,
-  module_name = "intellij.clion.diagnostics.docker",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":docker",
-    "//CIDR/cidr-util:cidr-util_test_lib",
-    "//CIDR/cidr-util/execution:execution_test_lib",
-    "//CIDR/clion-docker:clion-docker_test_lib",
-    "//contrib/cpp-diagnostics:clion-diagnostics_test_lib",
-    "//CIDR/clion-toolchains:clion-toolchains_test_lib",
-    "@community//libraries/kotlinx/serialization/core:core_test_lib",
-    "@community//libraries/kotlinx/serialization/json:json_test_lib",
-  ]
+    name = "docker_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.clion.diagnostics.docker",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":docker",
+        "//CIDR/cidr-util:cidr-util_test_lib",
+        "//CIDR/cidr-util/execution:execution_test_lib",
+        "//CIDR/clion-docker:clion-docker_test_lib",
+        "//contrib/cpp-diagnostics:clion-diagnostics_test_lib",
+        "//CIDR/clion-toolchains:clion-toolchains_test_lib",
+        "@community//libraries/kotlinx/serialization/core:core_test_lib",
+        "@community//libraries/kotlinx/serialization/json:json_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.clion.diagnostics.docker` end
 
 ### auto-generated section `iml intellij.clion.diagnostics.docker` start
-exports_files([
-  "intellij.clion.diagnostics.docker.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.clion.diagnostics.docker.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.clion.diagnostics.docker` end

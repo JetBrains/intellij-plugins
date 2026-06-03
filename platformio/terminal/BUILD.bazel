@@ -1,42 +1,60 @@
-### auto-generated section `build intellij.clion.embedded.platformio.terminal` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.clion.embedded.platformio.terminal` start
+
 jvm_library(
-  name = "terminal",
-  module_name = "intellij.clion.embedded.platformio.terminal",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@community//plugins/terminal",
-    "@community//platform/platform-util-io:ide-util-io",
-    "@lib//:kotlin-stdlib",
-    "@community//platform/util",
-    "@community//platform/core-api:core",
-    "//contrib/platformio",
-  ]
+    name = "terminal",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.clion.embedded.platformio.terminal",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@community//plugins/terminal",
+        "@community//platform/platform-util-io:ide-util-io",
+        "@lib//:kotlin-stdlib",
+        "@community//platform/util",
+        "@community//platform/core-api:core",
+        "//contrib/platformio",
+    ],
 )
 
 jvm_library(
-  name = "terminal_test_lib",
-  testonly = True,
-  module_name = "intellij.clion.embedded.platformio.terminal",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":terminal",
-    "@community//plugins/terminal:terminal_test_lib",
-    "@community//platform/platform-util-io:ide-util-io_test_lib",
-    "@community//platform/util:util_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "//contrib/platformio:platformio_test_lib",
-  ]
+    name = "terminal_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.clion.embedded.platformio.terminal",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":terminal",
+        "@community//plugins/terminal:terminal_test_lib",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "//contrib/platformio:platformio_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.clion.embedded.platformio.terminal` end
 
 ### auto-generated section `iml intellij.clion.embedded.platformio.terminal` start
-exports_files([
-  "intellij.clion.embedded.platformio.terminal.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.clion.embedded.platformio.terminal.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.clion.embedded.platformio.terminal` end

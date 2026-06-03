@@ -1,63 +1,81 @@
-### auto-generated section `build intellij.phoneGap.javascript` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.phoneGap.javascript` start
+
 jvm_library(
-  name = "javascript",
-  module_name = "intellij.phoneGap.javascript",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "//contrib/phoneGap/core",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/core-api:core",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/execution",
-    "@community//platform/platform-api:ide",
-    "@community//platform/ide-core",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-core",
-    "@community//platform/lang-impl",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/util",
-    "@community//platform/util:util-ui",
-    "//plugins/JavaScriptLanguage/javascript-backend",
-    "//plugins/JavaScriptLanguage/javascript-parser",
-  ]
+    name = "javascript",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.phoneGap.javascript",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "//contrib/phoneGap/core",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/execution",
+        "@community//platform/platform-api:ide",
+        "@community//platform/ide-core",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-core",
+        "@community//platform/lang-impl",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/util",
+        "@community//platform/util:util-ui",
+        "//plugins/JavaScriptLanguage/javascript-backend",
+        "//plugins/JavaScriptLanguage/javascript-parser",
+    ],
 )
 
 jvm_library(
-  name = "javascript_test_lib",
-  testonly = True,
-  module_name = "intellij.phoneGap.javascript",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":javascript",
-    "//contrib/phoneGap/core:core_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/execution:execution_test_lib",
-    "@community//platform/platform-api:ide_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/lang-core:lang-core_test_lib",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/util:util_test_lib",
-    "@community//platform/util:util-ui_test_lib",
-    "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
-    "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
-  ]
+    name = "javascript_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.phoneGap.javascript",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":javascript",
+        "//contrib/phoneGap/core:core_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/execution:execution_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-core:lang-core_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.phoneGap.javascript` end
 
 ### auto-generated section `iml intellij.phoneGap.javascript` start
-exports_files([
-  "intellij.phoneGap.javascript.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.phoneGap.javascript.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.phoneGap.javascript` end

@@ -1,153 +1,187 @@
-### auto-generated section `build intellij.qodana.yaml` start
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.qodana.yaml` start
+
 jvm_library(
-  name = "yaml",
-  module_name = "intellij.qodana.yaml",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "//contrib/qodana",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-impl",
-    "@community//platform/core-api:core",
-    "@community//platform/core-ui",
-    "@community//platform/platform-api:ide",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-core",
-    "@community//platform/lang-impl",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/util",
-    "@community//platform/util:util-ui",
-    "@community//platform/core-impl",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//libraries/kotlinx/coroutines/core",
-    "@community//json/backend",
-    "@community//plugins/yaml",
-    "@community//plugins/yaml/backend",
-    "@community//platform/statistics",
-    "@community//platform/ide-core-impl",
-    "@community//platform/ide-core",
-    "@community//platform/progress/shared:ide-progress",
-    "@community//platform/util/coroutines",
-  ]
+    name = "yaml",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.yaml",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//contrib/qodana",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-impl",
+        "@community//platform/core-api:core",
+        "@community//platform/core-ui",
+        "@community//platform/platform-api:ide",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-core",
+        "@community//platform/lang-impl",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/util",
+        "@community//platform/util:util-ui",
+        "@community//platform/core-impl",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//libraries/kotlinx/coroutines/core",
+        "@community//json/backend",
+        "@community//plugins/yaml",
+        "@community//plugins/yaml/backend",
+        "@community//platform/statistics",
+        "@community//platform/ide-core-impl",
+        "@community//platform/ide-core",
+        "@community//platform/progress/shared:ide-progress",
+        "@community//platform/util/coroutines",
+    ],
 )
 
 jvm_library(
-  name = "yaml_test_lib",
-  testonly = True,
-  module_name = "intellij.qodana.yaml",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":yaml",
-    "//contrib/qodana:qodana_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/analysis-impl:analysis-impl_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/platform-api:ide_test_lib",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/lang-core:lang-core_test_lib",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/util:util_test_lib",
-    "@community//platform/util:util-ui_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//libraries/kotlinx/coroutines/core:core_test_lib",
-    "@community//json/backend:backend_test_lib",
-    "@community//plugins/yaml:yaml_test_lib",
-    "@community//plugins/yaml/backend:backend_test_lib",
-    "@community//platform/statistics:statistics_test_lib",
-    "@community//platform/ide-core-impl:ide-core-impl_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "@community//platform/progress/shared:ide-progress_test_lib",
-    "@community//platform/util/coroutines:coroutines_test_lib",
-  ]
+    name = "yaml_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.yaml",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":yaml",
+        "//contrib/qodana:qodana_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/analysis-impl:analysis-impl_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-core:lang-core_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//libraries/kotlinx/coroutines/core:core_test_lib",
+        "@community//json/backend:backend_test_lib",
+        "@community//plugins/yaml:yaml_test_lib",
+        "@community//plugins/yaml/backend:backend_test_lib",
+        "@community//platform/statistics:statistics_test_lib",
+        "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/progress/shared:ide-progress_test_lib",
+        "@community//platform/util/coroutines:coroutines_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.yaml` end
 
 ### auto-generated section `iml intellij.qodana.yaml` start
-exports_files([
-  "intellij.qodana.yaml.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.yaml.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.yaml` end
 
 ### auto-generated section `build intellij.qodana.yaml.tests` start
+
 jvm_library(
-  name = "yaml-tests",
-  module_name = "intellij.qodana.yaml.tests",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+    name = "yaml-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.yaml.tests",
+    visibility = ["//visibility:public"],
 )
 
 jvm_library(
-  name = "yaml-tests_test_lib",
-  testonly = True,
-  visibility = ["//visibility:public"],
-  srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  associates = [
-    "//contrib/qodana/yaml",
-    "//contrib/qodana/yaml:yaml_test_lib",
-  ],
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/core-ui",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/platform-api:ide",
-    "@community//platform/platform-api:ide_test_lib",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/lang-impl",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/core-impl",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "//contrib/qodana",
-    "//contrib/qodana:qodana_test_lib",
-    "@community//platform/util/jdom",
-    "@community//platform/util/jdom:jdom_test_lib",
-    "@community//java/testFramework",
-    "@community//java/testFramework:testFramework_test_lib",
-    "//contrib/qodana-test-framework:qodana-testFramework",
-    "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//plugins/yaml",
-    "@community//plugins/yaml:yaml_test_lib",
-    "@community//plugins/yaml/backend",
-    "@community//plugins/yaml/backend:backend_test_lib",
-  ],
-  runtime_deps = [
-    ":yaml-tests",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-  ]
+    name = "yaml-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "tests/**/*.kt",
+            "tests/**/*.java",
+            "tests/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/qodana/yaml",
+        "//contrib/qodana/yaml:yaml_test_lib",
+    ],
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":yaml-tests",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-ui",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/platform-api:ide",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/lang-impl",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/core-impl",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "//contrib/qodana",
+        "//contrib/qodana:qodana_test_lib",
+        "@community//platform/util/jdom",
+        "@community//platform/util/jdom:jdom_test_lib",
+        "@community//java/testFramework",
+        "@community//java/testFramework:testFramework_test_lib",
+        "//contrib/qodana-test-framework:qodana-testFramework",
+        "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//plugins/yaml",
+        "@community//plugins/yaml:yaml_test_lib",
+        "@community//plugins/yaml/backend",
+        "@community//plugins/yaml/backend:backend_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.yaml.tests` end
 
 ### auto-generated section `iml intellij.qodana.yaml.tests` start
-exports_files([
-  "intellij.qodana.yaml.tests.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.yaml.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.yaml.tests` end
 
 ### auto-generated section `test intellij.qodana.yaml.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "yaml-tests_test",
-  runtime_deps = [":yaml-tests_test_lib"]
+    name = "yaml-tests_test",
+    runtime_deps = [":yaml-tests_test_lib"],
 )
 ### auto-generated section `test intellij.qodana.yaml.tests` end

@@ -1,59 +1,77 @@
-### auto-generated section `build intellij.errorProne` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.errorProne` start
+
 jvm_library(
-  name = "error-prone",
-  module_name = "intellij.errorProne",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@community//java/compiler/impl",
-    "@community//platform/core-api:core",
-    "@community//platform/platform-api:ide",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/ide-core",
-    "@community//libraries/guava",
-    "@community//jps/model-api:model",
-    "@community//platform/lang-api:lang",
-    "@community//java/java-psi-api:psi",
-    "@community//java/java-syntax:syntax",
-    "@community//libraries/stream",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//java/java-psi-impl:psi-impl",
-    "@community//jps/jps-builders:build",
-  ]
+    name = "error-prone",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.errorProne",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@community//java/compiler/impl",
+        "@community//platform/core-api:core",
+        "@community//platform/platform-api:ide",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/ide-core",
+        "@community//libraries/guava",
+        "@community//jps/model-api:model",
+        "@community//platform/lang-api:lang",
+        "@community//java/java-psi-api:psi",
+        "@community//java/java-syntax:syntax",
+        "@community//libraries/stream",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//java/java-psi-impl:psi-impl",
+        "@community//jps/jps-builders:build",
+    ],
 )
 
 jvm_library(
-  name = "error-prone_test_lib",
-  testonly = True,
-  module_name = "intellij.errorProne",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":error-prone",
-    "@community//java/compiler/impl:impl_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/platform-api:ide_test_lib",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "@community//libraries/guava:guava_test_lib",
-    "@community//jps/model-api:model_test_lib",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//java/java-psi-api:psi_test_lib",
-    "@community//java/java-syntax:syntax_test_lib",
-    "@community//libraries/stream:stream_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//java/java-psi-impl:psi-impl_test_lib",
-    "@community//jps/jps-builders:build_test_lib",
-  ]
+    name = "error-prone_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.errorProne",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":error-prone",
+        "@community//java/compiler/impl:impl_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//libraries/guava:guava_test_lib",
+        "@community//jps/model-api:model_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//java/java-psi-api:psi_test_lib",
+        "@community//java/java-syntax:syntax_test_lib",
+        "@community//libraries/stream:stream_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//java/java-psi-impl:psi-impl_test_lib",
+        "@community//jps/jps-builders:build_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.errorProne` end
 
 ### auto-generated section `iml intellij.errorProne` start
-exports_files([
-  "intellij.errorProne.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.errorProne.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.errorProne` end

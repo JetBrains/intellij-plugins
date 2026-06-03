@@ -1,150 +1,191 @@
-### auto-generated section `build intellij.qodana.rust` start
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.qodana.rust` start
+
 create_kotlinc_options(
-  name = "custom_rust",
-  opt_in = ["kotlin.io.path.ExperimentalPathApi"]
+    name = "custom_rust",
+    opt_in = ["kotlin.io.path.ExperimentalPathApi"],
 )
 
 jvm_library(
-  name = "rust",
-  module_name = "intellij.qodana.rust",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  kotlinc_opts = ":custom_rust",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "//rustrover",
-    "//rustrover/core",
-    "@community//libraries/rd/core",
-    "@community//libraries/rd/framework",
-    "@community//platform/core-api:core",
-    "@community//platform/util",
-    "@community//platform/backend/observation",
-    "//contrib/qodana",
-    "@community//platform/analysis-api:analysis",
-    "@lib//:qodana-sarif",
-    "@community//platform/rd-platform-community:rd-community",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/execution-impl",
-    "@community//platform/execution",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/ide-core",
-    "@community//libraries/io",
-  ],
-  runtime_deps = ["//rustrover/plugin"]
+    name = "rust",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    kotlinc_opts = ":custom_rust",
+    module_name = "intellij.qodana.rust",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//rustrover/plugin",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//rustrover",
+        "//rustrover/core",
+        "@community//libraries/rd/core",
+        "@community//libraries/rd/framework",
+        "@community//platform/core-api:core",
+        "@community//platform/util",
+        "@community//platform/backend/observation",
+        "//contrib/qodana",
+        "@community//platform/analysis-api:analysis",
+        "@lib//:qodana-sarif",
+        "@community//platform/rd-platform-community:rd-community",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/execution-impl",
+        "@community//platform/execution",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/ide-core",
+        "@community//libraries/io",
+    ],
 )
 
 jvm_library(
-  name = "rust_test_lib",
-  testonly = True,
-  module_name = "intellij.qodana.rust",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  kotlinc_opts = ":custom_rust",
-  runtime_deps = [
-    ":rust",
-    "//rustrover:rustrover_test_lib",
-    "//rustrover/core:core_test_lib",
-    "//rustrover/plugin:plugin_test_lib",
-    "@community//libraries/rd/core:core_test_lib",
-    "@community//libraries/rd/framework:framework_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/util:util_test_lib",
-    "@community//platform/backend/observation:observation_test_lib",
-    "//contrib/qodana:qodana_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/rd-platform-community:rd-community_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/execution-impl:execution-impl_test_lib",
-    "@community//platform/execution:execution_test_lib",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "@community//libraries/io:io_test_lib",
-  ]
+    name = "rust_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    kotlinc_opts = ":custom_rust",
+    module_name = "intellij.qodana.rust",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":rust",
+        "//rustrover:rustrover_test_lib",
+        "//rustrover/core:core_test_lib",
+        "//rustrover/plugin:plugin_test_lib",
+        "@community//libraries/rd/core:core_test_lib",
+        "@community//libraries/rd/framework:framework_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/backend/observation:observation_test_lib",
+        "//contrib/qodana:qodana_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/rd-platform-community:rd-community_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/execution-impl:execution-impl_test_lib",
+        "@community//platform/execution:execution_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//libraries/io:io_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.rust` end
 
 ### auto-generated section `iml intellij.qodana.rust` start
-exports_files([
-  "intellij.qodana.rust.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.rust.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.rust` end
 
 ### auto-generated section `build intellij.qodana.rust.tests` start
+
 create_kotlinc_options(
-  name = "custom_rust-tests",
-  opt_in = ["kotlin.io.path.ExperimentalPathApi"]
+    name = "custom_rust-tests",
+    opt_in = ["kotlin.io.path.ExperimentalPathApi"],
 )
 
 jvm_library(
-  name = "rust-tests",
-  module_name = "intellij.qodana.rust.tests",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+    name = "rust-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.rust.tests",
+    visibility = ["//visibility:public"],
 )
 
 jvm_library(
-  name = "rust-tests_test_lib",
-  testonly = True,
-  visibility = ["//visibility:public"],
-  srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  resources = glob(["test-data/**/*"]),
-  resource_strip_prefix = "test-data",
-  kotlinc_opts = ":custom_rust-tests",
-  associates = [
-    "//contrib/qodana/rust",
-    "//contrib/qodana/rust:rust_test_lib",
-  ],
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/util",
-    "@community//platform/util:util_test_lib",
-    "@lib//:kodein-di-jvm",
-    "@lib//:qodana-sarif",
-    "@community//platform/testFramework/junit5",
-    "@community//platform/testFramework/junit5:junit5_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//tools/intellij.tools.ide.starter:ide-starter",
-    "@community//tools/intellij.tools.ide.starter:ide-starter_test_lib",
-    "@community//tools/intellij.tools.ide.starter.product.rustrover:ide-starter-product-rustrover",
-    "@community//tools/intellij.tools.ide.starter.product.rustrover:ide-starter-product-rustrover_test_lib",
-    "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure",
-    "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure_test_lib",
-    "//tests/intellij.qodana.testsFramework:qodana-testsFramework",
-    "//tests/intellij.qodana.testsFramework:qodana-testsFramework_test_lib",
-    "//tests/intellij.ide.starter.extended:ide-starter-extended",
-    "//tests/intellij.ide.starter.extended:ide-starter-extended_test_lib",
-    "@community//libraries/kotlin/test:libraries-kotlinTest",
-    "@community//libraries/kotlin/test:libraries-kotlinTest_test_lib",
-    "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm",
-    "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm_test_lib",
-    "@community//libraries/kotlinx/coroutines/test",
-    "@community//libraries/kotlinx/coroutines/test:test_test_lib",
-    "//rustrover/integrationTestFramework:integration-testFramework",
-    "//rustrover/integrationTestFramework:integration-testFramework_test_lib",
-  ],
-  runtime_deps = [":rust-tests"]
+    name = "rust-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "tests/**/*.kt",
+            "tests/**/*.java",
+            "tests/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/qodana/rust",
+        "//contrib/qodana/rust:rust_test_lib",
+    ],
+    kotlinc_opts = ":custom_rust-tests",
+    resource_strip_prefix = "test-data",
+    resources = glob(
+        ["test-data/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":rust-tests",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/util",
+        "@community//platform/util:util_test_lib",
+        "@lib//:kodein-di-jvm",
+        "@lib//:qodana-sarif",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/testFramework/junit5:junit5_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//tools/intellij.tools.ide.starter:ide-starter",
+        "@community//tools/intellij.tools.ide.starter:ide-starter_test_lib",
+        "@community//tools/intellij.tools.ide.starter.product.rustrover:ide-starter-product-rustrover",
+        "@community//tools/intellij.tools.ide.starter.product.rustrover:ide-starter-product-rustrover_test_lib",
+        "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure",
+        "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure_test_lib",
+        "//tests/intellij.qodana.testsFramework:qodana-testsFramework",
+        "//tests/intellij.qodana.testsFramework:qodana-testsFramework_test_lib",
+        "//tests/intellij.ide.starter.extended:ide-starter-extended",
+        "//tests/intellij.ide.starter.extended:ide-starter-extended_test_lib",
+        "@community//libraries/kotlin/test:libraries-kotlinTest",
+        "@community//libraries/kotlin/test:libraries-kotlinTest_test_lib",
+        "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm",
+        "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm_test_lib",
+        "@community//libraries/kotlinx/coroutines/test",
+        "@community//libraries/kotlinx/coroutines/test:test_test_lib",
+        "//rustrover/integrationTestFramework:integration-testFramework",
+        "//rustrover/integrationTestFramework:integration-testFramework_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.rust.tests` end
 
 ### auto-generated section `iml intellij.qodana.rust.tests` start
-exports_files([
-  "intellij.qodana.rust.tests.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.rust.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.rust.tests` end
 
 ### auto-generated section `test intellij.qodana.rust.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "rust-tests_test",
-  runtime_deps = [":rust-tests_test_lib"]
+    name = "rust-tests_test",
+    runtime_deps = [":rust-tests_test_lib"],
 )
 ### auto-generated section `test intellij.qodana.rust.tests` end

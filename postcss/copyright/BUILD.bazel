@@ -1,35 +1,53 @@
-### auto-generated section `build intellij.postcss.copyright` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.postcss.copyright` start
+
 jvm_library(
-  name = "copyright",
-  module_name = "intellij.postcss.copyright",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@community//plugins/copyright",
-    "//plugins/css/copyright",
-  ]
+    name = "copyright",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.postcss.copyright",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@community//plugins/copyright",
+        "//plugins/css/copyright",
+    ],
 )
 
 jvm_library(
-  name = "copyright_test_lib",
-  testonly = True,
-  module_name = "intellij.postcss.copyright",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":copyright",
-    "@community//plugins/copyright:copyright_test_lib",
-    "//plugins/css/copyright:copyright_test_lib",
-  ]
+    name = "copyright_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.postcss.copyright",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":copyright",
+        "@community//plugins/copyright:copyright_test_lib",
+        "//plugins/css/copyright:copyright_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.postcss.copyright` end
 
 ### auto-generated section `iml intellij.postcss.copyright` start
-exports_files([
-  "intellij.postcss.copyright.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.postcss.copyright.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.postcss.copyright` end

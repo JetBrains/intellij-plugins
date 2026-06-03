@@ -1,42 +1,60 @@
-### auto-generated section `build intellij.angular.tslint` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.angular.tslint` start
+
 jvm_library(
-  name = "angular-tslint",
-  module_name = "intellij.angular.tslint",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//platform/util",
-    "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "//contrib/tslint",
-    "@community//platform/core-api:core",
-    "//contrib/Angular/angular-backend",
-  ]
+    name = "angular-tslint",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.angular.tslint",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//platform/util",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "//contrib/tslint",
+        "@community//platform/core-api:core",
+        "//contrib/Angular/angular-backend",
+    ],
 )
 
 jvm_library(
-  name = "angular-tslint_test_lib",
-  testonly = True,
-  module_name = "intellij.angular.tslint",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":angular-tslint",
-    "@community//platform/util:util_test_lib",
-    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
-    "//contrib/tslint:tslint_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "//contrib/Angular/angular-backend:angular-backend_test_lib",
-  ]
+    name = "angular-tslint_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.angular.tslint",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":angular-tslint",
+        "@community//platform/util:util_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+        "//contrib/tslint:tslint_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "//contrib/Angular/angular-backend:angular-backend_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.angular.tslint` end
 
 ### auto-generated section `iml intellij.angular.tslint` start
-exports_files([
-  "intellij.angular.tslint.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.angular.tslint.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.angular.tslint` end

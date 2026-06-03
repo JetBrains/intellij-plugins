@@ -1,46 +1,64 @@
-### auto-generated section `build intellij.qodana.jvm.dev` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.qodana.jvm.dev` start
+
 jvm_library(
-  name = "dev",
-  module_name = "intellij.qodana.jvm.dev",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//java/openapi:java",
-    "@community//plugins/dev/intellij.java.dev:java-dev",
-    "@community//platform/core-api:core",
-    "@community//platform/analysis-api:analysis",
-    "@community//plugins/dev/intellij.dev.codeInsight:codeInsight",
-    "@community//java/java-frontback-psi-api:frontback-psi",
-    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
-  ]
+    name = "dev",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.jvm.dev",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//java/openapi:java",
+        "@community//plugins/dev/intellij.java.dev:java-dev",
+        "@community//platform/core-api:core",
+        "@community//platform/analysis-api:analysis",
+        "@community//plugins/dev/intellij.dev.codeInsight:codeInsight",
+        "@community//java/java-frontback-psi-api:frontback-psi",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    ],
 )
 
 jvm_library(
-  name = "dev_test_lib",
-  testonly = True,
-  module_name = "intellij.qodana.jvm.dev",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":dev",
-    "@community//java/openapi:java_test_lib",
-    "@community//plugins/dev/intellij.java.dev:java-dev_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//plugins/dev/intellij.dev.codeInsight:codeInsight_test_lib",
-    "@community//java/java-frontback-psi-api:frontback-psi_test_lib",
-    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
-  ]
+    name = "dev_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.jvm.dev",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":dev",
+        "@community//java/openapi:java_test_lib",
+        "@community//plugins/dev/intellij.java.dev:java-dev_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//plugins/dev/intellij.dev.codeInsight:codeInsight_test_lib",
+        "@community//java/java-frontback-psi-api:frontback-psi_test_lib",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.jvm.dev` end
 
 ### auto-generated section `iml intellij.qodana.jvm.dev` start
-exports_files([
-  "intellij.qodana.jvm.dev.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.jvm.dev.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.jvm.dev` end

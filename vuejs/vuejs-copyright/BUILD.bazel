@@ -1,34 +1,48 @@
-### auto-generated section `build intellij.vuejs.copyright` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.vuejs.copyright` start
+
 jvm_library(
-  name = "copyright",
-  module_name = "intellij.vuejs.copyright",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  runtime_deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//plugins/copyright",
-  ]
+    name = "copyright",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.vuejs.copyright",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//plugins/copyright",
+    ],
 )
 
 jvm_library(
-  name = "copyright_test_lib",
-  testonly = True,
-  module_name = "intellij.vuejs.copyright",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":copyright",
-    "@community//plugins/copyright:copyright_test_lib",
-  ]
+    name = "copyright_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.vuejs.copyright",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":copyright",
+        "@community//plugins/copyright:copyright_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.vuejs.copyright` end
 
 ### auto-generated section `iml intellij.vuejs.copyright` start
-exports_files([
-  "intellij.vuejs.copyright.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.vuejs.copyright.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.vuejs.copyright` end

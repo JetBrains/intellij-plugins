@@ -1,41 +1,55 @@
-### auto-generated section `build intellij.protoeditor` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.protoeditor` start
+
 jvm_library(
-  name = "protoeditor",
-  module_name = "intellij.protoeditor",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  runtime_deps = [
-    "//contrib/protobuf/protoeditor-core",
-    "@community//platform/structure-view-impl:structureView-impl",
-  ]
+    name = "protoeditor",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.protoeditor",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//contrib/protobuf/protoeditor-core",
+        "@community//platform/structure-view-impl:structureView-impl",
+    ],
 )
 
 jvm_library(
-  name = "protoeditor_test_lib",
-  testonly = True,
-  module_name = "intellij.protoeditor",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":protoeditor",
-    "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
-    "@community//platform/structure-view-impl:structureView-impl_test_lib",
-    "//contrib/protobuf/protoeditor-jvm",
-    "//contrib/protobuf/protoeditor-jvm:protoeditor-jvm_test_lib",
-    "//contrib/protobuf/protoeditor-python",
-    "//contrib/protobuf/protoeditor-python:protoeditor-python_test_lib",
-    "//contrib/protobuf/protoeditor-go",
-    "//contrib/protobuf/protoeditor-go:protoeditor-go_test_lib",
-  ]
+    name = "protoeditor_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.protoeditor",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":protoeditor",
+        "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
+        "@community//platform/structure-view-impl:structureView-impl_test_lib",
+        "//contrib/protobuf/protoeditor-jvm",
+        "//contrib/protobuf/protoeditor-jvm:protoeditor-jvm_test_lib",
+        "//contrib/protobuf/protoeditor-python",
+        "//contrib/protobuf/protoeditor-python:protoeditor-python_test_lib",
+        "//contrib/protobuf/protoeditor-go",
+        "//contrib/protobuf/protoeditor-go:protoeditor-go_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.protoeditor` end
 
 ### auto-generated section `iml intellij.protoeditor` start
-exports_files([
-  "intellij.protoeditor.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.protoeditor.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.protoeditor` end

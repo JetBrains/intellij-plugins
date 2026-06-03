@@ -1,37 +1,55 @@
-### auto-generated section `build intellij.vcs.perforce.util` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.vcs.perforce.util` start
+
 jvm_library(
-  name = "vcs-perforce-util",
-  module_name = "intellij.vcs.perforce.util",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@community//platform/core-api:core",
-    "@community//platform/platform-api:ide",
-    "@community//platform/platform-util-io:ide-util-io",
-  ]
+    name = "vcs-perforce-util",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.vcs.perforce.util",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@community//platform/core-api:core",
+        "@community//platform/platform-api:ide",
+        "@community//platform/platform-util-io:ide-util-io",
+    ],
 )
 
 jvm_library(
-  name = "vcs-perforce-util_test_lib",
-  testonly = True,
-  module_name = "intellij.vcs.perforce.util",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":vcs-perforce-util",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/platform-api:ide_test_lib",
-    "@community//platform/platform-util-io:ide-util-io_test_lib",
-  ]
+    name = "vcs-perforce-util_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.vcs.perforce.util",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":vcs-perforce-util",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.vcs.perforce.util` end
 
 ### auto-generated section `iml intellij.vcs.perforce.util` start
-exports_files([
-  "intellij.vcs.perforce.util.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.vcs.perforce.util.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.vcs.perforce.util` end

@@ -1,36 +1,50 @@
-### auto-generated section `build intellij.qodana.sarif` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.qodana.sarif` start
+
 jvm_library(
-  name = "sarif",
-  module_name = "intellij.qodana.sarif",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  exports = ["@lib//:qodana-sarif"],
-  runtime_deps = [
-    "@lib//:qodana-sarif",
-    "@community//platform/backend",
-  ]
+    name = "sarif",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.sarif",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    exports = ["@lib//:qodana-sarif"],
+    runtime_deps = [
+        # do not sort,
+        "@lib//:qodana-sarif",
+        "@community//platform/backend",
+    ],
 )
 
 jvm_library(
-  name = "sarif_test_lib",
-  testonly = True,
-  module_name = "intellij.qodana.sarif",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  exports = ["@lib//:qodana-sarif"],
-  runtime_deps = [
-    ":sarif",
-    "@community//platform/backend:backend_test_lib",
-  ]
+    name = "sarif_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.sarif",
+    visibility = ["//visibility:public"],
+    exports = ["@lib//:qodana-sarif"],
+    runtime_deps = [
+        # do not sort,
+        ":sarif",
+        "@community//platform/backend:backend_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.sarif` end
 
 ### auto-generated section `iml intellij.qodana.sarif` start
-exports_files([
-  "intellij.qodana.sarif.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.sarif.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.sarif` end

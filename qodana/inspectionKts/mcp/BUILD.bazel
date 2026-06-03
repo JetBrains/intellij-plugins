@@ -1,54 +1,72 @@
-### auto-generated section `build intellij.qodana.inspectionKts.mcp` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.qodana.inspectionKts.mcp` start
+
 jvm_library(
-  name = "mcp",
-  module_name = "intellij.qodana.inspectionKts.mcp",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//plugins/mcp-server:mcpserver",
-    "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
-    "@community//libraries/kotlinx/serialization/core",
-    "@community//libraries/kotlinx/serialization/json",
-    "@community//platform/core-api:core",
-    "@community//platform/lang-api:lang",
-    "@community//platform/util",
-    "@community//libraries/kotlinx/coroutines/core",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-impl",
-    "@community//platform/platform-api:ide",
-  ]
+    name = "mcp",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.inspectionKts.mcp",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//plugins/mcp-server:mcpserver",
+        "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
+        "@community//libraries/kotlinx/serialization/core",
+        "@community//libraries/kotlinx/serialization/json",
+        "@community//platform/core-api:core",
+        "@community//platform/lang-api:lang",
+        "@community//platform/util",
+        "@community//libraries/kotlinx/coroutines/core",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-impl",
+        "@community//platform/platform-api:ide",
+    ],
 )
 
 jvm_library(
-  name = "mcp_test_lib",
-  testonly = True,
-  module_name = "intellij.qodana.inspectionKts.mcp",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":mcp",
-    "@community//plugins/mcp-server:mcpserver_test_lib",
-    "//contrib/qodana/inspectionKts/core:qodana-inspectionKts_test_lib",
-    "@community//libraries/kotlinx/serialization/core:core_test_lib",
-    "@community//libraries/kotlinx/serialization/json:json_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/util:util_test_lib",
-    "@community//libraries/kotlinx/coroutines/core:core_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/analysis-impl:analysis-impl_test_lib",
-    "@community//platform/platform-api:ide_test_lib",
-  ]
+    name = "mcp_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.inspectionKts.mcp",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":mcp",
+        "@community//plugins/mcp-server:mcpserver_test_lib",
+        "//contrib/qodana/inspectionKts/core:qodana-inspectionKts_test_lib",
+        "@community//libraries/kotlinx/serialization/core:core_test_lib",
+        "@community//libraries/kotlinx/serialization/json:json_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//libraries/kotlinx/coroutines/core:core_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/analysis-impl:analysis-impl_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.inspectionKts.mcp` end
 
 ### auto-generated section `iml intellij.qodana.inspectionKts.mcp` start
-exports_files([
-  "intellij.qodana.inspectionKts.mcp.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.inspectionKts.mcp.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.inspectionKts.mcp` end

@@ -1,64 +1,82 @@
-### auto-generated section `build intellij.qodana.jvm.gradle` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.qodana.jvm.gradle` start
+
 jvm_library(
-  name = "gradle",
-  module_name = "intellij.qodana.jvm.gradle",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@community//platform/lang-core",
-    "@community//platform/execution",
-    "@community//java/openapi:java",
-    "@lib//:kotlin-stdlib",
-    "@community//platform/core-api:core",
-    "@community//platform/platform-api:ide",
-    "@community//plugins/gradle",
-    "@community//platform/external-system-api:externalSystem",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/progress/shared:ide-progress",
-    "@community//platform/projectModel-api:projectModel",
-    "//contrib/qodana",
-    "@community//platform/backend/observation",
-    "//contrib/qodana/jvm/java",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/external-system-impl:externalSystem-impl",
-    "@community//platform/core-impl",
-  ]
+    name = "gradle",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.jvm.gradle",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@community//platform/lang-core",
+        "@community//platform/execution",
+        "@community//java/openapi:java",
+        "@lib//:kotlin-stdlib",
+        "@community//platform/core-api:core",
+        "@community//platform/platform-api:ide",
+        "@community//plugins/gradle",
+        "@community//platform/external-system-api:externalSystem",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/progress/shared:ide-progress",
+        "@community//platform/projectModel-api:projectModel",
+        "//contrib/qodana",
+        "@community//platform/backend/observation",
+        "//contrib/qodana/jvm/java",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/external-system-impl:externalSystem-impl",
+        "@community//platform/core-impl",
+    ],
 )
 
 jvm_library(
-  name = "gradle_test_lib",
-  testonly = True,
-  module_name = "intellij.qodana.jvm.gradle",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":gradle",
-    "@community//platform/lang-core:lang-core_test_lib",
-    "@community//platform/execution:execution_test_lib",
-    "@community//java/openapi:java_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/platform-api:ide_test_lib",
-    "@community//plugins/gradle:gradle_test_lib",
-    "@community//platform/external-system-api:externalSystem_test_lib",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-    "@community//platform/progress/shared:ide-progress_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "//contrib/qodana:qodana_test_lib",
-    "@community//platform/backend/observation:observation_test_lib",
-    "//contrib/qodana/jvm/java:java_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/external-system-impl:externalSystem-impl_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-  ]
+    name = "gradle_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.jvm.gradle",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":gradle",
+        "@community//platform/lang-core:lang-core_test_lib",
+        "@community//platform/execution:execution_test_lib",
+        "@community//java/openapi:java_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//plugins/gradle:gradle_test_lib",
+        "@community//platform/external-system-api:externalSystem_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/progress/shared:ide-progress_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "//contrib/qodana:qodana_test_lib",
+        "@community//platform/backend/observation:observation_test_lib",
+        "//contrib/qodana/jvm/java:java_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/external-system-impl:externalSystem-impl_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.jvm.gradle` end
 
 ### auto-generated section `iml intellij.qodana.jvm.gradle` start
-exports_files([
-  "intellij.qodana.jvm.gradle.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.jvm.gradle.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.jvm.gradle` end

@@ -1,147 +1,181 @@
-### auto-generated section `build intellij.protoeditor.jvm` start
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.protoeditor.jvm` start
+
 jvm_library(
-  name = "protoeditor-jvm",
-  module_name = "intellij.protoeditor.jvm",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//java/java-psi-api:psi",
-    "@community//java/java-frontback-psi-api:frontback-psi",
-    "@community//libraries/guava",
-    "@community//platform/core-api:core",
-    "@community//platform/lang-api:lang",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/core-impl",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/core-ui",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/indexing-api:indexing",
-    "@community//platform/lang-impl",
-    "//contrib/protobuf/protoeditor-core",
-    "@community//java/java-indexing-api:indexing",
-  ]
+    name = "protoeditor-jvm",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.protoeditor.jvm",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//java/java-psi-api:psi",
+        "@community//java/java-frontback-psi-api:frontback-psi",
+        "@community//libraries/guava",
+        "@community//platform/core-api:core",
+        "@community//platform/lang-api:lang",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/core-impl",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-ui",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/indexing-api:indexing",
+        "@community//platform/lang-impl",
+        "//contrib/protobuf/protoeditor-core",
+        "@community//java/java-indexing-api:indexing",
+    ],
 )
 
 jvm_library(
-  name = "protoeditor-jvm_test_lib",
-  testonly = True,
-  module_name = "intellij.protoeditor.jvm",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":protoeditor-jvm",
-    "@community//java/java-psi-api:psi_test_lib",
-    "@community//java/java-frontback-psi-api:frontback-psi_test_lib",
-    "@community//libraries/guava:guava_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//jps/model-api:model",
-    "@community//jps/model-api:model_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/indexing-api:indexing_test_lib",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
-    "@community//java/testFramework",
-    "@community//java/testFramework:testFramework_test_lib",
-    "@lib//:truth",
-    "@community//java/java-indexing-api:indexing_test_lib",
-  ]
+    name = "protoeditor-jvm_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.protoeditor.jvm",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":protoeditor-jvm",
+        "@community//java/java-psi-api:psi_test_lib",
+        "@community//java/java-frontback-psi-api:frontback-psi_test_lib",
+        "@community//libraries/guava:guava_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//jps/model-api:model",
+        "@community//jps/model-api:model_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/indexing-api:indexing_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
+        "@community//java/testFramework",
+        "@community//java/testFramework:testFramework_test_lib",
+        "@lib//:truth",
+        "@community//java/java-indexing-api:indexing_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.protoeditor.jvm` end
 
 ### auto-generated section `iml intellij.protoeditor.jvm` start
-exports_files([
-  "intellij.protoeditor.jvm.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.protoeditor.jvm.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.protoeditor.jvm` end
 
 ### auto-generated section `build intellij.protoeditor.jvm.tests` start
+
 jvm_library(
-  name = "protoeditor-jvm-tests",
-  module_name = "intellij.protoeditor.jvm.tests",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+    name = "protoeditor-jvm-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.protoeditor.jvm.tests",
+    visibility = ["//visibility:public"],
 )
 
 jvm_library(
-  name = "protoeditor-jvm-tests_test_lib",
-  testonly = True,
-  visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  associates = [
-    "//contrib/protobuf/protoeditor-jvm",
-    "//contrib/protobuf/protoeditor-jvm:protoeditor-jvm_test_lib",
-  ],
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//java/java-psi-api:psi",
-    "@community//java/java-psi-api:psi_test_lib",
-    "@community//libraries/guava",
-    "@community//libraries/guava:guava_test_lib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//jps/model-api:model",
-    "@community//jps/model-api:model_test_lib",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//platform/core-impl",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-ui",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/indexing-api:indexing",
-    "@community//platform/indexing-api:indexing_test_lib",
-    "@community//platform/lang-impl",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/ide-core",
-    "//contrib/protobuf/protoeditor-core",
-    "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
-    "@community//java/testFramework",
-    "@community//java/testFramework:testFramework_test_lib",
-    "@lib//:truth",
-    "@community//java/java-indexing-api:indexing",
-    "@community//java/java-indexing-api:indexing_test_lib",
-    "//contrib/protobuf/protoeditor-core:protoeditor-core-tests",
-    "//contrib/protobuf/protoeditor-core:protoeditor-core-tests_test_lib",
-    "@community//platform/statistics",
-    "@community//platform/statistics:statistics_test_lib",
-  ],
-  runtime_deps = [
-    ":protoeditor-jvm-tests",
-    "@community//platform/ide-core:ide-core_test_lib",
-  ]
+    name = "protoeditor-jvm-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "test/**/*.kt",
+            "test/**/*.java",
+            "test/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/protobuf/protoeditor-jvm",
+        "//contrib/protobuf/protoeditor-jvm:protoeditor-jvm_test_lib",
+    ],
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":protoeditor-jvm-tests",
+        "@community//platform/ide-core:ide-core_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//java/java-psi-api:psi",
+        "@community//java/java-psi-api:psi_test_lib",
+        "@community//libraries/guava",
+        "@community//libraries/guava:guava_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//jps/model-api:model",
+        "@community//jps/model-api:model_test_lib",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/core-impl",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-ui",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/indexing-api:indexing",
+        "@community//platform/indexing-api:indexing_test_lib",
+        "@community//platform/lang-impl",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/ide-core",
+        "//contrib/protobuf/protoeditor-core",
+        "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
+        "@community//java/testFramework",
+        "@community//java/testFramework:testFramework_test_lib",
+        "@lib//:truth",
+        "@community//java/java-indexing-api:indexing",
+        "@community//java/java-indexing-api:indexing_test_lib",
+        "//contrib/protobuf/protoeditor-core:protoeditor-core-tests",
+        "//contrib/protobuf/protoeditor-core:protoeditor-core-tests_test_lib",
+        "@community//platform/statistics",
+        "@community//platform/statistics:statistics_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.protoeditor.jvm.tests` end
 
 ### auto-generated section `iml intellij.protoeditor.jvm.tests` start
-exports_files([
-  "intellij.protoeditor.jvm.tests.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.protoeditor.jvm.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.protoeditor.jvm.tests` end
 
 ### auto-generated section `test intellij.protoeditor.jvm.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "protoeditor-jvm-tests_test",
-  runtime_deps = [":protoeditor-jvm-tests_test_lib"]
+    name = "protoeditor-jvm-tests_test",
+    runtime_deps = [":protoeditor-jvm-tests_test_lib"],
 )
 ### auto-generated section `test intellij.protoeditor.jvm.tests` end

@@ -1,139 +1,175 @@
-### auto-generated section `build intellij.protoeditor.python` start
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.protoeditor.python` start
+
 jvm_library(
-  name = "protoeditor-python",
-  module_name = "intellij.protoeditor.python",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//libraries/guava",
-    "@community//libraries/stream",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/core-api:core",
-    "@community//platform/core-impl",
-    "@community//platform/core-ui",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/ide-core",
-    "@community//platform/indexing-api:indexing",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-impl",
-    "@community//platform/markdown-utils",
-    "@community//platform/usageView",
-    "@community//platform/util:util-ui",
-    "//contrib/protobuf/protoeditor-core",
-    "@community//python/python-psi-api:psi",
-    "@community//python/python-psi-impl:psi-impl",
-  ]
+    name = "protoeditor-python",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.protoeditor.python",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//libraries/guava",
+        "@community//libraries/stream",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/core-impl",
+        "@community//platform/core-ui",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/ide-core",
+        "@community//platform/indexing-api:indexing",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-impl",
+        "@community//platform/markdown-utils",
+        "@community//platform/usageView",
+        "@community//platform/util:util-ui",
+        "//contrib/protobuf/protoeditor-core",
+        "@community//python/python-psi-api:psi",
+        "@community//python/python-psi-impl:psi-impl",
+    ],
 )
 
 jvm_library(
-  name = "protoeditor-python_test_lib",
-  testonly = True,
-  module_name = "intellij.protoeditor.python",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":protoeditor-python",
-    "@community//libraries/guava:guava_test_lib",
-    "@community//libraries/stream:stream_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "@community//platform/indexing-api:indexing_test_lib",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/markdown-utils:markdown-utils_test_lib",
-    "@community//platform/usageView:usageView_test_lib",
-    "@community//platform/util:util-ui_test_lib",
-    "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
-    "@community//python/python-psi-api:psi_test_lib",
-    "@community//python/python-psi-impl:psi-impl_test_lib",
-  ]
+    name = "protoeditor-python_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.protoeditor.python",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":protoeditor-python",
+        "@community//libraries/guava:guava_test_lib",
+        "@community//libraries/stream:stream_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/indexing-api:indexing_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/markdown-utils:markdown-utils_test_lib",
+        "@community//platform/usageView:usageView_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+        "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
+        "@community//python/python-psi-api:psi_test_lib",
+        "@community//python/python-psi-impl:psi-impl_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.protoeditor.python` end
 
 ### auto-generated section `iml intellij.protoeditor.python` start
-exports_files([
-  "intellij.protoeditor.python.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.protoeditor.python.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.protoeditor.python` end
 
 ### auto-generated section `build intellij.protoeditor.python.tests` start
+
 jvm_library(
-  name = "protoeditor-python-tests",
-  module_name = "intellij.protoeditor.python.tests",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+    name = "protoeditor-python-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.protoeditor.python.tests",
+    visibility = ["//visibility:public"],
 )
 
 jvm_library(
-  name = "protoeditor-python-tests_test_lib",
-  testonly = True,
-  visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  associates = [
-    "//contrib/protobuf/protoeditor-python",
-    "//contrib/protobuf/protoeditor-python:protoeditor-python_test_lib",
-  ],
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//libraries/guava",
-    "@community//libraries/guava:guava_test_lib",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/core-impl",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/core-ui",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/lang-impl",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//platform/usageView",
-    "@community//platform/usageView:usageView_test_lib",
-    "@community//platform/util:util-ui",
-    "@community//platform/util:util-ui_test_lib",
-    "//contrib/protobuf/protoeditor-core",
-    "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
-    "//contrib/protobuf/protoeditor-core:protoeditor-core-tests",
-    "//contrib/protobuf/protoeditor-core:protoeditor-core-tests_test_lib",
-    "@community//python:python-community-impl",
-    "@community//python:python-community-impl_test_lib",
-    "@community//python:python-community-tests",
-    "@community//python:python-community-tests_test_lib",
-    "@community//python/python-psi-api:psi",
-    "@community//python/python-psi-api:psi_test_lib",
-  ],
-  runtime_deps = [":protoeditor-python-tests"]
+    name = "protoeditor-python-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "test/**/*.kt",
+            "test/**/*.java",
+            "test/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/protobuf/protoeditor-python",
+        "//contrib/protobuf/protoeditor-python:protoeditor-python_test_lib",
+    ],
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":protoeditor-python-tests",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//libraries/guava",
+        "@community//libraries/guava:guava_test_lib",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/core-ui",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/usageView",
+        "@community//platform/usageView:usageView_test_lib",
+        "@community//platform/util:util-ui",
+        "@community//platform/util:util-ui_test_lib",
+        "//contrib/protobuf/protoeditor-core",
+        "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
+        "//contrib/protobuf/protoeditor-core:protoeditor-core-tests",
+        "//contrib/protobuf/protoeditor-core:protoeditor-core-tests_test_lib",
+        "@community//python:python-community-impl",
+        "@community//python:python-community-impl_test_lib",
+        "@community//python:python-community-tests",
+        "@community//python:python-community-tests_test_lib",
+        "@community//python/python-psi-api:psi",
+        "@community//python/python-psi-api:psi_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.protoeditor.python.tests` end
 
 ### auto-generated section `iml intellij.protoeditor.python.tests` start
-exports_files([
-  "intellij.protoeditor.python.tests.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.protoeditor.python.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.protoeditor.python.tests` end
 
 ### auto-generated section `test intellij.protoeditor.python.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "protoeditor-python-tests_test",
-  runtime_deps = [":protoeditor-python-tests_test_lib"]
+    name = "protoeditor-python-tests_test",
+    runtime_deps = [":protoeditor-python-tests_test_lib"],
 )
 ### auto-generated section `test intellij.protoeditor.python.tests` end

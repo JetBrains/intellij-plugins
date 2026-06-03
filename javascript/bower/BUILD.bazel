@@ -1,73 +1,91 @@
-### auto-generated section `build intellij.javascript.bower` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.javascript.bower` start
+
 jvm_library(
-  name = "bower",
-  module_name = "intellij.javascript.bower",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "//plugins/JavaScriptLanguage/javascript-backend",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/core-api:core",
-    "@community//platform/platform-util-io:ide-util-io",
-    "@community//libraries/gson",
-    "@community//platform/projectModel-api:projectModel",
-    "//webcore/impl",
-    "@community//libraries/guava",
-    "@community//platform/ide-core",
-    "@community//platform/lang-impl",
-    "@community//spellchecker",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/util/jdom",
-    "@community//platform/util:util-ui",
-    "@community//platform/core-ui",
-    "@community//platform/core-impl",
-    "@community//json/backend",
-    "//plugins/JavaScriptLanguage/javascript-common",
-    "@community//libraries/fastutil",
-    "@community//platform/util/concurrency",
-    "@community//platform/execution",
-  ]
+    name = "bower",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.javascript.bower",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "//plugins/JavaScriptLanguage/javascript-backend",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/platform-util-io:ide-util-io",
+        "@community//libraries/gson",
+        "@community//platform/projectModel-api:projectModel",
+        "//webcore/impl",
+        "@community//libraries/guava",
+        "@community//platform/ide-core",
+        "@community//platform/lang-impl",
+        "@community//spellchecker",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/util/jdom",
+        "@community//platform/util:util-ui",
+        "@community//platform/core-ui",
+        "@community//platform/core-impl",
+        "@community//json/backend",
+        "//plugins/JavaScriptLanguage/javascript-common",
+        "@community//libraries/fastutil",
+        "@community//platform/util/concurrency",
+        "@community//platform/execution",
+    ],
 )
 
 jvm_library(
-  name = "bower_test_lib",
-  testonly = True,
-  module_name = "intellij.javascript.bower",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":bower",
-    "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/platform-util-io:ide-util-io_test_lib",
-    "@community//libraries/gson:gson_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "//webcore/impl:impl_test_lib",
-    "@community//libraries/guava:guava_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//spellchecker:spellchecker_test_lib",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-    "@community//platform/util/jdom:jdom_test_lib",
-    "@community//platform/util:util-ui_test_lib",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//json/backend:backend_test_lib",
-    "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
-    "@community//libraries/fastutil:fastutil_test_lib",
-    "@community//platform/util/concurrency:concurrency_test_lib",
-    "@community//platform/execution:execution_test_lib",
-  ]
+    name = "bower_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.javascript.bower",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":bower",
+        "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//libraries/gson:gson_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "//webcore/impl:impl_test_lib",
+        "@community//libraries/guava:guava_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//spellchecker:spellchecker_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/util/jdom:jdom_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//json/backend:backend_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
+        "@community//libraries/fastutil:fastutil_test_lib",
+        "@community//platform/util/concurrency:concurrency_test_lib",
+        "@community//platform/execution:execution_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.javascript.bower` end
 
 ### auto-generated section `iml intellij.javascript.bower` start
-exports_files([
-  "intellij.javascript.bower.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.javascript.bower.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.javascript.bower` end

@@ -1,125 +1,163 @@
-### auto-generated section `build intellij.webassembly` start
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.webassembly` start
+
 jvm_library(
-  name = "webassembly",
-  module_name = "intellij.webassembly",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/main/gen/**/*.kt", "src/main/gen/**/*.java", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java", "src/main/kotlin/**/*.form"], allow_empty = True),
-  resources = glob(["src/main/resources/**/*"]),
-  resource_strip_prefix = "src/main/resources",
-  deps = [
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/core-api:core",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/indexing-api:indexing",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-impl",
-    "@community//platform/execution-impl",
-    "@community//platform/core-impl",
-    "@community//libraries/gson",
-    "@community//platform/core-ui",
-    "@community//platform/platform-util-io:ide-util-io",
-    "@community//platform/util/jdom",
-  ]
+    name = "webassembly",
+    srcs = glob(
+        [
+            "src/main/gen/**/*.kt",
+            "src/main/gen/**/*.java",
+            "src/main/kotlin/**/*.kt",
+            "src/main/kotlin/**/*.java",
+            "src/main/kotlin/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.webassembly",
+    resource_strip_prefix = "src/main/resources",
+    resources = glob(
+        ["src/main/resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/indexing-api:indexing",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-impl",
+        "@community//platform/execution-impl",
+        "@community//platform/core-impl",
+        "@community//libraries/gson",
+        "@community//platform/core-ui",
+        "@community//platform/platform-util-io:ide-util-io",
+        "@community//platform/util/jdom",
+    ],
 )
 
 jvm_library(
-  name = "webassembly_test_lib",
-  testonly = True,
-  module_name = "intellij.webassembly",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":webassembly",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/indexing-api:indexing_test_lib",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/execution-impl:execution-impl_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//libraries/gson:gson_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/platform-util-io:ide-util-io_test_lib",
-    "@community//platform/util/jdom:jdom_test_lib",
-  ]
+    name = "webassembly_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.webassembly",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":webassembly",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/indexing-api:indexing_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/execution-impl:execution-impl_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//libraries/gson:gson_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//platform/util/jdom:jdom_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.webassembly` end
 
 ### auto-generated section `iml intellij.webassembly` start
-exports_files([
-  "intellij.webassembly.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.webassembly.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.webassembly` end
 
 ### auto-generated section `build intellij.webassembly.tests` start
+
 jvm_library(
-  name = "webassembly-tests",
-  module_name = "intellij.webassembly.tests",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+    name = "webassembly-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.webassembly.tests",
+    visibility = ["//visibility:public"],
 )
 
 jvm_library(
-  name = "webassembly-tests_test_lib",
-  testonly = True,
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java", "src/test/kotlin/**/*.form"], allow_empty = True),
-  resources = glob(["src/test/resources/**/*"]),
-  resource_strip_prefix = "src/test/resources",
-  associates = [
-    "//contrib/web-assembly-plugin:webassembly",
-    "//contrib/web-assembly-plugin:webassembly_test_lib",
-  ],
-  deps = [
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/indexing-api:indexing",
-    "@community//platform/indexing-api:indexing_test_lib",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/lang-impl",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/execution-impl",
-    "@community//platform/execution-impl:execution-impl_test_lib",
-    "@community//platform/core-impl",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//libraries/gson",
-    "@community//libraries/gson:gson_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//platform/core-ui",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/platform-util-io:ide-util-io",
-    "@community//platform/util/jdom",
-    "@community//platform/util/jdom:jdom_test_lib",
-  ],
-  runtime_deps = [
-    ":webassembly-tests",
-    "@community//platform/platform-util-io:ide-util-io_test_lib",
-  ]
+    name = "webassembly-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "src/test/kotlin/**/*.kt",
+            "src/test/kotlin/**/*.java",
+            "src/test/kotlin/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/web-assembly-plugin:webassembly",
+        "//contrib/web-assembly-plugin:webassembly_test_lib",
+    ],
+    resource_strip_prefix = "src/test/resources",
+    resources = glob(
+        ["src/test/resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":webassembly-tests",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/indexing-api:indexing",
+        "@community//platform/indexing-api:indexing_test_lib",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/execution-impl",
+        "@community//platform/execution-impl:execution-impl_test_lib",
+        "@community//platform/core-impl",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//libraries/gson",
+        "@community//libraries/gson:gson_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/core-ui",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/platform-util-io:ide-util-io",
+        "@community//platform/util/jdom",
+        "@community//platform/util/jdom:jdom_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.webassembly.tests` end
 
 ### auto-generated section `iml intellij.webassembly.tests` start
-exports_files([
-  "intellij.webassembly.tests.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.webassembly.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.webassembly.tests` end
 
 ### auto-generated section `test intellij.webassembly.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "webassembly-tests_test",
-  runtime_deps = [":webassembly-tests_test_lib"]
+    name = "webassembly-tests_test",
+    runtime_deps = [":webassembly-tests_test_lib"],
 )
 ### auto-generated section `test intellij.webassembly.tests` end

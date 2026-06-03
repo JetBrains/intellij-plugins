@@ -1,151 +1,185 @@
-### auto-generated section `build intellij.jhipster.backend` start
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.jhipster.backend` start
+
 jvm_library(
-  name = "backend",
-  module_name = "intellij.jhipster.backend",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@community//platform/backend",
-    "//contrib/jhipster",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/core-api:core",
-    "@community//platform/util",
-    "@community//platform/indexing-api:indexing",
-    "@community//platform/indexing-impl",
-    "@community//spellchecker",
-    "@community//platform/execution",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/execution-impl",
-    "@community//platform/core-ui",
-    "@community//platform/lang-api:lang",
-    "@community//platform/platform-util-io:ide-util-io",
-    "@community//platform/ide-core",
-    "@lib//:kotlin-stdlib",
-    "@community//java/java-psi-api:psi",
-    "@community//platform/core-impl",
-    "@community//jps/model-api:model",
-  ]
+    name = "backend",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.jhipster.backend",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@community//platform/backend",
+        "//contrib/jhipster",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/util",
+        "@community//platform/indexing-api:indexing",
+        "@community//platform/indexing-impl",
+        "@community//spellchecker",
+        "@community//platform/execution",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/execution-impl",
+        "@community//platform/core-ui",
+        "@community//platform/lang-api:lang",
+        "@community//platform/platform-util-io:ide-util-io",
+        "@community//platform/ide-core",
+        "@lib//:kotlin-stdlib",
+        "@community//java/java-psi-api:psi",
+        "@community//platform/core-impl",
+        "@community//jps/model-api:model",
+    ],
 )
 
 jvm_library(
-  name = "backend_test_lib",
-  testonly = True,
-  module_name = "intellij.jhipster.backend",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":backend",
-    "@community//platform/backend:backend_test_lib",
-    "//contrib/jhipster:jhipster_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/util:util_test_lib",
-    "@community//platform/indexing-api:indexing_test_lib",
-    "@community//platform/indexing-impl:indexing-impl_test_lib",
-    "@community//spellchecker:spellchecker_test_lib",
-    "@community//platform/execution:execution_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/execution-impl:execution-impl_test_lib",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/platform-util-io:ide-util-io_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "@community//java/java-psi-api:psi_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//jps/model-api:model_test_lib",
-  ]
+    name = "backend_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.jhipster.backend",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":backend",
+        "@community//platform/backend:backend_test_lib",
+        "//contrib/jhipster:jhipster_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/indexing-api:indexing_test_lib",
+        "@community//platform/indexing-impl:indexing-impl_test_lib",
+        "@community//spellchecker:spellchecker_test_lib",
+        "@community//platform/execution:execution_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/execution-impl:execution-impl_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//java/java-psi-api:psi_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//jps/model-api:model_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.jhipster.backend` end
 
 ### auto-generated section `iml intellij.jhipster.backend` start
-exports_files([
-  "intellij.jhipster.backend.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.jhipster.backend.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.jhipster.backend` end
 
 ### auto-generated section `build intellij.jhipster.backend.tests` start
+
 jvm_library(
-  name = "backend-tests",
-  module_name = "intellij.jhipster.backend.tests",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+    name = "backend-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.jhipster.backend.tests",
+    visibility = ["//visibility:public"],
 )
 
 jvm_library(
-  name = "backend-tests_test_lib",
-  testonly = True,
-  visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  associates = [
-    "//contrib/jhipster/backend",
-    "//contrib/jhipster/backend:backend_test_lib",
-  ],
-  deps = [
-    "@community//platform/backend",
-    "@community//platform/backend:backend_test_lib",
-    "//contrib/jhipster",
-    "//contrib/jhipster:jhipster_test_lib",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/util",
-    "@community//platform/util:util_test_lib",
-    "@community//platform/indexing-api:indexing",
-    "@community//platform/indexing-api:indexing_test_lib",
-    "@community//platform/indexing-impl",
-    "@community//platform/indexing-impl:indexing-impl_test_lib",
-    "@community//spellchecker",
-    "@community//spellchecker:spellchecker_test_lib",
-    "@community//platform/execution",
-    "@community//platform/execution:execution_test_lib",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/execution-impl",
-    "@community//platform/execution-impl:execution-impl_test_lib",
-    "@community//platform/core-ui",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/platform-util-io:ide-util-io",
-    "@lib//:kotlin-stdlib",
-    "@community//java/java-psi-api:psi",
-    "@community//java/java-psi-api:psi_test_lib",
-    "@community//platform/core-impl",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//jps/model-api:model",
-    "@community//jps/model-api:model_test_lib",
-  ],
-  runtime_deps = [
-    ":backend-tests",
-    "@community//platform/platform-util-io:ide-util-io_test_lib",
-  ]
+    name = "backend-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "test/**/*.kt",
+            "test/**/*.java",
+            "test/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/jhipster/backend",
+        "//contrib/jhipster/backend:backend_test_lib",
+    ],
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":backend-tests",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "@community//platform/backend",
+        "@community//platform/backend:backend_test_lib",
+        "//contrib/jhipster",
+        "//contrib/jhipster:jhipster_test_lib",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/util",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/indexing-api:indexing",
+        "@community//platform/indexing-api:indexing_test_lib",
+        "@community//platform/indexing-impl",
+        "@community//platform/indexing-impl:indexing-impl_test_lib",
+        "@community//spellchecker",
+        "@community//spellchecker:spellchecker_test_lib",
+        "@community//platform/execution",
+        "@community//platform/execution:execution_test_lib",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/execution-impl",
+        "@community//platform/execution-impl:execution-impl_test_lib",
+        "@community//platform/core-ui",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/platform-util-io:ide-util-io",
+        "@lib//:kotlin-stdlib",
+        "@community//java/java-psi-api:psi",
+        "@community//java/java-psi-api:psi_test_lib",
+        "@community//platform/core-impl",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//jps/model-api:model",
+        "@community//jps/model-api:model_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.jhipster.backend.tests` end
 
 ### auto-generated section `iml intellij.jhipster.backend.tests` start
-exports_files([
-  "intellij.jhipster.backend.tests.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.jhipster.backend.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.jhipster.backend.tests` end
 
 ### auto-generated section `test intellij.jhipster.backend.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "backend-tests_test",
-  runtime_deps = [":backend-tests_test_lib"]
+    name = "backend-tests_test",
+    runtime_deps = [":backend-tests_test_lib"],
 )
 ### auto-generated section `test intellij.jhipster.backend.tests` end

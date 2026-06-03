@@ -1,51 +1,69 @@
-### auto-generated section `build intellij.flex.shared` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.flex.shared` start
+
 jvm_library(
-  name = "shared",
-  module_name = "intellij.flex.shared",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  kotlinc_opts = "@community//:k11",
-  deps = [
-    "@community//platform/util",
-    "@community//jps/model-api:model",
-    "@community//jps/model-impl",
-    "@community//jps/model-serialization",
-    "@community//jps/jps-builders:build",
-    "@community//libraries/fastutil",
-    "@community//platform/util/jdom",
-    "@community//platform/core-api:core",
-    "@community//libraries/hash4j",
-  ]
+    name = "shared",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    kotlinc_opts = "@community//:k11",
+    module_name = "intellij.flex.shared",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@community//platform/util",
+        "@community//jps/model-api:model",
+        "@community//jps/model-impl",
+        "@community//jps/model-serialization",
+        "@community//jps/jps-builders:build",
+        "@community//libraries/fastutil",
+        "@community//platform/util/jdom",
+        "@community//platform/core-api:core",
+        "@community//libraries/hash4j",
+    ],
 )
 
 jvm_library(
-  name = "shared_test_lib",
-  testonly = True,
-  module_name = "intellij.flex.shared",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  kotlinc_opts = "@community//:k11",
-  runtime_deps = [
-    ":shared",
-    "@community//platform/util:util_test_lib",
-    "@community//jps/model-api:model_test_lib",
-    "@community//jps/model-impl:model-impl_test_lib",
-    "@community//jps/model-serialization:model-serialization_test_lib",
-    "@community//jps/jps-builders:build_test_lib",
-    "@community//libraries/fastutil:fastutil_test_lib",
-    "@community//platform/util/jdom:jdom_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//libraries/hash4j:hash4j_test_lib",
-  ]
+    name = "shared_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    kotlinc_opts = "@community//:k11",
+    module_name = "intellij.flex.shared",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":shared",
+        "@community//platform/util:util_test_lib",
+        "@community//jps/model-api:model_test_lib",
+        "@community//jps/model-impl:model-impl_test_lib",
+        "@community//jps/model-serialization:model-serialization_test_lib",
+        "@community//jps/jps-builders:build_test_lib",
+        "@community//libraries/fastutil:fastutil_test_lib",
+        "@community//platform/util/jdom:jdom_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//libraries/hash4j:hash4j_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.flex.shared` end
 
 ### auto-generated section `iml intellij.flex.shared` start
-exports_files([
-  "intellij.flex.shared.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.flex.shared.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.flex.shared` end

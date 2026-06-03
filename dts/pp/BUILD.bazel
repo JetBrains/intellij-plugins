@@ -1,123 +1,169 @@
-### auto-generated section `build intellij.dts.pp` start
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.dts.pp` start
+
 jvm_library(
-  name = "pp",
-  module_name = "intellij.dts.pp",
-  visibility = ["//visibility:public"],
-  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/core-api:core",
-    "@community//platform/core-impl",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-impl",
-    "@community//platform/code-style-api:codeStyle",
-    "@community//platform/code-style-impl:codeStyle-impl",
-    "@community//platform/core-ui",
-    "@community//platform/projectModel-api:projectModel",
-  ],
-  runtime_deps = ["@community//platform/backend"]
+    name = "pp",
+    srcs = glob(
+        [
+            "gen/**/*.kt",
+            "gen/**/*.java",
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.dts.pp",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/backend",
+    ],
+    deps = [
+        # do not sort,
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/core-impl",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-impl",
+        "@community//platform/code-style-api:codeStyle",
+        "@community//platform/code-style-impl:codeStyle-impl",
+        "@community//platform/core-ui",
+        "@community//platform/projectModel-api:projectModel",
+    ],
 )
 
 jvm_library(
-  name = "pp_test_lib",
-  testonly = True,
-  module_name = "intellij.dts.pp",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":pp",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/backend:backend_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/code-style-api:codeStyle_test_lib",
-    "@community//platform/code-style-impl:codeStyle-impl_test_lib",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-  ]
+    name = "pp_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.dts.pp",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":pp",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/backend:backend_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/code-style-api:codeStyle_test_lib",
+        "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.dts.pp` end
 
 ### auto-generated section `iml intellij.dts.pp` start
-exports_files([
-  "intellij.dts.pp.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.dts.pp.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.dts.pp` end
 
 ### auto-generated section `build intellij.dts.pp.tests` start
+
 jvm_library(
-  name = "pp-tests",
-  module_name = "intellij.dts.pp.tests",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = ["@community//platform/backend"]
+    name = "pp-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.dts.pp.tests",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/backend",
+    ],
 )
 
 jvm_library(
-  name = "pp-tests_test_lib",
-  testonly = True,
-  visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form", "testGen/**/*.kt", "testGen/**/*.java"], allow_empty = True),
-  resources = glob(["testData/**/*"]),
-  resource_strip_prefix = "testData",
-  associates = [
-    "//contrib/dts/pp",
-    "//contrib/dts/pp:pp_test_lib",
-  ],
-  deps = [
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/core-impl",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/lang-impl",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/code-style-api:codeStyle",
-    "@community//platform/code-style-api:codeStyle_test_lib",
-    "@community//platform/code-style-impl:codeStyle-impl",
-    "@community//platform/code-style-impl:codeStyle-impl_test_lib",
-    "@community//platform/core-ui",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//platform/util:util-ui",
-    "@community//platform/util:util-ui_test_lib",
-  ],
-  runtime_deps = [
-    ":pp-tests",
-    "@community//platform/backend:backend_test_lib",
-  ]
+    name = "pp-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "test/**/*.kt",
+            "test/**/*.java",
+            "test/**/*.form",
+            "testGen/**/*.kt",
+            "testGen/**/*.java",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/dts/pp",
+        "//contrib/dts/pp:pp_test_lib",
+    ],
+    resource_strip_prefix = "testData",
+    resources = glob(
+        ["testData/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":pp-tests",
+        "@community//platform/backend:backend_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/code-style-api:codeStyle",
+        "@community//platform/code-style-api:codeStyle_test_lib",
+        "@community//platform/code-style-impl:codeStyle-impl",
+        "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+        "@community//platform/core-ui",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/util:util-ui",
+        "@community//platform/util:util-ui_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.dts.pp.tests` end
 
 ### auto-generated section `iml intellij.dts.pp.tests` start
-exports_files([
-  "intellij.dts.pp.tests.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.dts.pp.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.dts.pp.tests` end
 
 ### auto-generated section `test intellij.dts.pp.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "pp-tests_test",
-  runtime_deps = [":pp-tests_test_lib"]
+    name = "pp-tests_test",
+    runtime_deps = [":pp-tests_test_lib"],
 )
 ### auto-generated section `test intellij.dts.pp.tests` end

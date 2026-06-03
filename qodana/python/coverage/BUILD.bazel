@@ -1,193 +1,229 @@
-### auto-generated section `build intellij.qodana.python.coverage` start
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
+### auto-generated section `build intellij.qodana.python.coverage` start
+
 jvm_provided_library(
-  name = "contrib_qodana_provided",
-  lib = "//contrib/qodana"
+    name = "contrib_qodana_provided",
+    lib = "//contrib/qodana",
 )
 
 jvm_provided_library(
-  name = "community_platform_analysis_provided",
-  lib = "@community//platform/analysis-api:analysis"
+    name = "community_platform_analysis_provided",
+    lib = "@community//platform/analysis-api:analysis",
 )
 
 jvm_provided_library(
-  name = "community_platform_core_provided",
-  lib = "@community//platform/core-api:core"
+    name = "community_platform_core_provided",
+    lib = "@community//platform/core-api:core",
 )
 
 jvm_provided_library(
-  name = "community_platform_lang-impl_provided",
-  lib = "@community//platform/lang-impl"
+    name = "community_platform_lang-impl_provided",
+    lib = "@community//platform/lang-impl",
 )
 
 jvm_provided_library(
-  name = "python_provided",
-  lib = "//python"
+    name = "python_provided",
+    lib = "//python",
 )
 
 jvm_provided_library(
-  name = "community_python_aliasProvider_provided",
-  lib = "@community//python/aliasProvider"
+    name = "community_python_aliasProvider_provided",
+    lib = "@community//python/aliasProvider",
 )
 
 jvm_provided_library(
-  name = "community_python_community-plugin_provided",
-  lib = "@community//python/pluginCore:community-plugin"
+    name = "community_python_community-plugin_provided",
+    lib = "@community//python/pluginCore:community-plugin",
 )
 
 jvm_provided_library(
-  name = "community_plugins_coverage_provided",
-  lib = "@community//plugins/coverage-common:coverage"
+    name = "community_plugins_coverage_provided",
+    lib = "@community//plugins/coverage-common:coverage",
 )
 
 jvm_provided_library(
-  name = "community_plugins_coverage-common_coverage-agent_provided",
-  lib = "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent"
+    name = "community_plugins_coverage-common_coverage-agent_provided",
+    lib = "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
 )
 
 jvm_library(
-  name = "coverage",
-  module_name = "intellij.qodana.python.coverage",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "//contrib/qodana/coverage",
-    ":contrib_qodana_provided",
-    ":community_platform_analysis_provided",
-    ":community_platform_core_provided",
-    ":community_platform_lang-impl_provided",
-    ":python_provided",
-    ":community_python_aliasProvider_provided",
-    ":community_python_community-plugin_provided",
-    ":community_plugins_coverage_provided",
-    ":community_plugins_coverage-common_coverage-agent_provided",
-  ]
+    name = "coverage",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.python.coverage",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//contrib/qodana/coverage",
+        ":contrib_qodana_provided",
+        ":community_platform_analysis_provided",
+        ":community_platform_core_provided",
+        ":community_platform_lang-impl_provided",
+        ":python_provided",
+        ":community_python_aliasProvider_provided",
+        ":community_python_community-plugin_provided",
+        ":community_plugins_coverage_provided",
+        ":community_plugins_coverage-common_coverage-agent_provided",
+    ],
 )
 
 jvm_library(
-  name = "coverage_test_lib",
-  testonly = True,
-  module_name = "intellij.qodana.python.coverage",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":coverage",
-    "@community//platform/core-ui",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "//contrib/qodana",
-    "//contrib/qodana:qodana_test_lib",
-    "//contrib/qodana/coverage:coverage_test_lib",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/lang-impl",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "//python",
-    "//python:python_test_lib",
-    "@community//python/aliasProvider",
-    "@community//python/aliasProvider:aliasProvider_test_lib",
-    "@community//python/pluginCore:community-plugin",
-    "@community//python/pluginCore:community-plugin_test_lib",
-    "@community//plugins/coverage-common:coverage",
-    "@community//plugins/coverage-common:coverage_test_lib",
-    "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
-    "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent_test_lib",
-    "@community//java/testFramework",
-    "@community//java/testFramework:testFramework_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "//contrib/qodana-test-framework:qodana-testFramework",
-    "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
-    "//idea-tests:ultimate-tests",
-    "//idea-tests:ultimate-tests_test_lib",
-    "//python/plugin",
-    "//python/plugin:plugin_test_lib",
-  ]
+    name = "coverage_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.python.coverage",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":coverage",
+        "@community//platform/core-ui",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "//contrib/qodana",
+        "//contrib/qodana:qodana_test_lib",
+        "//contrib/qodana/coverage:coverage_test_lib",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/lang-impl",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "//python",
+        "//python:python_test_lib",
+        "@community//python/aliasProvider",
+        "@community//python/aliasProvider:aliasProvider_test_lib",
+        "@community//python/pluginCore:community-plugin",
+        "@community//python/pluginCore:community-plugin_test_lib",
+        "@community//plugins/coverage-common:coverage",
+        "@community//plugins/coverage-common:coverage_test_lib",
+        "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
+        "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent_test_lib",
+        "@community//java/testFramework",
+        "@community//java/testFramework:testFramework_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "//contrib/qodana-test-framework:qodana-testFramework",
+        "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
+        "//idea-tests:ultimate-tests",
+        "//idea-tests:ultimate-tests_test_lib",
+        "//python/plugin",
+        "//python/plugin:plugin_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.python.coverage` end
 
 ### auto-generated section `iml intellij.qodana.python.coverage` start
-exports_files([
-  "intellij.qodana.python.coverage.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.python.coverage.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.python.coverage` end
 
 ### auto-generated section `build intellij.qodana.python.coverage.tests` start
+
 jvm_library(
-  name = "qodana-python-coverage-tests",
-  module_name = "intellij.qodana.python.coverage.tests",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+    name = "qodana-python-coverage-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.python.coverage.tests",
+    visibility = ["//visibility:public"],
 )
 
 jvm_library(
-  name = "qodana-python-coverage-tests_test_lib",
-  testonly = True,
-  visibility = ["//visibility:public"],
-  srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  associates = [
-    "//contrib/qodana/python/coverage",
-    "//contrib/qodana/python/coverage:coverage_test_lib",
-  ],
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//platform/core-ui",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "//contrib/qodana",
-    "//contrib/qodana:qodana_test_lib",
-    "//contrib/qodana/coverage",
-    "//contrib/qodana/coverage:coverage_test_lib",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/lang-impl",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "//python",
-    "//python:python_test_lib",
-    "@community//python:python-community-plugin-modules",
-    "@community//python:python-community-plugin-modules_test_lib",
-    "@community//plugins/coverage-common:coverage",
-    "@community//plugins/coverage-common:coverage_test_lib",
-    "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
-    "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent_test_lib",
-    "@community//java/testFramework",
-    "@community//java/testFramework:testFramework_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "//contrib/qodana-test-framework:qodana-testFramework",
-    "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
-    "//idea-tests:ultimate-tests",
-    "//idea-tests:ultimate-tests_test_lib",
-    "//python/plugin",
-    "//python/plugin:plugin_test_lib",
-    "//contrib/qodana/coverage:coverage-tests",
-    "//contrib/qodana/coverage:coverage-tests_test_lib",
-    "@community//python/pluginCore:community-plugin",
-    "@community//python/pluginCore:community-plugin_test_lib",
-    "@community//python/aliasProvider",
-    "@community//python/aliasProvider:aliasProvider_test_lib",
-  ],
-  runtime_deps = [":qodana-python-coverage-tests"]
+    name = "qodana-python-coverage-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "tests/**/*.kt",
+            "tests/**/*.java",
+            "tests/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/qodana/python/coverage",
+        "//contrib/qodana/python/coverage:coverage_test_lib",
+    ],
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":qodana-python-coverage-tests",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//platform/core-ui",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "//contrib/qodana",
+        "//contrib/qodana:qodana_test_lib",
+        "//contrib/qodana/coverage",
+        "//contrib/qodana/coverage:coverage_test_lib",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/lang-impl",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "//python",
+        "//python:python_test_lib",
+        "@community//python:python-community-plugin-modules",
+        "@community//python:python-community-plugin-modules_test_lib",
+        "@community//plugins/coverage-common:coverage",
+        "@community//plugins/coverage-common:coverage_test_lib",
+        "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
+        "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent_test_lib",
+        "@community//java/testFramework",
+        "@community//java/testFramework:testFramework_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "//contrib/qodana-test-framework:qodana-testFramework",
+        "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
+        "//idea-tests:ultimate-tests",
+        "//idea-tests:ultimate-tests_test_lib",
+        "//python/plugin",
+        "//python/plugin:plugin_test_lib",
+        "//contrib/qodana/coverage:coverage-tests",
+        "//contrib/qodana/coverage:coverage-tests_test_lib",
+        "@community//python/pluginCore:community-plugin",
+        "@community//python/pluginCore:community-plugin_test_lib",
+        "@community//python/aliasProvider",
+        "@community//python/aliasProvider:aliasProvider_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.python.coverage.tests` end
 
 ### auto-generated section `iml intellij.qodana.python.coverage.tests` start
-exports_files([
-  "intellij.qodana.python.coverage.tests.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.python.coverage.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.python.coverage.tests` end
 
 ### auto-generated section `test intellij.qodana.python.coverage.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "qodana-python-coverage-tests_test",
-  runtime_deps = [":qodana-python-coverage-tests_test_lib"]
+    name = "qodana-python-coverage-tests_test",
+    runtime_deps = [":qodana-python-coverage-tests_test_lib"],
 )
 ### auto-generated section `test intellij.qodana.python.coverage.tests` end

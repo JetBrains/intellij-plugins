@@ -1,159 +1,193 @@
-### auto-generated section `build intellij.cucumber.groovy` start
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.cucumber.groovy` start
+
 jvm_library(
-  name = "cucumber-groovy",
-  module_name = "intellij.cucumber.groovy",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "//contrib/cucumber:gherkin",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/core-api:core",
-    "@community//platform/core-impl",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/indexing-api:indexing",
-    "@community//platform/lang-api:lang",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/lang-impl",
-    "@community//plugins/groovy",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//java/java-psi-impl:psi-impl",
-    "@community//java/java-psi-api:psi",
-    "@community//java/java-syntax:syntax",
-    "@community//platform/usageView",
-    "@ultimate_lib//:cucumber-groovy-cucumber-groovy",
-    "@community//java/java-impl:impl",
-    "@lib//:cucumber-core-1",
-    "//contrib/cucumber-java",
-    "@community//jps/model-api:model",
-  ]
+    name = "cucumber-groovy",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.cucumber.groovy",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "//contrib/cucumber:gherkin",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/core-impl",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/indexing-api:indexing",
+        "@community//platform/lang-api:lang",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/lang-impl",
+        "@community//plugins/groovy",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//java/java-psi-impl:psi-impl",
+        "@community//java/java-psi-api:psi",
+        "@community//java/java-syntax:syntax",
+        "@community//platform/usageView",
+        "@ultimate_lib//:cucumber-groovy-cucumber-groovy",
+        "@community//java/java-impl:impl",
+        "@lib//:cucumber-core-1",
+        "//contrib/cucumber-java",
+        "@community//jps/model-api:model",
+    ],
 )
 
 jvm_library(
-  name = "cucumber-groovy_test_lib",
-  testonly = True,
-  module_name = "intellij.cucumber.groovy",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":cucumber-groovy",
-    "//contrib/cucumber:gherkin_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/indexing-api:indexing_test_lib",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//plugins/groovy:groovy_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//java/java-psi-impl:psi-impl_test_lib",
-    "@community//java/java-psi-api:psi_test_lib",
-    "@community//java/java-syntax:syntax_test_lib",
-    "@community//platform/usageView:usageView_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//java/testFramework",
-    "@community//java/testFramework:testFramework_test_lib",
-    "@community//java/java-impl:impl_test_lib",
-    "//contrib/cucumber-java:cucumber-java_test_lib",
-    "@community//jps/model-api:model_test_lib",
-  ]
+    name = "cucumber-groovy_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.cucumber.groovy",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":cucumber-groovy",
+        "//contrib/cucumber:gherkin_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/indexing-api:indexing_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//plugins/groovy:groovy_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//java/java-psi-impl:psi-impl_test_lib",
+        "@community//java/java-psi-api:psi_test_lib",
+        "@community//java/java-syntax:syntax_test_lib",
+        "@community//platform/usageView:usageView_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//java/testFramework",
+        "@community//java/testFramework:testFramework_test_lib",
+        "@community//java/java-impl:impl_test_lib",
+        "//contrib/cucumber-java:cucumber-java_test_lib",
+        "@community//jps/model-api:model_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.cucumber.groovy` end
 
 ### auto-generated section `iml intellij.cucumber.groovy` start
-exports_files([
-  "intellij.cucumber.groovy.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.cucumber.groovy.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.cucumber.groovy` end
 
 ### auto-generated section `build intellij.cucumber.groovy.tests` start
+
 jvm_library(
-  name = "cucumber-groovy-tests",
-  module_name = "intellij.cucumber.groovy.tests",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+    name = "cucumber-groovy-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.cucumber.groovy.tests",
+    visibility = ["//visibility:public"],
 )
 
 jvm_library(
-  name = "cucumber-groovy-tests_test_lib",
-  testonly = True,
-  visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  associates = [
-    "//contrib/cucumber-groovy",
-    "//contrib/cucumber-groovy:cucumber-groovy_test_lib",
-  ],
-  deps = [
-    "//contrib/cucumber:gherkin",
-    "//contrib/cucumber:gherkin_test_lib",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/indexing-api:indexing",
-    "@community//platform/indexing-api:indexing_test_lib",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-api:lang_test_lib",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/lang-impl",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//plugins/groovy",
-    "@community//plugins/groovy:groovy_test_lib",
-    "@community//module-set-plugins/generated/intellij.moduleSet.plugin.structuralSearch:moduleSet-plugin-structuralSearch",
-    "@community//module-set-plugins/generated/intellij.moduleSet.plugin.structuralSearch:moduleSet-plugin-structuralSearch_test_lib",
-    "@community//module-set-plugins/generated/intellij.moduleSet.plugin.structureView:moduleSet-plugin-structureView",
-    "@community//module-set-plugins/generated/intellij.moduleSet.plugin.structureView:moduleSet-plugin-structureView_test_lib",
-    "@community//module-set-plugins/generated/intellij.moduleSet.plugin.todoView:moduleSet-plugin-todoView",
-    "@community//module-set-plugins/generated/intellij.moduleSet.plugin.todoView:moduleSet-plugin-todoView_test_lib",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//java/java-psi-impl:psi-impl",
-    "@community//java/java-psi-impl:psi-impl_test_lib",
-    "@community//java/java-psi-api:psi",
-    "@community//java/java-psi-api:psi_test_lib",
-    "@community//platform/usageView",
-    "@community//platform/usageView:usageView_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//java/testFramework",
-    "@community//java/testFramework:testFramework_test_lib",
-    "@ultimate_lib//:cucumber-groovy-tests-cucumber-groovy",
-    "@community//java/java-impl:impl",
-    "@community//java/java-impl:impl_test_lib",
-    "@lib//:cucumber-core-1",
-    "//contrib/cucumber-java",
-    "//contrib/cucumber-java:cucumber-java_test_lib",
-    "@community//jps/model-api:model",
-    "@community//jps/model-api:model_test_lib",
-    "@community//plugins/groovy:groovy-tests",
-    "@community//plugins/groovy:groovy-tests_test_lib",
-  ],
-  runtime_deps = [
-    ":cucumber-groovy-tests",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-  ]
+    name = "cucumber-groovy-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "test/**/*.kt",
+            "test/**/*.java",
+            "test/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/cucumber-groovy",
+        "//contrib/cucumber-groovy:cucumber-groovy_test_lib",
+    ],
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":cucumber-groovy-tests",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "//contrib/cucumber:gherkin",
+        "//contrib/cucumber:gherkin_test_lib",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/indexing-api:indexing",
+        "@community//platform/indexing-api:indexing_test_lib",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/lang-impl",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//plugins/groovy",
+        "@community//plugins/groovy:groovy_test_lib",
+        "@community//module-set-plugins/generated/intellij.moduleSet.plugin.structuralSearch:moduleSet-plugin-structuralSearch",
+        "@community//module-set-plugins/generated/intellij.moduleSet.plugin.structuralSearch:moduleSet-plugin-structuralSearch_test_lib",
+        "@community//module-set-plugins/generated/intellij.moduleSet.plugin.structureView:moduleSet-plugin-structureView",
+        "@community//module-set-plugins/generated/intellij.moduleSet.plugin.structureView:moduleSet-plugin-structureView_test_lib",
+        "@community//module-set-plugins/generated/intellij.moduleSet.plugin.todoView:moduleSet-plugin-todoView",
+        "@community//module-set-plugins/generated/intellij.moduleSet.plugin.todoView:moduleSet-plugin-todoView_test_lib",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//java/java-psi-impl:psi-impl",
+        "@community//java/java-psi-impl:psi-impl_test_lib",
+        "@community//java/java-psi-api:psi",
+        "@community//java/java-psi-api:psi_test_lib",
+        "@community//platform/usageView",
+        "@community//platform/usageView:usageView_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//java/testFramework",
+        "@community//java/testFramework:testFramework_test_lib",
+        "@ultimate_lib//:cucumber-groovy-tests-cucumber-groovy",
+        "@community//java/java-impl:impl",
+        "@community//java/java-impl:impl_test_lib",
+        "@lib//:cucumber-core-1",
+        "//contrib/cucumber-java",
+        "//contrib/cucumber-java:cucumber-java_test_lib",
+        "@community//jps/model-api:model",
+        "@community//jps/model-api:model_test_lib",
+        "@community//plugins/groovy:groovy-tests",
+        "@community//plugins/groovy:groovy-tests_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.cucumber.groovy.tests` end
 
 ### auto-generated section `iml intellij.cucumber.groovy.tests` start
-exports_files([
-  "intellij.cucumber.groovy.tests.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.cucumber.groovy.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.cucumber.groovy.tests` end
 
 ### auto-generated section `test intellij.cucumber.groovy.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "cucumber-groovy-tests_test",
-  runtime_deps = [":cucumber-groovy-tests_test_lib"]
+    name = "cucumber-groovy-tests_test",
+    runtime_deps = [":cucumber-groovy-tests_test_lib"],
 )
 ### auto-generated section `test intellij.cucumber.groovy.tests` end

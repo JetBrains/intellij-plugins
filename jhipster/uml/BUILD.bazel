@@ -1,59 +1,77 @@
-### auto-generated section `build intellij.jhipster.uml` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.jhipster.uml` start
+
 jvm_library(
-  name = "uml",
-  module_name = "intellij.jhipster.uml",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "//contrib/jhipster",
-    "//plugins/uml:diagram",
-    "@community//platform/core-api:core",
-    "@community//platform/util",
-    "@community//platform/util:util-ui",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/ide-core",
-    "@community//platform/core-ui",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/analysis-api:analysis",
-    "//plugins/uml/impl",
-    "//plugins/graph",
-    "@community//platform/core-impl",
-    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
-  ]
+    name = "uml",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.jhipster.uml",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "//contrib/jhipster",
+        "//plugins/uml:diagram",
+        "@community//platform/core-api:core",
+        "@community//platform/util",
+        "@community//platform/util:util-ui",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/ide-core",
+        "@community//platform/core-ui",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/analysis-api:analysis",
+        "//plugins/uml/impl",
+        "//plugins/graph",
+        "@community//platform/core-impl",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    ],
 )
 
 jvm_library(
-  name = "uml_test_lib",
-  testonly = True,
-  module_name = "intellij.jhipster.uml",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":uml",
-    "//contrib/jhipster:jhipster_test_lib",
-    "//plugins/uml:diagram_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/util:util_test_lib",
-    "@community//platform/util:util-ui_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "//plugins/uml/impl:impl_test_lib",
-    "//plugins/graph:graph_test_lib",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
-  ]
+    name = "uml_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.jhipster.uml",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":uml",
+        "//contrib/jhipster:jhipster_test_lib",
+        "//plugins/uml:diagram_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "//plugins/uml/impl:impl_test_lib",
+        "//plugins/graph:graph_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.jhipster.uml` end
 
 ### auto-generated section `iml intellij.jhipster.uml` start
-exports_files([
-  "intellij.jhipster.uml.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.jhipster.uml.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.jhipster.uml` end

@@ -1,48 +1,66 @@
-### auto-generated section `build intellij.qodana.python.community` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.qodana.python.community` start
+
 jvm_library(
-  name = "community",
-  module_name = "intellij.qodana.python.community",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//platform/projectModel-api:projectModel",
-    "//contrib/qodana",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/core-api:core",
-    "@community//platform/lang-impl",
-    "@community//python:python-community-impl",
-    "@community//platform/backend/observation",
-    "@community//python/python-sdk:sdk",
-  ]
+    name = "community",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.python.community",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//platform/projectModel-api:projectModel",
+        "//contrib/qodana",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/lang-impl",
+        "@community//python:python-community-impl",
+        "@community//platform/backend/observation",
+        "@community//python/python-sdk:sdk",
+    ],
 )
 
 jvm_library(
-  name = "community_test_lib",
-  testonly = True,
-  module_name = "intellij.qodana.python.community",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":community",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "//contrib/qodana:qodana_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//python:python-community-impl_test_lib",
-    "@community//platform/backend/observation:observation_test_lib",
-    "@community//python/python-sdk:sdk_test_lib",
-  ]
+    name = "community_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.python.community",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":community",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "//contrib/qodana:qodana_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//python:python-community-impl_test_lib",
+        "@community//platform/backend/observation:observation_test_lib",
+        "@community//python/python-sdk:sdk_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.python.community` end
 
 ### auto-generated section `iml intellij.qodana.python.community` start
-exports_files([
-  "intellij.qodana.python.community.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.python.community.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.python.community` end

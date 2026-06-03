@@ -1,192 +1,230 @@
-### auto-generated section `build intellij.qodana.cpp` start
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.qodana.cpp` start
+
 create_kotlinc_options(
-  name = "custom_cpp",
-  opt_in = [
-    "com.intellij.openapi.util.IntellijInternalApi",
-    "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
-    "kotlin.io.path.ExperimentalPathApi",
-  ],
-  x_context_parameters = True
+    name = "custom_cpp",
+    opt_in = [
+        "com.intellij.openapi.util.IntellijInternalApi",
+        "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+        "kotlin.io.path.ExperimentalPathApi",
+    ],
+    x_context_parameters = True,
 )
 
 jvm_library(
-  name = "cpp",
-  module_name = "intellij.qodana.cpp",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  kotlinc_opts = ":custom_cpp",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//platform/analysis-impl",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/core-api:core",
-    "@community//platform/util",
-    "@community//platform/util/jdom",
-    "//CIDR/clion-cmake/core",
-    "//contrib/qodana",
-    "@community//platform/platform-api:ide",
-    "@community//platform/ide-core",
-    "//CIDR/cidr-projectModel",
-    "//CIDR/cidr-workspaceModel",
-    "//CIDR/clion-radler/core",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/ide-core-impl",
-    "//CIDR/clion-makefile/core",
-    "//CIDR/cidr-execution",
-    "//CIDR/clion-compdb",
-    "//CIDR/clion-meson/core",
-    "//CIDR/cidr-util",
-    "@community//platform/backend/observation",
-    "@community//platform/external-system-api:externalSystem",
-    "//remote-dev/rd-platform",
-    "@community//libraries/rd/core",
-    "@community//libraries/rd/framework",
-    "//rider/rdclient-dotnet",
-    "//rider/rdclient-dotnet/rdclient.dotnet.startup",
-    "//rider/model/generated",
-    "//remote-dev/rd-ide-model-generated",
-  ]
+    name = "cpp",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    kotlinc_opts = ":custom_cpp",
+    module_name = "intellij.qodana.cpp",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//platform/analysis-impl",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/util",
+        "@community//platform/util/jdom",
+        "//CIDR/clion-cmake/core",
+        "//contrib/qodana",
+        "@community//platform/platform-api:ide",
+        "@community//platform/ide-core",
+        "//CIDR/cidr-projectModel",
+        "//CIDR/cidr-workspaceModel",
+        "//CIDR/clion-radler/core",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/ide-core-impl",
+        "//CIDR/clion-makefile/core",
+        "//CIDR/cidr-execution",
+        "//CIDR/clion-compdb",
+        "//CIDR/clion-meson/core",
+        "//CIDR/cidr-util",
+        "@community//platform/backend/observation",
+        "@community//platform/external-system-api:externalSystem",
+        "//remote-dev/rd-platform",
+        "@community//libraries/rd/core",
+        "@community//libraries/rd/framework",
+        "//rider/rdclient-dotnet",
+        "//rider/rdclient-dotnet/rdclient.dotnet.startup",
+        "//rider/model/generated",
+        "//remote-dev/rd-ide-model-generated",
+    ],
 )
 
 jvm_library(
-  name = "cpp_test_lib",
-  testonly = True,
-  module_name = "intellij.qodana.cpp",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  kotlinc_opts = ":custom_cpp",
-  runtime_deps = [
-    ":cpp",
-    "@community//platform/analysis-impl:analysis-impl_test_lib",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/util:util_test_lib",
-    "@community//platform/util/jdom:jdom_test_lib",
-    "//CIDR/clion-cmake/core:core_test_lib",
-    "//contrib/qodana:qodana_test_lib",
-    "@community//platform/platform-api:ide_test_lib",
-    "@community//platform/ide-core:ide-core_test_lib",
-    "//CIDR/cidr-projectModel:cidr-projectModel_test_lib",
-    "//CIDR/cidr-workspaceModel:cidr-workspaceModel_test_lib",
-    "//CIDR/clion-radler/core:core_test_lib",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/ide-core-impl:ide-core-impl_test_lib",
-    "//CIDR/clion-makefile/core:core_test_lib",
-    "//CIDR/cidr-execution:cidr-execution_test_lib",
-    "//CIDR/clion-compdb:clion-compdb_test_lib",
-    "//CIDR/clion-meson/core:core_test_lib",
-    "//CIDR/cidr-util:cidr-util_test_lib",
-    "@community//platform/backend/observation:observation_test_lib",
-    "@community//platform/external-system-api:externalSystem_test_lib",
-    "//remote-dev/rd-platform:rd-platform_test_lib",
-    "@community//libraries/rd/core:core_test_lib",
-    "@community//libraries/rd/framework:framework_test_lib",
-    "//rider/rdclient-dotnet:rdclient-dotnet_test_lib",
-    "//rider/rdclient-dotnet/rdclient.dotnet.startup:rdclient.dotnet.startup_test_lib",
-    "//rider/model/generated:generated_test_lib",
-    "//remote-dev/rd-ide-model-generated:rd-ide-model-generated_test_lib",
-  ]
+    name = "cpp_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    kotlinc_opts = ":custom_cpp",
+    module_name = "intellij.qodana.cpp",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":cpp",
+        "@community//platform/analysis-impl:analysis-impl_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/util/jdom:jdom_test_lib",
+        "//CIDR/clion-cmake/core:core_test_lib",
+        "//contrib/qodana:qodana_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "//CIDR/cidr-projectModel:cidr-projectModel_test_lib",
+        "//CIDR/cidr-workspaceModel:cidr-workspaceModel_test_lib",
+        "//CIDR/clion-radler/core:core_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+        "//CIDR/clion-makefile/core:core_test_lib",
+        "//CIDR/cidr-execution:cidr-execution_test_lib",
+        "//CIDR/clion-compdb:clion-compdb_test_lib",
+        "//CIDR/clion-meson/core:core_test_lib",
+        "//CIDR/cidr-util:cidr-util_test_lib",
+        "@community//platform/backend/observation:observation_test_lib",
+        "@community//platform/external-system-api:externalSystem_test_lib",
+        "//remote-dev/rd-platform:rd-platform_test_lib",
+        "@community//libraries/rd/core:core_test_lib",
+        "@community//libraries/rd/framework:framework_test_lib",
+        "//rider/rdclient-dotnet:rdclient-dotnet_test_lib",
+        "//rider/rdclient-dotnet/rdclient.dotnet.startup:rdclient.dotnet.startup_test_lib",
+        "//rider/model/generated:generated_test_lib",
+        "//remote-dev/rd-ide-model-generated:rd-ide-model-generated_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.cpp` end
 
 ### auto-generated section `iml intellij.qodana.cpp` start
-exports_files([
-  "intellij.qodana.cpp.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.cpp.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.cpp` end
 
 ### auto-generated section `build intellij.qodana.cpp.tests` start
+
 create_kotlinc_options(
-  name = "custom_cpp-tests",
-  opt_in = ["kotlin.io.path.ExperimentalPathApi"]
+    name = "custom_cpp-tests",
+    opt_in = ["kotlin.io.path.ExperimentalPathApi"],
 )
 
 jvm_library(
-  name = "cpp-tests",
-  module_name = "intellij.qodana.cpp.tests",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+    name = "cpp-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.cpp.tests",
+    visibility = ["//visibility:public"],
 )
 
 jvm_library(
-  name = "cpp-tests_test_lib",
-  testonly = True,
-  visibility = ["//visibility:public"],
-  srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
-  resources = glob(["test-data/**/*"]),
-  resource_strip_prefix = "test-data",
-  kotlinc_opts = ":custom_cpp-tests",
-  associates = [
-    "//contrib/qodana/cpp",
-    "//contrib/qodana/cpp:cpp_test_lib",
-  ],
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/util",
-    "@community//platform/util:util_test_lib",
-    "@lib//:kodein-di-jvm",
-    "@lib//:qodana-sarif",
-    "@community//platform/testFramework/junit5",
-    "@community//platform/testFramework/junit5:junit5_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//tools/intellij.tools.ide.starter:ide-starter",
-    "@community//tools/intellij.tools.ide.starter:ide-starter_test_lib",
-    "@community//tools/intellij.tools.ide.starter.product.clion:ide-starter-product-clion",
-    "@community//tools/intellij.tools.ide.starter.product.clion:ide-starter-product-clion_test_lib",
-    "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure",
-    "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure_test_lib",
-    "//tests/intellij.qodana.testsFramework:qodana-testsFramework",
-    "//tests/intellij.qodana.testsFramework:qodana-testsFramework_test_lib",
-    "//tests/intellij.ide.starter.extended:ide-starter-extended",
-    "//tests/intellij.ide.starter.extended:ide-starter-extended_test_lib",
-    "@community//libraries/kotlin/test:libraries-kotlinTest",
-    "@community//libraries/kotlin/test:libraries-kotlinTest_test_lib",
-    "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm",
-    "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm_test_lib",
-    "@community//libraries/kotlinx/serialization/core",
-    "@community//libraries/kotlinx/serialization/core:core_test_lib",
-    "@community//libraries/kotlinx/serialization/json",
-    "@community//libraries/kotlinx/serialization/json:json_test_lib",
-    "@community//images:images-tests",
-    "@community//images:images-tests_test_lib",
-    "@community//RegExpSupport:regexp-tests",
-    "@community//RegExpSupport:regexp-tests_test_lib",
-    "@community//platform/xdebugger-impl:debugger-impl-tests",
-    "@community//platform/xdebugger-impl:debugger-impl-tests_test_lib",
-    "//platform/ijent/impl:impl-tests",
-    "//platform/ijent/impl:impl-tests_test_lib",
-    "//contrib/qodana:qodana-core-tests",
-    "//contrib/qodana:qodana-core-tests_test_lib",
-    "@community//platform/util/jdom",
-    "@community//platform/util/jdom:jdom_test_lib",
-    "@community//libraries/assertj-core",
-    "@community//libraries/assertj-core:assertj-core_test_lib",
-    "//tests/intellij.ide.starter.extended.clion:ide-starter-extended-clion",
-    "//tests/intellij.ide.starter.extended.clion:ide-starter-extended-clion_test_lib",
-  ],
-  runtime_deps = [":cpp-tests"]
+    name = "cpp-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "tests/**/*.kt",
+            "tests/**/*.java",
+            "tests/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/qodana/cpp",
+        "//contrib/qodana/cpp:cpp_test_lib",
+    ],
+    kotlinc_opts = ":custom_cpp-tests",
+    resource_strip_prefix = "test-data",
+    resources = glob(
+        ["test-data/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":cpp-tests",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/util",
+        "@community//platform/util:util_test_lib",
+        "@lib//:kodein-di-jvm",
+        "@lib//:qodana-sarif",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/testFramework/junit5:junit5_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//tools/intellij.tools.ide.starter:ide-starter",
+        "@community//tools/intellij.tools.ide.starter:ide-starter_test_lib",
+        "@community//tools/intellij.tools.ide.starter.product.clion:ide-starter-product-clion",
+        "@community//tools/intellij.tools.ide.starter.product.clion:ide-starter-product-clion_test_lib",
+        "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure",
+        "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure_test_lib",
+        "//tests/intellij.qodana.testsFramework:qodana-testsFramework",
+        "//tests/intellij.qodana.testsFramework:qodana-testsFramework_test_lib",
+        "//tests/intellij.ide.starter.extended:ide-starter-extended",
+        "//tests/intellij.ide.starter.extended:ide-starter-extended_test_lib",
+        "@community//libraries/kotlin/test:libraries-kotlinTest",
+        "@community//libraries/kotlin/test:libraries-kotlinTest_test_lib",
+        "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm",
+        "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm_test_lib",
+        "@community//libraries/kotlinx/serialization/core",
+        "@community//libraries/kotlinx/serialization/core:core_test_lib",
+        "@community//libraries/kotlinx/serialization/json",
+        "@community//libraries/kotlinx/serialization/json:json_test_lib",
+        "@community//images:images-tests",
+        "@community//images:images-tests_test_lib",
+        "@community//RegExpSupport:regexp-tests",
+        "@community//RegExpSupport:regexp-tests_test_lib",
+        "@community//platform/xdebugger-impl:debugger-impl-tests",
+        "@community//platform/xdebugger-impl:debugger-impl-tests_test_lib",
+        "//platform/ijent/impl:impl-tests",
+        "//platform/ijent/impl:impl-tests_test_lib",
+        "//contrib/qodana:qodana-core-tests",
+        "//contrib/qodana:qodana-core-tests_test_lib",
+        "@community//platform/util/jdom",
+        "@community//platform/util/jdom:jdom_test_lib",
+        "@community//libraries/assertj-core",
+        "@community//libraries/assertj-core:assertj-core_test_lib",
+        "//tests/intellij.ide.starter.extended.clion:ide-starter-extended-clion",
+        "//tests/intellij.ide.starter.extended.clion:ide-starter-extended-clion_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.cpp.tests` end
 
 ### auto-generated section `iml intellij.qodana.cpp.tests` start
-exports_files([
-  "intellij.qodana.cpp.tests.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.cpp.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.cpp.tests` end
 
 ### auto-generated section `test intellij.qodana.cpp.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "cpp-tests_test",
-  runtime_deps = [":cpp-tests_test_lib"]
+    name = "cpp-tests_test",
+    runtime_deps = [":cpp-tests_test_lib"],
 )
 ### auto-generated section `test intellij.qodana.cpp.tests` end

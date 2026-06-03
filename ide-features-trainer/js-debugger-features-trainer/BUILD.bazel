@@ -1,76 +1,94 @@
-### auto-generated section `build intellij.javascript.debugger.featuresTrainer` start
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
+### auto-generated section `build intellij.javascript.debugger.featuresTrainer` start
+
 jvm_provided_library(
-  name = "plugins_JavaScriptLanguage_javascript-backend_provided",
-  lib = "//plugins/JavaScriptLanguage/javascript-backend"
+    name = "plugins_JavaScriptLanguage_javascript-backend_provided",
+    lib = "//plugins/JavaScriptLanguage/javascript-backend",
 )
 
 jvm_provided_library(
-  name = "plugins_JavaScriptDebugger_backend_provided",
-  lib = "//plugins/JavaScriptDebugger/backend"
+    name = "plugins_JavaScriptDebugger_backend_provided",
+    lib = "//plugins/JavaScriptDebugger/backend",
 )
 
 jvm_library(
-  name = "javascript-debugger-featuresTrainer",
-  module_name = "intellij.javascript.debugger.featuresTrainer",
-  visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
-  resources = glob(["resources/**/*"]),
-  resource_strip_prefix = "resources",
-  deps = [
-    "@lib//:kotlin-stdlib",
-    "//plugins/JavaScriptLanguage/javascript-parser",
-    "@community//platform/core-api:core",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/execution-impl",
-    "@community//platform/testRunner",
-    "@community//platform/smRunner",
-    "@community//plugins/ide-features-trainer:featuresTrainer",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/editor-ui-ex:editor-ex",
-    "@community//platform/xdebugger-api:debugger",
-    "@community//platform/core-ui",
-    "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "@community//platform/execution",
-    "@community//platform/util:util-ui",
-    ":plugins_JavaScriptLanguage_javascript-backend_provided",
-    ":plugins_JavaScriptDebugger_backend_provided",
-  ]
+    name = "javascript-debugger-featuresTrainer",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.javascript.debugger.featuresTrainer",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//plugins/JavaScriptLanguage/javascript-parser",
+        "@community//platform/core-api:core",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/execution-impl",
+        "@community//platform/testRunner",
+        "@community//platform/smRunner",
+        "@community//plugins/ide-features-trainer:featuresTrainer",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/editor-ui-ex:editor-ex",
+        "@community//platform/xdebugger-api:debugger",
+        "@community//platform/core-ui",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "@community//platform/execution",
+        "@community//platform/util:util-ui",
+        ":plugins_JavaScriptLanguage_javascript-backend_provided",
+        ":plugins_JavaScriptDebugger_backend_provided",
+    ],
 )
 
 jvm_library(
-  name = "javascript-debugger-featuresTrainer_test_lib",
-  testonly = True,
-  module_name = "intellij.javascript.debugger.featuresTrainer",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":javascript-debugger-featuresTrainer",
-    "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/editor-ui-api:editor-ui_test_lib",
-    "@community//platform/execution-impl:execution-impl_test_lib",
-    "@community//platform/testRunner:testRunner_test_lib",
-    "@community//platform/smRunner:smRunner_test_lib",
-    "@community//plugins/ide-features-trainer:featuresTrainer_test_lib",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-    "@community//platform/editor-ui-ex:editor-ex_test_lib",
-    "@community//platform/xdebugger-api:debugger_test_lib",
-    "@community//platform/core-ui:core-ui_test_lib",
-    "//plugins/JavaScriptLanguage/javascript-backend",
-    "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
-    "//plugins/JavaScriptDebugger/backend",
-    "//plugins/JavaScriptDebugger/backend:backend_test_lib",
-    "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
-    "@community//platform/execution:execution_test_lib",
-    "@community//platform/util:util-ui_test_lib",
-  ]
+    name = "javascript-debugger-featuresTrainer_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.javascript.debugger.featuresTrainer",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":javascript-debugger-featuresTrainer",
+        "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/execution-impl:execution-impl_test_lib",
+        "@community//platform/testRunner:testRunner_test_lib",
+        "@community//platform/smRunner:smRunner_test_lib",
+        "@community//plugins/ide-features-trainer:featuresTrainer_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/editor-ui-ex:editor-ex_test_lib",
+        "@community//platform/xdebugger-api:debugger_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-backend",
+        "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
+        "//plugins/JavaScriptDebugger/backend",
+        "//plugins/JavaScriptDebugger/backend:backend_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+        "@community//platform/execution:execution_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.javascript.debugger.featuresTrainer` end
 
 ### auto-generated section `iml intellij.javascript.debugger.featuresTrainer` start
-exports_files([
-  "intellij.javascript.debugger.featuresTrainer.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.javascript.debugger.featuresTrainer.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.javascript.debugger.featuresTrainer` end

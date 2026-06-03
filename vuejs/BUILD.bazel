@@ -1,48 +1,62 @@
-### auto-generated section `build intellij.vuejs.plugin` start
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.vuejs.plugin` start
+
 jvm_library(
-  name = "vuejs-plugin",
-  module_name = "intellij.vuejs.plugin",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  resources = glob(["vuejs-plugin/resources/**/*"]),
-  resource_strip_prefix = "vuejs-plugin/resources",
-  runtime_deps = [
-    "//contrib/postcss/plugin",
-    "@lib//:kotlin-stdlib",
-    "//contrib/vuejs/vuejs-backend:backend",
-    "//contrib/vuejs/vuejs-common:common",
-    "//contrib/vuejs/vuejs-copyright:copyright",
-    "//contrib/vuejs/vuejs-debugger:debugger",
-    "//contrib/vuejs/vuejs-markdown:markdown",
-    "//contrib/vuejs/vuejs-prettier:prettier",
-    "//plugins/JavaScriptLanguage/plugin",
-  ]
+    name = "vuejs-plugin",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.vuejs.plugin",
+    resource_strip_prefix = "vuejs-plugin/resources",
+    resources = glob(
+        ["vuejs-plugin/resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//contrib/postcss/plugin",
+        "@lib//:kotlin-stdlib",
+        "//contrib/vuejs/vuejs-backend:backend",
+        "//contrib/vuejs/vuejs-common:common",
+        "//contrib/vuejs/vuejs-copyright:copyright",
+        "//contrib/vuejs/vuejs-debugger:debugger",
+        "//contrib/vuejs/vuejs-markdown:markdown",
+        "//contrib/vuejs/vuejs-prettier:prettier",
+        "//plugins/JavaScriptLanguage/plugin",
+    ],
 )
 
 jvm_library(
-  name = "vuejs-plugin_test_lib",
-  testonly = True,
-  module_name = "intellij.vuejs.plugin",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True),
-  runtime_deps = [
-    ":vuejs-plugin",
-    "//contrib/postcss/plugin:plugin_test_lib",
-    "//contrib/vuejs/vuejs-backend:backend_test_lib",
-    "//contrib/vuejs/vuejs-common:common_test_lib",
-    "//contrib/vuejs/vuejs-copyright:copyright_test_lib",
-    "//contrib/vuejs/vuejs-debugger:debugger_test_lib",
-    "//contrib/vuejs/vuejs-markdown:markdown_test_lib",
-    "//contrib/vuejs/vuejs-prettier:prettier_test_lib",
-    "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
-  ]
+    name = "vuejs-plugin_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.vuejs.plugin",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":vuejs-plugin",
+        "//contrib/postcss/plugin:plugin_test_lib",
+        "//contrib/vuejs/vuejs-backend:backend_test_lib",
+        "//contrib/vuejs/vuejs-common:common_test_lib",
+        "//contrib/vuejs/vuejs-copyright:copyright_test_lib",
+        "//contrib/vuejs/vuejs-debugger:debugger_test_lib",
+        "//contrib/vuejs/vuejs-markdown:markdown_test_lib",
+        "//contrib/vuejs/vuejs-prettier:prettier_test_lib",
+        "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.vuejs.plugin` end
 
 ### auto-generated section `iml intellij.vuejs.plugin` start
-exports_files([
-  "intellij.vuejs.plugin.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.vuejs.plugin.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.vuejs.plugin` end

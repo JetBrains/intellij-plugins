@@ -1,91 +1,107 @@
-### auto-generated section `build intellij.qodana.inspectionKts.mcp.tests` start
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `build intellij.qodana.inspectionKts.mcp.tests` start
+
 jvm_library(
-  name = "tests",
-  module_name = "intellij.qodana.inspectionKts.mcp.tests",
-  visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+    name = "tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.inspectionKts.mcp.tests",
+    visibility = ["//visibility:public"],
 )
 
 jvm_library(
-  name = "tests_test_lib",
-  testonly = True,
-  visibility = ["//visibility:public"],
-  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java", "testSrc/**/*.form"], allow_empty = True),
-  associates = [
-    "//contrib/qodana/inspectionKts/mcp",
-    "//contrib/qodana/inspectionKts/mcp:mcp_test_lib",
-  ],
-  deps = [
-    "@community//libraries/junit5",
-    "@community//libraries/junit5:junit5_test_lib",
-    "@community//libraries/junit5-params",
-    "@community//libraries/junit5-params:junit5-params_test_lib",
-    "@community//libraries/kotlin/test:libraries-kotlinTest",
-    "@community//libraries/kotlin/test:libraries-kotlinTest_test_lib",
-    "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm",
-    "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm_test_lib",
-    "@community//libraries/kotlinx/coroutines/core",
-    "@community//libraries/kotlinx/coroutines/core:core_test_lib",
-    "@community//libraries/io",
-    "@community//libraries/io:io_test_lib",
-    "@community//libraries/kotlinx/serialization/core",
-    "@community//libraries/kotlinx/serialization/core:core_test_lib",
-    "@community//libraries/kotlinx/serialization/json",
-    "@community//libraries/kotlinx/serialization/json:json_test_lib",
-    "@community//libraries/ktor/client",
-    "@community//libraries/ktor/client:client_test_lib",
-    "@community//plugins/mcp-server:mcpserver",
-    "@community//plugins/mcp-server:mcpserver_test_lib",
-    "@community//plugins/mcp-server/mcpserver.stdio",
-    "@community//plugins/mcp-server/mcpserver.stdio:mcpserver.stdio_test_lib",
-    "@community//plugins/mcp-server/tests",
-    "@community//plugins/mcp-server/tests:tests_test_lib",
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/analysis-api:analysis_test_lib",
-    "@community//platform/core-api:core",
-    "@community//platform/core-api:core_test_lib",
-    "@community//platform/core-impl",
-    "@community//platform/core-impl:core-impl_test_lib",
-    "@community//platform/platform-util-io:ide-util-io",
-    "@community//platform/lang-impl",
-    "@community//platform/lang-impl:lang-impl_test_lib",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/projectModel-api:projectModel_test_lib",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//platform/testFramework/junit5",
-    "@community//platform/testFramework/junit5:junit5_test_lib",
-    "//contrib/qodana",
-    "//contrib/qodana:qodana_test_lib",
-    "@community//java/testFramework",
-    "@community//java/testFramework:testFramework_test_lib",
-    "//contrib/qodana/inspectionKts/java",
-    "//contrib/qodana/inspectionKts/java:java_test_lib",
-    "//contrib/qodana/inspectionKts/js",
-    "//contrib/qodana/inspectionKts/js:js_test_lib",
-    "//contrib/qodana/inspectionKts/kotlin",
-    "//contrib/qodana/inspectionKts/kotlin:kotlin_test_lib",
-  ],
-  runtime_deps = [
-    ":tests",
-    "@community//platform/platform-util-io:ide-util-io_test_lib",
-  ]
+    name = "tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "testSrc/**/*.kt",
+            "testSrc/**/*.java",
+            "testSrc/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/qodana/inspectionKts/mcp",
+        "//contrib/qodana/inspectionKts/mcp:mcp_test_lib",
+    ],
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":tests",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "@community//libraries/junit5",
+        "@community//libraries/junit5:junit5_test_lib",
+        "@community//libraries/junit5-params",
+        "@community//libraries/junit5-params:junit5-params_test_lib",
+        "@community//libraries/kotlin/test:libraries-kotlinTest",
+        "@community//libraries/kotlin/test:libraries-kotlinTest_test_lib",
+        "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm",
+        "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm_test_lib",
+        "@community//libraries/kotlinx/coroutines/core",
+        "@community//libraries/kotlinx/coroutines/core:core_test_lib",
+        "@community//libraries/io",
+        "@community//libraries/io:io_test_lib",
+        "@community//libraries/kotlinx/serialization/core",
+        "@community//libraries/kotlinx/serialization/core:core_test_lib",
+        "@community//libraries/kotlinx/serialization/json",
+        "@community//libraries/kotlinx/serialization/json:json_test_lib",
+        "@community//libraries/ktor/client",
+        "@community//libraries/ktor/client:client_test_lib",
+        "@community//plugins/mcp-server:mcpserver",
+        "@community//plugins/mcp-server:mcpserver_test_lib",
+        "@community//plugins/mcp-server/mcpserver.stdio",
+        "@community//plugins/mcp-server/mcpserver.stdio:mcpserver.stdio_test_lib",
+        "@community//plugins/mcp-server/tests",
+        "@community//plugins/mcp-server/tests:tests_test_lib",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/platform-util-io:ide-util-io",
+        "@community//platform/lang-impl",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/testFramework/junit5:junit5_test_lib",
+        "//contrib/qodana",
+        "//contrib/qodana:qodana_test_lib",
+        "@community//java/testFramework",
+        "@community//java/testFramework:testFramework_test_lib",
+        "//contrib/qodana/inspectionKts/java",
+        "//contrib/qodana/inspectionKts/java:java_test_lib",
+        "//contrib/qodana/inspectionKts/js",
+        "//contrib/qodana/inspectionKts/js:js_test_lib",
+        "//contrib/qodana/inspectionKts/kotlin",
+        "//contrib/qodana/inspectionKts/kotlin:kotlin_test_lib",
+    ],
 )
 ### auto-generated section `build intellij.qodana.inspectionKts.mcp.tests` end
 
 ### auto-generated section `iml intellij.qodana.inspectionKts.mcp.tests` start
-exports_files([
-  "intellij.qodana.inspectionKts.mcp.tests.iml",
-], visibility = ["//visibility:public"])
+exports_files(
+    [
+        "intellij.qodana.inspectionKts.mcp.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
 ### auto-generated section `iml intellij.qodana.inspectionKts.mcp.tests` end
 
 ### auto-generated section `test intellij.qodana.inspectionKts.mcp.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
-  name = "tests_test",
-  runtime_deps = [":tests_test_lib"]
+    name = "tests_test",
+    runtime_deps = [":tests_test_lib"],
 )
 ### auto-generated section `test intellij.qodana.inspectionKts.mcp.tests` end
