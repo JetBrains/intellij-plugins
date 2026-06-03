@@ -14,7 +14,7 @@ import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.isHclCompatiblePsiFile
 
 // TODO: Support overrides in separate files
-internal class TfDuplicatedBlockPropertyInspection : TfDuplicatedInspectionBase() {
+class HclDuplicatedPropertyInspection : TfDuplicatedInspectionBase() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean = isHclCompatiblePsiFile(file)
 

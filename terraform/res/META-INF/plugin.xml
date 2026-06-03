@@ -380,6 +380,10 @@
                      key="block.name.validness.inspection.display.name"
                      groupKey="hcl.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.terraform.config.inspection.HclBlockNameValidnessInspection"/>
+    <localInspection language="HCL" applyToDialects="true" shortName="HclDuplicatedProperty" bundle="messages.HCLBundle"
+                     key="duplicated.block.property.inspection.display.name"
+                     groupKey="hcl.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="org.intellij.terraform.config.inspection.HclDuplicatedPropertyInspection"/>
 
     <!-- Terraform/OpenTofu inspections -->
     <localInspection language="HCL" applyToDialects="true" shortName="HCLBlockConflictingProperties" bundle="messages.HCLBundle"
@@ -444,10 +448,6 @@
                      key="duplicated.output.inspection.display.name"
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.terraform.config.inspection.TfDuplicatedOutputInspection"/>
-    <localInspection language="HCL" applyToDialects="true" shortName="TfDuplicatedBlockProperty" bundle="messages.HCLBundle"
-                     key="duplicated.block.property.inspection.display.name"
-                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
-                     implementationClass="org.intellij.terraform.config.inspection.TfDuplicatedBlockPropertyInspection"/>
     <!--endregion Duplicates-->
 
     <localInspection language="HCL" applyToDialects="true" shortName="TfNoInterpolationsAllowed" bundle="messages.HCLBundle"

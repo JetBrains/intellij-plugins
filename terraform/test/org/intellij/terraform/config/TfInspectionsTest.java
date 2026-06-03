@@ -9,7 +9,7 @@ import org.intellij.terraform.config.inspection.HCLBlockConflictingPropertiesIns
 import org.intellij.terraform.config.inspection.HCLLiteralValidnessInspection;
 import org.intellij.terraform.config.inspection.HclBlockMissingPropertyInspection;
 import org.intellij.terraform.config.inspection.HclBlockNameValidnessInspection;
-import org.intellij.terraform.config.inspection.TfDuplicatedBlockPropertyInspection;
+import org.intellij.terraform.config.inspection.HclDuplicatedPropertyInspection;
 import org.intellij.terraform.config.inspection.TfDuplicatedOutputInspection;
 import org.intellij.terraform.config.inspection.TfDuplicatedProviderInspection;
 import org.intellij.terraform.config.inspection.TfDuplicatedVariableInspection;
@@ -127,7 +127,7 @@ public class TfInspectionsTest extends TfInspectionFixtureTestCase {
   }
 
   public void testDuplicatedBlockProperty() {
-    doTest("duplicated_block_property", new TfDuplicatedBlockPropertyInspection());
+    doTest("duplicated_block_property", new HclDuplicatedPropertyInspection());
   }
 
   public void testInterpolationsInWrongPlaces() {
