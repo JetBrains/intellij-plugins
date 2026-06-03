@@ -32,6 +32,7 @@ jvm_library(
     ),
     visibility = ["//visibility:public"],
     exports = [
+        # do not sort,
         "@community//xml/impl",
         "@community//xml/impl:impl_test_lib",
     ],

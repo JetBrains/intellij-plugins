@@ -34,10 +34,7 @@ jvm_library(
     ),
     module_name = "intellij.astro.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":astro-tests",
-    ],
+    runtime_deps = [":astro-tests"],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",

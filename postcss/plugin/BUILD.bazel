@@ -14,10 +14,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "//plugins/css/plugin",
-    ],
+    runtime_deps = ["//plugins/css/plugin"],
 )
 
 jvm_library(

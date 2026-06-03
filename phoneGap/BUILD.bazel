@@ -35,10 +35,7 @@ jvm_library(
     ),
     module_name = "intellij.phoneGap",
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":phoneGap",
-    ],
+    runtime_deps = [":phoneGap"],
 )
 ### auto-generated section `build intellij.phoneGap` end
 

@@ -164,10 +164,7 @@ jvm_library(
         "//contrib/qodana/python/coverage:coverage_test_lib",
     ],
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":qodana-python-coverage-tests",
-    ],
+    runtime_deps = [":qodana-python-coverage-tests"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",

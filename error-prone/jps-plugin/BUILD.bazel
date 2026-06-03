@@ -94,10 +94,7 @@ jvm_library(
         "//contrib/error-prone/jps-plugin:errorProne-jps_test_lib",
     ],
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":errorProne-jps-tests",
-    ],
+    runtime_deps = [":errorProne-jps-tests"],
     deps = [
         # do not sort,
         "@community//jps/jps-builders:build",

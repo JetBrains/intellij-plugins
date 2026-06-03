@@ -28,10 +28,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "@community//plugins/kotlin:kotlin-plugin-community-main",
-    ],
+    runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -124,10 +121,7 @@ jvm_library(
     ),
     module_name = "intellij.qodana.jvm.coverage.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "@community//plugins/kotlin:kotlin-plugin-community-main",
-    ],
+    runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"],
 )
 
 jvm_library(

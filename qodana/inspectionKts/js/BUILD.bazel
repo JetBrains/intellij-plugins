@@ -108,10 +108,7 @@ jvm_library(
         "//contrib/qodana/inspectionKts/js:js_test_lib",
     ],
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":qodana-inspectionKts-js-tests",
-    ],
+    runtime_deps = [":qodana-inspectionKts-js-tests"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",

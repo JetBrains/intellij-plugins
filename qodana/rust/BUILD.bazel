@@ -26,10 +26,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "//rustrover/plugin",
-    ],
+    runtime_deps = ["//rustrover/plugin"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -134,10 +131,7 @@ jvm_library(
         ["test-data/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":rust-tests",
-    ],
+    runtime_deps = [":rust-tests"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",

@@ -112,10 +112,7 @@ jvm_library(
         "//contrib/protobuf/protoeditor-python:protoeditor-python_test_lib",
     ],
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":protoeditor-python-tests",
-    ],
+    runtime_deps = [":protoeditor-python-tests"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",

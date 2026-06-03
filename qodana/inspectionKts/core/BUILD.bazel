@@ -18,10 +18,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "@community//plugins/kotlin/jsr223",
-    ],
+    runtime_deps = ["@community//plugins/kotlin/jsr223"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",

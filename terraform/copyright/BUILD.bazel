@@ -68,10 +68,7 @@ jvm_library(
     ),
     module_name = "intellij.terraform.copyright.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "//contrib/terraform/copyright",
-    ],
+    runtime_deps = ["//contrib/terraform/copyright"],
 )
 
 jvm_library(
@@ -90,10 +87,7 @@ jvm_library(
         "//contrib/terraform/copyright:copyright_test_lib",
     ],
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":copyright-tests",
-    ],
+    runtime_deps = [":copyright-tests"],
     deps = [
         # do not sort,
         "@community//platform/core-api:core",

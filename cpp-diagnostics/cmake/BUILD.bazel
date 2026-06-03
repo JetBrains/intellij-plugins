@@ -114,10 +114,7 @@ jvm_library(
         "//contrib/cpp-diagnostics/cmake:cmake_test_lib",
     ],
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":clion-diagnostics-cmake-tests",
-    ],
+    runtime_deps = [":clion-diagnostics-cmake-tests"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",

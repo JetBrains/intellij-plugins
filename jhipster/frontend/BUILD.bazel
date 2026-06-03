@@ -18,14 +18,8 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "@community//platform/platform-frontend:frontend",
-    ],
-    deps = [
-        # do not sort,
-        "//contrib/jhipster",
-    ],
+    runtime_deps = ["@community//platform/platform-frontend:frontend"],
+    deps = ["//contrib/jhipster"],
 )
 
 jvm_library(

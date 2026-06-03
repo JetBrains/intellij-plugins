@@ -25,10 +25,7 @@ jvm_library(
     ),
     module_name = "intellij.ruby.testing",
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":ruby-testing",
-    ],
+    runtime_deps = [":ruby-testing"],
 )
 ### auto-generated section `build intellij.ruby.testing` end
 

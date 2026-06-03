@@ -18,10 +18,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "@community//plugins/kotlin:kotlin-plugin-community-main",
-    ],
+    runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",

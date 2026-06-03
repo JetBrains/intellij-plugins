@@ -18,10 +18,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "//contrib/flex/jps-plugin:jps",
-    ],
+    runtime_deps = ["//contrib/flex/jps-plugin:jps"],
     deps = [
         # do not sort,
         "//contrib/flex/flex-shared:shared",

@@ -109,10 +109,7 @@ jvm_library(
     ),
     module_name = "intellij.nextjs.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
-    ],
+    runtime_deps = ["//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl"],
 )
 
 jvm_library(

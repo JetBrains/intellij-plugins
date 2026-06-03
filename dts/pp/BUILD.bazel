@@ -21,10 +21,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "@community//platform/backend",
-    ],
+    runtime_deps = ["@community//platform/backend"],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",
@@ -88,10 +85,7 @@ jvm_library(
     ),
     module_name = "intellij.dts.pp.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "@community//platform/backend",
-    ],
+    runtime_deps = ["@community//platform/backend"],
 )
 
 jvm_library(
