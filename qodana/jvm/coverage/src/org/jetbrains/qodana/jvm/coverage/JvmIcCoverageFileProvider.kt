@@ -9,11 +9,17 @@ import java.nio.file.Path
 class JvmIcCoverageFileProvider : BaseQodanaCoverageFileProvider() {
   override val engineType: CoverageEngineType = CoverageEngineType.JavaCoverageEngine
 
-  override fun getCoverageFilesPrimaryLocations(project: Project): List<Path> {
-    TODO("not implemented")
-  }
+  override val canonicalExtension: String = "ic"
 
-  override fun getCoverageFilesSecondaryLocations(project: Project): List<Path> {
-    TODO("not implemented")
-  }
+  // The IntelliJ coverage agent snapshot is binary and identified by the unique `.ic` extension only
+  override fun isValidCoverageReport(file: Path): Boolean = true
+
+  override fun getCoverageFilesPrimaryLocations(project: Project): List<Path> =
+    discover(
+      project,
+      names = listOf("report.ic", "*.ic"),
+      dirs = listOf("build/kover", "build/reports/kover"),
+    )
+
+  override fun getCoverageFilesSecondaryLocations(project: Project): List<Path> = emptyList()
 }
