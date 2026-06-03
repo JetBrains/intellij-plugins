@@ -37,6 +37,36 @@ esbuild.build({
     metafile: process.argv.includes('--metafile'),
     plugins: [
         {
+            // yaml-language-server 2.16.x requires prettier eagerly at module top-level, which crashes
+            // the bundled server on startup because prettier is not shipped next to nodeServer.js.
+            // Move the requires inside format() (as older versions did) so they are evaluated lazily,
+            // only if YAML formatting is actually requested (it never is: the IDE disables LSP formatting).
+            name: 'lazy-yaml-formatter-prettier',
+            setup(build) {
+                build.onLoad({filter: /yamlFormatter\.js$/}, args => {
+                    let contents = fs.readFileSync(args.path, 'utf8');
+                    const eager =
+                        'const yamlPlugin = require("prettier/plugins/yaml");\n' +
+                        'const estreePlugin = require("prettier/plugins/estree");\n' +
+                        'const standalone_1 = require("prettier/standalone");\n';
+                    const guard =
+                        '        if (!this.formatterEnabled) {\n' +
+                        '            return [];\n' +
+                        '        }\n';
+                    if (!contents.includes(eager) || !contents.includes(guard)) {
+                        throw new Error('yamlFormatter.js layout changed; update lazy-yaml-formatter-prettier in build.js');
+                    }
+                    contents = contents
+                        .replace(eager, '')
+                        .replace(guard, guard +
+                            '        const yamlPlugin = require("prettier/plugins/yaml");\n' +
+                            '        const estreePlugin = require("prettier/plugins/estree");\n' +
+                            '        const standalone_1 = require("prettier/standalone");\n');
+                    return {contents, loader: 'js'};
+                });
+            },
+        },
+        {
             name: 'umd2esm',
             setup(build) {
                 build.onResolve({filter: /^(vscode-.*-languageservice|jsonc-parser)/}, args => {

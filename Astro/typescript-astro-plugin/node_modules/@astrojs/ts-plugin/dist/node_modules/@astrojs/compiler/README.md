@@ -37,11 +37,11 @@ The Astro compiler can emit an AST using the `parse` method.
 
 - Position data is currently incomplete and in some cases incorrect. We're working on it!
 - A `TextNode` can represent both HTML `text` and JavaScript/TypeScript source code.
-- The `@astrojs/compiler/utils` entrypoint exposes a `walk` function that can be used to traverse the AST. It also exposes the `is` helper which can be used as guards to derive the proper types for each `node`.
+- The `@astrojs/compiler/utils` entrypoint exposes `walk` and `walkAsync` functions that can be used to traverse the AST. It also exposes the `is` helper which can be used as guards to derive the proper types for each `node`.
 
 ```js
 import { parse } from "@astrojs/compiler";
-import { walk, is } from "@astrojs/compiler/utils";
+import { walk, walkAsync, is } from "@astrojs/compiler/utils";
 
 const result = await parse(source, {
   position: false, // defaults to `true`
@@ -51,6 +51,12 @@ walk(result.ast, (node) => {
   // `tag` nodes are `element` | `custom-element` | `component`
   if (is.tag(node)) {
     console.log(node.name);
+  }
+});
+
+await walkAsync(result.ast, async (node) => {
+  if (is.tag(node)) {
+    node.value = await expensiveCalculation(node)
   }
 });
 ```
