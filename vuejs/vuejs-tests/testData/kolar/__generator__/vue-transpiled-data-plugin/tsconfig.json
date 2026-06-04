@@ -11,5 +11,6 @@
   },
   "include": [
     "./src/index.ts",
+    "./src/typings/typescript.d.ts",
   ]
 }
