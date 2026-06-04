@@ -10,6 +10,7 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.diagnostic.rethrowControlFlowException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManagerListener
 import com.intellij.openapi.progress.Task
@@ -139,18 +140,19 @@ class QodanaCppStartupManager(private val project: Project, private val coroutin
       awaitSolutionAnalysisHost()
 
       currentPhase = "awaiting backend startup"
-      withQodanaTimeout(project, "qd.cpp.workspace.ready.timeout.seconds", QodanaCppRegistry.workspaceReadyTimeout) {
-        awaitBackendStartup()
-        log.info("CLion backend started")
+      // Bounded only by the outer qd.cpp.startup.timeout.minutes (see QodanaCppProjectAwaiter), not by
+      // qd.cpp.workspace.ready.timeout.seconds — a 60s wrapper would preempt the 120s project-model wait
+      // inside awaitBackendReady (and the unbounded awaitSyncPoints below) and mislabel it "workspace ready".
+      awaitBackendStartup()
+      log.info("CLion backend started")
 
-        coroutineScope {
-          launch { awaitBackendReady() }
-          launch { awaitSmartMode() }
-        }
-
-        // we have to await sync points before considering project as open
-        awaitSyncPoints(lifetime)
+      coroutineScope {
+        launch { awaitBackendReady() }
+        launch { awaitSmartMode() }
       }
+
+      // we have to await sync points before considering project as open
+      awaitSyncPoints(lifetime)
 
       currentPhase = "awaiting build tools"
       log.info("Await for synced project")
@@ -401,11 +403,31 @@ class QodanaCppStartupManager(private val project: Project, private val coroutin
       throw ex
     }
     catch (ex: Exception) {
-      // RiderProjectModelWaiter throws bare java.lang.Exception for all timeout scenarios
-      // (e.g. "Project model wasn't ready in time", "Source generators weren't ready in time").
-      // There is no typed exception to narrow this catch — all failures are java.lang.Exception.
-      log.warn("Timeout while awaiting project model", ex)
-      println("Warning: backend project model timed out. Analysis may proceed with incomplete data.")
+      rethrowControlFlowException(ex)
+      // RiderProjectModelWaiter throws a bare Exception for both a timeout and a hard failure
+      // ("Source Generators failure!"); only the tracker tells them apart. Fail fast either way.
+      val details = ex.message ?: ex.javaClass.simpleName
+      val timedOut = timeoutTracker.isExpired
+
+      log.warn("Backend project model was not ready", ex)
+      logDiagnostics()
+
+      val ideaLogPath = PathManager.getLogDir() / "idea.log"
+      print(buildString {
+        if (timedOut) {
+          appendLine("Qodana failed to configure the project: the C++ backend project model was not ready in time.")
+          appendLine("  If the project needs more time to load, increase `qd.cpp.project.model.timeout.seconds`.")
+        }
+        else {
+          appendLine("Qodana failed to configure the project: the C++ backend project model failed to load ($details).")
+        }
+        appendLine("  Detailed logs are available at $ideaLogPath")
+      })
+
+      val message = if (timedOut) "backend project model was not ready in time: $details"
+                    else "backend project model failed to load: $details"
+      HeadlessLogging.logFatalError(message)
+      throw if (timedOut) QodanaTimeoutException(message, ex) else QodanaException(message, ex)
     }
   }
 
