@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.extensions.ci
+package org.jetbrains.qodana.yaml.extensions.ci
 
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.project.Project
@@ -6,8 +6,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.qodana.extensions.getOrAddSequenceForMapping
-import org.jetbrains.qodana.extensions.putSequenceItem
+import org.jetbrains.qodana.extensions.ci.AzureCIConfigHandler
+import org.jetbrains.qodana.yaml.extensions.getOrAddSequenceForMapping
+import org.jetbrains.qodana.yaml.extensions.putSequenceItem
 import org.jetbrains.yaml.YAMLElementGenerator
 import org.jetbrains.yaml.YAMLFileType
 import org.jetbrains.yaml.psi.YAMLFile
@@ -21,7 +22,7 @@ class YamlAzureCIConfigHandler : AzureCIConfigHandler {
       val topMapping = (file as? YAMLFile)?.documents?.get(0)?.topLevelValue as? YAMLMapping ?: return@readAction null
       val elementGenerator = YAMLElementGenerator.getInstance(project)
       val steps = getOrAddSequenceForMapping(elementGenerator, topMapping, "steps") as? YAMLSequence ?: return@readAction null
-      val sequenceItem = elementGenerator.createSequenceItem(taskToAddText) ?: return@readAction null
+      val sequenceItem = elementGenerator.createSequenceItem(taskToAddText)
       steps.putSequenceItem(sequenceItem)
       CodeStyleManager.getInstance(project).adjustLineIndent(file, sequenceItem.textRange)
       file.text

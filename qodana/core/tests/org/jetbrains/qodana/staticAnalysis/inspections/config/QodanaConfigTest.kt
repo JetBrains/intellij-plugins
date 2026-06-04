@@ -1,11 +1,9 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.testFramework.assertInstanceOf
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
-import org.jetbrains.qodana.yaml.QODANA_YAML_SCHEMA_RESOURCE
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
@@ -326,20 +324,6 @@ class QodanaConfigTest {
     """.trimIndent())
     assertEquals("7.1", config.script.parameters.getValue("fromLevel").toString())
     assertEquals("8.0", config.script.parameters.getValue("toLevel").toString())
-  }
-
-  @Test
-  fun `root properties should be exactly as described in schema`() {
-    val schemaRoots = ObjectMapper()
-      .readTree(javaClass.getResource(QODANA_YAML_SCHEMA_RESOURCE))
-      .get("properties")
-      .fieldNames()
-      .asSequence()
-      .sorted()
-      .toList()
-    val rootProps = QodanaYamlReader.rootProps.sorted()
-
-    assertEquals(schemaRoots, rootProps)
   }
 
   private fun testProviderInspectionScopes(

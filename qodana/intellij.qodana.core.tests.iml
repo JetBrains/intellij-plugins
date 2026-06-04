@@ -55,7 +55,6 @@
     <orderEntry type="library" scope="TEST" name="flexmark" level="project" />
     <orderEntry type="module" module-name="intellij.libraries.jsoup" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.yaml" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.externalProcessAuthHelper" scope="TEST" />
     <orderEntry type="module" module-name="intellij.json.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.editor.ex" scope="TEST" />
@@ -102,7 +101,6 @@
     <orderEntry type="library" scope="TEST" name="jetbrains.qodana.sarif.converter" level="project" />
     <orderEntry type="module" module-name="intellij.platform.sqlite" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.coroutines.test" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.yaml.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.inspect" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.statistics" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util.base" scope="TEST" />
@@ -131,7 +129,6 @@
     <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.qodana.yaml" scope="TEST" />
     <orderEntry type="module" module-name="intellij.vcs.git.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.lombok.tests" scope="TEST" />
   </component>

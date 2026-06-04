@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.extensions.ci
+package org.jetbrains.qodana.yaml.extensions.ci
 
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.project.Project
@@ -6,11 +6,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.qodana.extensions.createKeyValue
-import org.jetbrains.qodana.extensions.createMappingWithContent
-import org.jetbrains.qodana.extensions.createSequenceItemRaw
-import org.jetbrains.qodana.extensions.findMappingOrAdd
-import org.jetbrains.qodana.extensions.putSequenceItem
+import org.jetbrains.qodana.extensions.ci.CircleCIConfigHandler
+import org.jetbrains.qodana.yaml.extensions.createKeyValue
+import org.jetbrains.qodana.yaml.extensions.createMappingWithContent
+import org.jetbrains.qodana.yaml.extensions.createSequenceItemRaw
+import org.jetbrains.qodana.yaml.extensions.findMappingOrAdd
+import org.jetbrains.qodana.yaml.extensions.putSequenceItem
 import org.jetbrains.yaml.YAMLElementGenerator
 import org.jetbrains.yaml.YAMLFileType
 import org.jetbrains.yaml.YAMLUtil

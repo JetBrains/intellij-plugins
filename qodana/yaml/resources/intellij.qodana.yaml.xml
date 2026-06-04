@@ -12,6 +12,15 @@
     <ProviderFactory implementation="org.jetbrains.qodana.yaml.QodanaYamlSchemaProviderFactory"/>
   </extensions>
 
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <configUpdateHandler implementation="org.jetbrains.qodana.yaml.extensions.QodanaYamlConfigUpdateHandler"/>
+    <githubCiConfigHandler implementation="org.jetbrains.qodana.yaml.extensions.ci.YamlGitHubCIConfigHandler"/>
+    <gitlabCiConfigHandler implementation="org.jetbrains.qodana.yaml.extensions.ci.YamlGitLabCIConfigHandler"/>
+    <azureCiConfigUpdateHandler implementation="org.jetbrains.qodana.yaml.extensions.ci.YamlAzureCIConfigHandler"/>
+    <circleCiConfigUpdateHandler implementation="org.jetbrains.qodana.yaml.extensions.ci.YamlCircleCIConfigHandler"/>
+    <bitbucketCiConfigUpdateHandler implementation="org.jetbrains.qodana.yaml.extensions.ci.YamlBitbucketCIConfigHandler"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
     <!--yaml support -->
     <completion.contributor

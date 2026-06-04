@@ -1,10 +1,11 @@
-package org.jetbrains.qodana.extensions
+package org.jetbrains.qodana.yaml.extensions
 
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.childrenOfType
+import org.jetbrains.qodana.extensions.ConfigUpdateHandler
 import org.jetbrains.yaml.YAMLElementGenerator
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.YAMLKeyValue
@@ -45,7 +46,7 @@ class QodanaYamlConfigUpdateHandler : ConfigUpdateHandler {
       .filter { item -> item.keysValues.any { it.keyText == "name" && it.valueText == name } }
 
     val sequenceItem = if (sequenceItems.isEmpty()) {
-      val generatedItem = elementGenerator.createSequenceItem("name: $name") ?: return null
+      val generatedItem = elementGenerator.createSequenceItem("name: $name")
       values.putSequenceItem(generatedItem)
       generatedItem
     } else {
@@ -63,12 +64,12 @@ class QodanaYamlConfigUpdateHandler : ConfigUpdateHandler {
     return mapping
   }
 
-  private fun putPath(elementGenerator: YAMLElementGenerator, paths: YAMLKeyValue, path: String?) {
+  private fun putPath(elementGenerator: YAMLElementGenerator, paths: YAMLKeyValue, path: String) {
     if (paths.value !is YAMLSequence) {
       paths.setValue(elementGenerator.createEmptySequence())
     }
     val sequence = paths.value as YAMLSequence
-    val item = elementGenerator.createSequenceItem(path) ?: return
+    val item = elementGenerator.createSequenceItem(path)
     if (!sequence.items.any { it.value?.text == path })
       sequence.putSequenceItem(item)
   }

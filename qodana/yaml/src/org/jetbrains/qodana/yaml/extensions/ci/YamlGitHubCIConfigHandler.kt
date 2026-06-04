@@ -1,9 +1,10 @@
-package org.jetbrains.qodana.extensions.ci
+package org.jetbrains.qodana.yaml.extensions.ci
 
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import org.jetbrains.qodana.extensions.ci.GitHubCIConfigHandler
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.YAMLMapping
 import org.jetbrains.yaml.psi.YAMLSequence

@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.extensions
+package org.jetbrains.qodana.yaml.extensions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
@@ -62,10 +62,6 @@ internal fun YAMLElementGenerator.createMappingWithContent(name: String, content
 
 internal fun YAMLElementGenerator.createKeyValue(content: String): YAMLKeyValue? {
   return PsiTreeUtil.findChildOfType(createDummyYamlWithText(content), YAMLKeyValue::class.java)
-}
-
-internal fun YAMLElementGenerator.createSequenceItem(data: String?): YAMLSequenceItem? {
-  return PsiTreeUtil.findChildOfType(createDummyYamlWithText("- $data"), YAMLSequenceItem::class.java)
 }
 
 internal fun YAMLElementGenerator.createSequenceItemRaw(data: String): YAMLSequenceItem? {
