@@ -24,7 +24,7 @@ class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspect
   fun py() {
     runUnderCover()
     assertSarifResults()
-    assertCoverageProjectDataMatchesGolden("PyCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("PyCoverageEngine", "PyCoverageEngine.xml")
 
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(PyCoverageEngine::class.java)
     val path = qodanaConfig.coverage.coveragePath.resolve("PyCoverageEngine")
@@ -46,14 +46,14 @@ class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspect
   fun coverageInfoWithoutProblemReport() {
     runUnderCover()
     assertSarifResults()
-    assertCoverageProjectDataMatchesGolden("PyCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("PyCoverageEngine", "PyCoverageEngine.xml")
   }
 
   @Test
   fun coverageInfoWithProblemReport() {
     runUnderCover()
     assertSarifResults()
-    assertCoverageProjectDataMatchesGolden("PyCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("PyCoverageEngine", "PyCoverageEngine.xml")
   }
 
   @Test
@@ -72,7 +72,7 @@ class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspect
   fun incrementalSecondStage() {
     runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
     assertChangedLines(mapOf("src/FooCls.py" to setOf(11, 12, 13)))
-    assertCoverageProjectDataMatchesGolden("PyCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("PyCoverageEngine", "PyCoverageEngine.xml")
     assertSarifResults()
   }
 

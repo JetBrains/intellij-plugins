@@ -24,10 +24,10 @@ class JsCoverageInspectionTest: QodanaCoverageInspectionTest("JsCoverageInspecti
   fun jest() {
     runUnderCover()
     assertSarifResults()
-    assertCoverageProjectDataMatchesGolden("JestCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("JestCoverageEngine", "JestCoverageEngine.info")
 
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(JestCoverageEngine::class.java)
-    val path = qodanaConfig.coverage.coveragePath.resolve("JestCoverageEngine")
+    val path = qodanaConfig.coverage.coveragePath.resolve("JestCoverageEngine", "JestCoverageEngine.info")
     val coverageRunner = CoverageRunner.getInstanceById(JestCoverageEngine.ID)!!
     val data = ProjectDataLoader.load(path.toFile())
     val projectDir = qodanaConfig.projectPath
@@ -46,14 +46,14 @@ class JsCoverageInspectionTest: QodanaCoverageInspectionTest("JsCoverageInspecti
   fun jsWithoutProblemReport() {
     runUnderCover()
     assertSarifResults()
-    assertCoverageProjectDataMatchesGolden("JestCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("JestCoverageEngine", "JestCoverageEngine.info")
   }
 
   @Test
   fun jsWithProblemReport() {
     runUnderCover()
     assertSarifResults()
-    assertCoverageProjectDataMatchesGolden("JestCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("JestCoverageEngine", "JestCoverageEngine.info")
   }
 
   @Test
@@ -71,8 +71,8 @@ class JsCoverageInspectionTest: QodanaCoverageInspectionTest("JsCoverageInspecti
   @Test
   fun incrementalSecondStage() {
     runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
-    assertChangedLines(mapOf("FooCls.ts" to setOf(19, 20, 21)))
-    assertCoverageProjectDataMatchesGolden("JestCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("JestCoverageEngine", "JestCoverageEngine.info")
+    assertChangedLinesMatchesGolden()
     assertSarifResults()
   }
 

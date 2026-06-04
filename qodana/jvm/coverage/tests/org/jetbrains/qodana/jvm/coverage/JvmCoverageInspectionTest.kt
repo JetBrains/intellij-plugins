@@ -25,14 +25,14 @@ class JvmCoverageInspectionTest: QodanaCoverageInspectionTest("JvmCoverageInspec
   @Test
   fun execWithProblemReport() {
     runUnderCover()
-    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine", "JavaCoverageEngine.ic")
     assertSarifResults()
   }
 
   @Test
   fun icWithProblemReport() {
     runUnderCover()
-    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine", "JavaCoverageEngine.ic")
     assertSarifResults()
   }
 
@@ -51,21 +51,21 @@ class JvmCoverageInspectionTest: QodanaCoverageInspectionTest("JvmCoverageInspec
   @Test
   fun anonymousClassWithProblemReport() {
     runUnderCover()
-    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine", "JavaCoverageEngine.ic")
     assertSarifResults()
   }
 
   @Test
   fun execWithoutProblemReport() {
     runUnderCover()
-    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine", "JavaCoverageEngine.ic")
     assertSarifResults()
   }
 
   @Test
   fun icWithoutProblemReport() {
     runUnderCover()
-    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine", "JavaCoverageEngine.ic")
     assertSarifResults()
   }
 
@@ -84,7 +84,7 @@ class JvmCoverageInspectionTest: QodanaCoverageInspectionTest("JvmCoverageInspec
   @Test
   fun anonymousClassWithoutProblemReport() {
     runUnderCover()
-    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine", "JavaCoverageEngine.ic")
     assertSarifResults()
   }
 
@@ -104,7 +104,7 @@ class JvmCoverageInspectionTest: QodanaCoverageInspectionTest("JvmCoverageInspec
   fun incrementalSecondStage() {
     runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
     assertChangedLines(mapOf("src/foo/FooClass.java" to setOf(4, 5, 6)))
-    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("JavaCoverageEngine", "JavaCoverageEngine.ic")
     assertSarifResults()
   }
 
