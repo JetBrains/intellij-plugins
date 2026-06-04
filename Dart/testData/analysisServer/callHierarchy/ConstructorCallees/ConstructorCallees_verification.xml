@@ -1,6 +1,0 @@
-<node text="B.b() (B.dart)" base="true">
-  <node text="C.C() (C.dart)">
-    <node text="C.c() (C.dart)"/>
-  </node>
-  <node text="C.c() (C.dart)"/>
-</node>

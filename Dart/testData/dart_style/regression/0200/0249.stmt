@@ -1,9 +1,0 @@
->>> (indent 8)
-        clip.onTransitionEnd
-            .where((TransitionEvent e) => e.propertyName == 'height')
-                .first.then((_) => clip.classes.add('expanded'));
-<<<
-        clip.onTransitionEnd
-            .where((TransitionEvent e) => e.propertyName == 'height')
-            .first
-            .then((_) => clip.classes.add('expanded'));

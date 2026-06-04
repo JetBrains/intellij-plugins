@@ -1,8 +1,0 @@
->>> (indent 4)
-    for (int inputIndex = 1, statementIndex = 0;
-         inputIndex < inputs.length;
-         statementIndex++) {}
-<<<
-    for (int inputIndex = 1, statementIndex = 0;
-        inputIndex < inputs.length;
-        statementIndex++) {}

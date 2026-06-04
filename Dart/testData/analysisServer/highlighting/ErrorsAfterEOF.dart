@@ -1,1 +1,0 @@
-class Foo implement<error descr="A class declaration must have a body, even if it is empty."><error descr="Classes and mixins can only implement other classes and mixins."><error descr="Expected a type name.">s</error></error></error>

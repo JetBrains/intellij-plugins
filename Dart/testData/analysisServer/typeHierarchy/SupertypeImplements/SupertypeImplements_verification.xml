@@ -1,7 +1,0 @@
-<node text="E (lib)" base="true">
-  <node text="D (lib)">
-    <node text="B (lib)">
-      <node text="A (lib)"/>
-    </node>
-  </node>
-</node>

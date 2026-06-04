@@ -1,3 +1,0 @@
-m(expr) {
-  <spot>expr</spot>.par
-}

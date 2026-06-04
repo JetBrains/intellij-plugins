@@ -1,3 +1,0 @@
-main() {
-  identica<caret>l();
-}

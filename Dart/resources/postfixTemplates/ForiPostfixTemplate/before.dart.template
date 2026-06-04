@@ -1,4 +1,0 @@
-main() {
-  var limit = 100;
-  <spot>limit</spot>.fori
-}

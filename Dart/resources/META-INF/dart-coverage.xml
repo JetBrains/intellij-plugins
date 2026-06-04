@@ -1,8 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="com.intellij">
-    <programRunner implementation="com.jetbrains.lang.dart.coverage.DartCoverageProgramRunner"/>
-    <coverageEngine implementation="com.jetbrains.lang.dart.coverage.DartCoverageEngine"/>
-    <coverageRunner implementation="com.jetbrains.lang.dart.coverage.DartCoverageRunner"/>
-    <projectService serviceImplementation="com.jetbrains.lang.dart.coverage.DartCoverageAnnotator"/>
-  </extensions>
-</idea-plugin>

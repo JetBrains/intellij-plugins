@@ -1,5 +1,0 @@
-f() {
-  switch (expr) {
-    <spot></spot>
-  }
-}

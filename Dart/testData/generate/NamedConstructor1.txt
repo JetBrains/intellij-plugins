@@ -1,6 +1,0 @@
-class Point {
-  num x;
-  num y;
-
-  Point.name(this.x, this.y);<caret>
-}

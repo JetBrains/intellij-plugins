@@ -1,3 +1,0 @@
-m(bool b) {
-  <spot>b</spot>.else
-}

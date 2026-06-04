@@ -1,3 +1,0 @@
-f(bool b) {
-  f(<spot>b</spot>!);
-}

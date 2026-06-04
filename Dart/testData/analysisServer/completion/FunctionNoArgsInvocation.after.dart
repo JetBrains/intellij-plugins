@@ -1,3 +1,0 @@
-abcdefghij() {
-  abcdefghij()<caret>
-}

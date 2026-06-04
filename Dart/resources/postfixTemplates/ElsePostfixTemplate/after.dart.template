@@ -1,5 +1,0 @@
-m(bool b) {
-  if (!b) {
-    <spot></spot>
-  }
-}

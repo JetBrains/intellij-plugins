@@ -1,3 +1,0 @@
-m() {
-  soutm<caret>
-}

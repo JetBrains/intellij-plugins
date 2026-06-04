@@ -1,3 +1,0 @@
-// 'Add type annotation' quick assist example.
-
-<spot>var</spot> items = <int>[0, 1, 2];

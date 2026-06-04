@@ -1,5 +1,0 @@
-f(b) {
-  if (b == null) {
-    <spot></spot>
-  }
-}

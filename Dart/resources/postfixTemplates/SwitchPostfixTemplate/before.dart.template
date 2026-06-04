@@ -1,3 +1,0 @@
-f() {
-  <spot>expr</spot>.switch
-}
