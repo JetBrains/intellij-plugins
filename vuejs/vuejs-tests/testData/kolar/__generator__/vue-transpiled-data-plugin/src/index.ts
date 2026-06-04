@@ -1,12 +1,12 @@
 import type ts from "typescript/lib/tsserverlibrary";
 import {existsSync, mkdirSync, rmSync, writeFileSync} from 'node:fs'
-import path from 'node:path'
-import process from 'node:process'
+import {dirname, relative, resolve} from 'node:path'
+import {cwd, env} from 'node:process'
 
 function init() {
   function create(info: ts.server.PluginCreateInfo) {
     const project = info.project;
-    const transpiledDir = process.env.TRANSPILED_DIR as string;
+    const transpiledDir = env.TRANSPILED_DIR as string;
 
     if (existsSync(transpiledDir)) {
       rmSync(transpiledDir, {recursive: true})
@@ -20,12 +20,12 @@ function init() {
         const scriptInfo = project.getScriptInfo(scriptFileName)!
         const sourceFile = project.getSourceFile(scriptInfo.path)!
 
-        const transpiledFilePath = path.resolve(
+        const transpiledFilePath = resolve(
           transpiledDir,
-          path.relative(process.cwd(), scriptFileName) + ".ts",
+          relative(cwd(), scriptFileName) + ".ts",
         )
 
-        mkdirSync(path.dirname(transpiledFilePath), {recursive: true});
+        mkdirSync(dirname(transpiledFilePath), {recursive: true});
         writeFileSync(transpiledFilePath, sourceFile.getFullText())
       }
 
