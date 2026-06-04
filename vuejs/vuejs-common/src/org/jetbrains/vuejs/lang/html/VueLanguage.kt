@@ -12,6 +12,7 @@ object VueLanguage : WebFrameworkHtmlDialect("Vue") {
   object Companion {
     @Deprecated("Use VueLanguage instead", ReplaceWith("VueLanguage"))
     @ApiStatus.ScheduledForRemoval
+    @get:ApiStatus.ScheduledForRemoval
     val INSTANCE: VueLanguage = VueLanguage
   }
 }
