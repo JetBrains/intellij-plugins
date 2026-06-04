@@ -195,3 +195,15 @@ inspections:
     enabled: false
   - inspection: CppParameterValueIsReassigned
     enabled: false
+
+  # DevKit split-mode inspections: explicitly enabled for Qodana
+  # even though their categories fall into the Excluded group.
+  - inspection: SplitModeMixedDependencies
+    enabled: true
+  - inspection: SplitModeXmlApiUsage
+    enabled: true
+  - inspection: MissingFrontendOrBackendRuntimeDependency
+    enabled: true
+  - inspection: SplitModeApiUsage
+    severity: WARNING
+    enabled: true
