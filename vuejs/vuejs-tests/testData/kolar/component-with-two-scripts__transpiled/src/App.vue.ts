@@ -5,6 +5,18 @@
                
          
 
+        
+                         
+              
+             
+ 
+
+                                  
+              
+             
+  
+         
+
           
              
   
@@ -16,6 +28,18 @@
 import MyCounter from './MyCounter.vue'
 import MyLabel from './MyLabel.vue'
 
+
+export interface MyUser {
+  name: string
+  age: number
+}
+
+export type OtherUser = Readonly<{
+  name: string
+  age: number
+}>
+export default {} as typeof __VLS_export;
+const __VLS_export = await (async () => {
 const count = 1
 // @ts-ignore
 declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
@@ -47,6 +71,6 @@ const __VLS_7 = __VLS_6({
 }, ...__VLS_functionalComponentArgsRest(__VLS_6));
 // @ts-ignore
 [count,];
-const __VLS_export = (await import('vue')).defineComponent({
+return (await import('vue')).defineComponent({
 });
-export default {} as typeof __VLS_export;
+})();
