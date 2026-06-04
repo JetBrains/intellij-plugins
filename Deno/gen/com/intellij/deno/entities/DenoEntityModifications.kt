@@ -2,6 +2,7 @@
 
 package com.intellij.deno.entities
 
+import com.intellij.deno.entities.impl.DenoEntityImpl
 import com.intellij.platform.workspace.storage.EntitySource
 import com.intellij.platform.workspace.storage.EntityType
 import com.intellij.platform.workspace.storage.GeneratedCodeApiVersion
@@ -18,6 +19,7 @@ interface DenoEntityBuilder : WorkspaceEntityBuilder<DenoEntity> {
 
 internal object DenoEntityType : EntityType<DenoEntity, DenoEntityBuilder>() {
   override val entityClass: Class<DenoEntity> get() = DenoEntity::class.java
+  override val entityImplBuilderClass: Class<*> get() = DenoEntityImpl.Builder::class.java
   operator fun invoke(
     entitySource: EntitySource,
     init: (DenoEntityBuilder.() -> Unit)? = null,

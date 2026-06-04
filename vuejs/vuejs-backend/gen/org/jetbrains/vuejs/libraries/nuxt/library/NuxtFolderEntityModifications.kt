@@ -10,6 +10,7 @@ import com.intellij.platform.workspace.storage.MutableEntityStorage
 import com.intellij.platform.workspace.storage.WorkspaceEntityBuilder
 import com.intellij.platform.workspace.storage.impl.containers.toMutableWorkspaceList
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
+import org.jetbrains.vuejs.libraries.nuxt.library.impl.NuxtFolderEntityImpl
 
 @GeneratedCodeApiVersion(3)
 internal interface NuxtFolderEntityBuilder : WorkspaceEntityBuilder<NuxtFolderEntity> {
@@ -20,6 +21,7 @@ internal interface NuxtFolderEntityBuilder : WorkspaceEntityBuilder<NuxtFolderEn
 
 internal object NuxtFolderEntityType : EntityType<NuxtFolderEntity, NuxtFolderEntityBuilder>() {
   override val entityClass: Class<NuxtFolderEntity> get() = NuxtFolderEntity::class.java
+  override val entityImplBuilderClass: Class<*> get() = NuxtFolderEntityImpl.Builder::class.java
   operator fun invoke(
     nuxtFolderUrl: VirtualFileUrl,
     libraryFileUrls: List<VirtualFileUrl>,

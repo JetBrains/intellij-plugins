@@ -9,6 +9,7 @@ import com.intellij.platform.workspace.storage.GeneratedCodeApiVersion
 import com.intellij.platform.workspace.storage.MutableEntityStorage
 import com.intellij.platform.workspace.storage.WorkspaceEntityBuilder
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
+import org.intellij.terraform.config.model.local.impl.TfLocalMetaEntityImpl
 
 @GeneratedCodeApiVersion(3)
 interface TfLocalMetaEntityBuilder : WorkspaceEntityBuilder<TfLocalMetaEntity> {
@@ -21,6 +22,7 @@ interface TfLocalMetaEntityBuilder : WorkspaceEntityBuilder<TfLocalMetaEntity> {
 
 internal object TfLocalMetaEntityType : EntityType<TfLocalMetaEntity, TfLocalMetaEntityBuilder>() {
   override val entityClass: Class<TfLocalMetaEntity> get() = TfLocalMetaEntity::class.java
+  override val entityImplBuilderClass: Class<*> get() = TfLocalMetaEntityImpl.Builder::class.java
   operator fun invoke(
     timeStampLow: Int,
     timeStampHigh: Int,
