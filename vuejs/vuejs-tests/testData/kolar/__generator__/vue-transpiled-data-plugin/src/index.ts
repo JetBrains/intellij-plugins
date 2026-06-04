@@ -12,7 +12,7 @@ function init() {
       rmSync(transpiledDir, {recursive: true})
     }
 
-    info.languageService.getTypeDefinitionAtPosition = (fileName) => {
+    info.languageService.getTypeDefinitionAtPosition = () => {
       for (const scriptFileName of project.getScriptFileNames()) {
         if (!scriptFileName.endsWith('.vue'))
           continue;
