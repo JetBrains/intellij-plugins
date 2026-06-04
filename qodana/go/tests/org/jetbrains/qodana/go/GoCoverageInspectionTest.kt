@@ -17,6 +17,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.PRINTED_EXCEPTIO
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageInspectionTest
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageLoadingListener
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFromCloud
+import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.junit.Test
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
@@ -66,6 +67,7 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
   fun go() {
     runUnderCover()
     assertSarifResults()
+    assertCoverageProjectDataMatchesGolden("GoCoverageEngine")
 
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(GoCoverageEngine::class.java)
     val path = qodanaConfig.coverage.coveragePath.resolve("GoCoverageEngine")
@@ -87,17 +89,33 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
   fun coverageInfoWithProblemReport() {
     runUnderCover()
     assertSarifResults()
+    assertCoverageProjectDataMatchesGolden("GoCoverageEngine")
   }
 
   @Test
   fun coverageInfoWithoutProblemReport() {
     runUnderCover()
     assertSarifResults()
+    assertCoverageProjectDataMatchesGolden("GoCoverageEngine")
   }
 
   @Test
   fun warnMissingCoverage() {
     runUnderCover("inspection-profile.xml")
+    assertSarifResults()
+  }
+
+  @Test
+  fun incrementalFirstStage() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_COMPUTE, SCOPE)
+    assertSarifResults()
+  }
+
+  @Test
+  fun incrementalSecondStage() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
+    assertChangedLines(mapOf("coverage.go" to setOf(3, 4, 5)))
+    assertCoverageProjectDataMatchesGolden("GoCoverageEngine")
     assertSarifResults()
   }
 
@@ -153,5 +171,21 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
       }
       stream.toString()
     }
+  }
+
+  private companion object {
+    // Foo() spans lines 3-5; line 4 (`return x + y`) is covered, so fresh coverage is non-zero.
+    private const val SCOPE = """
+      {
+        "files" : [ {
+          "path" : "coverage.go",
+          "added" : [ {
+            "firstLine" : 3,
+            "count" : 3
+          } ],
+          "deleted" : [ ]
+        } ]
+      }
+    """
   }
 }

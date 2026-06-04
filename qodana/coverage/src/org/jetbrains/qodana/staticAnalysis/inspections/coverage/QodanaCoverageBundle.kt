@@ -7,9 +7,9 @@ import com.intellij.rt.coverage.data.ProjectData
 /**
  * Stores manually constructed coverage data.
  *
- * As Qodana does not read original coverage reports and also may filter ProjectData, we cannot use CoverageProvider directly.
- * However, the CoverageSuite has only soft reference to coverage data, so if it is garbage collected, we will not be able to
- * construct it again. This class stores the constructed report instead
+ * As Qodana does not read original coverage reports and also may filter ProjectData, we cannot use CoverageProvider directly,
+ * as it requires a physical file. However, the CoverageSuite has only soft reference to coverage data, so if it is garbage collected,
+ * we will not be able to construct it again. This class stores the constructed report instead
  */
 class QodanaCoverageBundle(
   suite: CoverageSuite,
