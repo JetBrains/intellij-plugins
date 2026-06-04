@@ -67,7 +67,7 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
   fun go() {
     runUnderCover()
     assertSarifResults()
-    assertCoverageProjectDataMatchesGolden("GoCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("GoCoverageEngine", "GoCoverageEngine.out")
 
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(GoCoverageEngine::class.java)
     val path = qodanaConfig.coverage.coveragePath.resolve("GoCoverageEngine")
@@ -89,14 +89,14 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
   fun coverageInfoWithProblemReport() {
     runUnderCover()
     assertSarifResults()
-    assertCoverageProjectDataMatchesGolden("GoCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("GoCoverageEngine", "GoCoverageEngine.out")
   }
 
   @Test
   fun coverageInfoWithoutProblemReport() {
     runUnderCover()
     assertSarifResults()
-    assertCoverageProjectDataMatchesGolden("GoCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("GoCoverageEngine", "GoCoverageEngine.out")
   }
 
   @Test
@@ -115,7 +115,7 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
   fun incrementalSecondStage() {
     runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
     assertChangedLines(mapOf("coverage.go" to setOf(3, 4, 5)))
-    assertCoverageProjectDataMatchesGolden("GoCoverageEngine")
+    assertCoverageProjectDataMatchesGolden("GoCoverageEngine", "GoCoverageEngine.out")
     assertSarifResults()
   }
 

@@ -123,14 +123,14 @@ abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleT
 
   /**
    * Assert that the serialized coverage [ProjectData] produced under [engineName] contains exactly the same
-   * information as the golden stored in `artifacts/<engineName>`. When the golden is missing it is created from
+   * information as the golden stored in `artifacts/<goldenFileName>`. When the golden is missing it is created from
    * the produced artifact
    */
-  protected fun assertCoverageProjectDataMatchesGolden(engineName: String) {
+  protected fun assertCoverageProjectDataMatchesGolden(engineName: String, goldenFileName: String) {
     val actualFile = qodanaConfig.coverage.coveragePath.resolve(engineName)
     assertTrue("Coverage artifact '$engineName' was not produced at $actualFile", Files.isRegularFile(actualFile))
 
-    val goldenFile = getTestDataPath("artifacts/$engineName")
+    val goldenFile = getTestDataPath("artifacts/$goldenFileName")
     if (!Files.isRegularFile(goldenFile)) {
       Files.createDirectories(goldenFile.parent)
       Files.copy(actualFile, goldenFile)
@@ -140,6 +140,24 @@ abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleT
     val expected = ProjectDataLoader.load(goldenFile.toFile())
     val actual = ProjectDataLoader.load(actualFile.toFile())
     assertEquals(canonicalizeCoverage(expected), canonicalizeCoverage(actual))
+  }
+
+  protected fun assertChangedLinesMatchesGolden(goldenFileName: String = CHANGED_LINES_FILE_NAME) {
+    val actualFile = qodanaConfig.coverage.coveragePath.resolve(CHANGED_LINES_FILE_NAME)
+    assertTrue("Changed-lines artifact was not produced at $actualFile", Files.isRegularFile(actualFile))
+
+    val goldenFile = getTestDataPath("artifacts/$goldenFileName")
+    if (!Files.isRegularFile(goldenFile)) {
+      Files.createDirectories(goldenFile.parent)
+      Files.copy(actualFile, goldenFile)
+      fail("Golden changed-lines artifact was missing and has been created at $goldenFile. Re-run the test to validate it.")
+    }
+
+    val expected = readChangedLinesPayload(goldenFile)
+    val actual = readChangedLinesPayload(actualFile)
+    assertNotNull("Golden changed-lines artifact could not be parsed: $goldenFile", expected)
+    assertNotNull("Produced changed-lines artifact could not be parsed: $actualFile", actual)
+    assertEquals(expected!!.files, actual!!.files)
   }
 
   private fun canonicalizeCoverage(data: ProjectData): Map<String, Map<Int, String>> {
