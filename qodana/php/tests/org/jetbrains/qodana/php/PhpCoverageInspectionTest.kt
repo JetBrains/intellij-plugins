@@ -9,6 +9,7 @@ import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageInspectionTest
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFromCloud
+import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.junit.Test
 import java.nio.file.Path
 
@@ -25,6 +26,7 @@ class PhpCoverageInspectionTest: QodanaCoverageInspectionTest("PhpCoverageInspec
   fun phpunit() {
     runUnderCover()
     assertSarifResults()
+    assertCoverageProjectDataMatchesGolden("PhpUnitCoverageEngine")
 
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(PhpUnitCoverageEngine::class.java)
     val path = qodanaConfig.coverage.coveragePath.resolve("PhpUnitCoverageEngine")
@@ -46,17 +48,49 @@ class PhpCoverageInspectionTest: QodanaCoverageInspectionTest("PhpCoverageInspec
   fun coverageInfoWithProblemReport() {
     runUnderCoverDataInSources()
     assertSarifResults()
+    assertCoverageProjectDataMatchesGolden("PhpUnitCoverageEngine")
   }
 
   @Test
   fun coverageInfoWithoutProblemReport() {
     runUnderCoverDataInSources()
     assertSarifResults()
+    assertCoverageProjectDataMatchesGolden("PhpUnitCoverageEngine")
   }
 
   @Test
   fun warnMissingCoverage() {
     runUnderCover("inspection-profile.xml")
     assertSarifResults()
+  }
+
+  @Test
+  fun incrementalFirstStage() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_COMPUTE, SCOPE)
+    assertSarifResults()
+  }
+
+  @Test
+  fun incrementalSecondStage() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
+    assertChangedLines(mapOf("src/FooCls.php" to setOf(14, 15, 16)))
+    assertCoverageProjectDataMatchesGolden("PhpUnitCoverageEngine")
+    assertSarifResults()
+  }
+
+  private companion object {
+    // bar() of FooCls: lines 14-16 are covered (count=1 in coverage.xml), so fresh coverage is non-zero.
+    private const val SCOPE = """
+      {
+        "files" : [ {
+          "path" : "src/FooCls.php",
+          "added" : [ {
+            "firstLine" : 14,
+            "count" : 3
+          } ],
+          "deleted" : [ ]
+        } ]
+      }
+    """
   }
 }

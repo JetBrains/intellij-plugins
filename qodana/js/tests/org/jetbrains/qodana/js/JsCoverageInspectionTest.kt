@@ -7,6 +7,7 @@ import com.intellij.javascript.testing.coverage.jest.JestCoverageEngine
 import com.intellij.rt.coverage.util.ProjectDataLoader
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageInspectionTest
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFromCloud
+import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.junit.Test
 import java.nio.file.Path
 
@@ -23,6 +24,7 @@ class JsCoverageInspectionTest: QodanaCoverageInspectionTest("JsCoverageInspecti
   fun jest() {
     runUnderCover()
     assertSarifResults()
+    assertCoverageProjectDataMatchesGolden("JestCoverageEngine")
 
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(JestCoverageEngine::class.java)
     val path = qodanaConfig.coverage.coveragePath.resolve("JestCoverageEngine")
@@ -44,17 +46,49 @@ class JsCoverageInspectionTest: QodanaCoverageInspectionTest("JsCoverageInspecti
   fun jsWithoutProblemReport() {
     runUnderCover()
     assertSarifResults()
+    assertCoverageProjectDataMatchesGolden("JestCoverageEngine")
   }
 
   @Test
   fun jsWithProblemReport() {
     runUnderCover()
     assertSarifResults()
+    assertCoverageProjectDataMatchesGolden("JestCoverageEngine")
   }
 
   @Test
   fun warnMissingCoverage() {
     runUnderCover("inspection-profile.xml")
     assertSarifResults()
+  }
+
+  @Test
+  fun incrementalFirstStage() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_COMPUTE, SCOPE)
+    assertSarifResults()
+  }
+
+  @Test
+  fun incrementalSecondStage() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
+    assertChangedLines(mapOf("FooCls.ts" to setOf(19, 20, 21)))
+    assertCoverageProjectDataMatchesGolden("JestCoverageEngine")
+    assertSarifResults()
+  }
+
+  private companion object {
+    // bar() of FooCls.ts: lines 19-21 are covered (DA counts > 0 in lcov.info), so fresh coverage is non-zero.
+    private const val SCOPE = """
+      {
+        "files" : [ {
+          "path" : "FooCls.ts",
+          "added" : [ {
+            "firstLine" : 19,
+            "count" : 3
+          } ],
+          "deleted" : [ ]
+        } ]
+      }
+    """
   }
 }

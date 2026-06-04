@@ -7,6 +7,7 @@ import com.intellij.python.pro.coverage.PyCoverageEngine
 import com.intellij.rt.coverage.util.ProjectDataLoader
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageInspectionTest
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFromCloud
+import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.junit.Test
 import java.nio.file.Path
 
@@ -23,6 +24,7 @@ class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspect
   fun py() {
     runUnderCover()
     assertSarifResults()
+    assertCoverageProjectDataMatchesGolden("PyCoverageEngine")
 
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(PyCoverageEngine::class.java)
     val path = qodanaConfig.coverage.coveragePath.resolve("PyCoverageEngine")
@@ -44,17 +46,49 @@ class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspect
   fun coverageInfoWithoutProblemReport() {
     runUnderCover()
     assertSarifResults()
+    assertCoverageProjectDataMatchesGolden("PyCoverageEngine")
   }
 
   @Test
   fun coverageInfoWithProblemReport() {
     runUnderCover()
     assertSarifResults()
+    assertCoverageProjectDataMatchesGolden("PyCoverageEngine")
   }
 
   @Test
   fun warnMissingCoverage() {
     runUnderCover("inspection-profile.xml")
     assertSarifResults()
+  }
+
+  @Test
+  fun incrementalFirstStage() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_COMPUTE, SCOPE)
+    assertSarifResults()
+  }
+
+  @Test
+  fun incrementalSecondStage() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
+    assertChangedLines(mapOf("src/FooCls.py" to setOf(11, 12, 13)))
+    assertCoverageProjectDataMatchesGolden("PyCoverageEngine")
+    assertSarifResults()
+  }
+
+  private companion object {
+    // bar() of FooCls.py: lines 11-13 are covered (hits > 0 in coverage.xml), so fresh coverage is non-zero.
+    private const val SCOPE = """
+      {
+        "files" : [ {
+          "path" : "src/FooCls.py",
+          "added" : [ {
+            "firstLine" : 11,
+            "count" : 3
+          } ],
+          "deleted" : [ ]
+        } ]
+      }
+    """
   }
 }
