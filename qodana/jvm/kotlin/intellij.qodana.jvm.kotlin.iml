@@ -27,5 +27,6 @@
     <orderEntry type="module" module-name="intellij.platform.util.classLoader" />
     <orderEntry type="module" module-name="intellij.kotlin.plugin.community.main" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.qodana.core.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.kotlin.references" />
   </component>
 </module>

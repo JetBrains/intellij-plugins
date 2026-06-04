@@ -32,6 +32,7 @@ jvm_library(
         "//contrib/qodana",
         "@lib//:kotlinc-kotlin-compiler-common-provided",
         "@community//platform/util-class-loader:util-classLoader",
+        "@community//plugins/kotlin/references",
     ],
 )
 
@@ -73,6 +74,7 @@ jvm_library(
         "@community//plugins/kotlin:kotlin-plugin-community-main_test_lib",
         "//contrib/qodana:qodana-core-tests",
         "//contrib/qodana:qodana-core-tests_test_lib",
+        "@community//plugins/kotlin/references:references_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.jvm.kotlin` end
