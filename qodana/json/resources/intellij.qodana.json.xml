@@ -1,6 +1,9 @@
 <idea-plugin>
   <dependencies>
+    <plugin id="org.intellij.qodana"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.json.backend"/>
+    <!-- endregion -->
   </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">

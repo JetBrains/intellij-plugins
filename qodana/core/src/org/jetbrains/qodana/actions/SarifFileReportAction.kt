@@ -17,9 +17,7 @@ import org.jetbrains.qodana.highlight.QodanaHighlightedReportService
 import org.jetbrains.qodana.highlight.highlightedReportDataIfSelected
 import org.jetbrains.qodana.report.FileReportDescriptor
 import org.jetbrains.qodana.report.openReportFromFileAndHighlight
-import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector
-import org.jetbrains.qodana.stats.SourceHighlight
-import org.jetbrains.qodana.stats.StatsReportType
+import org.jetbrains.qodana.stats.logSarifFileHighlightStats
 import java.nio.file.Path
 
 class SarifFileReportAction : DumbAwareAction() {
@@ -68,12 +66,7 @@ class SarifFileReportAction : DumbAwareAction() {
   }
 
   private fun logHighlightStats(project: Project, isHighlighted: Boolean) {
-    QodanaPluginStatsCounterCollector.UPDATE_HIGHLIGHTED_REPORT.log(
-      project,
-      isHighlighted,
-      StatsReportType.FILE,
-      SourceHighlight.SARIF_FILE
-    )
+    logSarifFileHighlightStats(project, isHighlighted)
   }
 }
 

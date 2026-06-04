@@ -117,6 +117,9 @@
 - name: lib/modules/intellij.qodana.js.jar
   contentModules:
   - name: intellij.qodana.js
+- name: lib/modules/intellij.qodana.json.jar
+  contentModules:
+  - name: intellij.qodana.json
 - name: lib/modules/intellij.qodana.jvm.coverage.jar
   contentModules:
   - name: intellij.qodana.jvm.coverage

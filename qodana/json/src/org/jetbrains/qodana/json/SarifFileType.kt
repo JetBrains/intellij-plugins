@@ -12,9 +12,7 @@ import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.coroutines.qodanaProjectScope
 import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.report.openReportFromFileAndHighlight
-import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector
-import org.jetbrains.qodana.stats.SourceHighlight
-import org.jetbrains.qodana.stats.StatsReportType
+import org.jetbrains.qodana.stats.logSarifFileHighlightStats
 import javax.swing.Icon
 
 object SarifFileType : JsonFileType(), INativeFileType {
@@ -37,18 +35,9 @@ object SarifFileType : JsonFileType(), INativeFileType {
     project.qodanaProjectScope.launch(QodanaDispatchers.Ui) {
       if (openReportFromFileAndHighlight(project, file.toNioPath()) == null) return@launch
 
-      logHighlightStats(project)
+      logSarifFileHighlightStats(project, true)
     }
     return true
-  }
-
-  private fun logHighlightStats(project: Project) {
-    QodanaPluginStatsCounterCollector.UPDATE_HIGHLIGHTED_REPORT.log(
-      project,
-      true,
-      StatsReportType.FILE,
-      SourceHighlight.SARIF_FILE
-    )
   }
 
   override fun useNativeIcon(): Boolean = false

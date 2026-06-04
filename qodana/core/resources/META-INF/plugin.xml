@@ -19,7 +19,7 @@
 
   <content namespace="jetbrains">
     <module name="intellij.qodana.sarif" loading="embedded"/>
-    <module name="intellij.qodana/json"/>
+    <module name="intellij.qodana.json"/>
     <module name="intellij.qodana.yaml"/>
     <module name="intellij.qodana.coverage"/>
     <module name="intellij.qodana.go"/>
