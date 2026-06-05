@@ -2,7 +2,10 @@
   <dependencies>
     <module name="intellij.java.backend"/>
     <module name="intellij.java.structuralSearch"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.java.ui"/>
     <module name="intellij.platform.collaborationTools.auth"/>
+    <!-- endregion -->
   </dependencies>
   <extensions defaultExtensionNs="org.intellij.qodana">
     <projectDescriber implementation="org.jetbrains.qodana.jvm.java.JavaDescriber"/>
