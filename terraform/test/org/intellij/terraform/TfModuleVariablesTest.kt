@@ -15,6 +15,7 @@ import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.testFramework.utils.codeVision.CodeVisionTestCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.inspection.HclBlockMissingPropertyInspection
@@ -70,9 +71,7 @@ internal suspend fun CodeInsightTestFixture.getCodeVisionsForCaret(): List<Strin
   val visionHost = project.service<CodeVisionHost>()
   doHighlighting()
   withContext(Dispatchers.EDT) {
-    writeIntentReadAction {
-      visionHost.calculateCodeVisionSync(editor, testRootDisposable)
-    }
+    CodeVisionTestCase.waitForCodeVisionSync(editor, visionHost, testRootDisposable)
   }
 
   return readAction {
