@@ -3,6 +3,13 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core
 
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.CompilerError
 
+// TextRange<Node extends ts.Node = ts.Node> { node: Node; start: number; end: number }
+data class TextRange<Node>(
+  val node: Node,
+  val start: Int,
+  val end: Int,
+)
+
 // IRAttr = true | { text: string; offset: number }
 sealed interface IRAttr {
   data object Present : IRAttr
