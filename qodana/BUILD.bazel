@@ -7,7 +7,6 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 create_kotlinc_options(
     name = "custom_qodana",
     opt_in = [
-        "com.intellij.openapi.util.IntellijInternalApi",
         "kotlinx.coroutines.ExperimentalCoroutinesApi",
         "kotlin.ExperimentalStdlibApi",
     ],
@@ -231,7 +230,6 @@ exports_files(
 create_kotlinc_options(
     name = "custom_qodana-core-tests",
     opt_in = [
-        "com.intellij.openapi.util.IntellijInternalApi",
         "kotlinx.coroutines.ExperimentalCoroutinesApi",
         "kotlin.ExperimentalStdlibApi",
     ],

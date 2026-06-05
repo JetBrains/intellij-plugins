@@ -8,7 +8,6 @@ create_kotlinc_options(
     name = "custom_prisma",
     opt_in = [
         "kotlin.uuid.ExperimentalUuidApi",
-        "com.intellij.openapi.util.IntellijInternalApi",
         "org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction",
         "org.jetbrains.kotlin.analysis.api.KaIdeApi",
         "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
@@ -163,7 +162,6 @@ create_kotlinc_options(
     name = "custom_prisma-tests",
     opt_in = [
         "kotlin.uuid.ExperimentalUuidApi",
-        "com.intellij.openapi.util.IntellijInternalApi",
         "org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction",
         "org.jetbrains.kotlin.analysis.api.KaIdeApi",
         "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
