@@ -1,6 +1,8 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core
 
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.CompilerError
+
 // IRAttr = true | { text: string; offset: number }
 sealed interface IRAttr {
   data object Present : IRAttr
@@ -43,8 +45,8 @@ data class IRTemplate(
   override val content: String,
   override val attrs: Map<String, Any>,
   val ast: Any?,           // CompilerDOM.RootNode — opaque TypeScript AST
-  val errors: List<Any>,   // CompilerDOM.CompilerError
-  val warnings: List<Any>, // CompilerDOM.CompilerError
+  val errors: List<CompilerError>,
+  val warnings: List<CompilerError>,
 ) : IRBlock
 
 data class IRScript(
