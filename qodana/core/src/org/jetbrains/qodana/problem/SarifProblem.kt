@@ -31,7 +31,7 @@ import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.Path
-import kotlin.io.path.pathString
+import kotlin.io.path.invariantSeparatorsPathString
 
 private val LOG = Logger.getInstance(SarifProblem::class.java)
 
@@ -228,8 +228,8 @@ private fun getLocationWithoutPrefix(
   val resolvedPath = uriBaseId?.let { resolveUriBaseId(originalUriBaseIds, uriBaseId) + uri } ?: uri
   return try {
     Paths.get(resolvedPath).run {
-      if (isAbsolute) pathString.removePrefix(absolutePrefixToRemove)
-      else pathString.removePrefix(relativePrefixToRemove)
+      if (isAbsolute) invariantSeparatorsPathString.removePrefix(absolutePrefixToRemove)
+      else invariantSeparatorsPathString.removePrefix(relativePrefixToRemove)
     }
   }
   catch (_: InvalidPathException) {
@@ -274,9 +274,9 @@ private fun Location.stringPath(macroManager: PathMacroManager, originalUriBaseI
   val uriBaseId = physicalLocation.artifactLocation?.uriBaseId
   return try {
     if (originalUriBaseIds == null || uriBaseId == null) {
-      Paths.get(uri).pathString
+      Paths.get(uri).invariantSeparatorsPathString
     } else {
-      Paths.get(resolveUriBaseId(originalUriBaseIds, uriBaseId) + uri).pathString
+      Paths.get(resolveUriBaseId(originalUriBaseIds, uriBaseId) + uri).invariantSeparatorsPathString
     }
   } catch (_: IllegalArgumentException) {
     null
