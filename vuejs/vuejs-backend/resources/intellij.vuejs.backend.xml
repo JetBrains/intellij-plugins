@@ -178,6 +178,7 @@
                                        toolShortName="VueDeprecatedSymbol"/>
 
     <polySymbols.documentationCustomizer implementation="org.jetbrains.vuejs.web.VueDocumentationCustomizer"/>
+    <polySymbols.psiLinkedSymbol host="org.jetbrains.vuejs.lang.html.psi.impl.VueFileImpl"/>
 
     <intentionAction>
       <language>Vue</language>
