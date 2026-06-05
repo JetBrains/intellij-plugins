@@ -1,11 +1,8 @@
-@file:OptIn(IntellijInternalApi::class)
-
 package org.angular2.web.scopes
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.polySymbols.PolySymbol
@@ -39,7 +36,6 @@ import org.angular2.web.NG_TEMPLATE_BINDINGS
 class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey) :
   PolySymbolScopeWithCache<Angular2TemplateBindingKey, Unit>(binding.project, binding, Unit) {
 
-  @OptIn(IntellijInternalApi::class)
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     val templateBindings = dataHolder.parentOfType<Angular2TemplateBindings>() ?: return
