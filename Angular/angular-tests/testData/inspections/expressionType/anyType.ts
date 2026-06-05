@@ -16,11 +16,10 @@ export class AppComponent {
   protected items: any[] = [{myBar: 'test', fooBar: 12}];
 
   test() {
-    // noinspection JSUnusedLocalSymbols
     let a = this.items[0].myBar;
-    // noinspection JSUnusedLocalSymbols
     let b = this.items[0].myBark;
     this.item.boo2;
     this.item.fooBar;
+    return a+b
   }
 }

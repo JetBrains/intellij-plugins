@@ -19,6 +19,6 @@ import {Component, QueryList} from "@angular/core"
 })
 export class MyComponent {
 
-  query: QueryList<string>
+  query!: QueryList<string>
 
 }

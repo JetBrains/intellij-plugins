@@ -14,6 +14,7 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceIns
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.SkipTsGoFork
 import org.angular2.TestNoService
 import org.angular2.TestTsGoFork
 import org.angular2.inspections.AngularUncalledSignalLengthPropertyAccessInspection
@@ -29,6 +30,7 @@ import org.junit.Test
 class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
 
   @Test
+  @SkipTsGoFork //new gold file
   fun testUnusedSymbol() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                        configureFileName = "unused.ts",
@@ -37,6 +39,7 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
                                            JSUnusedLocalSymbolsInspection::class.java))
 
   @Test
+  @SkipTsGoFork //new gold file
   fun testUnusedSymbolNg17() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_17_3_0,
                        configureFileName = "unused.ts",

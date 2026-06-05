@@ -23,6 +23,7 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_8_2_14
 import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestModule.TS_LIB
 import org.angular2.Angular2TsConfigFile
+import org.angular2.SkipTsGoFork
 import org.angular2.TestTsGoFork
 import org.angular2.TestTsNode
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection
@@ -268,6 +269,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
   }
 
   @Test
+  @SkipTsGoFork
   fun testInaccessibleSymbolHtmlAot() {
     doTest(inspections = listOf(AngularInaccessibleSymbolInspection::class.java),
            dependencies = listOf(ANGULAR_CORE_13_3_5),
@@ -423,6 +425,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
   }
 
   @Test
+  @SkipTsGoFork
   fun testUncalledSignalLengthPropertyAccess1() =
     doTest(
       testNr = 1,
@@ -453,7 +456,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
       location = "{{ () => {<caret>a: 12} }}",
       quickFixName = Angular2Bundle.message("angular.quickfix.wrap-with-parentheses.family"),
       inspections = listOf(AngularUnsupportedSyntaxInspection::class.java),
-      dependencies = listOf(ANGULAR_CORE_21_2_0),
+      dependencies = listOf(ANGULAR_CORE_21_2_0, TS_LIB),
       files = listOf("arrowFunctionWithBlockBody.ts"),
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
@@ -465,7 +468,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
       location = "{{ () => {<caret>} }}",
       quickFixName = Angular2Bundle.message("angular.quickfix.wrap-with-parentheses.family"),
       inspections = listOf(AngularUnsupportedSyntaxInspection::class.java),
-      dependencies = listOf(ANGULAR_CORE_21_2_0),
+      dependencies = listOf(ANGULAR_CORE_21_2_0, TS_LIB),
       files = listOf("arrowFunctionWithBlockBody.ts"),
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
@@ -477,7 +480,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
       location = "{{ () => {<caret>return 12} }}",
       quickFixName = Angular2Bundle.message("angular.quickfix.wrap-with-parentheses.family"),
       inspections = listOf(AngularUnsupportedSyntaxInspection::class.java),
-      dependencies = listOf(ANGULAR_CORE_21_2_0),
+      dependencies = listOf(ANGULAR_CORE_21_2_0, TS_LIB),
       files = listOf("arrowFunctionWithBlockBody.ts"),
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
@@ -489,7 +492,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
       location = "on immediate; on ti<caret>mer(100ms) ; on viewport(ref)",
       quickFixName = Angular2Bundle.message("angular.inspection.defer-trigger-misconfiguration.remove-trigger.fix"),
       inspections = listOf(AngularMisconfiguredDeferTriggerInspection::class.java),
-      dependencies = listOf(ANGULAR_CORE_21_2_0),
+      dependencies = listOf(ANGULAR_CORE_21_2_0, TS_LIB),
       files = listOf("misconfiguredDeferTriggers.ts"),
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
@@ -501,7 +504,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
       location = "on immediate; on timer(100ms) ; o<caret>n viewport(ref)",
       quickFixName = Angular2Bundle.message("angular.inspection.defer-trigger-misconfiguration.remove-trigger.fix"),
       inspections = listOf(AngularMisconfiguredDeferTriggerInspection::class.java),
-      dependencies = listOf(ANGULAR_CORE_21_2_0),
+      dependencies = listOf(ANGULAR_CORE_21_2_0, TS_LIB),
       files = listOf("misconfiguredDeferTriggers.ts"),
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
@@ -513,7 +516,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
       location = "on immediate;  prefetch on<caret> viewport",
       quickFixName = Angular2Bundle.message("angular.inspection.defer-trigger-misconfiguration.remove-trigger.fix"),
       inspections = listOf(AngularMisconfiguredDeferTriggerInspection::class.java),
-      dependencies = listOf(ANGULAR_CORE_21_2_0),
+      dependencies = listOf(ANGULAR_CORE_21_2_0, TS_LIB),
       files = listOf("misconfiguredDeferTriggers.ts"),
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
@@ -525,7 +528,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
       location = "on timer(1s); prefetch on<caret> timer(2000ms)",
       quickFixName = Angular2Bundle.message("angular.inspection.defer-trigger-misconfiguration.remove-trigger.fix"),
       inspections = listOf(AngularMisconfiguredDeferTriggerInspection::class.java),
-      dependencies = listOf(ANGULAR_CORE_21_2_0),
+      dependencies = listOf(ANGULAR_CORE_21_2_0, TS_LIB),
       files = listOf("misconfiguredDeferTriggers.ts"),
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )
@@ -538,7 +541,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
       location = "on viewport(ref); prefetch on view<caret>port(ref)",
       quickFixName = Angular2Bundle.message("angular.inspection.defer-trigger-misconfiguration.remove-trigger.fix"),
       inspections = listOf(AngularMisconfiguredDeferTriggerInspection::class.java),
-      dependencies = listOf(ANGULAR_CORE_21_2_0),
+      dependencies = listOf(ANGULAR_CORE_21_2_0, TS_LIB),
       files = listOf("misconfiguredDeferTriggers.ts"),
       configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
     )

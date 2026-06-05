@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import {Component} from '@angular/core';
 
-<error descr="TS2354: This syntax requires an imported helper but module 'tslib' cannot be found.">@Component({
+@Component({
   selector: 'my-comp',
   template: `
     <!-- should emit when on immediate coexists with other mains -->
@@ -27,7 +27,7 @@ import {Component} from '@angular/core';
     
     
   `,
-})</error>
+})
 export class MyComponent {
 
 }

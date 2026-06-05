@@ -38,6 +38,7 @@ import org.angular2.refactoring.extractComponent.Angular2CliComponentGenerator
 import org.junit.Assume
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import java.io.File
 import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)
@@ -51,6 +52,10 @@ annotation class TestTsNode
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 annotation class TestTsGoFork
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+annotation class SkipTsGoFork
 
 @RunWith(com.intellij.testFramework.Parameterized::class)
 abstract class Angular2TestCase(
@@ -93,8 +98,12 @@ abstract class Angular2TestCase(
     get() = "ts"
 
   override fun setUp() {
-    Assume.assumeTrue("Skip TsGoFork tests for now", serviceKind != TypeScriptServiceKind.TsGoFork)
+    Assume.assumeTrue("@SkipTsGoFork",
+                      javaClass.getMethod(name).annotations
+                        .filterIsInstance<SkipTsGoFork>()
+                        .firstOrNull() == null)
     super.setUp()
+
     myFixture.project.replaceService(
       Angular2CliComponentGenerator::class.java,
       Angular2CliComponentGeneratorMockImpl(project),
@@ -166,6 +175,17 @@ abstract class Angular2TestCase(
     finally {
       // expectedServerClass = Angular2TypeScriptService::class
     }
+  }
+
+  override fun getGoldFileName(forcedGoldFileName: String?, testFileExt: String): String {
+    val goldFileName = super.getGoldFileName(forcedGoldFileName, testFileExt)
+    if (serviceKind == TypeScriptServiceKind.TsGoFork) {
+      val lastIndex = goldFileName.lastIndexOf('.')
+      val tsGoGoldFileName = "${goldFileName.substring(0, lastIndex)}.tsgo${goldFileName.substring(lastIndex)}"
+      if (File("$testDataPath/$tsGoGoldFileName").exists())
+        return tsGoGoldFileName
+    }
+    return goldFileName
   }
 
   protected fun checkHighlightingAndQuickFix(

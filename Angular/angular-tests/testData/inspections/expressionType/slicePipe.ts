@@ -5,8 +5,8 @@ interface Foo {
   foo: string
 }
 
-// noinspection JSUnusedLocalSymbols
-interface Bar {
+// noinspection JSUnusedGlobalSymbols
+export interface Bar {
   bar: string
 }
 
@@ -19,5 +19,5 @@ interface Bar {
   `
 })
 export class MyComponent {
-  foo: Foo[];
+  foo!: Foo[];
 }

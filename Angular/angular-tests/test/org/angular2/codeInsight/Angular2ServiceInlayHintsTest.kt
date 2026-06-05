@@ -6,6 +6,7 @@ import com.intellij.lang.typescript.service.testTSServiceInlayHints
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
+import org.angular2.SkipTsGoFork
 import org.angular2.TestTsGoFork
 import org.angular2.TestTsNode
 import org.junit.Test
@@ -15,6 +16,7 @@ import org.junit.Test
 class Angular2ServiceInlayHintsTest : Angular2TestCase("inlayHints") {
 
   @Test
+  @SkipTsGoFork
   fun testBasic() = doConfiguredTest(
     Angular2TestModule.ANGULAR_CORE_18_2_1, Angular2TestModule.ANGULAR_COMMON_18_2_1,
     configurators = listOf(Angular2TsConfigFile())
@@ -23,6 +25,7 @@ class Angular2ServiceInlayHintsTest : Angular2TestCase("inlayHints") {
   }
 
   @Test
+  @SkipTsGoFork
   fun testExternalTemplate() = doConfiguredTest(
     Angular2TestModule.ANGULAR_CORE_18_2_1, Angular2TestModule.ANGULAR_COMMON_18_2_1,
     dir = true,
@@ -33,6 +36,7 @@ class Angular2ServiceInlayHintsTest : Angular2TestCase("inlayHints") {
   }
 
   @Test
+  @SkipTsGoFork
   fun testPipeExternalTemplate() = doConfiguredTest(
     Angular2TestModule.ANGULAR_CORE_18_2_1, Angular2TestModule.ANGULAR_COMMON_18_2_1,
     dir = true,
@@ -43,6 +47,7 @@ class Angular2ServiceInlayHintsTest : Angular2TestCase("inlayHints") {
   }
 
   @Test
+  @SkipTsGoFork
   fun testPipe() = doConfiguredTest(
     Angular2TestModule.ANGULAR_CORE_18_2_1, Angular2TestModule.ANGULAR_COMMON_18_2_1,
     configurators = listOf(Angular2TsConfigFile())
@@ -51,6 +56,7 @@ class Angular2ServiceInlayHintsTest : Angular2TestCase("inlayHints") {
   }
 
   @Test
+  @SkipTsGoFork
   fun testAnyCalls() = doConfiguredTest(
     Angular2TestModule.ANGULAR_CORE_18_2_1, Angular2TestModule.ANGULAR_COMMON_18_2_1,
     configurators = listOf(Angular2TsConfigFile())

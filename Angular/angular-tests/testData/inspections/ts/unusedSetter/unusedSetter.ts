@@ -7,7 +7,7 @@ import {Component} from '@angular/core';
 })
 export class Home {
 
-    private title: string;
+    private title!: string;
 
     set getSetUsedProperty(value: string) {
         this.title = value;

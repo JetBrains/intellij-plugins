@@ -19,6 +19,7 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_16_2_8
 import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
 import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
+import org.angular2.SkipTsGoFork
 import org.angular2.TestTsGoFork
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
@@ -35,6 +36,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
            ANGULAR_CORE_16_2_8)
 
   @Test
+  @SkipTsGoFork
   fun testBooleanTransformBinding() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "booleanAttribute"),
            ANGULAR_CORE_16_2_8)
@@ -45,6 +47,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
            ANGULAR_CORE_16_2_8)
 
   @Test
+  @SkipTsGoFork
   fun testNumberTransformBinding() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "numberAttribute"),
            ANGULAR_CORE_16_2_8)
@@ -75,6 +78,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
                      ANGULAR_CORE_16_2_8)
 
   @Test
+  @SkipTsGoFork
   fun testCreateObservablePropertyFromUsage() =
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1, checkCodeCompletion = true, checkIntentionPreview = false)
@@ -100,24 +104,28 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
                      ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1)
 
   @Test
+  @SkipTsGoFork
   fun testBasicFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
   @Test
+  @SkipTsGoFork
   fun testFieldCreationWithExportDefault() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
   @Test
+  @SkipTsGoFork
   fun testThisQualifiedFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
   @Test
+  @SkipTsGoFork
   fun testQualifiedFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
@@ -142,6 +150,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
   }
 
   @Test
+  @SkipTsGoFork
   fun testQualifiedMethodCreation() {
     doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)

@@ -27,6 +27,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSAliasTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeImpl
+import com.intellij.lang.typescript.lsp.getTsGoCommandLine
+import com.intellij.lang.typescript.lsp.getTypeScriptGoPackageInfo
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.TextRange
@@ -183,6 +185,7 @@ internal class Environment(
   private fun isFromTypeScriptPackage(file: VirtualFile): Boolean =
     PackageJsonUtil.findUpPackageJson(file)
       ?.let { NodeModuleUtil.inferNodeModulePackageName(it) } == "typescript"
+    || getTypeScriptGoPackageInfo(file.path) != null
 
   private fun getModuleImportName(
     moduleName: String,

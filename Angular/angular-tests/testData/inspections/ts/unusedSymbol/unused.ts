@@ -7,13 +7,13 @@ import {Component} from '@angular/core';
     templateUrl: './unused.html'
 })
 export class Home {
-    publicUsedField: string;
-    public readonly myObservable$: string; //WEB-34352
+    publicUsedField!: string;
+    public readonly myObservable$!: string; //WEB-34352
     testFn = testFn; //WEB-33907
-    <warning descr="Unused field publicUnusedField">publicUnusedField</warning>: string;
+    <warning descr="Unused field publicUnusedField">publicUnusedField</warning>!: string;
 
-    private <warning descr="Unused field privateUnusedField">privateUnusedField</warning>: string;
-    private privateUsedField: string;
+    private <warning descr="Unused field privateUnusedField">privateUnusedField</warning>!: string;
+    private privateUsedField!: string;
 
     constructor(
         public publicUsedConstructorField: string,

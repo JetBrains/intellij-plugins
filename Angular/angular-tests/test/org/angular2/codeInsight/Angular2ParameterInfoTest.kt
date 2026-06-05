@@ -6,6 +6,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule.ANGULAR_COMMON_18_2_1
 import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
 import org.angular2.Angular2TestModule.ANGULAR_CORE_19_2_0
+import org.angular2.SkipTsGoFork
 import org.angular2.TestTsGoFork
 import org.angular2.TestTsNode
 import org.junit.Test
@@ -21,6 +22,7 @@ class Angular2ParameterInfoTest : Angular2TestCase("parameterInfo") {
   }
 
   @Test
+  @SkipTsGoFork
   fun testPipe() =
     doParameterInfoTest(extension = "ts")
 
@@ -30,16 +32,19 @@ class Angular2ParameterInfoTest : Angular2TestCase("parameterInfo") {
                         extension = "ts")
 
   @Test
+  @SkipTsGoFork
   fun testTemplateBindingsNgIf1() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
                         extension = "ts")
 
   @Test
+  @SkipTsGoFork
   fun testTemplateBindingsNgIf2() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
                         extension = "ts")
 
   @Test
+  @SkipTsGoFork
   fun testTemplateBindingsNgIf3() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
                         extension = "ts")

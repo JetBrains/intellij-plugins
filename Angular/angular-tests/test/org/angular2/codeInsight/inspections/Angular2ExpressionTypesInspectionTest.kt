@@ -6,6 +6,7 @@ import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
+import org.angular2.SkipTsGoFork
 import org.angular2.TestTsGoFork
 import org.angular2.TestTsNode
 import org.angular2.codeInsight.deprecated.Angular2AttributesTest
@@ -32,6 +33,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
     }
 
   @Test
+  @SkipTsGoFork //new gold file
   fun testExpressions() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
                        Angular2TestModule.ANGULAR_FORMS_16_2_8, Angular2TestModule.RXJS_7_8_1,
@@ -56,6 +58,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
     }
 
   @Test
+  @SkipTsGoFork
   fun testGenericsValidationStrict() =
     doHighlightingTest(Angular2TestModule.TS_LIB,
                        Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
@@ -101,6 +104,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
     checkHighlightingNg15()
 
   @Test
+  @SkipTsGoFork //new gold file
   fun testNgIfAsContextGuardRemovesFalsy() =
     checkHighlightingNg15()
 
