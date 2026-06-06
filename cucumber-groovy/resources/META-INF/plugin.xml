@@ -11,6 +11,11 @@
   <depends>cucumber-java</depends>
   <vendor>JetBrains</vendor>
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.java.syntax"/>
+  </dependencies>
+  <!-- endregion -->
   <extensions defaultExtensionNs="com.intellij">
     <referencesSearch implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberStepDefinitionSearcher"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepFindUsageHandlerFactory"/>

@@ -10,6 +10,11 @@
   <depends>com.intellij.java</depends>
   <vendor>JetBrains</vendor>
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.java.syntax"/>
+  </dependencies>
+  <!-- endregion -->
   <resource-bundle>messages.ErrorProneBundle</resource-bundle>
   <extensions defaultExtensionNs="com.intellij">
     <java.compiler implementation="org.intellij.errorProne.ErrorProneJavaBackendCompiler"/>
