@@ -17,6 +17,7 @@
     <module name="intellij.css.common"/>
     <module name="intellij.css.common.psi"/>
     <module name="intellij.java.execution.impl"/>
+    <module name="intellij.java.psi"/>
     <module name="intellij.java.ui"/>
     <module name="intellij.javascript.analysis.impl"/>
     <module name="intellij.javascript.backend"/>

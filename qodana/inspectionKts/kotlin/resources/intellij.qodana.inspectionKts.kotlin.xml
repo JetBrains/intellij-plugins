@@ -1,9 +1,12 @@
 <idea-plugin>
   <dependencies>
     <plugin id="org.jetbrains.kotlin"/>
-    <module name="intellij.kotlin.base.scripting.shared"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.dev.psiViewer"/>
+    <module name="intellij.java.psi"/>
+    <module name="intellij.kotlin.base.scripting.shared"/>
     <module name="intellij.qodana.inspectionKts"/>
+    <!-- endregion -->
   </dependencies>
   <extensions defaultExtensionNs="com.intellij.dev">
     <psiViewer.propertyNodeAppender implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinAnalyzeEntrypointNodeAppender"/>

@@ -1,9 +1,12 @@
 <idea-plugin>
   <dependencies>
     <module name="intellij.java.backend"/>
-    <plugin id="Coverage"/>
     <plugin id="org.jetbrains.kotlin"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <plugin id="Coverage"/>
+    <module name="intellij.java.psi"/>
     <module name="intellij.qodana.coverage"/>
+    <!-- endregion -->
   </dependencies>
   <extensions defaultExtensionNs="org.intellij.qodana">
     <reportMetadataArtifact implementation="org.jetbrains.qodana.jvm.coverage.ICCoverageReportMetadataArtifact"/>
