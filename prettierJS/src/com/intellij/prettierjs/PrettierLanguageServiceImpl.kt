@@ -2,7 +2,6 @@
 package com.intellij.prettierjs
 
 import com.intellij.javascript.nodejs.execution.NodeTargetRun
-import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef
 import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage
@@ -227,8 +226,6 @@ internal class PrettierLanguageServiceImpl(
         it.pluginPath = LocalFilePath.create(service.absolutePathString())
       }
     }
-
-    override fun getNodeCommandLineConfiguratorOptions(project: Project): NodeCommandLineConfigurator.Options = NodeCommandLineConfigurator.defaultOptions(myProject)
   }
 
 

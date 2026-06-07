@@ -4,14 +4,13 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.idea.AppMode
 import com.intellij.javascript.nodejs.execution.NodeTargetRun
 import com.intellij.javascript.nodejs.execution.NodeTargetRun.Companion.shouldEnableRemoteDevelopmentUsingTargetsApi
-import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator
 import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage
 import com.intellij.javascript.nodejs.util.NodePackage
-import com.intellij.lang.javascript.linter.eslint.EslintBundle
 import com.intellij.lang.javascript.linter.ExtendedLinterState
 import com.intellij.lang.javascript.linter.JSLinterConfiguration
 import com.intellij.lang.javascript.linter.JSNpmLinterState
 import com.intellij.lang.javascript.linter.eslint.ESLintJsonProblemsParser
+import com.intellij.lang.javascript.linter.eslint.EslintBundle
 import com.intellij.lang.javascript.linter.eslint.EslintError
 import com.intellij.lang.javascript.linter.eslint.EslintRequestData
 import com.intellij.lang.javascript.linter.eslint.EslintUtil
@@ -284,10 +283,6 @@ abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStore
       if (!Files.isRegularFile(service)) JSLanguageServiceQueue.Holder.LOGGER.info("ESLint plugin not found at '$service'")
       protocolState.pluginPath = LocalFilePath.create(service.absolutePathString())
       return protocolState
-    }
-
-    override fun getNodeCommandLineConfiguratorOptions(project: Project): NodeCommandLineConfigurator.Options {
-      return NodeCommandLineConfigurator.defaultOptions(project).withRequiredNodePackage(myNodePackage)
     }
   }
 
