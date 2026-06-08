@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script vapor lang="ts">
 import MyCounter from './MyCounter.vue'
 import MyLabel from './MyLabel.vue'
 

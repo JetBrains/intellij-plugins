@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script vapor lang="ts">
 defineEmits<{
   select: [],
 }>()

@@ -16,6 +16,11 @@
 import MyCounter from './MyCounter.vue'
 import MyLabel from './MyLabel.vue'
 
+const __VLS_export = ((
+	__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>['props'],
+	__VLS_ctx?: __VLS_PrettifyLocal<Pick<NonNullable<Awaited<typeof __VLS_setup>>, 'attrs' | 'emit' | 'slots'>>,
+	__VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>['expose'],
+	__VLS_setup = (async () => {
 let count = 1
 // @ts-ignore
 declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
@@ -73,6 +78,14 @@ var __VLS_10!: __VLS_FunctionalComponentCtx<typeof __VLS_7, typeof __VLS_9>;
 var __VLS_11!: __VLS_FunctionalComponentProps<typeof __VLS_7, typeof __VLS_9>;
 // @ts-ignore
 [];
-const __VLS_export = (await import('vue')).defineComponent({
-});
+return {} as {
+	props: import('vue').PublicProps & (typeof globalThis extends { __VLS_PROPS_FALLBACK: infer P } ? P : {});
+	expose: (exposed: {}) => void;
+	attrs: any;
+	slots: {};
+	emit: {};
+};
+})(),
+) => ({} as import('vue').VNode & { __ctx?: Awaited<typeof __VLS_setup> }));
 export default {} as typeof __VLS_export;
+type __VLS_PrettifyLocal<T> = (T extends any ? { [K in keyof T]: T[K]; } : { [K in keyof T as K]: T[K]; }) & {};
