@@ -178,6 +178,8 @@ jvm_library(
         "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/core-api:core",
         "@community//platform/core-api:core_test_lib",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/projectModel-api:projectModel_test_lib",
         "@community//platform/lang-impl",
         "@community//platform/lang-impl:lang-impl_test_lib",
         "//python",

@@ -8,7 +8,6 @@ import com.intellij.coverage.CoverageSuiteListener
 import com.intellij.coverage.CoverageSuitesBundle
 import com.intellij.coverage.view.CoverageViewManager
 import com.intellij.coverage.view.CoverageViewTreeStructure
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.PluginPathManager
 import com.intellij.openapi.application.readAction
@@ -28,7 +27,6 @@ import com.intellij.toolWindow.ToolWindowHeadlessManagerImpl
 import com.intellij.rt.coverage.data.LineCoverage
 import com.intellij.testFramework.JavaModuleTestCase
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.common.ThreadLeakTracker
 import com.intellij.ui.tree.StructureTreeModel
 import com.intellij.util.concurrency.Invoker
 import com.intellij.util.io.await
@@ -79,9 +77,6 @@ abstract class QodanaCoverageUiTestBase(private val sourceClass: String) : JavaM
 
   override fun setUp() {
     super.setUp()
-    // Probing a Node interpreter for the opened JS sources spawns a debugger connection thread that outlives the test.
-    // Registered on the application (not testRootDisposable, which is disposed before the leak check runs).
-    ThreadLeakTracker.longRunningThreadCreated(ApplicationManager.getApplication(), "WipRemoteVmConnection")
     // Force-create the listener so it subscribes to the highlighted-report state before we drive it.
     CoverageListenerService.getInstance(project)
     registerCoverageToolWindow()
@@ -190,7 +185,7 @@ abstract class QodanaCoverageUiTestBase(private val sourceClass: String) : JavaM
     override val bannerContentProviderFlow: Flow<BannerContentProvider?> = emptyFlow()
     override val noProblemsContentProviderFlow: Flow<NoProblemsContentProvider> = emptyFlow()
 
-    override suspend fun refreshReport(): ReportDescriptor? = error("must not be invoked")
+    override suspend fun refreshReport(): ReportDescriptor = error("must not be invoked")
 
     override suspend fun loadReport(project: Project): LoadedReport =
       LoadedReport.Sarif(ValidatedSarif(SarifReport().withRuns(emptyList())), AggregatedReportMetadata(metadata), "")
