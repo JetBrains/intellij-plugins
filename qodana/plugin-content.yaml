@@ -59,6 +59,16 @@
   - name: $MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-visitor/0/flexmark-util-visitor-0.jar
   - name: $MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-youtrack-converter/0/flexmark-youtrack-converter-0.jar
   reason: <- intellij.qodana
+- name: lib/intellij.qodana.sarif.jar
+  contentModules:
+  - name: intellij.qodana.sarif
+  library: qodana-sarif
+  files:
+  - name: $MAVEN_REPOSITORY$/com/jetbrains/qodana/qodana-sarif/0/qodana-sarif-0.jar
+  reason: <- intellij.qodana.sarif
+- name: lib/intellij.qodana.util.jar
+  contentModules:
+  - name: intellij.qodana.util
 - name: lib/jetbrains.qodana.cloud.kotlin.client.jar
   library: jetbrains.qodana.cloud.kotlin.client
   files:
@@ -163,16 +173,6 @@
 - name: lib/modules/intellij.qodana.yaml.jar
   contentModules:
   - name: intellij.qodana.yaml
-- name: lib/qodana-frontend.jar
-  contentModules:
-  - name: intellij.qodana.util
-- name: lib/qodana-sarif.jar
-  library: qodana-sarif
-  files:
-  - name: $MAVEN_REPOSITORY$/com/jetbrains/qodana/qodana-sarif/0/qodana-sarif-0.jar
-  reason: <- intellij.qodana.sarif
 - name: lib/qodana.jar
   modules:
   - name: intellij.qodana
-  contentModules:
-  - name: intellij.qodana.sarif

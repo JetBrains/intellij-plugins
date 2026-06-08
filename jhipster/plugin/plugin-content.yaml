@@ -1,8 +1,9 @@
+- name: lib/intellij.jhipster.jar
+  contentModules:
+  - name: intellij.jhipster
 - name: lib/jhipster-plugin.jar
   modules:
   - name: intellij.jhipster.plugin
-  contentModules:
-  - name: intellij.jhipster
 - name: lib/modules/intellij.jhipster.backend.jar
   contentModules:
   - name: intellij.jhipster.backend
