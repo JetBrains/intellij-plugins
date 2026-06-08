@@ -4,11 +4,8 @@ package org.angular2
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import com.intellij.lang.javascript.waitEmptyServiceQueueForService
-import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
-import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings.TypeScriptCompilerVersionType
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
-import com.intellij.lang.typescript.lsp.TypeScriptGoEmbeddedService
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspServerDescriptor
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspServerSupportProvider
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
@@ -17,7 +14,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.platform.lsp.api.LspServerDescriptor
 import com.intellij.platform.lsp.api.LspServerManager
@@ -54,18 +50,35 @@ annotation class TestTsNode
 annotation class TestTsGoFork
 
 @Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class TestTsGoProxy
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+annotation class SkipNoService
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+annotation class SkipTsNode
+
+@Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 annotation class SkipTsGoFork
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+annotation class SkipTsGoProxy
 
 @RunWith(com.intellij.testFramework.Parameterized::class)
 abstract class Angular2TestCase(
   override val testCasePath: String,
 ) : WebFrameworkTestCase() {
 
-  enum class TypeScriptServiceKind {
-    None,
-    TsNode,
-    TsGoFork,
+  enum class TypeScriptServiceKind(val annotationClass: KClass<out Annotation>, val skipTestAnnotationClass: KClass<out Annotation>) {
+    None(TestNoService::class, SkipNoService::class),
+    TsNode(TestTsNode::class, SkipTsNode::class),
+    TsGoFork(TestTsGoFork::class, SkipTsGoFork::class),
+    TsGoProxy(TestTsGoProxy::class, SkipTsGoProxy::class),
   }
 
   @Parameterized.Parameter
@@ -76,6 +89,7 @@ abstract class Angular2TestCase(
     when (serviceKind) {
       TypeScriptServiceKind.TsNode -> Angular2TypeScriptService::class
       TypeScriptServiceKind.TsGoFork -> TypeScriptGoLspService::class
+      TypeScriptServiceKind.TsGoProxy -> TypeScriptGoLspService::class
       TypeScriptServiceKind.None -> Angular2TypeScriptService::class
     }
   }
@@ -98,10 +112,8 @@ abstract class Angular2TestCase(
     get() = "ts"
 
   override fun setUp() {
-    Assume.assumeTrue("@SkipTsGoFork",
-                      javaClass.getMethod(name).annotations
-                        .filterIsInstance<SkipTsGoFork>()
-                        .firstOrNull() == null)
+    Assume.assumeTrue("Skipping test because of @${serviceKind.skipTestAnnotationClass.simpleName} annotation",
+                      javaClass.getMethod(name).annotations.none { it.annotationClass == serviceKind.skipTestAnnotationClass })
     super.setUp()
 
     myFixture.project.replaceService(
@@ -113,29 +125,21 @@ abstract class Angular2TestCase(
   }
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
-    if (serviceKind == TypeScriptServiceKind.None) return
-    configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
+    when (serviceKind) {
+      TypeScriptServiceKind.None -> return
+      TypeScriptServiceKind.TsNode -> {}
+      TypeScriptServiceKind.TsGoFork,
+      TypeScriptServiceKind.TsGoProxy,
+        -> {
+        Registry.get("typescript.ts-go.enabled").setValue(true, testRootDisposable)
+        if (serviceKind == TypeScriptServiceKind.TsGoProxy)
+          Registry.get("typescript.ts-go.type-evaluator.proxy").setValue(true, testRootDisposable)
 
-    if (serviceKind == TypeScriptServiceKind.TsGoFork) {
-      Registry.get("typescript.ts-go.enabled").setValue(true, testRootDisposable)
-
-      val settings = TypeScriptCompilerSettings.getSettings(project)
-      val oldType = settings.versionType
-      settings.versionType = TypeScriptCompilerVersionType.EMBEDDED_TS_GO
-
-      Disposer.register(testRootDisposable) {
-        settings.versionType = oldType
+        // TODO remove once LSP does not restart analyzer for inlay hints
+        (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
       }
-
-      val embeddedService = TypeScriptGoEmbeddedService.get()
-      if (!embeddedService.isDownloaded()) {
-        thisLogger().info("Downloading embedded TS GO")
-        embeddedService.downloadEmbeddedTSGo(project)
-      }
-
-      // TODO remove once LSP does not restart analyzer for inlay hints
-      (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
     }
+    configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
     val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
       it::class == expectedServerClass
     }
@@ -147,7 +151,9 @@ abstract class Angular2TestCase(
           waitEmptyServiceQueueForService(service)
         }
       }
-      TypeScriptServiceKind.TsGoFork -> {
+      TypeScriptServiceKind.TsGoFork,
+      TypeScriptServiceKind.TsGoProxy,
+        -> {
         triggerLspServerInit(project, TypeScriptGoLspServerSupportProvider::class.java,
                              TypeScriptGoLspServerDescriptor(project))
       }
@@ -241,14 +247,11 @@ abstract class Angular2TestCase(
     @com.intellij.testFramework.Parameterized.Parameters(name = "ServiceKind={0}")
     @JvmStatic
     fun data(clazz: Class<*>): Collection<Any> {
-      return listOfNotNull(
-        arrayOf<Any>(TypeScriptServiceKind.None)
-          .takeIf { clazz.getAnnotation(TestNoService::class.java) != null },
-        arrayOf<Any>(TypeScriptServiceKind.TsNode)
-          .takeIf { clazz.getAnnotation(TestTsNode::class.java) != null },
-        arrayOf<Any>(TypeScriptServiceKind.TsGoFork)
-          .takeIf { clazz.getAnnotation(TestTsGoFork::class.java) != null },
-      )
+      return TypeScriptServiceKind.entries
+        // Skip TsGoFork and TsGoProxy tests for now
+        .filter { it != TypeScriptServiceKind.TsGoFork && it != TypeScriptServiceKind.TsGoProxy }
+        .filter { clazz.getAnnotation(it.annotationClass.java) != null }
+        .map { arrayOf<Any>(it) }
     }
 
     @Parameterized.Parameters

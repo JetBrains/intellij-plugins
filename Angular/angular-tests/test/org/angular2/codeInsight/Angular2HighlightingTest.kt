@@ -49,7 +49,9 @@ import org.angular2.Angular2TestModule.TS_LIB
 import org.angular2.Angular2TsConfigFile
 import org.angular2.Angular2TsExpectedConfigFiles
 import org.angular2.SkipTsGoFork
+import org.angular2.SkipTsGoProxy
 import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
 import org.junit.Test
@@ -58,13 +60,13 @@ import java.io.IOException
 
 @TestTsNode
 @TestTsGoFork
+@TestTsGoProxy
 class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   @Test
   fun testSvgTags() = checkHighlighting(ANGULAR_COMMON_16_2_8, extension = "ts")
 
   @Test
-  @SkipTsGoFork
   fun testDeprecated() = checkHighlighting(ANGULAR_CORE_15_1_5, dir = true)
 
   @Test
@@ -179,7 +181,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
                                                                   strictTemplates = true, extension = "ts")
 
   @Test
-  @SkipTsGoFork
+  @SkipTsGoFork /* sometimes failed to find PSI element */
+  @SkipTsGoProxy /* dir test data */
   fun testInputsWithTransform() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, strictTemplates = true, dir = true)
 
   @Test
@@ -233,6 +236,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   @Test
   @SkipTsGoFork
+  @SkipTsGoProxy
   fun testBlockDefer() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
 
   @Test
@@ -479,10 +483,12 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_18_2_1, extension = "ts")
 
   @Test
+  @SkipTsGoProxy
   fun testViewChildrenSignalSyntax() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
 
   @Test
+  @SkipTsGoProxy
   fun testReferenceOnTagWithTemplateBindings() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
 
@@ -495,7 +501,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
 
   @Test
-  @SkipTsGoFork
+  @SkipTsGoFork /* Failed to find Psi Element */
   fun testObjectInitializerInTemplate() =
     checkHighlighting(ANGULAR_CORE_18_2_1, dir = true, configureFileName = "app.component.html")
 
@@ -554,6 +560,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   @Test
   @SkipTsGoFork
+  @SkipTsGoProxy
   fun testSignalStore() =
     checkHighlighting(ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0, extension = "ts",
                       checkSymbolNames = true)
@@ -621,7 +628,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
                       configureFileName = "app.component.html", dir = true)
 
   @Test
-  @SkipTsGoFork
   fun testDirectiveWithExportDefault() =
     checkHighlighting(ANGULAR_CORE_20_1_4, extension = "html", dir = true)
 
@@ -736,7 +742,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   }
 
   private fun calculateFileName(configureFileName: String): String {
-    if (serviceKind == TypeScriptServiceKind.TsGoFork) {
+    if (serviceKind == TypeScriptServiceKind.TsGoFork || serviceKind == TypeScriptServiceKind.TsGoProxy) {
       val extension = configureFileName.substringAfterLast('.', "")
         .let { if (!it.isEmpty()) ".$it" else "" }
       val tsgoConfigureFileName = configureFileName.substring(0, configureFileName.length - extension.length) + ".tsgo" + extension
