@@ -12,7 +12,8 @@
     <orderEntry type="module" module-name="intellij.qodana" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.qodana.coverage" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.analysis" scope="PROVIDED" />
-    <orderEntry type="module" module-name="intellij.platform.core" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.python" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.python.community.plugin.modules" scope="TEST" />
