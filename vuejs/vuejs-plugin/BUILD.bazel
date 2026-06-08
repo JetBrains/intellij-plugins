@@ -3,15 +3,15 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 ### auto-generated section `build intellij.vuejs.plugin` start
 
 jvm_library(
-    name = "vuejs-plugin",
+    name = "plugin",
     srcs = glob(
         [],
         allow_empty = True,
     ),
     module_name = "intellij.vuejs.plugin",
-    resource_strip_prefix = "vuejs-plugin/resources",
+    resource_strip_prefix = "resources",
     resources = glob(
-        ["vuejs-plugin/resources/**/*"],
+        ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
     runtime_deps = [
@@ -29,7 +29,7 @@ jvm_library(
 )
 
 jvm_library(
-    name = "vuejs-plugin_test_lib",
+    name = "plugin_test_lib",
     testonly = True,
     srcs = glob(
         [],
@@ -39,7 +39,7 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
-        ":vuejs-plugin",
+        ":plugin",
         "//contrib/postcss/plugin:plugin_test_lib",
         "//contrib/vuejs/vuejs-backend:backend_test_lib",
         "//contrib/vuejs/vuejs-common:common_test_lib",
