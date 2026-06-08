@@ -22,6 +22,7 @@
 
   <dependencies>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <plugin id="JavaScript"/>
     <plugin id="org.intellij.plugins.postcss"/>
     <plugin id="com.intellij.modules.ultimate"/>
     <module name="intellij.css.common"/>
