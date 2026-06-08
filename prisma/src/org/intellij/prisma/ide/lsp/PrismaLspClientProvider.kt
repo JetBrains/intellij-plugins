@@ -8,10 +8,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.lsp.api.LspServer
-import com.intellij.platform.lsp.api.LspServerManager
-import com.intellij.platform.lsp.api.LspServerSupportProvider
-import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
+import com.intellij.platform.lsp.api.LspClient
+import com.intellij.platform.lsp.api.LspClientManager
+import com.intellij.platform.lsp.api.LspClientProvider
+import com.intellij.platform.lsp.api.lsWidget.LspClientWidgetItem
 import com.intellij.util.text.SemVer
 import org.intellij.prisma.PrismaIcons
 import org.intellij.prisma.ide.ui.PrismaSettingsConfigurable
@@ -33,20 +33,20 @@ private object PrismaLspServerPackageDescriptor : LspServerPackageDescriptor("@p
   }
 }
 
-class PrismaLspServerSupportProvider : LspServerSupportProvider {
-  override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerSupportProvider.LspServerStarter) {
+class PrismaLspClientProvider : LspClientProvider {
+  override fun fileOpened(project: Project, file: VirtualFile, clientStarter: LspClientProvider.LspClientStarter) {
     if (PrismaLspServerActivationRule.isEnabledAndAvailable(project, file)) {
-      serverStarter.ensureServerStarted(PrismaLspServerDescriptor(project))
+      clientStarter.ensureClientStarted(PrismaLspClientDescriptor(project))
     }
   }
 
-  override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
-    LspServerWidgetItem(lspServer, currentFile, PrismaIcons.PRISMA, settingsPageClass = PrismaSettingsConfigurable::class.java)
+  override fun createWidgetItem(lspClient: LspClient, currentFile: VirtualFile?): LspClientWidgetItem =
+    LspClientWidgetItem(lspClient, currentFile, PrismaIcons.PRISMA, settingsPageClass = PrismaSettingsConfigurable::class.java)
 }
 
 fun restartPrismaServerAsync(project: Project) {
   ApplicationManager.getApplication().invokeLater(Runnable {
-    LspServerManager.getInstance(project).stopAndRestartIfNeeded(PrismaLspServerSupportProvider::class.java)
+    LspClientManager.getInstance(project).stopAndRestartClientsIfNeeded(PrismaLspClientProvider::class.java)
   }, project.disposed)
 }
 

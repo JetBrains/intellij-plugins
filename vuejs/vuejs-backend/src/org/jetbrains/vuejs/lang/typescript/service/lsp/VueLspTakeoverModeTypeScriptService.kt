@@ -11,7 +11,7 @@ import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerState
-import com.intellij.platform.lsp.impl.LspServerImpl
+import com.intellij.platform.lsp.impl.LspClientImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import kotlinx.coroutines.delay
@@ -24,7 +24,7 @@ class VueLspTakeoverModeTypeScriptService(
   project: Project,
 ) : JSFrameworkLspTypeScriptService(
   project = project,
-  providerClass = VueLspServerTakeoverModeSupportProvider::class.java,
+  providerClass = VueLspClientTakeoverModeProvider::class.java,
   activationRule = VueLspServerTakeoverModeActivationRule,
   diagnosticsConfiguration = PublishDiagnostics(2),
 ) {
@@ -84,7 +84,7 @@ class VueLspTakeoverModeTypeScriptService(
            || file.language is VueTSLanguage
   }
 
-  private suspend fun awaitServerRunningState(server: LspServerImpl) {
+  private suspend fun awaitServerRunningState(server: LspClientImpl) {
     while (true) {
       when (server.state) {
         LspServerState.Initializing -> delay(10L)

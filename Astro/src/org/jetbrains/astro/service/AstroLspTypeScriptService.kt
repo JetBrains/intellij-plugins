@@ -16,7 +16,7 @@ import com.intellij.psi.xml.XmlTokenType
 
 class AstroLspTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService(
   project,
-  AstroLspServerSupportProvider::class.java,
+  AstroLspClientProvider::class.java,
   AstroLspServerActivationRule,
   PublishDiagnostics(2),
 ) {

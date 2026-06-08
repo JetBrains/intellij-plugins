@@ -16,9 +16,9 @@ import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
-import com.intellij.platform.lsp.api.LspServerManager
+import com.intellij.platform.lsp.api.LspClientManager
 import org.jetbrains.astro.service.AstroLspServerLoader
-import org.jetbrains.astro.service.AstroLspServerSupportProvider
+import org.jetbrains.astro.service.AstroLspClientProvider
 import org.jetbrains.astro.service.AstroTSPluginLoader
 
 fun getAstroServiceSettings(project: Project): AstroServiceSettings = project.service<AstroServiceSettings>()
@@ -85,7 +85,7 @@ class AstroServiceSettings(val project: Project) : SimplePersistentStateComponen
     state.workspaceConfiguration = newValue
     if (changed) {
       restartTypeScriptServicesAsync(project)
-      LspServerManager.getInstance(project).stopAndRestartIfNeeded(AstroLspServerSupportProvider::class.java)
+      LspClientManager.getInstance(project).stopAndRestartClientsIfNeeded(AstroLspClientProvider::class.java)
     }
   }
 }

@@ -40,9 +40,9 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.lsp.api.LspServer
-import com.intellij.platform.lsp.api.LspServerSupportProvider
-import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
+import com.intellij.platform.lsp.api.LspClient
+import com.intellij.platform.lsp.api.LspClientProvider
+import com.intellij.platform.lsp.api.ProjectWideLspClientDescriptor
 import com.intellij.platform.lsp.api.customization.LspCallHierarchyCustomizer
 import com.intellij.platform.lsp.api.customization.LspCallHierarchyDisabled
 import com.intellij.platform.lsp.api.customization.LspCodeLensDisabled
@@ -68,7 +68,7 @@ import com.intellij.platform.lsp.api.customization.LspSelectionRangeDisabled
 import com.intellij.platform.lsp.api.customization.LspSemanticTokensDisabled
 import com.intellij.platform.lsp.api.customization.LspWorkspaceSymbolCustomizer
 import com.intellij.platform.lsp.api.customization.LspWorkspaceSymbolDisabled
-import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
+import com.intellij.platform.lsp.api.lsWidget.LspClientWidgetItem
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.eclipse.lsp4j.Command
@@ -76,18 +76,18 @@ import org.eclipse.lsp4j.Diagnostic
 import java.nio.file.Files
 import java.nio.file.Paths
 
-class DenoLspSupportProvider : LspServerSupportProvider {
-  override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerSupportProvider.LspServerStarter) {
+class DenoLspClientProvider : LspClientProvider {
+  override fun fileOpened(project: Project, file: VirtualFile, clientStarter: LspClientProvider.LspClientStarter) {
     if (isDenoFileTypeAcceptable(file) && isDenoEnableForContextDirectory(project, file)) {
-      serverStarter.ensureServerStarted(DenoLspServerDescriptor(project))
+      clientStarter.ensureClientStarted(DenoLspClientDescriptor(project))
       if (!useDenoLibrary(project)) {
         setUseDenoLibrary(project)
       }
     }
   }
 
-  override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
-    object : LspServerWidgetItem(lspServer, currentFile, DenoUtil.getDefaultDenoIcon(), getJavaScriptRuntimeConfigurableClass(DenoConfigurable::class.java)) {
+  override fun createWidgetItem(lspClient: LspClient, currentFile: VirtualFile?): LspClientWidgetItem =
+    object : LspClientWidgetItem(lspClient, currentFile, DenoUtil.getDefaultDenoIcon(), getJavaScriptRuntimeConfigurableClass(DenoConfigurable::class.java)) {
       override val versionPostfix: @NlsSafe String
         get() {
           val postfix = super.versionPostfix
@@ -98,7 +98,7 @@ class DenoLspSupportProvider : LspServerSupportProvider {
 }
 
 
-class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor(project, "Deno") {
+class DenoLspClientDescriptor(project: Project) : ProjectWideLspClientDescriptor(project, "Deno") {
 
   private val initObject: JsonElement?
 
@@ -222,9 +222,9 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
     override val optimizeImportsCustomizer = LspOptimizeImportsDisabled
 
     override val commandsCustomizer = object : LspCommandsSupport() {
-      override fun executeCommand(server: LspServer, contextFile: VirtualFile, command: Command) {
+      override fun executeCommand(lspClient: LspClient, contextFile: VirtualFile, command: Command) {
         if (command.command != "deno.cache") {
-          super.executeCommand(server, contextFile, command)
+          super.executeCommand(lspClient, contextFile, command)
           return
         }
 
@@ -237,7 +237,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
         ApplicationManager.getApplication().executeOnPooledThread {
           val workingDirectory = findDenoConfig(project, contextFile)?.parent ?: project.guessProjectDir()
 
-          val commandLine = GeneralCommandLine(DenoSettings.getService(server.project).getDenoPath(), "cache", contextFile.path)
+          val commandLine = GeneralCommandLine(DenoSettings.getService(lspClient.project).getDenoPath(), "cache", contextFile.path)
             .withWorkingDirectory(workingDirectory?.toNioPath())
           val processHandler = withBackgroundProgress(project, DenoBundle.message("deno.cache.name")) {
             KillableColoredProcessHandler(commandLine)
@@ -250,7 +250,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
               ApplicationManager.getApplication().invokeLater(Runnable {
                 DenoSettings.getService(project).updateLibraries()
                 TypeScriptServiceRestarter.restartServices(project)
-                DaemonCodeAnalyzer.getInstance(project).restart("DenoLspSupportProvider.processTerminated")
+                DaemonCodeAnalyzer.getInstance(project).restart("DenoLspClientProvider.processTerminated")
               }, project.disposed)
             }
           })

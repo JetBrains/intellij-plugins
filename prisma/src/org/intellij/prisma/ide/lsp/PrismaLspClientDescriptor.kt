@@ -2,7 +2,7 @@
 package org.intellij.prisma.ide.lsp
 
 import com.intellij.application.options.CodeStyle
-import com.intellij.lang.typescript.lsp.JSNodeLspServerDescriptor
+import com.intellij.lang.typescript.lsp.JSNodeLspClientDescriptor
 import com.intellij.markdown.utils.convertMarkdownToHtml
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
@@ -37,8 +37,8 @@ import org.intellij.prisma.PrismaBundle
 import org.intellij.prisma.ide.formatter.settings.PrismaCodeStyleSettings
 import org.intellij.prisma.lang.PrismaFileType
 
-class PrismaLspServerDescriptor(project: Project)
-  : JSNodeLspServerDescriptor(project, PrismaLspServerActivationRule, PrismaBundle.message("prisma.framework.name")) {
+class PrismaLspClientDescriptor(project: Project)
+  : JSNodeLspClientDescriptor(project, PrismaLspServerActivationRule, PrismaBundle.message("prisma.framework.name")) {
 
   // code highlighting, references resolution, code completion, and hover info are implemented without using the LSP server
   override val lspCustomization: LspCustomization = object : LspCustomization() {

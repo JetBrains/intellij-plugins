@@ -5,14 +5,14 @@ import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinition
 import com.intellij.lang.javascript.service.BaseLspTypeScriptServiceTest
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
-import com.intellij.platform.lsp.api.LspServerManager
+import com.intellij.platform.lsp.api.LspClientManager
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeLoaderFactory
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeSupportProvider
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspClientHybridModeProvider
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginLoaderFactory
 import org.jetbrains.vuejs.options.VueLSMode
@@ -104,8 +104,8 @@ class VueHybridModeBundledResourcesTest : BaseLspTypeScriptServiceTest() {
 
     myFixture.doHighlighting()
 
-    val providerClass = VueLspServerHybridModeSupportProvider.getProviderClass(manualRuntime)
-    val servers = LspServerManager.getInstance(project).getServersForProvider(providerClass)
+    val providerClass = VueLspClientHybridModeProvider.getProviderClass(manualRuntime)
+    val servers = LspClientManager.getInstance(project).getClientsForProvider(providerClass)
     assertFalse(
       "LSP hybrid mode server (manual) should be running for version $version",
       servers.isEmpty(),

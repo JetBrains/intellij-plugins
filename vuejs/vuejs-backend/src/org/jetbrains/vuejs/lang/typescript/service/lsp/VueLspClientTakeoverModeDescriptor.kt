@@ -1,10 +1,10 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.lsp
 
-import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
+import com.intellij.lang.typescript.lsp.JSFrameworkLspClientDescriptor
 import com.intellij.openapi.project.Project
 
-internal class VueLspServerTakeoverModeDescriptor(project: Project) : JSFrameworkLspServerDescriptor(
+internal class VueLspClientTakeoverModeDescriptor(project: Project) : JSFrameworkLspClientDescriptor(
   project = project,
   activationRule = VueLspServerTakeoverModeActivationRule,
   presentableName = "Vue",

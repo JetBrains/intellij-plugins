@@ -121,7 +121,7 @@
                      implementationClass="org.jetbrains.astro.inspections.AstroMissingComponentImportInspection"
                      key="astro.inspection.display.name.missing.component.import" bundle="messages.AstroBundle"/>
 
-    <platform.lsp.serverSupportProvider implementation="org.jetbrains.astro.service.AstroLspServerSupportProvider" />
+    <platform.lsp.clientProvider implementation="org.jetbrains.astro.service.AstroLspClientProvider" />
     <gotoDeclarationHandler implementation="org.jetbrains.astro.editor.AstroGotoDeclarationHandler" order="first"/>
     <projectConfigurable parentId="settings.typescriptcompiler"
                          instance="org.jetbrains.astro.service.settings.AstroServiceConfigurable"

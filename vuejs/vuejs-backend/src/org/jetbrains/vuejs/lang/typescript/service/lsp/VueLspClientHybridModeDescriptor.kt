@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.lang.typescript.service.lsp
 import com.intellij.execution.target.value.TargetValue
 import com.intellij.javascript.nodejs.execution.NodeTargetRun
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptServiceCompletionSupport
-import com.intellij.lang.typescript.lsp.JSFrameworkLspServerDescriptor
+import com.intellij.lang.typescript.lsp.JSFrameworkLspClientDescriptor
 import com.intellij.lang.typescript.lsp.getTypeScriptServiceDirectory
 import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.project.Project
@@ -32,10 +32,10 @@ import org.eclipse.lsp4j.Diagnostic
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 
-class VueLspServerHybridModeDescriptor(
+class VueLspClientHybridModeDescriptor(
   project: Project,
   private val runtime: VueServiceRuntime,
-) : JSFrameworkLspServerDescriptor(
+) : JSFrameworkLspClientDescriptor(
   project = project,
   activationRule = VueLspServerHybridModeActivationRule(runtime),
   presentableName = "Vue",
@@ -93,7 +93,7 @@ class VueLspServerHybridModeDescriptor(
     return VueHybridModeLsp4jClient(
       project = project,
       handler = handler,
-      lspServerSupportProvider = VueLspServerHybridModeSupportProvider.getProviderClass(runtime),
+      lspServerSupportProvider = VueLspClientHybridModeProvider.getProviderClass(runtime),
       runtime = runtime,
     )
   }

@@ -69,14 +69,14 @@
     <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFileReferenceHelper"/>
     <useScopeEnlarger implementation="org.jetbrains.vuejs.findUsages.VueUseScopeEnlarger"/>
     <implicitUsageProvider implementation="org.jetbrains.vuejs.codeInsight.refs.VueImplicitUsageProvider"/>
-    <platform.lsp.serverSupportProvider
-      implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerTakeoverModeSupportProvider"/>
-    <platform.lsp.serverSupportProvider
-      implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeLegacySupportProvider"/>
-    <platform.lsp.serverSupportProvider
-      implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeDefaultSupportProvider"/>
-    <platform.lsp.serverSupportProvider
-      implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeManualSupportProvider"/>
+    <platform.lsp.clientProvider
+      implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspClientTakeoverModeProvider"/>
+    <platform.lsp.clientProvider
+      implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspClientHybridModeLegacyProvider"/>
+    <platform.lsp.clientProvider
+      implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspClientHybridModeDefaultProvider"/>
+    <platform.lsp.clientProvider
+      implementation="org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspClientHybridModeManualProvider"/>
 
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Vue.js"/>
     <copyPastePostProcessor implementation="org.jetbrains.vuejs.codeInsight.imports.VueTemplateExpressionsCopyPasteProcessor"/>

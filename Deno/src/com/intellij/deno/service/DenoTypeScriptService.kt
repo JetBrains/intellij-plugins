@@ -28,7 +28,7 @@ class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServicePro
 }
 
 @Service(Service.Level.PROJECT)
-class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project, DenoLspSupportProvider::class.java, PublishDiagnostics(1)) {
+class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(project, DenoLspClientProvider::class.java, PublishDiagnostics(1)) {
   companion object {
     fun getInstance(project: Project): DenoTypeScriptService = project.getService(DenoTypeScriptService::class.java)
   }

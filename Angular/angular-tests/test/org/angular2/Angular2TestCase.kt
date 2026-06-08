@@ -6,8 +6,8 @@ import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import com.intellij.lang.javascript.waitEmptyServiceQueueForService
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
-import com.intellij.lang.typescript.lsp.TypeScriptGoLspServerDescriptor
-import com.intellij.lang.typescript.lsp.TypeScriptGoLspServerSupportProvider
+import com.intellij.lang.typescript.lsp.TypeScriptGoLspClientDescriptor
+import com.intellij.lang.typescript.lsp.TypeScriptGoLspClientProvider
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.application.ApplicationManager
@@ -15,11 +15,11 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.platform.lsp.api.LspServerDescriptor
-import com.intellij.platform.lsp.api.LspServerManager
-import com.intellij.platform.lsp.api.LspServerSupportProvider
-import com.intellij.platform.lsp.impl.LspServerImpl
-import com.intellij.platform.lsp.impl.LspServerManagerImpl
+import com.intellij.platform.lsp.api.LspClientDescriptor
+import com.intellij.platform.lsp.api.LspClientManager
+import com.intellij.platform.lsp.api.LspClientProvider
+import com.intellij.platform.lsp.impl.LspClientImpl
+import com.intellij.platform.lsp.impl.LspClientManagerImpl
 import com.intellij.polySymbols.testFramework.HybridTestMode
 import com.intellij.testFramework.PlatformTestUtil.dispatchAllEventsInIdeEventQueue
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
@@ -154,8 +154,8 @@ abstract class Angular2TestCase(
       TypeScriptServiceKind.TsGoFork,
       TypeScriptServiceKind.TsGoProxy,
         -> {
-        triggerLspServerInit(project, TypeScriptGoLspServerSupportProvider::class.java,
-                             TypeScriptGoLspServerDescriptor(project))
+        triggerLspServerInit(project, TypeScriptGoLspClientProvider::class.java,
+                             TypeScriptGoLspClientDescriptor(project))
       }
       TypeScriptServiceKind.None -> {}
     }
@@ -209,20 +209,20 @@ abstract class Angular2TestCase(
 
   private fun triggerLspServerInit(
     project: Project,
-    providerClass: Class<out LspServerSupportProvider>,
-    descriptor: LspServerDescriptor,
+    providerClass: Class<out LspClientProvider>,
+    descriptor: LspClientDescriptor,
   ) {
     val getServer = {
-      LspServerManager.getInstance(project)
-        .getServersForProvider(providerClass)
+      LspClientManager.getInstance(project)
+        .getClientsForProvider(providerClass)
         .firstOrNull()
-        .let { it as? LspServerImpl }
+        .let { it as? LspClientImpl }
     }
 
     val state = getServer()?.state
     if (state == null) {
-      LspServerManagerImpl.getInstanceImpl(project)
-        .ensureServerStarted(providerClass, descriptor)
+      LspClientManagerImpl.getInstanceImpl(project)
+        .ensureClientStarted(providerClass, descriptor)
     }
     else {
       return

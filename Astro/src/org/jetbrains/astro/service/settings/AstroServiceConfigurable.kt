@@ -13,7 +13,7 @@ import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.platform.lsp.api.LspServerManager
+import com.intellij.platform.lsp.api.LspClientManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFileFactory
 import com.intellij.ui.dsl.builder.Align
@@ -26,7 +26,7 @@ import com.intellij.ui.layout.ComponentPredicate
 import com.intellij.util.ui.JBDimension
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.service.AstroLspServerLoader
-import org.jetbrains.astro.service.AstroLspServerSupportProvider
+import org.jetbrains.astro.service.AstroLspClientProvider
 import org.jetbrains.astro.service.AstroTSPluginLoader
 import javax.swing.JComponent
 
@@ -119,7 +119,7 @@ class AstroServiceConfigurable(private val project: Project) : Configurable {
     panel.apply()
     settings.setWorkspaceConfiguration(currentWorkspaceConfiguration)
     if (!project.isDefault) {
-      LspServerManager.getInstance(project).stopAndRestartIfNeeded(AstroLspServerSupportProvider::class.java)
+      LspClientManager.getInstance(project).stopAndRestartClientsIfNeeded(AstroLspClientProvider::class.java)
     }
   }
 
