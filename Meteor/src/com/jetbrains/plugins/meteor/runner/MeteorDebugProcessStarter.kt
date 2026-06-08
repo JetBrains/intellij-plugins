@@ -19,7 +19,7 @@ class MeteorDebugProcessStarter(private val isNode8: Boolean,
 
   @Throws(ExecutionException::class)
   override fun start(session: XDebugSession): XDebugProcess {
-    val connection = WipLocalVmConnection()
+    val connection = WipLocalVmConnection(project = session.project)
     val process = NodeChromeDebugProcess(session, finder, connection, executionResult)
     connection.executeOnStart { it.putUserData(IS_METEOR, true) }
     connection.open(socketAddress, executionResult.processHandler)

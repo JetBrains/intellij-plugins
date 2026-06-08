@@ -83,7 +83,7 @@ public class MeteorRunConfiguration extends DebuggableProcessRunConfigurationBas
                                                    @NotNull XDebugSession session,
                                                    @Nullable ExecutionResult executionResult,
                                                    @NotNull ExecutionEnvironment environment) {
-    var connection = new WipLocalVmConnection();
+    var connection = new WipLocalVmConnection(null, session.getProject());
     DebuggableFileFinder fileFinder = createFileFinder(session.getProject());
     var process = new NodeChromeDebugProcess(session, fileFinder, connection, executionResult);
     connection.open(socketAddress);

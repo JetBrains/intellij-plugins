@@ -154,7 +154,7 @@ internal class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
         // com.jetbrains.debugger.wip.WipRemoteVmConnection.
         //
         // Opening connection is postponed until browsers are ready (WEB-33076).
-        return BrowserChromeDebugProcess(session, fileFinder, WipRemoteVmConnection(url, null), executionResult)
+        return BrowserChromeDebugProcess(session, fileFinder, WipRemoteVmConnection(url, null, session.project), executionResult)
       }
       val debugEngine = debuggableWebBrowser.debugEngine
       val browser = debuggableWebBrowser.webBrowser
