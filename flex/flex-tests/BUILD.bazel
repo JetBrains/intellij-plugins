@@ -180,6 +180,8 @@ jvm_library(
         "@community//xml/xml-parser:parser_test_lib",
         "@community//platform/util/concurrency",
         "@community//platform/util/concurrency:concurrency_test_lib",
+        "@community//platform/testIntegration",
+        "@community//platform/testIntegration:testIntegration_test_lib",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
@@ -190,6 +192,8 @@ jvm_library(
         "@community//json:json_test_lib",
         "@community//xml/impl",
         "@community//xml/impl:impl_test_lib",
+        "@community//platform/testIntegration-ui",
+        "@community//platform/testIntegration-ui:testIntegration-ui_test_lib",
     ],
 )
 ### auto-generated section `build intellij.flex.tests` end
