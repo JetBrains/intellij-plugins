@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core
 
 import com.intellij.lang.typescript.kolar.KolarCodeInformation
+import org.jetbrains.vuejs.lang.typescript.kolar.js.symbol.Symbol
 
 class VueCodeInformation(
   verification: VerificationInfo? = null,
@@ -15,8 +16,8 @@ class VueCodeInformation(
   val __importCompletion: Boolean = false,
   val __propsCompletion: Boolean = false,
   val __shorthandExpression: ShorthandExpression? = null,
-  val __combineToken: Any? = null, // symbol
-  val __linkedToken: Any? = null,  // symbol
+  val __combineToken: Symbol? = null,
+  val __linkedToken: Symbol? = null,
 ) : KolarCodeInformation(
   verification = verification,
   completion = completion,
