@@ -1,21 +1,42 @@
                         
                
+
+             
+            
+                              
+            
+    
          
 
           
              
+
+                                               
+                                                                 
+                                               
            
 /// <reference types="../node_modules/@vue/language-core/types/template-helpers.d.ts" />
 /// <reference types="../node_modules/@vue/language-core/types/props-fallback.d.ts" />
 
 const count = 1
+
+type __VLS_Emit = {
+  start: [],
+  change: [{ value: number }],
+  reset: [],
+};
+const __VLS_emit = defineEmits<__VLS_Emit>()
 // @ts-ignore
 declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
 type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
 count: typeof count;
 }>;
+type __VLS_EmitProps = __VLS_EmitsToProps<__VLS_NormalizeEmits<typeof __VLS_emit>>;
 const __VLS_ctx = {
 ...{} as import('vue').ComponentPublicInstance,
+...{} as { $emit: typeof __VLS_emit },
+...{} as { $props: __VLS_EmitProps },
+...{} as __VLS_EmitProps,
 ...{} as __VLS_SetupExposed,
 };
 type __VLS_LocalComponents = __VLS_SetupExposed;
@@ -25,8 +46,30 @@ let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = __VLS_SetupExposed;
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 ( __VLS_ctx.count );
+__VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
+...{ onClick: (...[$event]) => {
+__VLS_ctx.emit('start');
 // @ts-ignore
-[count,];
+[count,emit,];
+}},
+});
+__VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
+...{ onClick: (...[$event]) => {
+__VLS_ctx.emit('change', {value: __VLS_ctx.count});
+// @ts-ignore
+[count,emit,];
+}},
+});
+__VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
+...{ onClick: (...[$event]) => {
+__VLS_ctx.emit('reset');
+// @ts-ignore
+[emit,];
+}},
+});
+// @ts-ignore
+[];
 const __VLS_export = (await import('vue')).defineComponent({
+__typeEmits: {} as __VLS_Emit,
 });
 export default {} as typeof __VLS_export;

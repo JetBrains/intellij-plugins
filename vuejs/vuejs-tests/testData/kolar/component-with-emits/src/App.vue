@@ -2,12 +2,12 @@
 import MyCounter from './MyCounter.vue'
 import MyLabel from './MyLabel.vue'
 
-const count = 1
+let count = 1
 </script>
 
 <template>
   {{ count }}
   
-  <MyCounter/>
-  <MyLabel/>
+  <MyCounter @change="count = $event.value"/>
+  <MyLabel @select="count = 0"/>
 </template>

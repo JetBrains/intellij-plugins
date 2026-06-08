@@ -2,21 +2,21 @@
                                        
                                    
 
-               
+             
          
 
           
              
   
-              
-            
+                                             
+                                
            /// <reference types="../node_modules/@vue/language-core/types/template-helpers.d.ts" />
 /// <reference types="../node_modules/@vue/language-core/types/props-fallback.d.ts" />
 
 import MyCounter from './MyCounter.vue'
 import MyLabel from './MyLabel.vue'
 
-const count = 1
+let count = 1
 // @ts-ignore
 declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
 type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
@@ -36,17 +36,43 @@ let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 const __VLS_0 = MyCounter;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({
+...{ 'onChange': {} as any },
 }));
 const __VLS_2 = __VLS_1({
+...{ 'onChange': {} as any },
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
-const __VLS_5 = MyLabel;
+let __VLS_5!: __VLS_ResolveEmits<typeof __VLS_0, typeof __VLS_3.emit>;
+const __VLS_6: __VLS_NormalizeComponentEvent<typeof __VLS_4, typeof __VLS_5, 'onChange', 'change', 'change'> = {
+...{ change: {} as any } as typeof __VLS_5,
+onChange: (...[$event]) => {
+__VLS_ctx.count = $event.value;
 // @ts-ignore
-const __VLS_6 = __VLS_asFunctionalComponent1(__VLS_5, new __VLS_5({
+[count,count,];
+},
+};
+var __VLS_3!: __VLS_FunctionalComponentCtx<typeof __VLS_0, typeof __VLS_2>;
+var __VLS_4!: __VLS_FunctionalComponentProps<typeof __VLS_0, typeof __VLS_2>;
+const __VLS_7 = MyLabel;
+// @ts-ignore
+const __VLS_8 = __VLS_asFunctionalComponent1(__VLS_7, new __VLS_7({
+...{ 'onSelect': {} as any },
 }));
-const __VLS_7 = __VLS_6({
-}, ...__VLS_functionalComponentArgsRest(__VLS_6));
+const __VLS_9 = __VLS_8({
+...{ 'onSelect': {} as any },
+}, ...__VLS_functionalComponentArgsRest(__VLS_8));
+let __VLS_12!: __VLS_ResolveEmits<typeof __VLS_7, typeof __VLS_10.emit>;
+const __VLS_13: __VLS_NormalizeComponentEvent<typeof __VLS_11, typeof __VLS_12, 'onSelect', 'select', 'select'> = {
+...{ select: {} as any } as typeof __VLS_12,
+onSelect: (...[$event]) => {
+__VLS_ctx.count = 0;
 // @ts-ignore
 [count,];
+},
+};
+var __VLS_10!: __VLS_FunctionalComponentCtx<typeof __VLS_7, typeof __VLS_9>;
+var __VLS_11!: __VLS_FunctionalComponentProps<typeof __VLS_7, typeof __VLS_9>;
+// @ts-ignore
+[];
 const __VLS_export = (await import('vue')).defineComponent({
 });
 export default {} as typeof __VLS_export;

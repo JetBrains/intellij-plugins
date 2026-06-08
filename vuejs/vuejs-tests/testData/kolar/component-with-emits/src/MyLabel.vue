@@ -1,8 +1,10 @@
 <script setup lang="ts">
-const count = 1
+defineEmits<{
+  select: [],
+}>()
 </script>
 
 <template>
   <span>My label!</span>
-  <span>{{ count }}</span>
+  <button @click="emit('select')">Select</button>
 </template>
