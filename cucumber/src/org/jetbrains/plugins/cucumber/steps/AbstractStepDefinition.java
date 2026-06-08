@@ -6,6 +6,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import static java.util.Objects.requireNonNullElse;
 
 @NotNullByDefault
 public abstract class AbstractStepDefinition {
@@ -24,12 +30,14 @@ public abstract class AbstractStepDefinition {
   private static final int TIME_TO_CHECK_STEP_BY_REGEX_MILLIS = 300;
 
   private final SmartPsiElementPointer<PsiElement> elementPointer;
-
-  private volatile @Nullable String regexText;
-  private volatile @Nullable Pattern regexPattern;
+  private final CachedValue<Pattern> patternCache;
 
   public AbstractStepDefinition(PsiElement element) {
-    elementPointer = SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
+    elementPointer = SmartPointerManager.createPointer(element);
+    patternCache = CachedValuesManager.getManager(element.getProject()).createCachedValue(
+      () -> CachedValueProvider.Result.create(computePattern(),
+                                              requireNonNullElse(elementPointer.getElement(), PsiModificationTracker.MODIFICATION_COUNT)),
+      false);
   }
 
   public abstract List<String> getVariableNames();
@@ -63,25 +71,25 @@ public abstract class AbstractStepDefinition {
   ///
   /// Depends on [#getCucumberRegex()].
   public @Nullable Pattern getPattern() {
+    return patternCache.getValue();
+  }
+
+  private @Nullable Pattern computePattern() {
     try {
       final String cucumberRegex = getCucumberRegex();
       if (cucumberRegex == null) {
         return null;
       }
-      if (regexText == null || !cucumberRegex.equals(regexText)) {
-        final StringBuilder patternText = new StringBuilder(ESCAPE_PATTERN.matcher(cucumberRegex).replaceAll("(.*)"));
-        if (patternText.toString().startsWith(CUCUMBER_START_PREFIX)) {
-          patternText.replace(0, CUCUMBER_START_PREFIX.length(), "^");
-        }
-
-        if (patternText.toString().endsWith(CUCUMBER_END_SUFFIX)) {
-          patternText.replace(patternText.length() - CUCUMBER_END_SUFFIX.length(), patternText.length(), "$");
-        }
-
-        regexPattern = Pattern.compile(patternText.toString(), isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
-        regexText = cucumberRegex;
+      final StringBuilder patternText = new StringBuilder(ESCAPE_PATTERN.matcher(cucumberRegex).replaceAll("(.*)"));
+      if (patternText.toString().startsWith(CUCUMBER_START_PREFIX)) {
+        patternText.replace(0, CUCUMBER_START_PREFIX.length(), "^");
       }
-      return regexPattern;
+
+      if (patternText.toString().endsWith(CUCUMBER_END_SUFFIX)) {
+        patternText.replace(patternText.length() - CUCUMBER_END_SUFFIX.length(), patternText.length(), "$");
+      }
+
+      return Pattern.compile(patternText.toString(), isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
     }
     catch (PatternSyntaxException ignored) {
       return null; // Bad regex?
