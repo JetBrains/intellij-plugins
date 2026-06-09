@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.styl
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRAttr
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRStyle
@@ -12,6 +11,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeF
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateClassProperty(
   source: String,
@@ -19,19 +19,19 @@ fun generateClassProperty(
   offset: Int,
   propertyType: String,
 ): Sequence<Code> = sequence {
-  yield(StringSegment("$newLine & { "))
+  yield("$newLine & { ")
   val token = yield(startBoundary(source, offset, codeFeatures.navigation))
-  yield(StringSegment("'"))
+  yield("'")
   yield(DataSegment(
     text = classNameWithDot.substring(1),
     source = source,
     sourceOffset = offset + 1,
     data = VueCodeInformation(__combineToken = token),
   ))
-  yield(StringSegment("'"))
+  yield("'")
   yield(endBoundary(token, offset + classNameWithDot.length))
-  yield(StringSegment(": $propertyType"))
-  yield(StringSegment(" }"))
+  yield(": $propertyType")
+  yield(" }")
 }
 
 fun generateStyleImports(
@@ -40,27 +40,27 @@ fun generateStyleImports(
   val features = codeFeatures.navigationAndVerification
   val src = style.src
   if (src is IRAttr.WithText) {
-    yield(StringSegment("$newLine & typeof import("))
+    yield("$newLine & typeof import(")
     val token = yield(startBoundary("main", src.offset, features))
-    yield(StringSegment("'"))
+    yield("'")
     yield(DataSegment(
       text = src.text,
       source = "main",
       sourceOffset = src.offset,
       data = VueCodeInformation(__combineToken = token),
     ))
-    yield(StringSegment("'"))
+    yield("'")
     yield(endBoundary(token, src.offset + src.text.length))
-    yield(StringSegment(").default"))
+    yield(").default")
   }
   for ((text, offset) in style.imports) {
-    yield(StringSegment("$newLine & typeof import('"))
+    yield("$newLine & typeof import('")
     yield(DataSegment(
       text = text,
       source = style.name,
       sourceOffset = offset,
       data = features,
     ))
-    yield(StringSegment("').default"))
+    yield("').default")
   }
 }

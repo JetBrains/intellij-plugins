@@ -3,9 +3,9 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.util
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateUnicode(
   code: String,
@@ -14,7 +14,7 @@ fun generateUnicode(
 ): Sequence<Code> = sequence {
   if (needToUnicode(code)) {
     val token = yield(startBoundary("template", offset, info))
-    yield(StringSegment(toUnicode(code)))
+    yield(toUnicode(code))
     yield(endBoundary(token, offset + code.length))
   }
   else {

@@ -1,15 +1,15 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateIntersectMerge(
   vararg codes: Code,
 ): Sequence<Code> = sequence {
   yield(codes[0])
   for (i in 1 until codes.size) {
-    yield(StringSegment(" & "))
+    yield(" & ")
     yield(codes[i])
   }
 }
@@ -21,12 +21,12 @@ fun generateSpreadMerge(
     yieldAll(codes.asIterable())
   }
   else {
-    yield(StringSegment("{$newLine"))
+    yield("{$newLine")
     for (code in codes) {
-      yield(StringSegment("..."))
+      yield("...")
       yield(code)
-      yield(StringSegment(",$newLine"))
+      yield(",$newLine")
     }
-    yield(StringSegment("}"))
+    yield("}")
   }
 }

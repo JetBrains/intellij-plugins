@@ -3,9 +3,9 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.util
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateStringLiteralKey(
   code: String,
@@ -13,18 +13,18 @@ fun generateStringLiteralKey(
   info: VueCodeInformation? = null,
 ): Sequence<Code> = sequence {
   if (offset == null || info == null) {
-    yield(StringSegment("'$code'"))
+    yield("'$code'")
   }
   else {
     val token = yield(startBoundary("template", offset, info))
-    yield(StringSegment("'"))
+    yield("'")
     yield(DataSegment(
       text = code,
       source = "template",
       sourceOffset = offset,
       data = VueCodeInformation(__combineToken = token),
     ))
-    yield(StringSegment("'"))
+    yield("'")
     yield(endBoundary(token, offset + code.length))
   }
 }

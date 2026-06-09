@@ -2,9 +2,9 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen
 
 import org.jetbrains.vuejs.config.VueCompilerOptions
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 class LocalTypesGenerator(
   vueCompilerOptions: VueCompilerOptions,
@@ -99,7 +99,7 @@ type __VLS_TypePropsToOption<T> = {
 
   fun generate(): Sequence<Code> = sequence {
     for (name in used) {
-      yield(StringSegment(helpers.getValue(name).generate()))
+      yield(helpers.getValue(name).generate())
     }
 
     used.clear()

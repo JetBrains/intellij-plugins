@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 import com.intellij.lang.typescript.kolar.KolarCodeInformation.VerificationInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.CommentNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
@@ -24,6 +23,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 private val commentDirectiveRegex: Regex =
   Regex("""^<!--\s*@vue-(?<name>[-\w]+)\b(?<content>[\s\S]*)-->${'$'}""")
@@ -164,18 +164,18 @@ fun createTemplateCodegenContext(): TemplateCodegenContext = object : TemplateCo
   override fun generateHoistVariables(): Sequence<Code> = sequence {
     // trick to avoid TS 4081 (#5186)
     if (hoistVars.isNotEmpty()) {
-      yield(StringSegment("// @ts-ignore$newLine"))
-      yield(StringSegment("var "))
+      yield("// @ts-ignore$newLine")
+      yield("var ")
       for ((originalVar, hoistVar) in hoistVars) {
-        yield(StringSegment("$hoistVar = $originalVar, "))
+        yield("$hoistVar = $originalVar, ")
       }
-      yield(StringSegment(endOfLine))
+      yield(endOfLine)
     }
   }
 
   override fun generateConditionGuards(): Sequence<Code> = sequence {
     for (condition in blockConditions) {
-      yield(StringSegment("if (!$condition) return$endOfLine"))
+      yield("if (!$condition) return$endOfLine")
     }
   }
 
@@ -239,9 +239,9 @@ fun createTemplateCodegenContext(): TemplateCodegenContext = object : TemplateCo
           ),
         ),
       ))
-      yield(StringSegment("// @ts-expect-error"))
+      yield("// @ts-expect-error")
       yield(endBoundary(token, expectError.node.loc.end.offset))
-      yield(StringSegment("$newLine$endOfLine"))
+      yield("$newLine$endOfLine")
     }
   }
 
@@ -283,17 +283,17 @@ fun createTemplateCodegenContext(): TemplateCodegenContext = object : TemplateCo
   private fun generateAutoImport(): Sequence<Code> = sequence {
     val all = componentAccessMap.entries.toList()
     if (!all.any { (_, map) -> map.isNotEmpty() }) return@sequence
-    yield(StringSegment("// @ts-ignore$newLine")) // #2304
-    yield(StringSegment("["))
+    yield("// @ts-ignore$newLine") // #2304
+    yield("[")
     for ((varName, map) in all) {
       for ((source, offsets) in map) {
         for (offset in offsets) {
           yield(DataSegment(varName, source, offset, codeFeatures.importCompletionOnly))
-          yield(StringSegment(","))
+          yield(",")
         }
         offsets.clear()
       }
     }
-    yield(StringSegment("]$endOfLine"))
+    yield("]$endOfLine")
   }
 }

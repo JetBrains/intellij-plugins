@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.style
 
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRAttr
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
@@ -10,6 +9,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenContext
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateStyleModules(
   options: StyleCodegenOptions,
@@ -20,10 +20,10 @@ fun generateStyleModules(
 
   ctx.generatedTypes.add(names.StyleModules)
 
-  yield(StringSegment("type ${names.StyleModules} = {$newLine"))
+  yield("type ${names.StyleModules} = {$newLine")
   for (style in styleModules) {
     when (val module = style.module) {
-      is IRAttr.Present -> yield(StringSegment("\$style"))
+      is IRAttr.Present -> yield("\$style")
       is IRAttr.WithText -> yield(DataSegment(
         text = module.text,
         source = "main",
@@ -32,11 +32,11 @@ fun generateStyleModules(
       ))
       null -> Unit
     }
-    yield(StringSegment(": "))
+    yield(": ")
     if (!options.vueCompilerOptions.strictCssModules) {
-      yield(StringSegment("Record<string, string> & "))
+      yield("Record<string, string> & ")
     }
-    yield(StringSegment("${names.PrettifyGlobal}<{}"))
+    yield("${names.PrettifyGlobal}<{}")
     if (options.vueCompilerOptions.resolveStyleImports) {
       yieldAll(generateStyleImports(style))
     }
@@ -48,7 +48,7 @@ fun generateStyleModules(
         propertyType = "string",
       ))
     }
-    yield(StringSegment(">$endOfLine"))
+    yield(">$endOfLine")
   }
-  yield(StringSegment("}$endOfLine"))
+  yield("}$endOfLine")
 }

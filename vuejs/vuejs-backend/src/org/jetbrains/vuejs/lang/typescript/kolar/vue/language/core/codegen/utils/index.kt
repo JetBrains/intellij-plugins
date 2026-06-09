@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.forEachChild
@@ -11,6 +10,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScriptBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 const val newLine: String = "\n"
 const val endOfLine: String = ";\n"
@@ -42,14 +42,14 @@ fun generateSfcBlockSection(
     val diagStart = diag.start
     val diagEnd = diag.start + diag.length
     if (diagStart >= textEnd && diagEnd <= end) {
-      yield(StringSegment(";"))
+      yield(";")
       yield(DataSegment(
         text = "",
         source = block.name,
         sourceOffset = end,
         data = codeFeatures.verification
       ))
-      yield(StringSegment(newLine))
+      yield(newLine)
       break
     }
   }
