@@ -2,6 +2,7 @@ package com.intellij.clion.embedded.platformio
 
 import com.intellij.clion.embedded.platformio.TestUtils.findExternalModule
 import com.intellij.clion.testFramework.nolang.junit5.core.clionProjectTestFixture
+import com.intellij.clion.testFramework.nolang.junit5.core.clionTimeoutRunBlocking
 import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
@@ -45,7 +46,7 @@ class TestProjectLibScan {
   }
 
   @Test
-  fun testScanLibraries() {
+  fun testScanLibraries() = clionTimeoutRunBlocking {
     ToolSetKindAssumption.assumeToolSetKind().isNotRemoteLike()
 
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)

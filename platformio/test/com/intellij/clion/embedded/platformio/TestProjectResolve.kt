@@ -3,6 +3,7 @@ package com.intellij.clion.embedded.platformio
 import com.intellij.build.events.MessageEvent
 import com.intellij.clion.embedded.platformio.TestUtils.findExternalModule
 import com.intellij.clion.testFramework.nolang.junit5.core.clionProjectTestFixture
+import com.intellij.clion.testFramework.nolang.junit5.core.clionTimeoutRunBlocking
 import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
 import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.model.DataNode
@@ -80,7 +81,7 @@ class TestProjectResolve {
   @Test
   fun testScanFiles2023() = doTestScanFiles("-2023")
 
-  private fun doTestScanFiles(suffix: String = "") {
+  private fun doTestScanFiles(suffix: String = "") = clionTimeoutRunBlocking {
     ToolSetKindAssumption.assumeToolSetKind().isNotRemoteLike()
 
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
