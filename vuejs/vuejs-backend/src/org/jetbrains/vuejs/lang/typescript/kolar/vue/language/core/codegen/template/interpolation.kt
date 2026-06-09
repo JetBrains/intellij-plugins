@@ -165,7 +165,7 @@ private fun forEachDeclarations(
     yieldAll(forEachDeclarations(node.expression, ast, ctx))
   }
   else if (isVariableDeclaration(node)) {
-    ctx.declare(*collectBindingNames(node.name, ast).toTypedArray())
+    ctx.declare(collectBindingNames(node.name, ast))
     yieldAll(forEachDeclarationsInBinding(node, ast, ctx))
   }
   else if (node is org.jetbrains.vuejs.lang.typescript.kolar.typescript.BindingPattern) {
@@ -246,7 +246,7 @@ private fun forEachDeclarationsInFunction(
 ): Sequence<Pair<Identifier, Boolean>> = sequence {
   val endScope = ctx.startScope()
   for (param in node.parameters) {
-    ctx.declare(*collectBindingNames(param.name, ast).toTypedArray())
+    ctx.declare(collectBindingNames(param.name, ast))
     yieldAll(forEachDeclarationsInBinding(param, ast, ctx))
   }
   val body = node.body

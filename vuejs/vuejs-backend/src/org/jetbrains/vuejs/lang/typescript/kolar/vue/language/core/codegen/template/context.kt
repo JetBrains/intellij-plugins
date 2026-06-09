@@ -47,7 +47,10 @@ interface TemplateCodegenContext {
   val components: MutableList<() -> String>
   fun addTemplateRef(name: String, typeExp: String, offset: Int)
   fun recordComponentAccess(source: String, name: String, offset: Int? = null)
-  fun declare(vararg varNames: String)
+  fun declare(varNames: List<String>)
+  fun declare(varName: String) {
+    declare(listOf(varName))
+  }
   fun startScope(): () -> Sequence<Code>
   fun getInternalVariable(): String
   fun getHoistVariable(originalVar: String): String
@@ -136,7 +139,7 @@ fun createTemplateCodegenContext(): TemplateCodegenContext = object : TemplateCo
   }
 
   override fun declare(
-    vararg varNames: String,
+    varNames: List<String>,
   ) {
     val scope = scopes.last()
     for (varName in varNames) {
