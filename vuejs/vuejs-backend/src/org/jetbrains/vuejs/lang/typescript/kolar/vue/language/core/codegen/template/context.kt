@@ -51,6 +51,7 @@ interface TemplateCodegenContext {
   fun declare(varName: String) {
     declare(listOf(varName))
   }
+
   fun startScope(): () -> Sequence<Code>
   fun getInternalVariable(): String
   fun getHoistVariable(originalVar: String): String
