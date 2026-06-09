@@ -56,6 +56,18 @@ class PhpCoverageUiTest : QodanaCoverageUiTestBase("PhpCoverageInspectionTest") 
       mapOf(2 to LineCoverage.NONE),
       gutterCoverage("src/index.php"),
     )
+
+    openFileInEditor("src/BarCls.php")
+    assertTrue(
+      "src/BarCls.php should not be highlighted",
+      gutterCoverage("src/BarCls.php").isNullOrEmpty()
+    )
+
+    openFileInEditor("tests/FooTest.php")
+    assertTrue(
+      "tests/FooTest.php should not be highlighted",
+      gutterCoverage("tests/FooTest.php").isNullOrEmpty()
+    )
   }
 
   @Test
@@ -80,6 +92,24 @@ class PhpCoverageUiTest : QodanaCoverageUiTestBase("PhpCoverageInspectionTest") 
     assertEquals(
       mapOf(14 to LineCoverage.FULL, 15 to LineCoverage.FULL, 16 to LineCoverage.FULL),
       gutterCoverage("src/FooCls.php"),
+    )
+
+    openFileInEditor("src/index.php")
+    assertTrue(
+      "src/index.php should not be highlighted in incremental report",
+      gutterCoverage("src/index.php").isNullOrEmpty()
+    )
+
+    openFileInEditor("src/BarCls.php")
+    assertTrue(
+      "src/BarCls.php should not be highlighted",
+      gutterCoverage("src/BarCls.php").isNullOrEmpty()
+    )
+
+    openFileInEditor("tests/FooTest.php")
+    assertTrue(
+      "tests/FooTest.php should not be highlighted",
+      gutterCoverage("tests/FooTest.php").isNullOrEmpty()
     )
   }
 }

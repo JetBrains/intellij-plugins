@@ -62,6 +62,18 @@ class JvmMultiModuleCoverageUiTest : QodanaCoverageUiTestBase("JvmMultiModuleCov
       mapOf(3 to LineCoverage.FULL, 5 to LineCoverage.FULL, 10 to LineCoverage.NONE),
       gutterCoverage("lib/src/main/kotlin/com/example/lib/Library.kt")
     )
+
+    openFileInEditor("app/src/test/kotlin/com/example/app/AppTest.kt")
+    assertTrue(
+      "app/src/test/kotlin/com/example/app/AppTest.kt should not be highlighted",
+      gutterCoverage("app/src/test/kotlin/com/example/app/AppTest.kt").isNullOrEmpty()
+    )
+
+    openFileInEditor("lib/src/test/kotlin/com/example/lib/LibraryTest.kt")
+    assertTrue(
+      "lib/src/test/kotlin/com/example/lib/LibraryTest.kt should not be highlighted",
+      gutterCoverage("lib/src/test/kotlin/com/example/lib/LibraryTest.kt").isNullOrEmpty()
+    )
   }
 
   @Test
@@ -91,6 +103,24 @@ class JvmMultiModuleCoverageUiTest : QodanaCoverageUiTestBase("JvmMultiModuleCov
     assertEquals(
       mapOf(7 to LineCoverage.FULL),
       gutterCoverage("app/src/main/kotlin/com/example/app/App.kt")
+    )
+
+    openFileInEditor("lib/src/main/kotlin/com/example/lib/Library.kt")
+    assertTrue(
+      "lib/src/main/kotlin/com/example/lib/Library.kt should not be highlighted in incremental report",
+      gutterCoverage("lib/src/main/kotlin/com/example/lib/Library.kt").isNullOrEmpty()
+    )
+
+    openFileInEditor("app/src/test/kotlin/com/example/app/AppTest.kt")
+    assertTrue(
+      "app/src/test/kotlin/com/example/app/AppTest.kt should not be highlighted",
+      gutterCoverage("app/src/test/kotlin/com/example/app/AppTest.kt").isNullOrEmpty()
+    )
+
+    openFileInEditor("lib/src/test/kotlin/com/example/lib/LibraryTest.kt")
+    assertTrue(
+      "lib/src/test/kotlin/com/example/lib/LibraryTest.kt should not be highlighted",
+      gutterCoverage("lib/src/test/kotlin/com/example/lib/LibraryTest.kt").isNullOrEmpty()
     )
   }
 }
