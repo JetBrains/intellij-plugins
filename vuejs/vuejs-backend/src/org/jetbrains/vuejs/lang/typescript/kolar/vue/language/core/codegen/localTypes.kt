@@ -80,14 +80,15 @@ type __VLS_TypePropsToOption<T> = {
     "type __VLS_OmitIndexSignature<T> = { [K in keyof T as {} extends Record<K, unknown> ? never : K]: T[K]; }$endOfLine"
   }
 
-  private val helpers: Map<String, Helper> = mapOf(
-    prettifyLocal.helperName to prettifyLocal,
-    withDefaults.helperName to withDefaults,
-    withSlots.helperName to withSlots,
-    propsChildren.helperName to propsChildren,
-    typePropsToOption.helperName to typePropsToOption,
-    omitIndexSignature.helperName to omitIndexSignature,
-  )
+  private val helpers: Map<String, Helper> =
+    sequenceOf(
+      prettifyLocal,
+      withDefaults,
+      withSlots,
+      propsChildren,
+      typePropsToOption,
+      omitIndexSignature,
+    ).associateBy { it.helperName }
 
   val PrettifyLocal: String get() = prettifyLocal.name
   val WithDefaults: String get() = withDefaults.name
