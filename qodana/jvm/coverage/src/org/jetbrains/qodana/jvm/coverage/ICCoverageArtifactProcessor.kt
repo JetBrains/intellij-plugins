@@ -55,10 +55,10 @@ class ICCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
     if (openCoverageSmartFilteringEnabled) {
       val smartSuite = engine.createSuite(runner, artifact.id, fileProvider, coverageFilterComputation(rawData), null, -1,
                                           false, true, false, project) ?: return null
-      return CoverageSuitesBundle(smartSuite)
+      return QodanaCoverageBundle(smartSuite, rawData)
     }
 
-    return CoverageSuitesBundle(noFiltersSuite)
+    return QodanaCoverageBundle(noFiltersSuite, rawData)
   }
 
   private fun coverageFilterComputation(covData: ProjectData): Array<String> {

@@ -58,7 +58,7 @@ import org.jetbrains.qodana.report.ValidatedSarif
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @RunWith(JUnit4::class)
 abstract class QodanaCoverageUiTestBase(private val sourceClass: String) : JavaModuleTestCase() {
@@ -116,7 +116,7 @@ abstract class QodanaCoverageUiTestBase(private val sourceClass: String) : JavaM
       }
     }, testRootDisposable)
     QodanaHighlightedReportService.getInstance(project).highlightReport(CoverageReportDescriptorMock(metadata))
-    withTimeout(30_000.milliseconds) {
+    withTimeout(30.seconds) {
       dataCollected.await()
     }
   }
