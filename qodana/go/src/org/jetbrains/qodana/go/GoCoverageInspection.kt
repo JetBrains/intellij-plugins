@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.go
 
 import com.goide.execution.testing.coverage.GoCoverageEngine
+import com.goide.execution.testing.coverage.GoCoverageProjectData
 import com.goide.psi.GoFile
 import com.goide.psi.GoFunctionLit
 import com.goide.psi.GoFunctionOrMethodDeclaration
@@ -24,6 +25,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.iterateContents
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadClassData
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadMissingData
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.normalizeFilePath
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverage
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.removePrefixFromCoverage
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportElement
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportProblemsNeeded
@@ -35,12 +37,17 @@ class GoCoverageInspection : CoverageInspectionBase() {
 
   companion object {
     private val go = Key.create<Lazy<ProjectData?>>("qodana.go.coverage")
+    private val goProjectData = Key.create<GoCoverageProjectData>("qodana.go.coverage.projectData")
     private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.go.normalizedPaths")
   }
 
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(go, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      computeCoverageData(globalContext, GoCoverageEngine::class)?.also { loadNormalizedPaths(globalContext, it) }
+      val data = computeCoverageData(globalContext, GoCoverageEngine::class) ?: return@lazy null
+      // Stash the pristine, typed Go data (its myFilesData carries the per-range statements/hits) before remap, which
+      // may rebuild it as a plain ProjectData and drop the Go-specific ranges the sidecar artifact needs.
+      (data as? GoCoverageProjectData)?.let { globalContext.putUserData(goProjectData, it) }
+      remapCoverage(globalContext.project, data).also { loadNormalizedPaths(globalContext, it) }
     })
   }
 
@@ -60,11 +67,19 @@ class GoCoverageInspection : CoverageInspectionBase() {
   override fun cleanup(globalContext: QodanaGlobalInspectionContext) {
     val data = globalContext.getUserData(go)?.value
     if (data != null) {
-      saveCoverageData(globalContext,
-                       GoCoverageEngine::class.java.simpleName,
-                       removePrefixFromCoverage(data, globalContext.config.projectPath))
+      saveCoverageData(globalContext, GoCoverageEngine::class.java.simpleName, data)
     }
     globalContext.putUserData(go, null)
+    globalContext.putUserData(goProjectData, null)
+  }
+
+  override fun saveCoverageData(context: QodanaGlobalInspectionContext, engine: String, data: ProjectData) {
+    val projectPath = context.config.projectPath
+    // line data is stored in the canonical (project-relative) binary form, like every other engine
+    super.saveCoverageData(context, engine, removePrefixFromCoverage(data, projectPath))
+    // the canonical format can't represent the Go-specific per-range statements/hits, so persist them alongside from
+    // the pristine data captured before remap
+    context.getUserData(goProjectData)?.let { writeGoCoverageProjectData(context.config.coverage.coveragePath, it, projectPath) }
   }
 
   override fun getOptionsPane(): OptPane {
@@ -160,4 +175,3 @@ class GoCoverageInspection : CoverageInspectionBase() {
     return "(anonymous function in ${file.name})"
   }
 }
-

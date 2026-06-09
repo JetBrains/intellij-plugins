@@ -45,7 +45,7 @@ abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleT
     qodanaConfig = manager.setUp(managerTestData)
   }
 
-  private fun getTestDataPath(relativePath: String): Path = testData.resolve(testDataBasePath).resolve(relativePath)
+  protected fun getTestDataPath(relativePath: String): Path = testData.resolve(testDataBasePath).resolve(relativePath)
 
   private fun getProfileConfig(relativePath: String): QodanaProfileConfig {
     return QodanaProfileConfig.fromPath(getTestDataPath(relativePath).toString())

@@ -99,7 +99,7 @@ abstract class QodanaCoverageUiTestBase(private val sourceClass: String) : JavaM
     return ChangedLinesMetaDataArtifact(CHANGED_LINES_ARTIFACT_ID, copyArtifactToTemp(scenario, CHANGED_LINES_FILE_NAME))
   }
 
-  private fun copyArtifactToTemp(scenario: String, fileName: String): Path {
+  protected fun copyArtifactToTemp(scenario: String, fileName: String): Path {
     val golden = testData.resolve(sourceClass).resolve(scenario).resolve("artifacts").resolve(fileName)
     assertTrue("Missing coverage fixture: $golden", Files.isRegularFile(golden))
     val tempDir = Files.createTempDirectory("qodana-coverage-ui")

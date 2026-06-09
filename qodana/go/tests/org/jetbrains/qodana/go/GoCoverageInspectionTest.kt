@@ -22,6 +22,7 @@ import org.junit.Test
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.swing.Icon
@@ -68,6 +69,7 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
     runUnderCover()
     assertSarifResults()
     assertCoverageProjectDataMatchesGolden("GoCoverageEngine", "GoCoverageEngine.out")
+    assertGoCoverageProjectDataMatchesGolden()
 
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(GoCoverageEngine::class.java)
     val path = qodanaConfig.coverage.coveragePath.resolve("GoCoverageEngine")
@@ -83,6 +85,28 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
     UsefulTestCase.assertSize(2, coverageData!!.classes.entries)
     // assert that prefix was restored and bundle was correctly built
     assertTrue(coverageData.classes.all { Path.of(it.key).startsWith(projectDir) })
+  }
+
+  /**
+   * Assert that the produced Go project-data sidecar matches the golden stored in `artifacts/<goldenFileName>`,
+   * creating the golden from the produced artifact when it is missing. Mirrors [assertChangedLinesMatchesGolden];
+   * the comparison is order-insensitive because the ranges originate from a hash map whose iteration order is not
+   * stable. The same golden doubles as the fixture consumed by [GoCoverageUiTest].
+   */
+  private fun assertGoCoverageProjectDataMatchesGolden(goldenFileName: String = GO_PROJECT_DATA_FILE_NAME) {
+    val actualFile = qodanaConfig.coverage.coveragePath.resolve(GO_PROJECT_DATA_FILE_NAME)
+    assertTrue("Go project-data sidecar was not produced at $actualFile", Files.isRegularFile(actualFile))
+
+    val goldenFile = getTestDataPath("artifacts/$goldenFileName")
+    if (!Files.isRegularFile(goldenFile)) {
+      Files.createDirectories(goldenFile.parent)
+      Files.copy(actualFile, goldenFile)
+      fail("Golden Go project-data artifact was missing and has been created at $goldenFile. Re-run the test to validate it.")
+    }
+
+    val expected = readGoCoverageProjectData(goldenFile)
+    val actual = readGoCoverageProjectData(actualFile)
+    assertEquals(expected.mapValues { it.value.toSet() }, actual.mapValues { it.value.toSet() })
   }
 
   @Test
@@ -116,6 +140,7 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
     runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
     assertChangedLines(mapOf("coverage.go" to setOf(3, 4, 5)))
     assertCoverageProjectDataMatchesGolden("GoCoverageEngine", "GoCoverageEngine.out")
+    assertGoCoverageProjectDataMatchesGolden()
     assertSarifResults()
   }
 

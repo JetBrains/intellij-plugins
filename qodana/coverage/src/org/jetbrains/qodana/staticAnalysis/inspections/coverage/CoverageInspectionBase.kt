@@ -110,9 +110,11 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
     return report.getClassData(path)
   }
 
-  protected fun saveCoverageData(context: QodanaGlobalInspectionContext,
-                                 engine: String,
-                                 data: ProjectData) {
+  protected open fun saveCoverageData(
+    context: QodanaGlobalInspectionContext,
+    engine: String,
+    data: ProjectData,
+  ) {
     val fileData = context.config.coverage.coveragePath.resolve(engine)
     val fileSourceMap = context.config.coverage.coveragePath.resolve("$engine.sourceMap")
     Files.createDirectories(fileData.parent)
@@ -134,16 +136,16 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
   fun computeCoverageData(globalContext: QodanaGlobalInspectionContext, engineType : KClass<out CoverageEngine>): ProjectData? {
     val coverageFiles = provideCoverageFiles(globalContext)
     logger.info("Coverage for ${engineType.java.simpleName} - provided ${coverageFiles.size} files")
-    if (!coverageFiles.isEmpty()) {
-      val engine = CoverageEngine.EP_NAME.findExtensionOrFail(engineType.java)
-      val data = retrieveCoverageData(engine, coverageFiles, globalContext)
-      if (data != null) {
-        INPUT_COVERAGE_LOADED.log(globalContext.project,
-                                       COVERAGE_LANGUAGE_FIELD.with(CoverageLanguage.mapEngine(engineType.java.simpleName)))
-        return data
-      }
+    if (coverageFiles.isEmpty()) return null
+    val engine = CoverageEngine.EP_NAME.findExtensionOrFail(engineType.java)
+    val data = retrieveCoverageData(engine, coverageFiles, globalContext) ?: return null
+    if (data.classes.isEmpty()) {
+      logger.error("Coverage reports were empty or not loaded correctly")
+      return null
     }
-    return null
+    INPUT_COVERAGE_LOADED.log(globalContext.project,
+                              COVERAGE_LANGUAGE_FIELD.with(CoverageLanguage.mapEngine(engineType.java.simpleName)))
+    return data
   }
 
   @OptIn(ExperimentalPathApi::class)

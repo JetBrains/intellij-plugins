@@ -28,6 +28,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadClassData
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadMissingData
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.normalizeFilePath
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.removePrefixFromCoverage
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverage
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportElement
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportProblemsNeeded
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
@@ -41,7 +42,7 @@ private class JsCoverageInspection : CoverageInspectionBase() {
 
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(jest, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      computeCoverageData(globalContext, JestCoverageEngine::class)?.also { loadNormalizedPaths(globalContext, it) }
+      computeCoverageData(globalContext, JestCoverageEngine::class)?.let { remapCoverage(globalContext.project, it) }?.also { loadNormalizedPaths(globalContext, it) }
     })
   }
 

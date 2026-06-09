@@ -76,6 +76,7 @@ jvm_library(
         "@community//platform/core-api:core",
         "@community//platform/projectModel-api:projectModel",
         "//contrib/qodana/coverage",
+        "@community//platform/ide-core",
         ":community_platform_ide_provided",
         ":community_platform_ide-impl_provided",
         ":community_platform_lang-impl_provided",
@@ -133,6 +134,7 @@ jvm_library(
         "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.go` end
