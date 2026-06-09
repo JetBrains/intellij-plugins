@@ -32,6 +32,6 @@ enum class NodeTypes(
   JS_ASSIGNMENT_EXPRESSION(24),
   JS_SEQUENCE_EXPRESSION(25),
   JS_RETURN_STATEMENT(26),
-  
+
   ;
 }

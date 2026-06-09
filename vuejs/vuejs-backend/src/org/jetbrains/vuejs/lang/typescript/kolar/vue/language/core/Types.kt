@@ -72,7 +72,7 @@ data class IRScript(
   override val content: String,
   override val attrs: Map<String, Any>,
   val src: IRAttr?,
-  override val ast: SourceFile
+  override val ast: SourceFile,
 ) : IRScriptBlock
 
 data class IRScriptSetup(
@@ -85,7 +85,7 @@ data class IRScriptSetup(
   override val content: String,
   override val attrs: Map<String, Any>,
   val generic: IRAttr?,
-  override val ast: SourceFile
+  override val ast: SourceFile,
 ) : IRScriptBlock
 
 data class IRStyle(

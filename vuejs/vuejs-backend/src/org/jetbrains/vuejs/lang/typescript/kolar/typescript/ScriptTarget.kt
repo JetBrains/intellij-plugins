@@ -3,6 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.typescript
 
 enum class ScriptTarget {
   ESNext,
-  
+
   ;
 }

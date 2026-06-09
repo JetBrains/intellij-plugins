@@ -2,5 +2,5 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.js.symbol
 
 class Symbol(
-  val description: String? = null
+  val description: String? = null,
 )

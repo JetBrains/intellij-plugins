@@ -6,6 +6,6 @@ enum class SyntaxKind {
   ExportKeyword,
   TrueKeyword,
   MultiLineCommentTrivia,
-  
+
   ;
 }
