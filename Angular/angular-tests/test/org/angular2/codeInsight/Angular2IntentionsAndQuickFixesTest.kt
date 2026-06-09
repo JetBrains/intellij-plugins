@@ -19,16 +19,16 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_16_2_8
 import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
 import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
-import org.angular2.SkipTsGoFork
-import org.angular2.TestTsGoFork
+import org.angular2.SkipTsGoProxy
+import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
-import org.junit.Test
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
+import org.junit.Test
 import org.junit.Ignore
 
 @TestTsNode
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuickFixes") {
 
   @Test
@@ -37,7 +37,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
            ANGULAR_CORE_16_2_8)
 
   @Test
-  @SkipTsGoFork
+  @SkipTsGoProxy
   @Ignore("Caused by WEB-78250")
   fun testBooleanTransformBinding() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "booleanAttribute"),
@@ -49,7 +49,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
            ANGULAR_CORE_16_2_8)
 
   @Test
-  @SkipTsGoFork
+  @SkipTsGoProxy
   @Ignore("Caused by WEB-78250")
   fun testNumberTransformBinding() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "numberAttribute"),
@@ -81,7 +81,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
                      ANGULAR_CORE_16_2_8)
 
   @Test
-  @SkipTsGoFork
+  @SkipTsGoProxy
   fun testCreateObservablePropertyFromUsage() =
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1, checkCodeCompletion = true, checkIntentionPreview = false)
@@ -107,28 +107,24 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
                      ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1)
 
   @Test
-  @SkipTsGoFork
   fun testBasicFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
   @Test
-  @SkipTsGoFork
   fun testFieldCreationWithExportDefault() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
   @Test
-  @SkipTsGoFork
   fun testThisQualifiedFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
   @Test
-  @SkipTsGoFork
   fun testQualifiedFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
@@ -153,7 +149,6 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
   }
 
   @Test
-  @SkipTsGoFork
   fun testQualifiedMethodCreation() {
     doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
@@ -267,8 +262,9 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
                .message("typescript.fix.change.member.access", accessTypeToKeyword(AccessType.PRIVATE, DialectOptionHolder.TS)),
              ANGULAR_CORE_18_2_1, checkIntentionPreview = false)
       throw AssertionError("Intention action should report conflicts")
-    } catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
-      assert(e.messages.count() == 1) { "Intention action should report one conflict"}
+    }
+    catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
+      assert(e.messages.count() == 1) { "Intention action should report one conflict" }
     }
 
   @Test
@@ -276,8 +272,9 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
     doTest(JavaScriptBundle.message("js.fix.change.member.access.to.sharp"),
            ANGULAR_CORE_18_2_1, checkIntentionPreview = false)
     throw AssertionError("Intention action should report conflicts")
-  } catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
-    assert(e.messages.count() == 1) { "Intention action should report one conflict"}
+  }
+  catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
+    assert(e.messages.count() == 1) { "Intention action should report one conflict" }
   }
 
   override fun setUp() {

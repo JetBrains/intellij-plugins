@@ -5,13 +5,13 @@ import com.intellij.xml.analysis.XmlAnalysisBundle
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.TestNoService
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.angular2.inspections.AngularNgOptimizedImageInspection
 import org.angular2.lang.Angular2Bundle
 import org.junit.Test
 
 @TestNoService
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2OptimizedImageDirectiveInspectionTest : Angular2TestCase("inspections/ngSrc") {
 
   override fun setUp() {

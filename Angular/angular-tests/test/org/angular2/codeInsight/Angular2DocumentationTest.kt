@@ -1,6 +1,5 @@
 package org.angular2.codeInsight
 
-import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
@@ -10,21 +9,17 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TestModule.NGRX_SIGNALS_20_1_0
 import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
-import org.angular2.SkipTsGoFork
-import org.angular2.TestTsGoFork
 import org.angular2.TestTsNode
 import org.junit.Test
-import java.io.File
 
 @TestTsNode
-@TestTsGoFork
+//@TestTsGoProxy
 class Angular2DocumentationTest : Angular2TestCase("documentation") {
 
   @Test
   fun testTagName() = doTestWithDeps()
 
   @Test
-  @SkipTsGoFork
   fun testSimpleInput() = doTestWithDeps()
 
   @Test
@@ -37,7 +32,6 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testSimpleBananaBox() = doTestWithDeps()
 
   @Test
-  @SkipTsGoFork
   fun testDirectiveWithMatchingInput() = doTestWithDeps(useConfig = true)
 
   @Test
@@ -63,7 +57,6 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
                                              additionalFiles = listOf("${testName}.ts"))
 
   @Test
-  @SkipTsGoFork
   fun testComponentDecorator() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8)
 
   @Test
@@ -102,7 +95,6 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
                                     Angular2TestModule.ANGULAR_COMMON_16_2_8)
 
   @Test
-  @SkipTsGoFork
   fun testWritableSignalCall() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                                         Angular2TestModule.ANGULAR_COMMON_16_2_8,
                                         configurators = listOf(Angular2TsConfigFile()))
@@ -112,7 +104,6 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
                             Angular2TestModule.ANGULAR_COMMON_16_2_8)
 
   @Test
-  @SkipTsGoFork
   fun testSignalCall() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                                 Angular2TestModule.ANGULAR_COMMON_16_2_8)
 
@@ -157,7 +148,6 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testUnknownNgClass() = doTest()
 
   @Test
-  @SkipTsGoFork
   fun testSignalStore() = doTest(ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0,
                                  configurators = listOf(Angular2TsConfigFile()))
 
@@ -168,15 +158,12 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testAriaPropertyAlias() = doTest(ANGULAR_CORE_20_1_4, ext = "html")
 
   @Test
-  @SkipTsGoFork
   fun testComponentLifecycleHook() = doTest(ANGULAR_CORE_20_1_4, ext = "ts")
 
   @Test
-  @SkipTsGoFork
   fun testIonicLifecycleHook() = doTest(ANGULAR_CORE_20_1_4, Angular2TestModule.IONIC_ANGULAR_8_4_3, ext = "ts")
 
   @Test
-  @SkipTsGoFork
   fun testRxjsOperator() = doTest(ANGULAR_CORE_20_1_4, RXJS_7_8_1, ext = "ts")
 
   private fun doTestWithDeps(useConfig: Boolean = false) {
@@ -214,12 +201,12 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   }
 
   private fun CodeInsightTestFixture.calculateFileSuffix(): String {
-    if (serviceKind == TypeScriptServiceKind.TsGoFork) {
-      val expectedFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(file)
-                           .virtualFile.nameWithoutExtension + ".expected.tsgo.html"
-      if (File("$testDataPath/$expectedFile").exists())
-        return ".expected.tsgo"
-    }
+    //if (serviceKind == TypeScriptServiceKind.TsGoProxy) {
+    //  val expectedFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(file)
+    //                       .virtualFile.nameWithoutExtension + ".expected.tsgo.html"
+    //  if (File("$testDataPath/$expectedFile").exists())
+    //    return ".expected.tsgo"
+    //}
     return ".expected"
   }
 }

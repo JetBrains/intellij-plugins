@@ -2,13 +2,12 @@
 package org.angular2.codeInsight.navigation
 
 import org.angular2.Angular2TestCase
-import org.angular2.SkipTsGoFork
 import org.angular2.TestNoService
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.junit.Test
 
 @TestNoService
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2FindUsagesTest : Angular2TestCase("navigation/findUsages") {
 
   @Test
@@ -36,7 +35,6 @@ class Angular2FindUsagesTest : Angular2TestCase("navigation/findUsages") {
   fun testHostDirectiveOneTimeBinding() = doFindUsagesTest(configureFileName = "mouseenter.directive.ts")
 
   @Test
-  @SkipTsGoFork
   fun testDollarSymbolInInlineTemplate() = doFindUsagesTest(configureFileName = "hello1.service.ts")
 
   @Test

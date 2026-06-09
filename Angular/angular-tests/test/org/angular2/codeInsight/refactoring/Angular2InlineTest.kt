@@ -9,12 +9,12 @@ import com.intellij.psi.PsiReference
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.TestNoService
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.angular2.refactoring.inline.Angular2InlineHandler
 import org.junit.Test
 
 @TestNoService
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2InlineTest : Angular2TestCase("refactoring/inline") {
 
   @Test
@@ -29,7 +29,7 @@ class Angular2InlineTest : Angular2TestCase("refactoring/inline") {
   fun testLetVariableComplexExpr() =
     doTest(false, Angular2TestModule.ANGULAR_CORE_18_2_1)
 
-  private fun doTest(onlyOneRef: Boolean, vararg modules: WebFrameworkTestModule, ) =
+  private fun doTest(onlyOneRef: Boolean, vararg modules: WebFrameworkTestModule) =
     doConfiguredTest(*modules, extension = "html", checkResult = true) {
       invokeHandler(onlyOneRef)
     }

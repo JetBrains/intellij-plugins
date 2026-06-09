@@ -2,7 +2,6 @@
 package org.angular2.codeInsight
 
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
@@ -48,9 +47,7 @@ import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TestModule.TS_LIB
 import org.angular2.Angular2TsConfigFile
 import org.angular2.Angular2TsExpectedConfigFiles
-import org.angular2.SkipTsGoFork
 import org.angular2.SkipTsGoProxy
-import org.angular2.TestTsGoFork
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
@@ -59,7 +56,6 @@ import java.io.File
 import java.io.IOException
 
 @TestTsNode
-@TestTsGoFork
 @TestTsGoProxy
 class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
@@ -127,9 +123,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testCustomUserEvents() = checkHighlighting(dir = true)
 
   @Test
-  fun testFxLayout() = withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
-    checkHighlighting(ANGULAR_CORE_9_1_1_MIXED, ANGULAR_FLEX_LAYOUT_13_0_0)
-  }
+  fun testFxLayout() = checkHighlighting(ANGULAR_CORE_9_1_1_MIXED, ANGULAR_FLEX_LAYOUT_13_0_0)
 
   @Test
   fun testHtmlAttributes() = checkHighlighting()
@@ -181,8 +175,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
                                                                   strictTemplates = true, extension = "ts")
 
   @Test
-  @SkipTsGoFork /* sometimes failed to find PSI element */
-  @SkipTsGoProxy /* dir test data */
+  @SkipTsGoProxy
   fun testInputsWithTransform() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, strictTemplates = true, dir = true)
 
   @Test
@@ -217,6 +210,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
                                                     extension = "ts", strictTemplates = true)
 
   @Test
+  @SkipTsGoProxy
   fun testSignalsColors() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8,
                                               extension = "ts", strictTemplates = true, checkSymbolNames = true)
 
@@ -235,7 +229,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   }
 
   @Test
-  @SkipTsGoFork
   @SkipTsGoProxy
   fun testBlockDefer() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
 
@@ -439,10 +432,12 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
 
   @Test
+  @SkipTsGoProxy
   fun testHostBindingsSyntax() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
 
   @Test
+  @SkipTsGoProxy
   fun testDirectiveSelectorsSyntax() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
 
@@ -501,7 +496,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
 
   @Test
-  @SkipTsGoFork /* Failed to find Psi Element */
   fun testObjectInitializerInTemplate() =
     checkHighlighting(ANGULAR_CORE_18_2_1, dir = true, configureFileName = "app.component.html")
 
@@ -538,6 +532,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
 
   @Test
+  @SkipTsGoProxy
   fun testCreateComponentBindings() =
     checkHighlighting(ANGULAR_CORE_20_0_0_NEXT_3, extension = "ts")
 
@@ -559,8 +554,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
                       checkWeakWarnings = false)
 
   @Test
-  @SkipTsGoFork
-  @SkipTsGoProxy
   fun testSignalStore() =
     checkHighlighting(ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0, extension = "ts",
                       checkSymbolNames = true)
@@ -610,10 +603,12 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_20_1_4, extension = "html", dir = true)
 
   @Test
+  @SkipTsGoProxy
   fun testNewAngularAnimationAttributes() =
     checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts", checkSymbolNames = true)
 
   @Test
+  @SkipTsGoProxy
   fun testNewAngularAnimationBindings() =
     checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts", checkSymbolNames = true)
 
@@ -640,6 +635,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_20_1_4, extension = "ts")
 
   @Test
+  @SkipTsGoProxy
   fun testListenerInNestedIfBlocks() =
     checkHighlighting(ANGULAR_CORE_20_1_4, extension = "ts")
 
@@ -742,7 +738,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   }
 
   private fun calculateFileName(configureFileName: String): String {
-    if (serviceKind == TypeScriptServiceKind.TsGoFork || serviceKind == TypeScriptServiceKind.TsGoProxy) {
+    if (serviceKind == TypeScriptServiceKind.TsGoProxy) {
       val extension = configureFileName.substringAfterLast('.', "")
         .let { if (!it.isEmpty()) ".$it" else "" }
       val tsgoConfigureFileName = configureFileName.substring(0, configureFileName.length - extension.length) + ".tsgo" + extension

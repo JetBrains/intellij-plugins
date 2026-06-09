@@ -3,13 +3,13 @@ package org.angular2.library.forms
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
 import org.junit.Test
 
 @TestTsNode
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2FormsQuickFixesTest : Angular2TestCase("library/forms/quickFixes") {
 
   @Test
