@@ -3,13 +3,13 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core
 
 // CompilerDOM.Node — base for all AST nodes
 interface Node {
-  val type: Int
+  val type: NodeTypes
   val loc: SourceLocation
 }
 
 // CompilerDOM.CommentNode
 data class CommentNode(
-  override val type: Int,  // NodeTypes.COMMENT
+  override val type: NodeTypes,  // NodeTypes.COMMENT
   val content: String,
   override val loc: SourceLocation,
 ) : Node
