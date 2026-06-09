@@ -9,7 +9,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestUtil
 import org.angular2.TestNoService
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider.getEntity
@@ -22,7 +22,7 @@ import org.angular2.web.Angular2Symbol
 import org.junit.Test
 
 @TestNoService
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2ModelStructureTest : Angular2TestCase("modelStructure") {
 
   @Test

@@ -11,13 +11,13 @@ import com.intellij.lang.javascript.BaseJSCompletionTestCase
 import com.intellij.testFramework.utils.coroutines.waitCoroutinesBlocking
 import org.angular2.Angular2TestCase
 import org.angular2.TestNoService
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.angular2.codeInsight.Angular2LiveTemplateTest.TestMode.NO_COMPLETION
 import org.angular2.codeInsight.Angular2LiveTemplateTest.TestMode.WITH_COMPLETION
 import org.junit.Test
 
 @TestNoService
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2LiveTemplateTest : Angular2TestCase("liveTemplate") {
   @Throws(Exception::class)
   override fun setUp() {
@@ -27,7 +27,8 @@ class Angular2LiveTemplateTest : Angular2TestCase("liveTemplate") {
 
   @Test
   fun testTemplateComponent() =
-    doTest("import { Component } from '@angular/core';\n\n@Component({ template: `<div a-cla<caret>></div>` })\nexport class AppComponent {}", "a-class")
+    doTest("import { Component } from '@angular/core';\n\n@Component({ template: `<div a-cla<caret>></div>` })\nexport class AppComponent {}",
+           "a-class")
 
   @Test
   fun testTemplateHtml() =

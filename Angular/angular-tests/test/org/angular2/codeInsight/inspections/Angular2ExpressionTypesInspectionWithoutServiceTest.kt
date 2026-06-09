@@ -5,11 +5,11 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 import org.angular2.TestNoService
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.junit.Test
 
 @TestNoService
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2ExpressionTypesInspectionWithoutServiceTest : Angular2TestCase("inspections/expressionType") {
 
   @Throws(Exception::class)

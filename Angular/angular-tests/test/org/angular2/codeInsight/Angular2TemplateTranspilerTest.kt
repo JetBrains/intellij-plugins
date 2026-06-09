@@ -8,14 +8,14 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TsConfigFile
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 import org.junit.Test
 
 @TestTsNode
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
 
   @Test

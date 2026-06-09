@@ -3,11 +3,11 @@ package org.angular2.codeInsight
 
 import org.angular2.Angular2TestCase
 import org.angular2.TestNoService
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.junit.Test
 
 @TestNoService
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2UsageHighlightingTest : Angular2TestCase("usageHighlighting") {
 
   @Test

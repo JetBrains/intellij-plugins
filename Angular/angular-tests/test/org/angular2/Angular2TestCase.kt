@@ -9,6 +9,7 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerSer
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspClientDescriptor
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspIntegrationProvider
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
+import com.intellij.lang.typescript.tsc.TypeScriptGoTypeEvaluatorMode
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.thisLogger
@@ -22,7 +23,6 @@ import com.intellij.platform.lsp.impl.LspClientImpl
 import com.intellij.platform.lsp.impl.LspClientManagerImpl
 import com.intellij.polySymbols.testFramework.HybridTestMode
 import com.intellij.testFramework.PlatformTestUtil.dispatchAllEventsInIdeEventQueue
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.replaceService
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.application
@@ -34,7 +34,6 @@ import org.angular2.refactoring.extractComponent.Angular2CliComponentGenerator
 import org.junit.Assume
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import java.io.File
 import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)
@@ -130,17 +129,16 @@ abstract class Angular2TestCase(
       TypeScriptServiceKind.TsNode -> {}
       TypeScriptServiceKind.TsGoFork,
       TypeScriptServiceKind.TsGoProxy,
-        -> {
-        Registry.get("typescript.ts-go.enabled").setValue(true, testRootDisposable)
-        if (serviceKind == TypeScriptServiceKind.TsGoProxy)
-          Registry.get("typescript.ts-go.type-evaluator.proxy").setValue(true, testRootDisposable)
-
-        // TODO remove once LSP does not restart analyzer for inlay hints
-        (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
-      }
+        -> Registry.get("typescript.ts-go.enabled").setValue(true, testRootDisposable)
     }
     configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
-    val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
+    val service = TypeScriptServiceTestMixin.setUpTypeScriptService(
+      myFixture,
+      tsGoTypeEvaluatorMode = if (serviceKind == TypeScriptServiceKind.TsGoProxy)
+        TypeScriptGoTypeEvaluatorMode.PROXY
+      else
+        TypeScriptGoTypeEvaluatorMode.TS_GO_FORK
+    ) {
       it::class == expectedServerClass
     }
     thisLogger().info("Using $service for the test")
@@ -181,17 +179,6 @@ abstract class Angular2TestCase(
     finally {
       // expectedServerClass = Angular2TypeScriptService::class
     }
-  }
-
-  override fun getGoldFileName(forcedGoldFileName: String?, testFileExt: String): String {
-    val goldFileName = super.getGoldFileName(forcedGoldFileName, testFileExt)
-    if (serviceKind == TypeScriptServiceKind.TsGoFork) {
-      val lastIndex = goldFileName.lastIndexOf('.')
-      val tsGoGoldFileName = "${goldFileName.substring(0, lastIndex)}.tsgo${goldFileName.substring(lastIndex)}"
-      if (File("$testDataPath/$tsGoGoldFileName").exists())
-        return tsGoGoldFileName
-    }
-    return goldFileName
   }
 
   protected fun checkHighlightingAndQuickFix(
@@ -248,8 +235,6 @@ abstract class Angular2TestCase(
     @JvmStatic
     fun data(clazz: Class<*>): Collection<Any> {
       return TypeScriptServiceKind.entries
-        // Skip TsGoFork and TsGoProxy tests for now
-        .filter { it != TypeScriptServiceKind.TsGoFork && it != TypeScriptServiceKind.TsGoProxy }
         .filter { clazz.getAnnotation(it.annotationClass.java) != null }
         .map { arrayOf<Any>(it) }
     }

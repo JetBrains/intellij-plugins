@@ -14,9 +14,9 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceIns
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
-import org.angular2.SkipTsGoFork
+import org.angular2.SkipTsGoProxy
 import org.angular2.TestNoService
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.angular2.inspections.AngularUncalledSignalLengthPropertyAccessInspection
 import org.angular2.lang.Angular2Bundle
 import org.junit.Test
@@ -26,33 +26,33 @@ import org.junit.Test
  * @see Angular2TemplateInspectionsTest
  */
 @TestNoService
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
 
   @Test
-  @SkipTsGoFork //new gold file
+  @SkipTsGoProxy
   fun testUnusedSymbol() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                        configureFileName = "unused.ts",
                        dir = true,
                        inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
-                                           JSUnusedLocalSymbolsInspection::class.java))
+                                            JSUnusedLocalSymbolsInspection::class.java))
 
   @Test
-  @SkipTsGoFork //new gold file
+  @SkipTsGoProxy
   fun testUnusedSymbolNg17() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_17_3_0,
                        configureFileName = "unused.ts",
                        dir = true,
                        inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
-                                           JSUnusedLocalSymbolsInspection::class.java))
+                                            JSUnusedLocalSymbolsInspection::class.java))
 
   @Test
   fun testUnusedSetter() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                        dir = true,
                        inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
-                                           JSUnusedLocalSymbolsInspection::class.java))
+                                            JSUnusedLocalSymbolsInspection::class.java))
 
   @Test
   fun testMethodCanBeStatic() =
@@ -89,7 +89,7 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
   fun testId() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                        inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java,
-                                           JSUnusedLocalSymbolsInspection::class.java))
+                                            JSUnusedLocalSymbolsInspection::class.java))
 
   @Test
   fun testPipeAndArgResolution() =
@@ -103,6 +103,7 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
                        extension = "html")
 
   @Test
+  @SkipTsGoProxy
   fun testDuplicateDeclarationOff() =
     doHighlightingTest(inspections = listOf(JSDuplicatedDeclarationInspection::class.java),
                        dir = true,

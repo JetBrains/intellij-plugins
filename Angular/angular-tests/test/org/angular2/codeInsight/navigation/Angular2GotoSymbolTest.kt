@@ -8,12 +8,12 @@ import com.intellij.polySymbols.testFramework.checkListByFile
 import com.intellij.testFramework.TestIndexingModeSupporter.IndexingMode
 import org.angular2.Angular2TestCase
 import org.angular2.TestNoService
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.junit.Test
 import org.junit.runners.Parameterized
 
 @TestNoService
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2GotoSymbolTest : Angular2TestCase("navigation/symbol/") {
 
   companion object {
