@@ -11,7 +11,6 @@ import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
 import org.intellij.terraform.config.patterns.TfPsiPatterns.HeredocContentAnywhereInVariable
-import org.intellij.terraform.config.patterns.TfPsiPatterns.ModuleRootBlock
 import org.intellij.terraform.config.patterns.TfPsiPatterns.StringLiteralAnywhereInVariable
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformRootBlock
 import org.intellij.terraform.hcl.HCLBundle
@@ -35,11 +34,9 @@ class TfNoInterpolationsAllowedInspection : LocalInspectionTool() {
     return MyEV(holder)
   }
 
-  inner class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
+  class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitBlock(block: HCLBlock) {
-      if (ModuleRootBlock.accepts(block)) {
-        checkModule(block)
-      } else if (TerraformRootBlock.accepts(block)) {
+      if (TerraformRootBlock.accepts(block)) {
         checkTerraform(block)
       }
     }
@@ -62,24 +59,12 @@ class TfNoInterpolationsAllowedInspection : LocalInspectionTool() {
       }
     }
 
-    private fun checkModule(block: HCLBlock) {
-      // Ensure there's no interpolation in module 'source' string
-      val source = block.`object`?.findProperty("source")?.value
-      if (source != null) {
-        if (source is HCLStringLiteral) {
-          reportRanges(source, "module source")
-        } else {
-          holder.registerProblem(source, HCLBundle.message("illegal.interpolations.inspection.no.double.quotes.error.message"))
-        }
-      }
-    }
-
     private fun checkTerraform(block: HCLBlock) {
       // Ensure there's no interpolation in all string properties
       (block.`object`?.propertyList ?: return)
-          .map { it.value }
-          .filterIsInstance<HCLStringLiteral>()
-          .forEach { reportRanges(it, "properties inside 'terraform' block") }
+        .map { it.value }
+        .filterIsInstance<HCLStringLiteral>()
+        .forEach { reportRanges(it, "properties inside 'terraform' block") }
     }
 
     private fun checkForVariableInterpolations(o: HCLStringLiteral) {
@@ -118,7 +103,6 @@ class TfNoInterpolationsAllowedInspection : LocalInspectionTool() {
     }
 
     private fun getInjectedLanguagePlacesCollector(ranges: ArrayList<TextRange>) =
-        InjectedLanguagePlaces { _, rangeInsideHost, _, _ -> ranges.add(rangeInsideHost) }
+      InjectedLanguagePlaces { _, rangeInsideHost, _, _ -> ranges.add(rangeInsideHost) }
   }
 }
-
