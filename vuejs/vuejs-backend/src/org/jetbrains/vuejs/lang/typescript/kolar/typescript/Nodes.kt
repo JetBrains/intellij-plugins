@@ -9,7 +9,11 @@ interface Identifier : Expression {
   val text: String
 }
 
-interface BindingElement : Node
+interface BindingElement : Node {
+  val name: Node
+  val dotDotDotToken: Any?
+  val initializer: Expression?
+}
 
 interface ParameterDeclaration : Node
 
@@ -69,9 +73,13 @@ interface TypeQueryNode : TypeNode
 
 interface FunctionLikeDeclaration : Node
 
-interface ArrayBindingPattern : Node
+interface BindingPattern : Node {
+  val elements: List<Node>
+}
 
-interface ObjectBindingPattern : Node
+interface ArrayBindingPattern : BindingPattern
+
+interface ObjectBindingPattern : BindingPattern
 
 interface ComputedPropertyName : Node
 
