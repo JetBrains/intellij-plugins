@@ -134,10 +134,11 @@ class TfTypeModel(
     val Module: BlockType = BlockType(HCL_MODULE_IDENTIFIER, 1, properties = listOf(
       PropertyType(HCL_SOURCE_IDENTIFIER, Types.String, hint = SimpleValueHint("Url"), required = true),
       VersionProperty,
-      DependsOnProperty,
       CountProperty,
+      DependsOnProperty,
       ForEachProperty,
-      PropertyType("providers", MapType(Types.String))
+      PropertyType("providers", MapType(Types.String)),
+      PropertyType("ignore_nested_deprecations", Types.Boolean)
     ).toMap())
 
     val ErrorMessageProperty: PropertyType = PropertyType(HCL_ERROR_MESSAGE_IDENTIFIER, Types.String)
