@@ -219,11 +219,11 @@ internal open class ReverseScopedRunContextFactory(
   override suspend fun openRunContext(scope: CoroutineScope): QodanaRunContext {
     val changedFiles = parseChangedFiles(scopeFile)
     val addedLines = collectAddedLines(changedFiles, config)
-    val paths = changedFiles.files.map { Path.of(it.path) }
+    val paths = changedFiles.files.map { Path.of(it.path).normalize() }
     val context = delegate.openRunContext(scope)
     val files = resolveVirtualFiles(config.projectPath, paths)
 
     val additionalFiles = computeAdditionalFiles(context, files, changedFiles.extendedFiles)
-    return context.createIncrementalContext(addedLines, files, additionalFiles, null)
+    return context.createIncrementalContext(addedLines, files, additionalFiles, paths.toSet(), null)
   }
 }
