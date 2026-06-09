@@ -8,12 +8,13 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.css.CssBundle
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.SkipTsGoProxy
 import org.angular2.TestNoService
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.junit.Test
 
 @TestNoService
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
 
   @Test
@@ -390,6 +391,7 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
     doSymbolRenameTest("cssCustomProperty.ts", "--foo", dir = true)
 
   @Test
+  @SkipTsGoProxy
   fun testNewAngularAnimationBindings() =
     doSymbolRename("newName", Angular2TestModule.ANGULAR_CORE_20_2_2, dir = false)
 

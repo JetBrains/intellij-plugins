@@ -15,12 +15,12 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.TestNoService
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
 import org.junit.Test
 
 @TestNoService
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2FormattingTest : Angular2TestCase("formatting") {
 
   @Test

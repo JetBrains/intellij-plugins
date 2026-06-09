@@ -5,14 +5,13 @@ import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
-import org.angular2.SkipTsGoFork
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.inspections.AngularInaccessibleSymbolInspection
 import org.junit.Test
 
 @TestTsNode
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2InaccessibleMemberAotQuickFixesTest : Angular2TestCase("inspections/inaccessibleSymbol") {
 
   @Test
@@ -31,19 +30,16 @@ class Angular2InaccessibleMemberAotQuickFixesTest : Angular2TestCase("inspection
   }
 
   @Test
-  @SkipTsGoFork
   fun testPrivateConstructorFieldFix() {
     doMultiFileTest("private.html", "private<caret>Field")
   }
 
   @Test
-  @SkipTsGoFork
   fun testPrivateConstructorDecoratedFieldFix() {
     doMultiFileTest("private.html", "private<caret>Field")
   }
 
   @Test
-  @SkipTsGoFork
   fun testPrivateConstructorDecoratedFieldFix2() {
     doMultiFileTest("private.html", "private<caret>Field")
   }

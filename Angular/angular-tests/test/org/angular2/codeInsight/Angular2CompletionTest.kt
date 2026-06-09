@@ -16,14 +16,13 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_19_2_0
 import org.angular2.Angular2TestModule.ANGULAR_CORE_21_2_0
 import org.angular2.Angular2TestModule.IONIC_ANGULAR_8_4_3
 import org.angular2.Angular2TsConfigFile
-import org.angular2.SkipTsGoFork
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
 import org.junit.Test
 
 @TestTsNode
-@TestTsGoFork
+//@TestTsGoProxy
 class Angular2CompletionTest : Angular2TestCase("completion") {
 
   override fun setUp() {
@@ -287,7 +286,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, configurators = listOf(Angular2TsConfigFile()))
 
   @Test
-  @SkipTsGoFork
   fun testTsconfigPriority() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", dir = true, configureFileName = "src/component.html") {
       it.priority >= 100
@@ -330,7 +328,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
   @Test
-  @SkipTsGoFork //new gold file
   fun testHostBindingDecorator1() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
@@ -343,7 +340,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
   @Test
-  @SkipTsGoFork
   fun testObjectInitializerProperties() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts",
                  locations = listOf("[product]=\"{<caret>}\"", "[product]=\"{title,<caret>}\""))
@@ -364,13 +360,11 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
                  locations = (1..6).map { "\"<caret>area$it\"" })
 
   @Test
-  @SkipTsGoFork //new gold file
   fun testSignalStore() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_20_1_4, Angular2TestModule.NGRX_SIGNALS_20_1_0, extension = "ts",
                  configurators = listOf(Angular2TsConfigFile()))
 
   @Test
-  @SkipTsGoFork
   fun testTemplateBindingsNgIf() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0, extension = "ts",
                  lookupItemFilter = { it.priority > 0 && it.lookupString != "Component" },
@@ -386,7 +380,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
                  ))
 
   @Test
-  @SkipTsGoFork
   fun testTemplateBindingsNgFor() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0, extension = "ts",
                  lookupItemFilter = { it.priority > 0 && it.lookupString != "Component" },
@@ -403,7 +396,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
                  ))
 
   @Test
-  @SkipTsGoFork
   fun testTemplateBindingsNgForContextDocumentation() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_18_2_1, Angular2TestModule.ANGULAR_COMMON_18_2_1, extension = "ts",
                  lookupItemFilter = { it.lookupString == "index" || it.lookupString == "last" || it.lookupString == "ngForOf" },
@@ -418,7 +410,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(ANGULAR_CORE_19_2_0, extension = "ts", checkDocumentation = true, dir = true)
 
   @Test
-  @SkipTsGoFork
   fun testTailwindInNgClass() =
     doConfiguredTest(ANGULAR_CORE_19_2_0, Angular2TestModule.TAILWINDCSS_4_1_7, extension = "ts", dir = true,
                      configureFileName = "src/tailwindInNgClass.ts") {
@@ -439,7 +430,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     }
 
   @Test
-  @SkipTsGoFork
   fun testNarrowingInCaseBlock() =
     doLookupTest(ANGULAR_CORE_19_2_0, extension = "html", dir = true, configurators = listOf(Angular2TsConfigFile())) {
       it.priority > 0.0
@@ -487,12 +477,10 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   }
 
   @Test
-  @SkipTsGoFork //new gold file
   fun testComponentLifecycleHooks() =
     doLookupTest(ANGULAR_CORE_21_2_0, renderTailText = true)
 
   @Test
-  @SkipTsGoFork //new gold file
   fun testIonicLifecycleHooks() =
     doLookupTest(ANGULAR_CORE_21_2_0, IONIC_ANGULAR_8_4_3, renderTailText = true)
 

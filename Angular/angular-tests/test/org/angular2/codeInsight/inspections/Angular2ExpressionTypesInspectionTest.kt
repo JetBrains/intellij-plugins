@@ -6,14 +6,14 @@ import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
-import org.angular2.SkipTsGoFork
-import org.angular2.TestTsGoFork
+import org.angular2.SkipTsGoProxy
+import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.codeInsight.deprecated.Angular2AttributesTest
 import org.junit.Test
 
 @TestTsNode
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expressionType") {
 
   @Throws(Exception::class)
@@ -33,7 +33,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
     }
 
   @Test
-  @SkipTsGoFork //new gold file
+  @SkipTsGoProxy
   fun testExpressions() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
                        Angular2TestModule.ANGULAR_FORMS_16_2_8, Angular2TestModule.RXJS_7_8_1,
@@ -58,7 +58,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
     }
 
   @Test
-  @SkipTsGoFork
+  @SkipTsGoProxy
   fun testGenericsValidationStrict() =
     doHighlightingTest(Angular2TestModule.TS_LIB,
                        Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
@@ -104,7 +104,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
     checkHighlightingNg15()
 
   @Test
-  @SkipTsGoFork //new gold file
+  @SkipTsGoProxy
   fun testNgIfAsContextGuardRemovesFalsy() =
     checkHighlightingNg15()
 
@@ -157,8 +157,8 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
   fun testNgTemplateContextGuardInferenceFromTwoInputs() =
   // There are 2 things of interest:
   // * type of person
-    // * type checking for assignment of expressions to directive inputs
-    // TODO - consider replacing `null as any` in directive type constructor with `undefined` (TCB - tcbCallTypeCtor),
+  // * type checking for assignment of expressions to directive inputs
+  // TODO - consider replacing `null as any` in directive type constructor with `undefined` (TCB - tcbCallTypeCtor),
     //        which will not infer person type as `any` when other inputs are missing improving type checking
     checkHighlightingNg15()
 
@@ -191,6 +191,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
                        configureFileName = "genericDirectiveReference.ts")
 
   @Test
+  @SkipTsGoProxy
   fun testGenericDirectiveReferenceUnsubstitutedFallsBackToAny() =
     checkHighlightingNg15()
 

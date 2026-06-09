@@ -5,12 +5,12 @@ import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.TestNoService
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.junit.Test
 
 @TestNoService
-@TestTsGoFork
-class Angular2CssHighlightingTest: Angular2TestCase("css/highlighting") {
+@TestTsGoProxy
+class Angular2CssHighlightingTest : Angular2TestCase("css/highlighting") {
 
   // WEB-63400
   @Test
@@ -40,7 +40,7 @@ class Angular2CssHighlightingTest: Angular2TestCase("css/highlighting") {
 
   private fun checkHighlighting(
     vararg modules: Angular2TestModule,
-    extension: String = "css"
+    extension: String = "css",
   ) {
     doHighlightingTest(*modules, configureFileName = "$testName.$extension")
   }

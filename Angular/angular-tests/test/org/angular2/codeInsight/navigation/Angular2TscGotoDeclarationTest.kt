@@ -5,12 +5,12 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TestModule.NGRX_SIGNALS_20_1_0
 import org.angular2.Angular2TsConfigFile
-import org.angular2.TestTsGoFork
+import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.junit.Test
 
 @TestTsNode
-@TestTsGoFork
+@TestTsGoProxy
 class Angular2TscGotoDeclarationTest : Angular2TestCase("navigation/declaration") {
 
   @Test
