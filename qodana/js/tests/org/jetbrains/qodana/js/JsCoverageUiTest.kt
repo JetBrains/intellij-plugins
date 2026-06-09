@@ -65,6 +65,18 @@ class JsCoverageUiTest : QodanaCoverageUiTestBase("JsCoverageInspectionTest") {
       mapOf(1 to LineCoverage.FULL, 2 to LineCoverage.FULL, 3 to LineCoverage.NONE, 4 to LineCoverage.NONE, 5 to LineCoverage.NONE),
       gutterCoverage("javascript.js"),
     )
+
+    openFileInEditor("FooCls.test.ts")
+    assertTrue(
+      "FooCls.test.ts should not be highlighted",
+      gutterCoverage("FooCls.test.ts").isNullOrEmpty()
+    )
+
+    openFileInEditor("javascript.test.js")
+    assertTrue(
+      "javascript.test.js should not be highlighted",
+      gutterCoverage("javascript.test.js").isNullOrEmpty()
+    )
   }
 
   @Test
@@ -91,6 +103,24 @@ class JsCoverageUiTest : QodanaCoverageUiTestBase("JsCoverageInspectionTest") {
     assertEquals(
       mapOf(19 to LineCoverage.FULL, 20 to LineCoverage.FULL, 21 to LineCoverage.FULL),
       gutterCoverage("FooCls.ts"),
+    )
+
+    openFileInEditor("javascript.js")
+    assertTrue(
+      "javascript.js should not be highlighted in incremental report",
+      gutterCoverage("javascript.js").isNullOrEmpty()
+    )
+
+    openFileInEditor("FooCls.test.ts")
+    assertTrue(
+      "FooCls.test.ts should not be highlighted",
+      gutterCoverage("FooCls.test.ts").isNullOrEmpty()
+    )
+
+    openFileInEditor("javascript.test.js")
+    assertTrue(
+      "javascript.test.js should not be highlighted",
+      gutterCoverage("javascript.test.js").isNullOrEmpty()
     )
   }
 }

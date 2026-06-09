@@ -64,6 +64,18 @@ class GoCoverageUiTest : QodanaCoverageUiTestBase("GoCoverageInspectionTest") {
       ),
       gutterCoverage("not_covered.go"),
     )
+
+    openFileInEditor("coverage_test.go")
+    assertTrue(
+      "coverage_test.go should not be highlighted",
+      gutterCoverage("coverage_test.go").isNullOrEmpty()
+    )
+
+    openFileInEditor("not_reported.go")
+    assertTrue(
+      "not_reported.go should not be highlighted",
+      gutterCoverage("not_reported.go").isNullOrEmpty()
+    )
   }
 
   @Test
@@ -87,6 +99,24 @@ class GoCoverageUiTest : QodanaCoverageUiTestBase("GoCoverageInspectionTest") {
     assertEquals(
       mapOf(3 to LineCoverage.FULL, 4 to LineCoverage.FULL, 5 to LineCoverage.FULL),
       gutterCoverage("coverage.go"),
+    )
+
+    openFileInEditor("not_covered.go")
+    assertTrue(
+      "not_covered.go should not be highlighted in incremental report",
+      gutterCoverage("not_covered.go").isNullOrEmpty()
+    )
+
+    openFileInEditor("coverage_test.go")
+    assertTrue(
+      "coverage_test.go should not be highlighted",
+      gutterCoverage("coverage_test.go").isNullOrEmpty()
+    )
+
+    openFileInEditor("not_reported.go")
+    assertTrue(
+      "not_reported.go should not be highlighted",
+      gutterCoverage("not_reported.go").isNullOrEmpty()
     )
   }
 }

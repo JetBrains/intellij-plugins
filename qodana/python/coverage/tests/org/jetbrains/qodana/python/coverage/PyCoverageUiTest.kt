@@ -93,5 +93,17 @@ class PyCoverageUiTest : QodanaCoverageUiTestBase("PyCoverageInspectionTest") {
       mapOf(11 to LineCoverage.FULL, 12 to LineCoverage.FULL, 13 to LineCoverage.FULL),
       gutterCoverage("src/FooCls.py"),
     )
+
+    openFileInEditor("src/another.py")
+    assertTrue(
+      "src/another.py should not be highlighted in incremental report",
+      gutterCoverage("src/another.py").isNullOrEmpty()
+    )
+
+    openFileInEditor("tests/FooTest.py")
+    assertTrue(
+      "tests/FooTest.py should not be highlighted in incremental report",
+      gutterCoverage("tests/FooTest.py").isNullOrEmpty()
+    )
   }
 }
