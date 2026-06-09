@@ -1,7 +1,9 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.typescript
 
-interface ObjectLiteralExpression : Expression
+interface ObjectLiteralExpression : Expression {
+  val properties: List<Node>
+}
 
 interface StringLiteral : Expression, StringLiteralLike
 
@@ -9,23 +11,33 @@ interface Identifier : Expression {
   val text: String
 }
 
-interface BindingElement : Node {
+// Common interface for BindingElement | ParameterDeclaration | VariableDeclaration
+interface NamedBinding : Node {
   val name: Node
-  val dotDotDotToken: Any?
+  val type: TypeNode?
   val initializer: Expression?
 }
 
-interface ParameterDeclaration : Node
+interface BindingElement : NamedBinding {
+  val dotDotDotToken: Any?
+}
 
-interface VariableDeclaration : Node
+interface ParameterDeclaration : NamedBinding
 
-interface ArrowFunction : Expression
+interface VariableDeclaration : NamedBinding
 
-interface FunctionExpression : Expression
+interface FunctionLikeDeclaration : Node {
+  val body: Node?
+  val parameters: List<ParameterDeclaration>
+}
 
-interface AccessorDeclaration : Node
+interface ArrowFunction : Expression, FunctionLikeDeclaration
 
-interface MethodDeclaration : Node
+interface FunctionExpression : Expression, FunctionLikeDeclaration
+
+interface AccessorDeclaration : FunctionLikeDeclaration
+
+interface MethodDeclaration : FunctionLikeDeclaration
 
 interface Statement : Node
 
@@ -59,7 +71,9 @@ interface CallExpression : Expression
 
 interface ParenthesizedExpression : Expression
 
-interface PropertyAccessExpression : Expression
+interface PropertyAccessExpression : Expression {
+  val expression: Expression
+}
 
 interface ArrayLiteralExpression : Expression
 
@@ -69,9 +83,13 @@ interface TypeLiteralNode : TypeNode
 
 interface UnionTypeNode : TypeNode
 
-interface TypeQueryNode : TypeNode
+interface TypeQueryNode : TypeNode {
+  val exprName: Node
+}
 
-interface FunctionLikeDeclaration : Node
+interface QualifiedName : Node {
+  val left: Node
+}
 
 interface BindingPattern : Node {
   val elements: List<Node>
@@ -81,13 +99,22 @@ interface ArrayBindingPattern : BindingPattern
 
 interface ObjectBindingPattern : BindingPattern
 
-interface ComputedPropertyName : Node
+interface ComputedPropertyName : Node {
+  val expression: Expression
+}
 
-interface PropertyAssignment : Node
+interface PropertyAssignment : Node {
+  val name: Node
+  val initializer: Expression
+}
 
-interface ShorthandPropertyAssignment : Node
+interface ShorthandPropertyAssignment : Node {
+  val name: Identifier
+}
 
-interface SpreadAssignment : Node
+interface SpreadAssignment : Node {
+  val expression: Expression
+}
 
 interface CallSignatureDeclaration : Node
 
