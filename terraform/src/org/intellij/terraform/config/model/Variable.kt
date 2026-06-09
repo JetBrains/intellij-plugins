@@ -16,7 +16,7 @@ class Variable(val declaration: HCLBlock) : Block(TfTypeModel.Variable) {
   }
 
   fun getTypeExpression(): HCLExpression? {
-    return declaration.`object`?.findProperty(TfTypeModel.VariableType.name)?.value
+    return declaration.`object`?.findProperty(TfTypeModel.TypeProperty.name)?.value
   }
 
   fun getType(): HclType? {

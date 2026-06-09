@@ -126,6 +126,8 @@ class TfTypeModel(
     val DescriptionProperty: PropertyType = PropertyType("description", Types.String)
     val SensitiveProperty: PropertyType = PropertyType("sensitive", Types.Boolean)
     val NullableProperty: PropertyType = PropertyType("nullable", Types.Boolean)
+    val ConstProperty: PropertyType = PropertyType("const", Types.Boolean)
+    val DeprecatedProperty: PropertyType = PropertyType("deprecated", Types.Boolean)
 
     val Atlas: BlockType = BlockType(HCL_ATLAS_IDENTIFIER, 0, properties = listOf(
       PropertyType("name", Types.String, injectionAllowed = false, required = true)).toMap())
@@ -140,7 +142,7 @@ class TfTypeModel(
 
     val ErrorMessageProperty: PropertyType = PropertyType(HCL_ERROR_MESSAGE_IDENTIFIER, Types.String)
     val ConditionProperty: PropertyType = PropertyType(HCL_CONDITION_IDENTIFIER, Types.Boolean, injectionAllowed = false)
-    val VariableType: PropertyType = PropertyType(HCL_TYPE_IDENTIFIER, Types.Any, injectionAllowed = false)
+    val TypeProperty: PropertyType = PropertyType(HCL_TYPE_IDENTIFIER, Types.Any, injectionAllowed = false)
     val VariableDefault: PropertyType = PropertyType(HCL_DEFAULT_IDENTIFIER, Types.Any)
     val VariableValidation: BlockType = BlockType(HCL_VALIDATION_IDENTIFIER, 0, properties = listOf(
       ConditionProperty,
@@ -148,13 +150,15 @@ class TfTypeModel(
     ).toMap())
     val EphemeralProperty: PropertyType = PropertyType(HCL_EPHEMERAL_IDENTIFIER, Types.Boolean)
     val Variable: BlockType = BlockType(HCL_VARIABLE_IDENTIFIER, 1, properties = listOf<PropertyOrBlockType>(
-      VariableType,
+      TypeProperty,
       VariableDefault,
-      VariableValidation,
       DescriptionProperty,
+      VariableValidation,
       SensitiveProperty,
       NullableProperty,
-      EphemeralProperty
+      EphemeralProperty,
+      ConstProperty,
+      DeprecatedProperty
     ).toMap())
 
     val Connection: BlockType = BlockType(HCL_CONNECTION_IDENTIFIER, 0, properties = listOf(
@@ -193,12 +197,14 @@ class TfTypeModel(
 
     val ValueProperty: PropertyType = PropertyType("value", Types.Any, required = true)
     val Output: BlockType = BlockType(HCL_OUTPUT_IDENTIFIER, 1, properties = listOf(
+      TypeProperty,
       ValueProperty,
       DescriptionProperty,
-      DependsOnProperty,
       SensitiveProperty,
+      EphemeralProperty,
+      DependsOnProperty,
+      DeprecatedProperty,
       PreconditionBlock,
-      EphemeralProperty
     ).toMap())
 
     val ResourceLifecycle: BlockType = BlockType(HCL_LIFECYCLE_IDENTIFIER, 0,

@@ -49,7 +49,7 @@ class TfIncorrectVariableTypeInspection : LocalInspectionTool() {
 
       val obj = block.`object` ?: return
 
-      val typeProperty = obj.findProperty(TfTypeModel.VariableType.name)
+      val typeProperty = obj.findProperty(TfTypeModel.TypeProperty.name)
       val typePropertyValue = typeProperty?.value ?: return
 
       if (typePropertyValue is HCLStringLiteral) {
@@ -121,7 +121,7 @@ class TfIncorrectVariableTypeInspection : LocalInspectionTool() {
       if (element !is HCLValue) return
       val property = element.parent as? HCLProperty ?: return
       val obj = property.parent as? HCLObject ?: return
-      val typeProperty = obj.findProperty(TfTypeModel.VariableType.name)
+      val typeProperty = obj.findProperty(TfTypeModel.TypeProperty.name)
 
       if (typeProperty == null) {
         obj.addAfter(HCLElementGenerator(project).createProperty("type", "\"$toType\""), obj.firstChild)
