@@ -28,6 +28,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadClassData
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.loadMissingData
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.normalizeFilePath
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.removePrefixFromCoverage
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverage
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportElement
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportProblemsNeeded
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
@@ -43,7 +44,7 @@ private class PhpCoverageInspection : CoverageInspectionBase() {
 
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(phpunit, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      computeCoverageData(globalContext, PhpUnitCoverageEngine::class)?.also { loadNormalizedPaths(globalContext, it) }
+      computeCoverageData(globalContext, PhpUnitCoverageEngine::class)?.let { remapCoverage(globalContext.project, it) }?.also { loadNormalizedPaths(globalContext, it) }
     })
   }
 

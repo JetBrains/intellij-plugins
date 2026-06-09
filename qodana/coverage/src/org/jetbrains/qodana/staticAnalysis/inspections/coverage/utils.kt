@@ -45,7 +45,6 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 
 
-internal val CLASS_ENGINES = setOf("JavaCoverageEngine", "XMLReportEngine")
 internal val COVERAGE_INSPECTIONS_NAMES = setOf("JsCoverageInspection", "JvmCoverageInspection", "PhpCoverageInspection",
                                        "PyCoverageInspection", "GoCoverageInspection", "NetCoverageInspection")
 private const val REMAP_CHECK_FILES_CNT = 3
@@ -121,15 +120,6 @@ internal fun retrieveCoverageData(engine: CoverageEngine, coverageFiles: List<Fi
   val suites = computeSuites(engine, coverageFiles, globalContext.project)
   if (!suites.any()) return null
   val bundle = CoverageSuitesBundle(suites.toTypedArray())
-  if (bundle.coverageData == null) return null
-  if (!CLASS_ENGINES.contains(engine.javaClass.simpleName)) {
-    if (bundle.coverageData!!.classes.isEmpty()) {
-      logger.error("Coverage reports were empty or not loaded correctly")
-      return null
-    }
-    // it's a file based coverage, we need to fix the
-    remapCoverage(globalContext.project, bundle)
-  }
   return bundle.coverageData
 }
 
@@ -276,32 +266,27 @@ private fun getCoverageRunner(file: File, engine: CoverageEngine): CoverageRunne
   return null
 }
 
-private fun remapCoverage(project: Project, bundle: CoverageSuitesBundle) {
-  var data = bundle.coverageData!!
+/**
+ * Remap file-based coverage [data] (relative or foreign-absolute paths) to local absolute paths under [project].
+ * Returns the remapped [ProjectData]; the input is returned unchanged when no remapping is necessary. Must be called
+ * with non-empty [ProjectData.getClasses].
+ */
+fun remapCoverage(project: Project, data: ProjectData): ProjectData {
   if (isRelativePath(data.classes.keys.minOf { it })) {
-    val projectDir = bundle.project.guessProjectDir() ?: return
-    data = remapDataToProjectDir(data, projectDir)
-    applyNewDataToBundle(bundle, data)
-  } else {
-    val rootManager = ProjectRootManager.getInstance(project)
-    val roots = ReadAction.compute<Array<VirtualFile>, Throwable> { rootManager.contentRoots }
-    for (contentRoot in roots) {
-      val files: Set<String> = data.classes.keys
-      val pathToRemap = findPathToRemap(files, contentRoot, REMAP_CHECK_FILES_CNT)
-      if (pathToRemap != null) {
-        // just replace paths for every file
-        data = remapData(data, pathToRemap, contentRoot.path)
-        applyNewDataToBundle(bundle, data)
-      }
+    val projectDir = project.guessProjectDir() ?: return data
+    return remapDataToProjectDir(data, projectDir)
+  }
+  val rootManager = ProjectRootManager.getInstance(project)
+  val roots = ReadAction.computeBlocking<Array<VirtualFile>, Throwable> { rootManager.contentRoots }
+  var remapped = data
+  for (contentRoot in roots) {
+    val pathToRemap = findPathToRemap(remapped.classes.keys, contentRoot, REMAP_CHECK_FILES_CNT)
+    if (pathToRemap != null) {
+      // just replace paths for every file
+      remapped = remapData(remapped, pathToRemap, contentRoot.path)
     }
   }
-}
-
-private fun applyNewDataToBundle(bundle: CoverageSuitesBundle, data: ProjectData) {
-  bundle.coverageData = data
-  for (suiteSuite in bundle.suites) {
-    suiteSuite.setCoverageData(data)
-  }
+  return remapped
 }
 
 fun findPathToRemap(files: Set<String>, contentRoot: VirtualFile, checkFilesCount: Int): String? {
