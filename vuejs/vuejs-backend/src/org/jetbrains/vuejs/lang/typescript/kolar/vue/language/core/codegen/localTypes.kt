@@ -98,10 +98,10 @@ type __VLS_TypePropsToOption<T> = {
   val OmitIndexSignature: String get() = omitIndexSignature.name
 
   fun generate(): Sequence<Code> = sequence {
-    while (used.isNotEmpty()) {
-      val name = used.first()
-      used.remove(name)
-      yield(StringSegment(helpers[name]!!.generate()))
+    for (name in used) {
+      yield(StringSegment(helpers.getValue(name).generate()))
     }
+
+    used.clear()
   }
 }
