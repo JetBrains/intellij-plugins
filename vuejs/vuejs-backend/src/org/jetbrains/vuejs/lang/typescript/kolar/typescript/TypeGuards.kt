@@ -1,10 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
-@file:OptIn(ExperimentalContracts::class)
-
 package org.jetbrains.vuejs.lang.typescript.kolar.typescript
 
-import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 fun isIdentifier(node: Node): Boolean {
