@@ -1,0 +1,30 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
+
+import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
+
+fun generateStringLiteralKey(
+  code: String,
+  offset: Int? = null,
+  info: VueCodeInformation? = null,
+): Sequence<Code> = sequence {
+  if (offset == null || info == null) {
+    yield(StringSegment("'$code'"))
+  }
+  else {
+    val token = yield(startBoundary("template", offset, info))
+    yield(StringSegment("'"))
+    yield(DataSegment(
+      text = code,
+      source = "template",
+      sourceOffset = offset,
+      data = VueCodeInformation(__combineToken = token),
+    ))
+    yield(StringSegment("'"))
+    yield(endBoundary(token, offset + code.length))
+  }
+}
