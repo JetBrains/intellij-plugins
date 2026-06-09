@@ -27,7 +27,7 @@ class JsCoverageInspectionTest: QodanaCoverageInspectionTest("JsCoverageInspecti
     assertCoverageProjectDataMatchesGolden("JestCoverageEngine", "JestCoverageEngine.info")
 
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(JestCoverageEngine::class.java)
-    val path = qodanaConfig.coverage.coveragePath.resolve("JestCoverageEngine", "JestCoverageEngine.info")
+    val path = qodanaConfig.coverage.coveragePath.resolve("JestCoverageEngine")
     val coverageRunner = CoverageRunner.getInstanceById(JestCoverageEngine.ID)!!
     val data = ProjectDataLoader.load(path.toFile())
     val projectDir = qodanaConfig.projectPath
