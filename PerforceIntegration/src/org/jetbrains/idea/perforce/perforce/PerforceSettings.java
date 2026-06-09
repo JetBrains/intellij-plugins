@@ -66,7 +66,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   private final Project myProject;
   private final PerforceOfflineNotification myOfflineNotification;
 
-  private String myEnvIgnore = P4EnvHelper.getP4IgnoreFileNameFromEnv();
+  private String myEnvIgnore;
 
   // ------------------ persistent state start
 
@@ -170,6 +170,9 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   @Override
   public String getPathToIgnore() {
     if (useP4IGNORE) {
+      if (myEnvIgnore == null) {
+        myEnvIgnore = P4EnvHelper.getP4IgnoreFileNameFromEnv();
+      }
       return myEnvIgnore;
     }
 
