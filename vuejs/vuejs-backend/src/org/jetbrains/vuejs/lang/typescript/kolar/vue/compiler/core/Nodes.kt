@@ -19,9 +19,40 @@ interface TextNode : Node {
   val content: String
 }
 
+// CompilerDOM.ElementTypes
+enum class ElementTypes(
+  val value: Int,
+) {
+  ELEMENT(0),
+  COMPONENT(1),
+  TEMPLATE(2),
+  SLOT(3),
+
+  ;
+}
+
+// CompilerDOM.ConstantTypes
+enum class ConstantTypes(
+  val value: Int,
+) {
+  NOT_CONSTANT(0),
+  CAN_SKIP_PATCH(1),
+  CAN_HOIST(2),
+  CAN_STRINGIFY(3),
+
+  ;
+}
+
+// CompilerDOM.AttributeNode
+interface AttributeNode : Node {
+  val name: String
+  val value: TextNode?
+}
+
 // CompilerDOM.ElementNode (minimal — full definition to be added when element.ts is converted)
 interface ElementNode : Node {
   val tag: String
+  val tagType: ElementTypes
   val isSelfClosing: Boolean
   val children: List<Node>
   val props: List<Node>
@@ -31,6 +62,7 @@ interface ElementNode : Node {
 interface SimpleExpressionNode : Node {
   val content: String
   val isStatic: Boolean
+  val constType: ConstantTypes
 }
 
 // CompilerDOM.DirectiveNode
