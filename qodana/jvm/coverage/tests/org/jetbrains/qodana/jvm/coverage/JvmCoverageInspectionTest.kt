@@ -59,6 +59,7 @@ class JvmCoverageInspectionTest: QodanaCoverageInspectionTest("JvmCoverageInspec
   fun execWithoutProblemReport() {
     runUnderCover()
     assertCoverageProjectDataMatchesGolden("JavaCoverageEngine", "JavaCoverageEngine.ic")
+    assertChangedLines(mapOf())
     assertSarifResults()
   }
 
@@ -66,6 +67,7 @@ class JvmCoverageInspectionTest: QodanaCoverageInspectionTest("JvmCoverageInspec
   fun icWithoutProblemReport() {
     runUnderCover()
     assertCoverageProjectDataMatchesGolden("JavaCoverageEngine", "JavaCoverageEngine.ic")
+    assertChangedLines(mapOf())
     assertSarifResults()
   }
 

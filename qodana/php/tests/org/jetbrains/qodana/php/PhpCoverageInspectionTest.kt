@@ -26,6 +26,7 @@ class PhpCoverageInspectionTest: QodanaCoverageInspectionTest("PhpCoverageInspec
   fun phpunit() {
     runUnderCover()
     assertSarifResults()
+    assertChangedLines(mapOf())
     assertCoverageProjectDataMatchesGolden("PhpUnitCoverageEngine", "PhpUnitCoverageEngine.xml")
 
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(PhpUnitCoverageEngine::class.java)

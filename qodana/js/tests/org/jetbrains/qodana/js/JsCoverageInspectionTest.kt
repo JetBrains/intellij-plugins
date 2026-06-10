@@ -24,6 +24,7 @@ class JsCoverageInspectionTest: QodanaCoverageInspectionTest("JsCoverageInspecti
   fun jest() {
     runUnderCover()
     assertSarifResults()
+    assertChangedLines(mapOf())
     assertCoverageProjectDataMatchesGolden("JestCoverageEngine", "JestCoverageEngine.info")
 
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(JestCoverageEngine::class.java)

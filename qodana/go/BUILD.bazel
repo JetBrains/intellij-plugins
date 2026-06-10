@@ -180,6 +180,7 @@ jvm_library(
         # do not sort,
         ":go-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
     ],
     deps = [
         # do not sort,
@@ -223,6 +224,7 @@ jvm_library(
         "//contrib/qodana/coverage:coverage-tests_test_lib",
         "//idea-tests:ultimate-tests",
         "//idea-tests:ultimate-tests_test_lib",
+        "@community//platform/ide-core",
     ],
 )
 ### auto-generated section `build intellij.qodana.go.tests` end

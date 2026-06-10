@@ -24,6 +24,7 @@ class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspect
   fun py() {
     runUnderCover()
     assertSarifResults()
+    assertChangedLines(mapOf())
     assertCoverageProjectDataMatchesGolden("PyCoverageEngine", "PyCoverageEngine.xml")
 
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(PyCoverageEngine::class.java)
