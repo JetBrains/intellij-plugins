@@ -16,7 +16,6 @@ class GoCoverOutSingleDiscoveryTest : QodanaCoverageDiscoveryTest("GoCoverageIns
   override val projectDirName: String = "example.com/cover-single"
 
   override fun reportPlacements(testName: String): List<ReportLocation> = when (testName) {
-    // primary names (coverage.out / cover.out) across every documented primary directory
     "coverageOut" -> listOf(ReportLocation("report.out", "coverage.out"))
     "coverOut" -> listOf(ReportLocation("report.out", "cover.out"))
     "coverageSubdir" -> listOf(ReportLocation("report.out", "coverage/coverage.out"))
@@ -27,7 +26,6 @@ class GoCoverOutSingleDiscoveryTest : QodanaCoverageDiscoveryTest("GoCoverageIns
     "artifactsDir" -> listOf(ReportLocation("report.out", "artifacts/coverage.out"))
     "binDir" -> listOf(ReportLocation("report.out", "bin/coverage.out"))
     "targetDir" -> listOf(ReportLocation("report.out", "target/coverage.out"))
-    // secondary names at the project root
     "cOut" -> listOf(ReportLocation("report.out", "c.out"))
     "profileTxt" -> listOf(ReportLocation("report.out", "profile.txt"))
     "coverageTxt" -> listOf(ReportLocation("report.out", "coverage.txt"))

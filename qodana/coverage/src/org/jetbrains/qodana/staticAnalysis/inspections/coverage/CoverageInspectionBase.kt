@@ -174,6 +174,7 @@ abstract class CoverageInspectionBase : GlobalSimpleInspectionTool() {
       lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         // files stored in .qodana/code-coverage or in directory specified via system variable
         val files = explicitCoverageFiles(globalContext)
+          // files found via discovery in common locations
           .ifEmpty { coverageFileProvider.getCoverageFiles(globalContext.project) }
         reportCollectedReports(globalContext, coverageFileProvider.engineType, files)
         files
