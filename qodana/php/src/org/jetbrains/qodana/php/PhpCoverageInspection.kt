@@ -39,7 +39,7 @@ internal class PhpCoverageInspection : CoverageInspectionBase() {
 
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(phpunit, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      computeCoverageData(globalContext, PhpUnitCoverageEngine::class, PhpCoverageFileProvider())?.let {
+      computeCoverageData(globalContext, PhpUnitCoverageEngine::class, PhpCoverageFileProvider)?.let {
         remapCoverage(globalContext.project, it)
       }?.also { loadNormalizedPaths(globalContext, it) }
     })

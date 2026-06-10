@@ -33,7 +33,7 @@ class PyCoverageInspection : CoverageInspectionBase() {
 
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(py, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      computeCoverageData(globalContext, PyCoverageEngine::class, PyCoverageFileProvider())?.let {
+      computeCoverageData(globalContext, PyCoverageEngine::class, PyCoverageFileProvider)?.let {
         remapCoverage(globalContext.project, it)
       }?.also { loadNormalizedPaths(globalContext, it) }
     })

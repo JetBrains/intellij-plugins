@@ -43,7 +43,7 @@ class GoCoverageInspection : CoverageInspectionBase() {
 
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(go, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      val data = computeCoverageData(globalContext, GoCoverageEngine::class, GoCoverageFileProvider()) ?: return@lazy null
+      val data = computeCoverageData(globalContext, GoCoverageEngine::class, GoCoverageFileProvider) ?: return@lazy null
       // Store GoProjectData for later serialisation of Go coverage data for IDE
       (data as? GoCoverageProjectData)?.let { globalContext.putUserData(goProjectData, it) }
       remapCoverage(globalContext.project, data).also { loadNormalizedPaths(globalContext, it) }

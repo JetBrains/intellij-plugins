@@ -72,7 +72,7 @@ class JvmCoverageInspection : CoverageInspectionBase() {
 
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(javacov, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      computeCoverageData(globalContext, JavaCoverageEngine::class, JvmIcCoverageFileProvider())
+      computeCoverageData(globalContext, JavaCoverageEngine::class, JvmIcCoverageFileProvider)
     })
     globalContext.putUserData(xmlcov, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
       val data = computeXmlCoverageData(globalContext, XMLReportEngine::class)
@@ -346,7 +346,7 @@ class JvmCoverageInspection : CoverageInspectionBase() {
     globalContext: QodanaGlobalInspectionContext,
     engineType: KClass<out CoverageEngine>,
   ): XMLProjectData? {
-    val coverageFiles = provideCoverageFilesWithDiscovery(globalContext, JvmXmlCoverageFileProvider())
+    val coverageFiles = provideCoverageFilesWithDiscovery(globalContext, JvmXmlCoverageFileProvider)
     logger.info("Coverage for ${engineType.java.simpleName} - provided ${coverageFiles.size} files")
     if (coverageFiles.isEmpty()) return null
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(engineType.java)

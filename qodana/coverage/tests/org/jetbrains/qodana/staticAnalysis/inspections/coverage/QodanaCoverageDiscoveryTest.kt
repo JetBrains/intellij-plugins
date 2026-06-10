@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 
+import com.intellij.openapi.observable.util.whenDisposed
 import com.intellij.openapi.util.io.NioFiles
 import com.intellij.testFramework.RunAll
 import com.intellij.util.ThrowableRunnable
@@ -25,15 +26,14 @@ abstract class QodanaCoverageDiscoveryTest(inspection: String) : QodanaCoverageI
    */
   protected abstract fun reportPlacements(testName: String): List<ReportLocation>
 
-  private var tempRoot: Path? = null
-
   /**
    * Sub-path under the temp root at which the project fixture is laid out
    */
   protected open val projectDirName: String get() = "project"
 
   override fun getProjectSourcesPath(): Path {
-    val root = Files.createTempDirectory("qodanaCoverageDiscovery").also { tempRoot = it }
+    val root = Files.createTempDirectory("qodanaCoverageDiscovery")
+    testRootDisposable.whenDisposed { NioFiles.deleteRecursively(root) }
     val projectFixture = testData.resolve(testDataBasePath).resolve("project")
     val target = root.resolve(projectDirName)
     target.parent?.createDirectories()
@@ -50,14 +50,6 @@ abstract class QodanaCoverageDiscoveryTest(inspection: String) : QodanaCoverageI
   protected fun runDiscovery() {
     runUnderCoverDataInSources()
     assertSarifResults()
-  }
-
-  override fun tearDown() {
-    val root = tempRoot
-    RunAll(
-      ThrowableRunnable { super.tearDown() },
-      ThrowableRunnable { if (root != null) NioFiles.deleteRecursively(root) },
-    ).run()
   }
 
   data class ReportLocation(

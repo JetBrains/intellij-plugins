@@ -7,7 +7,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.readReportHead
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.xmlRootElement
 import java.nio.file.Path
 
-internal class JvmXmlCoverageFileProvider : BaseQodanaCoverageFileProvider() {
+internal object JvmXmlCoverageFileProvider : BaseQodanaCoverageFileProvider() {
   override val engineType: CoverageEngineType = CoverageEngineType.XMLReportEngine
 
   override val canonicalExtension: String = "xml"
