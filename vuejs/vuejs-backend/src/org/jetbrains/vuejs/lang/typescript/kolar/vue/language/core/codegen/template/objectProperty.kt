@@ -12,6 +12,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRegex
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
 
 fun generateObjectProperty(
   options: TemplateCodegenOptions,
@@ -60,8 +61,3 @@ fun generateObjectProperty(
     }
   }
 }
-
-private fun camelize(code: String): String =
-  code.splitToSequence('-')
-    .mapIndexed { i, s -> if (i == 0) s else s.replaceFirstChar { it.uppercaseChar() } }
-    .joinToString("")
