@@ -125,7 +125,7 @@ class CoverageStatisticsData(val coverageComputationState: QodanaCoverageComputa
 
   fun getChangedRanges(virtualFileUrl: String) = changedRanges.getOrDefault(virtualFileUrl, null)
 
-  fun exposeChangedRanges(): Map<String, Set<Int>>? = changedRanges.takeIf { it.isNotEmpty() }
+  fun exposeChangedRanges(): Map<String, Set<Int>>? = changedRanges.takeIf { it.isNotEmpty() }?.toMap()
 }
 
 enum class QodanaCoverageComputationState {

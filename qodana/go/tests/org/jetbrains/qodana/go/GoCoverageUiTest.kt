@@ -1,14 +1,20 @@
 package org.jetbrains.qodana.go
 
 import com.goide.execution.testing.coverage.GoCoverageEngine
+import com.goide.execution.testing.coverage.GoCoverageProjectData
 import com.intellij.coverage.view.CoverageViewManager
+import com.intellij.openapi.project.guessProjectDir
 import com.intellij.rt.coverage.data.LineCoverage
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.coverage.CHANGED_LINES_ARTIFACT_ID
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageUiTestBase
 import org.junit.Test
+import kotlin.io.path.absolute
+import kotlin.io.path.pathString
 
-class GoCoverageUiTest : QodanaCoverageUiTestBase("GoCoverageInspectionTest") {
+private const val SOURCE_CLASS = "GoCoverageInspectionTest"
+
+class GoCoverageUiTest : QodanaCoverageUiTestBase(SOURCE_CLASS) {
 
   @Test
   fun loadsRegularCoverageReport(): Unit = runBlocking {
@@ -120,8 +126,29 @@ class GoCoverageUiTest : QodanaCoverageUiTestBase("GoCoverageInspectionTest") {
       "not_reported.go should not be highlighted",
       gutterCoverage("not_reported.go").isNullOrEmpty()
     )
+
+    (bundle.coverageData as? GoCoverageProjectData)?.apply {
+      val fileToHits = mutableMapOf<String, Long>()
+      processFiles { fileData ->
+        fileData.myRangesData.forEach { rangeData ->
+          val newValue = fileToHits.getOrPut(fileData.myFilePath) { 0L } + rangeData.value.hits
+          fileToHits[fileData.myFilePath] = newValue
+        }
+        true
+      }
+      val coveredFile = project.guessProjectDir()?.findFileByRelativePath("coverage.go")?.toNioPath()?.absolute()?.pathString
+      assertNotNull(coveredFile)
+      assertTrue("Only three hits overall should in coverage.go stay after filtering", fileToHits[coveredFile!!] == 3L)
+      assertTrue("Only one file should contain hits", fileToHits.size == 1)
+    }
   }
 
-  private fun goProjectDataArtifact(scenario: String): GoCoverageProjectDataArtifact =
-    GoCoverageProjectDataArtifact(GO_PROJECT_DATA, copyArtifactToTemp(scenario, GO_PROJECT_DATA_FILE_NAME))
+  private fun goProjectDataArtifact(scenario: String): GoCoverageProjectDataArtifact {
+    val golden = testData
+      .resolve(SOURCE_CLASS)
+      .resolve(scenario)
+      .resolve("artifacts")
+      .resolve(GO_PROJECT_DATA_FILE_NAME)
+    return GoCoverageProjectDataArtifact(GO_PROJECT_DATA, golden)
+  }
 }

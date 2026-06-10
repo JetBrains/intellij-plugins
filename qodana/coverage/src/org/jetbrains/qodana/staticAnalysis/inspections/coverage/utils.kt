@@ -158,6 +158,7 @@ fun remapCoverageFromCloud(suite: CoverageSuite, rawData: ProjectData, artifacts
   val filtered = (artifacts["changedLines"] as? ChangedLinesMetaDataArtifact)
                    ?.let { filterByChangedLines(remapped, it, projectDir) }
                  ?: remapped
+  suite.setCoverageData(filtered)
   return QodanaCoverageBundle(suite, filtered)
 }
 

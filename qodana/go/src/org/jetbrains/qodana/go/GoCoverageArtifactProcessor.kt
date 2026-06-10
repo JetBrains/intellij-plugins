@@ -38,10 +38,6 @@ class GoCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
     return null
   }
 
-  /**
-   * Rebuild a [GoCoverageProjectData] from the already remapped/filtered [lineData]
-   * plus the per-range statements/hits read from the [artifact], remapped back to absolute IDE paths.
-   */
   private fun buildGoCoverageProjectData(
     project: Project,
     lineData: ProjectData,
@@ -50,19 +46,39 @@ class GoCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
     val goData = GoCoverageProjectData()
     // Files that still carry live line data; in incremental runs remapCoverageFromCloud nulls out the lines of files
     // outside the changed set, and we must mirror that pruning for the ranges so the coverage tree stays consistent.
-    val filesWithLines = HashSet<String>()
+    val fileLineData = mutableMapOf<String, Map<Int, LineData?>>()
     lineData.classes.forEach { (name, classData) ->
       @Suppress("UNCHECKED_CAST")
       val lines = classData.lines as Array<LineData?>
       goData.getOrCreateClassData(name).setLines(lines)
-      if (lines.any { it != null }) filesWithLines.add(name)
+      // lines are 1-based
+      fileLineData[name] = lines.indices.associateWith { line -> lines[line] }
     }
+
     val projectDir = project.guessProjectDir()
     for ((relative, ranges) in readGoCoverageProjectData(artifact.path)) {
       val absolute = projectDir?.findFileByRelativePath(FileUtil.toSystemIndependentName(relative))?.path ?: continue
-      if (absolute !in filesWithLines) continue
+      val lineMap = fileLineData[absolute] ?: continue
+
       for (range in ranges) {
-        goData.addData(absolute, range.startLine, range.startColumn, range.endLine, range.endColumn, range.statements, range.hits)
+        // Clip to lines present in lineData
+        val clippedStart = maxOf(range.startLine, lineMap.keys.minOrNull() ?: continue)
+        val clippedEnd = minOf(range.endLine, lineMap.keys.maxOrNull() ?: continue)
+
+        if (clippedStart <= clippedEnd) {
+          // Use actual hits from LineData for covered lines in this range
+          val hits = (clippedStart..clippedEnd).sumOf { lineNum ->
+            lineMap[lineNum]?.hits ?: 0
+          }.toLong()
+
+          goData.addData(
+            absolute, clippedStart,
+            if (clippedStart == range.startLine) range.startColumn else 0,
+            clippedEnd,
+            if (clippedEnd == range.endLine) range.endColumn else Int.MAX_VALUE,
+            range.statements, hits
+          )
+        }
       }
     }
     return goData

@@ -117,7 +117,6 @@ abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleT
       return
     }
     assertNotNull("Changed-lines artifact was not produced", payload)
-    // Map and Set equality is order-insensitive, so this asserts the exact same content regardless of ordering.
     assertEquals(expected, payload!!.files)
   }
 

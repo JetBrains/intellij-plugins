@@ -14,9 +14,11 @@ import org.jetbrains.qodana.report.ReportMetadataArtifactProvider
 import org.jetbrains.qodana.staticAnalysis.inspections.config.COVERAGE_OUTPUT_DIR
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 const val CHANGED_LINES_ARTIFACT_ID: String = "changedLines"
-const val CHANGED_LINES_FILE_NAME: String = "changedLines"
+const val CHANGED_LINES_FILE_NAME: String = "changedLines.json"
 
 private val LOG = logger<ChangedLinesReportMetadataArtifact>()
 
@@ -85,10 +87,6 @@ fun writeChangedLinesArtifact(coveragePath: Path, payload: ChangedLinesArtifactP
   }
 }
 
-/**
- * Read a previously written sidecar. Returns null when the file is missing or malformed — callers must
- * treat that as "no filtering" rather than an error.
- */
 @OptIn(ExperimentalSerializationApi::class)
 fun readChangedLinesPayload(path: Path): ChangedLinesArtifactPayload? {
   if (!Files.isRegularFile(path)) return null

@@ -55,7 +55,6 @@ import org.jetbrains.qodana.report.NotificationCallback
 import org.jetbrains.qodana.report.ReportDescriptor
 import org.jetbrains.qodana.report.ReportMetadata
 import org.jetbrains.qodana.report.ValidatedSarif
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.time.Duration.Companion.seconds
@@ -92,20 +91,13 @@ abstract class QodanaCoverageUiTestBase(private val sourceClass: String) : JavaM
    * and wrap it as a [CoverageMetaDataArtifact] keyed by [key].
    */
   protected fun coverageArtifact(scenario: String, fileName: String, key: String): CoverageMetaDataArtifact {
-    return CoverageMetaDataArtifact(key, copyArtifactToTemp(scenario, fileName).toFile())
+    val golden = testData.resolve(sourceClass).resolve(scenario).resolve("artifacts").resolve(fileName)
+    return CoverageMetaDataArtifact(key, golden.toFile())
   }
 
   protected fun changedLinesArtifact(scenario: String): ChangedLinesMetaDataArtifact {
-    return ChangedLinesMetaDataArtifact(CHANGED_LINES_ARTIFACT_ID, copyArtifactToTemp(scenario, CHANGED_LINES_FILE_NAME))
-  }
-
-  protected fun copyArtifactToTemp(scenario: String, fileName: String): Path {
-    val golden = testData.resolve(sourceClass).resolve(scenario).resolve("artifacts").resolve(fileName)
-    assertTrue("Missing coverage fixture: $golden", Files.isRegularFile(golden))
-    val tempDir = Files.createTempDirectory("qodana-coverage-ui")
-    val target = tempDir.resolve(fileName)
-    Files.copy(golden, target)
-    return target
+    val golden = testData.resolve(sourceClass).resolve(scenario).resolve("artifacts").resolve(CHANGED_LINES_FILE_NAME)
+    return ChangedLinesMetaDataArtifact(CHANGED_LINES_ARTIFACT_ID, golden)
   }
 
   protected suspend fun highlightCoverageReport(metadata: Map<String, ReportMetadata>) {
@@ -152,7 +144,7 @@ abstract class QodanaCoverageUiTestBase(private val sourceClass: String) : JavaM
     CoverageViewManager.getInstance(project).stateBean.isShowOnlyModified = false
     val structure = CoverageViewTreeStructure(project, bundle)
     return withContext(Dispatchers.EDT) {
-      val disposable = Disposer.newDisposable()
+      val disposable = Disposer.newDisposable(testRootDisposable)
       try {
         val model = StructureTreeModel(structure, null, Invoker.forEventDispatchThread(disposable), disposable)
         val tree = writeIntentReadAction { javax.swing.JTree(model) }
@@ -165,11 +157,11 @@ abstract class QodanaCoverageUiTestBase(private val sourceClass: String) : JavaM
     }
   }
 
-  /** Absolute path of the opened project's base dir (where the reused `sources` were loaded from). */
-  protected fun projectBasePath(): String = project.guessProjectDir()!!.path
+  protected fun projectBasePath(): String = project.guessProjectDir()?.path ?: throw IllegalStateException("Project base path is not found")
 
   private fun projectFile(relativePath: String): VirtualFile =
-    project.guessProjectDir()!!.findFileByRelativePath(relativePath)!!
+    project.guessProjectDir()?.findFileByRelativePath(relativePath)
+    ?: throw IllegalStateException("Project file $relativePath not found")
 
   private fun coverageOf(highlighter: RangeHighlighter): Byte =
     when ((highlighter.lineMarkerRenderer as FillingLineMarkerRenderer).getTextAttributesKey()) {
