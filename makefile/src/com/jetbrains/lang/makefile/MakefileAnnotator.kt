@@ -31,6 +31,7 @@ class MakefileAnnotator : Annotator, DumbAware {
   private val lineTokenSet = TokenSet.create(MakefileTypes.IDENTIFIER)
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+    if (holder.isBatchMode()) return
     if (element is MakefileTarget && !(element.parent.parent.parent as MakefileRule).isUnused()) {
       holder.mark(element, if (element.isSpecialTarget) SPECIAL_TARGET else TARGET)
     } else if (element is MakefilePrerequisite) {
