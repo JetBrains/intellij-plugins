@@ -15,6 +15,7 @@ abstract class PpHighlightAnnotator : Annotator, DumbAware {
   protected abstract val inactiveAttribute: TextAttributesKey
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+    if (holder.isBatchMode()) return
     if (element.elementType == tokenTypes.inactive) {
       holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(inactiveAttribute).create()
     }
