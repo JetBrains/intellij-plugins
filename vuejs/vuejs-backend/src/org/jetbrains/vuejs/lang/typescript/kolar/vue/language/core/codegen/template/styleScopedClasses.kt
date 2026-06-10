@@ -12,11 +12,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateEscaped
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
-import java.util.WeakHashMap
 
 private val classNameEscapeRegex = Regex("""([\\'])""")
-
-val references: WeakHashMap<IRBlock, Pair<String, MutableList<Pair<String, Int>>>> = WeakHashMap()
 
 fun generateStyleScopedClassReference(
   block: IRBlock,
@@ -29,16 +26,6 @@ fun generateStyleScopedClassReference(
     yield(DataSegment(text = "", source = block.name, sourceOffset = offset, data = codeFeatures.completion))
     yield("']} */$endOfLine")
     return@sequence
-  }
-
-  val cache = references[block]
-  if (cache == null || cache.first != block.content) {
-    val arr = mutableListOf<Pair<String, Int>>()
-    references[block] = Pair(block.content, arr)
-    arr.add(Pair(className, offset))
-  }
-  else {
-    cache.second.add(Pair(className, offset))
   }
 
   yield("/** @type {${names.StyleScopedClasses}[")
