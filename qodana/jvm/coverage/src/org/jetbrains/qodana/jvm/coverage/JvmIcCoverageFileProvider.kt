@@ -6,7 +6,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.BaseQodanaCovera
 import java.nio.file.Path
 
 
-class JvmIcCoverageFileProvider : BaseQodanaCoverageFileProvider() {
+internal object JvmIcCoverageFileProvider : BaseQodanaCoverageFileProvider() {
   override val engineType: CoverageEngineType = CoverageEngineType.JavaCoverageEngine
 
   override val canonicalExtension: String = "ic"

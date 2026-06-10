@@ -8,7 +8,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.xmlRootElement
 import java.nio.file.Path
 
 
-class PhpCoverageFileProvider : BaseQodanaCoverageFileProvider() {
+internal object PhpCoverageFileProvider : BaseQodanaCoverageFileProvider() {
   override val engineType: CoverageEngineType = CoverageEngineType.PhpUnitCoverageEngine
 
   override val canonicalExtension: String = "xml"

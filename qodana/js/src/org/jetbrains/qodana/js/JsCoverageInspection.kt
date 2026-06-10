@@ -42,7 +42,7 @@ internal class JsCoverageInspection : CoverageInspectionBase() {
 
     override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(jest, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      computeCoverageData(globalContext, JestCoverageEngine::class, JsCoverageFileProvider())?.let {
+      computeCoverageData(globalContext, JestCoverageEngine::class, JsCoverageFileProvider)?.let {
         remapCoverage(globalContext.project, it)
       }?.also { loadNormalizedPaths(globalContext, it) }
     })

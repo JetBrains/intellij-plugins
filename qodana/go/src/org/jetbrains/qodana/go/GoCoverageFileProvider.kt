@@ -9,7 +9,7 @@ import java.nio.file.Path
 import kotlin.io.path.useLines
 
 
-class GoCoverageFileProvider : BaseQodanaCoverageFileProvider() {
+internal object GoCoverageFileProvider : BaseQodanaCoverageFileProvider() {
   override val engineType: CoverageEngineType = CoverageEngineType.GoCoverageEngine
 
   override val canonicalExtension: String = "out"

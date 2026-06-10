@@ -6,7 +6,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.BaseQodanaCovera
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.isLcovReport
 import java.nio.file.Path
 
-class JsCoverageFileProvider : BaseQodanaCoverageFileProvider() {
+internal object JsCoverageFileProvider : BaseQodanaCoverageFileProvider() {
   override val engineType: CoverageEngineType = CoverageEngineType.JestCoverageEngine
 
   override val canonicalExtension: String = "info"
