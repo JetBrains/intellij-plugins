@@ -146,7 +146,7 @@ private suspend fun reconstructProblems(results: List<Result>,
                                         uri: String,
                                         projectDir: VirtualFile?,
                                         runContext: QodanaRunContext,
-                                        cleanup: Boolean): List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>> {
+                                        cleanup: Boolean): List<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>> {
   val inspections = results.map { it.ruleId }.toSet()
   val file = VfsUtil.findRelativeFile(uri, projectDir) ?: return emptyList()
   val psiFile = readAction { PsiManager.getInstance(runContext.project).findFile(file) } ?: return emptyList()
@@ -163,7 +163,7 @@ private suspend fun reconstructProblems(results: List<Result>,
 
   val globalSimpleToolWrappers = toolWrappersEnabled.filter { it.tool is GlobalSimpleInspectionTool }
 
-  val problems = mutableListOf<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>>()
+  val problems = mutableListOf<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>>()
 
   val localProblems = readActionBlocking {
     InspectionEngine.inspectEx(
@@ -188,7 +188,7 @@ private suspend fun reconstructProblems(results: List<Result>,
 
 private suspend fun inspectGlobalSimpleTools(globalToolWrappers: List<InspectionToolWrapper<*, *>>,
                                              project: Project,
-                                             psiFile: PsiFile): List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>> {
+                                             psiFile: PsiFile): List<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>> {
   if (globalToolWrappers.isEmpty()) return emptyList()
 
   val managerEx = InspectionManagerEx.getInstance(project)
@@ -207,7 +207,7 @@ private suspend fun inspectGlobalSimpleTools(globalToolWrappers: List<Inspection
 
 private suspend fun applyCleanup(
   runContext: QodanaRunContext,
-  problems: List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>>,
+  problems: List<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>>,
   uri: String,
   fixesLogger: FixesLogger
 ): Int {
@@ -247,7 +247,7 @@ private suspend fun applyCleanup(
 
 private suspend fun applyOther(
   runContext: QodanaRunContext,
-  problems: List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>>,
+  problems: List<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>>,
   uri: String,
   fixesLogger: FixesLogger
 ): Int {
@@ -266,7 +266,7 @@ private suspend fun applyOther(
 
 private fun fixProblems(
   runContext: QodanaRunContext,
-  problems: List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>>,
+  problems: List<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>>,
   uri: String,
   fixesLogger: FixesLogger
 ): Int {

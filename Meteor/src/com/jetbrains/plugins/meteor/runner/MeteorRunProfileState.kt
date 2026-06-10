@@ -30,7 +30,8 @@ internal class MeteorRunProfileState(configuration: MeteorRunConfiguration, envi
   }
 
   private fun configureDebugArg(commandLine: GeneralCommandLine, debugPort: Int) {
-    val commandLineParameters = commandLine.parametersList.parameters
+    val parametersList = commandLine.parametersList
+    val commandLineParameters = parametersList.parameters
 
     val indexOfInspect = commandLineParameters.indexOf(NodeCommandLineUtil.INSPECT)
     if (indexOfInspect >= 0) {
@@ -40,20 +41,20 @@ internal class MeteorRunProfileState(configuration: MeteorRunConfiguration, envi
 
     val indexOfInspectBrk = commandLineParameters.indexOf(NodeCommandLineUtil.INSPECT_BRK)
     if (indexOfInspectBrk >= 0) {
-      commandLineParameters[indexOfInspectBrk] = NodeCommandLineUtil.INSPECT_BRK_EQ + debugPort
+      parametersList[indexOfInspectBrk] = NodeCommandLineUtil.INSPECT_BRK_EQ + debugPort
       return
     }
 
     val indexOfDebug = commandLineParameters.indexOf(NodeCommandLineUtil.DEBUG)
     if (indexOfDebug >= 0) {
-      commandLineParameters.removeAt(indexOfDebug)
+      parametersList.removeAt(indexOfDebug)
       commandLine.environment.put("NODE_OPTIONS", NodeCommandLineUtil.DEBUG_EQ + debugPort)
       return
     }
 
     val indexOfDebugBrk = commandLineParameters.indexOf(NodeCommandLineUtil.DEBUG_BRK)
     if (indexOfDebugBrk >= 0) {
-      commandLineParameters.removeAt(indexOfDebugBrk)
+      parametersList.removeAt(indexOfDebugBrk)
       commandLine.environment.put("NODE_OPTIONS", NodeCommandLineUtil.DEBUG_BRK_EQ + debugPort)
       return
     }
