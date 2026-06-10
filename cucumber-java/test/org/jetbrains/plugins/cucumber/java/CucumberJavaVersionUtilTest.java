@@ -5,8 +5,8 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 public class CucumberJavaVersionUtilTest extends BasePlatformTestCase {
-  public void testCucumber_4_5_VersionDetection() {
-    assertEquals("4.5", CucumberJavaVersionUtil.getCucumberCoreVersion(getModule(), getProject()));
+  public void testCucumber_4_8_VersionDetection() {
+    assertEquals("4.8", CucumberJavaVersionUtil.getCucumberCoreVersion(getModule(), getProject()));
   }
 
   public void testCucumber_3_0_VersionDetection() {
@@ -29,6 +29,6 @@ public class CucumberJavaVersionUtilTest extends BasePlatformTestCase {
       return CucumberJavaTestUtil.createCucumber1ProjectDescriptor();
     }
 
-    return CucumberJavaTestUtil.createCucumber4_5ProjectDescriptor();
+    return CucumberJavaTestUtil.createCucumber4_8ProjectDescriptor();
   }
 }

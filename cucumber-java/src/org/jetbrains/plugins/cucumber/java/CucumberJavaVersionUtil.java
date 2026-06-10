@@ -26,6 +26,7 @@ public final class CucumberJavaVersionUtil {
   public static final String CUCUMBER_CORE_VERSION_7 = "7";
   public static final String CUCUMBER_CORE_VERSION_6 = "6";
   public static final String CUCUMBER_CORE_VERSION_5 = "5";
+  public static final String CUCUMBER_CORE_VERSION_4_8 = "4.8";
   public static final String CUCUMBER_CORE_VERSION_4_5 = "4.5";
   public static final String CUCUMBER_CORE_VERSION_4 = "4";
   public static final String CUCUMBER_CORE_VERSION_3 = "3";
@@ -46,6 +47,7 @@ public final class CucumberJavaVersionUtil {
     VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.core.backend.SourceReference", CUCUMBER_CORE_VERSION_7));
     VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.core.exception.ExceptionUtils", CUCUMBER_CORE_VERSION_6));
     VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.plugin.event.EventHandler", CUCUMBER_CORE_VERSION_5));
+    VERSION_CLASS_MARKERS.add(Pair.create("cucumber.runtime.formatter.UndefinedStepsPrinter", CUCUMBER_CORE_VERSION_4_8));
     VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.core.cli.Main", CUCUMBER_CORE_VERSION_4_5));
     VERSION_CLASS_MARKERS.add(Pair.create("cucumber.api.event.ConcurrentEventListener", CUCUMBER_CORE_VERSION_4));
     VERSION_CLASS_MARKERS.add(Pair.create("cucumber.runner.TestCase", CUCUMBER_CORE_VERSION_3));

@@ -4,14 +4,14 @@ package org.jetbrains.plugins.cucumber.java.resolve;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-public class CucumberJava4_5ResolveTest extends BaseCucumberJavaResolveTest {
+public class CucumberJava4_8ResolveTest extends BaseCucumberJavaResolveTest {
   public void testHighlightingOK() {
     init("stepResolve_01");
     myFixture.testHighlighting("ShoppingStepdefs.java");
   }
 
   public void testResolveToNewAnnotation() {
-    init("stepResolve_cucumber_4_5");
+    init("stepResolve_cucumber_4_8");
     checkReference("my step<caret> definition", "my_step_definition");
   }
 
@@ -21,17 +21,17 @@ public class CucumberJava4_5ResolveTest extends BaseCucumberJavaResolveTest {
   }
 
   public void testResolveToJava8StepDefinitions() {
-    init("stepResolve_cucumber_4_5");
+    init("stepResolve_cucumber_4_8");
     checkReference("my jav<caret>a8 step", "Given");
   }
 
   public void testResolveEnumParameterType() {
-    init("stepResolve_cucumber_4_5");
+    init("stepResolve_cucumber_4_8");
     checkReference("smth w<caret>ith ONE", "smthWithMyEnum");
   }
 
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumber4_5ProjectDescriptor();
+    return CucumberJavaTestUtil.createCucumber4_8ProjectDescriptor();
   }
 }

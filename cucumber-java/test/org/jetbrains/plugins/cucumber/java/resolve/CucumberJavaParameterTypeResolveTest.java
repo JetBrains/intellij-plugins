@@ -37,7 +37,7 @@ public class CucumberJavaParameterTypeResolveTest extends BaseCucumberJavaResolv
 
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumber4_5ProjectDescriptor();
+    return CucumberJavaTestUtil.createCucumber4_8ProjectDescriptor();
   }
 
   @Nullable
