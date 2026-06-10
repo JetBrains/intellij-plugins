@@ -35,3 +35,14 @@ interface ForNode : Node {
   val parseResult: ForParseResult
   val children: List<Node>
 }
+
+// CompilerDOM.IfBranchNode
+interface IfBranchNode : Node {
+  val condition: Node?
+  val children: List<Node>
+}
+
+// CompilerDOM.IfNode
+interface IfNode : Node {
+  val branches: List<IfBranchNode>
+}
