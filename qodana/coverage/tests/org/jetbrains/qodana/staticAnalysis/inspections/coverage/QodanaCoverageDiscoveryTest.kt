@@ -2,8 +2,6 @@ package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 
 import com.intellij.openapi.observable.util.whenDisposed
 import com.intellij.openapi.util.io.NioFiles
-import com.intellij.testFramework.RunAll
-import com.intellij.util.ThrowableRunnable
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
