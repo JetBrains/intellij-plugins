@@ -5,6 +5,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.js.symbol.Symbol
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.capitalize
 
 fun generateCamelized(
   code: String,
@@ -28,7 +29,7 @@ fun generateCamelized(
       }
       else {
         yield(DataSegment(
-          text = part.replaceFirstChar { it.uppercaseChar() },
+          text = capitalize(part),
           source = source,
           sourceOffset = currentOffset,
           data = VueCodeInformation(__combineToken = combineToken),
