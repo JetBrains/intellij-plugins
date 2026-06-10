@@ -5,8 +5,5 @@ fun <T> toString(
   segments: List<Segment<T>>,
 ): String =
   segments.joinToString("") { segment ->
-    when (segment) {
-      is StringSegment -> segment.text
-      is DataSegment -> segment.text
-    }
+    segment.text
   }
