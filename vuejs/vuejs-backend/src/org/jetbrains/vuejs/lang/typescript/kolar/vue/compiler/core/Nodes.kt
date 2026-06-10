@@ -98,3 +98,18 @@ interface IfBranchNode : Node {
 interface IfNode : Node {
   val branches: List<IfBranchNode>
 }
+
+// CompilerDOM.RootNode
+interface RootNode : Node {
+  val children: List<Node>
+}
+
+// CompilerDOM.InterpolationNode
+interface InterpolationNode : Node {
+  val content: SimpleExpressionNode
+}
+
+// CompilerDOM.CompoundExpressionNode
+interface CompoundExpressionNode : Node {
+  val children: List<Any>
+}
