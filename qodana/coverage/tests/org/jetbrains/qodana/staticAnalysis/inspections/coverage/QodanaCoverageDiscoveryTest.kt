@@ -47,7 +47,6 @@ abstract class QodanaCoverageDiscoveryTest(inspection: String) : QodanaCoverageI
     return projectRoot
   }
 
-  /** Runs the inspection with discovery enabled (no `COVERAGE_DATA`) and compares against the golden SARIF. */
   protected fun runDiscovery() {
     runUnderCoverDataInSources()
     assertSarifResults()
