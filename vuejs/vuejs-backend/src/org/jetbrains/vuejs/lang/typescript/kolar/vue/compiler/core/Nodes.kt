@@ -14,8 +14,15 @@ data class CommentNode(
   override val loc: SourceLocation,
 ) : Node
 
+// CompilerDOM.TextNode
+interface TextNode : Node {
+  val content: String
+}
+
 // CompilerDOM.ElementNode (minimal — full definition to be added when element.ts is converted)
 interface ElementNode : Node {
+  val tag: String
+  val isSelfClosing: Boolean
   val children: List<Node>
   val props: List<Node>
 }
