@@ -21,6 +21,7 @@ final class TslAnnotator implements Annotator {
 
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+    if (holder.isBatchMode()) return;
     if (element instanceof TslPropertyKey) {
       holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
           .textAttributes(TslSyntaxHighlighter.TSL_FIELD_NAME)
