@@ -129,7 +129,10 @@ private fun collectSingleRootNodes(
   }
 }
 
-fun parseInterpolationNode(node: InterpolationNode, template: String): Pair<String, Int> {
+private fun parseInterpolationNode(
+  node: InterpolationNode,
+  template: String,
+): Pair<String, Int> {
   var start = node.content.loc.start.offset
   var end = node.content.loc.end.offset
 
