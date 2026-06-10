@@ -16,3 +16,22 @@ data class CommentNode(
 
 // CompilerDOM.ElementNode (minimal — full definition to be added when element.ts is converted)
 interface ElementNode : Node
+
+// CompilerDOM.SimpleExpressionNode
+interface SimpleExpressionNode : Node {
+  val content: String
+}
+
+// CompilerDOM.ForParseResult
+data class ForParseResult(
+  val source: SimpleExpressionNode,
+  val value: Node?,
+  val key: Node?,
+  val index: Node?,
+)
+
+// CompilerDOM.ForNode
+interface ForNode : Node {
+  val parseResult: ForParseResult
+  val children: List<Node>
+}
