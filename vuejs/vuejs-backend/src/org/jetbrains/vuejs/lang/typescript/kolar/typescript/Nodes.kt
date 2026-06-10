@@ -43,7 +43,9 @@ interface Statement : Node
 
 interface EmptyStatement : Statement
 
-interface ExpressionStatement : Statement
+interface ExpressionStatement : Statement {
+  val expression: Node
+}
 
 interface VariableStatement : Statement
 

@@ -4,4 +4,5 @@ package org.jetbrains.vuejs.lang.typescript.kolar.typescript
 interface SourceFile : Node {
   val text: String
   val parseDiagnostics: List<DiagnosticWithLocation>
+  val statements: List<Node>
 }
