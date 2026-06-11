@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.script
 
 import org.jetbrains.vuejs.config.VueCompilerOptions
+import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.path.browserify.dirname
 import org.jetbrains.vuejs.lang.typescript.kolar.path.browserify.isAbsolute
@@ -64,8 +65,7 @@ private fun generateWorker(
     else
       codeFeatures.all
     yield("import ${names.src} from ")
-    val (boundaryCode, token) = startBoundary(script.name, scriptSrc.offset, features)
-    yield(boundaryCode)
+    val token = yield(startBoundary(script.name, scriptSrc.offset, features))
     yield("'")
     yield(DataSegment(
       text = src.substring(0, scriptSrc.text.length),
@@ -256,8 +256,7 @@ private fun generateExportDeclareEqual(
   name: String,
 ): Sequence<Code> = sequence {
   yield("const ")
-  val (boundaryCode, token) = startBoundary(block.name, 0, codeFeatures.doNotReportTs6133)
-  yield(boundaryCode)
+  val token = yield(startBoundary(block.name, 0, codeFeatures.doNotReportTs6133))
   yield(name)
   yield(endBoundary(token, block.content.length))
   yield(" = ")

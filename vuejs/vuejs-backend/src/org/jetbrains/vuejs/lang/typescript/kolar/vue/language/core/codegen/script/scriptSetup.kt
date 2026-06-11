@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.script
 
+import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRAttr
@@ -254,8 +255,7 @@ fun generateSetupFunction(
       transforms.add(insert(useCssModule.callExp.end) {
         sequence {
           yield(" as ${type}[")
-          val (boundaryCode, token) = startBoundary(scriptSetup.name, useCssModule.exp.start, codeFeatures.verification)
-          yield(boundaryCode)
+          val token = yield(startBoundary(scriptSetup.name, useCssModule.exp.start, codeFeatures.verification))
           yield("'\$style'")
           yield(endBoundary(token, useCssModule.exp.end))
           yield("])")
