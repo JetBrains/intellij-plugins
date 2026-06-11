@@ -2,6 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 
 import com.intellij.openapi.observable.util.whenDisposed
 import com.intellij.openapi.util.io.NioFiles
+import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_DATA
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
@@ -46,8 +47,14 @@ abstract class QodanaCoverageDiscoveryTest(inspection: String) : QodanaCoverageI
   }
 
   protected fun runDiscovery() {
-    runUnderCoverDataInSources()
-    assertSarifResults()
+    val preciousCoverageDataValue = System.getProperty(COVERAGE_DATA)
+    try {
+      System.clearProperty(COVERAGE_DATA)
+      runUnderCoverDataInSources()
+      assertSarifResults()
+    } finally {
+        preciousCoverageDataValue?.let { System.setProperty(COVERAGE_DATA, it) } ?: System.clearProperty(COVERAGE_DATA)
+    }
   }
 
   data class ReportLocation(
