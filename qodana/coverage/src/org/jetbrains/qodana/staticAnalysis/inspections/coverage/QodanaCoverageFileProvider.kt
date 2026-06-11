@@ -98,7 +98,7 @@ private fun anchorRoots(project: Project): List<Path> =
       .toList()
   }
 
-private const val GLOBSTAR_MAX_DEPTH = 5
+private const val GLOBSTAR_MAX_DEPTH = 2
 
 private fun expandDir(root: Path, dir: String): List<Path> {
   if (dir.isEmpty() || dir == ".") return listOf(root)

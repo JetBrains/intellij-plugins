@@ -9,7 +9,7 @@ class AndroidAgpCoverageSingleDiscoveryTest : JvmCoverageDiscoveryTest("JvmCover
     "unitDebug" -> listOf(ReportLocation("report.xml", "build/reports/coverage/test/debug/report.xml"))
     "androidDebug" -> listOf(ReportLocation("report.xml", "build/reports/coverage/androidTest/debug/report.xml"))
     "unitFlavorDebug" -> listOf(ReportLocation("report.xml", "build/reports/coverage/test/foss/debug/report.xml"))
-    "androidFlavorConnected" -> listOf(ReportLocation("report.xml", "build/reports/coverage/androidTest/google/debug/connected/report.xml"))
+    "androidFlavorConnected" -> listOf(ReportLocation("report.xml", "build/reports/coverage/androidTest/playstore/debug/report.xml"))
     else -> error("Unknown test method: $testName")
   }
 
