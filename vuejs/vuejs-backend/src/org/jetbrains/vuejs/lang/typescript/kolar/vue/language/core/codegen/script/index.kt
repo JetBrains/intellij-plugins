@@ -3,6 +3,9 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.scri
 
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.path.browserify.dirname
+import org.jetbrains.vuejs.lang.typescript.kolar.path.browserify.isAbsolute
+import org.jetbrains.vuejs.lang.typescript.kolar.path.browserify.relative
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRAttr
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRBlock
@@ -227,12 +230,8 @@ private fun generateGlobalTypesReference(
   fileName: String,
 ): Sequence<Code> = sequence {
   val typesRoot = vueCompilerOptions.typesRoot
-  val typesPath = if (java.io.File(typesRoot).isAbsolute) {
-    var relativePath = java.io.File(java.io.File(fileName).parent ?: ".")
-      .toPath()
-      .relativize(java.io.File(typesRoot).toPath())
-      .toString()
-      .replace('\\', '/')
+  val typesPath = if (isAbsolute(typesRoot)) {
+    var relativePath = relative(dirname(fileName), typesRoot)
     if (relativePath != typesRoot
         && !relativePath.startsWith("./")
         && !relativePath.startsWith("../")) {
