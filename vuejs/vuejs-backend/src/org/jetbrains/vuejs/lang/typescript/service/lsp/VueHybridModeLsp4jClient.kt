@@ -47,7 +47,7 @@ internal class VueHybridModeLsp4jClient<P : LspClientProvider>(
                                           ?: return
 
     val server = LspClientManager.getInstance(project)
-      .getClientsForProvider(lspServerSupportProvider)
+      .getClients(lspServerSupportProvider)
       .singleOrNull()
 
     if (server == null) {

@@ -214,7 +214,7 @@ abstract class Angular2TestCase(
   ) {
     val getServer = {
       LspClientManager.getInstance(project)
-        .getClientsForProvider(providerClass)
+        .getClients(providerClass)
         .firstOrNull()
         .let { it as? LspClientImpl }
     }

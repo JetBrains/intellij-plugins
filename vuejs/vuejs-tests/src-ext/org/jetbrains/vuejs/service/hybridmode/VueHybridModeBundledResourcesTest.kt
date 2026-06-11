@@ -105,7 +105,7 @@ class VueHybridModeBundledResourcesTest : BaseLspTypeScriptServiceTest() {
     myFixture.doHighlighting()
 
     val providerClass = VueLspClientHybridModeProvider.getProviderClass(manualRuntime)
-    val servers = LspClientManager.getInstance(project).getClientsForProvider(providerClass)
+    val servers = LspClientManager.getInstance(project).getClients(providerClass)
     assertFalse(
       "LSP hybrid mode server (manual) should be running for version $version",
       servers.isEmpty(),

@@ -72,7 +72,7 @@ abstract class VueHybridModeTestBase(
   protected fun assertLspServiceActive() {
     val runtime = VueServiceRuntime.Manual
     val providerClass = VueLspClientHybridModeProvider.getProviderClass(runtime)
-    val servers = LspClientManager.getInstance(project).getClientsForProvider(providerClass)
+    val servers = LspClientManager.getInstance(project).getClients(providerClass)
     assertFalse(
       "LSP hybrid mode server should be running for version $bundledVersion",
       servers.isEmpty(),
