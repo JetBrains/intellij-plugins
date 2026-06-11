@@ -56,11 +56,11 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
   private fun findGeneratedServices(serviceDefinition: PbServiceDefinition,
                                     converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
     val serviceName = serviceDefinition.name ?: return emptySequence()
-    val goPackage = suggestGoPackage(serviceDefinition.pbFile)
+    val goPackages = suggestGoPackages(serviceDefinition.pbFile)
     return converters.asSequence()
       .map { converter -> converter.protoToCodeEntityName(serviceName) }
       .flatMap { maybeExistingCodeEntity ->
-        findTypeSpecsWithName(maybeExistingCodeEntity, goPackage, serviceDefinition.project)
+        findTypeSpecsWithName(maybeExistingCodeEntity, goPackages, serviceDefinition.project)
       }
   }
 
@@ -106,26 +106,37 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
   }
 
   private fun findMessageImplementations(messageDefinition: PbMessageDefinition): Sequence<PsiElement> {
-    val goPackage = suggestGoPackage(messageDefinition.pbFile)
+    val goPackages = suggestGoPackages(messageDefinition.pbFile)
     val messageName = messageDefinition.name ?: return emptySequence()
-    return findTypeSpecsWithName(messageName, goPackage, messageDefinition.project)
+    return findTypeSpecsWithName(messageName, goPackages, messageDefinition.project)
   }
 
-  private fun suggestGoPackage(pbFile: PbFile): String {
+  private fun suggestGoPackages(pbFile: PbFile): List<String> {
     val explicitGoPackage = pbFile.options
       .firstOrNull { it.optionName.text == PB_GO_PACKAGE_OPTION }
       ?.stringValue
       ?.asString
       ?.substringAfterLast("/")
-    return explicitGoPackage ?: pbFile.packageQualifiedName.toString()
+    if (explicitGoPackage != null) return listOf(explicitGoPackage)
+
+    val protoPackage = pbFile.packageQualifiedName.toString()
+    val candidates = mutableListOf(protoPackage)
+    // Buf managed mode derives the Go package name by concatenating
+    // the second-to-last and last proto package components when the
+    // last component is a version (e.g., "persist" + "v1alpha1").
+    val parts = protoPackage.split(".")
+    if (parts.size >= 2 && BUF_VERSION_PATTERN.matches(parts.last())) {
+      candidates.add(parts[parts.size - 2] + parts.last())
+    }
+    return candidates
   }
 
-  private fun findTypeSpecsWithName(name: String, goPackageName: String, project: Project): Sequence<GoTypeSpec> {
+  private fun findTypeSpecsWithName(name: String, goPackageNames: List<String>, project: Project): Sequence<GoTypeSpec> {
     return GoTypesIndex.find(name, project, GlobalSearchScope.projectScope(project), null)
       .asSequence()
       .filter {
         val packageName = it.containingFile.packageName
-        packageName.isNullOrBlank() || packageName == goPackageName
+        packageName.isNullOrBlank() || packageName in goPackageNames
       }
   }
 
@@ -179,3 +190,4 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
 }
 
 private const val PB_GO_PACKAGE_OPTION = "go_package"
+private val BUF_VERSION_PATTERN = Regex("^v\\d+((alpha|beta)\\d*|p\\d+(alpha|beta)\\d*|test.*)?$")
