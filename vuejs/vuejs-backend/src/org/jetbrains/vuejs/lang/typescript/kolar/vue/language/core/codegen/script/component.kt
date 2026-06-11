@@ -46,43 +46,45 @@ private fun generateEmitsOption(
   scriptSetupRanges: ScriptSetupRanges,
 ): Sequence<Code> = sequence {
   val typeCodes = if (options.vueCompilerOptions.target >= 3.5
-      && scriptSetupRanges.defineEmits?.hasUnionTypeArg != true) {
+                      && scriptSetupRanges.defineEmits?.hasUnionTypeArg != true) {
     generateTypeEmitsOption(scriptSetupRanges)
-  } else emptyList()
+  }
+  else emptyList()
 
   val runtimeCodes = if (typeCodes.isEmpty()) {
     generateRuntimeEmitsOption(scriptSetupRanges)
-  } else emptyList()
+  }
+  else emptyList()
 
   if (typeCodes.isNotEmpty()) {
     yield("__typeEmits: {} as ")
-    yieldAll(generateIntersectMerge(*typeCodes.map { StringSegment(it) }.toTypedArray()))
+    yieldAll(generateIntersectMerge(typeCodes))
     yield(",${newLine}")
   }
   else if (runtimeCodes.isNotEmpty()) {
     yield("emits: ")
-    yieldAll(generateSpreadMerge(*runtimeCodes.map { StringSegment(it) }.toTypedArray()))
+    yieldAll(generateSpreadMerge(runtimeCodes))
     yield(",${newLine}")
   }
 }
 
 private fun generateTypeEmitsOption(
   scriptSetupRanges: ScriptSetupRanges,
-): List<String> = buildList {
+): List<Code> = buildList {
   if (scriptSetupRanges.defineModel.isNotEmpty()) add(names.ModelEmit)
   if (scriptSetupRanges.defineEmits?.typeArg != null) add(names.Emit)
-}
+}.map(::StringSegment)
 
 private fun generateRuntimeEmitsOption(
   scriptSetupRanges: ScriptSetupRanges,
-): List<String> = buildList {
+): List<Code> = buildList {
   if (scriptSetupRanges.defineModel.isNotEmpty()) {
     add("{} as ${names.NormalizeEmits}<typeof ${names.modelEmit}>")
   }
   scriptSetupRanges.defineEmits?.let { defineEmits ->
     add("{} as ${names.NormalizeEmits}<typeof ${defineEmits.name ?: names.emit}>")
   }
-}
+}.map(::StringSegment)
 
 private fun generatePropsOption(
   options: ScriptCodegenOptions,
@@ -92,25 +94,27 @@ private fun generatePropsOption(
   hasEmitsOption: Boolean,
 ): Sequence<Code> = sequence {
   val typeCodes = if (options.vueCompilerOptions.target >= 3.5
-      && scriptSetupRanges.defineProps?.arg == null) {
+                      && scriptSetupRanges.defineProps?.arg == null) {
     generateTypePropsOption(options, ctx, hasEmitsOption).toList()
-  } else emptyList()
+  }
+  else emptyList()
 
   val runtimeCodes = if (scriptSetupRanges.withDefaults != null || typeCodes.isEmpty()) {
     generateRuntimePropsOption(options, ctx, scriptSetup, scriptSetupRanges, hasEmitsOption).toList()
-  } else emptyList()
+  }
+  else emptyList()
 
   if (typeCodes.isNotEmpty()) {
     if (options.vueCompilerOptions.target >= 3.6 && scriptSetupRanges.withDefaults?.arg != null) {
       yield("__defaults: ${names.defaults},${newLine}")
     }
     yield("__typeProps: ")
-    yieldAll(generateSpreadMerge(*typeCodes.toTypedArray()))
+    yieldAll(generateSpreadMerge(typeCodes))
     yield(",${newLine}")
   }
   if (runtimeCodes.isNotEmpty()) {
     yield("props: ")
-    yieldAll(generateSpreadMerge(*runtimeCodes.toTypedArray()))
+    yieldAll(generateSpreadMerge(runtimeCodes))
     yield(",${newLine}")
   }
 }
@@ -145,7 +149,7 @@ private fun generateRuntimePropsOption(
     else
       names.InheritedAttrs
     val propsType = "${ctx.localTypes.TypePropsToOption}<${names.PickNotAny}" +
-      "<${ctx.localTypes.OmitIndexSignature}<$attrsType>, {}>>"
+                    "<${ctx.localTypes.OmitIndexSignature}<$attrsType>, {}>>"
     yield("{} as $propsType")
   }
   if (ctx.generatedTypes.contains(names.PublicProps) && options.vueCompilerOptions.target < 3.6) {

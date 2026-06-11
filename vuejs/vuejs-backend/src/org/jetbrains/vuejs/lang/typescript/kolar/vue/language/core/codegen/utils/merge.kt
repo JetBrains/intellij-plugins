@@ -5,7 +5,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateIntersectMerge(
-  vararg codes: Code,
+  codes: List<Code>,
 ): Sequence<Code> = sequence {
   yield(codes[0])
   for (i in 1 until codes.size) {
@@ -15,10 +15,10 @@ fun generateIntersectMerge(
 }
 
 fun generateSpreadMerge(
-  vararg codes: Code,
+  codes: List<Code>,
 ): Sequence<Code> = sequence {
   if (codes.size <= 1) {
-    yieldAll(codes.asIterable())
+    yieldAll(codes)
   }
   else {
     yield("{$newLine")

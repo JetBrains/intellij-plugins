@@ -104,7 +104,7 @@ private fun generateTemplateCtx(
   }
 
   yield("const ${names.ctx} = ")
-  yieldAll(generateSpreadMerge(*exps.toTypedArray()))
+  yieldAll(generateSpreadMerge(exps))
   yield(endOfLine)
 }
 
