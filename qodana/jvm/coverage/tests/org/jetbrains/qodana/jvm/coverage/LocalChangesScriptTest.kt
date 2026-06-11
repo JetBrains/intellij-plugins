@@ -20,7 +20,7 @@ class LocalChangesScriptTest : LocalChangesScriptBaseTest() {
       runAnalysis()
       assertSarifResults()
     } finally {
-      System.setProperty(COVERAGE_DATA, "")
+      System.clearProperty(COVERAGE_DATA)
     }
   }
 }
