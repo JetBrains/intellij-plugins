@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.muggle.string
 
 sealed interface Segment<out T> {
   val text: String
-} 
+}
 
 @JvmInline
 value class StringSegment(
