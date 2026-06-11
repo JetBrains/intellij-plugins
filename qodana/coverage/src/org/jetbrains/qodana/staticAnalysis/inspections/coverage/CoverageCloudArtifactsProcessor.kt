@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 
+import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageRunner
 import com.intellij.coverage.CoverageSuitesBundle
 import com.intellij.openapi.extensions.ExtensionPointName
@@ -35,6 +36,13 @@ interface CoverageCloudArtifactsProcessor {
     }
 
     fun getCoverageRunner(file: File): CoverageRunner? {
+      // file name equals the engine name
+      val engine = CoverageEngine.EP_NAME.findFirstSafe {
+        it.javaClass.simpleName == file.nameWithoutExtension
+      }
+      if (engine != null) {
+        return CoverageRunner.EP_NAME.findFirstSafe { it.acceptsCoverageEngine(engine) }
+      }
       for (runner in CoverageRunner.EP_NAME.extensionList) {
         for (extension in runner.dataFileExtensions) {
           if (Comparing.strEqual(file.extension, extension) && runner.canBeLoaded(file.toPath())) return runner
