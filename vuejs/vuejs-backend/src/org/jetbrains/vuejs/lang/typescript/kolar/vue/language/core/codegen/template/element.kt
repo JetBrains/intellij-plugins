@@ -16,7 +16,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isPropertyAssignment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isShorthandPropertyAssignment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isStringLiteral
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isStringLiteralLike
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node as TsNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.AttributeNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.DirectiveNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
@@ -42,6 +41,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.normali
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.capitalize
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node as TsNode
 
 fun generateComponent(
   options: TemplateCodegenOptions,
@@ -152,7 +152,7 @@ fun generateComponent(
         VueCodeInformation(
           semantic = SemanticInfo.WithOptions(shouldHighlight = { false }),
           verification = if (options.vueCompilerOptions.checkUnknownComponents) VerificationInfo.Enabled
-                         else VerificationInfo.WithFilter(shouldReport = { _, code -> code != "2339" && code != "2551" }),
+          else VerificationInfo.WithFilter(shouldReport = { _, code -> code != "2339" && code != "2551" }),
         ),
       ))
       yield("]$endOfLine")
@@ -235,7 +235,12 @@ fun generateComponent(
     else codeFeatures.verification,
   ))
   yield("{")
-  yield(DataSegment(text = "", source = "template", sourceOffset = node.loc.start.offset, data = VueCodeInformation(__propsCompletion = true)))
+  yield(DataSegment(
+    text = "",
+    source = "template",
+    sourceOffset = node.loc.start.offset,
+    data = VueCodeInformation(__propsCompletion = true),
+  ))
   yield(newLine)
   yieldAll(propCodes)
   yield("}")
@@ -255,7 +260,7 @@ fun generateComponent(
 
   val templateRef = getTemplateRef(node)
   val isSingleRoot = node in ctx.singleRootNodes
-    && !options.vueCompilerOptions.fallthroughComponentNames.contains(hyphenateTag(tag))
+                     && !options.vueCompilerOptions.fallthroughComponentNames.contains(hyphenateTag(tag))
 
   if (templateRef != null || isSingleRoot) {
     val componentInstanceVar = ctx.getInternalVariable()
@@ -441,7 +446,11 @@ private fun generateStyleScopedClassReferences(
             }
           }
           isShorthandPropertyAssignment(property) ->
-            yieldAll(generateStyleScopedClassReference(template, property.name.text, property.name.end - property.name.text.length + startOffset))
+            yieldAll(generateStyleScopedClassReference(
+              template,
+              property.name.text,
+              property.name.end - property.name.text.length + startOffset,
+            ))
         }
       }
     }
@@ -527,4 +536,4 @@ private fun hasVBindAttrs(
       && prop.name == "bind"
       && (prop.exp as? SimpleExpressionNode)?.loc?.source == "\$attrs"
     }
-  )
+                                                      )
