@@ -3,5 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.typescript
 
 interface Node {
   val kind: SyntaxKind
+  val pos: Int
   val end: Int
 }

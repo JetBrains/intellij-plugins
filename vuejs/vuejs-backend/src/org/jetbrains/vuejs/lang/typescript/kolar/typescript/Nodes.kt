@@ -47,31 +47,72 @@ interface ExpressionStatement : Statement {
   val expression: Node
 }
 
-interface VariableStatement : Statement
+interface VariableDeclarationList : Node {
+  val declarations: List<VariableDeclaration>
+}
+
+interface VariableStatement : Statement {
+  val declarationList: VariableDeclarationList
+}
 
 interface Block : Statement
 
-interface FunctionDeclaration : Statement
+interface FunctionDeclaration : Statement {
+  val name: Identifier?
+}
 
-interface ClassDeclaration : Statement
+interface ClassDeclaration : Statement {
+  val name: Identifier?
+}
 
-interface EnumDeclaration : Statement
+interface EnumDeclaration : Statement {
+  val name: Identifier
+}
 
-interface ImportDeclaration : Statement
+interface ImportDeclaration : Statement {
+  val moduleSpecifier: Node
+  val importClause: ImportClause?
+}
+
+interface ImportClause : Node {
+  val isTypeOnly: Boolean
+  val name: Identifier?
+  val namedBindings: Node?
+}
+
+interface ImportSpecifier : Node {
+  val isTypeOnly: Boolean
+  val propertyName: Node?
+  val name: Identifier
+}
+
+interface NamespaceImport : Node {
+  val name: Identifier
+}
 
 interface ImportEqualsDeclaration : Statement
 
 interface ExportDeclaration : Statement
 
-interface ExportAssignment : Statement
+interface ExportAssignment : Statement {
+  val expression: Node
+}
 
 interface TypeAliasDeclaration : Statement
 
 interface InterfaceDeclaration : Statement
 
-interface CallExpression : Expression
+interface AsExpression : Expression {
+  val expression: Node
+}
 
-interface ParenthesizedExpression : Expression
+interface CallExpression : Expression {
+  val arguments: List<Node>
+}
+
+interface ParenthesizedExpression : Expression {
+  val expression: Node
+}
 
 interface PropertyAccessExpression : Expression {
   val expression: Expression
@@ -120,4 +161,6 @@ interface SpreadAssignment : Node {
 
 interface CallSignatureDeclaration : Node
 
-interface NamedImports : Node
+interface NamedImports : Node {
+  val elements: List<ImportSpecifier>
+}

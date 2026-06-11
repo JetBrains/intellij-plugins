@@ -39,6 +39,11 @@ fun isParenthesizedExpression(node: Node): Boolean {
   return node is ParenthesizedExpression
 }
 
+fun isAsExpression(node: Node): Boolean {
+  contract { returns(true) implies (node is AsExpression) }
+  return node is AsExpression
+}
+
 fun isExportAssignment(node: Node): Boolean {
   contract { returns(true) implies (node is ExportAssignment) }
   return node is ExportAssignment
