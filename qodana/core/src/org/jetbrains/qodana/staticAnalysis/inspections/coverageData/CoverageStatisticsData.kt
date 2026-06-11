@@ -60,7 +60,7 @@ class CoverageStatisticsData(val coverageComputationState: QodanaCoverageComputa
   private val reportTotalLines = AtomicInteger()
   private val reportCoveredLines = AtomicInteger()
   private val isIncremental = coverageComputationState.isIncrementalAnalysis()
-  private val changedRanges by lazy { changedRanges ?: computeChangedRanges(project) } // immutable
+  private val changedRanges: Lazy<Map<String, Set<Int>>> = lazy { changedRanges ?: computeChangedRanges(project) } // immutable
 
   fun computeStat(): Map<CoverageData, Int>? {
     if (!isIncremental && totalLines.get() == 0 || isIncremental && reportTotalLines.get() == 0) return null
@@ -123,9 +123,13 @@ class CoverageStatisticsData(val coverageComputationState: QodanaCoverageComputa
     reportCoveredLines.incrementAndGet()
   }
 
-  fun getChangedRanges(virtualFileUrl: String) = changedRanges.getOrDefault(virtualFileUrl, null)
+  fun getChangedRanges(virtualFileUrl: String) = changedRanges.value.getOrDefault(virtualFileUrl, null)
 
-  fun exposeChangedRanges(): Map<String, Set<Int>>? = changedRanges.takeIf { it.isNotEmpty() }?.toMap()
+  fun exposeChangedRanges(): Map<String, Set<Int>>? {
+    if (!changedRanges.isInitialized()) return null
+    if (changedRanges.value.isEmpty()) return null
+    return changedRanges.value.toMap()
+  }
 }
 
 enum class QodanaCoverageComputationState {
