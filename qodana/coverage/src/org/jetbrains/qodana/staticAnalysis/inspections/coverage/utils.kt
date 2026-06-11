@@ -274,14 +274,13 @@ private fun computeProblemDescriptor(element: PsiElement, @InspectionMessage des
     .createProblemDescriptor(element, TextRange(0, endOffsetFirstLine), descriptionTemplate, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true)
 }
 
-private fun getCoverageRunner(file: Path, engine: CoverageEngine): CoverageRunner? {
-  for (runner in CoverageRunner.EP_NAME.extensionList) {
-    for (extension in runner.dataFileExtensions) {
-      if (Comparing.strEqual(file.extension, extension) && runner.canBeLoaded(file) && runner.acceptsCoverageEngine(engine)) return runner
+private fun getCoverageRunner(file: Path, engine: CoverageEngine): CoverageRunner? =
+  CoverageRunner.EP_NAME.findFirstSafe {
+    for (extension in it.dataFileExtensions) {
+      if (Comparing.strEqual(file.extension, extension) && it.canBeLoaded(file) && it.acceptsCoverageEngine(engine)) return@findFirstSafe true
     }
+    false
   }
-  return null
-}
 
 /**
  * Remap file-based coverage [data] (relative or foreign-absolute paths) to local absolute paths under [project].
