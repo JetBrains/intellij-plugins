@@ -2,9 +2,7 @@ package org.jetbrains.qodana.js
 
 import com.intellij.coverage.view.CoverageViewManager
 import com.intellij.javascript.testing.coverage.jest.JestCoverageEngine
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.rt.coverage.data.LineCoverage
-import com.intellij.testFramework.common.ThreadLeakTracker
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.coverage.CHANGED_LINES_ARTIFACT_ID
 import org.jetbrains.qodana.report.ReportMetadata
@@ -12,12 +10,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageUi
 import org.junit.Test
 
 class JsCoverageUiTest : QodanaCoverageUiTestBase("JsCoverageInspectionTest") {
-
-  override fun setUp() {
-    super.setUp()
-    // WipRemoteVmConnection defaults to thread pool created in companion object in unit testing, which results in leak
-    ThreadLeakTracker.longRunningThreadCreated(ApplicationManager.getApplication(), "WipRemoteVmConnection")
-  }
 
   @Test
   fun loadsRegularCoverageReport(): Unit = runBlocking {
