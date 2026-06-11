@@ -33,7 +33,7 @@ class GoCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
       // The canonical report only carries line data, so we need GoCoverageProjectDataArtifact to fill missing fields
       val goArtifact = artifacts[GO_PROJECT_DATA] as? GoCoverageProjectDataArtifact ?: return bundle
       val lineData = bundle.coverageData ?: return bundle
-      QodanaCoverageBundle(suite, buildGoCoverageProjectData(project, lineData, goArtifact))
+      return QodanaCoverageBundle(suite, buildGoCoverageProjectData(project, lineData, goArtifact))
     }
     return null
   }
