@@ -1,7 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.script
 
-import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.InlayHintInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.LocalTypesGenerator
 
@@ -12,10 +11,10 @@ class ScriptCodegenContext(
 )
 
 fun createScriptCodegenContext(
-  vueCompilerOptions: VueCompilerOptions,
+  options: ScriptCodegenOptions,
 ): ScriptCodegenContext =
   ScriptCodegenContext(
     generatedTypes = mutableSetOf(),
-    localTypes = LocalTypesGenerator(vueCompilerOptions),
+    localTypes = LocalTypesGenerator(options.vueCompilerOptions),
     inlayHints = mutableListOf(),
   )
