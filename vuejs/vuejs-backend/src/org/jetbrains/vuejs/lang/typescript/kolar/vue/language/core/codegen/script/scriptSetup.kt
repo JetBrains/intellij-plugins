@@ -1,7 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.script
 
-import kotlin.math.max
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRAttr
@@ -24,6 +23,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.Defin
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.ScriptSetupRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
+import kotlin.math.max
 
 fun generateScriptSetupImports(
   scriptSetup: IRScriptSetup,
@@ -101,16 +101,18 @@ fun generateGeneric(
 
   yield("return {} as {${newLine}")
   yield("\tprops: ")
-  yield(when {
-    vueCompilerOptions.target >= 3.4 ->
-      "import('${vueCompilerOptions.lib}').PublicProps"
-    vueCompilerOptions.target >= 3.0 ->
-      "import('${vueCompilerOptions.lib}').VNodeProps" +
-      " & import('${vueCompilerOptions.lib}').AllowedComponentProps" +
-      " & import('${vueCompilerOptions.lib}').ComponentCustomProps"
-    else ->
-      "globalThis.JSX.IntrinsicAttributes"
-  })
+  yield(
+    when {
+      vueCompilerOptions.target >= 3.4 ->
+        "import('${vueCompilerOptions.lib}').PublicProps"
+      vueCompilerOptions.target >= 3.0 ->
+        "import('${vueCompilerOptions.lib}').VNodeProps" +
+        " & import('${vueCompilerOptions.lib}').AllowedComponentProps" +
+        " & import('${vueCompilerOptions.lib}').ComponentCustomProps"
+      else ->
+        "globalThis.JSX.IntrinsicAttributes"
+    }
+  )
   if (propTypes.isNotEmpty()) {
     yield(" & ${ctx.localTypes.PrettifyLocal}<${propTypes.joinToString(" & ")}>")
   }
@@ -149,98 +151,144 @@ fun generateSetupFunction(
 
   scriptSetupRanges.defineProps?.let { defineProps ->
     val callExp = scriptSetupRanges.withDefaults?.callExp ?: defineProps.callExp
-    transforms.addAll(generateDefineWithTypeTransforms(scriptSetup, defineProps.statement, callExp, defineProps.typeArg, defineProps.name, names.props, names.Props))
+    transforms.addAll(
+      generateDefineWithTypeTransforms(
+        scriptSetup,
+        defineProps.statement,
+        callExp,
+        defineProps.typeArg,
+        defineProps.name,
+        names.props,
+        names.Props,
+      )
+    )
   }
   scriptSetupRanges.defineEmits?.let { defineEmits ->
-    transforms.addAll(generateDefineWithTypeTransforms(scriptSetup, defineEmits.statement, defineEmits.callExp, defineEmits.typeArg, defineEmits.name, names.emit, names.Emit))
+    transforms.addAll(
+      generateDefineWithTypeTransforms(
+        scriptSetup,
+        defineEmits.statement,
+        defineEmits.callExp,
+        defineEmits.typeArg,
+        defineEmits.name,
+        names.emit,
+        names.Emit,
+      )
+    )
   }
   scriptSetupRanges.defineSlots?.let { defineSlots ->
-    transforms.addAll(generateDefineWithTypeTransforms(scriptSetup, defineSlots.statement, defineSlots.callExp, defineSlots.typeArg, defineSlots.name, names.slots, names.Slots))
+    transforms.addAll(
+      generateDefineWithTypeTransforms(
+        scriptSetup,
+        defineSlots.statement,
+        defineSlots.callExp,
+        defineSlots.typeArg,
+        defineSlots.name,
+        names.slots,
+        names.Slots,
+      )
+    )
   }
   scriptSetupRanges.defineExpose?.let { defineExpose ->
     val typeArg = defineExpose.typeArg
     val arg = defineExpose.arg
     when {
       typeArg != null -> {
-        transforms.add(insert(defineExpose.callExp.start) { sequence {
-          yield("let ${names.exposed}!: ")
-          yieldAll(generateSfcBlockSection(scriptSetup, typeArg.start, typeArg.end, codeFeatures.all))
-          yield(endOfLine)
-        }})
-        transforms.add(replace(typeArg.start, typeArg.end) { sequence {
-          yield("typeof ${names.exposed}")
-        }})
+        transforms.add(insert(defineExpose.callExp.start) {
+          sequence {
+            yield("let ${names.exposed}!: ")
+            yieldAll(generateSfcBlockSection(scriptSetup, typeArg.start, typeArg.end, codeFeatures.all))
+            yield(endOfLine)
+          }
+        })
+        transforms.add(replace(typeArg.start, typeArg.end) {
+          sequence {
+            yield("typeof ${names.exposed}")
+          }
+        })
       }
       arg != null -> {
-        transforms.add(insert(defineExpose.callExp.start) { sequence {
-          yield("const ${names.exposed} = ")
-          yieldAll(generateSfcBlockSection(scriptSetup, arg.start, arg.end, codeFeatures.all))
-          yield(endOfLine)
-        }})
-        transforms.add(replace(arg.start, arg.end) { sequence {
-          yield(names.exposed)
-        }})
+        transforms.add(insert(defineExpose.callExp.start) {
+          sequence {
+            yield("const ${names.exposed} = ")
+            yieldAll(generateSfcBlockSection(scriptSetup, arg.start, arg.end, codeFeatures.all))
+            yield(endOfLine)
+          }
+        })
+        transforms.add(replace(arg.start, arg.end) {
+          sequence {
+            yield(names.exposed)
+          }
+        })
       }
       else -> {
-        transforms.add(insert(defineExpose.callExp.start) { sequence {
-          yield("const ${names.exposed} = {}${endOfLine}")
-        }})
+        transforms.add(insert(defineExpose.callExp.start) {
+          sequence {
+            yield("const ${names.exposed} = {}${endOfLine}")
+          }
+        })
       }
     }
   }
   if (options.vueCompilerOptions.inferTemplateDollarAttrs) {
     for (useAttrs in scriptSetupRanges.useAttrs) {
-      transforms.add(insert(useAttrs.callExp.start) { sequence { yield("(") }})
-      transforms.add(insert(useAttrs.callExp.end) { sequence { yield(" as typeof ${names.dollars}.\$attrs)") }})
+      transforms.add(insert(useAttrs.callExp.start) { sequence { yield("(") } })
+      transforms.add(insert(useAttrs.callExp.end) { sequence { yield(" as typeof ${names.dollars}.\$attrs)") } })
     }
   }
   for (useCssModule in scriptSetupRanges.useCssModule) {
-    transforms.add(insert(useCssModule.callExp.start) { sequence { yield("(") }})
+    transforms.add(insert(useCssModule.callExp.start) { sequence { yield("(") } })
     val type = if (options.templateAndStyleTypes.contains(names.StyleModules)) names.StyleModules else "{}"
     val cssArg = useCssModule.arg
     if (cssArg != null) {
-      transforms.add(insert(useCssModule.callExp.end) { sequence {
-        yield(" as Omit<${type}, '\$style'>[")
-        yieldAll(generateSfcBlockSection(scriptSetup, cssArg.start, cssArg.end, codeFeatures.withoutSemantic))
-        yield("])")
-      }})
-      transforms.add(replace(cssArg.start, cssArg.end) { sequence { yield("{} as any") }})
+      transforms.add(insert(useCssModule.callExp.end) {
+        sequence {
+          yield(" as Omit<${type}, '\$style'>[")
+          yieldAll(generateSfcBlockSection(scriptSetup, cssArg.start, cssArg.end, codeFeatures.withoutSemantic))
+          yield("])")
+        }
+      })
+      transforms.add(replace(cssArg.start, cssArg.end) { sequence { yield("{} as any") } })
     }
     else {
-      transforms.add(insert(useCssModule.callExp.end) { sequence {
-        yield(" as ${type}[")
-        val (boundaryCode, token) = startBoundary(scriptSetup.name, useCssModule.exp.start, codeFeatures.verification)
-        yield(boundaryCode)
-        yield("'\$style'")
-        yield(endBoundary(token, useCssModule.exp.end))
-        yield("])")
-      }})
+      transforms.add(insert(useCssModule.callExp.end) {
+        sequence {
+          yield(" as ${type}[")
+          val (boundaryCode, token) = startBoundary(scriptSetup.name, useCssModule.exp.start, codeFeatures.verification)
+          yield(boundaryCode)
+          yield("'\$style'")
+          yield(endBoundary(token, useCssModule.exp.end))
+          yield("])")
+        }
+      })
     }
   }
   if (options.vueCompilerOptions.inferTemplateDollarSlots) {
     for (useSlots in scriptSetupRanges.useSlots) {
-      transforms.add(insert(useSlots.callExp.start) { sequence { yield("(") }})
-      transforms.add(insert(useSlots.callExp.end) { sequence { yield(" as typeof ${names.dollars}.\$slots)") }})
+      transforms.add(insert(useSlots.callExp.start) { sequence { yield("(") } })
+      transforms.add(insert(useSlots.callExp.end) { sequence { yield(" as typeof ${names.dollars}.\$slots)") } })
     }
   }
   for (useTemplateRef in scriptSetupRanges.useTemplateRef) {
-    transforms.add(insert(useTemplateRef.callExp.start) { sequence { yield("(") }})
+    transforms.add(insert(useTemplateRef.callExp.start) { sequence { yield("(") } })
     val refArg = useTemplateRef.arg
-    transforms.add(insert(useTemplateRef.callExp.end) { sequence {
-      yield(" as Readonly<import('${options.vueCompilerOptions.lib}').ShallowRef<")
-      if (refArg != null) {
-        yield(names.TemplateRefs)
-        yield("[")
-        yieldAll(generateSfcBlockSection(scriptSetup, refArg.start, refArg.end, codeFeatures.withoutSemantic))
-        yield("]")
+    transforms.add(insert(useTemplateRef.callExp.end) {
+      sequence {
+        yield(" as Readonly<import('${options.vueCompilerOptions.lib}').ShallowRef<")
+        if (refArg != null) {
+          yield(names.TemplateRefs)
+          yield("[")
+          yieldAll(generateSfcBlockSection(scriptSetup, refArg.start, refArg.end, codeFeatures.withoutSemantic))
+          yield("]")
+        }
+        else {
+          yield("unknown")
+        }
+        yield(" | null>>)")
       }
-      else {
-        yield("unknown")
-      }
-      yield(" | null>>)")
-    }})
+    })
     refArg?.let { ra ->
-      transforms.add(replace(ra.start, ra.end) { sequence { yield("{} as any") }})
+      transforms.add(replace(ra.start, ra.end) { sequence { yield("{} as any") } })
     }
   }
 
@@ -295,52 +343,68 @@ private fun generateDefineWithTypeTransforms(
   typeName: String,
 ): Sequence<CodeTransform> = sequence {
   if (typeArg != null) {
-    yield(insert(statement.start) { sequence {
-      yield("type $typeName = ")
-      yieldAll(generateSfcBlockSection(scriptSetup, typeArg.start, typeArg.end, codeFeatures.all))
-      yield(endOfLine)
-    }})
-    yield(replace(typeArg.start, typeArg.end) { sequence {
-      yield(typeName)
-    }})
+    yield(insert(statement.start) {
+      sequence {
+        yield("type $typeName = ")
+        yieldAll(generateSfcBlockSection(scriptSetup, typeArg.start, typeArg.end, codeFeatures.all))
+        yield(endOfLine)
+      }
+    })
+    yield(replace(typeArg.start, typeArg.end) {
+      sequence {
+        yield(typeName)
+      }
+    })
   }
   if (name == null) {
     if (statement.start == callExp.start && statement.end == callExp.end) {
-      yield(insert(callExp.start) { sequence {
-        yield("const $defaultName = ")
-      }})
+      yield(insert(callExp.start) {
+        sequence {
+          yield("const $defaultName = ")
+        }
+      })
     }
     else if (typeArg != null) {
-      yield(replace(statement.start, typeArg.start) { sequence {
-        yield("const $defaultName = ")
-        yieldAll(generateSfcBlockSection(scriptSetup, callExp.start, typeArg.start, codeFeatures.all))
-      }})
-      yield(replace(typeArg.end, callExp.end) { sequence {
-        yieldAll(generateSfcBlockSection(scriptSetup, typeArg.end, callExp.end, codeFeatures.all))
-        yield(endOfLine)
-        yieldAll(generateSfcBlockSection(scriptSetup, statement.start, callExp.start, codeFeatures.all))
-        yield(defaultName)
-      }})
+      yield(replace(statement.start, typeArg.start) {
+        sequence {
+          yield("const $defaultName = ")
+          yieldAll(generateSfcBlockSection(scriptSetup, callExp.start, typeArg.start, codeFeatures.all))
+        }
+      })
+      yield(replace(typeArg.end, callExp.end) {
+        sequence {
+          yieldAll(generateSfcBlockSection(scriptSetup, typeArg.end, callExp.end, codeFeatures.all))
+          yield(endOfLine)
+          yieldAll(generateSfcBlockSection(scriptSetup, statement.start, callExp.start, codeFeatures.all))
+          yield(defaultName)
+        }
+      })
     }
     else {
-      yield(replace(statement.start, callExp.end) { sequence {
-        yield("const $defaultName = ")
-        yieldAll(generateSfcBlockSection(scriptSetup, callExp.start, callExp.end, codeFeatures.all))
-        yield(endOfLine)
-        yieldAll(generateSfcBlockSection(scriptSetup, statement.start, callExp.start, codeFeatures.all))
-        yield(defaultName)
-      }})
+      yield(replace(statement.start, callExp.end) {
+        sequence {
+          yield("const $defaultName = ")
+          yieldAll(generateSfcBlockSection(scriptSetup, callExp.start, callExp.end, codeFeatures.all))
+          yield(endOfLine)
+          yieldAll(generateSfcBlockSection(scriptSetup, statement.start, callExp.start, codeFeatures.all))
+          yield(defaultName)
+        }
+      })
     }
   }
   else if (!identifierRegex.matches(name)) {
-    yield(replace(statement.start, callExp.start) { sequence {
-      yield("const $defaultName = ")
-    }})
-    yield(insert(statement.end) { sequence {
-      yield(endOfLine)
-      yieldAll(generateSfcBlockSection(scriptSetup, statement.start, callExp.start, codeFeatures.all))
-      yield(defaultName)
-    }})
+    yield(replace(statement.start, callExp.start) {
+      sequence {
+        yield("const $defaultName = ")
+      }
+    })
+    yield(insert(statement.end) {
+      sequence {
+        yield(endOfLine)
+        yieldAll(generateSfcBlockSection(scriptSetup, statement.start, callExp.start, codeFeatures.all))
+        yield(defaultName)
+      }
+    })
   }
 }
 
@@ -410,7 +474,12 @@ private fun generateModels(
     }
 
     if (defineModel.defaultValue != null) {
-      defaultCodes.add("'${propName}': ${scriptSetup.content.substring(defineModel.defaultValue.start, defineModel.defaultValue.end)},${newLine}")
+      defaultCodes.add("'${propName}': ${
+        scriptSetup.content.substring(
+          defineModel.defaultValue.start,
+          defineModel.defaultValue.end,
+        )
+      },${newLine}")
     }
 
     propCodes.add(generateModelProp(scriptSetup, defineModel, propName, modelType))
