@@ -25,20 +25,20 @@ class GoCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(GoCoverageEngine::class.java)
     val runner = CoverageCloudArtifactsProcessor.getCoverageRunner(artifact.path) ?: return null
     if (runner.acceptsCoverageEngine(engine)) {
-      return withContext(QodanaDispatchers.IO) {
-        val suite = engine.createCoverageSuite(artifact.id, project, runner, dummyProvider, -1) ?: return@withContext null
-        val coverageData = ProjectDataLoader.load(artifact.path) ?: return@withContext null
-        val bundle = remapCoverageFromCloud(suite, coverageData, artifacts) ?: return@withContext null
-        // The canonical report only carries line data, so we need GoCoverageProjectDataArtifact to fill missing fields
-        val goArtifact = artifacts[GO_PROJECT_DATA] as? GoCoverageProjectDataArtifact ?: return@withContext bundle
-        val lineData = bundle.coverageData ?: return@withContext bundle
-        QodanaCoverageBundle(suite, buildGoCoverageProjectData(project, lineData, goArtifact))
-      }
+      val suite = engine.createCoverageSuite(artifact.id, project, runner, dummyProvider, -1)
+      val coverageData = withContext(QodanaDispatchers.IO) {
+        ProjectDataLoader.load(artifact.path)
+      } ?: return null
+      val bundle = remapCoverageFromCloud(suite, coverageData, artifacts) ?: return null
+      // The canonical report only carries line data, so we need GoCoverageProjectDataArtifact to fill missing fields
+      val goArtifact = artifacts[GO_PROJECT_DATA] as? GoCoverageProjectDataArtifact ?: return bundle
+      val lineData = bundle.coverageData ?: return bundle
+      QodanaCoverageBundle(suite, buildGoCoverageProjectData(project, lineData, goArtifact))
     }
     return null
   }
 
-  private fun buildGoCoverageProjectData(
+  private suspend fun buildGoCoverageProjectData(
     project: Project,
     lineData: ProjectData,
     artifact: GoCoverageProjectDataArtifact,
@@ -56,7 +56,8 @@ class GoCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
     }
 
     val projectDir = project.guessProjectDir()
-    for ((relative, ranges) in readGoCoverageProjectData(artifact.path)) {
+    val goProjectData = withContext(QodanaDispatchers.IO) { readGoCoverageProjectData(artifact.path) }
+    for ((relative, ranges) in goProjectData) {
       val absolute = projectDir?.findFileByRelativePath(FileUtil.toSystemIndependentName(relative))?.path ?: continue
       val lineMap = fileLineData[absolute] ?: continue
 

@@ -18,11 +18,11 @@ class JSCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
     val (engine, artifact) = computeEngineAndArtifact(artifacts) ?: return null
     val runner = CoverageCloudArtifactsProcessor.getCoverageRunner(artifact.path) ?: return null
     if (runner.acceptsCoverageEngine(engine)) {
-      return withContext(QodanaDispatchers.IO) {
-        val suite = engine.createCoverageSuite(artifact.id, project, runner, dummyProvider, -1) ?: return@withContext null
-        val coverageData = ProjectDataLoader.load(artifact.path) ?: return@withContext null
-        remapCoverageFromCloud(suite, coverageData, artifacts)
-      }
+      val suite = engine.createCoverageSuite(artifact.id, project, runner, dummyProvider, -1) ?: return null
+      val coverageData = withContext(QodanaDispatchers.IO) {
+        ProjectDataLoader.load(artifact.path)
+      } ?: return null
+      return remapCoverageFromCloud(suite, coverageData, artifacts)
     }
     return null
   }

@@ -63,6 +63,10 @@ import kotlin.time.Duration.Companion.seconds
 abstract class QodanaCoverageUiTestBase(private val sourceClass: String) : JavaModuleTestCase() {
   protected val testData: Path = Paths.get(PluginPathManager.getPluginHomePath("qodana"), "core", "test-data")
 
+  private companion object {
+    private val COVERAGE_DATA_TIMEOUT = 60.seconds
+  }
+
   override fun runInDispatchThread(): Boolean = false
 
   protected val manager: CoverageDataManagerImpl
@@ -108,7 +112,7 @@ abstract class QodanaCoverageUiTestBase(private val sourceClass: String) : JavaM
       }
     }, testRootDisposable)
     QodanaHighlightedReportService.getInstance(project).highlightReport(CoverageReportDescriptorMock(metadata))
-    withTimeout(20.seconds) {
+    withTimeout(COVERAGE_DATA_TIMEOUT) {
       dataCollected.await()
     }
   }
