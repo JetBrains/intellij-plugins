@@ -108,7 +108,7 @@ abstract class QodanaCoverageUiTestBase(private val sourceClass: String) : JavaM
       }
     }, testRootDisposable)
     QodanaHighlightedReportService.getInstance(project).highlightReport(CoverageReportDescriptorMock(metadata))
-    withTimeout(30.seconds) {
+    withTimeout(20.seconds) {
       dataCollected.await()
     }
   }
