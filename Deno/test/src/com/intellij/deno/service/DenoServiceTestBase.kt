@@ -19,9 +19,9 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.StreamUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.lsp.api.LspServer
-import com.intellij.platform.lsp.api.LspServerManager
-import com.intellij.platform.lsp.api.LspServerManagerListener
+import com.intellij.platform.lsp.api.LspClient
+import com.intellij.platform.lsp.api.LspClientManager
+import com.intellij.platform.lsp.api.LspClientManagerListener
 import com.intellij.platform.lsp.api.LspServerState
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.IndexingTestUtil
@@ -98,21 +98,21 @@ abstract class DenoServiceTestBase : JSTempDirWithNodeInterpreterTest() {
   protected fun createServiceRestartCounter(): AtomicBoolean {
     val shutdown = AtomicBoolean(false)
     val restartFlag = AtomicBoolean(false)
-    LspServerManager.getInstance(project).addLspServerManagerListener(object : LspServerManagerListener {
-      override fun serverStateChanged(lspServer: LspServer) {
-        if (lspServer.descriptor !is DenoLspServerDescriptor) return
+    LspClientManager.getInstance(project).addListener(object : LspClientManagerListener {
+      override fun serverStateChanged(lspClient: LspClient) {
+        if (lspClient.descriptor !is DenoLspClientDescriptor) return
 
-        if (lspServer.state == LspServerState.ShutdownNormally ||
-            lspServer.state == LspServerState.ShutdownUnexpectedly) {
+        if (lspClient.state == LspServerState.ShutdownNormally ||
+            lspClient.state == LspServerState.ShutdownUnexpectedly) {
           shutdown.set(true)
         }
-        if ((lspServer.state == LspServerState.Initializing || lspServer.state == LspServerState.Running) && shutdown.get()) {
+        if ((lspClient.state == LspServerState.Initializing || lspClient.state == LspServerState.Running) && shutdown.get()) {
           restartFlag.set(true)
         }
       }
 
-      override fun fileOpened(lspServer: LspServer, file: VirtualFile) {}
-      override fun diagnosticsReceived(lspServer: LspServer, file: VirtualFile) {}
+      override fun fileOpened(lspClient: LspClient, file: VirtualFile) {}
+      override fun diagnosticsReceived(lspClient: LspClient, file: VirtualFile) {}
 
     }, testRootDisposable, false)
 

@@ -36,6 +36,7 @@ public final class PbTextHighlightingAnnotator implements Annotator, DumbAware {
 
   @Override
   public void annotate(@NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
+    if (holder.isBatchMode()) return;
     element.accept(
         new PbTextVisitor() {
           @Override

@@ -11,6 +11,7 @@ import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 
 internal class CloudFormationYamlAnnotator : Annotator {
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+    if (holder.isBatchMode()) return
     if (element is YAMLPlainTextImpl && element.parent is YAMLKeyValue) {
       val keyValue = element.parent as YAMLKeyValue
       if (keyValue.keyText == "Type") {

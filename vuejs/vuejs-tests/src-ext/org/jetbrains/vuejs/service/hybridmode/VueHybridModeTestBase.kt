@@ -6,12 +6,12 @@ import com.intellij.lang.javascript.service.BaseLspTypeScriptServiceTest
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.lang.typescript.lsp.JSBundledServiceNodePackage
-import com.intellij.platform.lsp.api.LspServerManager
+import com.intellij.platform.lsp.api.LspClientManager
 import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeLoaderFactory
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeSupportProvider
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspClientHybridModeProvider
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginLoaderFactory
 import org.jetbrains.vuejs.lang.typescript.service.vueLspPackageName
@@ -71,8 +71,8 @@ abstract class VueHybridModeTestBase(
 
   protected fun assertLspServiceActive() {
     val runtime = VueServiceRuntime.Manual
-    val providerClass = VueLspServerHybridModeSupportProvider.getProviderClass(runtime)
-    val servers = LspServerManager.getInstance(project).getServersForProvider(providerClass)
+    val providerClass = VueLspClientHybridModeProvider.getProviderClass(runtime)
+    val servers = LspClientManager.getInstance(project).getClients(providerClass)
     assertFalse(
       "LSP hybrid mode server should be running for version $bundledVersion",
       servers.isEmpty(),

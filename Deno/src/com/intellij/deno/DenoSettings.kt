@@ -3,7 +3,7 @@ package com.intellij.deno
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.deno.roots.createDenoEntity
 import com.intellij.deno.roots.removeDenoEntity
-import com.intellij.deno.service.DenoLspSupportProvider
+import com.intellij.deno.service.DenoLspClientProvider
 import com.intellij.deno.settings.DenoRuntimeType
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.javascript.runtime.settings.JSRuntimeConfiguration
@@ -25,7 +25,7 @@ import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.lsp.api.LspServerManager
+import com.intellij.platform.lsp.api.LspClientManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.ThrowableRunnable
@@ -192,13 +192,13 @@ class DenoSettings(
       setUseDeno(useDeno)
 
       if (!project.isDefault) {
-        val lspServerManager = LspServerManager.getInstance(project)
+        val lspServerManager = LspClientManager.getInstance(project)
         if (useDeno == UseDeno.ENABLE || useDeno == UseDeno.CONFIGURE_AUTOMATICALLY) {
-          lspServerManager.startServersIfNeeded(DenoLspSupportProvider::class.java)
+          lspServerManager.startClientsIfNeeded(DenoLspClientProvider::class.java)
           createDenoEntity(project)
         }
         else {
-          lspServerManager.stopServers(DenoLspSupportProvider::class.java)
+          lspServerManager.stopClients(DenoLspClientProvider::class.java)
           removeDenoEntity(project)
         }
       }
@@ -291,4 +291,3 @@ fun setUseDenoLibrary(project: Project, value: Boolean = true, updateLib: Boolea
 
 fun isDenoFileTypeAcceptable(file: VirtualFile) =
   file.fileType in arrayOf(TypeScriptFileType, TypeScriptJSXFileType)
-

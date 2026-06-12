@@ -2,14 +2,14 @@
 package org.jetbrains.vuejs.service.hybridmode
 
 import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.platform.lsp.api.LspServerManager
+import com.intellij.platform.lsp.api.LspClientManager
 import com.intellij.platform.lsp.tests.waitForDiagnosticsFromLspServer
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeSupportProvider
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspClientHybridModeProvider
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.jetbrains.vuejs.options.VueLSMode
 import org.jetbrains.vuejs.options.VueSettings
@@ -44,11 +44,11 @@ class VueHybridModeServiceLifecycleTest : VueHybridModeTestBase() {
 
     VueSettings.instance(project).serviceType = VueLSMode.DISABLED
     for (version in VueLanguageToolsVersion.entries) {
-      LspServerManager.getInstance(project)
-        .stopAndRestartIfNeeded(VueLspServerHybridModeSupportProvider.getProviderClass(VueServiceRuntime.Bundled(version)))
+      LspClientManager.getInstance(project)
+        .stopAndRestartClientsIfNeeded(VueLspClientHybridModeProvider.getProviderClass(VueServiceRuntime.Bundled(version)))
     }
-    LspServerManager.getInstance(project)
-      .stopAndRestartIfNeeded(VueLspServerHybridModeSupportProvider.getProviderClass(VueServiceRuntime.Manual))
+    LspClientManager.getInstance(project)
+      .stopAndRestartClientsIfNeeded(VueLspClientHybridModeProvider.getProviderClass(VueServiceRuntime.Manual))
     val highlightingAfter = myFixture.doHighlighting()
 
     val vueErrorsAfter = highlightingAfter.filter {

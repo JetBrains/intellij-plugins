@@ -10,11 +10,8 @@ import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer.LspCustomTypeScri
 import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.lsp.api.LspServerState
-import com.intellij.platform.lsp.impl.LspServerImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import kotlinx.coroutines.delay
 import org.eclipse.lsp4j.MarkupContent
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
@@ -24,10 +21,11 @@ class VueLspTakeoverModeTypeScriptService(
   project: Project,
 ) : JSFrameworkLspTypeScriptService(
   project = project,
-  providerClass = VueLspServerTakeoverModeSupportProvider::class.java,
+  providerClass = VueLspClientTakeoverModeProvider::class.java,
+  descriptor = VueLspClientTakeoverModeDescriptor(project),
   activationRule = VueLspServerTakeoverModeActivationRule,
-  diagnosticsConfiguration = PublishDiagnostics(2),
 ) {
+  override val diagnosticsConfiguration: DiagnosticsConfiguration get() = PublishDiagnostics(2)
 
   override val name: String
     get() = VueBundle.message("vue.service.name")
@@ -64,8 +62,7 @@ class VueLspTakeoverModeTypeScriptService(
     requiresNewEval: Boolean,
   ): JsonElement? {
     if (requiresNewEval) return null
-    val server = getServer() ?: return null
-    awaitServerRunningState(server)
+    val server = forceInitLspServer() ?: return null
     return server.sendRequest {
       (it as JSFrameworkLsp4jServer).handleCustomTsServerCommand(LspCustomTypeScriptCommandRequest(command.command, command.arguments))
     }
@@ -82,14 +79,5 @@ class VueLspTakeoverModeTypeScriptService(
   override fun supportsInjectedFile(file: PsiFile): Boolean {
     return file.language is VueJSLanguage
            || file.language is VueTSLanguage
-  }
-
-  private suspend fun awaitServerRunningState(server: LspServerImpl) {
-    while (true) {
-      when (server.state) {
-        LspServerState.Initializing -> delay(10L)
-        else -> return
-      }
-    }
   }
 }

@@ -1,7 +1,7 @@
 - name: lib/cucumber-core.jar
   library: cucumber-core-1
   files:
-  - name: $MAVEN_REPOSITORY$/io/cucumber/cucumber-core/1/cucumber-core-1.jar
+  - name: $MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/cucumber/cucumber-core/1/cucumber-core-1.jar
   - name: $MAVEN_REPOSITORY$/info/cukes/gherkin/2/gherkin-2.jar
   reason: <- intellij.cucumber.java
 - name: lib/cucumber-expressions.jar

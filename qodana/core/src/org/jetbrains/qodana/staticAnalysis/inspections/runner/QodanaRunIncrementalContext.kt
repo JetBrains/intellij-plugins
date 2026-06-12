@@ -31,20 +31,25 @@ class QodanaRunIncrementalContext private constructor(
   messageReporter: QodanaMessageReporter,
   val changes: Map<String, Set<Int>>,
   val scopeExtended: Map<VirtualFile, Set<String>>,
-): QodanaRunContext(project, loadedProfile, scope, qodanaProfile, config, runCoroutineScope, messageReporter) {
+  private val changedPaths: Set<Path>,
+) : QodanaRunContext(project, loadedProfile, scope, qodanaProfile, config, runCoroutineScope, messageReporter) {
   companion object {
-    suspend fun QodanaRunContext.asIncremental(changes: Map<String, Set<Int>>,
-                                               paths: Iterable<Path>,
-                                               onFileIncluded: ((VirtualFile) -> Unit)? = null): QodanaRunIncrementalContext {
-      val files = resolveVirtualFiles(config.projectPath, paths)
-      return createIncrementalContext(changes, files, emptyMap(), onFileIncluded)
+    suspend fun QodanaRunContext.asIncremental(
+      changes: Map<String, Set<Int>>,
+      paths: Iterable<Path>,
+      onFileIncluded: ((VirtualFile) -> Unit)? = null,
+    ): QodanaRunIncrementalContext {
+      val changedPaths = paths.map { it.normalize() }.toSet()
+      val files = resolveVirtualFiles(config.projectPath, changedPaths)
+      return createIncrementalContext(changes, files, emptyMap(), changedPaths, onFileIncluded)
     }
 
     suspend fun QodanaRunContext.createIncrementalContext(
       changes: Map<String, Set<Int>>,
       files: List<VirtualFile>,
       additionalFiles: Map<VirtualFile, Set<String>>,
-      onFileIncluded: ((VirtualFile) -> Unit)?
+      changedPaths: Set<Path>,
+      onFileIncluded: ((VirtualFile) -> Unit)?,
     ): QodanaRunIncrementalContext {
       project.serviceAsync<LocalChangesService>()
         .isIncrementalAnalysis
@@ -59,7 +64,8 @@ class QodanaRunIncrementalContext private constructor(
         runCoroutineScope,
         messageReporter,
         changes,
-        additionalFiles)
+        additionalFiles,
+        changedPaths)
     }
   }
 
@@ -77,7 +83,8 @@ class QodanaRunIncrementalContext private constructor(
         profile,
         runCoroutineScope,
         CoverageStatisticsData(coverageComputationState, project, changes),
-        scopeExtended
+        scopeExtended,
+        changedPaths,
       )
     }
   }

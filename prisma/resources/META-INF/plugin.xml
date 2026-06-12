@@ -118,7 +118,7 @@
                              implementationClass="org.intellij.prisma.ide.folding.PrismaFoldingBuilder"/>
 
         <!-- LSP -->
-        <platform.lsp.serverSupportProvider implementation="org.intellij.prisma.ide.lsp.PrismaLspServerSupportProvider"/>
+        <platform.lsp.clientProvider implementation="org.intellij.prisma.ide.lsp.PrismaLspClientProvider"/>
         <registryKey defaultValue="" description="Prisma service version for downloading" key="prisma.language.server.default.version"/>
 
         <!-- UI -->

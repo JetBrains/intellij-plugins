@@ -146,7 +146,7 @@ private suspend fun reconstructProblems(results: List<Result>,
                                         uri: String,
                                         projectDir: VirtualFile?,
                                         runContext: QodanaRunContext,
-                                        cleanup: Boolean): List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>> {
+                                        cleanup: Boolean): List<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>> {
   val inspections = results.map { it.ruleId }.toSet()
   val file = VfsUtil.findRelativeFile(uri, projectDir) ?: return emptyList()
   val psiFile = readAction { PsiManager.getInstance(runContext.project).findFile(file) } ?: return emptyList()
@@ -163,7 +163,7 @@ private suspend fun reconstructProblems(results: List<Result>,
 
   val globalSimpleToolWrappers = toolWrappersEnabled.filter { it.tool is GlobalSimpleInspectionTool }
 
-  val problems = mutableListOf<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>>()
+  val problems = mutableListOf<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>>()
 
   val localProblems = readActionBlocking {
     InspectionEngine.inspectEx(
@@ -188,7 +188,7 @@ private suspend fun reconstructProblems(results: List<Result>,
 
 private suspend fun inspectGlobalSimpleTools(globalToolWrappers: List<InspectionToolWrapper<*, *>>,
                                              project: Project,
-                                             psiFile: PsiFile): List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>> {
+                                             psiFile: PsiFile): List<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>> {
   if (globalToolWrappers.isEmpty()) return emptyList()
 
   val managerEx = InspectionManagerEx.getInstance(project)
@@ -207,7 +207,7 @@ private suspend fun inspectGlobalSimpleTools(globalToolWrappers: List<Inspection
 
 private suspend fun applyCleanup(
   runContext: QodanaRunContext,
-  problems: List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>>,
+  problems: List<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>>,
   uri: String,
   fixesLogger: FixesLogger
 ): Int {
@@ -215,27 +215,35 @@ private suspend fun applyCleanup(
   return withContext(Dispatchers.EDT) {
     blockingContextScope {
       //readaction is not enough
-      WriteIntentReadAction.compute<Int> {
+      WriteIntentReadAction.compute {
         var counter = 0
-        LOG.debug("Applying cleanup ${problems.size} fixes for $uri")
-        problems.forEach { (tool, problemDescriptors) ->
-          problemDescriptors.forEach { problem ->
-            val textBefore: CharSequence? =  if (fixesLogger.diffIncluded)
-              problem.containingFileText(true) else null
-
-            val fixesTask = CleanupInspectionUtil.getInstance().applyFixesNoSort(
-              runContext.project, QodanaBundle.message("apply.fixes.command"), listOf(problem), null, true)
-
-            if (fixesTask.numberOfSucceededFixes > 0) {
-              val problemMessage = problem.messageWithLine()
-              fixesLogger.logAppliedFix(runContext.messageReporter, tool, problemMessage, uri, problem, uri)
-
-              if (fixesLogger.diffIncluded && textBefore != null) {
-                fixesLogger.addFileModificationToQueue(uri, problemMessage, textBefore, problem.containingFileText())
-              }
+        val toolByProblem = LinkedHashMap<ProblemDescriptor, InspectionToolWrapper<*, *>>()
+        val sortedProblems = CleanupInspectionUtil.getInstance().sortDescriptions(
+          problems.flatMap { (tool, problemDescriptors) ->
+            problemDescriptors.onEach { problem ->
+              toolByProblem[problem] = tool
             }
-            counter += fixesTask.numberOfSucceededFixes
           }
+        )
+
+        LOG.debug("Applying cleanup ${sortedProblems.size} fixes for $uri")
+        sortedProblems.forEach { problem ->
+          val tool = toolByProblem.getValue(problem)
+          val textBefore: CharSequence? = if (fixesLogger.diffIncluded)
+            problem.containingFileText(true) else null
+
+          val fixesTask = CleanupInspectionUtil.getInstance().applyFixesNoSort(
+            runContext.project, QodanaBundle.message("apply.fixes.command"), listOf(problem), null, true)
+
+          if (fixesTask.numberOfSucceededFixes > 0) {
+            val problemMessage = problem.messageWithLine()
+            fixesLogger.logAppliedFix(runContext.messageReporter, tool, problemMessage, uri, problem, uri)
+
+            if (fixesLogger.diffIncluded && textBefore != null) {
+              fixesLogger.addFileModificationToQueue(uri, problemMessage, textBefore, problem.containingFileText())
+            }
+          }
+          counter += fixesTask.numberOfSucceededFixes
         }
 
         LOG.debug("Cleanup fixes for $uri applied")
@@ -247,7 +255,7 @@ private suspend fun applyCleanup(
 
 private suspend fun applyOther(
   runContext: QodanaRunContext,
-  problems: List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>>,
+  problems: List<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>>,
   uri: String,
   fixesLogger: FixesLogger
 ): Int {
@@ -266,7 +274,7 @@ private suspend fun applyOther(
 
 private fun fixProblems(
   runContext: QodanaRunContext,
-  problems: List<Pair<InspectionToolWrapper<*, *>, MutableList<ProblemDescriptor>>>,
+  problems: List<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>>,
   uri: String,
   fixesLogger: FixesLogger
 ): Int {

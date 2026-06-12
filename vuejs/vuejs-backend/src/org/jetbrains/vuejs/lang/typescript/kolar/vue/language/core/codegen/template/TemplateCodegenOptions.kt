@@ -7,11 +7,11 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRTemplate
 data class TemplateCodegenOptions(
   val vueCompilerOptions: VueCompilerOptions,
   val template: IRTemplate,
-  val setupRefs: Set<String>,
+  override val setupRefs: Set<String>,
   val setupConsts: Set<String>,
   val hasDefineSlots: Boolean = false,
   val propsAssignName: String? = null,
   val slotsAssignName: String? = null,
   val inheritAttrs: Boolean,
   val componentName: String,
-)
+) : HasSetupRefs

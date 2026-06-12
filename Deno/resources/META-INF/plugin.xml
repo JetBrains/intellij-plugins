@@ -40,7 +40,7 @@
 
     <lang.inspectionSuppressor language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoInspectionSuppressor"/>
 
-    <platform.lsp.serverSupportProvider implementation="com.intellij.deno.service.DenoLspSupportProvider"/>
+    <platform.lsp.clientProvider implementation="com.intellij.deno.service.DenoLspClientProvider"/>
     <editorTabTitleProvider implementation="com.intellij.deno.editor.DenoEditorTabTitleProvider"/>
 
     <workspaceModel.fileIndexContributor implementation="com.intellij.deno.roots.DenoWorkspaceFileIndexContributor"/>

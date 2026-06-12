@@ -12,9 +12,9 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.platform.lsp.api.Lsp4jClient
-import com.intellij.platform.lsp.api.LspServerManager
+import com.intellij.platform.lsp.api.LspClientManager
 import com.intellij.platform.lsp.api.LspServerNotificationsHandler
-import com.intellij.platform.lsp.api.LspServerSupportProvider
+import com.intellij.platform.lsp.api.LspClientProvider
 import kotlinx.coroutines.launch
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification
 import org.jetbrains.vuejs.lang.typescript.service.VueLSCoroutineScope
@@ -31,7 +31,7 @@ interface VueHMLsp4jServer : JSFrameworkLsp4jServer {
  * For Vue Hybrid mode.
  * Custom Lsp4jClient implementation for Vue LSP to handle custom tsserver bridge calls.
  */
-internal class VueHybridModeLsp4jClient<P : LspServerSupportProvider>(
+internal class VueHybridModeLsp4jClient<P : LspClientProvider>(
   private val project: Project,
   handler: LspServerNotificationsHandler,
   private val lspServerSupportProvider: Class<P>,
@@ -46,8 +46,8 @@ internal class VueHybridModeLsp4jClient<P : LspServerSupportProvider>(
     val (requestId, command, arguments) = VueTsserverRequest.parse(params)
                                           ?: return
 
-    val server = LspServerManager.getInstance(project)
-      .getServersForProvider(lspServerSupportProvider)
+    val server = LspClientManager.getInstance(project)
+      .getClients(lspServerSupportProvider)
       .singleOrNull()
 
     if (server == null) {

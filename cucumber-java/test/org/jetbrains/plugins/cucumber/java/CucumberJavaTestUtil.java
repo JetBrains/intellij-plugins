@@ -52,8 +52,8 @@ public final class CucumberJavaTestUtil {
     };
   }
 
-  public static DefaultLightProjectDescriptor createCucumber4_5ProjectDescriptor() {
-    return createCucumberProjectDescriptor("4.5");
+  public static DefaultLightProjectDescriptor createCucumber4_8ProjectDescriptor() {
+    return createCucumberProjectDescriptor("4.8");
   }
 
   public static DefaultLightProjectDescriptor createCucumber5ProjectDescriptor() {

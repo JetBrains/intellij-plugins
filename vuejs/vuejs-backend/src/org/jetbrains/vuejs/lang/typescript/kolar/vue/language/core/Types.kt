@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core
 
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.CompilerError
 
 // TextRange<Node extends ts.Node = ts.Node> { node: Node; start: number; end: number }
@@ -29,6 +30,11 @@ sealed interface IRBlock {
   val lang: String
   val content: String
   val attrs: Map<String, Any>  // values are String or Boolean (true)
+}
+
+// IRScript | IRScriptSetup — blocks that carry a TypeScript AST
+sealed interface IRScriptBlock : IRBlock {
+  val ast: SourceFile
 }
 
 // Top-level Vue SFC IR
@@ -66,8 +72,8 @@ data class IRScript(
   override val content: String,
   override val attrs: Map<String, Any>,
   val src: IRAttr?,
-  val ast: Any?,  // ts.SourceFile — opaque TypeScript AST
-) : IRBlock
+  override val ast: SourceFile,
+) : IRScriptBlock
 
 data class IRScriptSetup(
   override val name: String,
@@ -79,8 +85,8 @@ data class IRScriptSetup(
   override val content: String,
   override val attrs: Map<String, Any>,
   val generic: IRAttr?,
-  val ast: Any?,  // ts.SourceFile — opaque TypeScript AST
-) : IRBlock
+  override val ast: SourceFile,
+) : IRScriptBlock
 
 data class IRStyle(
   override val name: String,

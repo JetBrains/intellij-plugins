@@ -16,14 +16,16 @@ import com.intellij.psi.xml.XmlTokenType
 
 class AstroLspTypeScriptService(project: Project) : JSFrameworkLspTypeScriptService(
   project,
-  AstroLspServerSupportProvider::class.java,
+  AstroLspClientProvider::class.java,
+  AstroLspClientDescriptor(project),
   AstroLspServerActivationRule,
-  PublishDiagnostics(2),
 ) {
+  override val diagnosticsConfiguration: DiagnosticsConfiguration get() = PublishDiagnostics(2)
   override val name: String = "Astro LSP"
   override val prefix: String = "Astro"
 
-  override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): CompletionMergeStrategy = CompletionMergeStrategy.MERGE
+  override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): CompletionMergeStrategy =
+    CompletionMergeStrategy.MERGE
 
   override fun isServiceNavigationEnabled(): Boolean = true
 

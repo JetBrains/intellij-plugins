@@ -73,6 +73,7 @@ object names {
   const val PrettifyGlobal: String = "__VLS_PrettifyGlobal"
   const val ResolveDirectives: String = "__VLS_ResolveDirectives"
   const val ResolveEmits: String = "__VLS_ResolveEmits"
+  const val ResolveEvent: String = "__VLS_ResolveEvent"
   const val ShortEmits: String = "__VLS_ShortEmits"
   const val ShortEmitsToObject: String = "__VLS_ShortEmitsToObject"
   const val SpreadMerge: String = "__VLS_SpreadMerge"

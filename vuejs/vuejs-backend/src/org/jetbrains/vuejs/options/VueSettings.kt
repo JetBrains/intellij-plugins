@@ -19,14 +19,14 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.platform.lsp.api.LspServerManager
+import com.intellij.platform.lsp.api.LspClientManager
 import com.intellij.util.text.SemVer
 import kotlinx.serialization.Serializable
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.lang.typescript.service.allVueServiceRuntimes
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeLoaderFactory
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeSupportProvider
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspClientHybridModeProvider
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerTakeoverModeLoader
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginLoaderFactory
 import org.jetbrains.vuejs.lang.typescript.service.vueLspPackageName
@@ -317,7 +317,7 @@ enum class VueLSMode {
 
 /**
  * Restarts both TypeScript services (TS plugin, regular LSP) and the
- * Vue Hybrid Mode LSP server which has its own [com.intellij.platform.lsp.api.LspServerSupportProvider]
+ * Vue Hybrid Mode LSP server which has its own [com.intellij.platform.lsp.api.LspClientProvider]
  * not backed by a [com.intellij.lang.typescript.compiler.TypeScriptService].
  */
 internal fun restartVueServicesAsync(project: Project) {
@@ -325,8 +325,8 @@ internal fun restartVueServicesAsync(project: Project) {
   ApplicationManager.getApplication().invokeLater(
     {
       for (runtime in allVueServiceRuntimes) {
-        LspServerManager.getInstance(project)
-          .stopAndRestartIfNeeded(VueLspServerHybridModeSupportProvider.getProviderClass(runtime))
+        LspClientManager.getInstance(project)
+          .stopAndRestartClientsIfNeeded(VueLspClientHybridModeProvider.getProviderClass(runtime))
       }
     },
     project.disposed

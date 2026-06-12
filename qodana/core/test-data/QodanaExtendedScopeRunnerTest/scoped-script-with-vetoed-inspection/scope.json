@@ -1,0 +1,11 @@
+{
+  "files" : [{
+    "path" : "test-module/A.java",
+    "added" : [ ],
+    "deleted" : [ ]
+  }, {
+    "path" : "qodanaInspectionVetoer.trigger",
+    "added" : [ ],
+    "deleted" : [ ]
+  }]
+}
