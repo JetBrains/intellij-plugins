@@ -1,4 +1,4 @@
-package org.intellij.qodana.ijVoid
+package org.jetbrains.qodana.ijVoid
 
 import com.intellij.ide.starter.extended.allure.Subsystems
 import com.intellij.ide.starter.extended.engine.newTestContainerExtended
