@@ -30,6 +30,7 @@ jvm_library(
     visibility = ["//visibility:public"],
     deps = [
         # do not sort,
+        "@community//platform/backend",
         "@community//platform/analysis-api:analysis",
         "@community//platform/util/concurrency",
         "@community//platform/core-api:core",
@@ -87,6 +88,7 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         ":karma",
+        "@community//platform/backend:backend_test_lib",
         "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/util/concurrency:concurrency_test_lib",
         "@community//platform/core-api:core_test_lib",

@@ -4,7 +4,6 @@
   -->
 
 <idea-plugin>
-
   <extensions defaultExtensionNs="com.intellij">
     <programRunner implementation="com.intellij.javascript.karma.debug.KarmaDebugProgramRunner"/>
   </extensions>
