@@ -1,4 +1,4 @@
-package org.intellij.qodana.ijVoid
+package org.jetbrains.qodana.ijVoid
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
