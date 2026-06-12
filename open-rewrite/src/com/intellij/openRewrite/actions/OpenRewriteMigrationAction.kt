@@ -45,7 +45,7 @@ internal class OpenRewriteMigrationAction : OpenRewriteMigrationGroupAction() {
     val runnable = Runnable {
       ReadAction.nonBlocking(Callable {
         OpenRewriteRecipeService.getInstance(project).getDescriptors(null, OpenRewriteType.RECIPE).filter { descriptor ->
-          OpenRewriteRecipeLibraryContributor.EP_NAME.extensionList.any { it.updateMatches(descriptor.name) }
+          OpenRewriteRecipeLibraryContributor.EP_NAME.findFirstSafe { it.updateMatches(descriptor.name) } != null
         }
       })
         .coalesceBy(this, project)

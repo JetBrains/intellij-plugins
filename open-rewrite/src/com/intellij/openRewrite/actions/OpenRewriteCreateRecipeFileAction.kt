@@ -34,7 +34,7 @@ internal class OpenRewriteCreateRecipeFileAction : CreateFileFromTemplateAction(
     val view = LangDataKeys.IDE_VIEW.getData(dataContext) ?: return false
     return view.directories.any { directory ->
       val virtualFile = directory.virtualFile
-      OpenRewriteExternalSystemBridge.EP_NAME.extensionList.any { bridge -> bridge.hasBuildFile(virtualFile, project) } ||
+      OpenRewriteExternalSystemBridge.EP_NAME.findFirstSafe { bridge -> bridge.hasBuildFile(virtualFile, project) } != null ||
       ScratchUtil.isScratch(directory.virtualFile)
     }
   }

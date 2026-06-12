@@ -10,13 +10,9 @@ interface OpenRewriteLibraryResolver {
       ExtensionPointName.create("com.intellij.openRewrite.libraryResolver")
 
     fun resolveDependencies(virtualFile: VirtualFile?, version: String, project: Project): List<String> {
-      for (resolver in EP_NAME.extensionList) {
-        val dependencies = resolver.resolveDependencies(virtualFile, version, project)
-        if (dependencies.isNotEmpty()) {
-          return dependencies
-        }
-      }
-      return emptyList()
+      return EP_NAME.computeSafeIfAny { resolver ->
+        resolver.resolveDependencies(virtualFile, version, project).takeIf { it.isNotEmpty() }
+      } ?: emptyList()
     }
   }
 

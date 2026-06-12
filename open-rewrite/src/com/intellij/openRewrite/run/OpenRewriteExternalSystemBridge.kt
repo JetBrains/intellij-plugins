@@ -13,12 +13,8 @@ interface OpenRewriteExternalSystemBridge {
     internal val EP_NAME: ExtensionPointName<OpenRewriteExternalSystemBridge> =
       ExtensionPointName.create("com.intellij.openRewrite.externalSystemBridge")
 
-    fun findDelegate(configuration: OpenRewriteRunConfiguration): RunConfiguration? {
-      for (bridge in EP_NAME.extensionList) {
-        return bridge.getDelegate(configuration) ?: continue
-      }
-      return null
-    }
+    fun findDelegate(configuration: OpenRewriteRunConfiguration): RunConfiguration? =
+      EP_NAME.computeSafeIfAny { it.getDelegate(configuration) }
   }
 
   fun getDelegate(configuration: OpenRewriteRunConfiguration): RunConfiguration?

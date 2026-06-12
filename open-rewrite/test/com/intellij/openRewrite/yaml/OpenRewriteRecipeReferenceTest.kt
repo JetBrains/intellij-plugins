@@ -7,6 +7,7 @@ import com.intellij.openRewrite.RECIPE_FILE_NAME
 import com.intellij.openRewrite.recipe.OpenRewriteOptionPsiElement
 import com.intellij.openRewrite.recipe.OpenRewriteRecipePsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.yaml.psi.YAMLKeyValue
 import org.jetbrains.yaml.psi.YAMLScalar
 
@@ -21,7 +22,7 @@ class OpenRewriteRecipeReferenceTest : OpenRewriteLightHighlightingTestCase() {
       type: specs.openrewrite.org/v1beta/recipe
       name: com.second
     """.trimIndent())
-    val element = myFixture.file.findElementAt(myFixture.caretOffset)
+    val element = PsiUtilCore.getElementAtOffset(myFixture.file, myFixture.caretOffset)
     val scalar = PsiTreeUtil.getParentOfType(element, YAMLScalar::class.java)
     val reference = scalar!!.references.find { it is OpenRewriteYamlRecipeReferenceProvider.RecipeReference }
     assertNotNull(reference)
@@ -38,7 +39,7 @@ class OpenRewriteRecipeReferenceTest : OpenRewriteLightHighlightingTestCase() {
       type: specs.openrewrite.org/v1beta/recipe
       name: com.second
     """.trimIndent())
-    val element = myFixture.file.findElementAt(myFixture.caretOffset)
+    val element = PsiUtilCore.getElementAtOffset(myFixture.file, myFixture.caretOffset)
     val scalar = PsiTreeUtil.getParentOfType(element, YAMLScalar::class.java)
     val reference = scalar!!.references.find { it is OpenRewriteYamlRecipeReferenceProvider.RecipeReference }
     assertNotNull(reference)
@@ -55,7 +56,7 @@ class OpenRewriteRecipeReferenceTest : OpenRewriteLightHighlightingTestCase() {
       type: specs.openrewrite.org/v1beta/style
       name: com.second
     """.trimIndent())
-    val element = myFixture.file.findElementAt(myFixture.caretOffset)
+    val element = PsiUtilCore.getElementAtOffset(myFixture.file, myFixture.caretOffset)
     val scalar = PsiTreeUtil.getParentOfType(element, YAMLScalar::class.java)
     val reference = scalar!!.references.find { it is OpenRewriteYamlRecipeReferenceProvider.RecipeReference }
     assertNotNull(reference)
@@ -73,7 +74,7 @@ class OpenRewriteRecipeReferenceTest : OpenRewriteLightHighlightingTestCase() {
       type: specs.openrewrite.org/v1beta/recipe
       name: com.second
     """.trimIndent())
-    val element = myFixture.file.findElementAt(myFixture.caretOffset)
+    val element = PsiUtilCore.getElementAtOffset(myFixture.file, myFixture.caretOffset)
     val keyValue = PsiTreeUtil.getParentOfType(element, YAMLKeyValue::class.java)
     val reference = keyValue!!.references.find { it is OpenRewriteYamlRecipeReferenceProvider.RecipeReference }
     assertNotNull(reference)
@@ -96,7 +97,7 @@ class OpenRewriteRecipeReferenceTest : OpenRewriteLightHighlightingTestCase() {
         - com.MyRecipe:
             opt<caret>ion: value
     """.trimIndent())
-    val element = myFixture.file.findElementAt(myFixture.caretOffset)
+    val element = PsiUtilCore.getElementAtOffset(myFixture.file, myFixture.caretOffset)
     val keyValue = PsiTreeUtil.getParentOfType(element, YAMLKeyValue::class.java)
     val reference = keyValue!!.references.find { it is OpenRewriteYamlRecipeOptionReferenceProvider.RecipeOptionReference }
     assertNotNull(reference)
@@ -119,7 +120,7 @@ class OpenRewriteRecipeReferenceTest : OpenRewriteLightHighlightingTestCase() {
         - com.MyRecipe:
             option: val<caret>ue
     """.trimIndent())
-    val element = myFixture.file.findElementAt(myFixture.caretOffset)
+    val element = PsiUtilCore.getElementAtOffset(myFixture.file, myFixture.caretOffset)
     val scalar = PsiTreeUtil.getParentOfType(element, YAMLScalar::class.java)
     val reference = scalar!!.references.find { it is OpenRewriteYamlRecipeOptionValueReferenceProvider.RecipeOptionValueReference }
     assertNotNull(reference)

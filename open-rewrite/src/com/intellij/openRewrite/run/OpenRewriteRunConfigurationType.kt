@@ -22,7 +22,7 @@ internal class OpenRewriteRunConfigurationType : ConfigurationType, DumbAware {
     }
 
     override fun isApplicable(project: Project): Boolean =
-      OpenRewriteExternalSystemBridge.EP_NAME.extensionList.any { it.isAvailable(project) }
+      OpenRewriteExternalSystemBridge.EP_NAME.findFirstSafe { it.isAvailable(project) } != null
 
     override fun getId(): String = "OpenRewrite"
     override fun isEditableInDumbMode(): Boolean = true

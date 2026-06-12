@@ -269,8 +269,9 @@ internal open class OpenRewriteRecipeService(private val project: Project, priva
     val (dependencies, existingDependencies) = smartReadAction(project) {
       val dependencies = ArrayList<UnifiedCoordinates>()
       val existingDependencies = ArrayList<String>()
-      val coordinates = OpenRewriteRecipeLibraryContributor.EP_NAME.extensionList
-        .flatMap { it.getRecipeLibraries(project) }
+      val coordinates = buildList {
+        OpenRewriteRecipeLibraryContributor.EP_NAME.forEachExtensionSafe { addAll(it.getRecipeLibraries(project)) }
+      }
       for (coordinate in coordinates) {
         val mavenId = "${coordinate.groupId}:${coordinate.artifactId}"
         if (JavaLibraryUtil.hasLibraryJar(project, mavenId)) {

@@ -63,13 +63,13 @@ internal abstract class OpenRewriteMigrationGroupAction : DumbAwareAction() {
       return false
     }
     val module = ModuleUtil.findModuleForPsiElement(psiFile) ?: return false
-    val bridge = OpenRewriteExternalSystemBridge.EP_NAME.extensionList.find { it.isBuildFile(module, psiFile) } ?: return false
+    val bridge = OpenRewriteExternalSystemBridge.EP_NAME.findFirstSafe { it.isBuildFile(module, psiFile) } ?: return false
     return isUpdateAvailable(bridge.adjustModule(module), isPopup)
   }
 
   private fun isUpdateAvailable(module: Module, filterByLibrary: Boolean): Boolean {
-    return OpenRewriteRecipeLibraryContributor.EP_NAME.extensionList.any {
+    return OpenRewriteRecipeLibraryContributor.EP_NAME.findFirstSafe {
       it.hasLibrary(module) && (filterByLibrary || it.isUpdateAvailable(module))
-    }
+    } != null
   }
 }

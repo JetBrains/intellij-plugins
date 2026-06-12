@@ -18,7 +18,6 @@ import com.intellij.openRewrite.recipe.OpenRewriteType
 import com.intellij.openRewrite.run.before.OpenRewriteInstallBeforeRunTask
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ProjectFileIndex
@@ -35,6 +34,7 @@ import org.jetbrains.yaml.psi.YAMLMapping
 import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.YAMLSequence
 import java.util.concurrent.Callable
+import kotlinx.coroutines.CancellationException
 
 internal class OpenRewriteProgramRunner : AsyncProgramRunner<RunnerSettings>() {
   @Throws(ExecutionException::class)
@@ -57,7 +57,8 @@ internal class OpenRewriteProgramRunner : AsyncProgramRunner<RunnerSettings>() {
           val serviceArtifacts = OpenRewriteRecipeService.getInstance(environment.project).recipeArtifacts()
           state.setRecipeArtifacts(serviceArtifacts + getBeforeRunTaskArtifacts(configuration))
         }
-        catch (ignore: ProcessCanceledException) {
+        catch (e: CancellationException) {
+          throw e
         }
         catch (e: Exception) {
           descriptor.setError(e)

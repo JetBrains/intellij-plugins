@@ -20,7 +20,6 @@ import com.intellij.openapi.compiler.CompilerManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.newvfs.ManagingFS
@@ -39,6 +38,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import javax.swing.Icon
 import kotlin.io.path.pathString
+import kotlinx.coroutines.CancellationException
 
 internal val INSTALL_BEFORE_RUN_TASK_KEY: Key<OpenRewriteInstallBeforeRunTask> = Key.create("OpenRewriteInstallBeforeRunTask")
 private const val INSTALL_BEFORE_RUN_TASK_NOTIFICATION_DISPLAY_ID = "openRewrite.install.class.recipe"
@@ -158,10 +158,7 @@ internal class OpenRewriteInstallBeforeRunTaskProvider : BeforeRunTaskProvider<O
     commandLineBuilder.append(" -Dpackaging=${coordinates.packaging}")
     val commandLine = commandLineBuilder.toString()
 
-    for (bridge in OpenRewriteExternalSystemBridge.EP_NAME.extensionList) {
-      if (bridge.installFile(configuration.project, commandLine)) return true
-    }
-    return false
+    return OpenRewriteExternalSystemBridge.EP_NAME.findFirstSafe { it.installFile(configuration.project, commandLine) } != null
   }
 
   override fun executeTask(
@@ -187,7 +184,7 @@ internal class OpenRewriteInstallBeforeRunTaskProvider : BeforeRunTaskProvider<O
 
       return install(configuration, task, name)
     }
-    catch (e: ProcessCanceledException) {
+    catch (e: CancellationException) {
       throw e
     }
     catch (e: Exception) {

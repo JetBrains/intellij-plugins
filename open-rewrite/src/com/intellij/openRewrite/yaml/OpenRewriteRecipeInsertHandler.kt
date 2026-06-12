@@ -8,6 +8,7 @@ import com.intellij.openRewrite.recipe.OpenRewriteRecipeDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.yaml.YAMLElementGenerator
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLKeyValue
@@ -17,7 +18,7 @@ import org.jetbrains.yaml.psi.YAMLScalar
 internal class OpenRewriteRecipeInsertHandler(val descriptor: OpenRewriteRecipeDescriptor,
                                               val project: Project) : InsertHandler<LookupElement> {
   override fun handleInsert(context: InsertionContext, item: LookupElement) {
-    val psiElement = context.file.findElementAt(context.startOffset) ?: return
+    val psiElement = PsiUtilCore.getElementAtOffset(context.file, context.startOffset)
     val sequenceItemScalar = psiElement.parent as? YAMLScalar ?: return
 
     insertOptionKeyValues(sequenceItemScalar)
@@ -44,7 +45,7 @@ internal class OpenRewriteRecipeInsertHandler(val descriptor: OpenRewriteRecipeD
   }
 
   private fun runOptionValueTemplate(context: InsertionContext) {
-    val newElement = context.file.findElementAt(context.startOffset) ?: return
+    val newElement = PsiUtilCore.getElementAtOffset(context.file, context.startOffset)
     val recipeKeyValue = newElement.parent as? YAMLKeyValue ?: return
     val recipeMapping = recipeKeyValue.value as? YAMLMapping ?: return
     val builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(recipeKeyValue)

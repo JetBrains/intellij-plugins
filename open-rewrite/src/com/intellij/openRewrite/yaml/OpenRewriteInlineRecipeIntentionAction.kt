@@ -16,6 +16,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.yaml.psi.YAMLDocument
 import org.jetbrains.yaml.psi.YAMLMapping
@@ -36,7 +37,7 @@ internal class OpenRewriteInlineRecipeIntentionAction : IntentionAction, HighPri
     if (!isRecipe(psiFile)) return false
 
     val offset = editor.caretModel.offset
-    val element = psiFile.findElementAt(offset)?.parent
+    val element = PsiUtilCore.getElementAtOffset(psiFile, offset).parent
     if (element !is YAMLScalar) return false
     val type = getSequenceItemType(element.parent) ?: return false
 
@@ -49,7 +50,7 @@ internal class OpenRewriteInlineRecipeIntentionAction : IntentionAction, HighPri
     if (!FileModificationService.getInstance().prepareFileForWrite(psiFile)) return
 
     val offset = editor.caretModel.offset
-    val scalar = psiFile.findElementAt(offset)?.parent as? YAMLScalar ?: return
+    val scalar = PsiUtilCore.getElementAtOffset(psiFile, offset).parent as? YAMLScalar ?: return
     val recipeName = scalar.textValue
     val parent = scalar.parent ?: return
     val type = getSequenceItemType(parent) ?: return

@@ -34,7 +34,7 @@ internal class OpenRewriteWorkingDirectoryInfo(private val project: Project) : W
 
     override fun isFileSelectable(file: VirtualFile?): Boolean {
       if (!super.isFileSelectable(file)) return false
-      return OpenRewriteExternalSystemBridge.EP_NAME.extensionList.any { it.hasBuildFile(file!!, project) }
+      return OpenRewriteExternalSystemBridge.EP_NAME.findFirstSafe { it.hasBuildFile(file!!, project) } != null
     }
   }
 }
