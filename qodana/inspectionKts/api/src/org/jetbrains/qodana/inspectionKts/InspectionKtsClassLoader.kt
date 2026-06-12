@@ -18,7 +18,7 @@ import kotlin.math.max
  * Copy of [com.intellij.ide.script.IdeScriptEngineManagerImpl.AllPluginsLoader] but
  * with delegating of loading some classes to plugins's submodules, see [InspectionKtsPluginWithSubModulesClassLoader]
  */
-internal class InspectionKtsClassLoader : ClassLoader(null) {
+class InspectionKtsClassLoader : ClassLoader(null) {
   private val myLuckyGuess: ConcurrentMap<Long, ClassLoader> = ConcurrentHashMap()
 
   @Throws(ClassNotFoundException::class)

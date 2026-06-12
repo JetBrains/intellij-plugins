@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.annotations.ApiStatus.Internal
+import org.jetbrains.qodana.inspectionKts.bta.InspectionKtsBtaCompiler
 import org.jetbrains.qodana.util.appearedFilePath
 import org.jetbrains.qodana.util.disappearedFilePath
 import org.jetbrains.qodana.util.documentChangesFlow
@@ -53,9 +54,6 @@ fun isInspectionKtsEnabled(): Boolean {
 }
 
 const val INSPECTIONS_KTS_DIRECTORY: String = "inspections"
-const val INSPECTIONS_KTS_EXTENSION: String = "inspection.kts"
-
-internal const val FLEX_INSPECT_PROVIDER_NAME = "FlexInspect"
 
 internal class KtsDynamicInspectionsProvider : DynamicInspectionsProvider {
   override fun inspections(project: Project): Flow<Set<DynamicInspectionDescriptor>> {
@@ -221,7 +219,13 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
   }
 
   suspend fun doCompileInspectionKtsFile(file: Path): InspectionKtsFileStatus {
-    return compileInspectionKtsFile(project, file, inspectionKtsErrorLogManager.Logger(file), inspectionKtsClassLoader)
+    val errorLogger = inspectionKtsErrorLogManager.Logger(file)
+    val bta = InspectionKtsBtaCompiler.EP_NAME.extensionList.firstOrNull { it.isEnabled() }
+    return if (bta != null) {
+      bta.compile(project, file, errorLogger, inspectionKtsClassLoader, scope)
+    } else {
+      compileInspectionKtsFile(project, file, errorLogger, inspectionKtsClassLoader)
+    }
   }
 
   private suspend fun signalsAfterInitialCompilation(file: Path): Flow<CompiledInspectionSignal> {

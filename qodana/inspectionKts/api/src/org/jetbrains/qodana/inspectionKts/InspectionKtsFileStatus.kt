@@ -2,7 +2,6 @@ package org.jetbrains.qodana.inspectionKts
 
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ex.DynamicInspectionDescriptor
-import com.intellij.ide.script.IdeScriptEngine
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.flow.StateFlow
@@ -65,7 +64,7 @@ interface CompiledInspectionsKtsData
 class CompiledInspectionKtsInspections(
   val inspections: Set<DynamicInspectionDescriptor>,
   val customData: Set<CompiledInspectionsKtsData>,
-  @Suppress("unused") private val engine: IdeScriptEngine?, // to keep classes loaded by the engine
+  @Suppress("unused") private val keepAlive: Any?, // Keep this field to prevent the class from being optimized away
 )
 
 interface CompiledInspectionKtsPostProcessorFactory {

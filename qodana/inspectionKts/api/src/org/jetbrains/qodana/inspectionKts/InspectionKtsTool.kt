@@ -13,8 +13,8 @@ import com.intellij.codeInspection.ProblemDescriptionsProcessor
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.reference.RefEntity
-import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.diagnostic.rethrowControlFlowException
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import org.jetbrains.annotations.ApiStatus
@@ -32,9 +32,7 @@ fun InspectionKts.__asTool__(exceptionReporter: (Exception) -> Unit): Inspection
       action.invoke()
     }
     catch (e : Exception) {
-      if (e is ControlFlowException) {
-        throw e
-      }
+      rethrowControlFlowException(e)
       exceptionReporter.invoke(e)
       logger<InspectionKts>().error(e) // do not throw further, otherwise one incorrect inspection kills the whole analysis
     }
@@ -131,10 +129,10 @@ fun InspectionKts.__asTool__(exceptionReporter: (Exception) -> Unit): Inspection
     }
     else -> {
       error("""
-        $INSPECTIONS_KTS_EXTENSION $this tool must be either 
-        - Local inspection: ${LocalInspectionTool::class.java.canonicalName} 
+        $INSPECTIONS_KTS_EXTENSION $this tool must be either
+        - Local inspection: ${LocalInspectionTool::class.java.canonicalName}
         - Global inspection: ${GlobalInspectionTool::class.java.canonicalName}
-              
+
         Got ${tool}
       """.trimIndent())
     }

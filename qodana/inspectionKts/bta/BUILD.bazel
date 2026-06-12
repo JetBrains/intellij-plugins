@@ -1,0 +1,82 @@
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.qodana.inspectionKts.bta` start
+
+jvm_library(
+    name = "bta",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.inspectionKts.bta",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@lib//:kotlinc-kotlin-build-tools-impl",
+        "@lib//:kotlin-tooling-core",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@lib//:kotlinc-kotlin-build-tools-api",
+        "@lib//:kotlinc-kotlin-compiler-common",
+        "@lib//:kotlinc-kotlin-scripting-jvm",
+        "//contrib/qodana/inspectionKts/api",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-impl",
+        "@community//platform/core-api:core",
+        "@community//platform/platform-api:ide",
+        "@community//platform/ide-core",
+        "@community//platform/util",
+        "@community//platform/core-impl",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//libraries/kotlinx/coroutines/core",
+        "@community//platform/progress/shared:ide-progress",
+        "@community//plugins/kotlin/base/plugin",
+    ],
+)
+
+jvm_library(
+    name = "bta_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.inspectionKts.bta",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":bta",
+        "//contrib/qodana/inspectionKts/api:api_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/analysis-impl:analysis-impl_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//libraries/kotlinx/coroutines/core:core_test_lib",
+        "@community//platform/progress/shared:ide-progress_test_lib",
+        "@community//plugins/kotlin/base/plugin:plugin_test_lib",
+    ],
+)
+### auto-generated section `build intellij.qodana.inspectionKts.bta` end
+
+### auto-generated section `iml intellij.qodana.inspectionKts.bta` start
+exports_files(
+    [
+        "intellij.qodana.inspectionKts.bta.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.qodana.inspectionKts.bta` end

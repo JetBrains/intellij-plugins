@@ -1,9 +1,9 @@
 <idea-plugin visibility="public">
-  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="com.intellij.modules.ultimate"/>
     <module name="intellij.yaml.backend"/>
     <module name="intellij.json.backend"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.libraries.jackson"/>
     <module name="intellij.libraries.jackson.databind"/>
     <module name="intellij.libraries.jackson.dataformat.yaml"/>
@@ -17,7 +17,6 @@
     <module name="intellij.platform.editor.ui"/>
     <module name="intellij.platform.ide"/>
     <module name="intellij.platform.ide.core"/>
-    <module name="intellij.platform.ide.core.impl"/>
     <module name="intellij.platform.ide.impl"/>
     <module name="intellij.platform.ide.progress"/>
     <module name="intellij.platform.lang"/>
@@ -27,8 +26,9 @@
     <module name="intellij.platform.statistics"/>
     <module name="intellij.platform.util.coroutines"/>
     <module name="intellij.platform.util.ui"/>
+    <module name="intellij.qodana.inspectionKts.api"/>
+    <!-- endregion -->
   </dependencies>
-  <!-- endregion -->
   <resource-bundle>messages.InspectionKtsBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -68,13 +68,15 @@
     <extensionPoint qualifiedName="org.jetbrains.qodana.inspectionKts.customPsiFileFactory"
                     interface="org.jetbrains.qodana.inspectionKts.fileFactory.CustomPsiFileFactory"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.qodana.inspectionKts.btaCompiler"
+                    interface="org.jetbrains.qodana.inspectionKts.bta.InspectionKtsBtaCompiler"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.intellij.qodana">
     <dynamicInspectionsInitializer implementation="org.jetbrains.qodana.inspectionKts.InspectionKtsProfileInitializer"/>
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains.qodana.inspectionKts">
-    <defaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.api.MainInspectionKtsDefaultImportProvider"/>
     <templates.provider implementation="org.jetbrains.qodana.inspectionKts.templates.AnyLanguageInspectionKtsTemplateProvider"/>
     <templates.provider implementation="org.jetbrains.qodana.inspectionKts.templates.AnyLanguageGlobalInspectionKtsTemplateProvider"/>
     <examples.provider implementation="org.jetbrains.qodana.inspectionKts.examples.JsonYamlInspectionKtsExampleProvider"/>

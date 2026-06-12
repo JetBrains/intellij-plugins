@@ -1,17 +1,10 @@
 package org.jetbrains.qodana.inspectionKts
 
 import com.intellij.codeInspection.ex.DynamicInspectionDescriptor
-import com.intellij.ide.trustedProjects.TrustedProjects
-import com.intellij.ide.trustedProjects.TrustedProjectsListener
-import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -24,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import org.jetbrains.qodana.inspectionKts.api.InspectionKts
@@ -139,32 +131,6 @@ internal data class InspectionKtsResultData(
   val userData: Set<CompiledInspectionsKtsData>
 )
 
-internal suspend fun getDocumentByNioPath(file: Path): Document? {
-  val virtualFile = LocalFileSystem.getInstance().findFileByNioFile(file)
-  val document = if (virtualFile != null) {
-    readAction {
-      FileDocumentManager.getInstance().getDocument(virtualFile)
-    }
-  } else {
-    null
-  }
-  return document
-}
-
-private suspend fun waitWhenProjectTrusted(project: Project) {
-  if (TrustedProjects.isProjectTrusted(project)) return
-
-  suspendCancellableCoroutine { cont ->
-    val disposable = Disposer.newDisposable()
-    cont.invokeOnCancellation {
-      Disposer.dispose(disposable)
-    }
-    TrustedProjectsListener.onceWhenProjectTrusted(disposable) {
-      cont.resumeWith(Result.success(Unit))
-    }
-  }
-}
-
 /**
  * Kotlin compiled disconnects after some idle time (need to investigate and tune daemon options), for now we have this temp fix
  */
@@ -183,4 +149,3 @@ private class KeepAliveKotlinCompileService(scope: CoroutineScope) {
     }
   }
 }
-

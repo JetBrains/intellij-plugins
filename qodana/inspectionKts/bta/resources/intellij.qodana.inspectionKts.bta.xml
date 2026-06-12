@@ -1,0 +1,17 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="org.jetbrains.kotlin"/>
+    <module name="intellij.qodana.inspectionKts.api"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey defaultValue="true"
+                 description="Compile .inspection.kts via Kotlin Build Tools API instead of the deprecated Kotlin compiler daemon"
+                 key="qd.inspection.kts.use.bta"
+                 restartRequired="true"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.qodana.inspectionKts">
+    <btaCompiler implementation="org.jetbrains.qodana.inspectionKts.bta.QodanaBtaInspectionKtsCompiler"/>
+  </extensions>
+</idea-plugin>

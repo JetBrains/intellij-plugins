@@ -1,0 +1,9 @@
+<idea-plugin visibility="public">
+  <dependencies>
+    <plugin id="com.intellij.modules.lang"/>
+  </dependencies>
+  <resource-bundle>messages.InspectionKtsBundle</resource-bundle>
+  <extensions defaultExtensionNs="org.jetbrains.qodana.inspectionKts">
+    <defaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.api.MainInspectionKtsDefaultImportProvider"/>
+  </extensions>
+</idea-plugin>
