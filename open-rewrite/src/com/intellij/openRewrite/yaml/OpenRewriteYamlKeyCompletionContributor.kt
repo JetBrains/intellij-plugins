@@ -1,0 +1,6 @@
+package com.intellij.openRewrite.yaml
+
+import com.intellij.microservices.jvm.config.yaml.ConfigYamlKeyCompletionContributor
+
+internal class OpenRewriteYamlKeyCompletionContributor :
+  ConfigYamlKeyCompletionContributor(OpenRewriteYamlKeyCompletionProvider(), RECIPE_YAML_CONDITION)

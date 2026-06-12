@@ -1,0 +1,6 @@
+type: specs.openrewrite.org/v1beta/recipe
+name: com.my.Recipe
+recipeList:
+  - org.openrewrite.java.ChangePackage:/*<# Rename package name #>*/
+      oldPackageName: com
+      newPackageName: org

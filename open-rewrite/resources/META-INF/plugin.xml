@@ -1,0 +1,129 @@
+<idea-plugin package="com.intellij.openRewrite">
+  <id>com.intellij.openRewrite</id>
+  <name>OpenRewrite</name>
+  <vendor>JetBrains</vendor>
+  <category>JVM Frameworks</category>
+
+  <description><![CDATA[
+    <p>Applies automated migrations to project code using <a href="https://docs.openrewrite.org/">OpenRewrite</a> framework.</p>
+    <p>OpenRewrite is an automated refactoring ecosystem for source code,
+    enabling developers to effectively eliminate technical debt within their repositories.</p>
+  ]]></description>
+
+  <dependencies>
+    <plugin id="com.intellij.modules.ultimate"/>
+    <module name="intellij.java.backend"/>
+    <plugin id="com.intellij.modules.lang"/>
+    <plugin id="com.intellij.microservices.jvm"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.java.aetherDependencyResolver"/>
+    <module name="intellij.java.execution.impl"/>
+    <module name="intellij.java.psi"/>
+    <module name="intellij.java.syntax"/>
+    <module name="intellij.java.ui"/>
+    <module name="intellij.json.backend"/>
+    <module name="intellij.microservices.jvm.config.yaml"/>
+    <module name="intellij.platform.lvcs.impl"/>
+    <module name="intellij.spellchecker"/>
+    <module name="intellij.yaml.backend"/>
+    <!-- endregion -->
+  </dependencies>
+
+  <content namespace="jetbrains">
+    <module name="intellij.openRewrite.gradle"/>
+    <module name="intellij.openRewrite.maven"/>
+    <module name="intellij.openRewrite.micronaut"/>
+    <module name="intellij.openRewrite.quarkus"/>
+    <module name="intellij.openRewrite.spring.boot"/>
+  </content>
+
+  <resource-bundle>messages.OpenRewriteBundle</resource-bundle>
+
+  <extensionPoints>
+    <extensionPoint name="externalSystemBridge" interface="com.intellij.openRewrite.run.OpenRewriteExternalSystemBridge" dynamic="true"/>
+    <extensionPoint name="recipeLibraryContributor" interface="com.intellij.openRewrite.OpenRewriteRecipeLibraryContributor" dynamic="true"/>
+    <extensionPoint name="libraryResolver" interface="com.intellij.openRewrite.recipe.OpenRewriteLibraryResolver" dynamic="true"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <iconProvider implementation="com.intellij.openRewrite.OpenRewriteIconProvider"/>
+    <spellchecker.bundledDictionaryProvider implementation="com.intellij.openRewrite.OpenRewriteDictionaryProvider"/>
+
+    <notificationGroup id="OpenRewrite" displayType="BALLOON" isLogByDefault="true" bundle="messages.OpenRewriteBundle"
+                       key="open.rewrite"
+                       notificationIds="openRewrite.update.recipe"/>
+
+    <configurationType implementation="com.intellij.openRewrite.run.OpenRewriteRunConfigurationType"/>
+    <runConfigurationProducer implementation="com.intellij.openRewrite.run.OpenRewriteRunConfigurationProducer"/>
+    <runConfigurationProducer implementation="com.intellij.openRewrite.run.before.OpenRewriteScratchClassRunConfigurationProducer"/>
+    <stepsBeforeRunProvider implementation="com.intellij.openRewrite.run.before.OpenRewriteInstallBeforeRunTaskProvider"/>
+    <runLineMarkerContributor language="yaml"
+                              implementationClass="com.intellij.openRewrite.run.OpenRewriteRecipeRunLineMarkerProvider"/>
+    <runLineMarkerContributor language="JAVA"
+                              implementationClass="com.intellij.openRewrite.run.before.OpenRewriteScratchClassRunLineMarkerProvider"/>
+    <programRunner implementation="com.intellij.openRewrite.run.OpenRewriteProgramRunner" order="first"/>
+    <compiler.task execute="AFTER" implementation="com.intellij.openRewrite.run.before.OpenRewriteScratchClassCompilationSupport"/>
+
+    <projectService
+      serviceInterface="com.intellij.openRewrite.recipe.OpenRewriteRecipeService"
+      serviceImplementation="com.intellij.openRewrite.recipe.OpenRewriteRecipeService"
+      testServiceImplementation="com.intellij.openRewrite.recipe.OpenRewriteTestRecipeService"/>
+    <additionalLibraryRootsProvider implementation="com.intellij.openRewrite.recipe.OpenRewriteLibraryRootsProvider"/>
+    <openRewrite.libraryResolver implementation="com.intellij.openRewrite.recipe.OpenRewriteDefaultLibraryResolver" order="last"/>
+    <openRewrite.recipeLibraryContributor implementation="com.intellij.openRewrite.jakarta.JakartaRecipeLibraryContributor"/>
+
+    <psi.referenceContributor
+      language="yaml"
+      implementation="com.intellij.openRewrite.yaml.OpenRewriteYamlReferenceContributor"/>
+    <completion.contributor
+      language="yaml"
+      order="first"
+      implementationClass="com.intellij.openRewrite.yaml.OpenRewriteYamlKeyCompletionContributor"/>
+    <codeInsight.declarativeInlayProvider language="yaml"
+                                          implementationClass="com.intellij.openRewrite.yaml.OpenRewriteRecipeInlayHintsProvider"
+                                          isEnabledByDefault="true"
+                                          group="OTHER_GROUP"
+                                          providerId="open.rewrite.recipe"
+                                          bundle="messages.OpenRewriteBundle"
+                                          nameKey="open.rewrite.recipe.inlay.provider.name"
+                                          descriptionKey="open.rewrite.recipe.inlay.provider.description"/>
+    <localInspection language="yaml" bundle="messages.OpenRewriteBundle"
+                     shortName="OpenRewriteYamlRecipe" level="ERROR"
+                     key="open.rewrite.yaml.inspection"
+                     groupKey="open.rewrite" enabledByDefault="true"
+                     implementationClass="com.intellij.openRewrite.yaml.OpenRewriteYamlRecipeInspection"/>
+    <intentionAction>
+      <language>yaml</language>
+      <className>com.intellij.openRewrite.yaml.OpenRewriteInlineRecipeIntentionAction</className>
+      <categoryKey>open.rewrite</categoryKey>
+    </intentionAction>
+    <internalFileTemplate name="OpenRewrite Recipe"/>
+    <platform.backend.documentation.psiTargetProvider
+      implementation="com.intellij.openRewrite.yaml.OpenRewriteYamlDocumentationProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="JavaScript.JsonSchema">
+    <ProviderFactory implementation="com.intellij.openRewrite.recipe.OpenRewriteRecipeSchemaProviderFactory"/>
+  </extensions>
+
+  <actions>
+    <action id="OpenRewrite.Migration.Action"
+            class="com.intellij.openRewrite.actions.OpenRewriteMigrationAction"
+            icon="com.intellij.openRewrite.OpenRewriteIcons.OpenRewrite">
+      <add-to-group group-id="EditorContextBarMenu"/>
+      <add-to-group group-id="RefactoringMenu4" anchor="after" relative-to-action="MigrationMenu"/>
+    </action>
+    <action id="OpenRewrite.Hide.Migration.Action"
+            class="com.intellij.openRewrite.actions.OpenRewriteHideMigrationAction">
+      <add-to-group group-id="EditorContextBarMenu"/>
+    </action>
+    <action id="OpenRewrite.Create.Recipe.File"
+            class="com.intellij.openRewrite.actions.OpenRewriteCreateRecipeFileAction"
+            icon="com.intellij.openRewrite.OpenRewriteIcons.OpenRewrite">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFromTemplate"/>
+    </action>
+    <action id="OpenRewrite.Create.New.Migration" class="com.intellij.openRewrite.actions.OpenRewriteCreateNewMigrationAction">
+      <add-to-group group-id="MigrationMenu" anchor="after" relative-to-action="NewMigration"/>
+    </action>
+  </actions>
+</idea-plugin>

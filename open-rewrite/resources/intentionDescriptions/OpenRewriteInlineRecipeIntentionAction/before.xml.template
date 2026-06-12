@@ -1,0 +1,10 @@
+type: specs.openrewrite.org/v1beta/recipe
+name: com.recipe.first
+recipeList:
+  - <spot>com.recipe.second</spot>
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.recipe.second
+recipeList:
+  - com.recipe.third
+  - com.recipe.fourth

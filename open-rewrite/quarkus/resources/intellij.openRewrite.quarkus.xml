@@ -1,0 +1,12 @@
+<idea-plugin package="com.intellij.openRewrite.quarkus">
+  <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <plugin id="com.intellij.openRewrite"/>
+    <plugin id="com.intellij.quarkus"/>
+    <!-- endregion -->
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <openRewrite.recipeLibraryContributor implementation="com.intellij.openRewrite.quarkus.QsRecipeLibraryContributor"/>
+  </extensions>
+</idea-plugin>

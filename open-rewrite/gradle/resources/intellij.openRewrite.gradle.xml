@@ -1,0 +1,13 @@
+<idea-plugin package="com.intellij.openRewrite.gradle">
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.gradle"/>
+    <module name="intellij.platform.smRunner"/>
+    <module name="intellij.platform.testRunner"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <openRewrite.externalSystemBridge implementation="com.intellij.openRewrite.gradle.OpenRewriteGradleBridge"/>
+  </extensions>
+</idea-plugin>

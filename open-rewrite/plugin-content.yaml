@@ -1,0 +1,9 @@
+- name: lib/openRewrite.jar
+  modules:
+  - name: intellij.openRewrite
+  contentModules:
+  - name: intellij.openRewrite.gradle
+  - name: intellij.openRewrite.maven
+  - name: intellij.openRewrite.micronaut
+  - name: intellij.openRewrite.quarkus
+  - name: intellij.openRewrite.spring.boot

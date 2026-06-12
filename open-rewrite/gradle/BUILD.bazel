@@ -1,0 +1,179 @@
+load("@community//build:tests-options.bzl", "jps_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.openRewrite.gradle` start
+
+jvm_library(
+    name = "gradle",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.openRewrite.gradle",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//plugins/gradle",
+        "//contrib/open-rewrite",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/external-system-impl:externalSystem-impl",
+        "@community//platform/platform-util-io:ide-util-io",
+        "@community//platform/ide-core",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-impl",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/smRunner",
+        "@community//platform/execution",
+        "@community//platform/testRunner",
+    ],
+)
+
+jvm_library(
+    name = "gradle_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.openRewrite.gradle",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":gradle",
+        "@community//plugins/gradle:gradle_test_lib",
+        "//contrib/open-rewrite:open-rewrite_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-ui",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/external-system-impl:externalSystem-impl_test_lib",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/smRunner:smRunner_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/external-system-impl:externalSystem-tests",
+        "@community//platform/external-system-impl:externalSystem-tests_test_lib",
+        "@community//plugins/gradle:gradle-tests",
+        "@community//plugins/gradle:gradle-tests_test_lib",
+        "@community//platform/execution:execution_test_lib",
+        "@community//platform/testRunner:testRunner_test_lib",
+    ],
+)
+### auto-generated section `build intellij.openRewrite.gradle` end
+
+### auto-generated section `iml intellij.openRewrite.gradle` start
+exports_files(
+    [
+        "intellij.openRewrite.gradle.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.openRewrite.gradle` end
+
+### auto-generated section `build intellij.openRewrite.gradle.tests` start
+
+jvm_library(
+    name = "openRewrite-gradle-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.openRewrite.gradle.tests",
+    visibility = ["//visibility:public"],
+)
+
+jvm_library(
+    name = "openRewrite-gradle-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "test/**/*.kt",
+            "test/**/*.java",
+            "test/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/open-rewrite/gradle",
+        "//contrib/open-rewrite/gradle:gradle_test_lib",
+    ],
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":openRewrite-gradle-tests",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//plugins/gradle",
+        "@community//plugins/gradle:gradle_test_lib",
+        "//contrib/open-rewrite",
+        "//contrib/open-rewrite:open-rewrite_test_lib",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-ui",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/external-system-impl:externalSystem-impl",
+        "@community//platform/external-system-impl:externalSystem-impl_test_lib",
+        "@community//platform/platform-util-io:ide-util-io",
+        "@community//platform/ide-core",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/smRunner",
+        "@community//platform/smRunner:smRunner_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/external-system-impl:externalSystem-tests",
+        "@community//platform/external-system-impl:externalSystem-tests_test_lib",
+        "@community//plugins/gradle:gradle-tests",
+        "@community//plugins/gradle:gradle-tests_test_lib",
+        "@community//platform/execution",
+        "@community//platform/execution:execution_test_lib",
+        "//contrib/open-rewrite:openRewrite-tests",
+        "//contrib/open-rewrite:openRewrite-tests_test_lib",
+    ],
+)
+### auto-generated section `build intellij.openRewrite.gradle.tests` end
+
+### auto-generated section `iml intellij.openRewrite.gradle.tests` start
+exports_files(
+    [
+        "intellij.openRewrite.gradle.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.openRewrite.gradle.tests` end
+
+### auto-generated section `test intellij.openRewrite.gradle.tests` start
+
+jps_test(
+    name = "openRewrite-gradle-tests_test",
+    runtime_deps = [":openRewrite-gradle-tests_test_lib"],
+)
+### auto-generated section `test intellij.openRewrite.gradle.tests` end

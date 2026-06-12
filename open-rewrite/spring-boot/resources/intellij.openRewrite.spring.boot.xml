@@ -1,0 +1,13 @@
+<idea-plugin package="com.intellij.openRewrite.spring.boot">
+  <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <plugin id="com.intellij.openRewrite"/>
+    <module name="intellij.java.impl"/>
+    <module name="intellij.spring.boot.shared"/>
+    <!-- endregion -->
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <openRewrite.recipeLibraryContributor implementation="com.intellij.openRewrite.spring.boot.SpringBootRecipeLibraryContributor"/>
+  </extensions>
+</idea-plugin>

@@ -1,0 +1,30 @@
+package com.intellij.openRewrite;
+
+import com.intellij.DynamicBundle;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.PropertyKey;
+
+import java.util.function.Supplier;
+
+public final class OpenRewriteBundle {
+  private static final @NonNls String BUNDLE_FQN = "messages.OpenRewriteBundle";
+  private static final DynamicBundle BUNDLE = new DynamicBundle(OpenRewriteBundle.class, BUNDLE_FQN);
+
+  public static final String OPEN_REWRITE = "OpenRewrite";
+
+  private OpenRewriteBundle() {
+  }
+
+  public static @Nls @NotNull String message(@PropertyKey(resourceBundle = BUNDLE_FQN) @NotNull String key,
+                                             @Nullable Object @NotNull ... params) {
+    return BUNDLE.getMessage(key, params);
+  }
+
+  public static @NotNull Supplier<@Nls @NotNull String> messagePointer(@PropertyKey(resourceBundle = BUNDLE_FQN) @NotNull String key,
+                                                                       @Nullable Object @NotNull ... params) {
+    return BUNDLE.getLazyMessage(key, params);
+  }
+}

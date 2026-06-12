@@ -1,0 +1,10 @@
+<idea-plugin package="com.intellij.openRewrite.maven">
+  <dependencies>
+    <module name="intellij.maven"/>
+  </dependencies>
+  <extensions defaultExtensionNs="com.intellij">
+    <openRewrite.externalSystemBridge implementation="com.intellij.openRewrite.maven.OpenRewriteMavenBridge"
+                                      order="last"/>
+    <openRewrite.libraryResolver implementation="com.intellij.openRewrite.maven.OpenRewriteMavenLibraryResolver"/>
+  </extensions>
+</idea-plugin>

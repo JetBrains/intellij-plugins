@@ -1,0 +1,4 @@
+type: specs.openrewrite.org/v1beta/recipe
+name: #[[$name$]]#
+recipeList:
+  - #[[$id$]]##[[$END$]]#
