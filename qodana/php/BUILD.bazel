@@ -33,7 +33,6 @@ jvm_library(
         "//contrib/qodana",
         "//contrib/qodana/coverage",
         "//phpstorm/php-openapi:php",
-        "//phpstorm/php:php-impl",
         "//phpstorm/coverage",
         "@community//platform/util/jdom",
         "@community//plugins/coverage-common:coverage",
@@ -43,6 +42,7 @@ jvm_library(
         "@community//libraries/kotlinx/coroutines/core",
         "@community//platform/backend/observation",
         "//contrib/qodana/util",
+        "//phpstorm/php-backend",
     ],
 )
 
@@ -71,7 +71,6 @@ jvm_library(
         "//contrib/qodana:qodana_test_lib",
         "//contrib/qodana/coverage:coverage_test_lib",
         "//phpstorm/php-openapi:php_test_lib",
-        "//phpstorm/php:php-impl_test_lib",
         "//phpstorm/coverage:coverage_test_lib",
         "//plugins/taint-analysis",
         "//plugins/taint-analysis:taint-analysis_test_lib",
@@ -95,6 +94,7 @@ jvm_library(
         "//contrib/qodana/util:util_test_lib",
         "//contrib/qodana:qodana-core-tests",
         "//contrib/qodana:qodana-core-tests_test_lib",
+        "//phpstorm/php-backend:php-backend_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.php` end
@@ -165,8 +165,6 @@ jvm_library(
         "//contrib/qodana/coverage:coverage_test_lib",
         "//phpstorm/php-openapi:php",
         "//phpstorm/php-openapi:php_test_lib",
-        "//phpstorm/php:php-impl",
-        "//phpstorm/php:php-impl_test_lib",
         "//plugins/taint-analysis",
         "//plugins/taint-analysis:taint-analysis_test_lib",
         "@community//platform/util/jdom",
@@ -205,6 +203,8 @@ jvm_library(
         "@community//libraries/junit4:junit4_test_lib",
         "@community//libraries/junit5",
         "@community//libraries/junit5:junit5_test_lib",
+        "//phpstorm/php-backend",
+        "//phpstorm/php-backend:php-backend_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.php.tests` end

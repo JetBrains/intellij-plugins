@@ -19,7 +19,6 @@
     <orderEntry type="module" module-name="intellij.qodana" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.coverage" scope="TEST" />
     <orderEntry type="module" module-name="intellij.php" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.php.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.taintAnalysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.coverage" scope="TEST" />
@@ -40,6 +39,7 @@
     <orderEntry type="module" module-name="intellij.php.coverage" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit5" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.php.backend" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana.php" />
 </module>
