@@ -1,0 +1,121 @@
+load("@community//build:tests-options.bzl", "jps_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.qodana.ijVoid` start
+
+jvm_library(
+    name = "ijVoid",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.ijVoid",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = ["//contrib/qodana"],
+)
+
+jvm_library(
+    name = "ijVoid_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.ijVoid",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":ijVoid",
+        "//contrib/qodana:qodana_test_lib",
+    ],
+)
+### auto-generated section `build intellij.qodana.ijVoid` end
+
+### auto-generated section `iml intellij.qodana.ijVoid` start
+exports_files(
+    [
+        "intellij.qodana.ijVoid.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.qodana.ijVoid` end
+
+### auto-generated section `build intellij.qodana.ijVoid.tests` start
+
+jvm_library(
+    name = "ijVoid-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.ijVoid.tests",
+    visibility = ["//visibility:public"],
+)
+
+jvm_library(
+    name = "ijVoid-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "tests/**/*.kt",
+            "tests/**/*.java",
+            "tests/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/qodana/ijVoid",
+        "//contrib/qodana/ijVoid:ijVoid_test_lib",
+    ],
+    resource_strip_prefix = "test-data",
+    resources = glob(
+        ["test-data/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [":ijVoid-tests"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/util",
+        "@community//platform/util:util_test_lib",
+        "@lib//:qodana-sarif",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/testFramework/junit5:junit5_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//tools/intellij.tools.ide.starter:ide-starter",
+        "@community//tools/intellij.tools.ide.starter:ide-starter_test_lib",
+        "@community//tools/intellij.tools.ide.starter.product.idea.ultimate:ide-starter-product-idea-ultimate",
+        "@community//tools/intellij.tools.ide.starter.product.idea.ultimate:ide-starter-product-idea-ultimate_test_lib",
+        "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure",
+        "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure_test_lib",
+        "//tests/intellij.qodana.testsFramework:qodana-testsFramework",
+        "//tests/intellij.qodana.testsFramework:qodana-testsFramework_test_lib",
+        "//tests/intellij.ide.starter.extended:ide-starter-extended",
+        "//tests/intellij.ide.starter.extended:ide-starter-extended_test_lib",
+    ],
+)
+### auto-generated section `build intellij.qodana.ijVoid.tests` end
+
+### auto-generated section `iml intellij.qodana.ijVoid.tests` start
+exports_files(
+    [
+        "intellij.qodana.ijVoid.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.qodana.ijVoid.tests` end
+
+### auto-generated section `test intellij.qodana.ijVoid.tests` start
+
+jps_test(
+    name = "ijVoid-tests_test",
+    runtime_deps = [":ijVoid-tests_test_lib"],
+)
+### auto-generated section `test intellij.qodana.ijVoid.tests` end

@@ -1,0 +1,35 @@
+rules:
+  - id: hardcoded-password
+    pattern: password = "..."
+    message: Hardcoded password detected
+    severity: ERROR
+    languages:
+      - python
+    metadata:
+      category: security
+      confidence: HIGH
+
+  - id: hardcoded-secret
+    patterns:
+      - pattern: $VAR = "..."
+      - metavariable-regex:
+          metavariable: $VAR
+          regex: (password|secret|api_key|token)
+    message: Potential hardcoded secret detected
+    severity: WARNING
+    languages:
+      - python
+
+  - id: print-statement
+    pattern: print(...)
+    message: Debug print statement found
+    severity: INFO
+    languages:
+      - python
+
+  - id: sql-string-concat
+    pattern: execute("..." + ...)
+    message: Possible SQL injection via string concatenation
+    severity: ERROR
+    languages:
+      - python

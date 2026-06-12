@@ -1,0 +1,6 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="com.intellij.modules.qodana.ijVoid"/>
+    <plugin id="org.intellij.qodana"/>
+  </dependencies>
+</idea-plugin>
