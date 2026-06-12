@@ -1,374 +1,409 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.intellij.prettierjs;
+package com.intellij.prettierjs
 
-import com.intellij.codeInsight.actions.FileTreeIterator;
-import com.intellij.codeInsight.actions.VcsFacade;
-import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
-import com.intellij.lang.javascript.service.protocol.LocalFilePath;
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.ThrowableComputable;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.ReadonlyStatusHandler;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.prettierjs.formatting.PrettierFormattingApplier;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.NullableFunction;
-import com.intellij.util.SmartList;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.codeInsight.actions.FileTreeIterator
+import com.intellij.codeInsight.actions.VcsFacade
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil.awaitFuture
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil.timeout
+import com.intellij.lang.javascript.service.protocol.LocalFilePath.Companion.asLocalFilePath
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.ThrowableComputable
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.ReadonlyStatusHandler
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.prettierjs.PrettierLanguageService.Companion.getInstance
+import com.intellij.prettierjs.formatting.PrettierFormattingApplier.Companion.from
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
+import com.intellij.psi.util.PsiUtilCore
+import com.intellij.util.ArrayUtil
+import com.intellij.util.SmartList
+import com.intellij.util.ThrowableRunnable
+import org.jetbrains.annotations.Nls
+import java.util.concurrent.CompletableFuture
+import kotlin.math.abs
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-
-import static com.intellij.prettierjs.PrettierConfigUtilKt.ensureConfigsSaved;
-
-public final class ReformatWithPrettierAction extends AnAction implements DumbAware {
-  private static final @NotNull Logger LOG = Logger.getInstance(ReformatWithPrettierAction.class);
-  private static final long EDT_TIMEOUT_MS = 2000;
-
-  public ReformatWithPrettierAction() {
-  }
-
-  @Override
-  public void update(@NotNull AnActionEvent e) {
-    Project project = e.getProject();
+class ReformatWithPrettierAction : AnAction(), DumbAware {
+  override fun update(e: AnActionEvent) {
+    val project = e.project
     if (project == null) {
-      e.getPresentation().setEnabledAndVisible(false);
-      return;
+      e.presentation.setEnabledAndVisible(false)
+      return
     }
-    var psiFile = e.getData(CommonDataKeys.PSI_FILE);
-    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage(psiFile);
-    e.getPresentation().setEnabledAndVisible(!nodePackage.isEmptyPath() && isAcceptableFileContext(e));
+    val psiFile = e.getData(CommonDataKeys.PSI_FILE)
+    val nodePackage = PrettierConfiguration.getInstance(project).getPackage(psiFile)
+    e.presentation.setEnabledAndVisible(!nodePackage.isEmptyPath && isAcceptableFileContext(e))
   }
 
-  @Override
-  public @NotNull ActionUpdateThread getActionUpdateThread() {
-    return ActionUpdateThread.BGT;
+  override fun getActionUpdateThread(): ActionUpdateThread {
+    return ActionUpdateThread.BGT
   }
 
-  private static boolean isAcceptableFileContext(@NotNull AnActionEvent e) {
-    Editor editor = e.getData(CommonDataKeys.EDITOR);
-    if (editor != null) {
-      return true;
-    }
-    VirtualFile[] virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
-    return !ArrayUtil.isEmpty(virtualFiles);
-  }
-
-  @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
-    Project project = e.getProject();
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project
     if (project == null) {
-      return;
+      return
     }
-    Editor editor = e.getData(CommonDataKeys.EDITOR);
+    val editor = e.getData(CommonDataKeys.EDITOR)
     if (editor != null) {
-      processFileInEditor(project, editor, null);
+      processFileInEditor(project, editor, null)
     }
     else {
-      VirtualFile[] virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
+      val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)
       if (!ArrayUtil.isEmpty(virtualFiles)) {
-        processVirtualFiles(project, Arrays.asList(virtualFiles));
+        processVirtualFiles(project, virtualFiles?.toList() ?: listOf())
       }
     }
   }
 
-  public static void processFileInEditor(@NotNull Project project,
-                                         @NotNull Editor editor,
-                                         @Nullable TextRange targetRange) {
-    PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-    if (file == null) {
-      return;
-    }
+  companion object {
+    private val LOG = Logger.getInstance(ReformatWithPrettierAction::class.java)
+    private const val EDT_TIMEOUT_MS: Long = 2000
 
-    VirtualFile vFile = file.getVirtualFile();
-    if (ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(Collections.singletonList(vFile))
-      .hasReadonlyFiles()) {
-      return;
-    }
-
-    final TextRange range = (targetRange != null)
-                            ? targetRange
-                            : (editor.getSelectionModel().hasSelection())
-                              ? new TextRange(editor.getSelectionModel().getSelectionStart(), editor.getSelectionModel().getSelectionEnd())
-                              : null;
-
-    ensureConfigsSaved(Collections.singletonList(vFile), project);
-    ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable = () -> performRequestForFile(file, range, null);
-    PrettierLanguageService.FormatResult result = ProgressManager
-      .getInstance()
-      .runProcessWithProgressSynchronously(computable, PrettierBundle.message("progress.title"), true, project);
-    // timed out. show notification?
-    if (result == null) {
-      return;
-    }
-
-    if (result.ignored) {
-      PrettierUtil.showHintLater(editor, PrettierBundle.message("file.was.ignored.hint", file.getName()), false, null);
-    }
-    else if (result.result != null) {
-      Document document = editor.getDocument();
-      CharSequence textBefore = document.getImmutableCharSequence();
-      String newContent = result.result;
-      /*
-       * This checks only the first line break, but given that we don't handle mixed line separators,
-       * this is enough to detect if separators were changed by the external process
-       */
-      Ref<Boolean> lineSeparatorUpdated = new Ref<>(Boolean.FALSE);
-      var strategy = PrettierFormattingApplier.Companion.from(document, file, newContent);
-
-      EditorScrollingPositionKeeper.perform(editor, true, () -> {
-        runWriteCommandAction(project, () -> {
-          var isLineSeparatorChanged = strategy.apply(project, file);
-          lineSeparatorUpdated.set(isLineSeparatorChanged);
-        });
-      });
-
-      PrettierUtil.showHintLater(editor, buildNotificationMessage(document, textBefore, lineSeparatorUpdated.get()), false, null);
-    }
-  }
-
-  static TextRange processFileAsPostFormatProcessor(@NotNull PsiFile file, @NotNull TextRange range) {
-    // PostFormatProcessors are invoked in EDT under rite action. So we can't show progress and need to block for a while waiting for the result.
-    LOG.assertTrue(ApplicationManager.getApplication().isWriteAccessAllowed());
-
-    Project project = file.getProject();
-
-    VirtualFile vFile = file.getVirtualFile();
-    ensureConfigsSaved(Collections.singletonList(vFile), project);
-    PrettierLanguageService.FormatResult result = performRequestForFile(file, range, null);
-    if (result != null) {
-      int delta = applyFormatResult(project, file, result);
-      if (delta < 0 && range.getLength() < Math.abs(delta)) {
-        return TextRange.from(range.getStartOffset(), 0);
+    private fun isAcceptableFileContext(e: AnActionEvent): Boolean {
+      val editor = e.getData(CommonDataKeys.EDITOR)
+      if (editor != null) {
+        return true
       }
-      return range.grown(delta);
+      val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)
+      return !ArrayUtil.isEmpty(virtualFiles)
     }
-    return range;
-  }
 
-  public static void processVirtualFiles(@NotNull Project project,
-                                         @NotNull List<VirtualFile> virtualFiles) {
-    ReadonlyStatusHandler.OperationStatus readonlyStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFiles);
-    if (readonlyStatus.hasReadonlyFiles()) {
-      return;
-    }
-    ensureConfigsSaved(virtualFiles, project);
-    PsiManager psiManager = PsiManager.getInstance(project);
-    if (virtualFiles.size() == 1 && virtualFiles.getFirst().isDirectory()) {
-      PsiDirectory psiDirectory = psiManager.findDirectory(virtualFiles.getFirst());
-      if (psiDirectory == null) {
-        return;
+    fun processFileInEditor(
+      project: Project,
+      editor: Editor,
+      targetRange: TextRange?,
+    ) {
+      val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument())
+      if (file == null) {
+        return
       }
-      processFileIterator(project, new FileTreeIterator(psiDirectory), false);
-    }
-    else {
-      processFileIterator(project, new FileTreeIterator(PsiUtilCore.toPsiFiles(psiManager, virtualFiles)), true);
-    }
-  }
 
-  private static void processFileIterator(@NotNull Project project,
-                                          final @NotNull FileTreeIterator fileIterator,
-                                          boolean reportSkippedFiles) {
-    Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
-      Map<PsiFile, PrettierLanguageService.FormatResult> reformattedResults = new HashMap<>();
-
-      List<PsiFile> files = new SmartList<>();
-      ReadAction.run(() -> {
-        while (fileIterator.hasNext()) {
-          files.add(fileIterator.next());
-        }
-      });
-
-      for (PsiFile currentFile : files) {
-        indicator.setText(PrettierBundle.message("processing.0.progress", currentFile.getName()));
-
-        PrettierLanguageService.FormatResult result = performRequestForFile(currentFile, null, null);
-        // timed out. show notification?
-        if (result == null) {
-          continue;
-        }
-        if (result.unsupported && reportSkippedFiles) {
-          PrettierLanguageService.FormatResult errorResult = PrettierLanguageService.FormatResult
-            .error(PrettierBundle.message("not.supported.file", currentFile.getName()));
-          reformattedResults.put(currentFile, errorResult);
-        }
-        if (result.ignored) {
-          PrettierLanguageService.FormatResult errorResult =
-            PrettierLanguageService.FormatResult.error(PrettierBundle.message("file.was.ignored", currentFile.getName()));
-          reformattedResults.put(currentFile, errorResult);
-          continue;
-        }
-        reformattedResults.put(currentFile, result);
+      val vFile = file.getVirtualFile()
+      if (ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(mutableListOf(vFile))
+          .hasReadonlyFiles()) {
+        return
       }
-      return reformattedResults;
-    });
 
-    runWriteCommandAction(project, () -> {
-      for (Map.Entry<PsiFile, PrettierLanguageService.FormatResult> entry : results.entrySet()) {
-        VirtualFile virtualFile = entry.getKey().getVirtualFile();
-        if (virtualFile == null) {
-          continue;
-        }
-        applyFormatResult(project, entry.getKey(), entry.getValue());
+      val range = targetRange
+                  ?: if (editor.getSelectionModel().hasSelection())
+                    TextRange(editor.getSelectionModel().selectionStart, editor.getSelectionModel().selectionEnd)
+                  else
+                    null
+
+      ensureConfigsSaved(mutableListOf(vFile), project)
+      val computable: ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> =
+        ThrowableComputable { performRequestForFile(file, range, null) }
+
+      val result = ProgressManager.getInstance().runProcessWithProgressSynchronously(
+        computable,
+        PrettierBundle.message("progress.title"),
+        true,
+        project
+      )
+      // timed out. show notification?
+      if (result == null) {
+        return
       }
-    });
-  }
 
-  static @Nullable PrettierLanguageService.FormatResult processFileAsFormattingTask(@NotNull PsiFile psiFile, @NotNull String text, @NotNull TextRange range) {
-    ProgressManager.checkCanceled();
+      if (result.ignored) {
+        PrettierUtil.showHintLater(editor, PrettierBundle.message("file.was.ignored.hint", file.getName()), false, null)
+      }
+      else if (result.result != null) {
+        val document = editor.getDocument()
+        val textBefore = document.getImmutableCharSequence()
+        val newContent = result.result
 
-    VirtualFile vFile = psiFile.getVirtualFile();
-    if (vFile == null) return null;
+        /**
+         * This checks only the first line break, but given that we don't handle mixed line separators,
+         * this is enough to detect if separators were changed by the external process
+         */
+        val lineSeparatorUpdated = Ref(false)
+        val strategy = from(document, file, newContent)
 
-    Project project = psiFile.getProject();
+        EditorScrollingPositionKeeper.perform(editor, true, Runnable {
+          runWriteCommandAction(project, Runnable {
+            val isLineSeparatorChanged = strategy.apply(project, file)
+            lineSeparatorUpdated.set(isLineSeparatorChanged)
+          })
+        })
 
-    ApplicationManager.getApplication().invokeAndWait(() -> {
-      ensureConfigsSaved(Collections.singletonList(vFile), project);
-    });
-
-    return performRequestForFile(psiFile, range, text);
-  }
-
-  /**
-   * @param result (new text length) - (old text length)
-   */
-  static int applyFormatResult(@NotNull Project project,
-                               @NotNull PsiFile file,
-                               @NotNull PrettierLanguageService.FormatResult result) {
-    Document document = FileDocumentManager.getInstance().getDocument(file.getVirtualFile());
-    if (document != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported && (result.result != null)) {
-      var strategy = PrettierFormattingApplier.Companion.from(document, file, result.result);
-      var diff = result.result.length() - document.getTextLength();
-      strategy.apply(project, file);
-      return diff;
+        PrettierUtil.showHintLater(
+          editor,
+          buildNotificationMessage(document, textBefore, lineSeparatorUpdated.get()),
+          false,
+          null
+        )
+      }
     }
-    return 0;
-  }
 
-  static @NotNull CompletableFuture<PrettierLanguageService.FormatResult> performRequestForFileAsync(
-    @NotNull PsiFile currentFile,
-    @Nullable TextRange range,
-    @Nullable String forcedInitialText
-  ) {
-    Project project = currentFile.getProject();
-    Ref<String> text = Ref.create();
-    Ref<String> filePath = Ref.create();
-    Ref<String> ignoreFilePath = Ref.create();
-    Ref<TextRange> rangeForRequest = Ref.create(range);
+    fun processFileAsPostFormatProcessor(file: PsiFile, range: TextRange): TextRange {
+      // PostFormatProcessors are invoked in EDT under write action. So we can't show progress and need to block for a while waiting for the result.
+      LOG.assertTrue(ApplicationManager.getApplication().isWriteAccessAllowed())
 
-    ReadAction.run(() -> {
-      if (!currentFile.isValid()) return;
+      val project = file.getProject()
 
-      VirtualFile currentVFile = currentFile.getVirtualFile();
-      filePath.set(LocalFilePath.asLocalFilePath(currentVFile.toNioPath()));
+      val vFile = file.getVirtualFile()
+      ensureConfigsSaved(mutableListOf(vFile), project)
+      val result: PrettierLanguageService.FormatResult? = performRequestForFile(file, range, null)
+      if (result != null) {
+        val delta: Int = applyFormatResult(project, file, result)
+        if (delta < 0 && range.length < abs(delta)) {
+          return TextRange.from(range.startOffset, 0)
+        }
+        return range.grown(delta)
+      }
+      return range
+    }
 
-      CharSequence content;
-      if (forcedInitialText != null) {
-        content = forcedInitialText;
+    fun processVirtualFiles(
+      project: Project,
+      virtualFiles: List<VirtualFile>,
+    ) {
+      val readonlyStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFiles)
+      if (readonlyStatus.hasReadonlyFiles()) {
+        return
+      }
+      ensureConfigsSaved(virtualFiles, project)
+      val psiManager = PsiManager.getInstance(project)
+      if (virtualFiles.size == 1 && virtualFiles.first().isDirectory()) {
+        val psiDirectory = psiManager.findDirectory(virtualFiles.first())
+        if (psiDirectory == null) {
+          return
+        }
+        processFileIterator(
+          project,
+          FileTreeIterator(psiDirectory),
+          false,
+        )
       }
       else {
-        // PsiFile might be not committed at this point, take text from document
-        Document document = PsiDocumentManager.getInstance(project).getDocument(currentFile);
-        if (document == null) return;
-        content = document.getImmutableCharSequence();
+        processFileIterator(
+          project,
+          FileTreeIterator(PsiUtilCore.toPsiFiles(psiManager, virtualFiles)),
+          true,
+        )
       }
-
-      if (range != null && range.getStartOffset() == 0 && range.getLength() == content.length()) {
-        // Prettier may remove trailing line break in Vue (WEB-56144, https://github.com/prettier/prettier/issues/13399).
-        // It's safer not pass a range when there's no need to.
-        rangeForRequest.set(null);
-      }
-
-      int[] offsetsToKeep = null;
-
-      var editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-      if (editor != null && !editor.isDisposed() && Objects.equals(editor.getVirtualFile(), currentVFile)) {
-        offsetsToKeep = new int[] { editor.getCaretModel().getOffset() };
-      }
-      var convertedText = JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, content, currentVFile, offsetsToKeep);
-
-      text.set(convertedText.toString());
-      VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(project, currentVFile);
-      if (ignoreVFile != null) {
-        ignoreFilePath.set(ignoreVFile.getPath());
-      }
-    });
-
-    if (text.isNull()) {
-      return CompletableFuture.completedFuture(PrettierLanguageService.FormatResult.UNSUPPORTED);
     }
 
-    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage(currentFile);
-    PrettierLanguageService service = PrettierLanguageService.getInstance(project, currentFile.getVirtualFile(), nodePackage);
+    private fun processFileIterator(
+      project: Project,
+      fileIterator: FileTreeIterator,
+      reportSkippedFiles: Boolean,
+    ) {
+      val results: MutableMap<PsiFile, PrettierLanguageService.FormatResult> =
+        executeUnderProgress(project) { indicator ->
+          val reformattedResults = HashMap<PsiFile, PrettierLanguageService.FormatResult>()
 
-    return service.format(filePath.get(), ignoreFilePath.get(), text.get(), nodePackage, rangeForRequest.get());
-  }
+          val files: MutableList<PsiFile> = SmartList<PsiFile>()
+          ReadAction.run(ThrowableRunnable {
+            while (fileIterator.hasNext()) {
+              files.add(fileIterator.next())
+            }
+          })
 
-  static @Nullable PrettierLanguageService.FormatResult performRequestForFile(
-    @NotNull PsiFile currentFile,
-    @Nullable TextRange range,
-    @Nullable String forcedInitialText
-  ) {
-    boolean edt = ApplicationManager.getApplication().isDispatchThread();
-    if (!edt && ApplicationManager.getApplication().isReadAccessAllowed()) {
-      LOG.error("JSLanguageServiceUtil.awaitFuture() under read action may cause deadlock");
+          for (currentFile in files) {
+            indicator.setText(PrettierBundle.message("processing.0.progress", currentFile.getName()))
+
+            val result: PrettierLanguageService.FormatResult? = performRequestForFile(currentFile, null, null)
+            // timed out. show notification?
+            if (result == null) {
+              continue
+            }
+            if (result.unsupported && reportSkippedFiles) {
+              val errorResult: PrettierLanguageService.FormatResult =
+                PrettierLanguageService.FormatResult
+                  .error(PrettierBundle.message("not.supported.file", currentFile.getName()))
+              reformattedResults[currentFile] = errorResult
+            }
+            if (result.ignored) {
+              val errorResult: PrettierLanguageService.FormatResult =
+                PrettierLanguageService.FormatResult.error(
+                  PrettierBundle.message(
+                    "file.was.ignored",
+                    currentFile.getName()
+                  )
+                )
+              reformattedResults[currentFile] = errorResult
+              continue
+            }
+            reformattedResults[currentFile] = result
+          }
+          reformattedResults
+        }
+
+      runWriteCommandAction(project, Runnable {
+        for (entry in results.entries) {
+          val virtualFile = entry.key.getVirtualFile()
+          if (virtualFile == null) {
+            continue
+          }
+          applyFormatResult(project, entry.key, entry.value)
+        }
+      })
     }
 
-    CompletableFuture<PrettierLanguageService.FormatResult> formatFuture = performRequestForFileAsync(currentFile, range, forcedInitialText);
-    long timeout = edt ? EDT_TIMEOUT_MS : JSLanguageServiceUtil.getTimeout();
-    return JSLanguageServiceUtil.awaitFuture(formatFuture, timeout, true, null, edt);
-  }
+    fun processFileAsFormattingTask(
+      psiFile: PsiFile,
+      text: String,
+      range: TextRange,
+    ): PrettierLanguageService.FormatResult? {
+      ProgressManager.checkCanceled()
 
-  private static <T> T executeUnderProgress(@NotNull Project project, @NotNull NullableFunction<ProgressIndicator, T> handler) {
-    return ProgressManager
-      .getInstance()
-      .runProcessWithProgressSynchronously(() -> handler.fun(ProgressManager.getInstance().getProgressIndicator()),
-                                           PrettierBundle.message("progress.title"), true, project);
-  }
+      val vFile = psiFile.getVirtualFile()
+      if (vFile == null) return null
 
-  private static void runWriteCommandAction(@NotNull Project project, @NotNull Runnable runnable) {
-    WriteCommandAction.runWriteCommandAction(project, PrettierBundle.message("reformat.with.prettier.command.name"), null, runnable);
-  }
+      val project = psiFile.getProject()
 
-  private static @NotNull @Nls String buildNotificationMessage(@NotNull Document document,
-                                                               @NotNull CharSequence textBefore,
-                                                               boolean lineSeparatorsUpdated) {
-    int number = VcsFacade.getInstance().calculateChangedLinesNumber(document, textBefore);
-    if (number == 0) {
-      return lineSeparatorsUpdated ? PrettierBundle.message("line.endings.were.updated")
-                                   : PrettierBundle.message("no.lines.changed");
+      ApplicationManager.getApplication().invokeAndWait(Runnable {
+        ensureConfigsSaved(mutableListOf(vFile), project)
+      })
+
+      return performRequestForFile(psiFile, range, text)
     }
-    return PrettierBundle.message("formatted.0.lines", number);
+
+    /**
+     * @param result (new text length) - (old text length)
+     */
+    fun applyFormatResult(
+      project: Project,
+      file: PsiFile,
+      result: PrettierLanguageService.FormatResult,
+    ): Int {
+      val document = FileDocumentManager.getInstance().getDocument(file.getVirtualFile())
+      if (document != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported && (result.result != null)) {
+        val strategy = from(document, file, result.result)
+        val diff = result.result.length - document.textLength
+        strategy.apply(project, file)
+        return diff
+      }
+      return 0
+    }
+
+    fun performRequestForFileAsync(
+      currentFile: PsiFile,
+      range: TextRange?,
+      forcedInitialText: String?,
+    ): CompletableFuture<PrettierLanguageService.FormatResult?> {
+      val project = currentFile.getProject()
+      val text = Ref.create<String?>()
+      val filePath = Ref.create<String?>()
+      val ignoreFilePath = Ref.create<String?>()
+      val rangeForRequest = Ref.create<TextRange?>(range)
+
+      ReadAction.run<RuntimeException>(ThrowableRunnable {
+        if (!currentFile.isValid()) return@ThrowableRunnable
+        val currentVFile = currentFile.getVirtualFile()
+        filePath.set(currentVFile.toNioPath().asLocalFilePath())
+
+        val content: CharSequence?
+        if (forcedInitialText != null) {
+          content = forcedInitialText
+        }
+        else {
+          // PsiFile might be not committed at this point, take text from document
+          val document = PsiDocumentManager.getInstance(project).getDocument(currentFile)
+          if (document == null) return@ThrowableRunnable
+          content = document.getImmutableCharSequence()
+        }
+
+        if (range != null && range.startOffset == 0 && range.length == content.length) {
+          // Prettier may remove trailing line break in Vue (WEB-56144, https://github.com/prettier/prettier/issues/13399).
+          // It's safer not pass a range when there's no need to.
+          rangeForRequest.set(null)
+        }
+
+        var offsetsToKeep: IntArray? = null
+
+        val editor = FileEditorManager.getInstance(project).getSelectedTextEditor()
+        if (editor != null && !editor.isDisposed() && editor.virtualFile == currentVFile) {
+          offsetsToKeep = intArrayOf(editor.getCaretModel().offset)
+        }
+        val convertedText = convertLineSeparatorsToFileOriginal(project, content, currentVFile, offsetsToKeep)
+
+        text.set(convertedText.toString())
+        val ignoreVFile = PrettierUtil.findIgnoreFile(project, currentVFile)
+        if (ignoreVFile != null) {
+          ignoreFilePath.set(ignoreVFile.getPath())
+        }
+      })
+
+      if (text.isNull) {
+        return CompletableFuture.completedFuture<PrettierLanguageService.FormatResult?>(PrettierLanguageService.FormatResult.UNSUPPORTED)
+      }
+
+      val nodePackage = PrettierConfiguration.getInstance(project).getPackage(currentFile)
+      val service = getInstance(project, currentFile.getVirtualFile(), nodePackage)
+
+      return service.format(filePath.get()!!, ignoreFilePath.get(), text.get()!!, nodePackage, rangeForRequest.get())
+    }
+
+    fun performRequestForFile(
+      currentFile: PsiFile,
+      range: TextRange?,
+      forcedInitialText: String?,
+    ): PrettierLanguageService.FormatResult? {
+      val edt = ApplicationManager.getApplication().isDispatchThread()
+      if (!edt && ApplicationManager.getApplication().isReadAccessAllowed()) {
+        LOG.error("JSLanguageServiceUtil.awaitFuture() under read action may cause deadlock")
+      }
+
+      val formatFuture: CompletableFuture<PrettierLanguageService.FormatResult?> =
+        performRequestForFileAsync(currentFile, range, forcedInitialText)
+      val timeout = if (edt) EDT_TIMEOUT_MS else timeout
+      return awaitFuture(formatFuture, timeout, true, null, edt)
+    }
+
+    private fun <T> executeUnderProgress(
+      project: Project,
+      handler: (ProgressIndicator) -> T,
+    ): T {
+      return ProgressManager.getInstance().runProcessWithProgressSynchronously<T, RuntimeException?>(
+        { handler(ProgressManager.getInstance().getProgressIndicator()) },
+        PrettierBundle.message("progress.title"),
+        true,
+        project
+      )
+    }
+
+    private fun runWriteCommandAction(project: Project, runnable: Runnable) {
+      WriteCommandAction.runWriteCommandAction(project, PrettierBundle.message("reformat.with.prettier.command.name"), null, runnable)
+    }
+
+    @Nls
+    private fun buildNotificationMessage(
+      document: Document,
+      textBefore: CharSequence,
+      lineSeparatorsUpdated: Boolean,
+    ): @Nls String {
+      val number = VcsFacade.getInstance().calculateChangedLinesNumber(document, textBefore)
+      if (number == 0) {
+        return if (lineSeparatorsUpdated)
+          PrettierBundle.message("line.endings.were.updated")
+        else
+          PrettierBundle.message("no.lines.changed")
+      }
+      return PrettierBundle.message("formatted.0.lines", number)
+    }
   }
 }
