@@ -1,12 +1,11 @@
 package com.intellij.dts.documentation
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.intellij.dts.DTS_TEST_ROOT_PATH
 import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
 import com.intellij.testFramework.common.timeoutRunBlocking
-import com.networknt.schema.JsonSchemaFactory
-import com.networknt.schema.SpecVersion
+import com.networknt.schema.InputFormat
+import com.networknt.schema.SchemaRegistry
+import com.networknt.schema.SpecificationVersion
 import java.nio.file.Files
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
@@ -34,13 +33,11 @@ class DtsBundledDocumentationTest : DtsDocumentationTest() {
   }
 
   fun `test bundled bindings match schema`() {
-    val factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7)
-    val mapper = ObjectMapper(YAMLFactory())
-    val yamlFactory = JsonSchemaFactory.builder(factory).jsonMapper(mapper).build()
-    val schema = yamlFactory.getSchema(getFixture("documentation/BindingSchema.json"))
+    val registry = SchemaRegistry.withDefaultDialect(SpecificationVersion.DRAFT_7)
+    val schema = registry.getSchema(getFixture("documentation/BindingSchema.json"))
 
     for (file in DTS_TEST_ROOT_PATH.resolve("resources/bindings").listDirectoryEntries()) {
-      for (result in schema.validate(mapper.readTree(Files.readString(file)))) {
+      for (result in schema.validate(Files.readString(file), InputFormat.YAML)) {
         fail("${file.name}: ${result.message}")
       }
     }
