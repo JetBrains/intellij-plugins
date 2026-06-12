@@ -296,14 +296,14 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       }
       ?: return@withServiceTraceSpan null
 
-      val filePath = JSLanguageServiceUtil.awaitFuture(getFilePath(componentVirtualFile), JSLanguageServiceUtil.getShortTimeout())
+      val filePath = JSLanguageServiceUtil.awaitFuture(getFilePath(componentVirtualFile), JSLanguageServiceUtil.shortTimeout)
                      ?: return@withServiceTraceSpan null
 
       // The evaluation location is in the template, so the config will be searched for the containing component file,
       // which is the transpiledFile.originalFile
       val projectFileName = TypeScriptConfigUtil.getConfigForPsiFile(transpiledFile.originalFile.originalFile)
         ?.configFile
-        ?.let { JSLanguageServiceUtil.awaitFuture(getFilePath(it), JSLanguageServiceUtil.getShortTimeout()) }
+        ?.let { JSLanguageServiceUtil.awaitFuture(getFilePath(it), JSLanguageServiceUtil.shortTimeout) }
 
       val range = Range(
         start = StringUtil.offsetToLineColumn(transpiledFile.generatedCode, generatedRange.startOffset)
