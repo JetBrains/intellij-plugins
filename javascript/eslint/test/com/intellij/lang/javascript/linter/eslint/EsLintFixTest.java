@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.inspections.JSConsecutiveCommasInArrayLiteralInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
-import com.intellij.lang.javascript.linter.ActionsOnSaveTestUtil;
+import com.intellij.testFramework.utils.ActionsOnSaveTestUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;

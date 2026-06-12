@@ -4,7 +4,7 @@ package com.intellij.prettierjs.stable
 
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.nodejs.util.NodePackageRef
-import com.intellij.lang.javascript.linter.ActionsOnSaveTestUtil
+import com.intellij.testFramework.utils.ActionsOnSaveTestUtil
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.modules.TestNpmPackage
