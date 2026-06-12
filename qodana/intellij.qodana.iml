@@ -45,6 +45,8 @@
     <orderEntry type="module" module-name="intellij.platform.util.diff" />
     <orderEntry type="module" module-name="intellij.qodana.sarif" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.problemView.shared" />
+    <orderEntry type="module" module-name="intellij.platform.problemView.ui" />
     <orderEntry type="module" module-name="intellij.libraries.gson" />
     <orderEntry type="module" module-name="intellij.libraries.snakeyaml" />
     <orderEntry type="module" module-name="intellij.libraries.snakeyaml.engine" />

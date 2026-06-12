@@ -52,6 +52,8 @@
     <module name="intellij.platform.collaborationTools"/>
     <module name="intellij.platform.collaborationTools.auth"/>
     <module name="intellij.platform.inspect"/>
+    <module name="intellij.platform.problemView.shared"/>
+    <module name="intellij.platform.problemView.ui"/>
     <module name="intellij.platform.sqlite"/>
     <module name="intellij.platform.vcs.log"/>
     <module name="intellij.vcs.git.backend"/>
