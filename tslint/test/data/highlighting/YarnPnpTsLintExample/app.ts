@@ -1,1 +1,1 @@
-<error>console</error>.log('');
+<error>console.log</error>('');

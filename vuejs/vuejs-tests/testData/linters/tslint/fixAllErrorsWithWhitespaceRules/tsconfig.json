@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "plugins": [
-      {
-        "name": "typescript-tslint-plugin"
-      }
-    ]
-  }
-}

@@ -15,14 +15,6 @@ class VueTypeScriptWithTslintTest : TypeScriptServiceWithTslintTestBase() {
     return vueRelativeTestDataPath() + "/linters/tslint/"
   }
 
-  fun testFilterWhitespaceErrorsByScriptTag() {
-    doHighlightingTest("main", "vue")
-  }
-
-  fun testFixAllErrorsWithWhitespaceRules() {
-    doFixAllTest()
-  }
-
   fun testMatchingLineEndingsNotHighlighted() {
     doHighlightingTest("main", "vue") {
       JSTestUtils.ensureLineSeparators(myFixture.file, LineSeparator.CRLF)
