@@ -6,7 +6,6 @@ import com.intellij.codeInsight.actions.VcsFacade
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil.awaitFuture
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil.timeout
-import com.intellij.lang.javascript.service.protocol.LocalFilePath.Companion.asLocalFilePath
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -41,6 +40,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.annotations.Nls
 import java.util.concurrent.CompletableFuture
+import kotlin.io.path.absolutePathString
 import kotlin.math.abs
 
 class ReformatWithPrettierAction : AnAction(), DumbAware {
@@ -314,7 +314,7 @@ class ReformatWithPrettierAction : AnAction(), DumbAware {
       ReadAction.run<RuntimeException>(ThrowableRunnable {
         if (!currentFile.isValid()) return@ThrowableRunnable
         val currentVFile = currentFile.getVirtualFile()
-        filePath.set(currentVFile.toNioPath().asLocalFilePath())
+        filePath.set(currentVFile.toNioPath().absolutePathString())
 
         val content: CharSequence?
         if (forcedInitialText != null) {
