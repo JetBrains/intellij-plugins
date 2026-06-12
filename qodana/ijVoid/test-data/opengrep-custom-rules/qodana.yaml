@@ -1,0 +1,19 @@
+version: "1.0"
+
+profile:
+  base:
+    name: empty
+  groups:
+    - groupId: IncludedInspections
+      groups:
+        - "category:OpenGrep"
+    - groupId: Excluded
+      groups:
+        - "ALL"
+        - "!IncludedInspections"
+  inspections:
+    - group: IncludedInspections
+      enabled: true
+      severity: "WARNING"
+    - group: Excluded
+      enabled: false

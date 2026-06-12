@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/test-data">
+      <sourceFolder url="file://$MODULE_DIR$/test-data" type="java-test-resource" />
+    </content>
+    <content url="file://$MODULE_DIR$/tests">
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="TEST" name="kotlin-stdlib" level="project" />
+    <orderEntry type="module" module-name="intellij.qodana.ijVoid" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.util" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="qodana-sarif" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.tools.ide.starter" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.tools.ide.starter.product.idea.ultimate" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.ide.starter.extended.allure" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.testsFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.ide.starter.extended" scope="TEST" />
+  </component>
+  <component name="TestModuleProperties" production-module="intellij.qodana.ijVoid" />
+</module>
