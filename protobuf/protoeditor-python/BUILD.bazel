@@ -150,6 +150,8 @@ jvm_library(
         "@community//python:python-community-tests_test_lib",
         "@community//python/python-psi-api:psi",
         "@community//python/python-psi-api:psi_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.protoeditor.python.tests` end

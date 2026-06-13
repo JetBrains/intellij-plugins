@@ -109,6 +109,8 @@ jvm_library(
         "//plugins/css/common:common_test_lib",
         "//plugins/JavaScriptLanguage/javascript-codeinsight",
         "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.astro.tests` end

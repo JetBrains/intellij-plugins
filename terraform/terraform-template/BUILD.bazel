@@ -149,6 +149,8 @@ jvm_library(
         "@community//platform/lang-api:lang_test_lib",
         "@community//platform/util/jdom",
         "@community//platform/util/jdom:jdom_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.terraform.template.tests` end

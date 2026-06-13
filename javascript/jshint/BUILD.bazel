@@ -178,6 +178,8 @@ jvm_library(
         "//plugins/JavaScriptLanguage/testFramework:testFramework_test_lib",
         "@community//libraries/guava",
         "@community//libraries/guava:guava_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.javascript.jshint.tests` end

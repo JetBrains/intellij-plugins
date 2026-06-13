@@ -88,6 +88,7 @@
     <orderEntry type="module" module-name="intellij.libraries.jackson3.dataformat.yaml" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.syntax" scope="TEST" />
     <orderEntry type="module" module-name="intellij.dts" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.dts" />
 </module>

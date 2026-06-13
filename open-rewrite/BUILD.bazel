@@ -275,6 +275,8 @@ jvm_library(
         "@community//java/java-frontback-psi-api:frontback-psi_test_lib",
         "//plugins/microservices/microservices-jvm/config/yaml",
         "//plugins/microservices/microservices-jvm/config/yaml:yaml_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.openRewrite.tests` end

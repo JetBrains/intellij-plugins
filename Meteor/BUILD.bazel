@@ -278,6 +278,8 @@ jvm_library(
         "//contrib/handlebars:handlebars-tests_test_lib",
         "//plugins/LiveEdit:js-liveEdit-tests",
         "//plugins/LiveEdit:js-liveEdit-tests_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.meteor.tests` end

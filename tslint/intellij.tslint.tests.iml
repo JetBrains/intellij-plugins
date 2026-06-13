@@ -36,6 +36,7 @@
     <orderEntry type="module" module-name="intellij.tslint" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.analysis.impl" />
+    <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.tslint" />
 </module>

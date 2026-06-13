@@ -245,6 +245,8 @@ jvm_library(
         "@community//platform/script-debugger/backend:backend_test_lib",
         "@community//platform/util:util-ui",
         "@community//platform/util:util-ui_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.deno.tests` end

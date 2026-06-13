@@ -339,6 +339,12 @@ jvm_library(
         "@community//java/java-frontback-psi-api:frontback-psi_test_lib",
         "@community//platform/statistics",
         "@community//platform/statistics:statistics_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
+        "@community//libraries/junit5",
+        "@community//libraries/junit5:junit5_test_lib",
+        "@community//libraries/junit5-params",
+        "@community//libraries/junit5-params:junit5-params_test_lib",
     ],
 )
 ### auto-generated section `build intellij.cucumber.java.tests` end

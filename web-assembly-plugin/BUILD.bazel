@@ -141,6 +141,8 @@ jvm_library(
         "@community//platform/platform-util-io:ide-util-io",
         "@community//platform/util/jdom",
         "@community//platform/util/jdom:jdom_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.webassembly.tests` end

@@ -1,6 +1,11 @@
-load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
 ### auto-generated section `build intellij.angular.ngtools` start
+
+jvm_provided_library(
+    name = "community_libraries_junit4_provided",
+    lib = "@community//libraries/junit4",
+)
 
 jvm_library(
     name = "ngtools",
@@ -31,6 +36,7 @@ jvm_library(
         "@community//platform/platform-util-io:ide-util-io",
         "@community//platform/ide-core",
         "//contrib/Angular/angular-backend",
+        ":community_libraries_junit4_provided",
     ],
 )
 
@@ -61,6 +67,8 @@ jvm_library(
         "@community//platform/platform-util-io:ide-util-io_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
         "//contrib/Angular/angular-backend:angular-backend_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.angular.ngtools` end

@@ -289,6 +289,8 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.jade.tests` end

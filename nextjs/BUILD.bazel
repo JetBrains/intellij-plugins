@@ -192,6 +192,8 @@ jvm_library(
         "@community//platform/execution:execution_test_lib",
         "@community//platform/editor-ui-api:editor-ui",
         "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.nextjs.tests` end
