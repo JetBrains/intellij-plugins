@@ -461,6 +461,10 @@ jvm_library(
         "@community//plugins/git4idea:vcs-git-backend-tests_test_lib",
         "@community//plugins/lombok:lombok-tests",
         "@community//plugins/lombok:lombok-tests_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
+        "@community//libraries/junit5",
+        "@community//libraries/junit5:junit5_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.core.tests` end

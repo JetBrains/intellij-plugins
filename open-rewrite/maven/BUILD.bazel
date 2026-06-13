@@ -137,6 +137,8 @@ jvm_library(
         "@community//platform/ide-core",
         "//contrib/open-rewrite:openRewrite-tests",
         "//contrib/open-rewrite:openRewrite-tests_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.openRewrite.maven.tests` end

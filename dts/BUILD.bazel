@@ -197,6 +197,8 @@ jvm_library(
         "@community//libraries/jackson3/dataformat-yaml:libraries-jackson3-dataformat-yaml_test_lib",
         "@community//platform/syntax/syntax-api:syntax",
         "@community//platform/syntax/syntax-api:syntax_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.dts.tests` end

@@ -49,6 +49,7 @@
     <orderEntry type="module" module-name="intellij.prettierJS" scope="TEST" />
     <orderEntry type="module" module-name="intellij.prettierJS.eslint" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.eslint.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.prettierJS" />
 </module>

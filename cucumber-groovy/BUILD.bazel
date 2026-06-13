@@ -171,6 +171,8 @@ jvm_library(
         "@community//jps/model-api:model_test_lib",
         "@community//plugins/groovy:groovy-tests",
         "@community//plugins/groovy:groovy-tests_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.cucumber.groovy.tests` end

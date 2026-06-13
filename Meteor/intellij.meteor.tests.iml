@@ -54,6 +54,7 @@
     <orderEntry type="module" module-name="intellij.meteor" scope="TEST" />
     <orderEntry type="module" module-name="intellij.handlebars.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.js.liveEdit.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.meteor" />
 </module>

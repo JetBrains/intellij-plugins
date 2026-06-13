@@ -197,6 +197,8 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-coverage:javascript-coverage_test_lib",
         "//contrib/qodana/coverage:coverage-tests",
         "//contrib/qodana/coverage:coverage-tests_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.js.tests` end
