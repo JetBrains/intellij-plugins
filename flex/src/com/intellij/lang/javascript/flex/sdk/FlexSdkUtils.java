@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -37,6 +37,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
+import com.intellij.util.system.OS;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,7 +58,7 @@ import java.util.regex.Pattern;
 public final class FlexSdkUtils {
 
   public static final String ADL_RELATIVE_PATH =
-    File.separatorChar + "bin" + File.separatorChar + "adl" + (SystemInfo.isWindows ? ".exe" : "");
+    File.separatorChar + "bin" + File.separatorChar + OS.CURRENT.getBinaryName("adl");
 
   static final String AIR_RUNTIME_RELATIVE_PATH =
     File.separatorChar + "runtimes" + File.separatorChar + "air" + File.separatorChar +
@@ -355,7 +356,7 @@ public final class FlexSdkUtils {
       }
     }
 
-    final String javaExecutable = FileUtil.toSystemDependentName((javaHome + "/bin/java" + (SystemInfo.isWindows ? ".exe" : "")));
+    final String javaExecutable = FileUtil.toSystemDependentName(OS.CURRENT.getBinaryName(javaHome + "/bin/java"));
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 

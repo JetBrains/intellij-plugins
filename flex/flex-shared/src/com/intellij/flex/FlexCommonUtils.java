@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex;
 
 import com.intellij.execution.configurations.CommandLineTokenizer;
@@ -37,6 +37,7 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.SystemProperties;
+import com.intellij.util.system.OS;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
@@ -833,7 +834,7 @@ public final class FlexCommonUtils {
         }
       }
     }
-    final String javaExecutable = FileUtil.toSystemDependentName((javaHome + "/bin/java" + (SystemInfo.isWindows ? ".exe" : "")));
+    final String javaExecutable = FileUtil.toSystemDependentName(OS.CURRENT.getBinaryName(javaHome + "/bin/java"));
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 
@@ -935,7 +936,7 @@ public final class FlexCommonUtils {
       final Ref<String> versionRef = Ref.create();
 
       final String javaExecutable =
-        FileUtil.toSystemDependentName((SystemProperties.getJavaHome() + "/bin/java" + (SystemInfo.isWindows ? ".exe" : "")));
+        FileUtil.toSystemDependentName(OS.CURRENT.getBinaryName(SystemProperties.getJavaHome() + "/bin/java"));
 
       String[] cmdarray = {javaExecutable, "-jar", adtFile.getPath(), "-version"};
       final Process process = Runtime.getRuntime().exec(cmdarray);
