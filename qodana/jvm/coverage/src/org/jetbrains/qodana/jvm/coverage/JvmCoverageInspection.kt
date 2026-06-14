@@ -139,7 +139,7 @@ class JvmCoverageInspection : CoverageInspectionBase() {
   override fun cleanup(globalContext: QodanaGlobalInspectionContext) {
     val data = globalContext.getUserData(javacov)?.value
     if (data != null) {
-      saveCoverageData(globalContext, JavaCoverageEngine::class.java.simpleName, data)
+      saveCoverageData(globalContext, getCoverageDirectory(JavaCoverageEngine::class.java), data)
     }
     globalContext.putUserData(javacov, null)
     globalContext.putUserData(xmlcov, null)

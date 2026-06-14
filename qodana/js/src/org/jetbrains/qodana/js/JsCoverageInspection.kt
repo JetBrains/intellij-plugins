@@ -63,7 +63,7 @@ private class JsCoverageInspection : CoverageInspectionBase() {
     val data = globalContext.getUserData(jest)?.value
     if (data != null) {
       saveCoverageData(globalContext,
-                       JestCoverageEngine::class.java.simpleName,
+                       getCoverageDirectory(JestCoverageEngine::class.java),
                        removePrefixFromCoverage(data, globalContext.config.projectPath))
     }
     globalContext.putUserData(jest, null)

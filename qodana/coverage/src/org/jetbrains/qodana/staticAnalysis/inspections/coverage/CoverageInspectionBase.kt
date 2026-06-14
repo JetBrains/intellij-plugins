@@ -112,11 +112,11 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
 
   protected open fun saveCoverageData(
     context: QodanaGlobalInspectionContext,
-    engine: String,
+    fileName: String,
     data: ProjectData,
   ) {
-    val fileData = context.config.coverage.coveragePath.resolve(engine)
-    val fileSourceMap = context.config.coverage.coveragePath.resolve("$engine.sourceMap")
+    val fileData = context.config.coverage.coveragePath.resolve(fileName)
+    val fileSourceMap = context.config.coverage.coveragePath.resolve("$fileName.sourceMap")
     Files.createDirectories(fileData.parent)
     data.classes.forEach { c ->
       c.value.lines.forEach { l ->
@@ -140,7 +140,7 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(engineType.java)
     val data = retrieveCoverageData(engine, coverageFiles, globalContext) ?: return null
     if (data.classes.isEmpty()) {
-      logger.error("Coverage reports were empty or not loaded correctly")
+      logger.error("The engine ${engine.javaClass.simpleName} couldn't load coverage files")
       return null
     }
     INPUT_COVERAGE_LOADED.log(globalContext.project,
@@ -162,5 +162,13 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
 
   protected fun highlightedElement(element: PsiElement): PsiElement {
     return (element as? PsiNameIdentifierOwner)?.nameIdentifier ?: element
+  }
+
+  companion object {
+
+    /**
+     * Returns the directory name for the given coverage engine class without file extension
+     */
+    fun getCoverageDirectory(coverageEngine: Class<out CoverageEngine>): String = coverageEngine.simpleName
   }
 }
