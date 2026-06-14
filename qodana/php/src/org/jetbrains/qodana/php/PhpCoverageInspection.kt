@@ -64,7 +64,7 @@ private class PhpCoverageInspection : CoverageInspectionBase() {
   override fun cleanup(globalContext: QodanaGlobalInspectionContext) {
     val data = globalContext.getUserData(phpunit)?.value
     if (data != null) {
-      saveCoverageData(globalContext, PhpUnitCoverageEngine::class.java.simpleName, removePrefixFromCoverage(data, globalContext.config.projectPath))
+      saveCoverageData(globalContext, getCoverageDirectory(PhpUnitCoverageEngine::class.java), removePrefixFromCoverage(data, globalContext.config.projectPath))
     }
     globalContext.putUserData(phpunit, null)
   }

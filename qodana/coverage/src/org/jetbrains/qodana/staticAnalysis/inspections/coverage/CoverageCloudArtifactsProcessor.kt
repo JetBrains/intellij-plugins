@@ -38,7 +38,7 @@ interface CoverageCloudArtifactsProcessor {
     fun getCoverageRunner(file: File): CoverageRunner? {
       // file name equals the engine name
       val engine = CoverageEngine.EP_NAME.findFirstSafe {
-        it.javaClass.simpleName == file.nameWithoutExtension
+        CoverageInspectionBase.getCoverageDirectory(it.javaClass) == file.nameWithoutExtension
       }
       if (engine != null) {
         return CoverageRunner.EP_NAME.findFirstSafe { it.acceptsCoverageEngine(engine) }

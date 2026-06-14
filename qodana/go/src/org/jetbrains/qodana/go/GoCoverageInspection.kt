@@ -66,16 +66,16 @@ class GoCoverageInspection : CoverageInspectionBase() {
   override fun cleanup(globalContext: QodanaGlobalInspectionContext) {
     val data = globalContext.getUserData(go)?.value
     if (data != null) {
-      saveCoverageData(globalContext, GoCoverageEngine::class.java.simpleName, data)
+      saveCoverageData(globalContext, getCoverageDirectory(GoCoverageEngine::class.java), data)
     }
     globalContext.putUserData(go, null)
     globalContext.putUserData(goProjectData, null)
   }
 
-  override fun saveCoverageData(context: QodanaGlobalInspectionContext, engine: String, data: ProjectData) {
+  override fun saveCoverageData(context: QodanaGlobalInspectionContext, fileName: String, data: ProjectData) {
     val projectPath = context.config.projectPath
     // line data is stored in the canonical (project-relative) binary form, like every other engine
-    super.saveCoverageData(context, engine, removePrefixFromCoverage(data, projectPath))
+    super.saveCoverageData(context, fileName, removePrefixFromCoverage(data, projectPath))
     // the canonical format can't represent the Go-specific per-range statements/hits, so persist them alongside from
     // the pristine data captured before remap
     context.getUserData(goProjectData)?.let { writeGoCoverageProjectData(context.config.coverage.coveragePath, it, projectPath) }

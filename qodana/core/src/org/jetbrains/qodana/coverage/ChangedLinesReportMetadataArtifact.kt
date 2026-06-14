@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.coverage
 
-import com.intellij.openapi.diagnostic.Logger.shouldRethrow
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -56,20 +55,20 @@ private val JSON: Json = Json {
  * map with file paths relative to project root. Files outside [projectPath] are skipped.
  */
 fun buildChangedLinesPayload(urlToLines: Map<String, Set<Int>>, projectPath: Path): ChangedLinesArtifactPayload {
-  val base = projectPath.toAbsolutePath().normalize()
+  val baseAbsolute = projectPath.toAbsolutePath().normalize()
   val files = urlToLines
     .filter { (_, lines) -> lines.isNotEmpty() }
-    .mapNotNull { (url, lines) -> url.toProjectRelativePath(base)?.to(lines.toSortedSet()) }
+    .mapNotNull { (url, lines) -> url.toProjectRelativePath(baseAbsolute)?.to(lines.toSortedSet()) }
     .toMap(LinkedHashMap())
   return ChangedLinesArtifactPayload(files = files)
 }
 
-private fun String.toProjectRelativePath(base: Path): String? {
+private fun String.toProjectRelativePath(baseAbsolute: Path): String? {
   val localPath = VirtualFileManager.extractPath(this).takeIf(String::isNotBlank) ?: return null
   val absolute = runCatching { Path.of(localPath).toAbsolutePath().normalize() }.getOrNull() ?: return null
-  val relative = runCatching { base.relativize(absolute) }.getOrNull() ?: return null
-  return FileUtil.toSystemIndependentName(relative.toString())
-    .takeUnless { it.isBlank() || it.startsWith("..") }
+  if (!absolute.startsWith(baseAbsolute)) return null
+  val relative = runCatching { baseAbsolute.relativize(absolute) }.getOrNull() ?: return null
+  return FileUtil.toSystemIndependentName(relative.toString()).takeUnless { it.isBlank() }
 }
 
 /** Serialize [payload] to `$coveragePath/changedLines` as JSON. Skips when the payload is empty. */
@@ -82,14 +81,16 @@ fun writeChangedLinesArtifact(coveragePath: Path, payload: ChangedLinesArtifactP
     Files.newOutputStream(target).use { JSON.encodeToStream(payload, it) }
   }
   catch (e: Exception) {
-    if(shouldRethrow(e)) throw e
     LOG.warn("Failed to write changed-lines coverage sidecar", e)
   }
 }
 
 @OptIn(ExperimentalSerializationApi::class)
 fun readChangedLinesPayload(path: Path): ChangedLinesArtifactPayload? {
-  if (!Files.isRegularFile(path)) return null
+  if (!Files.isRegularFile(path)) {
+    LOG.warn("The file $path does not exist or not a regular file")
+    return null
+  }
   return try {
     Files.newInputStream(path).use { JSON.decodeFromStream<ChangedLinesArtifactPayload>(it) }
   }

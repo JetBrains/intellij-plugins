@@ -59,7 +59,7 @@ class PyCoverageInspection : CoverageInspectionBase() {
     val data = globalContext.getUserData(py)?.value
     if (data != null) {
       saveCoverageData(globalContext,
-                       PyCoverageEngine::class.java.simpleName,
+                       getCoverageDirectory(PyCoverageEngine::class.java),
                        removePrefixFromCoverage(data, globalContext.config.projectPath))
     }
     globalContext.putUserData(py, null)
