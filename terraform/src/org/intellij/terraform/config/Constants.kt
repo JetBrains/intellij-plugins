@@ -54,6 +54,8 @@ internal object Constants {
   const val HCL_STACK_IDENTIFIER: String = "stack"
   const val HCL_COMPONENT_IDENTIFIER = "component"
   const val HCL_PROVIDERS_IDENTIFIER = "providers"
+  const val HCL_CONST_IDENTIFIER = "const"
+  const val HCL_SENSITIVE_IDENTIFIER = "sensitive"
 
   const val REGISTRY_DOMAIN: String = "registry.terraform.io"
   const val LATEST_VERSION: String = "latest"

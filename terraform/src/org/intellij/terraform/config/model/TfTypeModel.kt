@@ -17,6 +17,7 @@ import org.intellij.terraform.config.Constants.HCL_CLOUD_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONDITION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONFIG_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONNECTION_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_CONST_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DEFAULT_IDENTIFIER
@@ -39,6 +40,7 @@ import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_REMOVED_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_SENSITIVE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
@@ -124,9 +126,14 @@ class TfTypeModel(
     private val ProviderProperty = PropertyType("provider", Types.String, hint = ReferenceHint("provider.#type", "provider.#alias"))
 
     val DescriptionProperty: PropertyType = PropertyType("description", Types.String)
-    val SensitiveProperty: PropertyType = PropertyType("sensitive", Types.Boolean)
+    val SensitiveProperty: PropertyType =
+      PropertyType(HCL_SENSITIVE_IDENTIFIER, Types.Boolean, conflictsWith = listOf(HCL_CONST_IDENTIFIER))
     val NullableProperty: PropertyType = PropertyType("nullable", Types.Boolean)
-    val ConstProperty: PropertyType = PropertyType("const", Types.Boolean)
+    val ConstProperty: PropertyType = PropertyType(
+      HCL_CONST_IDENTIFIER,
+      Types.Boolean,
+      conflictsWith = listOf(HCL_SENSITIVE_IDENTIFIER, HCL_EPHEMERAL_IDENTIFIER)
+    )
     val DeprecatedProperty: PropertyType = PropertyType("deprecated", Types.Boolean)
 
     val Atlas: BlockType = BlockType(HCL_ATLAS_IDENTIFIER, 0, properties = listOf(
@@ -149,7 +156,8 @@ class TfTypeModel(
       ConditionProperty,
       ErrorMessageProperty
     ).toMap())
-    val EphemeralProperty: PropertyType = PropertyType(HCL_EPHEMERAL_IDENTIFIER, Types.Boolean)
+    val EphemeralProperty: PropertyType =
+      PropertyType(HCL_EPHEMERAL_IDENTIFIER, Types.Boolean, conflictsWith = listOf(HCL_CONST_IDENTIFIER))
     val Variable: BlockType = BlockType(HCL_VARIABLE_IDENTIFIER, 1, properties = listOf<PropertyOrBlockType>(
       TypeProperty,
       VariableDefault,
