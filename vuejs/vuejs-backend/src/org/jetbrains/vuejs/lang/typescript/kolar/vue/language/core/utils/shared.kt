@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils
 
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.getTokenPosOfNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.TextNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRTemplate
@@ -56,7 +55,7 @@ fun <T : Node> getStartEnd(
 ): TextRange<T> {
   return TextRange(
     node = node,
-    start = getTokenPosOfNode(node, ast),
+    start = node.getStart(ast),
     end = node.end,
   )
 }

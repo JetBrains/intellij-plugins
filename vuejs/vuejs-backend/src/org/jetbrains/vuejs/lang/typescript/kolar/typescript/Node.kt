@@ -5,4 +5,6 @@ interface Node {
   val kind: SyntaxKind
   val pos: Int
   val end: Int
+
+  fun getStart(sourceFile: SourceFile): Int
 }

@@ -12,9 +12,3 @@ fun getLeadingCommentRanges(
   pos: Int,
 ): List<CommentRange>? =
   TODO()
-
-fun getTokenPosOfNode(
-  node: Node,
-  sourceFile: SourceFile? = null,
-): Int =
-  TODO()
