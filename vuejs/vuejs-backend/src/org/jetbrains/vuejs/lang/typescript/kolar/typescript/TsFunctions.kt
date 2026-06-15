@@ -18,12 +18,3 @@ fun getTokenPosOfNode(
   sourceFile: SourceFile? = null,
 ): Int =
   TODO()
-
-fun createSourceFile(
-  fileName: String,
-  sourceText: String,
-  languageVersion: ScriptTarget,
-  setParentNodes: Boolean = false,
-  scriptKind: ScriptKind? = null,
-): SourceFile =
-  TODO()
