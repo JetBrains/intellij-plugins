@@ -1,11 +1,12 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="com.jetbrains.php"/>
     <module name="intellij.php.coverage"/>
+    <module name="intellij.platform.coverage"/>
     <module name="intellij.qodana.coverage"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
   <extensions defaultExtensionNs="org.intellij.qodana">
     <projectDescriber implementation="org.jetbrains.qodana.php.PhpIncludedPathsProjectDescriber"/>
     <projectDescriber implementation="org.jetbrains.qodana.php.PhpInterpreterProjectDescriber"/>
