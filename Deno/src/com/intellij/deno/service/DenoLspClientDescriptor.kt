@@ -41,7 +41,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspClient
-import com.intellij.platform.lsp.api.LspClientProvider
+import com.intellij.platform.lsp.api.LspIntegrationProvider
 import com.intellij.platform.lsp.api.ProjectWideLspClientDescriptor
 import com.intellij.platform.lsp.api.customization.LspCallHierarchyCustomizer
 import com.intellij.platform.lsp.api.customization.LspCallHierarchyDisabled
@@ -76,8 +76,8 @@ import org.eclipse.lsp4j.Diagnostic
 import java.nio.file.Files
 import java.nio.file.Paths
 
-class DenoLspClientProvider : LspClientProvider {
-  override fun fileOpened(project: Project, file: VirtualFile, clientStarter: LspClientProvider.LspClientStarter) {
+class DenoLspIntegrationProvider : LspIntegrationProvider {
+  override fun fileOpened(project: Project, file: VirtualFile, clientStarter: LspIntegrationProvider.LspClientStarter) {
     if (isDenoFileTypeAcceptable(file) && isDenoEnableForContextDirectory(project, file)) {
       clientStarter.ensureClientStarted(DenoLspClientDescriptor(project))
       if (!useDenoLibrary(project)) {
@@ -250,7 +250,7 @@ class DenoLspClientDescriptor(project: Project) : ProjectWideLspClientDescriptor
               ApplicationManager.getApplication().invokeLater(Runnable {
                 DenoSettings.getService(project).updateLibraries()
                 TypeScriptServiceRestarter.restartServices(project)
-                DaemonCodeAnalyzer.getInstance(project).restart("DenoLspClientProvider.processTerminated")
+                DaemonCodeAnalyzer.getInstance(project).restart("DenoLspIntegrationProvider.processTerminated")
               }, project.disposed)
             }
           })

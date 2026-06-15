@@ -9,7 +9,7 @@ import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspClientHybridModeProvider
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspIntegrationHybridModeProvider
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.jetbrains.vuejs.options.VueLSMode
 import org.jetbrains.vuejs.options.VueSettings
@@ -45,10 +45,10 @@ class VueHybridModeServiceLifecycleTest : VueHybridModeTestBase() {
     VueSettings.instance(project).serviceType = VueLSMode.DISABLED
     for (version in VueLanguageToolsVersion.entries) {
       LspClientManager.getInstance(project)
-        .stopAndRestartClientsIfNeeded(VueLspClientHybridModeProvider.getProviderClass(VueServiceRuntime.Bundled(version)))
+        .stopAndRestartClientsIfNeeded(VueLspIntegrationHybridModeProvider.getProviderClass(VueServiceRuntime.Bundled(version)))
     }
     LspClientManager.getInstance(project)
-      .stopAndRestartClientsIfNeeded(VueLspClientHybridModeProvider.getProviderClass(VueServiceRuntime.Manual))
+      .stopAndRestartClientsIfNeeded(VueLspIntegrationHybridModeProvider.getProviderClass(VueServiceRuntime.Manual))
     val highlightingAfter = myFixture.doHighlighting()
 
     val vueErrorsAfter = highlightingAfter.filter {

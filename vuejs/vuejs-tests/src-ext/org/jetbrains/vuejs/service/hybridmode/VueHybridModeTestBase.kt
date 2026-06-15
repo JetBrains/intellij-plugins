@@ -11,7 +11,7 @@ import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeLoaderFactory
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspClientHybridModeProvider
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspIntegrationHybridModeProvider
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginLoaderFactory
 import org.jetbrains.vuejs.lang.typescript.service.vueLspPackageName
@@ -71,7 +71,7 @@ abstract class VueHybridModeTestBase(
 
   protected fun assertLspServiceActive() {
     val runtime = VueServiceRuntime.Manual
-    val providerClass = VueLspClientHybridModeProvider.getProviderClass(runtime)
+    val providerClass = VueLspIntegrationHybridModeProvider.getProviderClass(runtime)
     val servers = LspClientManager.getInstance(project).getClients(providerClass)
     assertFalse(
       "LSP hybrid mode server should be running for version $bundledVersion",

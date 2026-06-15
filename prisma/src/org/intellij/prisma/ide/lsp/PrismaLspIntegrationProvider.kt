@@ -10,7 +10,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspClient
 import com.intellij.platform.lsp.api.LspClientManager
-import com.intellij.platform.lsp.api.LspClientProvider
+import com.intellij.platform.lsp.api.LspIntegrationProvider
 import com.intellij.platform.lsp.api.lsWidget.LspClientWidgetItem
 import com.intellij.util.text.SemVer
 import org.intellij.prisma.PrismaIcons
@@ -33,8 +33,8 @@ private object PrismaLspServerPackageDescriptor : LspServerPackageDescriptor("@p
   }
 }
 
-class PrismaLspClientProvider : LspClientProvider {
-  override fun fileOpened(project: Project, file: VirtualFile, clientStarter: LspClientProvider.LspClientStarter) {
+class PrismaLspIntegrationProvider : LspIntegrationProvider {
+  override fun fileOpened(project: Project, file: VirtualFile, clientStarter: LspIntegrationProvider.LspClientStarter) {
     if (PrismaLspServerActivationRule.isEnabledAndAvailable(project, file)) {
       clientStarter.ensureClientStarted(PrismaLspClientDescriptor(project))
     }
@@ -46,7 +46,7 @@ class PrismaLspClientProvider : LspClientProvider {
 
 fun restartPrismaServerAsync(project: Project) {
   ApplicationManager.getApplication().invokeLater(Runnable {
-    LspClientManager.getInstance(project).stopAndRestartClientsIfNeeded(PrismaLspClientProvider::class.java)
+    LspClientManager.getInstance(project).stopAndRestartClientsIfNeeded(PrismaLspIntegrationProvider::class.java)
   }, project.disposed)
 }
 

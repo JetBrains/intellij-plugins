@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.waitEmptyServiceQueueForService
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspClientDescriptor
-import com.intellij.lang.typescript.lsp.TypeScriptGoLspClientProvider
+import com.intellij.lang.typescript.lsp.TypeScriptGoLspIntegrationProvider
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.application.ApplicationManager
@@ -17,7 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.platform.lsp.api.LspClientDescriptor
 import com.intellij.platform.lsp.api.LspClientManager
-import com.intellij.platform.lsp.api.LspClientProvider
+import com.intellij.platform.lsp.api.LspIntegrationProvider
 import com.intellij.platform.lsp.impl.LspClientImpl
 import com.intellij.platform.lsp.impl.LspClientManagerImpl
 import com.intellij.polySymbols.testFramework.HybridTestMode
@@ -154,7 +154,7 @@ abstract class Angular2TestCase(
       TypeScriptServiceKind.TsGoFork,
       TypeScriptServiceKind.TsGoProxy,
         -> {
-        triggerLspServerInit(project, TypeScriptGoLspClientProvider::class.java,
+        triggerLspServerInit(project, TypeScriptGoLspIntegrationProvider::class.java,
                              TypeScriptGoLspClientDescriptor(project))
       }
       TypeScriptServiceKind.None -> {}
@@ -209,7 +209,7 @@ abstract class Angular2TestCase(
 
   private fun triggerLspServerInit(
     project: Project,
-    providerClass: Class<out LspClientProvider>,
+    providerClass: Class<out LspIntegrationProvider>,
     descriptor: LspClientDescriptor,
   ) {
     val getServer = {

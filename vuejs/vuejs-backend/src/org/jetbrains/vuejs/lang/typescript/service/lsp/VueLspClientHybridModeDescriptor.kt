@@ -93,7 +93,7 @@ class VueLspClientHybridModeDescriptor(
     return VueHybridModeLsp4jClient(
       project = project,
       handler = handler,
-      lspServerSupportProvider = VueLspClientHybridModeProvider.getProviderClass(runtime),
+      lspServerSupportProvider = VueLspIntegrationHybridModeProvider.getProviderClass(runtime),
       runtime = runtime,
     )
   }

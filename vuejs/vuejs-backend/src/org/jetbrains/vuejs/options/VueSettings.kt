@@ -26,7 +26,7 @@ import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.lang.typescript.service.allVueServiceRuntimes
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeLoaderFactory
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspClientHybridModeProvider
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspIntegrationHybridModeProvider
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerTakeoverModeLoader
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginLoaderFactory
 import org.jetbrains.vuejs.lang.typescript.service.vueLspPackageName
@@ -317,7 +317,7 @@ enum class VueLSMode {
 
 /**
  * Restarts both TypeScript services (TS plugin, regular LSP) and the
- * Vue Hybrid Mode LSP server which has its own [com.intellij.platform.lsp.api.LspClientProvider]
+ * Vue Hybrid Mode LSP server which has its own [com.intellij.platform.lsp.api.LspIntegrationProvider]
  * not backed by a [com.intellij.lang.typescript.compiler.TypeScriptService].
  */
 internal fun restartVueServicesAsync(project: Project) {
@@ -326,7 +326,7 @@ internal fun restartVueServicesAsync(project: Project) {
     {
       for (runtime in allVueServiceRuntimes) {
         LspClientManager.getInstance(project)
-          .stopAndRestartClientsIfNeeded(VueLspClientHybridModeProvider.getProviderClass(runtime))
+          .stopAndRestartClientsIfNeeded(VueLspIntegrationHybridModeProvider.getProviderClass(runtime))
       }
     },
     project.disposed

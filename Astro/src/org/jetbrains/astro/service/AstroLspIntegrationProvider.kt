@@ -2,7 +2,7 @@
 package org.jetbrains.astro.service
 
 import com.intellij.lang.typescript.lsp.JSFrameworkLspClientDescriptor
-import com.intellij.lang.typescript.lsp.JSFrameworkLspClientProvider
+import com.intellij.lang.typescript.lsp.JSFrameworkLspIntegrationProvider
 import com.intellij.lang.typescript.lsp.JSLspClientWidgetItem
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -29,7 +29,7 @@ import org.jetbrains.astro.service.settings.AstroServiceConfigurable
 import org.jetbrains.astro.service.settings.AstroServiceSettings
 
 
-class AstroLspClientProvider : JSFrameworkLspClientProvider(AstroLspServerActivationRule) {
+class AstroLspIntegrationProvider : JSFrameworkLspIntegrationProvider(AstroLspServerActivationRule) {
   override fun createLspServerDescriptor(project: Project): JSFrameworkLspClientDescriptor = AstroLspClientDescriptor(project)
 
   override fun createWidgetItem(lspClient: LspClient, currentFile: VirtualFile?): LspClientWidgetItem =

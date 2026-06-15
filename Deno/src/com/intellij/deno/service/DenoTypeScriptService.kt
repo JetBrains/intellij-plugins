@@ -30,7 +30,7 @@ class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServicePro
 @Service(Service.Level.PROJECT)
 class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(
   project,
-  DenoLspClientProvider::class.java,
+  DenoLspIntegrationProvider::class.java,
   DenoLspClientDescriptor(project),
 ) {
   override val diagnosticsConfiguration: DiagnosticsConfiguration get() = PublishDiagnostics(1)

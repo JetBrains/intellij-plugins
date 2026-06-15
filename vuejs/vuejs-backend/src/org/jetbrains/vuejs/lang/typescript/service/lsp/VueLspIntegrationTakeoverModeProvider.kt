@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.service.lsp
 
 import com.intellij.lang.typescript.lsp.JSFrameworkLspClientDescriptor
-import com.intellij.lang.typescript.lsp.JSFrameworkLspClientProvider
+import com.intellij.lang.typescript.lsp.JSFrameworkLspIntegrationProvider
 import com.intellij.lang.typescript.lsp.JSLspClientWidgetItem
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -11,8 +11,8 @@ import com.intellij.platform.lsp.api.lsWidget.LspClientWidgetItem
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.options.VueConfigurable
 
-internal class VueLspClientTakeoverModeProvider :
-  JSFrameworkLspClientProvider(VueLspServerTakeoverModeActivationRule) {
+internal class VueLspIntegrationTakeoverModeProvider :
+  JSFrameworkLspIntegrationProvider(VueLspServerTakeoverModeActivationRule) {
   override fun createLspServerDescriptor(project: Project): JSFrameworkLspClientDescriptor =
     VueLspClientTakeoverModeDescriptor(project)
 

@@ -21,7 +21,7 @@ class VueLspTakeoverModeTypeScriptService(
   project: Project,
 ) : JSFrameworkLspTypeScriptService(
   project = project,
-  providerClass = VueLspClientTakeoverModeProvider::class.java,
+  providerClass = VueLspIntegrationTakeoverModeProvider::class.java,
   descriptor = VueLspClientTakeoverModeDescriptor(project),
   activationRule = VueLspServerTakeoverModeActivationRule,
 ) {

@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.service.lsp
 
 import com.intellij.lang.typescript.lsp.JSFrameworkLspClientDescriptor
-import com.intellij.lang.typescript.lsp.JSFrameworkLspClientProvider
+import com.intellij.lang.typescript.lsp.JSFrameworkLspIntegrationProvider
 import com.intellij.lang.typescript.lsp.JSLspClientWidgetItem
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -13,18 +13,18 @@ import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.options.VueConfigurable
 
-internal class VueLspClientHybridModeDefaultProvider :
-  VueLspClientHybridModeProvider(VueServiceRuntime.Bundled(VueLanguageToolsVersion.DEFAULT))
+internal class VueLspIntegrationHybridModeDefaultProvider :
+  VueLspIntegrationHybridModeProvider(VueServiceRuntime.Bundled(VueLanguageToolsVersion.DEFAULT))
 
-internal class VueLspClientHybridModeLegacyProvider :
-  VueLspClientHybridModeProvider(VueServiceRuntime.Bundled(VueLanguageToolsVersion.LEGACY))
+internal class VueLspIntegrationHybridModeLegacyProvider :
+  VueLspIntegrationHybridModeProvider(VueServiceRuntime.Bundled(VueLanguageToolsVersion.LEGACY))
 
-internal class VueLspClientHybridModeManualProvider :
-  VueLspClientHybridModeProvider(VueServiceRuntime.Manual)
+internal class VueLspIntegrationHybridModeManualProvider :
+  VueLspIntegrationHybridModeProvider(VueServiceRuntime.Manual)
 
-sealed class VueLspClientHybridModeProvider(
+sealed class VueLspIntegrationHybridModeProvider(
   private val runtime: VueServiceRuntime,
-) : JSFrameworkLspClientProvider(VueLspServerHybridModeActivationRule(runtime)) {
+) : JSFrameworkLspIntegrationProvider(VueLspServerHybridModeActivationRule(runtime)) {
 
   override fun createLspServerDescriptor(project: Project): JSFrameworkLspClientDescriptor =
     VueLspClientHybridModeDescriptor(project, runtime)
@@ -39,18 +39,18 @@ sealed class VueLspClientHybridModeProvider(
     )
 
   companion object {
-    fun getProviderClass(runtime: VueServiceRuntime): Class<out JSFrameworkLspClientProvider> {
+    fun getProviderClass(runtime: VueServiceRuntime): Class<out JSFrameworkLspIntegrationProvider> {
       return when (runtime) {
         is VueServiceRuntime.Bundled -> when (runtime.version) {
           VueLanguageToolsVersion.DEFAULT ->
-            VueLspClientHybridModeDefaultProvider::class.java
+            VueLspIntegrationHybridModeDefaultProvider::class.java
 
           VueLanguageToolsVersion.LEGACY ->
-            VueLspClientHybridModeLegacyProvider::class.java
+            VueLspIntegrationHybridModeLegacyProvider::class.java
         }
 
         VueServiceRuntime.Manual ->
-          VueLspClientHybridModeManualProvider::class.java
+          VueLspIntegrationHybridModeManualProvider::class.java
       }
     }
   }

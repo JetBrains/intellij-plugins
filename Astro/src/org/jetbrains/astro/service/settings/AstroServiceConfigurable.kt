@@ -26,7 +26,7 @@ import com.intellij.ui.layout.ComponentPredicate
 import com.intellij.util.ui.JBDimension
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.service.AstroLspServerLoader
-import org.jetbrains.astro.service.AstroLspClientProvider
+import org.jetbrains.astro.service.AstroLspIntegrationProvider
 import org.jetbrains.astro.service.AstroTSPluginLoader
 import javax.swing.JComponent
 
@@ -119,7 +119,7 @@ class AstroServiceConfigurable(private val project: Project) : Configurable {
     panel.apply()
     settings.setWorkspaceConfiguration(currentWorkspaceConfiguration)
     if (!project.isDefault) {
-      LspClientManager.getInstance(project).stopAndRestartClientsIfNeeded(AstroLspClientProvider::class.java)
+      LspClientManager.getInstance(project).stopAndRestartClientsIfNeeded(AstroLspIntegrationProvider::class.java)
     }
   }
 

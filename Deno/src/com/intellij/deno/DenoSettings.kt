@@ -3,7 +3,7 @@ package com.intellij.deno
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.deno.roots.createDenoEntity
 import com.intellij.deno.roots.removeDenoEntity
-import com.intellij.deno.service.DenoLspClientProvider
+import com.intellij.deno.service.DenoLspIntegrationProvider
 import com.intellij.deno.settings.DenoRuntimeType
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.javascript.runtime.settings.JSRuntimeConfiguration
@@ -194,11 +194,11 @@ class DenoSettings(
       if (!project.isDefault) {
         val lspServerManager = LspClientManager.getInstance(project)
         if (useDeno == UseDeno.ENABLE || useDeno == UseDeno.CONFIGURE_AUTOMATICALLY) {
-          lspServerManager.startClientsIfNeeded(DenoLspClientProvider::class.java)
+          lspServerManager.startClientsIfNeeded(DenoLspIntegrationProvider::class.java)
           createDenoEntity(project)
         }
         else {
-          lspServerManager.stopClients(DenoLspClientProvider::class.java)
+          lspServerManager.stopClients(DenoLspIntegrationProvider::class.java)
           removeDenoEntity(project)
         }
       }
