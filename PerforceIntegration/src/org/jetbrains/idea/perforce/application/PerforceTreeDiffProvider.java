@@ -9,6 +9,7 @@ import com.intellij.openapi.vcs.changes.FilePathsHelper;
 import com.intellij.openapi.vcs.changes.committed.CommittedChangesCache;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.vcsUtil.VcsUtil;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +25,7 @@ public class PerforceTreeDiffProvider implements TreeDiffProvider {
   }
 
   @Override
-  public Collection<String> getRemotelyChanged(VirtualFile vcsRoot, Collection<String> paths) {
+  public @Unmodifiable Collection<String> getRemotelyChanged(VirtualFile vcsRoot, Collection<String> paths) {
     final RepositoryLocation location =
       CommittedChangesCache.getInstance(myVcs.getProject()).getLocationCache().getLocation(myVcs, VcsUtil.getFilePath(vcsRoot), true);
     final PerforceCommittedChangesProvider committedChangesProvider = myVcs.getCommittedChangesProvider();
