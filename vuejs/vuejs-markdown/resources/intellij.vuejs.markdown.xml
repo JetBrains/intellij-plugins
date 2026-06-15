@@ -1,9 +1,8 @@
 <idea-plugin>
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <plugin id="org.intellij.plugins.markdown"/>
-    <module name="intellij.markdown"/>
     <module name="intellij.javascript.web"/>
+    <module name="intellij.markdown"/>
     <module name="intellij.vuejs.backend"/>
     <module name="intellij.vuejs.common"/>
   </dependencies>
