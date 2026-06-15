@@ -15,16 +15,15 @@ import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.problemDescriptors.MetricCodeDescriptor
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.GlobalOutputConsumer
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile.QodanaProfileState
-import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintSignals
-import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.areStructuralFingerprintsEnabled
-import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiSignalExtractor
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiFingerprintData
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiFingerprintDataExtractor
 import java.nio.file.Path
 
 class QodanaProblemConsumer(
   private val project: Project,
   private val database: QodanaToolResultDatabase,
   private val profileState: QodanaProfileState,
-  qodanaRunScope: CoroutineScope
+  qodanaRunScope: CoroutineScope,
 ) : InspectionProblemConsumer {
   private val macroManager = PathMacroManager.getInstance(project)
   private val writer = AsyncInspectionToolResultWriter(
@@ -48,28 +47,26 @@ class QodanaProblemConsumer(
     }
 
     val userData = descriptor as? UserDataHolderEx
-    val structuralFingerprintSignals = getStructuralSignals(descriptor)
+    val fingerprintData = getFingerprintData(descriptor)
 
     val problem = XmlProblem(
       element,
       toolWrapper.isCleanupTool,
       descriptor.fixes?.any { it is ModCommandQuickFix } == true,
       userData,
-      structuralFingerprintSignals
+      fingerprintData
     )
 
     consume(listOf(problem), toolWrapper.shortName)
   }
 
-  private fun getStructuralSignals(descriptor: CommonProblemDescriptor): StructuralFingerprintSignals? {
-    if (!areStructuralFingerprintsEnabled) return null
-
+  private fun getFingerprintData(descriptor: CommonProblemDescriptor): PsiFingerprintData? {
     val baseDescriptor = descriptor as? ProblemDescriptorBase ?: return null
 
     return runReadActionBlocking {
       val element = baseDescriptor.psiElement
       if (element != null && element.isValid) {
-        PsiSignalExtractor.extractSignals(element)
+        PsiFingerprintDataExtractor.extract(element)
       } else {
         null
       }

@@ -23,15 +23,22 @@ internal data object BaselineEqualityV2 : FingerprintCalculator {
   override fun calculate(result: Result): String = Hashing.fingerprint2011().hash { hasher ->
     hasher.put(result.ruleId)
 
-    result.locations.forEachNotNull { it.hash(hasher) }
-    if (result.locations == null || result.locations.isEmpty()) {
-      hasher.put(result.message?.text)
+    val additionalFingerprintData = result.additionalFingerprintData()
+    val xmlSemanticIdentity = additionalFingerprintData.xmlSemanticIdentity?.identity
+    if (xmlSemanticIdentity == null) {
+      result.locations.forEachNotNull { it.hash(hasher) }
+      if (result.locations == null || result.locations.isEmpty()) {
+        hasher.put(result.message?.text)
+      }
+    }
+    else {
+      hasher.put(xmlSemanticIdentity)
     }
     result.graphs.forEachNotNull { graph ->
       graph.nodes.forEachNotNull { it.hash(hasher) }
       graph.edges.forEachNotNull { it.hash(hasher) }
     }
     result.codeFlows.forEachNotNull { it.hash(hasher, includeDescription = false) }
-    hasher.put(result.properties?.get(ADDITIONAL_FINGERPRINT_DATA)?.hashCode())
+    hasher.put(additionalFingerprintData.stableHashCode())
   }
 }

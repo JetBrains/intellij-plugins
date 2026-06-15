@@ -41,7 +41,7 @@ internal data object MoveAndRefactorTolerantIndicator : StructuralFingerprintCal
 private fun structuralFingerprint(result: Result, astShape: String?, extras: List<String?>): String =
   Hashing.fingerprint2011().hash { hasher ->
     hasher.put(result.ruleId)
-    hasher.put(result.properties?.get(BaselineEqualityV2.ADDITIONAL_FINGERPRINT_DATA)?.hashCode())
+    hasher.put(result.additionalFingerprintData().stableHashCode())
     hasher.put(astShape)
     extras.forEach(hasher::put)
   }

@@ -19,8 +19,8 @@ import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_HAS_FIXES
 import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_CHILD_HASH_PROP
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_ROOT_HASH_PROP
-import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintSignals
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.addStructuralFingerprints
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiFingerprintData
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 
 private val LOG = logger<XmlProblem>()
@@ -35,17 +35,20 @@ interface Problem {
   fun getRelatedProblemHashFrom(): String? = null
 }
 
-internal class XmlProblem(private val element: Element,
-                          private val hasCleanup: Boolean = false,
-                          private val hasFixes: Boolean = false,
-                          private val userData: UserDataHolderEx? = null,
-                          private val structuralSignals: StructuralFingerprintSignals? = null): Problem {
+internal class XmlProblem(
+  private val element: Element,
+  private val hasCleanup: Boolean = false,
+  private val hasFixes: Boolean = false,
+  private val userData: UserDataHolderEx? = null,
+  private val fingerprintData: PsiFingerprintData? = null,
+) : Problem {
   override suspend fun getSarif(macroManager: PathMacroManager, database: QodanaToolResultDatabase): Result {
     macroManager.collapsePathsRecursively(element)
     return ElementToSarifConverter.convertFromXmlFormat(element, macroManager) { result ->
       val props = result.properties ?: PropertyBag()
       addRelatedProblemsHashes(props)
       addHasFixes(props, hasFixes, hasCleanup)
+      fingerprintData?.storeIn(props)
       result.properties = props
       props.tags.addAll(userData?.getUserData(PROBLEM_DESCRIPTOR_TAG) ?: emptyList())
       result.relatedLocations = userData?.getUserData(RELATED_LOCATIONS)
@@ -67,7 +70,7 @@ internal class XmlProblem(private val element: Element,
         }
         else -> result.getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.REGULAR
       }
-    }.also { sarif -> structuralSignals?.let { sarif.addStructuralFingerprints(it) } }
+    }.also { sarif -> fingerprintData?.structuralSignals?.let { sarif.addStructuralFingerprints(it) } }
   }
 
   override fun getFile(): String? = element.getChildText("file")
