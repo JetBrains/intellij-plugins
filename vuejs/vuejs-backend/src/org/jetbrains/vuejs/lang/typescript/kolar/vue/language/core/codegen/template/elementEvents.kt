@@ -227,13 +227,11 @@ fun isCompoundExpression(ast: SourceFile): Boolean {
         forEachChild(child1) { child2 ->
           if (isArrowFunction(child2)) result = false
           else if (isPropertyAccessOrId(child2)) result = false
-          null
         }
       }
       else if (isFunctionDeclaration(child1)) {
         result = false
       }
-      null
     }
   }
   return result

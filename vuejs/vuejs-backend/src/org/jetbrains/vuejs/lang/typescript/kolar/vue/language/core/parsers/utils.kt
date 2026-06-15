@@ -71,7 +71,6 @@ fun parseBindingRanges(
         }
       }
     }
-    null
   }
 
   return Pair(bindings, components)
