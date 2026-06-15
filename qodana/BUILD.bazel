@@ -248,6 +248,7 @@ jvm_library(
     ),
     module_name = "intellij.qodana.core.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/problemsView/plugin"],
 )
 
 jvm_library(
@@ -280,6 +281,7 @@ jvm_library(
         "@community//platform/platform-impl/concurrency:concurrency_test_lib",
         "@community//platform/observable:observable_test_lib",
         "@community//platform/platform-util-netty:ide-util-netty_test_lib",
+        "@community//platform/problemsView/plugin:plugin_test_lib",
         "@community//platform/platform-impl/internal:internal_test_lib",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-impl/ui:ui_test_lib",
