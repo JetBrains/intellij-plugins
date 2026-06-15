@@ -65,7 +65,6 @@ object names {
   const val FunctionalComponentProps: String = "__VLS_FunctionalComponentProps"
   const val IsAny: String = "__VLS_IsAny"
   const val IsFunction: String = "__VLS_IsFunction"
-  const val NormalizeComponentEvent: String = "__VLS_NormalizeComponentEvent"
   const val NormalizeEmits: String = "__VLS_NormalizeEmits"
   const val OverloadUnion: String = "__VLS_OverloadUnion"
   const val OverloadUnionInner: String = "__VLS_OverloadUnionInner"
