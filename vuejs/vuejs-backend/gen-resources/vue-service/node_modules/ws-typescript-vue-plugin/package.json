@@ -9,11 +9,11 @@
   "dependencies": {
     "typescript": "5.4.5",
     "tsc-ide-plugin": "workspace:*",
-    "@vue/typescript-plugin": "3.3.4"
+    "@vue/typescript-plugin": "3.3.5"
   },
   "devDependencies": {
     "@types/node": "22.19.7",
-    "@vercel/ncc": "^0.38.4"
+    "@vercel/ncc": "0.38.4"
   },
   "scripts": {
     "build:clean": "npm run clean && npm run build",

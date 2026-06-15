@@ -1,0 +1,12 @@
+{
+  "name": "@vue/language-server",
+  "version": "3.3.5",
+  "private": true,
+  "devDependencies": {
+    "@vue/language-server": "3.3.5",
+    "rolldown": "latest"
+  },
+  "scripts": {
+    "build": "rolldown --config"
+  }
+}
