@@ -192,13 +192,13 @@ class DenoSettings(
       setUseDeno(useDeno)
 
       if (!project.isDefault) {
-        val lspServerManager = LspClientManager.getInstance(project)
+        val lspClientManager = LspClientManager.getInstance(project)
         if (useDeno == UseDeno.ENABLE || useDeno == UseDeno.CONFIGURE_AUTOMATICALLY) {
-          lspServerManager.startClientsIfNeeded(DenoLspIntegrationProvider::class.java)
+          lspClientManager.startClientsIfNeeded(DenoLspIntegrationProvider::class.java)
           createDenoEntity(project)
         }
         else {
-          lspServerManager.stopClients(DenoLspIntegrationProvider::class.java)
+          lspClientManager.stopClients(DenoLspIntegrationProvider::class.java)
           removeDenoEntity(project)
         }
       }
