@@ -7,7 +7,7 @@
   {
    class: "VueScriptSetupInputProperty",
    name: "optional",
-   type: "string",
+   type: "string | undefined",
    required: false,
   },
   {

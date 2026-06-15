@@ -24,7 +24,7 @@
    params: [
     {
      name: "id",
-     type: "number",
+     type: "number | undefined",
     },
    ],
    hasStrictSignature: true,

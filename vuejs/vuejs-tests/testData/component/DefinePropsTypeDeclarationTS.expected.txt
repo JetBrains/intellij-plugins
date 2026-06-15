@@ -7,7 +7,7 @@
   {
    class: "VueScriptSetupInputProperty",
    name: "optional",
-   type: "string",
+   type: "string | undefined",
    required: false,
   },
   {
@@ -19,7 +19,7 @@
   {
    class: "VueScriptSetupInputProperty",
    name: "requiredNullish",
-   type: "string",
+   type: "string | undefined",
    required: true,
   },
  ],

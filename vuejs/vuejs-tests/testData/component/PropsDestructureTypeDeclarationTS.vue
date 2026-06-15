@@ -5,8 +5,8 @@ const {
   prop4: aliased,
   ...rest
 } = defineProps<{
-  prop1: number,
-  prop2: number,
+  prop1: number | undefined,
+  prop2: number | undefined,
   prop3?: number,
   prop4?: number,
 }>();

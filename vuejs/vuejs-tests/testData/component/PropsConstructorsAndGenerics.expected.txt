@@ -5,7 +5,7 @@
   {
    class: "VuePsiNamedElementInputProperty",
    name: "autofocus",
-   type: "boolean",
+   type: "boolean | undefined",
    required: false,
   },
   {
@@ -17,7 +17,7 @@
   {
    class: "VuePsiNamedElementInputProperty",
    name: "value",
-   type: "number",
+   type: "number | undefined",
    required: false,
   },
  ],
