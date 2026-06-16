@@ -123,13 +123,13 @@ private class AngularTranspiledFile(
     ctx: KolarCodegenContext,
   ): KolarVirtualCode? {
     val transpiledFile = getTranspiledDirectiveFile(file)
-    val fileName = file.path
+    val fileName = ctx.normalizePath(file.path)
     if (transpiledFile != null) {
       val newMappings = mutableListOf<CodeMapping>()
       val newAssociatedScriptMappings = mutableMapOf<String, MutableList<CodeMapping>>()
 
       transpiledFile.fileMappings.values.forEach { fileMapping ->
-        val normalizedMappingFileName = fileMapping.fileName.replace('\\', '/')
+        val normalizedMappingFileName = ctx.normalizePath(fileMapping.fileName.replace('\\', '/'))
         val mappingsWithData: MutableList<CodeMapping> = if (normalizedMappingFileName == fileName.replace('\\', '/')) {
           newMappings
         }
