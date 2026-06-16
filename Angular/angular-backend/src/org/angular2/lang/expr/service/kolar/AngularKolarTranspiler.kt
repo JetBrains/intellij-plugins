@@ -1,6 +1,7 @@
 package org.angular2.lang.expr.service.kolar
 
 import com.intellij.ide.highlighter.HtmlFileType
+import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationErrorFilter
 import com.intellij.lang.typescript.kolar.CodeMapping
@@ -24,6 +25,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.util.ThreeState
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
@@ -61,6 +63,9 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
   override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean =
     (element.language.let { it is Angular2ExprDialect || it is Angular2HtmlDialect }
      && Angular2EntitiesProvider.findTemplateComponent(element) != null)
+
+  override fun isTypeEvaluationEnabledInUsageContext(usageContext: JSServicePoweredTypeEngineUsageContext): ThreeState =
+    ThreeState.YES
 
   override fun supportsInjectedFile(file: PsiFile): Boolean =
     file.language is Angular2ExprDialect || file.language is Angular2HtmlDialect
