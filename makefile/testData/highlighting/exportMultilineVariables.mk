@@ -1,0 +1,6 @@
+SOURCES = a.c b.c
+EXECUTABLE = app
+export SOURCES \
+	EXECUTABLE
+unexport SOURCES \
+	EXECUTABLE
