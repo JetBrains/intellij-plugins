@@ -11,7 +11,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.asDisposable
 import com.intellij.util.awaitCancellationAndInvoke
-import com.jetbrains.fus.reporting.coroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
@@ -58,9 +57,9 @@ class CoverageListenerService(private val project: Project, scope: CoroutineScop
 
   private suspend fun openCoverageSuiteAndCloseOnCancellation(suite: CoverageSuitesBundle) {
     val coverageDataManager = CoverageDataManager.getInstance(project)
-    val listenerLifetime: Disposable = Disposer.newDisposable(coroutineScope.asDisposable(), "QodanaCoverageToolWindowActivator")
-    coverageDataManager.addSuiteListener(QodanaCoverageToolWindowActivator(project, suite), listenerLifetime)
     withContext(QodanaDispatchers.Ui) {
+      val listenerLifetime: Disposable = Disposer.newDisposable(this.asDisposable(), "QodanaCoverageToolWindowActivator")
+      coverageDataManager.addSuiteListener(QodanaCoverageToolWindowActivator(project, suite), listenerLifetime)
       coverageDataManager.chooseSuitesBundle(suite)
       awaitCancellationAndInvoke {
         if (!project.isDisposed) {
