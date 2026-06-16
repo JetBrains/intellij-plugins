@@ -399,7 +399,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'export' (EOL | (variable-assignment|variable) EOL?)
+  // 'export' (EOL | (variable-assignment|variable+) EOL?)
   public static boolean export(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "export")) return false;
     if (!nextTokenIs(b, KEYWORD_EXPORT)) return false;
@@ -411,7 +411,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // EOL | (variable-assignment|variable) EOL?
+  // EOL | (variable-assignment|variable+) EOL?
   private static boolean export_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "export_1")) return false;
     boolean r;
@@ -422,7 +422,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (variable-assignment|variable) EOL?
+  // (variable-assignment|variable+) EOL?
   private static boolean export_1_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "export_1_1")) return false;
     boolean r;
@@ -433,12 +433,27 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // variable-assignment|variable
+  // variable-assignment|variable+
   private static boolean export_1_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "export_1_1_0")) return false;
     boolean r;
     r = variable_assignment(b, l + 1);
-    if (!r) r = variable(b, l + 1);
+    if (!r) r = export_1_1_0_1(b, l + 1);
+    return r;
+  }
+
+  // variable+
+  private static boolean export_1_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "export_1_1_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = variable(b, l + 1);
+    while (r) {
+      int c = current_position_(b);
+      if (!variable(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "export_1_1_0_1", c)) break;
+    }
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1533,7 +1548,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'unexport' (EOL | (variable-assignment|variable) EOL?)
+  // 'unexport' (EOL | (variable-assignment|variable+) EOL?)
   public static boolean unexport(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "unexport")) return false;
     if (!nextTokenIs(b, KEYWORD_UNEXPORT)) return false;
@@ -1545,7 +1560,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // EOL | (variable-assignment|variable) EOL?
+  // EOL | (variable-assignment|variable+) EOL?
   private static boolean unexport_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "unexport_1")) return false;
     boolean r;
@@ -1556,7 +1571,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (variable-assignment|variable) EOL?
+  // (variable-assignment|variable+) EOL?
   private static boolean unexport_1_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "unexport_1_1")) return false;
     boolean r;
@@ -1567,12 +1582,27 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // variable-assignment|variable
+  // variable-assignment|variable+
   private static boolean unexport_1_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "unexport_1_1_0")) return false;
     boolean r;
     r = variable_assignment(b, l + 1);
-    if (!r) r = variable(b, l + 1);
+    if (!r) r = unexport_1_1_0_1(b, l + 1);
+    return r;
+  }
+
+  // variable+
+  private static boolean unexport_1_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unexport_1_1_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = variable(b, l + 1);
+    while (r) {
+      int c = current_position_(b);
+      if (!variable(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "unexport_1_1_0_1", c)) break;
+    }
+    exit_section_(b, m, null, r);
     return r;
   }
 
