@@ -11,6 +11,8 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.highlighting.DomElementProblemDescriptor
 import com.jetbrains.qodana.sarif.model.PropertyBag
+import org.jetbrains.qodana.staticAnalysis.sarif.QODANA_FINGERPRINT_SOURCE
+import org.jetbrains.qodana.staticAnalysis.sarif.QODANA_XML_SEMANTIC_FINGERPRINT_APPLIED
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.additionalFingerprintData
 import java.lang.reflect.Proxy
 
@@ -34,13 +36,15 @@ class DomProblemFingerprintPsiResolverTest : BasePlatformTestCase() {
     assertSame(extensionTag, resolvedElement)
 
     val props = PropertyBag()
-    PsiFingerprintDataExtractor.extract(resolvedElement).storeIn(props)
+    PsiFingerprintDataExtractor.extract(resolvedElement, FingerprintSource.DOM_PROBLEM_DESCRIPTOR).storeIn(props)
 
     val resolvedIdentity = props.additionalFingerprintData().xmlSemanticIdentity?.identity
     val directIdentity = PsiFingerprintDataExtractor.extract(extensionTag).additionalFingerprintData.xmlSemanticIdentity?.identity
 
     assertNotNull(resolvedIdentity)
     assertEquals(directIdentity, resolvedIdentity)
+    assertEquals(true, props[QODANA_XML_SEMANTIC_FINGERPRINT_APPLIED])
+    assertEquals(FingerprintSource.DOM_PROBLEM_DESCRIPTOR.sarifValue, props[QODANA_FINGERPRINT_SOURCE])
   }
 
   private fun parseXml(xml: String): XmlTag {
