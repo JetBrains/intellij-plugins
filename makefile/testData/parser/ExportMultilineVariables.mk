@@ -1,0 +1,4 @@
+export SOURCES \
+	EXECUTABLE
+unexport SOURCES \
+	EXECUTABLE

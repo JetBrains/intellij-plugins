@@ -5,6 +5,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 class MakefileHighlightingTest : BasePlatformTestCase() {
   fun testTargetspecificvars() = doTest()
   fun testExportMultipleVariables() = doTest()
+  fun testExportMultilineVariables() = doTest()
 
   fun doTest(checkInfos: Boolean = false) { myFixture.testHighlighting(true, checkInfos, true, "$basePath/${getTestName(true)}.mk") }
 

@@ -19,6 +19,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testDirectives() = doTest(true)
   fun testExport() = doTest(true)
   fun testExportMultipleVariables() = doTest(true)
+  fun testExportMultilineVariables() = doTest(true)
   fun testVPath() = doTest(true)
   fun testComments() = doTest(true)
   fun testMultiline() = doTest(true)
