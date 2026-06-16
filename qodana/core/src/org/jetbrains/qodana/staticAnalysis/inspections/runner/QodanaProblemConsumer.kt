@@ -15,6 +15,7 @@ import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.problemDescriptors.MetricCodeDescriptor
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.GlobalOutputConsumer
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile.QodanaProfileState
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.DomProblemFingerprintPsiResolver
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiFingerprintData
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiFingerprintDataExtractor
 import java.nio.file.Path
@@ -61,15 +62,10 @@ class QodanaProblemConsumer(
   }
 
   private fun getFingerprintData(descriptor: CommonProblemDescriptor): PsiFingerprintData? {
-    val baseDescriptor = descriptor as? ProblemDescriptorBase ?: return null
-
     return runReadActionBlocking {
-      val element = baseDescriptor.psiElement
-      if (element != null && element.isValid) {
-        PsiFingerprintDataExtractor.extract(element)
-      } else {
-        null
-      }
+      val element = (descriptor as? ProblemDescriptorBase)?.psiElement?.takeIf { it.isValid }
+                    ?: DomProblemFingerprintPsiResolver.resolve(descriptor)?.takeIf { it.isValid }
+      element?.let(PsiFingerprintDataExtractor::extract)
     }
   }
 

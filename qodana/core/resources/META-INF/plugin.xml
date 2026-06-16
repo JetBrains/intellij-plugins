@@ -130,6 +130,7 @@
     <module name="intellij.platform.vcs.impl"/>
     <module name="intellij.platform.vcs.log"/>
     <module name="intellij.platform.vcs.log.impl"/>
+    <module name="intellij.xml.dom"/>
     <module name="intellij.xml.parser"/>
     <module name="intellij.xml.psi"/>
     <!-- endregion -->
