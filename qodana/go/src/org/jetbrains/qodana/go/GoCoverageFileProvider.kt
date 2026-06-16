@@ -1,10 +1,10 @@
 package org.jetbrains.qodana.go
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.diagnostic.Logger.shouldRethrow
 import com.intellij.openapi.diagnostic.logger
 import org.jetbrains.qodana.coverage.CoverageEngineType
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.BaseQodanaCoverageFileProvider
+import java.io.IOException
 import java.nio.file.Path
 import kotlin.io.path.useLines
 
@@ -16,18 +16,11 @@ internal object GoCoverageFileProvider : BaseQodanaCoverageFileProvider() {
 
   override fun isValidCoverageReport(file: Path): Boolean = isGoCoverProfile(file)
 
-  override fun getCoverageFilesPrimaryLocations(project: Project): List<Path> =
+  override fun getCoverageFilesLocations(project: Project): List<Path> =
     discover(
       project,
-      names = listOf("coverage.out", "cover.out"),
+      names = listOf("coverage.out", "cover.out", "c.out", "profile.txt", "coverage.txt", "cov.txt", "profile.cov", "coverage.cov"),
       dirs = listOf(".", "coverage", ".coverage", "build", "reports", "test-results", "artifacts", "bin", "target"),
-    )
-
-  override fun getCoverageFilesSecondaryLocations(project: Project): List<Path> =
-    discover(
-      project,
-      names = listOf("c.out", "profile.txt", "coverage.txt", "cov.txt", "profile.cov", "coverage.cov"),
-      dirs = listOf(".", "coverage"),
     )
 }
 
@@ -44,8 +37,7 @@ private fun isGoCoverProfile(path: Path): Boolean {
       GO_COVER_HEADER_REGEX.matches(header)
     }
   }
-  catch (e: Exception) {
-    if (shouldRethrow(e)) throw e
+  catch (e: IOException) {
     logger.warn("Failed to read coverage report $path", e)
     false
   }

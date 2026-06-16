@@ -132,7 +132,10 @@ internal fun retrieveCoverageData(
 }
 
 @Suppress("IO_FILE_USAGE")
-@Deprecated("Use version with Path instead")
+@Deprecated(
+  message = "Use computeSuitesPaths(CoverageEngine, List<Path>, Project) instead",
+  replaceWith = ReplaceWith("computeSuitesPaths(engine, coverageFiles, project)")
+)
 fun computeSuites(engine: CoverageEngine, coverageFiles: List<java.io.File>, project: Project): List<CoverageSuite> {
   return computeSuitesPaths(engine, coverageFiles.map { it.toPath() }, project)
 }

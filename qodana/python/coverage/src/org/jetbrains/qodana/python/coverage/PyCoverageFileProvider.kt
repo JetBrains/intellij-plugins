@@ -14,14 +14,7 @@ internal object PyCoverageFileProvider : BaseQodanaCoverageFileProvider() {
 
   override fun isValidCoverageReport(file: Path): Boolean = isCoberturaLikeXmlReport(file)
 
-  override fun getCoverageFilesPrimaryLocations(project: Project): List<Path> =
-    discover(
-      project,
-      names = listOf("pytest-coverage.xml"),
-      dirs = listOf(".", "coverage", "reports"),
-    )
-
-  override fun getCoverageFilesSecondaryLocations(project: Project): List<Path> =
+  override fun getCoverageFilesLocations(project: Project): List<Path> =
     discover(
       project,
       names = listOf("*.xml"),

@@ -11,7 +11,10 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageDi
  * Base for JVM coverage auto-discovery tests: like [QodanaCoverageDiscoveryTest] but installs a mock JDK
  * required for the opened project to be a valid Java module.
  */
-abstract class JvmCoverageDiscoveryTest(inspection: String) : QodanaCoverageDiscoveryTest(inspection) {
+abstract class JvmCoverageDiscoveryTest(
+  inspection: String,
+  case: Case,
+) : QodanaCoverageDiscoveryTest(inspection, case) {
   override fun setUpProject() {
     super.setUpProject()
     WriteAction.runAndWait<RuntimeException> {

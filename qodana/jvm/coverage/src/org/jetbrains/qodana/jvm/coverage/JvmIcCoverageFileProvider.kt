@@ -14,12 +14,10 @@ internal object JvmIcCoverageFileProvider : BaseQodanaCoverageFileProvider() {
   // The IntelliJ coverage agent snapshot is binary and identified by the unique `.ic` extension only
   override fun isValidCoverageReport(file: Path): Boolean = true
 
-  override fun getCoverageFilesPrimaryLocations(project: Project): List<Path> =
+  override fun getCoverageFilesLocations(project: Project): List<Path> =
     discover(
       project,
       names = listOf("report.ic", "*.ic"),
-      dirs = listOf("build/kover", "build/reports/kover"),
+      dirs = listOf("build/kover", "build/reports/kover", "target/site/kover"),
     )
-
-  override fun getCoverageFilesSecondaryLocations(project: Project): List<Path> = emptyList()
 }

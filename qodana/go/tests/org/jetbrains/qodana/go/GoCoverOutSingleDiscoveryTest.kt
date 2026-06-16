@@ -7,33 +7,16 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageDiscoveryTest
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import java.nio.file.Path
 import javax.swing.Icon
 
-class GoCoverOutSingleDiscoveryTest : QodanaCoverageDiscoveryTest("GoCoverageInspection") {
+@RunWith(Parameterized::class)
+class GoCoverOutSingleDiscoveryTest(case: Case) : QodanaCoverageDiscoveryTest("GoCoverageInspection", case) {
   // The cover profile keys files by the `go.mod` module path; the stubbed SDK resolves these GOPATH-style as
   // `srcDir/<import-path>`, so the project must live at `<root>/example.com/cover-single` with `srcDir = <root>`.
   override val projectDirName: String = "example.com/cover-single"
-
-  override fun reportPlacements(testName: String): List<ReportLocation> = when (testName) {
-    "coverageOut" -> listOf(ReportLocation("report.out", "coverage.out"))
-    "coverOut" -> listOf(ReportLocation("report.out", "cover.out"))
-    "coverageSubdir" -> listOf(ReportLocation("report.out", "coverage/coverage.out"))
-    "dotCoverageSubdir" -> listOf(ReportLocation("report.out", ".coverage/coverage.out"))
-    "buildDir" -> listOf(ReportLocation("report.out", "build/coverage.out"))
-    "reportsDir" -> listOf(ReportLocation("report.out", "reports/coverage.out"))
-    "resultsDir" -> listOf(ReportLocation("report.out", "test-results/coverage.out"))
-    "artifactsDir" -> listOf(ReportLocation("report.out", "artifacts/coverage.out"))
-    "binDir" -> listOf(ReportLocation("report.out", "bin/coverage.out"))
-    "targetDir" -> listOf(ReportLocation("report.out", "target/coverage.out"))
-    "cOut" -> listOf(ReportLocation("report.out", "c.out"))
-    "profileTxt" -> listOf(ReportLocation("report.out", "profile.txt"))
-    "coverageTxt" -> listOf(ReportLocation("report.out", "coverage.txt"))
-    "covTxt" -> listOf(ReportLocation("report.out", "cov.txt"))
-    "profileCov" -> listOf(ReportLocation("report.out", "profile.cov"))
-    "coverageCov" -> listOf(ReportLocation("report.out", "coverage.cov"))
-    else -> error("Unknown test method: $testName")
-  }
 
   override fun setUpProject() {
     super.setUpProject()
@@ -53,20 +36,28 @@ class GoCoverOutSingleDiscoveryTest : QodanaCoverageDiscoveryTest("GoCoverageIns
     }, false)
   }
 
-  @Test fun coverageOut() = runDiscovery()
-  @Test fun coverOut() = runDiscovery()
-  @Test fun coverageSubdir() = runDiscovery()
-  @Test fun dotCoverageSubdir() = runDiscovery()
-  @Test fun buildDir() = runDiscovery()
-  @Test fun reportsDir() = runDiscovery()
-  @Test fun resultsDir() = runDiscovery()
-  @Test fun artifactsDir() = runDiscovery()
-  @Test fun binDir() = runDiscovery()
-  @Test fun targetDir() = runDiscovery()
-  @Test fun cOut() = runDiscovery()
-  @Test fun profileTxt() = runDiscovery()
-  @Test fun coverageTxt() = runDiscovery()
-  @Test fun covTxt() = runDiscovery()
-  @Test fun profileCov() = runDiscovery()
-  @Test fun coverageCov() = runDiscovery()
+  @Test fun discoverCoverage() = runDiscovery()
+
+  companion object {
+    @Parameterized.Parameters(name = "{0}")
+    @JvmStatic
+    fun data(): Collection<Case> = listOf(
+      Case("coverageOut", ReportLocation("report.out", "coverage.out")),
+      Case("coverOut", ReportLocation("report.out", "cover.out")),
+      Case("coverageSubdir", ReportLocation("report.out", "coverage/coverage.out")),
+      Case("dotCoverageSubdir", ReportLocation("report.out", ".coverage/coverage.out")),
+      Case("buildDir", ReportLocation("report.out", "build/coverage.out")),
+      Case("reportsDir", ReportLocation("report.out", "reports/coverage.out")),
+      Case("resultsDir", ReportLocation("report.out", "test-results/coverage.out")),
+      Case("artifactsDir", ReportLocation("report.out", "artifacts/coverage.out")),
+      Case("binDir", ReportLocation("report.out", "bin/coverage.out")),
+      Case("targetDir", ReportLocation("report.out", "target/coverage.out")),
+      Case("cOut", ReportLocation("report.out", "c.out")),
+      Case("profileTxt", ReportLocation("report.out", "profile.txt")),
+      Case("coverageTxt", ReportLocation("report.out", "coverage.txt")),
+      Case("covTxt", ReportLocation("report.out", "cov.txt")),
+      Case("profileCov", ReportLocation("report.out", "profile.cov")),
+      Case("coverageCov", ReportLocation("report.out", "coverage.cov"))
+    )
+  }
 }

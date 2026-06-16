@@ -11,7 +11,6 @@ import com.intellij.codeInspection.options.OptPane.checkbox
 import com.intellij.codeInspection.options.OptPane.number
 import com.intellij.codeInspection.options.OptRegularComponent
 import com.intellij.coverage.CoverageEngine
-import com.intellij.openapi.diagnostic.Logger.shouldRethrow
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.roots.TestSourcesFilter
 import com.intellij.psi.PsiElement
@@ -30,6 +29,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspec
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.COVERAGE_LANGUAGE_FIELD
 import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.INPUT_COVERAGE_LOADED
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
@@ -224,8 +224,7 @@ private fun reportCollectedReports(
     reportFile.parent?.createDirectories()
     Files.write(reportFile, files.map { "$engineType\t$it" }, StandardOpenOption.CREATE, StandardOpenOption.APPEND)
   }
-  catch (e: Exception) {
-    if (shouldRethrow(e)) throw e
+  catch (e: IOException) {
     logger.warn("Failed to write $COLLECTED_COVERAGE_REPORTS_FILE", e)
   }
   val reporter = QodanaMessageReporter.DEFAULT

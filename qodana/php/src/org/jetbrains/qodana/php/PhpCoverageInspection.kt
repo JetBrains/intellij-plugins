@@ -33,9 +33,9 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportElement
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportProblemsNeeded
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 
-internal class PhpCoverageInspection : CoverageInspectionBase() {
+class PhpCoverageInspection : CoverageInspectionBase() {
   @Suppress("MemberVisibilityCanBePrivate")
-  var fileThreshold = 50
+  var fileThreshold: Int = 50
 
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(phpunit, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
@@ -56,7 +56,7 @@ internal class PhpCoverageInspection : CoverageInspectionBase() {
     file.iterateContents(buildVisitor(file as PhpFile, problemsHolder, data, globalContext))
   }
 
-  override fun validateFileType(file: PsiFile) = file is PhpFile
+  override fun validateFileType(file: PsiFile): Boolean = file is PhpFile
 
   override fun cleanup(globalContext: QodanaGlobalInspectionContext) {
     val data = globalContext.getUserData(phpunit)?.value
@@ -83,7 +83,9 @@ internal class PhpCoverageInspection : CoverageInspectionBase() {
                            data: ClassData?,
                            globalContext: QodanaGlobalInspectionContext): PsiElementVisitor {
     loadClassData(data, file.virtualFile, globalContext)
-    if (data == null && !warnMissingCoverage || data != null && !reportProblemsNeeded(globalContext)) {
+    val missingDataWithoutTracking = data == null && !warnMissingCoverage
+    val dataPresentButReportingDisabled = data != null && !reportProblemsNeeded(globalContext)
+    if (missingDataWithoutTracking || dataPresentButReportingDisabled) {
       return PsiElementVisitor.EMPTY_VISITOR
     }
     if (reportProblemsNeeded(globalContext) &&

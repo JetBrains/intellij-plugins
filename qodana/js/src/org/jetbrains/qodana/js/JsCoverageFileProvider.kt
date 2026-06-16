@@ -13,17 +13,13 @@ internal object JsCoverageFileProvider : BaseQodanaCoverageFileProvider() {
 
   override fun isValidCoverageReport(file: Path): Boolean = isLcovReport(file)
 
-  override fun getCoverageFilesPrimaryLocations(project: Project): List<Path> =
-    discover(
+  override fun getCoverageFilesLocations(project: Project): List<Path> {
+    val regularReports = discover(
       project,
       names = listOf("lcov.info", "coverage.info", "*.info"),
       dirs = listOf(".", "coverage", "coverage/*", "*/coverage", "packages/*/coverage", "apps/*/coverage", "test-coverage", "reports"),
     )
-
-  override fun getCoverageFilesSecondaryLocations(project: Project): List<Path> =
-    discover(
-      project,
-      names = listOf("*.dat"),
-      dirs = listOf("bazel-out/_coverage"),
-    )
+    val bazelReports = discover(project, names = listOf("*.dat"), dirs = listOf("bazel-out/_coverage"))
+    return regularReports + bazelReports
+  }
 }

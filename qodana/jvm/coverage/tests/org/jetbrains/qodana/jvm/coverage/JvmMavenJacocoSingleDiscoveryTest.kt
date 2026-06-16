@@ -1,14 +1,20 @@
 package org.jetbrains.qodana.jvm.coverage
 
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
-class JvmMavenJacocoSingleDiscoveryTest : JvmCoverageDiscoveryTest("JvmCoverageInspection") {
-  override fun reportPlacements(testName: String): List<ReportLocation> = when (testName) {
-    "jacocoSite" -> listOf(ReportLocation("report.xml", "target/site/jacoco/jacoco.xml"))
-    "jacocoAggregate" -> listOf(ReportLocation("report.xml", "target/site/jacoco-aggregate/jacoco.xml"))
-    else -> error("Unknown test method: $testName")
+@RunWith(Parameterized::class)
+class JvmMavenJacocoSingleDiscoveryTest(case: Case) : JvmCoverageDiscoveryTest("JvmCoverageInspection", case) {
+  @Test fun discoverCoverage() = runDiscovery()
+
+  companion object {
+    @Parameterized.Parameters(name = "{0}")
+    @JvmStatic
+    fun data(): Collection<Case> = listOf(
+      Case("jacocoSite", ReportLocation("report.xml", "target/site/jacoco/jacoco.xml")),
+      Case("jacocoIt", ReportLocation("report.xml", "target/site/jacoco-it/jacoco.xml")),
+      Case("jacocoAggregate", ReportLocation("report.xml", "target/site/jacoco-aggregate/jacoco.xml")),
+    )
   }
-
-  @Test fun jacocoSite() = runDiscovery()
-  @Test fun jacocoAggregate() = runDiscovery()
 }

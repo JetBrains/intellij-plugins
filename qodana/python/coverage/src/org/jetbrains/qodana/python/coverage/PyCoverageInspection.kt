@@ -79,7 +79,9 @@ class PyCoverageInspection : CoverageInspectionBase() {
                            data: ClassData?,
                            globalContext: QodanaGlobalInspectionContext): PsiElementVisitor {
     loadClassData(data, file.virtualFile, globalContext)
-    if (data == null && !warnMissingCoverage || data != null && !reportProblemsNeeded(globalContext)) {
+    val missingDataWithoutTracking = data == null && !warnMissingCoverage
+    val dataPresentButReportingDisabled = data != null && !reportProblemsNeeded(globalContext)
+    if (missingDataWithoutTracking || dataPresentButReportingDisabled) {
       return PsiElementVisitor.EMPTY_VISITOR
     }
     if (reportProblemsNeeded(globalContext) &&
