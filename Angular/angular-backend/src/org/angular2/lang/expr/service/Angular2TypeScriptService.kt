@@ -33,7 +33,6 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
-import com.intellij.openapi.application.ReadAction.computeCancellable
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
@@ -44,7 +43,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
-import com.intellij.polySymbols.context.PolyContext
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -54,12 +52,10 @@ import com.intellij.util.asSafely
 import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.indexing.SubstitutedFileType
-import com.intellij.util.ui.EDT
 import icons.AngularIcons
 import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
 import org.angular2.codeInsight.blocks.isDeferOnReferenceExpression
 import org.angular2.entities.Angular2EntitiesProvider
-import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.service.protocol.Angular2TypeScriptServiceProtocol
 import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeCommand
@@ -71,7 +67,6 @@ import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.options.AngularConfigurable
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.AngularSettings
-import org.angular2.options.getAngularSettings
 import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.concurrent.Future
 
