@@ -15,17 +15,10 @@ internal object PhpCoverageFileProvider : BaseQodanaCoverageFileProvider() {
 
   override fun isValidCoverageReport(file: Path): Boolean = isCloverXmlReport(file)
 
-  override fun getCoverageFilesPrimaryLocations(project: Project): List<Path> =
+  override fun getCoverageFilesLocations(project: Project): List<Path> =
     discover(
       project,
-      names = listOf("clover.xml", "phpunit.coverage.xml"),
-      dirs = PHP_REPORT_DIRS,
-    )
-
-  override fun getCoverageFilesSecondaryLocations(project: Project): List<Path> =
-    discover(
-      project,
-      names = listOf("*.xml"),
+      names = listOf("clover.xml", "phpunit.coverage.xml", "*.xml"),
       dirs = PHP_REPORT_DIRS,
     )
 }

@@ -33,14 +33,11 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportElement
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.reportProblemsNeeded
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 
-private val jest = Key.create<Lazy<ProjectData?>>("qodana.jest.coverage")
-private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.js.normalizedPaths")
-
-internal class JsCoverageInspection : CoverageInspectionBase() {
+class JsCoverageInspection : CoverageInspectionBase() {
   @Suppress("MemberVisibilityCanBePrivate")
-  var fileThreshold = 50
+  var fileThreshold: Int = 50
 
-    override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
+  override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(jest, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
       computeCoverageData(globalContext, JestCoverageEngine::class, JsCoverageFileProvider)?.let {
         remapCoverage(globalContext.project, it)
@@ -59,7 +56,7 @@ internal class JsCoverageInspection : CoverageInspectionBase() {
     file.iterateContents(buildVisitor(file as JSFile, problemsHolder, data, globalContext))
   }
 
-  override fun validateFileType(file: PsiFile) = file is JSFile
+  override fun validateFileType(file: PsiFile): Boolean = file is JSFile
 
   override fun cleanup(globalContext: QodanaGlobalInspectionContext) {
     val data = globalContext.getUserData(jest)?.value
@@ -88,7 +85,9 @@ internal class JsCoverageInspection : CoverageInspectionBase() {
                            data: ClassData?,
                            globalContext: QodanaGlobalInspectionContext): PsiElementVisitor {
     loadClassData(data, file.virtualFile, globalContext)
-    if (data == null && !warnMissingCoverage || data != null && !reportProblemsNeeded(globalContext)) {
+    val missingDataWithoutTracking = data == null && !warnMissingCoverage
+    val dataPresentButReportingDisabled = data != null && !reportProblemsNeeded(globalContext)
+    if (missingDataWithoutTracking || dataPresentButReportingDisabled) {
       return PsiElementVisitor.EMPTY_VISITOR
     }
     if (reportProblemsNeeded(globalContext) &&
@@ -157,3 +156,6 @@ internal class JsCoverageInspection : CoverageInspectionBase() {
     return range
   }
 }
+
+private val jest = Key.create<Lazy<ProjectData?>>("qodana.jest.coverage")
+private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.js.normalizedPaths")

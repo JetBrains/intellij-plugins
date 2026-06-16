@@ -14,9 +14,8 @@ internal object JvmXmlCoverageFileProvider : BaseQodanaCoverageFileProvider() {
 
   override fun isValidCoverageReport(file: Path): Boolean = isJacocoXmlReport(file)
 
-  // Tool-stamped JaCoCo names (Maven default + Gradle JacocoReport task output) are unique to the JVM JaCoCo schema.
-  override fun getCoverageFilesPrimaryLocations(project: Project): List<Path> =
-    discover(
+  override fun getCoverageFilesLocations(project: Project): List<Path> {
+    val jacocoReports = discover(
       project,
       names = listOf("jacoco.xml", "jacocoTestReport.xml"),
       dirs = listOf(
@@ -24,16 +23,23 @@ internal object JvmXmlCoverageFileProvider : BaseQodanaCoverageFileProvider() {
         "build/reports/jacoco/test", "build/reports/jacoco/*",
       ),
     )
-
-  // Generically named JaCoCo-schema XML (Kover, AGP)
-  override fun getCoverageFilesSecondaryLocations(project: Project): List<Path> =
-    discover(
+    val koverReports = discover(
       project,
       names = listOf("report.xml", "coverage.xml"),
       dirs = listOf(
-        "build/reports/kover", "build/reports/kover/xml", "reports/kover/project-xml", "build/reports/coverage/**/debug",
+        "build/reports/kover", "build/reports/kover/xml", "reports/kover/project-xml",
+        "target/site/kover",
       ),
     )
+    val agpReports = discover(
+      project,
+      names = listOf("report.xml", "coverage.xml"),
+      dirs = listOf(
+        "build/reports/coverage/**/debug",
+      ),
+    )
+    return jacocoReports + koverReports + agpReports
+  }
 }
 
 /** `<sessioninfo>` element, or a `<counter type=...>` coverage counter — the JaCoCo structural hallmarks. */

@@ -2,18 +2,27 @@ package org.jetbrains.qodana.php
 
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageDiscoveryTest
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
-class PhpPhpunitCloverSingleDiscoveryTest : QodanaCoverageDiscoveryTest("PhpCoverageInspection") {
-  override fun reportPlacements(testName: String): List<ReportLocation> = when (testName) {
-    "cloverBuildLogs" -> listOf(ReportLocation("report.xml", "build/logs/clover.xml"))
-    "cloverRoot" -> listOf(ReportLocation("report.xml", "clover.xml"))
-    "phpunitCoverageRoot" -> listOf(ReportLocation("report.xml", "phpunit.coverage.xml"))
-    "coverageDir" -> listOf(ReportLocation("report.xml", "coverage/coverage.xml"))
-    else -> error("Unknown test method: $testName")
+@RunWith(Parameterized::class)
+class PhpPhpunitCloverSingleDiscoveryTest(case: Case) : QodanaCoverageDiscoveryTest("PhpCoverageInspection", case) {
+  @Test fun discoverCoverage() = runDiscovery()
+
+  companion object {
+    @Parameterized.Parameters(name = "{0}")
+    @JvmStatic
+    fun data(): Collection<Case> = listOf(
+      Case("cloverBuildLogs", ReportLocation("report.xml", "build/logs/clover.xml")),
+      Case("cloverRoot", ReportLocation("report.xml", "clover.xml")),
+      Case("phpunitCoverageRoot", ReportLocation("report.xml", "phpunit.coverage.xml")),
+      Case("coverageDir", ReportLocation("report.xml", "coverage/coverage.xml")),
+      Case("buildCoverageDir", ReportLocation("report.xml", "build/coverage/clover.xml")),
+      Case("buildReportsDir", ReportLocation("report.xml", "build/reports/clover.xml")),
+      Case("reportsDir", ReportLocation("report.xml", "reports/clover.xml")),
+      Case("testReportsDir", ReportLocation("report.xml", "test-reports/clover.xml")),
+      Case("testsCoverageDir", ReportLocation("report.xml", "tests/coverage/clover.xml")),
+      Case("targetDir", ReportLocation("report.xml", "target/clover.xml")),
+    )
   }
-
-  @Test fun cloverBuildLogs() = runDiscovery()
-  @Test fun cloverRoot() = runDiscovery()
-  @Test fun phpunitCoverageRoot() = runDiscovery()
-  @Test fun coverageDir() = runDiscovery()
 }

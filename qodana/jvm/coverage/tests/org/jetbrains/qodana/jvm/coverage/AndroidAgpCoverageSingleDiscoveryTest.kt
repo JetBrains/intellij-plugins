@@ -1,20 +1,22 @@
 package org.jetbrains.qodana.jvm.coverage
 
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
 
-class AndroidAgpCoverageSingleDiscoveryTest : JvmCoverageDiscoveryTest("JvmCoverageInspection") {
+@RunWith(Parameterized::class)
+class AndroidAgpCoverageSingleDiscoveryTest(case: Case) : JvmCoverageDiscoveryTest("JvmCoverageInspection", case) {
+  @Test fun discoverCoverage() = runDiscovery()
 
-  override fun reportPlacements(testName: String): List<ReportLocation> = when (testName) {
-    "unitDebug" -> listOf(ReportLocation("report.xml", "build/reports/coverage/test/debug/report.xml"))
-    "androidDebug" -> listOf(ReportLocation("report.xml", "build/reports/coverage/androidTest/debug/report.xml"))
-    "unitFlavorDebug" -> listOf(ReportLocation("report.xml", "build/reports/coverage/test/foss/debug/report.xml"))
-    "androidFlavorConnected" -> listOf(ReportLocation("report.xml", "build/reports/coverage/androidTest/playstore/debug/report.xml"))
-    else -> error("Unknown test method: $testName")
+  companion object {
+    @Parameterized.Parameters(name = "{0}")
+    @JvmStatic
+    fun data(): Collection<Case> = listOf(
+      Case("unitDebug", ReportLocation("report.xml", "build/reports/coverage/test/debug/report.xml")),
+      Case("androidDebug", ReportLocation("report.xml", "build/reports/coverage/androidTest/debug/report.xml")),
+      Case("unitFlavorDebug", ReportLocation("report.xml", "build/reports/coverage/test/foss/debug/report.xml")),
+      Case("androidFlavorConnected", ReportLocation("report.xml", "build/reports/coverage/androidTest/playstore/debug/report.xml")),
+    )
   }
-
-  @Test fun unitDebug() = runDiscovery()
-  @Test fun androidDebug() = runDiscovery()
-  @Test fun unitFlavorDebug() = runDiscovery()
-  @Test fun androidFlavorConnected() = runDiscovery()
 }
