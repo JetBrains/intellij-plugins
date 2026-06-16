@@ -109,6 +109,9 @@
 - name: lib/modules/intellij.qodana.go.jar
   contentModules:
   - name: intellij.qodana.go
+- name: lib/modules/intellij.qodana.ijVoid.jar
+  contentModules:
+  - name: intellij.qodana.ijVoid
 - name: lib/modules/intellij.qodana.inspectionKts.jar
   contentModules:
   - name: intellij.qodana.inspectionKts
