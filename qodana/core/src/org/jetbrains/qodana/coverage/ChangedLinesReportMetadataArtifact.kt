@@ -55,17 +55,19 @@ private val JSON: Json = Json {
  * map with file paths relative to project root. Files outside [projectPath] are skipped.
  */
 fun buildChangedLinesPayload(urlToLines: Map<String, Set<Int>>, projectPath: Path): ChangedLinesArtifactPayload {
-  val baseAbsolute = projectPath.toAbsolutePath().normalize()
   val files = urlToLines
     .filter { (_, lines) -> lines.isNotEmpty() }
-    .mapNotNull { (url, lines) -> url.toProjectRelativePath(baseAbsolute)?.to(lines.toSortedSet()) }
+    .mapNotNull { (url, lines) -> url.toProjectRelativePath(projectPath)?.to(lines.toSortedSet()) }
     .toMap(LinkedHashMap())
   return ChangedLinesArtifactPayload(files = files)
 }
 
-private fun String.toProjectRelativePath(baseAbsolute: Path): String? {
-  val localPath = VirtualFileManager.extractPath(this).takeIf(String::isNotBlank) ?: return null
-  val absolute = runCatching { Path.of(localPath).toAbsolutePath().normalize() }.getOrNull() ?: return null
+private fun String.toProjectRelativePath(projectPath: Path): String? {
+  val baseAbsolute = projectPath.toAbsolutePath().normalize()
+  val localPathString = VirtualFileManager.extractPath(this).takeIf(String::isNotBlank) ?: return null
+  val localPath = Path.of(localPathString)
+  val absolute = if (localPath.isAbsolute) localPath else projectPath.resolve(localPath)
+
   if (!absolute.startsWith(baseAbsolute)) return null
   val relative = runCatching { baseAbsolute.relativize(absolute) }.getOrNull() ?: return null
   return FileUtil.toSystemIndependentName(relative.toString()).takeUnless { it.isBlank() }
