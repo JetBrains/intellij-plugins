@@ -18,6 +18,8 @@ private const val QODANA_PROFILES_DIR = "/qodana-profiles/.idea/inspectionProfil
 private const val QODANA_RECOMMENDED_OTHER = "qodana.recommended.yaml"
 private const val QODANA_RECOMMENDED_WITH_JS = "qodana-js.recommended.yaml"
 private const val QODANA_RECOMMENDED_WITH_DOTNET = "qodana-dotnet.recommended.yaml"
+private const val QODANA_RECOMMENDED_WITH_IJ_VOID = "qodana-ij-void.recommended.yaml"
+private const val QODANA_IJ_VOID_PRODUCT_CODE = "QDIV"
 
 private const val QODANA_STARTER_OTHER = "qodana.starter.yaml"
 private const val QODANA_STARTER_WITH_JS = "qodana-js.starter.yaml"
@@ -73,7 +75,8 @@ class QodanaEmbeddedProfilesProvider : QodanaInspectionProfileProvider {
         else -> QODANA_STARTER_OTHER
       }
       QodanaEmbeddedProfile.QODANA_RECOMMENDED -> when {
-        PlatformUtils.isWebStorm() || PlatformUtils.isPhpStorm()  -> QODANA_RECOMMENDED_WITH_JS
+        isQodanaIjVoidLinter() -> QODANA_RECOMMENDED_WITH_IJ_VOID
+        PlatformUtils.isWebStorm() || PlatformUtils.isPhpStorm() -> QODANA_RECOMMENDED_WITH_JS
         PlatformUtils.isRider() -> QODANA_RECOMMENDED_WITH_DOTNET
         else -> QODANA_RECOMMENDED_OTHER
       }
@@ -84,4 +87,9 @@ class QodanaEmbeddedProfilesProvider : QodanaInspectionProfileProvider {
     return javaClass.getResourceAsStream("$QODANA_PROFILES_DIR/$profileFilename")
            ?: throw QodanaException("Cannot find file profile file $profileFilename in resources")
   }
+}
+
+private fun isQodanaIjVoidLinter(): Boolean {
+  val qodanaBuildNumber = System.getProperty("qodana.build.number")
+  return qodanaBuildNumber?.startsWith("$QODANA_IJ_VOID_PRODUCT_CODE-") == true
 }

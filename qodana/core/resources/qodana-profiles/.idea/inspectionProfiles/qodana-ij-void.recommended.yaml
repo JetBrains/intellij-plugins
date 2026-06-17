@@ -1,0 +1,11 @@
+baseProfile: "empty"
+name: "qodana.recommended"
+
+groups:
+  - groupId: QodanaOpengrepInspections
+    groups:
+      - "category:OpenGrep"
+
+inspections:
+  - group: QodanaOpengrepInspections
+    enabled: true
