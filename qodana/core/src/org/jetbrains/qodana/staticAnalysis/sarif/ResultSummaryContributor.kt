@@ -6,11 +6,8 @@ import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 
-private const val REVERSE_SCOPED_DEBUG_PROPERTY = "qodana.reverse.scoped.debug"
 private const val MATCHED_BY_PROPERTY = "matchedMethod"
 private val logger by lazy { logger<ResultSummaryContributor>() }
-
-private fun isReverseScopedDebugEnabled(): Boolean = System.getProperty(REVERSE_SCOPED_DEBUG_PROPERTY).toBoolean()
 
 internal class ResultSummaryContributor : SarifReportContributor {
   companion object {
@@ -46,15 +43,13 @@ internal class ResultSummaryContributor : SarifReportContributor {
     }
     run.resultSummary = summary
 
-    if (isReverseScopedDebugEnabled()) {
-      val filterMode = if (config.baseline == null) "ALL_RESULTS" else "BASELINE_NEW_ONLY"
-      logger.warn("REVERSE-SCOPED DEBUG [ResultSummaryContributor] baseline=${config.baseline ?: "<null>"} filter=$filterMode summary=$summary baselineState=${run.debugBaselineStateCounts()} matchedBy=${run.debugMatchedByCounts()}")
-      val matchedButWithoutBaselineState = run.results.orEmpty().count {
-        it.baselineState == null && (it.properties?.get(MATCHED_BY_PROPERTY) as? String) != null
-      }
-      if (config.baseline == null && matchedButWithoutBaselineState > 0) {
-        logger.warn("REVERSE-SCOPED DEBUG [ResultSummaryContributor] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. They are counted because NEW-only filtering is enabled only when config.baseline != null.")
-      }
+    val filterMode = if (config.baseline == null) "ALL_RESULTS" else "BASELINE_NEW_ONLY"
+    logger.warn("REVERSE-SCOPED DEBUG [ResultSummaryContributor] baseline=${config.baseline ?: "<null>"} filter=$filterMode summary=$summary baselineState=${run.debugBaselineStateCounts()} matchedBy=${run.debugMatchedByCounts()}")
+    val matchedButWithoutBaselineState = run.results.orEmpty().count {
+      it.baselineState == null && (it.properties?.get(MATCHED_BY_PROPERTY) as? String) != null
+    }
+    if (config.baseline == null && matchedButWithoutBaselineState > 0) {
+      logger.warn("REVERSE-SCOPED DEBUG [ResultSummaryContributor] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. They are counted because NEW-only filtering is enabled only when config.baseline != null.")
     }
   }
 }

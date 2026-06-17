@@ -46,11 +46,8 @@ internal const val RESULT_PRINTING_SKIPPED = "qodana.result.skipped"
 const val REVERSE_SCOPED_SCRIPT_NAME = "reverse-scoped"
 internal const val REDUCED_SCOPE_PATH = "qodana.reduced.scope.path"
 
-private const val REVERSE_SCOPED_DEBUG_PROPERTY = "qodana.reverse.scoped.debug"
 private const val MATCHED_BY_PROPERTY = "matchedMethod"
 private val reverseScopedLogger by lazy { logger<ReverseScopedScript>() }
-
-private fun isReverseScopedDebugEnabled(): Boolean = System.getProperty(REVERSE_SCOPED_DEBUG_PROPERTY).toBoolean()
 
 private fun Run.reverseScopedDebugSummary(): String {
   val results = results.orEmpty()
@@ -68,7 +65,6 @@ private fun Run.reverseScopedDebugSummary(): String {
 }
 
 private fun logReverseScopedDebug(label: String, run: Run, config: QodanaConfig) {
-  if (!isReverseScopedDebugEnabled()) return
   reverseScopedLogger.warn("REVERSE-SCOPED DEBUG [$label] baseline=${config.baseline ?: "<null>"} ${run.reverseScopedDebugSummary()}")
   val matchedButWithoutBaselineState = run.results.orEmpty().count {
     it.baselineState == null && (it.properties?.get(MATCHED_BY_PROPERTY) as? String) != null

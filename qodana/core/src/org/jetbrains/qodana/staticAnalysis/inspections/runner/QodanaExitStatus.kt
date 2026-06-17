@@ -28,10 +28,8 @@ internal const val PACKAGE_CHECKER_EXIT_CODE = 1
 private const val RUNTIME_ERRORS_EXIT_CODE = 70
 private const val BULLET_POINT = "\n- "
 
-private const val REVERSE_SCOPED_DEBUG_PROPERTY = "qodana.reverse.scoped.debug"
 private const val MATCHED_BY_PROPERTY = "matchedMethod"
 
-private fun isReverseScopedDebugEnabled(): Boolean = System.getProperty(REVERSE_SCOPED_DEBUG_PROPERTY).toBoolean()
 
 internal val Run.firstExitStatus: ExitStatus
   get() {
@@ -61,21 +59,17 @@ internal fun setInvocationExitStatus(run: Run, config: QodanaConfig) {
   }
 
   if (invocation.exitCode != null) {
-    if (isReverseScopedDebugEnabled()) {
-      logger.warn("REVERSE-SCOPED DEBUG [setInvocationExitStatus] skipping recalculation because invocation already has exitCode=${invocation.exitCode}, summary=$summary")
-    }
+    logger.warn("REVERSE-SCOPED DEBUG [setInvocationExitStatus] skipping recalculation because invocation already has exitCode=${invocation.exitCode}, summary=$summary")
     logger.info("Invocation already has an exit code, not updating")
     return
   }
 
-  if (isReverseScopedDebugEnabled()) {
-    logger.warn("REVERSE-SCOPED DEBUG [setInvocationExitStatus/before] baseline=${config.baseline ?: "<null>"} summary=$summary thresholds=${config.failureConditions} baselineState=${run.debugBaselineStateCounts()} matchedBy=${run.debugMatchedByCounts()}")
-    val matchedButWithoutBaselineState = run.results.orEmpty().count {
-      it.baselineState == null && (it.properties?.get(MATCHED_BY_PROPERTY) as? String) != null
-    }
-    if (config.baseline == null && matchedButWithoutBaselineState > 0) {
-      logger.warn("REVERSE-SCOPED DEBUG [setInvocationExitStatus/before] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. Thresholds will use the summary above because config.baseline is null.")
-    }
+  logger.warn("REVERSE-SCOPED DEBUG [setInvocationExitStatus/before] baseline=${config.baseline ?: "<null>"} summary=$summary thresholds=${config.failureConditions} baselineState=${run.debugBaselineStateCounts()} matchedBy=${run.debugMatchedByCounts()}")
+  val matchedButWithoutBaselineState = run.results.orEmpty().count {
+    it.baselineState == null && (it.properties?.get(MATCHED_BY_PROPERTY) as? String) != null
+  }
+  if (config.baseline == null && matchedButWithoutBaselineState > 0) {
+    logger.warn("REVERSE-SCOPED DEBUG [setInvocationExitStatus/before] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. Thresholds will use the summary above because config.baseline is null.")
   }
 
   val isToolError: (Notification) -> Boolean = {
@@ -103,9 +97,7 @@ internal fun setInvocationExitStatus(run: Run, config: QodanaConfig) {
     invocation.exitCode = FAIL_THRESHOLD_EXIT_CODE
     invocation.exitCodeDescription = QodanaBundle.message("exit.failure.summary", failedConditionsCount, failedConditions)
   }
-  if (isReverseScopedDebugEnabled()) {
-    logger.warn("REVERSE-SCOPED DEBUG [setInvocationExitStatus/after] exitCode=${invocation.exitCode} executionSuccessful=${invocation.executionSuccessful} exitCodeDescription=${invocation.exitCodeDescription}")
-  }
+  logger.warn("REVERSE-SCOPED DEBUG [setInvocationExitStatus/after] exitCode=${invocation.exitCode} executionSuccessful=${invocation.executionSuccessful} exitCodeDescription=${invocation.exitCodeDescription}")
 }
 
 
