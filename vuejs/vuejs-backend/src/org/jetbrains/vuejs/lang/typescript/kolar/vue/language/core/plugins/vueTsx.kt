@@ -73,8 +73,8 @@ private class Codegen(
   private val getSetupRefs: () -> Set<String> = computedSet {
     getScriptSetupRanges()?.useTemplateRef
       ?.mapNotNull { it.name }
-      ?.toMutableSet()
-    ?: mutableSetOf()
+      ?.toSet()
+    ?: emptySet()
   }
 
   private val hasDefineSlots: () -> Boolean = computed {
