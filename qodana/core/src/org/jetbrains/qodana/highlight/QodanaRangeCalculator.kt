@@ -76,7 +76,7 @@ internal class QodanaRangeCalculator(
                       ?: return@List localProblem
 
       if (textRange.endOffset > document.textLength) return@List localProblem
-      val textEqualToSnippet = problem.isEqualToSnippet(document.getText(textRange))
+      val textEqualToSnippet = problem.matchesSnippet(document, textRange)
       if (!textEqualToSnippet) return@List problemWithNullRange
       if (isProblemSuppressed(problems[index], textRange, highlightedReportData)) return@List problemWithNullRange
       ProblemWithRange(problems[index], textRange)
