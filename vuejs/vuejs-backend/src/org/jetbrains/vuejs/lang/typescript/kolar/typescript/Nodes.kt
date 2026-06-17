@@ -112,16 +112,22 @@ interface ExportAssignment : Statement {
   val expression: Node
 }
 
-interface TypeAliasDeclaration : Statement
+interface TypeAliasDeclaration : Statement, HasModifiers
 
-interface InterfaceDeclaration : Statement
+interface InterfaceDeclaration : Statement, HasModifiers
 
 interface AsExpression : Expression {
   val expression: Node
 }
 
+interface HasModifiers : Node {
+  val modifiers: List<Node>?
+}
+
 interface CallExpression : Expression {
+  val expression: Node
   val arguments: List<Node>
+  val typeArguments: List<Node>?
 }
 
 interface ParenthesizedExpression : Expression {
@@ -136,7 +142,9 @@ interface ArrayLiteralExpression : Expression
 
 interface TypeNode : Node
 
-interface TypeLiteralNode : TypeNode
+interface TypeLiteralNode : TypeNode {
+  val members: List<Node>
+}
 
 interface UnionTypeNode : TypeNode
 
@@ -173,7 +181,9 @@ interface SpreadAssignment : Node {
   val expression: Expression
 }
 
-interface CallSignatureDeclaration : Node
+interface CallSignatureDeclaration : Node {
+  val parameters: List<ParameterDeclaration>
+}
 
 interface NamedImports : Node {
   val elements: List<ImportSpecifier>
