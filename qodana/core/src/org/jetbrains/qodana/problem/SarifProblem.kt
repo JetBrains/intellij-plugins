@@ -136,7 +136,7 @@ data class SarifProblem(
       return null
     }
     val textRange = TextRange(startOffset, endOffset)
-    if (isEqualToSnippet(document.getText(textRange))) {
+    if (matchesSnippet(document, textRange)) {
       return textRange
     }
     return null
@@ -157,6 +157,15 @@ data class SarifProblem(
 
   fun isEqualToSnippet(text: String): Boolean {
     return !(snippetText != null && text != snippetText)
+  }
+
+  fun matchesSnippet(document: Document, range: TextRange): Boolean {
+    val snippet = snippetText ?: return true
+    val rangeText = document.getText(range)
+    if (isEqualToSnippet(rangeText)) return true
+
+    val columnInSnippet = startColumn ?: return false
+    return snippet.regionMatches(columnInSnippet, rangeText, 0, rangeText.length)
   }
 }
 

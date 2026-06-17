@@ -112,6 +112,20 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     )
   )
 
+  // QD-14233: some tools (e.g. Semgrep) put the whole source line into region.snippet while
+  // start/end columns describe only a sub-span of it. The reported sub-span must still resolve.
+  private val reportLatestRevisionFullLineSnippets = ReportDescriptorTestMock(
+    "report_latest",
+    listOf(
+      ProblemTestDescription("main", "src/Main.java", 3, 22, 4,
+                             "latest", snippet = "  public static void main(String[] args) {"),
+      ProblemTestDescription("code in functionWithSpacesIndent", "src/Main.java", 8, 7, 4,
+                             "latest", snippet = "    //code hi"),
+      ProblemTestDescription("code in functionWithTabulationIndent", "src/Main.java", 12, 5, 4,
+                             "latest", snippet = "\t\t//code hi")
+    )
+  )
+
   fun `test no highlight when report is not selected`() = runDispatchingOnUi {
     openFileInEditorByRelativePath("src/Main.java")
 
@@ -128,6 +142,37 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
   fun `test highlight report latest revision`() = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[0].openFileInEditor()
+
+    checkHighlighting("$name/MainExpectedHighlight.java")
+  }
+
+  fun `test highlight report latest revision full line snippets`() = runDispatchingOnUi {
+    reportLatestRevisionFullLineSnippets.setStatusHighlighted()
+    reportLatestRevisionFullLineSnippets.problems[0].openFileInEditor()
+
+    checkHighlighting("$name/MainExpectedHighlight.java")
+  }
+
+  // QD-14233: making any change to the file used to drop every highlight; unedited lines must keep theirs.
+  fun `test highlight report latest revision full line snippets insert line before`() = runDispatchingOnUi {
+    reportLatestRevisionFullLineSnippets.setStatusHighlighted()
+    reportLatestRevisionFullLineSnippets.problems[0].openFileInEditor()
+    reportLatestRevisionFullLineSnippets.problems[0].editDocument { document, _ ->
+      document.insertString(0, "//inserted line\n")
+    }
+
+    checkHighlighting("$name/MainExpectedHighlight.java")
+  }
+
+  // QD-14233: the problem must still be found when everything around it on its line changed,
+  // as long as the problem's own text survives (only the sub-span text is validated).
+  fun `test highlight report latest revision full line snippets surroundings changed`() = runDispatchingOnUi {
+    reportLatestRevisionFullLineSnippets.setStatusHighlighted()
+    reportLatestRevisionFullLineSnippets.problems[1].openFileInEditor()
+    reportLatestRevisionFullLineSnippets.problems[1].editDocument { document, problemRange ->
+      document.replaceString(problemRange.endOffset, document.getLineEndOffset(7), " CHANGED_AFTER")
+      document.replaceString(document.getLineStartOffset(7), problemRange.startOffset, "    /* CHANGED_BEFORE */ ")
+    }
 
     checkHighlighting("$name/MainExpectedHighlight.java")
   }
