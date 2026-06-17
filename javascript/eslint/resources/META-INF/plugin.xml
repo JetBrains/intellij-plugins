@@ -1,4 +1,4 @@
-<idea-plugin allow-bundled-update="true">
+<idea-plugin allow-bundled-update="true" require-restart="true">
   <id>intellij.javascript.eslint</id>
   <name>ESLint</name>
   <description><![CDATA[
@@ -51,12 +51,15 @@
     <consoleFilterProvider implementation="com.intellij.lang.javascript.linter.eslint.filter.EslintConsoleFilterProvider"/>
     <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.EslintConfiguration"/>
     <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.config.EslintConfigFileChangeTracker"/>
-    <platform.lang.lsWidget.itemsProvider id="EsLintWidgetItemsProvider" implementation="com.intellij.lang.javascript.linter.eslint.lsWidget.EsLintWidgetItemsProvider"/>
-    <registryKey key="eslint.additional.file.extensions" description="ESLint: comma-separated list of additional file extensions to lint"/>
-    <registryKey key="eslint.language.service.full.log" description="ESLint: include source code fragments with errors info language service messages"
+    <platform.lang.lsWidget.itemsProvider id="EsLintWidgetItemsProvider"
+                                          implementation="com.intellij.lang.javascript.linter.eslint.lsWidget.EsLintWidgetItemsProvider"/>
+    <registryKey key="eslint.additional.file.extensions" description="ESLint: comma-separated list of additional file extensions to lint"
+                 defaultValue=""/>
+    <registryKey key="eslint.language.service.full.log"
+                 description="ESLint: include source code fragments with errors info language service messages"
                  defaultValue="false"/>
     <registryKey key="eslint.service.node.path" description="Value of NODE_PATH for ESLint service process" defaultValue=""/>
-    <registryKey key="eslint.service.node.arguments" description="Command line options for ESLint service process"/>
+    <registryKey key="eslint.service.node.arguments" description="Command line options for ESLint service process" defaultValue=""/>
     <registryKey key="eslint.service.expiration.timeout.ms"
                  defaultValue="120000"
                  description="The IDE will stop the ESLint service process if it is not used for the specified period of time (in milliseconds)"/>
@@ -64,10 +67,12 @@
                  defaultValue="-1"
                  description="Maximum time to wait for a single request to the ESLint language service (in milliseconds)"/>
     <iconProvider implementation="com.intellij.lang.javascript.linter.eslint.config.EslintConfigIconProvider"/>
-    <json.jsonStandardComplianceProvider implementation="com.intellij.lang.javascript.linter.eslint.config.EslintConfigStandardComplianceProvider"/>
+    <json.jsonStandardComplianceProvider
+      implementation="com.intellij.lang.javascript.linter.eslint.config.EslintConfigStandardComplianceProvider"/>
     <lang.substitutor language="JSON" implementationClass="com.intellij.lang.javascript.linter.eslint.config.EslintConfigLangSubstitutor"/>
     <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.eslint.EsLintDescriptor" id="eslint"/>
-    <editorNotificationProvider implementation="com.intellij.lang.javascript.linter.eslint.importer.EslintImportCodeStyleEditorNotificationProvider"/>
+    <editorNotificationProvider
+      implementation="com.intellij.lang.javascript.linter.eslint.importer.EslintImportCodeStyleEditorNotificationProvider"/>
     <statistics.projectUsagesCollector implementation="com.intellij.lang.javascript.linter.eslint.EslintOptionsUsageCollector"/>
     <javascript.json.schema.provider implementation="com.intellij.lang.javascript.linter.eslint.EsLintJSJsonSchemaProvider"/>
     <eslint.ruleMappersFactory implementation="com.intellij.lang.javascript.linter.eslint.importer.EslintStandardRuleMappersFactory"/>
@@ -77,11 +82,14 @@
                           implementationClass="com.intellij.lang.javascript.linter.eslint.EslintConfigFileSpellcheckingStrategy"/>
 
     <!-- StandardJS -->
-    <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSExternalAnnotator"/>
-    <externalAnnotator language="HTML" implementationClass="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSExternalAnnotator"/>
+    <externalAnnotator language="JavaScript"
+                       implementationClass="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSExternalAnnotator"/>
+    <externalAnnotator language="HTML"
+                       implementationClass="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSExternalAnnotator"/>
     <projectService serviceImplementation="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSConfiguration"/>
     <editorNotificationProvider implementation="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSCodeStyleNotifierProvider"/>
-    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSDescriptor" order="before eslint"/>
+    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSDescriptor"
+                                  order="before eslint"/>
     <localInspection language="JavaScript"
                      key="standardjs.name"
                      groupPathKey="js.inspection.group.path"
