@@ -102,6 +102,7 @@ interface IfNode : Node {
 // CompilerDOM.RootNode
 interface RootNode : Node {
   val children: List<Node>
+  val components: List<String>
 }
 
 // CompilerDOM.InterpolationNode
