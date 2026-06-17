@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.plugins
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.alien.signals.computed
 import org.jetbrains.vuejs.lang.typescript.kolar.path.browserify.basename
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.RootNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IR
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.script.ScriptCodegenOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.script.ScriptGenerateResult
@@ -75,7 +74,7 @@ private class Codegen(
     getScriptSetupRanges()?.useTemplateRef
       ?.mapNotNull { it.name }
       ?.toMutableSet()
-      ?: mutableSetOf()
+    ?: mutableSetOf()
   }
 
   private val hasDefineSlots: () -> Boolean = computed {
@@ -92,7 +91,7 @@ private class Codegen(
 
   private val getInheritAttrs: () -> Boolean = computed {
     val value = getScriptSetupRanges()?.defineOptions?.inheritAttrs
-      ?: getScriptRanges()?.exportDefault?.options?.inheritAttrs
+                ?: getScriptRanges()?.exportDefault?.options?.inheritAttrs
     value != "false"
   }
 
@@ -167,7 +166,7 @@ private class Codegen(
     val candidates = mutableSetOf<String>()
     getGeneratedTemplate()?.ctx?.componentAccessMap?.keys?.let { candidates.addAll(it) }
     getGeneratedStyle()?.ctx?.componentAccessMap?.keys?.let { candidates.addAll(it) }
-    (ir.template?.ast as? RootNode)?.components?.forEach { name ->
+    ir.template?.ast?.components?.forEach { name ->
       candidates.add(camelize(name))
       candidates.add(capitalize(camelize(name)))
     }
