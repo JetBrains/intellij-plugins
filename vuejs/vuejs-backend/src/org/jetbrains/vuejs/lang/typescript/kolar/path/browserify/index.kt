@@ -7,9 +7,11 @@ import kotlin.io.path.relativeTo
 fun isAbsolute(path: String): Boolean =
   Path(path).isAbsolute
 
+fun basename(path: String): String =
+  Path(path).fileName.toString()
+
 fun dirname(path: String): String =
   Path(path).parent.toString()
 
 fun relative(from: String, to: String): String =
   Path(from).relativeTo(Path(to)).toString()
-  
