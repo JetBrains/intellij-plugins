@@ -414,21 +414,18 @@ private fun getStatementRange(
   node: Node,
   ast: SourceFile,
 ): TextRange<*> {
+  var statementRange: TextRange<*>? = null
   for (i in parents.indices.reversed()) {
     val statement = parents[i]
     if (isStatement(statement)) {
-      var start: Int? = null
-      var end: Int? = null
       forEachChild(statement) { child ->
         val range = getStartEnd(child, ast)
-        if (start == null) start = range.start
-        end = range.end
+        statementRange = statementRange?.copy(end = range.end) ?: range
       }
-      if (start != null && end != null) {
-        return TextRange(node = statement, start = start, end = end)
-      }
-      return getStartEnd(node, ast)
+      break
     }
   }
-  return getStartEnd(node, ast)
+
+  return statementRange
+         ?: getStartEnd(node, ast)
 }
