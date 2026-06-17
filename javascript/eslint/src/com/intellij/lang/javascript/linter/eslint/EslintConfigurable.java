@@ -7,7 +7,6 @@ import com.intellij.ide.actionsOnSave.ActionOnSaveContext;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
-import com.intellij.lang.javascript.linter.eslint.EslintBundle;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.ExtendedLinterState;
 import com.intellij.lang.javascript.linter.NewLinterView;
@@ -16,14 +15,18 @@ import com.intellij.lang.javascript.linter.eslint.service.EslintLanguageServiceM
 import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSConfiguration;
 import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSLanguageServiceManager;
 import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSState;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.ActionLink;
 import com.intellij.util.ui.FormBuilder;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -136,6 +139,17 @@ public class EslintConfigurable extends UntypedJSLinterConfigurable {
     NewEslintView(Project project, String displayName, EslintPanel eslintPanel) {
       super(project, displayName, eslintPanel.panel, ".eslintrc.*");
       myEslintPanel = eslintPanel;
+    }
+
+    @Override
+    public void disposeResources() {
+      JComponent component = getComponent();
+      if (component != null) {
+        UIUtil.uiTraverser(component)
+          .traverse()
+          .filter(Disposable.class)
+          .forEach(Disposer::dispose);
+      }
     }
 
     @Override
@@ -272,7 +286,7 @@ public class EslintConfigurable extends UntypedJSLinterConfigurable {
     @Override
     public @NotNull List<? extends ActionLink> getActionLinks() {
       String linkText = getValueFromSavedStateOrFromUiState(this::getOpenEsLintPageTextAccordingToStoredState,
-                                                            EsLintOnSaveActionInfo::getOpenEsLintPageTextAccordingToUiState);
+                                                             EsLintOnSaveActionInfo::getOpenEsLintPageTextAccordingToUiState);
       return Collections.singletonList(createGoToPageInSettingsLink(linkText, ID));
     }
 
