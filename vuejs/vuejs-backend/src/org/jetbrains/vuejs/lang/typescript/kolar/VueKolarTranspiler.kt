@@ -10,11 +10,13 @@ import com.intellij.lang.typescript.kolar.KolarVirtualCode
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.isVueFile
+import org.jetbrains.vuejs.lang.typescript.kolar.VueTranspiledFileBuilder.TranspiledFile
 
 internal class VueKolarTranspiler(
   private val project: Project,
@@ -49,7 +51,19 @@ private data class VueTranspiledFile(
     snapshot: KolarScriptSnapshot,
     ctx: KolarCodegenContext,
   ): KolarVirtualCode? {
-    // TBD
-    return null
+    val transpiledFile = getTranspiledFile()
+                         ?: return null
+
+    return KolarVirtualCode(
+      id = "main",
+      fsVirtualFile = file,
+      snapshot = KolarScriptSnapshot.create(transpiledFile.generatedCode),
+      mappings = transpiledFile.mappings,
+      associatedScriptMappings = emptyMap(),
+    )
   }
+
+  private fun getTranspiledFile(): TranspiledFile? =
+    PsiManager.getInstance(project).findFile(file)
+      ?.let { VueTranspiledFileBuilder.getTranspiledFile(it) }
 }
