@@ -7,6 +7,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueMapping
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.buildMappings
 
 class VueEmbeddedCode(
@@ -22,7 +23,7 @@ class VueEmbeddedCode(
 fun getMappingsForCode(
   code: VueEmbeddedCode,
   nameToBlockMap: Map<String, IRBlock>,
-): List<KolarMapping<VueCodeInformation>> {
+): List<VueMapping> {
   val mappings = buildMappings(
     code.content.map { segment ->
       if (segment !is DataSegment) return@map segment
@@ -78,12 +79,13 @@ fun getMappingsForCode(
   return newMappings.map { it.toKolarMapping() }
 }
 
-private fun KolarMapping<VueCodeInformation>.toAccumulating() = AccumulatingMapping(
-  sourceOffsets = sourceOffsets,
-  generatedOffsets = generatedOffsets,
-  lengths = lengths,
-  data = data,
-)
+private fun VueMapping.toAccumulating() =
+  AccumulatingMapping(
+    sourceOffsets = sourceOffsets,
+    generatedOffsets = generatedOffsets,
+    lengths = lengths,
+    data = data,
+  )
 
 private class AccumulatingMapping(
   var sourceOffsets: IntArray,
@@ -91,10 +93,11 @@ private class AccumulatingMapping(
   var lengths: IntArray,
   val data: VueCodeInformation,
 ) {
-  fun toKolarMapping() = KolarMapping(
-    sourceOffsets = sourceOffsets,
-    generatedOffsets = generatedOffsets,
-    lengths = lengths,
-    data = data,
-  )
+  fun toKolarMapping(): VueMapping =
+    VueMapping(
+      sourceOffsets = sourceOffsets,
+      generatedOffsets = generatedOffsets,
+      lengths = lengths,
+      data = data,
+    )
 }
