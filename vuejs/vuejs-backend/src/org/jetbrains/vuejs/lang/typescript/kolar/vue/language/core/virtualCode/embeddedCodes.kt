@@ -23,12 +23,17 @@ fun getMappingsForCode(
   code: VueEmbeddedCode,
   nameToBlockMap: Map<String, IRBlock>,
 ): List<KolarMapping<VueCodeInformation>> {
-  val mappings = buildMappings(code.content.map { segment ->
-    if (segment !is DataSegment) return@map segment
-    val source = segment.source ?: return@map segment
-    val block = nameToBlockMap[source] ?: return@map segment
-    DataSegment(segment.text, null, segment.sourceOffset + block.startTagEnd, segment.data)
-  })
+  val mappings = buildMappings(
+    code.content.map { segment ->
+      if (segment !is DataSegment) return@map segment
+      val source = segment.source ?: return@map segment
+      val block = nameToBlockMap[source] ?: return@map segment
+      segment.copy(
+        source = null,
+        sourceOffset = segment.sourceOffset + block.startTagEnd,
+      )
+    }
+  )
 
   val newMappings = mutableListOf<AccumulatingMapping>()
   val tokenMappings = mutableMapOf<Symbol, AccumulatingMapping>()
