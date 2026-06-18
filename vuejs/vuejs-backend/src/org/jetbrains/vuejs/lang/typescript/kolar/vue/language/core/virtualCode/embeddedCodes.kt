@@ -36,8 +36,8 @@ fun getMappingsForCode(
     }
   )
 
-  val newMappings = mutableListOf<AccumulatingMapping>()
-  val tokenMappings = mutableMapOf<Symbol, AccumulatingMapping>()
+  val newMappings = mutableListOf<VueMappingBuilder>()
+  val tokenMappings = mutableMapOf<Symbol, VueMappingBuilder>()
 
   for (mapping in mappings) {
     val combineToken = mapping.data.__combineToken
@@ -49,9 +49,9 @@ fun getMappingsForCode(
         existing.lengths += mapping.lengths
       }
       else {
-        val acc = mapping.toAccumulating()
-        tokenMappings[combineToken] = acc
-        newMappings.add(acc)
+        val builder = mapping.toBuilder()
+        tokenMappings[combineToken] = builder
+        newMappings.add(builder)
       }
       continue
     }
@@ -69,25 +69,25 @@ fun getMappingsForCode(
         )
       }
       else {
-        tokenMappings[linkedToken] = mapping.toAccumulating()
+        tokenMappings[linkedToken] = mapping.toBuilder()
       }
       continue
     }
-    newMappings.add(mapping.toAccumulating())
+    newMappings.add(mapping.toBuilder())
   }
 
   return newMappings.map { it.toKolarMapping() }
 }
 
-private fun VueMapping.toAccumulating() =
-  AccumulatingMapping(
+private fun VueMapping.toBuilder() =
+  VueMappingBuilder(
     sourceOffsets = sourceOffsets,
     generatedOffsets = generatedOffsets,
     lengths = lengths,
     data = data,
   )
 
-private class AccumulatingMapping(
+private class VueMappingBuilder(
   var sourceOffsets: IntArray,
   var generatedOffsets: IntArray,
   var lengths: IntArray,
