@@ -12,11 +12,16 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.ObjectAssert
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageData
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.coverageStats
 import org.jetbrains.qodana.staticAnalysis.sarif.ResultSummaryContributor
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.ToolErrorInspectListener
 import org.jetbrains.qodana.staticAnalysis.sarif.resultSummary
+import org.jetbrains.qodana.staticAnalysis.script.scoped.REVERSE_SCOPED_SCRIPT_NAME
+import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_BASELINE_PROPERTY
+import org.jetbrains.qodana.staticAnalysis.script.scoped.STAGE_ARG
+import org.jetbrains.qodana.staticAnalysis.script.scoped.Stage
 import org.jetbrains.qodana.staticAnalysis.sarif.withKind
 import org.junit.Test
 import kotlin.io.path.Path
@@ -323,6 +328,30 @@ class QodanaExitStatusKtTest {
       Failure condition triggered:
       - Detected 1 problem across all severities, fail threshold: 0
     """.trimIndent())
+  }
+
+  @Test
+  fun `should not count reverse scoped old stage results without baseline state as new`() {
+    val cfg = emptyConfig.copy(
+      script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(STAGE_ARG to Stage.OLD.name)),
+      failureConditions = FailureConditions(FailureConditions.SeverityThresholds(any = 0))
+    )
+
+    try {
+      System.setProperty(SCOPED_BASELINE_PROPERTY, "scoped-baseline.sarif.json")
+
+      val actual = withRun {
+        it.setup(cfg, resultOf(HighlightSeverity.ERROR))
+
+        assertThat(it.resultSummary).isEqualTo(mapOf(ResultSummaryContributor.TOTAL_KEY to 0))
+        setInvocationExitStatus(it, cfg)
+      }
+
+      assertThat(actual).isSuccessful()
+    }
+    finally {
+      System.clearProperty(SCOPED_BASELINE_PROPERTY)
+    }
   }
 
   @Test
