@@ -43,9 +43,9 @@ fun getMappingsForCode(
     if (combineToken != null) {
       val existing = tokenMappings[combineToken]
       if (existing != null) {
-        existing.sourceOffsets.addAll(mapping.sourceOffsets.toList())
-        existing.generatedOffsets.addAll(mapping.generatedOffsets.toList())
-        existing.lengths.addAll(mapping.lengths.toList())
+        existing.sourceOffsets += mapping.sourceOffsets
+        existing.generatedOffsets += mapping.generatedOffsets
+        existing.lengths += mapping.lengths
       }
       else {
         val acc = mapping.toAccumulating()
@@ -79,22 +79,22 @@ fun getMappingsForCode(
 }
 
 private fun KolarMapping<VueCodeInformation>.toAccumulating() = AccumulatingMapping(
-  sourceOffsets = sourceOffsets.toMutableList(),
-  generatedOffsets = generatedOffsets.toMutableList(),
-  lengths = lengths.toMutableList(),
+  sourceOffsets = sourceOffsets,
+  generatedOffsets = generatedOffsets,
+  lengths = lengths,
   data = data,
 )
 
 private class AccumulatingMapping(
-  val sourceOffsets: MutableList<Int>,
-  val generatedOffsets: MutableList<Int>,
-  val lengths: MutableList<Int>,
+  var sourceOffsets: IntArray,
+  var generatedOffsets: IntArray,
+  var lengths: IntArray,
   val data: VueCodeInformation,
 ) {
   fun toKolarMapping() = KolarMapping(
-    sourceOffsets = sourceOffsets.toIntArray(),
-    generatedOffsets = generatedOffsets.toIntArray(),
-    lengths = lengths.toIntArray(),
+    sourceOffsets = sourceOffsets,
+    generatedOffsets = generatedOffsets,
+    lengths = lengths,
     data = data,
   )
 }
