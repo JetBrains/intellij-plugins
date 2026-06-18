@@ -5,6 +5,7 @@ import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.alien.signals.computed
 import org.jetbrains.vuejs.lang.typescript.kolar.path.browserify.basename
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IR
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueLanguagePlugin
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.script.ScriptCodegenOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.script.ScriptGenerateResult
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.script.generateScript
@@ -19,10 +20,28 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.Scrip
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.parseScriptRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.parseScriptSetupRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.computedSet
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.VueEmbeddedCode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.capitalize
 
 private val validLangs = setOf("js", "jsx", "ts", "tsx")
+
+class VueTsxPlugin(
+  vueCompilerOptions: VueCompilerOptions,
+) : VueLanguagePlugin(vueCompilerOptions) {
+
+  override fun resolveEmbeddedCode(
+    fileName: String,
+    ir: IR,
+    embeddedFile: VueEmbeddedCode,
+  ) {
+    if (embeddedFile.id == "script") {
+      val codegen = Codegen(vueCompilerOptions, fileName, ir)
+      val generatedScript = codegen.getGeneratedScript()
+      embeddedFile.content = generatedScript.codes
+    }
+  }
+}
 
 private class Codegen(
   private val vueCompilerOptions: VueCompilerOptions,
