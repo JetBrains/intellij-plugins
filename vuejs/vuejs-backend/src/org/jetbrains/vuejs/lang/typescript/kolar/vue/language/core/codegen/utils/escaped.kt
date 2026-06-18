@@ -1,10 +1,10 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 
-import org.jetbrains.vuejs.lang.typescript.kolar.js.symbol.Symbol
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation.CombineToken
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateEscaped(
@@ -14,7 +14,7 @@ fun generateEscaped(
   features: VueCodeInformation,
   escapeTarget: Regex,
 ): Sequence<Code> = sequence {
-  val combineToken = features.__combineToken ?: Symbol()
+  val combineToken = features.__combineToken ?: CombineToken()
   var currentOffset = offset
   var lastIndex = 0
   var isFirst = true

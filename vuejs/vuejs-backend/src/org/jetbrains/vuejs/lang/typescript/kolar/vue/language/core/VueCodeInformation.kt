@@ -16,7 +16,7 @@ data class VueCodeInformation(
   val __importCompletion: Boolean = false,
   val __propsCompletion: Boolean = false,
   val __shorthandExpression: ShorthandExpression? = null,
-  val __combineToken: Symbol? = null,
+  val __combineToken: CombineToken? = null,
   val __linkedToken: LinkedToken? = null,
 ) : KolarCodeInformation(
   verification = verification,
@@ -36,7 +36,11 @@ data class VueCodeInformation(
     ;
   }
 
+  class CombineToken(
+    val description: String? = null,
+  ) : Symbol()
+
   class LinkedToken(
     val value: Int,
-  ) : Symbol(value.toString())
+  ) : Symbol()
 }

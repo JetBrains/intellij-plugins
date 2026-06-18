@@ -2,17 +2,17 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.ValueWithReturn
-import org.jetbrains.vuejs.lang.typescript.kolar.js.symbol.Symbol
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation.CombineToken
 
 fun startBoundary(
   source: String,
   startOffset: Int,
   features: VueCodeInformation,
-): ValueWithReturn<Code, Symbol> {
-  val token = Symbol(source)
+): ValueWithReturn<Code, CombineToken> {
+  val token = CombineToken(source)
   return ValueWithReturn(
     value = DataSegment(
       text = "",
@@ -25,7 +25,7 @@ fun startBoundary(
 }
 
 fun endBoundary(
-  token: Symbol,
+  token: CombineToken,
   endOffset: Int,
 ): Code =
   DataSegment(
