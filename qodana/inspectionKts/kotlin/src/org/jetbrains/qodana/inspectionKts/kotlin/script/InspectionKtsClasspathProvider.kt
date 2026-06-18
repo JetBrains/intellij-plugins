@@ -16,10 +16,12 @@ import com.intellij.openapi.progress.checkCanceled
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.impl.PsiManagerEx.getInstanceEx
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.application
 import com.intellij.util.io.URLUtil
+import com.intellij.util.lang.MultiParentClassLoaderSupport
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +37,7 @@ import org.jetbrains.qodana.inspectionKts.InspectionKtsSettings
 import java.io.File
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
+import java.util.ArrayDeque
 import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
@@ -125,7 +128,10 @@ private class InspectionKtsClasspathHolder(scope: CoroutineScope) {
     val classPath = mutableSetOf<File>()
 
     val platformClassLoader: ClassLoader = application::class.java.classLoader
-    val qodanaPluginClassLoaders = pluginAndContentModuleClassLoadersFor(InspectionKtsRegistry::class.java)
+
+    val dependencyClassLoaders = collectClassLoaderClosure(
+      pluginAndContentModuleClassLoadersFor(InspectionKtsRegistry::class.java)
+    )
     val pluginsWithLanguageParserClassLoaders = LanguageParserDefinitions.INSTANCE.point?.extensionList?.mapNotNull { it.instance.javaClass.classLoader }
     val distributionPluginsClassLoaders = PluginManager.getPlugins()
       .filter { useAllDistributionForDependencies || !it.isJetBrainsOrBundledPlugin }.map { it.classLoader }
@@ -133,7 +139,7 @@ private class InspectionKtsClasspathHolder(scope: CoroutineScope) {
 
     listOf(
       listOf(platformClassLoader),
-      qodanaPluginClassLoaders,
+      dependencyClassLoaders,
       pluginsWithLanguageParserClassLoaders ?: emptyList(),
       distributionPluginsClassLoaders,
       customPluginClassLoaders
@@ -148,6 +154,12 @@ private class InspectionKtsClasspathHolder(scope: CoroutineScope) {
 
     val kotlinClasspath = listOf(KotlinArtifacts.kotlinReflect, KotlinArtifacts.kotlinStdlib, KotlinArtifacts.kotlinScriptRuntime)
     classPath.addAll(kotlinClasspath)
+
+    // find jars for some classes explicitly
+    val pinnedPsiModuleJars = listOf(
+      PsiClassOwner::class.java,
+    ).mapNotNull { PathManager.getJarForClass(it)?.toFile() }
+    classPath.addAll(pinnedPsiModuleJars)
 
     classPath.toList()
   }
@@ -198,15 +210,17 @@ private fun pluginJars(pluginClassLoader: PluginClassLoader): List<File> {
     val isYamlPlugin = pluginId == "org.jetbrains.plugins.yaml"
     return when {
       isJavaPlugin -> {
-        jarName.startsWith("java-impl-frontend") // part of Java's PSI
+        // Java PSI
+        jarName.contains("java-impl-frontend") ||
+        jarName.contains("frontback")
       }
       isKotlinPlugin -> {
-        jarName.startsWith("kotlinc.kotlin-compiler-common") || // Kotlin PSI
-        jarName.startsWith("kotlinc.high-level-api") || // Semantics of Kotlin PSI (old JAR naming)
-        jarName.startsWith("kotlinc.analysis-api") // Semantics of Kotlin PSI
+        jarName.contains("kotlinc.kotlin-compiler-common") || // Kotlin PSI
+        jarName.contains("kotlinc.high-level-api") || // Semantics of Kotlin PSI (old JAR naming)
+        jarName.contains("kotlinc.analysis-api") // Semantics of Kotlin PSI
       }
       isYamlPlugin -> {
-        jarName.startsWith("intellij.yaml") // YAML PSI
+        jarName.contains("intellij.yaml") // YAML PSI
       }
       else -> true
     }
@@ -230,14 +244,31 @@ private fun platformJars(classLoader: ClassLoader): List<File> {
 
   fun isPlatformJarAccepted(jarName: String): Boolean {
     return !jarName.endsWith(".jar") ||
-           jarName.startsWith("util-") ||
-           jarName.startsWith("app") ||
+           jarName.contains("util") ||
+           jarName.contains("app") ||
            jarName.contains("annotation", ignoreCase = true) ||
            jarName.contains("analysis") ||
-           jarName.contains("platform.core")
+           jarName.contains("platform.core") ||
+           jarName.contains("psi")
   }
 
   return scriptCompilationClasspathFromContext(classLoader = classLoader, wholeClasspath = true).filter { isPlatformJarAccepted(it.name) }
+}
+
+/**
+ * Breadth-first traversal of the multi-parent classloader hierarchy starting from [roots],
+ * returning every reachable classloader (roots included, de-duplicated). Used to reach the
+ * platform/Java/Kotlin PSI module classloaders a plugin module depends on.
+ */
+private fun collectClassLoaderClosure(roots: Collection<ClassLoader>): List<ClassLoader> {
+  val visited = LinkedHashSet<ClassLoader>()
+  val queue = ArrayDeque<ClassLoader>(roots)
+  while (queue.isNotEmpty()) {
+    val classLoader = queue.removeFirst()
+    if (!visited.add(classLoader)) continue
+    (classLoader as? MultiParentClassLoaderSupport)?.collectDirectParents(queue)
+  }
+  return visited.toList()
 }
 
 private fun pluginAndContentModuleClassLoadersFor(pluginClass: Class<*>): List<ClassLoader> {
