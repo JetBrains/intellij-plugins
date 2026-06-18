@@ -9,6 +9,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueLanguagePl
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueMapping
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.plugins.VueTsxPlugin
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.VueEmbeddedCode
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.VueEmbeddedCode.Companion.SCRIPT_ID
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.getMappingsForCode
 
 object VueTranspiledFileBuilder {
@@ -19,7 +20,7 @@ object VueTranspiledFileBuilder {
     file: PsiFile,
   ): TranspiledFile {
     val code = VueEmbeddedCode(
-      id = "script",
+      id = SCRIPT_ID,
       lang = "ts",
       content = emptyList(),
     )

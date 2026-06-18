@@ -21,6 +21,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.parse
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.parseScriptSetupRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.computedSet
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.VueEmbeddedCode
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.VueEmbeddedCode.Companion.SCRIPT_ID
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.capitalize
 
@@ -35,7 +36,7 @@ class VueTsxPlugin(
     ir: IR,
     embeddedFile: VueEmbeddedCode,
   ) {
-    if (embeddedFile.id == "script") {
+    if (embeddedFile.id == SCRIPT_ID) {
       val codegen = Codegen(vueCompilerOptions, fileName, ir)
       val generatedScript = codegen.getGeneratedScript()
       embeddedFile.content = generatedScript.codes

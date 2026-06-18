@@ -18,6 +18,10 @@ class VueEmbeddedCode(
   var parentCodeId: String? = null
   val linkedCodeMappings: MutableList<KolarMapping<Nothing?>> = mutableListOf()
   val embeddedCodes: MutableList<VueEmbeddedCode> = mutableListOf()
+
+  companion object {
+    const val SCRIPT_ID: String = "script"
+  }
 }
 
 fun getMappingsForCode(
