@@ -11,6 +11,7 @@ jvm_library(
     ),
     module_name = "intellij.qodana.inspectionKts.mcp.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"],
 )
 
 jvm_library(
@@ -33,6 +34,7 @@ jvm_library(
         # do not sort,
         ":tests",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//plugins/kotlin:kotlin-plugin-community-main_test_lib",
     ],
     deps = [
         # do not sort,

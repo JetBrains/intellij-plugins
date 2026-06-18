@@ -52,6 +52,7 @@
     <orderEntry type="module" module-name="intellij.qodana" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.inspectionKts.java" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.kotlin.plugin.community.main" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.qodana.inspectionKts.js" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.inspectionKts.kotlin" scope="TEST" />
   </component>

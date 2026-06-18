@@ -28,7 +28,6 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -97,7 +96,6 @@ jvm_library(
         "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",
-        "@community//plugins/kotlin:kotlin-plugin-community-main_test_lib",
         "//contrib/qodana:qodana-core-tests",
         "//contrib/qodana:qodana-core-tests_test_lib",
     ],

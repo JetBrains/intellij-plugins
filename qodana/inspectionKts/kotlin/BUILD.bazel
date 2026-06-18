@@ -18,7 +18,6 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",
@@ -84,7 +83,6 @@ jvm_library(
         "@community//plugins/kotlin/base/util:util_test_lib",
         "@community//plugins/kotlin/base/project-structure:project-structure_test_lib",
         "@community//plugins/kotlin/scripting:scripting_test_lib",
-        "@community//plugins/kotlin:kotlin-plugin-community-main_test_lib",
         "@community//platform/util-class-loader:util-classLoader_test_lib",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
