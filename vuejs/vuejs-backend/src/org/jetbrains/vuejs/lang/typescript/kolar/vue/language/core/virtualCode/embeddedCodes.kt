@@ -13,7 +13,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.buildMa
 class VueEmbeddedCode(
   val id: String,
   val lang: String,
-  val content: List<Code>,
+  var content: List<Code>,
 ) {
   var parentCodeId: String? = null
   val linkedCodeMappings: MutableList<KolarMapping<Nothing?>> = mutableListOf()
