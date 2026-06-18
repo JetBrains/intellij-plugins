@@ -23,7 +23,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider
@@ -47,7 +46,6 @@ import org.intellij.terraform.hil.psi.HCLElementLazyReference
 import org.intellij.terraform.hil.psi.ILPsiFile
 import org.intellij.terraform.hil.psi.ILRecursiveVisitor
 import org.intellij.terraform.hil.psi.ILVariable
-import org.intellij.terraform.isTofuFile
 import org.intellij.terraform.opentofu.OpenTofuFileType
 import java.net.URLEncoder
 import java.util.TreeMap
@@ -204,7 +202,7 @@ object ModuleDetectionUtil {
 
     val toolType = getApplicableToolType(directory.virtualFile)
 
-    val source = getModuleSourceString(file, sourceVal)
+    val source = getModuleSourceString(sourceVal)
                  ?: return CachedValueProvider.Result(Result.Failure(HCLBundle.message("module.detection.error.no.module.source")), moduleBlock)
     val project = moduleBlock.project
 
@@ -284,47 +282,67 @@ object ModuleDetectionUtil {
     return CachedValueProvider.Result(Result.Success(mod), moduleBlock, directory, dotTerraform, manifest.context, relative, getModuleFiles(mod))
   }
 
-  private fun getModuleSourceString(file: PsiFile, sourceVal: HCLElement?, elementsPath: MutableList<PsiElement> = mutableListOf()): @NlsSafe String? {
+  private fun getModuleSourceString(sourceVal: HCLElement?, elementsPath: MutableList<PsiElement> = mutableListOf()): @NlsSafe String? {
     sourceVal ?: return null
 
     if (elementsPath.contains(sourceVal)) {
       return null //TODO IJPL-166297 implement inspection to prevent cyclic references
     }
 
-    val injectedHil = if (isTofuFile(file)) {
-      InjectedLanguageManager.getInstance(sourceVal.project)
-        .getInjectedPsiFiles(sourceVal)?.firstOrNull { it.first is ILPsiFile }?.first
-    }
-    else null
-
-    if (sourceVal is HCLStringLiteral && injectedHil == null) return sourceVal.value
-
-    val sourcePsi = if (injectedHil != null) {
-      getHilReferenceValue(injectedHil)
-    }
-    else {
-      getReferencesSelectAware(sourceVal).firstOrNull { it is HCLElementLazyReference<*> }?.resolve()
-    }
     elementsPath.add(sourceVal)
-    val sourceString = when (sourcePsi) {
-      is HCLProperty -> getModuleSourceString(file, sourcePsi.value, elementsPath)
-      is HCLElement -> getModuleSourceString(file, sourcePsi, elementsPath)
-      else -> null
+    if (sourceVal is HCLStringLiteral) {
+      return resolveStringLiteral(sourceVal, elementsPath)
     }
-    return sourceString?.let { StringUtil.unquoteString(sourceString) }
+
+    val resolved = getReferencesSelectAware(sourceVal).firstOrNull { it is HCLElementLazyReference<*> }?.resolve()
+    return resolveReferenceTarget(resolved, elementsPath)
   }
 
-  fun getHilReferenceValue(injectedHil: PsiElement?): PsiElement? {
-    var result: PsiElement? = null
+  private fun resolveStringLiteral(literal: HCLStringLiteral, elementsPath: MutableList<PsiElement>): @NlsSafe String? {
+    val fragments = literal.textFragments
+
+    // Plain string with no `${...}` interpolation - it is already the source value: path, registry, git
+    if (fragments.none { isInterpolationFragment(it.second) })
+      return literal.value
+
+    val injectedFiles = InjectedLanguageManager.getInstance(literal.project)
+      .getInjectedPsiFiles(literal).orEmpty()
+      .filter { it.first is ILPsiFile }
+
+    return fragments.map { fragment ->
+      val range = fragment.first
+      val text = fragment.second
+      if (!isInterpolationFragment(text)) {
+        text
+      }
+      else {
+        val injectedFile = injectedFiles.firstOrNull { range.contains(it.second) }?.first ?: return null
+        resolveHilExpression(injectedFile, elementsPath.toMutableList()) ?: return null
+      }
+    }.joinToString(separator = "")
+  }
+
+  private fun isInterpolationFragment(fragment: String): Boolean = fragment.startsWith($$"${")
+
+  private fun resolveHilExpression(injectedHil: PsiElement?, elementsPath: MutableList<PsiElement>): String? {
+    var result: String? = null
     injectedHil?.accept(object : ILRecursiveVisitor() {
       override fun visitILVariable(o: ILVariable) {
-        result = (o.references.firstOrNull { it is HCLElementLazyReference<*> }?.resolve() as? HCLProperty)?.value
-        if (result == null) super.visitILVariable(o)
+        if (result != null) return
+        val resolved = o.references.firstOrNull { it is HCLElementLazyReference<*> }?.resolve()
+        val value = resolveReferenceTarget(resolved, elementsPath)
+        if (value != null) result = value else super.visitILVariable(o)
       }
     })
     return result
   }
 
+  private fun resolveReferenceTarget(target: PsiElement?, elementsPath: MutableList<PsiElement>): String? = when (target) {
+    is HCLBlock -> getModuleSourceString(Variable(target).getDefault(), elementsPath)
+    is HCLProperty -> getModuleSourceString(target.value, elementsPath)
+    is HCLElement -> getModuleSourceString(target, elementsPath)
+    else -> null
+  }
 
   private fun directoryResult(
     directory: PsiDirectory,

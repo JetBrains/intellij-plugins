@@ -4,6 +4,7 @@ package org.intellij.terraform.config.model
 import com.intellij.openapi.components.service
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.TfTestUtils
+import org.intellij.terraform.config.inspection.HclBlockMissingPropertyInspection
 import org.intellij.terraform.config.inspection.TfMissingModuleInspection
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.TfProjectSettings
@@ -19,6 +20,7 @@ class MissingModuleInspectionTest : BasePlatformTestCase() {
   }
 
   override fun getTestDataPath(): String? = TfTestUtils.getTestDataPath()
+
   @org.junit.Test
   fun setOfModules() {
     myFixture.enableInspections(TfMissingModuleInspection::class.java)
@@ -168,7 +170,74 @@ class MissingModuleInspectionTest : BasePlatformTestCase() {
   }
 
   @org.junit.Test
-  fun testPreventStackOverflow() {
+  fun testDynamicSourceFromVariableAndLocalInTf() {
+    myFixture.enableInspections(TfMissingModuleInspection::class.java)
+    myFixture.addFileToProject("common_modules/pattern/eks/main.tf", "")
+    myFixture.configureByText("main.tf", $$"""
+      variable "root" { 
+        type        = string
+        description = "The path to the Terraform lib directory"
+        default     = "./common_modules"   
+      }
+      
+      locals { sub = "pattern" }
+
+      module "eks" {
+        source = "${var.root}/${local.sub}/eks"
+      }
+    """.trimIndent())
+
+    myFixture.checkHighlighting()
+  }
+
+  @org.junit.Test
+  fun testDynamicSourceFromVariableInTofu() {
+    myFixture.enableInspections(TfMissingModuleInspection::class.java)
+    myFixture.addFileToProject("common_modules/main.tofu", "")
+    myFixture.configureByText("main.tofu", """
+      variable "root" { default = "./common_modules" }
+
+      module "common" {
+        source = var.root
+      }
+    """.trimIndent())
+
+    myFixture.checkHighlighting()
+  }
+
+  @org.junit.Test
+  fun testUnresolvableDynamicSourceInTf() {
+    myFixture.enableInspections(TfMissingModuleInspection::class.java)
+    myFixture.configureByText("main.tf", $$"""
+      variable "some_var" { }
+      
+      <warning descr="Cannot locate module locally: Cannot get module source value">module "eks" {
+        source = "${var.test_var}/eks"
+      }</warning>
+    """.trimIndent())
+
+    myFixture.checkHighlighting()
+  }
+
+  @org.junit.Test
+  fun testMissingPropertyWithDynamicSourceInTofu() {
+    myFixture.enableInspections(TfMissingModuleInspection::class.java)
+    myFixture.enableInspections(HclBlockMissingPropertyInspection::class.java)
+
+    myFixture.addFileToProject("common_modules/sub_dir/main.tofu", """variable "test_var" {}""")
+    myFixture.configureByText("main.tofu", """
+      locals { default_path = "./common_modules/sub_dir"}
+      
+      module <warning descr="Missing required properties: test_var">"eks"</warning> {
+        source = local.default_path
+      }
+    """.trimIndent())
+
+    myFixture.checkHighlighting()
+  }
+
+  @org.junit.Test
+  fun testPreventStackOverflowInTofu() {
     myFixture.configureByText("main.tofu", """
       locals {
         module_source = local.module_source
@@ -182,5 +251,4 @@ class MissingModuleInspectionTest : BasePlatformTestCase() {
     myFixture.enableInspections(TfMissingModuleInspection::class.java)
     myFixture.checkHighlighting()
   }
-
 }
