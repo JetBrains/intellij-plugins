@@ -62,7 +62,7 @@ class VueLspTakeoverModeTypeScriptService(
     requiresNewEval: Boolean,
   ): JsonElement? {
     if (requiresNewEval) return null
-    val server = forceInitLspServer() ?: return null
+    val server = forceInitLspClient() ?: return null
     return server.sendRequest {
       (it as JSFrameworkLsp4jServer).handleCustomTsServerCommand(LspCustomTypeScriptCommandRequest(command.command, command.arguments))
     }
