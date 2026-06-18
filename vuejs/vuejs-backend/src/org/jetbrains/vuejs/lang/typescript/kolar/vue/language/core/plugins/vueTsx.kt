@@ -34,12 +34,12 @@ class VueTsxPlugin(
   override fun resolveEmbeddedCode(
     fileName: String,
     ir: IR,
-    embeddedFile: VueEmbeddedCode,
+    code: VueEmbeddedCode,
   ) {
-    if (embeddedFile.id == SCRIPT_ID) {
+    if (code.id == SCRIPT_ID) {
       val codegen = Codegen(vueCompilerOptions, fileName, ir)
       val generatedScript = codegen.getGeneratedScript()
-      embeddedFile.content = generatedScript.codes
+      code.content = generatedScript.codes
     }
   }
 }

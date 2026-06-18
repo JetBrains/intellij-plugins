@@ -10,7 +10,7 @@ abstract class VueLanguagePlugin(
   open fun resolveEmbeddedCode(
     fileName: String,
     ir: IR,
-    embeddedFile: VueEmbeddedCode,
+    code: VueEmbeddedCode,
   ) {
   }
 }
