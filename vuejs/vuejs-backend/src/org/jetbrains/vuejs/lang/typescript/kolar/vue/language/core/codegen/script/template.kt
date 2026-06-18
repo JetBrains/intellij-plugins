@@ -1,11 +1,11 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.script
 
-import org.jetbrains.vuejs.lang.typescript.kolar.js.symbol.Symbol
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation.LinkedToken
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
@@ -39,7 +39,7 @@ private fun generateSetupExposed(
 
   yield("type ${names.SetupExposed} = import('${options.vueCompilerOptions.lib}').ShallowUnwrapRef<{${newLine}")
   for (bindingName in exposed) {
-    val token = Symbol(bindingName.length.toString())
+    val token = LinkedToken(bindingName.length)
     yield(DataSegment(text = "", source = null, sourceOffset = 0, data = VueCodeInformation(__linkedToken = token)))
     yield("$bindingName: typeof ")
     yield(DataSegment(text = "", source = null, sourceOffset = 0, data = VueCodeInformation(__linkedToken = token)))

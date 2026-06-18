@@ -17,7 +17,7 @@ data class VueCodeInformation(
   val __propsCompletion: Boolean = false,
   val __shorthandExpression: ShorthandExpression? = null,
   val __combineToken: Symbol? = null,
-  val __linkedToken: Symbol? = null,
+  val __linkedToken: LinkedToken? = null,
 ) : KolarCodeInformation(
   verification = verification,
   completion = completion,
@@ -35,4 +35,8 @@ data class VueCodeInformation(
 
     ;
   }
+
+  class LinkedToken(
+    val value: Int,
+  ) : Symbol(value.toString())
 }

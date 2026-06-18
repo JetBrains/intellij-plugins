@@ -63,7 +63,7 @@ fun getMappingsForCode(
           KolarMapping(
             sourceOffsets = intArrayOf(prevMapping.generatedOffsets[0]),
             generatedOffsets = intArrayOf(mapping.generatedOffsets[0]),
-            lengths = intArrayOf(linkedToken.description!!.toInt()),
+            lengths = intArrayOf(linkedToken.value),
             data = null,
           )
         )
