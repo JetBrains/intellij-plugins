@@ -168,7 +168,7 @@ internal class ReverseScopedScriptOld(runContextFactory: ReverseScopedRunContext
     runContext.runAnalysis(context = inspectionContext)
     inspectionContext.populateRunWithInspectionResults(runOld)
     logReverseScopedDebug("OLD freshly analyzed runOld", runOld, runContext.config)
-    BaselineCalculation.compare(report, reportOld, Options(false, false, false, false))
+    BaselineCalculation.compare(report, reportOld, Options(false, true, true, true))
     logReverseScopedDebug("OLD after compare runNew", runNew, runContext.config)
 
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
