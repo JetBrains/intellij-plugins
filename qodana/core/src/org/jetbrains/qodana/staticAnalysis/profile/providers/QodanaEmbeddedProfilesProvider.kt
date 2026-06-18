@@ -18,8 +18,8 @@ private const val QODANA_PROFILES_DIR = "/qodana-profiles/.idea/inspectionProfil
 private const val QODANA_RECOMMENDED_OTHER = "qodana.recommended.yaml"
 private const val QODANA_RECOMMENDED_WITH_JS = "qodana-js.recommended.yaml"
 private const val QODANA_RECOMMENDED_WITH_DOTNET = "qodana-dotnet.recommended.yaml"
-private const val QODANA_RECOMMENDED_WITH_IJ_VOID = "qodana-ij-void.recommended.yaml"
-private const val QODANA_IJ_VOID_PRODUCT_CODE = "QDIV"
+private const val QODANA_RECOMMENDED_WITH_POLY = "qodana-poly.recommended.yaml"
+private const val QODANA_POLY_PRODUCT_CODE = "QDPOLY"
 
 private const val QODANA_STARTER_OTHER = "qodana.starter.yaml"
 private const val QODANA_STARTER_WITH_JS = "qodana-js.starter.yaml"
@@ -75,7 +75,7 @@ class QodanaEmbeddedProfilesProvider : QodanaInspectionProfileProvider {
         else -> QODANA_STARTER_OTHER
       }
       QodanaEmbeddedProfile.QODANA_RECOMMENDED -> when {
-        isQodanaIjVoidLinter() -> QODANA_RECOMMENDED_WITH_IJ_VOID
+        isQodanaPolyLinter() -> QODANA_RECOMMENDED_WITH_POLY
         PlatformUtils.isWebStorm() || PlatformUtils.isPhpStorm() -> QODANA_RECOMMENDED_WITH_JS
         PlatformUtils.isRider() -> QODANA_RECOMMENDED_WITH_DOTNET
         else -> QODANA_RECOMMENDED_OTHER
@@ -89,7 +89,7 @@ class QodanaEmbeddedProfilesProvider : QodanaInspectionProfileProvider {
   }
 }
 
-private fun isQodanaIjVoidLinter(): Boolean {
+private fun isQodanaPolyLinter(): Boolean {
   val qodanaBuildNumber = System.getProperty("qodana.build.number")
-  return qodanaBuildNumber?.startsWith("$QODANA_IJ_VOID_PRODUCT_CODE-") == true
+  return qodanaBuildNumber?.startsWith("$QODANA_POLY_PRODUCT_CODE-") == true
 }

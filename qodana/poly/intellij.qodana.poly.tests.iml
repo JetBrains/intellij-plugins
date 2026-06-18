@@ -11,7 +11,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="kotlin-stdlib" level="project" />
-    <orderEntry type="module" module-name="intellij.qodana.ijVoid" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.poly" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="qodana-sarif" level="project" />
@@ -24,5 +24,5 @@
     <orderEntry type="module" module-name="intellij.ide.starter.extended" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit5" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.qodana.ijVoid" />
+  <component name="TestModuleProperties" production-module="intellij.qodana.poly" />
 </module>
