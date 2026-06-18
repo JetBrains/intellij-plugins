@@ -1,15 +1,15 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
-### auto-generated section `build intellij.qodana.ijVoid` start
+### auto-generated section `build intellij.qodana.poly` start
 
 jvm_library(
-    name = "ijVoid",
+    name = "poly",
     srcs = glob(
         [],
         allow_empty = True,
     ),
-    module_name = "intellij.qodana.ijVoid",
+    module_name = "intellij.qodana.poly",
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],
@@ -19,45 +19,45 @@ jvm_library(
 )
 
 jvm_library(
-    name = "ijVoid_test_lib",
+    name = "poly_test_lib",
     testonly = True,
     srcs = glob(
         [],
         allow_empty = True,
     ),
-    module_name = "intellij.qodana.ijVoid",
+    module_name = "intellij.qodana.poly",
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
-        ":ijVoid",
+        ":poly",
         "//contrib/qodana:qodana_test_lib",
     ],
 )
-### auto-generated section `build intellij.qodana.ijVoid` end
+### auto-generated section `build intellij.qodana.poly` end
 
-### auto-generated section `iml intellij.qodana.ijVoid` start
+### auto-generated section `iml intellij.qodana.poly` start
 exports_files(
     [
-        "intellij.qodana.ijVoid.iml",
+        "intellij.qodana.poly.iml",
     ],
     visibility = ["//visibility:public"],
 )
-### auto-generated section `iml intellij.qodana.ijVoid` end
+### auto-generated section `iml intellij.qodana.poly` end
 
-### auto-generated section `build intellij.qodana.ijVoid.tests` start
+### auto-generated section `build intellij.qodana.poly.tests` start
 
 jvm_library(
-    name = "ijVoid-tests",
+    name = "poly-tests",
     srcs = glob(
         [],
         allow_empty = True,
     ),
-    module_name = "intellij.qodana.ijVoid.tests",
+    module_name = "intellij.qodana.poly.tests",
     visibility = ["//visibility:public"],
 )
 
 jvm_library(
-    name = "ijVoid-tests_test_lib",
+    name = "poly-tests_test_lib",
     testonly = True,
     srcs = glob(
         [
@@ -68,15 +68,15 @@ jvm_library(
         allow_empty = True,
     ),
     associates = [
-        "//contrib/qodana/ijVoid",
-        "//contrib/qodana/ijVoid:ijVoid_test_lib",
+        "//contrib/qodana/poly",
+        "//contrib/qodana/poly:poly_test_lib",
     ],
     resource_strip_prefix = "test-data",
     resources = glob(
         ["test-data/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [":ijVoid-tests"],
+    runtime_deps = [":poly-tests"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -103,21 +103,21 @@ jvm_library(
         "@community//libraries/junit5:junit5_test_lib",
     ],
 )
-### auto-generated section `build intellij.qodana.ijVoid.tests` end
+### auto-generated section `build intellij.qodana.poly.tests` end
 
-### auto-generated section `iml intellij.qodana.ijVoid.tests` start
+### auto-generated section `iml intellij.qodana.poly.tests` start
 exports_files(
     [
-        "intellij.qodana.ijVoid.tests.iml",
+        "intellij.qodana.poly.tests.iml",
     ],
     visibility = ["//visibility:public"],
 )
-### auto-generated section `iml intellij.qodana.ijVoid.tests` end
+### auto-generated section `iml intellij.qodana.poly.tests` end
 
-### auto-generated section `test intellij.qodana.ijVoid.tests` start
+### auto-generated section `test intellij.qodana.poly.tests` start
 
 jps_test(
-    name = "ijVoid-tests_test",
-    runtime_deps = [":ijVoid-tests_test_lib"],
+    name = "poly-tests_test",
+    runtime_deps = [":poly-tests_test_lib"],
 )
-### auto-generated section `test intellij.qodana.ijVoid.tests` end
+### auto-generated section `test intellij.qodana.poly.tests` end

@@ -42,7 +42,7 @@
     <module name="intellij.qodana.jvm.coverage"/>
     <module name="intellij.qodana.util" loading="embedded"/>
     <module name="intellij.qodana.rust"/>
-    <module name="intellij.qodana.ijVoid"/>
+    <module name="intellij.qodana.poly"/>
     <module name="intellij.qodana.inspectionKts.mcp"/>
   </content>
 

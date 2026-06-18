@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.ijVoid
+package org.jetbrains.qodana.poly
 
 import com.intellij.ide.starter.extended.allure.Subsystems
 import com.intellij.ide.starter.extended.engine.newTestContainerExtended
@@ -15,19 +15,19 @@ import kotlin.io.path.div
 @Subsystems.Startup
 abstract class IntegrationTest : org.jetbrains.qodana.tests.utils.IntegrationTest() {
   override val testDataPath: Path
-    get() = PathManager.getHomeDir() / "contrib/qodana/ijVoid/test-data"
+    get() = PathManager.getHomeDir() / "contrib/qodana/poly/test-data"
 
   override fun createTestContext(projectDir: Path): IDETestContext =
     Starter.newTestContainerExtended().newContext(
       testName,
-      TestCase(QODANA_IJ_VOID, LocalProjectInfo(projectDir)),
+      TestCase(QODANA_POLY, LocalProjectInfo(projectDir)),
     )
 
   private companion object {
-    val QODANA_IJ_VOID: IdeInfo = IdeInfo.IdeaUltimate.copy(
+    val QODANA_POLY: IdeInfo = IdeInfo.IdeaUltimate.copy(
       platformPrefix = "QodanaIJVoid",
-      qodanaProductCode = "QDIV",
-      fullName = "Qodana for IJ Void",
+      qodanaProductCode = "QDPOLY",
+      fullName = "Qodana for any",
     )
   }
 }
