@@ -53,7 +53,7 @@ class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplic
       true
 
   override val templateFile: PsiFile?
-    get() = getCachedValue {
+    get() = getCachedValue(typeSensitive = false) {
       val template = findAngularComponentTemplate()
       if (template?.virtualFile is VirtualFileWindow) {
         // If we cache a file coming from an injection, we need to invalidate the cache when the file gets invalidated.
@@ -67,10 +67,12 @@ class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplic
     }
 
   override val cssFiles: List<PsiFile>
-    get() = getCachedValue { create(findCssFiles(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator) }
+    get() = getCachedValue(typeSensitive = false) {
+      create(findCssFiles(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator)
+    }
 
   override val ngContentSelectors: List<Angular2DirectiveSelector>
-    get() = getCachedValue {
+    get() = getCachedValue(typeSensitive = false) {
       create(Angular2SourceUtil.getNgContentSelectors(templateFile),
              VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator)
     }
