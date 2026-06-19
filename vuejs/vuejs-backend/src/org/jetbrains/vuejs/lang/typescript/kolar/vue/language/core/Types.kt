@@ -24,13 +24,10 @@ sealed interface IRAttr {
 // Base interface for all SFC block types
 sealed interface IRBlock {
   val name: String
-  val start: Int
-  val end: Int
   val startTagEnd: Int
   val endTagStart: Int
   val lang: String
   val content: String
-  val attrs: Map<String, Any>  // values are String or Boolean (true)
 }
 
 // IRScript | IRScriptSetup — blocks that carry a TypeScript AST
@@ -50,13 +47,10 @@ data class IR(
 
 data class IRTemplate(
   override val name: String,
-  override val start: Int,
-  override val end: Int,
   override val startTagEnd: Int,
   override val endTagStart: Int,
   override val lang: String,
   override val content: String,
-  override val attrs: Map<String, Any>,
   val ast: RootNode?,
   val errors: List<CompilerError>,
   val warnings: List<CompilerError>,
@@ -64,39 +58,30 @@ data class IRTemplate(
 
 data class IRScript(
   override val name: String,
-  override val start: Int,
-  override val end: Int,
   override val startTagEnd: Int,
   override val endTagStart: Int,
   override val lang: String,
   override val content: String,
-  override val attrs: Map<String, Any>,
   val src: IRAttr?,
   override val ast: SourceFile,
 ) : IRScriptBlock
 
 data class IRScriptSetup(
   override val name: String,
-  override val start: Int,
-  override val end: Int,
   override val startTagEnd: Int,
   override val endTagStart: Int,
   override val lang: String,
   override val content: String,
-  override val attrs: Map<String, Any>,
   val generic: IRAttr?,
   override val ast: SourceFile,
 ) : IRScriptBlock
 
 data class IRStyle(
   override val name: String,
-  override val start: Int,
-  override val end: Int,
   override val startTagEnd: Int,
   override val endTagStart: Int,
   override val lang: String,
   override val content: String,
-  override val attrs: Map<String, Any>,
   val src: IRAttr?,
   val module: IRAttr?,
   val scoped: Boolean,
