@@ -2,17 +2,10 @@
 package org.jetbrains.plugins.cucumber.java.steps.search;
 
 import com.intellij.openapi.application.QueryExecutorBase;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNullByDefault;
-import org.jetbrains.plugins.cucumber.CucumberUtil;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
-
-import java.util.List;
 
 /// Searches for Gherkin references to Cucumber step definition methods via [MethodReferencesSearch].
 ///
@@ -27,16 +20,6 @@ public final class CucumberJavaMethodReferenceSearch extends QueryExecutorBase<P
 
   @Override
   public void processQuery(MethodReferencesSearch.SearchParameters queryParameters, Processor<? super PsiReference> consumer) {
-    final PsiMethod method = queryParameters.getMethod();
-    if (CucumberJavaUtil.isAnnotationStepDefinition(method)) {
-      final SearchScope searchScope = queryParameters.getEffectiveSearchScope();
-      final List<PsiAnnotation> stepAnnotations = CucumberJavaUtil.getCucumberStepAnnotations(method);
-      for (final PsiAnnotation stepAnnotation : stepAnnotations) {
-        final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
-        if (regexp != null) {
-          CucumberUtil.findGherkinReferencesToElement(stepAnnotation, regexp, consumer, searchScope);
-        }
-      }
-    }
+    CucumberJavaSearchUtil.findGherkinReferencesToMethod(consumer, queryParameters.getEffectiveSearchScope(), queryParameters.getMethod());
   }
 }

@@ -3,7 +3,6 @@ package org.jetbrains.plugins.cucumber.java.steps.search;
 
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.pom.PomTargetPsiElement;
-import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMethodCallExpression;
@@ -15,8 +14,6 @@ import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaLambdaStepPomTarget;
-
-import java.util.List;
 
 @NotNullByDefault
 public final class CucumberJavaStepDefinitionSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
@@ -30,18 +27,10 @@ public final class CucumberJavaStepDefinitionSearch extends QueryExecutorBase<Ps
     final SearchScope searchScope = queryParameters.getEffectiveSearchScope();
 
     if (elementToSearch instanceof PsiMethod method) {
-      final boolean isStepDefinition = CucumberJavaUtil.isAnnotationStepDefinition(method);
-      if (!isStepDefinition) {
+      if (!CucumberJavaUtil.isAnnotationStepDefinition(method)) {
         return;
       }
-      final List<PsiAnnotation> stepAnnotations = CucumberJavaUtil.getCucumberStepAnnotations(method);
-      for (final PsiAnnotation stepAnnotation : stepAnnotations) {
-        final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
-        if (regexp == null) {
-          continue;
-        }
-        CucumberUtil.findGherkinReferencesToElement(stepAnnotation, regexp, consumer, searchScope);
-      }
+      CucumberJavaSearchUtil.findGherkinReferencesToMethod(consumer, searchScope, method);
     }
 
     if (elementToSearch instanceof PomTargetPsiElement pomTargetPsiElement) {
