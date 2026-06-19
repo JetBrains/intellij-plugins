@@ -3,6 +3,7 @@
 package org.angular2.lang.expr.service
 
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
@@ -39,11 +40,15 @@ import kotlin.reflect.safeCast
 typealias ResponseInlayHintKind = com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintKind
 
 fun isAngularTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
+  val evaluationLocation = JSTypeEvaluationLocationProvider.typeEvaluationLocation
+
   val isAngularServiceContext = if (EDT.isCurrentThreadEdt())
-    isAngular2Context(project, context) && isAngularServiceSupport(project, context)
+    (isAngular2Context(project, context) || (evaluationLocation != null && isAngular2Context(evaluationLocation)))
+    && isAngularServiceSupport(project, context)
   else
     ReadAction.nonBlocking(Callable {
-      isAngular2Context(project, context) && isAngularServiceSupport(project, context)
+      (isAngular2Context(project, context) || (evaluationLocation != null && isAngular2Context(evaluationLocation)))
+      && isAngularServiceSupport(project, context)
     }).executeSynchronously()
 
   if (!isAngularServiceContext) return false
