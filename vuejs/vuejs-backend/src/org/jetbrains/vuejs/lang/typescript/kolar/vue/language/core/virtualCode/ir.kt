@@ -8,8 +8,6 @@ fun useIR(
   file: PsiFile,
 ): IR {
   return IR(
-    content = file.text,
-    comments = emptyList(),
     template = null,
     script = null,
     scriptSetup = null,

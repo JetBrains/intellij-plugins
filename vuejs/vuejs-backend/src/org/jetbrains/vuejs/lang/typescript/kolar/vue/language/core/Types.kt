@@ -36,8 +36,6 @@ sealed interface IRScriptBlock : IRBlock {
 
 // Top-level Vue SFC IR
 data class IR(
-  val content: String,
-  val comments: List<String>,
   val template: IRTemplate?,
   val script: IRScript?,
   val scriptSetup: IRScriptSetup?,
