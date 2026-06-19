@@ -27,7 +27,7 @@ abstract class IntegrationTest : org.jetbrains.qodana.tests.utils.IntegrationTes
     val QODANA_POLY: IdeInfo = IdeInfo.IdeaUltimate.copy(
       platformPrefix = "QodanaIJVoid",
       qodanaProductCode = "QDPOLY",
-      fullName = "Qodana for any",
+      fullName = "Qodana Poly",
     )
   }
 }
