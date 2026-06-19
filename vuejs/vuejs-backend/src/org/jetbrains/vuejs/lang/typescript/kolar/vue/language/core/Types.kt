@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core
 
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.CompilerError
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.RootNode
 
 // TextRange<Node extends ts.Node = ts.Node> { node: Node; start: number; end: number }
@@ -52,8 +51,6 @@ data class IRTemplate(
   override val lang: String,
   override val content: String,
   val ast: RootNode?,
-  val errors: List<CompilerError>,
-  val warnings: List<CompilerError>,
 ) : IRBlock
 
 data class IRScript(
