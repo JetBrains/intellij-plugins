@@ -53,6 +53,7 @@ dependencies {
     pluginModule(implementation(project(":vuejs-markdown")))
     pluginModule(implementation(project(":vuejs-prettier")))
     pluginModule(implementation(project(":vuejs-copyright")))
+    pluginModule(implementation(project(":vuejs-eslint")))
 
     // Marketplace-only plugins used by some tests (not bundled in IDEA Ultimate); set a version to enable:
     // plugin("org.jetbrains.plugins.stylus", "<version>")
