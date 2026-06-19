@@ -202,6 +202,8 @@ jvm_library(
         "//python/plugin:plugin_test_lib",
         "//contrib/qodana/coverage:coverage-tests",
         "//contrib/qodana/coverage:coverage-tests_test_lib",
+        "//contrib/qodana:qodana-core-tests",
+        "//contrib/qodana:qodana-core-tests_test_lib",
         "@community//python/pluginCore:community-plugin",
         "@community//python/pluginCore:community-plugin_test_lib",
         "@community//python/aliasProvider",

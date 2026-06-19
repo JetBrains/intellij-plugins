@@ -35,6 +35,7 @@
     <orderEntry type="module" module-name="intellij.javascript.coverage" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.js" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.coverage.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.core.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ssh.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
   </component>

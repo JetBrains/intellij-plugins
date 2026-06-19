@@ -222,6 +222,8 @@ jvm_library(
         "@community//platform/testFramework:testFramework_test_lib",
         "//contrib/qodana/coverage:coverage-tests",
         "//contrib/qodana/coverage:coverage-tests_test_lib",
+        "//contrib/qodana:qodana-core-tests",
+        "//contrib/qodana:qodana-core-tests_test_lib",
         "//idea-tests:ultimate-tests",
         "//idea-tests:ultimate-tests_test_lib",
         "@community//platform/ide-core",
