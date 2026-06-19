@@ -28,6 +28,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.applyIf
+import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.local.TF_DIRECTORY_NAME
 import org.intellij.terraform.config.model.version.MalformedConstraintException
@@ -202,7 +203,7 @@ object ModuleDetectionUtil {
 
     val toolType = getApplicableToolType(directory.virtualFile)
 
-    val source = getModuleSourceString(sourceVal)
+    val source = resolveStringValue(sourceVal)
                  ?: return CachedValueProvider.Result(Result.Failure(HCLBundle.message("module.detection.error.no.module.source")), moduleBlock)
     val project = moduleBlock.project
 
@@ -224,7 +225,7 @@ object ModuleDetectionUtil {
     LOG.debug("All modules from modules.json: ${manifest.modules}")
     val module: ModuleManifest?
     if (isRegistrySource(source, sourceVal)) {
-      val version = (moduleBlock.`object`?.findProperty("version")?.value as? HCLStringLiteral)?.value
+      val version = resolveStringValue(moduleBlock.`object`?.findProperty(HCL_VERSION_IDENTIFIER)?.value)
       val constraint = getVersionConstraint(version) ?: VersionConstraint.AnyVersion
       module = newestModuleManifest(constraint, manifest.modules.filter { sourceMatch(it.source, source) })
     }
@@ -282,19 +283,27 @@ object ModuleDetectionUtil {
     return CachedValueProvider.Result(Result.Success(mod), moduleBlock, directory, dotTerraform, manifest.context, relative, getModuleFiles(mod))
   }
 
-  private fun getModuleSourceString(sourceVal: HCLElement?, elementsPath: MutableList<PsiElement> = mutableListOf()): @NlsSafe String? {
-    sourceVal ?: return null
+  /**
+   * Resolves an HCL expression of a module block (its `source` or `version`) to string value,
+   * following `variable` (its `default`) and `local` references, including string interpolations.
+   *
+   * Works the same for Terraform and OpenTofu.
+   *
+   * Returns `null` when the value can't be evaluated (unsupported reference, missing `default`, cyclic reference)
+   */
+  private fun resolveStringValue(element: HCLElement?, elementsPath: MutableList<PsiElement> = mutableListOf()): @NlsSafe String? {
+    element ?: return null
 
-    if (elementsPath.contains(sourceVal)) {
+    if (elementsPath.contains(element)) {
       return null //TODO IJPL-166297 implement inspection to prevent cyclic references
     }
 
-    elementsPath.add(sourceVal)
-    if (sourceVal is HCLStringLiteral) {
-      return resolveStringLiteral(sourceVal, elementsPath)
+    elementsPath.add(element)
+    if (element is HCLStringLiteral) {
+      return resolveStringLiteral(element, elementsPath)
     }
 
-    val resolved = getReferencesSelectAware(sourceVal).firstOrNull { it is HCLElementLazyReference<*> }?.resolve()
+    val resolved = getReferencesSelectAware(element).firstOrNull { it is HCLElementLazyReference<*> }?.resolve()
     return resolveReferenceTarget(resolved, elementsPath)
   }
 
@@ -338,9 +347,9 @@ object ModuleDetectionUtil {
   }
 
   private fun resolveReferenceTarget(target: PsiElement?, elementsPath: MutableList<PsiElement>): String? = when (target) {
-    is HCLBlock -> getModuleSourceString(Variable(target).getDefault(), elementsPath)
-    is HCLProperty -> getModuleSourceString(target.value, elementsPath)
-    is HCLElement -> getModuleSourceString(target, elementsPath)
+    is HCLBlock -> resolveStringValue(Variable(target).getDefault(), elementsPath)
+    is HCLProperty -> resolveStringValue(target.value, elementsPath)
+    is HCLElement -> resolveStringValue(target, elementsPath)
     else -> null
   }
 

@@ -438,17 +438,17 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
   }
 
   fun testOutputBasicCompletion() {
-    doBasicCompletionTest("output test1 {<caret>}", 6, "value", "ephemeral", "sensitive")
-    doBasicCompletionTest("output test2 {\np<caret>}", 4, "precondition", "description", "depends_on", "ephemeral")
+    doBasicCompletionTest("output test1 {<caret>}", 8, "value", "ephemeral", "sensitive")
+    doBasicCompletionTest("output test2 {\np<caret>}", "precondition", "description", "depends_on", "deprecated", "type")
   }
 
   fun testVariableBasicCompletion() {
-    doBasicCompletionTest("variable test1 {\n<caret>}", 7, "type")
-    doBasicCompletionTest("variable test2 {\ns<caret>}", 2, "sensitive", "description")
-    doBasicCompletionTest("variable test3 {\nn<caret>}", 4, "nullable", "validation")
-    doBasicCompletionTest("variable test4 {\nd<caret>}", 3, "default")
+    doBasicCompletionTest("variable test1 {\n<caret>}", 9, "type", "const")
+    doBasicCompletionTest("variable test2 {\ns<caret>}", "sensitive", "description")
+    doBasicCompletionTest("variable test3 {\nn<caret>}", "nullable", "validation")
+    doBasicCompletionTest("variable test4 {\nd<caret>}", "default", "deprecated")
     doBasicCompletionTest(
-      "variable test5 {\ne<caret>}", 6, "ephemeral", "type", "sensitive", "description", "nullable", "default"
+      "variable test5 {\ne<caret>}", "ephemeral", "type", "sensitive", "description", "nullable", "default"
     )
   }
 

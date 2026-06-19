@@ -37,13 +37,6 @@
   </problem>
   <problem>
     <file>test.tf</file>
-    <line>15</line>
-    <module>0</module>
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
-    <description>Interpolations are not allowed in module source</description>
-  </problem>
-  <problem>
-    <file>test.tf</file>
     <line>18</line>
     <module>0</module>
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
@@ -73,12 +66,6 @@
     <line>35</line>
     <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Interpolations not allowed</problem_class>
     <description>Interpolations are not allowed in depends_on</description>
-  </problem>
-  <problem>
-    <file>test.tf</file>
-    <line>39</line>
-    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Interpolations not allowed</problem_class>
-    <description>Interpolations are not allowed in module source</description>
   </problem>
   <problem>
     <file>test.tf</file>
