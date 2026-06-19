@@ -3,6 +3,7 @@
   <dependencies>
     <plugin id="org.intellij.qodana"/>
     <module name="intellij.libraries.gson"/>
+    <module name="intellij.libraries.junit4"/>
     <module name="intellij.platform.analysis"/>
     <module name="intellij.platform.analysis.impl"/>
     <module name="intellij.platform.core"/>
