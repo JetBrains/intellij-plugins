@@ -14,6 +14,7 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
+import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.typescript.kolar.VueTranspiledFileBuilder.TranspiledFile
@@ -64,6 +65,8 @@ private data class VueTranspiledFile(
   }
 
   private fun getTranspiledFile(): TranspiledFile? =
-    PsiManager.getInstance(project).findFile(file)
+    PsiManager.getInstance(project)
+      .findFile(file)
+      ?.let { it as VueFile }
       ?.let { VueTranspiledFileBuilder.getTranspiledFile(it) }
 }
