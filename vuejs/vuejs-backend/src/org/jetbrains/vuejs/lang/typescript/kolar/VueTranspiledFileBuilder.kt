@@ -28,7 +28,7 @@ object VueTranspiledFileBuilder {
     plugin.resolveEmbeddedCode(fileName = file.name, useIR(file), code)
 
     val generatedCode = toString(code.content)
-    val mappings = getMappingsForCode(code, emptyMap())
+    val mappings = getMappingsForCode(code)
 
     return TranspiledFile(
       generatedCode = generatedCode,

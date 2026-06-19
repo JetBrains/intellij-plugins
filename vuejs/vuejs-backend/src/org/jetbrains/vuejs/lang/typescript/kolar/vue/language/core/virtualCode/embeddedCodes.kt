@@ -3,9 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode
 
 import com.intellij.lang.typescript.kolar.sourceMap.KolarMapping
 import org.jetbrains.vuejs.lang.typescript.kolar.js.symbol.Symbol
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueMapping
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.buildMappings
@@ -26,19 +24,8 @@ class VueEmbeddedCode(
 
 fun getMappingsForCode(
   code: VueEmbeddedCode,
-  nameToBlockMap: Map<String, IRBlock>,
 ): List<VueMapping> {
-  val mappings = buildMappings(
-    code.content.map { segment ->
-      if (segment !is DataSegment) return@map segment
-      val source = segment.source ?: return@map segment
-      val block = nameToBlockMap[source] ?: return@map segment
-      segment.copy(
-        source = null,
-        sourceOffset = segment.sourceOffset + block.startTagEnd,
-      )
-    }
-  )
+  val mappings = buildMappings(code.content)
 
   val newMappings = mutableListOf<VueMappingBuilder>()
   val tokenMappings = mutableMapOf<Symbol, VueMappingBuilder>()
