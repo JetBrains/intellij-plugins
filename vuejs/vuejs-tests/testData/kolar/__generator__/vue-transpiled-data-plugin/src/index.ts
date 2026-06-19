@@ -20,13 +20,16 @@ function init() {
         const scriptInfo = project.getScriptInfo(scriptFileName)!
         const sourceFile = project.getSourceFile(scriptInfo.path)!
 
+        const content = sourceFile.getFullText()
+          .substring(scriptInfo.getSnapshot().getLength())
+
         const transpiledFilePath = resolve(
           transpiledDir,
           relative(cwd(), scriptFileName) + ".ts",
         )
 
         mkdirSync(dirname(transpiledFilePath), {recursive: true});
-        writeFileSync(transpiledFilePath, sourceFile.getFullText())
+        writeFileSync(transpiledFilePath, content)
       }
 
       return undefined;
