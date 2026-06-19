@@ -46,7 +46,6 @@ object VueTranspiledFileBuilder {
       script = null,
       scriptSetup = null,
       styles = emptyList(),
-      customBlocks = emptyList(),
     )
 
   class TranspiledFile(

@@ -46,7 +46,6 @@ data class IR(
   val script: IRScript?,
   val scriptSetup: IRScriptSetup?,
   val styles: List<IRStyle>,
-  val customBlocks: List<IRCustomBlock>,
 )
 
 data class IRTemplate(
@@ -110,15 +109,3 @@ data class IRStyle(
     val offset: Int,
   )
 }
-
-data class IRCustomBlock(
-  override val name: String,
-  override val start: Int,
-  override val end: Int,
-  override val startTagEnd: Int,
-  override val endTagStart: Int,
-  override val lang: String,
-  override val content: String,
-  override val attrs: Map<String, Any>,
-  val type: String,
-) : IRBlock
