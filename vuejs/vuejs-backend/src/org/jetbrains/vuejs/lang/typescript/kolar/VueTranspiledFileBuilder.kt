@@ -4,13 +4,13 @@ package org.jetbrains.vuejs.lang.typescript.kolar
 import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.toString
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IR
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueLanguagePlugin
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueMapping
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.plugins.VueTsxPlugin
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.VueEmbeddedCode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.VueEmbeddedCode.Companion.SCRIPT_ID
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.getMappingsForCode
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.useIR
 
 object VueTranspiledFileBuilder {
   private val plugin: VueLanguagePlugin =
@@ -25,7 +25,7 @@ object VueTranspiledFileBuilder {
       content = emptyList(),
     )
 
-    plugin.resolveEmbeddedCode(fileName = file.name, ir(file), code)
+    plugin.resolveEmbeddedCode(fileName = file.name, useIR(file), code)
 
     val generatedCode = toString(code.content)
     val mappings = getMappingsForCode(code, emptyMap())
@@ -35,18 +35,6 @@ object VueTranspiledFileBuilder {
       mappings = mappings,
     )
   }
-
-  private fun ir(
-    file: PsiFile,
-  ): IR =
-    IR(
-      content = file.text,
-      comments = emptyList(),
-      template = null,
-      script = null,
-      scriptSetup = null,
-      styles = emptyList(),
-    )
 
   class TranspiledFile(
     val generatedCode: String,
