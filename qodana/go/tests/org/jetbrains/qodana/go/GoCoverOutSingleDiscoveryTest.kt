@@ -42,8 +42,16 @@ class GoCoverOutSingleDiscoveryTest(case: Case) : QodanaCoverageDiscoveryTest("G
     @Parameterized.Parameters(name = "{0}")
     @JvmStatic
     fun data(): Collection<Case> = listOf(
+      // All filenames at root
       Case("coverageOut", ReportLocation("report.out", "coverage.out")),
       Case("coverOut", ReportLocation("report.out", "cover.out")),
+      Case("cOut", ReportLocation("report.out", "c.out")),
+      Case("profileTxt", ReportLocation("report.out", "profile.txt")),
+      Case("coverageTxt", ReportLocation("report.out", "coverage.txt")),
+      Case("covTxt", ReportLocation("report.out", "cov.txt")),
+      Case("profileCov", ReportLocation("report.out", "profile.cov")),
+      Case("coverageCov", ReportLocation("report.out", "coverage.cov")),
+      // All directories with coverage.out
       Case("coverageSubdir", ReportLocation("report.out", "coverage/coverage.out")),
       Case("dotCoverageSubdir", ReportLocation("report.out", ".coverage/coverage.out")),
       Case("buildDir", ReportLocation("report.out", "build/coverage.out")),
@@ -52,12 +60,15 @@ class GoCoverOutSingleDiscoveryTest(case: Case) : QodanaCoverageDiscoveryTest("G
       Case("artifactsDir", ReportLocation("report.out", "artifacts/coverage.out")),
       Case("binDir", ReportLocation("report.out", "bin/coverage.out")),
       Case("targetDir", ReportLocation("report.out", "target/coverage.out")),
-      Case("cOut", ReportLocation("report.out", "c.out")),
-      Case("profileTxt", ReportLocation("report.out", "profile.txt")),
-      Case("coverageTxt", ReportLocation("report.out", "coverage.txt")),
-      Case("covTxt", ReportLocation("report.out", "cov.txt")),
-      Case("profileCov", ReportLocation("report.out", "profile.cov")),
-      Case("coverageCov", ReportLocation("report.out", "coverage.cov"))
+      // Cross-directory filename combinations
+      Case("coverOutInCoverage", ReportLocation("report.out", "coverage/cover.out")),
+      Case("cOutInBuild", ReportLocation("report.out", "build/c.out")),
+      Case("profileTxtInReports", ReportLocation("report.out", "reports/profile.txt")),
+      Case("coverageTxtInTestResults", ReportLocation("report.out", "test-results/coverage.txt")),
+      Case("covTxtInArtifacts", ReportLocation("report.out", "artifacts/cov.txt")),
+      Case("profileCovInBin", ReportLocation("report.out", "bin/profile.cov")),
+      Case("coverageCovInTarget", ReportLocation("report.out", "target/coverage.cov")),
+      Case("coverOutInDotCoverage", ReportLocation("report.out", ".coverage/cover.out"))
     )
   }
 }

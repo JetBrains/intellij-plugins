@@ -21,7 +21,12 @@ import kotlin.streams.asSequence
 interface QodanaCoverageFileProvider {
   val engineType: CoverageEngineType
 
-  fun getCoverageFiles(project: Project): List<Path>
+  fun getCoverageFiles(project: Project): Map<Path, Path>
+}
+
+internal class EmptyQodanaCoverageFileProvider: QodanaCoverageFileProvider {
+  override val engineType: CoverageEngineType = CoverageEngineType.Other
+  override fun getCoverageFiles(project: Project): Map<Path, Path> = emptyMap()
 }
 
 @ApiStatus.Internal
@@ -30,7 +35,8 @@ abstract class BaseQodanaCoverageFileProvider : QodanaCoverageFileProvider {
   /** Canonical extension the target engine's [com.intellij.coverage.CoverageRunner] accepts (e.g. "info" for LCOV). */
   protected abstract val canonicalExtension: String
 
-  override fun getCoverageFiles(project: Project): List<Path> {
+  /** Returns a map of found coverage files to their copies in the temp directory */
+  override fun getCoverageFiles(project: Project): Map<Path, Path> {
     val valid = getCoverageFilesLocations(project)
       .filter { isValidCoverageReport(it) }
     return copyToTempDir(project, valid)
@@ -59,12 +65,12 @@ abstract class BaseQodanaCoverageFileProvider : QodanaCoverageFileProvider {
     return result.toList()
   }
 
-  private fun copyToTempDir(project: Project, files: List<Path>): List<Path> {
-    if (files.isEmpty()) return emptyList()
+  private fun copyToTempDir(project: Project, files: List<Path>): Map<Path, Path> {
+    if (files.isEmpty()) return emptyMap()
     val projectDir = project.guessProjectDir()?.toNioPathOrNull()
     val targetRoot = Files.createTempDirectory("qodana-coverage-$engineType")
     val taken = HashSet<Path>()
-    val result = mutableListOf<Path>()
+    val result = mutableMapOf<Path, Path>()
     for (file in files) {
       val relative = if (projectDir != null && file.startsWith(projectDir)) projectDir.relativize(file)
                      else Path.of(file.name)
@@ -78,7 +84,7 @@ abstract class BaseQodanaCoverageFileProvider : QodanaCoverageFileProvider {
       }
       destination.parent?.createDirectories()
       file.copyTo(destination, overwrite = true)
-      result.add(destination)
+      result[file] = destination
     }
     return result
   }
