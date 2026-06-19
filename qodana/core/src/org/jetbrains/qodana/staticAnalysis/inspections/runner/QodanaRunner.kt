@@ -123,7 +123,7 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
       throw e
     }
     finally {
-      setInvocationExitStatus(sarif.getOrCreateRun(), config)
+        setInvocationExitStatus(sarif.getOrCreateRun(), config, messageReporter)
       withContext(NonCancellable) {
         clearResultsDirIfNeeded()
         SarifUtil.sortResults(sarif)

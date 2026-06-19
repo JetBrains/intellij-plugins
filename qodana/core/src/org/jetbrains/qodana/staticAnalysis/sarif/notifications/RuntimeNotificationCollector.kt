@@ -15,6 +15,7 @@ import org.jetbrains.qodana.staticAnalysis.profile.SanityInspectionGroup.Compani
 import org.jetbrains.qodana.staticAnalysis.sarif.OriginalUriBaseId
 import org.jetbrains.qodana.staticAnalysis.sarif.SarifReportContributor
 import org.jetbrains.qodana.staticAnalysis.sarif.qodanaKind
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedDeque
@@ -136,7 +137,7 @@ class RuntimeNotificationCollector {
       val logger = logger<NotificationReportContributor>()
     }
 
-    override fun contribute(run: Run, project: Project, config: QodanaConfig): Unit =
+    override fun contribute(run: Run, project: Project, config: QodanaConfig, messageReporter: QodanaMessageReporter): Unit =
       contribute(run, project.service<RuntimeNotificationCollector>())
 
     @VisibleForTesting

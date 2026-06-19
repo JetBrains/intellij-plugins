@@ -52,7 +52,7 @@ abstract class QodanaSingleRunScript(
       }
 
       maybeApplyFixes(run(), runContext)
-      SarifReportContributor.runContributors(run(), runContext.project, runContext.config)
+      SarifReportContributor.runContributors(run(), runContext.project, runContext.config, runContext.messageReporter)
       val scriptResult = QodanaScriptResult.create(inspectionContext)
       CoverageFeatureEventsCollector.logCoverageStatistics(runContext, scriptResult.coverageStats)
       this.coroutineContext.job.cancelChildren()

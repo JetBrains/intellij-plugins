@@ -50,7 +50,7 @@ class QodanaInIdeScript(private val runContext: QodanaRunContext) : QodanaScript
       inspectionContext.populateRunWithInspectionResults(run)
       applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
 
-      SarifReportContributor.runContributors(run, runContext.project, runContext.config)
+      SarifReportContributor.runContributors(run, runContext.project, runContext.config, runContext.messageReporter)
       val scriptResult = QodanaScriptResult.create(inspectionContext)
       CoverageFeatureEventsCollector.logCoverageStatistics(runContext, scriptResult.coverageStats)
       return scriptResult

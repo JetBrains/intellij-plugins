@@ -15,6 +15,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.dependencyLicenseAudit
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.ToolErrorInspectListener
 import org.jetbrains.qodana.staticAnalysis.sarif.qodanaKind
 import org.jetbrains.qodana.staticAnalysis.sarif.resultSummary
+import org.jetbrains.qodana.util.QodanaMessageReporter
 
 private val logger by lazy { logger<ExitStatus>() }
 
@@ -48,7 +49,16 @@ private fun Run.debugMatchedByCounts(): Map<String, Int> =
     .groupingBy { it }
     .eachCount()
 
-internal fun setInvocationExitStatus(run: Run, config: QodanaConfig) {
+private fun debugExitStatus(message: String, messageReporter: QodanaMessageReporter) {
+  logger.warn(message)
+  messageReporter.reportError(message)
+}
+
+internal fun setInvocationExitStatus(
+  run: Run,
+  config: QodanaConfig,
+  messageReporter: QodanaMessageReporter = QodanaMessageReporter.EMPTY,
+) {
   val summary = run.resultSummary ?: run {
     logger.warn("Cannot update exit code because the result summary has not been generated. See ${ResultSummaryContributor::class.qualifiedName}")
     return
@@ -59,17 +69,23 @@ internal fun setInvocationExitStatus(run: Run, config: QodanaConfig) {
   }
 
   if (invocation.exitCode != null) {
-    logger.warn("REVERSE-SCOPED DEBUG [setInvocationExitStatus] skipping recalculation because invocation already has exitCode=${invocation.exitCode}, summary=$summary")
+    debugExitStatus("REVERSE-SCOPED DEBUG [setInvocationExitStatus] skipping recalculation because invocation already has exitCode=${invocation.exitCode}, summary=$summary", messageReporter)
     logger.info("Invocation already has an exit code, not updating")
     return
   }
 
-  logger.warn("REVERSE-SCOPED DEBUG [setInvocationExitStatus/before] baseline=${config.baseline ?: "<null>"} summary=$summary thresholds=${config.failureConditions} baselineState=${run.debugBaselineStateCounts()} matchedBy=${run.debugMatchedByCounts()}")
+  debugExitStatus(
+    "REVERSE-SCOPED DEBUG [setInvocationExitStatus/before] baseline=${config.baseline ?: "<null>"} summary=$summary thresholds=${config.failureConditions} baselineState=${run.debugBaselineStateCounts()} matchedBy=${run.debugMatchedByCounts()}",
+    messageReporter
+  )
   val matchedButWithoutBaselineState = run.results.orEmpty().count {
     it.baselineState == null && (it.properties?.get(MATCHED_BY_PROPERTY) as? String) != null
   }
   if (config.baseline == null && matchedButWithoutBaselineState > 0) {
-    logger.warn("REVERSE-SCOPED DEBUG [setInvocationExitStatus/before] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. Thresholds will use the summary above because config.baseline is null.")
+    debugExitStatus(
+      "REVERSE-SCOPED DEBUG [setInvocationExitStatus/before] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. Thresholds will use the summary above because config.baseline is null.",
+      messageReporter
+    )
   }
 
   val isToolError: (Notification) -> Boolean = {
@@ -97,7 +113,10 @@ internal fun setInvocationExitStatus(run: Run, config: QodanaConfig) {
     invocation.exitCode = FAIL_THRESHOLD_EXIT_CODE
     invocation.exitCodeDescription = QodanaBundle.message("exit.failure.summary", failedConditionsCount, failedConditions)
   }
-  logger.warn("REVERSE-SCOPED DEBUG [setInvocationExitStatus/after] exitCode=${invocation.exitCode} executionSuccessful=${invocation.executionSuccessful} exitCodeDescription=${invocation.exitCodeDescription}")
+  debugExitStatus(
+    "REVERSE-SCOPED DEBUG [setInvocationExitStatus/after] exitCode=${invocation.exitCode} executionSuccessful=${invocation.executionSuccessful} exitCodeDescription=${invocation.exitCodeDescription}",
+    messageReporter
+  )
 }
 
 

@@ -49,6 +49,11 @@ internal const val REDUCED_SCOPE_PATH = "qodana.reduced.scope.path"
 private const val MATCHED_BY_PROPERTY = "matchedMethod"
 private val reverseScopedLogger by lazy { logger<ReverseScopedScript>() }
 
+private fun reportReverseScopedDebug(message: String, messageReporter: QodanaMessageReporter) {
+  reverseScopedLogger.warn(message)
+  messageReporter.reportError(message)
+}
+
 private fun Run.reverseScopedDebugSummary(): String {
   val results = results.orEmpty()
   val baselineStateCounts = results.groupingBy { it.baselineState?.name ?: "<null>" }.eachCount()
@@ -64,13 +69,16 @@ private fun Run.reverseScopedDebugSummary(): String {
   return "results=${results.size}, resultSummary=${resultSummary}, baselineState=$baselineStateCounts, matchedBy=$matchedByCounts, skipped=$skipped, sample=[$sample]"
 }
 
-private fun logReverseScopedDebug(label: String, run: Run, config: QodanaConfig) {
-  reverseScopedLogger.warn("REVERSE-SCOPED DEBUG [$label] baseline=${config.baseline ?: "<null>"} ${run.reverseScopedDebugSummary()}")
+private fun logReverseScopedDebug(label: String, run: Run, config: QodanaConfig, messageReporter: QodanaMessageReporter) {
+  reportReverseScopedDebug("REVERSE-SCOPED DEBUG [$label] baseline=${config.baseline ?: "<null>"} ${run.reverseScopedDebugSummary()}", messageReporter)
   val matchedButWithoutBaselineState = run.results.orEmpty().count {
     it.baselineState == null && (it.properties?.get(MATCHED_BY_PROPERTY) as? String) != null
   }
   if (config.baseline == null && matchedButWithoutBaselineState > 0) {
-    reverseScopedLogger.warn("REVERSE-SCOPED DEBUG [$label] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. These results were matched by reverse-scoped diff but will still be counted by result summary / exit thresholds because config.baseline is null.")
+    reportReverseScopedDebug(
+      "REVERSE-SCOPED DEBUG [$label] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. These results were matched by reverse-scoped diff but will still be counted by result summary / exit thresholds because config.baseline is null.",
+      messageReporter
+    )
   }
 }
 
@@ -133,11 +141,11 @@ internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContext
     inspectionContext.populateRunWithInspectionResults(run)
 
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
-    logReverseScopedDebug("NEW after applyBaseline", run, runContext.config)
+    logReverseScopedDebug("NEW after applyBaseline", run, runContext.config, runContext.messageReporter)
 
     val requireFurtherAnalysis = runContext.config.skipResultStrategy.shouldSkip(run, COVERAGE_INSPECTIONS_NAMES)
     preserveShouldSkipState(run, requireFurtherAnalysis)
-    logReverseScopedDebug("NEW after preserveShouldSkip", run, runContext.config)
+    logReverseScopedDebug("NEW after preserveShouldSkip", run, runContext.config, runContext.messageReporter)
     if (requireFurtherAnalysis) {
       val root = VfsUtil.findFile(runContext.config.projectPath, false)
                  ?: throw QodanaException("Cannot find VFS file for project path ${runContext.config.projectPath}")
@@ -162,20 +170,20 @@ internal class ReverseScopedScriptOld(runContextFactory: ReverseScopedRunContext
 
     val runOld = report.getOrCreateRun() // we retrieve original run created by QodanaRunner
     val runNew = updateReportWithScopedRun(baselineReport, report)
-    logReverseScopedDebug("OLD loaded scoped baseline runNew", runNew, runContext.config)
+    logReverseScopedDebug("OLD loaded scoped baseline runNew", runNew, runContext.config, runContext.messageReporter)
 
     val reportOld = createSarifReport(listOf(runOld)) // we create "fake" report containing current (old) run for baseline purposes
     runContext.runAnalysis(context = inspectionContext)
     inspectionContext.populateRunWithInspectionResults(runOld)
-    logReverseScopedDebug("OLD freshly analyzed runOld", runOld, runContext.config)
+    logReverseScopedDebug("OLD freshly analyzed runOld", runOld, runContext.config, runContext.messageReporter)
     BaselineCalculation.compare(report, reportOld, Options(false, true, true, true))
-    logReverseScopedDebug("OLD after compare runNew", runNew, runContext.config)
+    logReverseScopedDebug("OLD after compare runNew", runNew, runContext.config, runContext.messageReporter)
 
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
-    logReverseScopedDebug("OLD after applyBaseline runNew", runNew, runContext.config)
+    logReverseScopedDebug("OLD after applyBaseline runNew", runNew, runContext.config, runContext.messageReporter)
 
     preserveShouldSkipState(runNew, runContext.config.skipResultStrategy.shouldSkip(runNew))
-    logReverseScopedDebug("OLD after preserveShouldSkip runNew", runNew, runContext.config)
+    logReverseScopedDebug("OLD after preserveShouldSkip runNew", runNew, runContext.config, runContext.messageReporter)
   }
 }
 
@@ -192,7 +200,7 @@ internal class ReverseScopedScriptFixes(runContextFactory: ReverseScopedRunConte
     // no need to apply baseline, was applied before
 
     preserveShouldSkipState(runNew, runContext.config.skipResultStrategy.shouldSkip(runNew))
-    logReverseScopedDebug("FIXES after preserveShouldSkip runNew", runNew, runContext.config)
+    logReverseScopedDebug("FIXES after preserveShouldSkip runNew", runNew, runContext.config, runContext.messageReporter)
   }
 }
 

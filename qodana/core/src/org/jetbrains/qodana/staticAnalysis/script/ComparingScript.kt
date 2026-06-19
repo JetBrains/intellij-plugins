@@ -94,7 +94,7 @@ abstract class ComparingScript(
 
       maybeApplyFixes(run, runContext)
 
-      SarifReportContributor.runContributors(run, runContext.project, runContext.config)
+      SarifReportContributor.runContributors(run, runContext.project, runContext.config, runContext.messageReporter)
       CoverageFeatureEventsCollector.logCoverageStatistics(runContext, scriptResult.coverageStats)
       this.coroutineContext.job.cancelChildren()
       scriptResult

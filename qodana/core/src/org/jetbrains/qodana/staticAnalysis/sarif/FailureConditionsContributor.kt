@@ -6,11 +6,12 @@ import com.jetbrains.qodana.sarif.model.Run
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageData
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import kotlin.experimental.ExperimentalTypeInference
 
 internal class FailureConditionsContributor : SarifReportContributor {
 
-  override fun contribute(run: Run, project: Project, config: QodanaConfig) {
+  override fun contribute(run: Run, project: Project, config: QodanaConfig, messageReporter: QodanaMessageReporter) {
     val thresholds = config.failureConditions
     if (thresholds == FailureConditions.DEFAULT) return
     val props = run.properties ?: PropertyBag()
