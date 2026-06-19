@@ -16,11 +16,11 @@ class OpenGrepAnalysisTest : IntegrationTest() {
 
     val result = analyze(workdir) {
       timeout = 10.minutes
-      vm.properties["qodana.product.name"] = "Qodana for any"
+      vm.properties["qodana.product.name"] = "Qodana Poly"
     }
 
     assertTrue(result.ok, "Qodana failed with exit code ${result.exitCode}:\n${result.stdout}")
-    assertTrue(result.ideaLog.contains("IDE: Qodana for any"), "QDPOLY startup marker is missing from idea.log")
+    assertTrue(result.ideaLog.contains("IDE: Qodana Poly"), "QDPOLY startup marker is missing from idea.log")
     assertNotNull(result.findIssue("hardcoded-password", "test-file.py:5"))
     assertNotNull(result.findIssue("hardcoded-secret", "test-file.py:5"))
     assertNotNull(result.findIssue("print-statement", "test-file.py:15"))
