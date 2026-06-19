@@ -167,17 +167,21 @@ abstract class CoverageInspectionBase : GlobalSimpleInspectionTool() {
 
   protected fun provideCoverageFilesWithDiscovery(
     globalContext: QodanaGlobalInspectionContext,
-    coverageFileProvider: QodanaCoverageFileProvider,
+    coverageFileProvider: QodanaCoverageFileProvider = EmptyQodanaCoverageFileProvider(),
   ): List<Path> {
     val cache = globalContext.putUserDataIfAbsent(precomputedCoverageFiles, ConcurrentHashMap())
     return cache.computeIfAbsent(coverageFileProvider.engineType) {
       lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         // files stored in .qodana/code-coverage or in directory specified via system variable
-        val files = explicitCoverageFiles(globalContext)
-          // files found via discovery in common locations
-          .ifEmpty { coverageFileProvider.getCoverageFiles(globalContext.project) }
-        reportCollectedReports(globalContext, coverageFileProvider.engineType, files)
-        files
+        val explicitFiles = explicitCoverageFiles(globalContext)
+        if (explicitFiles.isNotEmpty()) {
+          reportCollectedReports(globalContext, coverageFileProvider.engineType, explicitFiles)
+          return@lazy explicitFiles
+        }
+        // files found via discovery in common locations
+        val filesToCopies = coverageFileProvider.getCoverageFiles(globalContext.project)
+        reportCollectedReports(globalContext, coverageFileProvider.engineType, filesToCopies.keys.toList())
+        filesToCopies.values.toList()
       }
     }.value
   }
@@ -191,7 +195,10 @@ abstract class CoverageInspectionBase : GlobalSimpleInspectionTool() {
   }
 
   @Suppress("IO_FILE_USAGE")
-  @Deprecated("Use version with Path instead")
+  @Deprecated(
+    message = "Use provideCoverageFilesWithDiscovery(QodanaGlobalInspectionContext, QodanaCoverageFileProvider) instead",
+    replaceWith = ReplaceWith("provideCoverageFilesWithDiscovery(globalContext)")
+  )
   protected fun provideCoverageFiles(globalContext: QodanaGlobalInspectionContext): List<java.io.File> {
     return explicitCoverageFiles(globalContext).map { it.toFile() }
   }
