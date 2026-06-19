@@ -1,12 +1,13 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="SerialPortMonitor"/>
+    <module name="intellij.libraries.junit5"/>
+    <module name="intellij.platform.core"/>
     <module name="intellij.platform.testFramework"/>
     <module name="intellij.platform.testFramework.junit5"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
-    <module name="intellij.platform.core"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
 
   <extensions defaultExtensionNs="com.intellij">
     <applicationService
