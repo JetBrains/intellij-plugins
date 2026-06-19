@@ -18,6 +18,7 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//platform/external-system-impl:externalSystem-impl",
     "@community//platform/platform-api:ide",
+    "@community//platform/ide-core-impl",
     "@community//platform/platform-impl:ide-impl",
     "@community//plugins/maven",
     "@community//platform/projectModel-api:projectModel",

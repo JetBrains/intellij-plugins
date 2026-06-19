@@ -31,6 +31,7 @@ data class QodanaYamlConfig(
   val coverage: QodanaCoverageYamlConfig = QodanaCoverageYamlConfig(),
   val onlyDirectory: Path? = null,
   val rootJavaProjects: List<Path> = emptyList(),
+  val mavenSettingsPath: Path? = null,
 
   // deprecated, but used as anySeverity
   val failThreshold: Int? = null,
