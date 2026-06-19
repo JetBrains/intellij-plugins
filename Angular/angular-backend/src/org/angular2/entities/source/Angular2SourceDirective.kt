@@ -82,7 +82,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
   private val hostDirectivesResolver = Angular2HostDirectivesResolver(this)
 
   override val selector: Angular2DirectiveSelector
-    get() = getCachedValue {
+    get() = getCachedValue(typeSensitive = false) {
       Result.create(
         Angular2SourceUtil.getComponentSelector(decorator,
                                                 Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.SELECTOR_PROP)),
@@ -152,7 +152,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
     }
 
   override val directExportAs: Map<String, Angular2DirectiveExportAs>
-    get() = getCachedValue { Result.create(getExportAsNoCache(), decorator) }
+    get() = getCachedValue(typeSensitive = false) { Result.create(getExportAsNoCache(), decorator) }
 
   private fun getExportAsNoCache(): Map<String, Angular2DirectiveExportAs> =
     AstLoadingFilter.forceAllowTreeLoading<Map<String, Angular2DirectiveExportAs>, Throwable>(decorator.containingFile) {

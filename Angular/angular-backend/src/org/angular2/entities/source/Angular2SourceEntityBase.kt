@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.lang.javascript.evaluation.forCurrentJSTypeEngineContext
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.openapi.util.Key
@@ -32,8 +33,13 @@ abstract class Angular2SourceEntityBase protected constructor(override val typeS
     return Angular2EntityUtils.toString(this)
   }
 
-  protected fun <T> getCachedValue(provider: CachedValueProvider<T>): T {
-    return CachedValuesManager.getManager(typeScriptClass.project).getCachedValue(this, provider)
+  protected fun <T> getCachedValue(typeSensitive: Boolean = true, provider: CachedValueProvider<T>): T {
+    val manager = CachedValuesManager.getManager(typeScriptClass.project)
+    return if (typeSensitive)
+      manager.getCachedValue(this, manager.getKeyForClass<T>(provider.javaClass)
+        .forCurrentJSTypeEngineContext(), provider, false)
+    else
+      manager.getCachedValue(this, provider)
   }
 
   /**
