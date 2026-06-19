@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.linter.eslint;
 
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
+import com.intellij.ide.trustedProjects.TrustedProjects;
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper;
@@ -78,6 +79,18 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
 
   public void testWarningsAndErrors() {
     doTest("warn.js");
+  }
+
+  // WEB-78439: an untrusted project must not be able to start/use the project-local ESLint language service (a Node process).
+  // warn.js would be flagged (no-console / no-debugger), but no highlighting is expected because the project is untrusted.
+  public void testNoLintingForUntrustedProject() {
+    TrustedProjects.setProjectTrusted(getProject(), false);
+    try {
+      doEditorHighlightingTest("warn.js");
+    }
+    finally {
+      TrustedProjects.setProjectTrusted(getProject(), true);
+    }
   }
 
   public void testDumbMode() {
