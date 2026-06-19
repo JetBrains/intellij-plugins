@@ -23,8 +23,6 @@ sealed interface IRAttr {
 // Base interface for all SFC block types
 sealed interface IRBlock {
   val name: String
-  val startTagEnd: Int
-  val endTagStart: Int
   val lang: String
   val content: String
 }
@@ -44,8 +42,6 @@ data class IR(
 
 data class IRTemplate(
   override val name: String,
-  override val startTagEnd: Int,
-  override val endTagStart: Int,
   override val lang: String,
   override val content: String,
   val ast: RootNode?,
@@ -53,8 +49,6 @@ data class IRTemplate(
 
 data class IRScript(
   override val name: String,
-  override val startTagEnd: Int,
-  override val endTagStart: Int,
   override val lang: String,
   override val content: String,
   val src: IRAttr?,
@@ -63,8 +57,6 @@ data class IRScript(
 
 data class IRScriptSetup(
   override val name: String,
-  override val startTagEnd: Int,
-  override val endTagStart: Int,
   override val lang: String,
   override val content: String,
   val generic: IRAttr?,
@@ -73,8 +65,6 @@ data class IRScriptSetup(
 
 data class IRStyle(
   override val name: String,
-  override val startTagEnd: Int,
-  override val endTagStart: Int,
   override val lang: String,
   override val content: String,
   val src: IRAttr?,
