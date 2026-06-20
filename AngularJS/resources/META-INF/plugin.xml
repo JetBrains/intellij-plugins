@@ -25,6 +25,7 @@
     <module name="intellij.javascript.backend"/>
     <module name="intellij.javascript.psi.impl"/>
     <module name="intellij.json"/>
+    <module name="intellij.platform.graph"/>
     <module name="intellij.platform.webide.impl"/>
     <module name="intellij.xml.impl"/>
     <module name="intellij.xml.parser"/>
