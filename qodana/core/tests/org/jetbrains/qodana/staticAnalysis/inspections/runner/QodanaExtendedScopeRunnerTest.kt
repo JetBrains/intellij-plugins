@@ -10,7 +10,6 @@ import org.jetbrains.qodana.registry.QodanaRegistry.SCOPE_EXTENDING_ENABLE_KEY
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.SkipResultStrategy
-import org.jetbrains.qodana.staticAnalysis.scopes.QodanaInspectionVetoer
 import org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
 import org.jetbrains.qodana.staticAnalysis.script.scoped.COVERAGE_SKIP_COMPUTATION_PROPERTY
@@ -37,7 +36,6 @@ class QodanaExtendedScopeRunnerTest : QodanaRunnerTestCase() {
     }
     InspectionToolScopeExtender.EP_NAME.point.registerExtension(InspectionToolScopeExtenderMock, testRootDisposable)
     QodanaScopeExtenderProvider.EP_NAME.point.registerExtension(QodanaScopeExtenderProviderMock, testRootDisposable)
-    QodanaInspectionVetoer.EP_NAME.point.registerExtension(QodanaInspectionVetoerMock, testRootDisposable)
   }
 
   @Test
@@ -101,25 +99,6 @@ class QodanaExtendedScopeRunnerTest : QodanaRunnerTestCase() {
     }
   }
 
-  @Test
-  fun `testScoped-script-with-vetoed-inspection`() {
-    val scope = qodanaConfig.projectPath.resolve("scope")
-    scope.writeText("""
-      {
-        "files" : [{
-          "path" : "test-module/A.java",
-          "added" : [ ],
-          "deleted" : [ ]
-        }, {
-          "path" : "$VETO_TRIGGER_FILE",
-          "added" : [ ],
-          "deleted" : [ ]
-        }]
-      }
-    """.trimIndent())
-    runReverseScopedScript(scope, Stage.NEW)
-  }
-
   private fun runReverseScopedScript(scope: Path, stage: Stage) {
     updateQodanaConfig {
       it.copy(
@@ -138,14 +117,13 @@ class QodanaExtendedScopeRunnerTest : QodanaRunnerTestCase() {
 
       val expectedScope = getTestDataPath("scope.json").absolutePathString()
       assertSameLinesWithFile(expectedScope, scope.readText().trimIndent())
-    }
-    finally {
+    } finally {
       System.clearProperty(COVERAGE_SKIP_COMPUTATION_PROPERTY)
     }
   }
 }
 
-object QodanaScopeExtenderProviderMock : QodanaScopeExtenderProvider {
+object QodanaScopeExtenderProviderMock: QodanaScopeExtenderProvider {
   const val INSPECTION_NAME = "ConstantValue"
   override val name: String
     get() = InspectionToolScopeExtenderMock.name
@@ -155,19 +133,7 @@ object QodanaScopeExtenderProviderMock : QodanaScopeExtenderProvider {
   }
 }
 
-private val VETO_TRIGGER_FILE: Path = Path.of("qodanaInspectionVetoer.trigger")
-
-object QodanaInspectionVetoerMock : QodanaInspectionVetoer {
-  override fun isApplicable(inspectionId: String): Boolean {
-    return inspectionId == QodanaScopeExtenderProviderMock.INSPECTION_NAME
-  }
-
-  override fun shouldVeto(changedPaths: Set<Path>, project: Project): Boolean {
-    return VETO_TRIGGER_FILE in changedPaths
-  }
-}
-
-object InspectionToolScopeExtenderMock : InspectionToolScopeExtender {
+object InspectionToolScopeExtenderMock: InspectionToolScopeExtender {
   override val name: String
     get() = javaClass.simpleName
 
@@ -176,11 +142,7 @@ object InspectionToolScopeExtenderMock : InspectionToolScopeExtender {
     "B.java" to "C.java"
   )
 
-  override suspend fun extendScope(
-    virtualFile: VirtualFile,
-    project: Project,
-    acceptedFiles: Map<VirtualFile, Set<String>>,
-  ): List<VirtualFile> {
+  override suspend fun extendScope(virtualFile: VirtualFile, project: Project, acceptedFiles: Map<VirtualFile, Set<String>>): List<VirtualFile> {
     val fileName = extendingMap[virtualFile.name] ?: return emptyList()
     return listOfNotNull(project.guessProjectDir()?.findChild(fileName))
   }

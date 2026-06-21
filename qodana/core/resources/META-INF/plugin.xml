@@ -354,9 +354,6 @@
     <extensionPoint name="scopeExtenderProvider"
                     interface="org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider"
                     dynamic="true"/>
-    <extensionPoint name="qodanaInspectionVetoer"
-                    interface="org.jetbrains.qodana.staticAnalysis.scopes.QodanaInspectionVetoer"
-                    dynamic="true"/>
     <extensionPoint name="scopeExtender"
                     interface="org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender"
                     dynamic="true"/>
