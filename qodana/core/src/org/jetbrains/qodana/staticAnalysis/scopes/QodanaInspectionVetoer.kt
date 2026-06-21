@@ -3,6 +3,7 @@ package org.jetbrains.qodana.staticAnalysis.scopes
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.ApiStatus
+import org.jetbrains.qodana.registry.QodanaRegistry
 import java.nio.file.Path
 
 /**
@@ -15,7 +16,7 @@ interface QodanaInspectionVetoer {
       ExtensionPointName.create("org.intellij.qodana.qodanaInspectionVetoer")
 
     fun isVetoed(inspectionId: String, changedPaths: Set<Path>, project: Project): Boolean {
-      return changedPaths.isNotEmpty() && EP_NAME.extensionList.any { vetoer ->
+      return QodanaRegistry.isInspectionVetoEnabled && changedPaths.isNotEmpty() && EP_NAME.extensionList.any { vetoer ->
         vetoer.isApplicable(inspectionId) && vetoer.shouldVeto(changedPaths, project)
       }
     }

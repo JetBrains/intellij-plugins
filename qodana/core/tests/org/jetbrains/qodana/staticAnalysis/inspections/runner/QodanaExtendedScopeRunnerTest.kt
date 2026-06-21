@@ -6,6 +6,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.qodana.registry.QodanaRegistry.INSPECTION_VETO_ENABLE_KEY
 import org.jetbrains.qodana.registry.QodanaRegistry.SCOPE_EXTENDING_ENABLE_KEY
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
@@ -101,8 +102,29 @@ class QodanaExtendedScopeRunnerTest : QodanaRunnerTestCase() {
   }
 
   @Test
-  fun `testScoped-script-with-vetoed-inspection`() {
+  fun `testScoped-script-with-vetoed-inspection-disabled-by-default`() {
     val scope = qodanaConfig.projectPath.resolve("scope")
+    writeScopeWithVetoTrigger(scope)
+    runReverseScopedScript(scope, Stage.NEW)
+  }
+
+  @Test
+  fun `testScoped-script-with-vetoed-inspection`() {
+    enableInspectionVeto()
+    val scope = qodanaConfig.projectPath.resolve("scope")
+    writeScopeWithVetoTrigger(scope)
+    runReverseScopedScript(scope, Stage.NEW)
+  }
+
+  private fun enableInspectionVeto() {
+    val registryValue = Registry.get(INSPECTION_VETO_ENABLE_KEY)
+    registryValue.setValue(true)
+    Disposer.register(testRootDisposable) {
+      registryValue.resetToDefault()
+    }
+  }
+
+  private fun writeScopeWithVetoTrigger(scope: Path) {
     scope.writeText("""
       {
         "files" : [{
@@ -116,7 +138,6 @@ class QodanaExtendedScopeRunnerTest : QodanaRunnerTestCase() {
         }]
       }
     """.trimIndent())
-    runReverseScopedScript(scope, Stage.NEW)
   }
 
   private fun runReverseScopedScript(scope: Path, stage: Stage) {
