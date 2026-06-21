@@ -149,7 +149,8 @@ jvm_library(
     ],
     deps = [
         # do not sort,
-        "@lib//:junit4",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
         "@community//platform/analysis-api:analysis",
         "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/core-api:core",

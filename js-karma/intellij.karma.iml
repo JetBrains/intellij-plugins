@@ -32,7 +32,7 @@
     <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="module" module-name="intellij.platform.coverage" />
     <orderEntry type="module" module-name="intellij.platform.webide.impl" />
-    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.wip.backend" />
     <orderEntry type="module" module-name="intellij.javascript.wip.protocol" />
     <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
