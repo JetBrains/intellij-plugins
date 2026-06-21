@@ -48,10 +48,18 @@ const val EMBEDDED_GIT_IGNORE_EXCLUDE = "embedded.gitignore"
 
 const val COVERAGE_OUTPUT_DIR = "coverage"
 
+internal val QODANA_EXCLUDE_SCOPE_MODIFIER = GlobalExcludeScopeModifier(
+  InspectScope(
+    name = "embedded.qodana",
+    paths = listOf(".qodana"),
+    patterns = emptyList(),
+  )
+)
+
 internal val DEFAULT_EXCLUDE_SCOPE_MODIFIER = GlobalExcludeScopeModifier(
   InspectScope(
     name = "embedded.default",
-    paths = listOf("buildSrc", "vendor", "build", "builds", "dist", "tests", "tools", "vendor", "bin", ".qodana"),
+    paths = listOf("buildSrc", "vendor", "build", "builds", "dist", "tests", "tools", "vendor", "bin"),
     patterns = listOf("test:*..*", "file:buildSrc/*", "file[*.buildSrc]:*/"),
   )
 )
@@ -310,6 +318,7 @@ data class QodanaConfig(
       else
         modifiers += ExcludeScopeModifier(scope)
     }
+    modifiers += QODANA_EXCLUDE_SCOPE_MODIFIER
     if (addDefaultExclude) modifiers += DEFAULT_EXCLUDE_SCOPE_MODIFIER
     if (addDefaultExclude && supportsGitIgnore(project)) modifiers += GIT_IGNORE_SCOPE_MODIFIER
     return modifiers
