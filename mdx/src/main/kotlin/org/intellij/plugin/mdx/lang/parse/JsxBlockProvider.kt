@@ -3,135 +3,112 @@ package org.intellij.plugin.mdx.lang.parse
 import org.intellij.markdown.parser.LookaheadText
 import org.intellij.markdown.parser.MarkerProcessor
 import org.intellij.markdown.parser.ProductionHolder
-import org.intellij.markdown.parser.constraints.CommonMarkdownConstraints
 import org.intellij.markdown.parser.constraints.MarkdownConstraints
 import org.intellij.markdown.parser.markerblocks.MarkerBlock
 import org.intellij.markdown.parser.markerblocks.MarkerBlockProvider
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
-import java.util.Stack
 
 class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
   override fun createMarkerBlocks(pos: LookaheadText.Position,
                                   productionHolder: ProductionHolder,
                                   stateInfo: MarkerProcessor.StateInfo): List<MarkerBlock> {
-    val matchingGroup = matches(pos, stateInfo.currentConstraints)
-    val myStack: Stack<CharSequence> = Stack()
-    if (matchingGroup != -1) {
-      if (matchingGroup == IMPORT_EXPORT_CONST) {
-        var endOfRange = pos.nextLineOrEofOffset
-        if (!pos.nextLine.isNullOrBlank()) {
-          endOfRange++
+    val start = findStart(pos, stateInfo.currentConstraints) ?: return emptyList()
+    val lineText = pos.currentLineFromPosition
+    val localText = lineText.subSequence(start.offsetInLine, lineText.length)
+    val absoluteStart = pos.offset + start.offsetInLine
+    val immediateBlock = when (start.kind) {
+      MdxBlockKind.ESM -> {
+        val block = MdxJsxScanner.scanEsmBlock(localText, 0)
+        if (block != null && block.balanced && localText.subSequence(block.range.last, localText.length).isBlank()) {
+          ImmediateBlock(MdxElementTypes.MDX_ESM_BLOCK, MdxJsxScanner.createEsmNodes(block, absoluteStart, includeRoot = false))
         }
-        JsxBlockUtil.parseExportParenthesis(pos, myStack)
-        productionHolder.addProduction(listOf(SequentialParser.Node(
-          pos.offset..endOfRange, MdxTokenTypes.JSX_BLOCK_CONTENT)))
-        return listOf(JsxBlockMarkerBlock(stateInfo.currentConstraints, productionHolder, END_REGEX, true, myStack))
+        else null
       }
-      JsxBlockUtil.parseParenthesis(pos, myStack, productionHolder, CommonMarkdownConstraints.BASE, false)
-      if (INLINE_REGEX.find(pos.currentLineFromPosition) == null) {
-        val endOfRange = pos.nextLineOrEofOffset
-        productionHolder.addProduction(listOf(SequentialParser.Node(
-          pos.offset..endOfRange, MdxTokenTypes.JSX_BLOCK_CONTENT)))
+      MdxBlockKind.JSX -> {
+        val element = MdxJsxScanner.scanJsxElement(localText, 0)
+        if (element != null && element.balanced && localText.subSequence(element.range.last, localText.length).isBlank()) {
+          ImmediateBlock(
+            MdxElementTypes.MDX_JSX_FLOW_ELEMENT,
+            MdxJsxScanner.createElementNodes(element, MdxElementTypes.MDX_JSX_FLOW_ELEMENT, absoluteStart, includeRoot = false),
+          )
+        }
+        else null
       }
-      return listOf(
-        JsxBlockMarkerBlock(stateInfo.currentConstraints, productionHolder, OPEN_CLOSE_REGEXES[matchingGroup].second, false, myStack))
+      MdxBlockKind.EXPRESSION -> {
+        val expressionEnd = MdxJsxScanner.scanExpression(localText, 0)
+        if (expressionEnd != -1 && localText.subSequence(expressionEnd, localText.length).isBlank()) {
+          ImmediateBlock(
+            MdxElementTypes.MDX_JSX_EXPRESSION,
+            listOf(SequentialParser.Node(absoluteStart..absoluteStart + expressionEnd, MdxTokenTypes.JSX_BLOCK_CONTENT)),
+          )
+        }
+        else null
+      }
     }
-    return emptyList()
+    if (immediateBlock != null) {
+      return listOf(
+        ImmediateJsxBlockMarkerBlock(
+          stateInfo.currentConstraints,
+          productionHolder,
+          immediateBlock.type,
+          immediateBlock.children,
+        ),
+      )
+    }
+    return listOf(
+      JsxBlockMarkerBlock(
+        stateInfo.currentConstraints,
+        productionHolder,
+        start.kind,
+        absoluteStart,
+        start.offsetInLine,
+        pos.originalText,
+        localText.toString(),
+      ),
+    )
   }
 
   override fun interruptsParagraph(pos: LookaheadText.Position, constraints: MarkdownConstraints): Boolean {
-    return matches(pos, constraints) in 0..5
+    return findStart(pos, constraints) != null
   }
 
-  private fun matches(pos: LookaheadText.Position, constraints: MarkdownConstraints): Int {
+  private fun findStart(pos: LookaheadText.Position, constraints: MarkdownConstraints): StartInfo? {
     if (!MarkerBlockProvider.isStartOfLineWithConstraints(pos, constraints)) {
-      return -1
+      return null
     }
     val text = pos.currentLineFromPosition
     val offset = MarkerBlockProvider.passSmallIndent(text)
     if (offset >= text.length) {
-      return -1
+      return null
     }
-
-    if (text[offset] != '<') {
-      if (FIND_START_IMPORT_EXPORT.matches(text.substring(offset))) {
-        return IMPORT_EXPORT_CONST
-      }
-      return -1
+    return when {
+      MdxJsxScanner.isLineStartEsm(text, offset) ->
+        StartInfo(offset, MdxBlockKind.ESM)
+      text[offset] == '<' && isLineStartJsxBlock(text, offset) ->
+        StartInfo(offset, MdxBlockKind.JSX)
+      text[offset] == '{' && MdxJsxScanner.isLineStartExpression(text, offset) ->
+        StartInfo(offset, MdxBlockKind.EXPRESSION)
+      else -> null
     }
-    val matchResult = FIND_START_REGEX.find(text.substring(offset))
-                      ?: return -1
-    assert(matchResult.groups.size == OPEN_CLOSE_REGEXES.size + 2) { "There are some excess capturing groups probably!" }
-    for (i in OPEN_CLOSE_REGEXES.indices) {
-      if (matchResult.groups[i + 2] != null) {
-        return i
-      }
-    }
-    assert(false) { "Match found but all groups are empty!" }
-    return -1
   }
 
+  private fun isLineStartJsxBlock(text: CharSequence, offset: Int): Boolean {
+    if (!MdxJsxScanner.isLineStartJsx(text, offset)) {
+      return false
+    }
 
-  companion object {
-    val IMPORT_EXPORT_CONST = 6
-
-    private val TAG_NAMES =
-      "address, article, aside, base, basefont, blockquote, body, caption, center, col, colgroup, dd, details, " +
-      "dialog, dir, div, dl, dt, fieldset, figcaption, figure, footer, form, frame, frameset, h1, " +
-      "head, header, hr, html, legend, li, link, main, menu, menuitem, meta, nav, noframes, ol, " +
-      "optgroup, option, p, param, pre, section, source, title, summary, table, tbody, td, tfoot, " +
-      "th, thead, title, tr, track, ul"
-
-    private val IMPORT_KEYWORD = "(^|\\s+)import($|\\s+|\\{)"
-
-    private val EXPORT_KEYWORD = "(^|\\s+)export($|\\s+)"
-
-    private val TAG_NAME = "[a-zA-Z][a-zA-Z0-9.-]*"
-
-    private val ATTR_NAME = "[A-Za-z:_][A-Za-z0-9_.:-]*"
-
-    private val ATTR_VALUE = "\\s*=\\s*(?:[^=<>`]+|\\{.*\\}|'[^']*'|\"[^\"]*\")"
-
-    private val ATTRIBUTE = "\\s+$ATTR_NAME(?:$ATTR_VALUE)?"
-
-    private val OPEN_TAG = "<$TAG_NAME(?:$ATTRIBUTE)*\\s*>|<>"
-
-    val EMPTY_TAG = "<$TAG_NAME(?:$ATTRIBUTE)*\\s*/>"
-
-    /**
-     * Closing tag allowance is not in public spec version yet
-     */
-    private val CLOSE_TAG = "</$TAG_NAME\\s*>|</>"
-
-    val CLOSE_TAG_REGEX = Regex("$CLOSE_TAG|^($ATTRIBUTE|[^<])*/>")
-
-    val TAG_REGEX = Regex("$OPEN_TAG|$EMPTY_TAG|<$TAG_NAME[^>]*$|$CLOSE_TAG_REGEX")
-
-    val OPEN_TAG_REGEX = Regex("$OPEN_TAG|<$TAG_NAME[^>]*$")
-
-    val ATTRIBUTES_REGEX = Regex("^($ATTRIBUTE)+")
-
-    /** see {@link http://spec.commonmark.org/0.21/#html-blocks}
-     *
-     * nulls mean "Next line should be blank"
-     * */
-
-    private val MULTILINE_TAG_REGEX_PAIR = Pair(Regex("<$TAG_NAME.*"), null)
-
-    val OPEN_CLOSE_REGEXES: List<Pair<Regex, Regex?>> = listOf(
-      Pair(Regex("<(?i:script|pre|style)(?: |>|$)"), Regex("</(?i:script|style|pre)>")),
-      Pair(Regex("</?(?i:${TAG_NAMES.replace(", ", "|")})(?: |/?>|$)"), null),
-      Pair(Regex("(?:$OPEN_TAG|$CLOSE_TAG|$EMPTY_TAG)(?: *|$)"), null),
-      MULTILINE_TAG_REGEX_PAIR
-    )
-    val FIND_START_IMPORT_EXPORT = Regex("($IMPORT_KEYWORD|$EXPORT_KEYWORD).*")
-
-    val FIND_START_REGEX = Regex(
-      "\\A(${OPEN_CLOSE_REGEXES.joinToString(separator = "|", transform = { "(${it.first.pattern})" })})"
-    )
-
-    val END_REGEX = Regex("(^$)")
-
-    val INLINE_REGEX = Regex("\\s*($CLOSE_TAG|$EMPTY_TAG).+")
+    val localText = text.subSequence(offset, text.length)
+    val element = MdxJsxScanner.scanJsxElement(localText, 0)
+    return element == null || !element.balanced || localText.subSequence(element.range.last, localText.length).isBlank()
   }
+
+  private data class StartInfo(val offsetInLine: Int, val kind: MdxBlockKind)
+
+  private data class ImmediateBlock(val type: org.intellij.markdown.IElementType, val children: List<SequentialParser.Node>)
+}
+
+internal enum class MdxBlockKind {
+  JSX,
+  ESM,
+  EXPRESSION
 }

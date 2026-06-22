@@ -1,0 +1,16 @@
+import Widget from './Widget'
+export const meta = { nested: { ok: true } }
+
+Paragraph with <Badge tone="info">**new**</Badge> and {items.map(item => <Item key={item.id}>{item.label}</Item>)}.
+
+<>
+  ## Fragment child
+  <Panel
+    title={"a > b"}
+    data={{ nested: { count: 1 } }}
+  >
+    **Strong** markdown
+  </Panel>
+</>
+
+<Broken attr={"unterminated}

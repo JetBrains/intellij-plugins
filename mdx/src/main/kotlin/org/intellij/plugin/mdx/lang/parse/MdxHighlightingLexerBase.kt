@@ -27,6 +27,7 @@ import org.intellij.markdown.parser.markerblocks.providers.HorizontalRuleProvide
 import org.intellij.markdown.parser.markerblocks.providers.HtmlBlockProvider
 import org.intellij.markdown.parser.markerblocks.providers.ListMarkerProvider
 import org.intellij.markdown.parser.markerblocks.providers.SetextHeaderProvider
+import org.intellij.markdown.parser.sequentialparsers.EmphasisLikeParser
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 import org.intellij.markdown.parser.sequentialparsers.SequentialParserManager
 import org.intellij.plugins.markdown.lang.parser.blocks.CommentAwareLinkReferenceDefinitionProvider
@@ -37,7 +38,16 @@ object MdxFlavourDescriptor : CommonMarkFlavourDescriptor() {
 
   override val markerProcessorFactory: MarkerProcessorFactory get() = MdxProcessFactory
 
-  override val sequentialParserManager: SequentialParserManager get() = myGfmFlavourDescriptor.sequentialParserManager
+  override val sequentialParserManager: SequentialParserManager = object : SequentialParserManager() {
+    override fun getParserSequence(): List<SequentialParser> {
+      val parsers = myGfmFlavourDescriptor.sequentialParserManager.getParserSequence()
+      val emphasisIndex = parsers.indexOfFirst { it is EmphasisLikeParser }
+      if (emphasisIndex == -1) {
+        return parsers + MdxInlineJsxParser()
+      }
+      return parsers.subList(0, emphasisIndex) + MdxInlineJsxParser() + parsers.subList(emphasisIndex, parsers.size)
+    }
+  }
 
   override fun createHtmlGeneratingProviders(linkMap: LinkMap, baseURI: URI?): Map<IElementType, GeneratingProvider> {
     return myGfmFlavourDescriptor.createHtmlGeneratingProviders(linkMap, baseURI)

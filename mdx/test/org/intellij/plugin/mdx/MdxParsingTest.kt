@@ -78,6 +78,11 @@ class MdxParsingTest : ParsingTestCase(
   }
 
   @Test
+  fun testParsingJsxScenarios() {
+    doTest(true)
+  }
+
+  @Test
   fun testParsingEmbedded() {
     doTest(true)
   }
