@@ -3,6 +3,7 @@ package org.jetbrains.qodana.staticAnalysis.sarif
 import com.google.gson.JsonSyntaxException
 import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.qodana.sarif.SarifUtil
+import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.model.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -12,9 +13,17 @@ import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.VULNERABLE_LIBRARIES_INSPECTION_ID
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV2
 
 private val LOG = logger<QodanaToolResultDatabase>()
 private val GSON = SarifUtil.createGson()
+private const val BASELINE_EQUALITY_V2_VERSION = 2
+private const val STRUCTURAL_FINGERPRINT_VERSION = 1
+private val STRUCTURAL_FINGERPRINT_NAMES = listOf(
+  BaselineCalculation.MOVE_AND_REFACTOR_TOLERANT_INDICATOR,
+  BaselineCalculation.EXTRACTION_AND_REFACTOR_TOLERANT_INDICATOR,
+  BaselineCalculation.ENCLOSING_SCOPE_INDICATOR,
+)
 
 /**
  * Given a database filled with SARIF [Result]s provide the flow, to iterate over
@@ -77,12 +86,30 @@ private fun processSameHash(resultJsons: List<String>): Result? {
   }
 
   val uniqueTags = uniqueResults.flatMap { it.getOrAssignProperties().tags }.distinct()
-  val resultToSubmit = uniqueResults.minByOrNull { it.hashCode() }!!.apply {
-    // We do not merge properties, but tags. If properties vary, the first one with the smallest hash code will be used.
+  val resultToSubmit = uniqueResults.minWithOrNull(
+    compareByDescending<Result> { it.fingerprintMetadataScore() }.thenBy { it.hashCode() }
+  )!!.apply {
+    // We do not merge properties, but tags. If properties vary, prefer the one with richer fingerprint metadata,
+    // otherwise use the first one with the smallest hash code.
     val properties = this.getOrAssignProperties()
     uniqueTags.filter { !properties.tags.contains(it) }.forEach { properties.tags.add(it) }
   }
   return resultToSubmit
+}
+
+private fun Result.fingerprintMetadataScore(): Int {
+  var score = 0
+  val fingerprints = partialFingerprints
+  if (fingerprints != null) {
+    if (fingerprints.get(BaselineCalculation.EQUAL_INDICATOR, BASELINE_EQUALITY_V2_VERSION) != null) score++
+    for (fingerprintName in STRUCTURAL_FINGERPRINT_NAMES) {
+      if (fingerprints.get(fingerprintName, STRUCTURAL_FINGERPRINT_VERSION) != null) score += 2
+    }
+  }
+
+  val properties = properties ?: return score
+  if (properties[BaselineEqualityV2.ADDITIONAL_FINGERPRINT_DATA] != null) score += 2
+  return score
 }
 
 fun List<String>.parseResults(): List<Result> {

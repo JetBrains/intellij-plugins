@@ -5,12 +5,17 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.EQUAL_INDICATOR
+import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.ENCLOSING_SCOPE_INDICATOR
+import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.EXTRACTION_AND_REFACTOR_TOLERANT_INDICATOR
+import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.MOVE_AND_REFACTOR_TOLERANT_INDICATOR
 import com.jetbrains.qodana.sarif.model.ArtifactLocation
 import com.jetbrains.qodana.sarif.model.Location
+import com.jetbrains.qodana.sarif.model.Message
 import com.jetbrains.qodana.sarif.model.PhysicalLocation
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
+import com.jetbrains.qodana.sarif.model.VersionedMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -59,7 +64,7 @@ class DatabaseProblemsFlowTest : QodanaTestCase() {
     val writer = StringWriter()
     SarifUtil.writeReport(writer, report)
 
-    assertSameLinesWithFile (testSarifPath.absolutePathString(), writer.toString())
+    assertSameLinesWithFile(testSarifPath.absolutePathString(), writer.toString())
   }
 
   @Test
@@ -152,6 +157,27 @@ class DatabaseProblemsFlowTest : QodanaTestCase() {
     return database.resultsFlowByGroup("related").toList().single()
   }
 
+  @Test
+  fun `duplicate collapse prefers structural fingerprint metadata`(): Unit = runBlocking {
+    val inspectionGroup = "fingerprint-richness"
+    val inspectionId = "SplitModeApiUsage"
+    val sharedDatabaseHash = "same-equal-indicator-v1"
+    val descriptorAwareResult = duplicateResult(withStructuralMetadata = true)
+    val exportedXmlResult = duplicateResult(withStructuralMetadata = false)
+
+    database.insert(inspectionGroup, inspectionId, sharedDatabaseHash, gson.toJson(exportedXmlResult, Result::class.java))
+    database.insert(inspectionGroup, inspectionId, sharedDatabaseHash, gson.toJson(descriptorAwareResult, Result::class.java))
+
+    val results = database.resultsFlowByGroup(inspectionGroup).toList()
+
+    assertSize(1, results)
+    val result = results.single()
+    assertEquals("descriptor-aware-v2", result.partialFingerprints.get(EQUAL_INDICATOR, 2))
+    assertEquals("move-and-refactor-tolerant", result.partialFingerprints.get(MOVE_AND_REFACTOR_TOLERANT_INDICATOR, 1))
+    assertEquals("extraction-and-refactor-tolerant", result.partialFingerprints.get(EXTRACTION_AND_REFACTOR_TOLERANT_INDICATOR, 1))
+    assertEquals("enclosing-scope", result.partialFingerprints.get(ENCLOSING_SCOPE_INDICATOR, 1))
+  }
+
 
   private fun getTestDataPath(): Path {
     return Path.of(PathManager.getHomePath(), "contrib", "qodana", "core", "test-data", DatabaseProblemsFlowTest::class.java.simpleName)
@@ -163,4 +189,22 @@ class DatabaseProblemsFlowTest : QodanaTestCase() {
 
   private fun couldNotFindResultMessage(result: Result) =
     "Couldn't find result with id ${result.ruleId}, equalIndicator: ${result.partialFingerprints.getLastValue(EQUAL_INDICATOR)}"
+
+  private fun duplicateResult(withStructuralMetadata: Boolean): Result {
+    val partialFingerprints = VersionedMap<String>().apply {
+      put(EQUAL_INDICATOR, 1, "same-equal-indicator-v1")
+      put(EQUAL_INDICATOR, 2, if (withStructuralMetadata) "descriptor-aware-v2" else "exported-xml-v2")
+      if (withStructuralMetadata) {
+        put(MOVE_AND_REFACTOR_TOLERANT_INDICATOR, 1, "move-and-refactor-tolerant")
+        put(EXTRACTION_AND_REFACTOR_TOLERANT_INDICATOR, 1, "extraction-and-refactor-tolerant")
+        put(ENCLOSING_SCOPE_INDICATOR, 1, "enclosing-scope")
+      }
+    }
+
+    return Result().apply {
+      ruleId = "SplitModeApiUsage"
+      message = Message().withText("Structural duplicate")
+      this.partialFingerprints = partialFingerprints
+    }
+  }
 }
