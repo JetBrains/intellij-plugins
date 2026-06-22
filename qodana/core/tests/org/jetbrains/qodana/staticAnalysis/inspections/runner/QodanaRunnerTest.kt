@@ -5,7 +5,9 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElementVisitor
@@ -27,6 +29,7 @@ import org.jetbrains.qodana.cloud.api.respond
 import org.jetbrains.qodana.cloudclient.asSuccess
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import org.jetbrains.qodana.respond200PublishReport
+import org.jetbrains.qodana.registry.QodanaRegistry.REDUCED_SCOPE_INCLUDE_REMOVED_FILES_ENABLE_KEY
 import org.jetbrains.qodana.staticAnalysis.QodanaEnvEmpty
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase.Companion.runTest
 import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
@@ -455,6 +458,14 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         {
           "path" : "test-module/C.java",
           "added" : [ ],
+          "deleted" : [ {
+            "firstLine" : 1,
+            "count" : 1
+          } ]
+        },
+        {
+          "path" : "test-module/Removed.java",
+          "added" : [ ],
           "deleted" : [ ]
         } ]
       }
@@ -469,6 +480,60 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
       val expectedScope = getTestDataPath("scope.json").absolutePathString()
       assertSameLinesWithFile(expectedScope, scopePath.readText())
+    } finally {
+      System.clearProperty(REDUCED_SCOPE_PATH)
+    }
+  }
+
+  @Test
+  fun `testReverseScoped-script-new-stage removed files disabled`(): Unit = runBlocking {
+    val registryValue = Registry.get(REDUCED_SCOPE_INCLUDE_REMOVED_FILES_ENABLE_KEY)
+    registryValue.setValue(false)
+    Disposer.register(testRootDisposable) {
+      registryValue.resetToDefault()
+    }
+    val scope = qodanaConfig.projectPath.resolve("scope")
+
+    updateQodanaConfig {
+      it.copy(
+        script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(
+          SCOPE_ARG to scope.toString(),
+          STAGE_ARG to Stage.NEW.name
+        )),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
+        skipResultStrategy = SkipResultStrategy.ANY,
+      )
+    }
+
+    scope.writeText("""
+      {
+        "files" : [ {
+          "path" : "test-module/A.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        },
+        {
+          "path" : "test-module/C.java",
+          "added" : [ ],
+          "deleted" : [ {
+            "firstLine" : 1,
+            "count" : 1
+          } ]
+        },
+        {
+          "path" : "test-module/Removed.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        } ]
+      }
+    """.trimIndent())
+
+    try {
+      val scopePath = qodanaConfig.outPath.resolve("scope")
+      System.setProperty(REDUCED_SCOPE_PATH, scopePath.toString())
+      runAnalysis()
+      assertSarifResults()
+      assertEquals("""{"files":[{"path":"test-module/A.java","added":[],"deleted":[]}]}""", scopePath.readText())
     } finally {
       System.clearProperty(REDUCED_SCOPE_PATH)
     }

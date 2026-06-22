@@ -11,9 +11,11 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
+import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunIncrementalContext
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.resolveVirtualFile
 import org.jetbrains.qodana.staticAnalysis.sarif.OriginalUriBaseId
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import java.nio.file.Files
@@ -24,6 +26,7 @@ import kotlin.io.path.Path
 
 internal suspend fun persistReducedScopeToPath(
   persistReducedScopePath: String,
+  scopeFilePath: Path,
   runContext: QodanaRunContext,
   report: SarifReport,
   root: VirtualFile
@@ -36,9 +39,20 @@ internal suspend fun persistReducedScopeToPath(
     }
   }
   val nextScope = computeNextScope(runContext, report, root)
+  val nextScopeWithRemovedFiles = if (QodanaRegistry.isReducedScopeIncludeRemovedFilesEnabled) {
+    val removedFiles = computeRemovedFiles(scopeFilePath, runContext.config.projectPath)
+    (nextScope + removedFiles).distinctBy { it.path }
+  }
+  else nextScope
   val extendedFiles = computeScopeExtenders(
-    runContext.project, nextScope, runContext.qodanaProfile, root)
-  writeNextScope(path, ChangedFiles(nextScope, extendedFiles.sortedBy { it.path }))
+    runContext.project, nextScopeWithRemovedFiles, runContext.qodanaProfile, root)
+  writeNextScope(path, ChangedFiles(nextScopeWithRemovedFiles, extendedFiles.sortedBy { it.path }))
+}
+
+private suspend fun computeRemovedFiles(scopeFilePath: Path, projectPath: Path): List<ChangedFile> {
+  return parseChangedFiles(scopeFilePath).files.filter { changedFile ->
+    resolveVirtualFile(projectPath, Path(changedFile.path)) == null
+  }
 }
 
 internal suspend fun persistFullScopeToPath(

@@ -12,6 +12,8 @@ object QodanaRegistry {
   @VisibleForTesting
   const val PACKAGE_CHECKER_CANCEL_ON_FAILURE_KEY = "qd.package-checker.cancel.on.failure"
   @VisibleForTesting
+  const val REDUCED_SCOPE_INCLUDE_REMOVED_FILES_ENABLE_KEY: String = "qd.reduced.scope.include.removed.files.enabled"
+  @VisibleForTesting
   const val INSPECTION_VETO_ENABLE_KEY: String = "qd.inspection.veto.enabled"
 
   val isQodanaLicenseAgreementCallbackEnabled: Boolean
@@ -28,6 +30,9 @@ object QodanaRegistry {
 
   val isPackageCheckerCancelOnFailureEnabled: Boolean
     get() = Registry.`is`(PACKAGE_CHECKER_CANCEL_ON_FAILURE_KEY, true)
+
+  val isReducedScopeIncludeRemovedFilesEnabled: Boolean
+    get() = Registry.`is`(REDUCED_SCOPE_INCLUDE_REMOVED_FILES_ENABLE_KEY, true)
 
   val isInspectionVetoEnabled: Boolean
     get() = Registry.`is`(INSPECTION_VETO_ENABLE_KEY, false)

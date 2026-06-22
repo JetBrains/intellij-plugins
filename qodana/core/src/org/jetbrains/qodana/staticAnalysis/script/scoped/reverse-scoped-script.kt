@@ -151,7 +151,7 @@ internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContext
                  ?: throw QodanaException("Cannot find VFS file for project path ${runContext.config.projectPath}")
       val persistReducedScopePath = System.getProperty(REDUCED_SCOPE_PATH)
       if (persistReducedScopePath != null) {
-        persistReducedScopeToPath(persistReducedScopePath, runContext, report, root)
+        persistReducedScopeToPath(persistReducedScopePath, scopeFile, runContext, report, root)
       }
       else if (runContext is QodanaRunIncrementalContext) {
         persistFullScopeToPath(scopeFile, runContext, root)
