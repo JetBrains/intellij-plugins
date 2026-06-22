@@ -31,6 +31,18 @@ class QodanaSingleInspectionProfileTest : QodanaTestCase() {
       <profile version="1.0">
         <option name="myName" value="qodana.effective.profile" />
         <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="true">
+          <scope name="qodana.yaml.exclude.embedded.qodana" level="INFORMATION" enabled="false" checkParameterExcludingHierarchy="false">
+            <option name="LOCAL_VARIABLE" value="true" />
+            <option name="FIELD" value="true" />
+            <option name="METHOD" value="true" />
+            <option name="CLASS" value="true" />
+            <option name="PARAMETER" value="true" />
+            <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
+            <option name="ADD_MAINS_TO_ENTRIES" value="true" />
+            <option name="ADD_APPLET_TO_ENTRIES" value="true" />
+            <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
+            <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
+          </scope>
           <scope name="qodana.yaml.exclude.unused" level="INFORMATION" enabled="false" checkParameterExcludingHierarchy="false">
             <option name="LOCAL_VARIABLE" value="true" />
             <option name="FIELD" value="true" />
@@ -67,8 +79,21 @@ class QodanaSingleInspectionProfileTest : QodanaTestCase() {
         <option name="myName" value="qodana.effective.profile" />
         <inspection_tool class="Annotator" enabled="true" level="ERROR" enabled_by_default="false">
           <scope name="qodana.yaml.include.Annotator" level="ERROR" enabled="true" />
+          <scope name="qodana.yaml.exclude.embedded.qodana" level="INFORMATION" enabled="false" />
         </inspection_tool>
         <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="true">
+          <scope name="qodana.yaml.exclude.embedded.qodana" level="INFORMATION" enabled="false" checkParameterExcludingHierarchy="false">
+            <option name="LOCAL_VARIABLE" value="true" />
+            <option name="FIELD" value="true" />
+            <option name="METHOD" value="true" />
+            <option name="CLASS" value="true" />
+            <option name="PARAMETER" value="true" />
+            <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
+            <option name="ADD_MAINS_TO_ENTRIES" value="true" />
+            <option name="ADD_APPLET_TO_ENTRIES" value="true" />
+            <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
+            <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
+          </scope>
           <scope name="qodana.yaml.exclude.unused" level="INFORMATION" enabled="false" checkParameterExcludingHierarchy="false">
             <option name="LOCAL_VARIABLE" value="true" />
             <option name="FIELD" value="true" />
@@ -103,8 +128,22 @@ class QodanaSingleInspectionProfileTest : QodanaTestCase() {
     assertEquals("""
       <profile version="1.0">
         <option name="myName" value="qodana.effective.profile" />
-        <inspection_tool class="Annotator" enabled="true" level="ERROR" enabled_by_default="true" />
+        <inspection_tool class="Annotator" enabled="true" level="ERROR" enabled_by_default="true">
+          <scope name="qodana.yaml.exclude.embedded.qodana" level="INFORMATION" enabled="false" />
+        </inspection_tool>
         <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="true">
+          <scope name="qodana.yaml.exclude.embedded.qodana" level="INFORMATION" enabled="false" checkParameterExcludingHierarchy="false">
+            <option name="LOCAL_VARIABLE" value="true" />
+            <option name="FIELD" value="true" />
+            <option name="METHOD" value="true" />
+            <option name="CLASS" value="true" />
+            <option name="PARAMETER" value="true" />
+            <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
+            <option name="ADD_MAINS_TO_ENTRIES" value="true" />
+            <option name="ADD_APPLET_TO_ENTRIES" value="true" />
+            <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
+            <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
+          </scope>
           <scope name="qodana.yaml.exclude.unused" level="INFORMATION" enabled="false" checkParameterExcludingHierarchy="false">
             <option name="LOCAL_VARIABLE" value="true" />
             <option name="FIELD" value="true" />
@@ -140,9 +179,22 @@ class QodanaSingleInspectionProfileTest : QodanaTestCase() {
 <profile version="1.0">
   <option name="myName" value="qodana.effective.profile" />
   <inspection_tool class="Annotator" enabled="true" level="ERROR" enabled_by_default="true">
+    <scope name="qodana.yaml.exclude.embedded.qodana" level="INFORMATION" enabled="false" />
     <scope name="qodana.yaml.exclude.All" level="INFORMATION" enabled="false" />
   </inspection_tool>
   <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="true">
+    <scope name="qodana.yaml.exclude.embedded.qodana" level="INFORMATION" enabled="false" checkParameterExcludingHierarchy="false">
+      <option name="LOCAL_VARIABLE" value="true" />
+      <option name="FIELD" value="true" />
+      <option name="METHOD" value="true" />
+      <option name="CLASS" value="true" />
+      <option name="PARAMETER" value="true" />
+      <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
+      <option name="ADD_MAINS_TO_ENTRIES" value="true" />
+      <option name="ADD_APPLET_TO_ENTRIES" value="true" />
+      <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
+      <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
+    </scope>
     <scope name="qodana.yaml.exclude.All" level="INFORMATION" enabled="false" checkParameterExcludingHierarchy="false">
       <option name="LOCAL_VARIABLE" value="true" />
       <option name="FIELD" value="true" />
@@ -191,9 +243,22 @@ class QodanaSingleInspectionProfileTest : QodanaTestCase() {
   <option name="myName" value="qodana.effective.profile" />
   <inspection_tool class="Annotator" enabled="true" level="ERROR" enabled_by_default="false">
     <scope name="qodana.yaml.include.Annotator" level="ERROR" enabled="true" />
+    <scope name="qodana.yaml.exclude.embedded.qodana" level="INFORMATION" enabled="false" />
     <scope name="qodana.yaml.exclude.All" level="INFORMATION" enabled="false" />
   </inspection_tool>
   <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="true">
+    <scope name="qodana.yaml.exclude.embedded.qodana" level="INFORMATION" enabled="false" checkParameterExcludingHierarchy="false">
+      <option name="LOCAL_VARIABLE" value="true" />
+      <option name="FIELD" value="true" />
+      <option name="METHOD" value="true" />
+      <option name="CLASS" value="true" />
+      <option name="PARAMETER" value="true" />
+      <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
+      <option name="ADD_MAINS_TO_ENTRIES" value="true" />
+      <option name="ADD_APPLET_TO_ENTRIES" value="true" />
+      <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
+      <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
+    </scope>
     <scope name="qodana.yaml.exclude.All" level="INFORMATION" enabled="false" checkParameterExcludingHierarchy="false">
       <option name="LOCAL_VARIABLE" value="true" />
       <option name="FIELD" value="true" />
@@ -234,6 +299,7 @@ class QodanaSingleInspectionProfileTest : QodanaTestCase() {
       <profile version="1.0">
         <option name="myName" value="qodana.effective.profile" />
         <inspection_tool class="RedundantThrows" enabled="true" level="WARNING" enabled_by_default="true">
+          <scope name="qodana.yaml.exclude.embedded.qodana" level="INFORMATION" enabled="false" />
           <scope name="qodana.yaml.exclude.RedundantThrows" level="INFORMATION" enabled="false" />
           <scope name="qodana.yaml.exclude.All" level="INFORMATION" enabled="false" />
         </inspection_tool>

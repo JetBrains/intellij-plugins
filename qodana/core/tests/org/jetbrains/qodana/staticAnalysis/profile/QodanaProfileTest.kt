@@ -140,6 +140,17 @@ class QodanaProfileTest : QodanaTestCase() {
           <option name="REPORT_ANNOTATION_NOT_PROPAGATED_TO_OVERRIDERS" value="true" />
           <option name="REPORT_NULLS_PASSED_TO_NON_ANNOTATED_METHOD" value="true" />
         </scope>
+        <scope name="qodana.yaml.exclude.embedded.qodana" level="INFORMATION" enabled="false">
+          <option name="REPORT_NULLABLE_METHOD_OVERRIDES_NOTNULL" value="true" />
+          <option name="REPORT_NOT_ANNOTATED_METHOD_OVERRIDES_NOTNULL" value="false" />
+          <option name="REPORT_NOTNULL_PARAMETER_OVERRIDES_NULLABLE" value="true" />
+          <option name="REPORT_NOT_ANNOTATED_PARAMETER_OVERRIDES_NOTNULL" value="false" />
+          <option name="REPORT_NOT_ANNOTATED_GETTER" value="true" />
+          <option name="IGNORE_EXTERNAL_SUPER_NOTNULL" value="true" />
+          <option name="REPORT_NOT_ANNOTATED_SETTER_PARAMETER" value="true" />
+          <option name="REPORT_ANNOTATION_NOT_PROPAGATED_TO_OVERRIDERS" value="true" />
+          <option name="REPORT_NULLS_PASSED_TO_NON_ANNOTATED_METHOD" value="true" />
+        </scope>
         <option name="REPORT_NULLABLE_METHOD_OVERRIDES_NOTNULL" value="true" />
         <option name="REPORT_NOT_ANNOTATED_METHOD_OVERRIDES_NOTNULL" value="false" />
         <option name="REPORT_NOTNULL_PARAMETER_OVERRIDES_NULLABLE" value="true" />
