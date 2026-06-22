@@ -753,6 +753,13 @@
           "description": "Whether to report insufficient coverage in classes and methods as problems",
           "type": "boolean",
           "default": true
+        },
+        "codeCoverageLocations": {
+          "description": "Paths to directories that contain coverage reports to include in coverage analysis relative to project root",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

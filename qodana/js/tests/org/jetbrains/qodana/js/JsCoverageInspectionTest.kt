@@ -58,6 +58,12 @@ class JsCoverageInspectionTest: QodanaCoverageInspectionTest("JsCoverageInspecti
   }
 
   @Test
+  fun coverageFromCustomLocation() {
+    runUnderCoverDataInSources()
+    assertSarifResults()
+  }
+
+  @Test
   fun warnMissingCoverage() {
     runUnderCover("inspection-profile.xml")
     assertSarifResults()

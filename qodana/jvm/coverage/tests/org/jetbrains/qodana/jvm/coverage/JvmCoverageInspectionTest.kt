@@ -30,6 +30,18 @@ class JvmCoverageInspectionTest: QodanaCoverageInspectionTest("JvmCoverageInspec
   }
 
   @Test
+  fun coverageFromCustomLocation() {
+    runUnderCoverDataInSources()
+    assertSarifResults()
+  }
+
+  @Test
+  fun coverageFromCustomLocationXml() {
+    runUnderCoverDataInSources()
+    assertSarifResults()
+  }
+
+  @Test
   fun icWithProblemReport() {
     runUnderCover()
     assertCoverageProjectDataMatchesGolden("JavaCoverageEngine", "JavaCoverageEngine.ic")

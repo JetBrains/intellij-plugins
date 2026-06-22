@@ -53,6 +53,12 @@ class PhpCoverageInspectionTest: QodanaCoverageInspectionTest("PhpCoverageInspec
   }
 
   @Test
+  fun coverageFromCustomLocation() {
+    runUnderCoverDataInSources()
+    assertSarifResults()
+  }
+
+  @Test
   fun coverageInfoWithoutProblemReport() {
     runUnderCoverDataInSources()
     assertSarifResults()
