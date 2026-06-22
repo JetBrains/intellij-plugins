@@ -69,6 +69,7 @@
     <stubElementRegistryExtension implementation="org.intellij.plugin.mdx.js.MdxJSStubRegistryExtension"/>
     <outerLanguageRangePatcher language="MdxJS"
                                implementationClass="org.intellij.plugin.mdx.lang.psi.MdxOuterLanguagePatcher"/>
+    <lang.importOptimizer language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSImportOptimizer" order="first"/>
     <lang.inspectionSuppressor language="MDX"
                                implementationClass="org.intellij.plugin.mdx.codeInspection.MdxInspectionSuppressor"/>
     <editorFactoryListener implementation="org.intellij.plugin.mdx.js.MdxEditorFactoryListener"/>
