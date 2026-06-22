@@ -81,7 +81,7 @@
     <orderEntry type="module" module-name="intellij.libraries.netty.codec.http" />
     <orderEntry type="module" module-name="intellij.platform.vcs.dvcs.impl" />
     <orderEntry type="module" module-name="intellij.platform.vcs.dvcs.impl.shared" />
-    <orderEntry type="library" name="jline" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.jline" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module" module-name="intellij.platform.vcs.impl" />
     <orderEntry type="module" module-name="intellij.platform.vcs.log.impl" />

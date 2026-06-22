@@ -18,6 +18,7 @@
   ]]></description>
 
   <content namespace="jetbrains">
+    <module name="intellij.libraries.jline" loading="embedded"/>
     <module name="intellij.qodana.sarif" loading="embedded"/>
     <module name="intellij.qodana.json"/>
     <module name="intellij.qodana.yaml"/>
@@ -45,7 +46,6 @@
     <module name="intellij.qodana.ijVoid"/>
     <module name="intellij.qodana.inspectionKts.mcp"/>
   </content>
-
   <dependencies>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.platform.collaborationTools"/>

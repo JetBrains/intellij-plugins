@@ -82,7 +82,7 @@
     <orderEntry type="module" module-name="intellij.libraries.assertj.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.vcs.dvcs.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.vcs.dvcs.impl.shared" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="jline" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.jline" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />

@@ -59,6 +59,12 @@
   - name: $MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util-visitor/0/flexmark-util-visitor-0.jar
   - name: $MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-youtrack-converter/0/flexmark-youtrack-converter-0.jar
   reason: <- intellij.qodana
+- name: lib/intellij.libraries.jline.jar
+  contentModules:
+  - name: intellij.libraries.jline
+    libraries:
+      jline:
+      - name: $MAVEN_REPOSITORY$/org/jline/jline/3/jline-3.jar
 - name: lib/intellij.qodana.sarif.jar
   contentModules:
   - name: intellij.qodana.sarif
@@ -94,11 +100,6 @@
   library: jetbrains.qodana.web.ui
   files:
   - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/qodana-web-ui/0/qodana-web-ui-0.jar
-  reason: <- intellij.qodana
-- name: lib/jline.jar
-  library: jline
-  files:
-  - name: $MAVEN_REPOSITORY$/org/jline/jline/3/jline-3.jar
   reason: <- intellij.qodana
 - name: lib/modules/intellij.qodana.coverage.jar
   contentModules:
