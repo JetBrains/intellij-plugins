@@ -1,0 +1,9 @@
+version: "1.0"
+
+profile:
+  name: qodana.recommended
+
+coverage:
+  reportProblems: true
+  codeCoverageLocations:
+    - "../coverageFromCustomLocation/coverage"

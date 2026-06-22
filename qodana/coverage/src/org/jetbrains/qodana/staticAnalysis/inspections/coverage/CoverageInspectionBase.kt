@@ -36,6 +36,7 @@ import java.nio.file.StandardOpenOption
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.walk
 import kotlin.reflect.KClass
@@ -188,8 +189,9 @@ abstract class CoverageInspectionBase : GlobalSimpleInspectionTool() {
 
   @OptIn(ExperimentalPathApi::class)
   private fun explicitCoverageFiles(globalContext: QodanaGlobalInspectionContext): List<Path> {
-    return sequenceOf(reportsInExternalPath(), reportsInProjectPath(globalContext.project))
-      .filterNotNull()
+    val configLocations = globalContext.config.coverage.codeCoverageLocations.asSequence()
+    return (sequenceOf(reportsInExternalPath(), reportsInProjectPath(globalContext.project)).filterNotNull() + configLocations)
+      .filter { it.exists() }
       .flatMap { it.walk().filter { f -> f.isRegularFile() } }
       .toList()
   }

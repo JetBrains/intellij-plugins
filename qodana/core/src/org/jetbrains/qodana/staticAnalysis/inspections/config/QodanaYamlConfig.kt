@@ -12,7 +12,8 @@ import kotlin.io.path.exists
 import kotlin.io.path.pathString
 
 data class QodanaCoverageYamlConfig(
-  val reportProblems: Boolean = true
+  val reportProblems: Boolean = true,
+  val codeCoverageLocations: List<String> = emptyList()
 )
 
 data class QodanaYamlConfig(

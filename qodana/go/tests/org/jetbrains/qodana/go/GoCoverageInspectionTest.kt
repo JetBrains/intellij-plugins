@@ -112,6 +112,12 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
   }
 
   @Test
+  fun coverageFromCustomLocation() {
+    runUnderCoverDataInSources()
+    assertSarifResults()
+  }
+
+  @Test
   fun coverageInfoWithoutProblemReport() {
     runUnderCover()
     assertSarifResults()

@@ -83,7 +83,8 @@ data class QodanaScriptConfig(
 
 data class QodanaCoverageConfig(
   val reportProblems: Boolean = QodanaCoverageYamlConfig().reportProblems,
-  val coveragePath: Path
+  val coveragePath: Path,
+  val codeCoverageLocations: List<Path> = emptyList()
 )
 
 private val LOG = logger<QodanaConfig>()
@@ -241,7 +242,10 @@ data class QodanaConfig(
       failureConditions: FailureConditions = yaml.failureConditions,
       coverage: QodanaCoverageConfig = QodanaCoverageConfig(
         reportProblems = yaml.coverage.reportProblems,
-        coveragePath = outPath.resolve("$COVERAGE_OUTPUT_DIR/")
+        coveragePath = outPath.resolve("$COVERAGE_OUTPUT_DIR/"),
+        codeCoverageLocations = yaml.coverage.codeCoverageLocations.map {
+          projectPath.resolve(it)
+        }
       ),
       rootJavaProjects: List<Path> = yaml.rootJavaProjects,
       mavenSettingsPath: Path? = yaml.mavenSettingsPath?.let { if (it.isAbsolute) it.normalize() else projectPath.resolve(it).normalize() }
