@@ -16,7 +16,7 @@
     <orderEntry type="module" module-name="intellij.javascript.debugger" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.guava" />
     <orderEntry type="module" module-name="intellij.libraries.gson" />
-    <orderEntry type="library" name="eclipse.lsp4j" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.eclipse.lsp4j" />
     <orderEntry type="module" module-name="intellij.platform.analysis" />
     <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.platform.editor.ui" />

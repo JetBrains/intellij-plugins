@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="TEST" name="eclipse.lsp4j.jsonrpc" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.eclipse.lsp4j.jsonrpc" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core.nolang" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.core" scope="TEST" />

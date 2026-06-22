@@ -21,7 +21,7 @@ jvm_library(
     visibility = ["//visibility:public"],
     deps = [
         # do not sort,
-        "@lib//:eclipse-lsp4j-jsonrpc",
+        "@community//libraries/lsp4j/jsonrpc",
         "//CIDR/cidr-core",
         "//CIDR/cidr-debugger/backend-api:cidr-debugger-backend",
         "//CIDR/cidr-debugger/core",
@@ -89,6 +89,7 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         ":platformio",
+        "@community//libraries/lsp4j/jsonrpc:jsonrpc_test_lib",
         "//CIDR/cidr-common-testFramework/core",
         "//CIDR/cidr-common-testFramework/core:core_test_lib",
         "//CIDR/cidr-common-testFramework/nolang",
@@ -208,7 +209,8 @@ jvm_library(
     ],
     deps = [
         # do not sort,
-        "@lib//:eclipse-lsp4j-jsonrpc",
+        "@community//libraries/lsp4j/jsonrpc",
+        "@community//libraries/lsp4j/jsonrpc:jsonrpc_test_lib",
         "//CIDR/cidr-common-testFramework/core",
         "//CIDR/cidr-common-testFramework/core:core_test_lib",
         "//CIDR/cidr-common-testFramework/nolang",

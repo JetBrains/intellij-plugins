@@ -18,15 +18,16 @@
 
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
+    <module name="intellij.javascript.debugger.backend"/>
+    <module name="intellij.javascript.parser"/>
     <plugin id="JavaScript"/>
     <plugin id="JavaScriptDebugger"/>
     <plugin id="com.intellij.modules.ultimate"/>
     <module name="intellij.javascript.analysis.impl"/>
     <module name="intellij.javascript.backend"/>
-    <module name="intellij.javascript.debugger.backend"/>
-    <module name="intellij.javascript.parser"/>
     <module name="intellij.javascript.psi.impl"/>
     <module name="intellij.json"/>
+    <module name="intellij.libraries.eclipse.lsp4j"/>
   </dependencies>
   <!-- endregion -->
   <resource-bundle>messages.DenoBundle</resource-bundle>
