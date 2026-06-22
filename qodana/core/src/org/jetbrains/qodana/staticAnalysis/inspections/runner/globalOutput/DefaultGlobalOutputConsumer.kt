@@ -1,11 +1,13 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput
 
+import com.intellij.codeInspection.ex.GlobalInspectionContextBase
 import com.intellij.openapi.project.Project
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.Problem
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.XmlProblem
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.GlobalOutputConsumer.Companion.consumeOutputXmlFile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintDebugLog
 import java.nio.file.Path
 
 /**
@@ -22,7 +24,12 @@ class DefaultGlobalOutputConsumer : GlobalOutputConsumer {
   ) {
     for (path in paths) {
       consumeOutputXmlFile(path) { inspectionId, root ->
-        consumer(root.getChildren("problem").map { XmlProblem(it) }, inspectionId)
+        val problems = root.getChildren("problem")
+        StructuralFingerprintDebugLog.log(
+          "DefaultGlobalOutputConsumer.consumeOwnedFiles path=$path, inspection=$inspectionId, " +
+          "localTool=${root.getAttributeValue(GlobalInspectionContextBase.LOCAL_TOOL_ATTRIBUTE)}, problems=${problems.size}"
+        )
+        consumer(problems.map { XmlProblem(it) }, inspectionId)
       }
     }
   }

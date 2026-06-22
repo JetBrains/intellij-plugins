@@ -14,6 +14,8 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.VULNERABLE_LIBRARIES_INSPECTION_ID
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV2
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintDebugLog
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.structuralFingerprintDebugSummary
 
 private val LOG = logger<QodanaToolResultDatabase>()
 private val GSON = SarifUtil.createGson()
@@ -86,6 +88,14 @@ private fun processSameHash(resultJsons: List<String>): Result? {
   }
 
   val uniqueTags = uniqueResults.flatMap { it.getOrAssignProperties().tags }.distinct()
+  StructuralFingerprintDebugLog.log(
+    "resultsFlowByGroup.sameHash results=${results.size}, unique=${uniqueResults.size}, " +
+    "candidates=${
+      uniqueResults.joinToString { result ->
+        "${result.ruleId}:score=${result.fingerprintMetadataScore()}:${result.structuralFingerprintDebugSummary()}"
+      }
+    }"
+  )
   val resultToSubmit = uniqueResults.minWithOrNull(
     compareByDescending<Result> { it.fingerprintMetadataScore() }.thenBy { it.hashCode() }
   )!!.apply {
@@ -94,6 +104,10 @@ private fun processSameHash(resultJsons: List<String>): Result? {
     val properties = this.getOrAssignProperties()
     uniqueTags.filter { !properties.tags.contains(it) }.forEach { properties.tags.add(it) }
   }
+  StructuralFingerprintDebugLog.log(
+    "resultsFlowByGroup.sameHash.selected ruleId=${resultToSubmit.ruleId}, " +
+    "score=${resultToSubmit.fingerprintMetadataScore()}, ${resultToSubmit.structuralFingerprintDebugSummary()}"
+  )
   return resultToSubmit
 }
 

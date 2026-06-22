@@ -11,15 +11,18 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderEx
 import com.intellij.platform.util.coroutines.childScope
+import com.intellij.psi.PsiElement
 import kotlinx.coroutines.CoroutineScope
 import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.problemDescriptors.MetricCodeDescriptor
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.GlobalOutputConsumer
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile.QodanaProfileState
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintDebugLog
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.DomProblemFingerprintPsiResolver
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.FingerprintSource
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiFingerprintData
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiFingerprintDataExtractor
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.structuralSignalsDebugSummary
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -56,8 +59,16 @@ class QodanaProblemConsumer(
     }
 
     val userData = descriptor as? UserDataHolderEx
-    val fingerprintData = getFingerprintData(descriptor)
+    var descriptorPsiSummary = "<not ProblemDescriptorBase>"
+    val fingerprintData = getFingerprintData(descriptor) { descriptorPsiSummary = it }
     logDomFingerprintFallbackIfNeeded(fingerprintData)
+    StructuralFingerprintDebugLog.log(
+      "QodanaProblemConsumer.consume inspection=${toolWrapper.shortName}, " +
+      "descriptor=${descriptor.javaClass.name}, descriptorPsi=$descriptorPsiSummary, " +
+      "fingerprintData=${fingerprintData != null}, source=${fingerprintData?.source}, " +
+      "signals=${fingerprintData?.structuralSignals?.structuralSignalsDebugSummary() ?: "<none>"}, " +
+      "additionalFingerprintData=${fingerprintData?.additionalFingerprintData?.isEmpty() == false}"
+    )
 
     val problem = XmlProblem(
       element,
@@ -70,9 +81,12 @@ class QodanaProblemConsumer(
     consume(listOf(problem), toolWrapper.shortName)
   }
 
-  private fun getFingerprintData(descriptor: CommonProblemDescriptor): PsiFingerprintData? {
+  private fun getFingerprintData(descriptor: CommonProblemDescriptor, onDescriptorPsi: (String) -> Unit): PsiFingerprintData? {
     return runReadActionBlocking {
-      (descriptor as? ProblemDescriptorBase)?.psiElement?.takeIf { it.isValid }?.let { psiElement ->
+      val descriptorPsi = (descriptor as? ProblemDescriptorBase)?.let { baseDescriptor ->
+        baseDescriptor.psiElement.also { onDescriptorPsi(it?.debugSummary() ?: "<null>") }
+      }
+      descriptorPsi?.takeIf { it.isValid }?.let { psiElement ->
         PsiFingerprintDataExtractor.extract(psiElement, FingerprintSource.PROBLEM_DESCRIPTOR_PSI)
       } ?: DomProblemFingerprintPsiResolver.resolve(descriptor)?.takeIf { it.isValid }?.let { psiElement ->
         PsiFingerprintDataExtractor.extract(psiElement, FingerprintSource.DOM_PROBLEM_DESCRIPTOR)
@@ -120,4 +134,7 @@ class QodanaProblemConsumer(
     writer.close()
     databaseMetricWriter.close()
   }
+
+  private fun PsiElement.debugSummary(): String =
+    "${javaClass.name}(language=${language.id}, valid=$isValid, textRange=$textRange)"
 }

@@ -19,8 +19,10 @@ import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_HAS_FIXES
 import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_CHILD_HASH_PROP
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_ROOT_HASH_PROP
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintDebugLog
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.addStructuralFingerprints
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiFingerprintData
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.structuralFingerprintDebugSummary
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 
 private val LOG = logger<XmlProblem>()
@@ -70,7 +72,13 @@ internal class XmlProblem(
         }
         else -> result.getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.REGULAR
       }
-    }.also { sarif -> fingerprintData?.structuralSignals?.let { sarif.addStructuralFingerprints(it) } }
+    }.also { result ->
+      fingerprintData?.structuralSignals?.let { result.addStructuralFingerprints(it) }
+      StructuralFingerprintDebugLog.log(
+        "XmlProblem.getSarif ruleId=${result.ruleId}, file=${getFile()}, module=${getModule()}, " +
+        "fingerprintData=${fingerprintData != null}, ${result.structuralFingerprintDebugSummary()}"
+      )
+    }
   }
 
   override fun getFile(): String? = element.getChildText("file")
