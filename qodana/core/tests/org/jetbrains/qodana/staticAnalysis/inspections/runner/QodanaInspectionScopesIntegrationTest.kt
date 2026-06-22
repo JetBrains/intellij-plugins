@@ -209,6 +209,15 @@ class QodanaInspectionScopesIntegrationTest : QodanaTestCase() {
     assertContainsElements(nonIgnoredWrappers.map { it.shortName }, *inspections)
   }
 
+  @Test
+  fun `exclude qodana output directory`() {
+    val inspections = arrayOf("UNUSED_IMPORT", "HardCodedStringLiteral", "JavaReflectionInvocation")
+    val wrappersByFile = provideTest(inspectionsInProfile = inspections)
+
+    assertEmpty(wrappersByFile(dummyPsiFile(".qodana")))
+    assertContainsElements(wrappersByFile(dummyPsiFile()).map { it.shortName }, *inspections)
+  }
+
   private fun provideTest(
     excludedInspections: Map<String, List<String>> = emptyMap(),
     includedInspections: Map<String, List<String>> = emptyMap(),
