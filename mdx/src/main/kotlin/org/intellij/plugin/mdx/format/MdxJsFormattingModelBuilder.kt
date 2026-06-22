@@ -39,6 +39,10 @@ internal class MdxJsFormattingModelBuilder : JavascriptFormattingModelBuilder() 
         return if (newlineProhibitedBefore(tag)) WrapType.NONE else super.getWrappingTypeForTagBegin(tag)
       }
 
+      override fun getWrappingTypeForTagEnd(xmlTag: XmlTag): WrapType {
+        return if (xmlTag.subTags.isNotEmpty() && !isInlineTag(xmlTag)) WrapType.ALWAYS else super.getWrappingTypeForTagEnd(xmlTag)
+      }
+
       override fun indentChildrenOf(parentTag: XmlTag): Boolean {
         return if (parentTag != null && parentTag.name.isEmpty()) true else super.indentChildrenOf(parentTag)
       }
