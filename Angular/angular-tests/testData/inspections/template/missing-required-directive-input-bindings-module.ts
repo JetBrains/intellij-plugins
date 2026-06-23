@@ -8,7 +8,9 @@ import {FooBarDirective} from "./foo-bar.directive";
    templateUrl: "./missing-required-directive-input-bindings.html"
  })
 class TheComponent {
+  trackByFn() {
 
+  }
 }
 
 @NgModule({

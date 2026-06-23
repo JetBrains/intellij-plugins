@@ -37,7 +37,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
            ANGULAR_CORE_16_2_8)
 
   @Test
-  @SkipTsGoProxy
+  @SkipTsGoProxy // Caused by WEB-78250
   @Ignore("Caused by WEB-78250")
   fun testBooleanTransformBinding() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "booleanAttribute"),
@@ -49,7 +49,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
            ANGULAR_CORE_16_2_8)
 
   @Test
-  @SkipTsGoProxy
+  @SkipTsGoProxy // Caused by WEB-78250
   @Ignore("Caused by WEB-78250")
   fun testNumberTransformBinding() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "numberAttribute"),
@@ -81,7 +81,6 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
                      ANGULAR_CORE_16_2_8)
 
   @Test
-  @SkipTsGoProxy
   fun testCreateObservablePropertyFromUsage() =
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1, checkCodeCompletion = true, checkIntentionPreview = false)
@@ -324,7 +323,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
       }
       if (checkCodeCompletion) {
         checkListByFile(renderLookupItems(false, false),
-                        if (dir) "${testName}/items.txt" else "${testName}.items.txt", false)
+                        if (dir) "${testName}/items.txt" else getGoldFileName("${testName}.items.txt", "txt"), false)
         type("\n")
       }
     }

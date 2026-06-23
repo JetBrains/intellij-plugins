@@ -1,8 +1,8 @@
 <ng-template ngFor let-item let-i="index" [ngForTrackBy]="trackByFn" [ngForOf]="<caret>">
-
+  {{item}}{{i}}
 </ng-template>
 
-<div *ngFor="let item"></div>
+<div *ngFor="let item">{{item}}</div>
 
 <div appFooBar></div>
 

@@ -227,7 +227,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   }
 
   @Test
-  @SkipTsGoProxy
+  @SkipTsGoProxy // missing unresolved symbol
   fun testBlockDefer() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
 
   @Test
@@ -600,7 +600,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts", checkSymbolNames = true)
 
   @Test
-  @SkipTsGoProxy
   fun testNewAngularAnimationBindings() =
     checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts", checkSymbolNames = true)
 
