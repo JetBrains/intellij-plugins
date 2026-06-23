@@ -694,7 +694,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkInjections: Boolean = false,
     strictTemplates: Boolean = false,
     extension: String = "html",
-    configureFileName: String = "$testName.$extension",
+    configureFileName: String = getDefaultConfigureFileName(extension),
     checkSymbolNames: Boolean = false,
     checkInformation: Boolean = checkSymbolNames,
     checkWarnings: Boolean = true,
