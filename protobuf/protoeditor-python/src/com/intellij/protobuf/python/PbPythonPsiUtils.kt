@@ -40,14 +40,19 @@ internal object PbPythonPsiUtils {
     val resolvedImportElement = refExpr.parent as? PyImportElement
                                 ?: PyResolveUtil.resolveLocally(refExpr).firstNotNullOfOrNull { it as? PyImportElement }
     if (resolvedImportElement != null) {
-      val sourceFile = resolvedImportElement.multiResolve()
-        .firstNotNullOfOrNull { it.element as? PyFile }
-      if (sourceFile != null) {
-        return listOf(sourceFile to QualifiedName.fromComponents())
+      // Cheap syntactic gate: only generated `_pb2`/`_pb` modules can hold protobuf types.
+      // Done before any resolve so ordinary imports skip the expensive import resolution below.
+      if (isProtobufModuleName(resolvedImportElement.importedQName)) {
+        val sourceFile = resolvedImportElement.multiResolve()
+          .firstNotNullOfOrNull { it.element as? PyFile }
+        if (sourceFile != null) {
+          return listOf(sourceFile to QualifiedName.fromComponents())
+        }
       }
 
       val importStatement = resolvedImportElement.containingImportStatement
       if (importStatement is PyFromImportStatement) {
+        if (!isProtobufModuleName(importStatement.importSourceQName)) return emptyList()
         val importSource = importStatement.importSource
         val sourceFile = importSource?.reference?.resolve() as? PyFile ?: return emptyList()
         val localQn = resolvedImportElement.importedQName ?: return emptyList()
@@ -64,11 +69,22 @@ internal object PbPythonPsiUtils {
       return containingFile.fromImports
         .asSequence()
         .filter { it.isStarImport }
+        .filter { isProtobufModuleName(it.importSourceQName) }
         .mapNotNull { it.importSource?.reference?.resolve() as? PyFile }
         .map { it to QualifiedName.fromComponents(name) }
         .toList()
     }
 
     return emptyList()
+  }
+
+  /**
+   * Cheap syntactic check whether [qName] refers to a generated protobuf module (`*_pb2` / `*_pb`),
+   * performed without resolving the reference so that ordinary imports skip the expensive import
+   * resolution in [decomposeReference].
+   */
+  private fun isProtobufModuleName(qName: QualifiedName?): Boolean {
+    val baseName = qName?.lastComponent ?: return false
+    return PbPythonSourceContext.ApiVersion.fromFileName(baseName) != null
   }
 }
