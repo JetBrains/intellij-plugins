@@ -18,6 +18,7 @@ import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.SkipTsGoProxy
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.inspections.AngularInvalidTemplateReferenceVariableInspection
@@ -32,7 +33,7 @@ import java.io.IOException
  * Also tests completion InsertHandlers.
  */
 @TestTsNode
-//@TestTsGoProxy
+@TestTsGoProxy
 class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngModuleImport") {
 
   @Test
@@ -66,6 +67,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
+  @SkipTsGoProxy // runs forever
   fun testNgClassCompletion() {
     doCompletionTest("angular-commons",
                      "test.html",
@@ -214,6 +216,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
+  @SkipTsGoProxy // runs forever
   fun testFormsModuleCompletion1() {
     doCompletionTest("formsModule",
                      "test.html",
@@ -223,6 +226,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
+  @SkipTsGoProxy // runs forever
   fun testFormsModuleCompletion2() {
     doCompletionTest("formsModule",
                      "test.html",
@@ -232,6 +236,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
+  @SkipTsGoProxy // runs forever
   fun testFormsModuleCompletion3() {
     doCompletionTest("formsModule",
                      "test.html",
@@ -241,6 +246,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
+  @SkipTsGoProxy // runs forever
   fun testFormsModuleCompletion4() {
     doCompletionTest("formsModule",
                      "test.html",
@@ -268,6 +274,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
+  @SkipTsGoProxy // runs forever
   fun testReactiveFormsModuleCompletion1() {
     doCompletionTest("reactiveFormsModule",
                      "test.html",
@@ -277,6 +284,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
+  @SkipTsGoProxy // runs forever
   fun testReactiveFormsModuleCompletion2() {
     doCompletionTest("reactiveFormsModule",
                      "test.html",
@@ -286,6 +294,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
+  @SkipTsGoProxy // close() cannot be called for files that haven't been opened.
   fun testLocalLib() {
     doMultiFileTest("src/app/app.component.html",
                     "Import MyLibModule") {
