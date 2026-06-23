@@ -41,7 +41,6 @@ import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.containers.ContainerUtil.emptyList
 import com.intellij.util.containers.ContainerUtil.map2SetNotNull
 import com.intellij.util.containers.MultiMap
-import com.intellij.util.containers.mapValues
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -160,6 +159,16 @@ object Angular2FixesFactory {
         }
       }
     }
+  }
+
+  private inline fun <K, V, R> MultiMap<out K, V>.mapValues(transform: (Pair<K, V>) -> R): MultiMap<K, R> {
+    val destination = MultiMap.createLinked<K, R>()
+    for ((key, value) in this.entrySet()) {
+      for (value in value) {
+        destination.putValue(key, transform(key to value))
+      }
+    }
+    return destination
   }
 
   @JvmStatic
