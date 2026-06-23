@@ -210,7 +210,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
                                                     extension = "ts", strictTemplates = true)
 
   @Test
-  @SkipTsGoProxy
   fun testSignalsColors() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8,
                                               extension = "ts", strictTemplates = true, checkSymbolNames = true)
 
@@ -432,12 +431,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
 
   @Test
-  @SkipTsGoProxy
   fun testHostBindingsSyntax() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
 
   @Test
-  @SkipTsGoProxy
   fun testDirectiveSelectorsSyntax() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
 
@@ -478,12 +475,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_18_2_1, extension = "ts")
 
   @Test
-  @SkipTsGoProxy
   fun testViewChildrenSignalSyntax() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts", checkSymbolNames = true)
 
   @Test
-  @SkipTsGoProxy
   fun testReferenceOnTagWithTemplateBindings() =
     checkHighlighting(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1, extension = "ts")
 
@@ -532,7 +527,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
 
   @Test
-  @SkipTsGoProxy
   fun testCreateComponentBindings() =
     checkHighlighting(ANGULAR_CORE_20_0_0_NEXT_3, extension = "ts")
 
@@ -603,7 +597,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_20_1_4, extension = "html", dir = true)
 
   @Test
-  @SkipTsGoProxy
   fun testNewAngularAnimationAttributes() =
     checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts", checkSymbolNames = true)
 
@@ -635,7 +628,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_20_1_4, extension = "ts")
 
   @Test
-  @SkipTsGoProxy
   fun testListenerInNestedIfBlocks() =
     checkHighlighting(ANGULAR_CORE_20_1_4, extension = "ts")
 
