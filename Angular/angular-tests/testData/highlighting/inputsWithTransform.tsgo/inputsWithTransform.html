@@ -1,0 +1,51 @@
+<app-test
+        [nope]="'true'"
+        [alsoNo]="'true'"
+        [strict]="'true'"
+        [obj]="{foo: 12}"
+></app-test>
+<app-test
+        [nope]="'false'"
+        [alsoNo]="'false'"
+        [strict]="'false'"
+        [obj]="{foo: 12, <error descr="TS2353: Object literal may only specify known properties, and 'bar' does not exist in type '{ foo: number; }'.">bar</error>: 13}"
+        [obj_virtual]="{foo: 12, <error descr="TS2353: Object literal may only specify known properties, and 'bar' does not exist in type '{ foo: number; }'.">bar</error>: 13}"
+></app-test>
+<app-test
+        [nope]="'foo'"
+        [alsoNo]="'foo'"
+        <error descr="TS2322: Type '\"foo\"' is not assignable to type '\"false\" | \"true\"'.">[strict]</error>="'foo'"
+        [obj]="{<error descr="TS2353: Object literal may only specify known properties, and 'bar' does not exist in type '{ foo: number; }'.">bar</error>: 13}"
+></app-test>
+<app-test
+        [nope]="true"
+        <error descr="TS2322: Type 'boolean' is not assignable to type 'string'.">[alsoNo]</error>="true"
+        <error descr="TS2322: Type 'true' is not assignable to type '\"false\" | \"true\"'.">[strict]</error>="true"
+></app-test>
+<app-test
+        [nope]="false"
+        <error descr="TS2322: Type 'boolean' is not assignable to type 'string'.">[alsoNo]</error>="false"
+        <error descr="TS2322: Type 'false' is not assignable to type '\"false\" | \"true\"'.">[strict]</error>="false"
+></app-test>
+<app-test
+        [nope]="null"
+        <error descr="TS2322: Type 'null' is not assignable to type 'string'.">[alsoNo]</error>="null"
+        <error descr="TS2322: Type 'null' is not assignable to type '\"false\" | \"true\"'.">[strict]</error>="null"
+        <error descr="TS2322: Type 'null' is not assignable to type '{ foo: number; }'.">[obj]</error>="null"
+></app-test>
+<app-test
+        nope="true"
+        alsoNo="true"
+        strict="true"
+        <error descr="TS2322: Type 'string' is not assignable to type '{ foo: number; }'.">obj</error>="null"
+></app-test>
+<app-test
+        nope="false"
+        alsoNo="false"
+        strict="false"
+></app-test>
+<app-test
+        nope="foo"
+        alsoNo="foo"
+        <error descr="TS2322: Type '\"foo\"' is not assignable to type '\"false\" | \"true\"'.">strict</error>=<warning descr="foo is not a valid value for strict. Expected: false or true">"foo"</warning>
+></app-test>
