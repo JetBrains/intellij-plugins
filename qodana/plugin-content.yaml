@@ -110,9 +110,6 @@
 - name: lib/modules/intellij.qodana.go.jar
   contentModules:
   - name: intellij.qodana.go
-- name: lib/modules/intellij.qodana.poly.jar
-  contentModules:
-  - name: intellij.qodana.poly
 - name: lib/modules/intellij.qodana.inspectionKts.jar
   contentModules:
   - name: intellij.qodana.inspectionKts
@@ -161,6 +158,9 @@
 - name: lib/modules/intellij.qodana.php.jar
   contentModules:
   - name: intellij.qodana.php
+- name: lib/modules/intellij.qodana.poly.jar
+  contentModules:
+  - name: intellij.qodana.poly
 - name: lib/modules/intellij.qodana.python.community.jar
   contentModules:
   - name: intellij.qodana.python.community
