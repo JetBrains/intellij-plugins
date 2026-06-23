@@ -6,12 +6,13 @@ import com.intellij.testFramework.UsefulTestCase
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
+import org.angular2.SkipTsGoProxy
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.junit.Test
 
 @TestTsNode
-//@TestTsGoProxy
+@TestTsGoProxy
 class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractComponent") {
 
   // TODO WEB-67260 - fails on server
@@ -20,6 +21,7 @@ class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractCompon
   }
 
   @Test
+  @SkipTsGoProxy // invalid line
   fun testSingleElementSingleLine() {
     doMultiFileTest()
   }
@@ -30,16 +32,19 @@ class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractCompon
   }
 
   @Test
+  @SkipTsGoProxy // invalid line
   fun testNoElement() {
     doMultiFileTest()
   }
 
   @Test
+  @SkipTsGoProxy // invalid line
   fun testNameClashes() {
     doMultiFileTest()
   }
 
   @Test
+  @SkipTsGoProxy // invalid line
   fun testExtractFromInlineTemplate() {
     doMultiFileTest("src/app/app.component.ts")
   }
