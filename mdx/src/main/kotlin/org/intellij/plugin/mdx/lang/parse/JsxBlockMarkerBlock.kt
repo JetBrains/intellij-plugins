@@ -155,7 +155,7 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
           emptyList()
         }
         else {
-          MdxJsxScanner.createElementNodes(element, MdxElementTypes.MDX_JSX_FLOW_ELEMENT)
+          MdxJsxScanner.createFlowElementNodes(source, element)
         }
       }
       MdxBlockKind.ESM -> {

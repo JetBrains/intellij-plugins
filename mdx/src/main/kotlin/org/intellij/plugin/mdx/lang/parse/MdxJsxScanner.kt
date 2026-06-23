@@ -1,6 +1,7 @@
 package org.intellij.plugin.mdx.lang.parse
 
 import org.intellij.markdown.IElementType
+import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 
 internal object MdxJsxScanner {
@@ -253,6 +254,20 @@ internal object MdxJsxScanner {
     return nodes
   }
 
+  fun createFlowElementNodes(text: CharSequence,
+                             element: Element,
+                             shift: Int = 0,
+                             includeRoot: Boolean = true): List<SequentialParser.Node> {
+    val nodes = createElementNodes(element, MdxElementTypes.MDX_JSX_FLOW_ELEMENT, shift, includeRoot = false).toMutableList()
+    flowChildParagraphRange(text, element)?.let {
+      nodes.add(SequentialParser.Node(it.shiftRight(shift), MarkdownElementTypes.PARAGRAPH))
+    }
+    if (includeRoot) {
+      nodes.add(SequentialParser.Node(element.range.shiftRight(shift), MdxElementTypes.MDX_JSX_FLOW_ELEMENT))
+    }
+    return nodes
+  }
+
   fun createEsmNodes(block: EsmBlock, shift: Int = 0, includeRoot: Boolean = true): List<SequentialParser.Node> {
     return buildList {
       add(SequentialParser.Node(block.range.shiftRight(shift), MdxTokenTypes.JSX_BLOCK_CONTENT))
@@ -277,6 +292,60 @@ internal object MdxJsxScanner {
     if (range.first < range.last) {
       add(SequentialParser.Node(range.shiftRight(shift), MdxTokenTypes.JSX_BLOCK_CONTENT))
     }
+  }
+
+  private fun flowChildParagraphRange(text: CharSequence, element: Element): IntRange? {
+    val opening = element.tags.firstOrNull() ?: return null
+    val closing = element.tags.lastOrNull() ?: return null
+    if (opening.kind == TagKind.SELF_CLOSING || closing.kind != TagKind.CLOSING) {
+      return null
+    }
+
+    val contentStart = opening.range.last
+    val contentEnd = closing.range.first
+    if (contentStart >= contentEnd) {
+      return null
+    }
+
+    val firstLineEnd = lineEnd(text, contentStart, contentEnd)
+    if (text.subSequence(contentStart, firstLineEnd).isBlank()) {
+      return null
+    }
+
+    val paragraphEnd = trimTrailingWhitespace(text, contentStart, firstBlankLineStart(text, firstLineEnd, contentEnd) ?: contentEnd)
+    return if (contentStart < paragraphEnd) contentStart..paragraphEnd else null
+  }
+
+  private fun firstBlankLineStart(text: CharSequence, firstLineEnd: Int, limit: Int): Int? {
+    var lineStart = nextLineStart(text, firstLineEnd, limit)
+    while (lineStart < limit) {
+      val lineEnd = lineEnd(text, lineStart, limit)
+      if (text.subSequence(lineStart, lineEnd).isBlank()) {
+        return lineStart
+      }
+      lineStart = nextLineStart(text, lineEnd, limit)
+    }
+    return null
+  }
+
+  private fun lineEnd(text: CharSequence, start: Int, limit: Int): Int {
+    var offset = start
+    while (offset < limit && text[offset] != '\n') {
+      offset++
+    }
+    return offset
+  }
+
+  private fun nextLineStart(text: CharSequence, lineEnd: Int, limit: Int): Int {
+    return if (lineEnd < limit && text[lineEnd] == '\n') lineEnd + 1 else limit
+  }
+
+  private fun trimTrailingWhitespace(text: CharSequence, start: Int, end: Int): Int {
+    var offset = end
+    while (offset > start && text[offset - 1].isWhitespace()) {
+      offset--
+    }
+    return offset
   }
 
   private fun parseTag(text: CharSequence, start: Int, limit: Int): Tag? {

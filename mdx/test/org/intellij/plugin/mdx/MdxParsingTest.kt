@@ -83,6 +83,11 @@ class MdxParsingTest : ParsingTestCase(
   }
 
   @Test
+  fun testParsingFlowJsxMarkdown() {
+    doTest(true)
+  }
+
+  @Test
   fun testParsingEmbedded() {
     doTest(true)
   }

@@ -29,7 +29,7 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
         if (element != null && element.balanced && localText.subSequence(element.range.last, localText.length).isBlank()) {
           ImmediateBlock(
             MdxElementTypes.MDX_JSX_FLOW_ELEMENT,
-            MdxJsxScanner.createElementNodes(element, MdxElementTypes.MDX_JSX_FLOW_ELEMENT, absoluteStart, includeRoot = false),
+            MdxJsxScanner.createFlowElementNodes(localText, element, absoluteStart, includeRoot = false),
           )
         }
         else null
