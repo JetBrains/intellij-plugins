@@ -6,6 +6,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule.ANGULAR_COMMON_18_2_1
 import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
 import org.angular2.Angular2TestModule.ANGULAR_CORE_19_2_0
+import org.angular2.Angular2TsConfigFile
 import org.angular2.SkipTsGoProxy
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
@@ -24,31 +25,32 @@ class Angular2ParameterInfoTest : Angular2TestCase("parameterInfo") {
   @Test
   @SkipTsGoProxy
   fun testPipe() =
-    doParameterInfoTest(extension = "ts")
+    doParameterInfoTest(extension = "ts",
+                        configurators = listOf(Angular2TsConfigFile()))
 
   @Test
-  @SkipTsGoProxy
   fun testTemplateBindingsNgIfEmpty() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
-                        extension = "ts")
+                        extension = "ts",
+                        configurators = listOf(Angular2TsConfigFile(strictNullChecks = false)))
 
   @Test
-  @SkipTsGoProxy
   fun testTemplateBindingsNgIf1() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
-                        extension = "ts")
+                        extension = "ts",
+                        configurators = listOf(Angular2TsConfigFile(strictNullChecks = false)))
 
   @Test
-  @SkipTsGoProxy
   fun testTemplateBindingsNgIf2() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
-                        extension = "ts")
+                        extension = "ts",
+                        configurators = listOf(Angular2TsConfigFile(strictNullChecks = false)))
 
   @Test
-  @SkipTsGoProxy
   fun testTemplateBindingsNgIf3() =
     doParameterInfoTest(ANGULAR_CORE_18_2_1, ANGULAR_COMMON_18_2_1,
-                        extension = "ts")
+                        extension = "ts",
+                        configurators = listOf(Angular2TsConfigFile(strictNullChecks = false)))
 
   @Test
   fun testForBlock1() =
