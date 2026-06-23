@@ -21,6 +21,7 @@ fun getQodanaProductName(): String {
     "QDRUBY" -> "Qodana for Ruby"
     "QDNET" -> "Qodana for .NET"
     "QDCPP" -> "Qodana for C/C++"
+    "QDPOLY" -> "Qodana Poly"
     "IJCA" -> "Qodana Deprecated common"
     else -> "Qodana"
   }
