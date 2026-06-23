@@ -1,6 +1,7 @@
 package org.angular2.web.scopes
 
 import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
@@ -109,9 +110,11 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey) :
         ?.sourceDirectives
       if (directives == null) return emptyList()
       val templateName = templateBindings.templateName
-      return directives
-        .flatMap { it.inputs }
-        .filter { it.name == templateName || isTemplateBindingDirectiveInput(it.name, templateName) }
+      return JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(templateBindings) {
+        directives
+          .flatMap { it.inputs }
+          .filter { it.name == templateName || isTemplateBindingDirectiveInput(it.name, templateName) }
+      }
     }
 
   }
