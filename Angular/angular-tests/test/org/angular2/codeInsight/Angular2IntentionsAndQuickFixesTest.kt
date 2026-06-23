@@ -305,7 +305,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
     extension: String = defaultExtension,
-    configureFileName: String = "$testName.$extension",
+    configureFileName: String = getDefaultConfigureFileName(extension),
     checkIntentionPreview: Boolean = true,
     checkCodeCompletion: Boolean = false,
   ) {

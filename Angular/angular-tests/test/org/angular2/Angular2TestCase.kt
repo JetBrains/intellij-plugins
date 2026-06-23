@@ -176,7 +176,7 @@ abstract class Angular2TestCase(
     quickFixName: String,
     dir: Boolean = false,
     extension: String = "ts",
-    configureFileName: String = "$testName.$extension",
+    configureFileName: String = getDefaultConfigureFileName(extension),
     inspections: Collection<Class<out LocalInspectionTool>> = emptyList(),
   ) = doConfiguredTest(*modules, dir = dir, extension = extension, configureFileName = configureFileName, checkResult = true) {
     enableInspections(inspections)
