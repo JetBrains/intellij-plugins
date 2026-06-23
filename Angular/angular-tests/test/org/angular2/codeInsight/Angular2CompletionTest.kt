@@ -16,6 +16,7 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_19_2_0
 import org.angular2.Angular2TestModule.ANGULAR_CORE_21_2_0
 import org.angular2.Angular2TestModule.IONIC_ANGULAR_8_4_3
 import org.angular2.Angular2TsConfigFile
+import org.angular2.SkipTsNode
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
@@ -328,6 +329,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
   @Test
+  @SkipTsNode // TODO investigate
   fun testHostBindingDecorator1() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 

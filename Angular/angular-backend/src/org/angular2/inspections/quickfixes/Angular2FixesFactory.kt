@@ -13,6 +13,7 @@ import com.intellij.lang.ecmascript6.psi.impl.TypeScriptImportPathBuilder
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
 import com.intellij.lang.javascript.ecmascript6.ES6QualifiedNamedElementRenderer
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
 import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType
@@ -284,9 +285,11 @@ object Angular2FixesFactory {
       }
     }
 
-    declarationProcessor(provider)
-    if (declarations.isEmpty() && codeCompletion && secondaryProvider != null) {
-      declarationProcessor(secondaryProvider)
+    JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) {
+      declarationProcessor(provider)
+      if (declarations.isEmpty() && codeCompletion && secondaryProvider != null) {
+        declarationProcessor(secondaryProvider)
+      }
     }
 
     val result = MultiMap<DeclarationProximity, Angular2Declaration>()
