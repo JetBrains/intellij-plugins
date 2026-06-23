@@ -23,7 +23,7 @@ class Angular2ParameterInfoTest : Angular2TestCase("parameterInfo") {
   }
 
   @Test
-  @SkipTsGoProxy
+  @SkipTsGoProxy // missing parameter info
   fun testPipe() =
     doParameterInfoTest(extension = "ts",
                         configurators = listOf(Angular2TsConfigFile()))

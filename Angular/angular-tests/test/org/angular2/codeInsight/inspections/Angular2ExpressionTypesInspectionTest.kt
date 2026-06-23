@@ -50,7 +50,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
                        configureFileName = "generics.html")
 
   @Test
-  @SkipTsGoProxy
+  @SkipTsGoProxy // duplicated error
   fun testGenericsValidationStrict() =
     doHighlightingTest(Angular2TestModule.TS_LIB,
                        Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
