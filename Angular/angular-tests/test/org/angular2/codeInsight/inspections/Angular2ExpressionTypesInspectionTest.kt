@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.inspections
 
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
@@ -31,7 +30,6 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
     )
 
   @Test
-  @SkipTsGoProxy
   fun testExpressions() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
                        Angular2TestModule.ANGULAR_FORMS_16_2_8, Angular2TestModule.RXJS_7_8_1,
@@ -94,7 +92,6 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
     checkHighlightingNg15()
 
   @Test
-  @SkipTsGoProxy
   fun testNgIfAsContextGuardRemovesFalsy() =
     checkHighlightingNg15()
 

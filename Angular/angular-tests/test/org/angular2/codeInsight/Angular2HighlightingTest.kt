@@ -175,7 +175,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
                                                                   strictTemplates = true, extension = "ts")
 
   @Test
-  @SkipTsGoProxy
   fun testInputsWithTransform() = checkHighlighting(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, strictTemplates = true, dir = true)
 
   @Test
@@ -705,7 +704,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
       *modules,
       dir = dir,
       extension = extension,
-      configureFileName = calculateFileName(configureFileName),
+      configureFileName = configureFileName,
       configurators = configurators,
       checkInjections = checkInjections,
       checkSymbolNames = checkSymbolNames,
@@ -727,17 +726,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     }
 
     return result.toTypedArray()
-  }
-
-  private fun calculateFileName(configureFileName: String): String {
-    if (serviceKind == TypeScriptServiceKind.TsGoProxy) {
-      val extension = configureFileName.substringAfterLast('.', "")
-        .let { if (!it.isEmpty()) ".$it" else "" }
-      val tsgoConfigureFileName = configureFileName.substring(0, configureFileName.length - extension.length) + ".tsgo" + extension
-      if (File("$testDataPath/$tsgoConfigureFileName").exists())
-        return tsgoConfigureFileName
-    }
-    return configureFileName
   }
 
   private fun checkHighlightingWithCrLfEnsured() {

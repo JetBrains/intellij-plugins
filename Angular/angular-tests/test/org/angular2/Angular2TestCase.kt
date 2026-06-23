@@ -34,6 +34,7 @@ import org.angular2.refactoring.extractComponent.Angular2CliComponentGenerator
 import org.junit.Assume
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import java.io.File
 import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)
@@ -109,6 +110,35 @@ abstract class Angular2TestCase(
 
   override val defaultExtension: String
     get() = "ts"
+
+  override val defaultDirName: String get() {
+    if (serviceKind == TypeScriptServiceKind.TsGoProxy) {
+      val tsGoDirName = "$testName.tsgo"
+      if (File("$testDataPath/$tsGoDirName").exists())
+        return tsGoDirName
+    }
+    return testName
+  }
+
+  override fun getDefaultConfigureFileName(extension: String): String {
+    if (serviceKind == TypeScriptServiceKind.TsGoProxy) {
+      val tsgoConfigureFileName = "$testName.tsgo.$extension"
+      if (File("$testDataPath/$tsgoConfigureFileName").exists())
+        return tsgoConfigureFileName
+    }
+    return super.getDefaultConfigureFileName(extension)
+  }
+
+  override fun getGoldFileName(forcedGoldFileName: String?, testFileExt: String): String {
+    val goldFileName = super.getGoldFileName(forcedGoldFileName, testFileExt)
+    if (serviceKind == TypeScriptServiceKind.TsGoProxy) {
+      val lastIndex = goldFileName.lastIndexOf('.')
+      val tsGoGoldFileName = "${goldFileName.substring(0, lastIndex)}.tsgo${goldFileName.substring(lastIndex)}"
+      if (File("$testDataPath/$tsGoGoldFileName").exists())
+        return tsGoGoldFileName
+    }
+    return goldFileName
+  }
 
   override fun setUp() {
     Assume.assumeTrue("Skipping test because of @${serviceKind.skipTestAnnotationClass.simpleName} annotation",

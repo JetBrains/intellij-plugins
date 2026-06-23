@@ -1,0 +1,10 @@
+{{ publicUsedField }}
+<div [id]="privateUsedField"></div>
+{{ publicUsedConstructorField }}
+<div [id]="privateUsedConstructorField"></div>
+<div (click)="publicUsedMethod()"></div>
+<div (click)="privateUsedMethod()"></div>
+
+<div *ngIf="myObservable$ | async"></div>
+
+{{ testFn() }}

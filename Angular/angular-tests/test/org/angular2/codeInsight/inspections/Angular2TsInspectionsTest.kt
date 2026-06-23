@@ -14,7 +14,6 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceIns
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
-import org.angular2.SkipTsGoProxy
 import org.angular2.TestNoService
 import org.angular2.TestTsGoProxy
 import org.angular2.inspections.AngularUncalledSignalLengthPropertyAccessInspection
@@ -30,7 +29,6 @@ import org.junit.Test
 class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
 
   @Test
-  @SkipTsGoProxy
   fun testUnusedSymbol() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                        configureFileName = "unused.ts",
@@ -39,7 +37,6 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
                                             JSUnusedLocalSymbolsInspection::class.java))
 
   @Test
-  @SkipTsGoProxy
   fun testUnusedSymbolNg17() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_17_3_0,
                        configureFileName = "unused.ts",
@@ -103,7 +100,6 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
                        extension = "html")
 
   @Test
-  @SkipTsGoProxy
   fun testDuplicateDeclarationOff() =
     doHighlightingTest(inspections = listOf(JSDuplicatedDeclarationInspection::class.java),
                        dir = true,
