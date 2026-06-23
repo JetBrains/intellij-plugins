@@ -213,6 +213,7 @@
     <plugin id="com.intellij.modules.lang"/>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.platform.structureView"/>
+    <module name="intellij.platform.vcs"/>
     <module name="intellij.platform.vcs.impl"/>
     <module name="intellij.spellchecker"/>
     <!-- endregion -->
