@@ -24,13 +24,11 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
 
   // TODO fails on server
   fun _testSimpleTypes() =
-    withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
-      doHighlightingTest(
-        Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.ANGULAR_FORMS_8_2_14,
-        dir = true,
-        configureFileName = "simple.html"
-      )
-    }
+    doHighlightingTest(
+      Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.ANGULAR_FORMS_8_2_14,
+      dir = true,
+      configureFileName = "simple.html"
+    )
 
   @Test
   @SkipTsGoProxy
@@ -43,19 +41,15 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
 
   @Test
   fun testTemplateBindings() =
-    withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
-      doHighlightingTest(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
-                         dir = true,
-                         configureFileName = "template.html")
-    }
+    doHighlightingTest(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
+                       dir = true,
+                       configureFileName = "template.html")
 
   @Test
   fun testGenericsValidation() =
-    withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
-      doHighlightingTest(Angular2TestModule.ANGULAR_CORE_8_2_14,
-                         dir = true,
-                         configureFileName = "generics.html")
-    }
+    doHighlightingTest(Angular2TestModule.ANGULAR_CORE_8_2_14,
+                       dir = true,
+                       configureFileName = "generics.html")
 
   @Test
   @SkipTsGoProxy
@@ -66,11 +60,9 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
 
   @Test
   fun testNgForOfAnyTypeNonStrictTemplates() =
-    withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
-      doHighlightingTest(Angular2TestModule.TS_LIB,
-                         Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
-                         configurators = listOf(Angular2TsConfigFile(strict = false)))
-    }
+    doHighlightingTest(Angular2TestModule.TS_LIB,
+                       Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14,
+                       configurators = listOf(Angular2TsConfigFile(strict = false)))
 
 
   @Test
@@ -79,11 +71,9 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
 
   @Test
   fun testInputValue() =
-    withTypeScriptServerService(TypeScriptServerServiceImpl::class) {
-      doHighlightingTest(Angular2TestModule.ANGULAR_CORE_8_2_14,
-                         dir = true,
-                         configureFileName = "inputValue.html")
-    }
+    doHighlightingTest(Angular2TestModule.ANGULAR_CORE_8_2_14,
+                       dir = true,
+                       configureFileName = "inputValue.html")
 
   /**
    * @see Angular2AttributesTest.testTypeMismatchErrorWithOptionalInputs
@@ -191,7 +181,6 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
                        configureFileName = "genericDirectiveReference.ts")
 
   @Test
-  @SkipTsGoProxy
   fun testGenericDirectiveReferenceUnsubstitutedFallsBackToAny() =
     checkHighlightingNg15()
 

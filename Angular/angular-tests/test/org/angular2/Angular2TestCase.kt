@@ -171,16 +171,6 @@ abstract class Angular2TestCase(
   override fun afterConfiguredTest(configuration: TestConfiguration) {
   }
 
-  fun withTypeScriptServerService(clazz: KClass<out TypeScriptService>, runnable: () -> Unit) {
-    //expectedServerClass = clazz
-    try {
-      runnable()
-    }
-    finally {
-      // expectedServerClass = Angular2TypeScriptService::class
-    }
-  }
-
   protected fun checkHighlightingAndQuickFix(
     vararg modules: Angular2TestModule,
     quickFixName: String,
