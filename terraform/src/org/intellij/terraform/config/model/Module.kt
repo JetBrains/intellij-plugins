@@ -6,14 +6,10 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.concurrency.ConcurrentCollectionFactory
 import com.intellij.lang.LanguageMatcher
-import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
@@ -36,7 +32,6 @@ import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.TerraformLanguage
-import org.intellij.terraform.config.model.local.TfLocalSchemaService
 import org.intellij.terraform.config.model.version.VersionConstraint
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
@@ -67,8 +62,6 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     }
 
     fun getModule(directory: PsiDirectory): Module {
-      if (isFallbackVariableSearchEnabled) return Module(directory)
-
       val moduleRoot = ModuleDetectionUtil.findModuleRoot(directory)
       val dir = moduleRoot?.let { directory.manager.findDirectory(it) }
       if (dir == null) {
@@ -153,48 +146,8 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
   }
 
   private fun getModuleSearchScope(): GlobalSearchScope? {
-    if (isFallbackVariableSearchEnabled) return fallbackCalculateModuleAwareSearchScope(moduleRoot)
-
     val moduleRootVf = moduleRoot.virtualFile ?: return null
     return GlobalSearchScopes.directoryScope(moduleRoot.project, moduleRootVf, false)
-  }
-
-
-  @Deprecated("Remove after 2024.3 release if no usages of `isFallbackVariableSearchEnabled` detected")
-  private fun fallbackCalculateModuleAwareSearchScope(context: PsiFileSystemItem): GlobalSearchScope? {
-    val currentFile = context.virtualFile ?: return null
-    val currentFileDir = currentFile.takeIf { it.isDirectory } ?: currentFile.parent
-    if (!isDeepVariableSearchEnabled) {
-      return GlobalSearchScopes.directoryScope(context.project, currentFileDir, false)
-    }
-
-    val terraformDir = ModuleDetectionUtil.getTerraformDirSomewhere(currentFile, context.project)
-    if (terraformDir != null && currentFileDir != null && VfsUtil.isAncestor(terraformDir, currentFile, true)) {
-      return GlobalSearchScopes.directoryScope(context.project, currentFileDir, false)
-    }
-
-    val manifestRoots = terraformDir?.let { findRootsFromManifest(context, it) } ?: emptyList()
-    val exactModuleRoot = findClosestRoot(manifestRoots, currentFile)
-                          ?: context.project.service<TfLocalSchemaService>().findLockFile(currentFile)?.parent
-
-    val dirToSearchIn = exactModuleRoot ?: currentFileDir ?: return null
-    val otherModuleRoots = manifestRoots.filterNot { VfsUtil.isAncestor(it, dirToSearchIn, false) }
-    val exclusion = GlobalSearchScopes.directoriesScope(context.project, true, *otherModuleRoots.toTypedArray())
-    return GlobalSearchScopes.directoryScope(context.project, dirToSearchIn, exactModuleRoot != null)
-      .intersectWith(GlobalSearchScope.notScope(exclusion))
-  }
-
-  private fun findClosestRoot(possibleRoots: List<VirtualFile>, currentFile: VirtualFile): VirtualFile? =
-    possibleRoots
-      .filter { VfsUtil.isAncestor(it, currentFile, false) }
-      .maxByOrNull { it.path.length }
-
-  private fun findRootsFromManifest(context: PsiFileSystemItem, dotTerraformDir: VirtualFile): List<VirtualFile> {
-    val manifest = ModuleDetectionUtil.getManifestForDirectory(dotTerraformDir, context, context.project).value ?: return emptyList()
-    return manifest.modules.mapNotNull { module ->
-      val path = FileUtil.toSystemIndependentName(module.dir)
-      manifest.context.findFileByRelativePath(path)
-    }
   }
 
   fun getTerraformModuleScope(): GlobalSearchScope {
@@ -448,11 +401,7 @@ internal fun GlobalSearchScope.restrictToTerraformFiles(project: Project): Globa
 internal val isDeepVariableSearchEnabled: Boolean
   get() = AdvancedSettings.getBoolean("org.intellij.terraform.config.variables.deep.search")
 
-internal val isFallbackVariableSearchEnabled: Boolean
-  get() = AdvancedSettings.getBoolean("org.intellij.terraform.variables.search.fallback")
-
 internal fun createDisableDeepVariableSearchQuickFix(): LocalQuickFix? {
-  if (!isFallbackVariableSearchEnabled) return null
   if (!isDeepVariableSearchEnabled) return null
 
   return object : LocalQuickFix {
@@ -465,6 +414,5 @@ internal fun createDisableDeepVariableSearchQuickFix(): LocalQuickFix? {
       AdvancedSettings.setBoolean("org.intellij.terraform.config.variables.deep.search", false)
       DaemonCodeAnalyzer.getInstance(project).restart("createDisableDeepVariableSearchQuickFix")
     }
-
   }
 }

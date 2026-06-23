@@ -10,7 +10,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.terraform.config.inspection.TfDuplicatedVariableInspection
 import org.intellij.terraform.config.inspection.TfVARSIncorrectElementInspection
 import org.intellij.terraform.config.model.Module
-import org.intellij.terraform.config.model.isFallbackVariableSearchEnabled
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
 import org.intellij.terraform.hil.inspection.HILUnresolvedReferenceInspection
 
@@ -204,10 +203,7 @@ abstract class AbstractTfVarsTest(private val enableFallbackVariableSearchEnable
       <caret>
     """.trimIndent())
     myFixture.testHighlighting(fileName)
-    if (isFallbackVariableSearchEnabled)
-      myFixture.testCompletionVariants("dir/prod/prod.tfvars", "foo1", "foo2", "baz1", "baz2")
-    else
-      myFixture.testCompletionVariants("dir/prod/prod.tfvars", "foo2", "baz2") // not "foo1","baz1"
+    myFixture.testCompletionVariants("dir/prod/prod.tfvars", "foo2", "baz2") // not "foo1","baz1"
   }
 
   fun testUnresolvedVarsNoIndex() {
