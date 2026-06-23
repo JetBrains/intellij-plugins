@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
@@ -63,9 +64,12 @@ class Angular2CodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomi
                     )
 
                 symbolKind == NG_DIRECTIVE_EXPORTS_AS ->
-                  item.decorateWithJsType(location,
-                                          location.parentOfType<XmlTag>()
-                                            ?.let { BindingsTypeResolver.get(it).resolveDirectiveExportAsType(item.name) })
+                  item.decorateWithJsType(
+                    location, location.parentOfType<XmlTag>()?.let {
+                      JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(location) {
+                        BindingsTypeResolver.get(it).resolveDirectiveExportAsType(item.name)
+                      }
+                    })
                 else -> item
               }
             }

@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspectio
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
 import com.intellij.lang.javascript.TypeScriptTestUtil
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection
 import com.intellij.lang.javascript.psi.JSField
 import com.intellij.lang.javascript.psi.JSFunction
@@ -209,12 +210,14 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     assertInstanceOf(resolve, JSLiteralExpression::class.java)
     val dec = PsiTreeUtil.getContextOfType(resolve, ES6Decorator::class.java)!!
     val component: Angular2Directive = getComponent(dec)!!
-    assertEquals(ContainerUtil.newHashSet("model", "id", "oneTime", "oneTimeList"),
-                 component.inputs.mapTo(HashSet(), Angular2DirectiveProperty::name))
-    assertEquals(setOf("complete"),
-                 component.outputs.mapTo(HashSet(), Angular2DirectiveProperty::name))
-    assertEquals(ContainerUtil.newHashSet("testAttrOne", "testAttrTwo", "testAttrThree"),
-                 component.attributes.mapTo(HashSet(), Angular2DirectiveAttribute::name))
+    JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(myFixture.file) {
+      assertEquals(ContainerUtil.newHashSet("model", "id", "oneTime", "oneTimeList"),
+                   component.inputs.mapTo(HashSet(), Angular2DirectiveProperty::name))
+      assertEquals(setOf("complete"),
+                   component.outputs.mapTo(HashSet(), Angular2DirectiveProperty::name))
+      assertEquals(ContainerUtil.newHashSet("testAttrOne", "testAttrTwo", "testAttrThree"),
+                   component.attributes.mapTo(HashSet(), Angular2DirectiveAttribute::name))
+    }
     myFixture.moveToOffsetBySignature("[model]=\"\"<caret>")
     myFixture.type(' ')
     myFixture.completeBasic()
