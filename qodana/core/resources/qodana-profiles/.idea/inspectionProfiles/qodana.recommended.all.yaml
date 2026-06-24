@@ -165,6 +165,9 @@ inspections:
     enabled: false
   - group: DependencyAnalysis
     enabled: true # Enable License Audit by default
+  - group: PQC_MIN_LEVEL_1 # Post-quantum cryptography inspections
+    enabled: true
+    severity: WARNING
   - inspection: PyPep8Inspection
     severity: WEAK WARNING # It has default INFORMATION severity because it makes a lot of noise during coding. For CI makes sense to enable it
     enabled: true # Explicitly enable, because it is disabled by default INFORMATION severity.
