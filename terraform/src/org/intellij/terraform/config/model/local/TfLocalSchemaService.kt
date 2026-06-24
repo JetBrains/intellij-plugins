@@ -44,6 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
@@ -68,11 +69,10 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.coroutines.coroutineContext
 import kotlin.io.path.readText
+import kotlin.time.Duration.Companion.milliseconds
 
-
-const val TERRAFORM_LOCK_FILE_NAME: String = ".terraform.lock.hcl"
+internal const val TERRAFORM_LOCK_FILE_NAME: String = ".terraform.lock.hcl"
 
 private const val DAEMON_RESTART_DEBOUNCE_TIMEOUT: Long = 300
 
@@ -81,7 +81,7 @@ private const val ORPHAN_COLLECTOR_DEBOUNCE_TIMEOUT: Long = 3000
 @Service(Service.Level.PROJECT)
 class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
-  private val modelBuildScope = scope.childScope()
+  private val modelBuildScope = scope.childScope("TfLocalSchemaService model build scope")
 
   private val modelComputationCache = VirtualFileMap<Deferred<TfTypeModel>>(project)
 
@@ -147,7 +147,7 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
   }
 
   private val daemonRestarter = LatestInvocationRunner {
-    delay(DAEMON_RESTART_DEBOUNCE_TIMEOUT)
+    delay(DAEMON_RESTART_DEBOUNCE_TIMEOUT.milliseconds)
     awaitModelsReady()
     readAction {
       val openTerraformFiles = getOpenTerraformFiles()
@@ -317,9 +317,8 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
   }
 
-
   private val orphanCollector = LatestInvocationRunner {
-    delay(ORPHAN_COLLECTOR_DEBOUNCE_TIMEOUT)
+    delay(ORPHAN_COLLECTOR_DEBOUNCE_TIMEOUT.milliseconds)
     awaitModelsReady()
     withBackgroundProgress(project, HCLBundle.message("progress.title.removing.unused.metadata")) {
       val localModelPath = localModelPath
@@ -381,8 +380,8 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
       .executeSuspendable()
 
     logger<TfLocalSchemaService>().info(
-      "building local model buildJsonFromTerraformProcess result: ${coroutineContext.isActive}, $success  $lock")
-    coroutineContext.ensureActive()
+      "building local model buildJsonFromTerraformProcess result: ${currentCoroutineContext().isActive}, $success  $lock")
+    currentCoroutineContext().ensureActive()
 
     val stdout = capturingProcessAdapter.output.stdout
     if (!success || stdout.isEmpty()) {
@@ -427,4 +426,3 @@ private class VirtualFileMap<T>(project: Project) {
 }
 
 internal fun isTfLock(virtualFile: VirtualFile?): Boolean = virtualFile?.name == TERRAFORM_LOCK_FILE_NAME
-
