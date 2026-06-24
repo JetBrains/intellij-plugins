@@ -37,10 +37,14 @@ class ESLintEventCollectorTest : EslintServiceTestBase() {
   }
 
   fun testTimeoutResponse() {
-    JSLanguageServiceUtil.setTimeout(50, testRootDisposable)
+    // Deterministic timeout via a never-responding fake service (no real node process spawned). See
+    // EslintServiceTestBase.highlightWithNeverRespondingService (WEB-67172).
+    myFixture.copyDirectoryToProject(getTestName(false), "")
+    val psiFile = myFixture.configureByFile("test.js")
+    JSLanguageServiceUtil.setTimeout(1, testRootDisposable)
 
     val event = collectEvent {
-      doEditorHighlightingTest("test.js")
+      highlightWithNeverRespondingService(psiFile)
     }
 
     Assert.assertNotNull("Expected event to be logged", event)

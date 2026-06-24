@@ -14,6 +14,8 @@ import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.InstallNpmModules;
+import com.intellij.lang.javascript.linter.JSLinterAnnotationResult;
+import com.intellij.lang.javascript.linter.JSLinterFileLevelAnnotation;
 import com.intellij.lang.javascript.linter.eslint.service.EslintLanguageServiceManager;
 import com.intellij.lang.javascript.nodejs.library.yarn.AbstractYarnPnpIntegrationTest;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
@@ -22,6 +24,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.profile.codeInspection.InspectionProfileManager;
+import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.DumbModeTestUtils;
 import com.intellij.testFramework.InspectionTestUtil;
 import com.intellij.testFramework.InspectionsKt;
@@ -136,10 +139,20 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
   }
 
   public void testTimeout() {
+    // Verify ESLint timeout handling (a slow analysis -> file-level timeout annotation) deterministically, WITHOUT
+    // spawning a real node service. See EslintServiceTestBase#highlightWithNeverRespondingService for the rationale
+    // (the real-service version was disposed mid-startup at tear-down and leaked its startup wait / reader thread,
+    // WEB-67172).
+    myFixture.copyDirectoryToProject(getTestName(false), "");
+    PsiFile psiFile = myFixture.configureByFile("test.js");
     JSLanguageServiceUtil.setTimeout(1, getTestRootDisposable());
-    String expectedMessage = "ESLint: " + JSLanguageServiceUtil.getTimeoutMessage("test.js", 1);
-    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation(expectedMessage, true, false);
-    doEditorHighlightingTest("test.js");
+
+    JSLinterAnnotationResult result = highlightWithNeverRespondingService(psiFile);
+
+    JSLinterFileLevelAnnotation annotation = result.getFileLevelError();
+    assertNotNull("Expected a file-level timeout annotation", annotation);
+    String expected = JSLanguageServiceUtil.getTimeoutMessage("test.js", EslintUtil.getTimeout());
+    assertTrue("Actual annotation: " + annotation.getMessage(), annotation.getMessage().contains(expected));
   }
 
   public void testESLintLocalFatalError() {
