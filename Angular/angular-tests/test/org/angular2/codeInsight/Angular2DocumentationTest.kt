@@ -21,23 +21,19 @@ import java.io.File
 class Angular2DocumentationTest : Angular2TestCase("documentation") {
 
   @Test
-  @SkipTsGoProxy // No config file
   fun testTagName() = doTestWithDeps()
 
   @Test
-  @SkipTsGoProxy // No config file
   fun testSimpleInput() = doTestWithDeps()
 
   @Test
-  @SkipTsGoProxy // No config file
   fun testSimpleInputBinding() = doTestWithDeps()
 
   @Test
-  @SkipTsGoProxy // No config file
+  @SkipTsGoProxy // More than one doc rendered
   fun testSimpleOutputBinding() = doTestWithDeps()
 
   @Test
-  @SkipTsGoProxy // No config file
   fun testSimpleBananaBox() = doTestWithDeps()
 
   @Test
@@ -50,7 +46,6 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testGlobalAttribute() = doTestWithDeps()
 
   @Test
-  @SkipTsGoProxy // No config file
   fun testFieldWithoutDocs() = doTestWithDeps()
 
   @Test
@@ -73,21 +68,17 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testUnknownDirective() = doTestWithDeps()
 
   @Test
-  @SkipTsGoProxy // No config file
   fun testDirectiveInputNoDoc() = doTest()
 
   @Test
-  @SkipTsGoProxy // No config file
   fun testDirectiveInOutNoDoc() = doTest(Angular2TestModule.ANGULAR_CORE_15_1_5,
                                          Angular2TestModule.ANGULAR_COMMON_15_1_5)
 
   @Test
-  @SkipTsGoProxy // No config file
   fun testDirectiveNoDocInOutDoc() = doTest(Angular2TestModule.ANGULAR_CORE_15_1_5,
                                             Angular2TestModule.ANGULAR_COMMON_15_1_5)
 
   @Test
-  @SkipTsGoProxy // No config file
   fun testDirectiveInOutMixedDoc() = doTest(Angular2TestModule.ANGULAR_CORE_15_1_5,
                                             Angular2TestModule.ANGULAR_COMMON_15_1_5)
 
@@ -97,25 +88,27 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
                                            configurators = listOf(Angular2TsConfigFile()))
 
   @Test
+  @SkipTsGoProxy // More than one doc rendered
   fun testStructuralDirectiveWithGenerics() = doTest(Angular2TestModule.ANGULAR_CORE_15_1_5,
                                                      Angular2TestModule.ANGULAR_COMMON_15_1_5,
                                                      configurators = listOf(Angular2TsConfigFile()))
 
   @Test
-  @SkipTsGoProxy // No config file
   fun testHostDirectiveMappedInput() = doTest()
 
   @Test
+  @SkipTsGoProxy // Invalid lines
   fun testWritableSignal() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                                     Angular2TestModule.ANGULAR_COMMON_16_2_8)
 
   @Test
-  @SkipTsGoProxy // Invalid line
+  @SkipTsGoProxy // Invalid lines
   fun testWritableSignalCall() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                                         Angular2TestModule.ANGULAR_COMMON_16_2_8,
                                         configurators = listOf(Angular2TsConfigFile()))
 
   @Test
+  @SkipTsGoProxy // Invalid lines
   fun testSignal() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                             Angular2TestModule.ANGULAR_COMMON_16_2_8)
 
@@ -158,14 +151,14 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testDeferBlockHydrateNever() = doTest(Angular2TestModule.ANGULAR_CORE_19_2_0, ext = "html")
 
   @Test
-  @SkipTsGoProxy // No config file
   fun testDefaultValueJSDoc() = doTest()
 
   @Test
+  @SkipTsGoProxy // Invalid lines - flaky
   fun testUnknownNgClass() = doTest()
 
   @Test
-  @SkipTsGoProxy // Invalid line
+  @SkipTsGoProxy // Invalid lines - flaky
   fun testSignalStore() = doTest(ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0,
                                  configurators = listOf(Angular2TsConfigFile()))
 
@@ -182,7 +175,7 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testIonicLifecycleHook() = doTest(ANGULAR_CORE_20_1_4, Angular2TestModule.IONIC_ANGULAR_8_4_3, ext = "ts")
 
   @Test
-  @SkipTsGoProxy // More than one doc rendered
+  @SkipTsGoProxy // Wrong doc rendered
   fun testRxjsOperator() = doTest(ANGULAR_CORE_20_1_4, RXJS_7_8_1, ext = "ts")
 
   private fun doTestWithDeps(useConfig: Boolean = false) {

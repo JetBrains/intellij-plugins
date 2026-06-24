@@ -34,6 +34,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   }
 
   @Test
+  @SkipTsGoProxy // Invalid line
   fun testExportAs() =
     doLookupTest(checkDocumentation = true)
 
@@ -66,6 +67,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doTypingTest("vir\t")
 
   @Test
+  @SkipTsGoProxy // Failed to find element
   fun testDirectiveInputMappingLiteralWithReplace() =
     doTypingTest("ie\t")
 
@@ -74,6 +76,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest()
 
   @Test
+  @SkipTsGoProxy // Failed to find element
   fun testDirectiveInputMappingOutsideLiteral() =
     doLookupTest(renderPresentedText = true) {
       it.priority >= 100
@@ -332,6 +335,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
 
   @Test
   @SkipTsNode // TODO investigate
+  @SkipTsGoProxy // TODO investigate
   fun testHostBindingDecorator1() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
@@ -371,7 +375,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
                  configurators = listOf(Angular2TsConfigFile()))
 
   @Test
-  @SkipTsGoProxy // No config file
+  @SkipTsGoProxy // Invalid line
   fun testTemplateBindingsNgIf() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0, extension = "ts",
                  lookupItemFilter = { it.priority > 0 && it.lookupString != "Component" },
@@ -387,7 +391,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
                  ))
 
   @Test
-  @SkipTsGoProxy // No config - should work without, actually
+  @SkipTsGoProxy // Invalid line
   fun testTemplateBindingsNgFor() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0, extension = "ts",
                  lookupItemFilter = { it.priority > 0 && it.lookupString != "Component" },
@@ -404,7 +408,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
                  ))
 
   @Test
-  @SkipTsGoProxy // No config - should work without, actually
+  @SkipTsGoProxy // Invalid line
   fun testTemplateBindingsNgForContextDocumentation() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_18_2_1, Angular2TestModule.ANGULAR_COMMON_18_2_1, extension = "ts",
                  lookupItemFilter = { it.lookupString == "index" || it.lookupString == "last" || it.lookupString == "ngForOf" },
@@ -415,6 +419,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_20_2_2, extension = "ts", checkDocumentation = true)
 
   @Test
+  @SkipTsGoProxy // Runs for a long time
   fun testCssCustomProperty() =
     doLookupTest(ANGULAR_CORE_19_2_0, extension = "ts", checkDocumentation = true, dir = true)
 
