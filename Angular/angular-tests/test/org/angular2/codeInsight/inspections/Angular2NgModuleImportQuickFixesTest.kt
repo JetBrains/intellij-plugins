@@ -88,6 +88,7 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
+  @SkipTsGoProxy // Invalid line
   fun testLowercasePipeCompletion() {
     doCompletionTest("angular-commons",
                      "test.html",

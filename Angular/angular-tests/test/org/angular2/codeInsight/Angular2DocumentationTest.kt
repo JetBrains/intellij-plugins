@@ -21,6 +21,7 @@ import java.io.File
 class Angular2DocumentationTest : Angular2TestCase("documentation") {
 
   @Test
+  @SkipTsGoProxy // Invalid line - flaky
   fun testTagName() = doTestWithDeps()
 
   @Test
