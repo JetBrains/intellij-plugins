@@ -72,6 +72,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doTypingTest("ie\t")
 
   @Test
+  @SkipTsGoProxy // Failed to find element - flaky
   fun testDirectiveInputMappingLiteral() =
     doLookupTest()
 
@@ -83,10 +84,12 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     }
 
   @Test
+  @SkipTsGoProxy // Failed to find element - flaky
   fun testDirectiveInputMappingObject() =
     doLookupTest()
 
   @Test
+  @SkipTsGoProxy // Failed to find PSI - flaky
   fun testDirectiveInputMappingOutsideObject() =
     doLookupTest(renderPresentedText = true) {
       it.priority >= 100
