@@ -6,8 +6,10 @@ import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.junit.JUnitConfiguration;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
@@ -25,41 +27,57 @@ final class CucumberJUnitRunConfigurationExtension extends RunConfigurationExten
 
   @Override
   public <T extends RunConfigurationBase<?>> void updateJavaParameters(@NotNull T configuration,
-                                                                    @NotNull JavaParameters params,
-                                                                    RunnerSettings runnerSettings) {
+                                                                       @NotNull JavaParameters params,
+                                                                       RunnerSettings runnerSettings) {
     if (!(configuration instanceof JUnitConfiguration unitConfiguration)) {
       return;
     }
 
-    Module module = unitConfiguration.getConfigurationModule().getModule();
-    if (module == null) {
+    String mainClassName = unitConfiguration.getPersistentData().MAIN_CLASS_NAME;
+    if (mainClassName == null) {
       return;
     }
-    GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
 
-    String mainClassName = unitConfiguration.getPersistentData().MAIN_CLASS_NAME;
-    DumbService.getInstance(module.getProject()).runWithAlternativeResolveEnabled(() -> {
-      PsiClass mainClass =  mainClassName != null
-                            ? JavaPsiFacade.getInstance(configuration.getProject()).findClass(mainClassName, scope)
-                            : null;
-      if (mainClass == null) {
-        return;
-      }
+    if (shouldUseCucumberTestTreeNodeManager(unitConfiguration, mainClassName)) {
+      params.getClassPath().add(PathUtil.getJarPathForClass(CucumberTestTreeNodeManager.class));
+      params.getVMParametersList().add("-D" + JUNIT_TEST_TREE_NODE_MANAGER_ARGUMENT + "=" + CucumberTestTreeNodeManager.class.getName());
+    }
+  }
 
-      PsiAnnotation runWithAnnotation = mainClass.getAnnotation(JUNIT_RUN_WITH_ANNOTATION_CLASS);
-      if (runWithAnnotation == null) {
-        return;
+  private static boolean shouldUseCucumberTestTreeNodeManager(@NotNull JUnitConfiguration junitConfiguration,
+                                                             @NotNull String mainClassName) {
+    return ReadAction.nonBlocking(() -> {
+      Module module = junitConfiguration.getConfigurationModule().getModule();
+      if (module == null) {
+        return false;
       }
-      PsiNameValuePair[] annotationParameters = runWithAnnotation.getParameterList().getAttributes();
-      for (PsiNameValuePair parameter : annotationParameters) {
-        PsiAnnotationMemberValue value = parameter.getValue();
-        if (value != null && value.getText().equalsIgnoreCase(CUCUMBER_JUNIT_RUNNER_CLASS_MARKER)) {
-          params.getClassPath().add(PathUtil.getJarPathForClass(CucumberTestTreeNodeManager.class));
-          params.getVMParametersList().add("-D" + JUNIT_TEST_TREE_NODE_MANAGER_ARGUMENT + "=" + CucumberTestTreeNodeManager.class.getName());
-          return;
-        }
+      GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
+      return DumbService.getInstance(module.getProject()).computeWithAlternativeResolveEnabled(
+        () -> isCucumberJUnitRunnerClass(junitConfiguration.getProject(), mainClassName, scope));
+    }).executeSynchronously();
+  }
+
+  private static boolean isCucumberJUnitRunnerClass(@NotNull Project project,
+                                                   @NotNull String mainClassName,
+                                                   @NotNull GlobalSearchScope scope) {
+    PsiClass mainClass = JavaPsiFacade.getInstance(project).findClass(mainClassName, scope);
+    if (mainClass == null) {
+      return false;
+    }
+
+    PsiAnnotation runWithAnnotation = mainClass.getAnnotation(JUNIT_RUN_WITH_ANNOTATION_CLASS);
+    if (runWithAnnotation == null) {
+      return false;
+    }
+
+    PsiNameValuePair[] annotationParameters = runWithAnnotation.getParameterList().getAttributes();
+    for (PsiNameValuePair parameter : annotationParameters) {
+      PsiAnnotationMemberValue value = parameter.getValue();
+      if (value != null && value.getText().equalsIgnoreCase(CUCUMBER_JUNIT_RUNNER_CLASS_MARKER)) {
+        return true;
       }
-    });
+    }
+    return false;
   }
 
   @Override
