@@ -6,6 +6,7 @@ import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjec
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.util.SystemProperties
 import com.intellij.workspaceModel.ide.JpsProjectLoadingManager
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -29,7 +30,7 @@ class QodanaReimportMavenProjects : QodanaWorkflowExtension {
     get() = setOf(QODANA_MAVEN_SETTINGS_CONFIGURED)
 
   override suspend fun configureForQodana(config: QodanaConfig, project: Project) {
-    val forceReimport = java.lang.Boolean.getBoolean("qodana.trigger.maven.import")
+    val forceReimport = SystemProperties.getBooleanProperty(QODANA_TRIGGER_MAVEN_IMPORT, false)
     if (MavenSimpleProjectComponent.isNormalProjectInHeadless() && !forceReimport) {
       return
     }
