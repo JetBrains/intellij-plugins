@@ -295,7 +295,6 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
-  @SkipTsGoProxy // close() cannot be called for files that haven't been opened.
   fun testLocalLib() {
     doMultiFileTest("src/app/app.component.html",
                     "Import MyLibModule") {
