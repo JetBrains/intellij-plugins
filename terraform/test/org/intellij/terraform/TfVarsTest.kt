@@ -1,9 +1,7 @@
 package org.intellij.terraform
 
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.roots.ModuleRootModificationUtil
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -13,44 +11,7 @@ import org.intellij.terraform.config.model.Module
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
 import org.intellij.terraform.hil.inspection.HILUnresolvedReferenceInspection
 
-class TfVarsTest : AbstractTfVarsTest(false)
-
-class TfVarsFallbackTest : AbstractTfVarsTest(true) {
-  fun testDifferentDirsWithoutLock() {
-
-    myFixture.enableInspections(TfVARSIncorrectElementInspection::class.java)
-
-    myFixture.configureByText("simple.tf", """
-      variable "foo" {
-        default = "42"
-        type = "string"
-      }
-      variable "baz" {
-        type = "map"
-      }
-    """.trimIndent())
-
-    val fileName = "dir/prod/prod.tfvars"
-    configureByTextInDir(fileName, """
-      <warning descr="Undefined variable 'foo'">foo</warning> = "9000"
-      <warning descr="Undefined variable 'baz'">baz</warning> = 1
-      <warning descr="Undefined variable 'bar'">bar</warning> = 0
-    """.trimIndent())
-    myFixture.testHighlighting(fileName)
-  }
-
-}
-
-abstract class AbstractTfVarsTest(private val enableFallbackVariableSearchEnabled: Boolean) : BasePlatformTestCase() {
-
-  override fun setUp() {
-    super.setUp()
-    val prev = AdvancedSettings.getBoolean("org.intellij.terraform.variables.search.fallback")
-    AdvancedSettings.setBoolean("org.intellij.terraform.variables.search.fallback", enableFallbackVariableSearchEnabled)
-    Disposer.register(testRootDisposable) {
-      AdvancedSettings.setBoolean("org.intellij.terraform.variables.search.fallback", prev)
-    }
-  }
+internal class TfVarsTest : BasePlatformTestCase() {
 
   fun testSameDir() {
     myFixture.enableInspections(TfVARSIncorrectElementInspection::class.java)
@@ -227,12 +188,11 @@ abstract class AbstractTfVarsTest(private val enableFallbackVariableSearchEnable
     myFixture.checkHighlighting()
   }
 
-  protected fun configureByTextInDir(fileName: String, text: String) {
+  private fun configureByTextInDir(fileName: String, text: String) {
     WriteAction.compute<VirtualFile, Throwable> {
       val prodTfvarsFile: VirtualFile = myFixture.tempDirFixture.createFile(fileName)
       VfsUtil.saveText(prodTfvarsFile, text)
       prodTfvarsFile
     }
   }
-
 }
