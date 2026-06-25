@@ -29,6 +29,7 @@ import com.jetbrains.python.psi.PyElement
 import com.jetbrains.python.psi.PyReferenceExpression
 import com.jetbrains.python.psi.PyTargetExpression
 import com.jetbrains.python.psi.impl.PyBuiltinCache
+import com.jetbrains.python.psi.types.PyAnyType
 import com.jetbrains.python.psi.types.PyCallableType
 import com.jetbrains.python.psi.types.PyCallableTypeImpl
 import com.jetbrains.python.psi.types.PyClassTypeImpl
@@ -53,12 +54,12 @@ internal class PbPythonTypeProvider : PyTypeProviderBase() {
       val (source, localQn) = locateInProtoUsingQualifier(referenceTarget, context) ?: return null
 
       // If protobuf was located, this target belongs to protobuf.
-      // Prevent other type providers from handling it by returning Ref.create(null).
+      // Prevent other type providers from handling it by returning Unknown.
       for (pbElement in resolveInProto(source, localQn)) {
         val type = getType(source, localQn, pbElement, referenceTarget)
         if (type != null) return Ref.create(type)
       }
-      return Ref.create(null)
+      return Ref.create(PyAnyType.unknown)
     }
     return null
   }
