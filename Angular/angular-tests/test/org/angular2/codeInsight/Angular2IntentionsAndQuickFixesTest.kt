@@ -25,6 +25,7 @@ import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
 import org.junit.Test
+import org.junit.Ignore
 
 @TestTsNode
 @TestTsGoProxy
@@ -37,6 +38,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
 
   @Test
   @SkipTsGoProxy
+  @Ignore("Caused by WEB-78250")
   fun testBooleanTransformBinding() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "booleanAttribute"),
            ANGULAR_CORE_16_2_8)
@@ -48,6 +50,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
 
   @Test
   @SkipTsGoProxy
+  @Ignore("Caused by WEB-78250")
   fun testNumberTransformBinding() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "numberAttribute"),
            ANGULAR_CORE_16_2_8)

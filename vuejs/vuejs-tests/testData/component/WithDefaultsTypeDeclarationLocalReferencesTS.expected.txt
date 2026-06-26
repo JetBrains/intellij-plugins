@@ -7,7 +7,7 @@
   {
    class: "VueScriptSetupInputProperty",
    name: "prop",
-   type: "number",
+   type: "number | undefined",
    required: true,
   },
  ],

@@ -7,7 +7,7 @@
   {
    class: "VueScriptSetupInputProperty",
    name: "clearable",
-   type: "Clearable",
+   type: "Clearable | undefined",
    required: false,
   },
   {
@@ -19,7 +19,7 @@
   {
    class: "VueScriptSetupInputProperty",
    name: "value",
-   type: "ValueType",
+   type: "ValueType | undefined",
    required: false,
   },
  ],

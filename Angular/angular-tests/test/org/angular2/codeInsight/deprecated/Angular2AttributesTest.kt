@@ -853,7 +853,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
       Pair("i<caret>d=", mutableListOf("id", "id: /*c1*/ string")),
       Pair("[i<caret>d]=", mutableListOf("""
         |/**
-        |     * The **`id`** property of the Element interface represents the element's identifier, reflecting the **`id`** global attribute.
+        |     * The **`id`** property of the Element interface represents the element's identifier, reflecting the id global attribute.
         |     *
         |     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/id)
         |     */

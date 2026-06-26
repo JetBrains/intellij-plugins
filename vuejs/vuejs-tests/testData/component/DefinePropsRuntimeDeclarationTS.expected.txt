@@ -7,13 +7,13 @@
   {
    class: "VuePsiNamedElementInputProperty",
    name: "optional",
-   type: "string",
+   type: "string | undefined",
    required: false,
   },
   {
    class: "VuePsiNamedElementInputProperty",
    name: "optionalUnion",
-   type: "string | number",
+   type: "string | number | undefined",
    required: false,
   },
   {

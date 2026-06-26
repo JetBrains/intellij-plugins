@@ -67,7 +67,7 @@ class VueRefAttrsTest : BasePlatformTestCase() {
       Triple("\$refs.input<caret>Ref", "ref='<caret>inputRef'", "js.after.vue"),
       Triple("\$refs.inputRef[0].validation<caret>Message",
            "/**\n" +
-           "     * The **`validationMessage`** read-only property of the HTMLInputElement interface returns a string representing a localized message that describes the validation constraints that the input control does not satisfy (if any).\n" +
+           "     * The **`validationMessage`** read-only property of the HTMLInputElement interface returns a string representing a localized message that describes the validation constraints that the <input> control does not satisfy (if any).\n" +
            "     *\n" +
            "     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLInputElement/validationMessage)\n" +
            "     */\n" +
