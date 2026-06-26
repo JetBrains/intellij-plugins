@@ -145,8 +145,7 @@ abstract class Angular2TestCase(
     Assume.assumeTrue("Skipping test because of @${serviceKind.skipTestAnnotationClass.simpleName} annotation",
                       javaClass.getMethod(name).annotations.none { it.annotationClass == serviceKind.skipTestAnnotationClass })
 
-    Assume.assumeTrue("Skipping flaky TS GO Proxy tests",
-                      serviceKind != TypeScriptServiceKind.TsGoProxy || this is Angular2HighlightingTest)
+    Assume.assumeTrue("Skipping flaky TS GO Proxy tests", serviceKind != TypeScriptServiceKind.TsGoProxy)
     super.setUp()
 
     myFixture.project.replaceService(
@@ -259,6 +258,7 @@ abstract class Angular2TestCase(
     @JvmStatic
     fun data(clazz: Class<*>): Collection<Any> {
       return TypeScriptServiceKind.entries
+        .filter { it == TypeScriptServiceKind.TsGoProxy }
         .filter { clazz.getAnnotation(it.annotationClass.java) != null }
         .map { arrayOf<Any>(it) }
     }
