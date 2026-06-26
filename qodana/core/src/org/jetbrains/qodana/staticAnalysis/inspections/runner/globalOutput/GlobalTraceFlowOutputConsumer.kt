@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput
 
+import com.intellij.codeInspection.DefaultInspectionToolResultExporter
 import com.intellij.codeInspection.InspectionsResultUtil
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.util.io.FileUtil
@@ -22,6 +23,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.withPartialFingerp
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 import java.nio.file.Path
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.CustomGlobalFlowFingerprintCalculator.Companion.withCustomPartialFingerprints
+import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 
 /**
  * Abstract base class for consuming DFA trace aggregate XML files and converting them to SARIF
@@ -31,6 +33,8 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.Custo
 abstract class GlobalTraceFlowOutputConsumer : GlobalOutputConsumer {
 
   protected abstract fun getInspectionName(): String
+
+  protected open fun getDependentInspectionNames(project: Project, profile: QodanaInspectionProfile): Collection<String> = emptyList()
 
   override fun ownedFiles(paths: List<Path>): List<Path> {
     val inspectionName = getInspectionName()
@@ -48,10 +52,20 @@ abstract class GlobalTraceFlowOutputConsumer : GlobalOutputConsumer {
     project: Project,
     consumer: (List<Problem>, String) -> Unit
   ) {
-    if (!GlobalOutputConsumer.reportingInspectionAllowed(profileState, getInspectionName()) || paths.size != 2) return
+    if (!reportingInspectionAllowed(project, profileState) || paths.size != 2) return
     GlobalOutputConsumer.consumeOutputXmlFile(paths.first()) { _, root ->
-      consumer(root.getChildren("problem").map { TraceProblem(it) }, getInspectionName())
+      root.getChildren("problem").groupBy { problem -> problem.getInspectionName() ?: getInspectionName() }
+        .forEach { (ruleId, problems) -> consumer(problems.map { TraceProblem(it) }, ruleId) }
     }
+  }
+
+  private fun reportingInspectionAllowed(project: Project, profileState: QodanaProfile.QodanaProfileState): Boolean {
+    val inspections = sequence {
+      yield(getInspectionName())
+      val inspectionProfile = profileState.mainState.context.effectiveProfile
+      yieldAll(getDependentInspectionNames(project, inspectionProfile))
+    }
+    return inspections.any { GlobalOutputConsumer.reportingInspectionAllowed(profileState, it) }
   }
 
   private class TraceProblem(val element: Element) : Problem {
@@ -142,4 +156,9 @@ private suspend fun convertTraceFromXmlFormat(problem: Element, macroManager: Pa
     .withLocations(fragmentLocations)
     .withPartialFingerprints()
     .withCustomPartialFingerprints()
+}
+
+private fun Element.getInspectionName(): String? {
+  val problemClassElement = getChild(DefaultInspectionToolResultExporter.INSPECTION_RESULTS_PROBLEM_CLASS_ELEMENT)
+  return problemClassElement?.getAttributeValue(DefaultInspectionToolResultExporter.INSPECTION_RESULTS_ID_ATTRIBUTE)
 }
