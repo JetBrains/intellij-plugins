@@ -49,8 +49,8 @@ interface TemplateCodegenContext {
 
   abstract class Scope {
     protected val vars: MutableSet<String> = mutableSetOf()
-    fun declare(vararg variables: String) {
-      vars.addAll(variables)
+    fun declare(variable: String) {
+      vars.add(variable)
     }
 
     fun declare(variables: List<String>) {
