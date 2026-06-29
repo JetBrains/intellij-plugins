@@ -2,13 +2,19 @@
 package org.jetbrains.vuejs.lang.typescript.service.lsp
 
 import com.intellij.lang.typescript.lsp.JSFrameworkLspClientDescriptor
+import com.intellij.lang.typescript.lsp.TypeScriptLspClientCommandExecutor
 import com.intellij.openapi.project.Project
+import com.intellij.platform.lsp.impl.LspClientImpl
 
 internal class VueLspClientTakeoverModeDescriptor(project: Project) : JSFrameworkLspClientDescriptor(
   project = project,
   activationRule = VueLspServerTakeoverModeActivationRule,
   presentableName = "Vue",
 ) {
+
+  override fun createCommandExecutor(client: LspClientImpl): TypeScriptLspClientCommandExecutor =
+    VueLspTakeoverModeLspClientCommandExecutor(client)
+
   override fun createInitializationOptionsWithTS(targetPath: String): Any {
     @Suppress("unused")
     return object {
