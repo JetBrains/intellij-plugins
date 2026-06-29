@@ -28,6 +28,7 @@ import com.intellij.javascript.nodejs.execution.withBackgroundProgress
 import com.intellij.javascript.runtime.settings.getJavaScriptRuntimeConfigurableClass
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.typescript.compiler.TypeScriptServiceRestarter
+import com.intellij.lang.typescript.lsp.BaseLspTypeScriptClientDescriptor
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptServiceCompletionSupport
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PathMacroManager
@@ -98,7 +99,7 @@ class DenoLspIntegrationProvider : LspIntegrationProvider {
 }
 
 
-class DenoLspClientDescriptor(project: Project) : ProjectWideLspClientDescriptor(project, "Deno") {
+class DenoLspClientDescriptor(project: Project) : BaseLspTypeScriptClientDescriptor(project, "Deno") {
 
   private val initObject: JsonElement?
 
