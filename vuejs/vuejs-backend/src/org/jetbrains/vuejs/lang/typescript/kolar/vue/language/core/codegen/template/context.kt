@@ -179,7 +179,7 @@ fun createTemplateCodegenContext(): TemplateCodegenContext = object : TemplateCo
 
   override fun generateConditionGuards(): Sequence<Code> = sequence {
     for (condition in blockConditions) {
-      yield("if (!$condition) return$endOfLine")
+      yield("if (!$condition) throw 0$endOfLine")
     }
   }
 

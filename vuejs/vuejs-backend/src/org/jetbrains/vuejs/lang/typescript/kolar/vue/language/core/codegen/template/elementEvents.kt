@@ -172,6 +172,9 @@ fun generateEventExpression(
       val endScope = ctx.startScope()
       ctx.declare("\$event")
       yieldAll(ctx.generateConditionGuards())
+      if (isSingleExpression(ast)) {
+        yield("return ")
+      }
       yieldAll(interpolation)
       yield(endOfLine)
       yieldAll(endScope())
@@ -250,4 +253,14 @@ fun isCompoundExpression(ast: SourceFile): Boolean {
     }
   }
   return true
+}
+
+private fun isSingleExpression(ast: SourceFile): Boolean {
+  if (ast.statements.size == 1 && ast.text[ast.endOfFileToken.pos - 1] != ';') {
+    val statement = ast.statements[0]
+    if (isExpressionStatement(statement)) {
+      return true
+    }
+  }
+  return false
 }
