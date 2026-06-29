@@ -223,7 +223,7 @@ fun isCompoundExpression(ast: SourceFile): Boolean {
   if (ast.statements.isEmpty()) {
     return false
   }
-  if (ast.statements.size == 1) {
+  if (ast.statements.size == 1 && ast.text[ast.endOfFileToken.pos - 1] != ';') {
     val statement = ast.statements[0]
     if (isExpressionStatement(statement)) {
       var node = statement.expression
