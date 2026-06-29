@@ -354,8 +354,6 @@ fun parseScriptSetupRanges(
                                   .find { range -> tsCheckReg.containsMatchIn(text.substring(range.pos, range.end)) }
                                   ?.end ?: 0
 
-  val (bindingsRaw, components) = parseBindingRanges(ast, vueCompilerOptions.extensions)
-
   var foundNonImportExportNode = false
   var importSectionEndOffset = 0
   forEachChild(ast) { node ->
@@ -385,10 +383,7 @@ fun parseScriptSetupRanges(
     visitNode(node, mutableListOf(ast))
   }
 
-  val templateRefNames = useTemplateRef.mapNotNull { it.name }.toSet()
-  val bindings = bindingsRaw.filter { range ->
-    text.substring(range.start, range.end) !in templateRefNames
-  }
+  val (bindings, components) = parseBindingRanges(ast, vueCompilerOptions.extensions)
 
   return ScriptSetupRanges(
     leadingCommentEndOffset = leadingCommentEndOffset,

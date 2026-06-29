@@ -49,7 +49,6 @@ fun parseScriptRanges(
   vueCompilerOptions: VueCompilerOptions,
 ): ScriptRanges {
   var exportDefault: ScriptExportDefault? = null
-  val (bindings, components) = parseBindingRanges(ast, vueCompilerOptions.extensions)
 
   forEachChild(ast) { child ->
     if (isExportAssignment(child)) {
@@ -66,6 +65,8 @@ fun parseScriptRanges(
       )
     }
   }
+
+  val (bindings, components) = parseBindingRanges(ast, vueCompilerOptions.extensions)
 
   return ScriptRanges(
     exportDefault = exportDefault,

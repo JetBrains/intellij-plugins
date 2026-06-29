@@ -165,23 +165,27 @@ private class Codegen(
     )
   }
 
-  val getSetupExposed: () -> Set<String> = computedSet {
-    val allVars = mutableSetOf<String>()
+  private val getSetupBindings: () -> Set<String> = computedSet {
+    val names = mutableSetOf<String>()
     val scriptSetupRanges = getScriptSetupRanges()
-    if (ir.scriptSetup == null || scriptSetupRanges == null) {
-      return@computedSet allVars
-    }
-    for (range in scriptSetupRanges.bindings) {
-      allVars.add(ir.scriptSetup.content.substring(range.start, range.end))
-    }
-    val scriptRanges = getScriptRanges()
-    if (ir.script != null && scriptRanges != null) {
-      for (range in scriptRanges.bindings) {
-        allVars.add(ir.script.content.substring(range.start, range.end))
+    if (ir.scriptSetup != null && scriptSetupRanges != null) {
+      for (range in scriptSetupRanges.bindings) {
+        names.add(ir.scriptSetup.content.substring(range.start, range.end))
+      }
+      val scriptRanges = getScriptRanges()
+      if (ir.script != null && scriptRanges != null) {
+        for (range in scriptRanges.bindings) {
+          names.add(ir.script.content.substring(range.start, range.end))
+        }
       }
     }
-    if (allVars.isEmpty()) {
-      return@computedSet allVars
+    names
+  }
+
+  val getSetupExposed: () -> Set<String> = computedSet {
+    val bindings = getSetupBindings()
+    if (bindings.isEmpty()) {
+      return@computedSet bindings
     }
     val candidates = mutableSetOf<String>()
     getGeneratedTemplate()?.ctx?.contextAccesses?.keys?.let { candidates.addAll(it) }
@@ -190,7 +194,7 @@ private class Codegen(
       candidates.add(camelize(name))
       candidates.add(capitalize(camelize(name)))
     }
-    candidates.filterTo(mutableSetOf()) { it in allVars }
+    candidates.filterTo(mutableSetOf()) { it in bindings }
   }
 
   val getGeneratedScript: () -> ScriptGenerateResult = computed {
