@@ -5,6 +5,7 @@ import com.intellij.execution.ExecutionResult
 import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugProcessStarter
 import com.intellij.xdebugger.XDebugSession
+import com.jetbrains.debugger.wip.BootstrapProvider
 import com.jetbrains.debugger.wip.WipLocalVmConnection
 import com.jetbrains.nodeJs.NodeChromeDebugProcess
 import org.jetbrains.debugger.connection.open
@@ -19,7 +20,7 @@ class MeteorDebugProcessStarter(private val isNode8: Boolean,
 
   @Throws(ExecutionException::class)
   override fun start(session: XDebugSession): XDebugProcess {
-    val connection = WipLocalVmConnection(project = session.project)
+    val connection = WipLocalVmConnection(bootstrapProvider = BootstrapProvider(session.project))
     val process = NodeChromeDebugProcess(session, finder, connection, executionResult)
     connection.executeOnStart { it.putUserData(IS_METEOR, true) }
     connection.open(socketAddress, executionResult.processHandler)

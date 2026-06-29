@@ -46,6 +46,7 @@ import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugProcessStarter
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebuggerManager
+import com.jetbrains.debugger.wip.BootstrapProvider
 import com.jetbrains.debugger.wip.BrowserChromeDebugProcess
 import com.jetbrains.debugger.wip.WipRemoteVmConnection
 import org.jetbrains.concurrency.Promise
@@ -154,7 +155,16 @@ internal class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
         // com.jetbrains.debugger.wip.WipRemoteVmConnection.
         //
         // Opening connection is postponed until browsers are ready (WEB-33076).
-        return BrowserChromeDebugProcess(session, fileFinder, WipRemoteVmConnection(url, null, session.project), executionResult)
+        return BrowserChromeDebugProcess(
+          session,
+          fileFinder,
+          WipRemoteVmConnection(
+            url,
+            null,
+            BootstrapProvider(session.project)
+          ),
+          executionResult
+        )
       }
       val debugEngine = debuggableWebBrowser.debugEngine
       val browser = debuggableWebBrowser.webBrowser
