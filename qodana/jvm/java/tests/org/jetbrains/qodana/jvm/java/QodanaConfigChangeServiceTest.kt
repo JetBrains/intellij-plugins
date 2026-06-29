@@ -57,6 +57,7 @@ class QodanaConfigChangeServiceTest: QodanaPluginHeavyTestBase() {
         # Quality gate. Will fail the CI/CD pipeline if any condition is not met
         # severityThresholds - configures maximum thresholds for different problem severities
         # testCoverageThresholds - configures minimum code coverage on a whole project and newly added code
+        # dependencyLicenses - fails the run on prohibited or unknown dependency licenses
         # Code Coverage is available in Ultimate and Ultimate Plus plans
         #failureConditions:
         #  severityThresholds:
@@ -65,6 +66,9 @@ class QodanaConfigChangeServiceTest: QodanaPluginHeavyTestBase() {
         #  testCoverageThresholds:
         #    fresh: 70
         #    total: 50
+        #  dependencyLicenses:
+        #    failOnProhibited: true
+        #    failOnUnknown: false
         
         #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
         linter: jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
