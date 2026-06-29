@@ -20,7 +20,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServicePopupSection
 import com.intellij.platform.lang.lsWidget.LanguageServicePopupSection.ForCurrentFile
@@ -37,7 +36,6 @@ import com.intellij.prettierjs.PrettierLanguageService
 import com.intellij.prettierjs.PrettierLanguageServiceImpl
 import com.intellij.prettierjs.PrettierLanguageServiceManager
 import com.intellij.prettierjs.PrettierUtil
-import com.intellij.prettierjs.isPrettierFormattingAllowedFor
 import javax.swing.Icon
 
 internal class PrettierWidgetItem(
@@ -45,6 +43,7 @@ internal class PrettierWidgetItem(
   private val currentFile: VirtualFile?,
   private val location: MultiRootJSLinterLanguageServiceManager.Location,
   private val serviceInfo: ServiceInfo<PrettierLanguageServiceImpl>,
+  private val isForCurrentFile: Boolean,
 ) : LanguageServiceWidgetItem() {
 
   override val statusBarIcon: Icon = PrettierUtil.ICON
@@ -52,12 +51,8 @@ internal class PrettierWidgetItem(
   override val statusBarTooltip: String
     get() = nameWithVersion
 
-  override val widgetActionLocation: LanguageServicePopupSection by lazy {
-    if (currentFile == null) return@lazy Other
-    if (!VfsUtil.isAncestor(location.workingDirectory, currentFile, true)) return@lazy Other
-    if (!isPrettierFormattingAllowedFor(project, currentFile)) return@lazy Other
-    else ForCurrentFile
-  }
+  override val widgetActionLocation: LanguageServicePopupSection
+    get() = if (isForCurrentFile) ForCurrentFile else Other
 
   override val isError: Boolean = serviceInfo.service.error != null
 

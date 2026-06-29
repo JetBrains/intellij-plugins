@@ -27,16 +27,17 @@ interface PrettierLanguageService {
   companion object {
     @JvmStatic
     fun getInstance(project: Project, contextFile: VirtualFile, prettierPackage: NodePackage): PrettierLanguageService {
-      val packageJson = PackageJsonUtil.findUpPackageJson(contextFile)
-      var workingDirectory = packageJson?.getParent()
-      if (workingDirectory == null) {
-        workingDirectory = BaseProjectDirectories.getInstance(project).getBaseDirectoryFor(contextFile)
-      }
-      if (workingDirectory == null) {
-        workingDirectory = contextFile.getParent()
-      }
+      val workingDirectory = computeContextDirectory(project, contextFile)
       return PrettierLanguageServiceManager.getInstance(project)
         .useService<PrettierLanguageService, Throwable>(workingDirectory, NodePackageRef.create(prettierPackage)) { it }
+    }
+
+    /** Starting point [getInstance] uses to resolve the service working directory; shared with the widget. */
+    internal fun computeContextDirectory(project: Project, contextFile: VirtualFile): VirtualFile {
+      val packageJson = PackageJsonUtil.findUpPackageJson(contextFile)
+      return packageJson?.parent
+             ?: BaseProjectDirectories.getInstance(project).getBaseDirectoryFor(contextFile)
+             ?: contextFile.parent
     }
   }
 

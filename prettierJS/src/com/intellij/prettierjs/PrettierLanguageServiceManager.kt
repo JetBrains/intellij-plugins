@@ -2,7 +2,9 @@
 package com.intellij.prettierjs
 
 import com.intellij.javascript.nodejs.util.NodePackage
+import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.javascript.linter.MultiRootJSLinterLanguageServiceManager
+import com.intellij.lang.javascript.linter.MultiRootJSLinterLanguageServiceManager.Location
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -59,6 +61,20 @@ internal class PrettierLanguageServiceManager(project: Project, internal val cs:
     workingDirectory: VirtualFile,
   ): PrettierLanguageServiceImpl {
     return PrettierLanguageServiceImpl(myProject, workingDirectory)
+  }
+
+  /**
+   * Returns the [Location] of the cached service that would format [file], or `null` if no cached service serves it.
+   * Reuses the same service-location resolution as formatting, but never creates a service (no Node.js process is
+   * started): each cached service is probed with its own package via a constant ref, so resolution short-circuits.
+   * Must be called under a read action.
+   */
+  fun findCachedServiceLocationFor(file: VirtualFile): Location? {
+    val contextDirectory = PrettierLanguageService.computeContextDirectory(myProject, file)
+    return jsLinterServices.keys.firstOrNull { cached ->
+      val resolved = resolveServiceLocation(contextDirectory, NodePackageRef.create(cached.nodePackage))
+      resolved?.workingDirectory == cached.workingDirectory
+    }
   }
 
   companion object {
