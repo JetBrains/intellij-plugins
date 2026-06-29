@@ -242,6 +242,31 @@ fun isAsExpression(node: Node): Boolean {
   return node is AsExpression
 }
 
+interface NonNullExpression : Expression {
+  val expression: Node
+}
+
+fun isNonNullExpression(node: Node): Boolean {
+  contract { returns(true) implies (node is NonNullExpression) }
+  return node is NonNullExpression
+}
+
+interface TypeAssertionExpression : Expression {
+  val expression: Node
+}
+
+fun isTypeAssertionExpression(node: Node): Boolean {
+  contract { returns(true) implies (node is TypeAssertionExpression) }
+  return node is TypeAssertionExpression
+}
+
+interface ElementAccessExpression : Expression
+
+fun isElementAccessExpression(node: Node): Boolean {
+  contract { returns(true) implies (node is ElementAccessExpression) }
+  return node is ElementAccessExpression
+}
+
 interface HasModifiers : Node {
   val modifiers: List<Node>?
 }

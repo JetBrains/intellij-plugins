@@ -3,12 +3,16 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.forEachChild
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrowFunction
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isAsExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isElementAccessExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExpressionStatement
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isFunctionDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isIdentifier
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isNonNullExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isParenthesizedExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isPropertyAccessExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeAssertionExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.DirectiveNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SimpleExpressionNode
@@ -27,7 +31,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.capitalize
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node as TsNode
 
 private data class EventDefinition(
   val propPrefix: String,
@@ -217,32 +220,34 @@ fun generateModelEventExpression(
 }
 
 fun isCompoundExpression(ast: SourceFile): Boolean {
-  var result = true
   if (ast.statements.isEmpty()) {
-    result = false
+    return false
   }
-  else if (ast.statements.size == 1) {
-    forEachChild(ast) { child1 ->
-      if (isExpressionStatement(child1)) {
-        forEachChild(child1) { child2 ->
-          if (isArrowFunction(child2)) result = false
-          else if (isPropertyAccessOrId(child2)) result = false
+  if (ast.statements.size == 1) {
+    val statement = ast.statements[0]
+    if (isExpressionStatement(statement)) {
+      var node = statement.expression
+      while (true) {
+        node = when {
+          isParenthesizedExpression(node) -> node.expression
+          isNonNullExpression(node) -> node.expression
+          isTypeAssertionExpression(node) -> node.expression
+          isAsExpression(node) -> node.expression
+          else -> break
         }
       }
-      else if (isFunctionDeclaration(child1)) {
-        result = false
+      if (
+        isArrowFunction(node)
+        || isIdentifier(node)
+        || isElementAccessExpression(node)
+        || isPropertyAccessExpression(node)
+      ) {
+        return false
       }
     }
+    else if (isFunctionDeclaration(statement)) {
+      return false
+    }
   }
-  return result
-}
-
-private fun isPropertyAccessOrId(node: TsNode): Boolean {
-  if (isIdentifier(node))
-    return true
-
-  if (isPropertyAccessExpression(node))
-    return isPropertyAccessOrId(node.expression)
-
-  return false
+  return true
 }
