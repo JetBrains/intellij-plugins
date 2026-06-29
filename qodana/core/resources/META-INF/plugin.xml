@@ -251,6 +251,9 @@
     <extensionPoint name="sarifReportContributor"
                     interface="org.jetbrains.qodana.staticAnalysis.sarif.SarifReportContributor"
                     dynamic="true"/>
+    <extensionPoint name="dependencyLicenseAuditProvider"
+                    interface="org.jetbrains.qodana.staticAnalysis.sarif.DependencyLicenseAuditProvider"
+                    dynamic="true"/>
     <extensionPoint name="qodanaScriptFactory"
                     interface="org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory"
                     dynamic="true"/>
@@ -403,6 +406,7 @@
     <qodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlLinterItemProvider"/>
     <sarifReportContributor implementation="org.jetbrains.qodana.staticAnalysis.sarif.ResultSummaryContributor"/>
     <sarifReportContributor implementation="org.jetbrains.qodana.staticAnalysis.sarif.FailureConditionsContributor"/>
+    <sarifReportContributor implementation="org.jetbrains.qodana.staticAnalysis.sarif.DependencyLicenseAuditContributor"/>
     <sarifReportContributor
       implementation="org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector$NotificationReportContributor"/>
     <qodanaHighlightingSupportInfoProvider implementation="org.jetbrains.qodana.extensions.DefaultQodanaHighlightingSupportInfoProvider"/>

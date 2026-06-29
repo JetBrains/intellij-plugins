@@ -5,7 +5,8 @@ import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
 
 data class FailureConditions(
   val severityThresholds: SeverityThresholds = SeverityThresholds(),
-  val testCoverageThresholds: TestCoverageThresholds = TestCoverageThresholds()
+  val testCoverageThresholds: TestCoverageThresholds = TestCoverageThresholds(),
+  val dependencyLicenses: DependencyLicenses = DependencyLicenses()
 ) {
   companion object {
     val DEFAULT = FailureConditions()
@@ -23,6 +24,11 @@ data class FailureConditions(
   data class TestCoverageThresholds(
     val total: Int? = null,
     val fresh: Int? = null
+  )
+
+  data class DependencyLicenses(
+    val failOnProhibited: Boolean = false,
+    val failOnUnknown: Boolean = false,
   )
 
   fun bySeverity(qodanaSeverity: QodanaSeverity) = when (qodanaSeverity) {
