@@ -288,6 +288,25 @@ class QodanaConfigTest {
   }
 
   @Test
+  fun `yaml dependencyLicenses`() {
+    val config = load("""
+      version: "1.0"
+      failureConditions:
+        dependencyLicenses:
+          failOnProhibited: true
+          failOnUnknown: true
+      """.trimIndent())
+
+    assertEquals(
+      FailureConditions(
+        dependencyLicenses = FailureConditions.DependencyLicenses(
+          failOnProhibited = true,
+          failOnUnknown = true)),
+      config.failureConditions
+    )
+  }
+
+  @Test
   fun `yaml disableSanityInspections`() {
     val config = load("""
       version: "1.0"

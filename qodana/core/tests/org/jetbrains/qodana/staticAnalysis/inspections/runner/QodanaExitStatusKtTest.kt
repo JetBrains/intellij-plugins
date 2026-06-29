@@ -22,11 +22,21 @@ import org.junit.Test
 import kotlin.io.path.Path
 
 class QodanaExitStatusKtTest {
+  // dependency license audit conditions covered below
   private fun withRun(f: (Run) -> Unit): ExitStatus {
     val run = Run().withInvocations(mutableListOf(Invocation()))
     run.resultSummary = emptyMap()
     f(run)
     return run.firstExitStatus
+  }
+
+  // Mirrors the property contract written by the dependency-analysis plugin's
+  // DependencyLicenseAuditContributor (key/values are intentionally literals to avoid a
+  // cross-module facade reference): "qodanaDependencyLicenseAudit" -> {prohibited, unknown}.
+  private fun Run.setDependencyAudit(prohibited: Boolean, unknown: Boolean) {
+    properties = (properties ?: PropertyBag()).also {
+      it["qodanaDependencyLicenseAudit"] = mapOf("prohibited" to prohibited, "unknown" to unknown)
+    }
   }
 
   private val emptyConfig = QodanaConfig.fromYaml(
@@ -353,5 +363,81 @@ class QodanaExitStatusKtTest {
         - Total coverage minimum not met. Got 1%, fail threshold 2%
         - Fresh coverage minimum not met. Got 2%, fail threshold 3%
       """.trimIndent())
+  }
+
+  @Test
+  fun `should set failure when prohibited licenses present and failOnProhibited`() {
+    val cfg = emptyConfig.copy(
+      failureConditions = FailureConditions(dependencyLicenses = FailureConditions.DependencyLicenses(failOnProhibited = true))
+    )
+    val actual = withRun {
+      it.setDependencyAudit(prohibited = true, unknown = true)
+      setInvocationExitStatus(it, cfg)
+    }
+
+    assertThat(actual).isExitWithDescription("""
+      Failure condition triggered:
+      - Detected dependencies with prohibited licenses
+    """.trimIndent())
+  }
+
+  @Test
+  fun `should set failure when unknown licenses present and failOnUnknown`() {
+    val cfg = emptyConfig.copy(
+      failureConditions = FailureConditions(dependencyLicenses = FailureConditions.DependencyLicenses(failOnUnknown = true))
+    )
+    val actual = withRun {
+      it.setDependencyAudit(prohibited = true, unknown = true)
+      setInvocationExitStatus(it, cfg)
+    }
+
+    assertThat(actual).isExitWithDescription("""
+      Failure condition triggered:
+      - Detected dependencies with unknown or uncategorized licenses
+    """.trimIndent())
+  }
+
+  @Test
+  fun `should set failure with both dependency conditions`() {
+    val cfg = emptyConfig.copy(
+      failureConditions = FailureConditions(
+        dependencyLicenses = FailureConditions.DependencyLicenses(failOnProhibited = true, failOnUnknown = true)
+      )
+    )
+    val actual = withRun {
+      it.setDependencyAudit(prohibited = true, unknown = true)
+      setInvocationExitStatus(it, cfg)
+    }
+
+    assertThat(actual).isExitWithDescription("""
+      Failure conditions triggered:
+      - Detected dependencies with prohibited licenses
+      - Detected dependencies with unknown or uncategorized licenses
+    """.trimIndent())
+  }
+
+  @Test
+  fun `should set success when dependency conditions enabled but no issues present`() {
+    val cfg = emptyConfig.copy(
+      failureConditions = FailureConditions(
+        dependencyLicenses = FailureConditions.DependencyLicenses(failOnProhibited = true, failOnUnknown = true)
+      )
+    )
+    val actual = withRun {
+      it.setDependencyAudit(prohibited = false, unknown = false)
+      setInvocationExitStatus(it, cfg)
+    }
+
+    assertThat(actual).isSuccessful()
+  }
+
+  @Test
+  fun `should set success when dependency issues present but conditions disabled`() {
+    val actual = withRun {
+      it.setDependencyAudit(prohibited = true, unknown = true)
+      setInvocationExitStatus(it, emptyConfig)
+    }
+
+    assertThat(actual).isSuccessful()
   }
 }

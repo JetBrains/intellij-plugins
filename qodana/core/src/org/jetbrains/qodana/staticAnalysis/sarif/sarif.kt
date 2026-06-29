@@ -87,6 +87,12 @@ internal const val QODANA_FAILURE_CONDITIONS = "qodanaFailureConditions"
 internal const val RELATED_PROBLEMS_CHILD_HASH_PROP = "relatedProblemsChildHash"
 internal const val RELATED_PROBLEMS_ROOT_HASH_PROP = "relatedProblemsRootHash"
 
+internal const val QODANA_DEPENDENCY_LICENSE_AUDIT = "qodanaDependencyLicenseAudit"
+
+internal const val DEPENDENCY_AUDIT_PROHIBITED = "prohibited"
+
+internal const val DEPENDENCY_AUDIT_UNKNOWN = "unknown"
+
 internal const val PROBLEM_TYPE = "problemType"
 internal const val PROBLEM_HAS_FIXES = "hasFixes"
 internal const val PROBLEM_HAS_CLEANUP = "hasCleanup"
@@ -427,5 +433,14 @@ internal var Run.resultSummary: Map<String, Int>?
   set(value) {
     val props = properties ?: PropertyBag()
     props[QODANA_NEW_RESULT_SUMMARY] = value
+    withProperties(props)
+  }
+
+@Suppress("UNCHECKED_CAST")
+internal var Run.dependencyLicenseAudit: Map<String, Boolean>
+  get() = (properties?.get(QODANA_DEPENDENCY_LICENSE_AUDIT) as? Map<String, Boolean>?).orEmpty()
+  set(value) {
+    val props = properties ?: PropertyBag()
+    props[QODANA_DEPENDENCY_LICENSE_AUDIT] = value
     withProperties(props)
   }

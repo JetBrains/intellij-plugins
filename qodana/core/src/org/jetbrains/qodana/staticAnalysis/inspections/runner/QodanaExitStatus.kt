@@ -9,6 +9,9 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageData
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.coverageStats
 import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
 import org.jetbrains.qodana.staticAnalysis.sarif.ResultSummaryContributor
+import org.jetbrains.qodana.staticAnalysis.sarif.DEPENDENCY_AUDIT_PROHIBITED
+import org.jetbrains.qodana.staticAnalysis.sarif.DEPENDENCY_AUDIT_UNKNOWN
+import org.jetbrains.qodana.staticAnalysis.sarif.dependencyLicenseAudit
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.ToolErrorInspectListener
 import org.jetbrains.qodana.staticAnalysis.sarif.qodanaKind
 import org.jetbrains.qodana.staticAnalysis.sarif.resultSummary
@@ -61,6 +64,7 @@ internal fun setInvocationExitStatus(run: Run, config: QodanaConfig) {
   var failedConditionsCount = 0
   val failedConditions = checkSeverityThresholds(summary, config)
     .plus(checkCoverageThresholds(run, config))
+    .plus(checkDependencyLicenses(run, config))
     .onEach { failedConditionsCount++ }
     .joinToString(prefix = BULLET_POINT, separator = BULLET_POINT)
 
@@ -121,3 +125,16 @@ private fun checkCoverageThresholds(run: Run, config: QodanaConfig): Sequence<St
       QodanaBundle.message("exit.threshold.coverage.not.met", coverage.title, level, threshold)
     }
 
+private fun checkDependencyLicenses(run: Run, config: QodanaConfig): Sequence<String> {
+  val conditions = config.failureConditions.dependencyLicenses
+  if (!conditions.failOnProhibited && !conditions.failOnUnknown) return emptySequence()
+  val audit = run.dependencyLicenseAudit
+  return sequence {
+    if (conditions.failOnProhibited && audit[DEPENDENCY_AUDIT_PROHIBITED] == true) {
+      yield(QodanaBundle.message("exit.dependency.prohibited.licenses"))
+    }
+    if (conditions.failOnUnknown && audit[DEPENDENCY_AUDIT_UNKNOWN] == true) {
+      yield(QodanaBundle.message("exit.dependency.unknown.licenses"))
+    }
+  }
+}

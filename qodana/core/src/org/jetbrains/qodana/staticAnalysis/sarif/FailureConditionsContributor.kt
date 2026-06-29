@@ -28,6 +28,11 @@ internal class FailureConditionsContributor : SarifReportContributor {
           yield(cov.prop to thresholds.byCoverage(cov))
         }
       })
+
+      yield("dependencyLicenses" to smallMap {
+        yield("failOnProhibited" to thresholds.dependencyLicenses.failOnProhibited.takeIf { it })
+        yield("failOnUnknown" to thresholds.dependencyLicenses.failOnUnknown.takeIf { it })
+      })
     }
     if (configMap != null) {
       props[QODANA_FAILURE_CONDITIONS] = configMap

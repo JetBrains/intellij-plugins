@@ -209,6 +209,7 @@ class QodanaYamlFailureConditionsItemProvider : QodanaYamlItemProvider {
       # Quality gate. Will fail the CI/CD pipeline if any condition is not met
       # severityThresholds - configures maximum thresholds for different problem severities
       # testCoverageThresholds - configures minimum code coverage on a whole project and newly added code
+      # dependencyLicenses - fails the run on prohibited or unknown dependency licenses (License Audit, Ultimate Plus)
       # Code Coverage is available in Ultimate and Ultimate Plus plans
       #failureConditions:
       #  severityThresholds:
@@ -217,6 +218,9 @@ class QodanaYamlFailureConditionsItemProvider : QodanaYamlItemProvider {
       #  testCoverageThresholds:
       #    fresh: 70
       #    total: 50
+      #  dependencyLicenses:
+        #    failOnProhibited: true
+        #    failOnUnknown: false
     """.trimIndent()
     return QodanaYamlItem(ID, 150, content)
   }

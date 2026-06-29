@@ -459,6 +459,22 @@
         }
       }
     },
+    "dependencyLicenses": {
+      "type": "object",
+      "description": "Configures quality gate conditions for license audit. Evaluated against the collected dependency licenses regardless of whether license problems are reported. If a baseline is given, only newly introduced dependency issues are considered",
+      "properties": {
+        "failOnProhibited": {
+          "type": "boolean",
+          "default": false,
+          "description": "The run fails if any dependency has a license prohibited by the configured license rules."
+        },
+        "failOnUnknown": {
+          "type": "boolean",
+          "default": false,
+          "description": "The run fails if any dependency has an unknown (not detected) or uncategorized license."
+        }
+      }
+    },
     "failureConditions": {
       "type": "object",
       "properties": {
@@ -468,6 +484,10 @@
         },
         "testCoverageThresholds": {
           "$ref": "#/definitions/coverageThresholds",
+          "default": null
+        },
+        "dependencyLicenses": {
+          "$ref": "#/definitions/dependencyLicenses",
           "default": null
         }
       }

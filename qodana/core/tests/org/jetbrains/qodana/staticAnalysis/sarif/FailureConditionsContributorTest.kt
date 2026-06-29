@@ -98,4 +98,24 @@ class FailureConditionsContributorTest : QodanaRunnerTestCase() {
     assertThat(getSerializedValue()).isEqualTo(expected)
   }
 
+  @Test
+  fun `should contribute dependency conditions when enabled`() {
+    val expected = json("""
+      {
+        "severityThresholds": {
+          "any": 1
+        },
+        "dependencyLicenses": {
+          "failOnProhibited": true
+        }
+      }
+    """.trimIndent())
+    configure(FailureConditions(
+      FailureConditions.SeverityThresholds(any = 1),
+      dependencyLicenses = FailureConditions.DependencyLicenses(failOnProhibited = true)
+    ))
+    runAnalysis()
+    assertThat(getSerializedValue()).isEqualTo(expected)
+  }
+
 }
