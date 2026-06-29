@@ -43,12 +43,12 @@ private fun generateWorker(
   options: TemplateCodegenOptions,
   ctx: TemplateCodegenContext,
 ): Sequence<Code> = sequence {
-  val endScope = ctx.startScope()
-  ctx.declare(options.setupConsts.toList())
+  val scope = ctx.scope()
+  scope.declare(options.setupConsts.toList())
   val vueCompilerOptions = options.vueCompilerOptions
 
-  options.slotsAssignName?.let { ctx.declare(it) }
-  options.propsAssignName?.let { ctx.declare(it) }
+  options.slotsAssignName?.let { scope.declare(it) }
+  options.propsAssignName?.let { scope.declare(it) }
 
   if (vueCompilerOptions.inferTemplateDollarSlots) ctx.dollarVars.add("\$slots")
   if (vueCompilerOptions.inferTemplateDollarAttrs) ctx.dollarVars.add("\$attrs")
@@ -90,7 +90,7 @@ private fun generateWorker(
     yield("} & { [K in keyof import('${vueCompilerOptions.lib}').ComponentPublicInstance]: unknown }$endOfLine")
   }
 
-  yieldAll(endScope())
+  yieldAll(scope.end())
 }
 
 private fun generateSlotsType(

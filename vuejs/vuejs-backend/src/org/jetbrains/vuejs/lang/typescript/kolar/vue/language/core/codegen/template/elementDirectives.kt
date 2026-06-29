@@ -64,7 +64,7 @@ private fun generateIdentifier(
     ),
   ))
   if (!isBuiltInDirective(prop.name)) {
-    ctx.recordComponentAccess("template", camelize(rawName), prop.loc.start.offset)
+    ctx.accessVariable("template", camelize(rawName), prop.loc.start.offset)
   }
   yield(endBoundary(token, startOffset + rawName.length))
 }

@@ -214,7 +214,7 @@ fun generateComponent(
   yield(endBoundary(token, node.loc.end.offset))
   yield(" = $functionalVar")
 
-  val generic = ctx.currentInfo.generic
+  val generic = ctx.getCommentInfo().generic
   if (generic != null) {
     val content = generic.content
     val offset = generic.offset

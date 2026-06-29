@@ -29,12 +29,12 @@ fun generateVFor(
 ): Sequence<Code> = sequence {
   val source = node.parseResult.source
   val (leftExpressionRange, leftExpressionText) = parseVForNode(node)
-  val endScope = ctx.startScope()
+  val scope = ctx.scope()
 
   yield("for (const [")
   if (leftExpressionRange != null && leftExpressionText != null) {
     val collectAst = getTypeScriptAST(options.template, "const [$leftExpressionText]")
-    ctx.declare(collectBindingNames(collectAst, collectAst))
+    scope.declare(collectBindingNames(collectAst, collectAst))
     yield(DataSegment(text = leftExpressionText, source = "template", sourceOffset = leftExpressionRange.start, data = codeFeatures.all))
   }
   yield("] of ")
@@ -70,7 +70,7 @@ fun generateVFor(
   }
   ctx.inVFor = inVFor
 
-  yieldAll(endScope())
+  yieldAll(scope.end())
   yield("}$newLine")
 }
 

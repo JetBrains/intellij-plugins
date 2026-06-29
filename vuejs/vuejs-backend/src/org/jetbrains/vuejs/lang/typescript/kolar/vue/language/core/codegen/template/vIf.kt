@@ -14,7 +14,7 @@ fun generateVIf(
   ctx: TemplateCodegenContext,
   node: IfNode,
 ): Sequence<Code> = sequence {
-  val originalBlockConditionsLength = ctx.blockConditions.size
+  val originalBlockConditionsLength = ctx.conditions.size
 
   for ((i, branch) in node.branches.withIndex()) {
     if (i == 0) {
@@ -42,7 +42,7 @@ fun generateVIf(
         suffix = ")",
       ).toList()
       yieldAll(codes)
-      ctx.blockConditions.add(toString(codes))
+      ctx.conditions.add(toString(codes))
       addedBlockCondition = true
       yield(" ")
     }
@@ -54,9 +54,9 @@ fun generateVIf(
     yield("}$newLine")
 
     if (addedBlockCondition) {
-      ctx.blockConditions[ctx.blockConditions.size - 1] = "!${ctx.blockConditions.last()}"
+      ctx.conditions[ctx.conditions.size - 1] = "!${ctx.conditions.last()}"
     }
   }
 
-  ctx.blockConditions.subList(originalBlockConditionsLength, ctx.blockConditions.size).clear()
+  ctx.conditions.subList(originalBlockConditionsLength, ctx.conditions.size).clear()
 }

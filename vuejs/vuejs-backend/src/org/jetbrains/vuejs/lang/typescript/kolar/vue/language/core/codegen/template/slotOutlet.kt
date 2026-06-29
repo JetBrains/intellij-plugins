@@ -82,7 +82,6 @@ fun generateSlotOutlet(
         name = nameProp.value!!.content,
         offset = nameProp.loc.start.offset + nameProp.loc.source.indexOf(nameProp.value!!.content, nameProp.name.length),
         tagRange = Pair(startTagOffset, startTagOffset + node.tag.length),
-        nodeLoc = node.loc,
         propsVar = ctx.getHoistVariable(propsVar),
       ))
     }
@@ -113,7 +112,6 @@ fun generateSlotOutlet(
         name = "default",
         offset = null,
         tagRange = Pair(startTagOffset, startTagEndOffset),
-        nodeLoc = node.loc,
         propsVar = ctx.getHoistVariable(propsVar),
       ))
     }

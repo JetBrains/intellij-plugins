@@ -166,15 +166,15 @@ fun generateEventExpression(
     )
     if (isCompound) {
       yield("(...[\$event]) => {$newLine")
-      val endScope = ctx.startScope()
-      ctx.declare("\$event")
+      val scope = ctx.scope()
+      scope.declare("\$event")
       yieldAll(ctx.generateConditionGuards())
       if (isSingleExpression(ast)) {
         yield("return ")
       }
       yieldAll(interpolation)
       yield(endOfLine)
-      yieldAll(endScope())
+      yieldAll(scope.end())
       yield("}")
       ctx.inlayHints.add(InlayHintInfo(
         blockName = "template",

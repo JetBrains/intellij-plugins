@@ -40,12 +40,12 @@ private fun generateWorker(
   options: StyleCodegenOptions,
   ctx: TemplateCodegenContext,
 ): Sequence<Code> = sequence {
-  val endScope = ctx.startScope()
-  ctx.declare(options.setupConsts.toList())
+  val scope = ctx.scope()
+  scope.declare(options.setupConsts.toList())
   yieldAll(generateStyleScopedClasses(options))
   yieldAll(generateStyleModules(options, ctx))
   yieldAll(generateCssVars(options, ctx))
-  yieldAll(endScope())
+  yieldAll(scope.end())
 }
 
 private fun generateCssVars(

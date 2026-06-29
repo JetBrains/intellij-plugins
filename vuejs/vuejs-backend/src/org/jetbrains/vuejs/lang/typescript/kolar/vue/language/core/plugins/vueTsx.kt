@@ -184,8 +184,8 @@ private class Codegen(
       return@computedSet allVars
     }
     val candidates = mutableSetOf<String>()
-    getGeneratedTemplate()?.ctx?.componentAccessMap?.keys?.let { candidates.addAll(it) }
-    getGeneratedStyle()?.ctx?.componentAccessMap?.keys?.let { candidates.addAll(it) }
+    getGeneratedTemplate()?.ctx?.contextAccesses?.keys?.let { candidates.addAll(it) }
+    getGeneratedStyle()?.ctx?.contextAccesses?.keys?.let { candidates.addAll(it) }
     ir.template?.ast?.components?.forEach { name ->
       candidates.add(camelize(name))
       candidates.add(capitalize(camelize(name)))

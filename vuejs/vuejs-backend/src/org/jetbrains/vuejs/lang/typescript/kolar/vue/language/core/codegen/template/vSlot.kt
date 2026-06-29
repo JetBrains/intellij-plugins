@@ -59,17 +59,17 @@ fun generateVSlot(
   }
   yield(": $slotVar } = $ctxVar.slots!$endOfLine")
 
-  val endScope = ctx.startScope()
+  val scope = ctx.scope()
   val exp = slotDir?.exp
   if (exp is SimpleExpressionNode) {
     val slotAst = getTypeScriptAST(options.template, "(${exp.content}) => {}")
     yieldAll(generateSlotParameters(options, ctx, slotAst, exp, slotVar))
-    ctx.declare(collectBindingNames(slotAst, slotAst))
+    scope.declare(collectBindingNames(slotAst, slotAst))
   }
   for (child in node.children) {
     yieldAll(generateTemplateChild(options, ctx, child))
   }
-  yieldAll(endScope())
+  yieldAll(scope.end())
 
   if (slotDir != null) {
     var isStatic = true
