@@ -7,7 +7,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation.CombineToken
 
-class Boundary(
+class Boundary
+private constructor(
   private val source: String,
   val features: VueCodeInformation,
 ) {
