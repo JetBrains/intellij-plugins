@@ -267,6 +267,15 @@ fun isElementAccessExpression(node: Node): Boolean {
   return node is ElementAccessExpression
 }
 
+interface SatisfiesExpression : Expression {
+  val expression: Node
+}
+
+fun isSatisfiesExpression(node: Node): Boolean {
+  contract { returns(true) implies (node is SatisfiesExpression) }
+  return node is SatisfiesExpression
+}
+
 interface HasModifiers : Node {
   val modifiers: List<Node>?
 }

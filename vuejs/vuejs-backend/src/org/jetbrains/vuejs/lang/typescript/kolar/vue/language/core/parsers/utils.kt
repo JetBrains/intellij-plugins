@@ -3,6 +3,11 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers
 
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.NamespaceImport
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isAsExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isNonNullExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isParenthesizedExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isSatisfiesExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeAssertionExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SyntaxKind
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.forEachChild
@@ -93,4 +98,19 @@ fun getClosestMultiLineCommentRange(
     return TextRange(node = currentNode, start = comment.pos, end = comment.end)
   }
   return null
+}
+
+fun getUnwrappedExpression(node: Node): Node {
+  var current = node
+  while (true) {
+    current = when {
+      isParenthesizedExpression(current) -> current.expression
+      isTypeAssertionExpression(current) -> current.expression
+      isAsExpression(current) -> current.expression
+      isNonNullExpression(current) -> current.expression
+      isSatisfiesExpression(current) -> current.expression
+      else -> break
+    }
+  }
+  return current
 }

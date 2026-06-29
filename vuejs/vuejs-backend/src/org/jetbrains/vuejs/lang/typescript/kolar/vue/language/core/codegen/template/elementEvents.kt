@@ -4,15 +4,12 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrowFunction
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isAsExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isElementAccessExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExpressionStatement
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isFunctionDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isIdentifier
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isNonNullExpression
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isParenthesizedExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isPropertyAccessExpression
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeAssertionExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.getUnwrappedExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.DirectiveNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SimpleExpressionNode
@@ -229,16 +226,7 @@ fun isCompoundExpression(ast: SourceFile): Boolean {
   if (ast.statements.size == 1 && ast.text[ast.endOfFileToken.pos - 1] != ';') {
     val statement = ast.statements[0]
     if (isExpressionStatement(statement)) {
-      var node = statement.expression
-      while (true) {
-        node = when {
-          isParenthesizedExpression(node) -> node.expression
-          isNonNullExpression(node) -> node.expression
-          isTypeAssertionExpression(node) -> node.expression
-          isAsExpression(node) -> node.expression
-          else -> break
-        }
-      }
+      val node = getUnwrappedExpression(statement.expression)
       if (
         isArrowFunction(node)
         || isIdentifier(node)

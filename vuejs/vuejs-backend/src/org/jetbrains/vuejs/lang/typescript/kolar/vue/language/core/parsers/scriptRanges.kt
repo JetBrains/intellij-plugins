@@ -7,12 +7,10 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.ObjectLiteralExpress
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.StringLiteral
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.forEachChild
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isAsExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isCallExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExportAssignment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isIdentifier
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isObjectLiteralExpression
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isParenthesizedExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isPropertyAssignment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isStringLiteral
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.TextRange
@@ -80,14 +78,7 @@ fun parseOptionsFromExtression(
   expNode: Node,
   ast: SourceFile,
 ): ScriptExportDefaultOptions? {
-  var exp = expNode
-  while (true) {
-    exp = when {
-      isAsExpression(exp) -> exp.expression
-      isParenthesizedExpression(exp) -> exp.expression
-      else -> break
-    }
-  }
+  val exp = getUnwrappedExpression(expNode)
 
   val obj: ObjectLiteralExpression
   if (isObjectLiteralExpression(exp)) {
