@@ -14,10 +14,13 @@ fun generateEscaped(
   features: VueCodeInformation,
   escapeTarget: Regex,
 ): Sequence<Code> = sequence {
-  val combineToken = features.__combineToken ?: CombineToken()
+  val features = if (features.__combineToken == null)
+    features.copy(__combineToken = CombineToken())
+  else
+    features
+
   var currentOffset = offset
   var lastIndex = 0
-  var isFirst = true
 
   for (match in escapeTarget.findAll(text)) {
     val part = text.substring(lastIndex, match.range.first)
@@ -25,15 +28,9 @@ fun generateEscaped(
       text = part,
       source = source,
       sourceOffset = currentOffset,
-      data = if (isFirst) {
-        features.copy(__combineToken = combineToken)
-      }
-      else {
-        VueCodeInformation(__combineToken = combineToken)
-      },
+      data = features,
     ))
     currentOffset += part.length
-    isFirst = false
 
     yield("\\")
 
@@ -41,7 +38,7 @@ fun generateEscaped(
       text = match.value,
       source = source,
       sourceOffset = currentOffset,
-      data = VueCodeInformation(__combineToken = combineToken),
+      data = features,
     ))
     currentOffset += match.value.length
     lastIndex = match.range.last + 1
@@ -52,6 +49,6 @@ fun generateEscaped(
     text = remaining,
     source = source,
     sourceOffset = currentOffset,
-    data = if (isFirst) features.copy(__combineToken = combineToken) else VueCodeInformation(__combineToken = combineToken),
+    data = features,
   ))
 }

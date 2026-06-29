@@ -10,11 +10,10 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateStringLiteralKey
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.isBuiltInDirective
@@ -27,7 +26,7 @@ fun generateElementDirectives(
   for (rawProp in node.props) {
     val prop = rawProp as? DirectiveNode ?: continue
     if (prop.name == "slot" || prop.name == "on" || prop.name == "model" || prop.name == "bind") continue
-    val token = yield(startBoundary("template", prop.loc.start.offset, codeFeatures.verification))
+    val boundary = yield(Boundary.start("template", prop.loc.start.offset, codeFeatures.verification))
     yield("${names.asFunctionalDirective}(")
     yieldAll(generateIdentifier(options, ctx, prop))
     yield(", {} as import('${options.vueCompilerOptions.lib}').ObjectDirective)(null!, { ...${names.directiveBindingRestFields}, ")
@@ -35,7 +34,7 @@ fun generateElementDirectives(
     yieldAll(generateModifiers(options, ctx, prop))
     yieldAll(generateValue(options, ctx, prop))
     yield(" }, null!, null!)")
-    yield(endBoundary(token, prop.loc.end.offset))
+    yield(boundary.end(prop.loc.end.offset))
     yield(endOfLine)
   }
 }
@@ -47,7 +46,7 @@ private fun generateIdentifier(
 ): Sequence<Code> = sequence {
   val rawName = "v-" + prop.name
   val startOffset = prop.loc.start.offset
-  val token = yield(startBoundary("template", startOffset, codeFeatures.verification))
+  val boundary = yield(Boundary.start("template", startOffset, codeFeatures.verification))
   yield(names.directives)
   yield(".")
   yieldAll(generateCamelized(
@@ -66,7 +65,7 @@ private fun generateIdentifier(
   if (!isBuiltInDirective(prop.name)) {
     ctx.accessVariable("template", camelize(rawName), prop.loc.start.offset)
   }
-  yield(endBoundary(token, startOffset + rawName.length))
+  yield(boundary.end(startOffset + rawName.length))
 }
 
 private fun generateArg(
@@ -76,9 +75,9 @@ private fun generateArg(
 ): Sequence<Code> = sequence {
   val arg = prop.arg as? SimpleExpressionNode ?: return@sequence
   val startOffset = arg.loc.start.offset + arg.loc.source.indexOf(arg.content)
-  val token = yield(startBoundary("template", startOffset, codeFeatures.verification))
+  val boundary = yield(Boundary.start("template", startOffset, codeFeatures.verification))
   yield("arg")
-  yield(endBoundary(token, startOffset + arg.content.length))
+  yield(boundary.end(startOffset + arg.content.length))
   yield(": ")
   if (arg.isStatic) {
     yieldAll(generateStringLiteralKey(arg.content, startOffset, codeFeatures.all))
@@ -108,9 +107,9 @@ fun generateModifiers(
   if (modifiers.isEmpty()) return@sequence
   val startOffset = modifiers.first().loc.start.offset - 1
   val endOffset = modifiers.last().loc.end.offset
-  val token = yield(startBoundary("template", startOffset, codeFeatures.verification))
+  val boundary = yield(Boundary.start("template", startOffset, codeFeatures.verification))
   yield(propertyName)
-  yield(endBoundary(token, endOffset))
+  yield(boundary.end(endOffset))
   yield(": { ")
   for (mod in modifiers) {
     yieldAll(generateObjectProperty(options, ctx, mod.content, mod.loc.start.offset, codeFeatures.withoutHighlight))
@@ -125,9 +124,9 @@ private fun generateValue(
   prop: DirectiveNode,
 ): Sequence<Code> = sequence {
   val exp = prop.exp as? SimpleExpressionNode ?: return@sequence
-  val token = yield(startBoundary("template", exp.loc.start.offset, codeFeatures.verification))
+  val boundary = yield(Boundary.start("template", exp.loc.start.offset, codeFeatures.verification))
   yield("value")
-  yield(endBoundary(token, exp.loc.end.offset))
+  yield(boundary.end(exp.loc.end.offset))
   yield(": ")
   yieldAll(generatePropExp(options, ctx, prop, exp))
 }

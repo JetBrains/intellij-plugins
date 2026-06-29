@@ -7,10 +7,9 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateEscaped
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 private val classNameEscapeRegex = Regex("""([\\'])""")
@@ -29,16 +28,16 @@ fun generateStyleScopedClassReference(
   }
 
   yield("/** @type {${names.StyleScopedClasses}[")
-  val token = yield(startBoundary(block.name, fullStart, codeFeatures.navigation))
+  val boundary = yield(Boundary.start(block.name, fullStart, codeFeatures.navigationAndCompletion))
   yield("'")
   yieldAll(generateEscaped(
     className,
     block.name,
     offset,
-    codeFeatures.navigationAndCompletion,
+    boundary.features,
     classNameEscapeRegex,
   ))
   yield("'")
-  yield(endBoundary(token, offset + className.length))
+  yield(boundary.end(offset + className.length))
   yield("]} */$endOfLine")
 }

@@ -13,11 +13,10 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SimpleExpress
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getTypeScriptAST
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingNames
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
@@ -45,17 +44,17 @@ fun generateVSlot(
       ))
     }
     else {
-      val token = yield(startBoundary("template", slotDir.loc.start.offset, codeFeatures.withoutHighlightAndCompletion))
+      val boundary = yield(Boundary.start("template", slotDir.loc.start.offset, codeFeatures.withoutHighlightAndCompletion))
       yield("default")
-      yield(endBoundary(token, slotDir.loc.start.offset + (slotDir.rawName?.length ?: 0)))
+      yield(boundary.end(slotDir.loc.start.offset + (slotDir.rawName?.length ?: 0)))
     }
   }
   else {
     yield("const { ")
     // #932: reference for implicit default slot
-    val token = yield(startBoundary("template", node.loc.start.offset, codeFeatures.navigation))
+    val boundary = yield(Boundary.start("template", node.loc.start.offset, codeFeatures.navigation))
     yield("default")
-    yield(endBoundary(token, node.loc.end.offset))
+    yield(boundary.end(node.loc.end.offset))
   }
   yield(": $slotVar } = $ctxVar.slots!$endOfLine")
 
@@ -147,7 +146,7 @@ private fun generateSlotParameters(
 
   if (types.any { it != null }) {
     yield(", ")
-    val token = yield(startBoundary("template", exp.loc.start.offset, codeFeatures.verification))
+    val boundary = yield(Boundary.start("template", exp.loc.start.offset, codeFeatures.verification))
     yield("(")
     for (type in types) {
       if (type != null) {
@@ -160,7 +159,7 @@ private fun generateSlotParameters(
       }
     }
     yield(") => [] as any")
-    yield(endBoundary(token, exp.loc.end.offset))
+    yield(boundary.end(exp.loc.end.offset))
   }
   yield(")$endOfLine")
 }

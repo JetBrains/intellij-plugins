@@ -8,10 +8,9 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 class TemplateGenerateResult(
@@ -116,9 +115,9 @@ private fun generateSlotsType(
       yieldAll(generateObjectProperty(options, ctx, slot.name, slot.offset, codeFeatures.navigation))
     }
     else {
-      val token = yield(startBoundary("template", slot.tagRange.first, codeFeatures.navigation))
+      val boundary = yield(Boundary.start("template", slot.tagRange.first, codeFeatures.navigation))
       yield("default")
-      yield(endBoundary(token, slot.tagRange.second))
+      yield(boundary.end(slot.tagRange.second))
     }
     yield("?: (props: typeof ${slot.propsVar}) => any }")
   }

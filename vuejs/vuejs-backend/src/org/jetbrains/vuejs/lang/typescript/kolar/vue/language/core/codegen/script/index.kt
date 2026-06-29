@@ -11,15 +11,13 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRAttr
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScript
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.InlayHintInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateSfcBlockSection
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.ScriptExportDefault
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.ScriptRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
@@ -65,17 +63,17 @@ private fun generateWorker(
     else
       codeFeatures.all
     yield("import ${names.src} from ")
-    val token = yield(startBoundary(script.name, scriptSrc.offset, features))
+    val boundary = yield(Boundary.start(script.name, scriptSrc.offset, features))
     yield("'")
     yield(DataSegment(
       text = src.substring(0, scriptSrc.text.length),
       source = script.name,
       sourceOffset = scriptSrc.offset,
-      data = VueCodeInformation(__combineToken = token),
+      data = boundary.features,
     ))
     yield(src.substring(scriptSrc.text.length))
     yield("'")
-    yield(endBoundary(token, scriptSrc.offset + scriptSrc.text.length))
+    yield(boundary.end(scriptSrc.offset + scriptSrc.text.length))
     yield(endOfLine)
     yield("export default ${names.src}${endOfLine}")
     yieldAll(generateTemplate(options, ctx, names.src))
@@ -256,8 +254,8 @@ private fun generateExportDeclareEqual(
   name: String,
 ): Sequence<Code> = sequence {
   yield("const ")
-  val token = yield(startBoundary(block.name, 0, codeFeatures.doNotReportTs6133))
+  val boundary = yield(Boundary.start(block.name, 0, codeFeatures.doNotReportTs6133))
   yield(name)
-  yield(endBoundary(token, block.content.length))
+  yield(boundary.end(block.content.length))
   yield(" = ")
 }

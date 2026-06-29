@@ -16,15 +16,15 @@ fun generateStringLiteralKey(
     yield("'$code'")
   }
   else {
-    val token = yield(startBoundary("template", offset, info))
+    val boundary = yield(Boundary.start("template", offset, info))
     yield("'")
     yield(DataSegment(
       text = code,
       source = "template",
       sourceOffset = offset,
-      data = VueCodeInformation(__combineToken = token),
+      data = boundary.features,
     ))
     yield("'")
-    yield(endBoundary(token, offset + code.length))
+    yield(boundary.end(offset + code.length))
   }
 }

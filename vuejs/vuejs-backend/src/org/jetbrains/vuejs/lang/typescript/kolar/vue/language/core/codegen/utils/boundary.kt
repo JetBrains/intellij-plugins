@@ -7,30 +7,25 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation.CombineToken
 
-fun startBoundary(
-  source: String,
-  startOffset: Int,
-  features: VueCodeInformation,
-): ValueWithReturn<Code, CombineToken> {
-  val token = CombineToken(source)
-  return ValueWithReturn(
-    value = DataSegment(
-      text = "",
-      source = source,
-      sourceOffset = startOffset,
-      data = features.copy(__combineToken = token),
-    ),
-    returnValue = token,
-  )
-}
+class Boundary(
+  private val source: String,
+  val features: VueCodeInformation,
+) {
+  companion object {
+    fun start(
+      source: String,
+      startOffset: Int,
+      features: VueCodeInformation,
+    ): ValueWithReturn<Code, Boundary> {
+      val token = CombineToken(source)
+      val boundaryFeatures = features.copy(__combineToken = token)
+      return ValueWithReturn(
+        value = DataSegment(text = "", source = source, sourceOffset = startOffset, data = boundaryFeatures),
+        returnValue = Boundary(source, boundaryFeatures),
+      )
+    }
+  }
 
-fun endBoundary(
-  token: CombineToken,
-  endOffset: Int,
-): Code =
-  DataSegment(
-    text = "",
-    source = token.description,
-    sourceOffset = endOffset,
-    data = VueCodeInformation(__combineToken = token),
-  )
+  fun end(endOffset: Int): Code =
+    DataSegment(text = "", source = source, sourceOffset = endOffset, data = features)
+}

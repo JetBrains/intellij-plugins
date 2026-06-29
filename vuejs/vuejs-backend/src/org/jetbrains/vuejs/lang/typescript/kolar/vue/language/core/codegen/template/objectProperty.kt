@@ -6,11 +6,10 @@ import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateStringLiteralKey
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRegex
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
 
@@ -45,11 +44,11 @@ fun generateObjectProperty(
       yieldAll(generateCamelized(code, "template", offset, features))
     }
     else {
-      val token = yield(startBoundary("template", offset, features))
+      val boundary = yield(Boundary.start("template", offset, features))
       yield("'")
-      yieldAll(generateCamelized(code, "template", offset, VueCodeInformation(__combineToken = token)))
+      yieldAll(generateCamelized(code, "template", offset, boundary.features))
       yield("'")
-      yield(endBoundary(token, offset + code.length))
+      yield(boundary.end(offset + code.length))
     }
   }
   else {

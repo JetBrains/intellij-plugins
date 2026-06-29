@@ -18,12 +18,11 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInform
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.createVBindShorthandInlayHintInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateUnicode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRegex
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.hyphenateAttr
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.hyphenateTag
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.normalizeAttributeValue
@@ -100,21 +99,21 @@ fun generateElementProps(
         val shouldCamelize = getShouldCamelize(options, node, directiveProp, propName)
         val features = getPropsCodeFeatures(checkUnknownProps)
         if (shouldSpread) yield("...{ ")
-        val token = yield(startBoundary("template", directiveProp.loc.start.offset, codeFeatures.verification))
+        val boundary = yield(Boundary.start("template", directiveProp.loc.start.offset, codeFeatures.verification))
         if (directiveProp.arg != null) {
           yieldAll(generateObjectProperty(options, ctx, propName, directiveProp.arg!!.loc.start.offset, features, shouldCamelize))
         }
         else {
-          val token2 = yield(startBoundary("template", directiveProp.loc.start.offset, codeFeatures.withoutHighlightAndCompletion))
+          val boundary2 = yield(Boundary.start("template", directiveProp.loc.start.offset, codeFeatures.withoutHighlightAndCompletion))
           yield(propName)
-          yield(endBoundary(token2, directiveProp.loc.start.offset + "v-model".length))
+          yield(boundary2.end(directiveProp.loc.start.offset + "v-model".length))
         }
         yield(": ")
         val argLoc = directiveProp.arg?.loc ?: directiveProp.loc
-        val token3 = yield(startBoundary("template", argLoc.start.offset, codeFeatures.verification))
+        val boundary3 = yield(Boundary.start("template", argLoc.start.offset, codeFeatures.verification))
         yieldAll(generatePropExp(options, ctx, directiveProp, directiveProp.exp as? SimpleExpressionNode))
-        yield(endBoundary(token3, argLoc.end.offset))
-        yield(endBoundary(token, directiveProp.loc.end.offset))
+        yield(boundary3.end(argLoc.end.offset))
+        yield(boundary.end(directiveProp.loc.end.offset))
         if (shouldSpread) yield(" }")
         yield(",$newLine")
         if (isComponent && directiveProp.name == "model" && directiveProp.modifiers.isNotEmpty()) {
@@ -134,7 +133,7 @@ fun generateElementProps(
         val shouldCamelize = getShouldCamelize(options, node, attrProp, attrProp.name)
         val features = getPropsCodeFeatures(checkUnknownProps)
         if (shouldSpread) yield("...{ ")
-        val token = yield(startBoundary("template", attrProp.loc.start.offset, codeFeatures.verification))
+        val boundary = yield(Boundary.start("template", attrProp.loc.start.offset, codeFeatures.verification))
         val prefix = options.template.content[attrProp.loc.start.offset]
         if (prefix == '.' || prefix == '#') {
           for (char in attrProp.name) {
@@ -150,7 +149,7 @@ fun generateElementProps(
           attrProp.value != null -> yieldAll(generateAttrValue(attrProp.value!!, codeFeatures.withoutNavigation))
           else -> yield("true")
         }
-        yield(endBoundary(token, attrProp.loc.end.offset))
+        yield(boundary.end(attrProp.loc.end.offset))
         if (shouldSpread) yield(" }")
         yield(",$newLine")
       }
@@ -160,10 +159,10 @@ fun generateElementProps(
           failedPropExps?.add(FailedPropExpressions(simpleExp, "(", ")"))
         }
         else {
-          val token = yield(startBoundary("template", simpleExp.loc.start.offset, codeFeatures.verification))
+          val boundary = yield(Boundary.start("template", simpleExp.loc.start.offset, codeFeatures.verification))
           yield("...")
           yieldAll(generatePropExp(options, ctx, directiveProp, simpleExp))
-          yield(endBoundary(token, simpleExp.loc.end.offset))
+          yield(boundary.end(simpleExp.loc.end.offset))
           yield(",$newLine")
         }
       }

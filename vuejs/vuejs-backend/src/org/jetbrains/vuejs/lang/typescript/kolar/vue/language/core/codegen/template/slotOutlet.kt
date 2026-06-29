@@ -10,10 +10,9 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.createVBindShorthandInlayHintInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getElementTagOffsets
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.normalizeAttributeValue
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
@@ -39,7 +38,7 @@ fun generateSlotOutlet(
   if (options.hasDefineSlots) {
     yield("${names.asFunctionalSlot}(")
     if (nameProp != null) {
-      val token = yield(startBoundary("template", nameProp.loc.start.offset, codeFeatures.verification))
+      val boundary = yield(Boundary.start("template", nameProp.loc.start.offset, codeFeatures.verification))
       yield(options.slotsAssignName ?: names.slots)
       if (nameProp is AttributeNode && nameProp.value != null) {
         val (content, offset) = normalizeAttributeValue(nameProp.value!!)
@@ -53,23 +52,23 @@ fun generateSlotOutlet(
       else {
         yield("['default']")
       }
-      yield(endBoundary(token, nameProp.loc.end.offset))
+      yield(boundary.end(nameProp.loc.end.offset))
     }
     else {
-      val token = yield(startBoundary("template", startTagOffset, codeFeatures.verification))
+      val boundary = yield(Boundary.start("template", startTagOffset, codeFeatures.verification))
       yield("${options.slotsAssignName ?: names.slots}[")
-      val token2 = yield(startBoundary("template", startTagOffset, codeFeatures.verification))
+      val boundary2 = yield(Boundary.start("template", startTagOffset, codeFeatures.verification))
       yield("'default'")
-      yield(endBoundary(token2, startTagEndOffset))
+      yield(boundary2.end(startTagEndOffset))
       yield("]")
-      yield(endBoundary(token, startTagEndOffset))
+      yield(boundary.end(startTagEndOffset))
     }
     yield(")(")
-    val token = yield(startBoundary("template", startTagOffset, codeFeatures.verification))
+    val boundary = yield(Boundary.start("template", startTagOffset, codeFeatures.verification))
     yield("{$newLine")
     yieldAll(generateElementProps(options, ctx, node, node.props.filter { it !== nameProp }, true))
     yield("}")
-    yield(endBoundary(token, startTagEndOffset))
+    yield(boundary.end(startTagEndOffset))
     yield(")$endOfLine")
   }
   else {

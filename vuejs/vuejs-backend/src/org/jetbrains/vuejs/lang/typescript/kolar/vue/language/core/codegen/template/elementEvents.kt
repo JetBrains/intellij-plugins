@@ -17,13 +17,12 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInform
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.InlayHintInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getTypeScriptAST
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRegex
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.getUnwrappedExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
@@ -131,17 +130,17 @@ fun generateEventArg(
   )
   val camelizedName = if (directive.isNotEmpty()) capitalize(name) else name
   if (identifierRegex.matches(camelize(camelizedName))) {
-    val token = yield(startBoundary("template", start, computedFeatures))
+    val boundary = yield(Boundary.start("template", start, computedFeatures))
     yield(directive)
-    yieldAll(generateCamelized(camelizedName, "template", start, VueCodeInformation(__combineToken = token)))
+    yieldAll(generateCamelized(camelizedName, "template", start, boundary.features))
   }
   else {
-    val token = yield(startBoundary("template", start, computedFeatures))
+    val boundary = yield(Boundary.start("template", start, computedFeatures))
     yield("'")
     yield(directive)
-    yieldAll(generateCamelized(camelizedName, "template", start, VueCodeInformation(__combineToken = token)))
+    yieldAll(generateCamelized(camelizedName, "template", start, boundary.features))
     yield("'")
-    yield(endBoundary(token, start + name.length))
+    yield(boundary.end(start + name.length))
   }
 }
 

@@ -9,8 +9,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScriptSetup
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.TextRange
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.CodeTransform
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCodeWithTransforms
@@ -19,7 +19,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.insert
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.replace
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.DefineModel
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.ScriptSetupRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
@@ -255,9 +254,9 @@ fun generateSetupFunction(
       transforms.add(insert(useCssModule.callExp.end) {
         sequence {
           yield(" as ${type}[")
-          val token = yield(startBoundary(scriptSetup.name, useCssModule.exp.start, codeFeatures.verification))
+          val boundary = yield(Boundary.start(scriptSetup.name, useCssModule.exp.start, codeFeatures.verification))
           yield("'\$style'")
-          yield(endBoundary(token, useCssModule.exp.end))
+          yield(boundary.end(useCssModule.exp.end))
           yield("])")
         }
       })

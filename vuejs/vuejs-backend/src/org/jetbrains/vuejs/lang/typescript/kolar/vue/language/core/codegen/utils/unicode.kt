@@ -13,9 +13,9 @@ fun generateUnicode(
   info: VueCodeInformation,
 ): Sequence<Code> = sequence {
   if (needToUnicode(code)) {
-    val token = yield(startBoundary("template", offset, info))
+    val boundary = yield(Boundary.start("template", offset, info))
     yield(toUnicode(code))
-    yield(endBoundary(token, offset + code.length))
+    yield(boundary.end(offset + code.length))
   }
   else {
     yield(DataSegment(

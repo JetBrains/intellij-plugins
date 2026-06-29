@@ -14,7 +14,11 @@ fun generateCamelized(
   features: VueCodeInformation,
 ): Sequence<Code> = sequence {
   val parts = code.split('-')
-  val combineToken = features.__combineToken ?: CombineToken()
+  val features = if (features.__combineToken == null)
+    features.copy(__combineToken = CombineToken())
+  else
+    features
+
   var currentOffset = offset
 
   for ((i, part) in parts.withIndex()) {
@@ -24,7 +28,7 @@ fun generateCamelized(
           text = part,
           source = source,
           sourceOffset = currentOffset,
-          data = features.copy(__combineToken = combineToken),
+          data = features,
         ))
       }
       else {
@@ -32,7 +36,7 @@ fun generateCamelized(
           text = capitalize(part),
           source = source,
           sourceOffset = currentOffset,
-          data = VueCodeInformation(__combineToken = combineToken),
+          data = features,
         ))
       }
     }

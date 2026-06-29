@@ -12,10 +12,9 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.InlayHintInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 private val commentDirectiveRegex: Regex =
@@ -165,7 +164,7 @@ class TemplateCodegenContext {
     commentBuffer.clear()
     val expectError = data.expectError
     if (expectError != null) {
-      val token = yield(startBoundary(
+      val boundary = yield(Boundary.start(
         source = "template",
         startOffset = expectError.node.loc.start.offset,
         features = VueCodeInformation(
@@ -178,7 +177,7 @@ class TemplateCodegenContext {
         ),
       ))
       yield("// @ts-expect-error")
-      yield(endBoundary(token, expectError.node.loc.end.offset))
+      yield(boundary.end(expectError.node.loc.end.offset))
       yield("$newLine$endOfLine")
     }
   }

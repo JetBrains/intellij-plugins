@@ -29,11 +29,10 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.forEachNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getTypeScriptAST
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRegex
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.startBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingNames
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNodeText
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStartEnd
@@ -93,7 +92,7 @@ fun generateInterpolation(
     }
     else {
       // #1205, #1264
-      val token = yield(startBoundary(block.name, start + offset, codeFeatures.verification))
+      val boundary = yield(Boundary.start(block.name, start + offset, codeFeatures.verification))
       if (ctx.dollarVars.contains(name)) {
         yield(names.dollars)
       }
@@ -108,7 +107,7 @@ fun generateInterpolation(
         sourceOffset = start + offset,
         data = if (isShorthand) data.copy(__shorthandExpression = VueCodeInformation.ShorthandExpression.js) else data,
       ))
-      yield(endBoundary(token, start + offset + name.length))
+      yield(boundary.end(start + offset + name.length))
     }
 
     prevEnd = offset + name.length
