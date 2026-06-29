@@ -8,7 +8,7 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.annotations.JsonAdapter
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
-import com.intellij.lang.typescript.lsp.TypeScriptLspClientCommandExecutor.Companion.tsSendNotification
+import com.intellij.lang.typescript.lsp.TypeScriptLspClientCommandExecutor.Companion.tsSendNotificationSuspending
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
@@ -67,7 +67,7 @@ internal class VueHybridModeLsp4jClient<P : LspIntegrationProvider>(
         )
       }
 
-      server.tsSendNotification {
+      server.tsSendNotificationSuspending {
         val lsp4jServer = it as VueHMLsp4jServer
         lsp4jServer.tsserverResponse(responseJson)
       }
