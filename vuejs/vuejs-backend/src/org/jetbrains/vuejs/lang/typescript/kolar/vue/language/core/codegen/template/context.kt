@@ -49,8 +49,14 @@ interface TemplateCodegenContext {
 
   abstract class Scope {
     protected val vars: MutableSet<String> = mutableSetOf()
-    fun declare(vararg variables: String) { vars.addAll(variables) }
-    fun declare(variables: List<String>) { vars.addAll(variables) }
+    fun declare(vararg variables: String) {
+      vars.addAll(variables)
+    }
+
+    fun declare(variables: List<String>) {
+      vars.addAll(variables)
+    }
+
     abstract fun end(): Sequence<Code>
     operator fun contains(element: String): Boolean = element in vars
   }

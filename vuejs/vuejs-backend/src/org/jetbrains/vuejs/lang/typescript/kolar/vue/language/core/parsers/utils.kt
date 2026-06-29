@@ -3,21 +3,21 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers
 
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.NamespaceImport
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isAsExpression
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isNonNullExpression
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isParenthesizedExpression
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isSatisfiesExpression
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeAssertionExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SyntaxKind
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.forEachChild
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.getLeadingCommentRanges
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isAsExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isClassDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isEnumDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isFunctionDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isImportDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isNamedImports
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isNonNullExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isParenthesizedExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isSatisfiesExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isStatement
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeAssertionExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isVariableStatement
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.TextRange
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingRanges
