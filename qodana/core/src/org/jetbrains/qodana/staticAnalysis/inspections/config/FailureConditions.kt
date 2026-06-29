@@ -9,7 +9,7 @@ data class FailureConditions(
   val dependencyLicenses: DependencyLicenses = DependencyLicenses()
 ) {
   companion object {
-    val DEFAULT = FailureConditions()
+    val DEFAULT: FailureConditions = FailureConditions()
   }
 
   data class SeverityThresholds(
@@ -31,7 +31,7 @@ data class FailureConditions(
     val failOnUnknown: Boolean = false,
   )
 
-  fun bySeverity(qodanaSeverity: QodanaSeverity) = when (qodanaSeverity) {
+  fun bySeverity(qodanaSeverity: QodanaSeverity): Int? = when (qodanaSeverity) {
     QodanaSeverity.INFO -> severityThresholds.info
     QodanaSeverity.LOW -> severityThresholds.low
     QodanaSeverity.MODERATE -> severityThresholds.moderate
@@ -39,7 +39,7 @@ data class FailureConditions(
     QodanaSeverity.CRITICAL -> severityThresholds.critical
   }
 
-  fun byCoverage(coverage: CoverageData) = when (coverage) {
+  fun byCoverage(coverage: CoverageData): Int? = when (coverage) {
     CoverageData.TOTAL_COV -> testCoverageThresholds.total
     CoverageData.FRESH_COV -> testCoverageThresholds.fresh
     else -> null

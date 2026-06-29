@@ -89,6 +89,8 @@ internal const val RELATED_PROBLEMS_ROOT_HASH_PROP = "relatedProblemsRootHash"
 
 internal const val QODANA_DEPENDENCY_LICENSE_AUDIT = "qodanaDependencyLicenseAudit"
 
+internal const val QODANA_DEPENDENCY_LICENSE_AUDIT_DETAILS = "qodanaDependencyLicenseAuditDetails"
+
 internal const val DEPENDENCY_AUDIT_PROHIBITED = "prohibited"
 
 internal const val DEPENDENCY_AUDIT_UNKNOWN = "unknown"
@@ -442,5 +444,14 @@ internal var Run.dependencyLicenseAudit: Map<String, Boolean>
   set(value) {
     val props = properties ?: PropertyBag()
     props[QODANA_DEPENDENCY_LICENSE_AUDIT] = value
+    withProperties(props)
+  }
+
+@Suppress("UNCHECKED_CAST")
+internal var Run.dependencyLicenseAuditDetails: Map<String, List<String>>
+  get() = (properties?.get(QODANA_DEPENDENCY_LICENSE_AUDIT_DETAILS) as? Map<String, List<String>>?).orEmpty()
+  set(value) {
+    val props = properties ?: PropertyBag()
+    props[QODANA_DEPENDENCY_LICENSE_AUDIT_DETAILS] = value
     withProperties(props)
   }
