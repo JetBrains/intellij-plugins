@@ -297,10 +297,10 @@ fun generateComponent(
   }
 
   if (isCtxVarUsed) {
-    yield("var $ctxVar!: ${names.FunctionalComponentCtx}<typeof $componentVar, typeof $vnodeVar>$endOfLine")
+    yield("var $ctxVar!: ${names.ExtractComponentContext}<typeof $componentVar, typeof $vnodeVar>$endOfLine")
   }
   if (isPropsVarUsed) {
-    yield("var $propsVar!: ${names.FunctionalComponentProps}<typeof $componentVar, typeof $vnodeVar>$endOfLine")
+    yield("var $propsVar!: ${names.ExtractComponentProps}<typeof $componentVar, typeof $vnodeVar>$endOfLine")
   }
   ctx.components.removeLast()
 }
