@@ -65,8 +65,9 @@ class TemplateCodegenContext {
     }
   }
 
-  abstract class Scope {
-    protected val vars: MutableSet<String> = mutableSetOf()
+  inner class Scope {
+    private val vars: MutableSet<String> = mutableSetOf()
+
     fun declare(variable: String) {
       vars.add(variable)
     }
@@ -75,17 +76,17 @@ class TemplateCodegenContext {
       vars.addAll(variables)
     }
 
-    abstract fun end(): Sequence<Code>
-    operator fun contains(element: String): Boolean = element in vars
+    fun end(): Sequence<Code> {
+      scopes.removeLast()
+      return generateAutoImport()
+    }
+
+    operator fun contains(element: String): Boolean =
+      element in vars
   }
 
   fun scope(): Scope {
-    val s = object : Scope() {
-      override fun end(): Sequence<Code> {
-        scopes.removeLast()
-        return generateAutoImport()
-      }
-    }
+    val s = Scope()
     scopes.add(s)
     return s
   }
