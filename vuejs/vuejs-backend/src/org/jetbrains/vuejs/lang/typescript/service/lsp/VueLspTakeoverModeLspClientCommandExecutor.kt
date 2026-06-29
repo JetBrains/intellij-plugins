@@ -6,8 +6,10 @@ import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.typescript.compiler.TypeScriptServiceQueueCommand
 import com.intellij.lang.typescript.lsp.TypeScriptLspClientCommandExecutor
 import com.intellij.platform.lsp.impl.LspClientImpl
+import kotlinx.coroutines.CoroutineScope
 
-internal class VueLspTakeoverModeLspClientCommandExecutor(client: LspClientImpl) : TypeScriptLspClientCommandExecutor(client) {
+internal class VueLspTakeoverModeLspClientCommandExecutor(client: LspClientImpl, commandCoroutineScope: CoroutineScope) :
+  TypeScriptLspClientCommandExecutor(client, commandCoroutineScope) {
 
   override suspend fun handleCustomTsServerCommand(
     command: TypeScriptServiceQueueCommand<out JSLanguageServiceObject, out Any>,

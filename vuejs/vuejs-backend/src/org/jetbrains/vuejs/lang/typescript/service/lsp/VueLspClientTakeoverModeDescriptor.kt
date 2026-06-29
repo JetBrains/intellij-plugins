@@ -5,6 +5,7 @@ import com.intellij.lang.typescript.lsp.JSFrameworkLspClientDescriptor
 import com.intellij.lang.typescript.lsp.TypeScriptLspClientCommandExecutor
 import com.intellij.openapi.project.Project
 import com.intellij.platform.lsp.impl.LspClientImpl
+import kotlinx.coroutines.CoroutineScope
 
 internal class VueLspClientTakeoverModeDescriptor(project: Project) : JSFrameworkLspClientDescriptor(
   project = project,
@@ -12,8 +13,8 @@ internal class VueLspClientTakeoverModeDescriptor(project: Project) : JSFramewor
   presentableName = "Vue",
 ) {
 
-  override fun createCommandExecutor(client: LspClientImpl): TypeScriptLspClientCommandExecutor =
-    VueLspTakeoverModeLspClientCommandExecutor(client)
+  override fun createCommandExecutor(client: LspClientImpl, commandCoroutineScope: CoroutineScope): TypeScriptLspClientCommandExecutor =
+    VueLspTakeoverModeLspClientCommandExecutor(client, commandCoroutineScope)
 
   override fun createInitializationOptionsWithTS(targetPath: String): Any {
     @Suppress("unused")
