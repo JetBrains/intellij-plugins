@@ -137,7 +137,7 @@ fun generateGeneric(
   yield("\temit: ${if (emitTypes.isNotEmpty()) emitTypes.joinToString(" & ") else "{}"}${endOfLine}")
   yield("}${endOfLine}")
   yield("})(),${newLine}")
-  yield(") => ({} as import('${vueCompilerOptions.lib}').VNode & { __ctx?: Awaited<typeof ${names.setup}> }))${endOfLine}")
+  yield(") => ({} as import('${vueCompilerOptions.lib}').VNode & { __ctx?: NonNullable<Awaited<typeof ${names.setup}>> }))${endOfLine}")
 }
 
 fun generateSetupFunction(
