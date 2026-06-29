@@ -22,7 +22,7 @@ class TemplateGenerateResult(
 fun generateTemplate(
   options: TemplateCodegenOptions,
 ): TemplateGenerateResult {
-  val ctx = createTemplateCodegenContext()
+  val ctx = TemplateCodegenContext()
   val codes = mutableListOf<Code>()
   for (code in generateWorker(options, ctx)) {
     codes.add(

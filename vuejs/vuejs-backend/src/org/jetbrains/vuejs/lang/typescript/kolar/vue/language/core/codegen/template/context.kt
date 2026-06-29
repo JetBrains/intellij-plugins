@@ -12,12 +12,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.InlayHintInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenContext.CurrentInfo
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenContext.DynamicSlot
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenContext.ExpectError
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenContext.Generic
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenContext.Slot
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenContext.TemplateRef
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endBoundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
@@ -27,25 +21,49 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 private val commentDirectiveRegex: Regex =
   Regex("""^<!--\s*@vue-(?<name>[-\w]+)\b(?<content>[\s\S]*)-->${'$'}""")
 
-interface TemplateCodegenContext {
-  val generatedTypes: MutableSet<String>
-  fun getCommentInfo(): CurrentInfo
-  fun resolveCodeFeatures(features: VueCodeInformation): VueCodeInformation
-  var inVFor: Boolean
-  val slots: MutableList<Slot>
-  val dynamicSlots: MutableList<DynamicSlot>
-  val dollarVars: MutableSet<String>
-  val contextAccesses: MutableMap<String, MutableMap<String, MutableSet<Int>>>
-  val conditions: MutableList<String>
-  val inlayHints: MutableList<InlayHintInfo>
-  val inheritedAttrVars: MutableSet<String>
-  val templateRefs: MutableMap<String, MutableList<TemplateRef>>
-  val singleRootElTypes: MutableSet<String>
-  val singleRootNodes: MutableSet<ElementNode?>
-  val scopes: MutableList<Scope>
-  val components: MutableList<() -> String>
-  fun addTemplateRef(name: String, typeExp: String, offset: Int)
-  fun accessVariable(source: String, name: String, offset: Int? = null)
+class TemplateCodegenContext {
+  private var variableId = 0
+  private val hoistVars = mutableMapOf<String, String>()
+  private val stack = mutableListOf<CurrentInfo>()
+  private val commentBuffer = mutableListOf<CommentNode>()
+
+  val generatedTypes: MutableSet<String> = mutableSetOf()
+  fun getCommentInfo(): CurrentInfo = stack.last()
+  var inVFor: Boolean = false
+  val slots: MutableList<Slot> = mutableListOf<Slot>()
+  val dynamicSlots: MutableList<DynamicSlot> = mutableListOf<DynamicSlot>()
+  val dollarVars: MutableSet<String> = mutableSetOf()
+  val contextAccesses: MutableMap<String, MutableMap<String, MutableSet<Int>>> = mutableMapOf()
+  val conditions: MutableList<String> = mutableListOf()
+  val inlayHints: MutableList<InlayHintInfo> = mutableListOf()
+  val inheritedAttrVars: MutableSet<String> = mutableSetOf()
+  val templateRefs: MutableMap<String, MutableList<TemplateRef>> = mutableMapOf<String, MutableList<TemplateRef>>()
+  val singleRootElTypes: MutableSet<String> = mutableSetOf()
+  val singleRootNodes: MutableSet<ElementNode?> = mutableSetOf()
+  val scopes: MutableList<Scope> = mutableListOf<Scope>()
+  val components: MutableList<() -> String> = mutableListOf()
+
+  fun addTemplateRef(
+    name: String,
+    typeExp: String,
+    offset: Int,
+  ) {
+    templateRefs
+      .getOrPut(name) { mutableListOf() }
+      .add(TemplateRef(typeExp, offset))
+  }
+
+  fun accessVariable(
+    source: String,
+    name: String,
+    offset: Int? = null,
+  ) {
+    val map = contextAccesses.getOrPut(name) { mutableMapOf() }
+    val arr = map.getOrPut(source) { mutableSetOf() }
+    if (offset != null) {
+      arr.add(offset)
+    }
+  }
 
   abstract class Scope {
     protected val vars: MutableSet<String> = mutableSetOf()
@@ -61,94 +79,8 @@ interface TemplateCodegenContext {
     operator fun contains(element: String): Boolean = element in vars
   }
 
-  fun scope(): Scope
-  fun getInternalVariable(): String
-  fun getHoistVariable(originalVar: String): String
-  fun generateHoistVariables(): Sequence<Code>
-  fun generateConditionGuards(): Sequence<Code>
-  fun enter(node: Node): Boolean
-  fun exit(): Sequence<Code>
-
-  data class Slot(
-    val name: String,
-    val offset: Int?,
-    val tagRange: Pair<Int, Int>,
-    val propsVar: String,
-  )
-
-  data class DynamicSlot(
-    val expVar: String,
-    val propsVar: String,
-  )
-
-  data class TemplateRef(
-    val typeExp: String,
-    val offset: Int,
-  )
-
-  class ExpectError(
-    val node: CommentNode,
-    var token: Int = 0,
-  )
-
-  data class Generic(
-    val content: String,
-    val offset: Int,
-  )
-
-  data class CurrentInfo(
-    val ignoreError: Boolean = false,
-    val expectError: ExpectError? = null,
-    val generic: Generic? = null,
-  )
-}
-
-fun createTemplateCodegenContext(): TemplateCodegenContext = object : TemplateCodegenContext {
-  private var variableId = 0
-  private val hoistVars = mutableMapOf<String, String>()
-  private val stack = mutableListOf<CurrentInfo>()
-  private val commentBuffer = mutableListOf<CommentNode>()
-
-  override val generatedTypes = mutableSetOf<String>()
-  override fun getCommentInfo() = stack.last()
-  override var inVFor = false
-  override val slots = mutableListOf<Slot>()
-  override val dynamicSlots = mutableListOf<DynamicSlot>()
-  override val dollarVars = mutableSetOf<String>()
-  override val contextAccesses = mutableMapOf<String, MutableMap<String, MutableSet<Int>>>()
-  override val conditions = mutableListOf<String>()
-  override val inlayHints = mutableListOf<InlayHintInfo>()
-  override val inheritedAttrVars = mutableSetOf<String>()
-  override val templateRefs = mutableMapOf<String, MutableList<TemplateRef>>()
-  override val singleRootElTypes = mutableSetOf<String>()
-  override val singleRootNodes = mutableSetOf<ElementNode?>()
-  override val scopes = mutableListOf<TemplateCodegenContext.Scope>()
-  override val components = mutableListOf<() -> String>()
-
-  override fun addTemplateRef(
-    name: String,
-    typeExp: String,
-    offset: Int,
-  ) {
-    templateRefs
-      .getOrPut(name) { mutableListOf() }
-      .add(TemplateRef(typeExp, offset))
-  }
-
-  override fun accessVariable(
-    source: String,
-    name: String,
-    offset: Int?,
-  ) {
-    val map = contextAccesses.getOrPut(name) { mutableMapOf() }
-    val arr = map.getOrPut(source) { mutableSetOf() }
-    if (offset != null) {
-      arr.add(offset)
-    }
-  }
-
-  override fun scope(): TemplateCodegenContext.Scope {
-    val s = object : TemplateCodegenContext.Scope() {
+  fun scope(): Scope {
+    val s = object : Scope() {
       override fun end(): Sequence<Code> {
         scopes.removeLast()
         return generateAutoImport()
@@ -158,15 +90,15 @@ fun createTemplateCodegenContext(): TemplateCodegenContext = object : TemplateCo
     return s
   }
 
-  override fun getInternalVariable(): String =
+  fun getInternalVariable(): String =
     "__VLS_${variableId++}"
 
-  override fun getHoistVariable(
+  fun getHoistVariable(
     originalVar: String,
   ): String =
     hoistVars.getOrPut(originalVar) { "__VLS_${variableId++}" }
 
-  override fun generateHoistVariables(): Sequence<Code> = sequence {
+  fun generateHoistVariables(): Sequence<Code> = sequence {
     // trick to avoid TS 4081 (#5186)
     if (hoistVars.isNotEmpty()) {
       yield("// @ts-ignore$newLine")
@@ -178,13 +110,13 @@ fun createTemplateCodegenContext(): TemplateCodegenContext = object : TemplateCo
     }
   }
 
-  override fun generateConditionGuards(): Sequence<Code> = sequence {
+  fun generateConditionGuards(): Sequence<Code> = sequence {
     for (condition in conditions) {
       yield("if (!$condition) throw 0$endOfLine")
     }
   }
 
-  override fun enter(node: Node): Boolean {
+  fun enter(node: Node): Boolean {
     if (node.type == NodeTypes.COMMENT) {
       commentBuffer.add(node as CommentNode)
       return false
@@ -227,7 +159,7 @@ fun createTemplateCodegenContext(): TemplateCodegenContext = object : TemplateCo
     return true
   }
 
-  override fun exit(): Sequence<Code> = sequence {
+  fun exit(): Sequence<Code> = sequence {
     val data = stack.removeLast()
     commentBuffer.clear()
     val expectError = data.expectError
@@ -250,7 +182,7 @@ fun createTemplateCodegenContext(): TemplateCodegenContext = object : TemplateCo
     }
   }
 
-  override fun resolveCodeFeatures(
+  fun resolveCodeFeatures(
     features: VueCodeInformation,
   ): VueCodeInformation {
     if (features.verification != null && stack.isNotEmpty()) {
@@ -301,4 +233,37 @@ fun createTemplateCodegenContext(): TemplateCodegenContext = object : TemplateCo
     }
     yield("]$endOfLine")
   }
+
+  data class Slot(
+    val name: String,
+    val offset: Int?,
+    val tagRange: Pair<Int, Int>,
+    val propsVar: String,
+  )
+
+  data class DynamicSlot(
+    val expVar: String,
+    val propsVar: String,
+  )
+
+  data class TemplateRef(
+    val typeExp: String,
+    val offset: Int,
+  )
+
+  class ExpectError(
+    val node: CommentNode,
+    var token: Int = 0,
+  )
+
+  data class Generic(
+    val content: String,
+    val offset: Int,
+  )
+
+  data class CurrentInfo(
+    val ignoreError: Boolean = false,
+    val expectError: ExpectError? = null,
+    val generic: Generic? = null,
+  )
 }

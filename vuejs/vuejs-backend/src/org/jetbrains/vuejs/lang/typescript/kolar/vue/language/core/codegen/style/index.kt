@@ -6,7 +6,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenContext
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.createTemplateCodegenContext
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.generateInterpolation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
@@ -19,7 +18,7 @@ class StyleGenerateResult(
 fun generateStyle(
   options: StyleCodegenOptions,
 ): StyleGenerateResult {
-  val ctx = createTemplateCodegenContext()
+  val ctx = TemplateCodegenContext()
   val codes = mutableListOf<Code>()
   for (code in generateWorker(options, ctx)) {
     codes.add(
