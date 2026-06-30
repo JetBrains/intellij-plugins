@@ -102,5 +102,8 @@
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.serialization.json" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit5" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.ui.common" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.analysis.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
   </component>
 </module>

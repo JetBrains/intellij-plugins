@@ -111,6 +111,10 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
+        "@community//xml/xml-analysis-impl:analysis-impl",
+        "@community//xml/xml-analysis-impl:analysis-impl_test_lib",
+        "@community//xml/impl",
+        "@community//xml/impl:impl_test_lib",
     ],
 )
 ### auto-generated section `build intellij.astro.tests` end

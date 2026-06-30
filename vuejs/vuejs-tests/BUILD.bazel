@@ -207,6 +207,12 @@ jvm_library(
         "@community//libraries/junit4:junit4_test_lib",
         "@community//libraries/junit5",
         "@community//libraries/junit5:junit5_test_lib",
+        "@community//xml/xml-ui-common:ui-common",
+        "@community//xml/xml-ui-common:ui-common_test_lib",
+        "@community//xml/xml-analysis-impl:analysis-impl",
+        "@community//xml/xml-analysis-impl:analysis-impl_test_lib",
+        "@community//xml/impl",
+        "@community//xml/impl:impl_test_lib",
     ],
 )
 ### auto-generated section `build intellij.vuejs.tests` end

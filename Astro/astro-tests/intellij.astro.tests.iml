@@ -45,5 +45,7 @@
     <orderEntry type="module" module-name="intellij.css.common" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.codeinsight" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.analysis.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
   </component>
 </module>
