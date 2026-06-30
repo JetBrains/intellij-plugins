@@ -17,7 +17,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
-private val commentDirectiveRegex: Regex =
+private val commentDirectiveRE: Regex =
   Regex("""^<!--\s*@vue-(?<name>[-\w]+)\b(?<content>[\s\S]*)-->${'$'}""")
 
 class TemplateCodegenContext {
@@ -130,7 +130,7 @@ class TemplateCodegenContext {
     commentBuffer.clear()
 
     for (comment in comments) {
-      val match = commentDirectiveRegex.find(comment.loc.source) ?: continue
+      val match = commentDirectiveRE.find(comment.loc.source) ?: continue
       val name = match.groups["name"]?.value ?: continue
       val content = match.groups["content"]?.value
       when (name) {

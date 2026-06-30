@@ -105,4 +105,8 @@ object codeFeatures {
       shouldReport = { _, code -> code != "6133" },
     ),
   )
+
+  val format: VueCodeInformation = VueCodeInformation(
+    format = true,
+  )
 }

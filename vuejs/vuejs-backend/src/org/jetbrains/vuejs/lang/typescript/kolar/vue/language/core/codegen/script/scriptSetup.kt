@@ -15,7 +15,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCodeWithTransforms
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateSfcBlockSection
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRegex
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.insert
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.replace
@@ -391,7 +391,7 @@ private fun generateDefineWithTypeTransforms(
       })
     }
   }
-  else if (!identifierRegex.matches(name)) {
+  else if (!identifierRE.matches(name)) {
     yield(replace(statement.start, callExp.start) {
       sequence {
         yield("const $defaultName = ")

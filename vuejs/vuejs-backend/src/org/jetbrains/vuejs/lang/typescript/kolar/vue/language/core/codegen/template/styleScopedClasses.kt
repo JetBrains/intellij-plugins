@@ -12,7 +12,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateEscaped
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
-private val classNameEscapeRegex = Regex("""([\\'])""")
+private val classNameEscapeRE = Regex("""([\\'])""")
 
 fun generateStyleScopedClassReference(
   block: IRBlock,
@@ -35,7 +35,7 @@ fun generateStyleScopedClassReference(
     block.name,
     offset,
     boundary.features,
-    classNameEscapeRegex,
+    classNameEscapeRE,
   ))
   yield("'")
   yield(boundary.end(offset + className.length))

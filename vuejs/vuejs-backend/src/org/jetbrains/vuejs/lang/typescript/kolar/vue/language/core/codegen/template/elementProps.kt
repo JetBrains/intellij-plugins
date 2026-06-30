@@ -21,7 +21,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateUnicode
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRegex
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.hyphenateAttr
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.hyphenateTag
@@ -193,7 +193,7 @@ fun generatePropExp(
   }
   else {
     val propVariableName = camelize(exp.loc.source)
-    if (identifierRegex.matches(propVariableName)) {
+    if (identifierRE.matches(propVariableName)) {
       val codes = generateCamelized(
         exp.loc.source,
         "template",

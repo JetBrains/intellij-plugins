@@ -9,7 +9,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateStringLiteralKey
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRegex
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
 
@@ -40,7 +40,7 @@ fun generateObjectProperty(
     }
   }
   else if (shouldCamelize) {
-    if (identifierRegex.matches(camelize(code))) {
+    if (identifierRE.matches(camelize(code))) {
       yieldAll(generateCamelized(code, "template", offset, features))
     }
     else {
@@ -52,7 +52,7 @@ fun generateObjectProperty(
     }
   }
   else {
-    if (identifierRegex.matches(code)) {
+    if (identifierRE.matches(code)) {
       yield(DataSegment(text = code, source = "template", sourceOffset = offset, data = features))
     }
     else {

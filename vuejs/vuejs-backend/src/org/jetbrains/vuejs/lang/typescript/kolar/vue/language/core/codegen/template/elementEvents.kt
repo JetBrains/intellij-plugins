@@ -21,7 +21,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getTypeScriptAST
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRegex
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.getUnwrappedExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
@@ -129,7 +129,7 @@ fun generateEventArg(
       codeFeatures.doNotReportTs2353AndTs2561.verification,
   )
   val camelizedName = if (directive.isNotEmpty()) capitalize(name) else name
-  if (identifierRegex.matches(camelize(camelizedName))) {
+  if (identifierRE.matches(camelize(camelizedName))) {
     val boundary = yield(Boundary.start("template", start, computedFeatures))
     yield(directive)
     yieldAll(generateCamelized(camelizedName, "template", start, boundary.features))

@@ -32,7 +32,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.forEachNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getTypeScriptAST
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRegex
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingNames
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNodeText
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStartEnd
@@ -134,7 +134,7 @@ private fun forEachIdentifiers(
   prefix: String,
   suffix: String,
 ): Sequence<Triple<String, Int, Boolean>> = sequence {
-  if (identifierRegex.matches(code) && !shouldIdentifierSkipped(ctx, code)) {
+  if (identifierRE.matches(code) && !shouldIdentifierSkipped(ctx, code)) {
     yield(Triple(code, 0, false))
     return@sequence
   }

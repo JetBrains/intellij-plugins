@@ -32,7 +32,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateStringLiteralKey
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getTypeScriptAST
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRegex
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getElementTagOffsets
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.hyphenateTag
@@ -156,7 +156,7 @@ fun generateComponent(
       ))
       yield("]$endOfLine")
 
-      if (identifierRegex.matches(camelize(tag))) {
+      if (identifierRE.matches(camelize(tag))) {
         // navigation support
         yield("/** @ts-ignore @type {")
         for (offset in listOfNotNull(startTagOffset, endTagOffset)) {

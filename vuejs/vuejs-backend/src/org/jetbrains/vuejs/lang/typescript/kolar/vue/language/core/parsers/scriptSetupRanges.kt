@@ -33,7 +33,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStartEnd
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.CallExpression as TsCallExpression
 
-private val tsCheckReg = Regex("""^//\s*@ts-(?:no)?check($|\s)""")
+private val tsCheckRE = Regex("""^//\s*@ts-(?:no)?check($|\s)""")
 
 // CallExpressionRange { callExp, exp, arg?, typeArg? }
 // Base for DefineProps, DefineEmits, DefineSlots, UseTemplateRef; also used standalone
@@ -351,7 +351,7 @@ fun parseScriptSetupRanges(
 
   val leadingCommentRanges = getLeadingCommentRanges(text, 0)?.reversed() ?: emptyList()
   val leadingCommentEndOffset = leadingCommentRanges
-                                  .find { range -> tsCheckReg.containsMatchIn(text.substring(range.pos, range.end)) }
+                                  .find { range -> tsCheckRE.containsMatchIn(text.substring(range.pos, range.end)) }
                                   ?.end ?: 0
 
   var foundNonImportExportNode = false

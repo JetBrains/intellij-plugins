@@ -14,7 +14,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 const val newLine: String = "\n"
 const val endOfLine: String = ";\n"
-val identifierRegex: Regex = Regex("^[a-zA-Z_\$][0-9a-zA-Z_\$]*\$")
+val identifierRE: Regex = Regex("^[a-zA-Z_\$][0-9a-zA-Z_\$]*\$")
 
 fun getTypeScriptAST(
   block: IRBlock,
