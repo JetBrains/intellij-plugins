@@ -43,7 +43,6 @@ jvm_library(
         "@community//platform/code-style-api:codeStyle",
         "@community//platform/code-style-impl:codeStyle-impl",
         "@community//platform/core-ui",
-        "@community//xml/dom-impl",
         "@community//libraries/snakeyaml",
     ],
 )
@@ -84,7 +83,6 @@ jvm_library(
         "@community//platform/testFramework:testFramework_test_lib",
         "@community//platform/testRunner",
         "@community//platform/testRunner:testRunner_test_lib",
-        "@community//xml/dom-impl:dom-impl_test_lib",
         "@community//libraries/snakeyaml:snakeyaml_test_lib",
         "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
         "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
