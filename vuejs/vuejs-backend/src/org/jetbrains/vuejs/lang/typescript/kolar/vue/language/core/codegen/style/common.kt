@@ -35,11 +35,10 @@ fun generateClassProperty(
 fun generateStyleImports(
   style: IRStyle,
 ): Sequence<Code> = sequence {
-  val features = codeFeatures.navigationAndVerification
   val src = style.src
   if (src is IRAttr.WithText) {
     yield("$newLine & typeof import(")
-    val boundary = yield(Boundary.start("main", src.offset, features))
+    val boundary = yield(Boundary.start("main", src.offset, codeFeatures.navigationAndVerification))
     yield("'")
     yield(DataSegment(
       text = src.text,
@@ -57,7 +56,7 @@ fun generateStyleImports(
       text = text,
       source = style.name,
       sourceOffset = offset,
-      data = features,
+      data = codeFeatures.navigationAndVerification,
     ))
     yield("').default")
   }

@@ -8,6 +8,15 @@ import com.intellij.lang.typescript.kolar.KolarCodeInformation.VerificationInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 
 object codeFeatures {
+  val full: VueCodeInformation = VueCodeInformation(
+    verification = VerificationInfo.Enabled,
+    completion = CompletionInfo.Enabled,
+    semantic = SemanticInfo.Enabled,
+    navigation = NavigationInfo.Enabled,
+    structure = true,
+    format = true,
+  )
+
   val all: VueCodeInformation = VueCodeInformation(
     verification = VerificationInfo.Enabled,
     completion = CompletionInfo.Enabled,
@@ -86,6 +95,15 @@ object codeFeatures {
     verification = VerificationInfo.Enabled,
     completion = CompletionInfo.Enabled,
     navigation = NavigationInfo.Enabled,
+  )
+
+  val structure: VueCodeInformation = VueCodeInformation(
+    structure = true,
+  )
+
+  val structureAndFormat: VueCodeInformation = VueCodeInformation(
+    structure = true,
+    format = true,
   )
 
   val doNotReportTs2339AndTs2551: VueCodeInformation = VueCodeInformation(
