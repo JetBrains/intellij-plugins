@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core
 
 import com.intellij.lang.typescript.kolar.KolarCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.js.symbol.Symbol
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 
 data class VueCodeInformation(
   override val verification: VerificationInfo? = null,
@@ -37,7 +38,7 @@ data class VueCodeInformation(
   }
 
   class CombineToken(
-    val description: String? = null,
+    private val value: Source? = null,
   ) : Symbol()
 
   class LinkedToken(

@@ -19,7 +19,7 @@ private constructor(
       startOffset: Int,
       features: VueCodeInformation,
     ): ValueWithReturn<Code, Boundary> {
-      val token = CombineToken(source.value)
+      val token = CombineToken(source)
       val boundaryFeatures = features.copy(__combineToken = token)
       return ValueWithReturn(
         value = DataSegment(text = "", source = source, sourceOffset = startOffset, data = boundaryFeatures),

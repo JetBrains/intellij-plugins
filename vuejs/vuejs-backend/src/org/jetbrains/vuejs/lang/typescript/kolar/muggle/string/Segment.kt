@@ -12,7 +12,7 @@ value class StringSegment(
 
 @JvmInline
 value class Source(
-  val value: String,
+  private val value: String,
 )
 
 data class DataSegment<out T>(
