@@ -140,7 +140,8 @@ internal class Environment(
   private fun reference(element: JSQualifiedNamedElement, kind: ImportExportSpecifierKind): String =
     importCache.computeIfAbsent(element) {
       if (element.containingFile == file || isBuiltIn(element)) {
-        return@computeIfAbsent element.qualifiedName ?: element.name!!
+        return@computeIfAbsent element.qualifiedName ?: element.name
+                               ?: throw IllegalStateException("Cannot import element ${element} from file ${element.containingFile.virtualFile} because it has no name. Element contents: ${element.text}")
       }
       try {
         val importDescriptor =
