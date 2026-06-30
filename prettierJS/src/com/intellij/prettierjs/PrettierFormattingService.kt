@@ -9,10 +9,10 @@ import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.CoreFormattingService
 import com.intellij.formatting.service.FormattingService
-import com.intellij.lang.javascript.imports.JSOptimizeImportUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -29,7 +29,6 @@ import com.intellij.prettierjs.formatting.PrettierFormattingApplier
 import com.intellij.prettierjs.formatting.extendRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.codeStyle.CoreCodeStyleUtil
-import java.util.concurrent.CountDownLatch
 
 private val LOG = logger<PrettierFormattingService>()
 
@@ -41,7 +40,8 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
   override fun getNotificationGroupId(): String = "Prettier"
   override fun getFeatures(): Set<FormattingService.Feature> = setOf(FormattingService.Feature.FORMAT_FRAGMENTS)
 
-  override fun canFormat(psiFile: PsiFile): Boolean = Registry.`is`("prettier.use.async.formatting.service") && isApplicable(psiFile)
+  override fun canFormat(psiFile: PsiFile): Boolean =
+    Registry.`is`("prettier.use.async.formatting.service") && isApplicable(psiFile)
 
   override fun createFormattingTask(request: AsyncFormattingRequest): FormattingTask? {
     val context = request.context
@@ -49,11 +49,8 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
     val file = context.containingFile
     val virtualFile = context.virtualFile ?: return null
 
-    val formatterLatch = CountDownLatch(1)
-    file.putUserData(JSOptimizeImportUtil.COUNTDOWN_LATCH_KEY, formatterLatch)
-
     val skipInContentCheck = file.consumeSkipInContentScopeCheck()
-    return PrettierFormattingTask(request, file, virtualFile, project, formatterLatch, skipInContentCheck)
+    return PrettierFormattingTask(request, file, virtualFile, project, skipInContentCheck)
   }
 
   private fun isApplicable(psiFile: PsiFile): Boolean {
@@ -80,7 +77,6 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
     private val file: PsiFile,
     private val virtualFile: VirtualFile,
     private val project: Project,
-    private val formatterLatch: CountDownLatch,
     private val skipInContentCheck: Boolean,
   ) : FormattingTask {
     private var cancelled = false
@@ -108,12 +104,12 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
           }
         }
       }
-      catch (e: Exception) {
+      catch (e: Throwable) {
+        if (Logger.shouldRethrow(e)) throw e
         LOG.warn("Error during Prettier formatting", e)
       }
       finally {
         request.onTextReady(null)
-        formatterLatch.countDown()
       }
     }
 
