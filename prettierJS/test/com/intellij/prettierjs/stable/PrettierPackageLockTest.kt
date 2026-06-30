@@ -2,6 +2,11 @@
 
 package com.intellij.prettierjs.stable
 
+import com.intellij.codeInsight.actions.onSave.FormatOnSaveOptionsBase
+import com.intellij.codeInsight.actions.onSave.OptimizeImportsOnSaveOptions
+import com.intellij.lang.javascript.JavaScriptFileType
+import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.testFramework.utils.ActionsOnSaveTestUtil
@@ -287,6 +292,59 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
       configuration.state.runOnSave = runOnSave
       configuration.state.runOnReformat = runOnReformat
       configuration.state.configurationMode = configurationMode
+    }
+  }
+
+  /**
+   * Enables both Prettier-on-save and Optimize Imports-on-save for JavaScript files.
+   * Used to exercise the WEB-76498 deadlock scenario: rapid saves chain OI's latch wait
+   * with Prettier's BG write, which previously deadlocked.
+   *
+   * Registers a transient `FormatOnSaveOptionsBase.DefaultsProvider` that adds JavaScript
+   * to the on-save 'Optimize imports' file-type set. The extension is registered BEFORE the
+   * first `OptimizeImportsOnSaveOptions.getInstance(project)` call so the service's State
+   * picks it up at construction time. The extension is removed via `myFixture.testRootDisposable`.
+   */
+  protected fun configureRunOptimizeImportsAndPrettierOnSave(runnable: Runnable) {
+    OPTIMIZE_IMPORTS_DEFAULTS_EP.point.registerExtension(JsOptimizeImportsOnSaveDefaults, myFixture.testRootDisposable)
+
+    val configuration = PrettierConfiguration.getInstance(project)
+    val origRunOnSave = configuration.state.runOnSave
+    val origRunOnReformat = configuration.state.runOnReformat
+    val origConfigMode = configuration.state.configurationMode
+
+    val oiOptions = OptimizeImportsOnSaveOptions.getInstance(project)
+    val origOiEnabled = oiOptions.isRunOnSaveEnabled
+
+    configuration.state.runOnSave = true
+    configuration.state.runOnReformat = false
+    configuration.state.configurationMode = PrettierConfiguration.ConfigurationMode.AUTOMATIC
+
+    oiOptions.isRunOnSaveEnabled = true
+
+    try {
+      // Copy prettier to node_modules (test data already copied by withInstallation)
+      myFixture.tempDirFixture.copyAll(getNodePackage().systemIndependentPath, "node_modules/prettier")
+
+      runnable.run()
+    }
+    finally {
+      configuration.state.runOnSave = origRunOnSave
+      configuration.state.runOnReformat = origRunOnReformat
+      configuration.state.configurationMode = origConfigMode
+
+      oiOptions.isRunOnSaveEnabled = origOiEnabled
+    }
+  }
+
+  private companion object {
+    val OPTIMIZE_IMPORTS_DEFAULTS_EP = ExtensionPointName.create<FormatOnSaveOptionsBase.DefaultsProvider>(
+      "com.intellij.formatOnSaveOptions.defaultsProvider"
+    )
+
+    val JsOptimizeImportsOnSaveDefaults = object : FormatOnSaveOptionsBase.DefaultsProvider {
+      override fun getFileTypesWithOptimizeImportsOnSaveByDefault(): Collection<FileType> =
+        listOf(JavaScriptFileType)
     }
   }
 

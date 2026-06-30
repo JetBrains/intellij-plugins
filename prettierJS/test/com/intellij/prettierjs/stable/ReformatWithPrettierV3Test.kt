@@ -8,6 +8,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.prettierjs.PrettierConfiguration
+import com.intellij.testFramework.utils.ActionsOnSaveTestUtil
 import com.intellij.util.LineSeparator
 
 @TestNpmPackage(PRETTIER_3_8_1_TEST_PACKAGE_SPEC)
@@ -337,5 +338,16 @@ class ReformatWithPrettierV3Test : ReformatWithPrettierGenericTest() {
 
   fun testCaretPositionReformatSvelte() = withInstallation {
     doReformatFile("toReformat", "svelte")
+  }
+
+  fun testOptimizeImportsAndPrettierOnSave() = withInstallation {
+    configureRunOptimizeImportsAndPrettierOnSave {
+      val dirName = getTestName(true)
+      myFixture.configureFromTempProjectFile("toReformat.js")
+      myFixture.type(' ')
+      myFixture.performEditorAction("SaveDocument")
+      ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(myFixture.project)
+      myFixture.checkResultByFile("$dirName/toReformat_after.js")
+    }
   }
 }
