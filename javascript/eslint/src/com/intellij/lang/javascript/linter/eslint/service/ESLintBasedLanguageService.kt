@@ -65,14 +65,37 @@ abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStore
     requestData: EslintRequestData,
     extraOptions: String?
   ): CompletableFuture<EslintLanguageServiceClient.Response<List<EslintError>>?>? {
-    if (!canCreateHighlightCommand(requestData)) return null
-    return cs.async { highlightSuspending(requestData, extraOptions) }.asCompletableFuture()
+    val command = createGetErrorsCommand(requestData, extraOptions) ?: return null
+    return cs.async { highlightSuspending(command) }.asCompletableFuture()
   }
 
   suspend fun highlightSuspending(
     requestData: EslintRequestData,
     extraOptions: String?
   ): EslintLanguageServiceClient.Response<List<EslintError>>? {
+    val command = createGetErrorsCommand(requestData, extraOptions) ?: return null
+
+    return highlightSuspending(command)
+  }
+
+  private suspend fun highlightSuspending(command: GetErrorsCommand): EslintLanguageServiceClient.Response<List<EslintError>>? {
+    val process = getProcess()
+    if (process == null) {
+      val error = JSLanguageServiceUtil.getLanguageServiceCreationError(this)
+      return EslintLanguageServiceClient.Response.error(error, false)
+    }
+
+    val answer = process.execute(command)?.answer ?: return null
+    val languageServiceError: @NlsSafe String? = JsonUtil.getChildAsString(answer.element, "error")
+    if (languageServiceError != null) {
+      val isNoConfigFile = JsonUtil.getChildAsBoolean(answer.element, "isNoConfigFile", false)
+      return EslintLanguageServiceClient.Response.error(languageServiceError, isNoConfigFile)
+    }
+    val parser = ESLintJsonProblemsParser.parse(answer.element)
+    return EslintLanguageServiceClient.Response<List<EslintError>>(parser.fileLevelError, parser.errors, false)
+  }
+
+  private fun createGetErrorsCommand(requestData: EslintRequestData, extraOptions: String?): GetErrorsCommand? {
     if (requestData.fileToLintContent.isBlank()) {
       return null
     }
@@ -86,41 +109,43 @@ abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStore
       return null
     }
 
-    val process = getProcess()
-    if (process == null) {
-      val error = JSLanguageServiceUtil.getLanguageServiceCreationError(this)
-      return EslintLanguageServiceClient.Response.error(error, false)
-    }
-
-    val command = GetErrorsCommand(path,
-                                   configPath,
-                                   requestData.fileToLintContent,
-                                   extraOptions,
-                                   eslintIgnoreFilePath,
-                                   requestData.fileKind.stringValue,
-                                   requestData.isFlatConfigMode)
-    val answer = process.execute(command)?.answer ?: return null
-    val languageServiceError: @NlsSafe String? = JsonUtil.getChildAsString(answer.element, "error")
-    if (languageServiceError != null) {
-      val isNoConfigFile = JsonUtil.getChildAsBoolean(answer.element, "isNoConfigFile", false)
-      return EslintLanguageServiceClient.Response.error(languageServiceError, isNoConfigFile)
-    }
-    val parser = ESLintJsonProblemsParser.parse(answer.element)
-    return EslintLanguageServiceClient.Response<List<EslintError>>(parser.fileLevelError, parser.errors, false)
+    return GetErrorsCommand(path,
+                            configPath,
+                            requestData.fileToLintContent,
+                            extraOptions,
+                            eslintIgnoreFilePath,
+                            requestData.fileKind.stringValue,
+                            requestData.isFlatConfigMode)
   }
 
   override fun fixFile(
     requestData: EslintRequestData,
     extraOptions: String?
   ): CompletableFuture<EslintLanguageServiceClient.Response<String?>?>? {
-    if (!canCreateFixFileCommand(requestData)) return null
-    return cs.async { fixFileSuspending(requestData, extraOptions) }.asCompletableFuture()
+    val command = createFixErrorsCommand(requestData, extraOptions) ?: return null
+    return cs.async { fixFileSuspending(command) }.asCompletableFuture()
   }
 
   suspend fun fixFileSuspending(
     requestData: EslintRequestData,
     extraOptions: String?
   ): EslintLanguageServiceClient.Response<String?>? {
+    val command = createFixErrorsCommand(requestData, extraOptions) ?: return null
+
+    return fixFileSuspending(command)
+  }
+
+  private suspend fun fixFileSuspending(command: FixErrorsCommand): EslintLanguageServiceClient.Response<String?>? {
+    val process = getProcess()
+    if (process == null) {
+      return EslintLanguageServiceClient.Response.error<String?>(JSLanguageServiceUtil.getLanguageServiceCreationError(this), false)
+    }
+
+    val answer = process.execute(command)?.answer ?: return null
+    return processFixFileResponse(answer)
+  }
+
+  private fun createFixErrorsCommand(requestData: EslintRequestData, extraOptions: String?): FixErrorsCommand? {
     val virtualFile = requestData.fileToLint
     val configPath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(requestData.specifiedConfigFile)
     val path = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(virtualFile)
@@ -129,32 +154,13 @@ abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStore
       return null
     }
 
-    val process = getProcess()
-    if (process == null) {
-      return EslintLanguageServiceClient.Response.error<String?>(JSLanguageServiceUtil.getLanguageServiceCreationError(this), false)
-    }
-
-    val command = FixErrorsCommand(path,
-                                   configPath,
-                                   requestData.fileToLintContent,
-                                   extraOptions,
-                                   ignoreFilePath,
-                                   requestData.fileKind.stringValue,
-                                   requestData.isFlatConfigMode)
-    val answer = process.execute(command)?.answer ?: return null
-    return processFixFileResponse(answer)
-  }
-
-  private fun canCreateHighlightCommand(requestData: EslintRequestData): Boolean {
-    return !requestData.fileToLintContent.isBlank() && canNormalizeLintFilePath(requestData)
-  }
-
-  private fun canCreateFixFileCommand(requestData: EslintRequestData): Boolean {
-    return canNormalizeLintFilePath(requestData)
-  }
-
-  private fun canNormalizeLintFilePath(requestData: EslintRequestData): Boolean {
-    return JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(requestData.fileToLint) != null
+    return FixErrorsCommand(path,
+                            configPath,
+                            requestData.fileToLintContent,
+                            extraOptions,
+                            ignoreFilePath,
+                            requestData.fileKind.stringValue,
+                            requestData.isFlatConfigMode)
   }
 
 
