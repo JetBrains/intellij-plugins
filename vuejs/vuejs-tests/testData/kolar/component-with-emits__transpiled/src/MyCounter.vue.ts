@@ -31,21 +31,21 @@ let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 ( __VLS_ctx.count );
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-__VLS_ctx.emit('start');
+return __VLS_ctx.emit('start');
 // @ts-ignore
 [count,emit,];
 }},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-__VLS_ctx.emit('change', {value: __VLS_ctx.count});
+return __VLS_ctx.emit('change', {value: __VLS_ctx.count});
 // @ts-ignore
 [count,emit,];
 }},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-__VLS_ctx.emit('reset');
+return __VLS_ctx.emit('reset');
 // @ts-ignore
 [emit,];
 }},

@@ -24,7 +24,7 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-__VLS_ctx.emit('select');
+return __VLS_ctx.emit('select');
 // @ts-ignore
 [emit,];
 }},

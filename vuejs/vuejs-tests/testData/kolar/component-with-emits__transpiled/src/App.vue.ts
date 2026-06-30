@@ -33,13 +33,13 @@ let __VLS_5!: __VLS_ResolveEmits<typeof __VLS_0, typeof __VLS_3.emit>;
 const __VLS_6: __VLS_ResolveEvent<typeof __VLS_4, typeof __VLS_5, 'onChange', 'change', 'change'> = {
 /** @type {typeof __VLS_5.change} */
 onChange: (...[$event]) => {
-__VLS_ctx.count = $event.value;
+return __VLS_ctx.count = $event.value;
 // @ts-ignore
 [count,count,];
 },
 };
-var __VLS_3!: __VLS_FunctionalComponentCtx<typeof __VLS_0, typeof __VLS_2>;
-var __VLS_4!: __VLS_FunctionalComponentProps<typeof __VLS_0, typeof __VLS_2>;
+var __VLS_3!: __VLS_ExtractComponentContext<typeof __VLS_0, typeof __VLS_2>;
+var __VLS_4!: __VLS_ExtractComponentProps<typeof __VLS_0, typeof __VLS_2>;
 const __VLS_7 = MyLabel;
 // @ts-ignore
 const __VLS_8 = __VLS_asFunctionalComponent1(__VLS_7, new __VLS_7({
@@ -52,13 +52,13 @@ let __VLS_12!: __VLS_ResolveEmits<typeof __VLS_7, typeof __VLS_10.emit>;
 const __VLS_13: __VLS_ResolveEvent<typeof __VLS_11, typeof __VLS_12, 'onSelect', 'select', 'select'> = {
 /** @type {typeof __VLS_12.select} */
 onSelect: (...[$event]) => {
-__VLS_ctx.count = 0;
+return __VLS_ctx.count = 0;
 // @ts-ignore
 [count,];
 },
 };
-var __VLS_10!: __VLS_FunctionalComponentCtx<typeof __VLS_7, typeof __VLS_9>;
-var __VLS_11!: __VLS_FunctionalComponentProps<typeof __VLS_7, typeof __VLS_9>;
+var __VLS_10!: __VLS_ExtractComponentContext<typeof __VLS_7, typeof __VLS_9>;
+var __VLS_11!: __VLS_ExtractComponentProps<typeof __VLS_7, typeof __VLS_9>;
 // @ts-ignore
 [];
 const __VLS_export = (await import('vue')).defineComponent({

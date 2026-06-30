@@ -29,7 +29,7 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-__VLS_ctx.emit('select');
+return __VLS_ctx.emit('select');
 // @ts-ignore
 [emit,];
 }},
@@ -44,6 +44,6 @@ return {} as {
 	emit: typeof __VLS_emit;
 };
 })(),
-) => ({} as import('vue').VNode & { __ctx?: Awaited<typeof __VLS_setup> }));
+) => ({} as import('vue').VNode & { __ctx?: NonNullable<Awaited<typeof __VLS_setup>> }));
 export default {} as typeof __VLS_export;
 type __VLS_PrettifyLocal<T> = (T extends any ? { [K in keyof T]: T[K]; } : { [K in keyof T as K]: T[K]; }) & {};

@@ -59,5 +59,5 @@ return {} as {
 	emit: {};
 };
 })(),
-) => ({} as import('vue').VNode & { __ctx?: Awaited<typeof __VLS_setup> }));
+) => ({} as import('vue').VNode & { __ctx?: NonNullable<Awaited<typeof __VLS_setup>> }));
 type __VLS_PrettifyLocal<T> = (T extends any ? { [K in keyof T]: T[K]; } : { [K in keyof T as K]: T[K]; }) & {};
