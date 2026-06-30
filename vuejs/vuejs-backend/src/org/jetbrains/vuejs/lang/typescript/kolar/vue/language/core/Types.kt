@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core
 
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.RootNode
 
@@ -22,7 +23,7 @@ sealed interface IRAttr {
 
 // Base interface for all SFC block types
 sealed interface IRBlock {
-  val name: String
+  val name: Source
   val lang: String
   val content: String
 }
@@ -41,14 +42,14 @@ data class IR(
 )
 
 data class IRTemplate(
-  override val name: String,
+  override val name: Source,
   override val lang: String,
   override val content: String,
   val ast: RootNode?,
 ) : IRBlock
 
 data class IRScript(
-  override val name: String,
+  override val name: Source,
   override val lang: String,
   override val content: String,
   val src: IRAttr?,
@@ -56,7 +57,7 @@ data class IRScript(
 ) : IRScriptBlock
 
 data class IRScriptSetup(
-  override val name: String,
+  override val name: Source,
   override val lang: String,
   override val content: String,
   val generic: IRAttr?,
@@ -64,7 +65,7 @@ data class IRScriptSetup(
 ) : IRScriptBlock
 
 data class IRStyle(
-  override val name: String,
+  override val name: Source,
   override val lang: String,
   override val content: String,
   val src: IRAttr?,

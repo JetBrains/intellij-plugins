@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.util
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
@@ -13,14 +14,14 @@ fun generateUnicode(
   info: VueCodeInformation,
 ): Sequence<Code> = sequence {
   if (needToUnicode(code)) {
-    val boundary = yield(Boundary.start("template", offset, info))
+    val boundary = yield(Boundary.start(Source("template"), offset, info))
     yield(toUnicode(code))
     yield(boundary.end(offset + code.length))
   }
   else {
     yield(DataSegment(
       text = code,
-      source = "template",
+      source = Source("template"),
       sourceOffset = offset,
       data = info,
     ))

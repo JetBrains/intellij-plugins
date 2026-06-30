@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template
 
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ForNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.NodeTypes
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
@@ -35,7 +36,12 @@ fun generateVFor(
   if (leftExpressionRange != null && leftExpressionText != null) {
     val collectAst = getTypeScriptAST(options.template, "const [$leftExpressionText]")
     scope.declare(collectBindingNames(collectAst, collectAst))
-    yield(DataSegment(text = leftExpressionText, source = "template", sourceOffset = leftExpressionRange.start, data = codeFeatures.all))
+    yield(DataSegment(
+      text = leftExpressionText,
+      source = Source("template"),
+      sourceOffset = leftExpressionRange.start,
+      data = codeFeatures.all,
+    ))
   }
   yield("] of ")
   if (source.type == NodeTypes.SIMPLE_EXPRESSION) {

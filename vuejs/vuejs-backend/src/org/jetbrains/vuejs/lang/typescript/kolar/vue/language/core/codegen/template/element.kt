@@ -5,6 +5,7 @@ import com.intellij.lang.typescript.kolar.KolarCodeInformation.SemanticInfo
 import com.intellij.lang.typescript.kolar.KolarCodeInformation.VerificationInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.toString
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrayLiteralExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isComputedPropertyName
@@ -118,7 +119,7 @@ fun generateComponent(
       yield("const $componentVar = ")
       yieldAll(generateCamelized(
         matchedSetupConst[0].toString() + tag.substring(1),
-        "template",
+        Source("template"),
         startTagOffset,
         VueCodeInformation(
           verification = VerificationInfo.Enabled,
@@ -131,7 +132,7 @@ fun generateComponent(
         yield(" || ")
         yieldAll(generateCamelized(
           matchedSetupConst[0].toString() + tag.substring(1),
-          "template",
+          Source("template"),
           endTagOffset,
           codeFeatures.withoutHighlightAndCompletion,
         ))
@@ -161,10 +162,10 @@ fun generateComponent(
         yield("/** @ts-ignore @type {")
         for (offset in listOfNotNull(startTagOffset, endTagOffset)) {
           yield(" | typeof ${names.components}.")
-          yieldAll(generateCamelized(tag, "template", offset, codeFeatures.navigation))
+          yieldAll(generateCamelized(tag, Source("template"), offset, codeFeatures.navigation))
           if (tag[0] != tag[0].uppercaseChar()) {
             yield(" | typeof ${names.components}.")
-            yieldAll(generateCamelized(capitalize(tag), "template", offset, codeFeatures.navigation))
+            yieldAll(generateCamelized(capitalize(tag), Source("template"), offset, codeFeatures.navigation))
           }
           if (tag.contains('-')) {
             yield(" | typeof ${names.components}[")
@@ -174,7 +175,7 @@ fun generateComponent(
         }
         yield("} */$newLine")
         // auto import support
-        yieldAll(generateCamelized(tag, "template", startTagOffset, codeFeatures.importCompletionOnly))
+        yieldAll(generateCamelized(tag, Source("template"), startTagOffset, codeFeatures.importCompletionOnly))
         yield(endOfLine)
       }
     }
@@ -208,7 +209,7 @@ fun generateComponent(
   yield("}))$endOfLine")
 
   yield("const ")
-  val boundary = yield(Boundary.start("template", node.loc.start.offset, codeFeatures.doNotReportTs6133))
+  val boundary = yield(Boundary.start(Source("template"), node.loc.start.offset, codeFeatures.doNotReportTs6133))
   yield(vnodeVar)
   yield(boundary.end(node.loc.end.offset))
   yield(" = $functionalVar")
@@ -217,9 +218,9 @@ fun generateComponent(
   if (generic != null) {
     val content = generic.content
     val offset = generic.offset
-    val genericBoundary = yield(Boundary.start("template", offset, codeFeatures.verification))
+    val genericBoundary = yield(Boundary.start(Source("template"), offset, codeFeatures.verification))
     yield("<")
-    yield(DataSegment(text = content, source = "template", sourceOffset = offset, data = codeFeatures.all))
+    yield(DataSegment(text = content, source = Source("template"), sourceOffset = offset, data = codeFeatures.all))
     yield(">")
     yield(genericBoundary.end(offset + content.length))
   }
@@ -228,7 +229,7 @@ fun generateComponent(
 
   yield("(")
   val boundary2 = yield(Boundary.start(
-    "template",
+    Source("template"),
     startTagOffset,
     if (shouldInheritAttrs && options.vueCompilerOptions.checkRequiredFallthroughAttributes) VueCodeInformation()
     else codeFeatures.verification,
@@ -236,7 +237,7 @@ fun generateComponent(
   yield("{")
   yield(DataSegment(
     text = "",
-    source = "template",
+    source = Source("template"),
     sourceOffset = node.loc.start.offset,
     data = VueCodeInformation(__propsCompletion = true),
   ))
@@ -335,7 +336,7 @@ fun generateElement(
     ))
   }
   yield(")(")
-  val boundary = yield(Boundary.start("template", startTagOffset, codeFeatures.verification))
+  val boundary = yield(Boundary.start(Source("template"), startTagOffset, codeFeatures.verification))
   yield("{$newLine")
   yieldAll(generateElementProps(
     options = options,
@@ -385,7 +386,7 @@ fun generateFragment(
   // special case for <template v-for="..." :key="..." />
   if (node.props.isNotEmpty()) {
     yield("__VLS_asFunctionalElement(${names.intrinsics}.template)(")
-    val boundary = yield(Boundary.start("template", startTagOffset, codeFeatures.verification))
+    val boundary = yield(Boundary.start(Source("template"), startTagOffset, codeFeatures.verification))
     yield("{$newLine")
     yieldAll(generateElementProps(
       options = options,

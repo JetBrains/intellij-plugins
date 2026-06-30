@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.AttributeNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.DirectiveNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
@@ -38,7 +39,7 @@ fun generateSlotOutlet(
   if (options.hasDefineSlots) {
     yield("${names.asFunctionalSlot}(")
     if (nameProp != null) {
-      val boundary = yield(Boundary.start("template", nameProp.loc.start.offset, codeFeatures.verification))
+      val boundary = yield(Boundary.start(Source("template"), nameProp.loc.start.offset, codeFeatures.verification))
       yield(options.slotsAssignName ?: names.slots)
       if (nameProp is AttributeNode && nameProp.value != null) {
         val (content, offset) = normalizeAttributeValue(nameProp.value!!)
@@ -55,16 +56,16 @@ fun generateSlotOutlet(
       yield(boundary.end(nameProp.loc.end.offset))
     }
     else {
-      val boundary = yield(Boundary.start("template", startTagOffset, codeFeatures.verification))
+      val boundary = yield(Boundary.start(Source("template"), startTagOffset, codeFeatures.verification))
       yield("${options.slotsAssignName ?: names.slots}[")
-      val boundary2 = yield(Boundary.start("template", startTagOffset, codeFeatures.verification))
+      val boundary2 = yield(Boundary.start(Source("template"), startTagOffset, codeFeatures.verification))
       yield("'default'")
       yield(boundary2.end(startTagEndOffset))
       yield("]")
       yield(boundary.end(startTagEndOffset))
     }
     yield(")(")
-    val boundary = yield(Boundary.start("template", startTagOffset, codeFeatures.verification))
+    val boundary = yield(Boundary.start(Source("template"), startTagOffset, codeFeatures.verification))
     yield("{$newLine")
     yieldAll(generateElementProps(options, ctx, node, node.props.filter { it !== nameProp }, true))
     yield("}")

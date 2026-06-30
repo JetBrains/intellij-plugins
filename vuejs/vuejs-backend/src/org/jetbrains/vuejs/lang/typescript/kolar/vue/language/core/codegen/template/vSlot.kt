@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.replaceSourceRange
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrowFunction
@@ -44,7 +45,7 @@ fun generateVSlot(
       ))
     }
     else {
-      val boundary = yield(Boundary.start("template", slotDir.loc.start.offset, codeFeatures.withoutHighlightAndCompletion))
+      val boundary = yield(Boundary.start(Source("template"), slotDir.loc.start.offset, codeFeatures.withoutHighlightAndCompletion))
       yield("default")
       yield(boundary.end(slotDir.loc.start.offset + (slotDir.rawName?.length ?: 0)))
     }
@@ -52,7 +53,7 @@ fun generateVSlot(
   else {
     yield("const { ")
     // #932: reference for implicit default slot
-    val boundary = yield(Boundary.start("template", node.loc.start.offset, codeFeatures.navigation))
+    val boundary = yield(Boundary.start(Source("template"), node.loc.start.offset, codeFeatures.navigation))
     yield("default")
     yield(boundary.end(node.loc.end.offset))
   }
@@ -83,7 +84,7 @@ fun generateVSlot(
         else -> 0
       }
       yield(DataSegment(text = "",
-                        source = "template",
+                        source = Source("template"),
                         sourceOffset = slotDir.loc.start.offset + prefixLen,
                         data = codeFeatures.completion))
       yield("'/* empty slot name completion */]$endOfLine")
@@ -117,9 +118,10 @@ private fun generateSlotParameters(
     start = startOffset,
   ).toMutableList()
 
-  replaceSourceRange(interpolation, "template", startOffset, startOffset + "(".length)
+  replaceSourceRange(interpolation, Source("template"), startOffset, startOffset + "(".length)
   replaceSourceRange(
-    interpolation, "template",
+    interpolation,
+    Source("template"),
     startOffset + ast.text.length - ") => {}".length,
     startOffset + ast.text.length,
   )
@@ -129,11 +131,11 @@ private fun generateSlotParameters(
     if (paramType != null) {
       types.add(DataSegment(
         text = ast.text.substring(param.name.end, paramType.end),
-        source = "template",
+        source = Source("template"),
         sourceOffset = startOffset + param.name.end,
         data = codeFeatures.all,
       ))
-      replaceSourceRange(interpolation, "template", startOffset + param.name.end, startOffset + paramType.end)
+      replaceSourceRange(interpolation, Source("template"), startOffset + param.name.end, startOffset + paramType.end)
     }
     else {
       types.add(null)
@@ -146,7 +148,7 @@ private fun generateSlotParameters(
 
   if (types.any { it != null }) {
     yield(", ")
-    val boundary = yield(Boundary.start("template", exp.loc.start.offset, codeFeatures.verification))
+    val boundary = yield(Boundary.start(Source("template"), exp.loc.start.offset, codeFeatures.verification))
     yield("(")
     for (type in types) {
       if (type != null) {

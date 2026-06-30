@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
@@ -41,19 +42,19 @@ fun generateObjectProperty(
   }
   else if (shouldCamelize) {
     if (identifierRE.matches(camelize(code))) {
-      yieldAll(generateCamelized(code, "template", offset, features))
+      yieldAll(generateCamelized(code, Source("template"), offset, features))
     }
     else {
-      val boundary = yield(Boundary.start("template", offset, features))
+      val boundary = yield(Boundary.start(Source("template"), offset, features))
       yield("'")
-      yieldAll(generateCamelized(code, "template", offset, boundary.features))
+      yieldAll(generateCamelized(code, Source("template"), offset, boundary.features))
       yield("'")
       yield(boundary.end(offset + code.length))
     }
   }
   else {
     if (identifierRE.matches(code)) {
-      yield(DataSegment(text = code, source = "template", sourceOffset = offset, data = features))
+      yield(DataSegment(text = code, source = Source("template"), sourceOffset = offset, data = features))
     }
     else {
       yieldAll(generateStringLiteralKey(code, offset, features))

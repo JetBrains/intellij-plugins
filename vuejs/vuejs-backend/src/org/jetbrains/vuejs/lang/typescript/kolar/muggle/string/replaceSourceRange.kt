@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.muggle.string
 
 fun <T> replaceSourceRange(
   segments: MutableList<Segment<T>>,
-  source: String?,
+  source: Source?,
   startOffset: Int,
   endOffset: Int,
   vararg newSegments: Segment<T>,

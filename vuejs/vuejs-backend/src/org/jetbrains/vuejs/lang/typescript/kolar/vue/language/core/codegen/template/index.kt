@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
@@ -115,7 +116,7 @@ private fun generateSlotsType(
       yieldAll(generateObjectProperty(options, ctx, slot.name, slot.offset, codeFeatures.navigation))
     }
     else {
-      val boundary = yield(Boundary.start("template", slot.tagRange.first, codeFeatures.navigation))
+      val boundary = yield(Boundary.start(Source("template"), slot.tagRange.first, codeFeatures.navigation))
       yield("default")
       yield(boundary.end(slot.tagRange.second))
     }

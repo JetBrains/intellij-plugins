@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 import com.intellij.lang.typescript.kolar.KolarCodeInformation.VerificationInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.CommentNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
@@ -32,7 +33,7 @@ class TemplateCodegenContext {
   val slots: MutableList<Slot> = mutableListOf<Slot>()
   val dynamicSlots: MutableList<DynamicSlot> = mutableListOf<DynamicSlot>()
   val dollarVars: MutableSet<String> = mutableSetOf()
-  val contextAccesses: MutableMap<String, MutableMap<String, MutableSet<Int>>> = mutableMapOf()
+  val contextAccesses: MutableMap<String, MutableMap<Source, MutableSet<Int>>> = mutableMapOf()
   val conditions: MutableList<String> = mutableListOf()
   val inlayHints: MutableList<InlayHintInfo> = mutableListOf()
   val inheritedAttrVars: MutableSet<String> = mutableSetOf()
@@ -53,7 +54,7 @@ class TemplateCodegenContext {
   }
 
   fun accessVariable(
-    source: String,
+    source: Source,
     name: String,
     offset: Int? = null,
   ) {
@@ -165,7 +166,7 @@ class TemplateCodegenContext {
     val expectError = data.expectError
     if (expectError != null) {
       val boundary = yield(Boundary.start(
-        source = "template",
+        source = Source("template"),
         startOffset = expectError.node.loc.start.offset,
         features = VueCodeInformation(
           verification = VerificationInfo.WithFilter(

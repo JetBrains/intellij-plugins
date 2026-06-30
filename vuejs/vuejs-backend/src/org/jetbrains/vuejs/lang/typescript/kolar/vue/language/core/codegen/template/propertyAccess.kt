@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template
 
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateStringLiteralKey
@@ -20,7 +21,7 @@ fun generatePropertyAccess(
   }
   else if (identifierRE.matches(code)) {
     yield(".")
-    yield(DataSegment(text = code, source = "template", sourceOffset = offset, data = features))
+    yield(DataSegment(text = code, source = Source("template"), sourceOffset = offset, data = features))
   }
   else {
     yield("[")

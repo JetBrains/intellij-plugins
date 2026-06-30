@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.style
 
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRAttr
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
@@ -26,7 +27,7 @@ fun generateStyleModules(
       is IRAttr.Present -> yield("\$style")
       is IRAttr.WithText -> yield(DataSegment(
         text = module.text,
-        source = "main",
+        source = Source("main"),
         sourceOffset = module.offset,
         data = codeFeatures.navigation,
       ))

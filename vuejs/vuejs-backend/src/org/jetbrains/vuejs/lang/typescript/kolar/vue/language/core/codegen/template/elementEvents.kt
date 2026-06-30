@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrowFunction
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isElementAccessExpression
@@ -130,15 +131,15 @@ fun generateEventArg(
   )
   val camelizedName = if (directive.isNotEmpty()) capitalize(name) else name
   if (identifierRE.matches(camelize(camelizedName))) {
-    val boundary = yield(Boundary.start("template", start, computedFeatures))
+    val boundary = yield(Boundary.start(Source("template"), start, computedFeatures))
     yield(directive)
-    yieldAll(generateCamelized(camelizedName, "template", start, boundary.features))
+    yieldAll(generateCamelized(camelizedName, Source("template"), start, boundary.features))
   }
   else {
-    val boundary = yield(Boundary.start("template", start, computedFeatures))
+    val boundary = yield(Boundary.start(Source("template"), start, computedFeatures))
     yield("'")
     yield(directive)
-    yieldAll(generateCamelized(camelizedName, "template", start, boundary.features))
+    yieldAll(generateCamelized(camelizedName, Source("template"), start, boundary.features))
     yield("'")
     yield(boundary.end(start + name.length))
   }
@@ -176,7 +177,7 @@ fun generateEventExpression(
       yieldAll(scope.end())
       yield("}")
       ctx.inlayHints.add(InlayHintInfo(
-        blockName = "template",
+        blockName = Source("template"),
         offset = exp.loc.start.offset,
         setting = "vue.inlayHints.inlineHandlerLeading",
         label = "\$event =>",

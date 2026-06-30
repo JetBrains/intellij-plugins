@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.styl
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRAttr
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRStyle
@@ -12,7 +13,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateClassProperty(
-  source: String,
+  source: Source,
   classNameWithDot: String,
   offset: Int,
   propertyType: String,
@@ -38,11 +39,11 @@ fun generateStyleImports(
   val src = style.src
   if (src is IRAttr.WithText) {
     yield("$newLine & typeof import(")
-    val boundary = yield(Boundary.start("main", src.offset, codeFeatures.navigationAndVerification))
+    val boundary = yield(Boundary.start(Source("main"), src.offset, codeFeatures.navigationAndVerification))
     yield("'")
     yield(DataSegment(
       text = src.text,
-      source = "main",
+      source = Source("main"),
       sourceOffset = src.offset,
       data = boundary.features,
     ))

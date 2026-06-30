@@ -3,22 +3,23 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.util
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.ValueWithReturn
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation.CombineToken
 
 class Boundary
 private constructor(
-  private val source: String,
+  private val source: Source,
   val features: VueCodeInformation,
 ) {
   companion object {
     fun start(
-      source: String,
+      source: Source,
       startOffset: Int,
       features: VueCodeInformation,
     ): ValueWithReturn<Code, Boundary> {
-      val token = CombineToken(source)
+      val token = CombineToken(source.value)
       val boundaryFeatures = features.copy(__combineToken = token)
       return ValueWithReturn(
         value = DataSegment(text = "", source = source, sourceOffset = startOffset, data = boundaryFeatures),

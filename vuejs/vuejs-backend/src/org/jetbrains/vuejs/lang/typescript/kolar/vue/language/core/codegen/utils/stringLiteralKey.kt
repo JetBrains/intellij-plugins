@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.util
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
@@ -16,11 +17,11 @@ fun generateStringLiteralKey(
     yield("'$code'")
   }
   else {
-    val boundary = yield(Boundary.start("template", offset, info))
+    val boundary = yield(Boundary.start(Source("template"), offset, info))
     yield("'")
     yield(DataSegment(
       text = code,
-      source = "template",
+      source = Source("template"),
       sourceOffset = offset,
       data = boundary.features,
     ))
