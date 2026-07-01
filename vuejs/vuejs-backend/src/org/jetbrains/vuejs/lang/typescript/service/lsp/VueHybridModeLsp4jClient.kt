@@ -67,7 +67,7 @@ internal class VueHybridModeLsp4jClient<P : LspIntegrationProvider>(
         )
       }
 
-      server.tsSendNotificationSuspending {
+      server.tsSendNotificationSuspending("tsserver/response") {
         val lsp4jServer = it as VueHMLsp4jServer
         lsp4jServer.tsserverResponse(responseJson)
       }
