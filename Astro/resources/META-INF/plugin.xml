@@ -37,6 +37,7 @@
     <module name="intellij.javascript.web"/>
     <module name="intellij.json"/>
     <module name="intellij.libraries.eclipse.lsp4j"/>
+    <module name="intellij.platform.polySymbols.backend"/>
     <module name="intellij.postcss.paid"/>
     <module name="intellij.xml.emmet"/>
     <module name="intellij.xml.impl"/>
