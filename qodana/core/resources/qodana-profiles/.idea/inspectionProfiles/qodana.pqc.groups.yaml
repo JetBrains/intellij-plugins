@@ -105,22 +105,21 @@ groups:
     groups:
       - "PqcLevelIndependentInspections"
       - "PqcNotCompliantRules"
-      - "PqcLevel1Rules"
 
   - groupId: PqcMinLevel2  # NIST level 2
     groups:
       - "PqcMinLevel1"
-      - "PqcLevel2Rules"
+      - "PqcLevel1Rules"
 
   - groupId: PqcMinLevel3  # NIST level 3
     groups:
       - "PqcMinLevel2"
-      - "PqcLevel3Rules"
+      - "PqcLevel2Rules"
 
   - groupId: PqcMinLevel4  # NIST level 4
     groups:
       - "PqcMinLevel3"
-      - "PqcLevel4Rules"
+      - "PqcLevel3Rules"
 
   - groupId: PqcMinLevel5  # NIST level 5
     groups:
@@ -129,3 +128,4 @@ groups:
   - groupId: AllPqcInspections  # every PQC inspection, any level
     groups:
       - "PqcMinLevel5"
+      - "PqcLevel5Rules"
