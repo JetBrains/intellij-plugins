@@ -1,0 +1,141 @@
+# Post-Quantum Cryptography inspection groups.
+#
+# Materializes, as explicit inspection ids, the grouping that used to be computed at runtime by
+# PqcInspectionGroupProvider (now removed):
+#   * every group also contains the level-independent PQC inspections;
+#   * PqcMinLevelN = all PQC-* algorithm-detection rules whose NIST compliance level is lower than N
+#     (i.e. rules that do NOT satisfy the minimum NIST level N);
+#   * AllPqcInspections = every PQC-* rule, regardless of NIST compliance level.
+#
+# Rule ids are generated from pqc-opengrep-rule-generator (opengrep-rules/java-kotlin).
+# Include this file from a profile and enable/disable the desired group there.
+
+
+groups:
+
+  - groupId: PqcLevelIndependentInspections  # PQC inspections not tied to a NIST level
+    inspections:
+      - CryptoProviderSpecification
+      - SslParametersModification
+      - SslParametersNonDefaultConstructors
+      - KotlinCryptoProviderSpecification
+      - KotlinSslParametersModification
+      - KotlinSslParametersNonDefaultConstructors
+
+  - groupId: PqcNotCompliantRules  # NIST "not compliant" (level 0)
+    inspections:
+      - PQC-EdDSA-Signature-java_kotlin-0
+      - PQC-Ed25519-Signature-java_kotlin-0
+      - PQC-Ed448-Signature-java_kotlin-0
+      - PQC-RSA-Signature-java_kotlin-0
+      - PQC-DSA-Signature-java_kotlin-0
+      - PQC-ECDSA-Signature-java_kotlin-0
+      - PQC-Diffie_Hellman-KeyAgreement-java_kotlin-0
+      - PQC-Diffie_Hellman-KEM-java_kotlin-0
+      - PQC-ECDH-KeyAgreement-java_kotlin-0
+      - PQC-ECMQV-KeyAgreement-java_kotlin-0
+      - PQC-XDH-KeyAgreement-java_kotlin-0
+      - PQC-X25519-KeyAgreement-java_kotlin-0
+      - PQC-X448-KeyAgreement-java_kotlin-0
+      - PQC-Arcfour-Cipher-java_kotlin-0
+      - PQC-Blowfish-Cipher-java_kotlin-0
+      - PQC-ChaCha20-Cipher-java_kotlin-0
+      - PQC-DES-Cipher-java_kotlin-0
+      - PQC-Triple_DES-Cipher-java_kotlin-0
+      - PQC-ECIES-Cipher-java_kotlin-0
+      - PQC-RC2-Cipher-java_kotlin-0
+      - PQC-RC4-Cipher-java_kotlin-0
+      - PQC-RC5-Cipher-java_kotlin-0
+      - PQC-RSA-Cipher-java_kotlin-0
+      - PQC-MD5-Mac-java_kotlin-0
+      - PQC-MD2-MessageDigest-java_kotlin-0
+      - PQC-MD5-MessageDigest-java_kotlin-0
+      - PQC-SSL-SSLContext-java_kotlin-0
+      - PQC-SSL_2-SSLContext-java_kotlin-0
+      - PQC-SSL_3-SSLContext-java_kotlin-0
+      - PQC-TLS_1-SSLContext-java_kotlin-0
+      - PQC-TLS_1.1-SSLContext-java_kotlin-0
+      - PQC-TLS_1.2-SSLContext-java_kotlin-0
+      - PQC-DTLS_1.0-SSLContext-java_kotlin-0
+      - PQC-DTLS_1.2-SSLContext-java_kotlin-0
+
+  - groupId: PqcLevel1Rules  # NIST level 1
+    inspections:
+      - PQC-ML_KEM_512-KEM-java_kotlin-1
+      - PQC-AES_128-Cipher-java_kotlin-1
+      - PQC-SHA_1-Mac-java_kotlin-1
+      - PQC-SHA_1-MessageDigest-java_kotlin-1
+
+  - groupId: PqcLevel2Rules  # NIST level 2
+    inspections:
+      - PQC-ML_DSA_44-Signature-java_kotlin-2
+      - PQC-SHAKE128-MessageDigest-java_kotlin-2
+
+  - groupId: PqcLevel3Rules  # NIST level 3
+    inspections:
+      - PQC-ML_DSA_65-Signature-java_kotlin-3
+      - PQC-ML_KEM_768-KEM-java_kotlin-3
+      - PQC-AES_192-Cipher-java_kotlin-3
+      - PQC-SHA_224-Mac-java_kotlin-3
+      - PQC-SHA_512_224-Mac-java_kotlin-3
+      - PQC-SHA3_224-Mac-java_kotlin-3
+      - PQC-SHA_224-MessageDigest-java_kotlin-3
+      - PQC-SHA_512_224-MessageDigest-java_kotlin-3
+      - PQC-SHA3_224-MessageDigest-java_kotlin-3
+
+  - groupId: PqcLevel5Rules  # NIST level 5 (level 4 has no rules)
+    inspections:
+      - PQC-ML_DSA_87-Signature-java_kotlin-5
+      - PQC-ML_DSA-Signature-java_kotlin-5
+      - PQC-HSS_LMS_with_SHA_256-Signature-java_kotlin-5
+      - PQC-ML_KEM-KEM-java_kotlin-5
+      - PQC-ML_KEM_1024-KEM-java_kotlin-5
+      - PQC-AES_256-Cipher-java_kotlin-5
+      - PQC-AES-Cipher-java_kotlin-5
+      - PQC-SHA_256-Mac-java_kotlin-5
+      - PQC-SHA_256-KDF-java_kotlin-5
+      - PQC-SHA_512_256-Mac-java_kotlin-5
+      - PQC-SHA_384-Mac-java_kotlin-5
+      - PQC-SHA_384-KDF-java_kotlin-5
+      - PQC-SHA_512-Mac-java_kotlin-5
+      - PQC-SHA_512-KDF-java_kotlin-5
+      - PQC-SHA3_256-Mac-java_kotlin-5
+      - PQC-SHA3_384-Mac-java_kotlin-5
+      - PQC-SHA3_512-Mac-java_kotlin-5
+      - PQC-SHA_256-MessageDigest-java_kotlin-5
+      - PQC-SHA_384-MessageDigest-java_kotlin-5
+      - PQC-SHA_512-MessageDigest-java_kotlin-5
+      - PQC-SHA_512_256-MessageDigest-java_kotlin-5
+      - PQC-SHA3_256-MessageDigest-java_kotlin-5
+      - PQC-SHA3_384-MessageDigest-java_kotlin-5
+      - PQC-SHA3_512-MessageDigest-java_kotlin-5
+      - PQC-SHAKE256-MessageDigest-java_kotlin-5
+
+  - groupId: PqcMinLevel1  # rules below NIST level 1
+    groups:
+      - "PqcLevelIndependentInspections"
+      - "PqcNotCompliantRules"
+
+  - groupId: PqcMinLevel2  # rules below NIST level 2
+    groups:
+      - "PqcMinLevel1"
+      - "PqcLevel1Rules"
+
+  - groupId: PqcMinLevel3  # rules below NIST level 3
+    groups:
+      - "PqcMinLevel2"
+      - "PqcLevel2Rules"
+
+  - groupId: PqcMinLevel4  # rules below NIST level 4
+    groups:
+      - "PqcMinLevel3"
+      - "PqcLevel3Rules"
+
+  - groupId: PqcMinLevel5  # rules below NIST level 5 (level 4 empty -> same as PqcMinLevel4)
+    groups:
+      - "PqcMinLevel4"
+
+  - groupId: AllPqcInspections  # every PQC inspection, any level
+    groups:
+      - "PqcMinLevel5"
+      - "PqcLevel5Rules"
