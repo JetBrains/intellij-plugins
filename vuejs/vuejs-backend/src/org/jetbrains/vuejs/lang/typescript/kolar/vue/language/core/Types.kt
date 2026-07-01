@@ -25,7 +25,7 @@ sealed interface IRAttr {
 sealed interface IRBlock {
   val name: Source
   val lang: String
-  val content: String
+  val content: IRContent
 }
 
 // IRScript | IRScriptSetup — blocks that carry a TypeScript AST
@@ -44,14 +44,14 @@ data class IR(
 data class IRTemplate(
   override val name: Source,
   override val lang: String,
-  override val content: String,
+  override val content: IRContent,
   val ast: RootNode?,
 ) : IRBlock
 
 data class IRScript(
   override val name: Source,
   override val lang: String,
-  override val content: String,
+  override val content: IRContent,
   val src: IRAttr?,
   override val ast: SourceFile,
 ) : IRScriptBlock
@@ -59,7 +59,7 @@ data class IRScript(
 data class IRScriptSetup(
   override val name: Source,
   override val lang: String,
-  override val content: String,
+  override val content: IRContent,
   val generic: IRAttr?,
   override val ast: SourceFile,
 ) : IRScriptBlock
@@ -67,7 +67,7 @@ data class IRScriptSetup(
 data class IRStyle(
   override val name: Source,
   override val lang: String,
-  override val content: String,
+  override val content: IRContent,
   val src: IRAttr?,
   val module: IRAttr?,
   val scoped: Boolean,
@@ -79,4 +79,11 @@ data class IRStyle(
     val text: String,
     val offset: Int,
   )
+}
+
+interface IRContent {
+  val length: Int
+  operator fun get(index: Int): Char
+  fun indexOf(string: String, startIndex: Int): Int
+  fun substring(startIndex: Int, endIndex: Int): String
 }

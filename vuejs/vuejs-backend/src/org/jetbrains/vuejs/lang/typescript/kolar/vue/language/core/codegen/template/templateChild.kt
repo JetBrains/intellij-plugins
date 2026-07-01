@@ -12,6 +12,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.NodeTypes
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.RootNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRContent
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.hyphenateTag
@@ -131,7 +132,7 @@ private fun collectSingleRootNodes(
 
 private fun parseInterpolationNode(
   node: InterpolationNode,
-  template: String,
+  template: IRContent,
 ): Pair<String, Int> {
   var start = node.content.loc.start.offset
   var end = node.content.loc.end.offset
