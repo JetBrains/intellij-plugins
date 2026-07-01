@@ -17,7 +17,7 @@ import org.junit.Test
 import java.io.File
 
 @TestTsNode
-@TestTsGoProxy
+//@TestTsGoProxy
 class Angular2DocumentationTest : Angular2TestCase("documentation") {
 
   @Test

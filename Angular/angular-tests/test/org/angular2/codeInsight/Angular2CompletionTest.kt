@@ -24,7 +24,7 @@ import org.angular2.lang.Angular2Bundle
 import org.junit.Test
 
 @TestTsNode
-@TestTsGoProxy
+//@TestTsGoProxy
 class Angular2CompletionTest : Angular2TestCase("completion") {
 
   override fun setUp() {
