@@ -24,6 +24,7 @@
     <module name="intellij.spellchecker"/>
     <module name="intellij.vuejs.common"/>
     <module name="intellij.vuejs.free"/>
+    <module name="intellij.xml.analysis"/>
     <module name="intellij.xml.impl"/>
   </dependencies>
   <!-- endregion -->
