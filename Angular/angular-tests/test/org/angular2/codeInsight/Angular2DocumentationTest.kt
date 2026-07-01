@@ -21,7 +21,6 @@ import java.io.File
 class Angular2DocumentationTest : Angular2TestCase("documentation") {
 
   @Test
-  @SkipTsGoProxy // Invalid line - flaky
   fun testTagName() = doTestWithDeps()
 
   @Test
@@ -31,10 +30,10 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testSimpleInputBinding() = doTestWithDeps()
 
   @Test
-  @SkipTsGoProxy // More than one doc rendered
   fun testSimpleOutputBinding() = doTestWithDeps()
 
   @Test
+  @SkipTsGoProxy // Invalid lines
   fun testSimpleBananaBox() = doTestWithDeps()
 
   @Test
@@ -50,6 +49,7 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testFieldWithoutDocs() = doTestWithDeps()
 
   @Test
+  @SkipTsGoProxy // Failed to find Psi element
   fun testFieldWithDocsPrivate() = doTestWithDeps(useConfig = true)
 
   @Test
@@ -89,7 +89,6 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
                                            configurators = listOf(Angular2TsConfigFile()))
 
   @Test
-  @SkipTsGoProxy // More than one doc rendered
   fun testStructuralDirectiveWithGenerics() = doTest(Angular2TestModule.ANGULAR_CORE_15_1_5,
                                                      Angular2TestModule.ANGULAR_COMMON_15_1_5,
                                                      configurators = listOf(Angular2TsConfigFile()))
@@ -155,11 +154,9 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testDefaultValueJSDoc() = doTest()
 
   @Test
-  @SkipTsGoProxy // Invalid lines - flaky
   fun testUnknownNgClass() = doTest()
 
   @Test
-  @SkipTsGoProxy // Invalid lines - flaky
   fun testSignalStore() = doTest(ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0,
                                  configurators = listOf(Angular2TsConfigFile()))
 
@@ -176,7 +173,6 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testIonicLifecycleHook() = doTest(ANGULAR_CORE_20_1_4, Angular2TestModule.IONIC_ANGULAR_8_4_3, ext = "ts")
 
   @Test
-  @SkipTsGoProxy // Wrong doc rendered
   fun testRxjsOperator() = doTest(ANGULAR_CORE_20_1_4, RXJS_7_8_1, ext = "ts")
 
   private fun doTestWithDeps(useConfig: Boolean = false) {

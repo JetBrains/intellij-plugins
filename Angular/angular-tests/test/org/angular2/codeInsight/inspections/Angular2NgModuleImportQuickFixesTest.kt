@@ -67,7 +67,6 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
-  @SkipTsGoProxy // runs forever
   fun testNgClassCompletion() {
     doCompletionTest("angular-commons",
                      "test.html",
@@ -217,7 +216,6 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
-  @SkipTsGoProxy // runs forever
   fun testFormsModuleCompletion1() {
     doCompletionTest("formsModule",
                      "test.html",
@@ -227,7 +225,6 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
-  @SkipTsGoProxy // runs forever
   fun testFormsModuleCompletion2() {
     doCompletionTest("formsModule",
                      "test.html",
@@ -237,7 +234,6 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
-  @SkipTsGoProxy // runs forever
   fun testFormsModuleCompletion3() {
     doCompletionTest("formsModule",
                      "test.html",
@@ -247,7 +243,6 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
-  @SkipTsGoProxy // runs forever
   fun testFormsModuleCompletion4() {
     doCompletionTest("formsModule",
                      "test.html",
@@ -275,7 +270,6 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
-  @SkipTsGoProxy // runs forever
   fun testReactiveFormsModuleCompletion1() {
     doCompletionTest("reactiveFormsModule",
                      "test.html",
@@ -285,7 +279,6 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
   }
 
   @Test
-  @SkipTsGoProxy // runs forever
   fun testReactiveFormsModuleCompletion2() {
     doCompletionTest("reactiveFormsModule",
                      "test.html",

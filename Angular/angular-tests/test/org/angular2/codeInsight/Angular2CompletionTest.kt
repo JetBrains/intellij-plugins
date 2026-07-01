@@ -72,7 +72,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doTypingTest("ie\t")
 
   @Test
-  @SkipTsGoProxy // Failed to find element - flaky
   fun testDirectiveInputMappingLiteral() =
     doLookupTest()
 
@@ -84,12 +83,10 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     }
 
   @Test
-  @SkipTsGoProxy // Failed to find element - flaky
   fun testDirectiveInputMappingObject() =
     doLookupTest()
 
   @Test
-  @SkipTsGoProxy // Failed to find PSI - flaky
   fun testDirectiveInputMappingOutsideObject() =
     doLookupTest(renderPresentedText = true) {
       it.priority >= 100
@@ -317,6 +314,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     }
 
   @Test
+  @SkipTsGoProxy // Panic - ConfigFilePath called on non-configured project
   fun testHostBindingJSProperty1() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts") {
       it.lookupString.startsWith("ti")
@@ -325,6 +323,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     }
 
   @Test
+  @SkipTsGoProxy // Panic - ConfigFilePath called on non-configured project
   fun testHostBindingJSProperty2() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
@@ -351,7 +350,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
   @Test
-  @SkipTsGoProxy // No completion
+  @SkipTsGoProxy // Invalid line
   fun testObjectInitializerProperties() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts",
                  locations = listOf("[product]=\"{<caret>}\"", "[product]=\"{title,<caret>}\""))
@@ -427,6 +426,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(ANGULAR_CORE_19_2_0, extension = "ts", checkDocumentation = true, dir = true)
 
   @Test
+  @SkipTsGoProxy // Invalid line
   fun testTailwindInNgClass() =
     doConfiguredTest(ANGULAR_CORE_19_2_0, Angular2TestModule.TAILWINDCSS_4_1_7, extension = "ts", dir = true,
                      configureFileName = "src/tailwindInNgClass.ts") {
