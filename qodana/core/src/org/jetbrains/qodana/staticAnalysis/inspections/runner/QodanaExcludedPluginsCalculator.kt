@@ -11,6 +11,7 @@ import com.intellij.ide.plugins.PluginSet
 import com.intellij.ide.plugins.ResolvedPluginSet
 import com.intellij.ide.plugins.getMainDescriptor
 import com.intellij.openapi.application.ApplicationStarter
+import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
@@ -51,7 +52,7 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
         printHelpAndExit()
       }
 
-      val (included, disabledIds) = calculateActual(requiredIds)
+      val (included, disabledIds) = calculateActual(getRequiredPluginIds(requiredIds))
       val dockerIgnorePath = Paths.get(output)
       val baseFolder = dockerIgnorePath.parent.toAbsolutePath()
 
@@ -143,3 +144,8 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
     return descriptor in sortedResolvedDescriptors
   }
 }
+
+internal fun getRequiredPluginIds(
+  included: List<String>,
+  essentialPluginIds: List<PluginId> = ApplicationInfoEx.getInstanceEx().essentialPluginIds,
+): List<String> = (included + essentialPluginIds.map { it.idString }).distinct()
