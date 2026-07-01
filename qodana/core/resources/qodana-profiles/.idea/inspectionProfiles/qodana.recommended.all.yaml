@@ -3,6 +3,7 @@ name: "qodana.recommended.all"
 
 include:
   - "qodana-rust.yaml"
+  - "qodana.pqc.groups.yaml"
 
 groups:
   - groupId: JSRelatedInspections
