@@ -40,7 +40,8 @@ internal class QodanaRecoverGradleJdks :
 
   private suspend fun recoverGradleJdkState(project: Project) {
     val modulesWithMissingInheritedProjectSdk = findGradleModulesWithMissingInheritedProjectSdk(project)
-    if (!hasBrokenRegisteredJavaJdks() && modulesWithMissingInheritedProjectSdk.isEmpty()) return
+    val brokenRegisteredJavaJdks = findBrokenRegisteredJavaJdks()
+    if (brokenRegisteredJavaJdks.isEmpty() && modulesWithMissingInheritedProjectSdk.isEmpty()) return
 
     if (modulesWithMissingInheritedProjectSdk.isNotEmpty()) {
       LOG.warn(
@@ -49,15 +50,27 @@ internal class QodanaRecoverGradleJdks :
       getQodanaProjectJdk(project)?.also { applyProjectJdk(it, project) }
     }
 
+    if (brokenRegisteredJavaJdks.isNotEmpty()) {
+      LOG.warn("Broken registered Java SDKs detected (${brokenRegisteredJavaJdks.joinToString { it.name }}), removing them before Gradle sync...")
+      removeRegisteredJavaJdks(brokenRegisteredJavaJdks)
+    }
+
     LOG.warn("Incomplete Gradle JDK state detected, running Gradle sync...")
     ExternalSystemUtil.refreshProjects(ImportSpecBuilder(project, GradleConstants.SYSTEM_ID))
     Observation.awaitConfiguration(project)
     recoverModulesWithMissingInheritedProjectSdk(project)
   }
 
-  private fun hasBrokenRegisteredJavaJdks(): Boolean {
-    return ProjectJdkTable.getInstance().allJdks.any {
+  private fun findBrokenRegisteredJavaJdks(): List<Sdk> {
+    return ProjectJdkTable.getInstance().allJdks.filter {
       it.sdkType is JavaSdk && it.homePath?.let { p -> Path.of(p).exists() } == false
+    }
+  }
+
+  private suspend fun removeRegisteredJavaJdks(sdks: List<Sdk>) {
+    edtWriteAction {
+      val jdkTable = ProjectJdkTable.getInstance()
+      sdks.forEach(jdkTable::removeJdk)
     }
   }
 

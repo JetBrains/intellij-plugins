@@ -23,7 +23,7 @@ internal class QodanaRefreshProjectJdkTable : QodanaWorkflowExtension {
     ProjectJdkTable.getInstance().allJdks.forEach {
       val sdkType = it.sdkType as? JavaSdk ?: return@forEach
 
-      val hasEmptyClassesRoots = it.rootProvider.getUrls(OrderRootType.CLASSES).isEmpty()
+      val hasEmptyClassesRoots = it.rootProvider.getFiles(OrderRootType.CLASSES).isEmpty()
       if (hasEmptyClassesRoots) {
         sdkType.setupSdkPaths(it)
       }
