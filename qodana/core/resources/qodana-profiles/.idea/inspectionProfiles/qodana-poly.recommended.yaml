@@ -9,3 +9,5 @@ groups:
 inspections:
   - group: QodanaOpengrepInspections
     enabled: true
+  - group: ALL_PQC_INSPECTIONS_GROUP
+    enabled: false

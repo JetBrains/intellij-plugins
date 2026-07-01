@@ -130,6 +130,8 @@ inspections:
     enabled: true
   - group: QodanaOpengrepInspections
     enabled: true
+  - group: ALL_PQC_INSPECTIONS_GROUP
+    enabled: false
   - inspection: HttpUrlsUsage # Spam
     enabled: false
   - group: ALL
