@@ -144,8 +144,6 @@ abstract class Angular2TestCase(
   override fun setUp() {
     Assume.assumeTrue("Skipping test because of @${serviceKind.skipTestAnnotationClass.simpleName} annotation",
                       javaClass.getMethod(name).annotations.none { it.annotationClass == serviceKind.skipTestAnnotationClass })
-
-    Assume.assumeTrue("Skipping flaky TS GO Proxy tests", serviceKind != TypeScriptServiceKind.TsGoProxy)
     super.setUp()
 
     myFixture.project.replaceService(
