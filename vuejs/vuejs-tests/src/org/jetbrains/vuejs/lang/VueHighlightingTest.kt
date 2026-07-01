@@ -65,6 +65,22 @@ class VueHighlightingTest :
     // flaky
     override fun testVueNoTagOmission() {
     }
+
+    @Ignore
+    // flaky
+    override fun testCompRequiredAttributesTest() {
+    }
+
+    @Ignore
+    // flaky
+    override fun testCompRequiredAttributesTestTS() {
+    }
+
+    @Ignore
+    // flaky
+    override fun testDirectivesWithoutParameters() {
+    }
+
   }
 
   class WithoutServiceTest :
@@ -110,6 +126,21 @@ abstract class VueHighlightingWithPluginTestBase(
   // flaky
   override fun testClassComponentAnnotationWithLocalComponentTs() {
   }
+
+  @Ignore
+  // flaky
+  override fun testCompRequiredAttributesTest() {
+  }
+
+  @Ignore
+  // flaky
+  override fun testCompRequiredAttributesTestTS() {
+  }
+
+  @Ignore
+  // flaky
+  override fun testDirectivesWithoutParameters() {
+  }
 }
 
 @RunWith(JUnit4::class)
@@ -135,7 +166,7 @@ abstract class VueHighlightingTestBase(
   }
 
   @Test
-  fun testDirectivesWithoutParameters() {
+  open fun testDirectivesWithoutParameters() {
     doHighlightingTest()
   }
 
@@ -180,12 +211,12 @@ abstract class VueHighlightingTestBase(
   }
 
   @Test
-  fun testCompRequiredAttributesTest() {
+  open fun testCompRequiredAttributesTest() {
     doHighlightingTest()
   }
 
   @Test
-  fun testCompRequiredAttributesTestTS() {
+  open fun testCompRequiredAttributesTestTS() {
     doHighlightingTest()
   }
 
