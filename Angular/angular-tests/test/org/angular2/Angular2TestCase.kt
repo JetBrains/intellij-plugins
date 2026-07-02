@@ -26,7 +26,6 @@ import com.intellij.testFramework.PlatformTestUtil.dispatchAllEventsInIdeEventQu
 import com.intellij.testFramework.replaceService
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.application
-import org.angular2.codeInsight.Angular2HighlightingTest
 import org.angular2.codeInsight.refactoring.Angular2CliComponentGeneratorMockImpl
 import org.angular2.lang.expr.service.Angular2TypeScriptService
 import org.angular2.options.AngularServiceSettings
@@ -265,7 +264,6 @@ abstract class Angular2TestCase(
     @JvmStatic
     fun data(clazz: Class<*>): Collection<Any> {
       return TypeScriptServiceKind.entries
-        .filter { it == TypeScriptServiceKind.TsGoProxy }
         .filter { clazz.getAnnotation(it.annotationClass.java) != null }
         .map { arrayOf<Any>(it) }
     }
