@@ -21,7 +21,6 @@ class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractCompon
   }
 
   @Test
-  @SkipTsGoProxy // invalid line
   fun testSingleElementSingleLine() {
     doMultiFileTest()
   }
@@ -32,19 +31,17 @@ class Angular2ExtractComponentTest : Angular2TestCase("refactoring/extractCompon
   }
 
   @Test
-  @SkipTsGoProxy // invalid line
+  @SkipTsGoProxy // local file not found
   fun testNoElement() {
     doMultiFileTest()
   }
 
   @Test
-  @SkipTsGoProxy // invalid line
   fun testNameClashes() {
     doMultiFileTest()
   }
 
   @Test
-  @SkipTsGoProxy // invalid line
   fun testExtractFromInlineTemplate() {
     doMultiFileTest("src/app/app.component.ts")
   }

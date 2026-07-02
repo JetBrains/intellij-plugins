@@ -15,7 +15,6 @@ import org.junit.Test
 class Angular2TscRenameTest : Angular2TestCase("refactoring/rename") {
 
   @Test
-  @SkipTsGoProxy // invalid line
   fun testSignalStore() =
     doSymbolRename("signalStore.ts", "newName", ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0,
                    dir = false, configurators = listOf(Angular2TsConfigFile()))
