@@ -28,7 +28,6 @@ class Angular2FormsRenameRefactoringTest : Angular2TestCase("library/forms/renam
     doSymbolRename("newName", Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, dir = false)
 
   @Test
-  @SkipTsGoProxy // Invalid line
   fun testFormBuilderInConstructor() =
     doSymbolRename("newName", Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, dir = false)
 

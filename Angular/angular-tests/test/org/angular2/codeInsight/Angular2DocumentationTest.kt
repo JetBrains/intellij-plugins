@@ -17,7 +17,7 @@ import org.junit.Test
 import java.io.File
 
 @TestTsNode
-//@TestTsGoProxy
+@TestTsGoProxy
 class Angular2DocumentationTest : Angular2TestCase("documentation") {
 
   @Test
@@ -33,7 +33,6 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testSimpleOutputBinding() = doTestWithDeps()
 
   @Test
-  @SkipTsGoProxy // Invalid lines
   fun testSimpleBananaBox() = doTestWithDeps()
 
   @Test
@@ -97,18 +96,15 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testHostDirectiveMappedInput() = doTest()
 
   @Test
-  @SkipTsGoProxy // Invalid lines
   fun testWritableSignal() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                                     Angular2TestModule.ANGULAR_COMMON_16_2_8)
 
   @Test
-  @SkipTsGoProxy // Invalid lines
   fun testWritableSignalCall() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                                         Angular2TestModule.ANGULAR_COMMON_16_2_8,
                                         configurators = listOf(Angular2TsConfigFile()))
 
   @Test
-  @SkipTsGoProxy // Invalid lines
   fun testSignal() = doTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                             Angular2TestModule.ANGULAR_COMMON_16_2_8)
 

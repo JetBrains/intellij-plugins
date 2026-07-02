@@ -74,7 +74,6 @@ class Angular2FormsCodeCompletionTest : Angular2TestCase("library/forms/completi
     ))
 
   @Test
-  @SkipTsGoProxy // Failed to find PSI element
   fun testFormBuilderInFieldInitializer() =
     doLookupTest(Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, locations = listOf(
       "get(\"<caret>name.more.foo\")",
@@ -85,7 +84,6 @@ class Angular2FormsCodeCompletionTest : Angular2TestCase("library/forms/completi
     ))
 
   @Test
-  @SkipTsGoProxy // Flaky - failed to find PSI element
   fun testFormBuilderInConstructor() =
     doLookupTest(Angular2TestModule.ANGULAR_FORMS_17_3_0, Angular2TestModule.ANGULAR_CORE_17_3_0, locations = listOf(
       "get(\"<caret>name.more.foo\")",

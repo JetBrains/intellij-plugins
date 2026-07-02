@@ -12,18 +12,15 @@ import org.junit.Test
 class Angular2UsageHighlightingTest : Angular2TestCase("usageHighlighting") {
 
   @Test
-  @SkipTsGoProxy // Fails
   fun testPrivateComponentField() = doUsageHighlightingTest()
 
   @Test
-  @SkipTsGoProxy // Fails
   fun testPublicComponentField() = doUsageHighlightingTest()
 
   @Test
   fun testDirectiveInputFromField() = doUsageHighlightingTest()
 
   @Test
-  @SkipTsGoProxy // Fails
   fun testDirectiveInputFromMapping() = doUsageHighlightingTest()
 
   @Test
