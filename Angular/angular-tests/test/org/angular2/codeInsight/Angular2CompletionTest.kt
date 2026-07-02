@@ -34,7 +34,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   }
 
   @Test
-  @SkipTsGoProxy // Invalid line
   fun testExportAs() =
     doLookupTest(checkDocumentation = true)
 
@@ -67,7 +66,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doTypingTest("vir\t")
 
   @Test
-  @SkipTsGoProxy // Failed to find element
   fun testDirectiveInputMappingLiteralWithReplace() =
     doTypingTest("ie\t")
 
@@ -76,7 +74,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest()
 
   @Test
-  @SkipTsGoProxy // Failed to find element
   fun testDirectiveInputMappingOutsideLiteral() =
     doLookupTest(renderPresentedText = true) {
       it.priority >= 100
@@ -350,7 +347,7 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
   @Test
-  @SkipTsGoProxy // Invalid line
+  @SkipTsGoProxy //panic: ConfigFilePath called on non-configured project
   fun testObjectInitializerProperties() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts",
                  locations = listOf("[product]=\"{<caret>}\"", "[product]=\"{title,<caret>}\""))
@@ -393,7 +390,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
                  ))
 
   @Test
-  @SkipTsGoProxy // Invalid line
   fun testTemplateBindingsNgFor() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0, extension = "ts",
                  lookupItemFilter = { it.priority > 0 && it.lookupString != "Component" },
@@ -426,7 +422,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(ANGULAR_CORE_19_2_0, extension = "ts", checkDocumentation = true, dir = true)
 
   @Test
-  @SkipTsGoProxy // Invalid line
   fun testTailwindInNgClass() =
     doConfiguredTest(ANGULAR_CORE_19_2_0, Angular2TestModule.TAILWINDCSS_4_1_7, extension = "ts", dir = true,
                      configureFileName = "src/tailwindInNgClass.ts") {

@@ -20,7 +20,6 @@ class Angular2CopyPasteTest : Angular2TestCase("copyPaste") {
   }
 
   @Test
-  @SkipTsGoProxy // runs forever
   fun testBasicToInjected() {
     doTest("html", "ts")
   }
