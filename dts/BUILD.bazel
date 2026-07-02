@@ -21,6 +21,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/backend"],
     deps = [
         # do not sort,
         "//contrib/dts/pp",
@@ -81,6 +82,7 @@ jvm_library(
         "@community//platform/core-ui:core-ui_test_lib",
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/backend:backend_test_lib",
         "@community//platform/testRunner",
         "@community//platform/testRunner:testRunner_test_lib",
         "@community//libraries/snakeyaml:snakeyaml_test_lib",

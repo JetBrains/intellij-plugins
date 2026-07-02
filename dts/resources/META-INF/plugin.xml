@@ -7,6 +7,7 @@
 
   <dependencies>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.platform.backend"/>
     <module name="intellij.platform.structureView"/>
     <!-- endregion -->
   </dependencies>
