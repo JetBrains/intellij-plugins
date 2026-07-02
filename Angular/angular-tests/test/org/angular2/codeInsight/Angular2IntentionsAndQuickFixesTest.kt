@@ -24,8 +24,8 @@ import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
-import org.junit.Test
 import org.junit.Ignore
+import org.junit.Test
 
 @TestTsNode
 @TestTsGoProxy

@@ -1,0 +1,4 @@
+STATE_SOURCE (typeText='unique symbol'; priority=101.0; bold)
+books (typeText='Signal<Book[]>'; priority=101.0; bold)
+filter (typeText='DeepSignal<{ query: string; order: "asc" | "desc"; }>'; priority=101.0; bold)
+isLoading (typeText='Signal<boolean>'; priority=101.0; bold)
