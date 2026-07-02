@@ -2,7 +2,6 @@ package org.angular2.library.forms
 
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
-import org.angular2.SkipTsGoProxy
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.junit.Test

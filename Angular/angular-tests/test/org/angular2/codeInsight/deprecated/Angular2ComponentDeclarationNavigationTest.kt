@@ -70,12 +70,14 @@ class Angular2ComponentDeclarationNavigationTest : Angular2CodeInsightFixtureTes
     }
   }
 
-  private fun doTest(action: AnAction,
-                     testFile: String,
-                     location: String,
-                     actionLabel: String?,
-                     targetFile: String?,
-                     elementText: String?) {
+  private fun doTest(
+    action: AnAction,
+    testFile: String,
+    location: String,
+    actionLabel: String?,
+    targetFile: String?,
+    elementText: String?,
+  ) {
     myFixture.configureByFiles(testFile, "custom.html", "custom.ts", "package.json")
     myFixture.moveToOffsetBySignature(location)
     val result = myFixture.testAction(action)

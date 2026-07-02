@@ -141,6 +141,15 @@ abstract class Angular2TestCase(
     return goldFileName
   }
 
+  override fun getCodeCompletionExpectedItemsFileNameInfix(prefix: String, suffix: String): String {
+    if (serviceKind == TypeScriptServiceKind.TsGoProxy) {
+      val tsGoItemsFileName = "${prefix}.tsgo${suffix}"
+      if (File("$testDataPath/$tsGoItemsFileName").exists())
+        return ".tsgo"
+    }
+    return ""
+  }
+
   override fun setUp() {
     Assume.assumeTrue("Skipping test because of @${serviceKind.skipTestAnnotationClass.simpleName} annotation",
                       javaClass.getMethod(name).annotations.none { it.annotationClass == serviceKind.skipTestAnnotationClass })
