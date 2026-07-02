@@ -40,6 +40,7 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
@@ -313,7 +314,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       return@withServiceTraceSpan refreshableType.toTSType().asJSType()
     }
 
-    override fun isEnabledInUsageContext(usageContext: JSServicePoweredTypeEngineUsageContext): Boolean = true
+    override fun isEnabledInUsageContext(usageContext: JSServicePoweredTypeEngineUsageContext): Boolean =
+      !Registry.`is`("typescript.service.powered.type.engine.force.default.usage.context") || super.isEnabledInUsageContext(usageContext)
 
     override val supportsTypeScriptInInjections: Boolean
       get() = true
