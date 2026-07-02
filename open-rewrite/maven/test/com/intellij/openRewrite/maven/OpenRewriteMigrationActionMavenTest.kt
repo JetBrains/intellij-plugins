@@ -1,14 +1,15 @@
 package com.intellij.openRewrite.maven
 
-import com.intellij.ide.DataManager
 import com.intellij.maven.testFramework.fixtures.MavenVersionArguments
 import com.intellij.maven.testFramework.fixtures.configureProjectPom
-import com.intellij.maven.testFramework.fixtures.getEditor
+import com.intellij.maven.testFramework.fixtures.getTestPsiFile
 import com.intellij.maven.testFramework.fixtures.importProjectAsync
 import com.intellij.maven.testFramework.fixtures.mavenDomFixture
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.smartReadAction
 import com.intellij.testFramework.junit5.TestApplication
@@ -82,17 +83,24 @@ class OpenRewriteMigrationActionMavenTest(mavenVersion: String, modelVersion: St
   }
 
   private suspend fun doTestAction(toolbarExpected: Boolean, popupExpected: Boolean) {
-    val editor = maven.getEditor(maven.projectPom)
+    val psiFile = maven.getTestPsiFile(maven.projectPom)
+    val dataContext = DataContext { dataId ->
+      when (dataId) {
+        PlatformDataKeys.PROJECT.name -> maven.project
+        PlatformDataKeys.PSI_FILE.name -> psiFile
+        else -> null
+      }
+    }
     smartReadAction(maven.project) {
       val action = ActionManager.getInstance().getAction("OpenRewrite.Migration.Action") ?: error("Migration action not found")
 
       val toolbarEvent = AnActionEvent.createFromAnAction(action, null, ActionPlaces.TOOLBAR,
-                                                          DataManager.getInstance().getDataContext(editor.contentComponent))
+                                                          dataContext)
       ActionUtil.updateAction(action, toolbarEvent)
       assertEquals(toolbarExpected, toolbarEvent.presentation.isEnabledAndVisible)
 
       val popupEvent = AnActionEvent.createFromAnAction(action, null, ActionPlaces.POPUP,
-                                                        DataManager.getInstance().getDataContext(editor.contentComponent))
+                                                        dataContext)
       ActionUtil.updateAction(action, popupEvent)
       assertEquals(popupExpected, popupEvent.presentation.isEnabledAndVisible)
     }
