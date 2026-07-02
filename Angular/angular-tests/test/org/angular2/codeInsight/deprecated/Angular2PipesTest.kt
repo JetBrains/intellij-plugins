@@ -22,7 +22,9 @@ class Angular2PipesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   private fun doTestAsyncPipeResolution() {
-    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_8_2_14, Angular2TestModule.ANGULAR_COMMON_8_2_14, Angular2TestModule.RXJS_6_4_0)
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_8_2_14,
+                                    Angular2TestModule.ANGULAR_COMMON_8_2_14,
+                                    Angular2TestModule.RXJS_6_4_0)
     myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts")
     var transformMethod = myFixture.resolveReference("makeObservable() | as<caret>ync")
     assertEquals("common.d.ts", transformMethod.getContainingFile().getName())

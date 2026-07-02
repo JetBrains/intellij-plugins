@@ -36,10 +36,10 @@ class VueCompletionTest :
   class WithoutServiceTest :
     VueCompletionTestBase(testMode = VueTestMode.NO_PLUGIN) {
 
-    override fun getExpectedItemsLocation(dir: Boolean): String {
+    override fun getCodeCompletionExpectedItemsLocation(dir: Boolean, dirName: String): String {
       require(dir) { "Only `dir` option is supported!" }
 
-      return super.getExpectedItemsLocation(dir) + "/items-no-service"
+      return super.getCodeCompletionExpectedItemsLocation(dir, dirName) + "/items-no-service"
     }
   }
 }

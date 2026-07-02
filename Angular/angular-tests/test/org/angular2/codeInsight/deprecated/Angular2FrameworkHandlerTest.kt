@@ -56,9 +56,11 @@ class Angular2FrameworkHandlerTest : Angular2CodeInsightFixtureTestCase() {
     val disposable = Disposer.newDisposable()
     Disposer.register(myFixture.testRootDisposable, disposable)
     Angular2FrameworkHandler.EP_NAME.point.registerExtension(object : Angular2FrameworkHandler {
-      override fun selectModuleForDeclarationsScope(modules: Collection<Angular2Module>,
-                                                    component: Angular2Component,
-                                                    context: PsiFile): Angular2Module {
+      override fun selectModuleForDeclarationsScope(
+        modules: Collection<Angular2Module>,
+        component: Angular2Component,
+        context: PsiFile,
+      ): Angular2Module {
         return modules.first { it.getName() == "FooModule" }
       }
     }, disposable)
@@ -83,8 +85,10 @@ class Angular2FrameworkHandlerTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testSuppressModuleInspectionErrors() {
     Angular2FrameworkHandler.EP_NAME.point.registerExtension(object : Angular2FrameworkHandler {
-      override fun suppressModuleInspectionErrors(modules: Collection<Angular2Module>,
-                                                  declaration: Angular2Declaration): Boolean {
+      override fun suppressModuleInspectionErrors(
+        modules: Collection<Angular2Module>,
+        declaration: Angular2Declaration,
+      ): Boolean {
         return "FooComponent" == declaration.getName()
       }
     }, myFixture.testRootDisposable)

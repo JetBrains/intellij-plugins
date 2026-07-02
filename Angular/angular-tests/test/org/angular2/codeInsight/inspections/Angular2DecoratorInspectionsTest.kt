@@ -104,27 +104,42 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   fun testModuleEntityTypeMismatch4() {
-    doTest(4, "Com<caret>ponentStandalone, // move", "Import ComponentStandalone instead", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+    doTest(4,
+           "Com<caret>ponentStandalone, // move",
+           "Import ComponentStandalone instead",
+           AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
            "module-entity-type-mismatch.ts")
   }
 
   fun testModuleEntityTypeMismatch5() {
-    doTest(5, "Dir<caret>ectiveStandalone, // move", "Import DirectiveStandalone instead", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+    doTest(5,
+           "Dir<caret>ectiveStandalone, // move",
+           "Import DirectiveStandalone instead",
+           AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
            "module-entity-type-mismatch.ts")
   }
 
   fun testModuleEntityTypeMismatch6() {
-    doTest(6, "Pi<caret>peStandalone, // move", "Import PipeStandalone instead", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+    doTest(6,
+           "Pi<caret>peStandalone, // move",
+           "Import PipeStandalone instead",
+           AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
            "module-entity-type-mismatch.ts")
   }
 
   fun testModuleEntityTypeMismatch7() {
-    doTest(7, "Com<caret>ponentStandalone, // move", "Make ComponentStandalone non-standalone", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+    doTest(7,
+           "Com<caret>ponentStandalone, // move",
+           "Make ComponentStandalone non-standalone",
+           AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
            "module-entity-type-mismatch.ts")
   }
 
   fun testModuleEntityTypeMismatch8() {
-    doTest(8, "Dir<caret>ectiveStandalone, // move", "Make DirectiveStandalone non-standalone", AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
+    doTest(8,
+           "Dir<caret>ectiveStandalone, // move",
+           "Make DirectiveStandalone non-standalone",
+           AngularInvalidImportedOrDeclaredSymbolInspection::class.java,
            "module-entity-type-mismatch.ts")
   }
 
@@ -227,6 +242,7 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
            "Remove 'UNUSED_PSEUDO_MODULE' import", AngularUnusedComponentImportInspection::class.java,
            "unused-imports-in-standalone-component.ts", "unused-imports-in-standalone-component.html")
   }
+
   fun testUnusedImportsInStandaloneComponent4() {
     myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0)
     doTest(4, "...UNUSED_<caret>PSEUDO_MODULE, //spread\n",

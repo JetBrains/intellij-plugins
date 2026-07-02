@@ -6,7 +6,7 @@ import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.lang.expr.Angular20Language
 import org.angular2.lang.html.Angular20HtmlFileType
 
-class Angular2RearrangerTest  : AbstractRearrangerTest(){
+class Angular2RearrangerTest : AbstractRearrangerTest() {
 
   override fun setUp() {
     super.setUp()
