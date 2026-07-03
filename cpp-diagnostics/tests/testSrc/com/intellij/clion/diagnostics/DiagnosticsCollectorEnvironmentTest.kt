@@ -1,10 +1,11 @@
-package com.jetbrains.cidr.cpp.diagnostics
+package com.intellij.clion.diagnostics
 
 import com.intellij.clion.testFramework.nolang.junit5.core.clionProjectTestFixture
 import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
 import com.intellij.testFramework.junit5.TestApplication
 import com.jetbrains.cidr.CidrTestDataFixture
 import com.jetbrains.cidr.cpp.CPPTestUtil
+import com.jetbrains.cidr.cpp.diagnostics.collectToolchains
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

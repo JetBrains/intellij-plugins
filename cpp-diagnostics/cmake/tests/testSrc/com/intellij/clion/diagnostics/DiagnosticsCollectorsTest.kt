@@ -1,9 +1,12 @@
-package com.jetbrains.cidr.cpp.diagnostics
+package com.intellij.clion.diagnostics
 
 import com.intellij.clion.testFramework.nolang.junit5.cmake.cmakeProjectTestFixture
 import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
 import com.intellij.testFramework.junit5.TestApplication
 import com.jetbrains.cidr.CidrTestDataFixture
+import com.jetbrains.cidr.cpp.diagnostics.collectCidrWorkspaces
+import com.jetbrains.cidr.cpp.diagnostics.collectOCWorkspace
+import com.jetbrains.cidr.cpp.diagnostics.collectToolchains
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
