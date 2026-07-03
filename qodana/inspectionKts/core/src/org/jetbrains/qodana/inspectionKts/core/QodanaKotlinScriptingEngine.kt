@@ -1,10 +1,12 @@
-package org.jetbrains.qodana.inspectionKts
+package org.jetbrains.qodana.inspectionKts.core
+
 
 import com.intellij.ide.script.IdeScriptEngine
 import com.intellij.ide.script.IdeScriptException
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.ClassLoaderUtil
 import com.intellij.util.ExceptionUtilRt
+import org.jetbrains.qodana.inspectionKts.InspectionKtsClassLoader
 import java.io.Reader
 import java.io.Writer
 import javax.script.ScriptEngine

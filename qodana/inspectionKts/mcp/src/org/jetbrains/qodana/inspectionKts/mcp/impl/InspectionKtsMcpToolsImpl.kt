@@ -12,12 +12,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.elementType
 import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
-import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
+import org.jetbrains.qodana.inspectionKts.core.KtsInspectionsManager
 import org.jetbrains.qodana.inspectionKts.examples.InspectionKtsExample
 import org.jetbrains.qodana.inspectionKts.fileFactory.CustomPsiFileFactory
 import org.jetbrains.qodana.inspectionKts.mcp.InspectionKtsRunResult
 import org.jetbrains.qodana.inspectionKts.mcp.InspectionProblem
-import org.jetbrains.qodana.inspectionKts.runInspectionOnPsiFile
+import org.jetbrains.qodana.inspectionKts.core.runInspectionOnPsiFile
 import org.jetbrains.qodana.inspectionKts.templates.InspectionKtsTemplate
 import kotlin.io.path.createTempFile
 import kotlin.io.path.writeText

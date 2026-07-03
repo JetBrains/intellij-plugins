@@ -31,9 +31,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.kotlin.idea.base.plugin.artifacts.KotlinArtifacts
-import org.jetbrains.qodana.inspectionKts.CustomPluginsForKtsClasspathProvider
-import org.jetbrains.qodana.inspectionKts.InspectionKtsRegistry
-import org.jetbrains.qodana.inspectionKts.InspectionKtsSettings
+import org.jetbrains.qodana.inspectionKts.core.CustomPluginsForKtsClasspathProvider
+import org.jetbrains.qodana.inspectionKts.core.InspectionKtsRegistry
+import org.jetbrains.qodana.inspectionKts.core.InspectionKtsSettings
 import java.io.File
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets

@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.inspectionKts.bta
+package org.jetbrains.qodana.inspectionKts.api.bta
 
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project

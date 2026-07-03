@@ -2,7 +2,7 @@ package org.jetbrains.qodana.inspectionKts.js
 
 import com.intellij.openapi.application.PluginPathManager
 import com.intellij.testFramework.TestDataPath
-import org.jetbrains.qodana.inspectionKts.FORCE_DISABLE_INSPECTION_KTS
+import org.jetbrains.qodana.inspectionKts.core.FORCE_DISABLE_INSPECTION_KTS
 import org.jetbrains.qodana.inspectionKts.templates.InspectionKtsTemplate
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig

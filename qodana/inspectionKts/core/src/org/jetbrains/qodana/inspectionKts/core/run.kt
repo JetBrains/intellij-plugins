@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.inspectionKts
+package org.jetbrains.qodana.inspectionKts.core
 
 import com.intellij.codeInspection.GlobalInspectionContext
 import com.intellij.codeInspection.InspectionEngine

@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.inspectionKts
+package org.jetbrains.qodana.inspectionKts.core
 
 import com.intellij.openapi.components.BaseState
 import com.intellij.openapi.components.SimplePersistentStateComponent

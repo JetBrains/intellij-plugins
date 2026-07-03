@@ -7,8 +7,8 @@ import com.intellij.platform.util.coroutines.childScope
 import com.intellij.testFramework.replaceService
 import com.intellij.util.io.delete
 import com.intellij.util.io.write
-import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_DIRECTORY
-import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
+import org.jetbrains.qodana.inspectionKts.core.INSPECTIONS_KTS_DIRECTORY
+import org.jetbrains.qodana.inspectionKts.core.KtsInspectionsManager
 import java.io.IOException
 import java.nio.file.Path
 import kotlin.io.path.createFile

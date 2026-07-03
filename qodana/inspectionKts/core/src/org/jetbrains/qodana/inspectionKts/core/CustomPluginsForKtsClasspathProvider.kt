@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.inspectionKts
+package org.jetbrains.qodana.inspectionKts.core
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.openapi.extensions.ExtensionPointName

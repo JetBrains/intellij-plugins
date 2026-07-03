@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalCoroutinesApi::class, ExperimentalCoroutinesApi::class, FlowPreview::class)
 
-package org.jetbrains.qodana.inspectionKts
+package org.jetbrains.qodana.inspectionKts.core
+
 
 import com.intellij.codeInspection.ex.DynamicInspectionDescriptor
 import com.intellij.codeInspection.ex.DynamicInspectionsProvider
@@ -37,7 +38,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.annotations.ApiStatus.Internal
-import org.jetbrains.qodana.inspectionKts.bta.InspectionKtsBtaCompiler
+import org.jetbrains.qodana.inspectionKts.FLEX_INSPECT_PROVIDER_NAME
+import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_EXTENSION
+import org.jetbrains.qodana.inspectionKts.InspectionKtsClassLoader
+import org.jetbrains.qodana.inspectionKts.InspectionKtsErrorLogManager
+import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
+import org.jetbrains.qodana.inspectionKts.api.bta.InspectionKtsBtaCompiler
+import org.jetbrains.qodana.inspectionKts.getDocumentByNioPath
 import org.jetbrains.qodana.util.appearedFilePath
 import org.jetbrains.qodana.util.disappearedFilePath
 import org.jetbrains.qodana.util.documentChangesFlow

@@ -1,4 +1,5 @@
-package org.jetbrains.qodana.inspectionKts
+package org.jetbrains.qodana.inspectionKts.core
+
 
 import com.intellij.codeInspection.ex.DynamicInspectionDescriptor
 import com.intellij.openapi.components.Service
@@ -19,7 +20,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
+import org.jetbrains.qodana.inspectionKts.CompiledInspectionKtsInspections
+import org.jetbrains.qodana.inspectionKts.CompiledInspectionKtsPostProcessorFactory
+import org.jetbrains.qodana.inspectionKts.CompiledInspectionsKtsData
+import org.jetbrains.qodana.inspectionKts.FLEX_INSPECT_PROVIDER_NAME
+import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
+import org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider
+import org.jetbrains.qodana.inspectionKts.InspectionKtsErrorLogManager
+import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
+import org.jetbrains.qodana.inspectionKts.__asTool__
 import org.jetbrains.qodana.inspectionKts.api.InspectionKts
+import org.jetbrains.qodana.inspectionKts.getDocumentByNioPath
+import org.jetbrains.qodana.inspectionKts.waitWhenProjectTrusted
 import java.nio.file.Path
 import kotlin.io.path.name
 import kotlin.io.path.readText

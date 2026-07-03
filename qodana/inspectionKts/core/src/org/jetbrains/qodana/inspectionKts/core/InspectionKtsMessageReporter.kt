@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.inspectionKts
+package org.jetbrains.qodana.inspectionKts.core
 
 /**
  * Interface for reporting messages and errors during inspection.kts initialization.

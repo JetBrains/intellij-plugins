@@ -1,6 +1,21 @@
-load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
 ### auto-generated section `build intellij.qodana.inspectionKts.bta` start
+jvm_provided_library(
+    name = "community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-common_provided",
+    lib = "@community//libraries/kotlinc/kotlin-scripting-common:libraries-kotlinc-kotlin-scripting-common",
+)
+
+jvm_provided_library(
+    name = "community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-jvm_provided",
+    lib = "@community//libraries/kotlinc/kotlin-scripting-jvm:libraries-kotlinc-kotlin-scripting-jvm",
+)
+
+jvm_provided_library(
+    name = "community_libraries_kotlinc_libraries-kotlinc-kotlin-script-runtime_provided",
+    lib = "@community//libraries/kotlinc/kotlin-script-runtime:libraries-kotlinc-kotlin-script-runtime",
+)
 
 jvm_library(
     name = "bta",
@@ -18,17 +33,11 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "@lib//:kotlinc-kotlin-build-tools-impl",
-        "@lib//:kotlin-tooling-core",
-    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
         "@lib//:kotlinc-kotlin-build-tools-api-provided",
-        "@lib//:kotlinc-kotlin-compiler-common",
-        "@lib//:kotlinc-kotlin-scripting-jvm-provided",
+        "@community//plugins/kotlin/build-tools-runtime",
         "//contrib/qodana/inspectionKts/api",
         "@community//platform/analysis-api:analysis",
         "@community//platform/analysis-impl",
@@ -40,9 +49,13 @@ jvm_library(
         "@community//platform/editor-ui-api:editor-ui",
         "@community//libraries/kotlinx/coroutines/core",
         "@community//platform/progress/shared:ide-progress",
-        "@community//plugins/kotlin/base/plugin",
+        ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-common_provided",
+        ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-jvm_provided",
+        ":community_libraries_kotlinc_libraries-kotlinc-kotlin-script-runtime_provided",
     ],
 )
+
+content_module_jar(module = ":bta")
 
 jvm_library(
     name = "bta_test_lib",
@@ -57,7 +70,7 @@ jvm_library(
         # do not sort,
         ":bta",
         "@lib//:kotlinc-kotlin-build-tools-api-provided",
-        "@lib//:kotlinc-kotlin-scripting-jvm-provided",
+        "@community//plugins/kotlin/build-tools-runtime:build-tools-runtime_test_lib",
         "//contrib/qodana/inspectionKts/api:api_test_lib",
         "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/analysis-impl:analysis-impl_test_lib",
@@ -68,8 +81,13 @@ jvm_library(
         "@community//platform/core-impl:core-impl_test_lib",
         "@community//platform/editor-ui-api:editor-ui_test_lib",
         "@community//libraries/kotlinx/coroutines/core:core_test_lib",
+        "@community//libraries/kotlinc/kotlin-scripting-common:libraries-kotlinc-kotlin-scripting-common",
+        "@community//libraries/kotlinc/kotlin-scripting-common:libraries-kotlinc-kotlin-scripting-common_test_lib",
+        "@community//libraries/kotlinc/kotlin-scripting-jvm:libraries-kotlinc-kotlin-scripting-jvm",
+        "@community//libraries/kotlinc/kotlin-scripting-jvm:libraries-kotlinc-kotlin-scripting-jvm_test_lib",
+        "@community//libraries/kotlinc/kotlin-script-runtime:libraries-kotlinc-kotlin-script-runtime",
+        "@community//libraries/kotlinc/kotlin-script-runtime:libraries-kotlinc-kotlin-script-runtime_test_lib",
         "@community//platform/progress/shared:ide-progress_test_lib",
-        "@community//plugins/kotlin/base/plugin:plugin_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.inspectionKts.bta` end
@@ -78,6 +96,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.inspectionKts.bta.iml",
+        "resources/intellij.qodana.inspectionKts.bta.xml",
     ],
     visibility = ["//visibility:public"],
 )

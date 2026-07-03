@@ -7,7 +7,7 @@ import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
 import com.intellij.openapi.project.Project
 import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
-import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
+import org.jetbrains.qodana.inspectionKts.core.KtsInspectionsManager
 
 internal class InspectionKtsMetricsCollector : ProjectUsagesCollector() {
   private val GROUP = EventLogGroup("qodana.flex.inspect.ide", 1, FUS_RECORDER)

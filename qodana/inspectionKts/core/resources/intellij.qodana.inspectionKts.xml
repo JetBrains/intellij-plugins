@@ -1,9 +1,9 @@
 <idea-plugin visibility="public">
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="com.intellij.modules.ultimate"/>
     <module name="intellij.yaml.backend"/>
     <module name="intellij.json.backend"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.libraries.jackson"/>
     <module name="intellij.libraries.jackson.databind"/>
     <module name="intellij.libraries.jackson.dataformat.yaml"/>
@@ -17,6 +17,7 @@
     <module name="intellij.platform.editor.ui"/>
     <module name="intellij.platform.ide"/>
     <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.ide.core.impl"/>
     <module name="intellij.platform.ide.impl"/>
     <module name="intellij.platform.ide.progress"/>
     <module name="intellij.platform.lang"/>
@@ -27,16 +28,16 @@
     <module name="intellij.platform.util.coroutines"/>
     <module name="intellij.platform.util.ui"/>
     <module name="intellij.qodana.inspectionKts.api"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
   <resource-bundle>messages.InspectionKtsBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
     <editorNotificationProvider implementation="org.jetbrains.qodana.inspectionKts.ui.InspectionKtsBannerProvider"/>
-    <dynamicInspectionsProvider implementation="org.jetbrains.qodana.inspectionKts.KtsDynamicInspectionsProvider"/>
+    <dynamicInspectionsProvider implementation="org.jetbrains.qodana.inspectionKts.core.KtsDynamicInspectionsProvider"/>
     <statistics.counterUsagesCollector implementationClass="org.jetbrains.qodana.inspectionKts.stat.InspectionKtsEventsCollector"/>
     <statistics.projectUsagesCollector implementation="org.jetbrains.qodana.inspectionKts.stat.InspectionKtsMetricsCollector"/>
-    <projectService serviceImplementation="org.jetbrains.qodana.inspectionKts.InspectionKtsSettings"
+    <projectService serviceImplementation="org.jetbrains.qodana.inspectionKts.core.InspectionKtsSettings"
                     configurationSchemaKey="inspectionKts"/>
   </extensions>
 
@@ -47,9 +48,6 @@
     </action>
   </actions>
   <extensionPoints>
-    <extensionPoint qualifiedName="org.jetbrains.qodana.inspectionKts.defaultImportProvider"
-                    interface="org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider"
-                    dynamic="true"/>
     <extensionPoint qualifiedName="org.jetbrains.qodana.inspectionKts.templates.provider"
                     interface="org.jetbrains.qodana.inspectionKts.templates.InspectionKtsTemplate$Provider"
                     dynamic="true"/>
@@ -59,22 +57,16 @@
     <extensionPoint qualifiedName="org.jetbrains.qodana.inspectionKts.examples.provider"
                     interface="org.jetbrains.qodana.inspectionKts.examples.InspectionKtsExample$Provider"
                     dynamic="true"/>
-    <extensionPoint qualifiedName="org.jetbrains.qodana.inspectionKts.postProcessorFactory"
-                    interface="org.jetbrains.qodana.inspectionKts.CompiledInspectionKtsPostProcessorFactory"
-                    dynamic="true"/>
     <extensionPoint qualifiedName="org.jetbrains.qodana.inspectionKts.customPluginsForKtsClasspathProvider"
-                    interface="org.jetbrains.qodana.inspectionKts.CustomPluginsForKtsClasspathProvider"
+                    interface="org.jetbrains.qodana.inspectionKts.core.CustomPluginsForKtsClasspathProvider"
                     dynamic="true"/>
     <extensionPoint qualifiedName="org.jetbrains.qodana.inspectionKts.customPsiFileFactory"
                     interface="org.jetbrains.qodana.inspectionKts.fileFactory.CustomPsiFileFactory"
                     dynamic="true"/>
-    <extensionPoint qualifiedName="org.jetbrains.qodana.inspectionKts.btaCompiler"
-                    interface="org.jetbrains.qodana.inspectionKts.bta.InspectionKtsBtaCompiler"
-                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.intellij.qodana">
-    <dynamicInspectionsInitializer implementation="org.jetbrains.qodana.inspectionKts.InspectionKtsProfileInitializer"/>
+    <dynamicInspectionsInitializer implementation="org.jetbrains.qodana.inspectionKts.core.InspectionKtsProfileInitializer"/>
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains.qodana.inspectionKts">
     <templates.provider implementation="org.jetbrains.qodana.inspectionKts.templates.AnyLanguageInspectionKtsTemplateProvider"/>

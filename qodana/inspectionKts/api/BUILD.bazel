@@ -1,7 +1,7 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.qodana.inspectionKts.api` start
-
 jvm_library(
     name = "api",
     srcs = glob(
@@ -21,9 +21,6 @@ jvm_library(
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
-        "@lib//:kotlinc-kotlin-scripting-common-provided",
-        "@lib//:kotlinc-kotlin-scripting-jvm-provided",
-        "@lib//:kotlinc-kotlin-script-runtime-provided",
         "@community//platform/analysis-api:analysis",
         "@community//platform/analysis-impl",
         "@community//platform/core-api:core",
@@ -46,6 +43,8 @@ jvm_library(
     ],
 )
 
+content_module_jar(module = ":api")
+
 jvm_library(
     name = "api_test_lib",
     testonly = True,
@@ -58,9 +57,6 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         ":api",
-        "@lib//:kotlinc-kotlin-scripting-common-provided",
-        "@lib//:kotlinc-kotlin-scripting-jvm-provided",
-        "@lib//:kotlinc-kotlin-script-runtime-provided",
         "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/analysis-impl:analysis-impl_test_lib",
         "@community//platform/core-api:core_test_lib",
@@ -88,6 +84,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.inspectionKts.api.iml",
+        "resources/intellij.qodana.inspectionKts.api.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -1,8 +1,10 @@
-package org.jetbrains.qodana.inspectionKts
+package org.jetbrains.qodana.inspectionKts.core
+
 
 import com.intellij.codeInspection.ex.ProjectInspectionToolRegistrar
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
 import org.jetbrains.qodana.inspectionKts.stat.InspectionKtsEventsCollector
 import org.jetbrains.qodana.util.DynamicInspectionInitializer
 import org.jetbrains.qodana.util.QodanaMessageReporter
