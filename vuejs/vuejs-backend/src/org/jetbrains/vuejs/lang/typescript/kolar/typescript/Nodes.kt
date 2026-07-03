@@ -9,6 +9,8 @@ interface Node {
   val end: Int
 
   fun getStart(sourceFile: SourceFile): Int
+  
+  fun getChildren(): Array<out Node>
 }
 
 interface Expression : Node

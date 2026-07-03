@@ -1,10 +1,12 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.source.tree.LeafElement
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.forEachChild
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScriptBlock
@@ -57,11 +59,9 @@ fun generateSfcBlockSection(
 
 fun forEachNode(
   node: Node,
-): Sequence<Node> = sequence {
-  val children = mutableListOf<Node>()
-  forEachChild(node) { child ->
-    children.add(child)
-  }
-
-  yieldAll(children)
-}
+): Sequence<Node> =
+  node.getChildren()
+    .asSequence()
+    .filter { it !is LeafElement }
+    .filter { it !is PsiWhiteSpace }
+    .filter { it !is PsiComment }
