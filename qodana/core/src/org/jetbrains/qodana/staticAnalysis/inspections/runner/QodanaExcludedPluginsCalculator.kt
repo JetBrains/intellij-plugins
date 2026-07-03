@@ -83,7 +83,7 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
 
   private fun calculateActual(included: List<String>): Pair<Set<PluginMainDescriptor>, List<String>> {
     val pluginSet = PluginManagerCore.getPluginSet()
-    val resolvedPluginSet = pluginSet.resolvedPluginSet ?: error("Resolved plugin set is not available")
+    val resolvedPluginSet = pluginSet.resolvedPluginSet
     val pluginIds = pluginSet.enabledPlugins.map { it.pluginId.idString }
     val toProcess = ArrayDeque<IdeaPluginDescriptorImpl>()
     for (idString in included) {
