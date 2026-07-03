@@ -95,25 +95,7 @@ private class IRContentImpl(
   }
 }
 
-private class SourceFileImpl(
+private fun SourceFileImpl(
   scriptTag: XmlTag,
-) : SourceFile {
-  override val text: String
-    get() = TODO("not implemented")
-  override val parseDiagnostics: List<DiagnosticWithLocation>
-    get() = TODO("not implemented")
-  override val statements: List<Node>
-    get() = TODO("not implemented")
-  override val endOfFileToken: Node
-    get() = TODO("not implemented")
-  override val kind: SyntaxKind
-    get() = TODO("not implemented")
-  override val pos: Int
-    get() = TODO("not implemented")
-  override val end: Int
-    get() = TODO("not implemented")
-
-  override fun getStart(sourceFile: SourceFile): Int {
-    TODO("not implemented")
-  }
-}
+) : SourceFile =
+  TODO("not implemented")
