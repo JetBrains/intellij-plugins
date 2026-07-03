@@ -1,13 +1,16 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner.startup
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.util.awaitCancellationAndInvoke
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.addQodanaAnalysisConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.removeQodanaAnalysisConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaAnalysisCancellationService
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionProfileLoader
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.cancelWithQodanaException
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
 import org.jetbrains.qodana.util.QodanaMessageReporter
@@ -24,7 +27,12 @@ class QodanaInIdeRunContextFactory(
 ) : QodanaRunContextFactory {
   override suspend fun openRunContext(scope: CoroutineScope): QodanaRunContext {
     project.addQodanaAnalysisConfig(config)
+    project.service<QodanaAnalysisCancellationService>().registerHook { message: String, cause: Throwable? ->
+      scope.cancelWithQodanaException(message, cause)
+    }
+    @Suppress("OPT_IN_USAGE")
     scope.awaitCancellationAndInvoke {
+      project.service<QodanaAnalysisCancellationService>().removeHook()
       project.removeQodanaAnalysisConfig()
     }
 

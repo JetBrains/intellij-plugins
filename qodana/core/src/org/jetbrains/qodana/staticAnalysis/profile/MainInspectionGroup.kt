@@ -1,16 +1,21 @@
 package org.jetbrains.qodana.staticAnalysis.profile
 
 import com.intellij.codeInspection.ex.EnabledInspectionsProvider
+import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import kotlinx.coroutines.cancel
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaCancellationException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaAnalysisCancellationService
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import java.util.concurrent.atomic.AtomicInteger
 
 class MainInspectionGroup(profile: QodanaInspectionProfile) : NamedInspectionGroup("", profile) {
-  override fun createState(context: QodanaGlobalInspectionContext) = State(context)
+  override fun createState(context: QodanaGlobalInspectionContext): State = State(context)
+
+  private companion object {
+    val LOG = logger<MainInspectionGroup>()
+  }
 
   inner class State(context: QodanaGlobalInspectionContext) : GroupState(context, this) {
     val thresholdState: StateWithThreshold? =
@@ -23,8 +28,9 @@ class MainInspectionGroup(profile: QodanaInspectionProfile) : NamedInspectionGro
       if (keepConsuming == false) return false
       if (context.config.isAboveStopThreshold(problemsCounter.get())) {
         val errorMessage = "Analysis cancelled since stopThreshold ${context.config.stopThreshold} is surpassed."
-
-        context.qodanaRunScope.cancel(QodanaCancellationException(errorMessage))
+        if (!context.project.service<QodanaAnalysisCancellationService>().requestCancel(errorMessage)) {
+          LOG.warn("Qodana analysis cancellation requested not in Qodana flow")
+        }
         return false
       }
       problemsCounter.incrementAndGet()
@@ -41,7 +47,7 @@ class MainInspectionGroup(profile: QodanaInspectionProfile) : NamedInspectionGro
       return thresholdState?.shouldSkip(inspectionId, file, wrappers) ?: false
     }
 
-    fun getCount() = problemsCounter.get()
+    fun getCount(): Int = problemsCounter.get()
   }
 
   override fun applyConfig(config: QodanaConfig, project: Project, addDefaultExclude: Boolean): MainInspectionGroup {

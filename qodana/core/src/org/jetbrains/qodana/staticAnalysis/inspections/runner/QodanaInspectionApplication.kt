@@ -87,8 +87,12 @@ class QodanaInspectionApplication(
       reporter.reportError("Qodana exited abnormally because: ${e.message}")
       exitProcess(1)
     }
+    catch (e: QodanaCancellationException) {
+      reporter.reportError(cancellationThrowableToReport(e) ?: e)
+      exitProcess(1)
+    }
     catch (@Suppress("IncorrectCancellationExceptionHandling") e: ProcessCanceledException) {
-      reporter.reportError((e.cause as? QodanaCancellationException) ?: e)
+      reporter.reportError(cancellationThrowableToReport(e) ?: e)
       exitProcess(1)
     }
     catch (e: Throwable) {
@@ -101,7 +105,7 @@ class QodanaInspectionApplication(
   }
 
   @VisibleForTesting
-  fun constructQodanaRunner(contextFactory: QodanaRunContextFactory, messageReporter: QodanaMessageReporter = reporter) =
+  fun constructQodanaRunner(contextFactory: QodanaRunContextFactory, messageReporter: QodanaMessageReporter = reporter): QodanaRunner =
     QodanaRunner(
       QodanaScriptFactory.buildScript(config, contextFactory, messageReporter),
       config,
@@ -291,5 +295,14 @@ class QodanaInspectionApplication(
 
   companion object {
     private val LOG = logger<QodanaInspectionApplication>()
+  }
+}
+
+@VisibleForTesting
+internal fun cancellationThrowableToReport(throwable: Throwable): Throwable? {
+  return when (throwable) {
+    is QodanaCancellationException -> throwable
+    is ProcessCanceledException -> (throwable.cause as? QodanaCancellationException) ?: throwable
+    else -> null
   }
 }

@@ -1,0 +1,10 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="org.intellij.qodana"/>
+    <plugin id="org.jetbrains.security.package-checker"/>
+  </dependencies>
+  <projectListeners>
+    <listener class="org.jetbrains.qodana.staticAnalysis.packageChecker.PackageCheckerInspectListener"
+              topic="com.intellij.codeInspection.ex.InspectListener"/>
+  </projectListeners>
+</idea-plugin>
