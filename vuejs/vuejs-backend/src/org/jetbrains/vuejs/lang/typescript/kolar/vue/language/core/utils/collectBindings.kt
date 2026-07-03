@@ -5,12 +5,12 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Expression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Identifier
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.forEachChild
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrayBindingPattern
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isBindingElement
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isIdentifier
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isObjectBindingPattern
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.TextRange
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.forEachNode
 
 data class BindingIdentifier(
   val id: Identifier,
@@ -60,7 +60,7 @@ fun collectBindingIdentifiers(
     }
   }
   else {
-    forEachChild(node) { child ->
+    for (child in forEachNode(node)) {
       collectBindingIdentifiers(
         node = child,
         results = results,

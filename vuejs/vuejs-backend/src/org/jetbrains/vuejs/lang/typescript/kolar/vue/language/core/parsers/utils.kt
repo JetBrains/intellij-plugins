@@ -5,7 +5,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.NamespaceImport
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SyntaxKind
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.forEachChild
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.getLeadingCommentRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isAsExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isClassDeclaration
@@ -20,6 +19,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isStatement
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeAssertionExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isVariableStatement
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.TextRange
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.forEachNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNodeText
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStartEnd
@@ -31,7 +31,7 @@ fun parseBindingRanges(
   val bindings = mutableListOf<TextRange<*>>()
   val components = mutableListOf<TextRange<*>>()
 
-  forEachChild(ast) { node ->
+  for (node in forEachNode(ast)) {
     if (isVariableStatement(node)) {
       for (decl in node.declarationList.declarations) {
         bindings.addAll(collectBindingRanges(decl.name, ast))

@@ -6,7 +6,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.HasModifiers
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SyntaxKind
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.forEachChild
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.getLeadingCommentRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isCallExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isCallSignatureDeclaration
@@ -28,6 +27,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeLiteralNode
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isUnionTypeNode
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isVariableDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.TextRange
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.forEachNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingIdentifiers
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNodeText
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStartEnd
@@ -341,7 +341,7 @@ fun parseScriptSetupRanges(
     }
 
     if (!isFunctionLike(node)) {
-      forEachChild(node) { child ->
+      for (child in forEachNode(node)) {
         parents.add(node)
         visitNode(child, parents)
         parents.removeAt(parents.lastIndex)
@@ -356,18 +356,18 @@ fun parseScriptSetupRanges(
 
   var foundNonImportExportNode = false
   var importSectionEndOffset = 0
-  forEachChild(ast) { node ->
+  for (node in forEachNode(ast)) {
     if (foundNonImportExportNode
         || isImportDeclaration(node)
         || isExportDeclaration(node)
         || isEmptyStatement(node)
         || isImportEqualsDeclaration(node)) {
-      return@forEachChild
+      continue
     }
     if (node is HasModifiers
         && (isTypeAliasDeclaration(node) || isInterfaceDeclaration(node))
         && node.modifiers?.any { it.kind == SyntaxKind.ExportKeyword } == true) {
-      return@forEachChild
+      continue
     }
     val commentRanges = getLeadingCommentRanges(text, node.pos)
     importSectionEndOffset = if (!commentRanges.isNullOrEmpty()) {
@@ -379,7 +379,7 @@ fun parseScriptSetupRanges(
     foundNonImportExportNode = true
   }
 
-  forEachChild(ast) { node ->
+  for (node in forEachNode(ast)) {
     visitNode(node, mutableListOf(ast))
   }
 
@@ -413,7 +413,7 @@ private fun getStatementRange(
   for (i in parents.indices.reversed()) {
     val statement = parents[i]
     if (isStatement(statement)) {
-      forEachChild(statement) { child ->
+      for (child in forEachNode(statement)) {
         val range = getStartEnd(child, ast)
         statementRange = statementRange?.copy(end = range.end) ?: range
       }

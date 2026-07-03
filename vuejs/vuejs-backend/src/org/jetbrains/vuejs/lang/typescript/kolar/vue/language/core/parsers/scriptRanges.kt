@@ -6,7 +6,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.ObjectLiteralExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.StringLiteral
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.forEachChild
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isCallExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExportAssignment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isIdentifier
@@ -14,6 +13,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isObjectLiteralExpre
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isPropertyAssignment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isStringLiteral
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.TextRange
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.forEachNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNodeText
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStartEnd
 
@@ -50,7 +50,7 @@ fun parseScriptRanges(
 ): ScriptRanges {
   var exportDefault: ScriptExportDefault? = null
 
-  forEachChild(ast) { child ->
+  for (child in forEachNode(ast)) {
     if (isExportAssignment(child)) {
       val expression = child.expression
       var start = getStartEnd(child, ast).start
@@ -99,7 +99,7 @@ fun parseOptionsFromExtression(
   var nameOptionNode: StringLiteral? = null
   var inheritAttrsOption: String? = null
 
-  forEachChild(obj) { node ->
+  for (node in forEachNode(obj)) {
     if (isPropertyAssignment(node) && isIdentifier(node.name)) {
       val name = getNodeText(node.name, ast)
       val init = node.initializer
