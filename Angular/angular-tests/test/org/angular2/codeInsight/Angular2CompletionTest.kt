@@ -432,7 +432,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     }
 
   @Test
-  @SkipTsGoProxy // Wrong results
   fun testNarrowingInCaseBlock() =
     doLookupTest(ANGULAR_CORE_19_2_0, extension = "html", dir = true, configurators = listOf(Angular2TsConfigFile())) {
       it.priority > 0.0
