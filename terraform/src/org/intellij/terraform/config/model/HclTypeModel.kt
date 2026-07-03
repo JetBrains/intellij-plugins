@@ -225,10 +225,11 @@ fun HclType.isConvertibleTo(other: HclType): Boolean {
 
     is ObjectType -> {
       if (other is MapType) {
-        if (this.elements == null || other.elements == null) return true
-        if (this.elements!!.isEmpty()) return true
-        val uniq = this.elements!!.values.filterNotNull().toSet()
-        return uniq.size == 1 && uniq.first().isConvertibleTo(other.elements)
+        val thisElements = this.elements ?: return true
+        val otherElements = other.elements ?: return true
+
+        if (thisElements.isEmpty()) return true
+        return thisElements.values.filterNotNull().all { it.isConvertibleTo(otherElements) }
       }
       if (other is ObjectType) {
         // other may have same or less elements
