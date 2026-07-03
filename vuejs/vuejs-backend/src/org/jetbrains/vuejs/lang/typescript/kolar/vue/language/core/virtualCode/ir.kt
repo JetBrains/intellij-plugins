@@ -8,10 +8,7 @@ import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.findTopLevelVueTag
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.DiagnosticWithLocation
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SyntaxKind
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IR
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRContent
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScript
@@ -97,5 +94,5 @@ private class IRContentImpl(
 
 private fun SourceFileImpl(
   scriptTag: XmlTag,
-) : SourceFile =
+): SourceFile =
   TODO("not implemented")
