@@ -129,6 +129,7 @@ class TfTypesConvertibilityTest : UsefulTestCase() {
 
     doTest(ObjectType(mapOf("x" to String)), MapType(Any), true)
     doTest(ObjectType(mapOf("x" to Number)), MapType(Any), true)
+    doTest(ObjectType(mapOf("x" to String, "y" to Number, "z" to Boolean)), MapType(Any), true)
 
     // same primitive
     doTest(ObjectType(mapOf("x" to String)), MapType(String), true)

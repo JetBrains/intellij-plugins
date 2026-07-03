@@ -110,6 +110,20 @@ public class TfInspectionsTest extends TfInspectionFixtureTestCase {
     doTest("incorrect_variable_type", new TfIncorrectVariableTypeInspection());
   }
 
+  public void testMapOfAnyVariableType() {
+    myFixture.configureByText(TerraformFileType.INSTANCE, """
+      variable "foo" {
+        type = map(any)
+        default = {
+          "bar" = "a-string"
+          "baz" = 10
+          "qux" = true
+        }
+      }""");
+    myFixture.enableInspections(new TfIncorrectVariableTypeInspection());
+    myFixture.checkHighlighting();
+  }
+
   public void testDuplicatedProvider() {
     doTest("duplicated_provider", new TfDuplicatedProviderInspection());
   }
