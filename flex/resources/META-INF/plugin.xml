@@ -12,10 +12,18 @@
       - Run, debug, test, package and deploy your applications.
     ]]></description>
 
+  <content namespace="jetbrains">
+    <module name="intellij.flex.css"/>
+  </content>
+
+  <extensionPoints>
+    <!-- Optional CSS integration; implemented by the intellij.flex.css content module (WEB-78192). -->
+    <extensionPoint qualifiedName="com.intellij.flex.cssSupport"
+                    interface="com.intellij.javascript.flex.css.FlexCssSupport" dynamic="true"/>
+  </extensionPoints>
+
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <module name="intellij.css.common"/>
-    <module name="intellij.css.common.psi"/>
     <module name="intellij.java.execution.impl"/>
     <module name="intellij.java.psi"/>
     <module name="intellij.java.ui"/>
@@ -43,7 +51,6 @@
   <!-- endregion -->
   <depends>JavaScript</depends>
   <depends>JavaScriptDebugger</depends>
-  <depends>com.intellij.modules.css.backend</depends>
   <depends>com.intellij.properties</depends>
   <depends>com.intellij.modules.idea.ultimate</depends>
   <depends optional="true" config-file="flex-maven-support.xml">org.jetbrains.idea.maven</depends>
@@ -119,7 +126,6 @@
     <lang.rearranger language="ECMA Script Level 4" implementationClass="com.intellij.lang.actionscript.arrangement.ActionScriptRearranger"/>
 
     <psi.referenceContributor language="XML" implementation="com.intellij.javascript.flex.FlexConfigXmlReferenceContributor"/>
-    <psi.referenceContributor language="CSS" implementation="com.intellij.javascript.flex.FlexCssReferenceContributor"/>
     <psi.referenceContributor language="ECMA Script Level 4" implementation="com.intellij.javascript.flex.ActionScriptReferenceContributor"/>
     <psi.referenceContributor language="Mxml" implementation="com.intellij.javascript.flex.MxmlReferenceContributor"/>
     <problemFileHighlightFilter implementation="com.intellij.lang.actionscript.highlighting.ActionScriptProblemFileHighlightFilter"/>
@@ -140,9 +146,6 @@
                           implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderOpenProcessor"
                           order="before EclipseProjectOpenProcessor"/>
     <defaultTemplatePropertiesProvider implementation="com.intellij.lang.javascript.ActionScriptAccessModifierTemplatePropertyProvider"/>
-    <css.elementDescriptorProvider implementation="com.intellij.javascript.flex.css.FlexCssElementDescriptorProvider" order="first"/>
-    <css.classOrIdUsagesProvider implementation="com.intellij.javascript.flex.css.FlexClassOrIdUsagesProvider"/>
-    <css.dialect id="FlexCSSDialect" order="before JavaFxCSSDialect" implementation="com.intellij.javascript.flex.css.FlexCSSDialect"/>
     <projectConfigurable bundle="messages.FlexBundle"
                          key="configurable.FlexCompilerProjectConfigurable.display.name"
                          instance="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfigurable" id="flex.compiler"
@@ -157,7 +160,6 @@
     <consoleFilterProvider implementation="com.intellij.lang.javascript.flex.FlexStackTraceFilterProvider"/>
     <gotoSymbolContributor implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSymbolContributor"/>
     <annotator language="Mxml" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
-    <annotator language="CSS" implementationClass="com.intellij.javascript.flex.css.FlexCssAnnotator"/>
     <multiHostInjector implementation="com.intellij.javascript.flex.mxml.MxmlLanguageInjector"/>
 
     <internalFileTemplate name="ActionScript Class"/>
@@ -206,7 +208,7 @@
 
     <projectStructureValidator implementation="com.intellij.lang.javascript.flex.projectStructure.ui.FlexProjectStructureValidator"/>
 
-    <moduleRendererFactory implementation="com.intellij.lang.javascript.flex.FlexModuleRendererFactory"/>
+    <moduleRendererFactory implementation="com.intellij.lang.javascript.flex.FlexModuleRendererFactory" order="last, before default"/>
     <treeStructureProvider
         implementation="com.intellij.lang.javascript.flex.projectStructure.ui.FlexCompositeSdkProjectViewStructureProvider"/>
 

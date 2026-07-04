@@ -2,7 +2,7 @@
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.javascript.flex.FlexReferenceContributor;
-import com.intellij.lang.Language;
+import com.intellij.javascript.flex.css.FlexCssSupport;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
@@ -27,10 +27,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.XmlElementVisitor;
-import com.intellij.psi.css.CssDeclaration;
-import com.intellij.psi.css.CssElementVisitor;
-import com.intellij.psi.css.CssFunction;
-import com.intellij.psi.css.CssString;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
@@ -47,8 +43,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class FlashUmlDependencyProvider {
-  private static final Language CSS = Language.findLanguageByID("CSS");
-
   private final JSClass myClazz;
 
   public FlashUmlDependencyProvider(final JSClass clazz) {
@@ -214,41 +208,14 @@ public class FlashUmlDependencyProvider {
         public void visitXmlText(final @NotNull XmlText text) {
           List<Pair<PsiElement, TextRange>> injectedFiles = InjectedLanguageManager.getInstance(text.getProject()).getInjectedPsiFiles(text);
           if (injectedFiles != null) {
-            for (Pair<PsiElement, TextRange> pair : injectedFiles) {
-              if (CSS.is(pair.first.getLanguage())) {
-                pair.first.accept(new CssElementVisitor() {
-                  private boolean myInClassReference; // to prevent extra references resolve
-
-                  @Override
-                  public void visitElement(final @NotNull PsiElement element) {
-                    super.visitElement(element);
-                    element.acceptChildren(this);
-                  }
-
-                  @Override
-                  public void visitCssFunction(final CssFunction _function) {
-                    if (FlexReferenceContributor.CLASS_REFERENCE.equals(_function.getName())) {
-                      myInClassReference = true;
-                      try {
-                        super.visitCssFunction(_function);
-                      }
-                      finally {
-                        myInClassReference = false;
-                      }
-                    }
-                  }
-
-                  @Override
-                  public void visitCssString(final CssString _string) {
-                    if (myInClassReference) {
-                      CssDeclaration declaration = PsiTreeUtil.getParentOfType(_string, CssDeclaration.class);
-                      if (declaration != null) {
-                        processReferenceSet(_string.getReferences(), result,
-                                            Factory.dependency(declaration.getPropertyName(), declaration));
-                      }
-                    }
-                  }
-                });
+            FlexCssSupport cssSupport = FlexCssSupport.getInstance();
+            if (cssSupport != null) {
+              for (Pair<PsiElement, TextRange> pair : injectedFiles) {
+                for (FlexCssSupport.InjectedCssClassDependency dependency :
+                  cssSupport.collectInjectedCssClassDependencies(pair.first, FlexReferenceContributor.CLASS_REFERENCE)) {
+                  processReferenceSet(dependency.references(), result,
+                                      Factory.dependency(dependency.dependencyName(), dependency.anchor()));
+                }
               }
             }
           }

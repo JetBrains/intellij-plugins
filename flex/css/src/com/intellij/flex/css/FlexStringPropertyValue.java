@@ -1,5 +1,6 @@
-package com.intellij.javascript.flex.css;
+package com.intellij.flex.css;
 
+import com.intellij.javascript.flex.css.FlexCssUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.impl.util.table.CssPropertyValueImpl;
 import org.jetbrains.annotations.Nullable;

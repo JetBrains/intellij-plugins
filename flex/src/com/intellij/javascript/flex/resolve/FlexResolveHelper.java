@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
+import com.intellij.javascript.flex.css.FlexCssSupport;
 import com.intellij.javascript.flex.mxml.MxmlJSClassProvider;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
@@ -41,7 +42,6 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.psi.css.CssString;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -170,7 +170,8 @@ public final class FlexResolveHelper implements JSResolveHelper {
 
   @Override
   public boolean isAdequatePlaceForImport(final PsiElement place) {
-    return place instanceof CssString;
+    FlexCssSupport cssSupport = FlexCssSupport.getInstance();
+    return cssSupport != null && cssSupport.isCssString(place);
   }
 
   @Override

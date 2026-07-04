@@ -17,6 +17,13 @@ import java.util.Set;
 public final class FlexCssUtil {
   private static final String STYLE_NAME_SUFFIX = "style-name";
 
+  /**
+   * MXML/CSS attribute format marker for color-typed properties. Kept in this host helper (rather than in the
+   * CSS-only {@code FlexCssPropertyDescriptor}) so core code can read it without depending on the optional CSS
+   * integration (WEB-78192).
+   */
+  public static final String COLOR_FORMAT = "Color";
+
   private FlexCssUtil() {
   }
 

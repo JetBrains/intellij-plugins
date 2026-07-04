@@ -1,5 +1,6 @@
-package com.intellij.javascript.flex.css;
+package com.intellij.flex.css;
 
+import com.intellij.javascript.flex.css.FlexCssUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssTerm;

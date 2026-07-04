@@ -1,8 +1,10 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.intellij.javascript.flex.css;
+package com.intellij.flex.css;
 
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.javascript.flex.FlexAnnotationNames;
+import com.intellij.javascript.flex.css.FlexCssUtil;
+import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.documentation.DocumentationMarkup;
 import com.intellij.lang.documentation.DocumentationProvider;
@@ -69,7 +71,6 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   private final @NotNull Set<String> myFileNames;
   private final FlexStyleIndexInfo myStyleInfo;
 
-  public static final String COLOR_FORMAT = "Color";
   private static final String LENGTH_FORMAT = "Length";
   private final @NotNull CssValueDescriptor myValueDescriptor;
 
@@ -266,7 +267,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       ContainerUtil.addIfNotNull(formats, info.getFormat());
     }
 
-    if (formats.contains(COLOR_FORMAT)) {
+    if (formats.contains(FlexCssUtil.COLOR_FORMAT)) {
       children.add(createCssColorValue());
     }
     if (formats.contains(LENGTH_FORMAT)) {
@@ -292,7 +293,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
         formats.add(format);
       }
     }
-    if (formats.contains(COLOR_FORMAT)) {
+    if (formats.contains(FlexCssUtil.COLOR_FORMAT)) {
       children.add(new FlexCssColorValue());
     }
     if (formats.contains(LENGTH_FORMAT)) {
@@ -435,7 +436,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       for (CssValueDescriptor child : children) {
         result.addChild(CssValueDescriptorModificator.withParent(child, result));
       }
-      if (!formats.contains(COLOR_FORMAT)) {
+      if (!formats.contains(FlexCssUtil.COLOR_FORMAT)) {
         result.addChild(CssElementDescriptorFactory2.getInstance().createStringValueDescriptor(null, 1, 1, result));
       }
     }
@@ -494,7 +495,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     if (value == null) {
       value = new FlexCssPropertyValue(shorthand, true);
     }
-    else if (!formats.contains(COLOR_FORMAT)) {
+    else if (!formats.contains(FlexCssUtil.COLOR_FORMAT)) {
       value.addChild(new FlexStringPropertyValue());
     }
     value.addChild(new FlexCssPropertyValue("undefined"));

@@ -64,6 +64,8 @@ jvm_library(
         "//plugins/uml/impl:impl_test_lib",
         "//contrib/flex",
         "//contrib/flex:flex_test_lib",
+        "//contrib/flex/css",
+        "//contrib/flex/css:css_test_lib",
         "//plugins/JavaScriptLanguage/javascript-parser",
         "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
         "//plugins/css/common",

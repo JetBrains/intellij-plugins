@@ -1,7 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
-import com.intellij.css.util.CssClassUtil;
+import com.intellij.javascript.flex.css.FlexCssSupport;
 import com.intellij.lang.javascript.psi.JSNamedElementBase;
 import com.intellij.lang.javascript.psi.JSNewExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.css.CssClassMarker;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
 import org.jetbrains.annotations.NotNull;
@@ -76,10 +75,11 @@ public abstract class ActionScriptResolveProcessor extends JSResolveProcessorBas
     }
     if (element instanceof XmlTag) return ((XmlTag)element).getAttributeValue("name");
     if (element instanceof XmlToken) return element.getText();
-    if (element instanceof CssClassMarker) {
-      String name = ((PsiNamedElement)element).getName();
-      if (name != null) {
-        return CssClassUtil.kebabToCamelCase(name);
+    FlexCssSupport cssSupport = FlexCssSupport.getInstance();
+    if (cssSupport != null) {
+      String cssClassName = cssSupport.cssClassMarkerName(element);
+      if (cssClassName != null) {
+        return cssClassName;
       }
     }
     if (element instanceof PsiNamedElement) {

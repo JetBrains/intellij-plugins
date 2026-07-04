@@ -4,7 +4,8 @@ package com.intellij.javascript.flex;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
-import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
+import com.intellij.javascript.flex.css.FlexCssSupport;
+import com.intellij.javascript.flex.css.FlexCssUtil;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
@@ -35,7 +36,6 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
-import com.intellij.psi.css.resolve.CssReferenceProviderUtil;
 import com.intellij.psi.filters.AndFilter;
 import com.intellij.psi.filters.ElementFilter;
 import com.intellij.psi.filters.ElementFilterBase;
@@ -84,21 +84,24 @@ public final class MxmlReferenceContributor extends PsiReferenceContributor {
 
   @Override
   public void registerReferenceProviders(final @NotNull PsiReferenceRegistrar registrar) {
-    registrar.registerReferenceProvider(
-      XmlPatterns.xmlAttributeValue().withLocalName(or(string().endsWith(STYLE_NAME_ATTR_SUFFIX),
-                                                       string().equalTo(STYLE_NAME_ATTR)))
-        .and(new FilterPattern(new ElementFilter() {
-          @Override
-          public boolean isAcceptable(final Object element, final PsiElement context) {
-            return !((PsiElement)element).textContains('{');
-          }
+    FlexCssSupport cssSupport = FlexCssSupport.getInstance();
+    if (cssSupport != null) {
+      registrar.registerReferenceProvider(
+        XmlPatterns.xmlAttributeValue().withLocalName(or(string().endsWith(STYLE_NAME_ATTR_SUFFIX),
+                                                         string().equalTo(STYLE_NAME_ATTR)))
+          .and(new FilterPattern(new ElementFilter() {
+            @Override
+            public boolean isAcceptable(final Object element, final PsiElement context) {
+              return !((PsiElement)element).textContains('{');
+            }
 
-          @Override
-          public boolean isClassAcceptable(final Class hintClass) {
-            return true;
-          }
-        })),
-      CssReferenceProviderUtil.CSS_CLASS_OR_ID_KEY_PROVIDER.getProvider());
+            @Override
+            public boolean isClassAcceptable(final Class hintClass) {
+              return true;
+            }
+          })),
+        cssSupport.cssClassOrIdReferenceProvider());
+    }
 
     XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, null, new ElementFilter() {
       @Override
@@ -108,7 +111,7 @@ public final class MxmlReferenceContributor extends PsiReferenceContributor {
           XmlAttributeDescriptor descriptor = ((XmlAttribute)parent).getDescriptor();
           if (descriptor instanceof AnnotationBackedDescriptorImpl) {
             String format = ((AnnotationBackedDescriptor)descriptor).getFormat();
-            return FlexCssPropertyDescriptor.COLOR_FORMAT.equals(format);
+            return FlexCssUtil.COLOR_FORMAT.equals(format);
           }
         }
         return false;

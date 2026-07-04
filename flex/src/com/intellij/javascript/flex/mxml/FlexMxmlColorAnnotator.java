@@ -3,9 +3,8 @@ package com.intellij.javascript.flex.mxml;
 
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.LineMarkerSettings;
-import com.intellij.css.util.color.CssColor;
-import com.intellij.css.util.color.CssColorTextUtilKt;
-import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
+import com.intellij.javascript.flex.css.FlexCssSupport;
+import com.intellij.javascript.flex.css.FlexCssUtil;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -51,7 +50,7 @@ public final class FlexMxmlColorAnnotator implements Annotator {
       return;
     }
     String format = annotationBackedDescriptor.getFormat();
-    if (!FlexCssPropertyDescriptor.COLOR_FORMAT.equals(format)) {
+    if (!FlexCssUtil.COLOR_FORMAT.equals(format)) {
       return;
     }
 
@@ -172,7 +171,10 @@ public final class FlexMxmlColorAnnotator implements Annotator {
               final PsiFile psiFile = myAttribute.getContainingFile();
               if (!FileModificationService.getInstance().prepareFileForWrite(psiFile)) return;
 
-              final String hex = CssColorTextUtilKt.toHexString(CssColor.fromJavaAwtColor(color));
+              final FlexCssSupport cssSupport = FlexCssSupport.getInstance();
+              final String hex = cssSupport != null
+                                 ? cssSupport.toCssHexString(color)
+                                 : String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
               final String mxmlStyleHex = toCanonicalHex(hex, false);
               ApplicationManager.getApplication().runWriteAction(() -> myAttribute.setValue(mxmlStyleHex));
             }

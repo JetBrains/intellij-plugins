@@ -1,9 +1,13 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.intellij.javascript.flex.css;
+package com.intellij.flex.css;
 
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.javascript.flex.FlexAnnotationNames;
+import com.intellij.javascript.flex.css.FlexCssUtil;
+import com.intellij.javascript.flex.css.FlexStyleIndex;
+import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
+import com.intellij.javascript.flex.css.SwitchToCssDialectQuickFix;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.Language;
 import com.intellij.lang.css.CSSLanguage;

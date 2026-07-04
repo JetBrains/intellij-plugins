@@ -1,4 +1,4 @@
-package com.intellij.javascript.flex.css;
+package com.intellij.flex.css;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssPropertyValue;

@@ -1,7 +1,6 @@
 package com.intellij.javascript.flex;
 
-import com.intellij.javascript.flex.css.CssClassValueReference;
-import com.intellij.javascript.flex.css.CssPropertyValueReference;
+import com.intellij.javascript.flex.css.FlexCssSupport;
 import com.intellij.javascript.flex.css.FlexCssUtil;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSArgumentList;
@@ -63,9 +62,10 @@ public final class ActionScriptReferenceContributor extends PsiReferenceContribu
     })), new PsiReferenceProvider() {
       @Override
       public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+        FlexCssSupport cssSupport = FlexCssSupport.getInstance();
         String value = element.getText();
-        if (FlexCssUtil.inQuotes(value)) {
-          return new PsiReference[]{new CssPropertyValueReference(element)};
+        if (cssSupport != null && FlexCssUtil.inQuotes(value)) {
+          return new PsiReference[]{cssSupport.createCssPropertyValueReference(element)};
         }
         return PsiReference.EMPTY_ARRAY;
       }
@@ -98,9 +98,10 @@ public final class ActionScriptReferenceContributor extends PsiReferenceContribu
     })), new PsiReferenceProvider() {
       @Override
       public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+        FlexCssSupport cssSupport = FlexCssSupport.getInstance();
         String value = element.getText();
-        if (FlexCssUtil.inQuotes(value)) {
-          return new PsiReference[]{new CssClassValueReference(element)};
+        if (cssSupport != null && FlexCssUtil.inQuotes(value)) {
+          return new PsiReference[]{cssSupport.createCssClassValueReference(element)};
         }
         return PsiReference.EMPTY_ARRAY;
       }
@@ -136,9 +137,10 @@ public final class ActionScriptReferenceContributor extends PsiReferenceContribu
     })), new PsiReferenceProvider() {
       @Override
       public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+        FlexCssSupport cssSupport = FlexCssSupport.getInstance();
         String value = element.getText();
-        if (FlexCssUtil.inQuotes(value)) {
-          return new PsiReference[]{new CssClassValueReference(element)};
+        if (cssSupport != null && FlexCssUtil.inQuotes(value)) {
+          return new PsiReference[]{cssSupport.createCssClassValueReference(element)};
         }
         return PsiReference.EMPTY_ARRAY;
       }
