@@ -16,7 +16,6 @@
     <orderEntry type="module" module-name="intellij.platform.editor.ui" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
-    <orderEntry type="module" module-name="intellij.css.common" />
     <orderEntry type="module" module-name="intellij.platform.indexing" />
     <orderEntry type="module" module-name="intellij.platform.lang" />
     <orderEntry type="module" module-name="intellij.platform.editor.ex" />
@@ -33,7 +32,6 @@
     <orderEntry type="module" module-name="intellij.platform.ide.core" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.css.plugin" />
     <orderEntry type="module" module-name="intellij.javascript.backend" />
     <orderEntry type="module" module-name="intellij.idea.ultimate.customization" scope="TEST" />
     <orderEntry type="module" module-name="intellij.fileWatcher" />
@@ -48,8 +46,6 @@
     <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" />
     <orderEntry type="module" module-name="intellij.javascript.web" />
     <orderEntry type="module" module-name="intellij.xml.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.css.common.psi" />
-    <orderEntry type="module" module-name="intellij.css.backend" />
     <orderEntry type="module" module-name="intellij.css.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.common" />
     <orderEntry type="module" module-name="intellij.javascript.codeinsight" />

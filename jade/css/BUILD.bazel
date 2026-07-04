@@ -1,0 +1,88 @@
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.jade.css` start
+
+jvm_library(
+    name = "css",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.jade.css",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:jetbrains-annotations",
+        "//contrib/jade",
+        "@community//RegExpSupport:regexp",
+        "//plugins/css",
+        "//plugins/css/common",
+        "//plugins/css/common/psi",
+        "//plugins/css/backend",
+        "//plugins/JavaScriptLanguage/javascript-parser",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "@community//platform/core-api:core",
+        "@community//platform/core-impl",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/lang-api:lang",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/util",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//xml/xml-psi-api:psi",
+        "@community//xml/xml-psi-impl:psi-impl",
+        "@community//xml/xml-parser:parser",
+        "@community//xml/impl",
+    ],
+)
+
+jvm_library(
+    name = "css_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.jade.css",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":css",
+        "//contrib/jade:jade_test_lib",
+        "@community//RegExpSupport:regexp_test_lib",
+        "//plugins/css:css_test_lib",
+        "//plugins/css/common:common_test_lib",
+        "//plugins/css/common/psi:psi_test_lib",
+        "//plugins/css/backend:backend_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//xml/xml-psi-api:psi_test_lib",
+        "@community//xml/xml-psi-impl:psi-impl_test_lib",
+        "@community//xml/xml-parser:parser_test_lib",
+        "@community//xml/impl:impl_test_lib",
+    ],
+)
+### auto-generated section `build intellij.jade.css` end
+
+### auto-generated section `iml intellij.jade.css` start
+exports_files(
+    [
+        "intellij.jade.css.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.jade.css` end

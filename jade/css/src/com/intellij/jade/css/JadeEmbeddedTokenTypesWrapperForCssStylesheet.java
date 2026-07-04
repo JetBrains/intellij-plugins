@@ -1,5 +1,5 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.jetbrains.plugins.jade.lexer;
+package com.intellij.jade.css;
 
 import com.intellij.embedding.EmbeddingElementType;
 import com.intellij.embedding.MasqueradingLexer;
@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.ParsingDiagnostics;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.impl.util.CssStylesheetLazyElementType;
+import com.jetbrains.plugins.jade.lexer.JadeSimpleInterpolationLexer;
 import org.jetbrains.annotations.NotNull;
 
 public class JadeEmbeddedTokenTypesWrapperForCssStylesheet extends CssStylesheetLazyElementType implements EmbeddingElementType {

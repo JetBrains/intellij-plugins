@@ -1,8 +1,9 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.jetbrains.plugins.jade;
+package com.intellij.jade.css;
 
 import com.intellij.lang.Language;
 import com.intellij.psi.css.EmbeddedCssProvider;
+import com.jetbrains.plugins.jade.JadeLanguage;
 import org.jetbrains.annotations.NotNull;
 
 public final class JadeEmbeddedCssProvider extends EmbeddedCssProvider {

@@ -26,10 +26,12 @@ intellijPlatform {
 sourceSets {
   main {
     java {
-      setSrcDirs(listOf("src", "gen"))
+      // `css` holds the optional intellij.jade.css content module (WEB-78193). Bazel/JPS package it as a separate
+      // jar, but the external Gradle build produces a single plugin jar, so include its sources and descriptor here.
+      setSrcDirs(listOf("src", "gen", "css/src"))
     }
     resources {
-      setSrcDirs(listOf("resources"))
+      setSrcDirs(listOf("resources", "css/resources"))
     }
   }
   test {

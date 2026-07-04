@@ -23,14 +23,20 @@
   <content namespace="jetbrains">
     <!-- The implicit main module of the plugin depends on internal module (intellij.javascript.codeinsight), so it's required to set the namespace for it
          todo: extract elements and dependencies to an explicit content module (see IJPL-212351) -->
+    <module name="intellij.jade.css"/>
   </content>
+
+  <extensionPoints>
+    <!-- Optional CSS integration; implemented by the intellij.jade.css content module (WEB-78193). -->
+    <extensionPoint qualifiedName="com.intellij.jade.cssSupport"
+                    interface="com.jetbrains.plugins.jade.css.JadeCssSupport" dynamic="true"/>
+  </extensionPoints>
 
   <dependencies>
     <plugin id="com.intellij.modules.xml"/>
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.modules.ultimate"/>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
-    <module name="intellij.css.backend"/>
     <module name="intellij.javascript.analysis.impl"/>
     <module name="intellij.javascript.backend"/>
     <module name="intellij.javascript.codeinsight"/>
@@ -90,7 +96,6 @@
     <langCodeStyleSettingsProvider implementation="com.jetbrains.plugins.jade.formatter.JadeLanguageCodeStyleSettingsProvider"/>
     <copyPastePreProcessor implementation="com.jetbrains.plugins.jade.JadeCopyPasteProcessor"/>
 
-    <css.classOrIdUsagesProvider implementation="com.jetbrains.plugins.jade.JadeClassOrIdUsagesProvider"/>
     <completion.contributor language="Jade" implementationClass="com.jetbrains.plugins.jade.JadeCompletionContributor"
                             order="before xmlNonFirst, before cssClassOrIdReferenceCompletionContributor"/>
     <liveTemplateContext contextId="JADE" implementation="com.jetbrains.plugins.jade.template.JadeTemplateContextType"/>
@@ -99,7 +104,6 @@
     <internalFileTemplate name="Jade File"/>
 
     <psi.referenceContributor language="Jade" implementation="com.jetbrains.plugins.jade.psi.references.JadeReferenceContributor"/>
-    <psi.referenceContributor language="Jade" implementation="com.jetbrains.plugins.jade.psi.references.JadeCssReferenceContributor"/>
     <stubElementTypeHolder class="com.jetbrains.plugins.jade.psi.stubs.JadeStubElementTypes"/>
     <stubIndex implementation="com.jetbrains.plugins.jade.psi.stubs.JadeMixinIndex"/>
 
@@ -120,9 +124,6 @@
     <editorHighlighterProvider filetype="Jade" implementationClass="com.jetbrains.plugins.jade.psi.JadeEditorHighlighterProvider"/>
   </extensions>
 
-  <extensions defaultExtensionNs="com.intellij.css">
-    <embeddedCssProvider implementation="com.jetbrains.plugins.jade.JadeEmbeddedCssProvider"/>
-  </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <intentionAndInspectionFilter language="JSInJade" implementationClass="com.jetbrains.plugins.jade.js.JavaScriptInJadeInspectionFilter"/>
     <inheritedLanguagesConfigurableProvider language="JSInJade"

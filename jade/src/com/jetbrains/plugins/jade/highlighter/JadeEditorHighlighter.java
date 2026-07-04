@@ -3,7 +3,6 @@ package com.jetbrains.plugins.jade.highlighter;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.lang.Language;
-import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.lexer.Lexer;
@@ -16,6 +15,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlElementType;
+import com.jetbrains.plugins.jade.css.JadeCssSupport;
 import com.jetbrains.plugins.jade.js.JavaScriptInJadeLanguageDialect;
 import com.jetbrains.plugins.jade.lexer.JadeEmbeddingUtil;
 import com.jetbrains.plugins.jade.psi.JadeTokenTypes;
@@ -51,8 +51,13 @@ public final class JadeEditorHighlighter extends LayeredLexerEditorHighlighter {
   }
 
   private void registerCSSLayer(Project project, VirtualFile virtualFile) {
-    registerLayer(project, virtualFile, CSSLanguage.INSTANCE, JadeTokenTypes.STYLE_BLOCK);
-    registerLayer(project, virtualFile, CSSLanguage.INSTANCE, JadeEmbeddingUtil.getEmbeddedTokenWrapperType(JadeTokenTypes.STYLE_BLOCK));
+    JadeCssSupport cssSupport = JadeCssSupport.getInstance();
+    if (cssSupport == null) {
+      return;
+    }
+    Language cssLanguage = cssSupport.getStyleBlockLanguage();
+    registerLayer(project, virtualFile, cssLanguage, JadeTokenTypes.STYLE_BLOCK);
+    registerLayer(project, virtualFile, cssLanguage, JadeEmbeddingUtil.getEmbeddedTokenWrapperType(JadeTokenTypes.STYLE_BLOCK));
   }
 
 

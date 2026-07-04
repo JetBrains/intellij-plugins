@@ -22,9 +22,9 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterLanguageFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.css.impl.util.CssStylesheetLazyElementType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlTokenType;
+import com.jetbrains.plugins.jade.css.JadeCssSupport;
 import com.jetbrains.plugins.jade.highlighter.JadeSyntaxHighlighter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -57,12 +57,14 @@ public final class JadeEmbeddingUtil {
   }
 
   private static IElementType createWrapper(IElementType token) {
-    if (token instanceof CssStylesheetLazyElementType) {
-      return new JadeEmbeddedTokenTypesWrapperForCssStylesheet(((CssStylesheetLazyElementType)token));
+    JadeCssSupport cssSupport = JadeCssSupport.getInstance();
+    if (cssSupport != null) {
+      IElementType cssWrapper = cssSupport.createEmbeddedCssWrapper(token);
+      if (cssWrapper != null) {
+        return cssWrapper;
+      }
     }
-    else {
-      return new JadeEmbeddedTokenTypesWrapper(token);
-    }
+    return new JadeEmbeddedTokenTypesWrapper(token);
   }
 
   public static @Nullable IElementType getElementToEmbedForATag(@Nullable String tagName, @Nullable Map<String, String> attributes) {

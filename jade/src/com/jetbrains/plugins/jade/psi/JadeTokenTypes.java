@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.types.JSEmbeddedBlockElementType;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.TokenType;
-import com.intellij.psi.css.impl.CssAdvancedElementTypes;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlElementType;
@@ -77,7 +76,10 @@ public interface JadeTokenTypes {
   IElementType JS_EACH_EXPR = new JSInJadeForeachLineType();
   IElementType JS_META_CODE = new JSInJadeMetaCode();
 
-  IElementType STYLE_BLOCK = CssAdvancedElementTypes.CSS_LAZY_STYLESHEET;
+  // Placeholder token type for embedded `style` blocks. The optional `com.intellij.jade.cssSupport` extension point
+  // (JadeCssSupport, contributed by the intellij.jade.css content module) turns it into a CSS lazy stylesheet when the
+  // CSS plugin is available; without CSS the block is handled as a plain embedded region (WEB-78193).
+  IElementType STYLE_BLOCK = new IElementType("STYLE_BLOCK", JadeLanguage.INSTANCE);
 
   IElementType FILTER_CODE = new IElementType("FILTER_CODE", JadeLanguage.INSTANCE);
 

@@ -16,8 +16,6 @@ import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.css.impl.CssLazyStylesheet;
-import com.intellij.psi.css.impl.util.CssStylesheetLazyElementType;
 import com.intellij.psi.impl.source.tree.LazyParseableElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
@@ -71,10 +69,6 @@ public class JadeEmbeddedTokenTypesWrapper extends EmbeddedLazyParseableElementT
 
   @Override
   public @Nullable ASTNode createNode(final CharSequence text) {
-    if (myDelegate instanceof CssStylesheetLazyElementType) {
-      return new CssLazyStylesheet(text, this);
-    }
-
     return new LazyParseableElement(this, text) {
 
       @Override

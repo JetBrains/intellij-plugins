@@ -33,10 +33,12 @@ import com.intellij.psi.codeStyle.FileTypeIndentOptionsProvider;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsContributor;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
 import com.intellij.psi.codeStyle.ProjectCodeStyleSettingsManager;
+import com.intellij.jade.css.JadeCssSupportImpl;
 import com.intellij.psi.css.impl.CssTreeElementFactory;
 import com.intellij.psi.impl.source.codeStyle.PersistableCodeStyleSchemes;
 import com.intellij.psi.xml.StartTagEndTokenProvider;
 import com.intellij.testFramework.ParsingTestCase;
+import com.jetbrains.plugins.jade.css.JadeCssSupport;
 import com.jetbrains.plugins.jade.formatter.JadeCodeStyleSettingsProvider;
 import com.jetbrains.plugins.jade.formatter.JadeLanguageCodeStyleSettingsProvider;
 import com.jetbrains.plugins.jade.js.JavascriptInJadeParserDefinition;
@@ -97,6 +99,12 @@ public abstract class JadeBaseParsingTestCase extends ParsingTestCase {
     registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CoffeeScriptEmbeddedTokenTypesProvider());
     registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new JSEmbeddedTokenTypesProvider());
     registerExtension(LanguageCodeStyleSettingsProvider.EP_NAME, new JadeLanguageCodeStyleSettingsProvider());
+
+    // Embedded `style` blocks route CSS parsing/highlighting through the optional `com.intellij.jade.cssSupport`
+    // extension point (see JadeCssSupport). In production it is contributed by the intellij.jade.css content module;
+    // register its implementation explicitly here so this lightweight test parses `style` blocks as CSS.
+    registerExtensionPoint(JadeCssSupport.EP_NAME, JadeCssSupport.class);
+    registerExtension(JadeCssSupport.EP_NAME, new JadeCssSupportImpl());
 
 
     CodeStyleSettings settings = CodeStyle.createTestSettings();

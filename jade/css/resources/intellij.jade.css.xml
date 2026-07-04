@@ -1,0 +1,24 @@
+<idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="com.jetbrains.plugins.jade"/>
+    <module name="intellij.css"/>
+    <module name="intellij.css.backend"/>
+    <module name="intellij.css.common"/>
+    <module name="intellij.css.common.psi"/>
+    <module name="intellij.javascript.parser"/>
+    <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.xml.impl"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <css.classOrIdUsagesProvider implementation="com.intellij.jade.css.JadeClassOrIdUsagesProvider"/>
+    <psi.referenceContributor language="Jade" implementation="com.intellij.jade.css.JadeCssReferenceContributor"/>
+    <jade.cssSupport implementation="com.intellij.jade.css.JadeCssSupportImpl"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij.css">
+    <embeddedCssProvider implementation="com.intellij.jade.css.JadeEmbeddedCssProvider"/>
+  </extensions>
+</idea-plugin>

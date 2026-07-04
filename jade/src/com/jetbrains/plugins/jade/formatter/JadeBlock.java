@@ -19,7 +19,6 @@ import com.intellij.formatting.templateLanguages.TemplateLanguageBlockFactory;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageFormatting;
-import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
@@ -37,9 +36,9 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlElementType;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.plugins.jade.JadeLanguage;
+import com.jetbrains.plugins.jade.css.JadeCssSupport;
 import com.jetbrains.plugins.jade.lexer.IndentUtil;
 import com.jetbrains.plugins.jade.lexer.JadeEmbeddedTokenTypesWrapper;
-import com.jetbrains.plugins.jade.lexer.JadeEmbeddedTokenTypesWrapperForCssStylesheet;
 import com.jetbrains.plugins.jade.psi.JadeElementTypes;
 import com.jetbrains.plugins.jade.psi.JadeTokenTypes;
 import com.jetbrains.plugins.jade.psi.impl.JadeBlockImpl;
@@ -301,7 +300,7 @@ public class JadeBlock extends TemplateLanguageBlock implements BlockEx {
       }
     }
     else if (block instanceof InjectedLanguageBlockWrapper
-             && (myNode instanceof JadeBlockImpl || ((InjectedLanguageBlockWrapper)block).getLanguage() == CSSLanguage.INSTANCE)) {
+             && (myNode instanceof JadeBlockImpl || isStyleBlockLanguage(((InjectedLanguageBlockWrapper)block).getLanguage()))) {
       return ChildAttributes.DELEGATE_TO_PREV_CHILD;
     }
 
@@ -333,12 +332,14 @@ public class JadeBlock extends TemplateLanguageBlock implements BlockEx {
     if (elementType instanceof JadeEmbeddedTokenTypesWrapper) {
       return getInjectedLanguageForElementType(((JadeEmbeddedTokenTypesWrapper)elementType).getDelegate());
     }
-    if (elementType instanceof JadeEmbeddedTokenTypesWrapperForCssStylesheet) {
-      return elementType.getLanguage();
-    }
-
-    if (elementType == JadeTokenTypes.STYLE_BLOCK) {
-      return CSSLanguage.INSTANCE;
+    JadeCssSupport cssSupport = JadeCssSupport.getInstance();
+    if (cssSupport != null) {
+      if (cssSupport.isCssStyleBlockWrapper(elementType)) {
+        return elementType.getLanguage();
+      }
+      if (elementType == JadeTokenTypes.STYLE_BLOCK) {
+        return cssSupport.getStyleBlockLanguage();
+      }
     }
     if (elementType == JadeTokenTypes.JS_CODE_BLOCK ||
         elementType == JadeTokenTypes.JS_EXPR) {
@@ -356,6 +357,11 @@ public class JadeBlock extends TemplateLanguageBlock implements BlockEx {
     }
 
     return null;
+  }
+
+  private static boolean isStyleBlockLanguage(@Nullable Language language) {
+    JadeCssSupport cssSupport = JadeCssSupport.getInstance();
+    return cssSupport != null && language == cssSupport.getStyleBlockLanguage();
   }
 
   private @NotNull Indent getIndentForChildScript() {
