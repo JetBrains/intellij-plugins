@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.LocalInspectionTool
@@ -11,7 +11,6 @@ import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
 import org.intellij.terraform.config.patterns.TfPsiPatterns.HeredocContentAnywhereInVariable
-import org.intellij.terraform.config.patterns.TfPsiPatterns.StringLiteralAnywhereInVariable
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformRootBlock
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLArray
@@ -41,12 +40,6 @@ class TfNoInterpolationsAllowedInspection : LocalInspectionTool() {
       }
     }
 
-    override fun visitStringLiteral(o: HCLStringLiteral) {
-      if (StringLiteralAnywhereInVariable.accepts(o)) {
-        checkForVariableInterpolations(o)
-      }
-    }
-
     override fun visitHeredocContent(o: HCLHeredocContent) {
       if (HeredocContentAnywhereInVariable.accepts(o)) {
         checkForVariableInterpolations(o)
@@ -65,10 +58,6 @@ class TfNoInterpolationsAllowedInspection : LocalInspectionTool() {
         .map { it.value }
         .filterIsInstance<HCLStringLiteral>()
         .forEach { reportRanges(it, "properties inside 'terraform' block") }
-    }
-
-    private fun checkForVariableInterpolations(o: HCLStringLiteral) {
-      reportRanges(o, "variables")
     }
 
     private fun checkForVariableInterpolations(o: HCLHeredocContent) {

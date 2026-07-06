@@ -41,7 +41,6 @@ import org.intellij.terraform.hcl.psi.HCLHeredocContent
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLProperty
-import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 
 internal object TfPsiPatterns {
@@ -192,8 +191,6 @@ internal object TfPsiPatterns {
     .withParent(HCLObject::class.java)
     .withSuperParent(2, or(ResourceRootBlock, DataSourceRootBlock))
 
-  val StringLiteralAnywhereInVariable: PsiElementPattern.Capture<HCLStringLiteral> = PlatformPatterns.psiElement(HCLStringLiteral::class.java)
-    .inside(true, VariableRootBlock)
   val HeredocContentAnywhereInVariable: PsiElementPattern.Capture<HCLHeredocContent> = PlatformPatterns.psiElement(HCLHeredocContent::class.java)
     .inside(true, VariableRootBlock)
 
