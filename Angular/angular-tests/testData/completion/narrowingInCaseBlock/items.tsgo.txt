@@ -1,0 +1,2 @@
+bar (typeText='bar'; priority=4.0; typeGreyed)
+foo (typeText='foo'; priority=4.0; typeGreyed)
