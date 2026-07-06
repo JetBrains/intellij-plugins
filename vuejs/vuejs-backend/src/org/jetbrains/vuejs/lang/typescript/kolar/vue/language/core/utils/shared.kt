@@ -67,6 +67,8 @@ fun getNodeText(
   node: Node,
   ast: SourceFile,
 ): String {
-  val (_, start, end) = getStartEnd(node)
-  return ast.text.substring(start, end)
+  // migration check
+  node as PsiElement
+
+  return node.text
 }
