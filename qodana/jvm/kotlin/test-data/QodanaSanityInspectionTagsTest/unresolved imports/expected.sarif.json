@@ -8,8 +8,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "[UNRESOLVED_IMPORT] Unresolved reference 'unknow'.",
-            "markdown": "\\[UNRESOLVED_IMPORT\\] Unresolved reference 'unknow'."
+            "text": "[UNRESOLVED_IMPORT]",
+            "markdown": "\\[UNRESOLVED_IMPORT\\]"
           },
           "locations": [
             {
@@ -49,7 +49,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "7299740e88595892",
-            "equalIndicator/v1": "e6c53e1c5fd470dbf9cb05a94e4d7e654a4c9414e8ae5f6e756827b69d660fbe"
+            "equalIndicator/v1": "3f741caaee0ae14ba9e4c95f1948a819d30331bcf3f8502e4491ab3af4b061fa"
           },
           "properties": {
             "ideaSeverity": "ERROR",
@@ -66,8 +66,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "[UNRESOLVED_IMPORT] Unresolved reference 'Unknown'.",
-            "markdown": "\\[UNRESOLVED_IMPORT\\] Unresolved reference 'Unknown'."
+            "text": "[UNRESOLVED_IMPORT]",
+            "markdown": "\\[UNRESOLVED_IMPORT\\]"
           },
           "locations": [
             {
@@ -107,7 +107,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "115d038b666c23ae",
-            "equalIndicator/v1": "4dc4008a83ba00efd4e73328d258c9e336faa27d8c4f7e374521896b4ca8874f"
+            "equalIndicator/v1": "1286a0522bbfc8e444105ffc3b4666021e4533031ca16b1893ff6ef2bfe30e51"
           },
           "properties": {
             "ideaSeverity": "ERROR",
@@ -124,8 +124,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "[UNRESOLVED_IMPORT] Unresolved reference 'Unknown2'.",
-            "markdown": "\\[UNRESOLVED_IMPORT\\] Unresolved reference 'Unknown2'."
+            "text": "[UNRESOLVED_IMPORT]",
+            "markdown": "\\[UNRESOLVED_IMPORT\\]"
           },
           "locations": [
             {
@@ -165,7 +165,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "e04fe6f316516380",
-            "equalIndicator/v1": "d5176b2d5af55ba515e720dafc2ffb475db713911ab723cf809d3f59c0c105ea"
+            "equalIndicator/v1": "525ea489a99f8d248388fc4977a4565e58c99a3f5f88604b39ed24d735f101aa"
           },
           "properties": {
             "ideaSeverity": "ERROR",
