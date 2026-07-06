@@ -2,10 +2,8 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.typescript
 
 enum class SyntaxKind {
-  AsExpression,
   ExportKeyword,
   TrueKeyword,
-  MultiLineCommentTrivia,
 
   ;
 }
