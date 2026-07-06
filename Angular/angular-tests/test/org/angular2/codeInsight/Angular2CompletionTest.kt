@@ -309,7 +309,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     }
 
   @Test
-  @SkipTsGoProxy // Panic - ConfigFilePath called on non-configured project
   fun testHostBindingJSProperty1() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts") {
       it.lookupString.startsWith("ti")
@@ -318,7 +317,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     }
 
   @Test
-  @SkipTsGoProxy // Panic - ConfigFilePath called on non-configured project
   fun testHostBindingJSProperty2() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
@@ -343,7 +341,6 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
   @Test
-  @SkipTsGoProxy //panic: ConfigFilePath called on non-configured project
   fun testObjectInitializerProperties() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts",
                  locations = listOf("[product]=\"{<caret>}\"", "[product]=\"{title,<caret>}\""))
