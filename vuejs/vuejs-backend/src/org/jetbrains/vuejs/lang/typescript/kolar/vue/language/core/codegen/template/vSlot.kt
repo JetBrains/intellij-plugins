@@ -18,6 +18,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getTypeScriptAST
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.statements
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingNames
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 

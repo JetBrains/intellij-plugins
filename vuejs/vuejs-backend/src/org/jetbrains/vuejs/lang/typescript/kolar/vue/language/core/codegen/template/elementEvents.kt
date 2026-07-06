@@ -20,10 +20,12 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.FakeSourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endsWithComma
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getTypeScriptAST
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.statements
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.getUnwrappedExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
@@ -223,8 +225,9 @@ fun isCompoundExpression(ast: FakeSourceFile): Boolean {
   if (ast.statements.isEmpty()) {
     return false
   }
-  if (ast.statements.size == 1 && ast.text[ast.endOfFileToken.pos - 1] != ';') {
-    val statement = ast.statements[0]
+
+  val statement = ast.statements.singleOrNull()
+  if (statement != null && statement.endsWithComma()) {
     if (isExpressionStatement(statement)) {
       val node = getUnwrappedExpression(statement.expression)
       if (
@@ -244,7 +247,8 @@ fun isCompoundExpression(ast: FakeSourceFile): Boolean {
 }
 
 private fun isSingleExpression(ast: FakeSourceFile): Boolean {
-  if (ast.statements.size == 1 && ast.text[ast.endOfFileToken.pos - 1] != ';') {
+  val statement = ast.statements.singleOrNull()
+  if (statement != null && statement.endsWithComma()) {
     val statement = ast.statements[0]
     if (isExpressionStatement(statement)) {
       return true
