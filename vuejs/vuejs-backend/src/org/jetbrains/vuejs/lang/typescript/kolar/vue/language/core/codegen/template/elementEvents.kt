@@ -152,7 +152,7 @@ fun generateEventExpression(
 ): Sequence<Code> = sequence {
   val exp = prop.exp
   if (exp is SimpleExpressionNode) {
-    val ast = getTypeScriptAST(options.template, exp.content)
+    val ast = getTypeScriptAST(exp.content)
     val isCompound = isCompoundExpression(ast)
     val interpolation = generateInterpolation(
       options = options,

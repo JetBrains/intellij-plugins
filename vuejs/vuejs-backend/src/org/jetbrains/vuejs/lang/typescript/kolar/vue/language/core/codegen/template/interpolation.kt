@@ -61,7 +61,7 @@ fun generateInterpolation(
   }
 
   var prevEnd = 0
-  for ((name, offset, isShorthand) in forEachIdentifiers(ctx, block, code, prefix, suffix)) {
+  for ((name, offset, isShorthand) in forEachIdentifiers(ctx, code, prefix, suffix)) {
     if (isShorthand) {
       yield(DataSegment(
         text = code.substring(prevEnd, offset + name.length),
@@ -128,7 +128,6 @@ fun generateInterpolation(
 
 private fun forEachIdentifiers(
   ctx: TemplateCodegenContext,
-  block: IRBlock,
   code: String,
   prefix: String,
   suffix: String,
@@ -139,7 +138,7 @@ private fun forEachIdentifiers(
   }
 
   val scope = ctx.scope()
-  val ast = getTypeScriptAST(block, prefix + code + suffix)
+  val ast = getTypeScriptAST(prefix + code + suffix)
   for ((id, isShorthand) in forEachDeclarations(ast, ctx, scope)) {
     val text = getNodeText(id)
     if (shouldIdentifierSkipped(ctx, text)) continue

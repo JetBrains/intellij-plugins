@@ -7,7 +7,6 @@ import com.intellij.psi.impl.source.tree.LeafElement
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScriptBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 
@@ -16,7 +15,6 @@ const val endOfLine: String = ";\n"
 val identifierRE: Regex = Regex("^[a-zA-Z_\$][0-9a-zA-Z_\$]*\$")
 
 fun getTypeScriptAST(
-  block: IRBlock,
   text: String,
 ): FakeSourceFile =
   TODO()

@@ -426,7 +426,7 @@ private fun generateStyleScopedClassReferences(
 
     val content = "(" + exp.content + ")"
     val startOffset = exp.loc.start.offset - 1
-    val ast = getTypeScriptAST(template, content)
+    val ast = getTypeScriptAST(content)
     val literals = mutableListOf<TsNode>()
 
     fun walkObjectLiteral(objectNode: TsNode): Sequence<Code> = sequence {
