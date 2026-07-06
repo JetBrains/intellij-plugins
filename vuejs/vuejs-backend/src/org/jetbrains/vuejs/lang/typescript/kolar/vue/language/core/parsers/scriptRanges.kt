@@ -54,7 +54,7 @@ fun parseScriptRanges(
     if (isExportAssignment(child)) {
       val expression = child.expression
       var start = getStartEnd(child).start
-      val comment = getClosestMultiLineCommentRange(child, emptyList(), ast)
+      val comment = getClosestMultiLineCommentRange(child, emptyList())
       if (comment != null) start = comment.start
       exportDefault = ScriptExportDefault(
         start = start,

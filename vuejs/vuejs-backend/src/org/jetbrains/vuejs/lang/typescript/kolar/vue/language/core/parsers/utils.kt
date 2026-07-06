@@ -1,11 +1,10 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers
 
+import com.intellij.lang.javascript.JSTokenTypes
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.NamespaceImport
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SyntaxKind
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.getLeadingCommentRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isAsExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isClassDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isEnumDeclaration
@@ -84,18 +83,21 @@ fun parseBindingRanges(
 fun getClosestMultiLineCommentRange(
   node: Node,
   parents: List<Node>,
-  ast: SourceFile,
 ): TextRange<*>? {
   var currentNode = node
   for (i in parents.indices.reversed()) {
     if (isStatement(currentNode)) break
     currentNode = parents[i]
   }
-  val comment = getLeadingCommentRanges(ast.text, currentNode.pos)
-    ?.reversed()
-    ?.find { it.kind == SyntaxKind.MultiLineCommentTrivia }
+  val comment = getCommentsBefore(currentNode)
+    .lastOrNull { it.tokenType == JSTokenTypes.C_STYLE_COMMENT }
+
   if (comment != null) {
-    return TextRange(node = currentNode, start = comment.pos, end = comment.end)
+    return TextRange(
+      node = currentNode,
+      start = comment.textRange.startOffset,
+      end = comment.textRange.endOffset,
+    )
   }
   return null
 }

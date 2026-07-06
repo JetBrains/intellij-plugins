@@ -228,7 +228,7 @@ fun parseScriptSetupRanges(
             runtimeType = runtimeType,
             defaultValue = defaultValue,
             required = required,
-            comments = getClosestMultiLineCommentRange(node, parents, ast),
+            comments = getClosestMultiLineCommentRange(node, parents),
             arg = getStartEnd(node),
           ))
         }
