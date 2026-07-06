@@ -2,38 +2,17 @@
 <problems>
   <problem>
     <file>test.tf</file>
-    <line>2</line>
+    <line>10</line>
     <module>0</module>
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
-    <description>Interpolations are not allowed in variables</description>
-  </problem>
-  <problem>
-    <file>test.tf</file>
-    <line>3</line>
-    <module>0</module>
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
-    <description>Interpolations are not allowed in variables</description>
-  </problem>
-  <problem>
-    <file>test.tf</file>
-    <line>8</line>
-    <module>0</module>
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
-    <description>Interpolations are not allowed in variables</description>
+    <description>Interpolations are not allowed in Heredoc within variable blocks</description>
   </problem>
   <problem>
     <file>test.tf</file>
     <line>10</line>
     <module>0</module>
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
-    <description>Interpolations are not allowed in variables</description>
-  </problem>
-  <problem>
-    <file>test.tf</file>
-    <line>10</line>
-    <module>0</module>
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
-    <description>Interpolations are not allowed in variables</description>
+    <description>Interpolations are not allowed in Heredoc within variable blocks</description>
   </problem>
   <problem>
     <file>test.tf</file>
@@ -74,4 +53,3 @@
     <description>Interpolations are not allowed in depends_on</description>
   </problem>
 </problems>
-

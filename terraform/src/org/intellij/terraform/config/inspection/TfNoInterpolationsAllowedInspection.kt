@@ -42,7 +42,7 @@ class TfNoInterpolationsAllowedInspection : LocalInspectionTool() {
 
     override fun visitHeredocContent(o: HCLHeredocContent) {
       if (HeredocContentAnywhereInVariable.accepts(o)) {
-        checkForVariableInterpolations(o)
+        checkHeredocInterpolationsInVariable(o)
       }
     }
 
@@ -60,11 +60,11 @@ class TfNoInterpolationsAllowedInspection : LocalInspectionTool() {
         .forEach { reportRanges(it, "properties inside 'terraform' block") }
     }
 
-    private fun checkForVariableInterpolations(o: HCLHeredocContent) {
+    private fun checkHeredocInterpolationsInVariable(o: HCLHeredocContent) {
       val ranges = ArrayList<TextRange>()
       ILLanguageInjector.getHCLHeredocContentInjections(o, getInjectedLanguagePlacesCollector(ranges))
       for (range in ranges) {
-        holder.registerProblem(o, HCLBundle.message("illegal.interpolations.inspection.in.variable.error.message"),
+        holder.registerProblem(o, HCLBundle.message("illegal.interpolations.inspection.in.variable.heredoc"),
                                ProblemHighlightType.ERROR, range)
       }
     }
