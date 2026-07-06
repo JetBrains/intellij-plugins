@@ -21,6 +21,7 @@ import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspectio
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.search.PsiLinkedPolySymbol
+import com.intellij.polySymbols.testFramework.checkGotoDeclaration
 import com.intellij.polySymbols.testFramework.checkListByFile
 import com.intellij.polySymbols.testFramework.doCompletionItemsTest
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
@@ -708,8 +709,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.completeBasic()
     myFixture.type("att\n")
     myFixture.type("acc\n")
-    val element = resolveToPolySymbolSource("[attr.ac<caret>cesskey]=\"\"")
-    assertEquals("common.rnc", element.getContainingFile().getName())
+    myFixture.checkGotoDeclaration("[attr.ac<caret>cesskey]=\"\"", "attribute <caret>accesskey", "common.rnc")
   }
 
   fun testAttrCompletionsCustomTag() {
@@ -723,8 +723,8 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     assertDoesntContain(myFixture.getLookupElementStrings()!!,
                         "innerHTML]")
     myFixture.type("acc\n")
-    val element = resolveToPolySymbolSource("[attr.ac<caret>cesskey]=\"\"")
-    assertEquals("common.rnc", element.getContainingFile().getName())
+
+    myFixture.checkGotoDeclaration("[attr.ac<caret>cesskey]=\"\"", "attribute <caret>accesskey", "common.rnc")
   }
 
   fun testAttrCompletions2() {
@@ -736,8 +736,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     // TODO - make web-types insert ']' - should be "<div [attr.]" here
     assertEquals("<div [attr.", myFixture.getFile().getText())
     myFixture.type("aat\n")
-    val element = resolveToPolySymbolSource("[attr.aria-atomic<caret>]=\"\"")
-    assertEquals("aria.rnc", element.getContainingFile().getName())
+    myFixture.checkGotoDeclaration("[attr.aria-atomic<caret>]=\"\"", "attribute <caret>aria-atomic", "aria.rnc")
   }
 
   fun testCanonicalCompletion() {
@@ -760,8 +759,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     assertContainsElements(myFixture.getLookupElementStrings()!!,
                            "attr.")
     myFixture.type("attr\naat\n")
-    val element = resolveToPolySymbolSource("bind-attr.aria-atomic<caret>=\"\"")
-    assertEquals("aria.rnc", element.getContainingFile().getName())
+    myFixture.checkGotoDeclaration("bind-attr.aria-atomic<caret>=\"\"", "attribute <caret>aria-atomic", "aria.rnc")
   }
 
   fun testExtKeyEvent() {
