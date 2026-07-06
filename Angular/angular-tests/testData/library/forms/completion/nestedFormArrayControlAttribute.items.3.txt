@@ -1,1 +1,1 @@
-group (typeText='FormGroup'; priority=0.0; typeGreyed)
+group (typeText='FormGroup'; priority=10.0; typeGreyed)

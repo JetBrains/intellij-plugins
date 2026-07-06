@@ -1,4 +1,4 @@
 Observable<boolean>
-Observable<boolean> | Promise<boolean> | Subscribable<boolean>
 Promise<boolean>
 Subscribable<boolean>
+Observable<boolean> | Promise<boolean> | Subscribable<boolean>
