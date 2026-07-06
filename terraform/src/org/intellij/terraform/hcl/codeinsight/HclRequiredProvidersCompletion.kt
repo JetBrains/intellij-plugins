@@ -18,6 +18,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
+import org.intellij.terraform.config.Constants.HCL_CONFIGURATION_ALIASES
 import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createPropertyOrBlockType
@@ -126,5 +127,6 @@ private val ProviderSorter: CompletionSorter = CompletionSorter.emptySorter().we
 
 private val RequiredProviderProperties = listOf(
   PropertyType(HCL_SOURCE_IDENTIFIER, Types.String),
-  PropertyType(HCL_VERSION_IDENTIFIER, Types.String)
+  PropertyType(HCL_VERSION_IDENTIFIER, Types.String),
+  PropertyType(HCL_CONFIGURATION_ALIASES, Types.Array)
 )

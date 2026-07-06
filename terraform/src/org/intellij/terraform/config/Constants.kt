@@ -15,6 +15,7 @@ internal object Constants {
   const val HCL_OUTPUT_IDENTIFIER: String = "output"
   const val HCL_TERRAFORM_IDENTIFIER: String = "terraform"
   const val HCL_TERRAFORM_REQUIRED_PROVIDERS: String = "required_providers"
+  const val HCL_CONFIGURATION_ALIASES: String = "configuration_aliases"
   const val HCL_LOCALS_IDENTIFIER: String = "locals"
   const val HCL_PROVISIONER_IDENTIFIER: String = "provisioner"
   const val HCL_BACKEND_IDENTIFIER: String = "backend"
