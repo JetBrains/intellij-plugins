@@ -8,8 +8,6 @@ interface Node {
   val pos: Int
   val end: Int
 
-  fun getStart(sourceFile: SourceFile): Int
-  
   fun getChildren(): Array<out Node>
 }
 

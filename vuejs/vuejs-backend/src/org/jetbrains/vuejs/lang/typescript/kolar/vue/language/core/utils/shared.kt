@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
@@ -53,10 +54,13 @@ fun <T : Node> getStartEnd(
   node: T,
   ast: SourceFile,
 ): TextRange<T> {
+  // migration check
+  node as PsiElement
+  
   return TextRange(
     node = node,
-    start = node.getStart(ast),
-    end = node.end,
+    start = node.textRange.startOffset,
+    end = node.textRange.endOffset,
   )
 }
 
