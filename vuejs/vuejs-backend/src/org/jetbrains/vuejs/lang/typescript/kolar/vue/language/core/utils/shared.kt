@@ -2,6 +2,8 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.endOffset
+import com.intellij.psi.util.startOffset
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.TextNode
@@ -57,8 +59,8 @@ fun <T : Node> getStartEnd(
 
   return TextRange(
     node = node,
-    start = node.textRange.startOffset,
-    end = node.textRange.endOffset,
+    start = node.startOffset,
+    end = node.endOffset,
   )
 }
 

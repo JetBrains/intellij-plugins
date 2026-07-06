@@ -2,6 +2,8 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers
 
 import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.psi.util.endOffset
+import com.intellij.psi.util.startOffset
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.NamespaceImport
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
@@ -95,8 +97,8 @@ fun getClosestMultiLineCommentRange(
   if (comment != null) {
     return TextRange(
       node = currentNode,
-      start = comment.textRange.startOffset,
-      end = comment.textRange.endOffset,
+      start = comment.startOffset,
+      end = comment.endOffset,
     )
   }
   return null
