@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrowFunction
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isElementAccessExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExpressionStatement
@@ -19,6 +18,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.Inlay
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.FakeSourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getTypeScriptAST
@@ -219,7 +219,7 @@ fun generateModelEventExpression(
   }
 }
 
-fun isCompoundExpression(ast: SourceFile): Boolean {
+fun isCompoundExpression(ast: FakeSourceFile): Boolean {
   if (ast.statements.isEmpty()) {
     return false
   }
@@ -243,7 +243,7 @@ fun isCompoundExpression(ast: SourceFile): Boolean {
   return true
 }
 
-private fun isSingleExpression(ast: SourceFile): Boolean {
+private fun isSingleExpression(ast: FakeSourceFile): Boolean {
   if (ast.statements.size == 1 && ast.text[ast.endOfFileToken.pos - 1] != ';') {
     val statement = ast.statements[0]
     if (isExpressionStatement(statement)) {

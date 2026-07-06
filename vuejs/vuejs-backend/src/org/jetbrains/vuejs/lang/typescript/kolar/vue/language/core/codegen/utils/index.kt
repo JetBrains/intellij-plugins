@@ -6,7 +6,6 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafElement
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScriptBlock
@@ -19,7 +18,7 @@ val identifierRE: Regex = Regex("^[a-zA-Z_\$][0-9a-zA-Z_\$]*\$")
 fun getTypeScriptAST(
   block: IRBlock,
   text: String,
-): SourceFile =
+): FakeSourceFile =
   TODO()
 
 fun generateSfcBlockSection(

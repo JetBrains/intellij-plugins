@@ -5,7 +5,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.replaceSourceRange
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrowFunction
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExpressionStatement
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.DirectiveNode
@@ -15,6 +14,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.FakeSourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getTypeScriptAST
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
@@ -96,7 +96,7 @@ fun generateVSlot(
 private fun generateSlotParameters(
   options: TemplateCodegenOptions,
   ctx: TemplateCodegenContext,
-  ast: SourceFile,
+  ast: FakeSourceFile,
   exp: SimpleExpressionNode,
   slotVar: String,
 ): Sequence<Code> = sequence {

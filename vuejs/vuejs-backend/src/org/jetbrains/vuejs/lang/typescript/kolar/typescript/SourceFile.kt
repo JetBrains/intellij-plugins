@@ -3,6 +3,4 @@ package org.jetbrains.vuejs.lang.typescript.kolar.typescript
 
 interface SourceFile : Node {
   val text: String
-  val statements: List<Node>
-  val endOfFileToken: Node
 }
