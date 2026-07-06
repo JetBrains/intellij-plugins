@@ -1,12 +1,13 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers
 
+import com.intellij.psi.util.endOffset
+import com.intellij.psi.util.startOffset
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.HasModifiers
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SyntaxKind
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.getLeadingCommentRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isCallExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isCallSignatureDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isEmptyStatement
@@ -134,8 +135,6 @@ fun parseScriptSetupRanges(
   ast: SourceFile,
   vueCompilerOptions: VueCompilerOptions,
 ): ScriptSetupRanges {
-  val text = ast.text
-
   val defineModelList = mutableListOf<DefineModel>()
   var defineProps: DefineProps? = null
   var withDefaults: CallExpression? = null
@@ -349,10 +348,10 @@ fun parseScriptSetupRanges(
     }
   }
 
-  val leadingCommentRanges = getLeadingCommentRanges(text, 0)?.reversed() ?: emptyList()
+  val leadingCommentRanges = getCommentsAtStart(ast).reversed()
   val leadingCommentEndOffset = leadingCommentRanges
-                                  .find { range -> tsCheckRE.containsMatchIn(text.substring(range.pos, range.end)) }
-                                  ?.end ?: 0
+                                  .firstOrNull { comment -> tsCheckRE.containsMatchIn(comment.text) }
+                                  ?.endOffset ?: 0
 
   var foundNonImportExportNode = false
   var importSectionEndOffset = 0
@@ -369,9 +368,9 @@ fun parseScriptSetupRanges(
         && node.modifiers?.any { it.kind == SyntaxKind.ExportKeyword } == true) {
       continue
     }
-    val commentRanges = getLeadingCommentRanges(text, node.pos)
-    importSectionEndOffset = if (!commentRanges.isNullOrEmpty()) {
-      commentRanges.minBy { it.pos }.pos
+    val commentRanges = getCommentsBefore(node)
+    importSectionEndOffset = if (commentRanges.isNotEmpty()) {
+      commentRanges.minOf { it.startOffset }
     }
     else {
       getStartEnd(node).start
