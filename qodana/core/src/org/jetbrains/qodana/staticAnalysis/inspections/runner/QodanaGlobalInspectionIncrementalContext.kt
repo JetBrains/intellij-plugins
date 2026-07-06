@@ -34,8 +34,8 @@ class QodanaGlobalInspectionIncrementalContext(
 ): QodanaGlobalInspectionContext(project, contentManager, config, outputPath, profile, qodanaRunScope, coverageStatisticsData) {
   private val extenderCache = ConcurrentHashMap<String, InspectionToolScopeExtender?>()
 
-  override fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {
-    return !isInExtendedScope(inspectionId, file.virtualFile) && profileState.shouldSkip(inspectionId, file, wrappers)
+  override fun shouldSkip(inspectionId: String, psiFile: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {
+    return !isInExtendedScope(inspectionId, psiFile.virtualFile) && profileState.shouldSkip(inspectionId, psiFile, wrappers)
   }
 
   private fun isInExtendedScope(inspectionId: String, file: VirtualFile): Boolean {

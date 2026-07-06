@@ -50,18 +50,18 @@ open class QodanaGlobalInspectionContext(
 
   override fun getWrappersFromTools(
     enabledInspectionsProvider: EnabledInspectionsProvider,
-    file: PsiFile,
+    psiFile: PsiFile,
     includeDoNotShow: Boolean
   ): EnabledInspectionsProvider.ToolWrappers {
-    val wrappers = super.getWrappersFromTools(enabledInspectionsProvider, file, includeDoNotShow)
+    val wrappers = super.getWrappersFromTools(enabledInspectionsProvider, psiFile, includeDoNotShow)
     return EnabledInspectionsProvider.ToolWrappers(
-      wrappers.allLocalWrappers.filterNot { shouldSkip(it.shortName, file, wrappers) },
-      wrappers.allGlobalSimpleWrappers.filterNot { shouldSkip(it.shortName, file, wrappers) },
+      wrappers.allLocalWrappers.filterNot { shouldSkip(it.shortName, psiFile, wrappers) },
+      wrappers.allGlobalSimpleWrappers.filterNot { shouldSkip(it.shortName, psiFile, wrappers) },
     )
   }
 
-  protected open fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {
-    return profileState.shouldSkip(inspectionId, file, wrappers)
+  protected open fun shouldSkip(inspectionId: String, psiFile: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {
+    return profileState.shouldSkip(inspectionId, psiFile, wrappers)
   }
 
   override fun runExternalTools() {
