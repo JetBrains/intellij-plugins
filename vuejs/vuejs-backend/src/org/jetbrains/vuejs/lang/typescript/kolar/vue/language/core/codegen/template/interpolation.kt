@@ -144,7 +144,7 @@ private fun forEachIdentifiers(
   for ((id, isShorthand) in forEachDeclarations(ast, ast, ctx, scope)) {
     val text = getNodeText(id, ast)
     if (shouldIdentifierSkipped(ctx, text)) continue
-    yield(Triple(text, getStartEnd(id, ast).start - prefix.length, isShorthand))
+    yield(Triple(text, getStartEnd(id).start - prefix.length, isShorthand))
   }
   scope.end()
 }

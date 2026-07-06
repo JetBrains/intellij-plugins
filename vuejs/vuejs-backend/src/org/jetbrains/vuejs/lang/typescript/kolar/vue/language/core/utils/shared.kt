@@ -52,11 +52,10 @@ fun getElementTagOffsets(
 
 fun <T : Node> getStartEnd(
   node: T,
-  ast: SourceFile,
 ): TextRange<T> {
   // migration check
   node as PsiElement
-  
+
   return TextRange(
     node = node,
     start = node.textRange.startOffset,
@@ -68,6 +67,6 @@ fun getNodeText(
   node: Node,
   ast: SourceFile,
 ): String {
-  val (_, start, end) = getStartEnd(node, ast)
+  val (_, start, end) = getStartEnd(node)
   return ast.text.substring(start, end)
 }

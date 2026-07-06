@@ -34,17 +34,17 @@ fun parseBindingRanges(
   for (node in forEachNode(ast)) {
     if (isVariableStatement(node)) {
       for (decl in node.declarationList.declarations) {
-        bindings.addAll(collectBindingRanges(decl.name, ast))
+        bindings.addAll(collectBindingRanges(decl.name))
       }
     }
     else if (isFunctionDeclaration(node)) {
-      node.name?.let { bindings.add(getStartEnd(it, ast)) }
+      node.name?.let { bindings.add(getStartEnd(it)) }
     }
     else if (isClassDeclaration(node)) {
-      node.name?.let { bindings.add(getStartEnd(it, ast)) }
+      node.name?.let { bindings.add(getStartEnd(it)) }
     }
     else if (isEnumDeclaration(node)) {
-      bindings.add(getStartEnd(node.name, ast))
+      bindings.add(getStartEnd(node.name))
     }
 
     if (isImportDeclaration(node)) {
@@ -52,8 +52,8 @@ fun parseBindingRanges(
       val importClause = node.importClause
       if (importClause != null && !importClause.isTypeOnly) {
         importClause.name?.let { name ->
-          if (extensions.any { moduleName.endsWith(it) }) components.add(getStartEnd(name, ast))
-          else bindings.add(getStartEnd(name, ast))
+          if (extensions.any { moduleName.endsWith(it) }) components.add(getStartEnd(name))
+          else bindings.add(getStartEnd(name))
         }
         val namedBindings = importClause.namedBindings
         if (namedBindings != null) {
@@ -63,15 +63,15 @@ fun parseBindingRanges(
               val propName = element.propertyName
               if (propName != null && getNodeText(propName, ast) == "default"
                   && extensions.any { moduleName.endsWith(it) }) {
-                components.add(getStartEnd(element.name, ast))
+                components.add(getStartEnd(element.name))
               }
               else {
-                bindings.add(getStartEnd(element.name, ast))
+                bindings.add(getStartEnd(element.name))
               }
             }
           }
           else if (namedBindings is NamespaceImport) {
-            bindings.add(getStartEnd(namedBindings.name, ast))
+            bindings.add(getStartEnd(namedBindings.name))
           }
         }
       }

@@ -27,10 +27,9 @@ fun collectBindingNames(
 
 fun collectBindingRanges(
   node: Node,
-  ast: SourceFile,
 ): List<TextRange<Identifier>> =
   collectBindingIdentifiers(node)
-    .map { getStartEnd(it.id, ast) }
+    .map { getStartEnd(it.id) }
 
 fun collectBindingIdentifiers(
   node: Node,

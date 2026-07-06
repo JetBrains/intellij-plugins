@@ -152,10 +152,10 @@ fun parseScriptSetupRanges(
     node: TsCallExpression,
   ): CallExpression =
     CallExpression(
-      callExp = getStartEnd(node, ast),
-      exp = getStartEnd(node.expression, ast),
-      arg = node.arguments.getOrNull(0)?.let { getStartEnd(it, ast) },
-      typeArg = node.typeArguments?.getOrNull(0)?.let { getStartEnd(it, ast) },
+      callExp = getStartEnd(node),
+      exp = getStartEnd(node.expression),
+      arg = node.arguments.getOrNull(0)?.let { getStartEnd(it) },
+      typeArg = node.typeArguments?.getOrNull(0)?.let { getStartEnd(it) },
     )
 
   fun parseCallExprAssignment(
@@ -187,10 +187,10 @@ fun parseScriptSetupRanges(
           var required = false
 
           if (isVariableDeclaration(parent) && isIdentifier(parent.name)) {
-            localName = getStartEnd(parent.name, ast)
+            localName = getStartEnd(parent.name)
           }
-          type = node.typeArguments?.getOrNull(0)?.let { getStartEnd(it, ast) }
-          modifierType = node.typeArguments?.getOrNull(1)?.let { getStartEnd(it, ast) }
+          type = node.typeArguments?.getOrNull(0)?.let { getStartEnd(it) }
+          modifierType = node.typeArguments?.getOrNull(1)?.let { getStartEnd(it) }
 
           when {
             node.arguments.size >= 2 -> {
@@ -207,8 +207,8 @@ fun parseScriptSetupRanges(
             for (prop in options.properties) {
               if (isPropertyAssignment(prop) && isIdentifier(prop.name)) {
                 when (getNodeText(prop.name, ast)) {
-                  "type" -> runtimeType = getStartEnd(prop.initializer, ast)
-                  "default" -> defaultValue = getStartEnd(prop.initializer, ast)
+                  "type" -> runtimeType = getStartEnd(prop.initializer)
+                  "default" -> defaultValue = getStartEnd(prop.initializer)
                   "required" -> if (prop.initializer.kind == SyntaxKind.TrueKeyword) required = true
                 }
               }
@@ -217,7 +217,7 @@ fun parseScriptSetupRanges(
 
           val pn = propName
           val name = if (pn != null && isStringLiteralLike(pn))
-            getStartEnd(pn, ast)
+            getStartEnd(pn)
           else null
 
           defineModelList.add(DefineModel(
@@ -229,7 +229,7 @@ fun parseScriptSetupRanges(
             defaultValue = defaultValue,
             required = required,
             comments = getClosestMultiLineCommentRange(node, parents, ast),
-            arg = getStartEnd(node, ast),
+            arg = getStartEnd(node),
           ))
         }
 
@@ -260,15 +260,15 @@ fun parseScriptSetupRanges(
             name = resolvedName,
             destructured = destructured,
             destructuredRest = destructuredRest,
-            statement = getStatementRange(parents, node, ast),
+            statement = getStatementRange(parents, node),
           )
         }
 
         callText in vueCompilerOptions.macros.withDefaults -> {
           withDefaults = CallExpression(
-            callExp = getStartEnd(node, ast),
-            exp = getStartEnd(node.expression, ast),
-            arg = node.arguments.getOrNull(1)?.let { getStartEnd(it, ast) },
+            callExp = getStartEnd(node),
+            exp = getStartEnd(node.expression),
+            arg = node.arguments.getOrNull(1)?.let { getStartEnd(it) },
             typeArg = null,
           )
         }
@@ -292,7 +292,7 @@ fun parseScriptSetupRanges(
             callExp = ce.callExp, exp = ce.exp, arg = ce.arg, typeArg = ce.typeArg,
             name = name,
             hasUnionTypeArg = hasUnionTypeArg,
-            statement = getStatementRange(parents, node, ast),
+            statement = getStatementRange(parents, node),
           )
         }
 
@@ -301,7 +301,7 @@ fun parseScriptSetupRanges(
           defineSlots = DefineSlots(
             callExp = ce.callExp, exp = ce.exp, arg = ce.arg, typeArg = ce.typeArg,
             name = name,
-            statement = getStatementRange(parents, node, ast),
+            statement = getStatementRange(parents, node),
           )
         }
 
@@ -374,7 +374,7 @@ fun parseScriptSetupRanges(
       commentRanges.minBy { it.pos }.pos
     }
     else {
-      getStartEnd(node, ast).start
+      getStartEnd(node).start
     }
     foundNonImportExportNode = true
   }
@@ -407,14 +407,13 @@ fun parseScriptSetupRanges(
 private fun getStatementRange(
   parents: List<Node>,
   node: Node,
-  ast: SourceFile,
 ): TextRange<*> {
   var statementRange: TextRange<*>? = null
   for (i in parents.indices.reversed()) {
     val statement = parents[i]
     if (isStatement(statement)) {
       for (child in forEachNode(statement)) {
-        val range = getStartEnd(child, ast)
+        val range = getStartEnd(child)
         statementRange = statementRange?.copy(end = range.end) ?: range
       }
       break
@@ -422,5 +421,5 @@ private fun getStatementRange(
   }
 
   return statementRange
-         ?: getStartEnd(node, ast)
+         ?: getStartEnd(node)
 }

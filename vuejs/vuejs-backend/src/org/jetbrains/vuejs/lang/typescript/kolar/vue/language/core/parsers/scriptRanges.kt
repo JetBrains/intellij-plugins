@@ -53,13 +53,13 @@ fun parseScriptRanges(
   for (child in forEachNode(ast)) {
     if (isExportAssignment(child)) {
       val expression = child.expression
-      var start = getStartEnd(child, ast).start
+      var start = getStartEnd(child).start
       val comment = getClosestMultiLineCommentRange(child, emptyList(), ast)
       if (comment != null) start = comment.start
       exportDefault = ScriptExportDefault(
         start = start,
         end = child.end,
-        expression = getStartEnd(expression, ast),
+        expression = getStartEnd(expression),
         isObjectLiteral = isObjectLiteralExpression(expression),
         options = parseOptionsFromExtression(expression, ast),
       )
@@ -114,13 +114,13 @@ fun parseOptionsFromExtression(
 
   return ScriptExportDefaultOptions(
     isObjectLiteral = isObjectLiteralExpression(exp),
-    expression = getStartEnd(exp, ast),
-    args = getStartEnd(obj, ast),
+    expression = getStartEnd(exp),
+    args = getStartEnd(obj),
     argsNode = obj,
-    components = componentsOptionNode?.let { getStartEnd(it, ast) },
+    components = componentsOptionNode?.let { getStartEnd(it) },
     componentsNode = componentsOptionNode,
-    directives = directivesOptionNode?.let { getStartEnd(it, ast) },
-    name = nameOptionNode?.let { getStartEnd(it, ast) },
+    directives = directivesOptionNode?.let { getStartEnd(it) },
+    name = nameOptionNode?.let { getStartEnd(it) },
     nameNode = nameOptionNode,
     inheritAttrs = inheritAttrsOption,
   )
