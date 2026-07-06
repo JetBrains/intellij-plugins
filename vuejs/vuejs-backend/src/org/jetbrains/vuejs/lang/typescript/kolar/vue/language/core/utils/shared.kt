@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.TextNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRTemplate
@@ -65,7 +64,6 @@ fun <T : Node> getStartEnd(
 
 fun getNodeText(
   node: Node,
-  ast: SourceFile,
 ): String {
   // migration check
   node as PsiElement

@@ -35,7 +35,7 @@ fun generateVFor(
   yield("for (const [")
   if (leftExpressionRange != null && leftExpressionText != null) {
     val collectAst = getTypeScriptAST(options.template, "const [$leftExpressionText]")
-    scope.declare(collectBindingNames(collectAst, collectAst))
+    scope.declare(collectBindingNames(collectAst))
     yield(DataSegment(
       text = leftExpressionText,
       source = Source("template"),

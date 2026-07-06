@@ -64,7 +64,7 @@ fun generateVSlot(
   if (exp is SimpleExpressionNode) {
     val slotAst = getTypeScriptAST(options.template, "(${exp.content}) => {}")
     yieldAll(generateSlotParameters(options, ctx, slotAst, exp, slotVar))
-    scope.declare(collectBindingNames(slotAst, slotAst))
+    scope.declare(collectBindingNames(slotAst))
   }
   for (child in node.children) {
     yieldAll(generateTemplateChild(options, ctx, child))

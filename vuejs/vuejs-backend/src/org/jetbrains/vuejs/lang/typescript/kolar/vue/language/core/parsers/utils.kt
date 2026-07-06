@@ -48,7 +48,7 @@ fun parseBindingRanges(
     }
 
     if (isImportDeclaration(node)) {
-      val moduleName = getNodeText(node.moduleSpecifier, ast).let { it.substring(1, it.length - 1) }
+      val moduleName = getNodeText(node.moduleSpecifier).let { it.substring(1, it.length - 1) }
       val importClause = node.importClause
       if (importClause != null && !importClause.isTypeOnly) {
         importClause.name?.let { name ->
@@ -61,7 +61,7 @@ fun parseBindingRanges(
             for (element in namedBindings.elements) {
               if (element.isTypeOnly) continue
               val propName = element.propertyName
-              if (propName != null && getNodeText(propName, ast) == "default"
+              if (propName != null && getNodeText(propName) == "default"
                   && extensions.any { moduleName.endsWith(it) }) {
                 components.add(getStartEnd(element.name))
               }

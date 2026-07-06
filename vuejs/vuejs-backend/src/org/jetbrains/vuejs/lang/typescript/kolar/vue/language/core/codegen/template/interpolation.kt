@@ -142,7 +142,7 @@ private fun forEachIdentifiers(
   val scope = ctx.scope()
   val ast = getTypeScriptAST(block, prefix + code + suffix)
   for ((id, isShorthand) in forEachDeclarations(ast, ast, ctx, scope)) {
-    val text = getNodeText(id, ast)
+    val text = getNodeText(id)
     if (shouldIdentifierSkipped(ctx, text)) continue
     yield(Triple(text, getStartEnd(id).start - prefix.length, isShorthand))
   }
@@ -165,7 +165,7 @@ private fun forEachDeclarations(
     yieldAll(forEachDeclarations(node.expression, ast, ctx, scope))
   }
   else if (isVariableDeclaration(node)) {
-    scope.declare(collectBindingNames(node.name, ast))
+    scope.declare(collectBindingNames(node.name))
     yieldAll(forEachDeclarationsInBinding(node, ast, ctx, scope))
   }
   else if (node is org.jetbrains.vuejs.lang.typescript.kolar.typescript.BindingPattern) {
@@ -247,7 +247,7 @@ private fun forEachDeclarationsInFunction(
 ): Sequence<Pair<Identifier, Boolean>> = sequence {
   val scope = ctx.scope()
   for (param in node.parameters) {
-    scope.declare(collectBindingNames(param.name, ast))
+    scope.declare(collectBindingNames(param.name))
     yieldAll(forEachDeclarationsInBinding(param, ast, ctx, scope))
   }
   val body = node.body

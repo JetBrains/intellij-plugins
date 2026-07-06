@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Expression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Identifier
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrayBindingPattern
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isBindingElement
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isIdentifier
@@ -20,10 +19,9 @@ data class BindingIdentifier(
 
 fun collectBindingNames(
   node: Node,
-  ast: SourceFile,
 ): List<String> =
   collectBindingIdentifiers(node)
-    .map { getNodeText(it.id, ast) }
+    .map { getNodeText(it.id) }
 
 fun collectBindingRanges(
   node: Node,

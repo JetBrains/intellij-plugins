@@ -61,7 +61,7 @@ fun parseScriptRanges(
         end = child.end,
         expression = getStartEnd(expression),
         isObjectLiteral = isObjectLiteralExpression(expression),
-        options = parseOptionsFromExtression(expression, ast),
+        options = parseOptionsFromExtression(expression),
       )
     }
   }
@@ -77,7 +77,6 @@ fun parseScriptRanges(
 
 fun parseOptionsFromExtression(
   expNode: Node,
-  ast: SourceFile,
 ): ScriptExportDefaultOptions? {
   val exp = getUnwrappedExpression(expNode)
 
@@ -101,13 +100,13 @@ fun parseOptionsFromExtression(
 
   for (node in forEachNode(obj)) {
     if (isPropertyAssignment(node) && isIdentifier(node.name)) {
-      val name = getNodeText(node.name, ast)
+      val name = getNodeText(node.name)
       val init = node.initializer
       when {
         name == "components" && isObjectLiteralExpression(init) -> componentsOptionNode = init
         name == "directives" && isObjectLiteralExpression(init) -> directivesOptionNode = init
         name == "name" && isStringLiteral(init) -> nameOptionNode = init
-        name == "inheritAttrs" -> inheritAttrsOption = getNodeText(init, ast)
+        name == "inheritAttrs" -> inheritAttrsOption = getNodeText(init)
       }
     }
   }

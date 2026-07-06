@@ -163,7 +163,7 @@ fun parseScriptSetupRanges(
     parent: Node,
   ): Pair<String?, CallExpression> {
     val name = if (isVariableDeclaration(parent) && isIdentifier(parent.name))
-      getNodeText(parent.name, ast)
+      getNodeText(parent.name)
     else null
     return Pair(name, parseCallExpr(node))
   }
@@ -174,7 +174,7 @@ fun parseScriptSetupRanges(
   ) {
     val parent = parents.last()
     if (isCallExpression(node) && isIdentifier(node.expression)) {
-      val callText = getNodeText(node.expression, ast)
+      val callText = getNodeText(node.expression)
       when {
         callText in vueCompilerOptions.macros.defineModel -> {
           var localName: TextRange<*>? = null
@@ -206,7 +206,7 @@ fun parseScriptSetupRanges(
           if (options != null && isObjectLiteralExpression(options)) {
             for (prop in options.properties) {
               if (isPropertyAssignment(prop) && isIdentifier(prop.name)) {
-                when (getNodeText(prop.name, ast)) {
+                when (getNodeText(prop.name)) {
                   "type" -> runtimeType = getStartEnd(prop.initializer)
                   "default" -> defaultValue = getStartEnd(prop.initializer)
                   "required" -> if (prop.initializer.kind == SyntaxKind.TrueKeyword) required = true
@@ -242,16 +242,16 @@ fun parseScriptSetupRanges(
           if (isVariableDeclaration(parent) && isObjectBindingPattern(parent.name)) {
             destructured = mutableMapOf()
             for (id in collectBindingIdentifiers(parent.name)) {
-              val idName = getNodeText(id.id, ast)
+              val idName = getNodeText(id.id)
               if (id.isRest) destructuredRest = idName
               else destructured[idName] = id.initializer
             }
           }
           else if (isCallExpression(parent) && isIdentifier(parent.expression)
-                   && getNodeText(parent.expression, ast) in vueCompilerOptions.macros.withDefaults) {
+                   && getNodeText(parent.expression) in vueCompilerOptions.macros.withDefaults) {
             val grand = parents.getOrNull(parents.lastIndex - 1)
             if (grand != null && isVariableDeclaration(grand) && isIdentifier(grand.name)) {
-              resolvedName = getNodeText(grand.name, ast)
+              resolvedName = getNodeText(grand.name)
             }
           }
 
@@ -317,8 +317,8 @@ fun parseScriptSetupRanges(
             for (prop in arg0.properties) {
               if (isPropertyAssignment(prop) && isIdentifier(prop.name)) {
                 val propInit = prop.initializer
-                when (getNodeText(prop.name, ast)) {
-                  "inheritAttrs" -> inheritAttrs = getNodeText(propInit, ast)
+                when (getNodeText(prop.name)) {
+                  "inheritAttrs" -> inheritAttrs = getNodeText(propInit)
                   "name" -> if (isStringLiteral(propInit)) optionsName = propInit.text
                 }
               }
