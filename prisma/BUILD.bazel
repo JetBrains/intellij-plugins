@@ -178,6 +178,13 @@ jvm_library(
     ),
     module_name = "intellij.prisma.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//libraries/misc/plugin",
+        "@community//platform/testRunner/plugin",
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/problemsView/plugin",
+    ],
 )
 
 jvm_library(
@@ -206,6 +213,10 @@ jvm_library(
         ":prisma-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//libraries/misc/plugin:plugin_test_lib",
+        "@community//platform/testRunner/plugin:plugin_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/problemsView/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,
@@ -262,6 +273,8 @@ jvm_library(
         "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
         "//plugins/JavaScriptLanguage/javascript-backend",
         "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
+        "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+        "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
         "//plugins/JavaScriptLanguage/javascript-common",
         "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
         "@community//platform/lsp",
@@ -284,6 +297,12 @@ jvm_library(
         "@community//platform/polySymbols:polySymbols-testFramework_test_lib",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
         "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+        "@community//platform/smRunner",
+        "@community//platform/smRunner:smRunner_test_lib",
+        "@community//platform/structure-view-impl:structureView",
+        "@community//platform/structure-view-impl:structureView_test_lib",
+        "@community//platform/problemsView/shared",
+        "@community//platform/problemsView/shared:shared_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
     ],
