@@ -1,1 +1,1 @@
-MyReactComponent (typeText='./MyReactComponent'; priority=0.0; typeGreyed)
+MyReactComponent (typeText='./MyReactComponent'; priority=4.0; typeGreyed)

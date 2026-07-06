@@ -11,8 +11,8 @@ valueOf (typeText='Object'; priority=98.0)
 export const getStaticPaths = (() => {
 	$1
 	return [];
-}) satisfies GetStaticPaths; (typeText='Create a new getStaticPaths function'; priority=0.0; typeGreyed)
-export const prerender = ${1|true,false|} (typeText='Add prerender export'; priority=0.0; typeGreyed)
+}) satisfies GetStaticPaths; (typeText='Create a new getStaticPaths function'; priority=4.0; typeGreyed)
+export const prerender = ${1|true,false|} (typeText='Add prerender export'; priority=4.0; typeGreyed)
 interface Props {
 	$1
-} (typeText='Create a new interface to type your props'; priority=0.0; typeGreyed)
+} (typeText='Create a new interface to type your props'; priority=4.0; typeGreyed)

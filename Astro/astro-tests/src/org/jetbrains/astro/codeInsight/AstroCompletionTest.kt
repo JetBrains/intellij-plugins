@@ -16,12 +16,12 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", u
 
   fun testScriptTagAttributes() =
     doLookupTest {
-      it.priority > 0
+      it.priority > 4
     }
 
   fun testStyleTagAttributes() =
     doLookupTest {
-      it.priority > 0
+      it.priority > 4
     }
 
   fun testImportedComponent() =
@@ -55,7 +55,7 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", u
 
   fun testAstroDirectives() =
     doLookupTest(additionalFiles = listOf("react-component.tsx")) {
-      it.priority > 0
+      it.priority > 4
     }
 
   fun testAstroDirectives2() =
@@ -125,7 +125,7 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", u
   fun testEmmetAbbreviation() = doLookupTest()
 
   fun testSlotNameAttribute() = doLookupTest() {
-    it.priority > 0 || it.lookupString.startsWith("s")
+    it.priority > 4 || it.lookupString.startsWith("s")
   }
 
   // WEB-59265 only enabled completion at root level and nested in HTML but not as children of components.

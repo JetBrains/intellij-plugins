@@ -1,2 +1,2 @@
-email (typeText='FormControl'; priority=0.0; typeGreyed)
-gender (typeText='FormControl'; priority=0.0; typeGreyed)
+email (typeText='FormControl'; priority=10.0; typeGreyed)
+gender (typeText='FormControl'; priority=10.0; typeGreyed)
