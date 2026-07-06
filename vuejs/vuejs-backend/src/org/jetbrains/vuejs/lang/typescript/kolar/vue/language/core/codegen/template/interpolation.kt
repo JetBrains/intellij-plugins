@@ -8,7 +8,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Identifier
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.NamedBinding
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.QualifiedName
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrowFunction
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isBindingElement
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isBlock
@@ -141,7 +140,7 @@ private fun forEachIdentifiers(
 
   val scope = ctx.scope()
   val ast = getTypeScriptAST(block, prefix + code + suffix)
-  for ((id, isShorthand) in forEachDeclarations(ast, ast, ctx, scope)) {
+  for ((id, isShorthand) in forEachDeclarations(ast, ctx, scope)) {
     val text = getNodeText(id)
     if (shouldIdentifierSkipped(ctx, text)) continue
     yield(Triple(text, getStartEnd(id).start - prefix.length, isShorthand))
@@ -151,7 +150,6 @@ private fun forEachIdentifiers(
 
 private fun forEachDeclarations(
   node: Node,
-  ast: SourceFile,
   ctx: TemplateCodegenContext,
   scope: TemplateCodegenContext.Scope,
 ): Sequence<Pair<Identifier, Boolean>> = sequence {
@@ -162,21 +160,21 @@ private fun forEachDeclarations(
     yield(Pair(node.name, true))
   }
   else if (isPropertyAccessExpression(node)) {
-    yieldAll(forEachDeclarations(node.expression, ast, ctx, scope))
+    yieldAll(forEachDeclarations(node.expression, ctx, scope))
   }
   else if (isVariableDeclaration(node)) {
     scope.declare(collectBindingNames(node.name))
-    yieldAll(forEachDeclarationsInBinding(node, ast, ctx, scope))
+    yieldAll(forEachDeclarationsInBinding(node, ctx, scope))
   }
   else if (node is org.jetbrains.vuejs.lang.typescript.kolar.typescript.BindingPattern) {
     for (element in node.elements) {
       if (isBindingElement(element)) {
-        yieldAll(forEachDeclarationsInBinding(element, ast, ctx, scope))
+        yieldAll(forEachDeclarationsInBinding(element, ctx, scope))
       }
     }
   }
   else if (isArrowFunction(node) || isFunctionExpression(node)) {
-    yieldAll(forEachDeclarationsInFunction(node, ast, ctx))
+    yieldAll(forEachDeclarationsInFunction(node, ctx))
   }
   else if (isObjectLiteralExpression(node)) {
     for (prop in node.properties) {
@@ -184,22 +182,22 @@ private fun forEachDeclarations(
         // fix https://github.com/vuejs/language-tools/issues/1176
         val propName = prop.name
         if (isComputedPropertyName(propName)) {
-          yieldAll(forEachDeclarations(propName.expression, ast, ctx, scope))
+          yieldAll(forEachDeclarations(propName.expression, ctx, scope))
         }
-        yieldAll(forEachDeclarations(prop.initializer, ast, ctx, scope))
+        yieldAll(forEachDeclarations(prop.initializer, ctx, scope))
       }
       // fix https://github.com/vuejs/language-tools/issues/1156
       else if (isShorthandPropertyAssignment(prop)) {
-        yieldAll(forEachDeclarations(prop, ast, ctx, scope))
+        yieldAll(forEachDeclarations(prop, ctx, scope))
       }
       // fix https://github.com/vuejs/language-tools/issues/1148#issuecomment-1094378126
       else if (isSpreadAssignment(prop)) {
         // TODO: cannot report "Spread types may only be created from object types.ts(2698)"
-        yieldAll(forEachDeclarations(prop.expression, ast, ctx, scope))
+        yieldAll(forEachDeclarations(prop.expression, ctx, scope))
       }
       // fix https://github.com/vuejs/language-tools/issues/4604
       else if (isFunctionLike(prop) && prop.body != null) {
-        yieldAll(forEachDeclarationsInFunction(prop, ast, ctx))
+        yieldAll(forEachDeclarationsInFunction(prop, ctx))
       }
     }
   }
@@ -210,20 +208,19 @@ private fun forEachDeclarations(
   else if (isBlock(node)) {
     val scope = ctx.scope()
     for (child in forEachNode(node)) {
-      yieldAll(forEachDeclarations(child, ast, ctx, scope))
+      yieldAll(forEachDeclarations(child, ctx, scope))
     }
     scope.end()
   }
   else {
     for (child in forEachNode(node)) {
-      yieldAll(forEachDeclarations(child, ast, ctx, scope))
+      yieldAll(forEachDeclarations(child, ctx, scope))
     }
   }
 }
 
 private fun forEachDeclarationsInBinding(
   node: NamedBinding,
-  ast: SourceFile,
   ctx: TemplateCodegenContext,
   scope: TemplateCodegenContext.Scope,
 ): Sequence<Pair<Identifier, Boolean>> = sequence {
@@ -232,27 +229,26 @@ private fun forEachDeclarationsInBinding(
     yieldAll(forEachDeclarationsInTypeNode(type))
   }
   if (!isIdentifier(node.name)) {
-    yieldAll(forEachDeclarations(node.name, ast, ctx, scope))
+    yieldAll(forEachDeclarations(node.name, ctx, scope))
   }
   val initializer = node.initializer
   if (initializer != null) {
-    yieldAll(forEachDeclarations(initializer, ast, ctx, scope))
+    yieldAll(forEachDeclarations(initializer, ctx, scope))
   }
 }
 
 private fun forEachDeclarationsInFunction(
   node: FunctionLikeDeclaration,
-  ast: SourceFile,
   ctx: TemplateCodegenContext,
 ): Sequence<Pair<Identifier, Boolean>> = sequence {
   val scope = ctx.scope()
   for (param in node.parameters) {
     scope.declare(collectBindingNames(param.name))
-    yieldAll(forEachDeclarationsInBinding(param, ast, ctx, scope))
+    yieldAll(forEachDeclarationsInBinding(param, ctx, scope))
   }
   val body = node.body
   if (body != null) {
-    yieldAll(forEachDeclarations(body, ast, ctx, scope))
+    yieldAll(forEachDeclarations(body, ctx, scope))
   }
   scope.end()
 }
