@@ -57,28 +57,22 @@ abstract class PrismaServiceTestBase : BaseLspTypeScriptServiceTest() {
     val clients = lspManager.getClients(PrismaLspIntegrationProvider::class.java)
     if (clients.isEmpty()) return
 
-    val disposable = Disposer.newDisposable()
-    try {
-      val shutdownClients = Collections.synchronizedSet(HashSet<LspClient>())
-      lspManager.addListener(object : LspClientManagerListener {
-        override fun serverStateChanged(lspClient: LspClient) {
-          if (lspClient.state == LspServerState.ShutdownNormally ||
-              lspClient.state == LspServerState.ShutdownUnexpectedly) {
-            shutdownClients.add(lspClient)
-          }
+    val shutdownClients = Collections.synchronizedSet(HashSet<LspClient>())
+    lspManager.addListener(object : LspClientManagerListener {
+      override fun serverStateChanged(lspClient: LspClient) {
+        if (lspClient.state == LspServerState.ShutdownNormally ||
+            lspClient.state == LspServerState.ShutdownUnexpectedly) {
+          shutdownClients.add(lspClient)
         }
-      }, disposable, sendEventsForExistingClients = true)
+      }
+    }, testRootDisposable, sendEventsForExistingClients = true)
 
-      lspManager.stopClients(PrismaLspIntegrationProvider::class.java)
+    lspManager.stopClients(PrismaLspIntegrationProvider::class.java)
 
-      PlatformTestUtil.waitWithEventsDispatching(
-        "Prisma LSP servers did not shut down within timeout",
-        { shutdownClients.size >= clients.size },
-        10, // seconds
-      )
-    }
-    finally {
-      Disposer.dispose(disposable)
-    }
+    PlatformTestUtil.waitWithEventsDispatching(
+      "Prisma LSP servers did not shut down within timeout",
+      { shutdownClients.size >= clients.size },
+      10, // seconds
+    )
   }
 }
