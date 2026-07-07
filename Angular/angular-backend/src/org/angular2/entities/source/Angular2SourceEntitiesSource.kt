@@ -154,9 +154,7 @@ class Angular2SourceEntitiesSource : Angular2EntitiesSource {
 
   private fun tryGetStandalonePseudoModule(variable: TypeScriptVariable): Angular2Module? {
     val attributeList = variable.attributeList
-    if (attributeList == null
-        || !variable.isConst
-        || !attributeList.hasModifier(ModifierType.EXPORT))
+    if (attributeList == null || !variable.isConst)
       return null
 
     if (
@@ -164,15 +162,18 @@ class Angular2SourceEntitiesSource : Angular2EntitiesSource {
         ?.asSafely<TypeScriptTupleType>()
         ?.members
         ?.all { it.tupleMemberName == null && it.tupleMemberType is TypeScriptTypeofType } == true
-      || variable.initializerOrStub
-        ?.asSafely<TypeScriptAsExpression>()
-        ?.stubSafeChildren
-        ?.let { children -> children.any { it is JSArrayLiteralExpression } && children.any { it is TypeScriptConstType } } == true
-      || variable.initializerOrStub
-        ?.asSafely<JSArrayLiteralExpression>() != null) {
+      || (attributeList.hasModifier(ModifierType.EXPORT) && (
+        variable.initializerOrStub
+          ?.asSafely<TypeScriptAsExpression>()
+          ?.stubSafeChildren
+          ?.let { children -> children.any { it is JSArrayLiteralExpression } && children.any { it is TypeScriptConstType } } == true
+        || variable.initializerOrStub
+          ?.asSafely<JSArrayLiteralExpression>() != null
+                                                            ))
+    ) {
       return Angular2SourceStandalonePseudoModule(variable)
     }
-    return null;
+    return null
   }
 
 }
