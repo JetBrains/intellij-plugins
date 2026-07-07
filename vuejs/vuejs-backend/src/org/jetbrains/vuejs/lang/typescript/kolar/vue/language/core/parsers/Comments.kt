@@ -13,7 +13,10 @@ fun getCommentsAtStart(
 ): List<PsiComment> {
   file as PsiElement
 
-  return file.firstChild.siblings()
+  val firstChild = file.firstChild
+                   ?: return emptyList()
+
+  return firstChild.siblings()
     .takeWhile { it is PsiComment || it is PsiWhiteSpace }
     .filterIsInstance<PsiComment>()
     .toList()
