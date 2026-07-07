@@ -5,7 +5,6 @@ import kotlin.contracts.contract
 
 interface Node {
   val kind: SyntaxKind
-  val pos: Int
   val end: Int
 
   fun getChildren(): Array<out Node>
