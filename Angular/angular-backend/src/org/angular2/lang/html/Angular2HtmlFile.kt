@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.tree.IFileElementType
@@ -23,6 +24,9 @@ class Angular2HtmlFile(viewProvider: FileViewProvider, fileElementType: IFileEle
     super.subtreeChanged()
     JSControlFlowService.getService(project).resetControlFlow(this)
   }
+
+  override fun getTSConfigGraphFile(): VirtualFile? =
+    Angular2SourceUtil.findComponentClass(this)?.containingFile?.virtualFile
 
   override fun getJSConfig(): JSConfig? {
     val importGraphIncludedFile = Angular2SourceUtil.findComponentClass(this)?.containingFile

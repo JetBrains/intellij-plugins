@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.config.JSConfig
 import com.intellij.lang.javascript.config.JSConfigProvider
 import com.intellij.lang.javascript.psi.impl.JSFileImpl
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.xml.XmlFile
 import org.angular2.entities.source.Angular2SourceUtil
@@ -18,6 +19,14 @@ class Angular2FileImpl(fileViewProvider: FileViewProvider, language: Angular2Exp
       is Angular2HtmlFile -> topLevelFile.jsConfig
       is XmlFile -> TypeScriptConfigUtil.getPreferableConfig(Angular2SourceUtil.findComponentClass(topLevelFile)?.containingFile, false)
       is JSFileImpl -> TypeScriptConfigUtil.getPreferableConfig(topLevelFile, false)
+      else -> throw IllegalStateException("Unexpected file type $topLevelFile")
+    }
+
+  override fun getTSConfigGraphFile(): VirtualFile? =
+    when (val topLevelFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(this)) {
+      is Angular2HtmlFile -> topLevelFile.tsConfigGraphFile
+      is XmlFile -> Angular2SourceUtil.findComponentClass(topLevelFile)?.containingFile?.virtualFile
+      is JSFileImpl -> topLevelFile.virtualFile
       else -> throw IllegalStateException("Unexpected file type $topLevelFile")
     }
 
