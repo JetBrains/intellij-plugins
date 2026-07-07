@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.siblings
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 
@@ -12,7 +13,7 @@ fun getCommentsAtStart(
 ): List<PsiComment> {
   file as PsiElement
 
-  return generateSequence(file.firstChild) { it.nextSibling }
+  return file.firstChild.siblings()
     .takeWhile { it is PsiComment || it is PsiWhiteSpace }
     .filterIsInstance<PsiComment>()
     .toList()
@@ -23,7 +24,7 @@ fun getCommentsBefore(
 ): List<PsiComment> {
   node as PsiElement
 
-  return generateSequence(node.prevSibling) { it.prevSibling }
+  return node.siblings(forward = false, withSelf = false)
     .takeWhile { it is PsiComment || it is PsiWhiteSpace }
     .filterIsInstance<PsiComment>()
     .toList()
