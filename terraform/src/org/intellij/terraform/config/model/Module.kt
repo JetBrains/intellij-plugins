@@ -23,6 +23,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
 import com.intellij.util.indexing.IndexingIteratorsProvider
 import org.intellij.terraform.config.Constants.HCL_ACTION_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_CONFIGURATION_ALIASES
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
@@ -36,10 +37,13 @@ import org.intellij.terraform.config.model.version.VersionConstraint
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
+import org.intellij.terraform.hcl.psi.HCLArray
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
+import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLFile
 import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
@@ -230,6 +234,15 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     return requiredProvidersBlock.`object`?.propertyList
   }
 
+  fun getConfigurationAliases(): List<HCLExpression> {
+    val requiredProviders = getDefinedRequiredProviders() ?: return emptyList()
+    return requiredProviders.flatMap { property ->
+      val providerObject = property.value as? HCLObject ?: return@flatMap emptyList()
+      val aliasesArray = providerObject.findProperty(HCL_CONFIGURATION_ALIASES)?.value as? HCLArray
+      aliasesArray?.elements ?: emptyList()
+    }
+  }
+
   fun getTerraformBlockWithProvidersOrFirst(): HCLBlock? {
     val terraformBlocks = getDefinedTerraformBlocks()
 
@@ -327,6 +340,12 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
       }); true
     })
     return found
+  }
+
+  fun getProvidersAndAliases(): List<String> {
+    val providers = getDefinedProviders().map { it.second }
+    val aliasProviders = getConfigurationAliases().mapNotNull { it.toAliasProviderName() }
+    return (providers + aliasProviders).distinct()
   }
 
   fun getDefinedModules(name: String? = null): List<HCLBlock> {

@@ -68,7 +68,7 @@ internal object TfPropertyObjectKeyCompletionProvider : HclObjectKeyCompletionPr
 
     if (name == "providers" && type == "module") {
       val module = block.getTerraformModule()
-      val providers = module.getDefinedProviders().map { it.second }
+      val providers = module.getProvidersAndAliases()
       result.addAllElements(providers.map { create(it).withInsertHandler(QuoteInsertHandler) })
       return
     }
@@ -128,11 +128,10 @@ internal object TfPropertyObjectKeyCompletionProvider : HclObjectKeyCompletionPr
     val module = Module.getAsModuleBlock(block) ?: return
     val incomplete: String? = getIncomplete(parameters)
     val defined = TfCompletionUtil.getOriginalObject(parameters, obj).propertyList.map { it.name }
-    val providers = module.getDefinedProviders()
-      .map { it.second }
+    val providers = module.getProvidersAndAliases()
       .filter { !defined.contains(it) || (incomplete != null && it.contains(incomplete)) }
-    result.addAllElements(
-      providers.map { create(it).withInsertHandler(ResourcePropertyInsertHandler) })
+
+    result.addAllElements(providers.map { create(it).withInsertHandler(ResourcePropertyInsertHandler) })
     return
   }
 }
