@@ -6,6 +6,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.ObjectLiteralExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.StringLiteral
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.endOffset
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isCallExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExportAssignment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isIdentifier
@@ -58,7 +59,7 @@ fun parseScriptRanges(
       if (comment != null) start = comment.start
       exportDefault = ScriptExportDefault(
         start = start,
-        end = child.end,
+        end = child.endOffset,
         expression = getStartEnd(expression),
         isObjectLiteral = isObjectLiteralExpression(expression),
         options = parseOptionsFromExtression(expression),

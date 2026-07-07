@@ -7,6 +7,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.toString
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.endOffset
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrayLiteralExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isComputedPropertyName
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExpressionStatement
@@ -437,7 +438,7 @@ private fun generateStyleScopedClassReferences(
             val name = property.name
             when {
               isIdentifier(name) ->
-                yieldAll(generateStyleScopedClassReference(template, name.text, name.end - name.text.length + startOffset))
+                yieldAll(generateStyleScopedClassReference(template, name.text, name.endOffset - name.text.length + startOffset))
               isStringLiteral(name) -> literals.add(name)
               isComputedPropertyName(name) -> {
                 val expr = name.expression
@@ -449,7 +450,7 @@ private fun generateStyleScopedClassReferences(
             yieldAll(generateStyleScopedClassReference(
               template,
               property.name.text,
-              property.name.end - property.name.text.length + startOffset,
+              property.name.endOffset - property.name.text.length + startOffset,
             ))
         }
       }
@@ -478,7 +479,7 @@ private fun generateStyleScopedClassReferences(
 
     for (literal in literals) {
       if (!isStringLiteralLike(literal)) continue
-      val start = literal.end - literal.text.length - 1 + startOffset
+      val start = literal.endOffset - literal.text.length - 1 + startOffset
       for ((className, offset) in forEachClassName(literal.text)) {
         yieldAll(generateStyleScopedClassReference(template, className, start + offset))
       }

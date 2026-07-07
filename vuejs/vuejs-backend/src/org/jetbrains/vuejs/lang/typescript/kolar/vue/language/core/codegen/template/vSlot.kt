@@ -5,6 +5,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.replaceSourceRange
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.endOffset
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrowFunction
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExpressionStatement
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.DirectiveNode
@@ -131,12 +132,12 @@ private fun generateSlotParameters(
     val paramType = param.type
     if (paramType != null) {
       types.add(DataSegment(
-        text = ast.text.substring(param.name.end, paramType.end),
+        text = ast.text.substring(param.name.endOffset, paramType.endOffset),
         source = Source("template"),
-        sourceOffset = startOffset + param.name.end,
+        sourceOffset = startOffset + param.name.endOffset,
         data = codeFeatures.all,
       ))
-      replaceSourceRange(interpolation, Source("template"), startOffset + param.name.end, startOffset + paramType.end)
+      replaceSourceRange(interpolation, Source("template"), startOffset + param.name.endOffset, startOffset + paramType.endOffset)
     }
     else {
       types.add(null)
