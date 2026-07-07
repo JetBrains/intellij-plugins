@@ -29,11 +29,6 @@ interface StringLiteralLike : Node {
   val text: String
 }
 
-fun isStringLiteralLike(node: Node): Boolean {
-  contract { returns(true) implies (node is StringLiteralLike) }
-  return node is StringLiteralLike
-}
-
 interface StringLiteral : Expression, StringLiteralLike
 
 fun isStringLiteral(node: Node): Boolean {
@@ -45,11 +40,6 @@ interface Identifier : Expression {
   val text: String
 }
 
-fun isIdentifier(node: Node): Boolean {
-  contract { returns(true) implies (node is Identifier) }
-  return node is Identifier
-}
-
 // Common interface for BindingElement | ParameterDeclaration | VariableDeclaration
 interface NamedBinding : Node {
   val name: Node
@@ -59,11 +49,6 @@ interface NamedBinding : Node {
 
 interface BindingElement : NamedBinding {
   val dotDotDotToken: Any?
-}
-
-fun isBindingElement(node: Node): Boolean {
-  contract { returns(true) implies (node is BindingElement) }
-  return node is BindingElement
 }
 
 interface ParameterDeclaration : NamedBinding
@@ -86,11 +71,6 @@ fun isFunctionLike(node: Node): Boolean {
 }
 
 interface ArrowFunction : Expression, FunctionLikeDeclaration
-
-fun isArrowFunction(node: Node): Boolean {
-  contract { returns(true) implies (node is ArrowFunction) }
-  return node is ArrowFunction
-}
 
 interface FunctionExpression : Expression, FunctionLikeDeclaration
 
@@ -148,11 +128,6 @@ fun isBlock(node: Node): Boolean {
 
 interface FunctionDeclaration : Statement {
   val name: Identifier?
-}
-
-fun isFunctionDeclaration(node: Node): Boolean {
-  contract { returns(true) implies (node is FunctionDeclaration) }
-  return node is FunctionDeclaration
 }
 
 interface ClassDeclaration : Statement {
@@ -337,11 +312,6 @@ fun isTypeLiteralNode(node: Node): Boolean {
 
 interface UnionTypeNode : TypeNode
 
-fun isUnionTypeNode(node: Node): Boolean {
-  contract { returns(true) implies (node is UnionTypeNode) }
-  return node is UnionTypeNode
-}
-
 interface TypeQueryNode : TypeNode {
   val exprName: Node
 }
@@ -361,17 +331,7 @@ interface BindingPattern : Node {
 
 interface ArrayBindingPattern : BindingPattern
 
-fun isArrayBindingPattern(node: Node): Boolean {
-  contract { returns(true) implies (node is ArrayBindingPattern) }
-  return node is ArrayBindingPattern
-}
-
 interface ObjectBindingPattern : BindingPattern
-
-fun isObjectBindingPattern(node: Node): Boolean {
-  contract { returns(true) implies (node is ObjectBindingPattern) }
-  return node is ObjectBindingPattern
-}
 
 interface ComputedPropertyName : Node {
   val expression: Expression
@@ -387,27 +347,12 @@ interface PropertyAssignment : Node {
   val initializer: Expression
 }
 
-fun isPropertyAssignment(node: Node): Boolean {
-  contract { returns(true) implies (node is PropertyAssignment) }
-  return node is PropertyAssignment
-}
-
 interface ShorthandPropertyAssignment : Node {
   val name: Identifier
 }
 
-fun isShorthandPropertyAssignment(node: Node): Boolean {
-  contract { returns(true) implies (node is ShorthandPropertyAssignment) }
-  return node is ShorthandPropertyAssignment
-}
-
 interface SpreadAssignment : Node {
   val expression: Expression
-}
-
-fun isSpreadAssignment(node: Node): Boolean {
-  contract { returns(true) implies (node is SpreadAssignment) }
-  return node is SpreadAssignment
 }
 
 interface CallSignatureDeclaration : Node {
