@@ -18,6 +18,9 @@ import org.jetbrains.qodana.inspectionKts.mcp.impl.runInspectionKtsImpl
  * Provides tools for generating PSI trees, fetching inspection examples, and retrieving API documentation.
  */
 class InspectionKtsMcpToolset : McpToolset {
+  override fun displayName(): String = InspectionKtsMcpBundle.message("toolset.display.name.inspectionKts")
+
+  override fun displayDescription(toolName: String): String? = InspectionKtsMcpBundle.message("tool.description.$toolName")
 
   @McpTool
   @McpDescription(
