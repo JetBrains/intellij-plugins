@@ -1,7 +1,9 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode
 
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.index.findScriptTag
@@ -49,7 +51,7 @@ private fun getScript(
   return IRScript(
     name = Source("script"),
     lang = lang(file),
-    content = IRContentImpl(scriptTag),
+    content = IRContentImpl(scriptTag.embeddedContent),
     src = null, // TBD
     ast = SourceFileImpl(scriptTag),
   )
@@ -64,7 +66,7 @@ private fun getScriptSetup(
   return IRScriptSetup(
     name = Source("scriptSetup"),
     lang = lang(file),
-    content = IRContentImpl(scriptTag),
+    content = IRContentImpl(scriptTag.embeddedContent),
     generic = null, // TBD
     ast = SourceFileImpl(scriptTag),
   )
@@ -73,8 +75,11 @@ private fun getScriptSetup(
 private fun lang(file: VueFile): String =
   file.langMode.canonicalAttrValue
 
+private val XmlTag.embeddedContent: JSEmbeddedContent?
+  get() = PsiTreeUtil.getStubChildOfType(this, JSEmbeddedContent::class.java)
+
 private class IRContentImpl(
-  element: PsiElement,
+  element: PsiElement?,
 ) : IRContent {
   override val length: Int
     get() = TODO("not implemented")
