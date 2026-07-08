@@ -10,7 +10,6 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TestModule.NGRX_SIGNALS_20_1_0
 import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
-import org.angular2.SkipTsGoProxy
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.junit.Test
@@ -48,7 +47,6 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   fun testFieldWithoutDocs() = doTestWithDeps()
 
   @Test
-  @SkipTsGoProxy // Failed to find Psi element
   fun testFieldWithDocsPrivate() = doTestWithDeps(useConfig = true)
 
   @Test
