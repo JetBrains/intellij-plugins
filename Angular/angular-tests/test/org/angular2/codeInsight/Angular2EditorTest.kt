@@ -3,6 +3,7 @@ package org.angular2.codeInsight
 
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
+import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.TestNoService
@@ -70,6 +71,22 @@ class Angular2EditorTest : Angular2TestCase("editor") {
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0,
                      fileContents = "<main>{{ <caret> }}</main>", extension = "html", checkResult = true) {
       type("'sdf'")
+    }
+
+  @Test
+  fun testInlineTemplateHighlightingOnType() =
+    doEditorTypingTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0, checkResult = false) {
+      myFixture.enableInspections(Angular2TemplateInspectionsProvider())
+
+      checkHighlighting(getGoldFileName(null, "1.ts"))
+      moveToOffsetBySignature("| pe<caret>rcent")
+
+      repeat(5) {
+        type("a")
+        checkHighlighting(getGoldFileName(null, "2.ts"))
+        type("\b")
+        checkHighlighting(getGoldFileName(null, "1.ts"))
+      }
     }
 
   private fun doWordSelectionTest() =
