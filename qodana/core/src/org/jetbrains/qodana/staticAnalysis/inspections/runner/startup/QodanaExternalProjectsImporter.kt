@@ -51,14 +51,18 @@ abstract class QodanaExternalProjectsImporter(
               LOG.info("Importing ${externalSystemUnlinkedProjectAware.systemId.id} project file: ${it.path}")
               externalSystemUnlinkedProjectAware.linkAndLoadProjectAsync(project, it.path)
             }
+          Observation.awaitConfiguration(project)
         }
       }
     }
   }
 
   suspend fun unlinkRemovedProjectsForImport(detectedFiles: List<VirtualFile>, project: Project) {
-    getProjectsToUnlink(detectedFiles, project).forEach {
-      externalSystemUnlinkedProjectAware.unlinkProject(project, it)
+    val projectsToUnlink = getProjectsToUnlink(detectedFiles, project)
+    if (projectsToUnlink.isNotEmpty()) {
+      projectsToUnlink.forEach {
+        externalSystemUnlinkedProjectAware.unlinkProject(project, it)
+      }
       Observation.awaitConfiguration(project)
     }
   }
