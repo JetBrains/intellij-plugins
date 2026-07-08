@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.cloudFormation.metadataCrawler` start
-
 jvm_library(
     name = "metadata-crawler",
     srcs = glob(
@@ -77,7 +76,6 @@ exports_files(
 ### auto-generated section `iml intellij.cloudFormation.metadataCrawler` end
 
 ### auto-generated section `test intellij.cloudFormation.metadataCrawler` start
-
 jps_test(
     name = "metadata-crawler_test",
     runtime_deps = [":metadata-crawler_test_lib"],

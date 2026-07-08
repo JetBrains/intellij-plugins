@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `build intellij.yeoman` start
-
 resourcegroup(
     name = "yeoman_resources",
     srcs = glob(
@@ -109,7 +108,6 @@ exports_files(
 ### auto-generated section `iml intellij.yeoman` end
 
 ### auto-generated section `build intellij.yeoman.tests` start
-
 jvm_library(
     name = "yeoman-tests",
     srcs = glob(
@@ -202,7 +200,6 @@ exports_files(
 ### auto-generated section `iml intellij.yeoman.tests` end
 
 ### auto-generated section `test intellij.yeoman.tests` start
-
 jps_test(
     name = "yeoman-tests_test",
     runtime_deps = [":yeoman-tests_test_lib"],

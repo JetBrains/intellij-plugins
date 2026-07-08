@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `build intellij.handlebars` start
-
 resourcegroup(
     name = "handlebars_resources",
     srcs = glob(
@@ -127,7 +126,6 @@ exports_files(
 ### auto-generated section `iml intellij.handlebars` end
 
 ### auto-generated section `build intellij.handlebars.tests` start
-
 jvm_library(
     name = "handlebars-tests",
     srcs = glob(
@@ -244,7 +242,6 @@ exports_files(
 ### auto-generated section `iml intellij.handlebars.tests` end
 
 ### auto-generated section `test intellij.handlebars.tests` start
-
 jps_test(
     name = "handlebars-tests_test",
     runtime_deps = [":handlebars-tests_test_lib"],

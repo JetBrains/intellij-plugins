@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `build intellij.prettierJS` start
-
 resourcegroup(
     name = "prettierJS_resources",
     srcs = glob(
@@ -139,7 +138,6 @@ exports_files(
 ### auto-generated section `iml intellij.prettierJS` end
 
 ### auto-generated section `build intellij.prettierJS.tests` start
-
 jvm_library(
     name = "prettierJS-tests",
     srcs = glob(
@@ -271,7 +269,6 @@ exports_files(
 ### auto-generated section `iml intellij.prettierJS.tests` end
 
 ### auto-generated section `test intellij.prettierJS.tests` start
-
 jps_test(
     name = "prettierJS-tests_test",
     runtime_deps = [":prettierJS-tests_test_lib"],

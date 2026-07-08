@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.jhipster` start
-
 jvm_library(
     name = "jhipster",
     srcs = glob(
@@ -92,7 +91,6 @@ exports_files(
 ### auto-generated section `iml intellij.jhipster` end
 
 ### auto-generated section `build intellij.jhipster.tests` start
-
 jvm_library(
     name = "jhipster-tests",
     srcs = glob(
@@ -177,7 +175,6 @@ exports_files(
 ### auto-generated section `iml intellij.jhipster.tests` end
 
 ### auto-generated section `test intellij.jhipster.tests` start
-
 jps_test(
     name = "jhipster-tests_test",
     runtime_deps = [":jhipster-tests_test_lib"],

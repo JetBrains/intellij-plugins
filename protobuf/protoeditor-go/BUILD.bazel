@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.protoeditor.go` start
-
 jvm_library(
     name = "protoeditor-go",
     srcs = glob(
@@ -86,7 +85,6 @@ exports_files(
 ### auto-generated section `iml intellij.protoeditor.go` end
 
 ### auto-generated section `build intellij.protoeditor.go.tests` start
-
 jvm_library(
     name = "protoeditor-go-tests",
     srcs = glob(
@@ -173,7 +171,6 @@ exports_files(
 ### auto-generated section `iml intellij.protoeditor.go.tests` end
 
 ### auto-generated section `test intellij.protoeditor.go.tests` start
-
 jps_test(
     name = "protoeditor-go-tests_test",
     runtime_deps = [":protoeditor-go-tests_test_lib"],

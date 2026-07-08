@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.makefile` start
-
 jvm_library(
     name = "makefile",
     srcs = glob(
@@ -102,7 +101,6 @@ exports_files(
 ### auto-generated section `iml intellij.makefile` end
 
 ### auto-generated section `build intellij.makefile.tests` start
-
 jvm_library(
     name = "makefile-tests",
     srcs = glob(
@@ -199,7 +197,6 @@ exports_files(
 ### auto-generated section `iml intellij.makefile.tests` end
 
 ### auto-generated section `test intellij.makefile.tests` start
-
 jps_test(
     name = "makefile-tests_test",
     runtime_deps = [":makefile-tests_test_lib"],

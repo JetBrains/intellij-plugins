@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.dts.pp` start
-
 jvm_library(
     name = "pp",
     srcs = glob(
@@ -75,7 +74,6 @@ exports_files(
 ### auto-generated section `iml intellij.dts.pp` end
 
 ### auto-generated section `build intellij.dts.pp.tests` start
-
 jvm_library(
     name = "pp-tests",
     srcs = glob(
@@ -157,7 +155,6 @@ exports_files(
 ### auto-generated section `iml intellij.dts.pp.tests` end
 
 ### auto-generated section `test intellij.dts.pp.tests` start
-
 jps_test(
     name = "pp-tests_test",
     runtime_deps = [":pp-tests_test_lib"],

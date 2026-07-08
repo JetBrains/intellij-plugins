@@ -1,7 +1,6 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `build intellij.appcode.reveal` start
-
 resourcegroup(
     name = "appcode-reveal_resources",
     srcs = glob(

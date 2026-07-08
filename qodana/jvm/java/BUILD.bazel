@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.qodana.jvm.java` start
-
 jvm_library(
     name = "java",
     srcs = glob(
@@ -129,7 +128,6 @@ exports_files(
 ### auto-generated section `iml intellij.qodana.jvm.java` end
 
 ### auto-generated section `build intellij.qodana.jvm.java.tests` start
-
 jvm_library(
     name = "qodana-jvm-java-tests",
     srcs = glob(
@@ -245,7 +243,6 @@ exports_files(
 ### auto-generated section `iml intellij.qodana.jvm.java.tests` end
 
 ### auto-generated section `test intellij.qodana.jvm.java.tests` start
-
 jps_test(
     name = "qodana-jvm-java-tests_test",
     runtime_deps = [":qodana-jvm-java-tests_test_lib"],

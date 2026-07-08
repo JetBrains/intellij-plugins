@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `build intellij.cfml` start
-
 resourcegroup(
     name = "cfml_resources",
     srcs = glob(
@@ -170,7 +169,6 @@ exports_files(
 ### auto-generated section `iml intellij.cfml` end
 
 ### auto-generated section `build intellij.cfml.tests` start
-
 jvm_library(
     name = "cfml-tests",
     srcs = glob(
@@ -319,7 +317,6 @@ exports_files(
 ### auto-generated section `iml intellij.cfml.tests` end
 
 ### auto-generated section `test intellij.cfml.tests` start
-
 jps_test(
     name = "cfml-tests_test",
     runtime_deps = [":cfml-tests_test_lib"],

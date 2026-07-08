@@ -11,7 +11,6 @@ jps_test(
 ### skip generation section `test intellij.qodana.jvm.coverage.tests`
 
 ### auto-generated section `build intellij.qodana.jvm.coverage` start
-
 jvm_library(
     name = "coverage",
     srcs = glob(
@@ -112,7 +111,6 @@ exports_files(
 ### auto-generated section `iml intellij.qodana.jvm.coverage` end
 
 ### auto-generated section `build intellij.qodana.jvm.coverage.tests` start
-
 jvm_library(
     name = "qodana-jvm-coverage-tests",
     srcs = glob(

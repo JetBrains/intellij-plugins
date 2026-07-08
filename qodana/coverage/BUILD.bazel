@@ -3,7 +3,6 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 ### skip generation section `test intellij.qodana.coverage.tests`
 
 ### auto-generated section `build intellij.qodana.coverage` start
-
 jvm_library(
     name = "coverage",
     srcs = glob(
@@ -88,7 +87,6 @@ exports_files(
 ### auto-generated section `iml intellij.qodana.coverage` end
 
 ### auto-generated section `build intellij.qodana.coverage.tests` start
-
 jvm_library(
     name = "coverage-tests",
     srcs = glob(

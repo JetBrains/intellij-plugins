@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.terraform.template` start
-
 jvm_library(
     name = "template",
     srcs = glob(
@@ -82,7 +81,6 @@ exports_files(
 ### auto-generated section `iml intellij.terraform.template` end
 
 ### auto-generated section `build intellij.terraform.template.tests` start
-
 jvm_library(
     name = "template-tests",
     srcs = glob(
@@ -165,7 +163,6 @@ exports_files(
 ### auto-generated section `iml intellij.terraform.template.tests` end
 
 ### auto-generated section `test intellij.terraform.template.tests` start
-
 jps_test(
     name = "template-tests_test",
     runtime_deps = [":template-tests_test_lib"],

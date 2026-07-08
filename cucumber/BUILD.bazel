@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `build intellij.gherkin` start
-
 resourcegroup(
     name = "gherkin_resources",
     srcs = glob(
@@ -131,7 +130,6 @@ exports_files(
 ### auto-generated section `iml intellij.gherkin` end
 
 ### auto-generated section `build intellij.gherkin.tests` start
-
 jvm_library(
     name = "gherkin-tests",
     srcs = glob(
@@ -256,7 +254,6 @@ exports_files(
 ### auto-generated section `iml intellij.gherkin.tests` end
 
 ### auto-generated section `test intellij.gherkin.tests` start
-
 jps_test(
     name = "gherkin-tests_test",
     runtime_deps = [":gherkin-tests_test_lib"],

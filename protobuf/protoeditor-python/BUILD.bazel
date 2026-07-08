@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.protoeditor.python` start
-
 jvm_library(
     name = "protoeditor-python",
     srcs = glob(
@@ -85,7 +84,6 @@ exports_files(
 ### auto-generated section `iml intellij.protoeditor.python` end
 
 ### auto-generated section `build intellij.protoeditor.python.tests` start
-
 jvm_library(
     name = "protoeditor-python-tests",
     srcs = glob(
@@ -166,7 +164,6 @@ exports_files(
 ### auto-generated section `iml intellij.protoeditor.python.tests` end
 
 ### auto-generated section `test intellij.protoeditor.python.tests` start
-
 jps_test(
     name = "protoeditor-python-tests_test",
     runtime_deps = [":protoeditor-python-tests_test_lib"],

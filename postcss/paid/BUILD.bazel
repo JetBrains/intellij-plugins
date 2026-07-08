@@ -1,7 +1,6 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `build intellij.postcss.paid` start
-
 resourcegroup(
     name = "paid_resources",
     srcs = glob(

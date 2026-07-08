@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.angularJS` start
-
 jvm_library(
     name = "angularJS",
     srcs = glob(
@@ -188,7 +187,6 @@ exports_files(
 ### auto-generated section `iml intellij.angularJS` end
 
 ### auto-generated section `build intellij.angularJS.tests` start
-
 jvm_library(
     name = "angularJS-tests",
     srcs = glob(
@@ -370,7 +368,6 @@ exports_files(
 ### auto-generated section `iml intellij.angularJS.tests` end
 
 ### auto-generated section `test intellij.angularJS.tests` start
-
 jps_test(
     name = "angularJS-tests_test",
     runtime_deps = [":angularJS-tests_test_lib"],

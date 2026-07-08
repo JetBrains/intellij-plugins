@@ -1,7 +1,6 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.openRewrite.micronaut` start
-
 jvm_library(
     name = "micronaut",
     srcs = glob(

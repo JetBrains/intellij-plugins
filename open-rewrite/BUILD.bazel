@@ -2,7 +2,6 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.openRewrite` start
-
 jvm_library(
     name = "open-rewrite",
     srcs = glob(
@@ -147,7 +146,6 @@ exports_files(
 ### auto-generated section `iml intellij.openRewrite` end
 
 ### auto-generated section `build intellij.openRewrite.tests` start
-
 jvm_library(
     name = "openRewrite-tests",
     srcs = glob(
@@ -291,7 +289,6 @@ exports_files(
 ### auto-generated section `iml intellij.openRewrite.tests` end
 
 ### auto-generated section `test intellij.openRewrite.tests` start
-
 jps_test(
     name = "openRewrite-tests_test",
     runtime_deps = [":openRewrite-tests_test_lib"],
