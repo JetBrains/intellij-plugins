@@ -116,6 +116,7 @@ jvm_library(
     ),
     module_name = "intellij.qodana.php.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["//phpstorm/php:php-impl"],
 )
 
 jvm_library(
@@ -138,6 +139,7 @@ jvm_library(
         # do not sort,
         ":php-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
+        "//phpstorm/php:php-impl_test_lib",
     ],
     deps = [
         # do not sort,
@@ -203,6 +205,8 @@ jvm_library(
         "@community//libraries/junit5:junit5_test_lib",
         "//phpstorm/php-backend",
         "//phpstorm/php-backend:php-backend_test_lib",
+        "//plugins/taint-analysis/php",
+        "//plugins/taint-analysis/php:php_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.php.tests` end
