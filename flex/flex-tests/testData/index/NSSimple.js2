@@ -1,0 +1,3 @@
+class Clazz { namespace NS
+ NS var var_
+ NS native function zzz(); NS native function zzz2(); }

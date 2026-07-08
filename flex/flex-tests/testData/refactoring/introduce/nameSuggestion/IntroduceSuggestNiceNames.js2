@@ -1,0 +1,3 @@
+function aaa() {
+  var x = <selection>obj[i].getFullYear2()</selection>;
+}

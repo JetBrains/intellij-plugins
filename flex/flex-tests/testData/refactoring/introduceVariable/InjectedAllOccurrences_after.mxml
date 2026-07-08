@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        public function foo(bar:String) {
+            var created:int = bar == "abc" ? 0 : 1;
+            var x:int = created;
+            var y:int = created;
+        }
+        ]]></mx:Script>
+</mx:Application>

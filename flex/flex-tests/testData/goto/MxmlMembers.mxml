@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx">
+  <mx:Button id=<error>"111"</error>/>
+    <fx:Script><![CDATA[
+
+        public var myField1 : String;
+
+        private static var myField2 = "field3";
+
+        function method1(p:String) {
+
+        }
+
+        ]]></fx:Script>
+    <fx:Declarations>
+        <fx:XML id="myXml">
+            <abc id="myXmlItem">
+                <def id="myXmlInnerItem"/>
+            </abc>
+        </fx:XML>
+
+        <fx:XMLList id="myXmlList">
+            <item id="myXmlListItem"/>
+        </fx:XMLList>
+
+        <fx:Model id="myModel">
+            <item id="myModelItem"/>
+        </fx:Model>
+
+        <s:WebService id="myWebService">
+            <s:operation id="myOperation">
+                <s:request>
+                </s:request>
+            </s:operation>
+        </s:WebService>
+
+        <s:HTTPService id="myHttpService">
+            <s:request>
+            </s:request>
+        </s:HTTPService>
+
+
+    </fx:Declarations>
+
+    <s:Group id="myGroup">
+        <s:Label id="myLabel"/>
+    </s:Group>
+
+    <fx:Private>
+        <abc id="myPrivate"/>
+    </fx:Private>
+
+</s:Application>

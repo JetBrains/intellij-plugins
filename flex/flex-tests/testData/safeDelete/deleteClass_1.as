@@ -1,0 +1,1 @@
+public class DeleteClass_1<caret> {}

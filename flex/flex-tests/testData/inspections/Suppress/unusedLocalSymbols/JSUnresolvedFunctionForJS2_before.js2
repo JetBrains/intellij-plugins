@@ -1,0 +1,5 @@
+package aaa.xxx {
+class AAA {
+  function doIt(<caret>e:String) {}
+}
+}

@@ -1,0 +1,7 @@
+class C {
+    var x:Number;
+
+	public function C() {
+		x = <selection>_x</selection>;
+	}
+}

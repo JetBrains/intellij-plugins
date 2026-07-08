@@ -1,0 +1,8 @@
+function baz():Number {}
+
+class Foo {
+    var bar:Number
+}
+
+var b:Foo
+b.bar = <selection>baz()</selection>

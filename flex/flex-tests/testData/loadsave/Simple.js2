@@ -1,0 +1,16 @@
+import PPP.ZZZ;
+
+package <error>PPP</error> {
+  public class <error>ZZZ</error> {}
+  namespace <error>AAA</error>;
+  var <error>b</error>:ZZZ = null;
+}
+
+var a:ZZZ = null;
+
+class ZZZ2 {
+  var iii;
+}
+
+var b:ZZZ2 = null;
+b.iii = 1;

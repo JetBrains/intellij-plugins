@@ -1,0 +1,7 @@
+function foo(foo:String = "",... rest) {
+    var x = <selection>"xxx"</selection> + "xxx";
+}
+
+foo();
+foo();
+foo();

@@ -1,0 +1,7 @@
+class C {
+    var x:Number;
+
+	public function C(_x:Number = 100) {
+		x = _x;
+	}
+}

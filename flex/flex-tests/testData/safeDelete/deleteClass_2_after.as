@@ -1,0 +1,4 @@
+package bar{
+function foo(){}
+}
+

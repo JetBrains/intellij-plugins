@@ -1,0 +1,3 @@
+function f(x:Boolean) {
+    x.if<caret>
+}

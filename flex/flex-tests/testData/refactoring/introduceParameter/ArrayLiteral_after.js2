@@ -1,0 +1,3 @@
+function foo(created:Array = [1]) {
+   var x= created
+}

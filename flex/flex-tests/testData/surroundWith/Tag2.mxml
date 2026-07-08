@@ -1,0 +1,3 @@
+<mx:Foo xmlns:mx="http://www.adobe.com/2006/mxml">
+  <selection>aaa</selection>
+</mx:Foo>

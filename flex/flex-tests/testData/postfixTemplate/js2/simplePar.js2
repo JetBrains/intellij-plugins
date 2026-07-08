@@ -1,0 +1,3 @@
+function m(n:int) {
+    new Array(["1", "1", "1"]).par<caret>
+}

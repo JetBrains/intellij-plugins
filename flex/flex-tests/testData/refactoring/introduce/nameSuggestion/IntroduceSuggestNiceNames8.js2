@@ -1,0 +1,5 @@
+class Foo {
+    var bar:Number
+}
+
+<selection>new Foo().bar</selection>

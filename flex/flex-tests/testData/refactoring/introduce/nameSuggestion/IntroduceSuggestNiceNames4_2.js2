@@ -1,0 +1,6 @@
+class SimpleQueryBuilder {
+    static function listOfFunctions(xxx2:String):Array {
+        listOfFunctions(<selection>new String("111")</selection>)
+        return null;
+    }
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        public function foo(bar:String) {
+            var x:int = bar == "abc" ? 0 : 1;
+            var y:int = <selection>ba<caret>r == "abc" ? 0 : 1</selection>;
+        }
+        ]]></mx:Script>
+</mx:Application>

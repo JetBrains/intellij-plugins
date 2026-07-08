@@ -1,0 +1,17 @@
+class C {
+    function foo() {
+        bar();
+    }
+    function bar() {
+    }
+}
+
+class D extends C {
+    override function bar(created:String) {
+        created
+    }
+
+    function barTest() {
+        bar("xxx");
+    }
+}

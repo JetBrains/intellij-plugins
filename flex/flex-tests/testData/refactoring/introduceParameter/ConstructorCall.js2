@@ -1,0 +1,8 @@
+class C {
+	public function C() {
+		trace(<selection>123</selection>);
+	}
+	function foo() {
+		var c: C = new C();
+	}
+}

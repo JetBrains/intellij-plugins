@@ -1,0 +1,7 @@
+function foo(foo:String = "", created:String = "", ... rest) {
+    var x = created + created;
+}
+
+foo();
+foo();
+foo();

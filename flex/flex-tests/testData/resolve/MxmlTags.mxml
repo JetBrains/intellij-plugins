@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+    <fx:Script><![CDATA[
+        private function creationCompleteHandler():void {
+            li<caret>st.selectedIndex = 1;
+        }
+        ]]></fx:Script>
+
+    <s:states>
+        <s:State name="list" />
+    </s:states>
+
+    <s:List id="list">
+    </s:List>
+
+</s:Group>

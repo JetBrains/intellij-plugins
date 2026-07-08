@@ -1,0 +1,1 @@
+var a = <warning descr="Can be simplified to (b() > c())">!!(b() > c<caret>())</warning>;

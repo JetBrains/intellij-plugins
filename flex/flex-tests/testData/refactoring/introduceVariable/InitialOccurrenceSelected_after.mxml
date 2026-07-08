@@ -1,0 +1,6 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+  <mx:Script>
+      var tmp:int = 11;
+      var a = tmp;
+  </mx:Script>
+</mx:Application>

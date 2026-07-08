@@ -1,0 +1,5 @@
+function foo():Boolean {}
+
+if (foo()) {
+    <caret>
+}

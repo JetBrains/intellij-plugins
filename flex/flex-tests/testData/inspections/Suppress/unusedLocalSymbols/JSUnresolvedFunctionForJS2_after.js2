@@ -1,0 +1,6 @@
+package aaa.xxx {
+class AAA {
+    //noinspection JSUnusedLocalSymbols
+    function doIt(e:String) {}
+}
+}

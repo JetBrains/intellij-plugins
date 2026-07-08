@@ -1,0 +1,7 @@
+function foo(created:String) {
+    var x:String = created + created;
+}
+
+foo("xxx");
+foo("xxx");
+foo("xxx");

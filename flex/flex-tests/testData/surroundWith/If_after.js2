@@ -1,0 +1,3 @@
+if (<caret>) {
+    text = Element.show($('approveReject'));
+}

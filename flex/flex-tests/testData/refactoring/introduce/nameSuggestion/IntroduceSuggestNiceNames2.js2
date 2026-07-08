@@ -1,0 +1,6 @@
+class SimpleQueryBuilder {
+    static function create():SimpleQueryBuilder {
+        <selection>create()</selection>
+        return null;
+    }
+}

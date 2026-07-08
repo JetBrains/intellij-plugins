@@ -1,0 +1,3 @@
+function m(x:Object) {
+    if ("race" is Boolean.var<caret>)
+}

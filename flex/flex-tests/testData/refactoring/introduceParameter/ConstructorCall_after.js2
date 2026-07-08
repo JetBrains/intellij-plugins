@@ -1,0 +1,8 @@
+class C {
+	public function C(created:int) {
+		trace(created);
+	}
+	function foo() {
+		var c: C = new C(123);
+	}
+}

@@ -1,0 +1,5 @@
+try {
+    text = Element.show($('approveReject'));
+    text = Element.show($('approveReject'));
+} catch (e:Error) {
+}

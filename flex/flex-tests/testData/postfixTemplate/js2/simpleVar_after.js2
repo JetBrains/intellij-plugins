@@ -1,0 +1,4 @@
+function m(x:Object) {
+    var foo:Boolean = "race" is Boolean;
+    if (foo)
+}

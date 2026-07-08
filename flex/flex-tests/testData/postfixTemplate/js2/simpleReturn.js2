@@ -1,0 +1,3 @@
+function f(x:Boolean):Boolean {
+    x.return<caret>
+}
