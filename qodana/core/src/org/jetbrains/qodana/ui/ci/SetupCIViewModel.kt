@@ -91,14 +91,15 @@ class BaseSetupCIViewModel(
           .flatMapLatest { it?.ciConfigFileState?.refreshConfigFileRequestFlow ?: flowOf(CIConfigFileState.RefreshRequest.FindFile) }
           .collectLatest {
             val newConfigFileState = refreshConfigFileState()
-            val newEditor = createEditor(project, newConfigFileState.document, configFiletype)
+            val newEditor = withContext(NonCancellable) {
+              createEditor(project, newConfigFileState.document, configFiletype).also { editorsToRelease.add(it) }
+            }
             if (disableHighlighting) {
               val psiFile = readAction {
                 PsiDocumentManager.getInstance(project).getPsiFile(newEditor.document)
               }
               psiFile?.let { DaemonCodeAnalyzer.getInstance(project).setHighlightingEnabled(it, false) }
             }
-            editorsToRelease.add(newEditor)
             configEditorStateFlow.value = CIConfigEditorState(newEditor, newConfigFileState)
           }
       }
