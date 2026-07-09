@@ -24,4 +24,11 @@
     <pyModuleMembersProvider implementation="com.intellij.protobuf.python.types.PbPythonModuleMembersProvider"/>
     <typeCheckerExtension implementation="com.intellij.protobuf.python.types.PbPythonTypeCheckerExtension"/>
   </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Goto Declaration: only for generated `.py` -> `.proto` -->
+    <gotoDeclarationHandler
+      implementation="com.intellij.protobuf.python.navigation.PbPythonGotoDeclarationHandler"
+      order="first"/>
+  </extensions>
 </idea-plugin>

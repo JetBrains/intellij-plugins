@@ -1,7 +1,7 @@
 # EXPECT-NEXT: all.proto / <file>
-import $importName  # TODO: caret for all.proto (solved)
+import <caret>$importName
 # EXPECT-NEXT: all.proto / <file>
-from $importName import (  # TODO: caret for all.proto (solved)
+from <caret>$importName import (
   # EXPECT-NEXT: all.proto / SomeMessage
   <caret>SomeMessage,
   # EXPECT-NEXT: all.proto / SomeEnum
@@ -17,7 +17,7 @@ from $importName import (  # TODO: caret for all.proto (solved)
 from $importName import WellKnownTypes<caret>Message
 
 # EXPECT-NEXT: timestamp.proto / <file>
-from google.protobuf.timestamp_pb2 import Timestamp  # TODO: caret for timestamp_pb2 (solved)
+from google.protobuf.timestamp_<caret>pb2 import Timestamp
 from google.protobuf.timestamp_pb2 import Timestamp  # TODO: caret for google.protobuf
 from google.protobuf.timestamp_pb2 import Timestamp  # TODO: caret for google
 
