@@ -1,12 +1,16 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.eslint.stable
 
+import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.inspections.JSInspection
+import com.intellij.lang.javascript.linter.eslint.EslintInspection
 import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
 import com.intellij.lang.javascript.linter.eslint.EslintUtil
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
+import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.testFramework.DumbModeTestUtils
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.LineSeparator
@@ -86,5 +90,15 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
     Assert.assertNotNull("Expected a file-level timeout annotation", annotation)
     val expected = JSLanguageServiceUtil.getTimeoutMessage("test.js", EslintUtil.getTimeout())
     Assert.assertTrue("Actual annotation: ${annotation?.message}", annotation?.message?.contains(expected) == true)
+  }
+
+  fun testOverrideConfigSeverityFromInspection() {
+    val shortName = JSInspection.calcShortNameFromClass(EslintInspection::class.java)
+    JSTestUtils.doWithChangedInspectionHighlightLevel(project, shortName, HighlightDisplayLevel.WEAK_WARNING) {
+      val inspection = InspectionProfileManager.getInstance(project).currentProfile
+        .getInspectionTool(shortName, project)!!.tool as EslintInspection
+      inspection.useSeverityFromConfigFile = false
+      doHighlightingTestWithInstallation("test.js")
+    }
   }
 }

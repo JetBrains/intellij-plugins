@@ -80,19 +80,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     return annotation != null ? annotation.getMessage() : null;
   }
 
-  // WEB-78439: an untrusted project must not be able to start/use the project-local ESLint language service (a Node process).
-  public void testOverrideConfigSeverityFromInspection() {
-    JSTestUtils.doWithChangedInspectionHighlightLevel(getProject(), calcShortNameFromClass(EslintInspection.class),
-                                                      HighlightDisplayLevel.WEAK_WARNING, () -> {
-        EslintInspection inspection = ((EslintInspection)InspectionProfileManager
-          .getInstance(getProject())
-          .getCurrentProfile()
-          .getInspectionTool(calcShortNameFromClass(EslintInspection.class), getProject()).getTool());
-        inspection.useSeverityFromConfigFile = false;
-        doEditorHighlightingTest("test.js");
-      });
-  }
-
   public void testReportAboutWrongParser() {
     doTest("test.js");
   }
