@@ -2,6 +2,6 @@
   "name": "with-eslint-ignore",
   "version": "1.0.0",
   "dependencies": {
-    "eslint": "latest"
+    "eslint": "10.6.0"
   }
 }
