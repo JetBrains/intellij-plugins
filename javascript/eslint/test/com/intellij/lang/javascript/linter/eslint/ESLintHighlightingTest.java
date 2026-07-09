@@ -227,10 +227,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     });
   }
 
-  public void testNextEslintVersion() {
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("index.js");
-  }
-
   public void testFlatConfigNoHtmlPlugin() {
     doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("index.html");
   }

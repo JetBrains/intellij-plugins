@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.linter.eslint;
 import com.intellij.lang.javascript.linter.eslint.unit.ESLintImportCodeStyleBasicTest;
 import com.intellij.lang.javascript.linter.eslint.unit.EslintConfigCompletionTest;
 import com.intellij.lang.javascript.linter.eslint.unit.EslintConfigHighlightingTest;
+import com.intellij.lang.javascript.linter.eslint.next.EslintHighlightingLatestTest;
 import com.intellij.lang.javascript.linter.eslint.stable.EslintHighlightingV10Test;
 import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSConfigParsingTest;
 import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSFixTest;
@@ -18,6 +19,7 @@ public final class EslintTestSuite {
     testSuite.addTestSuite(EsLintFixTest.class);
     testSuite.addTestSuite(ESLintHighlightingTest.class);
     testSuite.addTestSuite(EslintHighlightingV10Test.class);
+    testSuite.addTestSuite(EslintHighlightingLatestTest.class);
     testSuite.addTestSuite(ESLintImportCodeStyleBasicTest.class);
     testSuite.addTestSuite(ESLintImportCodeStyleIntegrationTest.class);
 
