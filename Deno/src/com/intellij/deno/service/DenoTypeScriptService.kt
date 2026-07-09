@@ -33,8 +33,6 @@ class DenoTypeScriptService(project: Project) : BaseLspTypeScriptService(
   DenoLspIntegrationProvider::class.java,
   DenoLspClientDescriptor(project),
 ) {
-  override val diagnosticsConfiguration: DiagnosticsConfiguration get() = PublishDiagnostics(1)
-
   companion object {
     fun getInstance(project: Project): DenoTypeScriptService = project.getService(DenoTypeScriptService::class.java)
   }

@@ -1,6 +1,5 @@
 package org.jetbrains.astro.codeInsight.highlighting
 
-import com.intellij.platform.lsp.tests.checkLspHighlighting
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
@@ -13,7 +12,7 @@ class AstroQuickFixHighlightingTest : AstroCodeInsightTestCase("codeInsight/high
 
   fun testAutoImport() {
     doConfiguredTest(additionalFiles = listOf("MyComponent.astro"), checkResult = true) {
-      checkLspHighlighting()
+      checkHighlighting()
       val intention = availableIntentions.firstOrNull { it.text.contains("import") && it.text.contains("MyComponent") }
                       ?: availableIntentions.firstOrNull { it.familyName.contains("import", ignoreCase = true) && it.text.contains("MyComponent") }
 
