@@ -1,0 +1,451 @@
+# EXPECT-NEXT: types.pyi / ModuleType
+import <caret>$importName
+from <caret>$importName import (
+  # EXPECT-NEXT: enum_type_wrapper.py / EnumTypeWrapper
+  Some<caret>Enum,
+  # EXPECT-NEXT: message.py / Message
+  Some<caret>Message,
+  ScalarTypes<caret>Message as ScalarsMessage,
+  Shared<caret>Message,
+  My<caret>Options
+)
+from $importName import WellKnownTypes<caret>Message
+
+# EXPECT-NEXT: types.pyi / ModuleType
+from google.protobuf.timestamp_<caret>pb2 import Timestamp
+from google.protobuf<caret>.timestamp_pb2 import Timestamp
+from <caret>google.protobuf.timestamp_pb2 import Timestamp
+
+def run():
+  # EXPECT-NEXT: all.proto / SomeMessage
+  <caret>msg = SomeMessage()
+
+  # EXPECT-NEXT: message.py / Message
+  scalars = Scalars<caret>Message()
+
+  # EXPECT-NEXT: all.proto / SomeMessage
+  m<caret>sg.scalar_types_message
+
+  # --- Constructor parameters ---
+  # EXPECT-NEXT: all.proto / ScalarTypesMessage
+  SomeMessage(scalar_types_<caret>message=ScalarsMessage())
+
+  # EXPECT-NEXT: builtins.pyi / str
+  SomeMessage(scalar_types_message=ScalarsMessage(), oneof_<caret>string="foo")
+
+  # EXPECT-NEXT: message.py / Message
+  SomeMessage(scalar_types_message=Scalars<caret>Message())
+
+  # EXPECT-NEXT: enum_type_wrapper.py / EnumTypeWrapper
+  SomeMessage(some_enum=Some<caret>Enum.ENUM_VALUE_1)
+
+  # EXPECT-NEXT: all.proto / SomeEnum
+  SomeMessage(some_enum=SomeEnum.ENUM_VALUE_<caret>1)
+
+  # --- Message fields ---
+  # EXPECT-NEXT: all.proto / ScalarTypesMessage
+  msg_field = msg.scalar_types_<caret>message
+
+  # EXPECT-NEXT: all.proto / WellKnownTypesMessage
+  msg.wkt_<caret>message
+  # EXPECT-NEXT: all.proto / SomeEnum
+  msg.<caret>some_enum
+  # EXPECT-NEXT: builtins.pyi / str
+  msg.old_string_<caret>data
+  # EXPECT-NEXT: builtins.pyi / int
+  msg.hidden_int32_<caret>metadata
+
+  # EXPECT-NEXT: all.proto / ScalarTypesMessage
+  msg<caret>_field.bool_field
+
+  # Via variable (+ nested)
+  # EXPECT-NEXT: all.proto / SomeMessage.Nested_Message
+  <caret>nested = SomeMessage.Nested_Message()
+  # EXPECT-NEXT: builtins.pyi / str
+  nested.nested<caret>_string_field
+
+  # --- Scalar fields ---
+  scalars = msg.scalar_types_message
+  # EXPECT-NEXT: builtins.pyi / bool
+  scalars.bool_<caret>field
+  # EXPECT-NEXT: builtins.pyi / bytes
+  scalars.bytes_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  scalars.int32_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  scalars.int64_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  scalars.uint32_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  scalars.uint64_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  scalars.sint32_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  scalars.sint64_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  scalars.fixed32_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  scalars.fixed64_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  scalars.sfixed32_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  scalars.sfixed64_<caret>field
+  # EXPECT-NEXT: builtins.pyi / float
+  scalars.float_<caret>field
+  # EXPECT-NEXT: builtins.pyi / float
+  scalars.double_<caret>field
+  # EXPECT-NEXT: builtins.pyi / str
+  scalars.string_<caret>field
+
+  # --- Enums ---
+  # EXPECT-NEXT: all.proto / SomeEnum
+  enum = SomeMessage.some<caret>_enum
+  # EXPECT-NEXT: builtins.pyi / int
+  <caret>enum = SomeMessage.some_enum
+
+  # EXPECT-NEXT: enum_type_wrapper.py / EnumTypeWrapper
+  Some<caret>Enum
+  # EXPECT-NEXT: builtins.pyi / int
+  enum<caret>_val = SomeEnum.ENUM_VALUE_1
+  # EXPECT-NEXT: all.proto / SomeEnum
+  enum_val = SomeEnum.ENUM_VALUE_<caret>UNSPECIFIED
+  enum_val = SomeEnum.ENUM_VALUE_<caret>1
+  enum_val = SomeEnum.ENUM_VALUE_<caret>ALIAS
+  enum_val = SomeEnum.ENUM_VALUE_<caret>DEPRECATED
+  enum_val = SomeEnum.ENUM_VALUE_<caret>CUSTOM_OPT
+
+  # Via variable (+ nested)
+  # EXPECT-NEXT: all.proto / SomeMessage.Nested_Enum
+  nested<caret>_enum = SomeMessage.Nested_Enum
+  # EXPECT-NEXT: all.proto / SomeMessage.Nested_Enum
+  nested_enum_val = nested_enum.NESTED_ENUM_VALUE_<caret>1
+
+  # --- Repeated fields ---
+  # EXPECT-NEXT: builtins.pyi / str
+  msg.repeated_string_<caret>field
+  # EXPECT-NEXT: all.proto / SomeEnum
+  msg.repeated_enum_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  msg.unpacked_int32_<caret>field
+  # EXPECT-NEXT: any.proto / Any
+  msg.repeated_any_<caret>field
+
+  # --- Map fields ---
+  # EXPECT-NEXT: builtins.pyi / int
+  msg.string_int32_<caret>map
+  # EXPECT-NEXT: all.proto / SomeEnum
+  msg.int32_enum_<caret>map
+
+  # EXPECT-NEXT: any.proto / Any
+  msg.int32_any_<caret>map
+  # EXPECT-NEXT: duration.proto / Duration
+  msg.bool_duration_<caret>map
+  # EXPECT-NEXT: all.proto / SomeMessage
+  msg.int32_recursive_message_<caret>map
+  # EXPECT-NEXT: import_from.proto / SharedMessage
+  msg.int32_shared_<caret>map
+
+  # EXPECT-NEXT: builtins.pyi / str
+  msg.int32_shared_map[1].shared_<caret>content
+
+  # --- Custom Option Message ---
+  # EXPECT-NEXT: message.py / Message
+  opt_msg = <caret>MyOptions()
+  # EXPECT-NEXT: builtins.pyi / str
+  opt_msg.in<caret>fo
+  # EXPECT-NEXT: builtins.pyi / bool
+  opt_msg.message_<caret>only
+
+  # --- Options ---
+  # EXPECT-NEXT: builtins.pyi / str
+  $importName.file_<caret>opt
+  # EXPECT-NEXT: builtins.pyi / int
+  $importName.message_<caret>opt
+  # EXPECT-NEXT: all.proto / MyOptions
+  $importName.complex_message_<caret>opt
+  # EXPECT-NEXT: builtins.pyi / float
+  $importName.field_<caret>opt
+  # EXPECT-NEXT: builtins.pyi / int
+  $importName.source_retention_<caret>opt
+  # EXPECT-NEXT: builtins.pyi / bool
+  $importName.enum_<caret>opt
+  # EXPECT-NEXT: builtins.pyi / str
+  opt = $importName.enum_value_<caret>opt
+
+  # EXPECT-NEXT: descriptor.py / FieldDescriptor
+  o<caret>pt
+
+  # --- Imported Message ---
+  # EXPECT-NEXT: message.py / Message
+  shared = <caret>SharedMessage()
+  # EXPECT-NEXT: builtins.pyi / str
+  shared.shared_<caret>content
+  # EXPECT-NEXT: import_from.proto / SharedMessage
+  <caret>shared
+
+  # --- Oneof ---
+  # EXPECT-NEXT: builtins.pyi / str
+  msg.oneof_<caret>string
+  # EXPECT-NEXT: builtins.pyi / int
+  msg.oneof_<caret>int32
+  # EXPECT-NEXT: all.proto / ScalarTypesMessage
+  msg.oneof_<caret>message
+
+  # EXPECT-NEXT: builtins.pyi / bool
+  msg.oneof_message.bool_<caret>field
+
+  # --- Well Known Types ---
+  wkt = WellKnownTypesMessage()
+
+  # EXPECT-NEXT: wrappers.proto / DoubleValue
+  wkt.double_value_<caret>field
+  # EXPECT-NEXT: wrappers.proto / FloatValue
+  wkt.float_value_<caret>field
+  # EXPECT-NEXT: wrappers.proto / Int64Value
+  wkt.int64_value_<caret>field
+  # EXPECT-NEXT: wrappers.proto / UInt64Value
+  wkt.uint64_value_<caret>field
+  # EXPECT-NEXT: wrappers.proto / Int32Value
+  wkt.int32_value_<caret>field
+  # EXPECT-NEXT: wrappers.proto / UInt32Value
+  wkt.uint32_value_<caret>field
+  # EXPECT-NEXT: wrappers.proto / BoolValue
+  wkt.bool_value_<caret>field
+  # EXPECT-NEXT: wrappers.proto / StringValue
+  wkt.string_value_<caret>field
+  # EXPECT-NEXT: wrappers.proto / BytesValue
+  wkt.bytes_value_<caret>field
+  # EXPECT-NEXT: timestamp.proto / Timestamp
+  wkt.timestamp_<caret>field
+  # EXPECT-NEXT: duration.proto / Duration
+  wkt.duration_<caret>field
+  # EXPECT-NEXT: any.proto / Any
+  wkt.any_<caret>field
+  # EXPECT-NEXT: struct.proto / Struct
+  wkt.struct_<caret>field
+  # EXPECT-NEXT: struct.proto / Value
+  wkt.value_<caret>field
+  # EXPECT-NEXT: struct.proto / ListValue
+  wkt.list_value_<caret>field
+  # EXPECT-NEXT: empty.proto / Empty
+  wkt.empty_<caret>field
+  # EXPECT-NEXT: field_mask.proto / FieldMask
+  wkt.field_mask_<caret>field
+  # EXPECT-NEXT: api.proto / Api
+  wkt.api_<caret>field
+  # EXPECT-NEXT: type.proto / Type
+  wkt.type_<caret>field
+  # EXPECT-NEXT: api.proto / Method
+  wkt.method_<caret>field
+  # EXPECT-NEXT: type.proto / Enum
+  wkt.enum_descriptor_<caret>field
+  # EXPECT-NEXT: type.proto / EnumValue
+  wkt.enum_value_descriptor_<caret>field
+  # EXPECT-NEXT: type.proto / Field
+  wkt.field_descriptor_<caret>field
+  # EXPECT-NEXT: type.proto / Option
+  wkt.option_<caret>field
+  # EXPECT-NEXT: api.proto / Mixin
+  wkt.mixin_<caret>field
+  # EXPECT-NEXT: source_context.proto / SourceContext
+  wkt.source_context_<caret>field
+
+  # --- Wrapper types ---
+  # EXPECT-NEXT: builtins.pyi / float
+  wkt.double_value_field.val<caret>ue
+  wkt.float_value_field.val<caret>ue
+
+  # EXPECT-NEXT: builtins.pyi / int
+  wkt.int64_value_field.val<caret>ue
+  wkt.uint64_value_field.val<caret>ue
+  wkt.int32_value_field.va<caret>lue
+  wkt.uint32_value_field.val<caret>ue
+
+  # EXPECT-NEXT: builtins.pyi / bool
+  wkt.bool_value_field.val<caret>ue
+
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.string_value_field.val<caret>ue
+
+  # EXPECT-NEXT: builtins.pyi / bytes
+  wkt.bytes_value_field.val<caret>ue
+
+  # --- Timestamp ---
+  # EXPECT-NEXT: timestamp.proto / Timestamp
+  wkt.timestamp_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  wkt.timestamp_field.seco<caret>nds
+  # EXPECT-NEXT: builtins.pyi / int
+  wkt.timestamp_field.nan<caret>os
+
+  # --- Duration ---
+  # EXPECT-NEXT: duration.proto / Duration
+  wkt.duration_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  wkt.duration_field.seco<caret>nds
+  # EXPECT-NEXT: builtins.pyi / int
+  wkt.duration_field.na<caret>nos
+
+  # --- Any ---
+  # EXPECT-NEXT: any.proto / Any
+  wkt.any_<caret>field
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.any_field.type_<caret>url
+  # EXPECT-NEXT: builtins.pyi / bytes
+  wkt.any_field.val<caret>ue
+
+  # --- Struct ---
+  # EXPECT-NEXT: struct.proto / Struct
+  wkt.struct_<caret>field
+  # EXPECT-NEXT: struct.proto / Value
+  wkt.struct_field.fie<caret>lds
+
+  # --- Value ---
+  # EXPECT-NEXT: struct.proto / Value
+  wkt.value_<caret>field
+  # EXPECT-NEXT: struct.proto / NullValue
+  wkt.value_field.null_<caret>value
+  # EXPECT-NEXT: builtins.pyi / float
+  wkt.value_field.number_<caret>value
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.value_field.string_<caret>value
+  # EXPECT-NEXT: builtins.pyi / bool
+  wkt.value_field.bool_<caret>value
+  # EXPECT-NEXT: struct.proto / Struct
+  wkt.value_field.struct_<caret>value
+  # EXPECT-NEXT: struct.proto / ListValue
+  wkt.value_field.list_<caret>value
+
+  # --- ListValue ---
+  # EXPECT-NEXT: struct.proto / ListValue
+  wkt.list_value_<caret>field
+  # EXPECT-NEXT: struct.proto / Value
+  wkt.list_value_field.val<caret>ues
+
+  # --- Empty ---
+  # EXPECT-NEXT: empty.proto / Empty
+  wkt.empty_<caret>field
+
+  # --- FieldMask ---
+  # EXPECT-NEXT: field_mask.proto / FieldMask
+  wkt.field_mask_<caret>field
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.field_mask_field.pa<caret>ths
+
+  # --- Api ---
+  # EXPECT-NEXT: api.proto / Api
+  wkt.api_<caret>field
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.api_field.na<caret>me
+  # EXPECT-NEXT: api.proto / Method
+  wkt.api_field.meth<caret>ods
+  # EXPECT-NEXT: type.proto / Option
+  wkt.api_field.opt<caret>ions
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.api_field.ver<caret>sion
+  # EXPECT-NEXT: source_context.proto / SourceContext
+  wkt.api_field.source_<caret>context
+  # EXPECT-NEXT: api.proto / Mixin
+  wkt.api_field.mix<caret>ins
+  # EXPECT-NEXT: type.proto / Syntax
+  wkt.api_field.syn<caret>tax
+
+  # --- Type ---
+  # EXPECT-NEXT: type.proto / Type
+  wkt.type_<caret>field
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.type_field.na<caret>me
+  # EXPECT-NEXT: type.proto / Field
+  wkt.type_field.fie<caret>lds
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.type_field.on<caret>eofs
+  # EXPECT-NEXT: type.proto / Option
+  wkt.type_field.opt<caret>ions
+  # EXPECT-NEXT: source_context.proto / SourceContext
+  wkt.type_field.source_<caret>context
+  # EXPECT-NEXT: type.proto / Syntax
+  wkt.type_field.syn<caret>tax
+
+  # --- Method ---
+  # EXPECT-NEXT: api.proto / Method
+  wkt.method_<caret>field
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.method_field.na<caret>me
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.method_field.request_type_<caret>url
+  # EXPECT-NEXT: builtins.pyi / bool
+  wkt.method_field.request_<caret>streaming
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.method_field.response_type_<caret>url
+  # EXPECT-NEXT: builtins.pyi / bool
+  wkt.method_field.response_<caret>streaming
+  # EXPECT-NEXT: type.proto / Option
+  wkt.method_field.opt<caret>ions
+  # EXPECT-NEXT: type.proto / Syntax
+  wkt.method_field.syn<caret>tax
+
+  # --- Enum Descriptor ---
+  # EXPECT-NEXT: type.proto / Enum
+  wkt.enum_descriptor_<caret>field
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.enum_descriptor_field.na<caret>me
+  # EXPECT-NEXT: type.proto / EnumValue
+  wkt.enum_descriptor_field.enum<caret>value
+  # EXPECT-NEXT: type.proto / Option
+  wkt.enum_descriptor_field.opt<caret>ions
+  # EXPECT-NEXT: source_context.proto / SourceContext
+  wkt.enum_descriptor_field.source_<caret>context
+  # EXPECT-NEXT: type.proto / Syntax
+  wkt.enum_descriptor_field.syn<caret>tax
+
+  # --- EnumValue ---
+  # EXPECT-NEXT: type.proto / EnumValue
+  wkt.enum_value_descriptor_<caret>field
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.enum_value_descriptor_field.na<caret>me
+  # EXPECT-NEXT: builtins.pyi / int
+  wkt.enum_value_descriptor_field.num<caret>ber
+  # EXPECT-NEXT: type.proto / Option
+  wkt.enum_value_descriptor_field.opt<caret>ions
+
+  # --- Field ---
+  # EXPECT-NEXT: type.proto / Field
+  wkt.field_descriptor_<caret>field
+  # EXPECT-NEXT: builtins.pyi / int
+  wkt.field_descriptor_field.num<caret>ber
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.field_descriptor_field.na<caret>me
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.field_descriptor_field.type_<caret>url
+  # EXPECT-NEXT: builtins.pyi / int
+  wkt.field_descriptor_field.oneof_<caret>index
+  # EXPECT-NEXT: builtins.pyi / bool
+  wkt.field_descriptor_field.pac<caret>ked
+  # EXPECT-NEXT: type.proto / Option
+  wkt.field_descriptor_field.opt<caret>ions
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.field_descriptor_field.json_<caret>name
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.field_descriptor_field.default_<caret>value
+
+  # --- Option ---
+  # EXPECT-NEXT: type.proto / Option
+  wkt.option_<caret>field
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.option_field.na<caret>me
+  # EXPECT-NEXT: any.proto / Any
+  wkt.option_field.va<caret>lue
+
+  # --- Mixin ---
+  # EXPECT-NEXT: api.proto / Mixin
+  wkt.mixin_<caret>field
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.mixin_field.na<caret>me
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.mixin_field.ro<caret>ot
+
+  # --- SourceContext ---
+  # EXPECT-NEXT: source_context.proto / SourceContext
+  wkt.source_context_<caret>field
+  # EXPECT-NEXT: builtins.pyi / str
+  wkt.source_context_field.file_<caret>name

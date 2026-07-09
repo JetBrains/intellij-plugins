@@ -30,5 +30,10 @@
     <gotoDeclarationHandler
       implementation="com.intellij.protobuf.python.navigation.PbPythonGotoDeclarationHandler"
       order="first"/>
+
+    <!-- Goto Type Declaration -->
+    <typeDeclarationProvider
+      implementation="com.intellij.protobuf.python.navigation.PbPythonTypeDeclarationProvider"
+      order="first"/>
   </extensions>
 </idea-plugin>

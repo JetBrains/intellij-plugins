@@ -1,13 +1,17 @@
 package com.intellij.protobuf.python
 
+import com.intellij.protobuf.lang.psi.PbSymbol
+import com.intellij.protobuf.python.PbPythonProtoUtils.resolveInProto
 import com.intellij.protobuf.python.types.PbPythonAbstractType
 import com.intellij.psi.util.QualifiedName
+import com.jetbrains.python.psi.PyClass
 import com.jetbrains.python.psi.PyFile
 import com.jetbrains.python.psi.PyFromImportStatement
 import com.jetbrains.python.psi.PyImportElement
 import com.jetbrains.python.psi.PyQualifiedExpression
 import com.jetbrains.python.psi.PyReferenceExpression
 import com.jetbrains.python.psi.resolve.PyResolveUtil
+import com.jetbrains.python.psi.resolve.QualifiedNameFinder
 import com.jetbrains.python.psi.types.TypeEvalContext
 
 internal object PbPythonPsiUtils {
@@ -28,6 +32,20 @@ internal object PbPythonPsiUtils {
     val name = expr.referencedName ?: return null
     val qualType = context.getType(qualifier) as? PbPythonAbstractType<*> ?: return null
     return qualType.source to qualType.localQn.append(name)
+  }
+
+  fun findPbSymbolForPyClass(pyClass: PyClass): List<PbSymbol> {
+    val pyFile = pyClass.containingFile as? PyFile ?: return emptyList()
+    val source = PbPythonSourceContext.resolve(pyFile) ?: return emptyList()
+    val fileQn = QualifiedNameFinder.findShortestImportableQName(pyFile) ?: return emptyList()
+
+    val classQnStr = pyClass.qualifiedName ?: return emptyList()
+    val classQn = QualifiedName.fromDottedString(classQnStr)
+    if (!classQn.matchesPrefix(fileQn)) return emptyList()
+
+    val localQn = classQn.removeHead(fileQn.componentCount)
+
+    return resolveInProto(source, localQn).filterIsInstance<PbSymbol>()
   }
 
   /**
