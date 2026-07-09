@@ -48,4 +48,10 @@ class EslintHighlightingV10Test : EslintHighlightingGenericTest() {
     doEditorHighlightingTest("src/sub/index.js")
     doEditorHighlightingTest("src/sub/dir/index.js")
   }
+
+  // @html-eslint plugin with the `html/html` language (flat config via defineConfig from eslint/config).
+  fun testHtmlFileFlatConfig() = doHighlightingTestWithInstallation("index.html")
+
+  // @html-eslint flat/recommended preset spread into the config.
+  fun testHtmlFileFlatConfigFromLib() = doHighlightingTestWithInstallation("index.html")
 }

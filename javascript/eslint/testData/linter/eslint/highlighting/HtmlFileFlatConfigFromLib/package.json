@@ -3,7 +3,7 @@
 	"version": "0.0.0",
 	"private": true,
 	"dependencies": {
-		"@html-eslint/eslint-plugin": "^0.40.3",
-		"eslint": "^9.27.0"
+		"@html-eslint/eslint-plugin": "0.63.0",
+		"eslint": "$ESLINT_VERSION$"
 	}
 }

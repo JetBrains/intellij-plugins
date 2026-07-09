@@ -1,0 +1,9 @@
+{
+  "name": "untitled",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@html-eslint/eslint-plugin": "0.63.0",
+    "eslint": "10.6.0"
+  }
+}

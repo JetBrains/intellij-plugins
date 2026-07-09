@@ -240,14 +240,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
   }
 
 
-  public void testHtmlFileFlatConfig() {
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("index.html");
-  }
-
-  public void testHtmlFileFlatConfigFromLib() {
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("index.html");
-  }
-
   private void doTest(@NotNull String mainFileRelativePath) {
     doEditorHighlightingTest(mainFileRelativePath);
     doBatchInspectionTest();
