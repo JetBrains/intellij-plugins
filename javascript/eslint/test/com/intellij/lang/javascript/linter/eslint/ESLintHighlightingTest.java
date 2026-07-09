@@ -63,7 +63,9 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     return Map.of("eslint", "8.57.0",
                   "vue-eslint-parser", "latest",
                   "@typescript-eslint/parser", "latest",
-                  "typescript", "latest");
+                  // Pinned below 6.1.0: typescript@latest is now 7.x, which violates the
+                  // "typescript >=4.8.4 <6.1.0" peer dependency of @typescript-eslint/parser (WEB npm ERESOLVE).
+                  "typescript", "5.9.3");
   }
 
   @Override

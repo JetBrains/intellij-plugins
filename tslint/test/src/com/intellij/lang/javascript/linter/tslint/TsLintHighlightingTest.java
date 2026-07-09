@@ -47,8 +47,10 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   @Override
   protected @NotNull Map<String, String> getGlobalPackageVersionsToInstall() {
+    // Pinned to 5.x: typescript@latest is now 7.x (the native rewrite), whose runtime API no longer
+    // exposes members such as ts.ScriptTarget, so tslint@6.x crashes ("Cannot read properties of undefined").
     return Map.of("tslint", "latest",
-                  "typescript", "latest");
+                  "typescript", "5.9.3");
   }
 
   public void testOne() {
