@@ -1,8 +1,10 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.eslint.stable
 
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
+import com.intellij.util.LineSeparator
 
 /**
  * Version-agnostic ESLint highlighting scenarios, shared by the pinned `stable` class
@@ -19,6 +21,23 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
 
   fun testWarningsAndErrors() {
     doHighlightingTestWithInstallation("warn.js")
+    doBatchInspectionTest()
+  }
+
+  fun testMultilineError() {
+    doHighlightingTestWithInstallation("test.js")
+    doBatchInspectionTest()
+  }
+
+  fun testEolLastNever() {
+    doHighlightingTestWithInstallation("test.js")
+    doBatchInspectionTest()
+  }
+
+  fun testLineSeparatorsWin() {
+    doHighlightingTestWithInstallation("test.js") {
+      JSTestUtils.ensureLineSeparators(myFixture.file, LineSeparator.CRLF)
+    }
     doBatchInspectionTest()
   }
 }

@@ -2,8 +2,8 @@ export default [
   { ignores: ["**/eslint.config.mjs"] },
   {
     rules: {
-      "no-console": "warn",
-      "no-debugger": "error",
+      "eol-last": ["error", "never"],
+      "no-magic-numbers": "error",
     },
   },
 ];

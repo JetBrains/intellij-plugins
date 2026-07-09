@@ -100,10 +100,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     doBatchInspectionTest();
   }
 
-  public void testMultilineError() {
-    doTest("test.js");
-  }
-
   public void testOverrideConfigSeverityFromInspection() {
     JSTestUtils.doWithChangedInspectionHighlightLevel(getProject(), calcShortNameFromClass(EslintInspection.class),
                                                       HighlightDisplayLevel.WEAK_WARNING, () -> {
@@ -116,17 +112,8 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
       });
   }
 
-  public void testEolLastNever() {
-    doTest("test.js");
-  }
-
   public void testReportAboutWrongParser() {
     doTest("test.js");
-  }
-
-  public void testLineSeparatorsWin() {
-    doEditorHighlightingTest("test.js", () -> JSTestUtils.ensureLineSeparators(myFixture.getFile(), LineSeparator.CRLF));
-    doBatchInspectionTest();
   }
 
   public void testESLintGlobalFatalError() {
