@@ -1,20 +1,21 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template
 
+import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSInitializerOwner
+import com.intellij.lang.javascript.psi.JSNamedElement
+import com.intellij.lang.javascript.psi.JSTypeDeclarationOwner
+import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.FunctionLikeDeclaration
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Identifier
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.NamedBinding
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.QualifiedName
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.getBindingElements
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrayBindingPattern
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrowFunction
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isBindingElement
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isBlock
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isComputedPropertyName
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isFunctionExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isFunctionLike
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isIdentifier
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isObjectBindingPattern
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isObjectLiteralExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isPropertyAccessExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isPropertyAssignment
@@ -148,42 +149,40 @@ private fun forEachIdentifiers(
 }
 
 private fun forEachDeclarations(
-  node: Node,
+  node: PsiElement,
   ctx: TemplateCodegenContext,
   scope: TemplateCodegenContext.Scope,
-): Sequence<Pair<Identifier, Boolean>> = sequence {
+): Sequence<Pair<PsiElement, Boolean>> = sequence {
   if (isIdentifier(node)) {
     yield(Pair(node, false))
   }
   else if (isShorthandPropertyAssignment(node)) {
-    yield(Pair(node.name, true))
+    yield(Pair(node.nameIdentifier!!, true))
   }
   else if (isPropertyAccessExpression(node)) {
-    yieldAll(forEachDeclarations(node.expression, ctx, scope))
+    yieldAll(forEachDeclarations(node.qualifier!!, ctx, scope))
   }
   else if (isVariableDeclaration(node)) {
-    scope.declare(collectBindingNames(node.name))
+    scope.declare(collectBindingNames(node))
     yieldAll(forEachDeclarationsInBinding(node, ctx, scope))
   }
-  else if (node is org.jetbrains.vuejs.lang.typescript.kolar.typescript.BindingPattern) {
-    for (element in node.elements) {
-      if (isBindingElement(element)) {
-        yieldAll(forEachDeclarationsInBinding(element, ctx, scope))
-      }
+  else if (isArrayBindingPattern(node) || isObjectBindingPattern(node)) {
+    for (element in node.getBindingElements()) {
+      yieldAll(forEachDeclarationsInBinding(element.source, ctx, scope))
     }
   }
   else if (isArrowFunction(node) || isFunctionExpression(node)) {
     yieldAll(forEachDeclarationsInFunction(node, ctx))
   }
   else if (isObjectLiteralExpression(node)) {
-    for (prop in node.properties) {
+    for (prop in node.propertiesIncludingSpreads) {
       if (isPropertyAssignment(prop)) {
         // fix https://github.com/vuejs/language-tools/issues/1176
-        val propName = prop.name
-        if (isComputedPropertyName(propName)) {
-          yieldAll(forEachDeclarations(propName.expression, ctx, scope))
+        val computedPropName = prop.computedPropertyName
+        if (computedPropName != null) {
+          yieldAll(forEachDeclarations(computedPropName.expression!!, ctx, scope))
         }
-        yieldAll(forEachDeclarations(prop.initializer, ctx, scope))
+        yieldAll(forEachDeclarations(prop.initializer!!, ctx, scope))
       }
       // fix https://github.com/vuejs/language-tools/issues/1156
       else if (isShorthandPropertyAssignment(prop)) {
@@ -192,10 +191,10 @@ private fun forEachDeclarations(
       // fix https://github.com/vuejs/language-tools/issues/1148#issuecomment-1094378126
       else if (isSpreadAssignment(prop)) {
         // TODO: cannot report "Spread types may only be created from object types.ts(2698)"
-        yieldAll(forEachDeclarations(prop.expression, ctx, scope))
+        yieldAll(forEachDeclarations(prop.expression!!, ctx, scope))
       }
       // fix https://github.com/vuejs/language-tools/issues/4604
-      else if (isFunctionLike(prop) && prop.body != null) {
+      else if (isFunctionLike(prop) && prop.block != null) {
         yieldAll(forEachDeclarationsInFunction(prop, ctx))
       }
     }
@@ -219,33 +218,34 @@ private fun forEachDeclarations(
 }
 
 private fun forEachDeclarationsInBinding(
-  node: NamedBinding,
+  node: PsiElement,
   ctx: TemplateCodegenContext,
   scope: TemplateCodegenContext.Scope,
-): Sequence<Pair<Identifier, Boolean>> = sequence {
-  val type = node.type
+): Sequence<Pair<PsiElement, Boolean>> = sequence {
+  val type = (node as? JSTypeDeclarationOwner)?.typeElement
   if (type != null) {
     yieldAll(forEachDeclarationsInTypeNode(type))
   }
-  if (!isIdentifier(node.name)) {
-    yieldAll(forEachDeclarations(node.name, ctx, scope))
+  val nameIdentifier = (node as? JSNamedElement)?.nameIdentifier
+  if (nameIdentifier != null && !isIdentifier(nameIdentifier)) {
+    yieldAll(forEachDeclarations(nameIdentifier, ctx, scope))
   }
-  val initializer = node.initializer
+  val initializer = (node as? JSInitializerOwner)?.initializer
   if (initializer != null) {
     yieldAll(forEachDeclarations(initializer, ctx, scope))
   }
 }
 
 private fun forEachDeclarationsInFunction(
-  node: FunctionLikeDeclaration,
+  node: JSFunction,
   ctx: TemplateCodegenContext,
-): Sequence<Pair<Identifier, Boolean>> = sequence {
+): Sequence<Pair<PsiElement, Boolean>> = sequence {
   val scope = ctx.scope()
   for (param in node.parameters) {
-    scope.declare(collectBindingNames(param.name))
+    scope.declare(collectBindingNames(param.declarationElement!!))
     yieldAll(forEachDeclarationsInBinding(param, ctx, scope))
   }
-  val body = node.body
+  val body = node.block
   if (body != null) {
     yieldAll(forEachDeclarations(body, ctx, scope))
   }
@@ -253,12 +253,12 @@ private fun forEachDeclarationsInFunction(
 }
 
 private fun forEachDeclarationsInTypeNode(
-  node: Node,
-): Sequence<Pair<Identifier, Boolean>> = sequence {
+  node: PsiElement,
+): Sequence<Pair<PsiElement, Boolean>> = sequence {
   if (isTypeQueryNode(node)) {
-    var id: Node = node.exprName
-    while (!isIdentifier(id)) {
-      id = (id as QualifiedName).left
+    var id = node.expression!!
+    while (isPropertyAccessExpression(id)) {
+      id = id.qualifier ?: break
     }
     yield(Pair(id, false))
   }

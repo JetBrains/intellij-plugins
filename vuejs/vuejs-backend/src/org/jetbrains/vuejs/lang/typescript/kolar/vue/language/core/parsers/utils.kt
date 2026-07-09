@@ -1,18 +1,19 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers
 
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration.ImportExportPrefixKind.IMPORT_TYPE
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifier
+import com.intellij.lang.javascript.JSStringUtil.unquoteStringLiteralValue
 import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.NamespaceImport
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isAsExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isClassDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isEnumDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isFunctionDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isImportDeclaration
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isNamedImports
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isNonNullExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isParenthesizedExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isSatisfiesExpression
@@ -22,11 +23,10 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isVariableStatement
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.TextRange
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.forEachNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingRanges
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNodeText
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStartEnd
 
 fun parseBindingRanges(
-  ast: SourceFile,
+  ast: JSEmbeddedContent,
   extensions: List<String>,
 ): Pair<List<TextRange<*>>, List<TextRange<*>>> {
   val bindings = mutableListOf<TextRange<*>>()
@@ -34,46 +34,66 @@ fun parseBindingRanges(
 
   for (node in forEachNode(ast)) {
     if (isVariableStatement(node)) {
-      for (decl in node.declarationList.declarations) {
-        bindings.addAll(collectBindingRanges(decl.name))
+      for (decl in node.variables) {
+        bindings.addAll(collectBindingRanges(decl.nameIdentifier!!))
       }
     }
     else if (isFunctionDeclaration(node)) {
-      node.name?.let { bindings.add(getStartEnd(it)) }
+      node.nameIdentifier?.let { bindings.add(getStartEnd(it)) }
     }
     else if (isClassDeclaration(node)) {
-      node.name?.let { bindings.add(getStartEnd(it)) }
+      node.nameIdentifier?.let { bindings.add(getStartEnd(it)) }
     }
     else if (isEnumDeclaration(node)) {
-      bindings.add(getStartEnd(node.name))
+      node.nameIdentifier?.let { bindings.add(getStartEnd(it)) }
     }
 
     if (isImportDeclaration(node)) {
-      val moduleName = getNodeText(node.moduleSpecifier).let { it.substring(1, it.length - 1) }
-      val importClause = node.importClause
-      if (importClause != null && !importClause.isTypeOnly) {
-        importClause.name?.let { name ->
-          if (extensions.any { moduleName.endsWith(it) }) components.add(getStartEnd(name))
-          else bindings.add(getStartEnd(name))
+      val moduleName = node.fromClause?.referenceText
+                         ?.let { unquoteStringLiteralValue(it) }
+                       ?: continue
+
+      if (node.importExportPrefixKind != IMPORT_TYPE) {
+        // default
+        val defaultImportName = node.importedBindings
+          .firstOrNull { !it.isNamespaceImport() }
+          ?.nameIdentifier
+
+        if (defaultImportName != null) {
+          if (extensions.any { moduleName.endsWith(it) }) {
+            components.add(getStartEnd(defaultImportName))
+          }
+          else {
+            bindings.add(getStartEnd(defaultImportName))
+          }
         }
-        val namedBindings = importClause.namedBindings
-        if (namedBindings != null) {
-          if (isNamedImports(namedBindings)) {
-            for (element in namedBindings.elements) {
-              if (element.isTypeOnly) continue
-              val propName = element.propertyName
-              if (propName != null && getNodeText(propName) == "default"
-                  && extensions.any { moduleName.endsWith(it) }) {
-                components.add(getStartEnd(element.name))
-              }
-              else {
-                bindings.add(getStartEnd(element.name))
-              }
+
+        // specifiers
+        val namedImports = node.namedImports
+        if (namedImports != null) {
+          for (specifier in namedImports.specifiers) {
+            if (specifier.specifierKind == ES6ImportExportSpecifier.ImportExportSpecifierKind.IMPORT_TYPE)
+              continue
+
+            val nameIdentifier = specifier.alias?.nameIdentifier ?: specifier
+            if (specifier.isDefault
+                && extensions.any { moduleName.endsWith(it) }
+            ) {
+              components.add(getStartEnd(nameIdentifier))
+            }
+            else {
+              bindings.add(getStartEnd(nameIdentifier))
             }
           }
-          else if (namedBindings is NamespaceImport) {
-            bindings.add(getStartEnd(namedBindings.name))
-          }
+        }
+
+        // namespace
+        val namespaceImportName = node.importedBindings
+          .firstOrNull { it.isNamespaceImport() }
+          ?.nameIdentifier
+
+        if (namespaceImportName != null) {
+          bindings.add(getStartEnd(namespaceImportName))
         }
       }
     }
@@ -83,8 +103,8 @@ fun parseBindingRanges(
 }
 
 fun getClosestMultiLineCommentRange(
-  node: Node,
-  parents: List<Node>,
+  node: PsiElement,
+  parents: List<PsiElement>,
 ): TextRange<*>? {
   var currentNode = node
   for (i in parents.indices.reversed()) {
@@ -104,15 +124,15 @@ fun getClosestMultiLineCommentRange(
   return null
 }
 
-fun getUnwrappedExpression(node: Node): Node {
+fun getUnwrappedExpression(node: PsiElement): PsiElement {
   var current = node
   while (true) {
     current = when {
-      isParenthesizedExpression(current) -> current.expression
-      isTypeAssertionExpression(current) -> current.expression
-      isAsExpression(current) -> current.expression
-      isNonNullExpression(current) -> current.expression
-      isSatisfiesExpression(current) -> current.expression
+      isParenthesizedExpression(current) -> current.innerExpression ?: break
+      isTypeAssertionExpression(current) -> current.expression ?: break
+      isAsExpression(current) -> current.expression ?: break
+      isNonNullExpression(current) -> current.expression ?: break
+      isSatisfiesExpression(current) -> current.expression ?: break
       else -> break
     }
   }

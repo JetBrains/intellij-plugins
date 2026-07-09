@@ -3,13 +3,13 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 
 import com.intellij.lang.typescript.kolar.KolarCodeInformation.SemanticInfo
 import com.intellij.lang.typescript.kolar.KolarCodeInformation.VerificationInfo
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.startOffset
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.toString
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.endOffset
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrayLiteralExpression
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isComputedPropertyName
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExpressionStatement
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isIdentifier
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isObjectLiteralExpression
@@ -42,7 +42,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.normali
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.capitalize
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node as TsNode
 
 fun generateComponent(
   options: TemplateCodegenOptions,
@@ -428,35 +427,39 @@ private fun generateStyleScopedClassReferences(
     val content = "(" + exp.content + ")"
     val startOffset = exp.loc.start.offset - 1
     val ast = getTypeScriptAST(content)
-    val literals = mutableListOf<TsNode>()
+    val literals = mutableListOf<PsiElement>()
 
-    fun walkObjectLiteral(objectNode: TsNode): Sequence<Code> = sequence {
+    fun walkObjectLiteral(objectNode: PsiElement): Sequence<Code> = sequence {
       if (!isObjectLiteralExpression(objectNode)) return@sequence
       for (property in objectNode.properties) {
         when {
           isPropertyAssignment(property) -> {
-            val name = property.name
+            val nameIdentifier = property.nameIdentifier
+            val computedPropName = property.computedPropertyName
             when {
-              isIdentifier(name) ->
-                yieldAll(generateStyleScopedClassReference(template, name.text, name.endOffset - name.text.length + startOffset))
-              isStringLiteral(name) -> literals.add(name)
-              isComputedPropertyName(name) -> {
-                val expr = name.expression
+              isIdentifier(nameIdentifier) ->
+                yieldAll(generateStyleScopedClassReference(template, property.name!!, nameIdentifier.startOffset + startOffset))
+              isStringLiteral(nameIdentifier) -> literals.add(nameIdentifier)
+              computedPropName != null -> {
+                val expr = computedPropName.expression
                 if (isStringLiteralLike(expr)) literals.add(expr)
               }
             }
           }
-          isShorthandPropertyAssignment(property) ->
+          isShorthandPropertyAssignment(property) -> {
+            val nameIdentifier = property.nameIdentifier!!
+
             yieldAll(generateStyleScopedClassReference(
               template,
-              property.name.text,
-              property.name.endOffset - property.name.text.length + startOffset,
+              property.name!!,
+              nameIdentifier.startOffset + startOffset,
             ))
+          }
         }
       }
     }
 
-    fun walkArrayLiteral(arrayNode: TsNode): Sequence<Code> = sequence {
+    fun walkArrayLiteral(arrayNode: PsiElement): Sequence<Code> = sequence {
       for (element in forEachNode(arrayNode)) {
         when {
           isStringLiteralLike(element) -> literals.add(element)
@@ -479,8 +482,8 @@ private fun generateStyleScopedClassReferences(
 
     for (literal in literals) {
       if (!isStringLiteralLike(literal)) continue
-      val start = literal.endOffset - literal.text.length - 1 + startOffset
-      for ((className, offset) in forEachClassName(literal.text)) {
+      val start = literal.startOffset + 1 + startOffset
+      for ((className, offset) in forEachClassName(literal.stringValue!!)) {
         yieldAll(generateStyleScopedClassReference(template, className, start + offset))
       }
     }

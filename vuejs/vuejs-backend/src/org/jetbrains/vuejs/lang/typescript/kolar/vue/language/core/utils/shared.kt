@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.TextNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRTemplate
@@ -51,12 +50,9 @@ fun getElementTagOffsets(
   return tagOffsets
 }
 
-fun <T : Node> getStartEnd(
+fun <T : PsiElement> getStartEnd(
   node: T,
 ): TextRange<T> {
-  // migration check
-  node as PsiElement
-
   return TextRange(
     node = node,
     start = node.startOffset,
@@ -65,10 +61,7 @@ fun <T : Node> getStartEnd(
 }
 
 fun getNodeText(
-  node: Node,
+  node: PsiElement,
 ): String {
-  // migration check
-  node as PsiElement
-
   return node.text
 }

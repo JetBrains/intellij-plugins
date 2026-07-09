@@ -1,11 +1,11 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template
 
+import com.intellij.psi.util.endOffset
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.replaceSourceRange
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.endOffset
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrowFunction
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExpressionStatement
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.DirectiveNode
@@ -129,15 +129,16 @@ private fun generateSlotParameters(
   )
 
   for (param in expression.parameters) {
-    val paramType = param.type
+    val paramType = param.typeElement
     if (paramType != null) {
+      val paramNameEnd = param.declarationElement!!.endOffset
       types.add(DataSegment(
-        text = ast.text.substring(param.name.endOffset, paramType.endOffset),
+        text = ast.text.substring(paramNameEnd, paramType.endOffset),
         source = Source("template"),
-        sourceOffset = startOffset + param.name.endOffset,
+        sourceOffset = startOffset + paramNameEnd,
         data = codeFeatures.all,
       ))
-      replaceSourceRange(interpolation, Source("template"), startOffset + param.name.endOffset, startOffset + paramType.endOffset)
+      replaceSourceRange(interpolation, Source("template"), startOffset + paramNameEnd, startOffset + paramType.endOffset)
     }
     else {
       types.add(null)

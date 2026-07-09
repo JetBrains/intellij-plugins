@@ -1,13 +1,14 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers
 
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList.ModifierType
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
 import org.jetbrains.vuejs.config.VueCompilerOptions
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.HasModifiers
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SyntaxKind
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isCallExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isCallSignatureDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isEmptyStatement
@@ -32,7 +33,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingIdentifiers
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNodeText
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStartEnd
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.CallExpression as TsCallExpression
 
 private val tsCheckRE = Regex("""^//\s*@ts-(?:no)?check($|\s)""")
 
@@ -132,7 +132,7 @@ data class ScriptSetupRanges(
 )
 
 fun parseScriptSetupRanges(
-  ast: SourceFile,
+  ast: JSEmbeddedContent,
   vueCompilerOptions: VueCompilerOptions,
 ): ScriptSetupRanges {
   val defineModelList = mutableListOf<DefineModel>()
@@ -148,48 +148,52 @@ fun parseScriptSetupRanges(
   val useTemplateRef = mutableListOf<UseTemplateRef>()
 
   fun parseCallExpr(
-    node: TsCallExpression,
+    node: JSCallExpression,
   ): CallExpression =
     CallExpression(
       callExp = getStartEnd(node),
-      exp = getStartEnd(node.expression),
+      exp = getStartEnd(node.methodExpression!!),
       arg = node.arguments.getOrNull(0)?.let { getStartEnd(it) },
-      typeArg = node.typeArguments?.getOrNull(0)?.let { getStartEnd(it) },
+      typeArg = node.typeArguments.getOrNull(0)?.let { getStartEnd(it) },
     )
 
   fun parseCallExprAssignment(
-    node: TsCallExpression,
-    parent: Node,
+    node: JSCallExpression,
+    parent: PsiElement,
   ): Pair<String?, CallExpression> {
-    val name = if (isVariableDeclaration(parent) && isIdentifier(parent.name))
-      getNodeText(parent.name)
+    val name = if (isVariableDeclaration(parent) && isIdentifier(parent.nameIdentifier))
+      parent.name
     else null
     return Pair(name, parseCallExpr(node))
   }
 
   fun visitNode(
-    node: Node,
-    parents: MutableList<Node>,
+    node: PsiElement,
+    parents: MutableList<PsiElement>,
   ) {
     val parent = parents.last()
-    if (isCallExpression(node) && isIdentifier(node.expression)) {
-      val callText = getNodeText(node.expression)
+    val expression = if (isCallExpression(node))
+      node.methodExpression
+    else null
+
+    if (isCallExpression(node) && isIdentifier(expression)) {
+      val callText = getNodeText(expression)
       when {
         callText in vueCompilerOptions.macros.defineModel -> {
           var localName: TextRange<*>? = null
-          var propName: Node? = null
-          var options: Node? = null
+          var propName: PsiElement? = null
+          var options: PsiElement? = null
           var type: TextRange<*>? = null
           var modifierType: TextRange<*>? = null
           var runtimeType: TextRange<*>? = null
           var defaultValue: TextRange<*>? = null
           var required = false
 
-          if (isVariableDeclaration(parent) && isIdentifier(parent.name)) {
-            localName = getStartEnd(parent.name)
+          if (isVariableDeclaration(parent) && isIdentifier(parent.nameIdentifier)) {
+            localName = getStartEnd(parent.nameIdentifier!!)
           }
-          type = node.typeArguments?.getOrNull(0)?.let { getStartEnd(it) }
-          modifierType = node.typeArguments?.getOrNull(1)?.let { getStartEnd(it) }
+          type = node.typeArguments.getOrNull(0)?.let { getStartEnd(it) }
+          modifierType = node.typeArguments.getOrNull(1)?.let { getStartEnd(it) }
 
           when {
             node.arguments.size >= 2 -> {
@@ -204,11 +208,12 @@ fun parseScriptSetupRanges(
 
           if (options != null && isObjectLiteralExpression(options)) {
             for (prop in options.properties) {
-              if (isPropertyAssignment(prop) && isIdentifier(prop.name)) {
-                when (getNodeText(prop.name)) {
-                  "type" -> runtimeType = getStartEnd(prop.initializer)
-                  "default" -> defaultValue = getStartEnd(prop.initializer)
-                  "required" -> if (prop.initializer.kind == SyntaxKind.TrueKeyword) required = true
+              if (isPropertyAssignment(prop) && isIdentifier(prop.nameIdentifier)) {
+                val initializer = prop.initializer ?: continue
+                when (prop.name) {
+                  "type" -> runtimeType = getStartEnd(initializer)
+                  "default" -> defaultValue = getStartEnd(initializer)
+                  "required" -> if (initializer is JSLiteralExpression && initializer.value == true) required = true
                 }
               }
             }
@@ -238,19 +243,19 @@ fun parseScriptSetupRanges(
           var destructuredRest: String? = null
           var resolvedName = name
 
-          if (isVariableDeclaration(parent) && isObjectBindingPattern(parent.name)) {
+          if (isVariableDeclaration(parent) && isObjectBindingPattern(parent.nameIdentifier)) {
             destructured = mutableMapOf()
-            for (id in collectBindingIdentifiers(parent.name)) {
+            for (id in collectBindingIdentifiers(parent.nameIdentifier!!)) {
               val idName = getNodeText(id.id)
               if (id.isRest) destructuredRest = idName
               else destructured[idName] = id.initializer
             }
           }
-          else if (isCallExpression(parent) && isIdentifier(parent.expression)
-                   && getNodeText(parent.expression) in vueCompilerOptions.macros.withDefaults) {
+          else if (isCallExpression(parent) && isIdentifier(parent.methodExpression)
+                   && getNodeText(parent.methodExpression!!) in vueCompilerOptions.macros.withDefaults) {
             val grand = parents.getOrNull(parents.lastIndex - 1)
-            if (grand != null && isVariableDeclaration(grand) && isIdentifier(grand.name)) {
-              resolvedName = getNodeText(grand.name)
+            if (grand != null && isVariableDeclaration(grand) && isIdentifier(grand.nameIdentifier)) {
+              resolvedName = grand.name
             }
           }
 
@@ -266,7 +271,7 @@ fun parseScriptSetupRanges(
         callText in vueCompilerOptions.macros.withDefaults -> {
           withDefaults = CallExpression(
             callExp = getStartEnd(node),
-            exp = getStartEnd(node.expression),
+            exp = getStartEnd(node.methodExpression!!),
             arg = node.arguments.getOrNull(1)?.let { getStartEnd(it) },
             typeArg = null,
           )
@@ -275,11 +280,11 @@ fun parseScriptSetupRanges(
         callText in vueCompilerOptions.macros.defineEmits -> {
           val (name, ce) = parseCallExprAssignment(node, parent)
           var hasUnionTypeArg: Boolean? = null
-          val firstTypeArg = node.typeArguments?.getOrNull(0)
+          val firstTypeArg = node.typeArguments.getOrNull(0)
           if (firstTypeArg != null && isTypeLiteralNode(firstTypeArg)) {
-            for (member in firstTypeArg.members) {
+            for (member in firstTypeArg.typeMembers) {
               if (isCallSignatureDeclaration(member)) {
-                val paramType = member.parameters.getOrNull(0)?.type
+                val paramType = member.parameters.getOrNull(0)?.typeElement
                 if (paramType != null && isUnionTypeNode(paramType)) {
                   hasUnionTypeArg = true
                   break
@@ -314,11 +319,11 @@ fun parseScriptSetupRanges(
             var optionsName: String? = null
             var inheritAttrs: String? = null
             for (prop in arg0.properties) {
-              if (isPropertyAssignment(prop) && isIdentifier(prop.name)) {
-                val propInit = prop.initializer
-                when (getNodeText(prop.name)) {
-                  "inheritAttrs" -> inheritAttrs = getNodeText(propInit)
-                  "name" -> if (isStringLiteral(propInit)) optionsName = propInit.text
+              if (isPropertyAssignment(prop) && isIdentifier(prop.nameIdentifier)) {
+                val initializer = prop.initializer ?: continue
+                when (prop.name) {
+                  "inheritAttrs" -> inheritAttrs = getNodeText(initializer)
+                  "name" -> if (isStringLiteral(initializer)) optionsName = initializer.stringValue
                 }
               }
             }
@@ -329,7 +334,7 @@ fun parseScriptSetupRanges(
         callText in vueCompilerOptions.composables.useAttrs -> useAttrs.add(parseCallExpr(node))
         callText in vueCompilerOptions.composables.useCssModule -> useCssModule.add(parseCallExpr(node))
         callText in vueCompilerOptions.composables.useSlots -> useSlots.add(parseCallExpr(node))
-        callText in vueCompilerOptions.composables.useTemplateRef && node.typeArguments.isNullOrEmpty() -> {
+        callText in vueCompilerOptions.composables.useTemplateRef && node.typeArguments.isEmpty() -> {
           val (name, ce) = parseCallExprAssignment(node, parent)
           useTemplateRef.add(UseTemplateRef(
             callExp = ce.callExp, exp = ce.exp, arg = ce.arg, typeArg = ce.typeArg,
@@ -363,9 +368,8 @@ fun parseScriptSetupRanges(
         || isImportEqualsDeclaration(node)) {
       continue
     }
-    if (node is HasModifiers
-        && (isTypeAliasDeclaration(node) || isInterfaceDeclaration(node))
-        && node.modifiers?.any { it.kind == SyntaxKind.ExportKeyword } == true) {
+    if ((isTypeAliasDeclaration(node) || isInterfaceDeclaration(node))
+        && node.hasModifier(ModifierType.EXPORT)) {
       continue
     }
     val commentRanges = getCommentsBefore(node)
@@ -404,8 +408,8 @@ fun parseScriptSetupRanges(
 }
 
 private fun getStatementRange(
-  parents: List<Node>,
-  node: Node,
+  parents: List<PsiElement>,
+  node: PsiElement,
 ): TextRange<*> {
   var statementRange: TextRange<*>? = null
   for (i in parents.indices.reversed()) {

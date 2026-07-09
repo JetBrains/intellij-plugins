@@ -1,12 +1,12 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers
 
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.endOffset
 import org.jetbrains.vuejs.config.VueCompilerOptions
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.ObjectLiteralExpression
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.StringLiteral
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.endOffset
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isCallExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExportAssignment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isIdentifier
@@ -22,12 +22,12 @@ data class ScriptExportDefaultOptions(
   val isObjectLiteral: Boolean,
   val expression: TextRange<*>,
   val args: TextRange<*>,
-  val argsNode: ObjectLiteralExpression,
+  val argsNode: JSObjectLiteralExpression,
   val components: TextRange<*>?,
-  val componentsNode: ObjectLiteralExpression?,
+  val componentsNode: JSObjectLiteralExpression?,
   val directives: TextRange<*>?,
   val name: TextRange<*>?,
-  val nameNode: StringLiteral?,
+  val nameNode: JSLiteralExpression?,
   val inheritAttrs: String?,
 )
 
@@ -46,14 +46,14 @@ data class ScriptRanges(
 )
 
 fun parseScriptRanges(
-  ast: SourceFile,
+  ast: JSEmbeddedContent,
   vueCompilerOptions: VueCompilerOptions,
 ): ScriptRanges {
   var exportDefault: ScriptExportDefault? = null
 
   for (child in forEachNode(ast)) {
     if (isExportAssignment(child)) {
-      val expression = child.expression
+      val expression = child.expression!!
       var start = getStartEnd(child).start
       val comment = getClosestMultiLineCommentRange(child, emptyList())
       if (comment != null) start = comment.start
@@ -77,11 +77,11 @@ fun parseScriptRanges(
 }
 
 fun parseOptionsFromExtression(
-  expNode: Node,
+  expNode: PsiElement,
 ): ScriptExportDefaultOptions? {
   val exp = getUnwrappedExpression(expNode)
 
-  val obj: ObjectLiteralExpression
+  val obj: JSObjectLiteralExpression
   if (isObjectLiteralExpression(exp)) {
     obj = exp
   }
@@ -94,15 +94,15 @@ fun parseOptionsFromExtression(
     return null
   }
 
-  var componentsOptionNode: ObjectLiteralExpression? = null
-  var directivesOptionNode: ObjectLiteralExpression? = null
-  var nameOptionNode: StringLiteral? = null
+  var componentsOptionNode: JSObjectLiteralExpression? = null
+  var directivesOptionNode: JSObjectLiteralExpression? = null
+  var nameOptionNode: JSLiteralExpression? = null
   var inheritAttrsOption: String? = null
 
   for (node in forEachNode(obj)) {
-    if (isPropertyAssignment(node) && isIdentifier(node.name)) {
-      val name = getNodeText(node.name)
-      val init = node.initializer
+    if (isPropertyAssignment(node) && isIdentifier(node.nameIdentifier)) {
+      val name = node.name!!
+      val init = node.initializer!!
       when {
         name == "components" && isObjectLiteralExpression(init) -> componentsOptionNode = init
         name == "directives" && isObjectLiteralExpression(init) -> directivesOptionNode = init

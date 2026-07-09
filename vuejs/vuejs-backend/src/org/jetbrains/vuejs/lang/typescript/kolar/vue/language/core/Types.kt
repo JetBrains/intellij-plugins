@@ -1,8 +1,8 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core
 
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.RootNode
 
 // TextRange<Node extends ts.Node = ts.Node> { node: Node; start: number; end: number }
@@ -30,7 +30,7 @@ sealed interface IRBlock {
 
 // IRScript | IRScriptSetup — blocks that carry a TypeScript AST
 sealed interface IRScriptBlock : IRBlock {
-  val ast: SourceFile
+  val ast: JSEmbeddedContent
 }
 
 // Top-level Vue SFC IR
@@ -53,7 +53,7 @@ data class IRScript(
   override val lang: String,
   override val content: IRContent,
   val src: IRAttr?,
-  override val ast: SourceFile,
+  override val ast: JSEmbeddedContent,
 ) : IRScriptBlock
 
 data class IRScriptSetup(
@@ -61,7 +61,7 @@ data class IRScriptSetup(
   override val lang: String,
   override val content: IRContent,
   val generic: IRAttr?,
-  override val ast: SourceFile,
+  override val ast: JSEmbeddedContent,
 ) : IRScriptBlock
 
 data class IRStyle(

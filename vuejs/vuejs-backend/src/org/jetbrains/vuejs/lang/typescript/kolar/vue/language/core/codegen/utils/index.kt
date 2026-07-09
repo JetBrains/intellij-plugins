@@ -2,10 +2,10 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafElement
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScriptBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
@@ -35,9 +35,9 @@ fun generateSfcBlockSection(
 }
 
 fun forEachNode(
-  node: Node,
-): Sequence<Node> =
-  node.getChildren()
+  node: PsiElement,
+): Sequence<PsiElement> =
+  node.children
     .asSequence()
     .filter { it !is LeafElement }
     .filter { it !is PsiWhiteSpace }

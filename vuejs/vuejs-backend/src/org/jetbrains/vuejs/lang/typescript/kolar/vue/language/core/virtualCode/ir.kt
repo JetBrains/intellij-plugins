@@ -10,7 +10,6 @@ import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.findTopLevelVueTag
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.SourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IR
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRContent
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScript
@@ -45,30 +44,32 @@ private fun getTemplate(
 private fun getScript(
   file: VueFile,
 ): IRScript? {
-  val scriptTag = findScriptTag(file, setup = false)
-                  ?: return null
+  val embeddedContent = findScriptTag(file, setup = false)
+                          ?.embeddedContent
+                        ?: return null
 
   return IRScript(
     name = Source("script"),
     lang = lang(file),
-    content = IRContentImpl(scriptTag.embeddedContent),
+    content = IRContentImpl(embeddedContent),
     src = null, // TBD
-    ast = SourceFileImpl(scriptTag),
+    ast = embeddedContent,
   )
 }
 
 private fun getScriptSetup(
   file: VueFile,
 ): IRScriptSetup? {
-  val scriptTag = findScriptTag(file, setup = false)
-                  ?: return null
+  val embeddedContent = findScriptTag(file, setup = false)
+                          ?.embeddedContent
+                        ?: return null
 
   return IRScriptSetup(
     name = Source("scriptSetup"),
     lang = lang(file),
-    content = IRContentImpl(scriptTag.embeddedContent),
+    content = IRContentImpl(embeddedContent),
     generic = null, // TBD
-    ast = SourceFileImpl(scriptTag),
+    ast = embeddedContent,
   )
 }
 
@@ -79,7 +80,7 @@ private val XmlTag.embeddedContent: JSEmbeddedContent?
   get() = PsiTreeUtil.getStubChildOfType(this, JSEmbeddedContent::class.java)
 
 private class IRContentImpl(
-  element: PsiElement?,
+  element: PsiElement,
 ) : IRContent {
   override val length: Int
     get() = TODO("not implemented")
@@ -96,8 +97,3 @@ private class IRContentImpl(
     TODO("not implemented")
   }
 }
-
-private fun SourceFileImpl(
-  scriptTag: XmlTag,
-): SourceFile =
-  TODO("not implemented")

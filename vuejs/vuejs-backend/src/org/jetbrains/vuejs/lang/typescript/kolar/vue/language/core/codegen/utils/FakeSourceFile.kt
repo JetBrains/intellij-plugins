@@ -5,20 +5,14 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafElement
 import com.intellij.psi.util.lastLeaf
-import org.jetbrains.vuejs.lang.typescript.kolar.typescript.Node
 
 // manual
-interface FakeSourceFile : Node {
-  val text: String
-}
+interface FakeSourceFile : PsiElement
 
-val FakeSourceFile.statements: List<Node>
+val FakeSourceFile.statements: List<PsiElement>
   get() = forEachNode(this).toList()
 
-fun Node.endsWithComma(): Boolean {
-  // migration check
-  this as PsiElement
-
+fun PsiElement.endsWithComma(): Boolean {
   val leaf = lastLeaf()
   return leaf is LeafElement
          && leaf.tokenType == JSTokenTypes.COMMA

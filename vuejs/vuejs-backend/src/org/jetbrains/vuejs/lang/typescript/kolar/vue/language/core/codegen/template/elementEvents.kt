@@ -229,7 +229,7 @@ fun isCompoundExpression(ast: FakeSourceFile): Boolean {
   val statement = ast.statements.singleOrNull()
   if (statement != null && statement.endsWithComma()) {
     if (isExpressionStatement(statement)) {
-      val node = getUnwrappedExpression(statement.expression)
+      val node = getUnwrappedExpression(statement.expression!!)
       if (
         isArrowFunction(node)
         || isIdentifier(node)
