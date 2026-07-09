@@ -17,5 +17,8 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
   override fun getBasePath(): String =
     ESLINT_TEST_DATA_RELATIVE_PATH + "/linter/eslint/highlighting/"
 
-  fun testWarningsAndErrors() = doHighlightingTestWithInstallation("warn.js")
+  fun testWarningsAndErrors() {
+    doHighlightingTestWithInstallation("warn.js")
+    doBatchInspectionTest()
+  }
 }
