@@ -165,6 +165,13 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
     InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, File(testDataPath, getTestName(false)).path)
   }
 
+  /** Mutates the ESLint extended state (e.g. extra CLI options) for the current test. */
+  protected fun updateConfiguration(configure: (EslintState.Builder) -> EslintState.Builder) {
+    val configuration = EslintConfiguration.getInstance(project)
+    val builder = configure(EslintState.Builder(configuration.extendedState.state))
+    configuration.setExtendedState(true, builder.build())
+  }
+
   private fun replaceEslintVersionPlaceholders(rootDir: VirtualFile) {
     val annotation = this::class.java.getAnnotation(TestNpmPackage::class.java)
                      ?: error("Test class must be annotated with @TestNpmPackage")

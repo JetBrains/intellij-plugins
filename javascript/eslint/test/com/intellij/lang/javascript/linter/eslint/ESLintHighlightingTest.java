@@ -125,12 +125,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     doEditorHighlightingTest("packages/inner/js.js");
   }
 
-  public void testWithRulesInOptions() {
-    doEditorHighlightingTest("test.js", () -> updateConfiguration(builder -> builder.setExtraOptions("--rule 'no-console: 1'")));
-    FileDocumentManager.getInstance().saveAllDocuments();
-    doEditorHighlightingTest("test.js", () -> updateConfiguration(builder -> builder.setExtraOptions("--rule \"no-console: 'warn'\"")));
-  }
-
   public void testCanDisableIgnoreFilesWithCommandLineOption() {
     doEditorHighlightingTest("test.js", () -> updateConfiguration(builder -> builder.setExtraOptions("--no-ignore")));
   }

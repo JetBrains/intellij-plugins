@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
 import com.intellij.lang.javascript.linter.eslint.EslintUtil
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.testFramework.DumbModeTestUtils
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
@@ -99,6 +100,19 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
         .getInspectionTool(shortName, project)!!.tool as EslintInspection
       inspection.useSeverityFromConfigFile = false
       doHighlightingTestWithInstallation("test.js")
+    }
+  }
+
+  fun testWithRulesInOptions() {
+    installEslintForTest()
+    // doEditorHighlightingTest re-copies the test dir each call, restoring the inline markers that the
+    // previous highlight stripped from the document -- required because this test highlights twice.
+    doEditorHighlightingTest<Throwable>("test.js") {
+      updateConfiguration { it.setExtraOptions("--rule 'no-console: 1'") }
+    }
+    FileDocumentManager.getInstance().saveAllDocuments()
+    doEditorHighlightingTest<Throwable>("test.js") {
+      updateConfiguration { it.setExtraOptions("--rule \"no-console: 'warn'\"") }
     }
   }
 }
