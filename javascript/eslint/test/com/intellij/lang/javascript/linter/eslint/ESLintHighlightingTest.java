@@ -97,10 +97,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     doTest("testIgnored.js");
   }
 
-  public void testTypescript() {
-    doEditorHighlightingTest("ts.ts");
-  }
-
   public void testFileIgnoredByCommandLineOption() {
     doEditorHighlightingTest("testIgnored.js", () -> updateConfiguration(builder -> builder.setExtraOptions("--ignore-pattern '*.js'")));
   }

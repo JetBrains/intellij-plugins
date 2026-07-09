@@ -13,4 +13,6 @@ class EslintHighlightingV10Test : EslintHighlightingGenericTest() {
   fun testFlatConfigOneDir() = doHighlightingTestWithInstallation("index.js")
 
   fun testFlatConfigSubdirs() = doHighlightingTestWithInstallation("src/sub/dir/index.js")
+
+  fun testTypescript() = doHighlightingTestWithInstallation("ts.ts")
 }
