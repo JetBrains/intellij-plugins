@@ -1,6 +1,0 @@
-// IDE should ignore this file presence and use esling.config.js instead
-{
-  "rules": {
-    "no-console": "error"
-  }
-}

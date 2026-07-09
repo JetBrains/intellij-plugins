@@ -29,4 +29,23 @@ class EslintHighlightingV10Test : EslintHighlightingGenericTest() {
   }
 
   fun testFlatConfigNoHtmlPlugin() = doHighlightingTestWithInstallation("index.html")
+
+  // eslint.config.mts loaded via jiti; eslint 10 loads TS configs natively (no unstable flag needed).
+  fun testFlatTypescriptConfigOneDir() = doHighlightingTestWithInstallation("index.js")
+
+  // Per-subdirectory TS flat configs (.cts/.ts/.mts), each loaded via jiti; eslint resolves the nearest config per file.
+  fun testFlatTypescriptConfigSubDirs() {
+    installEslintForTest()
+    doEditorHighlightingTest("src/index.js")
+    doEditorHighlightingTest("src/sub/index.js")
+    doEditorHighlightingTest("src/sub/dir/index.js")
+  }
+
+  // Mixed TS (.cts/.mts) and JS (.mjs) flat configs across subdirectories.
+  fun testFlatMixedConfigSubDirs() {
+    installEslintForTest()
+    doEditorHighlightingTest("src/index.js")
+    doEditorHighlightingTest("src/sub/index.js")
+    doEditorHighlightingTest("src/sub/dir/index.js")
+  }
 }

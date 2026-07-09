@@ -213,25 +213,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     });
   }
 
-  public void testFlatTypescriptConfigOneDir() {
-    updateConfiguration(builder -> builder.setExtraOptions("--flag unstable_ts_config"));
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("index.js");
-  }
-
-  public void testFlatTypescriptConfigSubDirs() {
-    updateConfiguration(builder -> builder.setExtraOptions("--flag unstable_ts_config"));
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("src/index.js");
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("src/sub/index.js");
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("src/sub/dir/index.js");
-  }
-
-  public void testFlatMixedConfigSubDirs() {
-    updateConfiguration(builder -> builder.setExtraOptions("--flag unstable_ts_config"));
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("src/index.js");
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("src/sub/index.js");
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("src/sub/dir/index.js");
-  }
-
   public void testCustomFlatConfig() {
     updateConfiguration(builder -> {
       String dir = getTestName(false);
