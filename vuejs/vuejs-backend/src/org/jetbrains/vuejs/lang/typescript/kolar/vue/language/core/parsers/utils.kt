@@ -27,7 +27,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStar
 
 fun parseBindingRanges(
   ast: JSEmbeddedContent,
-  extensions: List<String>,
+  componentExtensions: List<String>,
 ): Pair<List<TextRange<*>>, List<TextRange<*>>> {
   val bindings = mutableListOf<TextRange<*>>()
   val components = mutableListOf<TextRange<*>>()
@@ -60,7 +60,7 @@ fun parseBindingRanges(
           ?.nameIdentifier
 
         if (defaultImportName != null) {
-          if (extensions.any { moduleName.endsWith(it) }) {
+          if (componentExtensions.any { moduleName.endsWith(it) }) {
             components.add(getStartEnd(defaultImportName))
           }
           else {
@@ -77,7 +77,7 @@ fun parseBindingRanges(
 
             val nameIdentifier = specifier.alias?.nameIdentifier ?: specifier
             if (specifier.isDefault
-                && extensions.any { moduleName.endsWith(it) }
+                && componentExtensions.any { moduleName.endsWith(it) }
             ) {
               components.add(getStartEnd(nameIdentifier))
             }
