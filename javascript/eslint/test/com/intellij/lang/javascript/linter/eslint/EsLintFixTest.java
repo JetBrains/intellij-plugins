@@ -44,7 +44,9 @@ public class EsLintFixTest extends EslintServiceTestBase {
                   "eslint-plugin-vue", "latest",
                   "vue-eslint-parser", "latest",
                   "eslint-plugin-react", "latest",
-                  "typescript", "latest",
+                  // Pinned below 6.1.0: typescript@latest is now 7.x, which violates the
+                  // "typescript >=4.8.4 <6.1.0" peer dependency of @typescript-eslint/parser (npm ERESOLVE).
+                  "typescript", "5.9.3",
                   "@typescript-eslint/parser", "latest");
   }
 
