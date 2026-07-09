@@ -291,14 +291,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("index.js");
   }
 
-  public void testFlatConfigOneDir() {
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("index.js");
-  }
-
-  public void testFlatConfigSubdirs() {
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("src/sub/dir/index.js");
-  }
-
   public void testFlatConfigNoHtmlPlugin() {
     doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("index.html");
   }

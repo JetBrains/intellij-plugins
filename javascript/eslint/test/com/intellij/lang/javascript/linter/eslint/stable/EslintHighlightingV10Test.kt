@@ -9,4 +9,8 @@ import com.intellij.lang.javascript.modules.TestNpmPackage
  * generic scenario plus the flat-config-specific ones. A failure here is a product regression.
  */
 @TestNpmPackage(ESLINT_10_6_0_TEST_PACKAGE_SPEC)
-class EslintHighlightingV10Test : EslintHighlightingGenericTest()
+class EslintHighlightingV10Test : EslintHighlightingGenericTest() {
+  fun testFlatConfigOneDir() = doHighlightingTestWithInstallation("index.js")
+
+  fun testFlatConfigSubdirs() = doHighlightingTestWithInstallation("src/sub/dir/index.js")
+}
