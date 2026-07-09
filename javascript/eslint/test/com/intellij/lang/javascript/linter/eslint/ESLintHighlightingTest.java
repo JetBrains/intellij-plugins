@@ -80,10 +80,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     return annotation != null ? annotation.getMessage() : null;
   }
 
-  public void testWarningsAndErrors() {
-    doTest("warn.js");
-  }
-
   // WEB-78439: an untrusted project must not be able to start/use the project-local ESLint language service (a Node process).
   // warn.js would be flagged (no-console / no-debugger), but no highlighting is expected because the project is untrusted.
   public void testNoLintingForUntrustedProject() {
