@@ -106,8 +106,9 @@ class DenoLspClientDescriptor(project: Project) : TypeScriptLspClientDescriptor(
     initObject = calculateInitializationOptions()
   }
 
-  override fun isSupportedFile(file: VirtualFile) = isDenoFileTypeAcceptable(file)
+  override fun getDiagnosticsConfiguration(lspClient: LspClient): DiagnosticsConfiguration = PublishDiagnostics(1)
 
+  override fun isSupportedFile(file: VirtualFile) = isDenoFileTypeAcceptable(file)
 
   override fun createCommandLine(): GeneralCommandLine {
     return DenoSettings.getService(project).getDenoPath().ifEmpty { null }?.let {

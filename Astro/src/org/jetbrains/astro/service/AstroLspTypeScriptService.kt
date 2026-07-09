@@ -20,7 +20,6 @@ class AstroLspTypeScriptService(project: Project) : JSFrameworkLspTypeScriptServ
   AstroLspClientDescriptor(project),
   AstroLspServerActivationRule,
 ) {
-  override val diagnosticsConfiguration: DiagnosticsConfiguration get() = PublishDiagnostics(2)
   override val name: String = "Astro LSP"
   override val prefix: String = "Astro"
 

@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.typescript.service.lsp
 import com.intellij.lang.typescript.lsp.JSFrameworkLspClientDescriptor
 import com.intellij.lang.typescript.lsp.TypeScriptLspClientCommandExecutor
 import com.intellij.openapi.project.Project
+import com.intellij.platform.lsp.api.LspClient
 import com.intellij.platform.lsp.impl.LspClientImpl
 import kotlinx.coroutines.CoroutineScope
 
@@ -12,6 +13,8 @@ internal class VueLspClientTakeoverModeDescriptor(project: Project) : JSFramewor
   activationRule = VueLspServerTakeoverModeActivationRule,
   presentableName = "Vue",
 ) {
+
+  override fun getDiagnosticsConfiguration(lspClient: LspClient): DiagnosticsConfiguration = PublishDiagnostics(2)
 
   override fun createCommandExecutor(client: LspClientImpl, commandCoroutineScope: CoroutineScope): TypeScriptLspClientCommandExecutor =
     VueLspTakeoverModeLspClientCommandExecutor(client, commandCoroutineScope)

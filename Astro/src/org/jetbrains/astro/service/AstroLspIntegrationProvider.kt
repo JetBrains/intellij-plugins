@@ -37,6 +37,8 @@ class AstroLspIntegrationProvider : JSFrameworkLspIntegrationProvider(AstroLspSe
 }
 
 class AstroLspClientDescriptor(project: Project) : JSFrameworkLspClientDescriptor(project, AstroLspServerActivationRule, "Astro") {
+  override fun getDiagnosticsConfiguration(lspClient: LspClient): DiagnosticsConfiguration = PublishDiagnostics(2)
+
   override val lspCustomization: LspCustomization = object : LspCustomization() {
     override val semanticTokensCustomizer = LspSemanticTokensDisabled
     override val goToDefinitionCustomizer = LspGoToDefinitionDisabled
