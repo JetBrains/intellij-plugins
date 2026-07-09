@@ -81,25 +81,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
   }
 
   // WEB-78439: an untrusted project must not be able to start/use the project-local ESLint language service (a Node process).
-  // warn.js would be flagged (no-console / no-debugger), but no highlighting is expected because the project is untrusted.
-  public void testNoLintingForUntrustedProject() {
-    TrustedProjects.setProjectTrusted(getProject(), false);
-    try {
-      doEditorHighlightingTest("warn.js");
-    }
-    finally {
-      TrustedProjects.setProjectTrusted(getProject(), true);
-    }
-  }
-
-  public void testDumbMode() {
-    CodeInsightTestFixtureImpl.mustWaitForSmartMode(false, getTestRootDisposable());
-    DumbModeTestUtils.runInDumbModeSynchronously(getProject(), () -> {
-      doEditorHighlightingTest("warn.js");
-    });
-    doBatchInspectionTest();
-  }
-
   public void testOverrideConfigSeverityFromInspection() {
     JSTestUtils.doWithChangedInspectionHighlightLevel(getProject(), calcShortNameFromClass(EslintInspection.class),
                                                       HighlightDisplayLevel.WEAK_WARNING, () -> {

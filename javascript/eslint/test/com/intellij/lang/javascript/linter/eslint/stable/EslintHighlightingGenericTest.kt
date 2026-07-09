@@ -1,9 +1,12 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.eslint.stable
 
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
+import com.intellij.testFramework.DumbModeTestUtils
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.LineSeparator
 
 /**
@@ -37,6 +40,26 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
   fun testLineSeparatorsWin() {
     doHighlightingTestWithInstallation("test.js") {
       JSTestUtils.ensureLineSeparators(myFixture.file, LineSeparator.CRLF)
+    }
+    doBatchInspectionTest()
+  }
+
+  // warn.js would be flagged (no-console / no-debugger), but no highlighting is expected because the project is untrusted.
+  fun testNoLintingForUntrustedProject() {
+    try {
+      doHighlightingTestWithInstallation("warn.js") {
+        TrustedProjects.setProjectTrusted(project, false)
+      }
+    }
+    finally {
+      TrustedProjects.setProjectTrusted(project, true)
+    }
+  }
+
+  fun testDumbMode() {
+    CodeInsightTestFixtureImpl.mustWaitForSmartMode(false, testRootDisposable)
+    DumbModeTestUtils.runInDumbModeSynchronously(project) {
+      doHighlightingTestWithInstallation("warn.js")
     }
     doBatchInspectionTest()
   }
