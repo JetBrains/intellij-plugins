@@ -40,14 +40,12 @@ public class EsLintFixTest extends EslintServiceTestBase {
   @Override
   protected @NotNull Map<String, String> getGlobalPackageVersionsToInstall() {
     return Map.of("eslint", "8.57.0",
-                  "eslint-plugin-html", "latest",
-                  "eslint-plugin-vue", "latest",
-                  "vue-eslint-parser", "latest",
-                  "eslint-plugin-react", "latest",
-                  // Pinned below 6.1.0: typescript@latest is now 7.x, which violates the
-                  // "typescript >=4.8.4 <6.1.0" peer dependency of @typescript-eslint/parser (npm ERESOLVE).
+                  "eslint-plugin-html", "8.1.4",
+                  "eslint-plugin-vue", "10.9.2",
+                  "vue-eslint-parser", "10.4.1",
+                  "eslint-plugin-react", "7.37.5",
                   "typescript", "5.9.3",
-                  "@typescript-eslint/parser", "latest");
+                  "@typescript-eslint/parser", "8.63.0");
   }
 
   @Override
