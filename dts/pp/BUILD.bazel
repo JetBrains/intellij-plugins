@@ -24,6 +24,7 @@ jvm_library(
     runtime_deps = ["@community//platform/backend"],
     deps = [
         # do not sort,
+        "@lib//:kotlin-stdlib",
         "@community//platform/analysis-api:analysis",
         "@community//platform/core-api:core",
         "@community//platform/core-impl",
@@ -60,8 +61,6 @@ jvm_library(
         "@community//platform/code-style-impl:codeStyle-impl_test_lib",
         "@community//platform/core-ui:core-ui_test_lib",
         "@community//platform/projectModel-api:projectModel_test_lib",
-        "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
     ],
 )
 ### auto-generated section `build intellij.dts.pp` end
@@ -117,6 +116,7 @@ jvm_library(
     ],
     deps = [
         # do not sort,
+        "@lib//:kotlin-stdlib",
         "@community//platform/analysis-api:analysis",
         "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/core-api:core",
