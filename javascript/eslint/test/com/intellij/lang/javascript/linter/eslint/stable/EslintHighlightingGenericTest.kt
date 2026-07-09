@@ -63,4 +63,11 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
     }
     doBatchInspectionTest()
   }
+
+  fun testMissingConfigErrorReported() {
+    // eslint 10's programmatic API reports "Could not find config file." when no eslint.config.* is
+    // present (was "No ESLint configuration found" on eslint 8) -- re-recorded for the 8->10 bump.
+    myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("ESLint: Error: Could not find config file.", true, false)
+    doHighlightingTestWithInstallation("test.js")
+  }
 }

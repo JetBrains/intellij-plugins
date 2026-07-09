@@ -140,11 +140,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     doEditorHighlightingTest("src/ignoredDir/test.js");
   }
 
-  public void testMissingConfigErrorReported() {
-    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("ESLint: " + "Error: No ESLint configuration found", true, false);
-    doEditorHighlightingTest("test.js");
-  }
-
   public void testSuppressMissingConfigErrorWithAutodetectPackage() {
     configureLinterForPackage(AutodetectLinterPackage.INSTANCE);
     AutodetectLinterPackage.setTestAutodetectedPackage(myFixture.getProject(), getNodePackage(), myFixture.getTestRootDisposable());
