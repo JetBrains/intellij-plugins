@@ -7,7 +7,10 @@ import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.nodejs.util.NodePackageRef
+import com.intellij.lang.javascript.linter.JSLinterAnnotationResult
+import com.intellij.lang.javascript.linter.JSLinterInput
 import com.intellij.lang.javascript.linter.LinterHighlightingTest
+import com.intellij.lang.javascript.linter.eslint.service.EslintLanguageServiceClient
 import com.intellij.lang.javascript.linter.eslint.service.EslintLanguageServiceManager
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.modules.TestNpmPackage
@@ -17,6 +20,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.psi.PsiFile
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.createGlobalContextForTool
 import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests
@@ -24,6 +28,7 @@ import com.intellij.util.ThrowableRunnable
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.concurrent.CompletableFuture
 
 /**
  * Base class for ESLint tests that install packages per test from a committed `package-lock.json` in
@@ -76,17 +81,23 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
       }
   }
 
-  /**
-   * 1) copies `testData/<TestName>` into the project, 2) replaces [ESLINT_VERSION_PLACEHOLDER] in its
-   * `package.json` files, 3) installs from the stored `package-lock.json`, 4) points the ESLint
-   * configuration at `<project>/node_modules/eslint`, 5) runs editor highlighting on
-   * [mainFileRelativePath]. Call once per test.
-   */
+  /** [installEslintForTest] followed by editor highlighting on [mainFileRelativePath]. Call once per test. */
   protected fun doHighlightingTestWithInstallation(
     mainFileRelativePath: String,
     configureFixture: ThrowableRunnable<Throwable>? = null,
   ) {
-    check(!packagesInstalled) { "doHighlightingTestWithInstallation must be called once per test" }
+    installEslintForTest()
+    doEditorHighlightingTestWithoutCopy(mainFileRelativePath, configureFixture)
+  }
+
+  /**
+   * 1) copies `testData/<TestName>` into the project, 2) replaces [ESLINT_VERSION_PLACEHOLDER] in its
+   * `package.json` files, 3) installs from the stored `package-lock.json`, 4) points the ESLint
+   * configuration at `<project>/node_modules/eslint`. Call once per test, before highlighting or the
+   * fake-service helper.
+   */
+  protected fun installEslintForTest() {
+    check(!packagesInstalled) { "installEslintForTest must be called once per test" }
     packagesInstalled = true
 
     copyTestDataToProject()
@@ -108,8 +119,35 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
     // EslintServiceTestBase sets this in setUp() from the global install; here the package only exists
     // after the per-test install, so the registry value is set at this point instead.
     Registry.get("eslint.service.node.path").setValue(eslintPath.parent.toString(), testRootDisposable)
+  }
 
-    doEditorHighlightingTestWithoutCopy(mainFileRelativePath, configureFixture)
+  /**
+   * Runs the ESLint analysis pipeline against a fake service whose request never completes, so the
+   * analysis times out deterministically without spawning a real node process (WEB-67172 rationale,
+   * ported from EslintServiceTestBase). Call after [installEslintForTest]; set the timeout first
+   * (e.g. `JSLanguageServiceUtil.setTimeout(1L, testRootDisposable)`).
+   */
+  protected fun highlightWithNeverRespondingService(psiFile: PsiFile): JSLinterAnnotationResult {
+    val service = createNeverRespondingService(psiFile.virtualFile.parent)
+    val state = EslintConfiguration.getInstance(project).extendedState.state
+    val input = JSLinterInput.create(psiFile, state, null)
+    return EsLintExternalRunner.highlight(input, service, true)
+  }
+
+  private fun createNeverRespondingService(workingDirectory: VirtualFile): EslintLanguageServiceClient {
+    val nodePackage = getNodePackage()
+    return object : EslintLanguageServiceClient {
+      override fun getNodePackage(): NodePackage = nodePackage
+      override fun getWorkingDirectory(): VirtualFile = workingDirectory
+      override fun highlight(requestData: EslintRequestData, extraOptions: String?)
+        : CompletableFuture<EslintLanguageServiceClient.Response<List<EslintError>>> = CompletableFuture()
+
+      override fun fixFile(requestData: EslintRequestData, extraOptions: String?)
+        : CompletableFuture<EslintLanguageServiceClient.Response<String>> = CompletableFuture()
+
+      override fun isServiceCreated(): Boolean = true
+      override fun getServiceCreationError(): String? = null
+    }
   }
 
   /**

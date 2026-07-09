@@ -102,23 +102,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     doEditorHighlightingTest("test.jsx");
   }
 
-  public void testTimeout() {
-    // Verify ESLint timeout handling (a slow analysis -> file-level timeout annotation) deterministically, WITHOUT
-    // spawning a real node service. See EslintServiceTestBase#highlightWithNeverRespondingService for the rationale
-    // (the real-service version was disposed mid-startup at tear-down and leaked its startup wait / reader thread,
-    // WEB-67172).
-    myFixture.copyDirectoryToProject(getTestName(false), "");
-    PsiFile psiFile = myFixture.configureByFile("test.js");
-    JSLanguageServiceUtil.setTimeout(1, getTestRootDisposable());
-
-    JSLinterAnnotationResult result = highlightWithNeverRespondingService(psiFile);
-
-    JSLinterFileLevelAnnotation annotation = result.getFileLevelError();
-    assertNotNull("Expected a file-level timeout annotation", annotation);
-    String expected = JSLanguageServiceUtil.getTimeoutMessage("test.js", EslintUtil.getTimeout());
-    assertTrue("Actual annotation: " + annotation.getMessage(), annotation.getMessage().contains(expected));
-  }
-
   public void testESLintLocalFatalError() {
     doTest("test.js");
   }

@@ -5,9 +5,12 @@ import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
+import com.intellij.lang.javascript.linter.eslint.EslintUtil
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.testFramework.DumbModeTestUtils
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.LineSeparator
+import org.junit.Assert
 
 /**
  * Version-agnostic ESLint highlighting scenarios, shared by the pinned `stable` class
@@ -69,5 +72,19 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
     // present (was "No ESLint configuration found" on eslint 8) -- re-recorded for the 8->10 bump.
     myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("ESLint: Error: Could not find config file.", true, false)
     doHighlightingTestWithInstallation("test.js")
+  }
+
+  fun testTimeout() {
+    // Deterministic timeout handling without a real node service (WEB-67172): install eslint, point the
+    // linter at it, then run the analysis against a never-responding fake service and assert the
+    // file-level timeout annotation.
+    installEslintForTest()
+    val psiFile = myFixture.configureByFile("test.js")
+    JSLanguageServiceUtil.setTimeout(1L, testRootDisposable)
+
+    val annotation = highlightWithNeverRespondingService(psiFile).fileLevelError
+    Assert.assertNotNull("Expected a file-level timeout annotation", annotation)
+    val expected = JSLanguageServiceUtil.getTimeoutMessage("test.js", EslintUtil.getTimeout())
+    Assert.assertTrue("Actual annotation: ${annotation?.message}", annotation?.message?.contains(expected) == true)
   }
 }
