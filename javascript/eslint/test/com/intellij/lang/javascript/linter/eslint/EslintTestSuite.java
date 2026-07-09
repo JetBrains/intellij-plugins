@@ -1,5 +1,8 @@
 package com.intellij.lang.javascript.linter.eslint;
 
+import com.intellij.lang.javascript.linter.eslint.unit.ESLintImportCodeStyleBasicTest;
+import com.intellij.lang.javascript.linter.eslint.unit.EslintConfigCompletionTest;
+import com.intellij.lang.javascript.linter.eslint.unit.EslintConfigHighlightingTest;
 import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSConfigParsingTest;
 import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSFixTest;
 import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSHighlightingTest;

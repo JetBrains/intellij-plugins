@@ -1,5 +1,6 @@
-package com.intellij.lang.javascript.linter.eslint;
+package com.intellij.lang.javascript.linter.eslint.unit;
 
+import com.intellij.lang.javascript.linter.eslint.EslintTestUtil;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.linter.eslint;
+package com.intellij.lang.javascript.linter.eslint.unit;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.JavascriptLanguage;

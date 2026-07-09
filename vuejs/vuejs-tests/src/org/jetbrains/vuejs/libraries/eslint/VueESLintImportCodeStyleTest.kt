@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.libraries.eslint
 
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.lang.javascript.linter.eslint.ESLintImportCodeStyleTestBase
+import com.intellij.lang.javascript.linter.eslint.unit.ESLintImportCodeStyleTestBase
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettings.HtmlTagNewLineStyle.Never
 import com.intellij.psi.codeStyle.CodeStyleSettings.HtmlTagNewLineStyle.WhenMultiline

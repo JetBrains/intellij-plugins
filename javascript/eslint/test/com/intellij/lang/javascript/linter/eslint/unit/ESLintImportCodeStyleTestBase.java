@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.linter.eslint;
+package com.intellij.lang.javascript.linter.eslint.unit;
 
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.linter.eslint.EslintUtil;

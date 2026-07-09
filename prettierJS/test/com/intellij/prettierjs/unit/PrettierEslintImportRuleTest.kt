@@ -4,7 +4,7 @@ package com.intellij.prettierjs.unit
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
-import com.intellij.lang.javascript.linter.eslint.ESLintImportCodeStyleTestBase
+import com.intellij.lang.javascript.linter.eslint.unit.ESLintImportCodeStyleTestBase
 import com.intellij.psi.codeStyle.CodeStyleSettings.QuoteStyle
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import org.junit.Assert

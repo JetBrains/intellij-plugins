@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.linter.eslint;
+package com.intellij.lang.javascript.linter.eslint.unit;
 
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -6,6 +6,8 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
 import com.intellij.json.codeinsight.JsonStandardComplianceInspection;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
+import com.intellij.lang.javascript.linter.eslint.EslintTestUtil;
+import com.intellij.lang.javascript.linter.eslint.EslintUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
