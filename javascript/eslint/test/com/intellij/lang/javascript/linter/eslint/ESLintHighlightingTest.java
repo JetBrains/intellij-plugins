@@ -160,11 +160,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     doEditorHighlightingTest("packages/foo/bar/src/ignored.js");
   }
 
-  public void testVueFile() {
-    assertNotNull("This test must be run with intellij.vuejs module in classpath", Language.findLanguageByID("Vue"));
-    doEditorHighlightingTest("vue.vue");
-  }
-
   public void testVueTsFile() {
     assertNotNull("This test must be run with intellij.vuejs module in classpath", Language.findLanguageByID("Vue"));
     doEditorHighlightingTest("vue.vue");
