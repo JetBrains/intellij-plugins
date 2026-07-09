@@ -22,4 +22,11 @@ class EslintHighlightingV10Test : EslintHighlightingGenericTest() {
     Assert.assertNotNull("This test must be run with intellij.vuejs module in classpath", Language.findLanguageByID("Vue"))
     doHighlightingTestWithInstallation("vue.vue")
   }
+
+  fun testVueTsFile() {
+    Assert.assertNotNull("This test must be run with intellij.vuejs module in classpath", Language.findLanguageByID("Vue"))
+    doHighlightingTestWithInstallation("vue.vue")
+  }
+
+  fun testFlatConfigNoHtmlPlugin() = doHighlightingTestWithInstallation("index.html")
 }

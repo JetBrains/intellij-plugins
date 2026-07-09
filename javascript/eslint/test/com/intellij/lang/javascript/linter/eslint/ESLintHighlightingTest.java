@@ -160,11 +160,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     doEditorHighlightingTest("packages/foo/bar/src/ignored.js");
   }
 
-  public void testVueTsFile() {
-    assertNotNull("This test must be run with intellij.vuejs module in classpath", Language.findLanguageByID("Vue"));
-    doEditorHighlightingTest("vue.vue");
-  }
-
   public void testTypescriptWithVueParserAbsolutePath() throws IOException {
     File parserFile = new File(getNodePackage().getSystemDependentPath(), "../@typescript-eslint/parser/dist/parser.js").getCanonicalFile();
     assertTrue(parserFile.toString(), parserFile.exists());
@@ -216,10 +211,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
       assertNotNull(yarnEslintPkg);
       configureLinterForPackage(NodePackageRef.create(yarnEslintPkg));
     });
-  }
-
-  public void testFlatConfigNoHtmlPlugin() {
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("index.html");
   }
 
   public void testFlatTypescriptConfigOneDir() {
