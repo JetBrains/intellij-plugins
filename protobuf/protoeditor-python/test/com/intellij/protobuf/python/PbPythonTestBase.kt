@@ -32,7 +32,7 @@ abstract class PbPythonTestBase : PyTestCase() {
   /**
    * Prepares generated Protobuf and runs [action] for available Protobuf API versions.
    *
-   * State for [action]: Generated python code and .proto file are copied to the project.
+   * State for [action]: Generated Python code and `.proto` file are copied to the project.
    * Only one API version is present at a time.
    *
    * @param protoFile Name of the `.proto` file in [testData][getTestDataPath]`/proto/`
@@ -106,9 +106,9 @@ abstract class PbPythonTestBase : PyTestCase() {
   /**
    * Runs [action] for matching pairs of expectation and caret.
    *
-   * State before: Test file should be pre-configured in [myFixture].
+   * State before: Test file with carets should be pre-configured in [myFixture].
    *
-   * State for [action]: Test file with a single `<caret>`
+   * State for [action]: Test file with a single caret
    * at the current testing position is pre-configured in [myFixture].
    *
    * @param expectationParser Parser function that produces expectation markers.
