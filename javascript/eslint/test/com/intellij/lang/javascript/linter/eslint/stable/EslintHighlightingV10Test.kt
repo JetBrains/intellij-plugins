@@ -48,6 +48,21 @@ class EslintHighlightingV10Test : EslintHighlightingGenericTest() {
       updateConfiguration { it.setExtraOptions("--ignore-pattern '*.js'") }
     }
 
+  // Autodetect the project-local ESLint (declared dependency) + a flat eslint.config.mjs.
+  fun testCanAutodetectLocalPackage() = doHighlightingTestWithAutodetectInstallation("js.js")
+
+  // Autodetect ESLint from a parent directory's node_modules for a file in a sub-workspace.
+  fun testCanAutodetectLocalPackageInParentNodeModules() =
+    doHighlightingTestWithAutodetectInstallation("workspaces/a/js.js")
+
+  // A sub-package with no ESLint of its own resolves the parent's (walking up node_modules), then lints
+  // with its own flat config.
+  fun testSubpackageContainsOnlyLinkToParentEslint() =
+    doHighlightingTestWithAutodetectInstallation("packages/inner/js.js")
+
+  // A flat config that imports a sibling local config file (the flat-config analog of eslintrc extends).
+  fun testConfigReferencesLocalFiles() = doHighlightingTestWithAutodetectInstallation("packages/a/js.js")
+
   // Per-subdirectory TS flat configs (.cts/.ts/.mts), each loaded via jiti; eslint resolves the nearest config per file.
   fun testFlatTypescriptConfigSubDirs() {
     installEslintForTest()

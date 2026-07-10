@@ -46,16 +46,6 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
   // No flat config present -> ESLint falls back to the legacy .eslintrc config.
   fun testFallbackToLegacyConfig() = doHighlightingTestWithInstallation("index.js")
 
-  // Package autodetection from the project-local node_modules (eslintConfig in package.json).
-  fun testCanAutodetectLocalPackage() = doHighlightingTestWithAutodetectInstallation("js.js")
-
-  // Autodetect ESLint from a parent directory's node_modules for a file in a sub-workspace.
-  fun testCanAutodetectLocalPackageInParentNodeModules() =
-    doHighlightingTestWithAutodetectInstallation("workspaces/a/js.js")
-
-  // .eslintrc.js that `extends` a sibling config via a cwd-relative path.resolve() -- eslintrc only.
-  fun testConfigReferencesLocalFiles() = doHighlightingTestWithAutodetectInstallation("packages/a/js.js")
-
   // --rulesdir (removed in eslint 9) + additional rules directory, custom rule plugins on disk.
   fun testWithCustomRulesDirectories() = doHighlightingTestWithInstallation("js.js") {
     val tempDir = myFixture.tempDirFixture
@@ -68,10 +58,6 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
   // Relative-path .eslintignore inside a sub-package ignores a file there (eslintrc + .eslintignore).
   fun testEslintignoreWithRelativePathInProjectSubPackage() =
     doHighlightingTestWithAutodetectInstallation("packages/with-eslint-ignore/src/ignored.js")
-
-  // A sub-package with no ESLint of its own resolves the parent's, found by walking up node_modules.
-  fun testSubpackageContainsOnlyLinkToParentEslint() =
-    doHighlightingTestWithAutodetectInstallation("packages/inner/js.js")
 
   // The sub-package has no declared ESLint dependency, only an `eslintConfig` that implies one -- so
   // ESLint can be resolved from packages/inner/node_modules ONLY via AutodetectLinterPackage's
