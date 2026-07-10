@@ -114,42 +114,6 @@ public class EsLintFixTest extends EslintServiceTestBase {
     assertEmpty(fixActions);
   }
 
-  public void testSuppressForLineInNestedScopeWithIndent() {
-    JSTestUtils.testWithTempCodeStyleSettings(getProject(), settings -> {
-      CommonCodeStyleSettings commonSettings = settings.getCommonSettings(JavascriptLanguage.INSTANCE);
-      commonSettings.LINE_COMMENT_AT_FIRST_COLUMN = false;
-      doTestQuickFix("Suppress 'comma-spacing' for current line");
-    });
-  }
-
-  public void testSuppressForLineInNestedScopeAtLineStart() {
-    JSTestUtils.testWithTempCodeStyleSettings(getProject(), settings -> {
-      CommonCodeStyleSettings commonSettings = settings.getCommonSettings(JavascriptLanguage.INSTANCE);
-      commonSettings.LINE_COMMENT_AT_FIRST_COLUMN = true;
-      doTestQuickFix("Suppress 'comma-spacing' for current line");
-    });
-  }
-
-  public void testSuppressByFileComment() {
-    doTestQuickFix("Suppress 'comma-spacing' for current file");
-  }
-
-  public void testAddSuppressionToExistingLineComment() {
-    doTestQuickFix("Suppress 'comma-spacing' for current line");
-  }
-
-  public void testAddSuppressionToExistingFileComment() {
-    doTestQuickFix("Suppress 'comma-spacing' for current file");
-  }
-
-  public void testSuppressAllRulesForFile() {
-    doTestQuickFix("Suppress all ESLint rules for current file");
-  }
-
-  public void testSuppressAllRulesForFileWithExistingComment() {
-    doTestQuickFix("Suppress all ESLint rules for current file");
-  }
-
   public void testSuppressForLineInJSXTagContent() {
     doQuickFixTestForDirectory("Suppress 'react/self-closing-comp' for current line", "test", ".jsx", null);
   }

@@ -1,6 +1,8 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.eslint.stable
 
+import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
 import com.intellij.openapi.application.WriteAction
@@ -45,4 +47,28 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
   }
 
   fun testSuppressByLineComment() = doQuickFixTest("Suppress 'comma-spacing' for current line")
+
+  fun testSuppressByFileComment() = doQuickFixTest("Suppress 'comma-spacing' for current file")
+
+  fun testAddSuppressionToExistingLineComment() = doQuickFixTest("Suppress 'comma-spacing' for current line")
+
+  fun testAddSuppressionToExistingFileComment() = doQuickFixTest("Suppress 'comma-spacing' for current file")
+
+  fun testSuppressAllRulesForFile() = doQuickFixTest("Suppress all ESLint rules for current file")
+
+  fun testSuppressAllRulesForFileWithExistingComment() = doQuickFixTest("Suppress all ESLint rules for current file")
+
+  fun testSuppressForLineInNestedScopeWithIndent() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { settings ->
+      settings.getCommonSettings(JavascriptLanguage).LINE_COMMENT_AT_FIRST_COLUMN = false
+      doQuickFixTest("Suppress 'comma-spacing' for current line")
+    }
+  }
+
+  fun testSuppressForLineInNestedScopeAtLineStart() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { settings ->
+      settings.getCommonSettings(JavascriptLanguage).LINE_COMMENT_AT_FIRST_COLUMN = true
+      doQuickFixTest("Suppress 'comma-spacing' for current line")
+    }
+  }
 }
