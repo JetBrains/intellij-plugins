@@ -63,7 +63,7 @@ internal object HclRequiredProvidersCompletion : CompletionProvider<CompletionPa
       if (!providerPropertyPattern(requiredProviderBlock).accepts(parent.parent))
         return
 
-      val properties = RequiredProviderProperties.filter { parent.findProperty(it.name) == null }
+      val properties = requiredProviderProperties(element.containingFile).filter { parent.findProperty(it.name) == null }
       result.addAllElements(properties.map { createPropertyOrBlockType(it) })
     }
   }
@@ -114,6 +114,13 @@ internal object HclRequiredProvidersCompletion : CompletionProvider<CompletionPa
     isTfComponentPsiFile(psiFile) -> TfComponentPsiPatterns.TfComponentRequiredProviders
     else -> null
   }
+
+  private fun requiredProviderProperties(psiFile: PsiFile): List<PropertyType> = buildList {
+    add(PropertyType(HCL_SOURCE_IDENTIFIER, Types.String))
+    add(PropertyType(HCL_VERSION_IDENTIFIER, Types.String))
+
+    if (isTfOrTofuPsiFile(psiFile)) add(PropertyType(HCL_CONFIGURATION_ALIASES, Types.Array))
+  }
 }
 
 private val ProviderSorter: CompletionSorter = CompletionSorter.emptySorter().weigh(
@@ -123,10 +130,4 @@ private val ProviderSorter: CompletionSorter = CompletionSorter.emptySorter().we
       return if (providerType?.tier in ProviderTier.PreferedProviders) 0 else 1
     }
   }
-)
-
-private val RequiredProviderProperties = listOf(
-  PropertyType(HCL_SOURCE_IDENTIFIER, Types.String),
-  PropertyType(HCL_VERSION_IDENTIFIER, Types.String),
-  PropertyType(HCL_CONFIGURATION_ALIASES, Types.Array)
 )

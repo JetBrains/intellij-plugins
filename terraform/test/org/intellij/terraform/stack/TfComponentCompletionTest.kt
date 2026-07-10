@@ -110,7 +110,7 @@ internal class TfComponentCompletionTest : CompletionTestCase() {
           <caret>
         }
       }
-    """.trimIndent(), 2, "source", "version")
+    """.trimIndent(), Matcher.and(Matcher.all("source", "version"), Matcher.not("configuration_aliases")))
     doBasicCompletionTest("""
       required_providers {
         kubernetes = {

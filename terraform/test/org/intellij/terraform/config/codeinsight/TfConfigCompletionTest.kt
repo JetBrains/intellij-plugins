@@ -1081,7 +1081,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
           }
         }
       }
-    """.trimIndent(), 2, "source", "version")
+    """.trimIndent(), 3, "source", "version", "configuration_aliases")
   }
 
   fun testRequiredProvidersCompletionAfterProperty() {
@@ -1094,7 +1094,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
           }
         }
       }
-    """.trimIndent(), 1, "version")
+    """.trimIndent(), 2, "version", "configuration_aliases")
 
     doBasicCompletionTest("""
       terraform {
@@ -1106,7 +1106,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
           }
         }
       }
-    """.trimIndent(), 0)
+    """.trimIndent(), 1, "configuration_aliases")
   }
 
   fun testSelfReferenceInPostCondition() {
