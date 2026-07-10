@@ -19,7 +19,6 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_16_2_8
 import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
 import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
-import org.angular2.SkipTsGoProxy
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
@@ -36,7 +35,6 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
            ANGULAR_CORE_16_2_8)
 
   @Test
-  @SkipTsGoProxy
   fun testBooleanTransformBinding() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "booleanAttribute"),
            ANGULAR_CORE_16_2_8)
@@ -47,7 +45,6 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
            ANGULAR_CORE_16_2_8)
 
   @Test
-  @SkipTsGoProxy
   fun testNumberTransformBinding() =
     doTest(Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", "numberAttribute"),
            ANGULAR_CORE_16_2_8)
