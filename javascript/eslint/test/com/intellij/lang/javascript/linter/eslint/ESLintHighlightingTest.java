@@ -80,19 +80,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     return annotation != null ? annotation.getMessage() : null;
   }
 
-  public void testFileIgnored() {
-    doTest("testIgnored.js");
-  }
-
-  public void testFileIgnoredByCommandLineOption() {
-    doEditorHighlightingTest("testIgnored.js", () -> updateConfiguration(builder -> builder.setExtraOptions("--ignore-pattern '*.js'")));
-  }
-
-  public void testFileIgnoredWithPackageJsonOption() {
-    //WEB-30783
-    doEditorHighlightingTest("src/ignoredDir/test.js");
-  }
-
   public void testSuppressMissingConfigErrorWithAutodetectPackage() {
     configureLinterForPackage(AutodetectLinterPackage.INSTANCE);
     AutodetectLinterPackage.setTestAutodetectedPackage(myFixture.getProject(), getNodePackage(), myFixture.getTestRootDisposable());
@@ -106,10 +93,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
   public void testEslintignoreInSubpackageAndParent() {
     //WEB-36096
     doEditorHighlightingTest("packages/inner/js.js");
-  }
-
-  public void testCanDisableIgnoreFilesWithCommandLineOption() {
-    doEditorHighlightingTest("test.js", () -> updateConfiguration(builder -> builder.setExtraOptions("--no-ignore")));
   }
 
   public void testCanAutodetectLocalPackage() {

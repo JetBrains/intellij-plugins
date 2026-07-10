@@ -29,4 +29,19 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
     myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("ESLint: Error: Failed to load parser 'babel'", true, false)
     doHighlightingTestWithInstallation("test.jsx")
   }
+
+  // Legacy ignore mechanisms removed in flat config: .eslintignore and package.json "eslintIgnore".
+  fun testFileIgnored() = doTest("testIgnored.js")
+
+  fun testFileIgnoredByCommandLineOption() =
+    doHighlightingTestWithInstallation("testIgnored.js") {
+      updateConfiguration { it.setExtraOptions("--ignore-pattern '*.js'") }
+    }
+
+  fun testFileIgnoredWithPackageJsonOption() = doHighlightingTestWithInstallation("src/ignoredDir/test.js")
+
+  fun testCanDisableIgnoreFilesWithCommandLineOption() =
+    doHighlightingTestWithInstallation("test.js") {
+      updateConfiguration { it.setExtraOptions("--no-ignore") }
+    }
 }
