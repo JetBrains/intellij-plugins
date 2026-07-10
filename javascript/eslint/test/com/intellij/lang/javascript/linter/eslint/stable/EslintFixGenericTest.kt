@@ -96,7 +96,9 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
     lineSeparator: LineSeparator? = null,
   ) {
     installEslintForTest()
-    doFixTestForDirectory(mainFileName, extension, description, ThrowableRunnable<Throwable> {
+    // installEslintForTest already copied the test directory; use the WithoutCopy variant so the fix run
+    // does not re-copy (which would clobber the substituted package.json with the raw $ESLINT_VERSION$).
+    doFixTestForDirectoryWithoutCopy(mainFileName, extension, description, ThrowableRunnable<Throwable> {
       if (lineSeparator != null) {
         JSTestUtils.ensureLineSeparators(myFixture.file, lineSeparator)
       }
@@ -187,7 +189,7 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
 
   fun testNoFixFileActionForNonFixableErrors() {
     installEslintForTest()
-    doEditorHighlightingTestWithoutCopy("test.js", null as ThrowableRunnable<Throwable>?)
+    doEditorHighlightingTestWithoutCopy("test.js")
     assertEmpty(myFixture.filterAvailableIntentions("ESLint: Fix current file"))
   }
 
@@ -237,7 +239,7 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
   fun testSuppressQuickFixGoesAfterInspectionFix() {
     myFixture.enableInspections(JSUnusedGlobalSymbolsInspection::class.java)
     installEslintForTest()
-    doEditorHighlightingTestWithoutCopy("test.js", null as ThrowableRunnable<Throwable>?)
+    doEditorHighlightingTestWithoutCopy("test.js")
 
     val quickFixNames = myFixture.availableIntentions.map { it.text }
     assertContainsOrdered(quickFixNames,
@@ -264,7 +266,7 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
   fun testEsLintQuickFixGoesAfterInspectionFix() {
     myFixture.enableInspections(JSConsecutiveCommasInArrayLiteralInspection::class.java)
     installEslintForTest()
-    doEditorHighlightingTestWithoutCopy("test.js", null as ThrowableRunnable<Throwable>?)
+    doEditorHighlightingTestWithoutCopy("test.js")
 
     val quickFixNames = myFixture.availableIntentions.map { it.text }
     assertContainsOrdered(quickFixNames,

@@ -65,18 +65,20 @@ class EslintHighlightingV10Test : EslintHighlightingGenericTest() {
 
   // Per-subdirectory TS flat configs (.cts/.ts/.mts), each loaded via jiti; eslint resolves the nearest config per file.
   fun testFlatTypescriptConfigSubDirs() {
+    // installEslintForTest copies the whole dir once; each pass highlights a different file, so use the
+    // WithoutCopy variant to avoid re-copying (which clobbers the substituted package.json).
     installEslintForTest()
-    doEditorHighlightingTest("src/index.js")
-    doEditorHighlightingTest("src/sub/index.js")
-    doEditorHighlightingTest("src/sub/dir/index.js")
+    doEditorHighlightingTestWithoutCopy("src/index.js")
+    doEditorHighlightingTestWithoutCopy("src/sub/index.js")
+    doEditorHighlightingTestWithoutCopy("src/sub/dir/index.js")
   }
 
   // Mixed TS (.cts/.mts) and JS (.mjs) flat configs across subdirectories.
   fun testFlatMixedConfigSubDirs() {
     installEslintForTest()
-    doEditorHighlightingTest("src/index.js")
-    doEditorHighlightingTest("src/sub/index.js")
-    doEditorHighlightingTest("src/sub/dir/index.js")
+    doEditorHighlightingTestWithoutCopy("src/index.js")
+    doEditorHighlightingTestWithoutCopy("src/sub/index.js")
+    doEditorHighlightingTestWithoutCopy("src/sub/dir/index.js")
   }
 
   // @html-eslint plugin with the `html/html` language (flat config via defineConfig from eslint/config).

@@ -16,7 +16,6 @@ import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.testFramework.DumbModeTestUtils
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.LineSeparator
-import com.intellij.util.ThrowableRunnable
 import org.junit.Assert
 
 /**
@@ -87,7 +86,7 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
   fun testSuppressMissingConfigErrorWithAutodetectPackage() {
     installEslintForTestWithAutodetect()
     AutodetectLinterPackage.setTestAutodetectedPackage(project, getNodePackage(), testRootDisposable)
-    doEditorHighlightingTestWithoutCopy("test.js", null as ThrowableRunnable<Throwable>?)
+    doEditorHighlightingTestWithoutCopy("test.js")
   }
 
   // A .ts file with no config: the missing-config error is suppressed for TypeScript on every version.
