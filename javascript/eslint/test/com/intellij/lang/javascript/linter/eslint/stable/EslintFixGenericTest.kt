@@ -36,20 +36,21 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
    * the stored lock, and lets the flat config be auto-detected. Call once per test, before configuring
    * the file under test.
    */
-  protected fun installEslintWithSharedConfig() {
+  protected fun installEslintWithSharedConfig(configSource: String = "eslint.config.mjs") {
     WriteAction.run<Throwable> { FileDocumentManager.getInstance().saveAllDocuments() }
     myFixture.setCaresAboutInjection(false)
     myFixture.copyFileToProject("package.json")
-    myFixture.copyFileToProject("eslint.config.mjs")
+    myFixture.copyFileToProject(configSource, "eslint.config.mjs")
     installEslintFromProjectRoot()
   }
 
   /**
-   * Shared-config install, then configure `<TestName><extension>`, launch the intention named
-   * [description], and compare the result with `<TestName>_after<extension>`.
+   * Shared-config install (from [configSource], copied to the project as `eslint.config.mjs`), then
+   * configure `<TestName><extension>`, launch the intention named [description], and compare the result
+   * with `<TestName>_after<extension>`.
    */
-  protected fun doQuickFixTest(description: String, extension: String = ".js") {
-    installEslintWithSharedConfig()
+  protected fun doQuickFixTest(description: String, extension: String = ".js", configSource: String = "eslint.config.mjs") {
+    installEslintWithSharedConfig(configSource)
     launchQuickFix(description, extension)
   }
 
@@ -171,6 +172,29 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
     installEslintForTest()
     doEditorHighlightingTestWithoutCopy("test.js", null as ThrowableRunnable<Throwable>?)
     assertEmpty(myFixture.filterAvailableIntentions("ESLint: Fix current file"))
+  }
+
+  // The following exercise eslint-plugin-html (embedded <script> linting) and JSX via a shared,
+  // extension-specific flat config copied to the project root.
+  fun testSuppressForFileInHtml() =
+    doQuickFixTest("Suppress 'no-multiple-empty-lines' for current file", ".html", "eslint.config.html.mjs")
+
+  fun testSuppressMultiLinesByLineComment() =
+    doQuickFixTest("Suppress 'no-multiple-empty-lines' for current line", ".js", "eslint.config.html.mjs")
+
+  fun testSuppressForLineInHtml() =
+    doQuickFixTest("Suppress 'no-multiple-empty-lines' for current line", ".html", "eslint.config.html.mjs")
+
+  fun testFixInHtml() = doQuickFixTest("ESLint: Fix current file", ".html", "eslint.config.html.mjs")
+
+  fun testFixWorksInJsx() = doQuickFixTest("ESLint: Fix current file", ".jsx", "eslint.config.jsx.mjs")
+
+  fun testScriptsInHtmlFile() {
+    installEslintWithSharedConfig("eslint.config.html.mjs")
+    myFixture.configureByFile(getTestName(false) + ".html")
+    // The whole-file fix action is not offered for scripts embedded in HTML.
+    val fixActions = myFixture.availableIntentions.filter { it.text == "ESLint: Fix current file" }
+    assertEmpty(fixActions)
   }
 
   private fun fixProblemsDescription(ruleCode: String): String =

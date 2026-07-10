@@ -55,36 +55,8 @@ public class EsLintFixTest extends EslintServiceTestBase {
     myFixture.setTestDataPath(basePath);
   }
 
-  public void testScriptsInHtmlFile() {
-    configure(getTestName(false) + ".html", ".eslintrc-with-html.json", true);
-
-    List<IntentionAction> fixActions =
-      ContainerUtil.filter(myFixture.getAvailableIntentions(), action -> "ESLint: Fix current file".equals(action.getText()));
-    assertEmpty(fixActions);
-  }
-
-  public void testSuppressForFileInHtml() {
-    doTestQuickFix("Suppress 'no-multiple-empty-lines' for current file", ".html", ".eslintrc-with-html.json", true);
-  }
-
-  public void testSuppressMultiLinesByLineComment() {
-    doTestQuickFix("Suppress 'no-multiple-empty-lines' for current line", ".js", ".eslintrc-with-html.json", true);
-  }
-
-  public void testSuppressForLineInHtml() {
-    doTestQuickFix("Suppress 'no-multiple-empty-lines' for current line", ".html", ".eslintrc-with-html.json", true);
-  }
-
-  public void testFixWorksInJsx() {
-    doTestQuickFix("ESLint: Fix current file", ".jsx", ".eslintrc.json", true);
-  }
-
   public void testInHtmlWithHtmlPluginExplicitName() {
     doTestQuickFix("ESLint: Fix current file", ".html", ".eslintrc-with-html-explicit-name.json", true);
-  }
-
-  public void testFixInHtml() {
-    doTestQuickFix("ESLint: Fix current file", ".html", ".eslintrc-with-html.json", true);
   }
 
   public void testRunEslintFixOnSave() {
