@@ -170,32 +170,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     });
   }
 
-  public void testCustomFlatConfig() {
-    updateConfiguration(builder -> {
-      String dir = getTestName(false);
-      var configPsiFile = myFixture.configureByFile(dir + "/eslint.config.fast.mjs");
-      return builder
-        .setCustomConfigFileUsed(true)
-        .setCustomConfigFilePath(VfsUtilCore.virtualToIoFile(configPsiFile.getVirtualFile()).getAbsolutePath());
-    });
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("index.js");
-  }
-
-  public void testCustomLegacyConfig() {
-    updateConfiguration(builder -> {
-      String dir = getTestName(false);
-      var configPsiFile = myFixture.configureByFile(dir + "/.eslintrc.fast.json");
-      return builder
-        .setCustomConfigFileUsed(true)
-        .setCustomConfigFilePath(VfsUtilCore.virtualToIoFile(configPsiFile.getVirtualFile()).getAbsolutePath());
-    });
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("index.js");
-  }
-
-  public void testFallbackToLegacyConfig() {
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("index.js");
-  }
-
 
   private void doTest(@NotNull String mainFileRelativePath) {
     doEditorHighlightingTest(mainFileRelativePath);

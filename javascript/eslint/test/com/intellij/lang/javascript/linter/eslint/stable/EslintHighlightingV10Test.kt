@@ -33,6 +33,11 @@ class EslintHighlightingV10Test : EslintHighlightingGenericTest() {
   // eslint.config.mts loaded via jiti; eslint 10 loads TS configs natively (no unstable flag needed).
   fun testFlatTypescriptConfigOneDir() = doHighlightingTestWithInstallation("index.js")
 
+  // A custom (non-standard-named) flat config selected via the "custom config file" setting.
+  fun testCustomFlatConfig() = doHighlightingTestWithInstallation("index.js") {
+    useCustomConfigFile("eslint.config.fast.mjs")
+  }
+
   // Per-subdirectory TS flat configs (.cts/.ts/.mts), each loaded via jiti; eslint resolves the nearest config per file.
   fun testFlatTypescriptConfigSubDirs() {
     installEslintForTest()

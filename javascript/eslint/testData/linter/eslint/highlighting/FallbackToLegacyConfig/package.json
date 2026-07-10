@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
   "devDependencies": {
-    "eslint": "^9.11.0"
+    "eslint": "$ESLINT_VERSION$"
   }
 }

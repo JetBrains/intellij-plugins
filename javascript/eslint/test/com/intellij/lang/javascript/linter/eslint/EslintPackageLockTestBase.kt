@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.modules.TestNpmPackageInstaller
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiFile
@@ -172,6 +173,19 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
       createGlobalContextForTool(scope, project, listOf<InspectionToolWrapper<*, *>>(toolWrapper))
     InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
     InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, File(testDataPath, getTestName(false)).path)
+  }
+
+  /**
+   * Points ESLint at an explicit (non-standard-named) config file already present in the project root,
+   * as the "custom config file" IDE setting does. [fileName] is resolved in the temp project (copied
+   * there by [installEslintForTest]). Call after the install, before highlighting.
+   */
+  protected fun useCustomConfigFile(fileName: String) {
+    val configFile = myFixture.findFileInTempDir(fileName) ?: error("Config file '$fileName' not found in project")
+    updateConfiguration {
+      it.setCustomConfigFileUsed(true)
+        .setCustomConfigFilePath(VfsUtilCore.virtualToIoFile(configFile).absolutePath)
+    }
   }
 
   /** Mutates the ESLint extended state (e.g. extra CLI options) for the current test. */

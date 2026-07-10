@@ -53,4 +53,12 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
 
   fun testEslintIgnoreWithRelativePathInProjectSubDirectory() =
     doHighlightingTestWithInstallation("packages/foo/bar/src/ignored.js")
+
+  // A custom (non-standard-named) eslintrc selected via the "custom config file" setting.
+  fun testCustomLegacyConfig() = doHighlightingTestWithInstallation("index.js") {
+    useCustomConfigFile(".eslintrc.fast.json")
+  }
+
+  // No flat config present -> ESLint falls back to the legacy .eslintrc config.
+  fun testFallbackToLegacyConfig() = doHighlightingTestWithInstallation("index.js")
 }
