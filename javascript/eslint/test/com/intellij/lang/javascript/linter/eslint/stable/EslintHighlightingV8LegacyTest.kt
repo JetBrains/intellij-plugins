@@ -43,9 +43,6 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
     useCustomConfigFile(".eslintrc.fast.json")
   }
 
-  // No flat config present -> ESLint falls back to the legacy .eslintrc config.
-  fun testFallbackToLegacyConfig() = doHighlightingTestWithInstallation("index.js")
-
   // --rulesdir (removed in eslint 9) + additional rules directory, custom rule plugins on disk.
   fun testWithCustomRulesDirectories() = doHighlightingTestWithInstallation("js.js") {
     val tempDir = myFixture.tempDirFixture

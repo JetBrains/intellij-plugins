@@ -29,6 +29,7 @@ combo is shared, because resolution is relative to each test's `testDataPath`).
 |---|---|
 | (none) — `eslint 10.6.0` | core `stable` highlighting + fix tests |
 | (none) — `eslint 8.57.0` | `EslintHighlightingV8LegacyTest` (`.eslintrc` coverage) |
+| (none) — `eslint 9.11.1` | `EslintFallbackToLegacyConfigV9Test` (v9 `LegacyESLint` eslintrc-fallback path) |
 | `typescript 5.9.3`, `@typescript-eslint/parser 8.63.0`, `vue-eslint-parser 10.4.1`, `eslint-plugin-vue 10.9.2`, `eslint-plugin-html 8.1.4`, `eslint-plugin-react 7.37.5` (on eslint 10) | TS/Vue/HTML highlighting (V10) + the fix suite's shared root install |
 | `jiti 2.7.0` (on eslint 10) | `FlatTypescriptConfig*` — TS flat configs (`.ts/.cts/.mts`) loaded via jiti |
 | `@html-eslint/eslint-plugin 0.63.0` (on eslint 10) | `HtmlFileFlatConfig*` — HTML structure linting |

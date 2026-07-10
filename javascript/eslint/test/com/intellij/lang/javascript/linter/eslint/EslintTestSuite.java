@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.linter.eslint.unit.ESLintImportCodeStyleBasi
 import com.intellij.lang.javascript.linter.eslint.unit.EslintConfigCompletionTest;
 import com.intellij.lang.javascript.linter.eslint.unit.EslintConfigHighlightingTest;
 import com.intellij.lang.javascript.linter.eslint.next.EslintHighlightingLatestTest;
+import com.intellij.lang.javascript.linter.eslint.stable.EslintFallbackToLegacyConfigV9Test;
 import com.intellij.lang.javascript.linter.eslint.stable.EslintFixV10Test;
 import com.intellij.lang.javascript.linter.eslint.stable.EslintHighlightingV10Test;
 import com.intellij.lang.javascript.linter.eslint.stable.EslintHighlightingV8LegacyTest;
@@ -21,6 +22,7 @@ public final class EslintTestSuite {
     testSuite.addTestSuite(EslintYarnPnpTest.class);
     testSuite.addTestSuite(EslintHighlightingV10Test.class);
     testSuite.addTestSuite(EslintHighlightingV8LegacyTest.class);
+    testSuite.addTestSuite(EslintFallbackToLegacyConfigV9Test.class);
     testSuite.addTestSuite(EslintFixV10Test.class);
     testSuite.addTestSuite(EslintHighlightingLatestTest.class);
     testSuite.addTestSuite(ESLintImportCodeStyleBasicTest.class);

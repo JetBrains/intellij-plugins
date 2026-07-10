@@ -16,6 +16,12 @@ const val ESLINT_10_6_0_TEST_PACKAGE_SPEC: String = "eslint@10.6.0"
 /** Legacy `.eslintrc` coverage only — see EslintHighlightingV8LegacyTest. */
 const val ESLINT_8_57_0_TEST_PACKAGE_SPEC: String = "eslint@8.57.0"
 
+/**
+ * eslint 9 one-off — the only major that supports BOTH flat config (default) and, via
+ * `LegacyESLint` from `../lib/unsupported-api`, eslintrc fallback. See EslintFallbackToLegacyConfigV9Test.
+ */
+const val ESLINT_9_11_1_TEST_PACKAGE_SPEC: String = "eslint@9.11.1"
+
 // next versions
 const val ESLINT_LATEST_TEST_PACKAGE_SPEC: String = "eslint@latest"
 
