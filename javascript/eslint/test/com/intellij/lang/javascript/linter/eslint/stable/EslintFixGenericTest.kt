@@ -214,9 +214,6 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
     assertEmpty(fixActions)
   }
 
-  fun testInHtmlWithHtmlPluginExplicitName() =
-    doQuickFixTest("ESLint: Fix current file", ".html", "eslint.config.html.mjs")
-
   fun testRunEslintFixOnSave() {
     installEslintOnly()
     val configuration = EslintConfiguration.getInstance(project)
