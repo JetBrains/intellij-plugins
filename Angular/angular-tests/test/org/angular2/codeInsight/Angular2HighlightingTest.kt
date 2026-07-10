@@ -47,7 +47,6 @@ import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TestModule.TS_LIB
 import org.angular2.Angular2TsConfigFile
 import org.angular2.Angular2TsExpectedConfigFiles
-import org.angular2.SkipTsGoProxy
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
@@ -227,7 +226,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   }
 
   @Test
-  @SkipTsGoProxy // missing unresolved symbol
   fun testBlockDefer() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
 
   @Test
