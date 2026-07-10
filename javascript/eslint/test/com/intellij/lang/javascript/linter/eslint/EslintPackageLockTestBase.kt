@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.nodejs.util.NodePackageRef
+import com.intellij.lang.javascript.linter.AutodetectLinterPackage
 import com.intellij.lang.javascript.linter.JSLinterAnnotationResult
 import com.intellij.lang.javascript.linter.JSLinterInput
 import com.intellij.lang.javascript.linter.LinterHighlightingTest
@@ -102,13 +103,29 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
     installEslintFromProjectRoot()
   }
 
+  /** Like [installEslintForTest], but leaves the linter set to auto-detect the project-local ESLint
+   *  (AutodetectLinterPackage) rather than a fixed package -- for the autodetection tests. */
+  protected fun installEslintForTestWithAutodetect() {
+    copyTestDataToProject()
+    installEslintFromProjectRoot(autodetect = true)
+  }
+
+  /** [installEslintForTestWithAutodetect] followed by editor highlighting on [mainFileRelativePath]. */
+  protected fun doHighlightingTestWithAutodetectInstallation(
+    mainFileRelativePath: String,
+    configureFixture: ThrowableRunnable<Throwable>? = null,
+  ) {
+    installEslintForTestWithAutodetect()
+    doEditorHighlightingTestWithoutCopy(mainFileRelativePath, configureFixture)
+  }
+
   /**
    * Installs ESLint from the `package.json`/stored lock already present in the project root, then
    * points the ESLint configuration at `<project>/node_modules/eslint`. The project root must already
    * contain the `package.json` (and any config): [installEslintForTest] copies the per-test data
    * directory first, while the quick-fix suite copies a shared root install instead. Call once per test.
    */
-  protected fun installEslintFromProjectRoot() {
+  protected fun installEslintFromProjectRoot(autodetect: Boolean = false) {
     check(!packagesInstalled) { "ESLint must be installed once per test" }
     packagesInstalled = true
 
@@ -124,7 +141,12 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
     val nodePackage = NodePackage(eslintPath.toString())
     setNodePackage(nodePackage)
     VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, nodePackage.systemDependentPath)
-    configureLinterForPackage(NodePackageRef.create(nodePackage))
+    if (autodetect) {
+      configureLinterForPackage(AutodetectLinterPackage.INSTANCE)
+    }
+    else {
+      configureLinterForPackage(NodePackageRef.create(nodePackage))
+    }
 
     // EslintServiceTestBase sets this in setUp() from the global install; here the package only exists
     // after the per-test install, so the registry value is set at this point instead.

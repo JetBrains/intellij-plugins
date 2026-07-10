@@ -80,18 +80,8 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     return annotation != null ? annotation.getMessage() : null;
   }
 
-  public void testSuppressMissingConfigErrorWithAutodetectPackage() {
-    configureLinterForPackage(AutodetectLinterPackage.INSTANCE);
-    AutodetectLinterPackage.setTestAutodetectedPackage(myFixture.getProject(), getNodePackage(), myFixture.getTestRootDisposable());
-    doEditorHighlightingTest("test.js");
-  }
-
   public void testSuppressMissingConfigErrorForTypescript() {
     doEditorHighlightingTest("test.ts");
-  }
-
-  public void testCanAutodetectLocalPackage() {
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("js.js");
   }
 
   public void testCanAutodetectLocalPackageInParentNodeModules() {
