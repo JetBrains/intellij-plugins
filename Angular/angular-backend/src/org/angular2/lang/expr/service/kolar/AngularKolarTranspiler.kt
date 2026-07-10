@@ -28,6 +28,7 @@ import com.intellij.util.ThreeState
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.SubstitutedFileType
 import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
+import org.angular2.codeInsight.blocks.isDeferOnReferenceExpression
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.service.Angular2AnnotationErrorFilter
@@ -73,6 +74,9 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
     (file.language is Angular2HtmlDialect || file.language is Angular2ExprDialect)
     && Angular2EntitiesProvider.findTemplateComponent(file) == null
     && !isHostBindingExpression(file)
+
+  override fun skipInternalErrors(element: PsiElement): Boolean =
+    !isDeferOnReferenceExpression(element)
 
   private fun isAcceptableHtmlFile(file: VirtualFile): Boolean =
     file.isInLocalFileSystem && file.fileType.let {
