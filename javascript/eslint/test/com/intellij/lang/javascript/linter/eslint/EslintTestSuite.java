@@ -24,6 +24,8 @@ public final class EslintTestSuite {
     testSuite.addTestSuite(EslintHighlightingV8LegacyTest.class);
     testSuite.addTestSuite(EslintFallbackToLegacyConfigV9Test.class);
     testSuite.addTestSuite(EslintFixV10Test.class);
+    // next — kept in the suite; a failure here is triaged by the next.* package name (an upstream
+    // ESLint release changed something), not treated as a regression in the change under test.
     testSuite.addTestSuite(EslintHighlightingLatestTest.class);
     testSuite.addTestSuite(ESLintImportCodeStyleBasicTest.class);
     testSuite.addTestSuite(ESLintImportCodeStyleIntegrationTest.class);

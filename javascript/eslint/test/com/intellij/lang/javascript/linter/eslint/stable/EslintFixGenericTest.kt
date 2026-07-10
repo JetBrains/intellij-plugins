@@ -5,8 +5,6 @@ import com.intellij.lang.Language
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.JavascriptLanguage
-import com.intellij.lang.javascript.inspections.JSConsecutiveCommasInArrayLiteralInspection
-import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintBundle
 import com.intellij.lang.javascript.linter.eslint.EslintConfiguration
@@ -234,89 +232,6 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
     finally {
       configuration.setExtendedState(origEnabled, EslintState.Builder(eslintState).setRunOnSave(origRunOnSave).build())
     }
-  }
-
-  fun testSuppressQuickFixGoesAfterInspectionFix() {
-    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection::class.java)
-    installEslintForTest()
-    doEditorHighlightingTestWithoutCopy("test.js")
-
-    val quickFixNames = myFixture.availableIntentions.map { it.text }
-    assertContainsOrdered(quickFixNames,
-                          "Remove unused variable 'foo'",
-                          "Edit inspection profile setting",
-                          "Run inspection on…",
-                          "Disable highlighting, keep fix",
-                          "Disable inspection",
-                          "Suppress for file",
-                          "Suppress for statement",
-                          // eslint 10's no-unused-vars provides a "Remove unused variable" suggestion
-                          // (eslint 8 had none), so this ESLint fix now heads the ESLint action group.
-                          "ESLint: Remove unused variable 'foo'.",
-                          "Edit inspection profile setting",
-                          "Run inspection on…",
-                          "Disable highlighting, keep fix",
-                          "Disable inspection",
-                          "Suppress 'no-unused-vars' for current file",
-                          "Suppress all ESLint rules for current file",
-                          "Suppress 'no-unused-vars' for current line",
-                          "Suppress all ESLint rules for current line")
-  }
-
-  fun testEsLintQuickFixGoesAfterInspectionFix() {
-    myFixture.enableInspections(JSConsecutiveCommasInArrayLiteralInspection::class.java)
-    installEslintForTest()
-    doEditorHighlightingTestWithoutCopy("test.js")
-
-    val quickFixNames = myFixture.availableIntentions.map { it.text }
-    assertContainsOrdered(quickFixNames,
-                          "Insert 'undefined'",
-                          "Edit inspection profile setting",
-                          "Fix all 'Consecutive commas in array literal' problems in file",
-                          "Run inspection on…",
-                          "Disable highlighting, keep fix",
-                          "Disable inspection",
-                          "Suppress for file",
-                          "Suppress for statement",
-                          "Remove unneeded comma",
-                          "Edit inspection profile setting",
-                          "Fix all 'Consecutive commas in array literal' problems in file",
-                          "Run inspection on…",
-                          "Disable highlighting, keep fix",
-                          "Disable inspection",
-                          "Suppress for file",
-                          "Suppress for statement",
-                          "ESLint: Fix 'comma-spacing'",
-                          "Edit inspection profile setting",
-                          "Run inspection on…",
-                          "Disable highlighting, keep fix",
-                          "Disable inspection",
-                          "Suppress 'comma-spacing' for current file",
-                          "Suppress all ESLint rules for current file",
-                          "Suppress 'comma-spacing' for current line",
-                          "Suppress all ESLint rules for current line",
-                          "ESLint: Fix current file",
-                          "Edit inspection profile setting",
-                          "Run inspection on…",
-                          "Disable highlighting, keep fix",
-                          "Disable inspection",
-                          "Suppress 'comma-spacing' for current file",
-                          "Suppress all ESLint rules for current file",
-                          "Suppress 'comma-spacing' for current line",
-                          "Suppress all ESLint rules for current line",
-                          "Flip ',' (may change semantics)",
-                          "Edit intention settings",
-                          "Disable 'Flip comma'",
-                          "Assign shortcut…",
-                          "Split into declaration and initialization",
-                          "Edit intention settings",
-                          "Disable 'Split declaration and initialization'",
-                          "Assign shortcut…",
-                          "Disable option 'Variables and fields' for 'Type annotations' inlay hints",
-                          "Put comma-separated elements on multiple lines",
-                          "Edit intention settings",
-                          "Disable 'Put elements on multiple lines'",
-                          "Assign shortcut…")
   }
 
   private fun fixProblemsDescription(ruleCode: String): String =

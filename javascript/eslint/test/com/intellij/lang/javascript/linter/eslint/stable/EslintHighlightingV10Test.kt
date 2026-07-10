@@ -38,8 +38,8 @@ class EslintHighlightingV10Test : EslintHighlightingGenericTest() {
     useCustomConfigFile("eslint.config.fast.mjs")
   }
 
-  // ESLint autodetected from the project-local node_modules (installed but not an explicit dependency).
-  fun testCanAutodetectInstalledPackageWithoutExplicitDependency() =
+  // ESLint autodetected from the project-local node_modules + a flat eslint.config.js.
+  fun testCanAutodetectInstalledLocalPackage() =
     doHighlightingTestWithAutodetectInstallation("js.js")
 
   // A file ignored via the --ignore-pattern CLI option is skipped (flat config; option is v10-supported).
