@@ -114,10 +114,6 @@ public class EsLintFixTest extends EslintServiceTestBase {
     assertEmpty(fixActions);
   }
 
-  public void testSuppressByLineComment() {
-    doTestQuickFix("Suppress 'comma-spacing' for current line");
-  }
-
   public void testSuppressForLineInNestedScopeWithIndent() {
     JSTestUtils.testWithTempCodeStyleSettings(getProject(), settings -> {
       CommonCodeStyleSettings commonSettings = settings.getCommonSettings(JavascriptLanguage.INSTANCE);

@@ -97,10 +97,19 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
    * fake-service helper.
    */
   protected fun installEslintForTest() {
-    check(!packagesInstalled) { "installEslintForTest must be called once per test" }
-    packagesInstalled = true
-
     copyTestDataToProject()
+    installEslintFromProjectRoot()
+  }
+
+  /**
+   * Installs ESLint from the `package.json`/stored lock already present in the project root, then
+   * points the ESLint configuration at `<project>/node_modules/eslint`. The project root must already
+   * contain the `package.json` (and any config): [installEslintForTest] copies the per-test data
+   * directory first, while the quick-fix suite copies a shared root install instead. Call once per test.
+   */
+  protected fun installEslintFromProjectRoot() {
+    check(!packagesInstalled) { "ESLint must be installed once per test" }
+    packagesInstalled = true
 
     val projectDir = myFixture.tempDirFixture.getFile(".") ?: error("Project directory not found")
     replaceEslintVersionPlaceholders(projectDir)
