@@ -140,22 +140,31 @@ internal object RequiredProvidersReference : PsiReferenceProvider() {
   }
 }
 
+/**
+ * Resolves the `provider` property value of a resource/data source block to the matching `provider` block
+ *
+ * Handles both the plain form `provider = aws` and the aliased form `provider = aws.alias`
+ */
 object ResourceProviderReferenceProvider : PsiReferenceProvider() {
   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
-    if (element !is HCLStringLiteral && element !is HCLIdentifier) {
+    if (element !is HCLStringLiteral && element !is HCLIdentifier)
       return PsiReference.EMPTY_ARRAY
+
+    val parent = element.parent
+    if (parent is HCLSelectExpression) {
+      // aliased form: keep the reference on the alias part only (ignore `foo[0]` index access)
+      if (parent is HCLIndexSelectExpression || parent.field !== element)
+        return PsiReference.EMPTY_ARRAY
     }
-    if (!HCLPsiUtil.isPropertyValue(element)) return PsiReference.EMPTY_ARRAY
-    return arrayOf(HCLElementLazyReference(element, false) { incomplete, _ ->
-      @Suppress("NAME_SHADOWING")
-      val element = this.element
+    else if (!HCLPsiUtil.isPropertyValue(element))
+      return PsiReference.EMPTY_ARRAY
+
+    return arrayOf(HCLElementLazyReference(element, soft = false) { incomplete, _ ->
       val module = (element as HCLElement).getTerraformModule()
-      if (incomplete) {
+      if (incomplete)
         module.getDefinedProviders().map { it.first }
-      }
-      else {
+      else
         getElementText(element)?.let { text -> module.findProviders(text) } ?: emptyList()
-      }
     })
   }
 

@@ -18,6 +18,7 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.hil.inspection.HILUnknownResourceTypeInspection
 import org.intellij.terraform.hil.inspection.HILUnresolvedReferenceInspection
@@ -666,6 +667,31 @@ class TfReferencesTest : BasePlatformTestCase() {
 
     val requiredProviderBlock = requiredProvider.parentOfType<HCLBlock>()
     assertTrue(TfPsiPatterns.TfRequiredProvidersBlock.accepts(requiredProviderBlock))
+  }
+
+  @Test
+  fun testResolveAliasedProviderInResource() {
+    myFixture.configureByText("main.tf", """
+      provider "aws" { }
+      
+      provider "aws" {
+        alias = "global_region"
+      }
+
+      resource "aws_eks_addon" "test" {
+        provider = aws.global_<caret>region
+      }
+    """.trimIndent())
+
+    myFixture.checkHighlighting()
+    val reference = myFixture.getReferenceAtCaretPosition()
+    assertNotNull("Expected a reference on the aliased provider", reference)
+
+    val providerBlock = reference?.resolve() as? HCLBlock
+                        ?: throw AssertionError("Expected HCLBlock, got ${reference?.javaClass}")
+    assertEquals("provider", providerBlock.getNameElementUnquoted(0))
+    assertEquals("aws", providerBlock.getNameElementUnquoted(1))
+    assertEquals("global_region", (providerBlock.`object`?.findProperty("alias")?.value as? HCLStringLiteral)?.value)
   }
 
   private val DLR = "$"
