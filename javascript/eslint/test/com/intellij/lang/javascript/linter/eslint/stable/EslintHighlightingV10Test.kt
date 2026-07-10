@@ -42,6 +42,12 @@ class EslintHighlightingV10Test : EslintHighlightingGenericTest() {
   fun testCanAutodetectInstalledPackageWithoutExplicitDependency() =
     doHighlightingTestWithAutodetectInstallation("js.js")
 
+  // A file ignored via the --ignore-pattern CLI option is skipped (flat config; option is v10-supported).
+  fun testFileIgnoredByCommandLineOption() =
+    doHighlightingTestWithInstallation("testIgnored.js") {
+      updateConfiguration { it.setExtraOptions("--ignore-pattern '*.js'") }
+    }
+
   // Per-subdirectory TS flat configs (.cts/.ts/.mts), each loaded via jiti; eslint resolves the nearest config per file.
   fun testFlatTypescriptConfigSubDirs() {
     installEslintForTest()

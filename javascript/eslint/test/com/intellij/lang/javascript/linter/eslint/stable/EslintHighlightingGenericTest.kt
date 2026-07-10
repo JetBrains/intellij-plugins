@@ -129,4 +129,30 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
       updateConfiguration { it.setExtraOptions("--rule \"no-console: 'warn'\"") }
     }
   }
+
+  // Parse error (flat config with sourceType:script + ecmaVersion:5) reported as a fatal lint error;
+  // also exercises the fatal Annotation -> ProblemDescriptor batch mapping. Parse-error text/shape is a
+  // volatile eslint surface, so keeping these in the generic tier lets the @latest canary catch changes.
+  fun testReportAboutWrongParser() {
+    doHighlightingTestWithInstallation("test.js")
+    doBatchInspectionTest()
+  }
+
+  fun testESLintLocalFatalError() {
+    doHighlightingTestWithInstallation("test.js")
+    doBatchInspectionTest()
+  }
+
+  // A flat config that imports a nonexistent module fails to load -> config-load fatal, surfaced as a
+  // file-level ESLint error (asserts a stable fragment, not the exact node/eslint message).
+  fun testESLintGlobalFatalError() {
+    myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("eslint-config-does-not-exist", false, true)
+    doHighlightingTestWithInstallation("test.jsx")
+  }
+
+  // A file matched by flat-config `ignores` is skipped (isPathIgnored), so no problems are reported.
+  fun testFileIgnored() {
+    doHighlightingTestWithInstallation("testIgnored.js")
+    doBatchInspectionTest()
+  }
 }

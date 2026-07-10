@@ -9,37 +9,19 @@ import com.intellij.lang.javascript.modules.TestNpmPackage
 import java.io.File
 
 /**
- * Legacy `.eslintrc`-only ESLint scenarios, pinned to eslint 8.57.0 -- the last release that supports
- * eslintrc configs (removed in eslint 9/10). These exercise behavior with no flat-config equivalent
- * (string parser resolution, eslintrc parse/fatal errors), so they stay on a frozen eslint 8 rather
- * than migrating to flat config. eslint 8.57.0 never changes, so these goldens are stable.
+ * Legacy ESLint scenarios pinned to eslint 8.57.0 -- the last release supporting the mechanisms these
+ * exercise, all removed in eslint 9/10 and with no flat-config equivalent: `.eslintignore` and
+ * package.json `eslintIgnore`, `--rulesdir`, the eslintrc cascade across sub-packages, custom
+ * (non-standard-named) eslintrc files, a string `parser` path, and `eslintConfig`-implied resolution.
+ * Each test's comment states which legacy mechanism it covers. eslint 8.57.0 never changes, so these
+ * goldens are stable. (Fatal/parse-error and flat-ignore scenarios are version-agnostic and live in
+ * the generic tier; only genuinely eslintrc-era behavior belongs here.)
  */
 @TestNpmPackage(ESLINT_8_57_0_TEST_PACKAGE_SPEC)
 class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
   override fun getBasePath(): String = "$ESLINT_TEST_DATA_RELATIVE_PATH/linter/eslint/highlighting/"
 
-  private fun doTest(mainFile: String) {
-    doHighlightingTestWithInstallation(mainFile)
-    doBatchInspectionTest()
-  }
-
-  fun testReportAboutWrongParser() = doTest("test.js")
-
-  fun testESLintLocalFatalError() = doTest("test.js")
-
-  fun testESLintGlobalFatalError() {
-    myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("ESLint: Error: Failed to load parser 'babel'", true, false)
-    doHighlightingTestWithInstallation("test.jsx")
-  }
-
-  // Legacy ignore mechanisms removed in flat config: .eslintignore and package.json "eslintIgnore".
-  fun testFileIgnored() = doTest("testIgnored.js")
-
-  fun testFileIgnoredByCommandLineOption() =
-    doHighlightingTestWithInstallation("testIgnored.js") {
-      updateConfiguration { it.setExtraOptions("--ignore-pattern '*.js'") }
-    }
-
+  // Legacy ignore mechanism with no flat-config equivalent: package.json "eslintIgnore".
   fun testFileIgnoredWithPackageJsonOption() = doHighlightingTestWithInstallation("src/ignoredDir/test.js")
 
   fun testCanDisableIgnoreFilesWithCommandLineOption() =
