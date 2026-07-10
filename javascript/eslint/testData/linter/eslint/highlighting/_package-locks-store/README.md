@@ -19,6 +19,12 @@ each token sanitized by replacing `@`, `.` and `/` with `_`
 testData `package.json` declaring `"eslint": "10.6.0"` →
 `eslint_10_6_0eslint_10_6_0`.
 
+The dependency segments are **sorted alphabetically by sanitized name** (not in
+`package.json`/HashMap order), so the name is deterministic and hand-computable. Note
+`-` sorts before `_`, so e.g. `@typescript-eslint/parser` (→ `_typescript-eslint_parser_…`)
+and `eslint-plugin-*` segments sort before `eslint_…`. When in doubt, read the exact
+derived name from the installer's store-miss log line rather than computing it by hand.
+
 ## Combos
 
 Each combo directory pairs the pinned `eslint` with any extra dependencies its tests
