@@ -3,8 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core
 
 data class Position(
   val offset: Int,
-  val line: Int,
-  val column: Int,
 )
 
 data class SourceLocation(
