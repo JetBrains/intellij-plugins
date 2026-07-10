@@ -126,7 +126,9 @@ var ESLint8Plugin = /** @class */ (function () {
                     case 7:
                         e_1 = _a.sent();
                         response.isNoConfigFile = "no-config-found" === e_1.messageTemplate
-                            || (e_1.message && (0, eslint_common_1.containsString)(e_1.message.toString(), "No ESLint configuration found"));
+                            || "config-file-missing" === e_1.messageTemplate
+                            || (e_1.message && ((0, eslint_common_1.containsString)(e_1.message.toString(), "No ESLint configuration found")
+                                || (0, eslint_common_1.containsString)(e_1.message.toString(), "Could not find config file.")));
                         response.error = e_1.toString() + "\n\n" + e_1.stack;
                         return [3 /*break*/, 8];
                     case 8:

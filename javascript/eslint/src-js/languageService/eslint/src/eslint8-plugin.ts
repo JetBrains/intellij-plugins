@@ -78,7 +78,9 @@ export class ESLint8Plugin implements LanguagePlugin {
     }
     catch (e) {
       response.isNoConfigFile = "no-config-found" === e.messageTemplate
-        || (e.message && containsString(e.message.toString(), "No ESLint configuration found"));
+        || "config-file-missing" === e.messageTemplate
+        || (e.message && (containsString(e.message.toString(), "No ESLint configuration found")
+                          || containsString(e.message.toString(), "Could not find config file.")));
       response.error = e.toString() + "\n\n" + e.stack;
     }
     writer.write(JSON.stringify(response));
