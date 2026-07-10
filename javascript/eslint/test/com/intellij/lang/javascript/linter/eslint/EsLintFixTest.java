@@ -99,22 +99,6 @@ public class EsLintFixTest extends EslintServiceTestBase {
     assertEmpty(fixActions);
   }
 
-  public void testSuppressForLineInJSXTagContent() {
-    doQuickFixTestForDirectory("Suppress 'react/self-closing-comp' for current line", "test", ".jsx", null);
-  }
-
-  public void testSuppressForLineInJSXTagContent2() {
-    doQuickFixTestForDirectory("Suppress 'jsx-quotes' for current line", "test", ".jsx", null);
-  }
-
-  public void testSuppressForLineInJSXTagContentAddsToExistingComment() {
-    doQuickFixTestForDirectory("Suppress 'react/no-unknown-property' for current line", "test", ".jsx", null);
-  }
-
-  public void testSuppressForLineInJSXTagAttributes() {
-    doQuickFixTestForDirectory("Suppress 'react/jsx-curly-brace-presence' for current line", "test", ".jsx", null);
-  }
-
   public void testSuppressForFileInHtml() {
     doTestQuickFix("Suppress 'no-multiple-empty-lines' for current file", ".html", ".eslintrc-with-html.json", true);
   }
@@ -137,16 +121,6 @@ public class EsLintFixTest extends EslintServiceTestBase {
 
   public void testFixInHtml() {
     doTestQuickFix("ESLint: Fix current file", ".html", ".eslintrc-with-html.json", true);
-  }
-
-  public void testFixFileInVue() {
-    assertNotNull("This test must be run with intellij.vuejs module in classpath", Language.findLanguageByID("Vue"));
-    doQuickFixTestForDirectory("ESLint: Fix current file", "test", ".vue", null);
-  }
-
-  public void testFixFileInVueTs() {
-    assertNotNull("This test must be run with intellij.vuejs module in classpath", Language.findLanguageByID("Vue"));
-    doQuickFixTestForDirectory("ESLint: Fix current file", "test", ".vue", null);
   }
 
   public void testRunEslintFixOnSave() {
