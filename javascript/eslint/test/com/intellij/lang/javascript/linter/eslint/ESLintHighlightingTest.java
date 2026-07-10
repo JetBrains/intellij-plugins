@@ -80,22 +80,12 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     return annotation != null ? annotation.getMessage() : null;
   }
 
-  public void testCanAutodetectInstalledPackageWithoutExplicitDependency() {
-    //Eslint could have been installed as a transitive dependency, for example, by create-react-app
-    configureLinterForPackage(AutodetectLinterPackage.INSTANCE);
-    doEditorHighlightingTest("js.js", () -> performNpmInstallWithArguments("", "--no-save", "eslint@latest"));
-  }
-
   public void testImplicitDependencyButEslintConfigInSubpackage() {
     // inner package.json contains "eslintConfig" -> we check that eslint is taken from the inner node_modules, although it doesn't have
     // implicit eslint dependency
     myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("packages/inner/node_modules/eslint/lib/options", false, true);
     configureLinterForPackage(AutodetectLinterPackage.INSTANCE);
     doEditorHighlightingTest("packages/inner/js.js");
-  }
-
-  public void testSubpackageContainsOnlyLinkToParentEslint() {
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("packages/inner/js.js");
   }
 
   public void testYarnPnpEslintExample() throws Exception {

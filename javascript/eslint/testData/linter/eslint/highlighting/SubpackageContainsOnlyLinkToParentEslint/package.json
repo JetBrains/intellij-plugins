@@ -1,10 +1,6 @@
 {
   "version": "1.0.0",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
-  "dependencies": {
-    "eslint": "10.6.0"
+  "devDependencies": {
+    "eslint": "$ESLINT_VERSION$"
   }
 }

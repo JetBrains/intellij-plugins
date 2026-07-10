@@ -38,6 +38,10 @@ class EslintHighlightingV10Test : EslintHighlightingGenericTest() {
     useCustomConfigFile("eslint.config.fast.mjs")
   }
 
+  // ESLint autodetected from the project-local node_modules (installed but not an explicit dependency).
+  fun testCanAutodetectInstalledPackageWithoutExplicitDependency() =
+    doHighlightingTestWithAutodetectInstallation("js.js")
+
   // Per-subdirectory TS flat configs (.cts/.ts/.mts), each loaded via jiti; eslint resolves the nearest config per file.
   fun testFlatTypescriptConfigSubDirs() {
     installEslintForTest()

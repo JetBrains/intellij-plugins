@@ -100,6 +100,10 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
   fun testEslintignoreWithRelativePathInProjectSubPackage() =
     doHighlightingTestWithAutodetectInstallation("packages/with-eslint-ignore/src/ignored.js")
 
+  // A sub-package with no ESLint of its own resolves the parent's, found by walking up node_modules.
+  fun testSubpackageContainsOnlyLinkToParentEslint() =
+    doHighlightingTestWithAutodetectInstallation("packages/inner/js.js")
+
   // .eslintrc referencing an ABSOLUTE parser path resolved from the installed package -- eslintrc only.
   fun testTypescriptWithVueParserAbsolutePath() {
     installEslintForTest()
