@@ -8,11 +8,9 @@ interface Node {
 }
 
 // CompilerDOM.CommentNode
-data class CommentNode(
-  override val type: NodeTypes,  // NodeTypes.COMMENT
-  val content: String,
-  override val loc: SourceLocation,
-) : Node
+interface CommentNode : Node {
+  val content: String
+}
 
 // CompilerDOM.TextNode
 interface TextNode : Node {
