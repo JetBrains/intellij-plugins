@@ -7,6 +7,8 @@ import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.testFramework.DumbModeTestUtils
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 
 /**
  * Version-agnostic ESLint quick-fix and suppression scenarios, reused by the pinned [EslintFixV10Test]
@@ -39,6 +41,15 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
    */
   protected fun doQuickFixTest(description: String, extension: String = ".js") {
     installEslintWithSharedConfig()
+    launchQuickFix(description, extension)
+  }
+
+  /**
+   * Configures `<TestName><extension>`, launches the intention named [description], and compares the
+   * result with `<TestName>_after<extension>`. Assumes ESLint is already installed (see
+   * [installEslintWithSharedConfig]) -- split out so dumb-mode tests can install before entering dumb mode.
+   */
+  protected fun launchQuickFix(description: String, extension: String = ".js") {
     myFixture.configureByFile(getTestName(false) + extension)
     val intention = myFixture.getAvailableIntention(description)
                     ?: error("Intention '$description' is not available")
@@ -69,6 +80,18 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { settings ->
       settings.getCommonSettings(JavascriptLanguage).LINE_COMMENT_AT_FIRST_COLUMN = true
       doQuickFixTest("Suppress 'comma-spacing' for current line")
+    }
+  }
+
+  fun testFixFileWorks() = doQuickFixTest("ESLint: Fix current file")
+
+  fun testFixWithSearchForConfig() = doQuickFixTest("ESLint: Fix current file")
+
+  fun testFixFileInDumbWorks() {
+    CodeInsightTestFixtureImpl.mustWaitForSmartMode(false, testRootDisposable)
+    installEslintWithSharedConfig()
+    DumbModeTestUtils.runInDumbModeSynchronously(project) {
+      launchQuickFix("ESLint: Fix current file")
     }
   }
 }

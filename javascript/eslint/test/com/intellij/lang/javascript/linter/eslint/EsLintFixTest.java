@@ -55,17 +55,6 @@ public class EsLintFixTest extends EslintServiceTestBase {
     myFixture.setTestDataPath(basePath);
   }
 
-  public void testFixFileWorks() {
-    doTestQuickFix("ESLint: Fix current file");
-  }
-
-  public void testFixFileInDumbWorks() {
-    CodeInsightTestFixtureImpl.mustWaitForSmartMode(false, getTestRootDisposable());
-    DumbModeTestUtils.runInDumbModeSynchronously(getProject(), () -> {
-      doTestQuickFix("ESLint: Fix current file", ".js", ".eslintrc", true);
-    });
-  }
-
   public void testFixFileWithWindowsLineSeparator() throws IOException {
     if (!SystemInfo.isWindows) return;
     doQuickFixTestForDirectory("ESLint: Fix current file", "test", ".js", LineSeparator.CRLF);
@@ -100,10 +89,6 @@ public class EsLintFixTest extends EslintServiceTestBase {
     configure(dir + "/test.js", dir + "/.eslintrc", true);
     myFixture.checkHighlighting();
     assertEmpty(myFixture.filterAvailableIntentions("ESLint: Fix current file"));
-  }
-
-  public void testFixWithSearchForConfig() {
-    doTestQuickFix("ESLint: Fix current file", ".js", ".eslintrc", false);
   }
 
   public void testScriptsInHtmlFile() {
