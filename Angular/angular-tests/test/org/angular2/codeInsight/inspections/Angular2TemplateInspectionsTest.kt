@@ -23,8 +23,6 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_8_2_14
 import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestModule.TS_LIB
 import org.angular2.Angular2TsConfigFile
-import org.angular2.SkipTsGoProxy
-import org.angular2.SkipTsNode
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection
@@ -215,8 +213,6 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
   }
 
   @Test
-  @SkipTsGoProxy // no error
-  @SkipTsNode // no error - regression possibly by WEB-77722 Angular: fix more tests and document problems
   fun testMissingRequiredInputBinding1() {
     doTest(1, "<ng-<caret>template", "Create '[ngForOf]' attribute",
            inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java,
@@ -224,13 +220,10 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
            dependencies = listOf(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8),
            files = listOf("missing-required-directive-input-bindings.html",
                           "missing-required-directive-input-bindings-module.ts",
-                          "foo-bar.directive.ts"),
-           configurators = listOf(Angular2TsConfigFile()))
+                          "foo-bar.directive.ts"))
   }
 
   @Test
-  @SkipTsGoProxy // no error
-  @SkipTsNode // no error - regression
   fun testMissingRequiredInputBinding2() {
     doTest(2, "<d<caret>iv appFooBar>", "Create '[appFooBar2]' attribute",
            inspections = listOf(AngularMissingRequiredDirectiveInputBindingInspection::class.java,
@@ -238,13 +231,10 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
            dependencies = listOf(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8),
            files = listOf("missing-required-directive-input-bindings.html",
                           "missing-required-directive-input-bindings-module.ts",
-                          "foo-bar.directive.ts"),
-           configurators = listOf(Angular2TsConfigFile()))
+                          "foo-bar.directive.ts"))
   }
 
   @Test
-  @SkipTsGoProxy // no error
-  @SkipTsNode // no error - regression
   fun testMissingRequiredInputBinding3() {
     myFixture.enableInspections(HtmlUnknownBooleanAttributeInspection::class.java)
     doTest(3, "<d<caret>iv appFooBar=\"foo\"", "Create 'appFooBar2' attribute",
@@ -253,8 +243,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
            dependencies = listOf(ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8),
            files = listOf("missing-required-directive-input-bindings.html",
                           "missing-required-directive-input-bindings-module.ts",
-                          "foo-bar.directive.ts"),
-           configurators = listOf(Angular2TsConfigFile()))
+                          "foo-bar.directive.ts"))
   }
 
   @Test
