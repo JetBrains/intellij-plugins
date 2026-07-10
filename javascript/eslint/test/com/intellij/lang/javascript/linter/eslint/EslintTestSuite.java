@@ -18,7 +18,7 @@ public final class EslintTestSuite {
     final TestSuite testSuite = new TestSuite("ESLint tests");
     testSuite.addTestSuite(EslintConfigHighlightingTest.class);
     testSuite.addTestSuite(EslintConfigCompletionTest.class);
-    testSuite.addTestSuite(ESLintHighlightingTest.class);
+    testSuite.addTestSuite(EslintYarnPnpTest.class);
     testSuite.addTestSuite(EslintHighlightingV10Test.class);
     testSuite.addTestSuite(EslintHighlightingV8LegacyTest.class);
     testSuite.addTestSuite(EslintFixV10Test.class);
