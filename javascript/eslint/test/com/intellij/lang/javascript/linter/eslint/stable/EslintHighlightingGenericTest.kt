@@ -5,6 +5,7 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.inspections.JSInspection
+import com.intellij.lang.javascript.linter.AutodetectLinterPackage
 import com.intellij.lang.javascript.linter.eslint.EslintInspection
 import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
@@ -15,6 +16,7 @@ import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.testFramework.DumbModeTestUtils
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.LineSeparator
+import com.intellij.util.ThrowableRunnable
 import org.junit.Assert
 
 /**
@@ -78,6 +80,18 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
     myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("ESLint: Error: Could not find config file.", true, false)
     doHighlightingTestWithInstallation("test.js")
   }
+
+  // With no config file, the missing-config error is suppressed when ESLint is autodetected (the user
+  // installed it but has not configured it yet). eslint8-plugin.ts recognizes both the eslint 8
+  // ("No ESLint configuration found") and eslint 9/10 ("Could not find config file.") message shapes.
+  fun testSuppressMissingConfigErrorWithAutodetectPackage() {
+    installEslintForTestWithAutodetect()
+    AutodetectLinterPackage.setTestAutodetectedPackage(project, getNodePackage(), testRootDisposable)
+    doEditorHighlightingTestWithoutCopy("test.js", null as ThrowableRunnable<Throwable>?)
+  }
+
+  // A .ts file with no config: the missing-config error is suppressed for TypeScript on every version.
+  fun testSuppressMissingConfigErrorForTypescript() = doHighlightingTestWithInstallation("test.ts")
 
   fun testTimeout() {
     // Deterministic timeout handling without a real node service (WEB-67172): install eslint, point the

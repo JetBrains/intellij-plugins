@@ -1,7 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.eslint.stable
 
-import com.intellij.lang.javascript.linter.AutodetectLinterPackage
 import com.intellij.lang.javascript.linter.eslint.ESLINT_8_57_0_TEST_PACKAGE_SPEC
 import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
@@ -74,18 +73,6 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
 
   // .eslintrc.js that `extends` a sibling config via a cwd-relative path.resolve() -- eslintrc only.
   fun testConfigReferencesLocalFiles() = doHighlightingTestWithAutodetectInstallation("packages/a/js.js")
-
-  // With an autodetected package but no config, the missing-config error is suppressed (eslint 8's
-  // "No ESLint configuration found" -- eslint 10's newer message is not yet recognized by the IDE).
-  fun testSuppressMissingConfigErrorWithAutodetectPackage() {
-    installEslintForTestWithAutodetect()
-    AutodetectLinterPackage.setTestAutodetectedPackage(project, getNodePackage(), testRootDisposable)
-    doEditorHighlightingTestWithoutCopy("test.js", null as ThrowableRunnable<Throwable>?)
-  }
-
-  // A .ts file with no config: the missing-config error is suppressed for TypeScript (eslint 8's
-  // "No ESLint configuration found"; eslint 10's newer message is not yet recognized by the IDE).
-  fun testSuppressMissingConfigErrorForTypescript() = doHighlightingTestWithInstallation("test.ts")
 
   // --rulesdir (removed in eslint 9) + additional rules directory, custom rule plugins on disk.
   fun testWithCustomRulesDirectories() = doHighlightingTestWithInstallation("js.js") {
