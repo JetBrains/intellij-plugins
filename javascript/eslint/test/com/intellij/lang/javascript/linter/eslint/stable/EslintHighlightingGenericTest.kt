@@ -94,10 +94,11 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
   fun testSuppressMissingConfigErrorForTypescript() = doHighlightingTestWithInstallation("test.ts")
 
   fun testTimeout() {
-    // Deterministic timeout handling without a real node service (WEB-67172): install eslint, point the
-    // linter at it, then run the analysis against a never-responding fake service and assert the
-    // file-level timeout annotation.
-    installEslintForTest()
+    // Deterministic timeout handling without a real node service (WEB-67172): a stub eslint package (no
+    // npm install -- keeps the @latest canary offline) satisfies getNodePackage(), then the analysis
+    // runs against a never-responding fake service and we assert the file-level timeout annotation.
+    copyTestDataToProject()
+    installStubEslintPackage()
     val psiFile = myFixture.configureByFile("test.js")
     JSLanguageServiceUtil.setTimeout(1L, testRootDisposable)
 

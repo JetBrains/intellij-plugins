@@ -162,6 +162,23 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
   }
 
   /**
+   * Fabricates a stub `node_modules/eslint` (a package.json only -- no npm install) so [getNodePackage]
+   * and `Files.exists` are satisfied for tests that never actually run ESLint, e.g. the never-responding
+   * fake-service timeout test. Keeps the `@latest` canary offline: no registry install to hang on.
+   */
+  protected fun installStubEslintPackage() {
+    // A real (supported) version string so the plugin's version check passes; the fake service never
+    // loads this package, so no actual ESLint code is needed.
+    myFixture.tempDirFixture.createFile("node_modules/eslint/package.json", """{"name":"eslint","version":"8.57.0"}""")
+    val eslintPath = (myFixture.tempDirFixture.getFile(".") ?: error("Project directory not found"))
+      .toNioPath().resolve(NodeModuleUtil.NODE_MODULES).resolve("eslint")
+    val nodePackage = NodePackage(eslintPath.toString())
+    setNodePackage(nodePackage)
+    VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, nodePackage.systemDependentPath)
+    configureLinterForPackage(NodePackageRef.create(nodePackage))
+  }
+
+  /**
    * Runs the ESLint analysis pipeline against a fake service whose request never completes, so the
    * analysis times out deterministically without spawning a real node process (WEB-67172 rationale,
    * ported from EslintServiceTestBase). Call after [installEslintForTest]; set the timeout first
