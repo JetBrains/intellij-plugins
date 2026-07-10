@@ -102,7 +102,7 @@ internal class BrowsersToolbarSuppressor : OpenInBrowserFloatingToolbarSuppresso
 }
 
 private suspend fun angular2GTRToolbarCanBeShown(dataContext: DataContext): Boolean {
-  return withContext(Dispatchers.Default) {
+  return AdvancedSettings.getBoolean("angular.gtr.toolbar.enable") && withContext(Dispatchers.Default) {
     readAction {
       val editor = dataContext.getData(CommonDataKeys.EDITOR)
                    ?: return@readAction false
@@ -112,7 +112,6 @@ private suspend fun angular2GTRToolbarCanBeShown(dataContext: DataContext): Bool
       isInsideMainEditor(dataContext)
       && editor.editorKind == EditorKind.MAIN_EDITOR
       && isAngular2Context(file)
-      && AdvancedSettings.getBoolean("angular.gtr.toolbar.enable")
     }
   }
 }
