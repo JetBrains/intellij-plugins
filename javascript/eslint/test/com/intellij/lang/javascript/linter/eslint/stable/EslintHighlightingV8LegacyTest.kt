@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
 import com.intellij.lang.javascript.modules.TestNpmPackage
 import com.intellij.util.ThrowableRunnable
+import java.io.File
 
 /**
  * Legacy `.eslintrc`-only ESLint scenarios, pinned to eslint 8.57.0 -- the last release that supports
@@ -80,5 +81,32 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
     installEslintForTestWithAutodetect()
     AutodetectLinterPackage.setTestAutodetectedPackage(project, getNodePackage(), testRootDisposable)
     doEditorHighlightingTestWithoutCopy("test.js", null as ThrowableRunnable<Throwable>?)
+  }
+
+  // A .ts file with no config: the missing-config error is suppressed for TypeScript (eslint 8's
+  // "No ESLint configuration found"; eslint 10's newer message is not yet recognized by the IDE).
+  fun testSuppressMissingConfigErrorForTypescript() = doHighlightingTestWithInstallation("test.ts")
+
+  // .eslintrc referencing an ABSOLUTE parser path resolved from the installed package -- eslintrc only.
+  fun testTypescriptWithVueParserAbsolutePath() {
+    installEslintForTest()
+    val parserFile = File(getNodePackage().systemDependentPath, "../@typescript-eslint/parser/dist/parser.js").canonicalFile
+    assertTrue(parserFile.toString(), parserFile.exists())
+    myFixture.setCaresAboutInjection(false)
+    myFixture.configureByText(
+      ".eslintrc.json",
+      """
+      {
+        "parserOptions": {
+          "parser": "${parserFile.path.replace('\\', '/')}"
+        },
+        "parser": "vue-eslint-parser",
+        "rules": {
+          "no-console": "error"
+        }
+      }
+      """.trimIndent())
+    myFixture.configureByText("ts.ts", "<error descr=\"ESLint: Unexpected console statement. (no-console)\">console.log</error>('hello')")
+    myFixture.testHighlighting(true, false, true)
   }
 }

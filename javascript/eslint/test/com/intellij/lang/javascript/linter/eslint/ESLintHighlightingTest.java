@@ -80,10 +80,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     return annotation != null ? annotation.getMessage() : null;
   }
 
-  public void testSuppressMissingConfigErrorForTypescript() {
-    doEditorHighlightingTest("test.ts");
-  }
-
   public void testCanAutodetectInstalledPackageWithoutExplicitDependency() {
     //Eslint could have been installed as a transitive dependency, for example, by create-react-app
     configureLinterForPackage(AutodetectLinterPackage.INSTANCE);
@@ -105,25 +101,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     //this emulates package install location being hoisted to root of project by yarn/lerna while we don't use real yarn in these tests
     ThrowableRunnable<RuntimeException> setup = () -> performNpmInstallWithArguments("", "--no-save", "eslint@8.57.0");
     doEditorHighlightingTest("packages/with-eslint-ignore/src/ignored.js", setup);
-  }
-
-  public void testTypescriptWithVueParserAbsolutePath() throws IOException {
-    File parserFile = new File(getNodePackage().getSystemDependentPath(), "../@typescript-eslint/parser/dist/parser.js").getCanonicalFile();
-    assertTrue(parserFile.toString(), parserFile.exists());
-    myFixture.setCaresAboutInjection(false);
-    myFixture.configureByText(
-      ".eslintrc.json",
-      "{\n" +
-      "  \"parserOptions\": {\n" +
-      "    \"parser\": \"" + parserFile.getPath().replace('\\', '/') + "\"\n" +
-      "  },\n" +
-      "  \"parser\": \"vue-eslint-parser\",\n" +
-      "  \"rules\": {\n" +
-      "    \"no-console\": \"error\"\n" +
-      "  }\n" +
-      "}");
-    myFixture.configureByText("ts.ts", "<error descr=\"ESLint: Unexpected console statement. (no-console)\">console.log</error>('hello')");
-    myFixture.testHighlighting(true, false, true);
   }
 
   public void testImplicitDependencyButEslintConfigInSubpackage() {
