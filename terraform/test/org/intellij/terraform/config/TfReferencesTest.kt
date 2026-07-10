@@ -694,5 +694,34 @@ class TfReferencesTest : BasePlatformTestCase() {
     assertEquals("global_region", (providerBlock.`object`?.findProperty("alias")?.value as? HCLStringLiteral)?.value)
   }
 
+  @Test
+  fun testResolveAliasedProviderInModule() {
+    myFixture.addFileToProject("example/dir/providers.tf", """provider "aws" { alias = "global" }""".trimIndent())
+    myFixture.configureByText("main.tf", """
+      provider "aws" { }
+
+      provider "aws" {
+        alias = "usw3"
+      }
+
+      module "example" {
+        source    = "./example/dir"
+        providers = {
+          aws.global = aws.usw<caret>3
+        }
+      }
+    """.trimIndent())
+
+    myFixture.checkHighlighting()
+    val reference = myFixture.getReferenceAtCaretPosition()
+    assertNotNull("Expected a reference on the aliased provider", reference)
+
+    val providerBlock = reference?.resolve() as? HCLBlock
+                        ?: throw AssertionError("Expected HCLBlock, got ${reference?.javaClass}")
+    assertEquals("provider", providerBlock.getNameElementUnquoted(0))
+    assertEquals("aws", providerBlock.getNameElementUnquoted(1))
+    assertEquals("usw3", (providerBlock.`object`?.findProperty("alias")?.value as? HCLStringLiteral)?.value)
+  }
+
   private val DLR = "$"
 }

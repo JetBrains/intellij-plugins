@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.psi
 
 import com.intellij.psi.PsiElement
@@ -23,16 +23,18 @@ import org.intellij.terraform.hil.psi.HCLElementLazyReferenceBase
 object ModuleProvidersReferenceProvider : PsiReferenceProvider() {
   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
     // ModuleBlock -> Object -> (Block|Property) -> Object -> Property -> element (either key or value)
-    if (element !is HCLElement) return PsiReference.EMPTY_ARRAY
-    if (element !is HCLIdentifier && element !is HCLStringLiteral && element !is HCLSelectExpression) return PsiReference.EMPTY_ARRAY
-    if (element is HCLIndexSelectExpression) return PsiReference.EMPTY_ARRAY
-    val property = element.getParent(HCLProperty::class.java) ?: return PsiReference.EMPTY_ARRAY
+    if (element !is HCLIdentifier && element !is HCLStringLiteral) return PsiReference.EMPTY_ARRAY
 
+    val parent = element.parent
+    if (parent is HCLSelectExpression) {
+      // aliased form `aws.alias`: keep the reference on the alias part only (ignore `foo[0]` index access)
+      if (parent is HCLIndexSelectExpression || parent.field !== element) return PsiReference.EMPTY_ARRAY
+    }
+
+    val property = element.getParent(HCLProperty::class.java) ?: return PsiReference.EMPTY_ARRAY
     val block = property.getParent(HCLObject::class.java).getParent(HCLObject::class.java).getParent(HCLBlock::class.java)
         ?: return PsiReference.EMPTY_ARRAY
-
-    val type = block.getNameElementUnquoted(0) ?: return PsiReference.EMPTY_ARRAY
-    if (type != "module") return PsiReference.EMPTY_ARRAY
+    if (block.getNameElementUnquoted(0) != "module") return PsiReference.EMPTY_ARRAY
 
     return arrayOf(Reference(element))
   }

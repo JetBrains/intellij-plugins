@@ -96,10 +96,15 @@ class TfReferenceContributor : PsiReferenceContributor() {
 
     // 'module' providers key/value
     registrar.registerReferenceProvider(
-        psiElement().and(PlatformPatterns.or(HCLPatterns.Identifier, HCLPatterns.Literal, HCLPatterns.SelectExpression))
-            .inFile(TerraformConfigFile)
-            .withParent(TfPsiPatterns.PropertyUnderModuleProvidersPOB)
-        , ModuleProvidersReferenceProvider)
+      psiElement().and(PlatformPatterns.or(HCLPatterns.Identifier, HCLPatterns.Literal))
+        .inFile(TerraformConfigFile)
+        .withParent(TfPsiPatterns.PropertyUnderModuleProvidersPOB), ModuleProvidersReferenceProvider)
+
+    registrar.registerReferenceProvider(
+      psiElement().and(PlatformPatterns.or(HCLPatterns.Identifier, HCLPatterns.Literal))
+        .inFile(TerraformConfigFile)
+        .withParent(HCLPatterns.SelectExpression)
+        .withSuperParent(2, TfPsiPatterns.PropertyUnderModuleProvidersPOB), ModuleProvidersReferenceProvider)
 
     //Documentation reference
     registrar.registerReferenceProvider(
