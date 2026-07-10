@@ -21,14 +21,21 @@ testData `package.json` declaring `"eslint": "10.6.0"` →
 
 ## Combos
 
-| Directory | package.json devDependencies | Used by |
-|---|---|---|
-| `eslint_10_6_0eslint_10_6_0` | `eslint 10.6.0` | core `stable` highlighting + fix tests |
-| `eslint_8_57_0eslint_8_57_0` | `eslint 8.57.0` | `EslintHighlightingV8LegacyTest` (`.eslintrc` coverage) |
+Each combo directory pairs the pinned `eslint` with any extra dependencies its tests
+declare. `highlighting/` and `quickfix/` keep their own stores (byte-identical where a
+combo is shared, because resolution is relative to each test's `testDataPath`).
 
-The full TS/Vue/HTML combo (eslint + typescript + `@typescript-eslint/parser` +
-`vue-eslint-parser` + `eslint-plugin-vue`/`html`/`react`) is added alongside the
-TS/Vue/HTML batch.
+| Extra deps (besides the pinned eslint) | Used by |
+|---|---|
+| (none) — `eslint 10.6.0` | core `stable` highlighting + fix tests |
+| (none) — `eslint 8.57.0` | `EslintHighlightingV8LegacyTest` (`.eslintrc` coverage) |
+| `typescript 5.9.3`, `@typescript-eslint/parser 8.63.0`, `vue-eslint-parser 10.4.1`, `eslint-plugin-vue 10.9.2`, `eslint-plugin-html 8.1.4`, `eslint-plugin-react 7.37.5` (on eslint 10) | TS/Vue/HTML highlighting (V10) + the fix suite's shared root install |
+| `jiti 2.7.0` (on eslint 10) | `FlatTypescriptConfig*` — TS flat configs (`.ts/.cts/.mts`) loaded via jiti |
+| `@html-eslint/eslint-plugin 0.63.0` (on eslint 10) | `HtmlFileFlatConfig*` — HTML structure linting |
+| `typescript 5.9.3`, `@typescript-eslint/parser 8.63.0`, `vue-eslint-parser 10.4.1` (on eslint 8.57) | V8 TypeScript eslintrc tests (`SuppressMissingConfigErrorForTypescript`, `TypescriptWithVueParserAbsolutePath`) |
+
+The fix suite (`quickfix/`) installs from a single shared root `package.json` (the full
+TS/Vue/HTML combo) and swaps in per-test flat configs; see `EslintFixGenericTest`.
 
 ## Upgrade procedure
 
