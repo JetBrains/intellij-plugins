@@ -86,23 +86,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     doEditorHighlightingTest("js.js", () -> performNpmInstallWithArguments("", "--no-save", "eslint@latest"));
   }
 
-  public void testWithCustomRulesDirectories() {
-    //custom rule directories from command line options and from 'additional rules directory' input should be merged
-    doEditorHighlightingTest("js.js", () -> updateConfiguration(builder -> {
-      TempDirTestFixture tempDirFixture = myFixture.getTempDirFixture();
-      return builder.setAdditionalRulesDirPath(tempDirFixture.getFile("customRules1").getPath())
-        .setExtraOptions("--rulesdir " + tempDirFixture.getFile("customRules2").getPath());
-    }));
-  }
-
-  public void testEslintignoreWithRelativePathInProjectSubPackage() {
-    configureLinterForPackage(AutodetectLinterPackage.INSTANCE);
-    //TODO. use yarn because this causes indirect dependencies to be indexed so test is much slower
-    //this emulates package install location being hoisted to root of project by yarn/lerna while we don't use real yarn in these tests
-    ThrowableRunnable<RuntimeException> setup = () -> performNpmInstallWithArguments("", "--no-save", "eslint@8.57.0");
-    doEditorHighlightingTest("packages/with-eslint-ignore/src/ignored.js", setup);
-  }
-
   public void testImplicitDependencyButEslintConfigInSubpackage() {
     // inner package.json contains "eslintConfig" -> we check that eslint is taken from the inner node_modules, although it doesn't have
     // implicit eslint dependency

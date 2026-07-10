@@ -87,6 +87,19 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
   // "No ESLint configuration found"; eslint 10's newer message is not yet recognized by the IDE).
   fun testSuppressMissingConfigErrorForTypescript() = doHighlightingTestWithInstallation("test.ts")
 
+  // --rulesdir (removed in eslint 9) + additional rules directory, custom rule plugins on disk.
+  fun testWithCustomRulesDirectories() = doHighlightingTestWithInstallation("js.js") {
+    val tempDir = myFixture.tempDirFixture
+    updateConfiguration {
+      it.setAdditionalRulesDirPath(tempDir.getFile("customRules1")!!.path)
+        .setExtraOptions("--rulesdir " + tempDir.getFile("customRules2")!!.path)
+    }
+  }
+
+  // Relative-path .eslintignore inside a sub-package ignores a file there (eslintrc + .eslintignore).
+  fun testEslintignoreWithRelativePathInProjectSubPackage() =
+    doHighlightingTestWithAutodetectInstallation("packages/with-eslint-ignore/src/ignored.js")
+
   // .eslintrc referencing an ABSOLUTE parser path resolved from the installed package -- eslintrc only.
   fun testTypescriptWithVueParserAbsolutePath() {
     installEslintForTest()
