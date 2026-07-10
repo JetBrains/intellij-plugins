@@ -44,4 +44,13 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
     doHighlightingTestWithInstallation("test.js") {
       updateConfiguration { it.setExtraOptions("--no-ignore") }
     }
+
+  // eslintrc cascade across sub-packages (nearest .eslintrc, root:true, .eslintrc.js resolution) --
+  // no flat-config equivalent.
+  fun testEslintRcInSubpackage() = doHighlightingTestWithInstallation("packages/inner/js.js")
+
+  fun testEslintignoreInSubpackageAndParent() = doHighlightingTestWithInstallation("packages/inner/js.js")
+
+  fun testEslintIgnoreWithRelativePathInProjectSubDirectory() =
+    doHighlightingTestWithInstallation("packages/foo/bar/src/ignored.js")
 }

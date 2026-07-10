@@ -90,11 +90,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     doEditorHighlightingTest("test.ts");
   }
 
-  public void testEslintignoreInSubpackageAndParent() {
-    //WEB-36096
-    doEditorHighlightingTest("packages/inner/js.js");
-  }
-
   public void testCanAutodetectLocalPackage() {
     doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("js.js");
   }
@@ -126,10 +121,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     doEditorHighlightingTest("packages/with-eslint-ignore/src/ignored.js", setup);
   }
 
-  public void testEslintIgnoreWithRelativePathInProjectSubDirectory() {
-    doEditorHighlightingTest("packages/foo/bar/src/ignored.js");
-  }
-
   public void testTypescriptWithVueParserAbsolutePath() throws IOException {
     File parserFile = new File(getNodePackage().getSystemDependentPath(), "../@typescript-eslint/parser/dist/parser.js").getCanonicalFile();
     assertTrue(parserFile.toString(), parserFile.exists());
@@ -151,10 +142,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
 
   public void testConfigReferencesLocalFiles() {
     doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("packages/a/js.js");
-  }
-
-  public void testEslintRcInSubpackage() {
-    doEditorHighlightingTest("packages/inner/js.js");
   }
 
   public void testImplicitDependencyButEslintConfigInSubpackage() {
