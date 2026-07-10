@@ -9,8 +9,9 @@ import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.highlighting.JSLanguageServiceQuickFixProvider
 import com.intellij.lang.javascript.service.highlighting.JSLanguageServiceQuickFixProvider.JSLanguageServiceQuickFix
 import com.intellij.lang.typescript.compiler.languageService.TS_ERROR_CODE_TYPE_A_IS_NOT_ASSIGNABLE_TO_TYPE_B
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationRangeError
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
+import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -21,6 +22,7 @@ import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.asSafely
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.lang.expr.psi.Angular2Binding
+import org.angular2.lang.html.Angular2HtmlFile
 
 class Angular2LanguageServiceQuickFixProvider : JSLanguageServiceQuickFixProvider {
 
@@ -30,7 +32,10 @@ class Angular2LanguageServiceQuickFixProvider : JSLanguageServiceQuickFixProvide
     file: PsiFile,
     textRange: TextRange,
   ): List<JSLanguageServiceQuickFix> =
-    if (service is Angular2TypeScriptService && serviceError is TypeScriptLanguageServiceAnnotationResult) {
+    if ((service is Angular2TypeScriptService || service is TypeScriptGoLspService)
+        && file is Angular2HtmlFile
+        && serviceError is TypeScriptAnnotationRangeError
+    ) {
       when (serviceError.errorCode) {
         TS_ERROR_CODE_TYPE_A_IS_NOT_ASSIGNABLE_TO_TYPE_B -> getQuickFixesForWrongBindingType(file, textRange)
         else -> emptyList()
@@ -45,7 +50,7 @@ class Angular2LanguageServiceQuickFixProvider : JSLanguageServiceQuickFixProvide
   ): List<JSLanguageServiceQuickFix> {
     val displayKey = HighlightDisplayKey.find(LocalInspectionTool.getShortName(TypeScriptValidateTypesInspection::class.java.simpleName))
                      ?: return emptyList()
-    var attribute = PsiTreeUtil.findElementOfClassAtRange(file, textRange.startOffset, textRange.endOffset, PsiElement::class.java)
+    val attribute = PsiTreeUtil.findElementOfClassAtRange(file, textRange.startOffset, textRange.endOffset, PsiElement::class.java)
                       ?.takeIf { it.elementType == XmlTokenType.XML_NAME }
                       ?.parent
                       ?.asSafely<XmlAttribute>()
