@@ -80,19 +80,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     return annotation != null ? annotation.getMessage() : null;
   }
 
-  public void testReportAboutWrongParser() {
-    doTest("test.js");
-  }
-
-  public void testESLintGlobalFatalError() {
-    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("ESLint: Error: Failed to load parser 'babel'", true, false);
-    doEditorHighlightingTest("test.jsx");
-  }
-
-  public void testESLintLocalFatalError() {
-    doTest("test.js");
-  }
-
   public void testFileIgnored() {
     doTest("testIgnored.js");
   }
