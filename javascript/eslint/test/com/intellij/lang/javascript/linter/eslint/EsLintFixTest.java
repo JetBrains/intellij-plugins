@@ -55,42 +55,6 @@ public class EsLintFixTest extends EslintServiceTestBase {
     myFixture.setTestDataPath(basePath);
   }
 
-  public void testFixFileWithWindowsLineSeparator() throws IOException {
-    if (!SystemInfo.isWindows) return;
-    doQuickFixTestForDirectory("ESLint: Fix current file", "test", ".js", LineSeparator.CRLF);
-    FileDocumentManager.getInstance().saveAllDocuments();
-    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
-  }
-
-  public void testFixFileWithConvertLineSeparators() throws IOException {
-    if (!SystemInfo.isWindows) return;
-    doQuickFixTestForDirectory("ESLint: Fix current file", "test", ".js", LineSeparator.LF);
-    FileDocumentManager.getInstance().saveAllDocuments();
-    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
-  }
-
-  public void testFixSingleError() {
-    String description = JavaScriptBundle.message("eslint.fix.problems.text.with.error.code",
-                                                  EslintBundle.message("settings.javascript.linters.eslint.configurable.name"),
-                                                  "no-multiple-empty-lines");
-    doQuickFixTestForDirectory(description, "test", ".js", null);
-  }
-
-  public void testFixSingleErrorWithWindowsLineSeparators() {
-    if (!SystemInfo.isWindows) return;
-    String description = JavaScriptBundle.message("eslint.fix.problems.text.with.error.code",
-                                                  EslintBundle.message("settings.javascript.linters.eslint.configurable.name"),
-                                                  "no-multiple-empty-lines");
-    doQuickFixTestForDirectory(description, "test", ".js", LineSeparator.CRLF);
-  }
-
-  public void testNoFixFileActionForNonFixableErrors() {
-    String dir = getTestName(false);
-    configure(dir + "/test.js", dir + "/.eslintrc", true);
-    myFixture.checkHighlighting();
-    assertEmpty(myFixture.filterAvailableIntentions("ESLint: Fix current file"));
-  }
-
   public void testScriptsInHtmlFile() {
     configure(getTestName(false) + ".html", ".eslintrc-with-html.json", true);
 

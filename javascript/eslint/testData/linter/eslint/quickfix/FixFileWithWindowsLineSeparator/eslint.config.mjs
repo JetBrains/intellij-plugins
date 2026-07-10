@@ -1,0 +1,8 @@
+export default [
+  {
+    rules: {
+      "no-multiple-empty-lines": "error",
+      "quotes": ["error", "single"],
+    },
+  },
+];

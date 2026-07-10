@@ -3,13 +3,20 @@ package com.intellij.lang.javascript.linter.eslint.stable
 
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
+import com.intellij.lang.javascript.linter.eslint.EslintBundle
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.testFramework.DumbModeTestUtils
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.util.LineSeparator
+import com.intellij.util.ThrowableRunnable
 import org.junit.Assert
 
 /**
@@ -64,9 +71,18 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
    * (rather than the shared root config): installs from that directory, highlights
    * `<mainFileName><extension>`, launches [description], and checks `<mainFileName>_after<extension>`.
    */
-  protected fun doQuickFixTestForDirectory(description: String, mainFileName: String, extension: String) {
+  protected fun doQuickFixTestForDirectory(
+    description: String,
+    mainFileName: String,
+    extension: String,
+    lineSeparator: LineSeparator? = null,
+  ) {
     installEslintForTest()
-    doFixTestForDirectory(mainFileName, extension, description)
+    doFixTestForDirectory(mainFileName, extension, description, ThrowableRunnable<Throwable> {
+      if (lineSeparator != null) {
+        JSTestUtils.ensureLineSeparators(myFixture.file, lineSeparator)
+      }
+    })
   }
 
   fun testSuppressByLineComment() = doQuickFixTest("Suppress 'comma-spacing' for current line")
@@ -128,4 +144,37 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
     Assert.assertNotNull("This test must be run with intellij.vuejs module in classpath", Language.findLanguageByID("Vue"))
     doQuickFixTestForDirectory("ESLint: Fix current file", "test", ".vue")
   }
+
+  fun testFixSingleError() =
+    doQuickFixTestForDirectory(fixProblemsDescription("no-multiple-empty-lines"), "test", ".js")
+
+  fun testFixSingleErrorWithWindowsLineSeparators() {
+    if (!SystemInfo.isWindows) return
+    doQuickFixTestForDirectory(fixProblemsDescription("no-multiple-empty-lines"), "test", ".js", LineSeparator.CRLF)
+  }
+
+  fun testFixFileWithWindowsLineSeparator() {
+    if (!SystemInfo.isWindows) return
+    doQuickFixTestForDirectory("ESLint: Fix current file", "test", ".js", LineSeparator.CRLF)
+    FileDocumentManager.getInstance().saveAllDocuments()
+    Assert.assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(myFixture.file.virtualFile)))
+  }
+
+  fun testFixFileWithConvertLineSeparators() {
+    if (!SystemInfo.isWindows) return
+    doQuickFixTestForDirectory("ESLint: Fix current file", "test", ".js", LineSeparator.LF)
+    FileDocumentManager.getInstance().saveAllDocuments()
+    Assert.assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(myFixture.file.virtualFile)))
+  }
+
+  fun testNoFixFileActionForNonFixableErrors() {
+    installEslintForTest()
+    doEditorHighlightingTestWithoutCopy("test.js", null as ThrowableRunnable<Throwable>?)
+    assertEmpty(myFixture.filterAvailableIntentions("ESLint: Fix current file"))
+  }
+
+  private fun fixProblemsDescription(ruleCode: String): String =
+    JavaScriptBundle.message("eslint.fix.problems.text.with.error.code",
+                             EslintBundle.message("settings.javascript.linters.eslint.configurable.name"),
+                             ruleCode)
 }
