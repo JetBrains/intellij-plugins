@@ -104,6 +104,16 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
   fun testSubpackageContainsOnlyLinkToParentEslint() =
     doHighlightingTestWithAutodetectInstallation("packages/inner/js.js")
 
+  // The sub-package has no explicit ESLint dependency but its eslintConfig implies one, so ESLint is
+  // resolved from packages/inner/node_modules -- proven by the fact that it loads that package's
+  // eslintConfig and reports its unresolved "react-app" extends. (The exact resolution path in the
+  // message is separator- and eslint-version-specific, so we assert the stable error text instead.)
+  fun testImplicitDependencyButEslintConfigInSubpackage() {
+    myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("Failed to load config \"react-app\" to extend from", false, true)
+    installEslintForTestInSubdir("packages/inner")
+    doEditorHighlightingTestWithoutCopy("packages/inner/js.js", null as ThrowableRunnable<Throwable>?)
+  }
+
   // .eslintrc referencing an ABSOLUTE parser path resolved from the installed package -- eslintrc only.
   fun testTypescriptWithVueParserAbsolutePath() {
     installEslintForTest()

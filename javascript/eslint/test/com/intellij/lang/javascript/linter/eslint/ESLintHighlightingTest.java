@@ -80,14 +80,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     return annotation != null ? annotation.getMessage() : null;
   }
 
-  public void testImplicitDependencyButEslintConfigInSubpackage() {
-    // inner package.json contains "eslintConfig" -> we check that eslint is taken from the inner node_modules, although it doesn't have
-    // implicit eslint dependency
-    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("packages/inner/node_modules/eslint/lib/options", false, true);
-    configureLinterForPackage(AutodetectLinterPackage.INSTANCE);
-    doEditorHighlightingTest("packages/inner/js.js");
-  }
-
   public void testYarnPnpEslintExample() throws Exception {
     doEditorHighlightingTest("app.js", () -> {
       VirtualFile root = Objects.requireNonNull(myFixture.findFileInTempDir("."));

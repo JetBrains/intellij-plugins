@@ -110,6 +110,13 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
     installEslintFromProjectRoot(autodetect = true)
   }
 
+  /** Installs ESLint into `<project>/<subdir>/node_modules` (from that sub-directory's `package.json` +
+   *  stored lock) and auto-detects it -- for tests asserting resolution from a specific sub-package. */
+  protected fun installEslintForTestInSubdir(subdir: String) {
+    copyTestDataToProject()
+    installEslintFromProjectRoot(autodetect = true, installSubdir = subdir)
+  }
+
   /** [installEslintForTestWithAutodetect] followed by editor highlighting on [mainFileRelativePath]. */
   protected fun doHighlightingTestWithAutodetectInstallation(
     mainFileRelativePath: String,
@@ -125,7 +132,7 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
    * contain the `package.json` (and any config): [installEslintForTest] copies the per-test data
    * directory first, while the quick-fix suite copies a shared root install instead. Call once per test.
    */
-  protected fun installEslintFromProjectRoot(autodetect: Boolean = false) {
+  protected fun installEslintFromProjectRoot(autodetect: Boolean = false, installSubdir: String? = null) {
     check(!packagesInstalled) { "ESLint must be installed once per test" }
     packagesInstalled = true
 
@@ -133,9 +140,10 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
     replaceEslintVersionPlaceholders(projectDir)
 
     TestNpmPackageInstaller(project, myFixture, nodeJsAppRule, copyPackageJson = false, requireStoredLock = true)
-      .installForTest(this::class.java, projectDir)
+      .installForTest(this::class.java, projectDir, installSubdir)
 
-    val eslintPath = projectDir.toNioPath().resolve(NodeModuleUtil.NODE_MODULES).resolve("eslint")
+    val installDir = if (installSubdir != null) projectDir.toNioPath().resolve(installSubdir) else projectDir.toNioPath()
+    val eslintPath = installDir.resolve(NodeModuleUtil.NODE_MODULES).resolve("eslint")
     check(Files.exists(eslintPath)) { "eslint was not installed at $eslintPath" }
 
     val nodePackage = NodePackage(eslintPath.toString())
