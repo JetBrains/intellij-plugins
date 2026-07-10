@@ -5,7 +5,6 @@ import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
-import org.angular2.SkipTsGoProxy
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsNode
 import org.angular2.codeInsight.deprecated.Angular2AttributesTest
@@ -50,7 +49,6 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
                        configureFileName = "generics.html")
 
   @Test
-  @SkipTsGoProxy // duplicated error
   fun testGenericsValidationStrict() =
     doHighlightingTest(Angular2TestModule.TS_LIB,
                        Angular2TestModule.ANGULAR_CORE_16_2_8, Angular2TestModule.ANGULAR_COMMON_16_2_8,
