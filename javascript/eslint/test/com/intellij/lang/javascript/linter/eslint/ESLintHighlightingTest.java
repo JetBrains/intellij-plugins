@@ -84,10 +84,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
     doEditorHighlightingTest("test.ts");
   }
 
-  public void testCanAutodetectLocalPackageInParentNodeModules() {
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("workspaces/a/js.js");
-  }
-
   public void testCanAutodetectInstalledPackageWithoutExplicitDependency() {
     //Eslint could have been installed as a transitive dependency, for example, by create-react-app
     configureLinterForPackage(AutodetectLinterPackage.INSTANCE);
@@ -128,10 +124,6 @@ public class ESLintHighlightingTest extends EslintServiceTestBase {
       "}");
     myFixture.configureByText("ts.ts", "<error descr=\"ESLint: Unexpected console statement. (no-console)\">console.log</error>('hello')");
     myFixture.testHighlighting(true, false, true);
-  }
-
-  public void testConfigReferencesLocalFiles() {
-    doEditorHighlightingTestWithLocalNpmInstallFromPackageJson("packages/a/js.js");
   }
 
   public void testImplicitDependencyButEslintConfigInSubpackage() {

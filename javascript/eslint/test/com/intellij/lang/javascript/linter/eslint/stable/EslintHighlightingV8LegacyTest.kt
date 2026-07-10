@@ -67,6 +67,13 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
   // Package autodetection from the project-local node_modules (eslintConfig in package.json).
   fun testCanAutodetectLocalPackage() = doHighlightingTestWithAutodetectInstallation("js.js")
 
+  // Autodetect ESLint from a parent directory's node_modules for a file in a sub-workspace.
+  fun testCanAutodetectLocalPackageInParentNodeModules() =
+    doHighlightingTestWithAutodetectInstallation("workspaces/a/js.js")
+
+  // .eslintrc.js that `extends` a sibling config via a cwd-relative path.resolve() -- eslintrc only.
+  fun testConfigReferencesLocalFiles() = doHighlightingTestWithAutodetectInstallation("packages/a/js.js")
+
   // With an autodetected package but no config, the missing-config error is suppressed (eslint 8's
   // "No ESLint configuration found" -- eslint 10's newer message is not yet recognized by the IDE).
   fun testSuppressMissingConfigErrorWithAutodetectPackage() {
