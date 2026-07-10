@@ -123,7 +123,7 @@ class TfTypeModel(
     )
     private val CountProperty = PropertyType(HCL_COUNT_IDENTIFIER, Types.Number, conflictsWith = listOf(HCL_FOR_EACH_IDENTIFIER))
     private val ForEachProperty = PropertyType(HCL_FOR_EACH_IDENTIFIER, Types.Any, conflictsWith = listOf(HCL_COUNT_IDENTIFIER))
-    private val ProviderProperty = PropertyType("provider", Types.String, hint = ReferenceHint("provider.#type", "provider.#alias"))
+    private val ProviderProperty = PropertyType("provider", Types.Any, hint = ReferenceHint("provider.#type", "provider.#alias"))
 
     val DescriptionProperty: PropertyType = PropertyType("description", Types.String)
     val SensitiveProperty: PropertyType =
