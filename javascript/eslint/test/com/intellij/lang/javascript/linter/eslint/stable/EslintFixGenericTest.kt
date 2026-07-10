@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.linter.eslint.EslintBundle
 import com.intellij.lang.javascript.linter.eslint.EslintConfiguration
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
 import com.intellij.lang.javascript.linter.eslint.EslintState
-import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
@@ -55,8 +54,7 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
   }
 
   private fun prepareProjectForInstall() {
-    WriteAction.run<Throwable> { FileDocumentManager.getInstance().saveAllDocuments() }
-    myFixture.setCaresAboutInjection(false)
+    prepareFixtureForHighlighting()
   }
 
   /**
