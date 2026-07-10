@@ -104,8 +104,12 @@ class QodanaYamlViewModelImpl(override val project: Project, private val scope: 
       val editorsToRelease = mutableListOf<Editor>()
       try {
         merge(flowOf(Unit), physicalQodanaYamlFileChangesFlow()).collectLatest {
-          val yamlState = refreshQodanaYamlState()
-          editorsToRelease.add(yamlState.editor)
+          // create the editor and register it for release atomically: collectLatest may cancel this block
+          // (on a new emission or on scope cancellation) right after the editor is created, and a created-but-unregistered
+          // editor would leak its Project via EditorImpl.myProject
+          val yamlState = withContext(NonCancellable) {
+            refreshQodanaYamlState().also { editorsToRelease.add(it.editor) }
+          }
           yamlStateFlow.value = yamlState
         }
       }
