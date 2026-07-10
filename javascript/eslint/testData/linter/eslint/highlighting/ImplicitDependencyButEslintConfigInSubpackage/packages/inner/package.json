@@ -1,8 +1,7 @@
 {
   "name": "inner",
   "version": "1.0.0",
-  "devDependencies": {
-    "eslint": "$ESLINT_VERSION$"
+  "dependencies": {
   },
   "eslintConfig": {
     "extends": "react-app"

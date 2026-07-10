@@ -1,11 +1,11 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.eslint.stable
 
+import com.intellij.lang.javascript.linter.AutodetectLinterPackage
 import com.intellij.lang.javascript.linter.eslint.ESLINT_8_57_0_TEST_PACKAGE_SPEC
 import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
 import com.intellij.lang.javascript.modules.TestNpmPackage
-import com.intellij.util.ThrowableRunnable
 import java.io.File
 
 /**
@@ -91,14 +91,17 @@ class EslintHighlightingV8LegacyTest : EslintPackageLockTestBase() {
   fun testSubpackageContainsOnlyLinkToParentEslint() =
     doHighlightingTestWithAutodetectInstallation("packages/inner/js.js")
 
-  // The sub-package has no explicit ESLint dependency but its eslintConfig implies one, so ESLint is
-  // resolved from packages/inner/node_modules -- proven by the fact that it loads that package's
-  // eslintConfig and reports its unresolved "react-app" extends. (The exact resolution path in the
-  // message is separator- and eslint-version-specific, so we assert the stable error text instead.)
+  // The sub-package has no declared ESLint dependency, only an `eslintConfig` that implies one -- so
+  // ESLint can be resolved from packages/inner/node_modules ONLY via AutodetectLinterPackage's
+  // eslintConfig-implies-eslint branch (root's decoy `eslint` declaration blocks the sibling branch;
+  // inner declares no eslint dep). A committed empty stub `node_modules/eslint` (no npm install) proves
+  // that branch resolved it: the run fails trying to load the stub's lib/options and the error names
+  // the inner path. Discrimination verified by inverting the eslintConfig branch locally (the test then
+  // fails to resolve any package).
   fun testImplicitDependencyButEslintConfigInSubpackage() {
-    myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("Failed to load config \"react-app\" to extend from", false, true)
-    installEslintForTestInSubdir("packages/inner")
-    doEditorHighlightingTestWithoutCopy("packages/inner/js.js", null as ThrowableRunnable<Throwable>?)
+    myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("packages/inner/node_modules/eslint/lib/options", false, true)
+    configureLinterForPackage(AutodetectLinterPackage.INSTANCE)
+    doEditorHighlightingTest("packages/inner/js.js")
   }
 
   // .eslintrc referencing an ABSOLUTE parser path resolved from the installed package -- eslintrc only.
