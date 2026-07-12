@@ -133,7 +133,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
       return PsiReference.EMPTY_ARRAY
     }
 
-    if (TfPsiPatterns.PropertyUnderModuleProvidersPOB.accepts(host.getParent(HCLProperty::class.java))) {
+    if (TfPsiPatterns.PropertyUnderModuleProviders.accepts(host.getParent(HCLProperty::class.java))) {
       // covered by ModuleProvidersReferenceProvider
       return PsiReference.EMPTY_ARRAY
     }

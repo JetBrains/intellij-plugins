@@ -3,7 +3,6 @@ package org.intellij.terraform.config.psi
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.PatternCondition
-import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
@@ -17,7 +16,6 @@ import org.intellij.terraform.config.model.Module
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
-import org.intellij.terraform.config.patterns.TfPsiPatterns.ResourceProviderProperty
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformConfigFile
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformVariablesFile
 import org.intellij.terraform.hcl.HCLElementTypes
@@ -26,15 +24,10 @@ import org.intellij.terraform.hcl.psi.HCLArray
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLIdentifier
-import org.intellij.terraform.hcl.psi.HCLIndexSelectExpression
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
-import org.intellij.terraform.hcl.psi.HCLSelectExpression
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
-import org.intellij.terraform.hcl.psi.common.BaseExpression
-import org.intellij.terraform.hcl.psi.common.Identifier
-import org.intellij.terraform.hcl.psi.common.LiteralExpression
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.hcl.psi.reference.HclSourceLiteralPattern
 import org.intellij.terraform.hcl.psi.reference.HclSourcePropertyReferenceProvider
@@ -43,18 +36,10 @@ import org.intellij.terraform.hil.psi.HCLElementLazyReferenceBase
 
 class TfReferenceContributor : PsiReferenceContributor() {
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-    registrar.registerReferenceProvider(
-      psiElement()
-        .and(PlatformPatterns.or(HCLPatterns.Identifier, HCLPatterns.Literal))
-        .inFile(TerraformConfigFile)
-        .withParent(ResourceProviderProperty), ResourceProviderReferenceProvider)
+    ResourceProviderReference.registerTo(registrar, TfPsiPatterns.ResourceProviderProperty)
 
-    registrar.registerReferenceProvider(
-      psiElement()
-        .and(PlatformPatterns.or(HCLPatterns.Identifier, HCLPatterns.Literal))
-        .inFile(TerraformConfigFile)
-        .withParent(HCLPatterns.SelectExpression)
-        .withSuperParent(2, ResourceProviderProperty), ResourceProviderReferenceProvider)
+    // 'module' providers key/value
+    ModuleProvidersReference.registerTo(registrar, TfPsiPatterns.PropertyUnderModuleProviders)
 
     // 'depends_on' in resources, data sources, modules and outputs
     registrar.registerReferenceProvider(
@@ -91,18 +76,6 @@ class TfReferenceContributor : PsiReferenceContributor() {
         )
         .withSuperParent(3, TfPsiPatterns.ModuleRootBlock), ModuleVariableReferenceProvider)
 
-    // 'module' providers key/value
-    registrar.registerReferenceProvider(
-      psiElement().and(PlatformPatterns.or(HCLPatterns.Identifier, HCLPatterns.Literal))
-        .inFile(TerraformConfigFile)
-        .withParent(TfPsiPatterns.PropertyUnderModuleProvidersPOB), ModuleProvidersReferenceProvider)
-
-    registrar.registerReferenceProvider(
-      psiElement().and(PlatformPatterns.or(HCLPatterns.Identifier, HCLPatterns.Literal))
-        .inFile(TerraformConfigFile)
-        .withParent(HCLPatterns.SelectExpression)
-        .withSuperParent(2, TfPsiPatterns.PropertyUnderModuleProvidersPOB), ModuleProvidersReferenceProvider)
-
     //Documentation reference
     registrar.registerReferenceProvider(
       psiElement(HCLStringLiteral::class.java)
@@ -137,48 +110,6 @@ internal object RequiredProvidersReference : PsiReferenceProvider() {
       val requiredProvider = module.getDefinedRequiredProviders()?.firstOrNull { it.name == element.unquotedText }
       requiredProvider?.let { listOf(it) } ?: emptyList()
     })
-  }
-}
-
-/**
- * Resolves the `provider` property value of a resource/data source block to the matching `provider` block
- *
- * Handles both the plain form `provider = aws` and the aliased form `provider = aws.alias`
- */
-object ResourceProviderReferenceProvider : PsiReferenceProvider() {
-  override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
-    if (element !is HCLStringLiteral && element !is HCLIdentifier)
-      return PsiReference.EMPTY_ARRAY
-
-    val parent = element.parent
-    if (parent is HCLSelectExpression) {
-      // aliased form: keep the reference on the alias part only (ignore `foo[0]` index access)
-      if (parent is HCLIndexSelectExpression || parent.field !== element)
-        return PsiReference.EMPTY_ARRAY
-    }
-    else if (!HCLPsiUtil.isPropertyValue(element))
-      return PsiReference.EMPTY_ARRAY
-
-    return arrayOf(HCLElementLazyReference(element, soft = false) { incomplete, _ ->
-      val module = (element as HCLElement).getTerraformModule()
-      if (incomplete)
-        module.getDefinedProviders().map { it.first }
-      else
-        getElementText(element)?.let { text -> module.findProviders(text) } ?: emptyList()
-    })
-  }
-
-  private fun getElementText(expression: BaseExpression): String? {
-    if (expression !is LiteralExpression && expression !is Identifier) return null
-    val parent = expression.parent
-    if (parent is HCLSelectExpression && parent !is HCLIndexSelectExpression) {
-      return parent.text
-    }
-    return when (expression) {
-      is LiteralExpression -> expression.unquotedText
-      is Identifier -> expression.name
-      else -> null
-    }
   }
 }
 

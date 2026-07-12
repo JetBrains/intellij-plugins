@@ -169,7 +169,7 @@ internal object TfPsiPatterns {
       }
     })
 
-  val PropertyUnderModuleProvidersPOB: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
+  val PropertyUnderModuleProviders: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
     .withSuperParent(1, HCLPatterns.Object)
     .withSuperParent(2, PlatformPatterns.psiElement().and(HCLPatterns.PropertyOrBlock).andOr(propertyWithName("providers"), PlatformPatterns.psiElement(HCLBlock::class.java).with(object : PatternCondition<HCLBlock?>("HCLBlock(providers)") {
       override fun accepts(t: HCLBlock, context: ProcessingContext?): Boolean {
