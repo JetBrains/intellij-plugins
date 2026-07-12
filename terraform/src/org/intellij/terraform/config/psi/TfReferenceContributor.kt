@@ -58,25 +58,22 @@ class TfReferenceContributor : PsiReferenceContributor() {
 
     // 'depends_on' in resources, data sources, modules and outputs
     registrar.registerReferenceProvider(
-        psiElement(HCLStringLiteral::class.java)
-            .inFile(TerraformConfigFile)
-            .withSuperParent(1, psiElement(HCLArray::class.java))
-          .withSuperParent(2, DependsOnPattern)
-        , DependsOnReferenceProvider)
+      psiElement(HCLStringLiteral::class.java)
+        .inFile(TerraformConfigFile)
+        .withSuperParent(1, psiElement(HCLArray::class.java))
+        .withSuperParent(2, DependsOnPattern), DependsOnReferenceProvider)
 
     // Resolve variables usage in .tfvars
     registrar.registerReferenceProvider(
-        psiElement(HCLIdentifier::class.java)
-            .inFile(TerraformVariablesFile)
-            .withParent(psiElement(HCLProperty::class.java))
-        , VariableReferenceProvider)
+      psiElement(HCLIdentifier::class.java)
+        .inFile(TerraformVariablesFile)
+        .withParent(psiElement(HCLProperty::class.java)), VariableReferenceProvider)
     registrar.registerReferenceProvider(
-        psiElement().withElementType(TokenSet.create(HCLElementTypes.IDENTIFIER, HCLElementTypes.STRING_LITERAL))
-            .inFile(TerraformVariablesFile)
-            .withSuperParent(1, HCLProperty::class.java)
-            .withSuperParent(2, HCLObject::class.java)
-            .withSuperParent(3, HCLProperty::class.java)
-        , MapVariableIndexReferenceProvider)
+      psiElement().withElementType(TokenSet.create(HCLElementTypes.IDENTIFIER, HCLElementTypes.STRING_LITERAL))
+        .inFile(TerraformVariablesFile)
+        .withSuperParent(1, HCLProperty::class.java)
+        .withSuperParent(2, HCLObject::class.java)
+        .withSuperParent(3, HCLProperty::class.java), MapVariableIndexReferenceProvider)
 
     // source property resolution
     registrar.registerReferenceProvider(HclSourceLiteralPattern, HclSourcePropertyReferenceProvider)
@@ -110,8 +107,7 @@ class TfReferenceContributor : PsiReferenceContributor() {
     registrar.registerReferenceProvider(
       psiElement(HCLStringLiteral::class.java)
         .and(HCLPatterns.BlockTypeIdentifierLiteral)
-        .inFile(TerraformConfigFile)
-      , WebDocumentationReferenceProvider)
+        .inFile(TerraformConfigFile), WebDocumentationReferenceProvider)
 
     // Documentation reference for provider-defined functions
     registrar.registerReferenceProvider(HCLPatterns.ProviderDefinedFunction, WebDocumentationReferenceProvider)
@@ -126,8 +122,7 @@ class TfReferenceContributor : PsiReferenceContributor() {
 }
 
 internal object WebDocumentationReferenceProvider : PsiReferenceProvider() {
-  override fun getReferencesByElement(element: PsiElement,
-                                      context: ProcessingContext): Array<PsiReference> {
+  override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
     val webReference = TfDocReference(element)
     return arrayOf(webReference)
   }
@@ -220,7 +215,8 @@ class DependsOnLazyReference(element: HCLStringLiteral) : HCLElementLazyReferenc
       }
 
       return resources.values.asSequence().plus(data.values).plus(modules.values).plus(variables.values).toList()
-    } else {
+    }
+    else {
       val split = element.value.split('.')
       if (split.size == 2) {
         return when (split[0]) {
@@ -228,10 +224,14 @@ class DependsOnLazyReference(element: HCLStringLiteral) : HCLElementLazyReferenc
           "module" -> module.getDefinedModules(split[1])
           else -> module.getDefinedResources(split[0], split[1])
         }
-      } else if (split.size == 3) {
+      }
+      else if (split.size == 3) {
         when (split[0]) {
           "data" -> return module.getDefinedDataSources(split[1], split[2])
-          "module" -> return module.getDefinedModules(split[1]).mapNotNull { Module.getAsModuleBlock(it) }.flatMap { it.getDefinedOutputs() }.filter { it.name == split[2] }
+          "module" -> return module.getDefinedModules(split[1])
+            .mapNotNull { Module.getAsModuleBlock(it) }
+            .flatMap { it.getDefinedOutputs() }
+            .filter { it.name == split[2] }
         }
       }
     }
@@ -265,7 +265,8 @@ object VariableReferenceProvider : PsiReferenceProvider() {
       val element = this.element
       if (incomplete) {
         element.getTerraformModule().getAllVariables().map { it.declaration }
-      } else {
+      }
+      else {
         val value = element.id
         element.getTerraformModule().findVariables(value.substringBefore('.')).map { it.declaration }
       }
@@ -279,13 +280,15 @@ object VariableReferenceProvider : PsiReferenceProvider() {
       val subReference = HCLElementLazyReference(element, true) { incomplete, _ ->
         @Suppress("NAME_SHADOWING")
         val element = this.element
+
         @Suppress("NAME_SHADOWING")
         val value = element.id
         val variables = element.getTerraformModule().findVariables(value.substringBefore('.'))
         val defaults = variables.mapNotNull { it.getDefault() as? HCLObject }
         if (incomplete) {
           defaults.flatMap { it.propertyList }
-        } else {
+        }
+        else {
           defaults.mapNotNull { it.findProperty(value.substringAfter('.')) }
         }
       }
@@ -321,7 +324,8 @@ object MapVariableIndexReferenceProvider : PsiReferenceProvider() {
       val defaults = variables.mapNotNull { it.getDefault() as? HCLObject }
       if (incomplete) {
         defaults.flatMap { it.propertyList }
-      } else {
+      }
+      else {
         val name = element.name ?: return@HCLElementLazyReference emptyList()
         defaults.mapNotNull { it.findProperty(name) }
       }
