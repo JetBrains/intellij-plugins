@@ -9,10 +9,7 @@ import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage
 import com.intellij.lang.javascript.linter.JSLinterAnnotationResult
-import com.intellij.lang.javascript.linter.JSLinterInput
 import com.intellij.lang.javascript.linter.LinterHighlightingTest
-import com.intellij.lang.javascript.linter.eslint.service.EslintLanguageServiceClient
-import com.intellij.lang.javascript.linter.eslint.service.EslintLanguageServiceManager
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.modules.TestNpmPackage
 import com.intellij.lang.javascript.modules.TestNpmPackageInstaller
@@ -30,7 +27,6 @@ import com.intellij.util.ThrowableRunnable
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.concurrent.CompletableFuture
 
 /**
  * Base class for ESLint tests that install packages per test from a committed `package-lock.json` in
@@ -74,14 +70,8 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
    * global-annotation check would be vacuous and file-level-error scenarios could not be asserted
    * (WEB-67129 lineage).
    */
-  override fun getAnnotationText(): String? {
-    val file = myFixture.file.virtualFile
-    val state = EslintConfiguration.getInstance(project).extendedState.state
-    return EslintLanguageServiceManager.getInstance(project)
-      .useService<String?, RuntimeException>(file, state.nodePackageRef) { service ->
-        service?.fileLevelAnnotation?.message
-      }
-  }
+  override fun getAnnotationText(): String? =
+    getEslintFileLevelAnnotationText(project, myFixture.file.virtualFile)
 
   /** [installEslintForTest] followed by editor highlighting on [mainFileRelativePath]. Call once per test. */
   protected fun doHighlightingTestWithInstallation(
@@ -180,32 +170,13 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
 
   /**
    * Runs the ESLint analysis pipeline against a fake service whose request never completes, so the
-   * analysis times out deterministically without spawning a real node process (WEB-67172 rationale,
-   * ported from EslintServiceTestBase). Call after [installEslintForTest]; set the timeout first
-   * (e.g. `JSLanguageServiceUtil.setTimeout(1L, testRootDisposable)`).
+   * analysis times out deterministically without spawning a real node process (WEB-67172 rationale).
+   * Call after [installEslintForTest]; set the timeout first
+   * (e.g. `JSLanguageServiceUtil.setTimeout(1L, testRootDisposable)`). Shared with the global-install
+   * tiers via [EslintTestUtil.highlightWithNeverRespondingService].
    */
-  protected fun highlightWithNeverRespondingService(psiFile: PsiFile): JSLinterAnnotationResult {
-    val service = createNeverRespondingService(psiFile.virtualFile.parent)
-    val state = EslintConfiguration.getInstance(project).extendedState.state
-    val input = JSLinterInput.create(psiFile, state, null)
-    return EsLintExternalRunner.highlight(input, service, true)
-  }
-
-  private fun createNeverRespondingService(workingDirectory: VirtualFile): EslintLanguageServiceClient {
-    val nodePackage = getNodePackage()
-    return object : EslintLanguageServiceClient {
-      override fun getNodePackage(): NodePackage = nodePackage
-      override fun getWorkingDirectory(): VirtualFile = workingDirectory
-      override fun highlight(requestData: EslintRequestData, extraOptions: String?)
-        : CompletableFuture<EslintLanguageServiceClient.Response<List<EslintError>>> = CompletableFuture()
-
-      override fun fixFile(requestData: EslintRequestData, extraOptions: String?)
-        : CompletableFuture<EslintLanguageServiceClient.Response<String>> = CompletableFuture()
-
-      override fun isServiceCreated(): Boolean = true
-      override fun getServiceCreationError(): String? = null
-    }
-  }
+  protected fun highlightWithNeverRespondingService(psiFile: PsiFile): JSLinterAnnotationResult =
+    highlightWithNeverRespondingService(project, psiFile, getNodePackage())
 
   /**
    * Runs the batch (whole-project) ESLint inspection and compares against the current test dir's

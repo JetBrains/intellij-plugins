@@ -5,7 +5,6 @@ import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.lang.javascript.linter.eslint.service.EslintLanguageServiceManager;
 import com.intellij.lang.javascript.nodejs.library.yarn.AbstractYarnPnpIntegrationTest;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
@@ -45,13 +44,7 @@ public class EslintYarnPnpTest extends EslintServiceTestBase {
 
   @Override
   protected @Nullable String getAnnotationText() {
-    var file = myFixture.getFile().getVirtualFile();
-    var state = EslintConfiguration.getInstance(getProject()).getExtendedState().getState();
-    var annotation = EslintLanguageServiceManager.getInstance(getProject()).useService(file, state.getNodePackageRef(), service -> {
-      return service != null ? service.getFileLevelAnnotation() : null;
-    });
-
-    return annotation != null ? annotation.getMessage() : null;
+    return EslintTestUtil.getEslintFileLevelAnnotationText(getProject(), myFixture.getFile().getVirtualFile());
   }
 
   public void testYarnPnpEslintExample() throws Exception {
