@@ -249,7 +249,6 @@ fun isCompoundExpression(ast: FakeSourceFile): Boolean {
 private fun isSingleExpression(ast: FakeSourceFile): Boolean {
   val statement = ast.statements.singleOrNull()
   if (statement != null && statement.endsWithComma()) {
-    val statement = ast.statements[0]
     if (isExpressionStatement(statement)) {
       return true
     }
