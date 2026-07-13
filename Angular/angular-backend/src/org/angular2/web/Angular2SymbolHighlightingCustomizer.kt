@@ -2,7 +2,6 @@ package org.angular2.web
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
-import com.intellij.model.psi.PsiExternalReferenceHost
 import com.intellij.openapi.editor.XmlHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.polySymbols.PolySymbol
@@ -13,6 +12,7 @@ import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.js.JsSymbolSymbolKind
 import com.intellij.polySymbols.js.jsKind
 import com.intellij.polySymbols.search.PsiLinkedPolySymbol
+import com.intellij.psi.PsiElement
 import org.angular2.Angular2DecoratorUtil.isHostBinding
 import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
@@ -35,14 +35,14 @@ class Angular2SymbolHighlightingCustomizer : PolySymbolHighlightingCustomizer {
       else -> null
     }
 
-  override fun getDefaultHostClassTextAttributes(): Map<Class<out PsiExternalReferenceHost>, TextAttributesKey> =
+  override fun getDefaultHostClassTextAttributes(): Map<Class<out PsiElement>, TextAttributesKey> =
     mapOf(
       Angular2HtmlPropertyBinding::class.java to Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME,
       Angular2HtmlBananaBoxBinding::class.java to Angular2HtmlHighlighterColors.NG_BANANA_BINDING_ATTR_NAME,
       Angular2HtmlEvent::class.java to Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME,
     )
 
-  override fun getSymbolTextAttributes(host: PsiExternalReferenceHost, symbol: PolySymbol, level: Int): TextAttributesKey? {
+  override fun getSymbolTextAttributes(host: PsiElement, symbol: PolySymbol, level: Int): TextAttributesKey? {
     when (symbol.kind) {
       JS_SYMBOLS ->
         if (symbol.jsKind == JsSymbolSymbolKind.Variable
