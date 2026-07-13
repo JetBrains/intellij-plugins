@@ -39,6 +39,7 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLArray
 import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLFile
@@ -342,10 +343,20 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     return found
   }
 
-  fun getProvidersAndAliases(): List<String> {
+  fun getProviderReferenceNames(): List<String> {
     val providers = getDefinedProviders().map { it.second }
     val aliasProviders = getConfigurationAliases().mapNotNull { it.toAliasProviderName() }
     return (providers + aliasProviders).distinct()
+  }
+
+  fun getProviderDeclarations(): List<HCLElement> {
+    val providers: List<HCLElement> = getDefinedProviders().map { it.first }
+    return providers + getConfigurationAliases()
+  }
+
+  fun findProviderDeclarations(search: String): List<HCLElement> {
+    val providers: List<HCLElement> = findProviders(search)
+    return providers + getConfigurationAliases().filter { it.toAliasProviderName() == search }
   }
 
   fun getDefinedModules(name: String? = null): List<HCLBlock> {

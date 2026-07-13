@@ -137,7 +137,7 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       val type = block.getNameElementUnquoted(0)
       // TODO: Replace with 'ReferenceHint'
       if (property.name == HCL_PROVIDER_IDENTIFIER && (type == HCL_RESOURCE_IDENTIFIER || type == HCL_DATASOURCE_IDENTIFIER)) {
-        val providers = property.getTerraformModule().getProvidersAndAliases()
+        val providers = property.getTerraformModule().getProviderReferenceNames()
         result.addAllElements(providers.map { create(it).withInsertHandler(QuoteInsertHandler) })
         return
       }

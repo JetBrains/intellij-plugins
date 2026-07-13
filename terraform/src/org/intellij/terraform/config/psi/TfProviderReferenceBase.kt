@@ -44,9 +44,9 @@ internal abstract class TfProviderReferenceBase : PsiReferenceProvider() {
     return arrayOf(HCLElementLazyReference(element, soft = false) { incomplete, _ ->
       val module = targetModule(element) ?: return@HCLElementLazyReference emptyList()
       if (incomplete)
-        module.getDefinedProviders().map { it.first }
+        module.getProviderDeclarations()
       else
-        getElementText(element)?.let { module.findProviders(it) } ?: emptyList()
+        getElementText(element)?.let { module.findProviderDeclarations(it) } ?: emptyList()
     })
   }
 
