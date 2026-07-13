@@ -56,8 +56,11 @@ interface ElementNode : Node {
   val props: List<Node>
 }
 
+// CompilerDOM.ExpressionNode — sealed marker for SimpleExpressionNode | CompoundExpressionNode
+sealed interface ExpressionNode : Node
+
 // CompilerDOM.SimpleExpressionNode
-interface SimpleExpressionNode : Node {
+interface SimpleExpressionNode : ExpressionNode {
   val content: String
   val isStatic: Boolean
   val constType: ConstantTypes
@@ -66,18 +69,18 @@ interface SimpleExpressionNode : Node {
 // CompilerDOM.DirectiveNode
 interface DirectiveNode : Node {
   val name: String
-  val arg: Node?
-  val exp: Node?
+  val arg: ExpressionNode?
+  val exp: ExpressionNode?
   val rawName: String?
   val modifiers: List<SimpleExpressionNode>
 }
 
 // CompilerDOM.ForParseResult
 data class ForParseResult(
-  val source: SimpleExpressionNode,
-  val value: Node?,
-  val key: Node?,
-  val index: Node?,
+  val source: ExpressionNode,
+  val value: ExpressionNode?,
+  val key: ExpressionNode?,
+  val index: ExpressionNode?,
 )
 
 // CompilerDOM.ForNode
@@ -88,7 +91,7 @@ interface ForNode : Node {
 
 // CompilerDOM.IfBranchNode
 interface IfBranchNode : Node {
-  val condition: Node?
+  val condition: ExpressionNode?
   val children: List<Node>
 }
 
@@ -105,10 +108,10 @@ interface RootNode : Node {
 
 // CompilerDOM.InterpolationNode
 interface InterpolationNode : Node {
-  val content: SimpleExpressionNode
+  val content: ExpressionNode
 }
 
 // CompilerDOM.CompoundExpressionNode
-interface CompoundExpressionNode : Node {
+interface CompoundExpressionNode : ExpressionNode {
   val children: List<Any>
 }
