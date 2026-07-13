@@ -8,7 +8,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.CommentNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.NodeTypes
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.InlayHintInfo
@@ -118,8 +117,8 @@ class TemplateCodegenContext {
   }
 
   fun enter(node: Node): Boolean {
-    if (node.type == NodeTypes.COMMENT) {
-      commentBuffer.add(node as CommentNode)
+    if (node is CommentNode) {
+      commentBuffer.add(node)
       return false
     }
 

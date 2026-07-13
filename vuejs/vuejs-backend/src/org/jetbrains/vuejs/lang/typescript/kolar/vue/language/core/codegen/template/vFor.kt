@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ForNode
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.NodeTypes
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SimpleExpressionNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
@@ -44,7 +44,7 @@ fun generateVFor(
     ))
   }
   yield("] of ")
-  if (source.type == NodeTypes.SIMPLE_EXPRESSION) {
+  if (source is SimpleExpressionNode) {
     yield("${names.vFor}(")
     yieldAll(generateInterpolation(
       options = options,

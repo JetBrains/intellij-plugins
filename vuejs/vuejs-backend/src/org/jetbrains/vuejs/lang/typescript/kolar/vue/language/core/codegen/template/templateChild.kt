@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template
 
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.CommentNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.CompoundExpressionNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.DirectiveNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
@@ -9,7 +10,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ForNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.IfNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.InterpolationNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.NodeTypes
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.RootNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRContent
@@ -26,48 +26,44 @@ fun generateTemplateChild(
 ): Sequence<Code> = sequence {
   if (enterNode && !ctx.enter(node)) return@sequence
 
-  if (node.type == NodeTypes.ROOT) {
-    val rootNode = node as RootNode
-    for (item in collectSingleRootNodes(options, rootNode.children)) {
+  if (node is RootNode) {
+    for (item in collectSingleRootNodes(options, node.children)) {
       if (item != null) ctx.singleRootNodes.add(item)
     }
-    for (child in rootNode.children) {
+    for (child in node.children) {
       yieldAll(generateTemplateChild(options, ctx, child))
     }
   }
-  else if (node.type == NodeTypes.ELEMENT) {
-    val elementNode = node as ElementNode
-    if (elementNode.tagType == ElementTypes.SLOT) {
-      yieldAll(generateSlotOutlet(options, ctx, elementNode))
+  else if (node is ElementNode) {
+    if (node.tagType == ElementTypes.SLOT) {
+      yieldAll(generateSlotOutlet(options, ctx, node))
     }
     else {
-      val slotDir = elementNode.props.filterIsInstance<DirectiveNode>().find { it.name == "slot" }
-      if (elementNode.tagType == ElementTypes.TEMPLATE && ctx.components.isNotEmpty() && slotDir != null) {
-        yieldAll(generateVSlot(options, ctx, elementNode, slotDir, ctx.components.last()()))
+      val slotDir = node.props.filterIsInstance<DirectiveNode>().find { it.name == "slot" }
+      if (node.tagType == ElementTypes.TEMPLATE && ctx.components.isNotEmpty() && slotDir != null) {
+        yieldAll(generateVSlot(options, ctx, node, slotDir, ctx.components.last()()))
       }
-      else if (elementNode.tagType == ElementTypes.TEMPLATE && treatTemplateAsFragment) {
-        yieldAll(generateFragment(options, ctx, elementNode))
+      else if (node.tagType == ElementTypes.TEMPLATE && treatTemplateAsFragment) {
+        yieldAll(generateFragment(options, ctx, node))
       }
-      else if (elementNode.tagType == ElementTypes.COMPONENT) {
-        yieldAll(generateComponent(options, ctx, elementNode))
+      else if (node.tagType == ElementTypes.COMPONENT) {
+        yieldAll(generateComponent(options, ctx, node))
       }
       else {
-        yieldAll(generateElement(options, ctx, elementNode))
+        yieldAll(generateElement(options, ctx, node))
       }
     }
   }
-  else if (node.type == NodeTypes.COMPOUND_EXPRESSION) {
+  else if (node is CompoundExpressionNode) {
     // {{ ... }} {{ ... }}
-    val compoundNode = node as CompoundExpressionNode
-    for (child in compoundNode.children) {
+    for (child in node.children) {
       if (child !is Node) continue
       yieldAll(generateTemplateChild(options, ctx, child, enterNode = false))
     }
   }
-  else if (node.type == NodeTypes.INTERPOLATION) {
+  else if (node is InterpolationNode) {
     // {{ ... }}
-    val interpolationNode = node as InterpolationNode
-    val (content, start) = parseInterpolationNode(interpolationNode, options.template.content)
+    val (content, start) = parseInterpolationNode(node, options.template.content)
     yieldAll(generateInterpolation(
       options = options,
       ctx = ctx,
@@ -79,13 +75,13 @@ fun generateTemplateChild(
       suffix = ")$endOfLine",
     ))
   }
-  else if (node.type == NodeTypes.IF) {
+  else if (node is IfNode) {
     // v-if / v-else-if / v-else
-    yieldAll(generateVIf(options, ctx, node as IfNode))
+    yieldAll(generateVIf(options, ctx, node))
   }
-  else if (node.type == NodeTypes.FOR) {
+  else if (node is ForNode) {
     // v-for
-    yieldAll(generateVFor(options, ctx, node as ForNode))
+    yieldAll(generateVFor(options, ctx, node))
   }
 
   if (enterNode) {
@@ -98,7 +94,7 @@ private fun collectSingleRootNodes(
   children: List<Node>,
   treatTemplateAsFragment: Boolean = false,
 ): Sequence<ElementNode?> = sequence {
-  val filteredChildren = children.filter { it.type != NodeTypes.COMMENT }
+  val filteredChildren = children.filter { it !is CommentNode }
 
   if (filteredChildren.size != 1) {
     if (filteredChildren.size > 1) yield(null)
@@ -106,27 +102,25 @@ private fun collectSingleRootNodes(
   }
 
   val child = filteredChildren[0]
-  if (child.type == NodeTypes.IF) {
-    val ifNode = child as IfNode
-    for (branch in ifNode.branches) {
+  if (child is IfNode) {
+    for (branch in child.branches) {
       yieldAll(collectSingleRootNodes(options, branch.children, true))
     }
     return@sequence
   }
-  else if (child.type != NodeTypes.ELEMENT) {
+  else if (child !is ElementNode) {
     return@sequence
   }
 
-  val elementChild = child as ElementNode
-  if (elementChild.tagType == ElementTypes.TEMPLATE && treatTemplateAsFragment) {
-    yieldAll(collectSingleRootNodes(options, elementChild.children))
+  if (child.tagType == ElementTypes.TEMPLATE && treatTemplateAsFragment) {
+    yieldAll(collectSingleRootNodes(options, child.children))
     return@sequence
   }
-  yield(elementChild)
+  yield(child)
 
-  val tag = hyphenateTag(elementChild.tag)
+  val tag = hyphenateTag(child.tag)
   if (options.vueCompilerOptions.fallthroughComponentNames.contains(tag)) {
-    yieldAll(collectSingleRootNodes(options, elementChild.children))
+    yieldAll(collectSingleRootNodes(options, child.children))
   }
 }
 
