@@ -112,5 +112,5 @@ interface InterpolationNode : Node {
 
 // CompilerDOM.CompoundExpressionNode
 interface CompoundExpressionNode : ExpressionNode {
-  val children: List<Any>
+  val children: List<Any /* Node | string | symbol */>
 }
