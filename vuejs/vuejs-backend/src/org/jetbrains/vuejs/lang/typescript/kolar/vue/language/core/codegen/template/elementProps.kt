@@ -48,7 +48,7 @@ fun generateElementProps(
     if (propArg != null && !propArg.loc.source.startsWith("[") && !propArg.loc.source.endsWith("]")) {
       if (!isComponent) {
         yield("...{ ")
-        yieldAll(generateEventArg(options, propArg.loc.source, propArg.loc.start.offset))
+        yieldAll(generateEventArg(options, propArg.loc.source, propArg.loc.startOffset))
         yield(": ")
         yieldAll(generateEventExpression(options, ctx, prop))
         yield("},")
@@ -100,25 +100,25 @@ fun generateElementProps(
         val shouldCamelize = getShouldCamelize(options, node, directiveProp, propName)
         val features = getPropsCodeFeatures(checkUnknownProps)
         if (shouldSpread) yield("...{ ")
-        val boundary = yield(Boundary.start(Source("template"), directiveProp.loc.start.offset, codeFeatures.verification))
+        val boundary = yield(Boundary.start(Source("template"), directiveProp.loc.startOffset, codeFeatures.verification))
         if (directiveProp.arg != null) {
-          yieldAll(generateObjectProperty(options, ctx, propName, directiveProp.arg!!.loc.start.offset, features, shouldCamelize))
+          yieldAll(generateObjectProperty(options, ctx, propName, directiveProp.arg!!.loc.startOffset, features, shouldCamelize))
         }
         else {
           val boundary2 = yield(Boundary.start(
             Source("template"),
-            directiveProp.loc.start.offset,
+            directiveProp.loc.startOffset,
             codeFeatures.withoutHighlightAndCompletion
           ))
           yield(propName)
-          yield(boundary2.end(directiveProp.loc.start.offset + "v-model".length))
+          yield(boundary2.end(directiveProp.loc.startOffset + "v-model".length))
         }
         yield(": ")
         val argLoc = directiveProp.arg?.loc ?: directiveProp.loc
-        val boundary3 = yield(Boundary.start(Source("template"), argLoc.start.offset, codeFeatures.verification))
+        val boundary3 = yield(Boundary.start(Source("template"), argLoc.startOffset, codeFeatures.verification))
         yieldAll(generatePropExp(options, ctx, directiveProp, directiveProp.exp as? SimpleExpressionNode))
-        yield(boundary3.end(argLoc.end.offset))
-        yield(boundary.end(directiveProp.loc.end.offset))
+        yield(boundary3.end(argLoc.endOffset))
+        yield(boundary.end(directiveProp.loc.endOffset))
         if (shouldSpread) yield(" }")
         yield(",$newLine")
         if (isComponent && directiveProp.name == "model" && directiveProp.modifiers.isNotEmpty()) {
@@ -138,20 +138,20 @@ fun generateElementProps(
         val shouldCamelize = getShouldCamelize(options, node, attrProp, attrProp.name)
         val features = getPropsCodeFeatures(checkUnknownProps)
         if (shouldSpread) yield("...{ ")
-        val boundary = yield(Boundary.start(Source("template"), attrProp.loc.start.offset, codeFeatures.verification))
-        val prefix = options.template.content[attrProp.loc.start.offset]
+        val boundary = yield(Boundary.start(Source("template"), attrProp.loc.startOffset, codeFeatures.verification))
+        val prefix = options.template.content[attrProp.loc.startOffset]
         if (prefix == '.' || prefix == '#') {
           for (char in attrProp.name) {
             yield(DataSegment(
               text = char.toString(),
               source = Source("template"),
-              sourceOffset = attrProp.loc.start.offset,
+              sourceOffset = attrProp.loc.startOffset,
               data = features,
             ))
           }
         }
         else {
-          yieldAll(generateObjectProperty(options, ctx, attrProp.name, attrProp.loc.start.offset, features, shouldCamelize))
+          yieldAll(generateObjectProperty(options, ctx, attrProp.name, attrProp.loc.startOffset, features, shouldCamelize))
         }
         yield(": ")
         when {
@@ -159,7 +159,7 @@ fun generateElementProps(
           attrProp.value != null -> yieldAll(generateAttrValue(attrProp.value!!, codeFeatures.withoutNavigation))
           else -> yield("true")
         }
-        yield(boundary.end(attrProp.loc.end.offset))
+        yield(boundary.end(attrProp.loc.endOffset))
         if (shouldSpread) yield(" }")
         yield(",$newLine")
       }
@@ -169,10 +169,10 @@ fun generateElementProps(
           failedPropExps?.add(FailedPropExpressions(simpleExp, "(", ")"))
         }
         else {
-          val boundary = yield(Boundary.start(Source("template"), simpleExp.loc.start.offset, codeFeatures.verification))
+          val boundary = yield(Boundary.start(Source("template"), simpleExp.loc.startOffset, codeFeatures.verification))
           yield("...")
           yieldAll(generatePropExp(options, ctx, directiveProp, simpleExp))
-          yield(boundary.end(simpleExp.loc.end.offset))
+          yield(boundary.end(simpleExp.loc.endOffset))
           yield(",$newLine")
         }
       }
@@ -189,14 +189,14 @@ fun generatePropExp(
   if (exp == null) {
     yield("{}")
   }
-  else if (prop.arg?.loc?.start?.offset != prop.exp?.loc?.start?.offset) {
+  else if (prop.arg?.loc?.startOffset != prop.exp?.loc?.startOffset) {
     yieldAll(generateInterpolation(
       options = options,
       ctx = ctx,
       block = options.template,
       data = codeFeatures.all,
       code = exp.loc.source,
-      start = exp.loc.start.offset,
+      start = exp.loc.startOffset,
       prefix = "(",
       suffix = ")",
     ))
@@ -207,7 +207,7 @@ fun generatePropExp(
       val codes = generateCamelized(
         exp.loc.source,
         Source("template"),
-        exp.loc.start.offset,
+        exp.loc.startOffset,
         VueCodeInformation(
           semantic = codeFeatures.withoutHighlightAndCompletion.semantic,
           navigation = codeFeatures.withoutHighlightAndCompletion.navigation,
@@ -222,7 +222,7 @@ fun generatePropExp(
           yield(".value")
         }
         else -> {
-          ctx.accessVariable(Source("template"), propVariableName, exp.loc.start.offset)
+          ctx.accessVariable(Source("template"), propVariableName, exp.loc.startOffset)
           yield(names.ctx)
           yield(".")
           yieldAll(codes)

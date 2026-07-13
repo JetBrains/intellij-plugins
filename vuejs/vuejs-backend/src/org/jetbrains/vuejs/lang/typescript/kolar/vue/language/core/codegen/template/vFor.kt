@@ -52,7 +52,7 @@ fun generateVFor(
       block = options.template,
       data = codeFeatures.all,
       code = source.content,
-      start = source.loc.start.offset,
+      start = source.loc.startOffset,
       prefix = "(",
       suffix = ")",
     ))
@@ -86,15 +86,15 @@ private fun parseVForNode(
   val result = node.parseResult
   val leftExpressionRange = if (result.value != null || result.key != null || result.index != null) {
     VForParseResult.OffsetRange(
-      start = (result.value ?: result.key ?: result.index)!!.loc.start.offset,
-      end = (result.index ?: result.key ?: result.value)!!.loc.end.offset,
+      start = (result.value ?: result.key ?: result.index)!!.loc.startOffset,
+      end = (result.index ?: result.key ?: result.value)!!.loc.endOffset,
     )
   }
   else null
   val leftExpressionText = if (leftExpressionRange != null) {
     node.loc.source.substring(
-      leftExpressionRange.start - node.loc.start.offset,
-      leftExpressionRange.end - node.loc.start.offset,
+      leftExpressionRange.start - node.loc.startOffset,
+      leftExpressionRange.end - node.loc.startOffset,
     )
   }
   else null

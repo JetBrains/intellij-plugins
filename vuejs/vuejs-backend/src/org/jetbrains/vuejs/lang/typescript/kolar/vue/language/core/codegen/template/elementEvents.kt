@@ -64,7 +64,7 @@ fun generateElementEvents(
     if (!isOnStatic && !isModelStatic) continue
 
     var source = propArg?.loc?.source ?: "model-value"
-    var offset: Int? = propArg?.loc?.start?.offset
+    var offset: Int? = propArg?.loc?.startOffset
     var propPrefix = "on-"
     var emitPrefix = ""
     if (prop.name == "model") {
@@ -162,7 +162,7 @@ fun generateEventExpression(
       block = options.template,
       data = codeFeatures.all,
       code = exp.content,
-      start = exp.loc.start.offset,
+      start = exp.loc.startOffset,
       prefix = if (isCompound) "" else "(",
       suffix = if (isCompound) "" else ")",
     )
@@ -180,7 +180,7 @@ fun generateEventExpression(
       yield("}")
       ctx.inlayHints.add(InlayHintInfo(
         blockName = Source("template"),
-        offset = exp.loc.start.offset,
+        offset = exp.loc.startOffset,
         setting = "vue.inlayHints.inlineHandlerLeading",
         label = "\$event =>",
         paddingRight = true,
@@ -211,7 +211,7 @@ fun generateModelEventExpression(
       block = options.template,
       data = codeFeatures.verification,
       code = exp.content,
-      start = exp.loc.start.offset,
+      start = exp.loc.startOffset,
     ))
     yield(" = \$event$endOfLine")
     yield("}")

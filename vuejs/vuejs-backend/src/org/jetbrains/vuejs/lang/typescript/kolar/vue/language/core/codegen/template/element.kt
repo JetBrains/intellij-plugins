@@ -65,13 +65,13 @@ fun generateComponent(
       val propArg = prop.arg as? SimpleExpressionNode ?: continue
       val propExp = prop.exp as? SimpleExpressionNode ?: continue
       if (prop.name != "bind" || propArg.loc.source != "is") continue
-      isIsShorthand = propArg.loc.end.offset == propExp.loc.end.offset
+      isIsShorthand = propArg.loc.endOffset == propExp.loc.endOffset
       if (isIsShorthand) {
         ctx.inlayHints.add(createVBindShorthandInlayHintInfo(propExp.loc, "is"))
       }
       isExpression = true
       tag = propExp.content
-      startTagOffset = propExp.loc.start.offset
+      startTagOffset = propExp.loc.startOffset
       endTagOffset = null
       props = props.filter { it !== rawProp }
       break
@@ -209,9 +209,9 @@ fun generateComponent(
   yield("}))$endOfLine")
 
   yield("const ")
-  val boundary = yield(Boundary.start(Source("template"), node.loc.start.offset, codeFeatures.doNotReportTs6133))
+  val boundary = yield(Boundary.start(Source("template"), node.loc.startOffset, codeFeatures.doNotReportTs6133))
   yield(vnodeVar)
-  yield(boundary.end(node.loc.end.offset))
+  yield(boundary.end(node.loc.endOffset))
   yield(" = $functionalVar")
 
   val generic = ctx.getCommentInfo().generic
@@ -238,7 +238,7 @@ fun generateComponent(
   yield(DataSegment(
     text = "",
     source = Source("template"),
-    sourceOffset = node.loc.start.offset,
+    sourceOffset = node.loc.startOffset,
     data = VueCodeInformation(__propsCompletion = true),
   ))
   yield(newLine)
@@ -425,7 +425,7 @@ private fun generateStyleScopedClassReferences(
     if (arg.content != "class") continue
 
     val content = "(" + exp.content + ")"
-    val startOffset = exp.loc.start.offset - 1
+    val startOffset = exp.loc.startOffset - 1
     val ast = getTypeScriptAST(content)
     val literals = mutableListOf<PsiElement>()
 
@@ -510,7 +510,7 @@ private fun generateFailedExpressions(
       block = options.template,
       data = codeFeatures.all,
       code = node.loc.source,
-      start = node.loc.start.offset,
+      start = node.loc.startOffset,
       prefix = prefix,
       suffix = suffix,
     ))

@@ -10,7 +10,7 @@ fun createVBindShorthandInlayHintInfo(
 ): InlayHintInfo =
   InlayHintInfo(
     blockName = Source("template"),
-    offset = loc.end.offset,
+    offset = loc.endOffset,
     setting = "vue.inlayHints.vBindShorthand",
     label = "=\"$variableName\"",
     tooltip = listOf(

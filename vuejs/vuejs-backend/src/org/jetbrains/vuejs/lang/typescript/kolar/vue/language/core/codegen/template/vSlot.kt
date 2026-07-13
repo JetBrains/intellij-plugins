@@ -40,24 +40,24 @@ fun generateVSlot(
         options = options,
         ctx = ctx,
         code = arg.loc.source,
-        offset = arg.loc.start.offset,
+        offset = arg.loc.startOffset,
         features = if (arg.isStatic) codeFeatures.withoutHighlight else codeFeatures.all,
         shouldCamelize = false,
         shouldBeConstant = true,
       ))
     }
     else {
-      val boundary = yield(Boundary.start(Source("template"), slotDir.loc.start.offset, codeFeatures.withoutHighlightAndCompletion))
+      val boundary = yield(Boundary.start(Source("template"), slotDir.loc.startOffset, codeFeatures.withoutHighlightAndCompletion))
       yield("default")
-      yield(boundary.end(slotDir.loc.start.offset + (slotDir.rawName?.length ?: 0)))
+      yield(boundary.end(slotDir.loc.startOffset + (slotDir.rawName?.length ?: 0)))
     }
   }
   else {
     yield("const { ")
     // #932: reference for implicit default slot
-    val boundary = yield(Boundary.start(Source("template"), node.loc.start.offset, codeFeatures.navigation))
+    val boundary = yield(Boundary.start(Source("template"), node.loc.startOffset, codeFeatures.navigation))
     yield("default")
-    yield(boundary.end(node.loc.end.offset))
+    yield(boundary.end(node.loc.endOffset))
   }
   yield(": $slotVar } = $ctxVar.slots!$endOfLine")
 
@@ -87,7 +87,7 @@ fun generateVSlot(
       }
       yield(DataSegment(text = "",
                         source = Source("template"),
-                        sourceOffset = slotDir.loc.start.offset + prefixLen,
+                        sourceOffset = slotDir.loc.startOffset + prefixLen,
                         data = codeFeatures.completion))
       yield("'/* empty slot name completion */]$endOfLine")
     }
@@ -109,7 +109,7 @@ private fun generateSlotParameters(
   val expression = statement.expression
   if (!isArrowFunction(expression)) return@sequence
 
-  val startOffset = exp.loc.start.offset - 1
+  val startOffset = exp.loc.startOffset - 1
   val types = mutableListOf<Code?>()
   val interpolation = generateInterpolation(
     options = options,
@@ -151,7 +151,7 @@ private fun generateSlotParameters(
 
   if (types.any { it != null }) {
     yield(", ")
-    val boundary = yield(Boundary.start(Source("template"), exp.loc.start.offset, codeFeatures.verification))
+    val boundary = yield(Boundary.start(Source("template"), exp.loc.startOffset, codeFeatures.verification))
     yield("(")
     for (type in types) {
       if (type != null) {
@@ -164,7 +164,7 @@ private fun generateSlotParameters(
       }
     }
     yield(") => [] as any")
-    yield(boundary.end(exp.loc.end.offset))
+    yield(boundary.end(exp.loc.endOffset))
   }
   yield(")$endOfLine")
 }

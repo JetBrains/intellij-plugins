@@ -39,7 +39,7 @@ fun generateSlotOutlet(
   if (options.hasDefineSlots) {
     yield("${names.asFunctionalSlot}(")
     if (nameProp != null) {
-      val boundary = yield(Boundary.start(Source("template"), nameProp.loc.start.offset, codeFeatures.verification))
+      val boundary = yield(Boundary.start(Source("template"), nameProp.loc.startOffset, codeFeatures.verification))
       yield(options.slotsAssignName ?: names.slots)
       if (nameProp is AttributeNode && nameProp.value != null) {
         val (content, offset) = normalizeAttributeValue(nameProp.value!!)
@@ -53,7 +53,7 @@ fun generateSlotOutlet(
       else {
         yield("['default']")
       }
-      yield(boundary.end(nameProp.loc.end.offset))
+      yield(boundary.end(nameProp.loc.endOffset))
     }
     else {
       val boundary = yield(Boundary.start(Source("template"), startTagOffset, codeFeatures.verification))
@@ -80,14 +80,14 @@ fun generateSlotOutlet(
     if (nameProp is AttributeNode && nameProp.value != null) {
       ctx.slots.add(TemplateCodegenContext.Slot(
         name = nameProp.value!!.content,
-        offset = nameProp.loc.start.offset + nameProp.loc.source.indexOf(nameProp.value!!.content, nameProp.name.length),
+        offset = nameProp.loc.startOffset + nameProp.loc.source.indexOf(nameProp.value!!.content, nameProp.name.length),
         tagRange = Pair(startTagOffset, startTagOffset + node.tag.length),
         propsVar = ctx.getHoistVariable(propsVar),
       ))
     }
     else if (nameProp is DirectiveNode && nameProp.exp is SimpleExpressionNode) {
       val namePropExp = nameProp.exp as SimpleExpressionNode
-      val isShortHand = nameProp.arg?.loc?.start?.offset == namePropExp.loc.start.offset
+      val isShortHand = nameProp.arg?.loc?.startOffset == namePropExp.loc.startOffset
       if (isShortHand) {
         ctx.inlayHints.add(createVBindShorthandInlayHintInfo(namePropExp.loc, "name"))
       }
@@ -99,7 +99,7 @@ fun generateSlotOutlet(
         block = options.template,
         data = if (isShortHand) codeFeatures.withoutHighlightAndCompletion else codeFeatures.all,
         code = namePropExp.content,
-        start = namePropExp.loc.start.offset,
+        start = namePropExp.loc.startOffset,
       ))
       yield(")$endOfLine")
       ctx.dynamicSlots.add(TemplateCodegenContext.DynamicSlot(

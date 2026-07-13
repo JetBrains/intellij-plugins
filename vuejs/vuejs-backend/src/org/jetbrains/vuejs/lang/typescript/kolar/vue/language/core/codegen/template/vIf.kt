@@ -37,7 +37,7 @@ fun generateVIf(
         block = options.template,
         data = codeFeatures.all,
         code = condition.content,
-        start = condition.loc.start.offset,
+        start = condition.loc.startOffset,
         prefix = "(",
         suffix = ")",
       ).toList()

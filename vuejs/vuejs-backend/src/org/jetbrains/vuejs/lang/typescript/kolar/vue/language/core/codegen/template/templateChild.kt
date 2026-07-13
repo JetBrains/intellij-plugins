@@ -128,8 +128,8 @@ private fun parseInterpolationNode(
   node: InterpolationNode,
   template: IRContent,
 ): Pair<String, Int> {
-  var start = node.content.loc.start.offset
-  var end = node.content.loc.end.offset
+  var start = node.content.loc.startOffset
+  var end = node.content.loc.endOffset
 
   // fix https://github.com/vuejs/language-tools/issues/1787
   while (start > 0 && template[start - 1].isWhitespace()) {

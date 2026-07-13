@@ -142,7 +142,7 @@ class TemplateCodegenContext {
           if (text.startsWith("{") && text.endsWith("}")) {
             generic = Generic(
               content = text.substring(1, text.length - 1),
-              offset = comment.loc.start.offset + comment.loc.source.indexOf('{') + 1,
+              offset = comment.loc.startOffset + comment.loc.source.indexOf('{') + 1,
             )
           }
         }
@@ -166,7 +166,7 @@ class TemplateCodegenContext {
     if (expectError != null) {
       val boundary = yield(Boundary.start(
         source = Source("template"),
-        startOffset = expectError.node.loc.start.offset,
+        startOffset = expectError.node.loc.startOffset,
         features = VueCodeInformation(
           verification = VerificationInfo.WithFilter(
             // If no errors/warnings/diagnostics were reported within the region of code covered
@@ -177,7 +177,7 @@ class TemplateCodegenContext {
         ),
       ))
       yield("// @ts-expect-error")
-      yield(boundary.end(expectError.node.loc.end.offset))
+      yield(boundary.end(expectError.node.loc.endOffset))
       yield("$newLine$endOfLine")
     }
   }

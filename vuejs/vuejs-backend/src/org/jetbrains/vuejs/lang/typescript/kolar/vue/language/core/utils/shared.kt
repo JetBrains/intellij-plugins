@@ -26,7 +26,7 @@ fun normalizeAttributeValue(
   node: TextNode,
 ): Pair<String, Int> {
   val source = node.loc.source
-  val startOffset = node.loc.start.offset
+  val startOffset = node.loc.startOffset
   if (
     (source.startsWith('"') && source.endsWith('"'))
     || (source.startsWith("'") && source.endsWith("'"))
@@ -40,9 +40,9 @@ fun getElementTagOffsets(
   node: ElementNode,
   template: IRTemplate,
 ): List<Int> {
-  val tagOffsets = mutableListOf(template.content.indexOf(node.tag, node.loc.start.offset))
+  val tagOffsets = mutableListOf(template.content.indexOf(node.tag, node.loc.startOffset))
   if (!node.isSelfClosing && template.lang == "html") {
-    val endTagOffset = node.loc.start.offset + node.loc.source.lastIndexOf(node.tag)
+    val endTagOffset = node.loc.startOffset + node.loc.source.lastIndexOf(node.tag)
     if (endTagOffset > tagOffsets[0]) {
       tagOffsets.add(endTagOffset)
     }
