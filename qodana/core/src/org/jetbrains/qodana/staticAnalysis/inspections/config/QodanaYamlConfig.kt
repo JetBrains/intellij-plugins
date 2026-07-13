@@ -57,6 +57,7 @@ data class QodanaYamlConfig(
   val dependencyOverrides: List<DependencyOverride> = emptyList(),
   val dependencyIgnores: List<DependencyIgnore> = emptyList(),
   val customDependencies: List<CustomDependency> = emptyList(),
+  val pathsToDependencies: List<String> = emptyList(),
   val modulesToAnalyze: Set<AllowedModule> = emptySet(),
   val dependencySbomExclude: Set<DependencyIgnore> = emptySet(), // not in SBOM, but in projectMetadata
   val analyzeDevDependencies: Boolean = false,
