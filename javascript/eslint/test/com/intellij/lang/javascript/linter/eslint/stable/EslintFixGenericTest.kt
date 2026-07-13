@@ -26,30 +26,44 @@ import org.junit.Assert
  * (and, later, the next-tier canary).
  *
  * These tests historically shared a single `.eslintrc`; the flat-config successor is a shared
- * `eslint.config.mjs` copied to the project root and auto-detected by ESLint. ESLint itself is
- * installed from a shared root `package.json` (the full TS/Vue/HTML combo), so a single lock store
- * serves the whole suite regardless of which plugin a given test exercises.
+ * `eslint.config.mjs` copied to the project root and auto-detected by ESLint. ESLint is installed from
+ * one of two committed root manifests, chosen per test via [EslintPackageSet]: pure-JS scenarios use the
+ * eslint-only `package.json` (a fast single-dep lock), while scenarios whose config loads a plugin or
+ * parser (HTML, JSX) use the TS/Vue/HTML/React combo `package.full.json`.
  */
 abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
   override fun getBasePath(): String = "$ESLINT_TEST_DATA_RELATIVE_PATH/linter/eslint/quickfix/"
 
   /**
-   * Copies the shared root `package.json` + `eslint.config.mjs` into the project, installs ESLint from
-   * the stored lock, and lets the flat config be auto-detected. Call once per test, before configuring
-   * the file under test.
+   * Which committed root manifest a shared-config install pulls its dependencies from. Pure-JS scenarios
+   * use [CORE] (eslint only -> the fast single-dep lock store); scenarios whose flat config loads a plugin
+   * or parser (HTML, JSX) use [FULL] (the TS/Vue/HTML/React combo).
    */
-  protected fun installEslintWithSharedConfig(configSource: String = "eslint.config.mjs") {
+  protected enum class EslintPackageSet(val rootManifest: String) {
+    CORE("package.json"),
+    FULL("package.full.json"),
+  }
+
+  /**
+   * Copies the chosen root manifest (as `package.json`) + `eslint.config.mjs` into the project, installs
+   * ESLint from the stored lock, and lets the flat config be auto-detected. Call once per test, before
+   * configuring the file under test.
+   */
+  protected fun installEslintWithSharedConfig(
+    configSource: String = "eslint.config.mjs",
+    packageSet: EslintPackageSet = EslintPackageSet.CORE,
+  ) {
     prepareProjectForInstall()
-    myFixture.copyFileToProject("package.json")
+    myFixture.copyFileToProject(packageSet.rootManifest, "package.json")
     myFixture.copyFileToProject(configSource, "eslint.config.mjs")
     installEslintFromProjectRoot()
   }
 
-  /** Installs ESLint from the shared root `package.json` without any flat config -- for tests that add
+  /** Installs ESLint from the eslint-only root manifest without any flat config -- for tests that add
    *  their own config (e.g. run-on-save with an inline `eslint.config.js`). */
   protected fun installEslintOnly() {
     prepareProjectForInstall()
-    myFixture.copyFileToProject("package.json")
+    myFixture.copyFileToProject(EslintPackageSet.CORE.rootManifest, "package.json")
     installEslintFromProjectRoot()
   }
 
@@ -58,12 +72,17 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
   }
 
   /**
-   * Shared-config install (from [configSource], copied to the project as `eslint.config.mjs`), then
-   * configure `<TestName><extension>`, launch the intention named [description], and compare the result
-   * with `<TestName>_after<extension>`.
+   * Shared-config install (from [configSource], copied to the project as `eslint.config.mjs`, with
+   * dependencies from [packageSet]), then configure `<TestName><extension>`, launch the intention named
+   * [description], and compare the result with `<TestName>_after<extension>`.
    */
-  protected fun doQuickFixTest(description: String, extension: String = ".js", configSource: String = "eslint.config.mjs") {
-    installEslintWithSharedConfig(configSource)
+  protected fun doQuickFixTest(
+    description: String,
+    extension: String = ".js",
+    configSource: String = "eslint.config.mjs",
+    packageSet: EslintPackageSet = EslintPackageSet.CORE,
+  ) {
+    installEslintWithSharedConfig(configSource, packageSet)
     launchQuickFix(description, extension)
   }
 
@@ -190,22 +209,23 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
   }
 
   // The following exercise eslint-plugin-html (embedded <script> linting) and JSX via a shared,
-  // extension-specific flat config copied to the project root.
+  // extension-specific flat config copied to the project root. Their configs import plugins, so they
+  // install the FULL dependency set rather than the eslint-only CORE set.
   fun testSuppressForFileInHtml() =
-    doQuickFixTest("Suppress 'no-multiple-empty-lines' for current file", ".html", "eslint.config.html.mjs")
+    doQuickFixTest("Suppress 'no-multiple-empty-lines' for current file", ".html", "eslint.config.html.mjs", EslintPackageSet.FULL)
 
   fun testSuppressMultiLinesByLineComment() =
-    doQuickFixTest("Suppress 'no-multiple-empty-lines' for current line", ".js", "eslint.config.html.mjs")
+    doQuickFixTest("Suppress 'no-multiple-empty-lines' for current line", ".js", "eslint.config.html.mjs", EslintPackageSet.FULL)
 
   fun testSuppressForLineInHtml() =
-    doQuickFixTest("Suppress 'no-multiple-empty-lines' for current line", ".html", "eslint.config.html.mjs")
+    doQuickFixTest("Suppress 'no-multiple-empty-lines' for current line", ".html", "eslint.config.html.mjs", EslintPackageSet.FULL)
 
-  fun testFixInHtml() = doQuickFixTest("ESLint: Fix current file", ".html", "eslint.config.html.mjs")
+  fun testFixInHtml() = doQuickFixTest("ESLint: Fix current file", ".html", "eslint.config.html.mjs", EslintPackageSet.FULL)
 
-  fun testFixWorksInJsx() = doQuickFixTest("ESLint: Fix current file", ".jsx", "eslint.config.jsx.mjs")
+  fun testFixWorksInJsx() = doQuickFixTest("ESLint: Fix current file", ".jsx", "eslint.config.jsx.mjs", EslintPackageSet.FULL)
 
   fun testScriptsInHtmlFile() {
-    installEslintWithSharedConfig("eslint.config.html.mjs")
+    installEslintWithSharedConfig("eslint.config.html.mjs", EslintPackageSet.FULL)
     myFixture.configureByFile(getTestName(false) + ".html")
     // The whole-file fix action is not offered for scripts embedded in HTML.
     val fixActions = myFixture.availableIntentions.filter { it.text == "ESLint: Fix current file" }
