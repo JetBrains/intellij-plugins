@@ -17,25 +17,21 @@ interface TextNode : Node {
 }
 
 // CompilerDOM.ElementTypes
-enum class ElementTypes(
-  val value: Int,
-) {
-  ELEMENT(0),
-  COMPONENT(1),
-  TEMPLATE(2),
-  SLOT(3),
+enum class ElementTypes {
+  ELEMENT,   // 0
+  COMPONENT, // 1
+  TEMPLATE,  // 2
+  SLOT,      // 3
 
   ;
 }
 
 // CompilerDOM.ConstantTypes
-enum class ConstantTypes(
-  val value: Int,
-) {
-  NOT_CONSTANT(0),
-  CAN_SKIP_PATCH(1),
-  CAN_HOIST(2),
-  CAN_STRINGIFY(3),
+enum class ConstantTypes {
+  NOT_CONSTANT,   // 0
+  CAN_SKIP_PATCH, // 1
+  CAN_HOIST,      // 2
+  CAN_STRINGIFY,  // 3
 
   ;
 }
