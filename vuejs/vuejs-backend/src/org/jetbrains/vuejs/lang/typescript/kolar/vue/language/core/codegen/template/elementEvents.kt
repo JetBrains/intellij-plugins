@@ -222,7 +222,7 @@ fun generateModelEventExpression(
 }
 
 fun isCompoundExpression(ast: FakeSourceFile): Boolean {
-  if (ast.statements.isEmpty()) {
+  if (ast.statements.none()) {
     return false
   }
 

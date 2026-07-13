@@ -9,8 +9,8 @@ import com.intellij.psi.util.lastLeaf
 // manual
 interface FakeSourceFile : PsiElement
 
-val FakeSourceFile.statements: List<PsiElement>
-  get() = forEachNode(this).toList()
+val FakeSourceFile.statements: Sequence<PsiElement>
+  get() = forEachNode(this)
 
 fun PsiElement.endsWithComma(): Boolean {
   val leaf = lastLeaf()
