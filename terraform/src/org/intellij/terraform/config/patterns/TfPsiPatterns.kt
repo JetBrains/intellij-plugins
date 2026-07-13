@@ -13,9 +13,11 @@ import com.intellij.patterns.StandardPatterns.or
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants.HCL_ACTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_CONFIGURATION_ALIASES
 import org.intellij.terraform.config.Constants.HCL_CONFIG_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONNECTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_DEPENDS_ON_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
@@ -27,6 +29,7 @@ import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
@@ -123,13 +126,11 @@ internal object TfPsiPatterns {
   val RequiredProvidersProperty: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
     .withSuperParent(2, TfRequiredProvidersBlock)
 
-  val RequiredProvidersSource: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
+  val RequiredProvidersSource: PsiElementPattern.Capture<HCLProperty> = propertyWithName(HCL_SOURCE_IDENTIFIER)
     .withSuperParent(2, RequiredProvidersProperty)
-    .with(object : PatternCondition<HCLProperty?>("HCLProperty(source)") {
-      override fun accepts(t: HCLProperty, context: ProcessingContext?): Boolean {
-        return t.name == "source"
-      }
-    })
+
+  val ProviderConfigurationAliases: PsiElementPattern.Capture<HCLProperty> = propertyWithName(HCL_CONFIGURATION_ALIASES)
+    .withSuperParent(2, RequiredProvidersProperty)
 
   val LocalsRootBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_LOCALS_IDENTIFIER)
     .and(RootBlock)
@@ -194,23 +195,13 @@ internal object TfPsiPatterns {
   val HeredocContentAnywhereInVariable: PsiElementPattern.Capture<HCLHeredocContent> = PlatformPatterns.psiElement(HCLHeredocContent::class.java)
     .inside(true, VariableRootBlock)
 
-  val DependsOnPattern: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
+  val DependsOnPattern: PsiElementPattern.Capture<HCLProperty> = propertyWithName(HCL_DEPENDS_ON_IDENTIFIER)
     .withSuperParent(1, HCLObject::class.java)
     .withSuperParent(2, or(ResourceRootBlock, DataSourceRootBlock, ModuleRootBlock, OutputRootBlock))
-    .with(object : PatternCondition<HCLProperty?>("HCLProperty(depends_on)") {
-      override fun accepts(t: HCLProperty, context: ProcessingContext?): Boolean {
-        return t.name == "depends_on"
-      }
-    })
 
-  val FromPropertyInMovedBlock: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
+  val FromPropertyInMovedBlock: PsiElementPattern.Capture<HCLProperty> = propertyWithName("from")
     .withSuperParent(1, HCLObject::class.java)
     .withSuperParent(2, MovedBlock)
-    .with(object : PatternCondition<HCLProperty?>("HCLProperty(from)") {
-      override fun accepts(t: HCLProperty, context: ProcessingContext?): Boolean {
-        return t.name == "from"
-      }
-    })
 
   val LocalProperty: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
     .withSuperParent(1, HCLObject::class.java)

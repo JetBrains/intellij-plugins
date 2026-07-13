@@ -13,6 +13,7 @@ import com.intellij.psi.PsiReferenceBase
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parents
 import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
@@ -55,7 +56,6 @@ import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.IndexSelectExpression
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
 import org.intellij.terraform.hcl.psi.common.SelectExpression
-import org.intellij.terraform.hcl.psi.getParent
 import org.intellij.terraform.hil.HilContainingBlockType
 import org.intellij.terraform.hil.getResourceName
 import org.intellij.terraform.hil.getResourceType
@@ -65,6 +65,13 @@ import org.intellij.terraform.hil.patterns.HILPatterns
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 
 object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
+
+  private val providerNameContexts = listOf(
+    TfPsiPatterns.ResourceProviderProperty,
+    TfPsiPatterns.PropertyUnderModuleProviders,
+    TfPsiPatterns.ProviderConfigurationAliases
+  )
+
   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
     if (element !is BaseExpression) return PsiReference.EMPTY_ARRAY
     val name = getSelectFieldText(element) ?: return PsiReference.EMPTY_ARRAY
@@ -128,13 +135,8 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
       return refs.toTypedArray()
     }
 
-    if (TfPsiPatterns.ResourceProviderProperty.accepts(host.getParent(HCLProperty::class.java))) {
-      // covered by ResourceProviderReferenceProvider
-      return PsiReference.EMPTY_ARRAY
-    }
-
-    if (TfPsiPatterns.PropertyUnderModuleProviders.accepts(host.getParent(HCLProperty::class.java))) {
-      // covered by ModuleProvidersReferenceProvider
+    val hostProperty = host.parentOfType<HCLProperty>()
+    if (providerNameContexts.any { it.accepts(hostProperty) }) {
       return PsiReference.EMPTY_ARRAY
     }
 

@@ -671,6 +671,7 @@ class TfReferencesTest : BasePlatformTestCase() {
 
   @Test
   fun testResolveAliasedProviderInResource() {
+    myFixture.enableInspections(HILUnresolvedReferenceInspection::class.java)
     myFixture.configureByText("main.tf", """
       provider "aws" { }
       
@@ -696,6 +697,7 @@ class TfReferencesTest : BasePlatformTestCase() {
 
   @Test
   fun testResolveAliasedProviderInModule() {
+    myFixture.enableInspections(HILUnresolvedReferenceInspection::class.java)
     myFixture.addFileToProject("example/dir/providers.tf", """provider "aws" { alias = "global" }""".trimIndent())
     myFixture.configureByText("main.tf", """
       provider "aws" { }
@@ -721,6 +723,39 @@ class TfReferencesTest : BasePlatformTestCase() {
     assertEquals("provider", providerBlock.getNameElementUnquoted(0))
     assertEquals("aws", providerBlock.getNameElementUnquoted(1))
     assertEquals("usw3", (providerBlock.`object`?.findProperty("alias")?.value as? HCLStringLiteral)?.value)
+  }
+
+  @Test
+  fun testResolveModuleProviderToConfigurationAlias() {
+    myFixture.enableInspections(HILUnresolvedReferenceInspection::class.java)
+    myFixture.addFileToProject("example/dir/providers.tf", """
+      terraform {
+        required_providers {
+          aws = {
+            source                = "hashicorp/aws"
+            configuration_aliases = [aws.east_region]
+          }
+        }
+      }
+    """.trimIndent())
+    myFixture.configureByText("main.tf", """
+      provider "aws" {}
+
+      module "example" {
+        source    = "./example/dir"
+        providers = {
+          aws.east<caret>_region = aws
+        }
+      }
+    """.trimIndent())
+
+    myFixture.checkHighlighting()
+    val reference = myFixture.getReferenceAtCaretPosition()
+    assertNotNull("Expected a reference on the aliased provider key", reference)
+
+    val resolved = reference?.resolve()
+                   ?: throw AssertionError("'aws.east_region' should resolve to the child module's configuration_aliases entry")
+    assertEquals("aws.east_region", resolved.text)
   }
 
   private val DLR = "$"

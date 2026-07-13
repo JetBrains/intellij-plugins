@@ -258,6 +258,27 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     doBasicCompletionTest("provider Z {alias='Y'}\nresource a b {provider=\"<caret>\"}", "Z.Y")
   }
 
+  fun testProviderCompletionWithAliases() {
+    doBasicCompletionTest("""
+      terraform {
+        required_providers {
+          aws = {
+            source                = "hashicorp/aws"
+            configuration_aliases = [aws.bar]
+          }
+        }
+      }
+
+      provider "aws" {}
+      provider "aws" { alias = "foo" }
+
+      resource "aws_billing_view" "example" {
+        name     = "test"
+        provider = <caret>
+      }
+    """.trimIndent(), 3, "aws", "aws.foo", "aws.bar")
+  }
+
   fun testResourcePropertyCompletionBeforeInnerBlock() {
     doBasicCompletionTest("resource abc {\n<caret>\nsome_block {}\n}", commonResourceProperties)
 
