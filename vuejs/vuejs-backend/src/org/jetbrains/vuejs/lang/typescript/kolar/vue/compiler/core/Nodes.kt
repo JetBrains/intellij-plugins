@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core
 
 // CompilerDOM.Node — base for all AST nodes
 interface Node {
-  val type: NodeTypes
   val loc: SourceLocation
 }
 
