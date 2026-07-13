@@ -8,6 +8,8 @@ package org.jetbrains.qodana.staticAnalysis.inspections.config
  * @param [dependencyOverrides] list of overridden dependencies. Look [DependencyOverride]
  * @param [dependencyIgnores] list of ignore dependencies. Look [DependencyIgnore]
  * @param [customDependencies] list of custom dependencies. Look [CustomDependency]
+ * @param [pathsToDependencies] list of relative paths to local/vendored dependency directories whose
+ *   packaging metadata should be read and included in the license audit
  */
 data class DependencyAnalysisConfig(
   val projectLicenses: List<LicenseOverride> = emptyList(),
@@ -15,6 +17,7 @@ data class DependencyAnalysisConfig(
   val dependencyOverrides: List<DependencyOverride> = emptyList(),
   val dependencyIgnores: List<DependencyIgnore> = emptyList(),
   val customDependencies: List<CustomDependency> = emptyList(),
+  val pathsToDependencies: List<String> = emptyList(),
   val modulesToAnalyze: Set<AllowedModule> = emptySet(),
   val dependencySbomExclude: Set<DependencyIgnore> = emptySet(), // not in SBOM, but in projectMetadata
   val analyzeDevDependencies: Boolean = false,
@@ -30,6 +33,7 @@ data class DependencyAnalysisConfig(
         dependencyOverrides = yaml.dependencyOverrides,
         dependencyIgnores = yaml.dependencyIgnores,
         customDependencies = yaml.customDependencies,
+        pathsToDependencies = yaml.pathsToDependencies,
         modulesToAnalyze = yaml.modulesToAnalyze,
         dependencySbomExclude = yaml.dependencySbomExclude,
         analyzeDevDependencies = yaml.analyzeDevDependencies,

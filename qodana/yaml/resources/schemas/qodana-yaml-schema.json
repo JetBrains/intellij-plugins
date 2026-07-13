@@ -699,6 +699,14 @@
         "$ref": "#/definitions/customDependency"
       }
     },
+    "pathsToDependencies": {
+      "description": "A list of relative paths to local or vendored dependency directories",
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "string"
+      }
+    },
     "plugins": {
       "description": "A list of plugins to install for Qodana analysis",
       "type": "array",
