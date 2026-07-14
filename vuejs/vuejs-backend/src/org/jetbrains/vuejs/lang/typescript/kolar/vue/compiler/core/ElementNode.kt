@@ -38,6 +38,14 @@ class ElementNodeImpl(
     }
   }
 
-  override val props: List<Node>
-    get() = TODO("not implemented")
+  override val props: List<Node> by lazy {
+    element.attributes.mapNotNull {
+      val name = it.name
+      
+      if (isDirectiveAttributeName(name)) 
+        return@mapNotNull null
+      
+      AttributeNodeImpl(it) 
+    }
+  }
 }
