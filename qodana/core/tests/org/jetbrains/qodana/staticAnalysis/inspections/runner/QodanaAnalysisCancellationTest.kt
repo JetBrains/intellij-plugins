@@ -42,10 +42,12 @@ class QodanaAnalysisCancellationTest : BasePlatformTestCase() {
     try {
       PackageCheckerInspectListener().inspectionFailed("toolId", failure, null, project)
 
-      assertEquals(
-        listOf(PackageCheckerInspectListener.PACKAGE_CHECKER_QODANA_CANCELLATION_MESSAGE to failure),
-        cancellationRequests
-      )
+      assertEquals(1, cancellationRequests.size)
+      assertEquals(PackageCheckerInspectListener.PACKAGE_CHECKER_QODANA_CANCELLATION_MESSAGE, cancellationRequests.single().first)
+      val reportedFailure = cancellationRequests.single().second as? QodanaReportedFailureException
+      assertNotNull(reportedFailure)
+      assertEquals(PACKAGE_CHECKER_EXIT_CODE, reportedFailure?.exitCode)
+      assertSame(failure, reportedFailure?.cause)
     }
     finally {
       project.service<QodanaAnalysisCancellationService>().removeHook()

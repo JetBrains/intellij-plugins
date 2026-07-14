@@ -19,6 +19,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.resultSummary
 private val logger by lazy { logger<ExitStatus>() }
 
 private const val FAIL_THRESHOLD_EXIT_CODE = 255
+internal const val PACKAGE_CHECKER_EXIT_CODE = 1
 
 /**
  * Arbitrary, but based on https://man.freebsd.org/cgi/man.cgi?query=sysexits

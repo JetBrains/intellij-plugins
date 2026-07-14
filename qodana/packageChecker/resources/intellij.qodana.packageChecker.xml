@@ -7,4 +7,9 @@
     <listener class="org.jetbrains.qodana.staticAnalysis.packageChecker.PackageCheckerInspectListener"
               topic="com.intellij.codeInspection.ex.InspectListener"/>
   </projectListeners>
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="qd.package-checker.cancel.on.failure"
+                 defaultValue="true"
+                 description="Cancel Qodana analysis when vulnerability search fails"/>
+  </extensions>
 </idea-plugin>

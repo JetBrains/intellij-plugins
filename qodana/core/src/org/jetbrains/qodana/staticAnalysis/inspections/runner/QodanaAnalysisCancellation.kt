@@ -38,4 +38,3 @@ class QodanaAnalysisCancellationService {
     return true
   }
 }
-
