@@ -9,8 +9,13 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 fun children(
   tag: XmlTag,
 ): Lazy<List<Node>> = lazy {
-  tag.children.mapNotNull(::getChild)
+  getChildren(tag)
 }
+
+fun getChildren(
+  tag: XmlTag,
+): List<Node> =
+  tag.children.mapNotNull(::getChild)
 
 private fun getChild(
   child: PsiElement,
