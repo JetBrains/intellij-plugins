@@ -6,8 +6,3 @@ interface AttributeNode : Node {
   val name: String
   val value: TextNode?
 }
-
-// CompilerDOM.TextNode
-interface TextNode : Node {
-  val content: String
-}

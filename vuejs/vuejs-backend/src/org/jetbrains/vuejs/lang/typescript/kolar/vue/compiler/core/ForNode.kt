@@ -6,11 +6,3 @@ interface ForNode : Node {
   val parseResult: ForParseResult
   val children: List<Node>
 }
-
-// CompilerDOM.ForParseResult
-data class ForParseResult(
-  val source: ExpressionNode,
-  val value: ExpressionNode?,
-  val key: ExpressionNode?,
-  val index: ExpressionNode?,
-)
