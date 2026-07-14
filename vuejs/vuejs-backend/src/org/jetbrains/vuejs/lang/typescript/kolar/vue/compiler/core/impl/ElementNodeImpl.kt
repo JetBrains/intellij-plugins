@@ -6,6 +6,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementTypes
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SourceLocation
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.dom.isNativeTag
 
 class ElementNodeImpl(
   private val element: XmlTag,
@@ -16,8 +17,14 @@ class ElementNodeImpl(
   override val tag: String
     get() = element.localName
 
-  override val tagType: ElementTypes
-    get() = TODO("not implemented")
+  override val tagType: ElementTypes by lazy {
+    when {
+      tag == "template" -> ElementTypes.TEMPLATE
+      tag == "slot" -> ElementTypes.SLOT
+      isNativeTag(tag) -> ElementTypes.ELEMENT
+      else -> ElementTypes.COMPONENT
+    }
+  }
 
   override val isSelfClosing: Boolean
     get() = element.isEmpty
