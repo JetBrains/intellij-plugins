@@ -26,7 +26,7 @@ class ElementNodeImpl(
     get() = TODO("not implemented")
 
   override val isSelfClosing: Boolean
-    get() = TODO("not implemented")
+    get() = element.isEmpty
 
   override val children: List<Node> by lazy {
     element.children.mapNotNull { child ->
