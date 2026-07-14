@@ -19,5 +19,34 @@ private val HTML_TAGS: Set<String> = setOf(
   "iframe", "tfoot",
 )
 
+// https://developer.mozilla.org/en-US/docs/Web/SVG/Element
+private val SVG_TAGS: Set<String> = setOf(
+  "svg", "animate", "animateMotion", "animateTransform", "circle", "clipPath", "color-profile",
+  "defs", "desc", "discard", "ellipse", "feBlend", "feColorMatrix", "feComponentTransfer",
+  "feComposite", "feConvolveMatrix", "feDiffuseLighting", "feDisplacementMap",
+  "feDistantLight", "feDropShadow", "feFlood", "feFuncA", "feFuncB", "feFuncG", "feFuncR",
+  "feGaussianBlur", "feImage", "feMerge", "feMergeNode", "feMorphology", "feOffset",
+  "fePointLight", "feSpecularLighting", "feSpotLight", "feTile", "feTurbulence", "filter",
+  "foreignObject", "g", "hatch", "hatchpath", "image", "line", "linearGradient", "marker", "mask",
+  "mesh", "meshgradient", "meshpatch", "meshrow", "metadata", "mpath", "path", "pattern",
+  "polygon", "polyline", "radialGradient", "rect", "set", "solidcolor", "stop", "switch", "symbol",
+  "text", "textPath", "title", "tspan", "unknown", "use", "view",
+)
+
+// https://www.w3.org/TR/mathml4/ (content elements excluded)
+private val MATH_TAGS: Set<String> = setOf(
+  "annotation", "annotation-xml", "maction", "maligngroup", "malignmark", "math", "menclose",
+  "merror", "mfenced", "mfrac", "mfraction", "mglyph", "mi", "mlabeledtr", "mlongdiv",
+  "mmultiscripts", "mn", "mo", "mover", "mpadded", "mphantom", "mprescripts", "mroot", "mrow", "ms",
+  "mscarries", "mscarry", "msgroup", "msline", "mspace", "msqrt", "msrow", "mstack", "mstyle", "msub",
+  "msubsup", "msup", "mtable", "mtd", "mtext", "mtr", "munder", "munderover", "none", "semantics",
+)
+
 fun isHTMLTag(key: String): Boolean =
   key in HTML_TAGS
+
+fun isSVGTag(key: String): Boolean =
+  key in SVG_TAGS
+
+fun isMathMLTag(key: String): Boolean =
+  key in MATH_TAGS
