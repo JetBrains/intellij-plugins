@@ -9,3 +9,12 @@ interface DirectiveNode : Node {
   val rawName: String?
   val modifiers: List<SimpleExpressionNode>
 }
+
+private val DIRECTIVE_ATTRIBUTE_STARTS: Set<String> = 
+  setOf(":", ".", "@", "#", "v-")
+
+fun isDirectiveAttributeName(
+  name: String,
+): Boolean =
+  DIRECTIVE_ATTRIBUTE_STARTS
+    .any { name.startsWith(it) }
