@@ -19,8 +19,8 @@ class ElementNodeImpl(
 
   override val tagType: ElementTypes by lazy {
     when {
-      tag == "template" -> ElementTypes.TEMPLATE
-      tag == "slot" -> ElementTypes.SLOT
+      tag == TEMPLATE_TAG_NAME -> ElementTypes.TEMPLATE
+      tag == SLOT_TAG_NAME -> ElementTypes.SLOT
       isNativeTag(tag) -> ElementTypes.ELEMENT
       else -> ElementTypes.COMPONENT
     }
