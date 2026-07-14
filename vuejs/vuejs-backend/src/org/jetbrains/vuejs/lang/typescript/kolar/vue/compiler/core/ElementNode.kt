@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core
 
+import com.intellij.psi.xml.XmlComment
 import com.intellij.psi.xml.XmlTag
 
 // CompilerDOM.ElementNode (minimal — full definition to be added when element.ts is converted)
@@ -27,8 +28,15 @@ class ElementNodeImpl(
   override val isSelfClosing: Boolean
     get() = TODO("not implemented")
 
-  override val children: List<Node>
-    get() = TODO("not implemented")
+  override val children: List<Node> by lazy {
+    element.children.mapNotNull { child ->
+      when (child) {
+        is XmlTag -> ElementNodeImpl(child)
+        is XmlComment -> CommentNodeImpl(child)
+        else -> null
+      }
+    }
+  }
 
   override val props: List<Node>
     get() = TODO("not implemented")
