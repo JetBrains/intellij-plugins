@@ -17,7 +17,7 @@ class RootNodeImpl(
     get() = PsiSourceLocation(template)
 
   override val children: List<Node> by lazy {
-    template.children.mapNotNull { child -> 
+    template.children.mapNotNull { child ->
       when (child) {
         is XmlTag -> ElementNodeImpl(child)
         is XmlComment -> CommentNodeImpl(child)

@@ -10,7 +10,7 @@ interface DirectiveNode : Node {
   val modifiers: List<SimpleExpressionNode>
 }
 
-private val DIRECTIVE_ATTRIBUTE_STARTS: Set<String> = 
+private val DIRECTIVE_ATTRIBUTE_STARTS: Set<String> =
   setOf(":", ".", "@", "#", "v-")
 
 fun isDirectiveAttributeName(

@@ -15,10 +15,10 @@ interface ElementNode : Node {
 
 class ElementNodeImpl(
   private val element: XmlTag,
-): ElementNode {
+) : ElementNode {
   override val loc: SourceLocation
     get() = PsiSourceLocation(element)
-  
+
   override val tag: String
     get() = element.localName
 
@@ -41,11 +41,11 @@ class ElementNodeImpl(
   override val props: List<Node> by lazy {
     element.attributes.mapNotNull {
       val name = it.name
-      
-      if (isDirectiveAttributeName(name)) 
+
+      if (isDirectiveAttributeName(name))
         return@mapNotNull null
-      
-      AttributeNodeImpl(it) 
+
+      AttributeNodeImpl(it)
     }
   }
 }
