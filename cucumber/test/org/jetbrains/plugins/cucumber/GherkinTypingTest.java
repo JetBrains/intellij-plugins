@@ -17,24 +17,45 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 public class GherkinTypingTest extends BasePlatformTestCase {
   public void testEnterAfterComment() {
-    myFixture.configureByText("test.feature",
-                              """
-                                Feature: two
-                                    Scenario: items count #1
-                                      Given user has 100 items
-                                #      |  20   |  5  |  15  |<caret>
-                                """);
+    doTest("\n");
+  }
 
-    myFixture.type("\n");
+  public void testAutoIndentTableCellSingleColumn() {
+    doTest("|");
+  }
 
-    myFixture.checkResult(
-      """
-        Feature: two
-            Scenario: items count #1
-              Given user has 100 items
-        #      |  20   |  5  |  15  |
-          <caret>
-        """
-    );
+  public void testAutoIndentTableCellMultipleColumns() {
+    doTest("|");
+  }
+
+  public void testEnterKeepsClosedPyStringUnchanged() {
+    doTest("\n");
+  }
+
+  public void testEnterAddsClosingQuotesForUnclosedPyString() {
+    doTest("\n");
+  }
+
+  public void testEnterCreatesIndentInsideFeature() {
+    doTest("\n");
+  }
+
+  public void testEnterCreatesIndentAfterFeatureLine() {
+    doTest("\n");
+  }
+
+  public void testEnterInsertsClosingTripleQuotesAfterStep() {
+    doTest("\n");
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return CucumberTestUtil.getTestDataPath() + "/typing";
+  }
+
+  private void doTest(String toType) {
+    myFixture.configureByFile(getTestName(true) + ".feature");
+    myFixture.type(toType);
+    myFixture.checkResultByFile(getTestName(true) + "_after.feature");
   }
 }
