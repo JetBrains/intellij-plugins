@@ -37,10 +37,15 @@ class ElementNodeImpl(
     element.attributes.mapNotNull {
       val name = it.name
 
-      if (isDirectiveAttributeName(name))
-        return@mapNotNull null
+      when {
+        name in STRUCTURAL_DIRECTIVE_NAMES
+          -> null
 
-      AttributeNodeImpl(it)
+        isDirectiveAttributeName(name) ->
+          DirectiveNodeImpl(it)
+
+        else -> AttributeNodeImpl(it)
+      }
     }
   }
 }
