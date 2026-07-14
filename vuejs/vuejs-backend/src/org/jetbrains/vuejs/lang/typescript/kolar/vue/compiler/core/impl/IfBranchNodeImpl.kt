@@ -9,6 +9,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SourceLocatio
 
 class IfBranchNodeImpl(
   private val tag: XmlTag,
+  private val directiveName: String,
 ) : IfBranchNode {
   override val loc: SourceLocation
     get() = PsiSourceLocation(tag)
