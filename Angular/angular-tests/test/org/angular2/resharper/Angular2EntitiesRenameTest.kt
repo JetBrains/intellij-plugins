@@ -1,18 +1,14 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.resharper
 
-import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.lang.resharper.tests.ReSharperParameterizedTestCase
 import com.intellij.lang.resharper.tests.ReSharperTestUtil
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.polySymbols.testFramework.canRenamePolySymbolAtCaret
-import com.intellij.polySymbols.testFramework.renamePolySymbol
+import com.intellij.polySymbols.testFramework.renameSymbolAtCaret
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
-import com.intellij.refactoring.rename.RenameProcessor
-import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.testFramework.Parameterized
 import org.angular2.Angular2TestUtil
 import org.junit.runner.RunWith
@@ -48,20 +44,11 @@ class Angular2EntitiesRenameTest : ReSharperParameterizedTestCase() {
     PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments()
 
     //perform rename
-    if (myFixture.canRenamePolySymbolAtCaret()) {
-      myFixture.renamePolySymbol("zzz")
-    }
-    else {
-      var targetElement = TargetElementUtil.findTargetElement(
-        myFixture.getEditor(),
-        TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED)
-      targetElement = RenamePsiElementProcessor.forElement(targetElement!!).substituteElementToRename(targetElement, myFixture.getEditor())
-      val renameProcessor = RenameProcessor(myFixture.getProject(), targetElement!!, "zzz", false, false)
-      renameProcessor.run()
-      WriteCommandAction
-        .runWriteCommandAction(project) { PostprocessReformattingAspect.getInstance(project).doPostponedFormatting() }
-      FileDocumentManager.getInstance().saveAllDocuments()
-    }
+    myFixture.renameSymbolAtCaret("zzz")
+
+    WriteCommandAction
+      .runWriteCommandAction(project) { PostprocessReformattingAspect.getInstance(project).doPostponedFormatting() }
+    FileDocumentManager.getInstance().saveAllDocuments()
     for (f in testDir.listFiles()!!) {
       if (f.getName().startsWith(testNamePrefix) && f.getName().endsWith(".gold")) {
         myFixture.checkResultByFile(f.getName().removeSuffix(".gold"),

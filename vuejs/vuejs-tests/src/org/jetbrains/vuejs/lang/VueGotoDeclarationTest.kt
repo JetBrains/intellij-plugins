@@ -16,17 +16,20 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.testFramework.assertUnresolvedReference
 import com.intellij.polySymbols.testFramework.checkGotoDeclaration
 import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.polySymbols.testFramework.multiResolvePolySymbolReference
-import com.intellij.polySymbols.testFramework.polySymbolSourceAtCaret
+import com.intellij.polySymbols.testFramework.multiResolveSymbolReference
 import com.intellij.polySymbols.testFramework.renderLookupItems
 import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.polySymbols.testFramework.resolveToPolySymbolSource
+import com.intellij.polySymbols.testFramework.symbolAtCaret
+import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.polySymbols.utils.asSingleSymbol
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.xml.XmlAttribute
@@ -2448,7 +2451,7 @@ export default class UsageComponent extends Vue {
       ).forEach { (signature, offset, expectedFileName) ->
         configureFromTempProjectFile("index.html")
         if (offset == null) {
-          assertEmpty("Expected empty for $signature", multiResolvePolySymbolReference(signature))
+          assertEmpty("Expected empty for $signature", multiResolveSymbolReference(signature))
         }
         else {
           checkGotoDeclaration(signature, offset, expectedFileName)
@@ -2789,7 +2792,9 @@ export default class UsageComponent extends Vue {
 
       assertEquals(
         "default?: (props: { field: FieldSlotPropText }) => any",
-        multiResolvePolySymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
+        multiResolveSymbolReference("v-sl<caret>ot='{ field }'")
+          .filterIsInstance<PolySymbol>()
+          .asSingleSymbol()
           ?.asSafely<PsiLinkedPolySymbol>()?.linkedElement?.text
       )
     }
@@ -2817,7 +2822,9 @@ export default class UsageComponent extends Vue {
 
       assertEquals(
         "default?: (props: { field: FieldSlotPropText }) => any",
-        multiResolvePolySymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
+        multiResolveSymbolReference("v-sl<caret>ot='{ field }'")
+          .filterIsInstance<PolySymbol>()
+          .asSingleSymbol()
           ?.asSafely<PsiLinkedPolySymbol>()?.linkedElement?.text
       )
     }
@@ -2845,7 +2852,9 @@ export default class UsageComponent extends Vue {
 
       assertEquals(
         "default?: (props: { field: FieldSlotPropText }) => any",
-        multiResolvePolySymbolReference("v-slot:def<caret>ault='{ field }'").asSingleSymbol()
+        multiResolveSymbolReference("v-slot:def<caret>ault='{ field }'")
+          .filterIsInstance<PolySymbol>()
+          .asSingleSymbol()
           ?.asSafely<PsiLinkedPolySymbol>()?.linkedElement?.text
       )
     }
@@ -2893,7 +2902,7 @@ export default class UsageComponent extends Vue {
       dir = true,
     ) {
       val declarations = myFixture
-        .multiResolvePolySymbolReference("v-bind:input<caret>Prop")
+        .multiResolveSymbolReference("v-bind:input<caret>Prop")
         .asSequence()
         .filterIsInstance<VueBindingShorthandSymbol>()
         .flatMap { it.nameSegments }
@@ -2961,3 +2970,10 @@ fun globalMixinText(): String {
   });
   """
 }
+
+fun CodeInsightTestFixture.polySymbolSourceAtCaret(): PsiElement? =
+  when (val symbol = symbolAtCaret()) {
+    is PsiLinkedPolySymbol -> symbol.linkedElement
+    is PolySymbolDeclaredInPsi -> symbol.sourceElement
+    else -> null
+  }

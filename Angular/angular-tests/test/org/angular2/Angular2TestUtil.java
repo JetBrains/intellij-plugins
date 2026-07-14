@@ -3,6 +3,7 @@ package org.angular2;
 
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.polySymbols.PolySymbol;
 import com.intellij.polySymbols.testFramework.PolySymbolsTestUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -93,7 +94,7 @@ public final class Angular2TestUtil {
 
   public static void assertUnresolvedReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture,
                                                Boolean okWithNoRef, Boolean allowSelfReference) {
-    var symbols = PolySymbolsTestUtil.multiResolvePolySymbolReference(fixture, signature);
+    var symbols = ContainerUtil.filterIsInstance(PolySymbolsTestUtil.multiResolveSymbolReference(fixture, signature), PolySymbol.class);
     if (!symbols.isEmpty() && ContainerUtil.and(symbols, s -> s.get(Angular2ErrorSymbolProperty.INSTANCE) == Boolean.TRUE)) {
       return;
     }

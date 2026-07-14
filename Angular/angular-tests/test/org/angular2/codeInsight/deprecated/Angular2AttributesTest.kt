@@ -26,7 +26,7 @@ import com.intellij.polySymbols.testFramework.checkListByFile
 import com.intellij.polySymbols.testFramework.doCompletionItemsTest
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.polySymbols.testFramework.multiResolvePolySymbolReference
+import com.intellij.polySymbols.testFramework.multiResolveSymbolReference
 import com.intellij.polySymbols.testFramework.renderLookupItems
 import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
 import com.intellij.polySymbols.testFramework.resolveReference
@@ -505,7 +505,8 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
       "fakeChange", "sxvx")) {
       for (i in attrWrap.indices) {
         val wrap = attrWrap[i]
-        val ref = myFixture.multiResolvePolySymbolReference(wrap.first + "<caret>" + name + wrap.second + "=")
+        val ref = myFixture.multiResolveSymbolReference(wrap.first + "<caret>" + name + wrap.second + "=")
+          .filterIsInstance<PolySymbol>()
           .filter { s: PolySymbol ->
             s[Angular2ErrorSymbolProperty] != true
             && s[Angular2BindingPatternProperty] != true
@@ -865,7 +866,8 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     )
     for ((location, value) in data) {
       UsefulTestCase.assertSameElements(
-        myFixture.multiResolvePolySymbolReference(location)
+        myFixture.multiResolveSymbolReference(location)
+          .filterIsInstance<PolySymbol>()
           .map {
             if (it is PsiLinkedPolySymbol) {
               val source = it.linkedElement
