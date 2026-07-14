@@ -1,9 +1,13 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.inspections;
 
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.NonAsciiCharactersInspection;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
+
+import java.util.List;
 
 public class CucumberTableInspectionTest extends BasePlatformTestCase {
 
@@ -113,5 +117,30 @@ public class CucumberTableInspectionTest extends BasePlatformTestCase {
       """);
 
     myFixture.checkHighlighting();
+  }
+
+  public void testRemoveUnusedColumn() {
+    myFixture.configureByText(GherkinFileType.INSTANCE, """
+      Feature: Foo
+        Scenario Outline: Bar
+          Given something <used>
+        Examples:
+          | unused | used |
+          | indeed | yeah |
+      """);
+
+    final List<IntentionAction> fixes = myFixture.getAllQuickFixes();
+    final IntentionAction quickFix = CodeInsightTestUtil.findIntentionByText(fixes, "Remove unused column");
+    assertNotNull(quickFix);
+    myFixture.launchAction(quickFix);
+
+    myFixture.checkResult("""
+      Feature: Foo
+        Scenario Outline: Bar
+          Given something <used>
+        Examples:
+          | used |
+          | yeah |
+      """);
   }
 }
