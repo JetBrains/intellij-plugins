@@ -83,7 +83,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
 
   internal data class CompDbEntry(val file: String, val command: String, val directory: String)
 
-  internal fun scanSources(
+  internal suspend fun scanSources(
     compDbJson: List<CompDbEntry>,
     workspace: PlatformioWorkspace,
     languageConfigurations: List<ExternalLanguageConfiguration>,
@@ -98,7 +98,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
 
     compDbJson.mapNotNull {
       val file = it.file
-      if(!OCFileTypeHelpers.isKnownFileType(file)) return@mapNotNull null
+      if (!OCFileTypeHelpers.isKnownFileType(file)) return@mapNotNull null
       val command = it.command
       val directory = it.directory
 

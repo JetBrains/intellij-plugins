@@ -226,7 +226,11 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         val compDbJson = getCompDbJson(pioResolvePolicy, platformioService, id, project, activeEnvName, listener, projectPath)
 
         checkCancelled()
-        scanner.scanSources(compDbJson, workspace, languageConfigurations, confBuilder)
+
+        runBlockingCancellable {
+          scanner.scanSources(compDbJson, workspace, languageConfigurations, confBuilder)
+        }
+
         checkCancelled()
 
         platformioService.librariesPaths = scanner.scanLibraries(pioActiveMetadata)
