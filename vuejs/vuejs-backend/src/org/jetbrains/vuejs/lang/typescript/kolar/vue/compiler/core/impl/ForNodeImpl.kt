@@ -10,8 +10,9 @@ class ForNodeImpl(
   private val tag: XmlTag,
 ) : NodeImpl(tag),
     ForNode {
-  override val parseResult: ForParseResult
-    get() = TODO("not implemented")
+  override val parseResult: ForParseResult by lazy {
+    ForParseResultImpl(tag.getAttribute(V_FOR)!!)
+  }
 
   override val children: List<Node> by children(tag, ParentScope.FOR)
 }
