@@ -5,15 +5,12 @@ import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ExpressionNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.IfBranchNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SourceLocation
 
 class IfBranchNodeImpl(
   private val tag: XmlTag,
   private val directiveName: String,
-) : IfBranchNode {
-  override val loc: SourceLocation
-    get() = PsiSourceLocation(tag)
-
+) : NodeImpl(tag),
+    IfBranchNode {
   override val condition: ExpressionNode? by lazy {
     // TODO: support compound expressions
     tag.getAttribute(directiveName)

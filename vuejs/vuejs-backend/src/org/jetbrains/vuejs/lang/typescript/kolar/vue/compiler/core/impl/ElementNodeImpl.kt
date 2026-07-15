@@ -5,14 +5,12 @@ import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementTypes
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SourceLocation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.dom.isNativeTag
 
 class ElementNodeImpl(
   private val element: XmlTag,
-) : ElementNode {
-  override val loc: SourceLocation
-    get() = PsiSourceLocation(element)
+) : NodeImpl(element),
+    ElementNode {
 
   override val tag: String
     get() = element.localName

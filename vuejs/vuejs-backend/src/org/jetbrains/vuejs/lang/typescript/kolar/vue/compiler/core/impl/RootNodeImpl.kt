@@ -4,14 +4,11 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.RootNode
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SourceLocation
 
 class RootNodeImpl(
   private val template: XmlTag,
-) : RootNode {
-  override val loc: SourceLocation
-    get() = PsiSourceLocation(template)
-
+) : NodeImpl(template),
+    RootNode {
   override val children: List<Node> by children(template)
 
   override val components: List<String> =

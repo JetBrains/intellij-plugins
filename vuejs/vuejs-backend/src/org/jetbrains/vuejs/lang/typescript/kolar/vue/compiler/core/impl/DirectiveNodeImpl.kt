@@ -5,14 +5,11 @@ import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.DirectiveNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ExpressionNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SimpleExpressionNode
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SourceLocation
 
 class DirectiveNodeImpl(
   private val attribute: XmlAttribute,
-) : DirectiveNode {
-  override val loc: SourceLocation
-    get() = PsiSourceLocation(attribute)
-
+) : NodeImpl(attribute),
+    DirectiveNode {
   override val name: String
     get() = TODO("not implemented")
 

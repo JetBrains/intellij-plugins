@@ -3,14 +3,11 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl
 
 import com.intellij.psi.xml.XmlComment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.CommentNode
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SourceLocation
 
 class CommentNodeImpl(
   private val comment: XmlComment,
-) : CommentNode {
-  override val loc: SourceLocation
-    get() = PsiSourceLocation(comment)
-
+) : NodeImpl(comment),
+    CommentNode {
   override val content: String
     get() = comment.commentText
 }

@@ -5,14 +5,11 @@ import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ForNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ForParseResult
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SourceLocation
 
 class ForNodeImpl(
   private val tag: XmlTag,
-) : ForNode {
-  override val loc: SourceLocation
-    get() = PsiSourceLocation(tag)
-
+) : NodeImpl(tag),
+    ForNode {
   override val parseResult: ForParseResult
     get() = TODO("not implemented")
 
