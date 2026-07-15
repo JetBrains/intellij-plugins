@@ -43,6 +43,7 @@ groups:
       - "category:Reactive Streams"
       - "category:RegExp"
       - "category:PHP"
+      - "category:Laravel Idea"
       - "category:Go"
       - "category:Python"
       - "category:General"
