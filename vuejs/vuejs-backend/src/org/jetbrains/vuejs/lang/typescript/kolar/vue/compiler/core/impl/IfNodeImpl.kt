@@ -1,7 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl
 
-import com.intellij.lang.javascript.psi.util.stubSafeGetAttribute
 import com.intellij.psi.util.siblings
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.IfBranchNode
@@ -23,14 +22,14 @@ class IfNodeImpl(
 
       current.siblings(withSelf = false)
         .filterIsInstance<XmlTag>()
-        .takeWhile { it.stubSafeGetAttribute(V_ELSE_IF) != null }
+        .takeWhile { it.hasAttribute(V_ELSE_IF) }
         .onEach { current = it }
         .mapTo(this) { IfBranchNodeImpl(current, V_ELSE_IF) }
 
       current.siblings(withSelf = false)
         .filterIsInstance<XmlTag>()
         .take(1)
-        .filter { it.stubSafeGetAttribute(V_ELSE) != null }
+        .filter { it.hasAttribute(V_ELSE) }
         .mapTo(this) { IfBranchNodeImpl(current, V_ELSE) }
     }
   }
