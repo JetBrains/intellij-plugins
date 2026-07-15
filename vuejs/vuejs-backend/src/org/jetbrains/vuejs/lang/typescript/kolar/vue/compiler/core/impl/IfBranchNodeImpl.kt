@@ -7,8 +7,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.IfBranchNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 
 class IfBranchNodeImpl(
-  private val tag: XmlTag,
-  private val directiveName: String,
+  tag: XmlTag,
+  directiveName: String,
 ) : NodeImpl(tag),
     IfBranchNode {
   override val condition: ExpressionNode? by lazy {

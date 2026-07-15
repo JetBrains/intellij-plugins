@@ -6,7 +6,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.RootNode
 
 class RootNodeImpl(
-  private val template: XmlTag,
+  template: XmlTag,
 ) : NodeImpl(template),
     RootNode {
   override val children: List<Node> by children(template, ParentScope.ELEMENT)

@@ -7,7 +7,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ForParseResul
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 
 class ForNodeImpl(
-  private val tag: XmlTag,
+  tag: XmlTag,
 ) : NodeImpl(tag),
     ForNode {
   override val parseResult: ForParseResult by lazy {
