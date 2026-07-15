@@ -3,7 +3,7 @@
   ".sdk_type": "builtin",
   "name": "remote-exec",
   "type": "provisioner",
-  "version": "v1.1.4",
+  "version": "v1.15.8",
   "schema": {
     "inline": {
       "Type": "List(cty.String)",

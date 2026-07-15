@@ -3,7 +3,7 @@
   ".sdk_type": "builtin",
   "name": "local-exec",
   "type": "provisioner",
-  "version": "v1.1.4",
+  "version": "v1.15.8",
   "schema": {
     "command": {
       "Type": "cty.String",
@@ -17,6 +17,11 @@
     },
     "interpreter": {
       "Type": "List(cty.String)",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr"
+    },
+    "quiet": {
+      "Type": "cty.Bool",
       "Optional": true,
       "ConfigImplicitMode": "Attr"
     },

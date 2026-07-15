@@ -3,7 +3,7 @@
   ".sdk_type": "builtin",
   "name": "file",
   "type": "provisioner",
-  "version": "v1.1.4",
+  "version": "v1.15.8",
   "schema": {
     "content": {
       "Type": "cty.String",
