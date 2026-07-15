@@ -3,88 +3,73 @@
   ".sdk_type": "builtin",
   "name": "consul",
   "type": "backend",
-  "version": "v1.3.0-dev",
+  "version": "v1.15.8",
   "schema": {
     "access_token": {
       "Type": "String",
       "Optional": true,
       "Description": "Access token for a Consul ACL",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "address": {
       "Type": "String",
       "Optional": true,
       "Description": "Address to the Consul Cluster",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "ca_file": {
       "Type": "String",
       "Optional": true,
-      "Description": "A path to a PEM-encoded certificate authority used to verify the remote agent's certificate.",
-      "DefaultFunc": "ENV(CONSUL_CACERT)"
+      "Description": "A path to a PEM-encoded certificate authority used to verify the remote agent's certificate",
+      "ConfigImplicitMode": "Attr"
     },
     "cert_file": {
       "Type": "String",
       "Optional": true,
-      "Description": "A path to a PEM-encoded certificate provided to the remote agent; requires use of key_file.",
-      "DefaultFunc": "ENV(CONSUL_CLIENT_CERT)"
+      "Description": "A path to a PEM-encoded certificate provided to the remote agent; requires use of key_file",
+      "ConfigImplicitMode": "Attr"
     },
     "datacenter": {
       "Type": "String",
       "Optional": true,
       "Description": "Datacenter to communicate with",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "gzip": {
       "Type": "Bool",
       "Optional": true,
       "Description": "Compress the state data using gzip",
-      "Default": {
-        "Type": "bool",
-        "Value": "false"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "http_auth": {
       "Type": "String",
       "Optional": true,
       "Description": "HTTP Auth in the format of 'username:password'",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "key_file": {
       "Type": "String",
       "Optional": true,
-      "Description": "A path to a PEM-encoded private key, required if cert_file is specified.",
-      "DefaultFunc": "ENV(CONSUL_CLIENT_KEY)"
+      "Description": "A path to a PEM-encoded private key, required if cert_file is specified",
+      "ConfigImplicitMode": "Attr"
     },
     "lock": {
       "Type": "Bool",
       "Optional": true,
       "Description": "Lock state access",
-      "Default": {
-        "Type": "bool",
-        "Value": "true"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "path": {
       "Type": "String",
       "Optional": true,
-      "Description": "Path to store state in Consul"
+      "Description": "Path to store state in Consul",
+      "ConfigImplicitMode": "Attr"
     },
     "scheme": {
       "Type": "String",
       "Optional": true,
       "Description": "Scheme to communicate to Consul with",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
     }
   }
 }

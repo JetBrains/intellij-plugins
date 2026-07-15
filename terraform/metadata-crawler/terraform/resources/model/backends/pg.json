@@ -3,40 +3,37 @@
   ".sdk_type": "builtin",
   "name": "pg",
   "type": "backend",
-  "version": "v1.3.0-dev",
+  "version": "v1.15.8",
   "schema": {
     "conn_str": {
       "Type": "String",
       "Optional": true,
-      "Description": "Postgres connection string; a `postgres://` URL"
+      "Description": "Postgres connection string; a `postgres://` URL",
+      "ConfigImplicitMode": "Attr"
     },
     "schema_name": {
       "Type": "String",
       "Optional": true,
       "Description": "Name of the automatically managed Postgres schema to store state",
-      "Default": {
-        "Type": "string",
-        "Value": "terraform_remote_state"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "skip_index_creation": {
       "Type": "Bool",
       "Optional": true,
-      "Description": "If set to `true`, Terraform won't try to create the Postgres index"
+      "Description": "If set to `true`, Terraform won't try to create the Postgres index",
+      "ConfigImplicitMode": "Attr"
     },
     "skip_schema_creation": {
       "Type": "Bool",
       "Optional": true,
       "Description": "If set to `true`, Terraform won't try to create the Postgres schema",
-      "Default": {
-        "Type": "bool",
-        "Value": "false"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "skip_table_creation": {
       "Type": "Bool",
       "Optional": true,
-      "Description": "If set to `true`, Terraform won't try to create the Postgres table"
+      "Description": "If set to `true`, Terraform won't try to create the Postgres table",
+      "ConfigImplicitMode": "Attr"
     }
   }
 }

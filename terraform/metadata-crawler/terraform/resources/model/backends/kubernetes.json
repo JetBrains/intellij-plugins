@@ -1,0 +1,150 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "kubernetes",
+  "type": "backend",
+  "version": "v1.15.8",
+  "schema": {
+    "client_certificate": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "PEM-encoded client certificate for TLS authentication.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "client_key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "PEM-encoded client certificate key for TLS authentication.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "cluster_ca_certificate": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "PEM-encoded root certificates bundle for TLS authentication.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "config_context": {
+      "Type": "String",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr"
+    },
+    "config_context_auth_info": {
+      "Type": "String",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr"
+    },
+    "config_context_cluster": {
+      "Type": "String",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr"
+    },
+    "config_path": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Path to the kube config file. Can be set with KUBE_CONFIG_PATH environment variable.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "config_paths": {
+      "Type": "List(String)",
+      "Optional": true,
+      "Description": "A list of paths to kube config files. Can be set with KUBE_CONFIG_PATHS environment variable.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "exec": {
+      "Type": "NestingSingle",
+      "IsBlock": true,
+      "ConfigImplicitMode": "Block",
+      "Elem": {
+        "Type": "SchemaInfo",
+        "Info": {
+          "api_version": {
+            "Type": "String",
+            "Required": true,
+            "ConfigImplicitMode": "Attr"
+          },
+          "args": {
+            "Type": "List(String)",
+            "Optional": true,
+            "ConfigImplicitMode": "Attr"
+          },
+          "command": {
+            "Type": "String",
+            "Required": true,
+            "ConfigImplicitMode": "Attr"
+          },
+          "env": {
+            "Type": "Map(String)",
+            "Optional": true,
+            "ConfigImplicitMode": "Attr"
+          }
+        }
+      }
+    },
+    "host": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The hostname (in form of URI) of Kubernetes master.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "in_cluster_config": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Used to authenticate to the cluster from inside a pod.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "insecure": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Whether server should be accessed without verifying the TLS certificate.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "labels": {
+      "Type": "Map(String)",
+      "Optional": true,
+      "Description": "Map of additional labels to be applied to the secret.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "load_config_file": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Load local kubeconfig.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "namespace": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Namespace to store the secret in.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "password": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The password to use for HTTP basic authentication when accessing the Kubernetes master endpoint.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "proxy_url": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "URL to the proxy to be used for all API requests",
+      "ConfigImplicitMode": "Attr"
+    },
+    "secret_suffix": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Suffix used when creating the secret. The secret will be named in the format: `tfstate-{workspace}-{secret_suffix}`. Note that the backend may append its own numeric index to the secret name when chunking large state files into multiple secrets. In this case, there will be multiple secrets named in the format: `tfstate-{workspace}-{secret_suffix}-{index}`.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "token": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Token to authentifcate a service account.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "username": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The username to use for HTTP basic authentication when accessing the Kubernetes master endpoint.",
+      "ConfigImplicitMode": "Attr"
+    }
+  }
+}

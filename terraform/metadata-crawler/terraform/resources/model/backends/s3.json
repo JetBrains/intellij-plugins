@@ -3,247 +3,274 @@
   ".sdk_type": "builtin",
   "name": "s3",
   "type": "backend",
-  "version": "v1.3.0-dev",
+  "version": "v1.15.8",
   "schema": {
     "access_key": {
       "Type": "String",
       "Optional": true,
       "Description": "AWS access key",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "acl": {
       "Type": "String",
       "Optional": true,
       "Description": "Canned ACL to be applied to the state file",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
     },
-    "assume_role_duration_seconds": {
-      "Type": "Int",
+    "allowed_account_ids": {
+      "Type": "Set(String)",
       "Optional": true,
-      "Description": "Seconds to restrict the assume role session duration."
+      "Description": "List of allowed AWS account IDs.",
+      "ConfigImplicitMode": "Attr"
     },
-    "assume_role_policy": {
-      "Type": "String",
+    "assume_role": {
+      "Type": "NilType",
       "Optional": true,
-      "Description": "IAM Policy JSON describing further restricting permissions for the IAM Role being assumed.",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
     },
-    "assume_role_policy_arns": {
-      "Type": "Set",
+    "assume_role_with_web_identity": {
+      "Type": "NilType",
       "Optional": true,
-      "Description": "Amazon Resource Names (ARNs) of IAM Policies describing further restricting permissions for the IAM Role being assumed.",
-      "ConfigImplicitMode": "Attr",
-      "Elem": {
-        "Type": "SchemaElements",
-        "ElementsType": "String"
-      }
-    },
-    "assume_role_tags": {
-      "Type": "Map",
-      "Optional": true,
-      "Description": "Assume role session tags.",
-      "ConfigImplicitMode": "Attr",
-      "Elem": {
-        "Type": "SchemaElements",
-        "ElementsType": "String"
-      }
-    },
-    "assume_role_transitive_tag_keys": {
-      "Type": "Set",
-      "Optional": true,
-      "Description": "Assume role session tag keys to pass to any subsequent sessions.",
-      "ConfigImplicitMode": "Attr",
-      "Elem": {
-        "Type": "SchemaElements",
-        "ElementsType": "String"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "bucket": {
       "Type": "String",
       "Optional": true,
-      "Description": "The name of the S3 bucket"
+      "Description": "The name of the S3 bucket",
+      "ConfigImplicitMode": "Attr"
+    },
+    "custom_ca_bundle": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "File containing custom root and intermediate certificates.",
+      "ConfigImplicitMode": "Attr"
     },
     "dynamodb_endpoint": {
       "Type": "String",
       "Optional": true,
       "Description": "A custom endpoint for the DynamoDB API",
-      "DefaultFunc": "ENV(AWS_DYNAMODB_ENDPOINT)"
+      "ConfigImplicitMode": "Attr"
     },
     "dynamodb_table": {
       "Type": "String",
       "Optional": true,
       "Description": "DynamoDB table for state locking and consistency",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
+    },
+    "ec2_metadata_service_endpoint": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Address of the EC2 metadata service (IMDS) endpoint to use.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "ec2_metadata_service_endpoint_mode": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Mode to use in communicating with the metadata service.",
+      "ConfigImplicitMode": "Attr"
     },
     "encrypt": {
       "Type": "Bool",
       "Optional": true,
       "Description": "Whether to enable server side encryption of the state file",
-      "Default": {
-        "Type": "bool",
-        "Value": "false"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "endpoint": {
       "Type": "String",
       "Optional": true,
       "Description": "A custom endpoint for the S3 API",
-      "DefaultFunc": "ENV(AWS_S3_ENDPOINT)"
+      "ConfigImplicitMode": "Attr"
     },
-    "external_id": {
-      "Type": "String",
+    "endpoints": {
+      "Type": "NilType",
       "Optional": true,
-      "Description": "The external ID to use when assuming the role",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
+    },
+    "forbidden_account_ids": {
+      "Type": "Set(String)",
+      "Optional": true,
+      "Description": "List of forbidden AWS account IDs.",
+      "ConfigImplicitMode": "Attr"
     },
     "force_path_style": {
       "Type": "Bool",
       "Optional": true,
-      "Description": "Force s3 to use path style api.",
-      "Default": {
-        "Type": "bool",
-        "Value": "false"
-      }
+      "Description": "Enable path-style S3 URLs.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "http_proxy": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "URL of a proxy to use for HTTP requests when accessing the AWS API.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "https_proxy": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "URL of a proxy to use for HTTPS requests when accessing the AWS API.",
+      "ConfigImplicitMode": "Attr"
     },
     "iam_endpoint": {
       "Type": "String",
       "Optional": true,
       "Description": "A custom endpoint for the IAM API",
-      "DefaultFunc": "ENV(AWS_IAM_ENDPOINT)"
+      "ConfigImplicitMode": "Attr"
+    },
+    "insecure": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Whether to explicitly allow the backend to perform insecure SSL requests.",
+      "ConfigImplicitMode": "Attr"
     },
     "key": {
       "Type": "String",
       "Optional": true,
-      "Description": "The path to the state file inside the bucket"
+      "Description": "The path to the state file inside the bucket",
+      "ConfigImplicitMode": "Attr"
     },
     "kms_key_id": {
       "Type": "String",
       "Optional": true,
       "Description": "The ARN of a KMS Key to use for encrypting the state",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "max_retries": {
-      "Type": "Int",
+      "Type": "Number",
       "Optional": true,
       "Description": "The maximum number of times an AWS API request is retried on retryable failure.",
-      "Default": {
-        "Type": "int",
-        "Value": "5"
-      }
+      "ConfigImplicitMode": "Attr"
+    },
+    "no_proxy": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Comma-separated list of hosts that should not use HTTP or HTTPS proxies.",
+      "ConfigImplicitMode": "Attr"
     },
     "profile": {
       "Type": "String",
       "Optional": true,
       "Description": "AWS profile name",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "region": {
       "Type": "String",
       "Optional": true,
       "Description": "AWS region of the S3 Bucket and DynamoDB Table (if used).",
-      "DefaultFunc": "MENV(AWS_REGION,AWS_DEFAULT_REGION)"
+      "ConfigImplicitMode": "Attr"
     },
-    "role_arn": {
+    "retry_mode": {
       "Type": "String",
       "Optional": true,
-      "Description": "The role to be assumed",
-      "Default": {
-        "Type": "string"
-      }
+      "Description": "Specifies how retries are attempted.",
+      "ConfigImplicitMode": "Attr"
     },
     "secret_key": {
       "Type": "String",
       "Optional": true,
       "Description": "AWS secret key",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
     },
-    "session_name": {
-      "Type": "String",
+    "shared_config_files": {
+      "Type": "Set(String)",
       "Optional": true,
-      "Description": "The session name to use when assuming the role.",
-      "Default": {
-        "Type": "string"
-      }
+      "Description": "List of paths to shared config files",
+      "ConfigImplicitMode": "Attr"
     },
     "shared_credentials_file": {
       "Type": "String",
       "Optional": true,
       "Description": "Path to a shared credentials file",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
+    },
+    "shared_credentials_files": {
+      "Type": "Set(String)",
+      "Optional": true,
+      "Description": "List of paths to shared credentials files",
+      "ConfigImplicitMode": "Attr"
     },
     "skip_credentials_validation": {
       "Type": "Bool",
       "Optional": true,
-      "Description": "Skip the credentials validation via STS API.",
-      "Default": {
-        "Type": "bool",
-        "Value": "false"
-      }
+      "Description": "Skip the credentials validation via STS API. Useful for testing and for AWS API implementations that do not have STS available.",
+      "ConfigImplicitMode": "Attr"
     },
     "skip_metadata_api_check": {
       "Type": "Bool",
       "Optional": true,
       "Description": "Skip the AWS Metadata API check.",
-      "Default": {
-        "Type": "bool",
-        "Value": "false"
-      }
+      "ConfigImplicitMode": "Attr"
     },
     "skip_region_validation": {
       "Type": "Bool",
       "Optional": true,
       "Description": "Skip static validation of region name.",
-      "Default": {
-        "Type": "bool",
-        "Value": "false"
-      }
+      "ConfigImplicitMode": "Attr"
+    },
+    "skip_requesting_account_id": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Skip the requesting account ID. Useful for AWS API implementations that do not have the IAM, STS API, or metadata API.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "skip_s3_checksum": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Do not include checksum when uploading S3 Objects. Useful for some S3-Compatible APIs.",
+      "ConfigImplicitMode": "Attr"
     },
     "sse_customer_key": {
       "Type": "String",
       "Optional": true,
       "Description": "The base64-encoded encryption key to use for server-side encryption with customer-provided keys (SSE-C).",
-      "DefaultFunc": "ENV(AWS_SSE_CUSTOMER_KEY)"
+      "ConfigImplicitMode": "Attr"
     },
     "sts_endpoint": {
       "Type": "String",
       "Optional": true,
       "Description": "A custom endpoint for the STS API",
-      "DefaultFunc": "ENV(AWS_STS_ENDPOINT)"
+      "ConfigImplicitMode": "Attr"
+    },
+    "sts_region": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "AWS region for STS.",
+      "ConfigImplicitMode": "Attr"
     },
     "token": {
       "Type": "String",
       "Optional": true,
       "Description": "MFA token",
-      "Default": {
-        "Type": "string"
-      }
+      "ConfigImplicitMode": "Attr"
+    },
+    "use_dualstack_endpoint": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Force the backend to resolve endpoints with DualStack capability.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "use_fips_endpoint": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Force the backend to resolve endpoints with FIPS capability.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "use_lockfile": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Whether to use a lockfile for locking the state file.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "use_path_style": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Enable path-style S3 URLs.",
+      "ConfigImplicitMode": "Attr"
     },
     "workspace_key_prefix": {
       "Type": "String",
       "Optional": true,
       "Description": "The prefix applied to the non-default state path inside the bucket.",
-      "Default": {
-        "Type": "string",
-        "Value": "env:"
-      }
+      "ConfigImplicitMode": "Attr"
     }
   }
 }

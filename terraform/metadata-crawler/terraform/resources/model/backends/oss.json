@@ -3,13 +3,13 @@
   ".sdk_type": "builtin",
   "name": "oss",
   "type": "backend",
-  "version": "v1.3.0-dev",
+  "version": "v1.15.8",
   "schema": {
     "access_key": {
       "Type": "String",
       "Optional": true,
       "Description": "Alibaba Cloud Access Key ID",
-      "DefaultFunc": "ENV(ALICLOUD_ACCESS_KEY)"
+      "DefaultFunc": "UNKNOWN"
     },
     "acl": {
       "Type": "String",
@@ -23,7 +23,6 @@
       "Type": "Set",
       "Optional": true,
       "MaxItems": 1,
-      "Deprecated": "use assume_role_* options instead",
       "IsBlock": true,
       "ConfigImplicitMode": "Block",
       "Elem": {
@@ -38,7 +37,7 @@
             "Type": "String",
             "Required": true,
             "Description": "The ARN of a RAM role to assume prior to making API calls.",
-            "DefaultFunc": "ENV(ALICLOUD_ASSUME_ROLE_ARN)"
+            "DefaultFunc": "UNKNOWN"
           },
           "session_expiration": {
             "Type": "Int",
@@ -49,7 +48,7 @@
             "Type": "String",
             "Optional": true,
             "Description": "The session name to use when assuming the role.",
-            "DefaultFunc": "ENV(ALICLOUD_ASSUME_ROLE_SESSION_NAME)"
+            "DefaultFunc": "UNKNOWN"
           }
         }
       }
@@ -63,7 +62,7 @@
       "Type": "String",
       "Optional": true,
       "Description": "The ARN of a RAM role to assume prior to making API calls.",
-      "DefaultFunc": "ENV(ALICLOUD_ASSUME_ROLE_ARN)"
+      "DefaultFunc": "UNKNOWN"
     },
     "assume_role_session_expiration": {
       "Type": "Int",
@@ -74,7 +73,7 @@
       "Type": "String",
       "Optional": true,
       "Description": "The session name to use when assuming the role.",
-      "DefaultFunc": "ENV(ALICLOUD_ASSUME_ROLE_SESSION_NAME)"
+      "DefaultFunc": "UNKNOWN"
     },
     "bucket": {
       "Type": "String",
@@ -85,7 +84,7 @@
       "Type": "String",
       "Optional": true,
       "Description": "The RAM Role Name attached on a ECS instance for API operations. You can retrieve this from the 'Access Control' section of the Alibaba Cloud console.",
-      "DefaultFunc": "ENV(ALICLOUD_ECS_ROLE_NAME)"
+      "DefaultFunc": "UNKNOWN"
     },
     "encrypt": {
       "Type": "Bool",
@@ -100,7 +99,7 @@
       "Type": "String",
       "Optional": true,
       "Description": "A custom endpoint for the OSS API",
-      "DefaultFunc": "ENV(ALICLOUD_OSS_ENDPOINT)"
+      "DefaultFunc": "UNKNOWN"
     },
     "key": {
       "Type": "String",
@@ -124,43 +123,51 @@
       "Type": "String",
       "Optional": true,
       "Description": "This is the Alibaba Cloud profile name as set in the shared credentials file. It can also be sourced from the `ALICLOUD_PROFILE` environment variable.",
-      "DefaultFunc": "ENV(ALICLOUD_PROFILE)"
+      "DefaultFunc": "UNKNOWN"
     },
     "region": {
       "Type": "String",
       "Optional": true,
       "Description": "The region of the OSS bucket.",
-      "DefaultFunc": "ENV(ALICLOUD_REGION)"
+      "DefaultFunc": "UNKNOWN"
     },
     "secret_key": {
       "Type": "String",
       "Optional": true,
       "Description": "Alibaba Cloud Access Secret Key",
-      "DefaultFunc": "ENV(ALICLOUD_SECRET_KEY)"
+      "DefaultFunc": "UNKNOWN"
     },
     "security_token": {
       "Type": "String",
       "Optional": true,
       "Description": "Alibaba Cloud Security Token",
-      "DefaultFunc": "ENV(ALICLOUD_SECURITY_TOKEN)"
+      "DefaultFunc": "UNKNOWN"
     },
     "shared_credentials_file": {
       "Type": "String",
       "Optional": true,
       "Description": "This is the path to the shared credentials file. If this is not set and a profile is specified, `~/.aliyun/config.json` will be used.",
-      "DefaultFunc": "ENV(ALICLOUD_SHARED_CREDENTIALS_FILE)"
+      "DefaultFunc": "UNKNOWN"
     },
     "sts_endpoint": {
       "Type": "String",
       "Optional": true,
       "Description": "A custom endpoint for the STS API",
-      "DefaultFunc": "ENV(ALICLOUD_STS_ENDPOINT)"
+      "DefaultFunc": "UNKNOWN"
     },
     "tablestore_endpoint": {
       "Type": "String",
       "Optional": true,
       "Description": "A custom endpoint for the TableStore API",
-      "DefaultFunc": "ENV(ALICLOUD_TABLESTORE_ENDPOINT)"
+      "DefaultFunc": "UNKNOWN"
+    },
+    "tablestore_instance_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The instance name of tableStore table belongs",
+      "Default": {
+        "Type": "string"
+      }
     },
     "tablestore_table": {
       "Type": "String",

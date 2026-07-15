@@ -1,0 +1,111 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "oci",
+  "type": "backend",
+  "version": "v1.15.8",
+  "schema": {
+    "auth": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Authentication method (API key, Instance Principal, Resource Principal, etc.).",
+      "ConfigImplicitMode": "Attr"
+    },
+    "bucket": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the OCI Object Storage bucket.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "config_file_profile": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Profile name from the OCI config file.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "fingerprint": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The fingerprint of the user's API key.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the state file stored on the remote backend.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "kms_key_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The OCID of a master encryption key used to call the Key Management service to generate a data encryption key or to encrypt or decrypt a data encryption key.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "namespace": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The namespace of the OCI Object Storage.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "private_key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The private key for API authentication.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "private_key_password": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Passphrase for the private key, if required.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "private_key_path": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Path to the private key file.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "region": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "OCI region where the bucket is located.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "sse_customer_algorithm": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The optional header that specifies \"AES256\" as the encryption algorithm.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "sse_customer_key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The optional header that specifies the base64-encoded 256-bit encryption key to use to encrypt or decrypt the data.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "sse_customer_key_sha256": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The optional header that specifies the base64-encoded SHA256 hash of the encryption key. This value is used to check the integrity of the encryption key.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "tenancy_ocid": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The OCID of the tenancy.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "user_ocid": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The OCID of the user.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "workspace_key_prefix": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The prefix applied to the non-default state path inside the bucket.",
+      "ConfigImplicitMode": "Attr"
+    }
+  }
+}

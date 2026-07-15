@@ -3,7 +3,7 @@
   ".sdk_type": "builtin",
   "name": "local",
   "type": "backend",
-  "version": "v1.3.0-dev",
+  "version": "v1.15.8",
   "schema": {
     "path": {
       "Type": "String",

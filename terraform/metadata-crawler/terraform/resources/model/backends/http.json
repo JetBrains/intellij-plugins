@@ -3,82 +3,97 @@
   ".sdk_type": "builtin",
   "name": "http",
   "type": "backend",
-  "version": "v1.3.0-dev",
+  "version": "v1.15.8",
   "schema": {
     "address": {
       "Type": "String",
       "Optional": true,
       "Description": "The address of the REST endpoint",
-      "DefaultFunc": "ENV(TF_HTTP_ADDRESS)"
+      "ConfigImplicitMode": "Attr"
+    },
+    "client_ca_certificate_pem": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A PEM-encoded CA certificate chain used by the client to verify server certificates during TLS authentication",
+      "ConfigImplicitMode": "Attr"
+    },
+    "client_certificate_pem": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A PEM-encoded certificate used by the server to verify the client during mutual TLS (mTLS) authentication",
+      "ConfigImplicitMode": "Attr"
+    },
+    "client_private_key_pem": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A PEM-encoded private key, required if client_certificate_pem is specified",
+      "ConfigImplicitMode": "Attr"
     },
     "lock_address": {
       "Type": "String",
       "Optional": true,
       "Description": "The address of the lock REST endpoint",
-      "DefaultFunc": "ENV(TF_HTTP_LOCK_ADDRESS)"
+      "ConfigImplicitMode": "Attr"
     },
     "lock_method": {
       "Type": "String",
       "Optional": true,
       "Description": "The HTTP method to use when locking",
-      "DefaultFunc": "ENV(TF_HTTP_LOCK_METHOD)"
+      "ConfigImplicitMode": "Attr"
     },
     "password": {
       "Type": "String",
       "Optional": true,
       "Description": "The password for HTTP basic authentication",
-      "DefaultFunc": "ENV(TF_HTTP_PASSWORD)"
+      "ConfigImplicitMode": "Attr"
     },
     "retry_max": {
-      "Type": "Int",
+      "Type": "Number",
       "Optional": true,
-      "Description": "The number of HTTP request retries.",
-      "DefaultFunc": "ENV(TF_HTTP_RETRY_MAX)"
+      "Description": "The number of HTTP request retries",
+      "ConfigImplicitMode": "Attr"
     },
     "retry_wait_max": {
-      "Type": "Int",
+      "Type": "Number",
       "Optional": true,
-      "Description": "The maximum time in seconds to wait between HTTP request attempts.",
-      "DefaultFunc": "ENV(TF_HTTP_RETRY_WAIT_MAX)"
+      "Description": "The maximum time in seconds to wait between HTTP request attempts",
+      "ConfigImplicitMode": "Attr"
     },
     "retry_wait_min": {
-      "Type": "Int",
+      "Type": "Number",
       "Optional": true,
-      "Description": "The minimum time in seconds to wait between HTTP request attempts.",
-      "DefaultFunc": "ENV(TF_HTTP_RETRY_WAIT_MIN)"
+      "Description": "The minimum time in seconds to wait between HTTP request attempts",
+      "ConfigImplicitMode": "Attr"
     },
     "skip_cert_verification": {
       "Type": "Bool",
       "Optional": true,
-      "Description": "Whether to skip TLS verification.",
-      "Default": {
-        "Type": "bool",
-        "Value": "false"
-      }
+      "Description": "Whether to skip TLS verification",
+      "ConfigImplicitMode": "Attr"
     },
     "unlock_address": {
       "Type": "String",
       "Optional": true,
       "Description": "The address of the unlock REST endpoint",
-      "DefaultFunc": "ENV(TF_HTTP_UNLOCK_ADDRESS)"
+      "ConfigImplicitMode": "Attr"
     },
     "unlock_method": {
       "Type": "String",
       "Optional": true,
       "Description": "The HTTP method to use when unlocking",
-      "DefaultFunc": "ENV(TF_HTTP_UNLOCK_METHOD)"
+      "ConfigImplicitMode": "Attr"
     },
     "update_method": {
       "Type": "String",
       "Optional": true,
       "Description": "HTTP method to use when updating state",
-      "DefaultFunc": "ENV(TF_HTTP_UPDATE_METHOD)"
+      "ConfigImplicitMode": "Attr"
     },
     "username": {
       "Type": "String",
       "Optional": true,
       "Description": "The username for HTTP basic authentication",
-      "DefaultFunc": "ENV(TF_HTTP_USERNAME)"
+      "ConfigImplicitMode": "Attr"
     }
   }
 }

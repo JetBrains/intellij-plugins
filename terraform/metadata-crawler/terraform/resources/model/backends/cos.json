@@ -3,8 +3,17 @@
   ".sdk_type": "builtin",
   "name": "cos",
   "type": "backend",
-  "version": "v1.3.0-dev",
+  "version": "v1.15.8",
   "schema": {
+    "accelerate": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Whether to enable global Acceleration",
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
     "acl": {
       "Type": "String",
       "Optional": true,
@@ -14,10 +23,64 @@
         "Value": "private"
       }
     },
+    "assume_role": {
+      "Type": "Set",
+      "Optional": true,
+      "Description": "The `assume_role` block. If provided, terraform will attempt to assume this role using the supplied credentials.",
+      "MaxItems": 1,
+      "IsBlock": true,
+      "ConfigImplicitMode": "Block",
+      "Elem": {
+        "Type": "SchemaInfo",
+        "Info": {
+          "external_id": {
+            "Type": "String",
+            "Optional": true,
+            "Description": "External role ID, which can be obtained by clicking the role name in the CAM console. It can contain 2-128 letters, digits, and symbols (=,.@:/-). Regex: [\\w+=,.@:/-]*. It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_EXTERNAL_ID`.",
+            "DefaultFunc": "UNKNOWN"
+          },
+          "policy": {
+            "Type": "String",
+            "Optional": true,
+            "Description": "A more restrictive policy when making the AssumeRole call. Its content must not contains `principal` elements. Notice: more syntax references, please refer to: [policies syntax logic](https://intl.cloud.tencent.com/document/product/598/10603)."
+          },
+          "role_arn": {
+            "Type": "String",
+            "Required": true,
+            "Description": "The ARN of the role to assume. It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_ARN`.",
+            "DefaultFunc": "UNKNOWN"
+          },
+          "session_duration": {
+            "Type": "Int",
+            "Required": true,
+            "Description": "The duration of the session when making the AssumeRole call. Its value ranges from 0 to 43200(seconds), and default is 7200 seconds. It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_DURATION`.",
+            "DefaultFunc": "UNKNOWN"
+          },
+          "session_name": {
+            "Type": "String",
+            "Required": true,
+            "Description": "The session name to use when making the AssumeRole call. It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_NAME`.",
+            "DefaultFunc": "UNKNOWN"
+          }
+        }
+      }
+    },
     "bucket": {
       "Type": "String",
       "Optional": true,
       "Description": "The name of the COS bucket"
+    },
+    "cam_role_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the CVM instance CAM role. It can be sourced from the `TENCENTCLOUD_CAM_ROLE_NAME` environment variable.",
+      "DefaultFunc": "UNKNOWN"
+    },
+    "domain": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The root domain of the API request. Default is tencentcloudapi.com.",
+      "DefaultFunc": "UNKNOWN"
     },
     "encrypt": {
       "Type": "Bool",
@@ -27,6 +90,12 @@
         "Type": "bool",
         "Value": "true"
       }
+    },
+    "endpoint": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The custom endpoint for the COS API, e.g. http://cos-internal.{Region}.tencentcos.cn. Both HTTP and HTTPS are accepted.",
+      "DefaultFunc": "UNKNOWN"
     },
     "key": {
       "Type": "String",
@@ -42,24 +111,42 @@
       "Optional": true,
       "Description": "The directory for saving the state file in bucket"
     },
+    "profile": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The profile name as set in the shared credentials. It can also be sourced from the `TENCENTCLOUD_PROFILE` environment variable. If not set, the default profile created with `tccli configure` will be used.",
+      "DefaultFunc": "UNKNOWN"
+    },
     "region": {
       "Type": "String",
       "Optional": true,
       "Description": "The region of the COS bucket",
       "InputDefault": "ap-guangzhou",
-      "DefaultFunc": "ENV(TENCENTCLOUD_REGION)"
+      "DefaultFunc": "UNKNOWN"
     },
     "secret_id": {
       "Type": "String",
       "Optional": true,
       "Description": "Secret id of Tencent Cloud",
-      "DefaultFunc": "ENV(TENCENTCLOUD_SECRET_ID)"
+      "DefaultFunc": "UNKNOWN"
     },
     "secret_key": {
       "Type": "String",
       "Optional": true,
       "Description": "Secret key of Tencent Cloud",
-      "DefaultFunc": "ENV(TENCENTCLOUD_SECRET_KEY)"
+      "DefaultFunc": "UNKNOWN"
+    },
+    "security_token": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "TencentCloud Security Token of temporary access credentials. It can be sourced from the `TENCENTCLOUD_SECURITY_TOKEN` environment variable. Notice: for supported products, please refer to: [temporary key supported products](https://intl.cloud.tencent.com/document/product/598/10588).",
+      "DefaultFunc": "UNKNOWN"
+    },
+    "shared_credentials_dir": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The directory of the shared credentials. It can also be sourced from the `TENCENTCLOUD_SHARED_CREDENTIALS_DIR` environment variable. If not set this defaults to ~/.tccli.",
+      "DefaultFunc": "UNKNOWN"
     }
   }
 }

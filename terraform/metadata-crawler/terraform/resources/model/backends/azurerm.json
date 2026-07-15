@@ -3,124 +3,193 @@
   ".sdk_type": "builtin",
   "name": "azurerm",
   "type": "backend",
-  "version": "v1.3.0-dev",
+  "version": "v1.15.8",
   "schema": {
     "access_key": {
       "Type": "String",
       "Optional": true,
-      "Description": "The access key.",
-      "DefaultFunc": "ENV(ARM_ACCESS_KEY)"
+      "Description": "The access key to use when authenticating using a Storage Access Key.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "ado_pipeline_service_connection_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The Azure DevOps Pipeline Service Connection ID.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "client_certificate": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Base64 encoded PKCS#12 certificate bundle to use when authenticating as a Service Principal using a Client Certificate",
+      "ConfigImplicitMode": "Attr"
     },
     "client_certificate_password": {
       "Type": "String",
       "Optional": true,
-      "Description": "The password associated with the Client Certificate specified in `client_certificate_path`",
-      "DefaultFunc": "ENV(ARM_CLIENT_CERTIFICATE_PASSWORD)"
+      "Description": "The password associated with the Client Certificate. For use when authenticating as a Service Principal using a Client Certificate",
+      "ConfigImplicitMode": "Attr"
     },
     "client_certificate_path": {
       "Type": "String",
       "Optional": true,
-      "Description": "The path to the PFX file used as the Client Certificate when authenticating as a Service Principal",
-      "DefaultFunc": "ENV(ARM_CLIENT_CERTIFICATE_PATH)"
+      "Description": "The path to the Client Certificate associated with the Service Principal for use when authenticating as a Service Principal using a Client Certificate.",
+      "ConfigImplicitMode": "Attr"
     },
     "client_id": {
       "Type": "String",
       "Optional": true,
-      "Description": "The Client ID.",
-      "DefaultFunc": "ENV(ARM_CLIENT_ID)"
+      "Description": "The Client ID to use when authenticating using Azure Active Directory.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "client_id_file_path": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The path to a file containing the Client ID which should be used.",
+      "ConfigImplicitMode": "Attr"
     },
     "client_secret": {
       "Type": "String",
       "Optional": true,
-      "Description": "The Client Secret.",
-      "DefaultFunc": "ENV(ARM_CLIENT_SECRET)"
+      "Description": "The Client Secret which should be used. For use When authenticating as a Service Principal using a Client Secret.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "client_secret_file_path": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The path to a file containing the Client Secret which should be used. For use When authenticating as a Service Principal using a Client Secret.",
+      "ConfigImplicitMode": "Attr"
     },
     "container_name": {
       "Type": "String",
       "Optional": true,
-      "Description": "The container name."
+      "Description": "The container name to use in the Storage Account.",
+      "ConfigImplicitMode": "Attr"
     },
     "endpoint": {
       "Type": "String",
       "Optional": true,
-      "Description": "A custom Endpoint used to access the Azure Resource Manager API's.",
-      "DefaultFunc": "ENV(ARM_ENDPOINT)"
+      "Description": "`endpoint` is deprecated in favor of `msi_endpoint`, it will be removed in a future version of Terraform",
+      "ConfigImplicitMode": "Attr"
     },
     "environment": {
       "Type": "String",
       "Optional": true,
-      "Description": "The Azure cloud environment.",
-      "DefaultFunc": "ENV(ARM_ENVIRONMENT)"
+      "Description": "The Cloud Environment which should be used. Possible values are public, usgovernment, and china. Defaults to public. Not used and should not be specified when `metadata_host` is specified.",
+      "ConfigImplicitMode": "Attr"
     },
     "key": {
       "Type": "String",
       "Optional": true,
-      "Description": "The blob key."
+      "Description": "The blob key to use in the Storage Container.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "lookup_blob_endpoint": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Whether to look up the storage account blob endpoint. This is necessary when the storage account uses the Azure DNS zone endpoint.",
+      "ConfigImplicitMode": "Attr"
     },
     "metadata_host": {
       "Type": "String",
       "Optional": true,
-      "Description": "The Metadata URL which will be used to obtain the Cloud Environment.",
-      "DefaultFunc": "ENV(ARM_METADATA_HOST)"
+      "Description": "The Hostname which should be used for the Azure Metadata Service.",
+      "ConfigImplicitMode": "Attr"
     },
     "msi_endpoint": {
       "Type": "String",
       "Optional": true,
-      "Description": "The Managed Service Identity Endpoint.",
-      "DefaultFunc": "ENV(ARM_MSI_ENDPOINT)"
+      "Description": "The path to a custom endpoint for Managed Identity - in most circumstances this should be detected automatically.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "oidc_request_token": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The bearer token for the request to the OIDC provider. For use when authenticating as a Service Principal using OpenID Connect.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "oidc_request_url": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The URL for the OIDC provider from which to request an ID token. For use when authenticating as a Service Principal using OpenID Connect.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "oidc_token": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The OIDC ID token for use when authenticating as a Service Principal using OpenID Connect.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "oidc_token_file_path": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The path to a file containing an OIDC ID token for use when authenticating as a Service Principal using OpenID Connect.",
+      "ConfigImplicitMode": "Attr"
     },
     "resource_group_name": {
       "Type": "String",
       "Optional": true,
-      "Description": "The resource group name."
+      "Description": "The Resource Group where the Storage Account is located.",
+      "ConfigImplicitMode": "Attr"
     },
     "sas_token": {
       "Type": "String",
       "Optional": true,
-      "Description": "A SAS Token used to interact with the Blob Storage Account.",
-      "DefaultFunc": "ENV(ARM_SAS_TOKEN)"
+      "Description": "The SAS Token to use when authenticating using a SAS Token.",
+      "ConfigImplicitMode": "Attr"
     },
     "snapshot": {
       "Type": "Bool",
       "Optional": true,
-      "Description": "Enable/Disable automatic blob snapshotting",
-      "DefaultFunc": "ENV(ARM_SNAPSHOT)"
+      "Description": "Whether to enable automatic blob snapshotting.",
+      "ConfigImplicitMode": "Attr"
     },
     "storage_account_name": {
       "Type": "String",
       "Optional": true,
-      "Description": "The name of the storage account."
+      "Description": "The name of the storage account.",
+      "ConfigImplicitMode": "Attr"
     },
     "subscription_id": {
       "Type": "String",
       "Optional": true,
-      "Description": "The Subscription ID.",
-      "DefaultFunc": "ENV(ARM_SUBSCRIPTION_ID)"
+      "Description": "The Subscription ID where the Storage Account is located.",
+      "ConfigImplicitMode": "Attr"
     },
     "tenant_id": {
       "Type": "String",
       "Optional": true,
-      "Description": "The Tenant ID.",
-      "DefaultFunc": "ENV(ARM_TENANT_ID)"
+      "Description": "The Tenant ID to use when authenticating using Azure Active Directory.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "use_aks_workload_identity": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Allow Azure AKS Workload Identity to be used for Authentication.",
+      "ConfigImplicitMode": "Attr"
     },
     "use_azuread_auth": {
       "Type": "Bool",
       "Optional": true,
-      "Description": "Should Terraform use AzureAD Authentication to access the Blob?",
-      "DefaultFunc": "ENV(ARM_USE_AZUREAD)"
+      "Description": "Whether to use Azure Active Directory authentication to access the Storage Data Plane APIs.",
+      "ConfigImplicitMode": "Attr"
     },
-    "use_microsoft_graph": {
+    "use_cli": {
       "Type": "Bool",
       "Optional": true,
-      "Description": "Should Terraform obtain an MSAL auth token and use Microsoft Graph rather than Azure Active Directory?",
-      "DefaultFunc": "ENV(ARM_USE_MSGRAPH)",
-      "Deprecated": "This field now defaults to `true` and will be removed in v1.3 of Terraform Core due to the deprecation of ADAL by Microsoft."
+      "Description": "Allow Azure CLI to be used for Authentication.",
+      "ConfigImplicitMode": "Attr"
     },
     "use_msi": {
       "Type": "Bool",
       "Optional": true,
-      "Description": "Should Managed Service Identity be used?",
-      "DefaultFunc": "ENV(ARM_USE_MSI)"
+      "Description": "Allow Managed Identity to be used for Authentication.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "use_oidc": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Allow OpenID Connect to be used for authentication",
+      "ConfigImplicitMode": "Attr"
     }
   }
 }
