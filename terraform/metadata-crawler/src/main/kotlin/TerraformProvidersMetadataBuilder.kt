@@ -15,6 +15,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicInteger
 
 object TerraformProvidersMetadataBuilder {
@@ -71,6 +72,11 @@ object TerraformProvidersMetadataBuilder {
 
   @JvmStatic
   fun main(args: Array<String>) {
+    val version = getTerraformVersion()
+    logger.info("Terraform version: $version")
+
+    generateFunctionsMetadata()
+
     val outputDir = File("plugins-meta").apply { mkdirs() }
     val allOut = File(outputDir, "allout.json")
     val officialProviders = loadOfficialProvidersList()
@@ -96,8 +102,6 @@ object TerraformProvidersMetadataBuilder {
                                   !unlisted && (providerVendorsTier.contains(attributes["tier"].asText())
                                                 || attributes["downloads"].asLong() >= downloadsLimitForProvider)
                                 }
-    val version = getTerraformVersion()
-    logger.info("Terraform version: $version")
 
     val generatedJsonFileNames = File(File(outputDir, "resources/model").apply { mkdirs() }, "providers.list")
     mostUsefulProviders.forEach { data ->
@@ -207,6 +211,31 @@ object TerraformProvidersMetadataBuilder {
         versionProcess.waitFor()
       }
     }
+
+  private fun generateFunctionsMetadata() {
+    val functionsFile = Path.of("resources", "model", "functions.json")
+    try {
+      val process = ProcessBuilder(listOf("terraform", "metadata", "functions", "-json")).start()
+      val output = process.inputStream.use { it.readBytes() }
+      val error = process.errorStream.use { it.reader().readText() }
+      process.waitFor()
+
+      val json = runCatching { objectMapper.readTree(output) }.getOrNull()
+      val signatures = json?.get("function_signatures")
+      if (json == null || signatures == null || !signatures.isObject) {
+        logger.error("Failed to generate functions metadata, keeping existing '$functionsFile'. Error: $error")
+        return
+      }
+
+      Files.newOutputStream(functionsFile).use { out ->
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(out, json)
+      }
+      logger.info("Regenerated $functionsFile from 'terraform metadata functions -json' (${signatures.size()} functions)")
+    }
+    catch (e: Exception) {
+      logger.error("Error running 'terraform metadata functions -json', keeping existing '$functionsFile'", e)
+    }
+  }
 
   private fun deleteDirRecursively(tfgendir: File) {
     if (tfgendir.exists())
