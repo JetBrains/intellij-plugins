@@ -14,6 +14,7 @@
     <projectDescriber implementation="org.jetbrains.qodana.jvm.java.JavaDescriber"/>
     <problemsViewModuleSupport implementation="org.jetbrains.qodana.jvm.java.QodanaGroupByModuleSupportImpl"/>
     <qodanaYamlItemProvider implementation="org.jetbrains.qodana.jvm.java.QodanaYamlJdkItemProvider"/>
+    <psiStructuralFingerprintsProvider language="JAVA" implementationClass="org.jetbrains.qodana.jvm.java.psi.JavaPsiStructuralFingerprintsProvider"/>
     <qodanaScriptFactory implementation="org.jetbrains.qodana.jvm.java.migrate.MigrateClassesScriptFactory"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.jvm.java.JvmLocalTaintOutputConsumer"/>
     <workflowExtension implementation="org.jetbrains.qodana.jvm.java.workflow.QodanaResolveProjectJdkFromMiscXml"/>

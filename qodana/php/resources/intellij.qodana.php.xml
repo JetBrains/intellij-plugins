@@ -8,6 +8,7 @@
   </dependencies>
   <!-- endregion -->
   <extensions defaultExtensionNs="org.intellij.qodana">
+    <psiStructuralFingerprintsProvider language="PHP" implementationClass="org.jetbrains.qodana.php.psi.PhpPsiStructuralFingerprintsProvider"/>
     <projectDescriber implementation="org.jetbrains.qodana.php.PhpIncludedPathsProjectDescriber"/>
     <projectDescriber implementation="org.jetbrains.qodana.php.PhpInterpreterProjectDescriber"/>
     <projectDescriber implementation="org.jetbrains.qodana.php.PhpComposerProjectDescriber"/>

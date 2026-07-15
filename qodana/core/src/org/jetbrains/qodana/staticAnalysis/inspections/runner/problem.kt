@@ -18,6 +18,8 @@ import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_HAS_FIXES
 import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_CHILD_HASH_PROP
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_ROOT_HASH_PROP
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintSignals
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.addStructuralFingerprints
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 
 /**
@@ -33,7 +35,8 @@ interface Problem {
 internal class XmlProblem(private val element: Element,
                           private val hasCleanup: Boolean = false,
                           private val hasFixes: Boolean = false,
-                          private val userData: UserDataHolderEx? = null): Problem {
+                          private val userData: UserDataHolderEx? = null,
+                          private val structuralSignals: StructuralFingerprintSignals? = null): Problem {
   override suspend fun getSarif(macroManager: PathMacroManager, database: QodanaToolResultDatabase): Result {
     macroManager.collapsePathsRecursively(element)
     return ElementToSarifConverter.convertFromXmlFormat(element, macroManager) { result ->
@@ -61,7 +64,7 @@ internal class XmlProblem(private val element: Element,
         }
         else -> result.getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.REGULAR
       }
-    }
+    }.also { sarif -> structuralSignals?.let { sarif.addStructuralFingerprints(it) } }
   }
 
   override fun getFile(): String? = element.getChildText("file")

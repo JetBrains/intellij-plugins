@@ -132,7 +132,7 @@ internal class ReverseScopedScriptOld(runContextFactory: ReverseScopedRunContext
     val reportOld = createSarifReport(listOf(runOld)) // we create "fake" report containing current (old) run for baseline purposes
     runContext.runAnalysis(context = inspectionContext)
     runOld.results = runContext.getResultsForInspectionGroup(inspectionContext)
-    BaselineCalculation.compare(report, reportOld, Options(false, false, false))
+    BaselineCalculation.compare(report, reportOld, Options(false, false, false, false))
 
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
 

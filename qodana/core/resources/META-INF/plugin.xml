@@ -243,6 +243,12 @@
   </projectListeners>
 
   <extensionPoints>
+    <extensionPoint name="psiStructuralFingerprintsProvider"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass"
+            implements="org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.QodanaPsiStructuralFingerprintsProvider"/>
+    </extensionPoint>
     <extensionPoint name="projectDescriber"
                     interface="org.jetbrains.qodana.staticAnalysis.projectDescription.QodanaProjectDescriber"
                     dynamic="true"/>

@@ -13,6 +13,7 @@
     <reportMetadataArtifact implementation="org.jetbrains.qodana.go.GoCoverageProjectDataReportMetadataArtifact"/>
     <workflowExtension implementation="org.jetbrains.qodana.go.QodanaValidateGoSdk"/>
     <workflowExtension implementation="org.jetbrains.qodana.go.QodanaRestoreGoSdk"/>
+    <psiStructuralFingerprintsProvider language="go" implementationClass="org.jetbrains.qodana.go.psi.GoPsiStructuralFingerprintsProvider"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <qodana.coverage.cloudArtifactsProcessor implementation="org.jetbrains.qodana.go.GoCoverageArtifactProcessor"/>

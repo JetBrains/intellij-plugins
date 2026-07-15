@@ -189,7 +189,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
   /** Compared to the baseline, 1 problem has been fixed in the code. */
   @Test
   fun `testBaseline, one result removed`(): Unit = runBlocking {
-    assertEquals(qodanaConfig.includeAbsent, false)
+    assertEquals(false, qodanaConfig.includeAbsent)
 
     runAnalysis()
 

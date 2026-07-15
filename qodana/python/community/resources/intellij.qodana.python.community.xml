@@ -4,6 +4,9 @@
     <module name="intellij.python.sdk"/>
   </dependencies>
 
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <psiStructuralFingerprintsProvider language="Python" implementationClass="org.jetbrains.qodana.python.community.psi.PythonPsiStructuralFingerprintsProvider"/>
+  </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity implementation="org.jetbrains.qodana.python.community.QodanaPycharmPythonPathActivity"/>
   </extensions>

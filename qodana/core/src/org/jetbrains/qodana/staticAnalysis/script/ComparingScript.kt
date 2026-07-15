@@ -84,7 +84,11 @@ abstract class ComparingScript(
       writeReport(Paths.get(PathManager.getLogPath(), "before.qodana.sarif.json"), SarifReport().withRuns(listOf(beforeRun)))
       writeReport(Paths.get(PathManager.getLogPath(), "after.qodana.sarif.json"), SarifReport().withRuns(listOf(run)))
       // compare before and current, keeping only 'NEW' issues in current
-      BaselineCalculation.compare(report, beforeReport, Options(false, false, false))
+      BaselineCalculation.compare(
+        report,
+        beforeReport,
+        Options(false, false,false, false)
+      )
       // compare current and baseline to generate the final report
       applyBaselineCalculation(report, config, runContext.scope, messageReporter)
 

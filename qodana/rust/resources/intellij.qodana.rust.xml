@@ -24,5 +24,6 @@
   </extensions>
   <extensions defaultExtensionNs="org.intellij">
     <qodana.workflowExtension implementation="org.jetbrains.qodana.rust.QodanaLogRustAnalysisScope"/>
+    <qodana.psiStructuralFingerprintsProvider language="Rust" implementationClass="psi.RustPsiStructuralFingerprintsProvider" />
   </extensions>
 </idea-plugin>

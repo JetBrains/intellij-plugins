@@ -1,9 +1,11 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.codeInspection.CommonProblemDescriptor
+import com.intellij.codeInspection.ProblemDescriptorBase
 import com.intellij.codeInspection.ex.InspectionProblemConsumer
 import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.modcommand.ModCommandQuickFix
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderEx
@@ -13,6 +15,9 @@ import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.problemDescriptors.MetricCodeDescriptor
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.GlobalOutputConsumer
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile.QodanaProfileState
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintSignals
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.areStructuralFingerprintsEnabled
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiSignalExtractor
 import java.nio.file.Path
 
 class QodanaProblemConsumer(
@@ -42,14 +47,33 @@ class QodanaProblemConsumer(
       return
     }
 
+    val userData = descriptor as? UserDataHolderEx
+    val structuralFingerprintSignals = getStructuralSignals(descriptor)
+
     val problem = XmlProblem(
       element,
       toolWrapper.isCleanupTool,
       descriptor.fixes?.any { it is ModCommandQuickFix } == true,
-      descriptor as? UserDataHolderEx
+      userData,
+      structuralFingerprintSignals
     )
 
     consume(listOf(problem), toolWrapper.shortName)
+  }
+
+  private fun getStructuralSignals(descriptor: CommonProblemDescriptor): StructuralFingerprintSignals? {
+    if (!areStructuralFingerprintsEnabled) return null
+
+    val baseDescriptor = descriptor as? ProblemDescriptorBase ?: return null
+
+    return runReadActionBlocking {
+      val element = baseDescriptor.psiElement
+      if (element != null && element.isValid) {
+        PsiSignalExtractor.extractSignals(element)
+      } else {
+        null
+      }
+    }
   }
 
   private fun consumeCodeQualityMetricsInfo(descriptor: MetricCodeDescriptor, toolWrapper: InspectionToolWrapper<*, *>) {

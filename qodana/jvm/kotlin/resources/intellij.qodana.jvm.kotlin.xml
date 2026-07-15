@@ -11,6 +11,7 @@
     />
   </extensions>
   <extensions defaultExtensionNs="org.intellij.qodana">
+    <psiStructuralFingerprintsProvider language="kotlin" implementationClass="org.jetbrains.qodana.jvm.kotlin.psi.KotlinPsiStructuralFingerprintsProvider"/>
     <cyclomaticComplexityFileVisitor
       implementation="org.jetbrains.qodana.jvm.kotlin.metrics.cyclomaticComplexity.KotlinCyclomaticComplexityMetricFileVisitor"/>
   </extensions>
