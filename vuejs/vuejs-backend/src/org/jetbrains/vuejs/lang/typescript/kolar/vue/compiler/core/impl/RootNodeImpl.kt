@@ -9,7 +9,7 @@ class RootNodeImpl(
   private val template: XmlTag,
 ) : NodeImpl(template),
     RootNode {
-  override val children: List<Node> by children(template)
+  override val children: List<Node> by children(template, ParentScope.ELEMENT)
 
   override val components: List<String> =
     emptyList() // TBD

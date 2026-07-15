@@ -18,10 +18,5 @@ class IfBranchNodeImpl(
       ?.let { SimpleExpressionNodeImpl(it) }
   }
 
-  override val children: List<Node> by lazy {
-    if (tag.localName == TEMPLATE_TAG_NAME)
-      getChildren(tag)
-    else
-      listOf(ElementNodeImpl(tag))
-  }
+  override val children: List<Node> by children(tag, ParentScope.IF)
 }

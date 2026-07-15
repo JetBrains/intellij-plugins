@@ -27,7 +27,7 @@ class ElementNodeImpl(
   override val isSelfClosing: Boolean
     get() = element.isEmpty
 
-  override val children: List<Node> by children(element)
+  override val children: List<Node> by children(element, ParentScope.ELEMENT)
 
   override val props: List<Node> by lazy {
     element.attributes.mapNotNull {

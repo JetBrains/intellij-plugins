@@ -7,18 +7,39 @@ import com.intellij.psi.xml.XmlComment
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 
+enum class ParentScope {
+  IF,
+  FOR,
+  ELEMENT,
+
+  ;
+}
+
 fun children(
   tag: XmlTag,
+  parentScope: ParentScope,
 ): Lazy<List<Node>> = lazy {
-  getChildren(tag)
+  getChildren(tag, parentScope)
 }
 
 fun getChildren(
   tag: XmlTag,
+  parentScope: ParentScope,
 ): List<Node> =
-  tag.childrenSequence
-    .mapNotNull(::getChild)
-    .toList()
+  when (parentScope) {
+    ParentScope.IF if tag.hasAttribute(V_FOR)
+      -> listOf(ForNodeImpl(tag))
+
+    ParentScope.IF if !isTemplate(tag)
+      -> listOf(ElementNodeImpl(tag))
+
+    ParentScope.FOR if !isTemplate(tag)
+      -> listOf(ElementNodeImpl(tag))
+
+    else -> tag.childrenSequence
+      .mapNotNull(::getChild)
+      .toList()
+  }
 
 private val NODE_FACTORY_MAP: Map<String, (XmlTag) -> Node?> = mapOf(
   V_IF to ::IfNodeImpl,

@@ -13,5 +13,5 @@ class ForNodeImpl(
   override val parseResult: ForParseResult
     get() = TODO("not implemented")
 
-  override val children: List<Node> by children(tag)
+  override val children: List<Node> by children(tag, ParentScope.FOR)
 }
