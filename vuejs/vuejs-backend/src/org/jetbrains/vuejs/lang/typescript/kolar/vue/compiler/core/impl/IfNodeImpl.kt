@@ -16,11 +16,11 @@ class IfNodeImpl(
     get() = PsiSourceLocation(tag)
 
   override val branches: List<IfBranchNode> by lazy {
-    buildList { 
+    buildList {
       add(IfBranchNodeImpl(tag, V_IF))
-      
+
       var current = tag
-      
+
       current.siblings(withSelf = false)
         .filterIsInstance<XmlTag>()
         .takeWhile { it.stubSafeGetAttribute(V_ELSE_IF) != null }
