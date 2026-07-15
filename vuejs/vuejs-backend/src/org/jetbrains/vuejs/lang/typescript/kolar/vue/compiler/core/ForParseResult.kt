@@ -2,9 +2,9 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core
 
 // CompilerDOM.ForParseResult
-data class ForParseResult(
-  val source: ExpressionNode,
-  val value: ExpressionNode?,
-  val key: ExpressionNode?,
-  val index: ExpressionNode?,
-)
+interface ForParseResult {
+  val source: ExpressionNode
+  val value: ExpressionNode?
+  val key: ExpressionNode?
+  val index: ExpressionNode?
+}
