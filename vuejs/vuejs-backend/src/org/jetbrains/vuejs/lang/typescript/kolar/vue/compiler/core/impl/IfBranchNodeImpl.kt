@@ -14,8 +14,12 @@ class IfBranchNodeImpl(
   override val loc: SourceLocation
     get() = PsiSourceLocation(tag)
 
-  override val condition: ExpressionNode
-    get() = TODO("not implemented")
+  override val condition: ExpressionNode? by lazy {
+    // TODO: support compound expressions
+    tag.getAttribute(directiveName)
+      ?.valueElement
+      ?.let { SimpleExpressionNodeImpl(it) }
+  }
 
   override val children: List<Node> by lazy {
     if (tag.localName == TEMPLATE_TAG_NAME)
