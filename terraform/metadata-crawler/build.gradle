@@ -24,7 +24,7 @@ def repoUsername = System.getenv('REPO_USERNAME') ?: 'spaceUsername'
 def repoPassword = System.getenv('REPO_PASSWORD') ?: 'spacePassword'
 
 def artifactGroup = System.getenv('ARTIFACT_GROUP') ?: 'org.intellij.plugins.hcl.terraform'
-def artifactVersion = System.getenv('ARTIFACT_VERSION') ?: '2025.3'
+def artifactVersion = System.getenv('ARTIFACT_VERSION') ?: '2026.2'
 def artifactName = "terraform-metadata"
 
 def crawlerContainerName = "terraform_metadata_crawler"
