@@ -91,7 +91,7 @@ public final class MxmlJSClassProvider extends XmlBackedJSClassProvider {
     if (isComponentSubTag(tag)) {
       return new MxmlJSClass(tag.getParentTag().getSubTags()[0]);
     }
-    return null;
+    return new XmlBackedJSClassImpl(tag);
   }
 
   private static boolean isComponentSubTag(XmlTag tag) {
