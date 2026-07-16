@@ -15,7 +15,7 @@ class IfBranchNodeImpl(
     // TODO: support compound expressions
     tag.getAttribute(directiveName)
       ?.valueElement
-      ?.let { SimpleExpressionNodeImpl(it) }
+      ?.let(::XmlValueExpressionNodeImpl)
   }
 
   override val children: List<Node> by children(tag, ParentScope.IF)
