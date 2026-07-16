@@ -165,6 +165,8 @@ jvm_library(
         "@community//platform/execution:execution_test_lib",
         "//plugins/JavaScriptLanguage/javascript-backend",
         "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-duplicates-detection:javascript-duplicatesDetection",
+        "//plugins/JavaScriptLanguage/javascript-duplicates-detection:javascript-duplicatesDetection_test_lib",
         "@community//platform/projectModel-api:projectModel",
         "@community//platform/projectModel-api:projectModel_test_lib",
         "//contrib/qodana",
