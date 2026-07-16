@@ -107,6 +107,7 @@
     <fileBasedIndex implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedImplementedInterfacesIndex"/>
     <fileBasedIndex implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedMembersIndex"/>
     <fileBasedIndex implementation="com.intellij.javascript.flex.css.FlexStyleIndex"/>
+    <stubIndex implementation="com.intellij.javascript.flex.index.ActionScriptNameIndex"/>
     <additionalLibraryRootsProvider implementation="com.intellij.javascript.flex.FlexCompositeSdkRootProvider"/>
 
     <lang.namesValidator language="ECMA Script Level 4"

@@ -2,8 +2,6 @@
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
-import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoFilter;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlPathReferenceInspection;
@@ -13,6 +11,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
+import com.intellij.flex.css.FlexCSSDialect;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -21,7 +20,6 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.util.FlexUnitLibs;
 import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.flex.css.FlexCSSDialect;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.javascript.flex.mxml.schema.FlexMxmlNSDescriptor;
 import com.intellij.javascript.flex.resolve.ActionScriptFlexPsiImplUtil;
@@ -30,7 +28,6 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.css.CssDialect;
 import com.intellij.lang.css.CssDialectMappings;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.JSIndexTest;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
@@ -45,6 +42,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompil
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;
+import com.intellij.lang.javascript.index.JSIndexKeys;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
@@ -108,6 +106,7 @@ import com.intellij.psi.css.inspections.invalid.CssInvalidPropertyValueInspectio
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -121,6 +120,7 @@ import com.intellij.testFramework.IndexingTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -841,7 +841,10 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   private void checkNavigatableSymbols(String s) {
     JavaScriptIndex scriptIndex = JavaScriptIndex.getInstance(myProject);
-    String[] strings = JSIndexTest.getSymbolNames(myProject);
+    Set<String> names = new HashSet<>();
+    names.addAll(StubIndex.getInstance().getAllKeys(JSIndexKeys.JS_NAME_INDEX_KEY, myProject));
+    names.addAll(StubIndex.getInstance().getAllKeys(JSIndexKeys.JS_SYMBOL_INDEX_2_KEY, myProject));
+    String[] strings = ArrayUtil.toStringArray(names);
     Arrays.sort(strings);
 
     assertTrue(Arrays.binarySearch(strings, s) >= 0);
