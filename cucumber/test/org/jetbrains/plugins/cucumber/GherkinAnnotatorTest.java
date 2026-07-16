@@ -24,4 +24,13 @@ public class GherkinAnnotatorTest extends BasePlatformTestCase {
                                     Given test""");
     myFixture.testHighlighting();
   }
+
+  public void testExamplesHeaderCells() {
+    myFixture.testHighlighting(false, true, false, getTestName(true) + ".feature");
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return CucumberTestUtil.getTestDataPath() + "/annotator";
+  }
 }
