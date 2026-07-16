@@ -1,0 +1,25 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "An empty expression "
+          },
+          {
+            "type": "mdxTextExpression",
+            "value": ""
+          },
+          {
+            "type": "text",
+            "value": " in prose."
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingEmptyExpression.mdx"
+}

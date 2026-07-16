@@ -1,0 +1,14 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "lang": "tsx",
+        "meta": null,
+        "type": "code",
+        "value": "export interface AutoSuggestAddressApi {\n  getDetailsById: (id: string) => Promise<AddressDetailResponse>;\n}"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingTsxCodeBlock.mdx"
+}

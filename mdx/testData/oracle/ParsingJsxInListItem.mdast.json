@@ -1,0 +1,86 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "first item"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": [],
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "second"
+                      }
+                    ],
+                    "name": "Item",
+                    "type": "mdxJsxTextElement"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "checked": null,
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "attributes": [],
+                            "children": [
+                              {
+                                "type": "text",
+                                "value": "nested"
+                              }
+                            ],
+                            "name": "Sub",
+                            "type": "mdxJsxTextElement"
+                          }
+                        ],
+                        "type": "paragraph"
+                      }
+                    ],
+                    "spread": false,
+                    "type": "listItem"
+                  }
+                ],
+                "ordered": false,
+                "spread": false,
+                "start": null,
+                "type": "list"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          }
+        ],
+        "ordered": false,
+        "spread": false,
+        "start": null,
+        "type": "list"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingJsxInListItem.mdx"
+}

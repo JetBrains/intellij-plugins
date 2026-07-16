@@ -1,0 +1,5 @@
+JSFile:ParsingStrikethrough.mdx(0,32)
+  PsiElement(OUTER_BLOCK)('This is ~~struck through~~ text.')(0,32)
+  PsiWhiteSpace('')(32,32)
+  JSEmptyStatement(32,32)
+    <empty list>

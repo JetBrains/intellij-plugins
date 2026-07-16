@@ -1,0 +1,51 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "mdxjsEsm",
+        "value": "import {External} from './place.js'\nexport const Local = props => <span {...props} />"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "An "
+          },
+          {
+            "attributes": [],
+            "children": [
+              {
+                "type": "text",
+                "value": "external"
+              }
+            ],
+            "name": "External",
+            "type": "mdxJsxTextElement"
+          },
+          {
+            "type": "text",
+            "value": " component and a "
+          },
+          {
+            "attributes": [],
+            "children": [
+              {
+                "type": "text",
+                "value": "local one"
+              }
+            ],
+            "name": "Local",
+            "type": "mdxJsxTextElement"
+          },
+          {
+            "type": "text",
+            "value": "."
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingEsm.mdx"
+}

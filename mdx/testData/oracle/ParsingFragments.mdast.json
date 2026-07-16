@@ -1,0 +1,24 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "attributes": [],
+        "children": [
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "fragment child"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "name": null,
+        "type": "mdxJsxFlowElement"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingFragments.mdx"
+}

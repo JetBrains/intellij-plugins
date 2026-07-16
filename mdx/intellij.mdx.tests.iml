@@ -17,6 +17,8 @@
     <orderEntry type="module" module-name="intellij.libraries.lucene.common" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.misc.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.analysis" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.analysis.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.codeStyle" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.editor.ex" scope="TEST" />
@@ -43,6 +45,7 @@
     <orderEntry type="module" module-name="intellij.xml.psi" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.analysis" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.analysis.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.common" scope="TEST" />
@@ -56,8 +59,19 @@
     <orderEntry type="module" module-name="intellij.react.free" scope="TEST" />
     <orderEntry type="module" module-name="intellij.react.plugin" scope="TEST" />
     <orderEntry type="module" module-name="intellij.markdown" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.yaml" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.yaml.backend" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.markdown.model" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.markdown.images" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.markdown.frontmatter" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.markdown.frontmatter.yaml" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.markdown.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.mdx" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework.junit5.codeInsight" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.junit5" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.junit5.suites" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.mdx" />
 </module>

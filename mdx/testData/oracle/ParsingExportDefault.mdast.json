@@ -1,0 +1,26 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "mdxjsEsm",
+        "value": "export default function Layout(props) {\n  return props.children\n}"
+      },
+      {
+        "type": "mdxjsEsm",
+        "value": "export { Thing as default } from './m'"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Heading"
+          }
+        ],
+        "depth": 1,
+        "type": "heading"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingExportDefault.mdx"
+}

@@ -1,0 +1,57 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "mdxjsEsm",
+        "value": "import Tabs from '@theme/Tabs'\nimport TabItem from '@theme/TabItem'"
+      },
+      {
+        "attributes": [
+          {
+            "name": "groupId",
+            "type": "mdxJsxAttribute",
+            "value": "code"
+          },
+          {
+            "name": "defaultValue",
+            "type": "mdxJsxAttribute",
+            "value": "kotlin"
+          },
+          {
+            "name": "values",
+            "type": "mdxJsxAttribute",
+            "value": {
+              "type": "mdxJsxAttributeValueExpression",
+              "value": "[{label: \"Kotlin\", value: \"kotlin\"}]"
+            }
+          }
+        ],
+        "children": [
+          {
+            "attributes": [
+              {
+                "name": "value",
+                "type": "mdxJsxAttribute",
+                "value": "kotlin"
+              }
+            ],
+            "children": [
+              {
+                "lang": "kotlin",
+                "meta": null,
+                "type": "code",
+                "value": "val bar: Bar<Baz> = Something()"
+              }
+            ],
+            "name": "TabItem",
+            "type": "mdxJsxFlowElement"
+          }
+        ],
+        "name": "Tabs",
+        "type": "mdxJsxFlowElement"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingGenericsInCodeBlock.mdx"
+}

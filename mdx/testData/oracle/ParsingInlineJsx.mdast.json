@@ -1,0 +1,37 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "attributes": [],
+            "children": [
+              {
+                "type": "text",
+                "value": "# this is not a heading but "
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "this"
+                  }
+                ],
+                "type": "emphasis"
+              },
+              {
+                "type": "text",
+                "value": " is emphasis"
+              }
+            ],
+            "name": "div",
+            "type": "mdxJsxTextElement"
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingInlineJsx.mdx"
+}

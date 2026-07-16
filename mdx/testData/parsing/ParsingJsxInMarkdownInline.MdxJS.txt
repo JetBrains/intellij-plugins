@@ -1,0 +1,17 @@
+JSFile:ParsingJsxInMarkdownInline.mdx(0,67)
+  PsiElement(OUTER_BLOCK)('Some text with an inline ')(0,25)
+  PsiWhiteSpace('')(25,25)
+  JSEmptyStatement(25,25)
+    <empty list>
+  JSExpressionStatement(25,38)
+    XmlTag:Component(25,38)
+      XmlToken:XML_START_TAG_START('<')(25,26)
+      XmlToken:XML_TAG_NAME('Component')(26,35)
+      PsiWhiteSpace(' ')(35,36)
+      XmlToken:XML_EMPTY_ELEMENT_END('/>')(36,38)
+  JSEmptyStatement(38,38)
+    <empty list>
+  PsiElement(OUTER_BLOCK)(' in the middle of a sentence.')(38,67)
+  PsiWhiteSpace('')(67,67)
+  JSEmptyStatement(67,67)
+    <empty list>

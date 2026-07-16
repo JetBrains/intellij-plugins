@@ -1,0 +1,48 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "checked": false,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "unchecked task"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": true,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "checked task"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          }
+        ],
+        "ordered": false,
+        "spread": false,
+        "start": null,
+        "type": "list"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingTaskList.mdx"
+}

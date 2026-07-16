@@ -1,0 +1,5 @@
+JSFile:ParsingIndentedCode.mdx(0,49)
+  PsiElement(OUTER_BLOCK)('Paragraph.\n\n    console.log(1)\n    console.log(2)')(0,49)
+  PsiWhiteSpace('')(49,49)
+  JSEmptyStatement(49,49)
+    <empty list>

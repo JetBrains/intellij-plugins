@@ -1,0 +1,22 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "toml",
+        "value": "title = \"Hello MDX\"\npublished = true"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Heading"
+          }
+        ],
+        "depth": 1,
+        "type": "heading"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingTomlFrontMatter.mdx"
+}

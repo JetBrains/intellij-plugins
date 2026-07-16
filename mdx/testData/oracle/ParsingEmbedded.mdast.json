@@ -1,0 +1,54 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "mdxjsEsm",
+        "value": "import {name} from './data.js'"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Hello "
+          },
+          {
+            "type": "mdxTextExpression",
+            "value": "name"
+          }
+        ],
+        "depth": 1,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "A paragraph with an inline "
+          },
+          {
+            "type": "mdxTextExpression",
+            "value": "1 + 1"
+          },
+          {
+            "type": "text",
+            "value": " expression."
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "attributes": [],
+        "children": [
+          {
+            "type": "mdxFlowExpression",
+            "value": "name.toUpperCase()"
+          }
+        ],
+        "name": "div",
+        "type": "mdxJsxFlowElement"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingEmbedded.mdx"
+}

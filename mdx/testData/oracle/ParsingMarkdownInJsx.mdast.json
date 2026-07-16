@@ -1,0 +1,65 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "attributes": [],
+        "children": [
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "Important"
+              }
+            ],
+            "depth": 2,
+            "type": "heading"
+          },
+          {
+            "children": [
+              {
+                "checked": null,
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "item one"
+                      }
+                    ],
+                    "type": "paragraph"
+                  }
+                ],
+                "spread": false,
+                "type": "listItem"
+              },
+              {
+                "checked": null,
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "item two"
+                      }
+                    ],
+                    "type": "paragraph"
+                  }
+                ],
+                "spread": false,
+                "type": "listItem"
+              }
+            ],
+            "ordered": false,
+            "spread": false,
+            "start": null,
+            "type": "list"
+          }
+        ],
+        "name": "Callout",
+        "type": "mdxJsxFlowElement"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingMarkdownInJsx.mdx"
+}

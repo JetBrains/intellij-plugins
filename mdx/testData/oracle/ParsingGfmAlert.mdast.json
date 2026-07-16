@@ -1,0 +1,22 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "[!NOTE]\nUseful information that users should know."
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "blockquote"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingGfmAlert.mdx"
+}

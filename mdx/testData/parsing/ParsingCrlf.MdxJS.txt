@@ -1,0 +1,17 @@
+JSFile:ParsingCrlf.mdx(0,46)
+  PsiElement(OUTER_BLOCK)('# Heading\nA paragraph line.\n\n')(0,29)
+  PsiWhiteSpace('')(29,29)
+  JSEmptyStatement(29,29)
+    <empty list>
+  JSExpressionStatement(29,46)
+    XmlTag:Note(29,46)
+      XmlToken:XML_START_TAG_START('<')(29,30)
+      XmlToken:XML_TAG_NAME('Note')(30,34)
+      XmlToken:XML_TAG_END('>')(34,35)
+      XmlText(35,39)
+        XmlToken:XML_DATA_CHARACTERS('flow')(35,39)
+      XmlToken:XML_END_TAG_START('</')(39,41)
+      XmlToken:XML_TAG_NAME('Note')(41,45)
+      XmlToken:XML_TAG_END('>')(45,46)
+  JSEmptyStatement(46,46)
+    <empty list>

@@ -1,0 +1,9 @@
+{
+  "parseError": {
+    "column": 14,
+    "line": 1,
+    "reason": "Unexpected character `/` (U+002F) before local name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a link in MDX, use `[text](url)`)",
+    "ruleId": "unexpected-character"
+  },
+  "source": "parsing/ParsingAutolink.mdx"
+}

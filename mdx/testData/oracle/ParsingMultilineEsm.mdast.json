@@ -1,0 +1,16 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "mdxjsEsm",
+        "value": "import {\n  a,\n  b\n} from './mod.js'"
+      },
+      {
+        "type": "mdxjsEsm",
+        "value": "export const config = {\n  x: 1,\n  y: 2,\n}"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingMultilineEsm.mdx"
+}

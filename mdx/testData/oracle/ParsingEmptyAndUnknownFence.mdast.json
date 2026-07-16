@@ -1,0 +1,20 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "lang": null,
+        "meta": null,
+        "type": "code",
+        "value": ""
+      },
+      {
+        "lang": "unknownlang",
+        "meta": null,
+        "type": "code",
+        "value": "some content"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingEmptyAndUnknownFence.mdx"
+}

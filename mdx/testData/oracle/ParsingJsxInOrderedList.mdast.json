@@ -1,0 +1,76 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "one"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "attributes": [
+                  {
+                    "name": "src",
+                    "type": "mdxJsxAttribute",
+                    "value": ""
+                  }
+                ],
+                "children": [],
+                "name": "img",
+                "type": "mdxJsxFlowElement"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "two"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "three"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          }
+        ],
+        "ordered": true,
+        "spread": false,
+        "start": 1,
+        "type": "list"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingJsxInOrderedList.mdx"
+}

@@ -1,0 +1,57 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "A paragraph with "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "emphasis and an "
+              },
+              {
+                "attributes": [],
+                "children": [],
+                "name": "Icon",
+                "type": "mdxJsxTextElement"
+              },
+              {
+                "type": "text",
+                "value": " inline"
+              }
+            ],
+            "type": "emphasis"
+          },
+          {
+            "type": "text",
+            "value": " and a "
+          },
+          {
+            "children": [
+              {
+                "attributes": [],
+                "children": [],
+                "name": "Logo",
+                "type": "mdxJsxTextElement"
+              }
+            ],
+            "title": null,
+            "type": "link",
+            "url": "https://x"
+          },
+          {
+            "type": "text",
+            "value": " link."
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingInlineJsxInEmphasis.mdx"
+}

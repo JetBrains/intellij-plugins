@@ -1,0 +1,1357 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "yaml",
+        "value": "title: 'Under the hood'\nmetaTitle: 'Prisma under the hood'\nmetaDescription: 'Learn about Prisma internals and how it works \"under the hood\". Prisma tools are based on an engine-layer which manages the communication with the database.'"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Overview"
+          }
+        ],
+        "depth": 2,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "This page gives an overview of the Prisma internals and how it works \"under the hood\"."
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Note that "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "this page does not contain any practical information that is relevant for "
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "using"
+                  }
+                ],
+                "type": "emphasis"
+              },
+              {
+                "type": "text",
+                "value": " Prisma"
+              }
+            ],
+            "type": "strong"
+          },
+          {
+            "type": "text",
+            "value": ". It rather aims at providing a "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "mental model"
+              }
+            ],
+            "type": "emphasis"
+          },
+          {
+            "type": "text",
+            "value": " for what the Prisma toolkit "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "actually"
+              }
+            ],
+            "type": "emphasis"
+          },
+          {
+            "type": "text",
+            "value": " is and how the different tools that are available to developers are structured."
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "If you're new to Prisma, be sure to check out the "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "Quickstart"
+              }
+            ],
+            "title": null,
+            "type": "link",
+            "url": "../getting-started/quickstart"
+          },
+          {
+            "type": "text",
+            "value": " and "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "Introduction"
+              }
+            ],
+            "title": null,
+            "type": "link",
+            "url": "./introduction"
+          },
+          {
+            "type": "text",
+            "value": " pages first."
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Modules and interfaces"
+          }
+        ],
+        "depth": 2,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "The tools in the Prisma toolkit are built with respect to two dimensions:"
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "Module"
+                      }
+                    ],
+                    "type": "strong"
+                  },
+                  {
+                    "type": "text",
+                    "value": ": A set of functionality that's offered by Prisma"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "Interface"
+                      }
+                    ],
+                    "type": "strong"
+                  },
+                  {
+                    "type": "text",
+                    "value": ": A way to "
+                  },
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "use"
+                      }
+                    ],
+                    "type": "emphasis"
+                  },
+                  {
+                    "type": "text",
+                    "value": " the functionality of a module"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          }
+        ],
+        "ordered": false,
+        "spread": false,
+        "start": null,
+        "type": "list"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "The following illustration gives an overview of the tools that exist (or are planned) in the Prisma toolkit:"
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "alt": "",
+            "title": null,
+            "type": "image",
+            "url": "https://i.imgur.com/mxJTGOu.png"
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Modules"
+          }
+        ],
+        "depth": 3,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Prisma provides a number of features which are implemented in the form of "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "modules"
+              }
+            ],
+            "type": "emphasis"
+          },
+          {
+            "type": "text",
+            "value": ". Here is an overview of the modules Prisma provides:"
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "Query"
+                      }
+                    ],
+                    "type": "strong"
+                  },
+                  {
+                    "type": "text",
+                    "value": ": Send queries to your database"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "Migrate"
+                      }
+                    ],
+                    "type": "strong"
+                  },
+                  {
+                    "type": "text",
+                    "value": ": Perform schema migrations in your database"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "Introspect"
+                      }
+                    ],
+                    "type": "strong"
+                  },
+                  {
+                    "type": "text",
+                    "value": ": Read a database schema and translate into "
+                  },
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "Prisma data model"
+                      }
+                    ],
+                    "title": null,
+                    "type": "link",
+                    "url": "../reference/tools-and-interfaces/prisma-schema/data-model"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "Schema"
+                      }
+                    ],
+                    "type": "strong"
+                  },
+                  {
+                    "type": "text",
+                    "value": ": Construct and modify a "
+                  },
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "Prisma schema file"
+                      }
+                    ],
+                    "title": null,
+                    "type": "link",
+                    "url": "../reference/tools-and-interfaces/prisma-schema/prisma-schema-file"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "Generate"
+                      }
+                    ],
+                    "type": "strong"
+                  },
+                  {
+                    "type": "text",
+                    "value": ": Generate clients for Prisma data sources"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          }
+        ],
+        "ordered": false,
+        "spread": false,
+        "start": null,
+        "type": "list"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Interface"
+          }
+        ],
+        "depth": 3,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "Interfaces"
+              }
+            ],
+            "type": "emphasis"
+          },
+          {
+            "type": "text",
+            "value": " offer a way to actually "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "use"
+              }
+            ],
+            "type": "emphasis"
+          },
+          {
+            "type": "text",
+            "value": " the functionality of a module. The module-interface-matrix above shows four different levels of interfaces (from bottom to top):"
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "Engines"
+                      }
+                    ],
+                    "type": "strong"
+                  },
+                  {
+                    "type": "text",
+                    "value": " Implements the "
+                  },
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "core functionality"
+                      }
+                    ],
+                    "type": "emphasis"
+                  },
+                  {
+                    "type": "text",
+                    "value": " consumed by the higher-level interfaces"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "Library"
+                      }
+                    ],
+                    "type": "strong"
+                  },
+                  {
+                    "type": "text",
+                    "value": ": A way to "
+                  },
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "programmatically"
+                      }
+                    ],
+                    "type": "emphasis"
+                  },
+                  {
+                    "type": "text",
+                    "value": " use the functionality of a module"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "CLI"
+                      }
+                    ],
+                    "type": "strong"
+                  },
+                  {
+                    "type": "text",
+                    "value": ": A way to use the functionality of a module on the "
+                  },
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "command line"
+                      }
+                    ],
+                    "type": "emphasis"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "GUI"
+                      }
+                    ],
+                    "type": "strong"
+                  },
+                  {
+                    "type": "text",
+                    "value": ": A way to "
+                  },
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "visually"
+                      }
+                    ],
+                    "type": "emphasis"
+                  },
+                  {
+                    "type": "text",
+                    "value": " use the functionality of a module"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          }
+        ],
+        "ordered": false,
+        "spread": false,
+        "start": null,
+        "type": "list"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Prisma engines"
+          }
+        ],
+        "depth": 2,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "At the core of each module, there typically is a "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "Prisma engine"
+              }
+            ],
+            "title": null,
+            "type": "link",
+            "url": "https://github.com/prisma/prisma-engines"
+          },
+          {
+            "type": "text",
+            "value": " that implements the core set of functionality. Engines are implemented in "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "Rust"
+              }
+            ],
+            "title": null,
+            "type": "link",
+            "url": "https://www.rust-lang.org/"
+          },
+          {
+            "type": "text",
+            "value": " and expose a low-level API that is used by the higher-level interfaces."
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "A Prisma engine is the "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "direct interface to the database"
+              }
+            ],
+            "type": "strong"
+          },
+          {
+            "type": "text",
+            "value": ", any higher-level interfaces always communicate with the database "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "through"
+              }
+            ],
+            "type": "emphasis"
+          },
+          {
+            "type": "text",
+            "value": " the engine-layer."
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "As an example, Prisma Client connects to the "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "query engine"
+              }
+            ],
+            "title": null,
+            "type": "link",
+            "url": "../reference/tools-and-interfaces/prisma-client/query-engine"
+          },
+          {
+            "type": "text",
+            "value": " in order to read and write data in a database:"
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "alt": "",
+            "title": null,
+            "type": "image",
+            "url": "https://i.imgur.com/I8do25A.png"
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Using custom engine binaries"
+          }
+        ],
+        "depth": 3,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "By default, all binaries are automatically downloaded into the "
+          },
+          {
+            "type": "inlineCode",
+            "value": "node_modules/@prisma/cli"
+          },
+          {
+            "type": "text",
+            "value": " folder when you install or update "
+          },
+          {
+            "type": "inlineCode",
+            "value": "@prisma/cli"
+          },
+          {
+            "type": "text",
+            "value": ". You might want to use a "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "custom binary"
+              }
+            ],
+            "title": null,
+            "type": "link",
+            "url": "https://github.com/prisma/prisma-engines"
+          },
+          {
+            "type": "text",
+            "value": " file if:"
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Automated download of binaries is not possible."
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "You have created your own engine binary (for testing, or for an OS that is not officially supported)."
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          }
+        ],
+        "ordered": false,
+        "spread": false,
+        "start": null,
+        "type": "list"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Use the following environment variables to specify custom locations for your binaries:"
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "inlineCode",
+                    "value": "PRISMA_QUERY_ENGINE_BINARY"
+                  },
+                  {
+                    "type": "text",
+                    "value": " (Query engine)"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "inlineCode",
+                    "value": "PRISMA_MIGRATION_ENGINE_BINARY"
+                  },
+                  {
+                    "type": "text",
+                    "value": " (Migration engine)"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "inlineCode",
+                    "value": "PRISMA_INTROSPECTION_ENGINE_BINARY"
+                  },
+                  {
+                    "type": "text",
+                    "value": " (Introspection engine)"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "inlineCode",
+                    "value": "PRISMA_FMT_BINARY"
+                  },
+                  {
+                    "type": "text",
+                    "value": " (for "
+                  },
+                  {
+                    "type": "inlineCode",
+                    "value": "npx prisma format"
+                  },
+                  {
+                    "type": "text",
+                    "value": ")"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          }
+        ],
+        "ordered": false,
+        "spread": false,
+        "start": null,
+        "type": "list"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "The "
+          },
+          {
+            "type": "inlineCode",
+            "value": "prisma/.env"
+          },
+          {
+            "type": "text",
+            "value": " file"
+          }
+        ],
+        "depth": 4,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "To set an environment variable in the "
+          },
+          {
+            "type": "inlineCode",
+            "value": "prisma/.env"
+          },
+          {
+            "type": "text",
+            "value": " file:"
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Add the environment variable to the "
+                  },
+                  {
+                    "type": "inlineCode",
+                    "value": "prisma/.env"
+                  },
+                  {
+                    "type": "text",
+                    "value": " file:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "attributes": [
+                  {
+                    "name": "tabs",
+                    "type": "mdxJsxAttribute",
+                    "value": {
+                      "type": "mdxJsxAttributeValueExpression",
+                      "value": "[<FileWithIcon text=\"Unix, MacOS\" icon=\"code\"/>  , <FileWithIcon text=\"Windows\" icon=\"display\"/>]"
+                    }
+                  }
+                ],
+                "children": [
+                  {
+                    "attributes": [],
+                    "children": [
+                      {
+                        "lang": null,
+                        "meta": null,
+                        "type": "code",
+                        "value": "PRISMA_QUERY_ENGINE_BINARY=custom/path/my-query-engine-binary"
+                      }
+                    ],
+                    "name": "tab",
+                    "type": "mdxJsxFlowElement"
+                  },
+                  {
+                    "attributes": [],
+                    "children": [
+                      {
+                        "lang": null,
+                        "meta": null,
+                        "type": "code",
+                        "value": "PRISMA_QUERY_ENGINE_BINARY=c:\\custom\\path\\my-query-engine-binary"
+                      }
+                    ],
+                    "name": "tab",
+                    "type": "mdxJsxFlowElement"
+                  }
+                ],
+                "name": "TabbedContent",
+                "type": "mdxJsxFlowElement"
+              }
+            ],
+            "spread": true,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Run the following command to output the paths to all binaries:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "lang": "terminal",
+                "meta": null,
+                "type": "code",
+                "value": "npx prisma -v"
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "The output shows that the query engine path comes from the "
+                  },
+                  {
+                    "type": "inlineCode",
+                    "value": "PRISMA_QUERY_ENGINE_BINARY"
+                  },
+                  {
+                    "type": "text",
+                    "value": " environment variable:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "attributes": [
+                  {
+                    "name": "tabs",
+                    "type": "mdxJsxAttribute",
+                    "value": {
+                      "type": "mdxJsxAttributeValueExpression",
+                      "value": "[<FileWithIcon text=\"Unix, MacOS\" icon=\"code\"/>  , <FileWithIcon text=\"Windows\" icon=\"display\"/>]"
+                    }
+                  }
+                ],
+                "children": [
+                  {
+                    "attributes": [],
+                    "children": [
+                      {
+                        "lang": null,
+                        "meta": null,
+                        "type": "code",
+                        "value": "Current platform     : darwin\n|Query Engine         : query-engine d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /custom/my-query-engine-windows)\nMigration Engine     : migration-engine-cli d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/migration-engine-windows)\nIntrospection Engine : introspection-core d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/introspection-engine-windows)\nFormat Binary        : prisma-fmt d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/prisma-fmt-windows)"
+                      }
+                    ],
+                    "name": "tab",
+                    "type": "mdxJsxFlowElement"
+                  },
+                  {
+                    "attributes": [],
+                    "children": [
+                      {
+                        "lang": null,
+                        "meta": null,
+                        "type": "code",
+                        "value": "Current platform     : windows\n|Query Engine         : query-engine d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\\custom\\my-query-engine-windows.exe)\nMigration Engine     : migration-engine-cli d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\\myproject\\node_modules\\@prisma\\cli\\migration-engine-windows.exe)\nIntrospection Engine : introspection-core d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\\myproject\\node_modules\\@prisma\\cli\\introspection-engine-windows.exe)\nFormat Binary        : prisma-fmt d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\\myproject\\node_modules\\@prisma\\cli\\prisma-fmt-windows.exe)"
+                      }
+                    ],
+                    "name": "tab",
+                    "type": "mdxJsxFlowElement"
+                  }
+                ],
+                "name": "TabbedContent",
+                "type": "mdxJsxFlowElement"
+              }
+            ],
+            "spread": true,
+            "type": "listItem"
+          }
+        ],
+        "ordered": true,
+        "spread": true,
+        "start": 1,
+        "type": "list"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Note"
+                  }
+                ],
+                "type": "strong"
+              },
+              {
+                "type": "text",
+                "value": ": It is possible to "
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "use an "
+                  },
+                  {
+                    "type": "inlineCode",
+                    "value": ".env"
+                  },
+                  {
+                    "type": "text",
+                    "value": " file in a location outside the "
+                  },
+                  {
+                    "type": "inlineCode",
+                    "value": "prisma"
+                  },
+                  {
+                    "type": "text",
+                    "value": " folder"
+                  }
+                ],
+                "title": null,
+                "type": "link",
+                "url": "../reference/tools-and-interfaces/prisma-schema#manage-env-files-manually"
+              },
+              {
+                "type": "text",
+                "value": "."
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "blockquote"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Global environment variable"
+          }
+        ],
+        "depth": 4,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "To set the an environment variable globally (in this example, "
+          },
+          {
+            "type": "inlineCode",
+            "value": "PRISMA_QUERY_ENGINE_BINARY"
+          },
+          {
+            "type": "text",
+            "value": "):"
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Run the following command to set the environment variable:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "attributes": [
+                  {
+                    "name": "tabs",
+                    "type": "mdxJsxAttribute",
+                    "value": {
+                      "type": "mdxJsxAttributeValueExpression",
+                      "value": "[<FileWithIcon text=\"Unix, MacOS\" icon=\"code\"/>  , <FileWithIcon text=\"Windows\" icon=\"display\"/>]"
+                    }
+                  }
+                ],
+                "children": [
+                  {
+                    "attributes": [],
+                    "children": [
+                      {
+                        "lang": "terminal",
+                        "meta": null,
+                        "type": "code",
+                        "value": "export PRISMA_QUERY_ENGINE_BINARY=/custom/my-query-engine-unix"
+                      }
+                    ],
+                    "name": "tab",
+                    "type": "mdxJsxFlowElement"
+                  },
+                  {
+                    "attributes": [],
+                    "children": [
+                      {
+                        "lang": "terminal",
+                        "meta": null,
+                        "type": "code",
+                        "value": "set PRISMA_QUERY_ENGINE_BINARY=c:\\custom\\my-query-engine-windows.exe"
+                      }
+                    ],
+                    "name": "tab",
+                    "type": "mdxJsxFlowElement"
+                  }
+                ],
+                "name": "TabbedContent",
+                "type": "mdxJsxFlowElement"
+              }
+            ],
+            "spread": true,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Run the following command to output the paths to all binaries:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "lang": "terminal",
+                "meta": null,
+                "type": "code",
+                "value": "npx prisma -v"
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "The output shows that the query engine path comes from the "
+                  },
+                  {
+                    "type": "inlineCode",
+                    "value": "PRISMA_QUERY_ENGINE_BINARY"
+                  },
+                  {
+                    "type": "text",
+                    "value": " environment variable:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "attributes": [
+                  {
+                    "name": "tabs",
+                    "type": "mdxJsxAttribute",
+                    "value": {
+                      "type": "mdxJsxAttributeValueExpression",
+                      "value": "[<FileWithIcon text=\"Unix, MacOS\" icon=\"code\"/>  , <FileWithIcon text=\"Windows\" icon=\"display\"/>]"
+                    }
+                  }
+                ],
+                "children": [
+                  {
+                    "attributes": [],
+                    "children": [
+                      {
+                        "lang": null,
+                        "meta": null,
+                        "type": "code",
+                        "value": "Current platform     : darwin\n|Query Engine         : query-engine d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /custom/my-query-engine-windows)\nMigration Engine     : migration-engine-cli d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/migration-engine-windows)\nIntrospection Engine : introspection-core d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/introspection-engine-windows)\nFormat Binary        : prisma-fmt d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/prisma-fmt-windows)"
+                      }
+                    ],
+                    "name": "tab",
+                    "type": "mdxJsxFlowElement"
+                  },
+                  {
+                    "attributes": [],
+                    "children": [
+                      {
+                        "lang": null,
+                        "meta": null,
+                        "type": "code",
+                        "value": "Current platform     : windows\n|Query Engine         : query-engine d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\\custom\\my-query-engine-windows.exe)\nMigration Engine     : migration-engine-cli d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\\myproject\\node_modules\\@prisma\\cli\\migration-engine-windows.exe)\nIntrospection Engine : introspection-core d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\\myproject\\node_modules\\@prisma\\cli\\introspection-engine-windows.exe)\nFormat Binary        : prisma-fmt d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\\myproject\\node_modules\\@prisma\\cli\\prisma-fmt-windows.exe)"
+                      }
+                    ],
+                    "name": "tab",
+                    "type": "mdxJsxFlowElement"
+                  }
+                ],
+                "name": "TabbedContent",
+                "type": "mdxJsxFlowElement"
+              }
+            ],
+            "spread": true,
+            "type": "listItem"
+          }
+        ],
+        "ordered": true,
+        "spread": true,
+        "start": 1,
+        "type": "list"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingPrisma.mdx"
+}

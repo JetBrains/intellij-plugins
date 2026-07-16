@@ -1,0 +1,51 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "mdxjsEsm",
+        "value": "import { Source } from '@storybook/addon-docs/blocks'"
+      },
+      {
+        "attributes": [
+          {
+            "name": "language",
+            "type": "mdxJsxAttribute",
+            "value": "tsx"
+          },
+          {
+            "name": "code",
+            "type": "mdxJsxAttribute",
+            "value": {
+              "type": "mdxJsxAttributeValueExpression",
+              "value": "`\nconst [state, setState] = useState<SomeType>()\n`"
+            }
+          }
+        ],
+        "children": [],
+        "name": "Source",
+        "type": "mdxJsxFlowElement"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Selection Type"
+          }
+        ],
+        "depth": 4,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Some text after the source element."
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingJsxExpressionAttribute.mdx"
+}

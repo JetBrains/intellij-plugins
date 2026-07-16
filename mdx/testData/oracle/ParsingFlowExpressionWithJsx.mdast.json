@@ -1,0 +1,12 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "mdxFlowExpression",
+        "value": "a < b ? <Yes/> : <No/>"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingFlowExpressionWithJsx.mdx"
+}

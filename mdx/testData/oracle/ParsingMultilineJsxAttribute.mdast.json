@@ -1,0 +1,61 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Exercise"
+          }
+        ],
+        "depth": 2,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "This is some question."
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "attributes": [
+          {
+            "name": "options",
+            "type": "mdxJsxAttribute",
+            "value": {
+              "type": "mdxJsxAttributeValueExpression",
+              "value": "[1, 2]"
+            }
+          }
+        ],
+        "children": [
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "text"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "name": "Answer",
+        "type": "mdxJsxFlowElement"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "This is another question."
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingMultilineJsxAttribute.mdx"
+}

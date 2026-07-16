@@ -1,0 +1,14 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "attributes": [],
+        "children": [],
+        "name": "Foo.Bar",
+        "type": "mdxJsxFlowElement"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingMemberExpressionComponent.mdx"
+}

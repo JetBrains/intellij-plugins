@@ -1,0 +1,23 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "attributes": [
+          {
+            "name": "tabs",
+            "type": "mdxJsxAttribute",
+            "value": {
+              "type": "mdxJsxAttributeValueExpression",
+              "value": "[<FileWithIcon key=\"a\" />, <FileWithIcon key=\"b\" />]"
+            }
+          }
+        ],
+        "children": [],
+        "name": "Tabs",
+        "type": "mdxJsxFlowElement"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingJsxInAttributeArray.mdx"
+}

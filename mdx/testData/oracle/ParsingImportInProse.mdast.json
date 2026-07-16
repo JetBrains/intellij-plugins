@@ -1,0 +1,9 @@
+{
+  "parseError": {
+    "column": 14,
+    "line": 1,
+    "reason": "Could not parse import/exports with acorn",
+    "ruleId": "acorn"
+  },
+  "source": "parsing/ParsingImportInProse.mdx"
+}

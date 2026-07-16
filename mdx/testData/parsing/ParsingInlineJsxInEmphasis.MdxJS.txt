@@ -1,0 +1,29 @@
+JSFile:ParsingInlineJsxInEmphasis.mdx(0,84)
+  PsiElement(OUTER_BLOCK)('A paragraph with *emphasis and an ')(0,34)
+  PsiWhiteSpace('')(34,34)
+  JSEmptyStatement(34,34)
+    <empty list>
+  JSExpressionStatement(34,42)
+    XmlTag:Icon(34,42)
+      XmlToken:XML_START_TAG_START('<')(34,35)
+      XmlToken:XML_TAG_NAME('Icon')(35,39)
+      PsiWhiteSpace(' ')(39,40)
+      XmlToken:XML_EMPTY_ELEMENT_END('/>')(40,42)
+  JSEmptyStatement(42,42)
+    <empty list>
+  PsiElement(OUTER_BLOCK)(' inline* and a [')(42,58)
+  PsiWhiteSpace('')(58,58)
+  JSEmptyStatement(58,58)
+    <empty list>
+  JSExpressionStatement(58,66)
+    XmlTag:Logo(58,66)
+      XmlToken:XML_START_TAG_START('<')(58,59)
+      XmlToken:XML_TAG_NAME('Logo')(59,63)
+      PsiWhiteSpace(' ')(63,64)
+      XmlToken:XML_EMPTY_ELEMENT_END('/>')(64,66)
+  JSEmptyStatement(66,66)
+    <empty list>
+  PsiElement(OUTER_BLOCK)('](https://x) link.')(66,84)
+  PsiWhiteSpace('')(84,84)
+  JSEmptyStatement(84,84)
+    <empty list>

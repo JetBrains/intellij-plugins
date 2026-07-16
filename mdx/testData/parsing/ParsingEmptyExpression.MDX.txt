@@ -1,0 +1,8 @@
+MDX File(0,32)
+  MarkdownParagraph(Markdown:PARAGRAPH)(0,32)
+    PsiElement(Markdown:Markdown:TEXT)('An empty expression')(0,19)
+    PsiWhiteSpace(' ')(19,20)
+    ASTWrapperPsiElement(Markdown:Markdown:MDX_JSX_EXPRESSION)(20,22)
+      PsiElement(Markdown:Markdown:TEXT)('{}')(20,22)
+    PsiWhiteSpace(' ')(22,23)
+    PsiElement(Markdown:Markdown:TEXT)('in prose.')(23,32)

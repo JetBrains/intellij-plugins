@@ -1,0 +1,31 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "attributes": [
+          {
+            "name": "a",
+            "type": "mdxJsxAttribute",
+            "value": {
+              "type": "mdxJsxAttributeValueExpression",
+              "value": "1 < 2"
+            }
+          },
+          {
+            "name": "b",
+            "type": "mdxJsxAttribute",
+            "value": {
+              "type": "mdxJsxAttributeValueExpression",
+              "value": "useMemo<Foo>(() => x)"
+            }
+          }
+        ],
+        "children": [],
+        "name": "Comp",
+        "type": "mdxJsxFlowElement"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingOperatorInAttribute.mdx"
+}

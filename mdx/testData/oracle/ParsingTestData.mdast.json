@@ -1,0 +1,59 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "mdxjsEsm",
+        "value": "import {\n    ComponentHeader,\n    ComponentFooter,\n    DeprecatedComponentAlert,\n} from 'components/thumbprint-components'\nimport {MdxDocument} from './mdxExample.mdx'"
+      },
+      {
+        "type": "mdxjsEsm",
+        "value": "export default ({ children, ...props }) => <div {...props}>{children}</div>"
+      },
+      {
+        "children": [
+          {
+            "attributes": [],
+            "children": [
+              {
+                "type": "text",
+                "value": "  btn "
+              }
+            ],
+            "name": "Button",
+            "type": "mdxJsxTextElement"
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "attributes": [
+          {
+            "name": "href",
+            "type": "mdxJsxAttribute",
+            "value": "https://github.com/thumbtack/thumbprint/issues/25"
+          },
+          {
+            "name": "title",
+            "type": "mdxJsxAttribute",
+            "value": "Details about the recent changes"
+          }
+        ],
+        "children": [
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "are out-of-date"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "name": "a",
+        "type": "mdxJsxFlowElement"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingTestData.mdx"
+}

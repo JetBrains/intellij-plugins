@@ -1,0 +1,49 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "attributes": [],
+        "children": [
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "Indented heading"
+              }
+            ],
+            "depth": 2,
+            "type": "heading"
+          },
+          {
+            "children": [
+              {
+                "checked": null,
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "a list"
+                      }
+                    ],
+                    "type": "paragraph"
+                  }
+                ],
+                "spread": false,
+                "type": "listItem"
+              }
+            ],
+            "ordered": false,
+            "spread": false,
+            "start": null,
+            "type": "list"
+          }
+        ],
+        "name": "Box",
+        "type": "mdxJsxFlowElement"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingMarkdownInJsxIndented.mdx"
+}

@@ -1,0 +1,5 @@
+JSFile:ParsingCodeBlockInJsx.mdx(0,76)
+  PsiElement(OUTER_BLOCK)('# Markdown\n\n<div>\n```c\n#include <stdio.h>\n```\n</div>\n\n# Markdown with errors')(0,76)
+  PsiWhiteSpace('')(76,76)
+  JSEmptyStatement(76,76)
+    <empty list>

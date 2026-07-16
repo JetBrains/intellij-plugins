@@ -1,0 +1,7 @@
+MDX File(0,78)
+  ASTWrapperPsiElement(Markdown:Markdown:MDX_ESM_BLOCK)(0,35)
+    PsiElement(Markdown:Markdown:JSX_BLOCK_CONTENT)('import {\n  a,\n  b\n} from './mod.js'')(0,35)
+  PsiWhiteSpace('\n')(35,36)
+  PsiWhiteSpace('\n')(36,37)
+  ASTWrapperPsiElement(Markdown:Markdown:MDX_ESM_BLOCK)(37,78)
+    PsiElement(Markdown:Markdown:JSX_BLOCK_CONTENT)('export const config = {\n  x: 1,\n  y: 2,\n}')(37,78)

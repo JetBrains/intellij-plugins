@@ -1,0 +1,9 @@
+{
+  "parseError": {
+    "column": 2,
+    "line": 1,
+    "reason": "Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)",
+    "ruleId": "unexpected-character"
+  },
+  "source": "parsing/ParsingHtmlComment.mdx"
+}

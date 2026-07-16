@@ -1,0 +1,5 @@
+# Preserve CRLF verbatim: ParsingCrlf.mdx is a fixture that specifically exercises
+# CRLF line endings, and its golden snapshots encode CRLF-based offsets. Without this
+# the repo's `* text=auto` + core.autocrlf would normalize it to LF on checkout and the
+# snapshot test would fail on a clean clone.
+ParsingCrlf.mdx -text

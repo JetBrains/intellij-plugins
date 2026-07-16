@@ -1,0 +1,43 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "mdxFlowExpression",
+        "value": "/* a comment */"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Hello "
+          },
+          {
+            "type": "mdxTextExpression",
+            "value": "name.toUpperCase()"
+          }
+        ],
+        "depth": 1,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "The current year is "
+          },
+          {
+            "type": "mdxTextExpression",
+            "value": "year"
+          },
+          {
+            "type": "text",
+            "value": "."
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingExpressions.mdx"
+}

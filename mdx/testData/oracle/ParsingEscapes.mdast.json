@@ -1,0 +1,17 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Escaped < is not a tag and { is not an expression."
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingEscapes.mdx"
+}

@@ -3,20 +3,18 @@ package org.intellij.plugin.mdx
 import com.intellij.codeInsight.actions.OptimizeImportsAction
 import com.intellij.ide.DataManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
-import java.io.File
+import org.junit.jupiter.api.Test
 
-@RunWith(JUnit4::class)
-class MdxTest : MdxTestBase() {
+/** Integration tests for IDE features that span multiple subsystems: resolve, reformat, find-usages, folding. */
+@TestDataPath($$"$PROJECT_ROOT/contrib/mdx/testData")
+class MdxIntegrationTest : MdxTestBase() {
 
     @Test
     fun testResolve() {
         myFixture.configureByText("my.mdx", "export const hello = \"hello\"")
-        myFixture.configureByText("test.mdx", "import {hello} from \'my.mdx\'\n<div>{h<caret>ello}</div>")
+        myFixture.configureByText("test.mdx", "import {hello} from 'my.mdx'\n<div>{h<caret>ello}</div>")
         val ref = myFixture.getReferenceAtCaretPosition()
         assertNotNull(ref?.resolve())
     }
@@ -37,23 +35,20 @@ class MdxTest : MdxTestBase() {
 
     @Test
     fun testFoldingImports() {
-        doTestFolding()
+        myFixture.testFolding("$testDataPath/$testName.mdx")
     }
 
     @Test
     fun testFoldingOneImport() {
-        doTestFolding()
+        myFixture.testFolding("$testDataPath/$testName.mdx")
     }
 
     @Test
     fun testFoldingMultilineImport() {
-        doTestFolding()
-    }
-
-    private fun doTestFolding() {
-        val testFile = File(testDataPath, getTestName(false) + ".mdx")
-        val expected = FileUtil.loadFile(testFile).replace("\r", "")
-        myFixture.configureByText(testFile.name, CodeInsightTestFixtureImpl.removeFoldingMarkers(expected))
+        val virtualFile = myFixture.copyFileToProject("$testName.mdx")
+        val psiFile = myFixture.psiManager.findFile(virtualFile) ?: error("No PSI file for $virtualFile")
+        val expected = psiFile.text.replace("\r", "")
+        myFixture.configureByText("$testName.mdx", CodeInsightTestFixtureImpl.removeFoldingMarkers(expected))
         val actual = (myFixture as CodeInsightTestFixtureImpl)
             .getFoldingDescription(true, false)
             .normalizeMdxFoldingDescription()

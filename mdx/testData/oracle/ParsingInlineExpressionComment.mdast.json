@@ -1,0 +1,33 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "A paragraph with "
+          },
+          {
+            "type": "mdxTextExpression",
+            "value": "/* a comment */"
+          },
+          {
+            "type": "text",
+            "value": " and an inline "
+          },
+          {
+            "type": "mdxTextExpression",
+            "value": "1 + 1"
+          },
+          {
+            "type": "text",
+            "value": " expression."
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingInlineExpressionComment.mdx"
+}

@@ -1,0 +1,136 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "attributes": [
+          {
+            "name": "type",
+            "type": "mdxJsxAttribute",
+            "value": "warning"
+          },
+          {
+            "name": "title",
+            "type": "mdxJsxAttribute",
+            "value": "Avatar component is out-of-date"
+          }
+        ],
+        "children": [
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "The sizes and styles available in the SCSS version of the "
+              },
+              {
+                "attributes": [],
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Avatar"
+                  }
+                ],
+                "name": "InlineCode",
+                "type": "mdxJsxTextElement"
+              },
+              {
+                "type": "mdxTextExpression",
+                "value": "' '"
+              },
+              {
+                "type": "text",
+                "value": "\ncomponent"
+              },
+              {
+                "type": "mdxTextExpression",
+                "value": "' '"
+              }
+            ],
+            "type": "paragraph"
+          },
+          {
+            "attributes": [
+              {
+                "name": "href",
+                "type": "mdxJsxAttribute",
+                "value": "https://github.com/thumbtack/thumbprint/issues/25"
+              },
+              {
+                "name": "title",
+                "type": "mdxJsxAttribute",
+                "value": "Details about the recent changes"
+              }
+            ],
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "are out-of-date"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "name": "a",
+            "type": "mdxJsxFlowElement"
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": ". "
+              },
+              {
+                "attributes": [
+                  {
+                    "name": "to",
+                    "type": "mdxJsxAttribute",
+                    "value": "/components/avatar/react/"
+                  }
+                ],
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Use the React component"
+                  }
+                ],
+                "name": "Link",
+                "type": "mdxJsxTextElement"
+              },
+              {
+                "type": "text",
+                "value": " if possible or "
+              },
+              {
+                "attributes": [
+                  {
+                    "name": "to",
+                    "type": "mdxJsxAttribute",
+                    "value": "/help/"
+                  }
+                ],
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "\nreach out to the Design Systems team\n"
+                  }
+                ],
+                "name": "Link",
+                "type": "mdxJsxTextElement"
+              },
+              {
+                "type": "text",
+                "value": " if you are blocked."
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "name": "Alert",
+        "type": "mdxJsxFlowElement"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingAlert.mdx"
+}

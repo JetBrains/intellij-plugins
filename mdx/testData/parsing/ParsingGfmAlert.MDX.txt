@@ -1,0 +1,8 @@
+MDX File(0,54)
+  MarkdownAlert(Markdown:Markdown:ALERT)(0,54)
+    PsiElement(Markdown:Markdown:BLOCK_QUOTE)('> ')(0,2)
+    MarkdownAlertTitle(Markdown:Markdown:ALERT_TITLE)('[!NOTE]')(2,9)
+    PsiWhiteSpace('\n')(9,10)
+    PsiWhiteSpace('> ')(10,12)
+    MarkdownParagraph(Markdown:PARAGRAPH)(12,54)
+      PsiElement(Markdown:Markdown:TEXT)('Useful information that users should know.')(12,54)

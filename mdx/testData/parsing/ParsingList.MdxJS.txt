@@ -1,0 +1,25 @@
+JSFile:ParsingList.mdx(0,30)
+  PsiElement(OUTER_BLOCK)('* ')(0,2)
+  PsiWhiteSpace('')(2,2)
+  JSEmptyStatement(2,2)
+    <empty list>
+  JSExpressionStatement(2,14)
+    XmlTag:DocLink1(2,14)
+      XmlToken:XML_START_TAG_START('<')(2,3)
+      XmlToken:XML_TAG_NAME('DocLink1')(3,11)
+      PsiWhiteSpace(' ')(11,12)
+      XmlToken:XML_EMPTY_ELEMENT_END('/>')(12,14)
+  JSEmptyStatement(14,14)
+    <empty list>
+  PsiElement(OUTER_BLOCK)('\n * ')(14,18)
+  PsiWhiteSpace('')(18,18)
+  JSEmptyStatement(18,18)
+    <empty list>
+  JSExpressionStatement(18,30)
+    XmlTag:DocLink2(18,30)
+      XmlToken:XML_START_TAG_START('<')(18,19)
+      XmlToken:XML_TAG_NAME('DocLink2')(19,27)
+      PsiWhiteSpace(' ')(27,28)
+      XmlToken:XML_EMPTY_ELEMENT_END('/>')(28,30)
+  JSEmptyStatement(30,30)
+    <empty list>

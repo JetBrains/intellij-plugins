@@ -1,0 +1,38 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "attributes": [],
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "quoted note"
+                  }
+                ],
+                "name": "Note",
+                "type": "mdxJsxTextElement"
+              }
+            ],
+            "type": "paragraph"
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "text after"
+              }
+            ],
+            "type": "paragraph"
+          }
+        ],
+        "type": "blockquote"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingJsxInBlockquote.mdx"
+}

@@ -1,49 +1,20 @@
 package org.intellij.plugin.mdx
 
-import com.intellij.codeInsight.template.TemplateManager
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl
-import com.intellij.codeInsight.template.impl.TemplateSettings
-import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
-import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.testFramework.PlatformTestUtil
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import com.intellij.testFramework.TestDataPath
+import org.junit.jupiter.api.Test
 
-@RunWith(JUnit4::class)
+@TestDataPath($$"$PROJECT_ROOT/contrib/mdx/testData/emmet")
 class MdxEmmetTest : MdxTestBase() {
-    
-    @Test
-    fun testTemplates() {
-        doTest("a:link<caret>", "<a href=\"http://\"></a>")
-    }
 
-    @Test
-    fun testTagNameInference() {
-        doTest("ul>.item*3<caret>", """<ul>
-    <li></li>
-    <li></li>
-    <li></li>
-</ul>""")
-        doTest("<ul>.item*3<caret></ul>", """<ul>
-    <li class="item"></li>
-    <li class="item"></li>
-    <li class="item"></li></ul>""")
-    }
+  @Test
+  fun testTemplates() = doEmmetTest()
 
-    @Test
-    fun testDoubleBracket() {
-        doTest("<inp<caret>", "<inp")
-    }
+  @Test
+  fun testTagNameInference() {
+    doEmmetTest("TagNameInference", "TagNameInference_after")
+    doEmmetTest("TagNameInferenceInsideExistingTag", "TagNameInferenceInsideExistingTag_after")
+  }
 
-    private fun doTest(input: String, expectedOutput: String) {
-        myFixture.configureByText("a.mdx", input)
-        TemplateManagerImpl.setTemplateTesting(testRootDisposable)
-        WriteCommandAction.runWriteCommandAction(myFixture.project) {
-            TemplateManager.getInstance(myFixture.project).startTemplate(myFixture.editor, TemplateSettings.TAB_CHAR)
-        }
-        NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
-        PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
-        myFixture.checkResult(expectedOutput)
-    }
+  @Test
+  fun testDoubleBracket() = doEmmetTest()
 }

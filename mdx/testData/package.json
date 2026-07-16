@@ -1,0 +1,25 @@
+{
+  "name": "testdata",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate:mdast": "node oracle/generate-mdast.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@git.jetbrains.team/ij/ultimate.git"
+  },
+  "private": true,
+  "dependencies": {
+    "rebass": "^4.0.7"
+  },
+  "devDependencies": {
+    "remark-parse": "11.0.0",
+    "remark-mdx": "3.1.1",
+    "remark-gfm": "4.0.1",
+    "remark-frontmatter": "5.0.0",
+    "unified": "11.0.5"
+  }
+}

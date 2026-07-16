@@ -1,0 +1,43 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Heading"
+          }
+        ],
+        "depth": 1,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "A paragraph line."
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "attributes": [],
+            "children": [
+              {
+                "type": "text",
+                "value": "flow"
+              }
+            ],
+            "name": "Note",
+            "type": "mdxJsxTextElement"
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingCrlf.mdx"
+}

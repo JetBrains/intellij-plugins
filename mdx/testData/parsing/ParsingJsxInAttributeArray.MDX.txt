@@ -1,0 +1,7 @@
+MDX File(0,68)
+  ASTWrapperPsiElement(Markdown:Markdown:MDX_JSX_FLOW_ELEMENT)(0,68)
+    ASTWrapperPsiElement(Markdown:Markdown:MDX_JSX_SELF_CLOSING_ELEMENT)(0,68)
+      PsiElement(Markdown:Markdown:JSX_BLOCK_CONTENT)('<Tabs ')(0,6)
+      ASTWrapperPsiElement(Markdown:Markdown:MDX_JSX_ATTRIBUTE)(6,65)
+        PsiElement(Markdown:Markdown:JSX_BLOCK_CONTENT)('tabs={[<FileWithIcon key="a" />, <FileWithIcon key="b" />]}')(6,65)
+      PsiElement(Markdown:Markdown:JSX_BLOCK_CONTENT)(' />')(65,68)

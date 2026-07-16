@@ -1,0 +1,30 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "This is "
+          },
+          {
+            "children": [
+              {
+                "type": "text",
+                "value": "struck through"
+              }
+            ],
+            "type": "delete"
+          },
+          {
+            "type": "text",
+            "value": " text."
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingStrikethrough.mdx"
+}

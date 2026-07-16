@@ -1,0 +1,31 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "yaml",
+        "value": "title: Hello MDX\npublished: true\ntags:\n  - mdx\n  - markdown"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Heading"
+          }
+        ],
+        "depth": 1,
+        "type": "heading"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Some paragraph."
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingFrontMatter.mdx"
+}

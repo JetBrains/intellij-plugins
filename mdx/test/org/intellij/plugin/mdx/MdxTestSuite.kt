@@ -1,14 +1,18 @@
 package org.intellij.plugin.mdx
 
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
+import org.junit.platform.suite.api.SelectClasses
+import org.junit.platform.suite.api.Suite
 
-@RunWith(Suite::class)
-@Suite.SuiteClasses(
-  MdxTest::class,
+@Suite
+@SelectClasses(
+  MdxAutoImportTest::class,
+  MdxCompletionTest::class,
   MdxEmmetTest::class,
-  MdxHighlightTest::class,
-  MdxParsingTest::class,
   MdxFormatterTest::class,
+  MdxHighlightTest::class,
+  MdxIntegrationTest::class,
+  MdxLiveEditingTest::class,
+  MdxOracleTest::class,
+  MdxParsingTest::class,
 )
 class MdxTestSuite

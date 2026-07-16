@@ -1,0 +1,38 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "attributes": [],
+        "children": [
+          {
+            "attributes": [],
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": [],
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "Hello"
+                      }
+                    ],
+                    "name": "Heading",
+                    "type": "mdxJsxTextElement"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "name": "article",
+            "type": "mdxJsxFlowElement"
+          }
+        ],
+        "name": "main",
+        "type": "mdxJsxFlowElement"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingNestedComponents.mdx"
+}

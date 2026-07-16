@@ -1,0 +1,114 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "align": [
+          "left",
+          "center",
+          "right"
+        ],
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Left"
+                  }
+                ],
+                "type": "tableCell"
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Center"
+                  }
+                ],
+                "type": "tableCell"
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Right"
+                  }
+                ],
+                "type": "tableCell"
+              }
+            ],
+            "type": "tableRow"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "a"
+                  }
+                ],
+                "type": "tableCell"
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "b"
+                  }
+                ],
+                "type": "tableCell"
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "c"
+                  }
+                ],
+                "type": "tableCell"
+              }
+            ],
+            "type": "tableRow"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "d"
+                  }
+                ],
+                "type": "tableCell"
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "e"
+                  }
+                ],
+                "type": "tableCell"
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "f"
+                  }
+                ],
+                "type": "tableCell"
+              }
+            ],
+            "type": "tableRow"
+          }
+        ],
+        "type": "table"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingGfmTable.mdx"
+}

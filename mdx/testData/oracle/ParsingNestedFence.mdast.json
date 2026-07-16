@@ -1,0 +1,14 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "lang": "md",
+        "meta": null,
+        "type": "code",
+        "value": "```js\nconst x = 1\n```"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingNestedFence.mdx"
+}

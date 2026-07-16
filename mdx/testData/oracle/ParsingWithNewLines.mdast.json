@@ -1,0 +1,204 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "type": "yaml",
+        "value": "title: \"They LinkedIn\"\ndate: \"2017\"\nlede: \"A Chrome extension that lets you see through the LinkedIn jargon.\"\nlink: \"https://chrome.google.com/webstore/detail/they-linkedin/cmjockpmecfhkaeadcgneakffkioombe\"\nrepo: \"https://github.com/prichey/they-linkedin\"\norder: 9\npublish: true\nlang: \"Node.js\""
+      },
+      {
+        "type": "mdxjsEsm",
+        "value": "import ZoomImage from 'components/ZoomImage';\nimport XA from 'components/ExternalAnchor';"
+      },
+      {
+        "type": "mdxjsEsm",
+        "value": "import screenshot from './screenshot.jpg';\nimport screenshotZoom from './screenshot-zoom.jpg';"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "LinkedIn can be a useful resource whenever you're looking for a job, or looking to fill a job, and is a total waste of time the other 93% of the time. (All opinions my own, obviously.) I maintain "
+          },
+          {
+            "attributes": [
+              {
+                "name": "href",
+                "type": "mdxJsxAttribute",
+                "value": "https://www.linkedin.com/in/preston-richey-40b35950/"
+              }
+            ],
+            "children": [
+              {
+                "type": "text",
+                "value": "a profile"
+              }
+            ],
+            "name": "XA",
+            "type": "mdxJsxTextElement"
+          },
+          {
+            "type": "text",
+            "value": " out of sadistic compulsion, though I rarely 'do' anything on the site. Out of all the feeds to which I subject myself regularly, LinkedIn seems to have the highest noise to signal ratio. It is also, by far, the most jargon-y. The back-patting is endless and the paradigm-shifting synergy is streamlined."
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Someone saner than I would, given these opinions about a free and totally optional website on the internet, probably just delete her profile or unsubscribe from email notifications. Instead, I made an amusing Chrome plugin."
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "children": [
+          {
+            "attributes": [],
+            "children": [],
+            "name": "a",
+            "type": "mdxJsxTextElement"
+          },
+          {
+            "attributes": [
+              {
+                "name": "href",
+                "type": "mdxJsxAttribute",
+                "value": "https://chrome.google.com/webstore/detail/they-linkedin/cmjockpmecfhkaeadcgneakffkioombe"
+              }
+            ],
+            "children": [
+              {
+                "type": "text",
+                "value": "They LinkedIn"
+              }
+            ],
+            "name": "XA",
+            "type": "mdxJsxTextElement"
+          },
+          {
+            "type": "text",
+            "value": ", inspired by John Carpenter's "
+          },
+          {
+            "attributes": [
+              {
+                "name": "href",
+                "type": "mdxJsxAttribute",
+                "value": "https://www.youtube.com/watch?v=JI8AMRbqY6w&t=68s"
+              }
+            ],
+            "children": [
+              {
+                "type": "text",
+                "value": "They Live"
+              }
+            ],
+            "name": "XA",
+            "type": "mdxJsxTextElement"
+          },
+          {
+            "type": "text",
+            "value": " and an episode of the podcast "
+          },
+          {
+            "attributes": [
+              {
+                "name": "href",
+                "type": "mdxJsxAttribute",
+                "value": "https://trackchanges.postlight.com/paul-and-rich-try-to-talk-about-something-else-but-end-up-complaining-about-linkedin-again-c20526cfdb74"
+              }
+            ],
+            "children": [
+              {
+                "type": "text",
+                "value": "Track Changes"
+              }
+            ],
+            "name": "XA",
+            "type": "mdxJsxTextElement"
+          },
+          {
+            "type": "text",
+            "value": ", lets you see past the jargon. It works similar to "
+          },
+          {
+            "attributes": [
+              {
+                "name": "href",
+                "type": "mdxJsxAttribute",
+                "value": "https://github.com/panicsteve/cloud-to-butt"
+              }
+            ],
+            "children": [
+              {
+                "type": "text",
+                "value": "cloud-to-butt"
+              }
+            ],
+            "name": "XA",
+            "type": "mdxJsxTextElement"
+          },
+          {
+            "type": "text",
+            "value": " but it only runs on linkedin.com. It replaces phrases like \"People you may know\" with \"Synergistic partners\", and \"What people are talking about now\" with \"Your boss expects you to know about this\". Etc."
+          }
+        ],
+        "type": "paragraph"
+      },
+      {
+        "attributes": [
+          {
+            "name": "class",
+            "type": "mdxJsxAttribute",
+            "value": "blog-inset"
+          }
+        ],
+        "children": [
+          {
+            "attributes": [
+              {
+                "name": "src",
+                "type": "mdxJsxAttribute",
+                "value": {
+                  "type": "mdxJsxAttributeValueExpression",
+                  "value": "screenshot"
+                }
+              },
+              {
+                "name": "zoomSrc",
+                "type": "mdxJsxAttribute",
+                "value": {
+                  "type": "mdxJsxAttributeValueExpression",
+                  "value": "screenshotZoom"
+                }
+              },
+              {
+                "name": "alt",
+                "type": "mdxJsxAttribute",
+                "value": "Plugin Screenshot"
+              }
+            ],
+            "children": [],
+            "name": "ZoomImage",
+            "type": "mdxJsxFlowElement"
+          }
+        ],
+        "name": "div",
+        "type": "mdxJsxFlowElement"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "If you found any of this interesting, send me a note. I'd love to add you to my professional network. And, if you would, please endorse me for 'growth hacking' and 'thought leadership'. Thanks in advance!"
+          }
+        ],
+        "type": "paragraph"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingWithNewLines.mdx"
+}

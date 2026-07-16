@@ -1,0 +1,42 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "checked": null,
+            "children": [
+              {
+                "attributes": [],
+                "children": [],
+                "name": "DocLink1",
+                "type": "mdxJsxFlowElement"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          },
+          {
+            "checked": null,
+            "children": [
+              {
+                "attributes": [],
+                "children": [],
+                "name": "DocLink2",
+                "type": "mdxJsxFlowElement"
+              }
+            ],
+            "spread": false,
+            "type": "listItem"
+          }
+        ],
+        "ordered": false,
+        "spread": false,
+        "start": null,
+        "type": "list"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingList.mdx"
+}

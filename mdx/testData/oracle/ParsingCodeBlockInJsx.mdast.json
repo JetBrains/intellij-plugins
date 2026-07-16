@@ -1,0 +1,41 @@
+{
+  "mdast": {
+    "children": [
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Markdown"
+          }
+        ],
+        "depth": 1,
+        "type": "heading"
+      },
+      {
+        "attributes": [],
+        "children": [
+          {
+            "lang": "c",
+            "meta": null,
+            "type": "code",
+            "value": "#include <stdio.h>"
+          }
+        ],
+        "name": "div",
+        "type": "mdxJsxFlowElement"
+      },
+      {
+        "children": [
+          {
+            "type": "text",
+            "value": "Markdown with errors"
+          }
+        ],
+        "depth": 1,
+        "type": "heading"
+      }
+    ],
+    "type": "root"
+  },
+  "source": "parsing/ParsingCodeBlockInJsx.mdx"
+}
