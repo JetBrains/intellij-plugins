@@ -8,10 +8,13 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SimpleExpress
 class SimpleExpressionNodeImpl(
   private val value: XmlAttributeValue,
 ) : NodeImpl(value),
-    SimpleExpressionNode {
+    DefaultSimpleExpressionNode {
   override val content: String
     get() = value.value
+}
 
+interface DefaultSimpleExpressionNode :
+  SimpleExpressionNode {
   override val isStatic: Boolean
     get() = false
 
