@@ -25,21 +25,20 @@ fun children(
 fun getChildren(
   tag: XmlTag,
   parentScope: ParentScope,
-): List<Node> =
-  when (parentScope) {
-    ParentScope.IF if tag.hasAttribute(V_FOR)
-      -> listOf(ForNodeImpl(tag))
+): List<Node> {
+  if (parentScope == ParentScope.IF && tag.hasAttribute(V_FOR))
+    return listOf(ForNodeImpl(tag))
 
-    ParentScope.IF if !isTemplate(tag)
-      -> listOf(ElementNodeImpl(tag))
+  if (parentScope == ParentScope.IF && !isTemplate(tag))
+    return listOf(ElementNodeImpl(tag))
 
-    ParentScope.FOR if !isTemplate(tag)
-      -> listOf(ElementNodeImpl(tag))
+  if (parentScope == ParentScope.FOR && !isTemplate(tag))
+    return listOf(ElementNodeImpl(tag))
 
-    else -> tag.childrenSequence
-      .mapNotNull(::getChild)
-      .toList()
-  }
+  return tag.childrenSequence
+    .mapNotNull(::getChild)
+    .toList()
+}
 
 private val NODE_FACTORY_MAP: Map<String, (XmlTag) -> Node?> = mapOf(
   V_IF to ::IfNodeImpl,
