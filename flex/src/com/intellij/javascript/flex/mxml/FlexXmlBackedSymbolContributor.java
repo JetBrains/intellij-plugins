@@ -4,7 +4,7 @@ package com.intellij.javascript.flex.mxml;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.navigation.DumbAwareChooseByNameContributor;
-import com.intellij.lang.javascript.navigation.JavaScriptClassContributor;
+import com.intellij.javascript.flex.navigation.ActionScriptClassContributor;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.structureView.JSStructureItemPresentation;
@@ -77,7 +77,7 @@ public final class FlexXmlBackedSymbolContributor extends DumbAwareChooseByNameC
       }, true);
       return result[0];
     }, parameters.getSearchScope());
-    new JavaScriptClassContributor().processElementsWithName(name, o ->
+    new ActionScriptClassContributor().processElementsWithName(name, o ->
       !(o instanceof XmlBackedJSClassImpl) || processor.process(o), parameters);
   }
 

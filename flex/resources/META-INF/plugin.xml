@@ -159,6 +159,8 @@
     <projectService serviceImplementation="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters"/>
     <consoleFilterProvider implementation="com.intellij.lang.javascript.flex.FlexStackTraceFilterProvider"/>
     <gotoSymbolContributor implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSymbolContributor"/>
+    <gotoSymbolContributor implementation="com.intellij.javascript.flex.navigation.ActionScriptSymbolContributor"/>
+    <gotoClassContributor implementation="com.intellij.javascript.flex.navigation.ActionScriptClassContributor"/>
     <annotator language="Mxml" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
     <multiHostInjector implementation="com.intellij.javascript.flex.mxml.MxmlLanguageInjector"/>
 
