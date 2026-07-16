@@ -33,10 +33,8 @@ fun getChildren(
     }
   }
 
-  if (parentScope == ParentScope.IF && !isTemplate(tag))
-    return listOf(ElementNodeImpl(tag))
-
-  if (parentScope == ParentScope.FOR && !isTemplate(tag))
+  if ((parentScope == ParentScope.IF || parentScope == ParentScope.FOR)
+      && !isTemplate(tag))
     return listOf(ElementNodeImpl(tag))
 
   return tag.childrenSequence
