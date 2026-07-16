@@ -10,15 +10,31 @@ class ForParseResultImpl(
   private val varStatement: JSVarStatement?,
   private val collectionExpression: JSExpression,
 ) : ForParseResult {
-  override val source: ExpressionNode
-    get() = SimpleExpressionNodeImpl(collectionExpression)
+  private val variableNodeMap: MutableMap<Int, ExpressionNode?> = mutableMapOf()
+
+  private fun variableNode(
+    index: Int,
+  ): ExpressionNode? {
+    if (!variableNodeMap.containsKey(index)) {
+      variableNodeMap[index] = varStatement
+        ?.declarations
+        ?.getOrNull(index)
+        ?.let(::SimpleExpressionNodeImpl)
+    }
+
+    return variableNodeMap[index]
+  }
+
+  override val source: ExpressionNode by lazy {
+    SimpleExpressionNodeImpl(collectionExpression)
+  }
 
   override val value: ExpressionNode?
-    get() = null // TBD
+    get() = variableNode(0)
 
   override val key: ExpressionNode?
-    get() = null  // TBD
+    get() = variableNode(1)
 
   override val index: ExpressionNode?
-    get() = null  // TBD
+    get() = variableNode(2)
 }
