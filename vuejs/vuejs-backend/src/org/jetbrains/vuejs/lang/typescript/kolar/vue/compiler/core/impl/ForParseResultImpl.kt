@@ -11,7 +11,7 @@ class ForParseResultImpl(
   private val collectionExpression: JSExpression,
 ) : ForParseResult {
   override val source: ExpressionNode
-    get() = TODO("not implemented")
+    get() = SimpleExpressionNodeImpl(collectionExpression)
 
   override val value: ExpressionNode?
     get() = null // TBD
