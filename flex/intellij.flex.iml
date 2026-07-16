@@ -91,5 +91,6 @@
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
     <orderEntry type="module" module-name="intellij.javascript.analysis.impl" />
     <orderEntry type="module" module-name="intellij.javascript.structureView" />
+    <orderEntry type="module" module-name="intellij.platform.ide.concurrency" />
   </component>
 </module>
