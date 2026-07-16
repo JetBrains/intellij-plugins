@@ -1,5 +1,5 @@
 # Base layer with OpenJDK and Terraform
-FROM gradle:7.6.4-jdk17-jammy AS base
+FROM gradle:8.14.5-jdk17-jammy AS base
 #Install wget
 RUN apt-get update && apt-get install -y gnupg software-properties-common unzip wget
 #Install Terraform

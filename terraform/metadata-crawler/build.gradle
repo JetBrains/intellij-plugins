@@ -5,7 +5,7 @@ import com.bmuschko.gradle.docker.tasks.image.*
 plugins {
   id 'java'
   id 'application'
-  id 'org.jetbrains.kotlin.jvm' version '1.9.23'
+  id 'org.jetbrains.kotlin.jvm' version '2.2.21'
   id 'com.bmuschko.docker-remote-api' version '9.4.0'
 }
 
@@ -28,16 +28,16 @@ def artifactVersion = System.getenv('ARTIFACT_VERSION') ?: '2026.2'
 def artifactName = "terraform-metadata"
 
 def crawlerContainerName = "terraform_metadata_crawler"
-def metadataPath = System.getenv('METADATA_PATH') ?: "${project.buildDir}/metadata/lib"
-def logPath = System.getenv('LOG_PATH') ?: "${project.buildDir}/metadata/log"
+def metadataPath = System.getenv('METADATA_PATH') ?: layout.buildDirectory.dir('metadata/lib').get().asFile.toString()
+def logPath = System.getenv('LOG_PATH') ?: layout.buildDirectory.dir('metadata/log').get().asFile.toString()
 
 dependencies {
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
   implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-  implementation 'com.bertramlabs.plugins:hcl4j:0.9.2'
-  implementation 'org.slf4j:slf4j-api:1.7.36'
-  implementation 'ch.qos.logback:logback-core:1.4.14'
-  implementation 'ch.qos.logback:logback-classic:1.4.14'
+  implementation 'com.bertramlabs.plugins:hcl4j:0.9.8'
+  implementation 'org.slf4j:slf4j-api:2.0.17'
+  implementation 'ch.qos.logback:logback-core:1.5.38'
+  implementation 'ch.qos.logback:logback-classic:1.5.38'
 }
 
 application {
