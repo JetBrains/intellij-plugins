@@ -8,6 +8,7 @@ import com.intellij.codeInspection.HintAction;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.injected.editor.VirtualFileWindow;
+import com.intellij.javascript.flex.index.ActionScriptElementFinder;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -18,7 +19,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.resolve.BackendJSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
@@ -181,7 +181,7 @@ public final class AddImportECMAScriptClassOrFunctionAction implements HintActio
       } else {
         searchScope = JSResolveUtil.getResolveScope(file);
       }
-      return BackendJSResolveUtil.findElementsByName(name, file.getProject(), searchScope);
+      return ActionScriptElementFinder.findElementsByName(name, file.getProject(), searchScope);
     }
     else {
       return Collections.emptyList();

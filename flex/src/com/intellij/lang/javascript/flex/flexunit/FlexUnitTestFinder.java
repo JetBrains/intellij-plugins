@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit;
 
+import com.intellij.javascript.flex.index.ActionScriptElementFinder;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.index.JSIndexKeys;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -8,7 +9,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.resolve.BackendJSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -61,7 +61,7 @@ public final class FlexUnitTestFinder implements TestFinder {
 
     for (final String possibleTestName : allNames) {
       if (possibleTestName.contains(className)) {
-        for (final JSQualifiedNamedElement jsElement : BackendJSResolveUtil.findElementsByName(possibleTestName, element.getProject(), scope)) {
+        for (final JSQualifiedNamedElement jsElement : ActionScriptElementFinder.findElementsByName(possibleTestName, element.getProject(), scope)) {
           final VirtualFile f = jsElement.getContainingFile().getVirtualFile();
           final boolean inTestSource = f != null && fileIndex.isInTestSourceContent(f);
 
@@ -95,7 +95,7 @@ public final class FlexUnitTestFinder implements TestFinder {
 
     final List<Pair<? extends PsiNamedElement, Integer>> classesWithWeights = new ArrayList<>();
     for (Pair<String, Integer> nameWithWeight : TestFinderHelper.collectPossibleClassNamesWithWeights(className)) {
-      for (final JSQualifiedNamedElement jsElement : BackendJSResolveUtil.findElementsByName(nameWithWeight.first, module.getProject(), scope)) {
+      for (final JSQualifiedNamedElement jsElement : ActionScriptElementFinder.findElementsByName(nameWithWeight.first, module.getProject(), scope)) {
         if (jsElement instanceof JSClass && jsElement != jsClass && !((JSClass)jsElement).isInterface() &&
             !flexUnitSupport.isTestClass((JSClass)jsElement, true)) {
           classesWithWeights.add(Pair.create(jsElement, nameWithWeight.second));

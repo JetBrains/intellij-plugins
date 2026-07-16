@@ -10,13 +10,13 @@ import com.intellij.ide.util.gotoByName.ChooseByNamePopupComponent;
 import com.intellij.ide.util.gotoByName.GotoClassModel2;
 import com.intellij.ide.util.treeView.AlphaComparator;
 import com.intellij.ide.util.treeView.NodeRenderer;
+import com.intellij.javascript.flex.index.ActionScriptElementFinder;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.BackendJSResolveUtil;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -333,7 +333,7 @@ public final class JSClassChooserDialog extends DialogWrapper {
 
     @Override
     public Object @NotNull [] getElementsByName(@NotNull String name, @NotNull FindSymbolParameters parameters, @NotNull ProgressIndicator canceled) {
-      final Collection<JSQualifiedNamedElement> elements = BackendJSResolveUtil.findElementsByName(name, myProject, parameters.getSearchScope(), false);
+      final Collection<JSQualifiedNamedElement> elements = ActionScriptElementFinder.findElementsByName(name, myProject, parameters.getSearchScope(), false);
 
       final List<JSClass> list = new ArrayList<>();
       for (JSQualifiedNamedElement element : elements) {

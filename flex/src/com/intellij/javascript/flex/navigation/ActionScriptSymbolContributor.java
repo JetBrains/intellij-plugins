@@ -1,11 +1,11 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.navigation;
 
+import com.intellij.javascript.flex.index.ActionScriptElementFinder;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.index.JSIndexKeys;
 import com.intellij.lang.javascript.navigation.DumbAwareChooseByNameContributor;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.resolve.BackendJSResolveUtil;
 import com.intellij.navigation.ChooseByNameContributorEx;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.DumbAware;
@@ -30,7 +30,7 @@ public final class ActionScriptSymbolContributor extends DumbAwareChooseByNameCo
   public void doProcessElementsWithName(@NotNull String name,
                                         @NotNull Processor<? super NavigationItem> processor,
                                         @NotNull FindSymbolParameters parameters) {
-    Iterator<JSQualifiedNamedElement> elements = BackendJSResolveUtil
+    Iterator<JSQualifiedNamedElement> elements = ActionScriptElementFinder
       .findElementsByName(name, parameters.getProject(), parameters.getSearchScope())
       .stream()
       .filter(o -> DialectDetector.isActionScript(o))

@@ -1,13 +1,13 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.navigation;
 
+import com.intellij.javascript.flex.index.ActionScriptElementFinder;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.navigation.DumbAwareChooseByNameContributor;
 import com.intellij.lang.javascript.psi.ecmal4.JSNamespaceDeclaration;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
-import com.intellij.lang.javascript.psi.resolve.BackendJSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSClassIndex;
 import com.intellij.navigation.GotoClassContributor;
 import com.intellij.navigation.NavigationItem;
@@ -48,7 +48,7 @@ public final class ActionScriptClassContributor extends DumbAwareChooseByNameCon
                                         @NotNull FindSymbolParameters parameters) {
     Project project = parameters.getProject();
     GlobalSearchScope scope = parameters.getSearchScope();
-    Collection<JSQualifiedNamedElement> psiClasses = BackendJSResolveUtil.findElementsByName(name, project, scope);
+    Collection<JSQualifiedNamedElement> psiClasses = ActionScriptElementFinder.findElementsByName(name, project, scope);
 
     for (Iterator<JSQualifiedNamedElement> q = psiClasses.iterator(); q.hasNext(); ) {
       JSQualifiedNamedElement element = q.next();

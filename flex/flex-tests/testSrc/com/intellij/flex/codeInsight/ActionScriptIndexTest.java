@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.resolve.BackendJSResolveUtil;
+import com.intellij.javascript.flex.index.ActionScriptElementFinder;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.navigation.ItemPresentation;
@@ -39,7 +39,7 @@ public class ActionScriptIndexTest extends BasePlatformTestCase {
     GlobalSearchScope scope = getCollectScope(includeNonProjectItems, project);
 
     final Collection<JSPsiElementBase> symbolNavItems = JSClassResolver.findElementsByNameIncludingImplicit(name, scope, false);
-    Collection<JSQualifiedNamedElement> qualified = BackendJSResolveUtil.findElementsByName(name, project, scope);
+    Collection<JSQualifiedNamedElement> qualified = ActionScriptElementFinder.findElementsByName(name, project, scope);
 
     for (Iterator<JSQualifiedNamedElement> q = qualified.iterator(); q.hasNext(); ) {
       JSQualifiedNamedElement element = q.next();
