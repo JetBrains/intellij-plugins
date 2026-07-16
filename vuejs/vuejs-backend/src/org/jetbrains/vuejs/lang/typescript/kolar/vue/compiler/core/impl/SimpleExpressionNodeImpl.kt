@@ -1,13 +1,13 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl
 
-import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.psi.xml.XmlAttributeValue
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ConstantTypes
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SimpleExpressionNode
 
 class SimpleExpressionNodeImpl(
-  private val value: JSExpression,
+  private val value: JSElement,
 ) : NodeImpl(value),
     DefaultSimpleExpressionNode {
   override val content: String
