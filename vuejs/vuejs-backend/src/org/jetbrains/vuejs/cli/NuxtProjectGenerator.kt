@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentEntry
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import org.jetbrains.vuejs.VueBundle
@@ -50,8 +51,14 @@ class NuxtProjectGenerator : NpmPackageProjectGenerator() {
        * a package manager in UI
        */
       "--packageManager=npm",
-      dir.path,
+      getProjectDirectory(dir),
     )
+  }
+
+  private fun getProjectDirectory(dir: VirtualFile): @NlsSafe String {
+    if (generateInTemp()) return dir.name
+    // pass DIR=. to generate project in the working directory
+    return "."
   }
 
   override fun generatorArgs(project: Project, baseDir: VirtualFile): Array<String> {
