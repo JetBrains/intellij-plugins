@@ -11,6 +11,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
+import com.intellij.flex.codeInsight.ActionScriptIndexTest;
 import com.intellij.flex.css.FlexCSSDialect;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
@@ -849,7 +850,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
     assertTrue(Arrays.binarySearch(strings, s) >= 0);
 
-    NavigationItem[] navigationItems = scriptIndex.getSymbolsByName(s, true);
+    NavigationItem[] navigationItems = ActionScriptIndexTest.getSymbolsByName(s, true, getProject());
     assertTrue(navigationItems.length > 0);
 
     boolean containedInLibrarySwf = false;
