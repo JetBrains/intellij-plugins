@@ -26,8 +26,12 @@ fun getChildren(
   tag: XmlTag,
   parentScope: ParentScope,
 ): List<Node> {
-  if (parentScope == ParentScope.IF && tag.hasAttribute(V_FOR))
-    return listOf(ForNodeImpl(tag))
+  if (parentScope == ParentScope.IF) {
+    val forNode = parseForNode(tag)
+    if (forNode != null) {
+      return listOf(forNode)
+    }
+  }
 
   if (parentScope == ParentScope.IF && !isTemplate(tag))
     return listOf(ElementNodeImpl(tag))
@@ -44,7 +48,6 @@ private val NODE_FACTORY_MAP: Map<String, (XmlTag) -> Node?> = mapOf(
   V_IF to ::IfNodeImpl,
   V_ELSE_IF to { null },
   V_ELSE to { null },
-  V_FOR to ::ForNodeImpl,
 )
 
 private fun getChild(
@@ -57,7 +60,8 @@ private fun getChild(
       }
     }
 
-    return ElementNodeImpl(child)
+    return parseForNode(child)
+           ?: ElementNodeImpl(child)
   }
 
   if (child is XmlComment)

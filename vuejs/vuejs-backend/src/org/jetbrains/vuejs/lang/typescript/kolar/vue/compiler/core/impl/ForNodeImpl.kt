@@ -8,11 +8,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 
 class ForNodeImpl(
   tag: XmlTag,
+  override val parseResult: ForParseResult,
 ) : NodeImpl(tag),
     ForNode {
-  override val parseResult: ForParseResult by lazy {
-    ForParseResultImpl(tag.getAttribute(V_FOR)!!)
-  }
-
   override val children: List<Node> by children(tag, ParentScope.FOR)
 }
