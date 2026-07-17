@@ -70,7 +70,7 @@
   - name: intellij.qodana.sarif
   library: qodana-sarif
   files:
-  - name: $MAVEN_REPOSITORY$/com/jetbrains/qodana/qodana-sarif/0/qodana-sarif-0.jar
+  - name: $MAVEN_REPOSITORY$/com/jetbrains/qodana/qodana-sarif/1/qodana-sarif-1.jar
   reason: <- intellij.qodana.sarif
 - name: lib/intellij.qodana.util.jar
   contentModules:
@@ -175,7 +175,7 @@
   - name: intellij.qodana.rust
   library: qodana-sarif
   files:
-  - name: $MAVEN_REPOSITORY$/com/jetbrains/qodana/qodana-sarif/0/qodana-sarif-0.jar
+  - name: $MAVEN_REPOSITORY$/com/jetbrains/qodana/qodana-sarif/1/qodana-sarif-1.jar
   reason: <- intellij.qodana.rust
 - name: lib/modules/intellij.qodana.yaml.jar
   contentModules:
