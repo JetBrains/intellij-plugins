@@ -9,6 +9,7 @@ open class NodeImpl
 protected constructor(
   private val element: PsiElement,
 ) : Node {
-  final override val loc: SourceLocation
-    get() = PsiSourceLocation(element)
+  final override val loc: SourceLocation by lazy {
+    PsiSourceLocation(element)
+  }
 }
