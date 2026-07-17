@@ -16,6 +16,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.ApplicationNamesInfo
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.options.ex.ConfigurableWrapper
@@ -140,7 +141,9 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
               )
           }
           row(PrettierBundle.message("prettier.ignore.path.field.label")) {
-            customIgnorePathField = textFieldWithBrowseButton(project)
+            val ignorePathDescriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
+              .withEnvironmentRestricted(true)
+            customIgnorePathField = textFieldWithBrowseButton(ignorePathDescriptor, project)
               .align(AlignX.FILL)
               .bind({ textField -> textField.text.trim() },
                     TextFieldWithBrowseButton::setText,
