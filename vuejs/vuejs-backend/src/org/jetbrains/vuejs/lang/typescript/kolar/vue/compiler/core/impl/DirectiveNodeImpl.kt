@@ -2,16 +2,18 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl
 
 import com.intellij.psi.xml.XmlAttribute
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.DirectiveNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ExpressionNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SimpleExpressionNode
 
 class DirectiveNodeImpl(
   private val attribute: XmlAttribute,
+  private val info: VueDirectiveInfo,
 ) : NodeImpl(attribute),
     DirectiveNode {
   override val name: String
-    get() = TODO("not implemented")
+    get() = info.name
 
   override val arg: ExpressionNode?
     get() = null // TBD

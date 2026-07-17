@@ -2,6 +2,8 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl
 
 import com.intellij.psi.xml.XmlTag
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementTypes
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
@@ -30,17 +32,21 @@ class ElementNodeImpl(
   override val children: List<Node> by children(element, ParentScope.ELEMENT)
 
   override val props: List<Node> by lazy {
-    element.attributes.mapNotNull {
-      val name = it.name
+    buildList {
+      for (attribute in element.attributes) {
+        val name = attribute.name
+        if (name in STRUCTURAL_DIRECTIVE_NAMES)
+          continue
 
-      when {
-        name in STRUCTURAL_DIRECTIVE_NAMES
-          -> null
+        val info = VueAttributeNameParser.parse(attribute.name, element)
+        val prop = if (info is VueDirectiveInfo) {
+          DirectiveNodeImpl(attribute, info)
+        }
+        else {
+          AttributeNodeImpl(attribute)
+        }
 
-        isDirectiveRawName(name) ->
-          DirectiveNodeImpl(it)
-
-        else -> AttributeNodeImpl(it)
+        add(prop)
       }
     }
   }

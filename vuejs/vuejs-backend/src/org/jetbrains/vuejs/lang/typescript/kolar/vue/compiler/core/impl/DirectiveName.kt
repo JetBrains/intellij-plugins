@@ -8,20 +8,3 @@ const val V_FOR: String = "v-for"
 
 val STRUCTURAL_DIRECTIVE_NAMES: Set<String> =
   setOf(V_IF, V_ELSE_IF, V_ELSE, V_FOR)
-
-private val DIRECTIVE_NAME_MAP: Map<Char, String> = mapOf(
-  ':' to "bind",
-  '.' to "bind",
-  '@' to "on",
-  '#' to "slot",
-)
-
-fun isDirectiveRawName(
-  name: String,
-): Boolean {
-  if (name.isEmpty())
-    return false
-
-  return DIRECTIVE_NAME_MAP.containsKey(name[0])
-         || name.startsWith("v-")
-}
