@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.psi.xml.XmlAttributeValue
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ConstantTypes
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SimpleExpressionNode
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SourceLocation
 
 class SimpleExpressionNodeImpl(
   private val value: JSElement,
@@ -16,9 +17,10 @@ class SimpleExpressionNodeImpl(
 
 class XmlValueExpressionNodeImpl(
   private val value: XmlAttributeValue,
-) : NodeImpl(value),
-    DefaultSimpleExpressionNode {
-  // TODO: override `loc`?
+) : DefaultSimpleExpressionNode {
+  override val loc: SourceLocation by lazy {
+    AttributeValueSourceLocation(value)
+  }
 
   override val content: String
     get() = value.value
