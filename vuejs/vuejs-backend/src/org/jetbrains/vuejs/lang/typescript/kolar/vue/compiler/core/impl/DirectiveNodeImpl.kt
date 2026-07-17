@@ -16,11 +16,13 @@ class DirectiveNodeImpl(
   override val arg: ExpressionNode?
     get() = null // TBD
 
-  override val exp: ExpressionNode?
-    get() = null // TBD
+  override val exp: ExpressionNode? by lazy {
+    attribute.valueElement
+      ?.let(::XmlValueExpressionNodeImpl)
+  }
 
-  override val rawName: String?
-    get() = null // TBD
+  override val rawName: String
+    get() = attribute.name
 
   override val modifiers: List<SimpleExpressionNode>
     get() = emptyList() // TBD
