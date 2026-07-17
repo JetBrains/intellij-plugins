@@ -12,7 +12,7 @@ val STRUCTURAL_DIRECTIVE_NAMES: Set<String> =
 private val DIRECTIVE_ATTRIBUTE_STARTS: Set<String> =
   setOf(":", ".", "@", "#", "v-")
 
-fun isDirectiveAttributeName(
+fun isDirectiveRawName(
   name: String,
 ): Boolean =
   DIRECTIVE_ATTRIBUTE_STARTS

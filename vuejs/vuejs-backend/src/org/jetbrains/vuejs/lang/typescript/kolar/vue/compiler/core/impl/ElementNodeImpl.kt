@@ -37,7 +37,7 @@ class ElementNodeImpl(
         name in STRUCTURAL_DIRECTIVE_NAMES
           -> null
 
-        isDirectiveAttributeName(name) ->
+        isDirectiveRawName(name) ->
           DirectiveNodeImpl(it)
 
         else -> AttributeNodeImpl(it)
