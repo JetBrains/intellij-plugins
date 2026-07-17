@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.AttributeNode
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SourceLocation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.TextNode
 
 class AttributeNodeImpl(
@@ -21,8 +22,11 @@ class AttributeNodeImpl(
 
 private class AttributeValueNodeImpl(
   private val element: XmlAttributeValue,
-) : NodeImpl(element),
-    TextNode {
+) : TextNode {
+  override val loc: SourceLocation by lazy {
+    AttributeValueSourceLocation(element)
+  }
+
   override val content: String
     get() = element.value
 }
