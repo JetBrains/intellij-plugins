@@ -4,15 +4,12 @@ import com.intellij.ide.browsers.BrowserLauncher
 import com.intellij.ide.browsers.WebBrowser
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
-import java.io.File
 import java.nio.file.Path
 
 class TestBrowserLauncher : BrowserLauncher() {
   var timesBrowserOpened = 0
 
   override fun open(url: String) { }
-
-  override fun browse(file: File) { }
 
   override fun browse(file: Path) { }
 
