@@ -1,0 +1,12 @@
+<idea-plugin>
+  <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <plugin id="com.thoughtworks.gauge"/>
+    <module name="intellij.gradle"/>
+    <module name="intellij.gradle.settings"/>
+    <!-- endregion -->
+  </dependencies>
+  <extensions defaultExtensionNs="com.thoughtworks.gauge">
+    <moduleImporter implementation="com.intellij.gauge.gradle.GaugeGradleImporter"/>
+  </extensions>
+</idea-plugin>

@@ -1,0 +1,64 @@
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.gauge.gradle` start
+jvm_library(
+    name = "gradle",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.gauge.gradle",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "//contrib/gauge",
+        "@community//platform/core-api:core",
+        "@community//platform/util",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/util/concurrency",
+        "@community//plugins/gradle/settings",
+        "@community//plugins/gradle",
+    ],
+)
+
+jvm_library(
+    name = "gradle_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.gauge.gradle",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":gradle",
+        "//contrib/gauge:gauge_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/util/concurrency:concurrency_test_lib",
+        "@community//plugins/gradle/settings:settings_test_lib",
+        "@community//plugins/gradle:gradle_test_lib",
+    ],
+)
+### auto-generated section `build intellij.gauge.gradle` end
+
+### auto-generated section `iml intellij.gauge.gradle` start
+exports_files(
+    [
+        "intellij.gauge.gradle.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.gauge.gradle` end

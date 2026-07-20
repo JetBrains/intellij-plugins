@@ -11,3 +11,9 @@
 - name: lib/gauge.jar
   modules:
   - name: intellij.gauge
+- name: lib/modules/intellij.gauge.gradle.jar
+  contentModules:
+  - name: intellij.gauge.gradle
+- name: lib/modules/intellij.gauge.maven.jar
+  contentModules:
+  - name: intellij.gauge.maven

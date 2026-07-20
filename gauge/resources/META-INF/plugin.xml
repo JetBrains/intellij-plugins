@@ -15,7 +15,6 @@
     <module name="intellij.java.psi"/>
     <module name="intellij.libraries.grpc"/>
     <module name="intellij.libraries.grpc.netty.shaded"/>
-    <module name="intellij.maven"/>
     <module name="intellij.platform.smRunner"/>
     <module name="intellij.platform.testRunner"/>
     <!-- endregion -->
@@ -24,10 +23,9 @@
   <content namespace="jetbrains">
     <!-- The implicit main module of the plugin depends on internal modules (intellij.libraries.grpc.netty.shaded), so it's required to set the namespace for it
          todo: extract elements and dependencies to an explicit content module (see IJPL-212351) -->
+    <module name="intellij.gauge.gradle"/>
+    <module name="intellij.gauge.maven"/>
   </content>
-
-  <depends optional="true" config-file="with-gradle.xml">org.jetbrains.plugins.gradle</depends>
-  <depends optional="true" config-file="with-maven.xml">org.jetbrains.idea.maven</depends>
 
   <description><![CDATA[
     Plugin for writing <a href="https://gauge.org">Gauge tests</a> (originally developed by Thoughtworks Inc.).

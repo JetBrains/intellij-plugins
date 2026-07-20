@@ -1,0 +1,11 @@
+<idea-plugin>
+  <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <plugin id="com.thoughtworks.gauge"/>
+    <module name="intellij.maven"/>
+    <!-- endregion -->
+  </dependencies>
+  <extensions defaultExtensionNs="com.thoughtworks.gauge">
+    <moduleImporter implementation="com.intellij.gauge.maven.GaugeMavenImporter"/>
+  </extensions>
+</idea-plugin>

@@ -1,4 +1,4 @@
-package com.thoughtworks.gauge.wizard.gradle;
+package com.intellij.gauge.gradle;
 
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -19,7 +19,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 import java.io.File;
 import java.io.IOException;
 
-final class GaugeGradleImporter implements GaugeModuleImporter {
+public final class GaugeGradleImporter implements GaugeModuleImporter {
   @Override
   public String getId() {
     return "gradle";
@@ -81,7 +81,7 @@ final class GaugeGradleImporter implements GaugeModuleImporter {
         String buildText = VfsUtilCore.loadText(buildGradle)
           .replace("'Gradle_example'", "'org.example'")
           .replace("'com.thoughtworks.gauge:gauge-java:0.7.2'",
-                   "'com.thoughtworks.gauge:gauge-java:" + MINIMAL_GAUGE_JAVA_VERSION + "'"); // patch version
+                   "'com.thoughtworks.gauge:gauge-java:" + GaugeModuleImporter.MINIMAL_GAUGE_JAVA_VERSION + "'"); // patch version
         VfsUtil.saveText(buildGradle, buildText);
       }
       catch (IOException e) {

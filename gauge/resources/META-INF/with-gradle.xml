@@ -1,5 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="com.thoughtworks.gauge">
-    <moduleImporter implementation="com.thoughtworks.gauge.wizard.gradle.GaugeGradleImporter"/>
-  </extensions>
-</idea-plugin>

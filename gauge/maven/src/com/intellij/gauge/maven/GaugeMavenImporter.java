@@ -1,4 +1,4 @@
-package com.thoughtworks.gauge.wizard.maven;
+package com.intellij.gauge.maven;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-final class GaugeMavenImporter implements GaugeModuleImporter {
+public final class GaugeMavenImporter implements GaugeModuleImporter {
 
   private static final String GAUGE_SELENIUM_ARCHETYPE = "gauge-archetype-selenium";
   private static final String GAUGE_ARCHETYPE = "gauge-archetype-java";
