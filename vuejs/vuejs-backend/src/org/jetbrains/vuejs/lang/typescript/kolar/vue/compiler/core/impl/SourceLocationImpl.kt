@@ -10,7 +10,12 @@ class SourceLocationImpl(
   override val startOffset: Int,
   override val endOffset: Int,
   override val source: String,
-) : SourceLocation
+) : SourceLocation {
+  companion object {
+    val EMPTY: SourceLocation =
+      SourceLocationImpl(-1, -1, "")
+  }
+}
 
 class PsiSourceLocation(
   private val element: PsiElement,
