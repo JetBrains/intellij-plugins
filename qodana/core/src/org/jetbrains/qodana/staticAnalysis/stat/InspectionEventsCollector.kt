@@ -4,11 +4,11 @@ package org.jetbrains.qodana.staticAnalysis.stat
 import com.intellij.codeInspection.ex.InspectListener.InspectionKind
 import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.codeInspection.ex.ProjectInspectionToolRegistrar
-import com.intellij.internal.statistic.collectors.fus.fileTypes.FileTypeUsagesCollector
 import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.internal.statistic.utils.PluginInfo
 import com.intellij.internal.statistic.utils.getPluginInfoByDescriptor
+import com.intellij.openapi.fileTypes.impl.FileTypeValidationRule
 import com.intellij.openapi.project.Project
 
 internal const val FLEXINSPECT_STATS_INSPECTION_ID = "flexinspect"
@@ -30,7 +30,7 @@ internal object InspectionEventsCollector : CounterUsagesCollector() {
   private val lowerBoundField = EventFields.Long("lowerBound")
   private val upperBoundField = EventFields.Long("upperBound")
   private val filesCountField = EventFields.Int("filesCount")
-  private val filetypeField = EventFields.StringValidatedByCustomRule<FileTypeUsagesCollector.ValidationRule>("filetype")
+  private val filetypeField = EventFields.StringValidatedByCustomRule<FileTypeValidationRule>("filetype")
   private val totalCountField = EventFields.RoundedInt("totalCount")
   private val analyzedCountField = EventFields.RoundedInt("analyzedCount")
   private val qodanaActivityKindField = EventFields.Enum<QodanaActivityKind>("activityKind")
