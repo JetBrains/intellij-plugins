@@ -70,8 +70,10 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
       Files.writeString(disabledPluginMacPath, disablePluginsText, StandardOpenOption.TRUNCATE_EXISTING)
       ApplicationManagerEx.getApplicationEx().exit(true, true)
     }
-    catch (e: Throwable) {
-      LOG.error(e)
+    catch (@Suppress("IncorrectCancellationExceptionHandling") e: Throwable) {
+      // Never hand a control-flow exception to LOG.error: the platform logger rethrows it, which would skip
+      // the exitProcess below and hang this ApplicationStarter on non-daemon threads (same defect as QD-15440).
+      if (!Logger.shouldRethrow(e)) LOG.error(e)
       exitProcess(1)
     }
   }
