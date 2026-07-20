@@ -1,11 +1,18 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl
 
+import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.childrenSequence
 import com.intellij.psi.xml.XmlComment
 import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.xml.XmlText
 import com.intellij.util.containers.sequenceOfNotNull
+import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueTSLanguage
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 
 enum class ParentScope {
@@ -54,6 +61,7 @@ private fun getChildrenSequence(
 ): Sequence<Node> =
   when (element) {
     is XmlTag -> sequenceOfNotNull(getTagChild(element))
+    is XmlText -> getTextChildren(element)
     is XmlComment -> sequenceOf(CommentNodeImpl(element))
     else -> emptySequence()
   }
@@ -69,4 +77,34 @@ private fun getTagChild(
 
   return parseForNode(tag)
          ?: ElementNodeImpl(tag)
+}
+
+private fun getTextChildren(
+  element: XmlText,
+): Sequence<Node> {
+  val injectedFiles = InjectedLanguageManager.getInstance(element.project)
+                        .getInjectedPsiFiles(element)
+                      ?: return emptySequence()
+
+  return injectedFiles.asSequence()
+    .mapNotNull { getInterpolationNode(it.first, it.second) }
+}
+
+private fun getInterpolationNode(
+  element: PsiElement,
+  fileRange: TextRange,
+): Node? {
+  if (element !is JSFile)
+    return null
+
+  if (element.language != VueJSLanguage
+      && element.language != VueTSLanguage)
+    return null
+
+  val content = element.childrenSequence
+                  .filterIsInstance<VueJSEmbeddedExpressionContent>()
+                  .firstOrNull()
+                ?: return null
+
+  return InterpolationNodeImpl(content, fileRange)
 }
