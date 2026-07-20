@@ -2,7 +2,7 @@
 package org.angular2.findUsages
 
 import com.intellij.lang.javascript.findUsages.JSSearchCandidateBatcherTestSupport
-import com.intellij.lang.javascript.findUsages.JSSearchCandidateBatcherTestSupport.EXPERIMENTAL_FIND_USAGES_REGISTRY_KEY
+import com.intellij.lang.javascript.findUsages.JSSearchCandidateBatcherTestSupport.EXPERIMENTAL_CANDIDATES_BATCHING_KEY
 import com.intellij.openapi.util.registry.Registry
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
@@ -31,7 +31,7 @@ class Angular2SearchCandidateBatcherTest : Angular2TestCase("findUsages") {
 
   @Test
   fun testGroupsTemplateCandidatesByComponentConfig() {
-    Registry.get(EXPERIMENTAL_FIND_USAGES_REGISTRY_KEY).setValue(true, testRootDisposable)
+    Registry.get(EXPERIMENTAL_CANDIDATES_BATCHING_KEY).setValue(true, testRootDisposable)
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_19_2_0, dir = true, dirName = "importGraphBatcher", configureFile = false) {
       val root = tempDirFixture.findOrCreateDir(".")
 
