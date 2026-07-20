@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.childrenSequence
 import com.intellij.psi.xml.XmlComment
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.containers.sequenceOfNotNull
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 
 enum class ParentScope {
@@ -38,7 +39,7 @@ fun getChildren(
     return listOf(ElementNodeImpl(tag))
 
   return tag.childrenSequence
-    .mapNotNull(::getChild)
+    .flatMap(::getChildrenSequence)
     .toList()
 }
 
@@ -48,22 +49,24 @@ private val NODE_FACTORY_MAP: Map<String, (XmlTag) -> Node?> = mapOf(
   V_ELSE to { null },
 )
 
-private fun getChild(
+private fun getChildrenSequence(
   child: PsiElement,
-): Node? {
+): Sequence<Node> {
   if (child is XmlTag) {
     for ((directiveName, factory) in NODE_FACTORY_MAP) {
       if (child.hasAttribute(directiveName)) {
-        return factory(child)
+        return sequenceOfNotNull(factory(child))
       }
     }
 
-    return parseForNode(child)
-           ?: ElementNodeImpl(child)
+    return sequenceOf(
+      parseForNode(child)
+      ?: ElementNodeImpl(child),
+    )
   }
 
   if (child is XmlComment)
-    return CommentNodeImpl(child)
+    return sequenceOf(CommentNodeImpl(child))
 
-  return null
+  return emptySequence()
 }
