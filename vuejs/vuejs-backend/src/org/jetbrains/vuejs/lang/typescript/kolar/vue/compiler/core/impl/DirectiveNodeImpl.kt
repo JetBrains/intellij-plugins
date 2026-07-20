@@ -19,8 +19,12 @@ class DirectiveNodeImpl(
   override val name: String
     get() = info.name
 
-  override val arg: ExpressionNode?
-    get() = null // TBD
+  override val arg: ExpressionNode? by lazy {
+    val argument = info.arguments ?: return@lazy null
+    val nameElement = attribute.nameElement ?: return@lazy null
+
+    DirectiveArgExpressionNode(nameElement, argument)
+  }
 
   override val exp: ExpressionNode? by lazy {
     attribute.valueElement
@@ -31,12 +35,36 @@ class DirectiveNodeImpl(
     get() = attribute.name
 
   override val modifiers: List<SimpleExpressionNode> by lazy {
-    val nameElement = attribute.nameElement!!
+    val nameElement = attribute.nameElement ?: return@lazy emptyList()
 
     info.modifiers.map { modifierName ->
       DirectiveModifierExpressionNode(nameElement, modifierName)
     }
   }
+}
+
+private class DirectiveArgExpressionNode(
+  nameElement: XmlElement,
+  private val argument: String,
+) : SimpleExpressionNode {
+  override val loc: SourceLocation by lazy {
+    // naive implementation
+    val startOffset = nameElement.startOffset + nameElement.text.indexOf(":$argument") + 1
+    val endOffset = startOffset + argument.length
+    val dynamicCorrection = if (isStatic) 0 else 1
+    SourceLocationImpl(
+      startOffset = startOffset + dynamicCorrection,
+      endOffset = endOffset - dynamicCorrection,
+      source = content,
+    )
+  }
+
+  override val content: String by lazy {
+    argument.removeSurrounding("[", "]")
+  }
+
+  override val isStatic: Boolean = !argument.startsWith("[")
+  override val constType: ConstantTypes = ConstantTypes.NOT_CONSTANT
 }
 
 private class DirectiveModifierExpressionNode(
