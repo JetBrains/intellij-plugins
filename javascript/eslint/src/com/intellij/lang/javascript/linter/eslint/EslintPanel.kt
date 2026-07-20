@@ -150,13 +150,15 @@ internal class EslintPanel(project: Project, private val fullModeDialog: Boolean
     )
     workDirPatternsTextField.emptyText.text = EslintBundle.message("eslint.configurable.working.dir.field.empty.text")
     val result = ComponentWithBrowseButton(workDirPatternsTextField, null)
-    result.addBrowseFolderListener(project, FileChooserDescriptorFactory.createMultipleFoldersDescriptor(), TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT)
+    result.addBrowseFolderListener(project, FileChooserDescriptorFactory.createMultipleFoldersDescriptor().withEnvironmentRestricted(true), TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT)
     return result
   }
 
   private fun createAdditionalRulesDirField(project: Project): TextFieldWithBrowseButton {
     val result = TextFieldWithBrowseButton()
-    val descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(EslintBundle.message("eslint.configurable.additionalRulesDir.browseDialogTitle"))
+    val descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
+      .withTitle(EslintBundle.message("eslint.configurable.additionalRulesDir.browseDialogTitle"))
+      .withEnvironmentRestricted(true)
     SwingHelper.installFileCompletionAndBrowseDialog(project, result, descriptor)
     return result
   }
