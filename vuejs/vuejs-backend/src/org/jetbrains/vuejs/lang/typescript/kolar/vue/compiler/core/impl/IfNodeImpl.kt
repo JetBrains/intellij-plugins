@@ -12,7 +12,7 @@ class IfNodeImpl(
 ) : IfNode {
   override val loc: SourceLocation
     // TODO: include all branches?
-    get() = PsiSourceLocation(tag)
+    get() = PsiSourceLocation(tag, null)
 
   override val branches: List<IfBranchNode> by lazy {
     buildList {
