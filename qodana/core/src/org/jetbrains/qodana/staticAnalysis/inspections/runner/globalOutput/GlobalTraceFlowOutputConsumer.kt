@@ -71,6 +71,10 @@ abstract class GlobalTraceFlowOutputConsumer : GlobalOutputConsumer {
   private class TraceProblem(val element: Element) : Problem {
     override suspend fun getSarif(macroManager: PathMacroManager, database: QodanaToolResultDatabase): Result {
       macroManager.collapsePathsRecursively(element)
+      if (element.getChild("fragments")?.getChildren("fragment").isNullOrEmpty()) {
+        // Non-taint detections are exported without trace fragments: report them as ordinary results
+        return ElementToSarifConverter.convertFromXmlFormat(element, macroManager)
+      }
       return convertTraceFromXmlFormat(element, macroManager).apply {
         if (!codeFlows.isNullOrEmpty()) {
           getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.TAINT
