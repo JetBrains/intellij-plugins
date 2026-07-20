@@ -51,6 +51,7 @@
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.platform.collaborationTools"/>
     <module name="intellij.platform.collaborationTools.auth"/>
+    <module name="intellij.platform.ide.internal"/>
     <module name="intellij.platform.inspect"/>
     <module name="intellij.platform.problemView.shared"/>
     <module name="intellij.platform.problemView.ui"/>
