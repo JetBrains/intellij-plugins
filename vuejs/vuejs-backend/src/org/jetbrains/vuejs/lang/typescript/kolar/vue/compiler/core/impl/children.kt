@@ -50,23 +50,23 @@ private val NODE_FACTORY_MAP: Map<String, (XmlTag) -> Node?> = mapOf(
 )
 
 private fun getChildrenSequence(
-  child: PsiElement,
+  element: PsiElement,
 ): Sequence<Node> {
-  if (child is XmlTag) {
+  if (element is XmlTag) {
     for ((directiveName, factory) in NODE_FACTORY_MAP) {
-      if (child.hasAttribute(directiveName)) {
-        return sequenceOfNotNull(factory(child))
+      if (element.hasAttribute(directiveName)) {
+        return sequenceOfNotNull(factory(element))
       }
     }
 
     return sequenceOf(
-      parseForNode(child)
-      ?: ElementNodeImpl(child),
+      parseForNode(element)
+      ?: ElementNodeImpl(element),
     )
   }
 
-  if (child is XmlComment)
-    return sequenceOf(CommentNodeImpl(child))
+  if (element is XmlComment)
+    return sequenceOf(CommentNodeImpl(element))
 
   return emptySequence()
 }
