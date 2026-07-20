@@ -43,9 +43,7 @@ class QodanaPycharmPythonPathActivity : QodanaLinterProjectActivity() {
           launch(QodanaDispatchers.Default) {
             project.trackActivity(Key) {
               modules.forEach { module ->
-                withContext(QodanaDispatchers.Ui) {
-                  PySdkFromEnvironmentVariable.setModuleSdk(module, projectSdk, pycharmPythonPathSdk, pycharmPythonPath)
-                }
+                PySdkFromEnvironmentVariable.setModuleSdk(module, projectSdk, pycharmPythonPathSdk, pycharmPythonPath)
               }
             }
           }
