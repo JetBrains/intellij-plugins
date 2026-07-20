@@ -10,27 +10,24 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SourceLocatio
 class SimpleExpressionNodeImpl(
   private val value: JSElement,
 ) : NodeImpl(value),
-    DefaultSimpleExpressionNode {
+    SimpleExpressionNode {
   override val content: String
     get() = value.text
+
+  override val isStatic: Boolean = false
+  override val constType: ConstantTypes = ConstantTypes.NOT_CONSTANT
 }
 
 class XmlValueExpressionNodeImpl(
   private val value: XmlAttributeValue,
-) : DefaultSimpleExpressionNode {
+) : SimpleExpressionNode {
   override val loc: SourceLocation by lazy {
     AttributeValueSourceLocation(value)
   }
 
   override val content: String
     get() = value.value
-}
 
-interface DefaultSimpleExpressionNode :
-  SimpleExpressionNode {
-  override val isStatic: Boolean
-    get() = false
-
-  override val constType: ConstantTypes
-    get() = ConstantTypes.NOT_CONSTANT
+  override val isStatic: Boolean = false
+  override val constType: ConstantTypes = ConstantTypes.NOT_CONSTANT
 }
