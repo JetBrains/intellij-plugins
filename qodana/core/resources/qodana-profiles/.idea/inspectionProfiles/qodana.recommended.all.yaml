@@ -114,6 +114,9 @@ groups:
       - PyArgumentListInspection # QD-11389 FPs on real python projects (due to python being dynamic and not type friendly)
       - PyTypeCheckerInspection # QD-11389 FPs on real python projects (due to python being dynamic and not type friendly)
 
+      #C++
+      - CppUseDesignatedInitializers # QD-15497 Spam on aggregate tables and unsafe for C++ language levels before C++20
+
       #Ruby
       -
       #Security
