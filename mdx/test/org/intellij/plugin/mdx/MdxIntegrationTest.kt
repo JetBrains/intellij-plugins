@@ -8,7 +8,7 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import org.junit.jupiter.api.Test
 
 /** Integration tests for IDE features that span multiple subsystems: resolve, reformat, find-usages, folding. */
-@TestDataPath($$"$PROJECT_ROOT/contrib/mdx/testData")
+@TestDataPath($$"$PROJECT_ROOT/contrib/mdx/testData/integration")
 class MdxIntegrationTest : MdxTestBase() {
 
     @Test
@@ -35,20 +35,24 @@ class MdxIntegrationTest : MdxTestBase() {
 
     @Test
     fun testFoldingImports() {
-        myFixture.testFolding("$testDataPath/$testName.mdx")
+        doTestFolding()
     }
 
     @Test
     fun testFoldingOneImport() {
-        myFixture.testFolding("$testDataPath/$testName.mdx")
+        doTestFolding()
     }
 
     @Test
     fun testFoldingMultilineImport() {
+        doTestFolding()
+    }
+
+    private fun doTestFolding() {
         val virtualFile = myFixture.copyFileToProject("$testName.mdx")
         val psiFile = myFixture.psiManager.findFile(virtualFile) ?: error("No PSI file for $virtualFile")
         val expected = psiFile.text.replace("\r", "")
-        myFixture.configureByText("$testName.mdx", CodeInsightTestFixtureImpl.removeFoldingMarkers(expected))
+        myFixture.configureByText(virtualFile.name, CodeInsightTestFixtureImpl.removeFoldingMarkers(expected))
         val actual = (myFixture as CodeInsightTestFixtureImpl)
             .getFoldingDescription(true, false)
             .normalizeMdxFoldingDescription()
