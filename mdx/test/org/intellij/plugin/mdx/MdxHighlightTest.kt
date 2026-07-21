@@ -20,7 +20,9 @@ class MdxHighlightTest : MdxTestBase() {
 
 
     @Test
-    fun testJsxSimple() = doTestHighlighting()
+    fun testJsxSimple() {
+        doTestHighlighting()
+    }
 
     @Test
     fun testUnresolvedVariable() {
@@ -74,38 +76,44 @@ class MdxHighlightTest : MdxTestBase() {
 
     /** Plain Markdown prose is valid MDX. */
     @Test
-    fun testPlainProse() = doAssertNoErrors()
+    fun testPlainProse() {
+        doAssertNoErrors()
+    }
 
     /** A self-closing JSX flow element is valid MDX. */
     @Test
-    fun testSelfClosingJsx() = doAssertNoErrors()
+    fun testSelfClosingJsx() {
+        doAssertNoErrors()
+    }
 
     /** An ESM export and an inline `{expression}` that references it are valid MDX. */
     @Test
-    fun testExportAndExpression() = doAssertNoErrors()
+    fun testExportAndExpression() {
+        doAssertNoErrors()
+    }
 
     /** A JSX flow element with a string attribute and inline children is valid MDX. */
     @Test
-    fun testJsxWithAttribute() = doAssertNoErrors()
+    fun testJsxWithAttribute() {
+        doAssertNoErrors()
+    }
 
     /** A fenced code block with plain JavaScript is valid MDX (opaque code). */
     @Test
-    fun testFencedJsCode() = doAssertNoErrors()
+    fun testFencedJsCode() {
+        doAssertNoErrors()
+    }
 
     /** A GFM table is valid MDX (GFM is enabled in the MDX flavour). */
     @Test
-    fun testGfmTable() = doAssertNoErrors()
+    fun testGfmTable() {
+        doAssertNoErrors()
+    }
 
     // --- Editor-highlighter token/color layer (MdxEditorHighlighter + JS/JSX layer) --------
     // Queries myFixture.editor.highlighter directly, not the inspection pipeline.
     // Intentionally RED (WEB-78468): testFlowExpressionIsColoredAsJs, testInlineExpressionIsColoredAsJs —
     // the editor-highlighter JS layer doesn't yet cover inline/flow expressions in the redesigned PSI.
-
-    private fun testDataText(name: String = testName): String {
-        val virtualFile = myFixture.copyFileToProject("$name.mdx")
-        val psiFile = myFixture.psiManager.findFile(virtualFile) ?: error("No PSI file for $virtualFile")
-        return psiFile.text
-    }
 
     /** Configures the file and returns (start, tokenText, attribute-key chain) per EDITOR token. */
     private fun editorHighlightingTokens(text: String): List<Triple<Int, String, List<String>>> {
@@ -126,6 +134,12 @@ class MdxHighlightTest : MdxTestBase() {
             it.advance()
         }
         return tokens
+    }
+
+    private fun testDataText(name: String = testName): String {
+        val virtualFile = myFixture.copyFileToProject("$name.mdx")
+        val psiFile = myFixture.psiManager.findFile(virtualFile) ?: error("No PSI file for $virtualFile")
+        return psiFile.text
     }
 
     /** Mirrors EditorTestUtil.serializeTextAttributeKey: external name + fallback chain. */

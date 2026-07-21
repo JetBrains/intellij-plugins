@@ -64,6 +64,8 @@
     <editorHighlighterProvider filetype="MDX"
                                implementationClass="org.intellij.plugin.mdx.highlighting.MdxEditorHighlighterProvider"/>
     <colorSettingsPage implementation="org.intellij.plugin.mdx.highlighting.MdxColorSettingsPage"/>
+    <defaultHighlightingSettingProvider
+        implementation="org.intellij.plugin.mdx.highlighting.MdxInjectedHighlightingSettingProvider"/>
 
     <lang.parserDefinition language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSParserDefinition"/>
     <stubElementRegistryExtension implementation="org.intellij.plugin.mdx.js.MdxJSStubRegistryExtension"/>
