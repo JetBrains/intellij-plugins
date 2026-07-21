@@ -6,7 +6,7 @@ import com.intellij.testFramework.TestDataPath
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-@TestDataPath($$"$PROJECT_ROOT/contrib/mdx/testData")
+@TestDataPath($$"$PROJECT_ROOT/contrib/mdx/testData/parsing")
 class MdxParsingTest : MdxTestBase() {
 
   @BeforeEach fun enableParsingTestInspections() = enableJsxInspections()
@@ -20,12 +20,11 @@ class MdxParsingTest : MdxTestBase() {
    * a JVM with the heavy code-insight tests without the parser tree changing under it.
    */
   private fun doTest() {
-    val parsingDir = "$testDataPath/parsing"
-    val virtualFile = myFixture.copyFileToProject("parsing/$testName.mdx")
+    val virtualFile = myFixture.copyFileToProject("$testName.mdx", "$testName-raw.mdx")
     val psiFile = myFixture.psiManager.findFile(virtualFile) ?: error("No PSI file for $virtualFile")
     val text = StringUtil.convertLineSeparators(psiFile.text).trim()
     myFixture.configureByText("$testName.mdx", text)
-    ParsingTestCase.doCheckResult(parsingDir, myFixture.file, true, testName, false, true)
+    ParsingTestCase.doCheckResult(testDataPath, myFixture.file, true, testName, false, true)
   }
 
   @Test
@@ -89,6 +88,24 @@ class MdxParsingTest : MdxTestBase() {
   }
 
   // --- WEB-78468 (MDX redesign) coverage: problematic examples from the linked issues ---
+
+  /**
+   * Trailing whitespace after inline flow content (`<div>dqwd` then a continuation line with trailing
+   * spaces) used to crash the block parser with "Intersecting parsed nodes".
+   */
+  @Test
+  fun testParsingFlowContentTrailingSpace() {
+    doTest()
+  }
+
+  /**
+   * A half-typed closing tag (`</div`, no `>` yet) followed by a code fence used to crash the block
+   * parser with "Intersecting parsed nodes" when the opening-line paragraph spanned into the fence.
+   */
+  @Test
+  fun testParsingIncompleteClosingBeforeFence() {
+    doTest()
+  }
 
   /**
    * WEB-59041 regression anchor: fenced code inside a JSX element. The scanner keeps the fenced code

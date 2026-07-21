@@ -2,6 +2,7 @@ package org.intellij.plugin.mdx.lang.parse
 
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
+import org.intellij.markdown.flavours.gfm.GFMConstraints
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.GeneratingProvider
 import org.intellij.markdown.lexer.MarkdownLexer
@@ -9,7 +10,6 @@ import org.intellij.markdown.parser.LinkMap
 import org.intellij.markdown.parser.MarkerProcessor
 import org.intellij.markdown.parser.MarkerProcessorFactory
 import org.intellij.markdown.parser.ProductionHolder
-import org.intellij.markdown.parser.constraints.CommonMarkdownConstraints
 import org.intellij.markdown.parser.constraints.MarkdownConstraints
 import org.intellij.markdown.parser.markerblocks.MarkerBlockProvider
 import org.intellij.markdown.parser.markerblocks.providers.CodeBlockProvider
@@ -47,7 +47,7 @@ object MdxFlavourDescriptor : CommonMarkFlavourDescriptor() {
 
 private object MdxProcessFactory : MarkerProcessorFactory {
   override fun createMarkerProcessor(productionHolder: ProductionHolder): MarkerProcessor<*> {
-    return MdxMarkerProcessor(productionHolder, CommonMarkdownConstraints.BASE)
+    return MdxMarkerProcessor(productionHolder, GFMConstraints.BASE)
   }
 }
 

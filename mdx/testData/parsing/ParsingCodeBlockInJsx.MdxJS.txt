@@ -1,5 +1,27 @@
 JSFile:ParsingCodeBlockInJsx.mdx(0,76)
-  PsiElement(OUTER_BLOCK)('# Markdown\n\n<div>\n```c\n#include <stdio.h>\n```\n</div>\n\n# Markdown with errors')(0,76)
+  PsiElement(OUTER_BLOCK)('# Markdown\n\n')(0,12)
+  PsiWhiteSpace('')(12,12)
+  JSEmptyStatement(12,12)
+    <empty list>
+  JSExpressionStatement(12,52)
+    XmlTag:div(12,52)
+      XmlToken:XML_START_TAG_START('<')(12,13)
+      XmlToken:XML_TAG_NAME('div')(13,16)
+      XmlToken:XML_TAG_END('>')(16,17)
+      PsiWhiteSpace('\n')(17,18)
+      XmlText(18,18)
+        <empty list>
+      PsiElement(OUTER_BLOCK)('```c\n#include <stdio.h>\n```')(18,45)
+      PsiWhiteSpace('')(45,45)
+      XmlText(45,45)
+        <empty list>
+      PsiWhiteSpace('\n')(45,46)
+      XmlToken:XML_END_TAG_START('</')(46,48)
+      XmlToken:XML_TAG_NAME('div')(48,51)
+      XmlToken:XML_TAG_END('>')(51,52)
+  JSEmptyStatement(52,52)
+    <empty list>
+  PsiElement(OUTER_BLOCK)('\n\n# Markdown with errors')(52,76)
   PsiWhiteSpace('')(76,76)
   JSEmptyStatement(76,76)
     <empty list>

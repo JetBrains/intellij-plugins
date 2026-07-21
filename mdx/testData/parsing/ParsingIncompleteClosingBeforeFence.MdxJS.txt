@@ -1,0 +1,29 @@
+JSFile:ParsingIncompleteClosingBeforeFence.mdx(0,37)
+  JSExpressionStatement(0,11)
+    XmlTag:div(0,11)
+      XmlToken:XML_START_TAG_START('<')(0,1)
+      XmlToken:XML_TAG_NAME('div')(1,4)
+      XmlToken:XML_TAG_END('>')(4,5)
+      XmlToken:XML_END_TAG_START('</')(5,7)
+      XmlToken:XML_TAG_NAME('div')(7,10)
+      PsiErrorElement:Closing tag is not valid(10,10)
+        <empty list>
+      PsiWhiteSpace('\n')(10,11)
+  PsiErrorElement:Statement expected(11,11)
+    <empty list>
+  PsiErrorElement:Statement expected(11,11)
+    <empty list>
+  PsiElement(OUTER_BLOCK)('    ```tsx\n\n    ```')(11,30)
+  PsiWhiteSpace('')(30,30)
+  PsiErrorElement:Statement expected(30,30)
+    <empty list>
+  PsiWhiteSpace('\n')(30,31)
+  XmlToken:XML_END_TAG_START('</')(31,33)
+  PsiErrorElement:Statement expected(33,33)
+    <empty list>
+  XmlToken:XML_TAG_NAME('div')(33,36)
+  PsiErrorElement:Statement expected(36,36)
+    <empty list>
+  XmlToken:XML_TAG_END('>')(36,37)
+  PsiErrorElement:Statement expected(37,37)
+    <empty list>

@@ -22,7 +22,9 @@ internal class ImmediateJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   override fun isInterestingOffset(pos: LookaheadText.Position): Boolean = pos.offsetInCurrentLine == -1
 
   override fun getDefaultAction(): MarkerBlock.ClosingAction {
-    return MarkerBlock.ClosingAction.DROP
+    // DONE, not DROP: a single-line block closed via flushMarkers at EOF must still emit its wrapping
+    // node, or its children leak as detached siblings.
+    return MarkerBlock.ClosingAction.DONE
   }
 
   override fun doProcessToken(pos: LookaheadText.Position, currentConstraints: MarkdownConstraints): MarkerBlock.ProcessingResult {
@@ -45,7 +47,7 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
                                    private val blockStartIndent: Int,
                                    private val source: CharSequence,
                                    initialText: String) : MarkerBlockImpl(
-  if (kind == MdxBlockKind.JSX) MdxJsxMarkdownConstraints(myConstraints, blockStartIndent) else myConstraints,
+  if (kind == MdxBlockKind.JSX) MdxJsxMarkdownConstraints(myConstraints, blockStartIndent, blockStartOffset) else myConstraints,
   productionHolder.mark()
 ) {
   private var currentEndOffset = blockStartOffset + initialText.length

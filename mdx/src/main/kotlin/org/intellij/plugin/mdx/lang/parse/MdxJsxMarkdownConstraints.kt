@@ -6,6 +6,7 @@ import org.intellij.markdown.parser.constraints.MarkdownConstraints
 internal class MdxJsxMarkdownConstraints(
   private val parent: MarkdownConstraints,
   private val blockStartIndent: Int,
+  private val blockStartOffset: Int,
   override val charsEaten: Int = blockStartIndent,
 ) : MarkdownConstraints {
   override val indent: Int
@@ -30,7 +31,9 @@ internal class MdxJsxMarkdownConstraints(
   }
 
   override fun addModifierIfNeeded(pos: LookaheadText.Position?): MarkdownConstraints? {
-    return null
+    // Delegate to the block-start constraints so a `- item`/`1.`/`> ...` line inside the JSX block
+    // still gets a real list-item/blockquote modifier instead of collapsing into a flat paragraph.
+    return parent.addModifierIfNeeded(pos)
   }
 
   override fun applyToNextLine(pos: LookaheadText.Position?): MarkdownConstraints {
@@ -42,7 +45,11 @@ internal class MdxJsxMarkdownConstraints(
     if (nonWhitespaceOffset == -1) {
       return copy(charsEaten = pos.currentLine.length)
     }
-    if (lineIndent <= blockStartIndent && pos.currentLine.startsWith("</", nonWhitespaceOffset)) {
+    // A `</tag>` line inside a code fence is opaque fence content, not a closing tag — it must not
+    // relax to the parent constraints, or the fence ends early and orphans the rest of its body.
+    if (lineIndent <= blockStartIndent &&
+        pos.currentLine.startsWith("</", nonWhitespaceOffset) &&
+        !MdxJsxScanner.isInsideCodeFence(pos.originalText, blockStartOffset, pos.offset)) {
       return parent.applyToNextLine(pos)
     }
     if (lineIndent < blockStartIndent) {
@@ -52,7 +59,7 @@ internal class MdxJsxMarkdownConstraints(
   }
 
   private fun copy(charsEaten: Int): MdxJsxMarkdownConstraints {
-    return MdxJsxMarkdownConstraints(parent, blockStartIndent, charsEaten)
+    return MdxJsxMarkdownConstraints(parent, blockStartIndent, blockStartOffset, charsEaten)
   }
 
   private fun leadingSpaces(line: CharSequence): Int {

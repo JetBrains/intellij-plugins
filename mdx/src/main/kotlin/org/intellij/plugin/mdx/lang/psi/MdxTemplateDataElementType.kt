@@ -44,6 +44,11 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
       if (pendingSemicolon) {
         modifications.addRangeToRemove(range.first, ";")
       }
+      // Hide one dash of a single-line `<!--` opener from the JS view: JS otherwise reads it as an
+      // XML-style comment, but `<!-` is a malformed JSX tag, so the JSX parser reports it as an error.
+      if (isInvalidSingleLineComment(sourceCode, range)) {
+        modifications.addOuterRange(TextRange.create(range.first + 3, range.first + 4), true)
+      }
       pendingSemicolon = needsStatementSemicolon(sourceCode, range)
       offset = range.last
     }
@@ -73,12 +78,44 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
         continue
       }
 
+      // A single-line `<!--...-->` is invalid MDX; route it to JSX explicitly since the scanner itself
+      // rejects `<!`.
+      val invalidComment = blockedRanges.firstOrNull {
+        it.kind == BlockedRangeKind.INVALID_COMMENT && offset == it.range.first
+      }
+      if (invalidComment != null) {
+        ranges.add(TemplateRange(invalidComment.range, TemplateRangeKind.JSX))
+        offset = invalidComment.range.last
+        continue
+      }
+
       when (sourceCode[offset]) {
         '<' -> {
           val element = MdxJsxScanner.scanJsxElement(sourceCode, offset)
           if (element != null && element.balanced && !element.range.intersectsAny(blockedRanges, sourceCode)) {
             ranges.add(TemplateRange(element.range, TemplateRangeKind.JSX))
             offset = element.range.last
+            continue
+          }
+          // A balanced element whose only opaque content is code fences (e.g. `<div>` wrapping a fence) is
+          // still projected as a real tag: carve the fences out so they stay OUTER and project the rest.
+          if (element != null && element.balanced) {
+            val fences = MdxJsxScanner.codeFenceRanges(sourceCode, element.range.first, element.range.last)
+            if (fences.isNotEmpty()) {
+              val carved = carveAround(element.range, fences)
+              if (carved.none { it.intersectsAny(blockedRanges, sourceCode) }) {
+                carved.forEach { ranges.add(TemplateRange(it, TemplateRangeKind.JSX)) }
+                offset = element.range.last
+                continue
+              }
+            }
+          }
+          // A still-unbalanced `<Name…` prefix (mid-typing) would otherwise stay outside the MdxJS layer,
+          // so JSX tag-name completion would find nothing; project just the incomplete opening tag.
+          val incompleteRange = MdxJsxScanner.incompleteOpeningTagRange(sourceCode, offset)
+          if (incompleteRange != null && !incompleteRange.intersectsAny(blockedRanges, sourceCode)) {
+            ranges.add(TemplateRange(incompleteRange, TemplateRangeKind.JSX))
+            offset = incompleteRange.last
             continue
           }
         }
@@ -131,7 +168,8 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
         }
         val endInToken = tokenText.indexOf("-->", tokenOffset)
         if (endInToken == -1) break
-        ranges.add(BlockedRange(htmlCommentStart..tokenStart + endInToken + 3, BlockedRangeKind.HARD))
+        val commentEnd = tokenStart + endInToken + 3
+        ranges.add(BlockedRange(htmlCommentStart..commentEnd, commentBlockedKind(sourceCode, htmlCommentStart, commentEnd)))
         htmlCommentStart = -1
         tokenOffset = endInToken + 3
       }
@@ -141,6 +179,17 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
       ranges.add(BlockedRange(htmlCommentStart..sourceCode.length, BlockedRangeKind.HARD))
     }
     return ranges.mergeTouchingBlockedRanges()
+  }
+
+  // Multi-line `<!-- ... -->` stays opaque (HARD, never an error); only single-line is invalid MDX.
+  private fun commentBlockedKind(sourceCode: CharSequence, start: Int, end: Int): BlockedRangeKind {
+    val spansSingleLine = (start until end).none { sourceCode[it] == '\n' }
+    return if (spansSingleLine) BlockedRangeKind.INVALID_COMMENT else BlockedRangeKind.HARD
+  }
+
+  private fun isInvalidSingleLineComment(sourceCode: CharSequence, range: IntRange): Boolean {
+    val text = sourceCode.subSequence(range.first, range.last)
+    return text.startsWith("<!--") && text.endsWith("-->") && text.none { it == '\n' }
   }
 
   private fun needsStatementSemicolon(sourceCode: CharSequence, range: IntRange): Boolean {
@@ -190,6 +239,20 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
     return result
   }
 
+  /** [range] split into the sub-ranges left after removing [gaps] (which stay OUTER); empty pieces dropped. */
+  private fun carveAround(range: IntRange, gaps: List<IntRange>): List<IntRange> {
+    val result = mutableListOf<IntRange>()
+    var cursor = range.first
+    for (gap in gaps.sortedBy { it.first }) {
+      val gapStart = gap.first.coerceIn(range.first, range.last)
+      val gapEnd = gap.last.coerceIn(range.first, range.last)
+      if (cursor < gapStart) result.add(cursor..gapStart)
+      cursor = maxOf(cursor, gapEnd)
+    }
+    if (cursor < range.last) result.add(cursor..range.last)
+    return result
+  }
+
   private fun IntRange.intersectsAny(ranges: List<BlockedRange>, sourceCode: CharSequence): Boolean {
     return ranges.any { blockedRange ->
       first < blockedRange.range.last &&
@@ -218,7 +281,8 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
 
   private enum class BlockedRangeKind {
     HARD,
-    INDENTED_CODE
+    INDENTED_CODE,
+    INVALID_COMMENT
   }
 
   private enum class TemplateRangeKind {

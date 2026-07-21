@@ -1,5 +1,6 @@
 package org.intellij.plugin.mdx.lang.parse
 
+import com.intellij.xml.util.HtmlUtil
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
@@ -53,6 +54,188 @@ internal object MdxJsxScanner {
     return indent != -1 && lineStart + indent == start && isEsmKeywordAt(text, start)
   }
 
+  /**
+   * True when the caret at [offset] sits in a JSX-tag-start context: the character just before the
+   * caret is a `<`, or the caret follows a freshly-typed `<Name` prefix (walk back over JSX name
+   * characters to a `<`). Used by the auto-popup enabler to surface JSX tag-name completion for an
+   * unbalanced `<`/`<My`, which the parser does not yet project into the MdxJS layer. WEB-78468.
+   */
+  fun isJsxTagStartContext(text: CharSequence, offset: Int): Boolean {
+    if (offset <= 0 || offset > text.length) return false
+    var index = offset - 1
+    if (text[index] == '<') return true
+    // Walk back over a partial JSX tag name (e.g. `My`, `Foo.Bar`) to the `<` that opened it.
+    while (index >= 0 && isNamePart(text[index])) {
+      index--
+    }
+    return index >= 0 && text[index] == '<'
+  }
+
+  /**
+   * If a `<Name…` opening tag that has not yet been closed with `>` begins at [start] (see
+   * [isIncompleteOpeningTagStart]), returns its range up to the logical end of a "clean" prefix — a
+   * `<Name` with optional, fully-formed attributes, ending at a line break or end of input. A dangling
+   * `{…` expression or unterminated quote (e.g. the static `<Broken attr={"unterminated}`) yields
+   * `null` so it keeps its existing outer-language parse rather than being reinterpreted as JSX.
+   * Used to project a freshly-typed `<My` into the MdxJS layer so the platform JSX tag-name completion
+   * runs while the tag is still unbalanced. Ranges use an exclusive `.last` (a text offset), matching
+   * the other MdxJsxScanner ranges. WEB-78468.
+   */
+  fun incompleteOpeningTagRange(text: CharSequence, start: Int, limit: Int = text.length): IntRange? {
+    if (!isIncompleteOpeningTagStart(text, start, limit)) return null
+    var offset = start + 1
+    while (offset < limit && isNamePart(text[offset])) {
+      offset++
+    }
+    while (offset < limit) {
+      when (text[offset]) {
+        '\n' -> return start..offset
+        '{' -> {
+          val expressionEnd = scanExpression(text, offset, limit)
+          if (expressionEnd == -1) return null
+          offset = expressionEnd
+        }
+        '\'', '"' -> {
+          val quoteEnd = scanQuoted(text, offset, limit, text[offset])
+          if (quoteEnd == -1) return null
+          offset = quoteEnd
+        }
+        else -> offset++
+      }
+    }
+    return start..limit
+  }
+
+  /**
+   * When a `>` is about to be typed at [caretOffset], returns the closing tag to auto-insert (e.g.
+   * `</div>`, `</Foo>`, or `</>` for a fragment), or `null` when no closing tag should be inserted.
+   *
+   * Operates on the document [text] directly (the source of truth at typing time): walks back from the
+   * caret to the `<` that opens the current tag and, if that tag is an unclosed opening tag, derives
+   * its name. Returns `null` for closing tags (`</…`), already-`>`-terminated tags, and self-closing
+   * (`/`) tags, and void HTML elements (`<br>`, `<input>`, …), which have no closing tag. WEB-78468.
+   */
+  fun closingTagToInsert(text: CharSequence, caretOffset: Int): String? {
+    if (caretOffset <= 0 || caretOffset > text.length) return null
+    // Find the `<` that opens the tag containing the caret. A completed `{…}` attribute expression or
+    // quoted value ending just before the caret is part of the opening tag (e.g. a multi-line
+    // `onClick={() => { … }}`), so skip each as a unit — otherwise its internal `>`/`<`/newlines/quotes
+    // would abort the search for the tag's `<`. A top-level `>` (tag already closed), `<` (tag start),
+    // or newline still stops the walk. WEB-78468.
+    var index = caretOffset - 1
+    walk@ while (index >= 0) {
+      when (text[index]) {
+        '}' -> {
+          val expressionStart = matchingExpressionStart(text, index) ?: return null
+          index = expressionStart - 1
+        }
+        '\'', '"', '`' -> {
+          val quoteStart = matchingQuoteStart(text, index) ?: return null
+          index = quoteStart - 1
+        }
+        '>' -> return null
+        '<' -> break@walk
+        '\n' -> return null
+        else -> index--
+      }
+    }
+    if (index < 0 || text[index] != '<') return null
+    val tagStart = index
+    // A closing tag `</…` never auto-closes.
+    if (text.getOrNull(tagStart + 1) == '/') return null
+    // Fragment: a bare `<` directly before the caret.
+    if (tagStart == caretOffset - 1) return "</>"
+    // Otherwise it must be a `<name` opening tag with a valid JSX/HTML name.
+    var nameEnd = tagStart + 1
+    if (!isNameStart(text.getOrNull(nameEnd))) return null
+    nameEnd++
+    while (nameEnd < text.length && nameEnd < caretOffset && isNamePart(text[nameEnd])) {
+      nameEnd++
+    }
+    val name = text.subSequence(tagStart + 1, nameEnd).toString()
+    if (name.isEmpty()) return null
+    // The `>` only terminates the opening tag when the caret sits at the tag's top level. If it is
+    // inside a JSX `{…}` attribute expression (e.g. completing an `=>` arrow or an `a > b` comparison)
+    // or inside a quoted attribute value, the typed `>` is ordinary expression/string text, not the
+    // tag terminator, so no closing tag should be inserted. WEB-78468.
+    if (caretInsideTagExpressionOrQuote(text, nameEnd, caretOffset)) return null
+    // Reject a self-closing `<name … /` whose `/` precedes the caret.
+    if (text.getOrNull(caretOffset - 1) == '/') return null
+    // Void HTML elements (input, br, img, …) have no closing tag; JSX requires them self-closed, so a
+    // typed `>` must not insert `</input>`. Case-sensitive: a capitalized component (never a void
+    // element) such as `<Input>` still auto-closes.
+    if (HtmlUtil.isSingleHtmlTag(name, true)) return null
+    return "</$name>"
+  }
+
+  /**
+   * Scans the opening-tag body from [from] (just past the tag name) and reports whether [caretOffset]
+   * falls inside a JSX `{…}` expression or a quoted attribute value. Such a span swallows a typed `>`
+   * as expression/string text rather than the tag terminator. An unterminated `{…`/quote that reaches
+   * the caret also counts (the caret is inside it). The backward walk in [closingTagToInsert] already
+   * guarantees no `<`/`>` appears between the tag start and the caret, so only `{`/quotes need tracking.
+   */
+  private fun caretInsideTagExpressionOrQuote(text: CharSequence, from: Int, caretOffset: Int): Boolean {
+    var offset = from
+    while (offset < caretOffset) {
+      when (text[offset]) {
+        '{' -> {
+          val expressionEnd = scanExpression(text, offset, text.length)
+          if (expressionEnd == -1 || caretOffset < expressionEnd) return true
+          offset = expressionEnd
+        }
+        '\'', '"' -> {
+          val quoteEnd = scanQuoted(text, offset, text.length, text[offset])
+          if (quoteEnd == -1 || caretOffset < quoteEnd) return true
+          offset = quoteEnd
+        }
+        else -> offset++
+      }
+    }
+    return false
+  }
+
+  /**
+   * Given the `}` at [closeBrace], returns the offset of the `{` that opens the matching JSX expression,
+   * or `null` if there is none. The candidate `{` (found by a brace-depth walk) is confirmed with the
+   * string/template/comment-aware forward [scanExpression] — so an unmatched or string-embedded brace
+   * yields `null` (no auto-close) rather than a wrong match. WEB-78468.
+   */
+  private fun matchingExpressionStart(text: CharSequence, closeBrace: Int): Int? {
+    var depth = 0
+    var i = closeBrace
+    while (i >= 0) {
+      when (text[i]) {
+        '}' -> depth++
+        '{' -> {
+          depth--
+          if (depth == 0) {
+            return if (scanExpression(text, i, text.length) == closeBrace + 1) i else null
+          }
+        }
+      }
+      i--
+    }
+    return null
+  }
+
+  /**
+   * Given the quote at [closeQuote], returns the offset of the opening quote of the matching quoted
+   * value, or `null` if there is none on the same line. Candidates are confirmed with the escape-aware
+   * forward [scanQuoted]; a quoted attribute value does not span lines, so a newline stops the search.
+   * WEB-78468.
+   */
+  private fun matchingQuoteStart(text: CharSequence, closeQuote: Int): Int? {
+    val quote = text[closeQuote]
+    var i = closeQuote - 1
+    while (i >= 0) {
+      if (text[i] == '\n') return null
+      if (text[i] == quote && scanQuoted(text, i, text.length, quote) == closeQuote + 1) return i
+      i--
+    }
+    return null
+  }
+
   fun scanJsxElement(text: CharSequence, start: Int, limit: Int = text.length): Element? {
     if (limit - start > MAX_SCAN_LENGTH) return null
     val opening = parseTag(text, start, limit) ?: return null
@@ -66,6 +249,14 @@ internal object MdxJsxScanner {
     val stack = mutableListOf(opening.name)
     var offset = opening.range.last
     while (offset < limit) {
+      // Skip fenced code blocks whole: their {/}/< are code, not MDX expressions or tags.
+      if (isAtLineStart(text, offset)) {
+        val fenceEnd = skipCodeFence(text, offset, limit)
+        if (fenceEnd != -1) {
+          offset = fenceEnd
+          continue
+        }
+      }
       when (text[offset]) {
         '{' -> {
           val expressionEnd = scanExpression(text, offset, limit)
@@ -312,15 +503,24 @@ internal object MdxJsxScanner {
       return null
     }
 
-    val paragraphEnd = trimTrailingWhitespace(text, contentStart, firstBlankLineStart(text, firstLineEnd, contentEnd) ?: contentEnd)
+    // Stop at the same boundary (blank line or code fence) the block parser would start a new block at,
+    // or the paragraph overlaps the sibling block and crashes with "Intersecting parsed nodes".
+    val regionEnd = firstParagraphBoundary(text, firstLineEnd, contentEnd) ?: contentEnd
+    // Keep trailing spaces when continuing past the first line: the sub-block parser's paragraph for that
+    // continuation line keeps them too, so trimming here would only partially overlap it.
+    val paragraphEnd = if (regionEnd > firstLineEnd) trimTrailingLineBreaks(text, contentStart, regionEnd)
+                       else trimTrailingWhitespace(text, contentStart, regionEnd)
     return if (contentStart < paragraphEnd) contentStart..paragraphEnd else null
   }
 
-  private fun firstBlankLineStart(text: CharSequence, firstLineEnd: Int, limit: Int): Int? {
+  private fun firstParagraphBoundary(text: CharSequence, firstLineEnd: Int, limit: Int): Int? {
     var lineStart = nextLineStart(text, firstLineEnd, limit)
     while (lineStart < limit) {
       val lineEnd = lineEnd(text, lineStart, limit)
       if (text.subSequence(lineStart, lineEnd).isBlank()) {
+        return lineStart
+      }
+      if (skipCodeFence(text, lineStart, limit) != -1) {
         return lineStart
       }
       lineStart = nextLineStart(text, lineEnd, limit)
@@ -346,6 +546,123 @@ internal object MdxJsxScanner {
       offset--
     }
     return offset
+  }
+
+  private fun trimTrailingLineBreaks(text: CharSequence, start: Int, end: Int): Int {
+    var offset = end
+    while (offset > start && (text[offset - 1] == '\n' || text[offset - 1] == '\r')) {
+      offset--
+    }
+    return offset
+  }
+
+  private fun isAtLineStart(text: CharSequence, offset: Int): Boolean {
+    return offset == 0 || text.getOrNull(offset - 1) == '\n'
+  }
+
+  /**
+   * True if [offset] falls inside a fenced code block that opens at or after [from]. Scans line by line from
+   * [from] (a line start), jumping over whole fences via [skipCodeFence]. Used to keep fence interiors opaque:
+   * a `</tag>` line inside a fence must not be treated as a flow-element closing tag by the JSX constraints. WEB-78468.
+   */
+  fun isInsideCodeFence(text: CharSequence, from: Int, offset: Int): Boolean {
+    var lineStart = from.coerceAtLeast(0)
+    while (lineStart < offset && lineStart < text.length) {
+      val fenceEnd = skipCodeFence(text, lineStart, text.length)
+      if (fenceEnd != -1) {
+        if (offset < fenceEnd) return true
+        lineStart = nextLineStart(text, fenceEnd, text.length)
+      }
+      else {
+        lineStart = nextLineStart(text, lineEnd(text, lineStart, text.length), text.length)
+      }
+    }
+    return false
+  }
+
+  /**
+   * The contiguous ranges of fenced code blocks opening on their own line within `[start, limit)` — each from
+   * the opener line start to just past the closing fence. Unlike the lexer's HARD-blocked token ranges (which
+   * are fragmented by the fence-info and newline tokens), these are whole-fence spans, so the MdxJS projection
+   * can carve a fence out of an enclosing JSX flow element (the fence stays OUTER while the element around it
+   * is still projected as a real tag). WEB-78468.
+   */
+  fun codeFenceRanges(text: CharSequence, start: Int, limit: Int): List<IntRange> {
+    val ranges = mutableListOf<IntRange>()
+    var lineStart = start
+    while (lineStart < limit) {
+      val fenceEnd = if (isAtLineStart(text, lineStart)) skipCodeFence(text, lineStart, limit) else -1
+      if (fenceEnd != -1) {
+        ranges.add(lineStart..fenceEnd)
+        lineStart = nextLineStart(text, fenceEnd, limit)
+      }
+      else {
+        lineStart = nextLineStart(text, lineEnd(text, lineStart, limit), limit)
+      }
+    }
+    return ranges
+  }
+
+  /**
+   * If the line at [start] opens a fenced code block (any amount of leading spaces, 3+ backticks or
+   * tildes), returns the offset just past the closing fence (or [limit] if the fence is unterminated);
+   * otherwise returns -1. The fence body is treated as opaque so that `{`/`}`/`<` inside it are not
+   * scanned as MDX expressions or JSX tags.
+   *
+   * Unlike CommonMark's top-level ≤3-space rule ([smallIndent]), any indentation is accepted here: this
+   * runs while scanning inside a JSX flow body, where a fence is indented to align with its container
+   * (e.g. four spaces under `<div>`). The block parser already treats such a fence as a fence, so with the
+   * ≤3 cap an incremental re-lex would fail to skip an indented fence and scan its `{`/`}` as JSX, emitting
+   * a node that intersects the CODE_FENCE_CONTENT. Accepting the wider indent keeps the two consistent. WEB-78468.
+   */
+  private fun skipCodeFence(text: CharSequence, start: Int, limit: Int): Int {
+    val indent = fenceIndent(text, start, limit)
+    val fenceStart = start + indent
+    val fenceChar = text.getOrNull(fenceStart) ?: return -1
+    if (fenceChar != '`' && fenceChar != '~') return -1
+    var marker = 0
+    while (fenceStart + marker < limit && text[fenceStart + marker] == fenceChar) {
+      marker++
+    }
+    if (marker < 3) return -1
+    // A ``` fence-info string must not itself contain a backtick (CommonMark rule); ~~~ has no such
+    // restriction. This keeps an inline ``code`` span from being mistaken for a fence opener.
+    var infoEnd = fenceStart + marker
+    while (infoEnd < limit && text[infoEnd] != '\n') {
+      if (fenceChar == '`' && text[infoEnd] == '`') return -1
+      infoEnd++
+    }
+    var lineStart = nextLineStart(text, infoEnd, limit)
+    while (lineStart < limit) {
+      val contentStart = lineStart + fenceIndent(text, lineStart, limit)
+      var closeMarker = 0
+      while (contentStart + closeMarker < limit && text[contentStart + closeMarker] == fenceChar) {
+        closeMarker++
+      }
+      if (closeMarker >= marker && isBlankUntilLineEnd(text, contentStart + closeMarker, limit)) {
+        return lineEnd(text, contentStart + closeMarker, limit)
+      }
+      lineStart = nextLineStart(text, lineEnd(text, lineStart, limit), limit)
+    }
+    return limit
+  }
+
+  /** Counts leading spaces of the line at [lineStart] with no ≤3 cap, for opaque fence-skipping inside JSX bodies. */
+  private fun fenceIndent(text: CharSequence, lineStart: Int, limit: Int): Int {
+    var indent = 0
+    while (lineStart + indent < limit && text[lineStart + indent] == ' ') {
+      indent++
+    }
+    return indent
+  }
+
+  private fun isBlankUntilLineEnd(text: CharSequence, start: Int, limit: Int): Boolean {
+    var offset = start
+    while (offset < limit && text[offset] != '\n') {
+      if (!text[offset].isWhitespace()) return false
+      offset++
+    }
+    return true
   }
 
   private fun parseTag(text: CharSequence, start: Int, limit: Int): Tag? {
@@ -446,7 +763,26 @@ internal object MdxJsxScanner {
     while (offset < limit && isNamePart(text[offset])) {
       offset++
     }
-    return offset == limit || text.subSequence(offset, limit).none { it == '>' || it == '<' }
+    // A `>`/`<` outside an expression breaks the tag; one inside an unterminated `{...}` attribute
+    // (e.g. an `=>` arrow) does not, so expressions are skipped as a unit rather than scanned char-by-char.
+    while (offset < limit) {
+      when (text[offset]) {
+        '>', '<' -> return false
+        '\n' -> return true
+        '{' -> {
+          val expressionEnd = scanExpression(text, offset, limit)
+          if (expressionEnd == -1) return true
+          offset = expressionEnd
+        }
+        '\'', '"' -> {
+          val quoteEnd = scanQuoted(text, offset, limit, text[offset])
+          if (quoteEnd == -1) return true
+          offset = quoteEnd
+        }
+        else -> offset++
+      }
+    }
+    return true
   }
 
   private fun scanQuoted(text: CharSequence, start: Int, limit: Int, quote: Char): Int {
