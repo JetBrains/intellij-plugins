@@ -137,8 +137,8 @@ private class AngularTranspiledFile(
       val newAssociatedScriptMappings = mutableMapOf<String, MutableList<CodeMapping>>()
 
       transpiledFile.fileMappings.values.forEach { fileMapping ->
-        val normalizedMappingFileName = ctx.normalizePath(fileMapping.fileName.replace('\\', '/'))
-        val mappingsWithData: MutableList<CodeMapping> = if (normalizedMappingFileName == fileName.replace('\\', '/')) {
+        val normalizedMappingFileName = ctx.normalizePath(fileMapping.fileName)
+        val mappingsWithData: MutableList<CodeMapping> = if (normalizedMappingFileName == fileName) {
           newMappings
         }
         else {
