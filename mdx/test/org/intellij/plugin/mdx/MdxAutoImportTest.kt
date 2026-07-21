@@ -50,8 +50,7 @@ class MdxAutoImportTest : MdxTestBase() {
 
   @Test
   fun testInsertImportPreservesExistingImports() {
-    // MyComponent and CompB come from different files so they can't be merged into one import
-    doAutoImportTest("MyComponent.mdx", "CompB.mdx")
+    doAutoImportTest("CompA.mdx", "CompB.mdx")
   }
 
   // --- Front matter: import must land AFTER the closing delimiter, never before it ---
@@ -65,12 +64,12 @@ class MdxAutoImportTest : MdxTestBase() {
   @Test
   fun testInsertImportAfterTomlFrontMatter() {
     // TOML front matter starts with '+++' on line 1; same constraint applies
-    doAutoImportTest()
+    doAutoImportTest("InsertImportAfterTomlFrontMatter_1.mdx")
   }
 
   @Test
   fun testInsertImportWithFrontMatterAndExistingImport() {
     // Front matter + an existing import: new import should still go after front matter
-    doAutoImportTest("MyComponent.mdx", "CompB.mdx")
+    doAutoImportTest("CompA.mdx", "CompB.mdx")
   }
 }

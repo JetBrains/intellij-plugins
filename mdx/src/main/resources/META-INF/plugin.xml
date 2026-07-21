@@ -105,6 +105,8 @@
   <extensions defaultExtensionNs="JavaScript">
     <importModulePathStrategy order="after TypeScript"
                               implementation="org.intellij.plugin.mdx.js.MdxImportModulePathStrategy" />
+    <handlersFactory language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSHandlersFactory"/>
+    <moduleExportsProvider id="mdx" implementation="org.intellij.plugin.mdx.js.MdxModuleExportsProvider"/>
   </extensions>
 
   <actions>
