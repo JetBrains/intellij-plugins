@@ -24,92 +24,92 @@ groups:
 
   - groupId: PqcNotCompliantRules  # NIST "not compliant" (level 0)
     inspections:
-      - PQC-EdDSA-Signature-java_kotlin-0
-      - PQC-Ed25519-Signature-java_kotlin-0
-      - PQC-Ed448-Signature-java_kotlin-0
-      - PQC-RSA-Signature-java_kotlin-0
-      - PQC-DSA-Signature-java_kotlin-0
-      - PQC-ECDSA-Signature-java_kotlin-0
-      - PQC-Diffie_Hellman-KeyAgreement-java_kotlin-0
-      - PQC-Diffie_Hellman-KEM-java_kotlin-0
-      - PQC-ECDH-KeyAgreement-java_kotlin-0
-      - PQC-ECMQV-KeyAgreement-java_kotlin-0
-      - PQC-XDH-KeyAgreement-java_kotlin-0
-      - PQC-X25519-KeyAgreement-java_kotlin-0
-      - PQC-X448-KeyAgreement-java_kotlin-0
-      - PQC-Arcfour-Cipher-java_kotlin-0
-      - PQC-Blowfish-Cipher-java_kotlin-0
-      - PQC-ChaCha20-Cipher-java_kotlin-0
-      - PQC-DES-Cipher-java_kotlin-0
-      - PQC-Triple_DES-Cipher-java_kotlin-0
-      - PQC-ECIES-Cipher-java_kotlin-0
-      - PQC-RC2-Cipher-java_kotlin-0
-      - PQC-RC4-Cipher-java_kotlin-0
-      - PQC-RC5-Cipher-java_kotlin-0
-      - PQC-RSA-Cipher-java_kotlin-0
-      - PQC-MD5-Mac-java_kotlin-0
-      - PQC-MD2-MessageDigest-java_kotlin-0
-      - PQC-MD5-MessageDigest-java_kotlin-0
-      - PQC-SSL-SSLContext-java_kotlin-0
-      - PQC-SSL_2-SSLContext-java_kotlin-0
-      - PQC-SSL_3-SSLContext-java_kotlin-0
-      - PQC-TLS_1-SSLContext-java_kotlin-0
-      - PQC-TLS_1.1-SSLContext-java_kotlin-0
-      - PQC-TLS_1.2-SSLContext-java_kotlin-0
-      - PQC-DTLS_1.0-SSLContext-java_kotlin-0
-      - PQC-DTLS_1.2-SSLContext-java_kotlin-0
+      - JavaKotlinUsingCryptographySignatureEdDSA
+      - JavaKotlinUsingCryptographySignatureEd25519
+      - JavaKotlinUsingCryptographySignatureEd448
+      - JavaKotlinUsingCryptographySignatureRSA
+      - JavaKotlinUsingCryptographySignatureDSA
+      - JavaKotlinUsingCryptographySignatureECDSA
+      - JavaKotlinUsingCryptographyKeyAgreementDiffieHellman
+      - JavaKotlinUsingCryptographyKEMDiffieHellman
+      - JavaKotlinUsingCryptographyKeyAgreementECDH
+      - JavaKotlinUsingCryptographyKeyAgreementECMQV
+      - JavaKotlinUsingCryptographyKeyAgreementXDH
+      - JavaKotlinUsingCryptographyKeyAgreementX25519
+      - JavaKotlinUsingCryptographyKeyAgreementX448
+      - JavaKotlinUsingCryptographyCipherArcfour
+      - JavaKotlinUsingCryptographyCipherBlowfish
+      - JavaKotlinUsingCryptographyCipherChaCha20
+      - JavaKotlinUsingCryptographyCipherDES
+      - JavaKotlinUsingCryptographyCipherTripleDES
+      - JavaKotlinUsingCryptographyCipherECIES
+      - JavaKotlinUsingCryptographyCipherRC2
+      - JavaKotlinUsingCryptographyCipherRC4
+      - JavaKotlinUsingCryptographyCipherRC5
+      - JavaKotlinUsingCryptographyCipherRSA
+      - JavaKotlinUsingCryptographyMacMD5
+      - JavaKotlinUsingCryptographyMessageDigestMD2
+      - JavaKotlinUsingCryptographyMessageDigestMD5
+      - JavaKotlinUsingCryptographySSLContextSSL
+      - JavaKotlinUsingCryptographySSLContextSSL2
+      - JavaKotlinUsingCryptographySSLContextSSL3
+      - JavaKotlinUsingCryptographySSLContextTLS1
+      - JavaKotlinUsingCryptographySSLContextTLS11
+      - JavaKotlinUsingCryptographySSLContextTLS12
+      - JavaKotlinUsingCryptographySSLContextDTLS10
+      - JavaKotlinUsingCryptographySSLContextDTLS12
 
   - groupId: PqcLevel1Rules  # NIST level 1
     inspections:
-      - PQC-ML_KEM_512-KEM-java_kotlin-1
-      - PQC-AES_128-Cipher-java_kotlin-1
-      - PQC-SHA_1-Mac-java_kotlin-1
-      - PQC-SHA_1-MessageDigest-java_kotlin-1
+      - JavaKotlinUsingCryptographyKEMMLKEM512
+      - JavaKotlinUsingCryptographyCipherAES128
+      - JavaKotlinUsingCryptographyMacSHA1
+      - JavaKotlinUsingCryptographyMessageDigestSHA1
 
   - groupId: PqcLevel2Rules  # NIST level 2
     inspections:
-      - PQC-ML_DSA_44-Signature-java_kotlin-2
-      - PQC-SHAKE128-MessageDigest-java_kotlin-2
+      - JavaKotlinUsingCryptographySignatureMLDSA44
+      - JavaKotlinUsingCryptographyMessageDigestSHAKE128
 
   - groupId: PqcLevel3Rules  # NIST level 3
     inspections:
-      - PQC-ML_DSA_65-Signature-java_kotlin-3
-      - PQC-ML_KEM_768-KEM-java_kotlin-3
-      - PQC-AES_192-Cipher-java_kotlin-3
-      - PQC-SHA_224-Mac-java_kotlin-3
-      - PQC-SHA_512_224-Mac-java_kotlin-3
-      - PQC-SHA3_224-Mac-java_kotlin-3
-      - PQC-SHA_224-MessageDigest-java_kotlin-3
-      - PQC-SHA_512_224-MessageDigest-java_kotlin-3
-      - PQC-SHA3_224-MessageDigest-java_kotlin-3
+      - JavaKotlinUsingCryptographySignatureMLDSA65
+      - JavaKotlinUsingCryptographyKEMMLKEM768
+      - JavaKotlinUsingCryptographyCipherAES192
+      - JavaKotlinUsingCryptographyMacSHA224
+      - JavaKotlinUsingCryptographyMacSHA512224
+      - JavaKotlinUsingCryptographyMacSHA3224
+      - JavaKotlinUsingCryptographyMessageDigestSHA224
+      - JavaKotlinUsingCryptographyMessageDigestSHA512224
+      - JavaKotlinUsingCryptographyMessageDigestSHA3224
 
-  - groupId: PqcLevel5Rules  # NIST level 5 (level 4 has no rules)
+  - groupId: PqcLevel5Rules  # NIST level 5
     inspections:
-      - PQC-ML_DSA_87-Signature-java_kotlin-5
-      - PQC-ML_DSA-Signature-java_kotlin-5
-      - PQC-HSS_LMS_with_SHA_256-Signature-java_kotlin-5
-      - PQC-ML_KEM-KEM-java_kotlin-5
-      - PQC-ML_KEM_1024-KEM-java_kotlin-5
-      - PQC-AES_256-Cipher-java_kotlin-5
-      - PQC-AES-Cipher-java_kotlin-5
-      - PQC-SHA_256-Mac-java_kotlin-5
-      - PQC-SHA_256-KDF-java_kotlin-5
-      - PQC-SHA_512_256-Mac-java_kotlin-5
-      - PQC-SHA_384-Mac-java_kotlin-5
-      - PQC-SHA_384-KDF-java_kotlin-5
-      - PQC-SHA_512-Mac-java_kotlin-5
-      - PQC-SHA_512-KDF-java_kotlin-5
-      - PQC-SHA3_256-Mac-java_kotlin-5
-      - PQC-SHA3_384-Mac-java_kotlin-5
-      - PQC-SHA3_512-Mac-java_kotlin-5
-      - PQC-SHA_256-MessageDigest-java_kotlin-5
-      - PQC-SHA_384-MessageDigest-java_kotlin-5
-      - PQC-SHA_512-MessageDigest-java_kotlin-5
-      - PQC-SHA_512_256-MessageDigest-java_kotlin-5
-      - PQC-SHA3_256-MessageDigest-java_kotlin-5
-      - PQC-SHA3_384-MessageDigest-java_kotlin-5
-      - PQC-SHA3_512-MessageDigest-java_kotlin-5
-      - PQC-SHAKE256-MessageDigest-java_kotlin-5
+      - JavaKotlinUsingCryptographySignatureMLDSA87
+      - JavaKotlinUsingCryptographySignatureMLDSA
+      - JavaKotlinUsingCryptographySignatureHSSLMSwithSHA256
+      - JavaKotlinUsingCryptographyKEMMLKEM
+      - JavaKotlinUsingCryptographyKEMMLKEM1024
+      - JavaKotlinUsingCryptographyCipherAES256
+      - JavaKotlinUsingCryptographyCipherAES
+      - JavaKotlinUsingCryptographyMacSHA256
+      - JavaKotlinUsingCryptographyKDFSHA256
+      - JavaKotlinUsingCryptographyMacSHA512256
+      - JavaKotlinUsingCryptographyMacSHA384
+      - JavaKotlinUsingCryptographyKDFSHA384
+      - JavaKotlinUsingCryptographyMacSHA512
+      - JavaKotlinUsingCryptographyKDFSHA512
+      - JavaKotlinUsingCryptographyMacSHA3256
+      - JavaKotlinUsingCryptographyMacSHA3384
+      - JavaKotlinUsingCryptographyMacSHA3512
+      - JavaKotlinUsingCryptographyMessageDigestSHA256
+      - JavaKotlinUsingCryptographyMessageDigestSHA384
+      - JavaKotlinUsingCryptographyMessageDigestSHA512
+      - JavaKotlinUsingCryptographyMessageDigestSHA512256
+      - JavaKotlinUsingCryptographyMessageDigestSHA3256
+      - JavaKotlinUsingCryptographyMessageDigestSHA3384
+      - JavaKotlinUsingCryptographyMessageDigestSHA3512
+      - JavaKotlinUsingCryptographyMessageDigestSHAKE256
 
   - groupId: PqcMinLevel1  # rules below NIST level 1
     groups:
