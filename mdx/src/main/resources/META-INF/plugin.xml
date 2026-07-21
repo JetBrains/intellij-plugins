@@ -84,6 +84,12 @@
                             id="MdxImportExportCompletionContributor"
                             implementationClass="org.intellij.plugin.mdx.completion.MdxImportExportCompletionContributor"
     />
+    <completion.contributor language="MdxJS"
+                            id="MdxVoidTagSelfCloseCompletionContributor"
+                            order="first"
+                            implementationClass="org.intellij.plugin.mdx.completion.MdxVoidTagSelfCloseCompletionContributor"
+    />
+    <xml.autoPopupEnabler implementation="org.intellij.plugin.mdx.completion.MdxXmlAutoPopupEnabler"/>
     <xml.zenCodingGenerator implementation="org.intellij.plugin.mdx.emmet.MdxZenCodingGenerator"/>
   </extensions>
 

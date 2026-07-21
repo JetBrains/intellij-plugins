@@ -333,6 +333,15 @@ class MdxCompletionTest : MdxTestBase() {
     assertCompletionContains("```ja<caret>\n```", "javascript")
   }
 
+  @Test
+  fun testCodeFenceLanguageCompletionInPlainMarkdown() {
+    // Baseline: code fence language completion must work in plain .md
+    myFixture.configureByText("test.md", "```ja<caret>\n```")
+    val elements = myFixture.completeBasic()
+    val strings = elements?.map { it.lookupString } ?: emptyList()
+    assertTrue("Expected 'javascript' in code fence language completion inside .md file (baseline)",
+               strings.contains("javascript"))
+  }
 
   @Test
   fun testHeaderAnchorCompletionInMdxFile() {
@@ -341,12 +350,30 @@ class MdxCompletionTest : MdxTestBase() {
                strings.any { it.contains("my-section") })
   }
 
+  @Test
+  fun testHeaderAnchorCompletionInPlainMarkdown() {
+    // Baseline: anchor completion in .md
+    myFixture.configureByText("test.md", "## My Section\n\n[link](#my-s<caret>)")
+    val elements = myFixture.completeBasic()
+    val strings = elements?.map { it.lookupString } ?: emptyList()
+    assertTrue("Expected header anchor '#my-section' in .md anchor reference completion (baseline)",
+               strings.any { it.contains("my-section") })
+  }
 
   @Test
   fun testYamlFrontMatterSchemaCompletionInMdxFile() {
     assertCompletionContains("---\ntitl<caret>: value\n---", "title")
   }
 
+  @Test
+  fun testYamlFrontMatterSchemaCompletionInPlainMarkdown() {
+    // Baseline: front matter schema completion in .md
+    myFixture.configureByText("test.md", "---\ntitl<caret>: value\n---")
+    val elements = myFixture.completeBasic()
+    val strings = elements?.map { it.lookupString } ?: emptyList()
+    assertTrue("Expected 'title' in front matter schema completion inside .md file (baseline)",
+               strings.contains("title"))
+  }
 
   @Test
   fun testImageTagCompletionInMdxFile() {
@@ -365,6 +392,18 @@ class MdxCompletionTest : MdxTestBase() {
       companionFile = "MyComponent.mdx" to "export const MyComponent = () => <div/>"
     )
     assertTrue("Expected 'MyComponent' in tag-name completion at unbalanced '<My' prefix, got: $strings",
+               strings.contains("MyComponent"))
+  }
+
+  @Test
+  fun testTagNameCompletionAtBareCaretBeforeLaterJsxElement() {
+    // A bare `<` must still get tag-name completion even when an unrelated JSX element follows later
+    // in the file after a blank line.
+    val strings = completionStrings(
+      "import {MyComponent} from 'MyComponent.mdx'\n\n<<caret>\n\n<a>\n\n</a>",
+      companionFile = "MyComponent.mdx" to "export const MyComponent = () => <div/>"
+    )
+    assertTrue("Expected 'MyComponent' in tag-name completion at a bare '<' before a later JSX element, got: $strings",
                strings.contains("MyComponent"))
   }
 }
