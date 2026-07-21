@@ -53,6 +53,10 @@
     <listener class="org.intellij.plugin.mdx.js.MdxTagNameSynchronizer$MyDynamicPluginListener"
               topic="com.intellij.ide.plugins.DynamicPluginListener"/>
   </applicationListeners>
+  <projectListeners>
+    <listener class="org.intellij.plugin.mdx.editor.MdxCodeFenceCompletionIndentRestorer"
+              topic="com.intellij.codeInsight.lookup.LookupManagerListener"/>
+  </projectListeners>
   <extensions defaultExtensionNs="com.intellij">
     <fileType name="MDX" implementationClass="org.intellij.plugin.mdx.lang.MdxFileType"
               fieldName="INSTANCE" language="MDX" extensions="mdx"/>
@@ -66,6 +70,8 @@
     <colorSettingsPage implementation="org.intellij.plugin.mdx.highlighting.MdxColorSettingsPage"/>
     <defaultHighlightingSettingProvider
         implementation="org.intellij.plugin.mdx.highlighting.MdxInjectedHighlightingSettingProvider"/>
+    <enterHandlerDelegate implementation="org.intellij.plugin.mdx.editor.MdxCodeFenceEnterHandler" order="first"/>
+    <editorActionHandler action="EditorTab" implementationClass="org.intellij.plugin.mdx.editor.MdxCodeFenceTabHandler"/>
 
     <lang.parserDefinition language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSParserDefinition"/>
     <stubElementRegistryExtension implementation="org.intellij.plugin.mdx.js.MdxJSStubRegistryExtension"/>
@@ -90,6 +96,9 @@
                             implementationClass="org.intellij.plugin.mdx.completion.MdxVoidTagSelfCloseCompletionContributor"
     />
     <xml.autoPopupEnabler implementation="org.intellij.plugin.mdx.completion.MdxXmlAutoPopupEnabler"/>
+    <typedHandler implementationClass="org.intellij.plugin.mdx.js.MdxTagClosingTypedHandler" order="after xmlGt, before js"/>
+    <typedHandler implementationClass="org.intellij.plugin.mdx.js.MdxBraceTypedHandler"/>
+    <quoteHandler fileType="MDX" className="org.intellij.plugins.markdown.braces.MarkdownQuoteHandler"/>
     <xml.zenCodingGenerator implementation="org.intellij.plugin.mdx.emmet.MdxZenCodingGenerator"/>
   </extensions>
 

@@ -1,11 +1,14 @@
 package org.intellij.plugin.mdx
 
 import com.intellij.codeInsight.editorActions.CompletionAutoPopupHandler
+import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.TestModeFlags
+import com.intellij.testFramework.assertNoErrorLogged
 import org.intellij.plugin.mdx.completion.MdxXmlAutoPopupEnabler
 import org.junit.jupiter.api.Test
 
@@ -119,6 +122,12 @@ class MdxLiveEditingTest : MdxTestBase() {
   fun testAutoCloseFragment() = checkTyping('>')
 
   @Test
+  fun testAutoCloseDoesNotAbsorbAdjacentTrailingText() {
+    // The tag-name scan must stop at the caret, not absorb adjacent trailing text with no separator.
+    checkTyping('>')
+  }
+
+  @Test
   fun testNoAutoCloseInsideArrowFunctionExpression() {
     // Regression (WEB-78468): typing `>` to complete an `=>` arrow inside a `{…}` attribute expression
     // must NOT be treated as the tag terminator, so no spurious closing tag is inserted -- even when a
@@ -151,15 +160,21 @@ class MdxLiveEditingTest : MdxTestBase() {
     checkTyping('>')
   }
 
-  // -------------------------------------------------------------------------
-  // Void HTML elements must NOT be auto-closed (WEB-78468).
-  //
-  // A void element such as <br>/<img>/<input>/<hr> has no closing tag, so inserting one produces
-  // invalid HTML/JSX (`<br></br>`). The platform XmlGtTypedHandler skips these via
-  // HtmlUtil.isSingleHtmlTag; MdxJsxScanner.closingTagToInsert currently has no such guard, so it is
-  // the only inserter here and wrongly emits the close. These tests assert the fixed behavior: typing
-  // `>` after a void element inserts nothing but the `>` itself.
-  // -------------------------------------------------------------------------
+  @Test
+  fun testAutoCloseAfterMultilineAttributeExpression() {
+    // The backward search for the opening `<` must skip a whole multi-line `{…}` expression, not abort
+    // on its newlines or its `=>` arrow's `>`.
+    checkTyping('>')
+  }
+
+  @Test
+  fun testAutoCloseAfterMultilineAttributeExpressionWithTrailingSpace() {
+    // Same as above but with trailing whitespace after `}}` before the caret: still one `</div>`.
+    checkTyping('>')
+  }
+
+  // Void HTML elements (<br>/<img>/<input>/<hr>, ...) have no closing tag, so typing `>` after one
+  // must insert nothing but the `>` itself.
 
   @Test
   fun testNoAutoCloseVoidBrTag() = checkTyping('>')
@@ -181,5 +196,46 @@ class MdxLiveEditingTest : MdxTestBase() {
 
   @Test
   fun testTypeInsideIndentedCodeFenceInJsxBody() = checkTyping('x')
+
+  // --- Formatter must not crash on transient/incomplete PSI (MdxFormattingModelBuilder) ----------
+
+  @Test
+  fun testBackspaceInIncompleteArrowFunctionDoesNotCrashFormatter() {
+    myFixture.configureByFile("$testName.mdx")
+    // The same platform call SmartIndentingBackspaceHandler makes via CodeStyle.getLineIndent.
+    CodeStyleManager.getInstance(myFixture.project).getLineIndent(myFixture.file, myFixture.caretOffset)
+  }
+
+  @Test
+  fun testLineIndentAfterUnclosedFenceFollowingEmptyFenceDoesNotCrashFormatter() {
+    myFixture.configureByFile("$testName.mdx")
+    CodeStyleManager.getInstance(myFixture.project).getLineIndent(myFixture.file, myFixture.caretOffset)
+  }
+
+  @Test
+  fun testDoKeywordCompletionInsideFenceDoesNotCrashFormatter() {
+    myFixture.configureByFile("$testName.mdx")
+    TemplateManagerImpl.setTemplateTesting(testRootDisposable)
+    assertNoErrorLogged { selectCompletionItem("do") }
+    assertTrue(
+      "Expected the fence content to survive the live-template reformat",
+      myFixture.editor.document.text.contains("npx")
+    )
+  }
+
+
+  @Test
+  fun testAutoCloseBacktick() = checkTyping('`')
+
+  @Test
+  fun testNoAutoCloseBacktickAfterWord() = checkTyping('`')
+
+  /**
+   * MarkdownQuoteHandler treats a lone backtick as an opener whenever it's not flanked by word
+   * characters (IJPL-232322), which includes JSX bracket punctuation like `<`/`>` - so a backtick typed
+   * between JSX tags auto-closes the same as it would between other punctuation or whitespace.
+   */
+  @Test
+  fun testAutoCloseBacktickInsideJsxText() = checkTyping('`')
 
 }
