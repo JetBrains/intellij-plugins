@@ -28,10 +28,11 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.common.CommonCodegenOptions
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.common.getTypeScriptAST
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.forEachNode
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getTypeScriptAST
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingNames
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNodeText
@@ -48,7 +49,7 @@ private val literalWhitelist = setOf(
 )
 
 fun generateInterpolation(
-  options: HasSetupRefs,
+  options: CommonCodegenOptions,
   ctx: TemplateCodegenContext,
   block: IRBlock,
   data: VueCodeInformation,
@@ -62,7 +63,7 @@ fun generateInterpolation(
   }
 
   var prevEnd = 0
-  for ((name, offset, isShorthand) in forEachIdentifiers(ctx, code, prefix, suffix)) {
+  for ((name, offset, isShorthand) in forEachIdentifiers(options, ctx, code, prefix, suffix)) {
     if (isShorthand) {
       yield(DataSegment(
         text = code.substring(prevEnd, offset + name.length),
@@ -128,6 +129,7 @@ fun generateInterpolation(
 }
 
 private fun forEachIdentifiers(
+  options: CommonCodegenOptions,
   ctx: TemplateCodegenContext,
   code: String,
   prefix: String,
@@ -139,7 +141,7 @@ private fun forEachIdentifiers(
   }
 
   val scope = ctx.scope()
-  val ast = getTypeScriptAST(prefix + code + suffix)
+  val ast = getTypeScriptAST(prefix + code + suffix, options)
   for ((id, isShorthand) in forEachDeclarations(ast, ctx, scope)) {
     val text = getNodeText(id)
     if (shouldIdentifierSkipped(ctx, text)) continue

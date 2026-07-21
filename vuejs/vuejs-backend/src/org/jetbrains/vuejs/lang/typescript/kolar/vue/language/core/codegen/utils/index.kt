@@ -1,10 +1,13 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 
+import com.intellij.lang.javascript.psi.impl.JSChangeUtil.createJSContentFromText
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafElement
+import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScriptBlock
@@ -16,8 +19,9 @@ val identifierRE: Regex = Regex("^[a-zA-Z_\$][0-9a-zA-Z_\$]*\$")
 
 fun getTypeScriptAST(
   text: String,
+  project: Project,
 ): FakeSourceFile =
-  TODO()
+  createJSContentFromText(project, text, VueJSLanguage)
 
 fun generateSfcBlockSection(
   block: IRScriptBlock,

@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRTemplate
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.common.CommonCodegenOptions
 
 data class TemplateCodegenOptions(
   val vueCompilerOptions: VueCompilerOptions,
@@ -14,4 +15,4 @@ data class TemplateCodegenOptions(
   val slotsAssignName: String? = null,
   val inheritAttrs: Boolean,
   val componentName: String,
-) : HasSetupRefs
+) : CommonCodegenOptions

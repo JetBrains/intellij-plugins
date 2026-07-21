@@ -3,11 +3,11 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.styl
 
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRStyle
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.HasSetupRefs
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.common.CommonCodegenOptions
 
 data class StyleCodegenOptions(
   val vueCompilerOptions: VueCompilerOptions,
   val styles: List<IRStyle>,
   override val setupRefs: Set<String>,
   val setupConsts: Set<String>,
-) : HasSetupRefs
+) : CommonCodegenOptions

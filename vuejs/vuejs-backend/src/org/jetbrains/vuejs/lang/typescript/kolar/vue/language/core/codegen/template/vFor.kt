@@ -7,8 +7,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ForNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SimpleExpressionNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.common.getTypeScriptAST
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getTypeScriptAST
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingNames
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
@@ -34,7 +34,7 @@ fun generateVFor(
 
   yield("for (const [")
   if (leftExpressionRange != null && leftExpressionText != null) {
-    val collectAst = getTypeScriptAST("const [$leftExpressionText]")
+    val collectAst = getTypeScriptAST("const [$leftExpressionText]", options)
     scope.declare(collectBindingNames(collectAst))
     yield(DataSegment(
       text = leftExpressionText,

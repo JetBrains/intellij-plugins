@@ -2,12 +2,13 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 
 import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafElement
 import com.intellij.psi.util.lastLeaf
 
 // manual
-interface FakeSourceFile : PsiElement
+typealias FakeSourceFile = JSElement
 
 val FakeSourceFile.statements: Sequence<PsiElement>
   get() = forEachNode(this)
