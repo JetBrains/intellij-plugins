@@ -77,6 +77,8 @@
     <editorFactoryListener implementation="org.intellij.plugin.mdx.js.MdxEditorFactoryListener"/>
     <lang.formatter language="MDX" implementationClass="org.intellij.plugin.mdx.format.MdxFormattingModelBuilder"/>
     <lang.formatter language="MdxJS" implementationClass="org.intellij.plugin.mdx.format.MdxJsFormattingModelBuilder"/>
+    <postFormatProcessor implementation="org.intellij.plugin.mdx.format.MdxTablePostFormatProcessor"/>
+    <postFormatProcessor implementation="org.intellij.plugin.mdx.format.MdxCodeFencePostFormatProcessor"/>
     <fileIndentOptionsProvider implementation="org.intellij.plugin.mdx.format.MdxFileIndentOptionsProvider"/>
     <completion.contributor language="Markdown"
                             id="MdxImportExportCompletionContributor"

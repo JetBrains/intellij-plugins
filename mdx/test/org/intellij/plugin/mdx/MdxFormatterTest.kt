@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 @TestDataPath($$"$PROJECT_ROOT/contrib/mdx/testData/format")
 class MdxFormatterTest : MdxTestBase() {
 
+    /** Reformats `<before>.mdx` twice, checking both passes against `<after>.mdx` (proves idempotency). */
     private fun doTest(before: String = testName, after: String = "${testName}_after") {
         myFixture.configureByFile("$before.mdx")
         reformat()
@@ -35,6 +36,9 @@ class MdxFormatterTest : MdxTestBase() {
     @Test
     fun testFormatting() = doTest()
 
+    @Test
+    fun testFormattingAfterIsIdempotent() = doTest("Formatting_after", "Formatting_after")
+
     /** Preservation floor: reformat keeps a YAML front matter block verbatim, incl. its TAB-indented multi-line value. WEB-64195. */
     @Test
     fun testFrontMatter() = doTest()
@@ -55,6 +59,22 @@ class MdxFormatterTest : MdxTestBase() {
     @Test
     fun testMarkdownProse() = doTest()
 
+    /** Formatting an already-correctly-formatted document must be a no-op (idempotence). */
+    @Test
+    fun testIdempotent() = doTest("Idempotent_after", "Idempotent_after")
+
+    /**
+     * Enter right after a code fence nested in a JSX flow element indents the new line to the flow body
+     * level, not one level deeper: [org.intellij.plugin.mdx.editor.MdxCodeFenceEnterHandler] inserts it at
+     * the fence column, since the platform's default Enter routes through the XML formatter and over-indents.
+     */
+    @Test
+    fun testEnterAfterCodeFenceInJsxFlowElementIndentsToBodyLevel() {
+        myFixture.configureByFile("$testName.mdx")
+        myFixture.performEditorAction("EditorEnter")
+        myFixture.checkResultByFile("${testName}_after.mdx")
+    }
+
     /** A fenced code block inside a JSX flow element (blank-line separated, as in the GfmTable fixture). */
     @Test
     fun testCodeFenceInsideJsxFlowElementIsIndented() = doTest()
@@ -63,13 +83,25 @@ class MdxFormatterTest : MdxTestBase() {
     @Test
     fun testCodeFenceInsideJsxFlowElementTightIsIndented() = doTest()
 
-    /**
-     * A Markdown list nested in a JSX flow element: every item must align at the same indent.
-     * Today the first paragraph/item picks up a partial indent from the foreign outer-element handling
-     * while later items stay flush, so the list is misaligned.
-     */
+    /** A Markdown list nested in a JSX flow element: every item aligns at the same indent. */
     @Test
     fun testListInsideJsxFlowElementIsIndentedConsistently() = doTest()
+
+    /** An empty code fence must not gain a spurious blank body line. */
+    @Test
+    fun testEmptyCodeFenceInsideJsxFlowElementHasNoBlankLine() = doTest()
+
+    /** A `<div>` wrapping a code fence is still indented one level as a real XmlTag, fence kept OUTER. */
+    @Test
+    fun testCodeFenceThenListInsideJsxFlowElementIndentsBody() = doTest()
+
+    /** The already-indented form of the case above must reformat to itself (idempotent). */
+    @Test
+    fun testCodeFenceAndListInsideJsxFlowElementReformatIsIdempotent() = doTest(testName, testName)
+
+    /** Reformatting a code fence nested in a JSX flow element must be idempotent (an atomic leaf block). */
+    @Test
+    fun testCodeFenceInsideJsxFlowElementReformatIsIdempotent() = doTest()
 
     /**
      * A new line inside a JSX flow element's body must indent to the body level instead of dropping to
@@ -132,9 +164,9 @@ class MdxFormatterTest : MdxTestBase() {
      */
     @Test
     fun testConsoleCompletionInsideIndentedTsxCodeFenceKeepsIndent() {
-      myFixture.configureByFile("$testName.mdx")
-      selectCompletionItem("console")
-      myFixture.checkResultByFile("${testName}_after.mdx")
+        myFixture.configureByFile("$testName.mdx")
+        selectCompletionItem("console")
+        myFixture.checkResultByFile("${testName}_after.mdx")
     }
     /**
      * Enter inside an *indented* injected code fence must not corrupt the injected document. Without a
@@ -156,21 +188,84 @@ class MdxFormatterTest : MdxTestBase() {
      */
     @Test
     fun testFunctionKeywordCompletionInsideIndentedTsxCodeFenceKeepsIndent() {
-      myFixture.configureByFile("$testName.mdx")
-      selectCompletionItem("function")
-      assertEquals(expectedText(), topLevelHost().viewProvider.document!!.text)
+        myFixture.configureByFile("$testName.mdx")
+        selectCompletionItem("function")
+        assertEquals(expectedText(), topLevelHost().viewProvider.document!!.text)
     }
+
+    /**
+     * Enter between a JSX element's tags inside an indented fence expands it like braces: a body line one step
+     * deeper, the closing tag on its own line at the fence base (MdxCodeFenceEnterHandler runs before a
+     * competing JS/XML delegate that would mis-indent it on the injected 0-based fragment).
+     */
+    @Test
+    fun testEnterBetweenJsxTagsInCodeFenceInsideJsxIsIndented() {
+        myFixture.configureByFile("$testName.mdx")
+        myFixture.type("\n")
+        assertEquals(expectedText(), topLevelHost().text)
+    }
+
+    /** As above for a component tag (`<Foo></Foo>`). */
+    @Test
+    fun testEnterBetweenComponentTagsInCodeFenceInsideJsxIsIndented() {
+        myFixture.configureByFile("$testName.mdx")
+        myFixture.type("\n")
+        assertEquals(expectedText(), topLevelHost().text)
+    }
+
+    /** Enter right after a lone opening tag (no matching closer) keeps the new line at the tag's own indent. */
+    @Test
+    fun testEnterAfterOpeningJsxTagInCodeFenceInsideJsxIsIndented() {
+        myFixture.configureByFile("$testName.mdx")
+        myFixture.type("\n")
+        assertEquals(expectedText(), topLevelHost().text)
+    }
+
+    /** Tab inside a code fence indents one level from the fence base instead of to column zero. */
+    @Test
+    fun testTabInsideCodeFenceInsideJsxKeepsFenceIndent() {
+        myFixture.configureByFile("$testName.mdx")
+        myFixture.performEditorAction("EditorTab")
+        assertEquals(expectedText(), topLevelHost().text)
+    }
+
+    /**
+     * A code fence whose body contains JSX (including a line-starting closing tag like `</Foo>`) must parse as
+     * one fence and reformat without crashing, not have its `</Foo>` line mistaken for the flow element's own
+     * closing tag.
+     */
+    @Test
+    fun testReformatCodeFenceWithJsxContentInsideJsx() = doTest()
+
+    /** A fence body indented less than its backticks must still be a code fence and reformat without crashing. */
+    @Test
+    fun testReformatLessIndentedCodeFenceBodyInsideJsx() = doTest()
+
+    /** A less-indented body with mixed indentation is normalized to the fence base. */
+    @Test
+    fun testReformatMixedIndentCodeFenceBodyInsideJsx() = doTest()
 
     @Test
     fun testReformatCodeFenceWithBracesInsideJsxIsIdempotent() = doTest()
 
     // An inline `{expression}` in prose must stay inline, not be exploded onto its own lines by the JS formatter.
     @Test
-    fun testReformatKeepsInlineExpressionInline() {
-        doTest(testName, testName)
-    }
+    fun testReformatKeepsInlineExpressionInline() = doTest(testName, testName)
 
     // Nested JSX is indented one level per nesting and reformatting is idempotent (no drift to the right).
     @Test
     fun testReformatNestedJsxIsIdempotent() = doTest()
+
+
+    /** Reformat inserts a blank line after front matter when the following content is flush against it. */
+    @Test
+    fun testFrontMatterInsertsBlankLineBeforeImport() = doTest()
+
+    /** Reformat collapses multiple blank lines after front matter down to exactly one. */
+    @Test
+    fun testFrontMatterCollapsesExcessBlankLinesToOne() = doTest()
+
+    /** An excessive gap after front matter must stabilize to one blank line and stay stable on reformat. */
+    @Test
+    fun testFrontMatterFollowedByBlankLinesAndJsxReformatIsIdempotent() = doTest()
 }

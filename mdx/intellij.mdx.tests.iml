@@ -66,6 +66,8 @@
     <orderEntry type="module" module-name="intellij.markdown.frontmatter" scope="TEST" />
     <orderEntry type="module" module-name="intellij.markdown.frontmatter.yaml" scope="TEST" />
     <orderEntry type="module" module-name="intellij.markdown.backend" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.markdown.fenceInjection" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.markdown" scope="TEST" />
     <orderEntry type="module" module-name="intellij.mdx" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
