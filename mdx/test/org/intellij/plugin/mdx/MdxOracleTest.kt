@@ -5,15 +5,19 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.junit.jupiter.api.Test
 
-
+/**
+ * Oracle-based structural tests for the IntelliJ MDX parser (WEB-78468 redesign acceptance criteria):
+ * each asserts PSI STRUCTURE (real heading/list/code/expression nodes, not just absence of parse
+ * errors) against the canonical MDX AST produced by remark-mdx/remark-gfm, the reference toolchain
+ * behind mdxjs.com.
+ */
 class MdxOracleTest : MdxTestBase() {
 
   /**
    * Containment oracle: the fenced code must be a real CHILD of the enclosing JSX flow element in
    * the BASE Markdown PSI tree. Asserts no errors, opaque fence content, the fence NESTED under a
    * base-tree JSX element spanning `<`[enclosingTagName]`...</`tag`>`, and no JSX tag named any of
-   * [forbiddenTagNames]. Red today: the base parser makes JSX an opaque JSX_BLOCK whose body is
-   * JSX_BLOCK_CONTENT, so there is no real fenced-code child nested under the JSX element.
+   * [forbiddenTagNames].
    */
   private fun assertOpaqueFenceInsideJsx(
     text: String,
@@ -76,7 +80,7 @@ class MdxOracleTest : MdxTestBase() {
       forbiddenTagNames = arrayOf("stdio.h"))
   }
 
-  /** Oracle: braces inside a fenced ```tsx``` block nested in JSX are code, not MDX JSX expressions. RED today. */
+  /** Oracle: braces inside a fenced ```tsx``` block nested in JSX are code, not MDX JSX expressions. GREEN. */
   @Test
   fun testTsxFunctionCodeBlockInJsxHasNoErrors() {
     val text = """
@@ -159,8 +163,7 @@ class MdxOracleTest : MdxTestBase() {
 
   /**
    * WEB-78468. Oracle: `<Callout>` is a flow element whose children include a real heading{2} and a
-   * list. PARTIALLY implemented: heading IS now ATX_2 nested inside the JSX element, but `- item`
-   * inside flow JSX is still a flat PARAGRAPH, not UNORDERED_LIST. RED on the list assertion.
+   * list, both nested inside the JSX element (not a flat PARAGRAPH). GREEN.
    */
   @Test
   fun testMarkdownInsideJsxHasNoErrors() {
@@ -184,8 +187,7 @@ class MdxOracleTest : MdxTestBase() {
   }
 
   /**
-   * WEB-78468. Oracle: same interleaving with 2-space indentation. RED on the list assertion
-   * until lists-in-flow-JSX are parsed.
+   * WEB-78468. Oracle: same interleaving with 2-space indentation. GREEN.
    */
   @Test
   fun testMarkdownInsideJsxIndented() {
@@ -275,8 +277,7 @@ class MdxOracleTest : MdxTestBase() {
   }
 
   /**
-   * Oracle: `<!-- -->` is INVALID MDX; the parser must produce a PsiErrorElement. RED today —
-   * the current parser treats it as text. WEB-78468.
+   * Oracle: `<!-- -->` is INVALID MDX; the parser must produce a PsiErrorElement. GREEN. WEB-78468.
    */
   @Test
   fun testHtmlCommentIsInvalidMdx() {
@@ -298,7 +299,7 @@ class MdxOracleTest : MdxTestBase() {
     )
   }
 
-  /** Oracle: a multiline JS expression attribute in a JSX opening tag keeps one surrounding JSX flow element. RED today. */
+  /** Oracle: a multiline JS expression attribute in a JSX opening tag keeps one surrounding JSX flow element. GREEN. */
   @Test
   fun testMultilineExpressionAttributeInOpeningTagHasJsxFlowElement() {
     val text = """
@@ -311,6 +312,27 @@ class MdxOracleTest : MdxTestBase() {
     assertNoErrors(text)
     assertEquals(
       "Expected one JSX flow element spanning the multiline opening tag and its body.",
+      1,
+      nodesOfType(myFixture.file, "MDX_JSX_FLOW_ELEMENT").count { it.text.contains("Hello") }
+    )
+  }
+
+  /** As above, but the arrow-function body also contains a blank line, which must not split the element. */
+  @Test
+  fun testMultilineExpressionAttributeWithBlankLineHasJsxFlowElement() {
+    val text = """
+      <div onClick={() => {
+          console.log(1)
+
+          console.log(2)
+      }}>
+          Hello
+      </div>
+    """.trimIndent()
+    assertNoErrors(text)
+    assertEquals(
+      "Expected one JSX flow element spanning the multiline opening tag (with a blank line inside its " +
+      "attribute expression) and its body.",
       1,
       nodesOfType(myFixture.file, "MDX_JSX_FLOW_ELEMENT").count { it.text.contains("Hello") }
     )
@@ -344,8 +366,8 @@ class MdxOracleTest : MdxTestBase() {
   }
 
   /**
-   * Oracle: `{a < b ? <Yes/> : <No/>}` on its own line is a single `mdxFlowExpression`. RED today —
-   * the base parser splits it into TEXT / `<` / HTML_TAG tokens. WEB-78468.
+   * Oracle: `{a < b ? <Yes/> : <No/>}` on its own line is a single `mdxFlowExpression`; `<Yes/>`/
+   * `<No/>` must NOT be split into standalone HTML_TAG tokens in the base tree. GREEN. WEB-78468.
    */
   @Test
   fun testFlowExpressionWithJsx() {
@@ -383,8 +405,8 @@ class MdxOracleTest : MdxTestBase() {
   }
 
   /**
-   * Oracle: unchecked/checked task items are `listItem`s with CHECK_BOX markers.
-   * RED today — the base parser reads checkbox markers as plain text / SHORT_REFERENCE_LINK. WEB-78468.
+   * Oracle: unchecked/checked task items are `listItem`s with CHECK_BOX markers, not plain
+   * text / SHORT_REFERENCE_LINK. GREEN. WEB-78468.
    */
   @Test
   fun testTaskListItemsAreCheckable() {
@@ -532,8 +554,7 @@ class MdxOracleTest : MdxTestBase() {
   /** Oracle: a leading `---`...`---` block is a `yaml` node; FRONT_MATTER_HEADER is recognized. GREEN. */
   @Test
   fun testFrontMatterIsRecognized() {
-    myFixture.configureByText("foo.mdx", "---\ntitle: Hello MDX\npublished: true\n---\n\n# Heading")
-    assertNoPsiErrors()
+    assertNoErrors("---\ntitle: Hello MDX\npublished: true\n---\n\n# Heading")
     assertTrue("Oracle: a leading `---`...`---` block must parse to a FRONT_MATTER_HEADER node.", nodesOfTypeAllRoots("FRONT_MATTER_HEADER").isNotEmpty())
     assertHasMarkdownHeading("Heading", depth = 1)
   }
@@ -541,8 +562,7 @@ class MdxOracleTest : MdxTestBase() {
   /** Oracle: a leading `+++`...`+++` block is a `toml` node; FRONT_MATTER_HEADER is recognized. GREEN. */
   @Test
   fun testTomlFrontMatterIsRecognized() {
-    myFixture.configureByText("foo.mdx", "+++\ntitle = \"Hello MDX\"\npublished = true\n+++\n\n# Heading")
-    assertNoPsiErrors()
+    assertNoErrors("+++\ntitle = \"Hello MDX\"\npublished = true\n+++\n\n# Heading")
     assertTrue("Oracle: a leading `+++`...`+++` block must parse to a FRONT_MATTER_HEADER node.", nodesOfTypeAllRoots("FRONT_MATTER_HEADER").isNotEmpty())
     assertHasMarkdownHeading("Heading", depth = 1)
   }
@@ -552,8 +572,7 @@ class MdxOracleTest : MdxTestBase() {
   /** Oracle: CRLF line endings parse like LF; heading + paragraph parse with no errors. GREEN. */
   @Test
   fun testCrlf() {
-    myFixture.configureByText("foo.mdx", "# Heading\r\nA paragraph line.\r\n\r\n<Note>flow</Note>\r\n")
-    assertNoPsiErrors()
+    assertNoErrors("# Heading\r\nA paragraph line.\r\n\r\n<Note>flow</Note>\r\n")
     assertHasMarkdownHeading("Heading", depth = 1)
     assertNotNull("Oracle: a paragraph is expected", firstContainer("PARAGRAPH"))
   }
@@ -561,8 +580,7 @@ class MdxOracleTest : MdxTestBase() {
   /** Oracle: a whitespace-only file has no block content (empty `root`). GREEN. */
   @Test
   fun testWhitespaceOnlyFile() {
-    myFixture.configureByText("foo.mdx", "   \n   \n")
-    assertNoPsiErrors()
+    assertNoErrors("   \n   \n")
     assertEmpty(
       "Oracle: a whitespace-only file has no block content",
       PsiTreeUtil.collectElements(myFixture.file) { it.firstChild == null && it.text.isNotBlank() }.toList()
@@ -572,7 +590,6 @@ class MdxOracleTest : MdxTestBase() {
   /** An empty file is valid MDX (empty `root`). GREEN. */
   @Test
   fun testEmptyFile() {
-    myFixture.configureByText("foo.mdx", "")
-    assertNoPsiErrors()
+    assertNoErrors("")
   }
 }
