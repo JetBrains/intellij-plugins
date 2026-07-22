@@ -61,7 +61,6 @@ data class QodanaYamlConfig(
   val modulesToAnalyze: Set<AllowedModule> = emptySet(),
   val dependencySbomExclude: Set<DependencyIgnore> = emptySet(), // not in SBOM, but in projectMetadata
   val analyzeDevDependencies: Boolean = false,
-  val enablePackageSearch: Boolean = false,
   val raiseLicenseProblems: Boolean = false
 ) {
 

@@ -4,6 +4,7 @@ import com.intellij.testFramework.assertInstanceOf
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
@@ -121,6 +122,23 @@ class QodanaConfigTest {
     }
 
     assertEquals("Unexpected keys in qodana.yaml: [inspections]", ex.message)
+  }
+
+  @Test
+  fun `deprecated yaml option is ignored and reported`() {
+    val errors = mutableListOf<String?>()
+    val reporter = object : QodanaMessageReporter by QodanaMessageReporter.EMPTY {
+      override fun reportError(message: String?) {
+        errors += message
+      }
+    }
+    val yaml = QodanaYamlReader.parse("""
+      version: 1.0
+      enablePackageSearch: true
+    """.trimIndent(), reporter).getOrThrow()
+
+    assertEquals("1.0", yaml.version)
+    assertEquals(listOf("Property \"enablePackageSearch\" in qodana.yaml is deprecated and will be ignored"), errors)
   }
 
   @Test

@@ -37,7 +37,7 @@ data class DependencyAnalysisConfig(
         modulesToAnalyze = yaml.modulesToAnalyze,
         dependencySbomExclude = yaml.dependencySbomExclude,
         analyzeDevDependencies = yaml.analyzeDevDependencies,
-        enablePackageSearch = yaml.enablePackageSearch,
+        enablePackageSearch = false,
         raiseLicenseProblems = yaml.raiseLicenseProblems
       )
     }

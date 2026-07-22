@@ -816,11 +816,6 @@
       "type": "boolean",
       "default": false
     },
-    "enablePackageSearch": {
-      "description": "Using package-search service for fetching license data for dependencies (only for jvm libraries)",
-      "type": "boolean",
-      "default": false
-    },
     "raiseLicenseProblems": {
       "description": "Show license problems like other inspections",
       "type": "boolean",

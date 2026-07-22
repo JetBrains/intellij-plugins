@@ -10,12 +10,14 @@ import kotlinx.coroutines.runInterruptible
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.reflect.full.declaredMemberProperties
 
 internal val QODANA_CONFIG_FILES: List<String> = listOf(QODANA_YAML_CONFIG_FILENAME, QODANA_YML_CONFIG_FILENAME)
+private val deprecatedFields = setOf("enablePackageSearch")
 
 // parsing
 object QodanaYamlReader {
@@ -50,7 +52,10 @@ object QodanaYamlReader {
     QodanaYamlConfig::class.declaredMemberProperties.map { it.name }.toSet()
   }
 
-  fun parse(@Language("yaml") yaml: String): Result<QodanaYamlConfig> =
+  fun parse(
+    @Language("yaml") yaml: String,
+    messageReporter: QodanaMessageReporter = QodanaMessageReporter.DEFAULT,
+  ): Result<QodanaYamlConfig> =
     runCatching {
       val obj = when (val parsed = parser.readTree(yaml)) {
         null, is MissingNode -> parser.createObjectNode() // don't fail on empty input
@@ -61,6 +66,10 @@ object QodanaYamlReader {
       val relevantFields = knownProps
       val filteredObject = obj.fieldNames()
         .asSequence()
+        .onEach {
+          if (it in deprecatedFields) messageReporter.reportError("Property \"$it\" in qodana.yaml is deprecated and will be ignored")
+        }
+        .filter { it !in deprecatedFields }
         .onEach { if (it !in rootProps) unknown += it }
         .filter { it in relevantFields }
         .toList()
