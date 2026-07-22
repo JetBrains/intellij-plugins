@@ -3,7 +3,6 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.ide.plugins.DisabledPluginsState
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.internal.statistic.eventLog.EventLogConfiguration
@@ -13,6 +12,7 @@ import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -78,22 +78,8 @@ class QodanaInspectionApplication(
       }
       run()
     }
-    catch (e: InspectionApplicationException) {
-      reporter.reportError(e)
-      exitProcess(1)
-    }
-    catch (e: QodanaException) {
-      LOG.error(e)
-      reporter.reportError("Qodana exited abnormally because: ${e.message}")
-      exitProcess(1)
-    }
-    catch (@Suppress("IncorrectCancellationExceptionHandling") e: ProcessCanceledException) {
-      reporter.reportError((e.cause as? QodanaCancellationException) ?: e)
-      exitProcess(1)
-    }
-    catch (e: Throwable) {
-      LOG.error(e)
-      reporter.reportError(e)
+    catch (@Suppress("IncorrectCancellationExceptionHandling") e: Throwable) {
+      reportTerminalError(e, reporter)
       exitProcess(1)
     }
 
@@ -159,7 +145,7 @@ class QodanaInspectionApplication(
       }
     }
     catch (e: Throwable) {
-      if (e !is CancellationException) {
+      if (!Logger.shouldRethrow(e)) {
         LOG.error(e)
       }
       throw e
@@ -291,5 +277,29 @@ class QodanaInspectionApplication(
 
   companion object {
     private val LOG = logger<QodanaInspectionApplication>()
+
+    /**
+     * Reports the exception that terminated [startup]. Deliberately does NOT call `LOG.error`: the platform logger
+     * rethrows control-flow exceptions, which would skip the caller's `exitProcess` and hang the headless linter
+     * (QD-15440).
+     */
+    @VisibleForTesting
+    internal fun reportTerminalError(e: Throwable, reporter: QodanaMessageReporter) {
+      when (e) {
+        // QodanaCancellationException, ProcessCanceledException, IndicatorCancellationException — all CancellationException.
+        is CancellationException -> reporter.reportError(cancellationThrowableToReport(e) ?: e)
+        is QodanaException -> reporter.reportError("Qodana exited abnormally because: ${e.message}")
+        else -> reporter.reportError(e)
+      }
+    }
+  }
+}
+
+@VisibleForTesting
+internal fun cancellationThrowableToReport(throwable: Throwable): Throwable? {
+  return when (throwable) {
+    is QodanaCancellationException -> throwable
+    is ProcessCanceledException -> (throwable.cause as? QodanaCancellationException) ?: throwable
+    else -> null
   }
 }
