@@ -298,6 +298,8 @@
     <polySymbols.codeCompletionItemCustomizer
       implementation="org.jetbrains.vuejs.web.VueCodeCompletionItemCustomizer"/>
 
+    <typescript.kolar.transpiler implementation="org.jetbrains.vuejs.lang.typescript.kolar.VueKolarTranspiler"/>
+
     <vuejs.templateScopesProvider
       implementation="org.jetbrains.vuejs.codeInsight.template.VueStandardSymbolsScopesProvider"
       id="standardSymbols"
