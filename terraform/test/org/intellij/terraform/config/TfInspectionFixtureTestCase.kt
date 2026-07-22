@@ -68,7 +68,7 @@ abstract class TfInspectionFixtureTestCase : InspectionFixtureTestCase() {
             myFixture.checkPreviewAndLaunchAction(intentionAction)
 
           val newText = myFixture.file.text
-          assertEqualsToFile("quickfix ${intentionAction.text} result",
+          assertEqualsToFile("quickfix '${intentionAction.text}' result",
                              File(File(basePath, testDir), "after_${i}_${j}")
                                .apply { mkdirs() }
                                .resolve(refEntity.name),
