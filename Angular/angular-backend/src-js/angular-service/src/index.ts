@@ -12,7 +12,7 @@ import {
 } from "./decorateLanguageService"
 import {CodegenContext} from "@volar/language-core/lib/types"
 import {AngularSourceMap} from "./ngSourceMap"
-import {ngTranspiledTemplates, registerProtocolHandlers} from "./ngCommands"
+import {ngTranspiledTemplates, patchProjectUpdateGraphToRestoreNgRoots, registerProtocolHandlers} from "./ngCommands"
 
 type TypeScript = typeof ts
 
@@ -88,6 +88,7 @@ function addNgCommands(ts: TypeScript, info: ts.server.PluginCreateInfo) {
 
   (session as any).webStormNgCommandsAdded = true
   registerProtocolHandlers(session, ts, projectService)
+  patchProjectUpdateGraphToRestoreNgRoots(ts)
   projectService.logger.info("Angular specific commands are successfully added.");
 }
 

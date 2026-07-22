@@ -71,6 +71,51 @@ type GetGeneratedElementTypeArguments = {
 
 export let ngTranspiledTemplates = new Map<string, AngularTranspiledTemplate>()
 
+// The TS server resyncs a project's root files from its tsconfig on every reload
+// (see ProjectService.updateNonInferredProjectFiles), which drops any root added via
+// project.addRoot() that isn't part of the tsconfig's file list - including the
+// template ".html" roots added below. This is called again from a patched
+// Project.prototype.updateGraph (see patchProjectUpdateGraphToRestoreNgRoots) to
+// re-add those roots after such a reload.
+function restoreNgTranspiledTemplateRoots(ts: TypeScript, project: ts.server.Project): boolean {
+  let restoredAny = false
+  ngTranspiledTemplates.forEach((transpiledTemplate, fileName) => {
+    if (!project.containsFile(ts.server.toNormalizedPath(fileName))) return
+    transpiledTemplate.mappings?.forEach(mapping => {
+      let mappingFileName = ts.server.toNormalizedPath(mapping.fileName)
+      if (mappingFileName.endsWith(".html") && !project.containsFile(mappingFileName)) {
+        let mappingScriptInfo = project.projectService.getOrCreateScriptInfoForNormalizedPath(
+          mappingFileName,
+          true, undefined, ts.ScriptKind.Unknown,
+          false, undefined
+        )
+        if (mappingScriptInfo && !project.containsFile(mappingFileName)) {
+          project.addRoot(mappingScriptInfo, mappingFileName)
+          restoredAny = true
+        }
+      }
+    });
+  });
+  return restoredAny
+}
+
+export function patchProjectUpdateGraphToRestoreNgRoots(ts: TypeScript) {
+  const projectPrototype = ts.server.Project.prototype as any
+  if (projectPrototype.webStormNgRootsRestorePatched) return
+  projectPrototype.webStormNgRootsRestorePatched = true
+
+  const originalUpdateGraph = projectPrototype.updateGraph
+  projectPrototype.updateGraph = function (this: ts.server.Project, ...args: any[]) {
+    const result = originalUpdateGraph.apply(this, args)
+    if (restoreNgTranspiledTemplateRoots(ts, this)) {
+      // addRoot() only marks the project dirty; fold the restored roots into the
+      // program right away instead of waiting for the next unrelated update.
+      originalUpdateGraph.apply(this, args)
+    }
+    return result
+  }
+}
+
 function ngTranspiledTemplateHandler(ts: TypeScript,
                                      session: ts.server.Session,
                                      projectService: ts.server.ProjectService,
@@ -87,23 +132,7 @@ function ngTranspiledTemplateHandler(ts: TypeScript,
 
   let scriptInfo = projectService.getScriptInfo(fileName)
   if (scriptInfo) {
-    transpiledTemplate?.mappings?.forEach(mapping => {
-      let mappingFileName = ts.server.toNormalizedPath(mapping.fileName)
-      if (mappingFileName.endsWith(".html")) {
-        let mappingScriptInfo = projectService.getOrCreateScriptInfoForNormalizedPath(
-          mappingFileName,
-          true, undefined, ts.ScriptKind.Unknown,
-          false, undefined
-        )
-        if (mappingScriptInfo) {
-          scriptInfo?.containingProjects?.forEach(project => {
-            if (!project.containsFile(mappingFileName)) {
-              project.addRoot(mappingScriptInfo, mappingFileName)
-            }
-          })
-        }
-      }
-    });
+    scriptInfo.containingProjects?.forEach(project => restoreNgTranspiledTemplateRoots(ts, project));
     // trigger reload
     (session as any).change(
       {
