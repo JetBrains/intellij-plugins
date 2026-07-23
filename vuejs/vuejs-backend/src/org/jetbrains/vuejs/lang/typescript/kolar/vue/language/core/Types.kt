@@ -83,7 +83,6 @@ data class IRStyle(
 
 interface IRContent {
   val length: Int
-  operator fun get(index: Int): Char
   fun indexOf(string: String, startIndex: Int): Int
   fun substring(startIndex: Int, endIndex: Int): String
 }

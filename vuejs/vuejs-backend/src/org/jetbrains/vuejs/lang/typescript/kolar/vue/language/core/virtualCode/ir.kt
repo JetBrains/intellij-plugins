@@ -86,10 +86,6 @@ private class IRContentImpl(
   override val length: Int
     get() = TODO("not implemented")
 
-  override fun get(index: Int): Char {
-    TODO("not implemented")
-  }
-
   override fun indexOf(string: String, startIndex: Int): Int {
     TODO("not implemented")
   }
