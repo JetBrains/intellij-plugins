@@ -11,8 +11,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.IfNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.InterpolationNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Node
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.RootNode
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl.InterpolationNodeImpl
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRContent
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.hyphenateTag
@@ -63,7 +63,7 @@ fun generateTemplateChild(
   }
   else if (node is InterpolationNode) {
     // {{ ... }}
-    val (content, start) = parseInterpolationNode(node, options.template.content)
+    val (content, start) = parseInterpolationNode(node)
     yieldAll(generateInterpolation(
       options = options,
       ctx = ctx,
@@ -126,18 +126,5 @@ private fun collectSingleRootNodes(
 
 private fun parseInterpolationNode(
   node: InterpolationNode,
-  template: IRContent,
-): Pair<String, Int> {
-  var start = node.content.loc.startOffset
-  var end = node.content.loc.endOffset
-
-  // fix https://github.com/vuejs/language-tools/issues/1787
-  while (start > 0 && template[start - 1].isWhitespace()) {
-    start--
-  }
-  while (end < template.length && template[end].isWhitespace()) {
-    end++
-  }
-
-  return Pair(template.substring(start, end), start)
-}
+): Pair<String, Int> =
+  InterpolationNodeImpl.sourceLocationWithWhitespaces(node)

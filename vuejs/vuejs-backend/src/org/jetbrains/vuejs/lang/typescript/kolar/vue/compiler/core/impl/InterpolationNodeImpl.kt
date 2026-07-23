@@ -15,4 +15,17 @@ class InterpolationNodeImpl(
     // TODO: support compound expressions
     SimpleExpressionNodeImpl(expressionContent)
   }
+
+  companion object {
+    fun sourceLocationWithWhitespaces(
+      node: InterpolationNode,
+    ): Pair<String, Int> {
+      node as InterpolationNodeImpl
+
+      return Pair(
+        node.expressionContent.parent.text,
+        node.parentRange.startOffset,
+      )
+    }
+  }
 }
