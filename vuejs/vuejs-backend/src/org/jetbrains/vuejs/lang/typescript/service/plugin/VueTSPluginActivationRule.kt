@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.getAppropriateVueLSVersion
+import org.jetbrains.vuejs.lang.typescript.service.isVueServiceCompatibleTypeScriptEnabled
 import org.jetbrains.vuejs.lang.typescript.service.isVueServiceContext
 import org.jetbrains.vuejs.options.VueLSMode
 import org.jetbrains.vuejs.options.VueSettings
@@ -33,6 +34,9 @@ private class ActivationHelper(
   }
 
   override fun isEnabledInSettings(project: Project): Boolean {
+    if (!isVueServiceCompatibleTypeScriptEnabled(project))
+      return false
+
     val settings = VueSettings.instance(project)
     return when (runtime) {
       is VueServiceRuntime.Bundled ->
