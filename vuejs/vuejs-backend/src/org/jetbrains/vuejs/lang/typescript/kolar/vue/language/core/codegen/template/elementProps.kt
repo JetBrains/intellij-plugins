@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.picomatch.isMatch
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.AttributeNode
@@ -139,20 +138,8 @@ fun generateElementProps(
         val features = getPropsCodeFeatures(checkUnknownProps)
         if (shouldSpread) yield("...{ ")
         val boundary = yield(Boundary.start(Source("template"), attrProp.loc.startOffset, codeFeatures.verification))
-        val prefix = options.template.content[attrProp.loc.startOffset]
-        if (prefix == '.' || prefix == '#') {
-          for (char in attrProp.name) {
-            yield(DataSegment(
-              text = char.toString(),
-              source = Source("template"),
-              sourceOffset = attrProp.loc.startOffset,
-              data = features,
-            ))
-          }
-        }
-        else {
-          yieldAll(generateObjectProperty(options, ctx, attrProp.name, attrProp.loc.startOffset, features, shouldCamelize))
-        }
+        // Pug shorthand syntax (was here, but removed)
+        yieldAll(generateObjectProperty(options, ctx, attrProp.name, attrProp.loc.startOffset, features, shouldCamelize))
         yield(": ")
         when {
           attrProp.name == "style" -> yield("{}")
