@@ -1,7 +1,9 @@
 <idea-plugin visibility="public">
   <dependencies>
-    <plugin id="com.intellij.mcpServer"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.mcpserver"/>
     <module name="intellij.qodana.inspectionKts"/>
+    <!-- endregion -->
   </dependencies>
 
   <extensions defaultExtensionNs="com.intellij.mcpServer">
