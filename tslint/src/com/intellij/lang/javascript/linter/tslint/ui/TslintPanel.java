@@ -50,7 +50,9 @@ public final class TslintPanel {
   public @NotNull JComponent createComponent() {
     myRules = new TextFieldWithBrowseButton();
     myAllowJs = new JBCheckBox();
-    var descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(TsLintBundle.message("additional.rules.directory.title"));
+    var descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
+      .withTitle(TsLintBundle.message("additional.rules.directory.title"))
+      .withEnvironmentRestricted(true);
     SwingHelper.installFileCompletionAndBrowseDialog(myProject, myRules, descriptor);
     FormBuilder nodeFieldsWrapperBuilder = FormBuilder.createFormBuilder()
       .setHorizontalGap(UIUtil.DEFAULT_HGAP)
