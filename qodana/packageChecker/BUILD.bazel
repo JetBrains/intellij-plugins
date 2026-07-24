@@ -1,0 +1,58 @@
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.qodana.packageChecker` start
+
+jvm_library(
+    name = "packageChecker",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.packageChecker",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//plugins/package-checker/core:packageChecker",
+        "@community//platform/analysis-impl",
+        "@community//platform/core-api:core",
+        "//contrib/qodana",
+    ],
+)
+
+jvm_library(
+    name = "packageChecker_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.packageChecker",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":packageChecker",
+        "//plugins/package-checker/core:packageChecker_test_lib",
+        "@community//platform/analysis-impl:analysis-impl_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "//contrib/qodana:qodana_test_lib",
+    ],
+)
+### auto-generated section `build intellij.qodana.packageChecker` end
+
+### auto-generated section `iml intellij.qodana.packageChecker` start
+exports_files(
+    [
+        "intellij.qodana.packageChecker.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.qodana.packageChecker` end

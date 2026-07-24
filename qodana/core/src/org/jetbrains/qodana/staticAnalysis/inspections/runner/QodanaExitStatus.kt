@@ -7,10 +7,10 @@ import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageData
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.coverageStats
-import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
-import org.jetbrains.qodana.staticAnalysis.sarif.ResultSummaryContributor
 import org.jetbrains.qodana.staticAnalysis.sarif.DEPENDENCY_AUDIT_PROHIBITED
 import org.jetbrains.qodana.staticAnalysis.sarif.DEPENDENCY_AUDIT_UNKNOWN
+import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
+import org.jetbrains.qodana.staticAnalysis.sarif.ResultSummaryContributor
 import org.jetbrains.qodana.staticAnalysis.sarif.dependencyLicenseAudit
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.ToolErrorInspectListener
 import org.jetbrains.qodana.staticAnalysis.sarif.qodanaKind
@@ -19,6 +19,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.resultSummary
 private val logger by lazy { logger<ExitStatus>() }
 
 private const val FAIL_THRESHOLD_EXIT_CODE = 255
+internal const val PACKAGE_CHECKER_EXIT_CODE = 1
 
 /**
  * Arbitrary, but based on https://man.freebsd.org/cgi/man.cgi?query=sysexits

@@ -1,0 +1,15 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="org.intellij.qodana"/>
+    <plugin id="org.jetbrains.security.package-checker"/>
+  </dependencies>
+  <projectListeners>
+    <listener class="org.jetbrains.qodana.staticAnalysis.packageChecker.PackageCheckerInspectListener"
+              topic="com.intellij.codeInspection.ex.InspectListener"/>
+  </projectListeners>
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="qd.package-checker.cancel.on.failure"
+                 defaultValue="true"
+                 description="Cancel Qodana analysis when vulnerability search fails"/>
+  </extensions>
+</idea-plugin>

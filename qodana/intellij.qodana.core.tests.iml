@@ -127,7 +127,9 @@
     <orderEntry type="library" scope="TEST" name="jetbrains.qodana.configuration" level="project" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.packageChecker" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.packageChecker" scope="TEST" />
     <orderEntry type="module" module-name="intellij.vcs.git.backend.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.lombok.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />

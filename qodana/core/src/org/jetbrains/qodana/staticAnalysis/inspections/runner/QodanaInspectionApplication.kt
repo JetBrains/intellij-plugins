@@ -78,7 +78,7 @@ class QodanaInspectionApplication(
       }
       run()
     }
-    catch (@Suppress("IncorrectCancellationExceptionHandling") e: Throwable) {
+    catch (e: Throwable) {
       reportTerminalError(e, reporter)
       exitProcess(1)
     }
@@ -87,7 +87,7 @@ class QodanaInspectionApplication(
   }
 
   @VisibleForTesting
-  fun constructQodanaRunner(contextFactory: QodanaRunContextFactory, messageReporter: QodanaMessageReporter = reporter) =
+  fun constructQodanaRunner(contextFactory: QodanaRunContextFactory, messageReporter: QodanaMessageReporter = reporter): QodanaRunner =
     QodanaRunner(
       QodanaScriptFactory.buildScript(config, contextFactory, messageReporter),
       config,

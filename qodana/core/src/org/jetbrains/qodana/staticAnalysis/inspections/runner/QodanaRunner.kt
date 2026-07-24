@@ -2,9 +2,10 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.google.gson.reflect.TypeToken
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.NioFiles
 import com.intellij.platform.diagnostic.telemetry.helpers.useWithScope
 import com.intellij.psi.PsiElement
+import com.intellij.util.ExceptionUtil
 import com.intellij.util.io.createDirectories
 import com.intellij.util.io.delete
 import com.jetbrains.qodana.sarif.SarifUtil
@@ -17,13 +18,13 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.coverage.buildChangedLinesPayload
+import org.jetbrains.qodana.coverage.writeChangedLinesArtifact
 import org.jetbrains.qodana.qodanaTracer
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.coverageStats
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.hasCoverageFiles
-import org.jetbrains.qodana.coverage.buildChangedLinesPayload
-import org.jetbrains.qodana.coverage.writeChangedLinesArtifact
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.CodeQualityMetrics
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.MetricAggregator
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.codeQualityMetrics
@@ -74,7 +75,7 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
           resultsStorageDir.createDirectories()
         }
         try {
-          FileUtil.deleteRecursively(config.coverage.coveragePath)
+          NioFiles.deleteRecursively(config.coverage.coveragePath)
         }
         catch (e: IOException) {
           LOG.warn("Exception while cleaning up coverage directory", e)
@@ -96,7 +97,7 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
 
       sarif.getOrCreateRun().run {
         if (config.skipResultStrategy.shouldSkip(this)) return@run
-        createCommandLineResultsPrinter(getInspectionNamesFromRun(this, scriptResult))?.let { commandLineResultsPrinter ->
+        createCommandLineResultsPrinter(getInspectionNamesFromRun(this, scriptResult)).let { commandLineResultsPrinter ->
           printSanityResults(this, commandLineResultsPrinter)
           printMainResults(this, commandLineResultsPrinter)
           printPromoResults(this, commandLineResultsPrinter)
@@ -109,6 +110,13 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
     }
     catch (e: Throwable) {
       val invocation = sarif.getOrCreateRun().invocations.first()
+      val reportedFailure = ExceptionUtil.findCause(e, QodanaReportedFailureException::class.java)
+      if (reportedFailure != null) {
+        invocation.exitCode = reportedFailure.exitCode
+        invocation.executionSuccessful = false
+        invocation.exitCodeDescription = reportedFailure.exitCodeDescription
+        return sarif
+      }
       invocation.exitCode = 1
       invocation.executionSuccessful = false
       invocation.exitCodeDescription = "Internal error"
@@ -281,46 +289,47 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
     }
   }
 
-  private suspend fun getInspectionNamesFromRun(resultingRun: Run, scriptResult: QodanaScriptResult) = withContext(StaticAnalysisDispatchers.Default) {
-    buildMap {
-      val nullPsiElement: PsiElement? = null
-      val profile = scriptResult.profileState.mainState.inspectionGroup.profile
-      val unknownIds = mutableMapOf<String, String>()
-      val resolveUnknown: (String) -> String = { input ->
-        // this is a rare situation when we handle 2 runs having different plugin ids
-        // it is expensive, however, calling it for 1-2 is less expensive than storing
-        // thousands of mapped values
-        unknownIds.computeIfAbsent(input) {
-          resultingRun.tool.extensions.forEach { e -> e.rules.forEach { r -> if (r.id == input) return@computeIfAbsent r.shortDescription.text } }
-          input
+  private suspend fun getInspectionNamesFromRun(resultingRun: Run, scriptResult: QodanaScriptResult) =
+    withContext(StaticAnalysisDispatchers.Default) {
+      buildMap {
+        val nullPsiElement: PsiElement? = null
+        val profile = scriptResult.profileState.mainState.inspectionGroup.profile
+        val unknownIds = mutableMapOf<String, String>()
+        val resolveUnknown: (String) -> String = { input ->
+          // this is a rare situation when we handle 2 runs having different plugin ids
+          // it is expensive, however, calling it for 1-2 is less expensive than storing
+          // thousands of mapped values
+          unknownIds.computeIfAbsent(input) {
+            resultingRun.tool.extensions.forEach { e -> e.rules.forEach { r -> if (r.id == input) return@computeIfAbsent r.shortDescription.text } }
+            input
+          }
         }
-      }
 
-      val shouldIncludeResult: (Result) -> Boolean = { result ->
-        val baselineState = result.baselineState
-        when {
-          baselineState == Result.BaselineState.ABSENT -> false
-          else -> true
+        val shouldIncludeResult: (Result) -> Boolean = { result ->
+          val baselineState = result.baselineState
+          when {
+            baselineState == Result.BaselineState.ABSENT -> false
+            else -> true
+          }
         }
-      }
 
-      resultingRun.results?.filter(shouldIncludeResult)?.forEach { result ->
-        result.ruleId?.let { put(it, profile.getInspectionTool(it, nullPsiElement)?.displayName ?: resolveUnknown(it)) }
-      }
-
-      resultingRun.convertPropertyToResults("qodana.sanity.results")
-        ?.filter(shouldIncludeResult)?.forEach { result ->
+        resultingRun.results?.filter(shouldIncludeResult)?.forEach { result ->
           result.ruleId?.let { put(it, profile.getInspectionTool(it, nullPsiElement)?.displayName ?: resolveUnknown(it)) }
         }
 
-      resultingRun.convertPropertyToResults("qodana.promo.results")
-        ?.filter(shouldIncludeResult)?.forEach { result ->
-          result.ruleId?.let { put(it, profile.getInspectionTool(it, nullPsiElement)?.displayName ?: resolveUnknown(it)) }
-        }
+        resultingRun.convertPropertyToResults("qodana.sanity.results")
+          ?.filter(shouldIncludeResult)?.forEach { result ->
+            result.ruleId?.let { put(it, profile.getInspectionTool(it, nullPsiElement)?.displayName ?: resolveUnknown(it)) }
+          }
+
+        resultingRun.convertPropertyToResults("qodana.promo.results")
+          ?.filter(shouldIncludeResult)?.forEach { result ->
+            result.ruleId?.let { put(it, profile.getInspectionTool(it, nullPsiElement)?.displayName ?: resolveUnknown(it)) }
+          }
+      }
     }
-  }
 
-  private suspend fun createCommandLineResultsPrinter(inspectionNames: Map<String, String>): CommandLineResultsPrinter? {
+  private suspend fun createCommandLineResultsPrinter(inspectionNames: Map<String, String>): CommandLineResultsPrinter {
     return CommandLineResultsPrinter(
       inspectionIdToName = getInspectionIdToNameMap(inspectionNames, config),
       cliPrinter = { message -> messageReporter.reportMessage(1, message) }

@@ -10,6 +10,9 @@ object QodanaRegistry {
   @VisibleForTesting
   const val SCOPE_EXTENDING_ENABLE_KEY = "qd.scope.extending.enabled"
 
+  @VisibleForTesting
+  const val PACKAGE_CHECKER_CANCEL_ON_FAILURE_KEY = "qd.package-checker.cancel.on.failure"
+
   val isQodanaLicenseAgreementCallbackEnabled: Boolean
     get() = Registry.`is`("qd.license.agreement.callback.enabled", true)
 
@@ -21,6 +24,9 @@ object QodanaRegistry {
 
   val isScopeExtendingEnabled: Boolean
     get() = Registry.`is`(SCOPE_EXTENDING_ENABLE_KEY, false)
+
+  val isPackageCheckerCancelOnFailureEnabled: Boolean
+    get() = Registry.`is`(PACKAGE_CHECKER_CANCEL_ON_FAILURE_KEY, true)
 
   val openSarifInEditor: Boolean
     get() = Registry.`is`("qd.open.sarif.in.editor", false)
