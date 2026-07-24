@@ -91,10 +91,6 @@ private class IRContentImpl(
   override val endOffset: Int
     get() = element.endOffset
 
-  override fun indexOf(string: String, startIndex: Int): Int {
-    TODO("not implemented")
-  }
-
   override fun substring(startIndex: Int, endIndex: Int): String {
     TODO("not implemented")
   }
