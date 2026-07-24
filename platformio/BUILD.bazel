@@ -73,6 +73,7 @@ jvm_library(
         "//plugins/profiler/clion",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
         "//CIDR/clion-profiles/core:clion-profiles",
+        "//plugins/ini4idea:ini",
     ],
 )
 
@@ -157,6 +158,7 @@ jvm_library(
         "//plugins/profiler/clion:clion_test_lib",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
         "//CIDR/clion-profiles/core:clion-profiles_test_lib",
+        "//plugins/ini4idea:ini_test_lib",
     ],
 )
 ### auto-generated section `build intellij.clion.embedded.platformio` end

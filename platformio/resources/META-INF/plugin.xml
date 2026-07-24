@@ -57,7 +57,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <configurationType order="last" id="platformio"
                        implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurationType"/>
-    <fileType id="platformio" name="platformio" fileNames="platformio.ini" fieldName="INSTANCE" language="Ini"
+    <fileType id="platformio" name="platformio" fileNames="platformio.ini" fieldName="INSTANCE"
               implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioCleanBeforeRunTaskProvider"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUploadBeforeRunTaskProvider"/>

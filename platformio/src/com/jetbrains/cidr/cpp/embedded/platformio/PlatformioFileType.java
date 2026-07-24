@@ -1,11 +1,10 @@
 package com.jetbrains.cidr.cpp.embedded.platformio;
 
-import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.ClionEmbeddedPlatformioIcons;
+import ini4idea.IniLanguage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +16,7 @@ public final class PlatformioFileType extends LanguageFileType {
   public static final String FILE_NAME = "platformio.ini";
 
   private PlatformioFileType() {
-    super(findLanguage());
+    super(IniLanguage.INSTANCE, true);
   }
 
   @Override
@@ -41,11 +40,6 @@ public final class PlatformioFileType extends LanguageFileType {
   @Override
   public Icon getIcon() {
     return ClionEmbeddedPlatformioIcons.LogoPlatformIO;
-  }
-
-  private static Language findLanguage() {
-    Language language = Language.findLanguageByID("Ini");
-    return language == null ? PlainTextLanguage.INSTANCE : language;
   }
 
   @Contract("null->false")
