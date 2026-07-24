@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode
 
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
@@ -39,7 +40,7 @@ private fun getTemplate(
   return IRTemplate(
     name = Source("template"),
     lang = "html",
-    content = IRContentImpl(templateTag),
+    content = IRContentImpl(file, templateTag),
     ast = RootNodeImpl(templateTag),
   )
 }
@@ -54,7 +55,7 @@ private fun getScript(
   return IRScript(
     name = Source("script"),
     lang = lang(file),
-    content = IRContentImpl(embeddedContent),
+    content = IRContentImpl(file, embeddedContent),
     src = null, // TBD
     ast = embeddedContent,
   )
@@ -70,7 +71,7 @@ private fun getScriptSetup(
   return IRScriptSetup(
     name = Source("scriptSetup"),
     lang = lang(file),
-    content = IRContentImpl(embeddedContent),
+    content = IRContentImpl(file, embeddedContent),
     generic = null, // TBD
     ast = embeddedContent,
   )
@@ -83,6 +84,7 @@ private val XmlTag.embeddedContent: JSEmbeddedContent?
   get() = PsiTreeUtil.getStubChildOfType(this, JSEmbeddedContent::class.java)
 
 private class IRContentImpl(
+  private val file: PsiFile,
   private val element: PsiElement,
 ) : IRContent {
   override val startOffset: Int
@@ -102,9 +104,6 @@ private class IRContentImpl(
       "endIndex $endIndex must be <= endOffset $endOffset"
     }
 
-    return element.text.substring(
-      startIndex - startOffset,
-      endIndex - startOffset,
-    )
+    return file.viewProvider.contents.substring(startIndex, endIndex)
   }
 }
