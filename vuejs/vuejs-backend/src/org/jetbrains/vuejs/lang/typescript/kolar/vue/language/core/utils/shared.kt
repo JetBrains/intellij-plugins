@@ -6,7 +6,7 @@ import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.TextNode
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRTemplate
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl.ElementNodeImpl
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.TextRange
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.hyphenate
 
@@ -38,17 +38,8 @@ fun normalizeAttributeValue(
 
 fun getElementTagOffsets(
   node: ElementNode,
-  template: IRTemplate,
-): List<Int> {
-  val tagOffsets = mutableListOf(template.content.indexOf(node.tag, node.loc.startOffset))
-  if (!node.isSelfClosing && template.lang == "html") {
-    val endTagOffset = node.loc.startOffset + node.loc.source.lastIndexOf(node.tag)
-    if (endTagOffset > tagOffsets[0]) {
-      tagOffsets.add(endTagOffset)
-    }
-  }
-  return tagOffsets
-}
+): List<Int> =
+  ElementNodeImpl.getNameElementsOffsets(node)
 
 fun <T : PsiElement> getStartEnd(
   node: T,

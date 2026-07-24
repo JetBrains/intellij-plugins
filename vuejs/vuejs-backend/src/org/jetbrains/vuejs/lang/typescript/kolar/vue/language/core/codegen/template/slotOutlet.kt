@@ -23,7 +23,7 @@ fun generateSlotOutlet(
   ctx: TemplateCodegenContext,
   node: ElementNode,
 ): Sequence<Code> = sequence {
-  val tagOffsets = getElementTagOffsets(node, options.template)
+  val tagOffsets = getElementTagOffsets(node)
   val startTagOffset = tagOffsets[0]
   val startTagEndOffset = startTagOffset + node.tag.length
   val propsVar = ctx.getInternalVariable()

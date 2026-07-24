@@ -50,7 +50,7 @@ fun generateComponent(
 ): Sequence<Code> = sequence {
   var tag = node.tag
   var props: List<Node> = node.props
-  val tagOffsets = getElementTagOffsets(node, options.template)
+  val tagOffsets = getElementTagOffsets(node)
   var startTagOffset = tagOffsets[0]
   var endTagOffset: Int? = tagOffsets.getOrNull(1)
   var isExpression = false
@@ -311,7 +311,7 @@ fun generateElement(
   ctx: TemplateCodegenContext,
   node: ElementNode,
 ): Sequence<Code> = sequence {
-  val tagOffsets = getElementTagOffsets(node, options.template)
+  val tagOffsets = getElementTagOffsets(node)
   val startTagOffset = tagOffsets[0]
   val endTagOffset: Int? = tagOffsets.getOrNull(1)
   val failedPropExps = mutableListOf<FailedPropExpressions>()
@@ -381,7 +381,7 @@ fun generateFragment(
   ctx: TemplateCodegenContext,
   node: ElementNode,
 ): Sequence<Code> = sequence {
-  val startTagOffset = getElementTagOffsets(node, options.template)[0]
+  val startTagOffset = getElementTagOffsets(node)[0]
 
   // special case for <template v-for="..." :key="..." />
   if (node.props.isNotEmpty()) {
