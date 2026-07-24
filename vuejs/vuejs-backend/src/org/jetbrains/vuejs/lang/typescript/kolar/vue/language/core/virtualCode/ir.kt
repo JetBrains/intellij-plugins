@@ -4,6 +4,8 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.endOffset
+import com.intellij.psi.util.startOffset
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.index.findScriptTag
@@ -81,10 +83,13 @@ private val XmlTag.embeddedContent: JSEmbeddedContent?
   get() = PsiTreeUtil.getStubChildOfType(this, JSEmbeddedContent::class.java)
 
 private class IRContentImpl(
-  element: PsiElement,
+  private val element: PsiElement,
 ) : IRContent {
-  override val length: Int
-    get() = TODO("not implemented")
+  override val startOffset: Int
+    get() = element.startOffset
+
+  override val endOffset: Int
+    get() = element.endOffset
 
   override fun indexOf(string: String, startIndex: Int): Int {
     TODO("not implemented")

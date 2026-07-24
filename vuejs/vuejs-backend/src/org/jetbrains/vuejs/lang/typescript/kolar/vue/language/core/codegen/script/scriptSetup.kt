@@ -293,7 +293,7 @@ fun generateSetupFunction(
 
   yieldAll(generateCodeWithTransforms(
     max(scriptSetupRanges.importSectionEndOffset, scriptSetupRanges.leadingCommentEndOffset),
-    scriptSetup.content.length,
+    scriptSetup.content.endOffset,
     transforms,
   ) { start, end -> generateSfcBlockSection(scriptSetup, start, end, codeFeatures.all) })
   yieldAll(generateMacros(options))

@@ -89,7 +89,7 @@ private fun generateWorker(
       yieldAll(generateScriptWithExportDefault(ctx, script, scriptRanges, exportDefault, vueCompilerOptions, selfType))
     }
     else {
-      yieldAll(generateSfcBlockSection(script, 0, script.content.length, codeFeatures.all))
+      yieldAll(generateSfcBlockSection(script, script.content.startOffset, script.content.endOffset, codeFeatures.all))
       yield("export default ${exportExpression}${endOfLine}")
     }
 
@@ -159,7 +159,7 @@ private fun generateWorker(
       ))
     }
     else {
-      yieldAll(generateSfcBlockSection(script, 0, script.content.length, codeFeatures.all))
+      yieldAll(generateSfcBlockSection(script, script.content.startOffset, script.content.endOffset, codeFeatures.all))
       yieldAll(generateExportDeclareEqual(script, names.export))
       yield("(await import('${vueCompilerOptions.lib}')).defineComponent({})${endOfLine}")
       yieldAll(generateTemplate(options, ctx, names.export))
@@ -203,7 +203,7 @@ private fun generateScriptWithExportDefault(
     ))
   }
 
-  yieldAll(generateSfcBlockSection(script, 0, expression.start, codeFeatures.all))
+  yieldAll(generateSfcBlockSection(script, script.content.startOffset, expression.start, codeFeatures.all))
   yield(exportExpression)
   yieldAll(generateSfcBlockSection(script, expression.end, exportDefault.end, codeFeatures.all))
   yield(endOfLine)
@@ -220,7 +220,7 @@ private fun generateScriptWithExportDefault(
     yieldAll(generateSfcBlockSection(script, expression.start, expression.end, codeFeatures.all))
   }
   yield(endOfLine)
-  yieldAll(generateSfcBlockSection(script, exportDefault.end, script.content.length, codeFeatures.all))
+  yieldAll(generateSfcBlockSection(script, exportDefault.end, script.content.endOffset, codeFeatures.all))
 }
 
 private fun generateGlobalTypesReference(
@@ -254,8 +254,8 @@ private fun generateExportDeclareEqual(
   name: String,
 ): Sequence<Code> = sequence {
   yield("const ")
-  val boundary = yield(Boundary.start(block.name, 0, codeFeatures.doNotReportTs6133))
+  val boundary = yield(Boundary.start(block.name, block.content.startOffset, codeFeatures.doNotReportTs6133))
   yield(name)
-  yield(boundary.end(block.content.length))
+  yield(boundary.end(block.content.endOffset))
   yield(" = ")
 }
