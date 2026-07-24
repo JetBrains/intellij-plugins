@@ -91,7 +91,20 @@ private class IRContentImpl(
   override val endOffset: Int
     get() = element.endOffset
 
-  override fun substring(startIndex: Int, endIndex: Int): String {
-    TODO("not implemented")
+  override fun substring(
+    startIndex: Int,
+    endIndex: Int,
+  ): String {
+    require(startIndex >= startOffset) {
+      "startIndex $startIndex must be >= startOffset $startOffset"
+    }
+    require(endIndex <= endOffset) {
+      "endIndex $endIndex must be <= endOffset $endOffset"
+    }
+
+    return element.text.substring(
+      startIndex - startOffset,
+      endIndex - startOffset,
+    )
   }
 }
