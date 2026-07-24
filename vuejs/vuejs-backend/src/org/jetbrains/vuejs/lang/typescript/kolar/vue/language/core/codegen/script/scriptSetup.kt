@@ -31,7 +31,7 @@ fun generateScriptSetupImports(
 ): Sequence<Code> = sequence {
   yieldAll(generateSfcBlockSection(
     scriptSetup,
-    0,
+    scriptSetup.content.startOffset,
     max(scriptSetupRanges.importSectionEndOffset, scriptSetupRanges.leadingCommentEndOffset),
     codeFeatures.all,
   ))
