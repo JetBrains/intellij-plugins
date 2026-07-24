@@ -3,6 +3,7 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 import com.intellij.codeInspection.ex.EnabledInspectionsProvider
 import com.intellij.codeInspection.ex.GlobalInspectionContextImpl
 import com.intellij.codeInspection.ex.InspectionToolWrapper
+import com.intellij.codeInspection.ex.JobDescriptor
 import com.intellij.codeInspection.ex.Tools
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
@@ -10,6 +11,7 @@ import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiFile
 import com.intellij.ui.content.ContentManager
 import kotlinx.coroutines.CoroutineScope
+import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageStatisticsData
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalInspectionToolWrapper
@@ -17,7 +19,9 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.Exte
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolsProvider
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
+import org.jetbrains.qodana.staticAnalysis.script.QodanaProgressIndicator
 import java.nio.file.Path
+import java.util.concurrent.atomic.AtomicInteger
 
 /** @param outputPath in the Docker container, this is `/data/results` */
 open class QodanaGlobalInspectionContext(
@@ -29,6 +33,8 @@ open class QodanaGlobalInspectionContext(
   val qodanaRunScope: CoroutineScope,
   val coverageStatisticsData: CoverageStatisticsData,
 ) : GlobalInspectionContextImpl(project, contentManager) {
+  private val completedLocalAnalysisFiles = AtomicInteger()
+  private var scheduledLocalAnalysisFiles: Int? = null
 
   /** In the Docker container, this is `/data/results`. */
   override fun getOutputPath(): Path = outputPath
@@ -87,6 +93,22 @@ open class QodanaGlobalInspectionContext(
     super.classifyTool(outGlobalTools, outLocalTools, outGlobalSimpleTools, currentTools, toolWrapper)
   }
 
+  override fun incrementJobDoneAmount(job: JobDescriptor, message: String) {
+    super.incrementJobDoneAmount(job, message)
+    if (job === stdJobDescriptors.LOCAL_ANALYSIS) {
+      val completedFiles = completedLocalAnalysisFiles.incrementAndGet()
+      val totalFiles = scheduledLocalAnalysisFiles ?: job.totalAmount
+      (myProgressIndicator as? QodanaProgressIndicator)?.reportLocalAnalysisProgress("${job.displayName} $message", completedFiles.progressPercent(totalFiles))
+    }
+  }
+
+  override fun onScheduledFilesCounted(scheduledFilesCount: Int) {
+    scheduledLocalAnalysisFiles = scheduledFilesCount
+    if (scheduledFilesCount == 0) {
+      ConsoleLog.info(QodanaBundle.message("progress.code.analysis.no.files"))
+    }
+  }
+
   suspend fun closeQodanaContext() {
     consumer.close()
     profileState.onFinish()
@@ -95,4 +117,8 @@ open class QodanaGlobalInspectionContext(
   }
 
   fun coverageComputationState() = coverageStatisticsData.coverageComputationState
+}
+
+private fun Int.progressPercent(total: Int): Int {
+  return this * 100 / total
 }

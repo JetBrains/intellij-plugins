@@ -30,14 +30,12 @@ fun interface QodanaRunContextFactory {
 internal class DefaultRunContextFactory(
   private val reporter: QodanaMessageReporter,
   private val config: QodanaConfig,
-  //private val scope: CoroutineScope,
   private val projectLoader: QodanaProjectLoader = QodanaProjectLoader(reporter),
 ) : QodanaRunContextFactory {
 
   override suspend fun openRunContext(scope: CoroutineScope): QodanaRunContext {
     val project = projectLoader.openProject(config)
     projectLoader.configureProject(config, project)
-    reporter.reportMessageNoLineBreak(1, InspectionsBundle.message("inspection.application.initializing.project"))
 
     val loadedProfile = LoadedProfile.load(config, project, reporter)
     reportUsage(loadedProfile, project, scope)

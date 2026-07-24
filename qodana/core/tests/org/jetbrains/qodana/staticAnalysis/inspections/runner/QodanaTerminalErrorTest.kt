@@ -19,7 +19,6 @@ class QodanaTerminalErrorTest {
     override fun reportError(e: Throwable) { errors += e }
     override fun reportError(message: String?) { messages += message }
     override fun reportMessage(minVerboseLevel: Int, message: String?) {}
-    override fun reportMessageNoLineBreak(minVerboseLevel: Int, message: String?) {}
   }
 
   private val reporter = RecordingReporter()

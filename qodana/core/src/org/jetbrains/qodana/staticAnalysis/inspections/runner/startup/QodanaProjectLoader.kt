@@ -47,9 +47,9 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsCollector.QodanaActivityKind
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
+import org.jetbrains.qodana.staticAnalysis.workflow.appendBeforeOpen
 import org.jetbrains.qodana.staticAnalysis.workflow.callQodanaWorkflowExtensions
 import org.jetbrains.qodana.staticAnalysis.workflow.callQodanaWorkflowExtensionsSequentially
-import org.jetbrains.qodana.staticAnalysis.workflow.appendBeforeOpen
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.nio.file.Path
 import java.util.function.Predicate
@@ -67,9 +67,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
     verifyConfig(config)
     callQodanaWorkflowExtensions(QodanaWorkflowExtension::beforeProjectOpened, config)
 
-    reporter.reportMessageNoLineBreak(1, InspectionsBundle.message("inspection.application.opening.project"))
     val project = doOpen(config)
-    reporter.reportMessage(1, InspectionsBundle.message("inspection.done"))
 
     edtWriteAction { VirtualFileManager.getInstance().refreshWithoutFileWatcher(false) }
     return project
@@ -183,7 +181,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
     coroutineScope {
       val loggingJob = installLogger()
       val result = project.awaitCompleteProjectConfiguration {
-        reporter.reportMessage(1, it)
+        logger<QodanaProjectLoader>().debug(it)
       }
       dumpThreadsAfterConfiguration()
       loggingJob.cancel()

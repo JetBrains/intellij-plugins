@@ -37,8 +37,6 @@ class DatabaseProblemsDuplicatesTest : QodanaTestCase() {
         }
 
         override fun reportMessage(minVerboseLevel: Int, message: String?) {}
-
-        override fun reportMessageNoLineBreak(minVerboseLevel: Int, message: String?) {}
       }
       commonPathsInspectionsSample.forEach { p ->
         val run = gson.fromJson(getTestDataPath().resolve(p).toFile().readText(), Run::class.java)
