@@ -64,7 +64,7 @@ private fun getScript(
 private fun getScriptSetup(
   file: VueFile,
 ): IRScriptSetup? {
-  val embeddedContent = findScriptTag(file, setup = false)
+  val embeddedContent = findScriptTag(file, setup = true)
                           ?.embeddedContent
                         ?: return null
 
