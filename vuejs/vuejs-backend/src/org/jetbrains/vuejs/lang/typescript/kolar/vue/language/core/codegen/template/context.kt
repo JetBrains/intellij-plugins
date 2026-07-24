@@ -29,17 +29,17 @@ class TemplateCodegenContext {
   val generatedTypes: MutableSet<String> = mutableSetOf()
   fun getCommentInfo(): CurrentInfo = stack.last()
   var inVFor: Boolean = false
-  val slots: MutableList<Slot> = mutableListOf<Slot>()
-  val dynamicSlots: MutableList<DynamicSlot> = mutableListOf<DynamicSlot>()
+  val slots: MutableList<Slot> = mutableListOf()
+  val dynamicSlots: MutableList<DynamicSlot> = mutableListOf()
   val dollarVars: MutableSet<String> = mutableSetOf()
   val contextAccesses: MutableMap<String, MutableMap<Source, MutableSet<Int>>> = mutableMapOf()
   val conditions: MutableList<String> = mutableListOf()
   val inlayHints: MutableList<InlayHintInfo> = mutableListOf()
   val inheritedAttrVars: MutableSet<String> = mutableSetOf()
-  val templateRefs: MutableMap<String, MutableList<TemplateRef>> = mutableMapOf<String, MutableList<TemplateRef>>()
+  val templateRefs: MutableMap<String, MutableList<TemplateRef>> = mutableMapOf()
   val singleRootElTypes: MutableSet<String> = mutableSetOf()
   val singleRootNodes: MutableSet<ElementNode?> = mutableSetOf()
-  val scopes: MutableList<Scope> = mutableListOf<Scope>()
+  val scopes: MutableList<Scope> = mutableListOf()
   val components: MutableList<() -> String> = mutableListOf()
 
   fun addTemplateRef(
