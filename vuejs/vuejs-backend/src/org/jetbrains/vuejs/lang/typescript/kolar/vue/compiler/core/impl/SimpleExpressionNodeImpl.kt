@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl
 
 import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.xml.XmlAttributeValue
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ConstantTypes
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SimpleExpressionNode
@@ -9,7 +10,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.SourceLocatio
 
 class SimpleExpressionNodeImpl(
   private val value: JSElement,
-) : NodeImpl(value),
+  parentRange: TextRange? = null,
+) : NodeImpl(value, parentRange),
     SimpleExpressionNode {
   override val content: String
     get() = value.text

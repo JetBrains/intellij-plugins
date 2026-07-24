@@ -9,11 +9,11 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.Interpolation
 class InterpolationNodeImpl(
   private val expressionContent: VueJSEmbeddedExpressionContent,
   private val parentRange: TextRange,
-) : NodeImpl(expressionContent),
+) : NodeImpl(expressionContent, parentRange),
     InterpolationNode {
   override val content: ExpressionNode by lazy {
     // TODO: support compound expressions
-    SimpleExpressionNodeImpl(expressionContent)
+    SimpleExpressionNodeImpl(expressionContent, parentRange)
   }
 
   companion object {
