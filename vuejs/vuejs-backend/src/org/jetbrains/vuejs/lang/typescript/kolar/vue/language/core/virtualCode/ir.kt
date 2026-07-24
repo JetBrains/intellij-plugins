@@ -15,6 +15,7 @@ import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl.RootNodeImpl
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IR
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRAttr
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRContent
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScript
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScriptSetup
@@ -48,15 +49,14 @@ private fun getTemplate(
 private fun getScript(
   file: VueFile,
 ): IRScript? {
-  val embeddedContent = findScriptTag(file, setup = false)
-                          ?.embeddedContent
-                        ?: return null
+  val tag = findScriptTag(file, setup = false) ?: return null
+  val embeddedContent = tag.embeddedContent ?: return null
 
   return IRScript(
     name = Source("script"),
     lang = lang(file),
     content = IRContentImpl(file, embeddedContent),
-    src = null, // TBD
+    src = attr(tag, "src"),
     ast = embeddedContent,
   )
 }
@@ -64,21 +64,33 @@ private fun getScript(
 private fun getScriptSetup(
   file: VueFile,
 ): IRScriptSetup? {
-  val embeddedContent = findScriptTag(file, setup = true)
-                          ?.embeddedContent
-                        ?: return null
+  val tag = findScriptTag(file, setup = true) ?: return null
+  val embeddedContent = tag.embeddedContent ?: return null
 
   return IRScriptSetup(
     name = Source("scriptSetup"),
     lang = lang(file),
     content = IRContentImpl(file, embeddedContent),
-    generic = null, // TBD
+    generic = attr(tag, "generic"),
     ast = embeddedContent,
   )
 }
 
 private fun lang(file: VueFile): String =
   file.langMode.canonicalAttrValue
+
+private fun attr(
+  tag: XmlTag,
+  attributeName: String,
+): IRAttr? {
+  val attribute = tag.getAttribute(attributeName)
+                  ?: return null
+
+  return IRAttr.WithText(
+    text = attribute.value ?: return null,
+    offset = attribute.valueTextRange.startOffset,
+  )
+}
 
 private val XmlTag.embeddedContent: JSEmbeddedContent?
   get() = PsiTreeUtil.getStubChildOfType(this, JSEmbeddedContent::class.java)
