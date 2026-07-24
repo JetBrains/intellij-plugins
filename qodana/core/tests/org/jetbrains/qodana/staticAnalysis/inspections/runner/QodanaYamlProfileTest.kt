@@ -112,6 +112,25 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
   }
 
   @Test
+  fun `testInclude disabled global inspection preserves yaml ignore`(): Unit = runBlocking {
+    updateQodanaConfig {
+      it.copy(include = listOf(InspectScope("unused")))
+    }
+
+    updateQodanaConfig {
+      it.copy(
+        profile = QodanaProfileConfig.fromPath(getTestDataPath("inspection-profile.yaml").absolutePathString()),
+      )
+    }
+    runAnalysis()
+
+    val resultPaths = manager.sarifRun.results.map { it.locations.single().physicalLocation.artifactLocation.uri }
+    Assert.assertTrue(resultPaths.any { it.endsWith("A.java") })
+    Assert.assertTrue(resultPaths.any { it.endsWith("B.java") })
+    Assert.assertTrue(resultPaths.none { it.endsWith("C.java") })
+  }
+
+  @Test
   fun `testInclude inspection in qodana-yaml with path`(): Unit = runBlocking {
     updateQodanaConfig {
       it.copy(
