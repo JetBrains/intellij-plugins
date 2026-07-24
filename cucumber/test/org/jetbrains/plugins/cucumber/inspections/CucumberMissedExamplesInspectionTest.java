@@ -4,6 +4,7 @@ package org.jetbrains.plugins.cucumber.inspections;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
 
 import java.util.List;
@@ -72,7 +73,7 @@ public class CucumberMissedExamplesInspectionTest extends BasePlatformTestCase {
   }
 
   @Override
-  protected String getTestDataPath() {
+  protected @NotNull String getTestDataPath() {
     return CucumberTestUtil.getTestDataPath() + "/inspections/missedExamples";
   }
 }

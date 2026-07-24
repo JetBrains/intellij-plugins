@@ -14,6 +14,7 @@
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import org.jetbrains.annotations.NotNull;
 
 public class GherkinTypingTest extends BasePlatformTestCase {
   public void testEnterAfterComment() {
@@ -49,11 +50,11 @@ public class GherkinTypingTest extends BasePlatformTestCase {
   }
 
   @Override
-  protected String getTestDataPath() {
+  protected @NotNull String getTestDataPath() {
     return CucumberTestUtil.getTestDataPath() + "/typing";
   }
 
-  private void doTest(String toType) {
+  private void doTest(final @NotNull String toType) {
     myFixture.configureByFile(getTestName(true) + ".feature");
     myFixture.type(toType);
     myFixture.checkResultByFile(getTestName(true) + "_after.feature");

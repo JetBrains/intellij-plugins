@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 public class GherkinAnnotatorTest extends BasePlatformTestCase {
@@ -30,7 +31,7 @@ public class GherkinAnnotatorTest extends BasePlatformTestCase {
   }
 
   @Override
-  protected String getTestDataPath() {
+  protected @NotNull String getTestDataPath() {
     return CucumberTestUtil.getTestDataPath() + "/annotator";
   }
 }
