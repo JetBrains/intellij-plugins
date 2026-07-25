@@ -22,7 +22,7 @@ import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.lang.Angular2LangUtil
 import org.jetbrains.annotations.NonNls
 
-private class Angular2UsageFilteringRuleProvider : UsageFilteringRuleProvider {
+internal class Angular2UsageFilteringRuleProvider : UsageFilteringRuleProvider {
   @Suppress("OVERRIDE_DEPRECATION")
   override fun getActiveRules(project: Project): Array<out UsageFilteringRule> =
     arrayOf(Angular2ComponentUsageInTemplateFilteringRule(project))

@@ -6,7 +6,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
 import com.intellij.webassembly.lang.psi.WebAssemblyTypes
 
-private class WebAssemblyBraceMatcher : PairedBraceMatcher {
+internal class WebAssemblyBraceMatcher : PairedBraceMatcher {
   override fun getPairs(): Array<BracePair> = arrayOf(
     BracePair(WebAssemblyTypes.LPAR, WebAssemblyTypes.RPAR, true))
 

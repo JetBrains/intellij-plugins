@@ -19,7 +19,7 @@ import javax.swing.Icon
 private const val CREATE_NEXT_APP = "create-next-app"
 private val ARGUMENTS = Key.create<Array<String>>("create.next.args")
 
-private class NextJsProjectGenerator : NpmPackageProjectGenerator(), ReactLikeProjectGenerator {
+internal class NextJsProjectGenerator : NpmPackageProjectGenerator(), ReactLikeProjectGenerator {
 
   override fun getDescription(): String = NextJsBundle.message("create.next.app.description")
   override fun getName(): String = NextJsBundle.message("create.next.app.name")

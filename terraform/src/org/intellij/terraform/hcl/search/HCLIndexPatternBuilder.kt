@@ -11,7 +11,7 @@ import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.createHclLexer
 import org.intellij.terraform.hcl.psi.HCLFile
 
-private class HCLIndexPatternBuilder : IndexPatternBuilder {
+internal class HCLIndexPatternBuilder : IndexPatternBuilder {
   override fun getIndexingLexer(file: PsiFile): Lexer? {
     return if (file is HCLFile) createHclLexer() else null
   }

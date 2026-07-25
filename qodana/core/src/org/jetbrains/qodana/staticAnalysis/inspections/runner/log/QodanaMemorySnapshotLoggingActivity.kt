@@ -15,7 +15,7 @@ import kotlin.time.Duration.Companion.minutes
 
 private val LOG = logger<QodanaMemorySnapshotLoggingActivity>()
 
-private class QodanaMemorySnapshotLoggingActivity : QodanaLoggingActivity {
+internal class QodanaMemorySnapshotLoggingActivity : QodanaLoggingActivity {
   override suspend fun executeActivity(progressName: String, timeCookie: TimeCookie) {
     val delayMinutes = System.getProperty("qodana.hprof.period", "-1").toInt()
 

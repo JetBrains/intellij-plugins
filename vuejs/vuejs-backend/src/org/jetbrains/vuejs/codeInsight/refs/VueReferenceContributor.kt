@@ -33,7 +33,7 @@ import com.intellij.xml.util.HtmlUtil.hasHtmlPrefix
 import org.jetbrains.vuejs.lang.html.lexer.styleLanguage
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 
-private class VueReferenceContributor : PsiReferenceContributor() {
+internal class VueReferenceContributor : PsiReferenceContributor() {
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
     registrar.registerReferenceProvider(STYLE_PATTERN, STYLE_REF_PROVIDER)
 

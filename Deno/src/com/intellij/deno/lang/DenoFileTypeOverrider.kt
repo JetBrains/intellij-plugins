@@ -6,7 +6,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.impl.FileTypeOverrider
 import com.intellij.openapi.vfs.VirtualFile
 
-private class DenoFileTypeOverrider : FileTypeOverrider {
+internal class DenoFileTypeOverrider : FileTypeOverrider {
   override fun getOverriddenFileType(file: VirtualFile): FileType? {
     return if (isDenoCacheFile(file)) TypeScriptFileType else null
   }

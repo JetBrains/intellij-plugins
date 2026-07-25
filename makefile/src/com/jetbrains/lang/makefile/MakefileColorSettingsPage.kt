@@ -5,7 +5,7 @@ import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
 import icons.MakefileIcons
 
-private class MakefileColorSettingsPage : ColorSettingsPage {
+internal class MakefileColorSettingsPage : ColorSettingsPage {
   override fun getDisplayName() = MakefileLanguage.displayName
   override fun getIcon() = MakefileIcons.Makefile
 

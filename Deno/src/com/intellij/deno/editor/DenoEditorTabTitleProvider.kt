@@ -9,7 +9,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 
-private class DenoEditorTabTitleProvider : EditorTabTitleProvider, DumbAware {
+internal class DenoEditorTabTitleProvider : EditorTabTitleProvider, DumbAware {
   override fun getEditorTabTitle(project: Project, file: VirtualFile): String? {
     if (DenoUtil.isDenoCacheFile(file)) {
       val model = project.service<DenoModel>()

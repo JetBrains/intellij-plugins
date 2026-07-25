@@ -3,7 +3,7 @@ package org.jetbrains.qodana.inspectionKts.kotlin
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider
 
-private class KotlinInspectionKtsDefaultImportsProvider : InspectionKtsDefaultImportProvider {
+internal class KotlinInspectionKtsDefaultImportsProvider : InspectionKtsDefaultImportProvider {
   override fun imports(): List<String> {
     val thisPackage = "org.jetbrains.qodana.inspectionKts.kotlin"
     return listOf(
@@ -11,7 +11,6 @@ private class KotlinInspectionKtsDefaultImportsProvider : InspectionKtsDefaultIm
       "$thisPackage.getFQN"
     )
   }
-
 }
 
 /**

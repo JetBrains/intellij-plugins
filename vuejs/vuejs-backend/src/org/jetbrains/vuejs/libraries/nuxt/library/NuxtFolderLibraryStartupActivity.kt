@@ -8,7 +8,7 @@ import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 
-private class NuxtFolderLibraryStartupActivity : ProjectActivity {
+internal class NuxtFolderLibraryStartupActivity : ProjectActivity {
   override suspend fun execute(project: Project) {
     NuxtFolderModelSynchronizer.create(project).sync()
   }

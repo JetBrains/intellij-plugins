@@ -16,10 +16,10 @@ import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.Companion.pioIcon
 import com.jetbrains.cidr.cpp.external.system.linkExternalProject
+import com.jetbrains.cidr.cpp.external.system.workspace.ExternalWorkspace
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cidr.cpp.toolchains.TrivialNativeToolchain
-import com.jetbrains.cidr.cpp.external.system.workspace.ExternalWorkspace
 import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
 import com.jetbrains.cidr.project.workspace.CidrWorkspaceProvider
 import com.jetbrains.cidr.project.workspace.WorkspaceWithEnvironment
@@ -102,7 +102,7 @@ internal class PlatformioWorkspace(project: Project) : ExternalWorkspace(project
 
 val ID: ProjectSystemId = ProjectSystemId("PlatformIO", ClionEmbeddedPlatformioBundle.message("platformio.id"))
 
-private class PlatformioWorkspaceProvider : CidrWorkspaceProvider {
+internal class PlatformioWorkspaceProvider : CidrWorkspaceProvider {
   override fun getWorkspace(project: Project): PlatformioWorkspace =
     project.service<PlatformioWorkspace>()
 
@@ -115,7 +115,7 @@ private class PlatformioWorkspaceProvider : CidrWorkspaceProvider {
   }
 }
 
-private class PlatformioIconProvider : ExternalSystemIconProvider {
+internal class PlatformioIconProvider : ExternalSystemIconProvider {
   override val reloadIcon: Icon
     get() = pioIcon(PlatformIcons.SYNCHRONIZE_ICON)
   override val projectIcon: Icon

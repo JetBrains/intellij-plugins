@@ -18,7 +18,7 @@ import com.intellij.ui.EditorNotifications
 import java.util.function.Function
 import javax.swing.JComponent
 
-private class TsLintCodeStyleEditorNotificationProvider(private val project: Project) : EditorNotificationProvider {
+internal class TsLintCodeStyleEditorNotificationProvider(private val project: Project) : EditorNotificationProvider {
   private val NOTIFICATION_DISMISSED_PROPERTY = "tslint.code.style.apply.dismiss"
 
   private fun isNotificationDismissed(file: VirtualFile): Boolean {

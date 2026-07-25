@@ -10,7 +10,7 @@ import com.jetbrains.lang.makefile.psi.MakefileTypes.CHARS
 import com.jetbrains.lang.makefile.psi.MakefileTypes.COMMENT
 import com.jetbrains.lang.makefile.psi.MakefileVariable
 
-private class MakefileFindUsagesProvider : FindUsagesProvider {
+internal class MakefileFindUsagesProvider : FindUsagesProvider {
   override fun getWordsScanner() = DefaultWordsScanner(MakefileLexerAdapter(), TokenSet.create(CHARS), TokenSet.create(COMMENT), TokenSet.EMPTY)
 
   override fun canFindUsagesFor(element: PsiElement) =

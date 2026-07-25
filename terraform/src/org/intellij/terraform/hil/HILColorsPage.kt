@@ -14,7 +14,7 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.Icons
 import javax.swing.Icon
 
-private class HILColorPage : ColorSettingsPage, InspectionColorSettingsPage, DisplayPrioritySortable {
+internal class HILColorPage : ColorSettingsPage, InspectionColorSettingsPage, DisplayPrioritySortable {
   private val descriptors: Array<out AttributesDescriptor> = arrayOf(
     AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.parentheses"), HILSyntaxHighlighter.TIL_PARENS),
     AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.braces"), HILSyntaxHighlighter.TIL_BRACES),

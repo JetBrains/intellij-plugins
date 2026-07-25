@@ -14,7 +14,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider
 
-private class MainInspectionKtsDefaultImportProvider : InspectionKtsDefaultImportProvider {
+internal class MainInspectionKtsDefaultImportProvider : InspectionKtsDefaultImportProvider {
   override fun imports(): List<String> = listOf(
     "org.jetbrains.qodana.inspectionKts.api.*",
     "com.intellij.codeHighlighting.HighlightDisplayLevel",

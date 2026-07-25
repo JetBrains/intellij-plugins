@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hil.HILElementTypes
 
-private class HCLHILStringLiteralSelectionHandler : ExtendWordSelectionHandlerBase() {
+internal class HCLHILStringLiteralSelectionHandler : ExtendWordSelectionHandlerBase() {
   override fun canSelect(e: PsiElement): Boolean {
     val type = e.node.elementType
     return type === HCLElementTypes.SINGLE_QUOTED_STRING

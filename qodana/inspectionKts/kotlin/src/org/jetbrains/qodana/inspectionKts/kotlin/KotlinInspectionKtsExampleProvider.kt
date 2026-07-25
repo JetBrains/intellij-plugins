@@ -5,7 +5,7 @@ import icons.KotlinBaseResourcesIcons
 import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 import org.jetbrains.qodana.inspectionKts.examples.InspectionKtsExample
 
-private class KotlinInspectionKtsExampleProvider : InspectionKtsExample.Provider {
+internal class KotlinInspectionKtsExampleProvider : InspectionKtsExample.Provider {
   override fun example(): InspectionKtsExample? {
     val resourceUrl = this::class.java.classLoader.getResource("examples/kotlin-examples.inspection.kts")
     @Suppress("UrlHashCode")

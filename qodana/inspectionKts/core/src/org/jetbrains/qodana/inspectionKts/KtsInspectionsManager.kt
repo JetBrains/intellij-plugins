@@ -41,12 +41,9 @@ import org.jetbrains.qodana.util.appearedFilePath
 import org.jetbrains.qodana.util.disappearedFilePath
 import org.jetbrains.qodana.util.documentChangesFlow
 import org.jetbrains.qodana.util.vfsChangesMapFlow
-import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
-import kotlin.io.path.createTempFile
-import kotlin.io.path.writeText
 
 const val FORCE_DISABLE_INSPECTION_KTS: String = "inspection.kts.disabled"
 
@@ -60,7 +57,7 @@ const val INSPECTIONS_KTS_EXTENSION: String = "inspection.kts"
 
 internal const val FLEX_INSPECT_PROVIDER_NAME = "FlexInspect"
 
-private class KtsDynamicInspectionsProvider : DynamicInspectionsProvider {
+internal class KtsDynamicInspectionsProvider : DynamicInspectionsProvider {
   override fun inspections(project: Project): Flow<Set<DynamicInspectionDescriptor>> {
     return KtsInspectionsManager.getInstance(project).ktsInspectionsFlow
       .filterNotNull()

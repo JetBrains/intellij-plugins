@@ -23,7 +23,7 @@ import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterLanguage
 import org.jetbrains.astro.lang.psi.AstroContentRoot
 
-private class AstroCommentProvider : MultipleLangCommentProvider {
+internal class AstroCommentProvider : MultipleLangCommentProvider {
   override fun getLineCommenter(file: PsiFile, editor: Editor, lineStartLanguage: Language, lineEndLanguage: Language): Commenter {
     val minimalElement = editor.caretModel.currentCaret
       .let { findMinimalElementContainingRange(file, it.selectionStart, it.selectionEnd) }

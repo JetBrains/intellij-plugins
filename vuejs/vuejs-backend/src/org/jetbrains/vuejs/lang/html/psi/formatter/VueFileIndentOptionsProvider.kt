@@ -12,7 +12,7 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.isVueFile
 
-private class VueFileIndentOptionsProvider : PsiBasedFileIndentOptionsProvider() {
+internal class VueFileIndentOptionsProvider : PsiBasedFileIndentOptionsProvider() {
   override fun getIndentOptionsByPsiFile(settings: CodeStyleSettings, file: PsiFile): IndentOptions? {
     if (file.language is VueLanguage) {
       if (file.isVueFile) {

@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLFile
 
-private class TfInterpolationStartTypedHandler : TypedHandlerDelegate() {
+internal class TfInterpolationStartTypedHandler : TypedHandlerDelegate() {
   override fun charTyped(c: Char, project: Project, editor: Editor, file: PsiFile): Result {
     if (c != '{') return Result.CONTINUE
 

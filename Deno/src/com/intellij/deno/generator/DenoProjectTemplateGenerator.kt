@@ -34,7 +34,7 @@ import com.intellij.ui.dsl.builder.panel
 import javax.swing.Icon
 import javax.swing.JComponent
 
-private class DenoProjectTemplateGenerator : WebProjectTemplate<DenoProjectTemplateSettings>() {
+internal class DenoProjectTemplateGenerator : WebProjectTemplate<DenoProjectTemplateSettings>() {
   override fun getDescription(): @NlsContexts.DetailedDescription String = DenoBundle.message("deno.name")
   override fun getName(): @NlsContexts.Label String = DenoBundle.message("deno.name")
   override fun generateProject(project: Project, baseDir: VirtualFile, settings: DenoProjectTemplateSettings, module: Module) {

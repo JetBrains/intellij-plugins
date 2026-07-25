@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 
-private class KotlinAnalyzeEntrypointNodeAppender : PsiViewerPropertyNodeAppender {
+internal class KotlinAnalyzeEntrypointNodeAppender : PsiViewerPropertyNodeAppender {
   override suspend fun appendChildren(
     nodeContext: PsiViewerPropertyNode.Context,
     parent: PsiViewerPropertyNode

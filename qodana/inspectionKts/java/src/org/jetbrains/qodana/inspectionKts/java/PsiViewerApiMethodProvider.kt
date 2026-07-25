@@ -9,7 +9,7 @@ import org.jetbrains.qodana.jvm.dev.inspectionKts.getAllSuperTypesPsiViewerApiMe
 import org.jetbrains.qodana.jvm.dev.inspectionKts.psiClassAsPsiClassTypePsiViewerApiMethod
 import org.jetbrains.qodana.jvm.dev.inspectionKts.psiCodeReferenceElementAsPsiClassTypePsiViewerApiMethod
 
-private class PsiViewerApiMethodProvider : PsiViewerApiMethod.Provider {
+internal class PsiViewerApiMethodProvider : PsiViewerApiMethod.Provider {
   override fun apiMethods(instance: Any, clazz: Class<*>): List<PsiViewerApiMethod> {
     return buildList {
       ifExactClass<PsiFile>(clazz, instance) {

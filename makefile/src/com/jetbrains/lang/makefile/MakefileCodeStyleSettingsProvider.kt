@@ -9,7 +9,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings
 
-private class MakefileCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
+internal class MakefileCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
   override fun createConfigurable(settings: CodeStyleSettings, modelSettings: CodeStyleSettings): CodeStyleConfigurable {
     return object : CodeStyleAbstractConfigurable(settings, modelSettings, MakefileLangBundle.message("configurable.name")) {
       override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel {

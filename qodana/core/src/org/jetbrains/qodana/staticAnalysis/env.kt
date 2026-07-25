@@ -107,7 +107,7 @@ private interface QodanaEnvService {
   val env: QodanaEnv
 }
 
-private class QodanaEnvServiceImpl : QodanaEnvService {
+internal class QodanaEnvServiceImpl : QodanaEnvService {
   override val env: QodanaEnv = QodanaEnvImpl()
 }
 

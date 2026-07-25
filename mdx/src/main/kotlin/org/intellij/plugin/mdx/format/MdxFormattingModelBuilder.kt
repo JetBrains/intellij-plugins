@@ -23,7 +23,7 @@ import com.intellij.psi.xml.XmlTag
 import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
 import org.intellij.plugins.markdown.lang.MarkdownElementType
 
-private class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilder() {
+internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilder() {
   override fun createTemplateLanguageBlock(node: ASTNode,
                                            wrap: Wrap?,
                                            alignment: Alignment?,

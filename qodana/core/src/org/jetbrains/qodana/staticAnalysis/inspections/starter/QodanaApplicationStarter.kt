@@ -8,7 +8,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionAp
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionApplicationFactory
 import kotlin.system.exitProcess
 
-private class QodanaApplicationStarter : ModernApplicationStarter() {
+internal class QodanaApplicationStarter : ModernApplicationStarter() {
   override fun premain(args: List<String>) {
     logger<QodanaApplicationStarter>().info("Command line arguments: $args")
   }

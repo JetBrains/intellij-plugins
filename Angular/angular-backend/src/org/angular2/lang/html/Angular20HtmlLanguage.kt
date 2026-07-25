@@ -27,8 +27,8 @@ object Angular20HtmlFileType : Angular2TemplateFileTypeBase(Angular20HtmlLanguag
 
 open class Angular20HtmlParserDefinition : Angular2TemplateParserDefinitionBase(Angular20HtmlLanguage)
 
-private class Angular20HtmlSyntaxHighlighterFactory : Angular2HtmlSyntaxHighlighterFactoryBase(Angular20HtmlLanguage)
+internal class Angular20HtmlSyntaxHighlighterFactory : Angular2HtmlSyntaxHighlighterFactoryBase(Angular20HtmlLanguage)
 
-private class Angular20HtmlIdIndexer : Angular2HtmlIdIndexer(Angular20HtmlLanguage)
+internal class Angular20HtmlIdIndexer : Angular2HtmlIdIndexer(Angular20HtmlLanguage)
 
-private class Angular20HtmlTodoIndexer : Angular2HtmlTodoIndexer(Angular20HtmlLanguage)
+internal class Angular20HtmlTodoIndexer : Angular2HtmlTodoIndexer(Angular20HtmlLanguage)

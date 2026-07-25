@@ -8,7 +8,7 @@ import com.intellij.openapi.application.readAction
 import com.intellij.psi.PsiElement
 import org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider
 
-private class JsInspectionKtsDefaultImportsProvider : InspectionKtsDefaultImportProvider {
+internal class JsInspectionKtsDefaultImportsProvider : InspectionKtsDefaultImportProvider {
   override fun imports(): List<String> {
     val thisPackage = "org.jetbrains.qodana.inspectionKts.js"
     return listOf(
@@ -36,7 +36,7 @@ fun JSExpression.resolveExpressionJsType(): JSType? {
   return JSResolveUtil.getExpressionJSType(this)
 }
 
-private class JsPsiViewerApiMethodProvider : PsiViewerApiMethod.Provider {
+internal class JsPsiViewerApiMethodProvider : PsiViewerApiMethod.Provider {
   override fun apiMethods(instance: Any, clazz: Class<*>): List<PsiViewerApiMethod> {
     return when (clazz) {
       PsiElement::class.java -> listOf(resolveJsTypeApiMethod(instance))

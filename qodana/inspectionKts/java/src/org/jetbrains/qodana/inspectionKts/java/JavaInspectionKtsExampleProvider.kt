@@ -5,7 +5,7 @@ import com.intellij.openapi.diagnostic.thisLogger
 import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 import org.jetbrains.qodana.inspectionKts.examples.InspectionKtsExample
 
-private class JavaInspectionKtsExampleProvider : InspectionKtsExample.Provider {
+internal class JavaInspectionKtsExampleProvider : InspectionKtsExample.Provider {
   override fun example(): InspectionKtsExample? {
     val resourceUrl = this::class.java.classLoader.getResource("examples/java-examples.inspection.kts")
     @Suppress("UrlHashCode")

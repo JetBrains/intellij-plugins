@@ -10,7 +10,7 @@ import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.HCLSelectExpression
 
-private class HCLUsageTypeProvider : UsageTypeProvider {
+internal class HCLUsageTypeProvider : UsageTypeProvider {
 
   override fun getUsageType(element: PsiElement): UsageType? {
     if (element !is HCLElement) return null

@@ -5,7 +5,7 @@ import com.intellij.lang.Language
 import com.intellij.psi.css.EmbeddedCssProvider
 import org.angular2.lang.html.Angular2HtmlLanguage
 
-private class Angular2EmbeddedCssProvider : EmbeddedCssProvider() {
+internal class Angular2EmbeddedCssProvider : EmbeddedCssProvider() {
   override fun enableEmbeddedCssFor(language: Language): Boolean {
     return language.isKindOf(Angular2HtmlLanguage)
   }

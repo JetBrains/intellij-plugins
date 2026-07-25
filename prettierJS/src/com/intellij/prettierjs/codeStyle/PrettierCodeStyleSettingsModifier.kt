@@ -36,7 +36,7 @@ import kotlin.time.Duration.Companion.milliseconds
 private val LOG: Logger
   get() = logger<PrettierCodeStyleSettingsModifier>()
 
-private class PrettierCodeStyleSettingsModifier : CodeStyleSettingsModifier {
+internal class PrettierCodeStyleSettingsModifier : CodeStyleSettingsModifier {
   override fun modifySettings(settings: TransientCodeStyleSettings, psiFile: PsiFile): Boolean {
     val project = psiFile.project
     val file = psiFile.virtualFile

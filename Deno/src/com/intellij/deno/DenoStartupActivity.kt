@@ -13,7 +13,7 @@ import com.intellij.openapi.startup.ProjectActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-private class DenoStartupActivity : ProjectActivity {
+internal class DenoStartupActivity : ProjectActivity {
   override suspend fun execute(project: Project) {
     if (isJavaScriptRuntimeSettingsPageEnabled) {
       // sync selected "Preferred runtime" with `DenoSetting`

@@ -37,7 +37,7 @@ interface IjQDCloudClientProvider {
   fun getQDCloudClient(frontendUrl: String): QDCloudClient
 }
 
-private class IjQDCloudClientProviderImpl(private val scope: CoroutineScope) : IjQDCloudClientProvider {
+internal class IjQDCloudClientProviderImpl(private val scope: CoroutineScope) : IjQDCloudClientProvider {
   override val httpClient: QDCloudHttpClient = LoggingQDCloudHttpClient(QDCloudHttpClient(PlatformHttpClient.client()))
 
   override fun getQDCloudClient(frontendUrl: String): QDCloudClient {

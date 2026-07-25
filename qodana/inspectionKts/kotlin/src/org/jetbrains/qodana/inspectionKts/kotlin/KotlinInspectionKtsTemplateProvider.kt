@@ -7,7 +7,7 @@ import org.jetbrains.qodana.inspectionKts.templates.InspectionKtsTemplate
 import org.jetbrains.qodana.inspectionKts.templates.standardLocalInspectionKtsTemplateContent
 import org.jetbrains.qodana.inspectionKts.templates.templateInspectionKtsFilenameToInspectionName
 
-private class KotlinInspectionKtsTemplateProvider : InspectionKtsTemplate.Provider {
+internal class KotlinInspectionKtsTemplateProvider : InspectionKtsTemplate.Provider {
   companion object {
     const val ID = "KOTLIN"
   }

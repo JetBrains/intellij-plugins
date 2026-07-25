@@ -16,7 +16,7 @@ private val LOG_INTERVAL: Duration = Duration.ofMinutes(10)
 
 private val LOGGER = logger<QodanaThreadDumpLoggingActivity>()
 
-private class QodanaThreadDumpLoggingActivity : QodanaLoggingActivity {
+internal class QodanaThreadDumpLoggingActivity : QodanaLoggingActivity {
   override suspend fun executeActivity(progressName: String, timeCookie: TimeCookie) {
     while (true) {
       delay(LOG_INTERVAL)

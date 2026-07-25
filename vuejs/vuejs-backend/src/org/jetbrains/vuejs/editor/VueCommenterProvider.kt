@@ -22,7 +22,7 @@ import org.intellij.plugins.postcss.PostCssCommentProvider
 import org.intellij.plugins.postcss.PostCssLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-private class VueCommenterProvider : MultipleLangCommentProvider {
+internal class VueCommenterProvider : MultipleLangCommentProvider {
   override fun getLineCommenter(file: PsiFile, editor: Editor, lineStartLanguage: Language, lineEndLanguage: Language): Commenter? {
     val minimalElement = editor.caretModel.currentCaret
       .let { findMinimalElementContainingRange(file, it.selectionStart, it.selectionEnd) }

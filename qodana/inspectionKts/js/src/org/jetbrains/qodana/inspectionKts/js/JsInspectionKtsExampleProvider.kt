@@ -6,7 +6,7 @@ import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 import org.jetbrains.qodana.inspectionKts.examples.InspectionKtsExample
 import java.net.URL
 
-private class JsInspectionKtsExampleProvider : InspectionKtsExample.Provider {
+internal class JsInspectionKtsExampleProvider : InspectionKtsExample.Provider {
   override fun example(): InspectionKtsExample? {
     return InspectionKtsExample(
       icon = AllIcons.FileTypes.JavaScript,

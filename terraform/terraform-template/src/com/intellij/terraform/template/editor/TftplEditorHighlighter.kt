@@ -16,7 +16,7 @@ import com.intellij.terraform.template.doComputeTemplateDataLanguage
 import org.intellij.terraform.hil.psi.template.TftplLanguage
 import org.intellij.terraform.hil.psi.template.TftplTokenTypes
 
-private class TftplEditorHighlighterProvider : EditorHighlighterProvider {
+internal class TftplEditorHighlighterProvider : EditorHighlighterProvider {
   override fun getEditorHighlighter(project: Project?,
                                     fileType: FileType,
                                     virtualFile: VirtualFile?,

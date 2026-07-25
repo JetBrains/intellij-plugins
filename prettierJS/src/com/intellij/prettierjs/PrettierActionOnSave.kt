@@ -20,7 +20,7 @@ import com.intellij.util.concurrency.annotations.RequiresReadLock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.DocumentUpdatingActionOnSave() {
+internal class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.DocumentUpdatingActionOnSave() {
   override val presentableName: @NlsSafe String = "Prettier"
 
   override fun isEnabledForProject(project: Project): Boolean = PrettierConfiguration.getInstance(project).isRunOnSave

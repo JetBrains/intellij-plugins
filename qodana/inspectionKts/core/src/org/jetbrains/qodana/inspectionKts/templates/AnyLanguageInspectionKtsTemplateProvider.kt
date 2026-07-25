@@ -4,7 +4,7 @@ import com.intellij.icons.AllIcons
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 
-private class AnyLanguageInspectionKtsTemplateProvider : InspectionKtsTemplate.Provider {
+internal class AnyLanguageInspectionKtsTemplateProvider : InspectionKtsTemplate.Provider {
   override fun template() = InspectionKtsTemplate(
     InspectionKtsTemplate.UiDescriptor(
       name = InspectionKtsBundle.message("inspectionkts.template.any.language.local.inspection"),
@@ -16,7 +16,7 @@ private class AnyLanguageInspectionKtsTemplateProvider : InspectionKtsTemplate.P
   )
 }
 
-private class AnyLanguageGlobalInspectionKtsTemplateProvider : InspectionKtsTemplate.Provider {
+internal class AnyLanguageGlobalInspectionKtsTemplateProvider : InspectionKtsTemplate.Provider {
   override fun template() = InspectionKtsTemplate(
     InspectionKtsTemplate.UiDescriptor(
       name = InspectionKtsBundle.message("inspectionkts.template.any.language.global.inspection"),

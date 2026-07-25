@@ -21,7 +21,7 @@ import org.jetbrains.vuejs.index.VUE_COMPONENT_STYLES_INDEX_KEY
 import org.jetbrains.vuejs.libraries.VUE_CLASS_COMPONENT
 import java.util.Properties
 
-private class VueDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesProvider {
+internal class VueDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesProvider {
   override fun fillProperties(directory: PsiDirectory, props: Properties) {
     if (!hasVueFiles(directory.project) && !isVueContext(directory))
       return
