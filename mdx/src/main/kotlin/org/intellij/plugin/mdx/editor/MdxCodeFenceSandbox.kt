@@ -8,6 +8,7 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFileFactory
@@ -67,7 +68,12 @@ internal object MdxCodeFenceSandbox {
     val file = PsiFileFactory.getInstance(project)
       .createFileFromText("fence.$extension", languageAndExtension.first, dedented)
     val sandboxDocument = documentManager.getDocument(file) ?: return false
-    val sandboxEditor = EditorFactory.getInstance().createEditor(sandboxDocument, project, file.viewProvider.virtualFile, false)
+    val virtualFile = file.viewProvider.virtualFile
+    val sandboxEditor = EditorFactory.getInstance().createEditor(sandboxDocument, project, virtualFile, false)
+    // createEditor(document, project, file, isViewer) uses `file` only to build the highlighter — it does NOT set
+    // the editor's own virtualFile. Set it so the sandbox is a genuine file-backed editor: language line-indent
+    // providers dereference editor.virtualFile and would otherwise crash on Enter (TextMate fences NPE). WEB-78468.
+    (sandboxEditor as EditorEx).setFile(virtualFile)
     try {
       val length = sandboxDocument.textLength
       sandboxEditor.caretModel.moveToOffset(dedentedOffsets[0].coerceIn(0, length))
