@@ -22,8 +22,10 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import org.jdom.Element
+import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.runActivityWithTiming
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.ConsoleLog
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
@@ -79,6 +81,7 @@ suspend fun QodanaRunContext.runAnalysis(
 
   val inspectionsResults = mutableListOf<Path>()
   runActivityWithTiming(QodanaActivityKind.PROJECT_ANALYSIS) {
+    ConsoleLog.info(QodanaBundle.message("progress.code.analysis.started"))
     withContext(StaticAnalysisDispatchers.IO) {
       jobToIndicator(coroutineContext.job, progressIndicator) {
         context.performInspectionsWithProgressAndExportResults(

@@ -9,16 +9,12 @@ interface QodanaMessageReporter : CommandLineInspectionProgressReporter {
 
   override fun reportMessage(minVerboseLevel: Int, message: String?)
 
-  fun reportMessageNoLineBreak(minVerboseLevel: Int, message: String?)
-
   object EMPTY : QodanaMessageReporter {
     override fun reportError(e: Throwable) {}
 
     override fun reportError(message: String?) {}
 
     override fun reportMessage(minVerboseLevel: Int, message: String?) {}
-
-    override fun reportMessageNoLineBreak(minVerboseLevel: Int, message: String?) {}
   }
 
   object DEFAULT : QodanaMessageReporter {
@@ -34,10 +30,6 @@ interface QodanaMessageReporter : CommandLineInspectionProgressReporter {
 
     override fun reportMessage(minVerboseLevel: Int, message: String?) {
       if (VERBOSITY >= minVerboseLevel) println(message)
-    }
-
-    override fun reportMessageNoLineBreak(minVerboseLevel: Int, message: String?) {
-      if (VERBOSITY >= minVerboseLevel) print(message)
     }
   }
 }
