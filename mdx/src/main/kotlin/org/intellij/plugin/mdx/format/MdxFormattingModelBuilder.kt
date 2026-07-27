@@ -4,8 +4,8 @@ import com.intellij.formatting.ASTBlock
 import com.intellij.formatting.Alignment
 import com.intellij.formatting.Block
 import com.intellij.formatting.ChildAttributes
-import com.intellij.formatting.FormattingModel
 import com.intellij.formatting.FormattingContext
+import com.intellij.formatting.FormattingModel
 import com.intellij.formatting.Indent
 import com.intellij.formatting.Spacing
 import com.intellij.formatting.Wrap
@@ -15,12 +15,11 @@ import com.intellij.formatting.templateLanguages.TemplateLanguageBlockFactory
 import com.intellij.formatting.templateLanguages.TemplateLanguageFormattingModelBuilder
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.DocumentBasedFormattingModel
-import com.intellij.psi.formatter.FormattingDocumentModelImpl
 import com.intellij.psi.formatter.FormatterUtil
+import com.intellij.psi.formatter.FormattingDocumentModelImpl
 import com.intellij.psi.formatter.xml.HtmlPolicy
 import com.intellij.psi.formatter.xml.SyntheticBlock
 import com.intellij.psi.templateLanguages.SimpleTemplateLanguageFormattingModelBuilder
@@ -42,18 +41,6 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
     val documentModel = FormattingDocumentModelImpl.createOn(node.psi.containingFile)
     val mdxForeignChildren = filterForeignChildren(node, foreignChildren)
     return MdxBlock(this, codeStyleSettings, node, mdxForeignChildren, HtmlPolicy(codeStyleSettings, documentModel))
-  }
-
-  override fun createModel(element: PsiElement, settings: CodeStyleSettings): FormattingModel {
-    val file = element.containingFile
-    val node = element.node
-    if (node.elementType === MdxTokenTypes.OUTER_ELEMENT_TYPE) {
-      return SimpleTemplateLanguageFormattingModelBuilder().createModel(element, settings)
-    }
-    if (!isMdxPsiComplete(file)) {
-      return DocumentBasedFormattingModel(createDummyBlock(file.node), element.project, settings, file.fileType, file)
-    }
-    return DocumentBasedFormattingModel(getRootBlock(file, file.viewProvider, settings), element.project, settings, file.fileType, file)
   }
 
   override fun createModel(formattingContext: FormattingContext): FormattingModel {
@@ -101,7 +88,7 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
   }
 
   private fun filterForeignChildren(node: ASTNode, foreignChildren: MutableList<DataLanguageBlockWrapper>?): List<DataLanguageBlockWrapper>? {
-    if (foreignChildren == null || foreignChildren.isEmpty() || isSingleInlineJsxParagraph(node)) {
+    if (foreignChildren.isNullOrEmpty() || isSingleInlineJsxParagraph(node)) {
       return null
     }
 
@@ -179,11 +166,11 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
     }
   }
 
-  private class MdxBlock internal constructor(blockFactory: TemplateLanguageBlockFactory,
-                                              settings: CodeStyleSettings,
-                                              node: ASTNode,
-                                              foreignChildren: List<DataLanguageBlockWrapper>?,
-                                              private val myHtmlPolicy: HtmlPolicy) : TemplateLanguageBlock(blockFactory, settings, node,
+  private class MdxBlock(blockFactory: TemplateLanguageBlockFactory,
+                         settings: CodeStyleSettings,
+                         node: ASTNode,
+                         foreignChildren: List<DataLanguageBlockWrapper>?,
+                         private val myHtmlPolicy: HtmlPolicy) : TemplateLanguageBlock(blockFactory, settings, node,
                                                                                                             foreignChildren) {
 
     override fun getTemplateTextElementType(): IElementType {
