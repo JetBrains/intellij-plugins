@@ -1,6 +1,11 @@
 <idea-plugin>
   <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="com.intellij.swagger"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.ide"/>
+    <module name="intellij.platform.ide.core"/>
+    <!-- endregion -->
   </dependencies>
   <extensions defaultExtensionNs="org.intellij.qodana">
     <projectDescriber implementation="org.jetbrains.qodana.jvm.swagger.OpenApiDescriber"/>

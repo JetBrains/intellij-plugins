@@ -14,7 +14,15 @@
   <dependencies>
     <module name="intellij.java.psi"/>
     <module name="intellij.java.syntax"/>
+    <module name="intellij.libraries.guava"/>
+    <module name="intellij.libraries.stream"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.ide"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.ide.impl"/>
     <module name="intellij.platform.jps.build"/>
+    <module name="intellij.platform.lang"/>
+    <module name="intellij.platform.projectModel"/>
   </dependencies>
   <!-- endregion -->
   <resource-bundle>messages.ErrorProneBundle</resource-bundle>

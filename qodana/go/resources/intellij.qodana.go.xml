@@ -1,12 +1,16 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="org.jetbrains.plugins.go"/>
     <module name="intellij.go.coverage"/>
     <module name="intellij.platform.collaborationTools"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.projectModel"/>
     <module name="intellij.qodana.coverage"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
 
   <extensions defaultExtensionNs="org.intellij.qodana">
     <reportMetadataArtifact implementation="org.jetbrains.qodana.go.GoCoverageReportMetadataArtifact"/>

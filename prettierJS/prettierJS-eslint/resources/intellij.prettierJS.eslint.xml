@@ -1,7 +1,7 @@
 <idea-plugin>
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="intellij.javascript.eslint"/>
     <plugin id="intellij.prettierJS"/>
     <module name="intellij.javascript.backend"/>
@@ -9,8 +9,11 @@
     <module name="intellij.javascript.parser"/>
     <module name="intellij.javascript.psi.impl"/>
     <module name="intellij.json.backend"/>
-    <!-- endregion -->
+    <module name="intellij.platform.codeStyle"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.projectModel"/>
   </dependencies>
+  <!-- endregion -->
 
   <extensions defaultExtensionNs="com.intellij">
     <eslint.ruleMappersFactory implementation="com.intellij.prettierjs.eslint.PrettierEslintRuleMappersFactory"/>

@@ -1,7 +1,11 @@
 <idea-plugin visibility="internal">
   <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="com.intellij.plugins.watcher"/>
     <plugin id="org.intellij.plugins.hcl"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.macro"/>
+    <!-- endregion -->
   </dependencies>
   
   <extensions defaultExtensionNs="com.intellij.plugins.watcher">

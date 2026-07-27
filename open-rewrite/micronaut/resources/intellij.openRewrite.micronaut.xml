@@ -1,10 +1,12 @@
 <idea-plugin package="com.intellij.openRewrite.micronaut">
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="com.intellij.micronaut"/>
     <plugin id="com.intellij.openRewrite"/>
-    <!-- endregion -->
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.externalSystem.dependencyUpdater"/>
   </dependencies>
+  <!-- endregion -->
 
   <extensions defaultExtensionNs="com.intellij">
     <openRewrite.recipeLibraryContributor implementation="com.intellij.openRewrite.micronaut.MnRecipeLibraryContributor"/>

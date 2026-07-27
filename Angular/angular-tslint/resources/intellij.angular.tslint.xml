@@ -1,11 +1,12 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="tslint"/>
     <module name="intellij.angular.backend"/>
     <module name="intellij.javascript.psi.impl"/>
-    <!-- endregion -->
+    <module name="intellij.platform.core"/>
   </dependencies>
+  <!-- endregion -->
 
   <extensions defaultExtensionNs="com.intellij">
     <tslint.configDetector implementation="com.intellij.angular.tslint.TsLintConfigAngularDetector" order="first" id="angular"/>

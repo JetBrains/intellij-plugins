@@ -2,9 +2,15 @@
   <dependencies>
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.dev"/>
-    <module name="intellij.dev.psiViewer"/>
-    <module name="intellij.qodana.inspectionKts"/>
     <module name="intellij.javascript.psi.impl"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.dev.psiViewer"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.ui"/>
+    <module name="intellij.platform.ide"/>
+    <module name="intellij.platform.util.ui"/>
+    <module name="intellij.qodana.inspectionKts"/>
+    <!-- endregion -->
   </dependencies>
   <extensions defaultExtensionNs="org.jetbrains.qodana.inspectionKts">
     <defaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.js.JsInspectionKtsDefaultImportsProvider"/>

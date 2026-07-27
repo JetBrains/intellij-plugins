@@ -1,11 +1,23 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="com.intellij.platform.images"/>
+    <module name="intellij.libraries.fastutil"/>
+    <module name="intellij.libraries.opentelemetry"/>
+    <module name="intellij.libraries.stream"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.core.ui"/>
+    <module name="intellij.platform.editor.ui"/>
+    <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.lang.core"/>
+    <module name="intellij.platform.polySymbols"/>
+    <module name="intellij.platform.projectModel"/>
     <module name="intellij.platform.trialPromotion.common"/>
     <module name="intellij.vuejs.common"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
   <extensions defaultExtensionNs="com.intellij">
     <pluginWithFreeTierEditorNotificationProvider implementation="org.jetbrains.vuejs.editor.VueFreeTierEditorNotificationProvider"/>
     <polySymbols.webTypes source="web-types/vue-context@0.0.0.web-types.json" enableByDefault="true"/>

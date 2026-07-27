@@ -1,10 +1,13 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="org.intellij.groovy"/>
     <module name="intellij.java.psi"/>
-    <!-- endregion -->
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.lang.impl"/>
   </dependencies>
+  <!-- endregion -->
   <extensions defaultExtensionNs="org.intellij.qodana">
     <jenkinsConfigHandler implementation="org.jetbrains.qodana.jvm.groovy.GroovyJenkinsConfigHandler"/>
   </extensions>

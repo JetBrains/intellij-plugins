@@ -1,10 +1,15 @@
 <idea-plugin>
+<!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
 <dependencies>
-<plugin id="org.jetbrains.kotlin"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
-    <module name="intellij.kotlin.references"/>
-    <!-- endregion -->
+  <plugin id="org.jetbrains.kotlin"/>
+  <module name="intellij.kotlin.references"/>
+  <module name="intellij.platform.analysis"/>
+  <module name="intellij.platform.core"/>
+  <module name="intellij.platform.core.impl"/>
+  <module name="intellij.platform.ide"/>
+  <module name="intellij.platform.ide.impl"/>
 </dependencies>
+<!-- endregion -->
 <extensions defaultExtensionNs="com.intellij">
 <localInspection language="kotlin" shortName="QodanaKotlinSanity"
                      groupKey="inspection.general.tools.group.name" groupBundle="messages.InspectionsBundle"

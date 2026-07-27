@@ -5,7 +5,15 @@
     <plugin id="org.jetbrains.kotlin"/>
     <plugin id="Coverage"/>
     <module name="intellij.java.psi"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
     <module name="intellij.platform.coverage"/>
+    <module name="intellij.platform.ide"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.lang.impl"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.statistics"/>
     <module name="intellij.qodana.coverage"/>
   </dependencies>
   <!-- endregion -->

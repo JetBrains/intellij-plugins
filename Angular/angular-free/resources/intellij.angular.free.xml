@@ -1,8 +1,23 @@
 <idea-plugin>
   <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="HtmlTools"/>
     <plugin id="com.intellij.platform.images"/>
+    <module name="intellij.libraries.fastutil"/>
+    <module name="intellij.libraries.icu4j"/>
+    <module name="intellij.libraries.opentelemetry"/>
+    <module name="intellij.libraries.stream"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.core.ui"/>
+    <module name="intellij.platform.editor.ui"/>
+    <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.lang.core"/>
+    <module name="intellij.platform.polySymbols"/>
+    <module name="intellij.platform.projectModel"/>
     <module name="intellij.platform.trialPromotion.common"/>
+    <!-- endregion -->
   </dependencies>
   <extensions defaultExtensionNs="com.intellij">
     <pluginWithFreeTierEditorNotificationProvider implementation="org.angular2.editor.AngularFreeTierEditorNotificationProvider"/>

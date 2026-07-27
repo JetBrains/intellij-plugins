@@ -3,8 +3,11 @@
   <dependencies>
     <module name="intellij.javascript.web"/>
     <module name="intellij.markdown"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
     <module name="intellij.vuejs.backend"/>
     <module name="intellij.vuejs.common"/>
+    <module name="intellij.xml.parser"/>
   </dependencies>
   <!-- endregion -->
   <extensions defaultExtensionNs="org.intellij.markdown">

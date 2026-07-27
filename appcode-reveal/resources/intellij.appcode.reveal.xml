@@ -1,15 +1,27 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <module name="intellij.cidr.runner"/>
     <module name="intellij.cidr.util.execution"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.appcode"/>
     <module name="intellij.apple.sdk"/>
     <module name="intellij.cidr.debugger.core"/>
     <module name="intellij.cidr.projectModel"/>
     <module name="intellij.cidr.workspaceModel"/>
-    <!-- endregion -->
+    <module name="intellij.libraries.guava"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.core.ui"/>
+    <module name="intellij.platform.editor.ui"/>
+    <module name="intellij.platform.execution"/>
+    <module name="intellij.platform.execution.impl"/>
+    <module name="intellij.platform.ide"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.statistics"/>
+    <module name="intellij.platform.util.ui"/>
   </dependencies>
+  <!-- endregion -->
 
   <extensions defaultExtensionNs="com.intellij">
     <statistics.counterUsagesCollector implementationClass="org.jetbrains.appcode.reveal.RevealUsageTriggerCollector"/>

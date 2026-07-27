@@ -3,6 +3,7 @@
   <dependencies>
     <plugin id="intellij.webpack"/>
     <module name="intellij.javascript.backend"/>
+    <module name="intellij.platform.core"/>
     <module name="intellij.vuejs.backend"/>
     <module name="intellij.vuejs.common"/>
   </dependencies>

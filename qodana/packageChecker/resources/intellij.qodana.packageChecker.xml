@@ -1,7 +1,11 @@
 <idea-plugin>
   <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="org.intellij.qodana"/>
     <plugin id="org.jetbrains.security.package-checker"/>
+    <module name="intellij.platform.analysis.impl"/>
+    <module name="intellij.platform.core"/>
+    <!-- endregion -->
   </dependencies>
   <projectListeners>
     <listener class="org.jetbrains.qodana.staticAnalysis.packageChecker.PackageCheckerInspectListener"

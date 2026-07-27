@@ -17,8 +17,24 @@
 
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <module name="intellij.javascript.psi.impl"/>
     <module name="intellij.javascript.backend"/>
+    <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.core.ui"/>
+    <module name="intellij.platform.execution"/>
+    <module name="intellij.platform.ide"/>
+    <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.lang"/>
+    <module name="intellij.platform.lang.core"/>
+    <module name="intellij.platform.lang.impl"/>
+    <module name="intellij.platform.polySymbols"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.util.ui"/>
+    <module name="intellij.platform.webide"/>
+    <module name="intellij.platform.webide.impl"/>
+    <module name="intellij.xml.psi"/>
   </dependencies>
   <!-- endregion -->
   <depends>com.intellij.modules.platform</depends>

@@ -9,6 +9,15 @@
     <module name="intellij.clion.meson.core"/>
     <module name="intellij.clion.radler.core"/>
     <module name="intellij.cmake.core"/>
+    <module name="intellij.libraries.rd.core"/>
+    <module name="intellij.libraries.rd.framework"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.analysis.impl"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.externalSystem"/>
+    <module name="intellij.platform.ide"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.projectModel"/>
     <module name="intellij.rd.ide.model.generated"/>
     <module name="intellij.rd.platform"/>
     <module name="intellij.rider.model.generated"/>

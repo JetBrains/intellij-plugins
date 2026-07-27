@@ -4,6 +4,17 @@
     <plugin id="com.intellij.modules.rustrover"/>
     <plugin id="com.jetbrains.rust"/>
     <plugin id="org.intellij.qodana"/>
+    <module name="intellij.libraries.kotlinx.io"/>
+    <module name="intellij.libraries.rd.core"/>
+    <module name="intellij.libraries.rd.framework"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.execution"/>
+    <module name="intellij.platform.execution.impl"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.rd.community"/>
     <module name="intellij.rustrover.common"/>
     <module name="intellij.rustrover.core"/>
   </dependencies>
