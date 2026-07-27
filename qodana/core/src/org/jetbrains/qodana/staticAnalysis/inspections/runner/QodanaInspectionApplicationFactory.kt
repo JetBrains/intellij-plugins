@@ -161,7 +161,7 @@ class QodanaInspectionApplicationFactory {
       runPromoInspections = runPromo,
       script = script,
       includeAbsent = includeAbsent,
-      onlyDirectory = dirToAnalyze,
+      onlyDirectory = dirToAnalyze ?: yamlConfig.onlyDirectory,
       failureConditions = if (failThresholdArg == null) {
         yamlConfig.failureConditions
       }
