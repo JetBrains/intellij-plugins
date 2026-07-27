@@ -6,6 +6,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ExportDeclaration
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
 import com.intellij.lang.ecmascript6.psi.ES6NamedImports
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSBlockStatement
 import com.intellij.lang.javascript.psi.JSCallExpression
@@ -42,6 +43,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeofType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptUnionOrIntersectionType
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.elementType
 import kotlin.contracts.contract
 
 fun isObjectLiteralExpression(node: PsiElement?): Boolean {
@@ -60,8 +62,13 @@ fun isStringLiteral(node: PsiElement?): Boolean {
 }
 
 fun isIdentifier(node: PsiElement?): Boolean {
-  contract { returns(true) implies (node is JSReferenceExpression) }
-  return node is JSReferenceExpression && node.qualifier == null
+  contract { returns(true) implies (node != null) }
+
+  node ?: return false
+
+  return node.elementType == JSTokenTypes.IDENTIFIER
+         // TODO: check if required
+         || (node is JSReferenceExpression && node.qualifier == null)
 }
 
 fun isBindingElement(node: PsiElement?): Boolean {
