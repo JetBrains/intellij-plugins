@@ -74,7 +74,6 @@
     <highlightingPassFactory implementation="org.jetbrains.qodana.highlight.QodanaHighlightingPassRegistrar"/>
     <jbProtocolCommand implementation="org.jetbrains.qodana.protocol.JBProtocolQodanaCommand"/>
     <inspectionResultsExportActionProvider implementation="org.jetbrains.qodana.actions.ExportToSarifAction"/>
-    <inspectionGroupProvider implementation="org.jetbrains.qodana.staticAnalysis.profile.providers.PqcInspectionGroupProvider"/>
     <applicationService serviceInterface="org.jetbrains.qodana.cloud.authorization.QodanaCloudOAuthService"
                         serviceImplementation="org.jetbrains.qodana.cloud.authorization.QodanaCloudOAuthServiceImpl"/>
     <httpRequestHandler implementation="org.jetbrains.qodana.cloud.authorization.QodanaCloudOAuthCallbackHandler"/>
