@@ -17,11 +17,13 @@
     <module name="intellij.platform.ide.impl"/>
     <module name="intellij.platform.lang.impl"/>
     <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.langInjection"/>
     <module name="intellij.qodana.coverage"/>
   </dependencies>
   <!-- endregion -->
   <extensions defaultExtensionNs="org.intellij.qodana">
     <reportMetadataArtifact implementation="org.jetbrains.qodana.js.JestCoverageReportMetadataArtifact"/>
+    <workflowExtension implementation="org.jetbrains.qodana.js.QodanaDisableJsInjections"/>
     <psiStructuralFingerprintsProvider language="JavaScript" implementationClass="org.jetbrains.qodana.js.psi.JsPsiStructuralFingerprintsProvider"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">

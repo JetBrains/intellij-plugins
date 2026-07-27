@@ -114,7 +114,6 @@
     <!-- endregion -->
   </dependencies>
 
-  <depends optional="true" config-file="static-analysis-intellijLang.xml">org.intellij.intelliLang</depends>
   <depends optional="true" config-file="static-analysis-git.xml">Git4Idea</depends>
 
   <resource-bundle>messages.QodanaBundle</resource-bundle>
