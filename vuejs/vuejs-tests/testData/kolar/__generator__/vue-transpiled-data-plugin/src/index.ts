@@ -22,6 +22,10 @@ function init() {
 
         const content = sourceFile.getFullText()
           .substring(scriptInfo.getSnapshot().getLength())
+          .replaceAll(
+            '/// <reference types="../node_modules/@vue/language-core/types/',
+            '/// <reference types="@vue/language-core/types/',
+          )
 
         const transpiledFilePath = resolve(
           transpiledDir,

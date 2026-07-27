@@ -1,5 +1,5 @@
-/// <reference types="../node_modules/@vue/language-core/types/template-helpers.d.ts" />
-/// <reference types="../node_modules/@vue/language-core/types/props-fallback.d.ts" />
+/// <reference types="@vue/language-core/types/template-helpers.d.ts" />
+/// <reference types="@vue/language-core/types/props-fallback.d.ts" />
 
 const __VLS_export = ((
 	__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>['props'],

@@ -1,5 +1,5 @@
-/// <reference types="../node_modules/@vue/language-core/types/template-helpers.d.ts" />
-/// <reference types="../node_modules/@vue/language-core/types/props-fallback.d.ts" />
+/// <reference types="@vue/language-core/types/template-helpers.d.ts" />
+/// <reference types="@vue/language-core/types/props-fallback.d.ts" />
 
 const count = 1
 
