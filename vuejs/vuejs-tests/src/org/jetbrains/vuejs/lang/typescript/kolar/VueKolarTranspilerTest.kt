@@ -3,10 +3,11 @@ package org.jetbrains.vuejs.lang.typescript.kolar
 
 import com.intellij.lang.typescript.kolar.KolarScriptSnapshot
 import com.intellij.lang.typescript.kolar.KolarTranspiledFile
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
-import com.intellij.testFramework.VfsTestUtil.TEST_DATA_FILE_PATH
+import com.intellij.testFramework.PlatformTestUtil.assertDirectoriesEqual
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
@@ -14,8 +15,11 @@ import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+import java.io.FileNotFoundException
 
 private const val __TRANSPILE__: String = "__transpile__"
+
+private const val COMPARE_DIRS: Boolean = false
 
 @RunWith(JUnit4::class)
 class VueKolarTranspilerTest :
@@ -27,8 +31,19 @@ class VueKolarTranspilerTest :
     doConfiguredTest(
       configureFile = false,
     ) {
-      transpile()
+      val actualDir = transpile()
+      val expectedDir = getExpectedTranspiledDataDir()
+
+      if (COMPARE_DIRS) {
+        assertDirectoriesEqual(expectedDir, actualDir)
+      }
     }
+  }
+
+  private fun CodeInsightTestFixture.getExpectedTranspiledDataDir(): VirtualFile {
+    val path = "$testDataPath/${testName}__transpiled"
+    return LocalFileSystem.getInstance().findFileByPath(path)
+           ?: throw FileNotFoundException(path)
   }
 
   private fun CodeInsightTestFixture.transpile(): VirtualFile {
@@ -38,9 +53,10 @@ class VueKolarTranspilerTest :
     assert(fileMap.isNotEmpty())
 
     for ((path, file) in fileMap) {
-      val tsPath = "$path.ts"
-      val transpiledFile = addFileToProject("$__TRANSPILE__/$tsPath", code(transpiler, file))
-      transpiledFile.virtualFile.putUserData(TEST_DATA_FILE_PATH, tsPath)
+      addFileToProject(
+        "$__TRANSPILE__/$path.ts",
+        code(transpiler, file),
+      )
     }
 
     return tempDirFixture.findOrCreateDir(__TRANSPILE__)
