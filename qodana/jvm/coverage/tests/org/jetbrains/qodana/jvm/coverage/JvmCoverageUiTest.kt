@@ -38,19 +38,19 @@ class JvmCoverageUiTest : QodanaCoverageUiTestBase("JvmCoverageInspectionTest") 
 
     openFileInEditor("src/foo/FooClass.java")
     assertEquals(
-      mapOf(5 to LineCoverage.FULL, 9 to LineCoverage.PARTIAL),
+      mapOf(3 to LineCoverage.FULL, 5 to LineCoverage.FULL, 9 to LineCoverage.PARTIAL),
       gutterCoverage("src/foo/FooClass.java")
     )
 
     openFileInEditor("src/foo/bar/BarClass.java")
     assertEquals(
-      mapOf(5 to LineCoverage.FULL, 9 to LineCoverage.NONE, 13 to LineCoverage.NONE),
+      mapOf(3 to LineCoverage.FULL, 5 to LineCoverage.FULL, 9 to LineCoverage.NONE, 13 to LineCoverage.NONE),
       gutterCoverage("src/foo/bar/BarClass.java")
     )
 
     openFileInEditor("src/foo/bar/UncoveredClass.java")
     assertEquals(
-      mapOf(5 to LineCoverage.NONE, 8 to LineCoverage.NONE, 11 to LineCoverage.NONE, 14 to LineCoverage.NONE),
+      mapOf(3 to LineCoverage.NONE, 5 to LineCoverage.NONE, 8 to LineCoverage.NONE, 11 to LineCoverage.NONE, 14 to LineCoverage.NONE),
       gutterCoverage("src/foo/bar/UncoveredClass.java")
     )
   }
