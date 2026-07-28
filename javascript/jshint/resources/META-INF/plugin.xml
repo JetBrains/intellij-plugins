@@ -40,6 +40,7 @@
     <module name="intellij.spellchecker"/>
   </dependencies>
   <!-- endregion -->
+  <content namespace="jetbrains"/>
   <resource-bundle>messages.JSHintBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">

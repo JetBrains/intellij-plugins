@@ -18,7 +18,7 @@
     </ul>
   ]]></description>
 
-  <content>
+  <content namespace="jetbrains">
     <module name="intellij.protoeditor.go"/>
     <module name="intellij.protoeditor.python"/>
     <module name="intellij.protoeditor.jvm"/>

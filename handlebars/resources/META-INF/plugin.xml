@@ -46,6 +46,7 @@ For WebStorm, you can check out this section in the <a href="https://www.jetbrai
     <module name="intellij.xml.ui.common"/>
   </dependencies>
   <!-- endregion -->
+  <content namespace="jetbrains"/>
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="javascript-ex.xml">JavaScript</depends>
 

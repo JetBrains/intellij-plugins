@@ -42,6 +42,7 @@
     <module name="intellij.yaml.backend"/>
     <!-- endregion -->
   </dependencies>
+  <content namespace="jetbrains"/>
 
   <actions resource-bundle="messages.CloudFormationBundle">
     <action id="NewCloudFormationFile" class="com.intellij.aws.cloudformation.NewCloudFormationFile"

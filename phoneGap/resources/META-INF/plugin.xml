@@ -15,7 +15,7 @@ Adds Cordova support to IntelliJ-based IDEs. Here's what's included in this supp
 <p>For more information, check out our <a href="https://www.jetbrains.com/help/webstorm/using-phonegap-cordova.html">documentation</a>.
     ]]></description>
 
-  <content>
+  <content namespace="jetbrains">
     <module name="intellij.phoneGap.core" loading="required"/>
     <module name="intellij.phoneGap.javascript" loading="optional"/>
   </content>

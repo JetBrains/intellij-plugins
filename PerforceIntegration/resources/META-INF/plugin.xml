@@ -39,6 +39,7 @@
     <module name="intellij.platform.vcs.impl.shared"/>
   </dependencies>
   <!-- endregion -->
+  <content namespace="jetbrains"/>
   <depends optional="true" config-file="git-plugin-extensions.xml">Git4Idea</depends>
 
   <actions>

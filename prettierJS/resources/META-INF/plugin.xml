@@ -54,6 +54,7 @@
     <!-- endregion -->
   </dependencies>
 
+  <content namespace="jetbrains"/>
   <content>
     <module name="intellij.prettierJS.eslint"/>
   </content>

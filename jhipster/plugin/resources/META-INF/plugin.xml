@@ -27,10 +27,12 @@
     </ul>
   ]]></description>
 
-  <content>
+  <content namespace="jetbrains">
     <module name="intellij.jhipster" loading="embedded"/>
     <module name="intellij.jhipster.backend"/>
-    <module name="intellij.jhipster.frontend"/>
     <module name="intellij.jhipster.uml"/>
+  </content>
+  <content>
+    <module name="intellij.jhipster.frontend"/>
   </content>
 </idea-plugin>

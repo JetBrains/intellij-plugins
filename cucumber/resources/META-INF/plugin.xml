@@ -41,6 +41,7 @@
     <module name="intellij.regexp"/>
   </dependencies>
   <!-- endregion -->
+  <content namespace="jetbrains"/>
   <extensions defaultExtensionNs="com.intellij">
     <fileType
       name="Cucumber"

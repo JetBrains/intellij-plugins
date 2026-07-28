@@ -61,6 +61,7 @@
     <module name="intellij.platform.util.ui"/>
     <!-- endregion -->
   </dependencies>
+  <content namespace="jetbrains"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="Serial Monitor" anchor="bottom" icon="SerialMonitorIcons.Toolwindow"

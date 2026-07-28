@@ -52,6 +52,7 @@
     <module name="intellij.xml.psi"/>
   </dependencies>
   <!-- endregion -->
+  <content namespace="jetbrains"/>
   <depends>JavaScript</depends>
   <depends>JavaScriptDebugger</depends>
   <depends>com.dmarcotte.handlebars</depends>

@@ -50,6 +50,7 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
     <!-- endregion -->
   </dependencies>
 
+  <content namespace="jetbrains"/>
   <content>
     <module name="intellij.makefile.spellchecker"/>
     <module name="intellij.makefile.terminal"/>

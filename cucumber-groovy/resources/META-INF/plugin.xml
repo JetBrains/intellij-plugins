@@ -27,6 +27,7 @@
     <module name="intellij.platform.usageView"/>
   </dependencies>
   <!-- endregion -->
+  <content namespace="jetbrains"/>
   <extensions defaultExtensionNs="com.intellij">
     <referencesSearch implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberStepDefinitionSearcher"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepFindUsageHandlerFactory"/>

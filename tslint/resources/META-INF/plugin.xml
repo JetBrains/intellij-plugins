@@ -40,6 +40,7 @@
     <module name="intellij.platform.webide.impl"/>
   </dependencies>
   <!-- endregion -->
+  <content namespace="jetbrains"/>
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
   <resource-bundle>messages.TsLintBundle</resource-bundle>

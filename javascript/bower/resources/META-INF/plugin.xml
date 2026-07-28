@@ -29,6 +29,7 @@ Note that this plugin is not actively maintained and may stop working in future 
     <module name="intellij.platform.webide.impl"/>
   </dependencies>
   <!-- endregion -->
+  <content namespace="jetbrains"/>
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>JavaScript</depends>

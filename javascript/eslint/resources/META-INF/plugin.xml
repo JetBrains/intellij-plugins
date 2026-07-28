@@ -43,6 +43,7 @@
     <module name="intellij.xml.psi.impl"/>
   </dependencies>
   <!-- endregion -->
+  <content namespace="jetbrains"/>
 
   <resource-bundle>messages.EslintBundle</resource-bundle>
 
