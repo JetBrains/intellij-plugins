@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import com.intellij.idea.IJIgnore
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
@@ -266,6 +267,7 @@ internal abstract class TfBaseLocalMetadataTest : BasePlatformTestCase() {
   }
 }
 
+@IJIgnore(issue = "IJPL-251464")
 internal class TfLazyLocalMetadataTest : TfBaseLocalMetadataTest() {
 
   fun testNewLockNotPickedUpIfLazy() {
