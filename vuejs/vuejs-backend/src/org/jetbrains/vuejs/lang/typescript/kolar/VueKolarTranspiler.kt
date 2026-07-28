@@ -19,7 +19,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.typescript.kolar.VueTranspiledFileBuilder.TranspiledFile
 
-internal class VueKolarTranspiler(
+class VueKolarTranspiler(
   private val project: Project,
 ) : KolarTranspiler {
 
