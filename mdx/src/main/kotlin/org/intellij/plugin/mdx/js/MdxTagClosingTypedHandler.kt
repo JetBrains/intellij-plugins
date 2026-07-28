@@ -36,10 +36,12 @@ internal class MdxTagClosingTypedHandler : TypedHandlerDelegate() {
     val closingTag = MdxJsxScanner.closingTagToInsert(text, offset) ?: return Result.CONTINUE
 
     // Don't insert twice if an earlier handler in the chain already added it.
-    if (text.subSequence(offset, text.length).startsWith(closingTag)) return Result.CONTINUE
+    if (text.subSequence(offset, text.length).startsWith(closingTag)) return Result.DEFAULT
 
-    // Insert without moving the caret, then CONTINUE so the typed `>` lands normally between it and the close.
+    // Insert without moving the caret, then DEFAULT so the typed `>` still lands normally between it and
+    // the close, but no later delegate in the chain (e.g. JavaScriptTypedHandler, registered "after" this
+    // one) also tries to insert its own closing tag for the same keystroke. WEB-78468.
     EditorModificationUtilEx.insertStringAtCaret(editor, closingTag, false, 0)
-    return Result.CONTINUE
+    return Result.DEFAULT
   }
 }

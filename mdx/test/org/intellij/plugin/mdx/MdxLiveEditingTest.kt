@@ -122,6 +122,12 @@ class MdxLiveEditingTest : MdxTestBase() {
   fun testAutoCloseFragment() = checkTyping('>')
 
   @Test
+  fun testAutoCloseFragmentNestedInTag() = checkTyping('>')
+
+  @Test
+  fun testAutoCloseFragmentNestedInBraces() = checkTyping('>')
+
+  @Test
   fun testAutoCloseDoesNotAbsorbAdjacentTrailingText() {
     // The tag-name scan must stop at the caret, not absorb adjacent trailing text with no separator.
     checkTyping('>')
