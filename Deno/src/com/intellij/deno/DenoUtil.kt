@@ -3,21 +3,23 @@ package com.intellij.deno
 import com.intellij.deno.icons.DenoIcons
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.IconUtil
 import com.intellij.util.SystemProperties
+import com.intellij.util.system.LowLevelLocalMachineAccess
+import com.intellij.util.system.OS
+import com.intellij.util.system.OS.CURRENT
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.swing.Icon
 
-
+@OptIn(LowLevelLocalMachineAccess::class)
 object DenoUtil {
-  const val HASH_FILE_NAME_LENGTH = 64
+  const val HASH_FILE_NAME_LENGTH: Int = 64
 
   fun getDenoTypings(): URL {
     val file = JSLanguageServiceUtil.getPluginDirectory(this::class.java,
@@ -29,21 +31,14 @@ object DenoUtil {
            ?: error("Cannot locate bundled 'lib.deno.d.ts'")
   }
 
-  fun getDefaultDenoExecutable() = detectDenoPaths().firstOrNull()
-
-  private fun detectDenoPaths(): List<String> {
-    val list = (if (SystemInfo.isWindows) sequenceOf("deno.bat", "deno.cmd", "deno.exe") else sequenceOf("deno"))
-      .mapNotNull(PathEnvironmentVariableUtil::findInPath)
-      .map { it.absolutePath }
-      .toList()
-    if (list.isNotEmpty()) return list
+  fun getDefaultDenoExecutable(): String? {
+    val found = PathEnvironmentVariableUtil.findFirst("deno")
+    if (found != null) return found.toString()
 
     val userHome = FileUtil.toSystemIndependentName(SystemProperties.getUserHome())
-
-    val exec = if (SystemInfoRt.isWindows) "deno.exe" else "deno"
-    val candidate = "$userHome/.deno/bin/$exec"
-    val path = Path.of((candidate))
-    return if (Files.exists(path)) listOf (candidate) else emptyList()
+    val candidate = "${userHome}/.deno/bin/${OS.CURRENT.getBinaryName("deno")}"
+    val path = Path.of(candidate)
+    return if (Files.exists(path)) candidate else null
   }
 
   fun getDenoCache(): String {

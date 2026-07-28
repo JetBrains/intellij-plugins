@@ -334,8 +334,8 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
   private static void checkExistsSdkWithWarning(@Nullable String path, @NotNull @Nls String error) throws RuntimeConfigurationWarning {
     if (path == null) return;
 
-    File file = PathEnvironmentVariableUtil.findInPath(path);
-    if (file != null && file.exists()) {
+    var file = PathEnvironmentVariableUtil.findFirst(path);
+    if (file != null) {
       return;
     }
 
@@ -344,9 +344,9 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
 
   private static void checkExistsSdkWithWarning(@Nullable List<String> paths, @NotNull @Nls String error) throws RuntimeConfigurationWarning {
     if (paths == null) return;
-    for (String path : paths) {
-      File file = PathEnvironmentVariableUtil.findInPath(path);
-      if (file != null && file.exists()) {
+    for (var path : paths) {
+      var file = PathEnvironmentVariableUtil.findFirst(path);
+      if (file != null) {
         return;
       }
     }

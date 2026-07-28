@@ -16,7 +16,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,11 +85,11 @@ public abstract class PhoneGapTargets {
                               String... params) {
     List<String> result = new ArrayList<>();
 
-    File deployExecutable = PathEnvironmentVariableUtil.findInPath(executableName);
+    var deployExecutable = PathEnvironmentVariableUtil.findFirst(executableName);
     if (deployExecutable == null) return result;
 
     try {
-      GeneralCommandLine line = new GeneralCommandLine(deployExecutable.getAbsolutePath());
+      GeneralCommandLine line = new GeneralCommandLine(deployExecutable.toString());
       line.addParameters(params);
       ProcessOutput output = ExecUtil.execAndGetOutput(line);
       List<String> lines = null;

@@ -185,7 +185,7 @@ class PlatformioConfigurable : SearchableConfigurable {
 
     // Searches for pio executable bin folder
     private fun pioBinLookup(): Path {
-      val path = PathEnvironmentVariableUtil.findExecutableInPathOnAnyOS(PIO_EXECUTABLE)?.parent?.let { Path.of(it) }
+      val path = PathEnvironmentVariableUtil.findFirst(PIO_EXECUTABLE)?.parent
       if (path != null) {
         return path
       }
@@ -197,6 +197,6 @@ class PlatformioConfigurable : SearchableConfigurable {
       return defaultPath1
     }
 
-    fun pioExePath() = pioBinFolder().resolve(PIO_EXECUTABLE).toString()
+    fun pioExePath(): String = pioBinFolder().resolve(PIO_EXECUTABLE).toString()
   }
 }

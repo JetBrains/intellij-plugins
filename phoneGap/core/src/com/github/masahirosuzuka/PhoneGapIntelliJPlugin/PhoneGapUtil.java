@@ -11,7 +11,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -33,7 +32,6 @@ import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -140,8 +138,8 @@ public final class PhoneGapUtil {
   }
 
   private static @Nullable String getPath(@NotNull String name) {
-    File path = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? name + ".cmd" : name);
-    return (path != null && path.exists()) ? path.getAbsolutePath() : null;
+    var path = PathEnvironmentVariableUtil.findFirst(name);
+    return path != null ? path.toString() : null;
   }
 
   public static boolean isPhoneGapProject(final @NotNull Project project) {
