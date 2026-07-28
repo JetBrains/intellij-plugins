@@ -7,8 +7,8 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.qodana.inspectionKts.fileFactory.CustomPsiFileFactory
 import java.nio.file.Path
@@ -39,7 +39,7 @@ class KotlinCustomPsiFileFactory : CustomPsiFileFactory {
           ?: return@edtWriteAction null
 
         val psi = psiManager.findFile(ktVirtualFile) ?: return@edtWriteAction null
-        val contextModuleFromProject = KaModuleProvider.Companion.getModule(project, psi, useSiteModule = null)
+        val contextModuleFromProject = psi.kaModule(useSiteModule = null)
 
         ktFile.contextModule = contextModuleFromProject
         ktFile
