@@ -32,6 +32,7 @@ import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
+import org.intellij.terraform.config.Constants.HCL_VALIDATION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.TFVARS_EXTENSION
 import org.intellij.terraform.config.TerraformFileType
@@ -44,6 +45,7 @@ import org.intellij.terraform.hcl.psi.HCLHeredocContent
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 
 internal object TfPsiPatterns {
@@ -192,8 +194,18 @@ internal object TfPsiPatterns {
     .withParent(HCLObject::class.java)
     .withSuperParent(2, or(ResourceRootBlock, DataSourceRootBlock))
 
-  val HeredocContentAnywhereInVariable: PsiElementPattern.Capture<HCLHeredocContent> = PlatformPatterns.psiElement(HCLHeredocContent::class.java)
-    .inside(true, VariableRootBlock)
+  val VariableValidationBlock: PsiElementPattern.Capture<HCLBlock> = createBlockPattern(HCL_VALIDATION_IDENTIFIER)
+    .withSuperParent(2, VariableRootBlock)
+
+  val HeredocInVariableExceptValidation: PsiElementPattern.Capture<HCLHeredocContent> =
+    PlatformPatterns.psiElement(HCLHeredocContent::class.java)
+      .inside(true, VariableRootBlock)
+      .andNot(PlatformPatterns.psiElement().inside(true, VariableValidationBlock))
+
+  val StringLiteralInVariableExceptValidation: PsiElementPattern.Capture<HCLStringLiteral> =
+    PlatformPatterns.psiElement(HCLStringLiteral::class.java)
+      .inside(true, VariableRootBlock)
+      .andNot(PlatformPatterns.psiElement().inside(true, VariableValidationBlock))
 
   val DependsOnPattern: PsiElementPattern.Capture<HCLProperty> = propertyWithName(HCL_DEPENDS_ON_IDENTIFIER)
     .withSuperParent(1, HCLObject::class.java)
