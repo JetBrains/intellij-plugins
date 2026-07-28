@@ -10,7 +10,8 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
-import org.intellij.terraform.config.patterns.TfPsiPatterns.HeredocContentAnywhereInVariable
+import org.intellij.terraform.config.patterns.TfPsiPatterns.HeredocInVariableExceptValidation
+import org.intellij.terraform.config.patterns.TfPsiPatterns.StringLiteralInVariableExceptValidation
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformRootBlock
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLArray
@@ -40,8 +41,14 @@ class TfNoInterpolationsAllowedInspection : LocalInspectionTool() {
       }
     }
 
+    override fun visitStringLiteral(o: HCLStringLiteral) {
+      if (StringLiteralInVariableExceptValidation.accepts(o)) {
+        reportRanges(o, "Variable block")
+      }
+    }
+
     override fun visitHeredocContent(o: HCLHeredocContent) {
-      if (HeredocContentAnywhereInVariable.accepts(o)) {
+      if (HeredocInVariableExceptValidation.accepts(o)) {
         checkHeredocInterpolationsInVariable(o)
       }
     }

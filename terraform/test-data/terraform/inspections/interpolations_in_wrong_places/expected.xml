@@ -2,17 +2,35 @@
 <problems>
   <problem>
     <file>test.tf</file>
-    <line>10</line>
-    <module>0</module>
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
-    <description>Interpolations are not allowed in Heredoc within variable blocks</description>
+    <line>2</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Illegal interpolation</problem_class>
+    <description>Interpolations are not allowed in Variable block</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>3</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Illegal interpolation</problem_class>
+    <description>Interpolations are not allowed in Variable block</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>8</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Illegal interpolation</problem_class>
+    <description>Interpolations are not allowed in Variable block</description>
   </problem>
   <problem>
     <file>test.tf</file>
     <line>10</line>
-    <module>0</module>
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Illegal interpolation</problem_class>
     <description>Interpolations are not allowed in Heredoc within variable blocks</description>
+    <highlighted_element>${var.x}</highlighted_element>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>10</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Illegal interpolation</problem_class>
+    <description>Interpolations are not allowed in Heredoc within variable blocks</description>
+    <highlighted_element>${var.y}</highlighted_element>
   </problem>
   <problem>
     <file>test.tf</file>
@@ -24,33 +42,31 @@
   <problem>
     <file>test.tf</file>
     <line>18</line>
-    <module>0</module>
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Illegal interpolation</problem_class>
     <description>Interpolations are not allowed in depends_on</description>
   </problem>
   <problem>
     <file>test.tf</file>
     <line>21</line>
-    <module>0</module>
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Illegal interpolation</problem_class>
     <description>Interpolations are not allowed in properties inside 'terraform' block</description>
   </problem>
   <problem>
     <file>test.tf</file>
     <line>26</line>
-    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Illegal interpolation</problem_class>
     <description>Interpolations are not allowed in depends_on</description>
   </problem>
   <problem>
     <file>test.tf</file>
     <line>27</line>
-    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Illegal interpolation</problem_class>
     <description>A single static variable reference is required: only attribute access and indexing with constant keys (no calculations, function calls, template expressions, and so on).</description>
   </problem>
   <problem>
     <file>test.tf</file>
     <line>35</line>
-    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Illegal interpolation</problem_class>
     <description>Interpolations are not allowed in depends_on</description>
   </problem>
   <problem>
@@ -62,7 +78,13 @@
   <problem>
     <file>test.tf</file>
     <line>43</line>
-    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Illegal interpolation</problem_class>
     <description>Interpolations are not allowed in depends_on</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>52</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Illegal interpolation</problem_class>
+    <description>Interpolations are not allowed in Variable block</description>
   </problem>
 </problems>

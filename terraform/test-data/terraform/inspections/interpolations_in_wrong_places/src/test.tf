@@ -43,3 +43,11 @@ module "m1" {
     "${var.x}", // not ok
   ]
 }
+variable "v" {
+  type = string
+  validation {
+    condition     = contains(local.versions, var.v) // ok
+    error_message = "Available releases: ${join(", ", local.versions)}" // ok, interpolation allowed in validation
+  }
+  description = "Selected release ${var.v}" // not ok, interpolation not allowed in variable attributes
+}
