@@ -33,21 +33,9 @@ class VueKolarTranspilerTest :
 
   private fun CodeInsightTestFixture.transpile(): VirtualFile {
     val transpiler = VueKolarTranspiler(project)
-    val fileMap = mutableMapOf<String, VirtualFile>()
+    val fileMap = getSourceFileMap(transpiler::isEnabled)
 
-    val root = tempDirFixture.findOrCreateDir(".")
-    VfsUtil.visitChildrenRecursively(root, object : VirtualFileVisitor<Any>() {
-      override fun visitFileEx(file: VirtualFile): Result =
-        if (!directoriesCompareFileFilter.accept(file))
-          SKIP_CHILDREN
-        else {
-          if (transpiler.isEnabled(file)) {
-            val path = VfsUtil.getRelativePath(file, root)!!
-            fileMap[path] = file
-          }
-          CONTINUE
-        }
-    })
+    assert(fileMap.isNotEmpty())
 
     for ((path, file) in fileMap) {
       val tsPath = "$path.ts"
@@ -55,9 +43,32 @@ class VueKolarTranspilerTest :
       transpiledFile.virtualFile.putUserData(TEST_DATA_FILE_PATH, tsPath)
     }
 
-    assert(fileMap.isNotEmpty())
-
     return tempDirFixture.findOrCreateDir(__TRANSPILE__)
+  }
+
+  private fun CodeInsightTestFixture.getSourceFileMap(
+    isSourceFile: (VirtualFile) -> Boolean,
+  ): Map<String, VirtualFile> {
+    val fileMap = mutableMapOf<String, VirtualFile>()
+
+    val root = tempDirFixture.findOrCreateDir(".")
+    VfsUtil.visitChildrenRecursively(
+      root,
+      object : VirtualFileVisitor<Any>() {
+        override fun visitFileEx(file: VirtualFile): Result =
+          if (!directoriesCompareFileFilter.accept(file))
+            SKIP_CHILDREN
+          else {
+            if (isSourceFile(file)) {
+              val path = VfsUtil.getRelativePath(file, root)!!
+              fileMap[path] = file
+            }
+            CONTINUE
+          }
+      },
+    )
+
+    return fileMap.toMap()
   }
 
   private fun code(
