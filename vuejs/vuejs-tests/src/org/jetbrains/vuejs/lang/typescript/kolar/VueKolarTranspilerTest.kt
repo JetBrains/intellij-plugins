@@ -1,15 +1,20 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar
 
-import com.intellij.lang.typescript.kolar.KolarTranspiler
-import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.lang.typescript.kolar.KolarScriptSnapshot
+import com.intellij.lang.typescript.kolar.KolarTranspiledFile
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.isFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.testFramework.VfsTestUtil.TEST_DATA_FILE_PATH
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+
+private const val __TRANSPILE__: String = "__transpile__"
 
 @RunWith(JUnit4::class)
 class VueKolarTranspilerTest :
@@ -21,27 +26,46 @@ class VueKolarTranspilerTest :
     doConfiguredTest(
       configureFile = false,
     ) {
-      val transpiler = VueKolarTranspiler(project)
-      val files = getFilesForTranspilation(transpiler)
-
-      assert(files.isNotEmpty())
+      transpile()
     }
   }
 
-  private fun getFilesForTranspilation(
-    transpiler: KolarTranspiler,
-  ): List<VirtualFile> {
-    val files = mutableListOf<VirtualFile>()
+  private fun CodeInsightTestFixture.transpile(): VirtualFile {
+    val transpiler = VueKolarTranspiler(project)
+    val fileMap = mutableMapOf<String, VirtualFile>()
 
-    ProjectFileIndex.getInstance(project)
-      .iterateContent { file ->
-        if (file.isFile && transpiler.isEnabled(file)) {
-          files.add(file)
+    val root = tempDirFixture.findOrCreateDir(".")
+    VfsUtil.visitChildrenRecursively(root, object : VirtualFileVisitor<Any>() {
+      override fun visitFileEx(file: VirtualFile): Result =
+        if (!directoriesCompareFileFilter.accept(file))
+          SKIP_CHILDREN
+        else {
+          if (transpiler.isEnabled(file)) {
+            val path = VfsUtil.getRelativePath(file, root)!!
+            fileMap[path] = file
+          }
+          CONTINUE
         }
-        true
-      }
+    })
 
-    return files
+    for ((path, file) in fileMap) {
+      val tsPath = "$path.ts"
+      val transpiledFile = addFileToProject("$__TRANSPILE__/$tsPath", code(transpiler, file))
+      transpiledFile.virtualFile.putUserData(TEST_DATA_FILE_PATH, tsPath)
+    }
+
+    assert(fileMap.isNotEmpty())
+
+    return tempDirFixture.findOrCreateDir(__TRANSPILE__)
+  }
+
+  private fun code(
+    transpiler: VueKolarTranspiler,
+    sourceFile: VirtualFile,
+  ): String {
+    val transpiledFile = transpiler.getFileInfo(sourceFile) as KolarTranspiledFile
+    val code = transpiledFile.createVirtualCode(KolarScriptSnapshot.create(""), EmptyKolarCodegenContext)!!
+    return code.snapshot.text
   }
 
   @Test
