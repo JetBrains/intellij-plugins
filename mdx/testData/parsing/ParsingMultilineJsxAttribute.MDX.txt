@@ -1,5 +1,5 @@
 MDX File(0,107)
-  markdown: Markdown:ATX_2(0,11)
+  Markdown:Markdown:ATX_2(0,11)
     PsiElement(Markdown:Markdown:ATX_HEADER)('##')(0,2)
     MarkdownHeaderContent(Markdown:ATX_CONTENT)(2,11)
       PsiWhiteSpace(' ')(2,3)
