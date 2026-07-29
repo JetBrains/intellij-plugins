@@ -260,7 +260,10 @@ fun parseScriptSetupRanges(
           }
 
           defineProps = DefineProps(
-            callExp = ce.callExp, exp = ce.exp, arg = ce.arg, typeArg = ce.typeArg,
+            callExp = ce.callExp,
+            exp = ce.exp,
+            arg = ce.arg,
+            typeArg = ce.typeArg,
             name = resolvedName,
             destructured = destructured,
             destructuredRest = destructuredRest,
