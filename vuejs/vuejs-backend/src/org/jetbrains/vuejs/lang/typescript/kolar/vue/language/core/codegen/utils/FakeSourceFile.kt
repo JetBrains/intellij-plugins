@@ -13,8 +13,8 @@ typealias FakeSourceFile = JSElement
 val FakeSourceFile.statements: Sequence<PsiElement>
   get() = forEachNode(this)
 
-fun PsiElement.endsWithComma(): Boolean {
+fun PsiElement.endsWithSemicolon(): Boolean {
   val leaf = lastLeaf()
   return leaf is LeafElement
-         && leaf.tokenType == JSTokenTypes.COMMA
+         && leaf.tokenType == JSTokenTypes.SEMICOLON
 }

@@ -21,7 +21,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.FakeSourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endsWithComma
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endsWithSemicolon
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
@@ -227,7 +227,7 @@ fun isCompoundExpression(ast: FakeSourceFile): Boolean {
   }
 
   val statement = ast.statements.singleOrNull()
-  if (statement != null && statement.endsWithComma()) {
+  if (statement != null && !statement.endsWithSemicolon()) {
     if (isExpressionStatement(statement)) {
       val node = getUnwrappedExpression(statement.expression!!)
       if (
@@ -248,7 +248,7 @@ fun isCompoundExpression(ast: FakeSourceFile): Boolean {
 
 private fun isSingleExpression(ast: FakeSourceFile): Boolean {
   val statement = ast.statements.singleOrNull()
-  if (statement != null && statement.endsWithComma()) {
+  if (statement != null && !statement.endsWithSemicolon()) {
     if (isExpressionStatement(statement)) {
       return true
     }
