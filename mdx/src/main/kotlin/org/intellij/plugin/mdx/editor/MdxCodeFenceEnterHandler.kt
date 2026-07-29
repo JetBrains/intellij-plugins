@@ -1,5 +1,6 @@
 package org.intellij.plugin.mdx.editor
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate.Result
 import com.intellij.openapi.actionSystem.DataContext
@@ -9,6 +10,9 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlTag
+import org.intellij.plugin.mdx.js.MdxJSLanguage
 import org.intellij.plugin.mdx.lang.parse.MdxElementTypes
 import org.intellij.plugin.mdx.lang.psi.MdxFile
 import org.intellij.plugins.markdown.injection.MarkdownCodeFenceUtils
@@ -28,6 +32,7 @@ internal class MdxCodeFenceEnterHandler : EnterHandlerDelegate {
                                originalHandler: EditorActionHandler?): Result {
     if (MdxCodeFenceSandbox.replay(editor, "EditorEnter")) return Result.Stop
     if (insertLineAfterFenceInFlow(file, editor)) return Result.Stop
+    if (insertLineBetweenEmptyJsxTagsInEsmBlock(file, editor)) return Result.Stop
     return Result.Continue
   }
 
@@ -67,6 +72,55 @@ internal class MdxCodeFenceEnterHandler : EnterHandlerDelegate {
     while (parent != null) {
       if (parent.node?.elementType === flowType) return true
       parent = parent.parent
+    }
+    return false
+  }
+
+  /**
+   * Handles Enter between an empty JSX tag pair (`<div><caret></div>`) nested inside an ESM statement's
+   * function/expression body: MdxFormattingModelBuilder deliberately treats the whole MDX_ESM_BLOCK as one
+   * opaque leaf (to leave import/export syntax untouched), so it has no structural indent info for the
+   * nested tags and the platform's default Enter handling drops the closing tag to column 0 instead of
+   * aligning it with the opening tag's line.
+   */
+  private fun insertLineBetweenEmptyJsxTagsInEsmBlock(file: PsiFile, editor: Editor): Boolean {
+    if (editor.caretModel.caretCount != 1) return false
+    val document = editor.document
+    val caret = editor.caretModel.offset
+    if (caret == 0 || document.charsSequence[caret - 1] != '>') return false
+
+    val mdxFile = file.viewProvider.allFiles.firstOrNull { it is MdxFile } ?: return false
+    PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
+
+    val jsFile = file.viewProvider.getPsi(MdxJSLanguage.INSTANCE) ?: return false
+    val tag = emptyJsxTagEndingAt(jsFile, caret) ?: return false
+    if (!isInsideEsmBlock(mdxFile, tag.textRange.startOffset)) return false
+
+    val lineStart = document.getLineStartOffset(document.getLineNumber(caret))
+    val baseIndent = " ".repeat(leadingSpaces(document.charsSequence, lineStart))
+    val childIndent = baseIndent + " ".repeat(CodeStyle.getIndentSize(jsFile))
+    document.insertString(caret, "\n$childIndent\n$baseIndent")
+    PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
+    editor.caretModel.moveToOffset(caret + 1 + childIndent.length)
+    return true
+  }
+
+  private fun emptyJsxTagEndingAt(jsFile: PsiFile, offset: Int): XmlTag? {
+    val tag = PsiTreeUtil.getParentOfType(jsFile.findElementAt(offset - 1), XmlTag::class.java) ?: return null
+    if (tag.isEmpty) return null // self-closing <div/>: no separate closing tag to split away from
+    val value = tag.value.textRange
+    return if (value.isEmpty && value.startOffset == offset) tag else null
+  }
+
+  // The offset sits inside embedded JS/JSX content, which PsiFile.findElementAt would resolve straight
+  // into the foreign JS tree (the host's OUTER_ELEMENT_TYPE delegation) instead of the host AST — so this
+  // walks the raw host ASTNode tree directly to see whether an MDX_ESM_BLOCK actually covers the offset.
+  private fun isInsideEsmBlock(mdxFile: PsiFile, offset: Int): Boolean {
+    val esmBlockType = MarkdownElementType.platformType(MdxElementTypes.MDX_ESM_BLOCK)
+    var node = mdxFile.node?.findLeafElementAt(offset)
+    while (node != null) {
+      if (node.elementType === esmBlockType) return true
+      node = node.treeParent
     }
     return false
   }

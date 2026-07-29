@@ -221,6 +221,20 @@ class MdxFormatterTest : MdxTestBase() {
         assertEquals(expectedText(), topLevelHost().text)
     }
 
+    /**
+     * Enter between an empty JSX tag pair nested inside an ESM statement's function/expression body (e.g.
+     * `export function f() { return <div></div> }`) indents the body line one step and keeps the closing tag
+     * at the statement's own indent: MdxFormattingModelBuilder deliberately treats the whole MDX_ESM_BLOCK as
+     * one opaque leaf (to leave import/export syntax untouched), so it has no structural indent info here and
+     * the platform's default Enter handling would otherwise drop the closing tag to column 0. WEB-78468.
+     */
+    @Test
+    fun testEnterBetweenJsxTagsInEsmBlockIsIndented() {
+        myFixture.configureByFile("$testName.mdx")
+        myFixture.type("\n")
+        assertEquals(expectedText(), topLevelHost().text)
+    }
+
     /** Tab inside a code fence indents one level from the fence base instead of to column zero. */
     @Test
     fun testTabInsideCodeFenceInsideJsxKeepsFenceIndent() {
