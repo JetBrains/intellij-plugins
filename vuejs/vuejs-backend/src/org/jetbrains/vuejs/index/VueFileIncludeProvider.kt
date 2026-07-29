@@ -17,6 +17,10 @@ class VueFileIncludeProvider : JSFrameworkFileIncludeProvider(VueFileType) {
     if (!ES6FileIncludeProvider.checkTextHasImportKeyword(content)) return emptyArray()
 
     val psiFile = content.psiFile
+    // FIXME: FileIncludeProvider result must depend _only_ on FileContent -- while findModule() relies on <script src='...'>
+    //        (see tryResolveSrcReference() in findModule)
+    //        Hence, the exact index data will depend on the ordering between host file and src-ed file modifications
+    //        -- which is UB.
     val importDeclarations = (findModule(psiFile, false)?.let { ES6ImportPsiUtil.getImportDeclarations(it) } ?: emptyList()) +
                              (findModule(psiFile, true)?.let { ES6ImportPsiUtil.getImportDeclarations(it) } ?: emptyList())
 
