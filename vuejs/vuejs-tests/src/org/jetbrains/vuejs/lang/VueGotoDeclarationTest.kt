@@ -2175,7 +2175,7 @@ export default class UsageComponent extends Vue {
     ) {
       configureByFile("vueDefaultSymbols.vue")
       checkGotoDeclaration("\$<caret>slots", "readonly <caret>\$slots", "vue.d.ts")
-      configureByFile("vueDefaultSymbols.vue")
+      configureFromTempProjectFile("vueDefaultSymbols.vue")
       checkGotoDeclaration("\$<caret>emit()", "<caret>\$emit(event:", "vue.d.ts")
     }
   }
