@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.psi.JSDestructuringArray
 import com.intellij.lang.javascript.psi.JSDestructuringContainer
 import com.intellij.lang.javascript.psi.JSDestructuringElement
 import com.intellij.lang.javascript.psi.JSDestructuringObject
-import com.intellij.lang.javascript.psi.JSDestructuringShorthandedProperty
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSNamedElement
 import com.intellij.psi.PsiElement
@@ -17,26 +16,30 @@ fun JSDestructuringContainer.getBindingElements(): Sequence<BindingElement> =
     else -> error("Unexpected destructuring container!")
   }
 
+private fun JSDestructuringElement?.getBindingElements(): Sequence<BindingElement> =
+  this?.target?.getBindingElements() ?: emptySequence()
+
 private fun getBindingElements(
   o: JSDestructuringObject,
 ): Sequence<BindingElement> = sequence {
   for (property in o.properties) {
-    val nameIdentifier = when (property) {
-      is JSDestructuringShorthandedProperty,
-        -> property.destructuringElement?.nameIdentifier
-      is JSNamedElement,
-        -> property.nameIdentifier
-      else -> null
+    val destructuringElement = property.destructuringElement
+                               ?: continue
+
+    if (destructuringElement is JSDestructuringElement) {
+      yieldAll(destructuringElement.getBindingElements())
+      continue
     }
 
-    nameIdentifier ?: continue
+    val nameIdentifier = (destructuringElement as? JSNamedElement)?.nameIdentifier
+                         ?: continue
 
     yield(
       BindingElement(
         source = property,
         nameIdentifier = nameIdentifier,
         isRest = property.isRest,
-        initializer = property.destructuringElement?.initializer,
+        initializer = destructuringElement.initializer,
       )
     )
   }
@@ -47,7 +50,7 @@ private fun getBindingElements(
 ): Sequence<BindingElement> = sequence {
   for (element in array.elements) {
     if (element is JSDestructuringElement) {
-      yieldAll(element.target?.getBindingElements() ?: emptySequence())
+      yieldAll(element.getBindingElements())
       continue
     }
 
