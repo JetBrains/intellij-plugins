@@ -42,13 +42,19 @@ fun getChildren(
   }
 
   if ((parentScope == ParentScope.IF || parentScope == ParentScope.FOR)
-      && !isTemplate(tag))
+      && !ignoreStructuralDirectiveContainer(tag))
     return listOf(ElementNodeImpl(tag))
 
   return tag.childrenSequence
     .flatMap(::getChildrenSequence)
     .toList()
 }
+
+private fun ignoreStructuralDirectiveContainer(
+  tag: XmlTag,
+): Boolean =
+  isTemplate(tag)
+  && tag.attributes.all { it.name in STRUCTURAL_DIRECTIVE_NAMES }
 
 private val NODE_FACTORY_MAP: Map<String, (XmlTag) -> Node?> = mapOf(
   V_IF to ::IfNodeImpl,
