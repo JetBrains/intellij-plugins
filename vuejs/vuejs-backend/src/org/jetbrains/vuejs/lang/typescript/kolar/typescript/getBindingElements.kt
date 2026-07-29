@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.typescript
 import com.intellij.lang.javascript.psi.JSDestructuringArray
 import com.intellij.lang.javascript.psi.JSDestructuringContainer
 import com.intellij.lang.javascript.psi.JSDestructuringObject
+import com.intellij.lang.javascript.psi.JSDestructuringShorthandedProperty
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSNamedElement
 import com.intellij.psi.PsiElement
@@ -19,8 +20,15 @@ private fun getBindingElements(
   o: JSDestructuringObject,
 ): Sequence<BindingElement> = sequence {
   for (property in o.properties) {
-    val nameIdentifier = (property as? JSNamedElement)?.nameIdentifier
-                         ?: continue
+    val nameIdentifier = when (property) {
+      is JSDestructuringShorthandedProperty,
+        -> property.destructuringElement?.nameIdentifier
+      is JSNamedElement,
+        -> property.nameIdentifier
+      else -> null
+    }
+
+    nameIdentifier ?: continue
 
     yield(
       BindingElement(
