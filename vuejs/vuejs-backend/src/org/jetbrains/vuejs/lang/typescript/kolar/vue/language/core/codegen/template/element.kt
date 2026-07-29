@@ -245,7 +245,7 @@ fun generateComponent(
   yieldAll(propCodes)
   yield("}")
   yield(boundary2.end(startTagOffset + tag.length))
-  yield(", ...${names.functionalComponentArgsRest}($functionalVar)$endOfLine")
+  yield(", ...${names.functionalComponentArgsRest}($functionalVar))$endOfLine")
 
   yieldAll(generateFailedExpressions(options, ctx, failedPropExps))
   yieldAll(generateElementEvents(
