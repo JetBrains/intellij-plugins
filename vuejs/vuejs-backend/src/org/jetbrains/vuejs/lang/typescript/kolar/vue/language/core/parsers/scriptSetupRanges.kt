@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers
 
 import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSDestructuringElement
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSLiteralExpression
@@ -244,9 +245,9 @@ fun parseScriptSetupRanges(
           var destructuredRest: String? = null
           var resolvedName = name
 
-          if (isVariableDeclaration(parent) && isObjectBindingPattern(parent.nameIdentifier)) {
+          if (parent is JSDestructuringElement && isObjectBindingPattern(parent.target)) {
             destructured = mutableMapOf()
-            for (id in collectBindingIdentifiers(parent.nameIdentifier!!)) {
+            for (id in collectBindingIdentifiers(parent.target!!)) {
               val idName = getNodeText(id.id)
               if (id.isRest) destructuredRest = idName
               else destructured[idName] = id.initializer
