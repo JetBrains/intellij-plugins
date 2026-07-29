@@ -24,13 +24,13 @@ class IfNodeImpl(
         .filterIsInstance<XmlTag>()
         .takeWhile { it.hasAttribute(V_ELSE_IF) }
         .onEach { current = it }
-        .mapTo(this) { IfBranchNodeImpl(current, V_ELSE_IF) }
+        .mapTo(this) { IfBranchNodeImpl(it, V_ELSE_IF) }
 
       current.siblings(withSelf = false)
         .filterIsInstance<XmlTag>()
         .take(1)
         .filter { it.hasAttribute(V_ELSE) }
-        .mapTo(this) { IfBranchNodeImpl(current, V_ELSE) }
+        .mapTo(this) { IfBranchNodeImpl(it, V_ELSE) }
     }
   }
 }
