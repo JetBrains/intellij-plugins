@@ -356,10 +356,11 @@ fun parseScriptSetupRanges(
   val leadingCommentRanges = getCommentsAtStart(ast).reversed()
   val leadingCommentEndOffset = leadingCommentRanges
                                   .firstOrNull { comment -> tsCheckRE.containsMatchIn(comment.text) }
-                                  ?.endOffset ?: 0
+                                  ?.endOffset
+                                ?: ast.startOffset
 
   var foundNonImportExportNode = false
-  var importSectionEndOffset = 0
+  var importSectionEndOffset = ast.startOffset
   for (node in forEachNode(ast)) {
     if (foundNonImportExportNode
         || isImportDeclaration(node)
