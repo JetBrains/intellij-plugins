@@ -67,6 +67,8 @@ fun isIdentifier(node: PsiElement?): Boolean {
   node ?: return false
 
   return node.elementType == JSTokenTypes.IDENTIFIER
+         // Temp WA for WEB-78993
+         || node.elementType == JSTokenTypes.SOURCE_KEYWORD
          // TODO: check if required
          || (node is JSReferenceExpression && node.qualifier == null)
 }
