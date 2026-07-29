@@ -71,7 +71,7 @@ class TemplateCodegenContext {
       vars.add(variable)
     }
 
-    fun declare(variables: List<String>) {
+    fun declare(variables: Iterable<String>) {
       vars.addAll(variables)
     }
 
