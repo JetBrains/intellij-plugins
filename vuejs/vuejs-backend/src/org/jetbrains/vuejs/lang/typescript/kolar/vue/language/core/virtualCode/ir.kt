@@ -9,11 +9,13 @@ import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
+import org.jetbrains.vuejs.codeInsight.VAPOR_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.findTopLevelVueTag
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl.RootNodeImpl
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.impl.hasAttribute
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IR
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRAttr
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRContent
@@ -71,7 +73,7 @@ private fun getScriptSetup(
     name = Source("scriptSetup"),
     lang = lang(file),
     content = IRContentImpl(file, embeddedContent),
-    generic = attr(tag, "generic"),
+    generic = generic(tag),
     ast = embeddedContent,
   )
 }
@@ -91,6 +93,17 @@ private fun attr(
     offset = attribute.valueTextRange.startOffset,
   )
 }
+
+private fun generic(tag: XmlTag): IRAttr? =
+  attr(tag, "generic") ?: defaultGeneric(tag)
+
+/**
+ * [Source](https://github.com/vuejs/language-tools/blob/dc941c72d2fa64ebbaa300431d475253c80a1884/packages/language-core/lib/utils/parseSfc.ts#L130)
+ */
+private fun defaultGeneric(tag: XmlTag): IRAttr? =
+  if (tag.hasAttribute(VAPOR_ATTRIBUTE_NAME))
+    IRAttr.Present
+  else null
 
 private val XmlTag.embeddedContent: JSEmbeddedContent?
   get() = PsiTreeUtil.getStubChildOfType(this, JSEmbeddedContent::class.java)
