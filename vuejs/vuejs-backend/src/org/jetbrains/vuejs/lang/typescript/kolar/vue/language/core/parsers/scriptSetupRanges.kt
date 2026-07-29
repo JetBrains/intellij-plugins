@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers
 
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList.ModifierType
 import com.intellij.psi.PsiElement
@@ -72,7 +73,7 @@ data class DefineProps(
   override val arg: TextRange<*>?,
   override val typeArg: TextRange<*>?,
   val name: String?,
-  val destructured: Map<String, *>?,  // Map<string, ts.Expression | undefined>
+  val destructured: Map<String, JSExpression?>?,
   val destructuredRest: String?,
   val statement: TextRange<*>,
 ) : CallExpressionRange
@@ -239,7 +240,7 @@ fun parseScriptSetupRanges(
 
         callText in vueCompilerOptions.macros.defineProps -> {
           val (name, ce) = parseCallExprAssignment(node, parent)
-          var destructured: MutableMap<String, Any?>? = null
+          var destructured: MutableMap<String, JSExpression?>? = null
           var destructuredRest: String? = null
           var resolvedName = name
 
