@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.typescript
 
 import com.intellij.lang.javascript.psi.JSDestructuringArray
 import com.intellij.lang.javascript.psi.JSDestructuringContainer
+import com.intellij.lang.javascript.psi.JSDestructuringElement
 import com.intellij.lang.javascript.psi.JSDestructuringObject
 import com.intellij.lang.javascript.psi.JSDestructuringShorthandedProperty
 import com.intellij.lang.javascript.psi.JSExpression
@@ -45,6 +46,11 @@ private fun getBindingElements(
   array: JSDestructuringArray,
 ): Sequence<BindingElement> = sequence {
   for (element in array.elements) {
+    if (element is JSDestructuringElement) {
+      yieldAll(element.target?.getBindingElements() ?: emptySequence())
+      continue
+    }
+
     val nameIdentifier = (element as? JSNamedElement)?.nameIdentifier
                          ?: continue
 
