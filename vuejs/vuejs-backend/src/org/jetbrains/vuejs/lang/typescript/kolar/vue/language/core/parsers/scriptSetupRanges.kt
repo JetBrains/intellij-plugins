@@ -298,7 +298,10 @@ fun parseScriptSetupRanges(
             }
           }
           defineEmits = DefineEmits(
-            callExp = ce.callExp, exp = ce.exp, arg = ce.arg, typeArg = ce.typeArg,
+            callExp = ce.callExp,
+            exp = ce.exp,
+            arg = ce.arg,
+            typeArg = ce.typeArg,
             name = name,
             hasUnionTypeArg = hasUnionTypeArg,
             statement = getStatementRange(parents, node),
@@ -308,7 +311,10 @@ fun parseScriptSetupRanges(
         callText in vueCompilerOptions.macros.defineSlots -> {
           val (name, ce) = parseCallExprAssignment(node, parent)
           defineSlots = DefineSlots(
-            callExp = ce.callExp, exp = ce.exp, arg = ce.arg, typeArg = ce.typeArg,
+            callExp = ce.callExp,
+            exp = ce.exp,
+            arg = ce.arg,
+            typeArg = ce.typeArg,
             name = name,
             statement = getStatementRange(parents, node),
           )
