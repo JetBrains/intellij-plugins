@@ -1,11 +1,10 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderSdkFinder;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.projectRoots.AdditionalDataConfigurable;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -90,7 +89,7 @@ public final class FlexSdkType2 extends SdkType {
   public void setupSdkPaths(final @NotNull Sdk sdk) {
     SdkModificator modificator = sdk.getSdkModificator();
     setupSdkPaths(sdk.getHomeDirectory(), modificator);
-    ApplicationManager.getApplication().invokeAndWait(() -> WriteAction.run(() -> modificator.commitChanges()));
+    WriteAction.run(() -> modificator.commitChanges());
   }
 
   @Override
