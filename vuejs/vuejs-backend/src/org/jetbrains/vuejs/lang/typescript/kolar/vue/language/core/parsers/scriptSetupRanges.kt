@@ -31,6 +31,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeLiteralNode
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isUnionTypeNode
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isVariableDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.TextRange
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.typeScriptFileStart
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.forEachNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingIdentifiers
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNodeText
@@ -374,7 +375,7 @@ fun parseScriptSetupRanges(
                                 ?: ast.startOffset
 
   var foundNonImportExportNode = false
-  var importSectionEndOffset = ast.startOffset
+  var importSectionEndOffset = typeScriptFileStart(ast)
   for (node in forEachNode(ast)) {
     if (foundNonImportExportNode
         || isImportDeclaration(node)

@@ -7,6 +7,8 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafElement
+import com.intellij.psi.util.endOffset
+import com.intellij.psi.util.startOffset
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
@@ -46,3 +48,11 @@ fun forEachNode(
     .filter { it !is LeafElement }
     .filter { it !is PsiWhiteSpace }
     .filter { it !is PsiComment }
+
+fun typeScriptFileStart(
+  node: PsiElement,
+): Int =
+  if (forEachNode(node).none())
+    node.endOffset
+  else
+    node.startOffset
