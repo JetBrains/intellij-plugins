@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar
 
+import com.intellij.lang.javascript.TrackFailedTestRule
 import com.intellij.lang.typescript.kolar.KolarScriptSnapshot
 import com.intellij.lang.typescript.kolar.KolarTranspiledFile
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -11,14 +12,14 @@ import com.intellij.testFramework.PlatformTestUtil.assertDirectoriesEqual
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import java.io.FileNotFoundException
 
 private const val __TRANSPILE__: String = "__transpile__"
-
-private const val COMPARE_DIRS: Boolean = false
 
 @RunWith(JUnit4::class)
 class VueKolarTranspilerTest :
@@ -33,9 +34,7 @@ class VueKolarTranspilerTest :
       val actualDir = transpile()
       val expectedDir = getExpectedTranspiledDataDir()
 
-      if (COMPARE_DIRS) {
-        assertDirectoriesEqual(expectedDir, actualDir)
-      }
+      assertDirectoriesEqual(expectedDir, actualDir)
     }
   }
 
@@ -94,6 +93,21 @@ class VueKolarTranspilerTest :
     val code = transpiledFile.createVirtualCode(KolarScriptSnapshot.create(""), EmptyKolarCodegenContext)!!
     return code.snapshot.text
   }
+
+  @Rule
+  @JvmField
+  val rule: TestRule = TrackFailedTestRule(
+    "props-type-param-with-defaults",
+    "props-type-param-with-defaults__vapor",
+    "v-for-dynamic-slot-name",
+    "v-for-dynamic-slot-name__vapor",
+    "v-for-number__vapor",
+    "v-for-template-with-slot",
+    "v-for-template-with-slot__vapor",
+    "v-if-condition-typeof-narrowing",
+    "v-if-condition-typeof-narrowing__vapor",
+    "v-if-implicit-slot-child__vapor",
+  )
 
   @Test
   fun `component-with-two-scripts`() {
