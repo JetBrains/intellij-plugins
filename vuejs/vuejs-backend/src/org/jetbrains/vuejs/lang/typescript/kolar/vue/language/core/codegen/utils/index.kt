@@ -7,6 +7,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafElement
+import com.intellij.psi.util.childrenSequence
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
@@ -43,8 +44,7 @@ fun generateSfcBlockSection(
 fun forEachNode(
   node: PsiElement,
 ): Sequence<PsiElement> =
-  node.children
-    .asSequence()
+  node.childrenSequence
     .filter { it !is LeafElement }
     .filter { it !is PsiWhiteSpace }
     .filter { it !is PsiComment }
