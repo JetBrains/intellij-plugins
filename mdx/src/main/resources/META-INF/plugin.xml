@@ -86,6 +86,10 @@
     <postFormatProcessor implementation="org.intellij.plugin.mdx.format.MdxTablePostFormatProcessor"/>
     <postFormatProcessor implementation="org.intellij.plugin.mdx.format.MdxCodeFencePostFormatProcessor"/>
     <fileIndentOptionsProvider implementation="org.intellij.plugin.mdx.format.MdxFileIndentOptionsProvider"/>
+    <!--suppress PluginXmlRegistrationCheck -->
+    <codeInsight.inlayProvider language="MDX"
+                               implementationClass="org.intellij.plugins.markdown.editor.tables.ui.MarkdownTableInlayProvider"
+                               id="MdxMarkdownTableInlayProvider"/>
     <completion.contributor language="Markdown"
                             id="MdxImportExportCompletionContributor"
                             implementationClass="org.intellij.plugin.mdx.completion.MdxImportExportCompletionContributor"
@@ -100,6 +104,16 @@
     <typedHandler implementationClass="org.intellij.plugin.mdx.js.MdxBraceTypedHandler"/>
     <quoteHandler fileType="MDX" className="org.intellij.plugins.markdown.braces.MarkdownQuoteHandler"/>
     <xml.zenCodingGenerator implementation="org.intellij.plugin.mdx.emmet.MdxZenCodingGenerator"/>
+    <codeInsight.fillParagraph language="MDX"
+                               implementationClass="org.intellij.plugins.markdown.editor.MarkdownParagraphFillHandler"/>
+    <lang.psiStructureViewFactory language="MDX"
+                                  implementationClass="org.intellij.plugins.markdown.structureView.MarkdownStructureViewFactory"/>
+    <lang.foldingBuilder language="MDX" implementationClass="org.intellij.plugins.markdown.folding.MarkdownFoldingBuilder"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.intellij.markdown">
+    <markdownCompatibilityChecker implementation="org.intellij.plugin.mdx.markdown.MdxMarkdownCompatibilityChecker"/>
+    <actionPromoterExtension implementation="org.intellij.plugin.mdx.markdown.MdxMarkdownActionPromoterExtension"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
