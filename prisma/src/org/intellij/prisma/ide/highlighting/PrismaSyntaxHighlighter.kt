@@ -27,7 +27,7 @@ import org.intellij.prisma.lang.psi.PrismaElementTypes.UNSUPPORTED
 class PrismaSyntaxHighlighter : SyntaxHighlighterBase() {
   override fun getHighlightingLexer(): Lexer = PrismaLexer()
 
-  override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> =
+  override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> =
     pack(ATTRIBUTES[tokenType])
 }
 

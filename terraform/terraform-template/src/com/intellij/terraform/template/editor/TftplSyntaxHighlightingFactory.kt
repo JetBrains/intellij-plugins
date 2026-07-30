@@ -19,7 +19,7 @@ internal class TftplSyntaxHighlightingFactory : HILSyntaxHighlighterFactory() {
 }
 
 private class TerraformTemplateSyntaxHighlighter : HILSyntaxHighlighter() {
-  override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> {
+  override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> {
     return if (tokenType == TftplTokenTypes.DATA_LANGUAGE_TOKEN_UNPARSED) {
       emptyArray()
     }

@@ -35,7 +35,7 @@ open class HILSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
 }
 
 open class HILSyntaxHighlighter : SyntaxHighlighterBase() {
-  override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> = when (tokenType) {
+  override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> = when (tokenType) {
     COMMA -> pack(TIL_COMMA)
     OP_DOT -> pack(TIL_DOT)
     DOUBLE_QUOTED_STRING -> pack(TIL_STRING)

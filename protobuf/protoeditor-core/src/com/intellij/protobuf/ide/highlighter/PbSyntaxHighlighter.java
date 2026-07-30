@@ -188,7 +188,7 @@ public class PbSyntaxHighlighter extends SyntaxHighlighterBase {
   }
 
   @Override
-  public @NotNull TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+  public @NotNull TextAttributesKey @NotNull [] getTokenHighlights(@NotNull IElementType tokenType) {
     return pack(attributesKeyMap.get(tokenType));
   }
 }

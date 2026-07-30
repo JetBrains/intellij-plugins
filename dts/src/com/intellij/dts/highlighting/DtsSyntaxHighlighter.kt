@@ -26,7 +26,7 @@ class DtsSyntaxHighlighter : SyntaxHighlighterBase() {
     return attr.map { it.attribute }.toTypedArray()
   }
 
-  override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
+  override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> {
     if (tokenType in DtsTokenSets.comments) return pack(DtsTextAttributes.COMMENT)
     if (tokenType in DtsTokenSets.strings) return pack(DtsTextAttributes.STRING)
     if (tokenType in DtsTokenSets.numbers) return pack(DtsTextAttributes.NUMBER)

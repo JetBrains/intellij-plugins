@@ -108,7 +108,7 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
   }
 
   @Override
-  public TextAttributesKey @NotNull [] getTokenHighlights(final IElementType tokenType) {
+  public @NotNull TextAttributesKey @NotNull [] getTokenHighlights(final @NotNull IElementType tokenType) {
     if (mapping.containsKey(tokenType)) {
       return pack(mapping.get(tokenType));
     }

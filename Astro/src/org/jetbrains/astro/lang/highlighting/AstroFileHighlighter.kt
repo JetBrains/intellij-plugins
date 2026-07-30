@@ -20,7 +20,7 @@ internal class AstroFileHighlighter : JSHighlighter(AstroLanguage.INSTANCE.optio
 
   private val htmlHighlighter = HtmlFileHighlighter()
 
-  override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
+  override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> {
     return keys[tokenType] ?: mapToTsKeys(htmlHighlighter.getTokenHighlights(tokenType), tokenType)
   }
 

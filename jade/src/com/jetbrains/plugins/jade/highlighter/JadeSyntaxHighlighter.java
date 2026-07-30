@@ -87,7 +87,7 @@ public final class JadeSyntaxHighlighter extends SyntaxHighlighterBase implement
   }
 
   @Override
-  public TextAttributesKey @NotNull [] getTokenHighlights(final IElementType tokenType) {
+  public @NotNull TextAttributesKey @NotNull [] getTokenHighlights(final @NotNull IElementType tokenType) {
     final TextAttributesKey ownResult = ATTRIBUTES.get(tokenType);
 
     if (tokenType.getLanguage() == JadeLanguage.INSTANCE || ownResult != null) {

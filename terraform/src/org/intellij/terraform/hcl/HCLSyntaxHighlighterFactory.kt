@@ -37,7 +37,7 @@ open class HCLSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
 }
 
 class HCLSyntaxHighlighter(val lexer: HCLLexer) : SyntaxHighlighterBase() {
-  override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> = when (tokenType) {
+  override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> = when (tokenType) {
     HCLElementTypes.L_CURLY, HCLElementTypes.R_CURLY -> pack(HCL_BRACES)
     HCLElementTypes.L_BRACKET, HCLElementTypes.R_BRACKET -> pack(HCL_BRACKETS)
     HCLElementTypes.COMMA -> pack(HCL_COMMA)

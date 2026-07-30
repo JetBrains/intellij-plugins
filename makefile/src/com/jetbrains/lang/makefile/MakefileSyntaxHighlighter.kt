@@ -52,7 +52,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     private val EMPTY_KEYS = emptyArray<TextAttributesKey>()
   }
 
-  override fun getTokenHighlights(tokenType: IElementType) = when(tokenType) {
+  override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> = when(tokenType) {
     MakefileTypes.DOC_COMMENT -> DOCCOMMENT_KEYS
     MakefileTypes.COMMENT -> COMMENT_KEYS
     MakefileTypes.TARGET -> TARGET_KEYS
