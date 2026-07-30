@@ -348,7 +348,10 @@ fun parseScriptSetupRanges(
         callText in vueCompilerOptions.composables.useTemplateRef && node.typeArguments.isEmpty() -> {
           val (name, ce) = parseCallExprAssignment(node, parent)
           useTemplateRef.add(UseTemplateRef(
-            callExp = ce.callExp, exp = ce.exp, arg = ce.arg, typeArg = ce.typeArg,
+            callExp = ce.callExp,
+            exp = ce.exp,
+            arg = ce.arg,
+            typeArg = ce.typeArg,
             name = name,
           ))
         }
