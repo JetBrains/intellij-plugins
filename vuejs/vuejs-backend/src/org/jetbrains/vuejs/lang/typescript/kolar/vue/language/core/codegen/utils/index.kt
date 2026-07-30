@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 
+import com.intellij.lang.javascript.psi.JSParameter
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil.createJSContentFromText
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiComment
@@ -10,6 +11,7 @@ import com.intellij.psi.impl.source.tree.LeafElement
 import com.intellij.psi.util.childrenSequence
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
+import com.intellij.util.containers.sequenceOfNotNull
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
@@ -48,6 +50,16 @@ fun forEachNode(
     .filter { it !is LeafElement }
     .filter { it !is PsiWhiteSpace }
     .filter { it !is PsiComment }
+    .plus(nameIdentifiers(node))
+
+private fun nameIdentifiers(
+  node: PsiElement,
+): Sequence<PsiElement> = when {
+  node is JSParameter
+    -> sequenceOfNotNull(node.nameIdentifier)
+
+  else -> emptySequence()
+}
 
 fun typeScriptFileStart(
   node: PsiElement,
