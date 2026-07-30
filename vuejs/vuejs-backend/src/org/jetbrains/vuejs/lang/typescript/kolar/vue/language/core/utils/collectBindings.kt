@@ -30,38 +30,34 @@ fun collectBindingRanges(
 
 fun collectBindingIdentifiers(
   node: PsiElement,
-  results: MutableList<BindingIdentifier> = mutableListOf(),
+): List<BindingIdentifier> =
+  collectBindingIdentifiersInternal(node).toList()
+
+private fun collectBindingIdentifiersInternal(
+  node: PsiElement,
   isRest: Boolean = false,
   initializer: JSExpression? = null,
-): List<BindingIdentifier> {
-  if (isIdentifier(node)) {
-    results.add(
-      BindingIdentifier(
-        id = node,
-        isRest = isRest,
-        initializer = initializer,
-      ),
-    )
-  }
-  else if (isArrayBindingPattern(node) || isObjectBindingPattern(node)) {
-    for (el in node.getBindingElements()) {
-      collectBindingIdentifiers(
+): Sequence<BindingIdentifier> = when {
+  isIdentifier(node)
+    -> sequenceOf(
+    BindingIdentifier(
+      id = node,
+      isRest = isRest,
+      initializer = initializer,
+    ),
+  )
+
+  isArrayBindingPattern(node)
+  || isObjectBindingPattern(node)
+    -> node.getBindingElements()
+    .flatMap { el ->
+      collectBindingIdentifiersInternal(
         node = el.nameIdentifier,
-        results = results,
         isRest = el.isRest,
         initializer = el.initializer,
       )
     }
-  }
-  else {
-    for (child in forEachNode(node)) {
-      collectBindingIdentifiers(
-        node = child,
-        results = results,
-        isRest = false,
-      )
-    }
-  }
 
-  return results
+  else -> forEachNode(node)
+    .flatMap(::collectBindingIdentifiersInternal)
 }
