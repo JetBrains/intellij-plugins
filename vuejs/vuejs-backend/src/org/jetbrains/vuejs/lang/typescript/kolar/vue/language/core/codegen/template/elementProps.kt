@@ -24,7 +24,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.hyphenateAttr
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.hyphenateTag
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.normalizeAttributeValue
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
@@ -254,14 +253,30 @@ private fun getPropsCodeFeatures(
     __propsCompletion = true,
   )
 
-private fun getModelPropName(node: ElementNode, vueCompilerOptions: VueCompilerOptions): String? {
-  val modelPropNames = vueCompilerOptions.experimentalModelPropName ?: return "modelValue"
-  for ((modelName, tags) in modelPropNames) {
-    for (tag in tags.keys) {
-      if (node.tag == tag || node.tag == hyphenateTag(tag)) {
-        return modelName.ifEmpty { null }
-      }
-    }
+// TODO: use `vueCompilerOptions.experimentalModelPropName` as configuration source
+private fun getModelPropName(
+  node: ElementNode,
+  vueCompilerOptions: VueCompilerOptions,
+): String? {
+  require(vueCompilerOptions.experimentalModelPropName == null)
+
+  val valueMode = when (node.tag) {
+    "input",
+      -> node.props.asSequence()
+      .filterIsInstance<AttributeNode>()
+      .firstOrNull { it.name == "type" }
+      ?.value?.content == "text"
+
+    "textarea",
+    "select",
+      -> true
+
+    else -> false
   }
-  return "modelValue"
+
+  return when {
+    valueMode -> "value"
+    node.tag == "input" -> null
+    else -> "modelValue"
+  }
 }
