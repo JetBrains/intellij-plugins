@@ -218,11 +218,12 @@ class TemplateCodegenContext {
   }
 
   private fun generateAutoImport(): Sequence<Code> = sequence {
-    val all = contextAccesses.entries.toList()
-    if (!all.any { (_, map) -> map.isNotEmpty() }) return@sequence
+    if (contextAccesses.all { (_, map) -> map.isEmpty() })
+      return@sequence
+
     yield("// @ts-ignore$newLine") // #2304
     yield("[")
-    for ((varName, map) in all) {
+    for ((varName, map) in contextAccesses) {
       for ((source, offsets) in map) {
         for (offset in offsets) {
           yield(DataSegment(varName, source, offset, codeFeatures.importCompletionOnly))
