@@ -51,11 +51,10 @@ private class DirectiveArgExpressionNode(
     // naive implementation
     val startOffset = nameElement.startOffset + nameElement.text.indexOf(":$argument") + 1
     val endOffset = startOffset + argument.length
-    val dynamicCorrection = if (isStatic) 0 else 1
     SourceLocationImpl(
-      startOffset = startOffset + dynamicCorrection,
-      endOffset = endOffset - dynamicCorrection,
-      source = content,
+      startOffset = startOffset,
+      endOffset = endOffset,
+      source = argument,
     )
   }
 
