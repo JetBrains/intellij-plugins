@@ -21,7 +21,6 @@ data class DependencyAnalysisConfig(
   val modulesToAnalyze: Set<AllowedModule> = emptySet(),
   val dependencySbomExclude: Set<DependencyIgnore> = emptySet(), // not in SBOM, but in projectMetadata
   val analyzeDevDependencies: Boolean = false,
-  val enablePackageSearch: Boolean = true,
   val raiseLicenseProblems: Boolean = false
 ) {
 
@@ -37,7 +36,6 @@ data class DependencyAnalysisConfig(
         modulesToAnalyze = yaml.modulesToAnalyze,
         dependencySbomExclude = yaml.dependencySbomExclude,
         analyzeDevDependencies = yaml.analyzeDevDependencies,
-        enablePackageSearch = false,
         raiseLicenseProblems = yaml.raiseLicenseProblems
       )
     }
