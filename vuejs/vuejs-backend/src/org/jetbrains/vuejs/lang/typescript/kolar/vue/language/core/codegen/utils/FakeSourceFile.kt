@@ -3,15 +3,21 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.util
 
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafElement
+import com.intellij.psi.util.childrenSequence
 import com.intellij.psi.util.lastLeaf
 
 // manual
 typealias FakeSourceFile = JSElement
 
 val FakeSourceFile.statements: Sequence<PsiElement>
-  get() = forEachNode(this)
+  get() = childrenSequence
+    .filter { it !is LeafElement }
+    .filter { it !is PsiWhiteSpace }
+    .filter { it !is PsiComment }
 
 fun PsiElement.endsWithSemicolon(): Boolean {
   val leaf = lastLeaf()
