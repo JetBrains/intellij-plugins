@@ -97,8 +97,6 @@ class VueKolarTranspilerTest :
   @Rule
   @JvmField
   val rule: TestRule = TrackFailedTestRule(
-    "props-type-param-with-defaults",
-    "props-type-param-with-defaults__vapor",
     "v-for-dynamic-slot-name",
     "v-for-dynamic-slot-name__vapor",
     "v-for-template-with-slot",

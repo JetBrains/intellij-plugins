@@ -31,8 +31,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeLiteralNode
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isUnionTypeNode
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isVariableDeclaration
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.TextRange
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.typeScriptFileStart
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.forEachNode
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.typeScriptFileStart
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingIdentifiers
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNodeText
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStartEnd
@@ -254,11 +254,14 @@ fun parseScriptSetupRanges(
               else destructured[idName] = id.initializer
             }
           }
-          else if (isCallExpression(parent) && isIdentifier(parent.methodExpression)
-                   && getNodeText(parent.methodExpression!!) in vueCompilerOptions.macros.withDefaults) {
-            val grand = parents.getOrNull(parents.lastIndex - 1)
-            if (grand != null && isVariableDeclaration(grand) && isIdentifier(grand.nameIdentifier)) {
-              resolvedName = grand.name
+          else {
+            val parentCall = parents.getOrNull(parents.lastIndex - 1)
+            if (isCallExpression(parentCall) && isIdentifier(parentCall.methodExpression)
+                && getNodeText(parentCall.methodExpression!!) in vueCompilerOptions.macros.withDefaults) {
+              val grand = parents.getOrNull(parents.lastIndex - 2)
+              if (isVariableDeclaration(grand) && isIdentifier(grand.nameIdentifier)) {
+                resolvedName = grand.name
+              }
             }
           }
 
