@@ -101,8 +101,6 @@ class VueKolarTranspilerTest :
     "v-for-dynamic-slot-name__vapor",
     "v-for-template-with-slot",
     "v-for-template-with-slot__vapor",
-    "v-if-condition-typeof-narrowing",
-    "v-if-condition-typeof-narrowing__vapor",
   )
 
   @Test

@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.childrenSequence
+import com.intellij.psi.util.startOffset
 import com.intellij.psi.xml.XmlComment
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
@@ -92,13 +93,15 @@ private fun getTextChildren(
                         .getInjectedPsiFiles(element)
                       ?: return emptySequence()
 
-  return injectedFiles.asSequence()
-    .mapNotNull { getInterpolationNode(it.first, it.second) }
+  return injectedFiles.asSequence().mapNotNull {
+    val rangeInFile = it.second.shiftRight(element.startOffset)
+    getInterpolationNode(it.first, rangeInFile)
+  }
 }
 
 private fun getInterpolationNode(
   element: PsiElement,
-  fileRange: TextRange,
+  rangeInFile: TextRange,
 ): Node? {
   if (element !is JSFile)
     return null
@@ -112,5 +115,5 @@ private fun getInterpolationNode(
                   .firstOrNull()
                 ?: return null
 
-  return InterpolationNodeImpl(content, fileRange)
+  return InterpolationNodeImpl(content, rangeInFile)
 }
