@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.expr.psi.impl
 
+import com.intellij.lang.javascript.performance.JSFindUsagesPerformanceCollector
 import com.intellij.lang.javascript.psi.JSFunction
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.psi.PsiElement
@@ -14,10 +15,9 @@ class VueJSFilterReferenceExpressionImpl(
     VueJSFilterReferenceExpression {
 
   override fun isReferenceTo(element: PsiElement): Boolean {
-    return if (element is JSFunction) {
-      element == resolve()
+    return JSFindUsagesPerformanceCollector.measureIsReferenceTo(this) {
+      element is JSFunction && element == resolve()
     }
-    else false
   }
 
   @Throws(IncorrectOperationException::class)
