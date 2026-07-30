@@ -82,7 +82,7 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
       return null
     }
     return when {
-      MdxJsxScanner.isLineStartEsm(text, offset) ->
+      constraints.types.isEmpty() && MdxJsxScanner.isLineStartEsm(text, offset) ->
         StartInfo(offset, MdxBlockKind.ESM)
       text[offset] == '<' && isLineStartJsxBlock(text, offset) ->
         StartInfo(offset, MdxBlockKind.JSX)

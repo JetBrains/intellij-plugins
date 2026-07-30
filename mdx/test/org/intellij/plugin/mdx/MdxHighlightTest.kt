@@ -225,6 +225,23 @@ class MdxHighlightTest : MdxTestBase() {
         )
     }
 
+    @Test
+    fun testEsmInListIsNotColoredAsJavaScript() {
+        val text = testDataText()
+        val tokens = editorHighlightingTokens(text)
+        val topLevelKeys = keysAt(tokens, text.indexOf("import bbb from"))
+        assertTrue(
+            "Test setup: top-level ESM must carry a JS keyword color, got $topLevelKeys.",
+            topLevelKeys.any { it.contains("JS.KEYWORD") }
+        )
+
+        val listKeys = keysAt(tokens, text.lastIndexOf("import bbb"))
+        assertFalse(
+            "List-item `import` must remain Markdown text, not a JavaScript keyword: $listKeys.",
+            listKeys.any { it.contains("JS.KEYWORD") }
+        )
+    }
+
     /**
      * Currently fails: an INLINE MDX text expression in prose must be colored as embedded JS, the same
      * as an identical block-level flow expression (mdxjs.com: `{...}` is a JS expression). WEB-78468.

@@ -170,6 +170,12 @@ class MdxParsingTest : MdxTestBase() {
     doTest()
   }
 
+  /** ESM is only valid at document root, not in Markdown list or blockquote content. */
+  @Test
+  fun testEsmInMarkdownContainersIsText() {
+    doTest()
+  }
+
   /** Nested JSX flow components. */
   @Test
   fun testParsingNestedComponents() {
