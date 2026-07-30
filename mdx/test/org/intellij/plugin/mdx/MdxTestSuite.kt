@@ -14,5 +14,6 @@ import org.junit.platform.suite.api.Suite
   MdxLiveEditingTest::class,
   MdxOracleTest::class,
   MdxParsingTest::class,
+  MdxRenameTest::class,
 )
 class MdxTestSuite

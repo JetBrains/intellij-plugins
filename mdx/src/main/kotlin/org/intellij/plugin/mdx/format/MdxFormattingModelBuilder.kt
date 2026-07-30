@@ -181,6 +181,14 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
       // Content nested inside a foreign XmlTag is already indented by that tag's own XmlTagBlock; if this
       // template block also indented, foreign-nested content would double-indent (e.g. <div><div><div>).
       // So the template layer contributes no indent of its own and defers to the foreign formatter.
+      if (MarkdownCodeFenceUtils.isCodeFence(myNode)) {
+        val flowType = MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_FLOW_ELEMENT)
+        var ancestor = myNode.treeParent
+        while (ancestor != null) {
+          if (ancestor.elementType === flowType) return Indent.getNormalIndent()
+          ancestor = ancestor.treeParent
+        }
+      }
       return Indent.getNoneIndent()
     }
 
