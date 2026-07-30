@@ -1,6 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//plugins/kotlin:kotlin_test_dependencies.bzl", "all_test_dep_targets")
-load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
 jps_test(
     name = "qodana-jvm-coverage-tests_test",
@@ -11,6 +11,11 @@ jps_test(
 ### skip generation section `test intellij.qodana.jvm.coverage.tests`
 
 ### auto-generated section `build intellij.qodana.jvm.coverage` start
+jvm_provided_library(
+    name = "community_libraries_kotlinc_libraries-kotlinc-kotlin-compiler-common_provided",
+    lib = "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
+)
+
 jvm_library(
     name = "coverage",
     srcs = glob(
@@ -30,7 +35,6 @@ jvm_library(
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
-        "@lib//:kotlinc-kotlin-compiler-common-provided",
         "@community//java/openapi:java",
         "@community//java/java-psi-api:psi",
         "@community//java/java-frontback-psi-api:frontback-psi",
@@ -50,6 +54,7 @@ jvm_library(
         "@community//plugins/coverage-common:coverage",
         "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
         "@community//platform/statistics",
+        ":community_libraries_kotlinc_libraries-kotlinc-kotlin-compiler-common_provided",
     ],
 )
 
@@ -65,7 +70,8 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         ":coverage",
-        "@lib//:kotlinc-kotlin-compiler-common-provided",
+        "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
+        "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common_test_lib",
         "@community//libraries/assertj-core",
         "@community//libraries/assertj-core:assertj-core_test_lib",
         "@community//java/openapi:java_test_lib",
@@ -147,7 +153,8 @@ jvm_library(
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
-        "@lib//:kotlinc-kotlin-compiler-common-provided",
+        "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
+        "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common_test_lib",
         "@community//libraries/assertj-core",
         "@community//libraries/assertj-core:assertj-core_test_lib",
         "@community//java/openapi:java",

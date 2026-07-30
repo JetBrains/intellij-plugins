@@ -215,7 +215,7 @@ private fun pluginJars(pluginClassLoader: PluginClassLoader): List<File> {
         jarName.contains("frontback")
       }
       isKotlinPlugin -> {
-        jarName.contains("kotlinc.kotlin-compiler-common") || // Kotlin PSI
+        jarName.contains("intellij.libraries.kotlinc.kotlin.compiler.common") || // Kotlin PSI
         jarName.contains("kotlinc.high-level-api") || // Semantics of Kotlin PSI (old JAR naming)
         jarName.contains("kotlinc.analysis-api") // Semantics of Kotlin PSI
       }

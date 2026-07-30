@@ -1,6 +1,11 @@
-load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
 ### auto-generated section `build intellij.qodana.inspectionKts.kotlin` start
+jvm_provided_library(
+    name = "community_libraries_kotlinc_libraries-kotlinc-kotlin-compiler-common_provided",
+    lib = "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
+)
+
 jvm_library(
     name = "kotlin",
     srcs = glob(
@@ -25,7 +30,6 @@ jvm_library(
         "@community//platform/analysis-impl",
         "@community//java/java-psi-api:psi",
         "@lib//:kotlinc-analysis-api-provided",
-        "@lib//:kotlinc-kotlin-compiler-common-provided",
         "@lib//:kotlinc-kotlin-scripting-common-provided",
         "@lib//:kotlinc-kotlin-scripting-jvm-provided",
         "@lib//:kotlinc-kotlin-scripting-compiler-impl-provided",
@@ -46,6 +50,7 @@ jvm_library(
         "@community//platform/backend/workspace",
         "@community//plugins/kotlin/base/scripting/scripting.shared",
         "@community//platform/indexing-api:indexing",
+        ":community_libraries_kotlinc_libraries-kotlinc-kotlin-compiler-common_provided",
     ],
 )
 
@@ -67,7 +72,8 @@ jvm_library(
         "@community//platform/analysis-impl:analysis-impl_test_lib",
         "@community//java/java-psi-api:psi_test_lib",
         "@lib//:kotlinc-analysis-api-provided",
-        "@lib//:kotlinc-kotlin-compiler-common-provided",
+        "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
+        "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common_test_lib",
         "@lib//:kotlinc-kotlin-scripting-common-provided",
         "@lib//:kotlinc-kotlin-scripting-jvm-provided",
         "@lib//:kotlinc-kotlin-scripting-compiler-impl-provided",
