@@ -24,8 +24,8 @@ import com.intellij.protobuf.python.types.PbPythonTypeUtils.getMapContainerClass
 import com.intellij.protobuf.python.types.PbPythonTypeUtils.getRepeatedContainerClassQName
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.QualifiedName
-import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyElement
+import com.jetbrains.python.psi.PyExpression
 import com.jetbrains.python.psi.PyReferenceExpression
 import com.jetbrains.python.psi.PyTargetExpression
 import com.jetbrains.python.psi.impl.PyBuiltinCache
@@ -66,7 +66,7 @@ internal class PbPythonTypeProvider : PyTypeProviderBase() {
 
   override fun prepareCalleeTypeForCall(
     type: PyType?,
-    call: PyCallExpression,
+    callee: PyExpression,
     context: TypeEvalContext,
   ): Ref<PyCallableType?>? {
     val pbPythonType = type as? PbPythonAbstractType<*> ?: return null
