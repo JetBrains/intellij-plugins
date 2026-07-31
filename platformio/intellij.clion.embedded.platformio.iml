@@ -24,6 +24,8 @@
     <orderEntry type="module" module-name="intellij.cidr.util.execution" />
     <orderEntry type="module" module-name="intellij.cidr.workspaceModel" />
     <orderEntry type="module" module-name="intellij.clion.embedded.core" />
+    <orderEntry type="module" module-name="intellij.clion.embedded.debugtargets" />
+    <orderEntry type="module" module-name="intellij.clion.embedded.peripheralview" />
     <orderEntry type="module" module-name="intellij.clion.execution" />
     <orderEntry type="module" module-name="intellij.clion.externalSystem" />
     <orderEntry type="module" module-name="intellij.clion.projectStatus" />

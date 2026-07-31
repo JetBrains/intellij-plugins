@@ -23,6 +23,8 @@
     <orderEntry type="module" module-name="intellij.cidr.util.execution" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.workspaceModel" scope="TEST" />
     <orderEntry type="module" module-name="intellij.clion.embedded.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.clion.embedded.debugtargets" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.clion.embedded.peripheralview" scope="TEST" />
     <orderEntry type="module" module-name="intellij.clion.execution" scope="TEST" />
     <orderEntry type="module" module-name="intellij.clion.externalSystem" scope="TEST" />
     <orderEntry type="module" module-name="intellij.clion.projectStatus" scope="TEST" />

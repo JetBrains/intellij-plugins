@@ -36,6 +36,8 @@
     <module name="intellij.cidr.util"/>
     <module name="intellij.cidr.workspaceModel"/>
     <module name="intellij.clion.embedded.core"/>
+    <module name="intellij.clion.embedded.debugtargets"/>
+    <module name="intellij.clion.embedded.peripheralview"/>
     <module name="intellij.clion.execution"/>
     <module name="intellij.clion.externalSystem"/>
     <module name="intellij.clion.profiles"/>
