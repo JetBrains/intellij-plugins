@@ -250,12 +250,16 @@ fun isComputedPropertyName(node: PsiElement?): Boolean {
 
 fun isPropertyAssignment(node: PsiElement?): Boolean {
   contract { returns(true) implies (node is JSProperty) }
-  return node is JSProperty && !node.isShorthanded
+  return node is JSProperty
+         && node.initializer != null
+         && !node.isShorthanded
 }
 
 fun isShorthandPropertyAssignment(node: PsiElement?): Boolean {
   contract { returns(true) implies (node is JSProperty) }
-  return node is JSProperty && node.isShorthanded
+  return node is JSProperty
+         && node.initializer != null
+         && node.isShorthanded
 }
 
 fun isSpreadAssignment(node: PsiElement?): Boolean {
