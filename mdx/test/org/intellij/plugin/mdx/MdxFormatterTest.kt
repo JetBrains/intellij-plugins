@@ -298,6 +298,31 @@ class MdxFormatterTest : MdxTestBase() {
     @Test
     fun testReformatNestedJsxIsIdempotent() = doTest()
 
+    /** A non-inline tag whose children are all inline (e.g. `<span>`) stays on one line, matching real TSX. */
+    @Test
+    fun testNonInlineTagWithOnlyInlineChildrenStaysCompact() = doTest(testName, testName)
+
+    /** A non-inline sibling forces itself and the parent's closing tag onto their own lines; an inline sibling before it stays put. Matches real TSX (`JavaScriptFormatterTest`). */
+    @Test
+    fun testMixedInlineAndBlockChildrenWrapsClosingTag() = doTest()
+
+    /**
+     * JSX inside an ESM (import/export) statement's function body is fully formatter-aware, matching a real
+     * .tsx file: MDX_ESM_BLOCK is no longer an opaque leaf, so a mis-indented `return` line inside
+     * `export function` is reindented like any other JS/JSX content, while the import declaration itself is
+     * left as-is (matching real TS/TSX's own import formatting).
+     */
+    @Test
+    fun testEsmBlockJsxBodyIsReformatted() = doTest()
+
+    /**
+     * A plain ESM block with no JSX in it (including a pathological case of two statements glued together
+     * with no separating whitespace) stays opaque and untouched, avoiding a formatter block-covering
+     * assertion crash that reformatting it could trip (see MdxIntegrationTest#testOptimizeImports).
+     */
+    @Test
+    fun testGluedEsmStatementsWithoutJsxStayOpaque() = doTest(testName, testName)
+
 
     /** Reformat inserts a blank line after front matter when the following content is flush against it. */
     @Test

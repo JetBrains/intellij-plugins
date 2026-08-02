@@ -50,10 +50,7 @@ internal class MdxTablePostFormatProcessor : PostFormatProcessor {
   }
 
   private fun shouldProcess(file: PsiFile?, settings: CodeStyleSettings): Boolean {
-    if (file !is MdxFile) {
-      return false
-    }
-    return settings.getCustomSettings(MarkdownCustomCodeStyleSettings::class.java).FORMAT_TABLES
+    return file is MdxFile && settings.getCustomSettings(MarkdownCustomCodeStyleSettings::class.java).FORMAT_TABLES
   }
 
   private fun processTable(table: MarkdownTable, document: Document) {
