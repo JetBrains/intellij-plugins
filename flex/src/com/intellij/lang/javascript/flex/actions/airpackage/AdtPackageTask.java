@@ -1,10 +1,10 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.PathUtil;
-import com.intellij.util.net.HttpConfigurable;
+import com.intellij.util.net.ProxyUtils;
 
 import java.io.File;
 import java.util.List;
@@ -21,12 +21,12 @@ public abstract class AdtPackageTask extends AdtTask {
 
   @Override
   protected List<String> createCommandLine() {
-    final List<String> command = super.createCommandLine();
-    final List<Pair<String, String>> proxySettings = HttpConfigurable.getInstance().getJvmProperties(false, null);
+    var command = super.createCommandLine();
+    var proxySettings = ProxyUtils.getCurrentSettingsAsJvmProperties();
 
     int i = 1; // after java executable
-    for (Pair<String, String> proxySetting : proxySettings) {
-      command.add(i++, "-D" + proxySetting.first + "=" + proxySetting.second);
+    for (var proxySetting : proxySettings.entrySet()) {
+      command.add(i++, "-D" + proxySetting.getKey() + "=" + proxySetting.getValue());
     }
     return command;
   }
