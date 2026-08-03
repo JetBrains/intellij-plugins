@@ -120,6 +120,13 @@ internal object MdxCodeFenceSandbox {
    * Shifts the indentation of every line by [delta] spaces — negative removes leading spaces (dedent), positive
    * prepends them to non-blank lines (and lines bearing a tracked offset). Returns the shifted text and the
    * given [offsets] mapped into it.
+   *
+   * A whitespace-only line keeps its own whitespace: dedent leaves it alone, and reindent re-emits it as it came
+   * back from the sandbox (only a blank line the caret landed on is indented, so a newly opened line gets the fence
+   * base). The round trip has to be lossless for lines the replayed action never touches — rewriting them makes
+   * [replay] write back text above the caret, and such a host change spans whole fence-content lines, so it
+   * invalidates the shreds of the injected DocumentWindow the caret lives in: the window's length then collapses
+   * below the offset `EnterHandler` snapshotted before calling the delegate, tripping "Wrong caret offset change".
    */
   private fun shift(text: String, offsets: IntArray, delta: Int): Pair<String, IntArray> {
     if (delta == 0) return text to offsets
@@ -130,9 +137,10 @@ internal object MdxCodeFenceSandbox {
     for ((index, line) in text.split('\n').withIndex()) {
       if (index > 0) out.append('\n')
       val bearsOffset = offsets.any { it in lineStart..(lineStart + line.length) }
+      val blank = line.isBlank()
       val leading = line.takeWhile { it == ' ' }.length
-      val removed = if (delta < 0) minOf(-delta, leading) else 0
-      val prepend = delta > 0 && (line.isNotBlank() || bearsOffset)
+      val removed = if (delta < 0 && !blank) minOf(-delta, leading) else 0
+      val prepend = delta > 0 && (!blank || bearsOffset)
       val base = out.length
       for ((k, offset) in offsets.withIndex()) {
         if (offset in lineStart..(lineStart + line.length)) {
@@ -141,7 +149,7 @@ internal object MdxCodeFenceSandbox {
         }
       }
       if (prepend) out.append(indent)
-      out.append(if (delta < 0) line.substring(removed) else if (line.isBlank() && !bearsOffset) "" else line)
+      out.append(if (delta < 0) line.substring(removed) else line)
       lineStart += line.length + 1
     }
     return out.toString() to mapped

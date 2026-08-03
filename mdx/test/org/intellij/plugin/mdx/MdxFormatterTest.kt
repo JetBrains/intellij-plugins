@@ -235,6 +235,34 @@ class MdxFormatterTest : MdxTestBase() {
         assertEquals(expectedText(), topLevelHost().text)
     }
 
+    /**
+     * Enter below a whitespace-only line of an indented fence must leave that line alone. The sandbox round trip
+     * used to dedent it to nothing and re-indent it back as an *empty* line, so writing the body back changed text
+     * above the caret; that host change spans whole CODE_FENCE_CONTENT lines and invalidates the shreds of the
+     * injected DocumentWindow the caret lives in, collapsing its length below the offset `EnterHandler` snapshotted
+     * before calling the delegate ("Wrong caret offset change by MdxCodeFenceEnterHandler"). Both fixtures hinge on
+     * lines that are *only* whitespace — keep them intact. WEB-78468.
+     */
+    @Test
+    fun testEnterBelowIndentedBlankLineInInjectedFenceKeepsInjectionValid() {
+        myFixture.configureByFile("$testName.mdx")
+        myFixture.type("\n")
+        assertEquals(expectedText(), topLevelHost().text)
+    }
+
+    /**
+     * As above, but the caret sits *on* a whitespace-only line indented less than the fence base. Re-indenting that
+     * line to the base on write-back replaced it whole, which desynced the injected document from its PSI
+     * ("After patch: doc: ... ---PSI: ...") — the same corruption, caught one step earlier. The line keeps its own
+     * whitespace; only the line Enter opens gets the fence base. WEB-78468.
+     */
+    @Test
+    fun testEnterOnUnderIndentedBlankLineInInjectedFenceKeepsInjectionValid() {
+        myFixture.configureByFile("$testName.mdx")
+        myFixture.type("\n")
+        assertEquals(expectedText(), topLevelHost().text)
+    }
+
     /** Tab inside a code fence indents one level from the fence base instead of to column zero. */
     @Test
     fun testTabInsideCodeFenceInsideJsxKeepsFenceIndent() {
