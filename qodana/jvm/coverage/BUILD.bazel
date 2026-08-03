@@ -11,11 +11,6 @@ jps_test(
 ### skip generation section `test intellij.qodana.jvm.coverage.tests`
 
 ### auto-generated section `build intellij.qodana.jvm.coverage` start
-jvm_provided_library(
-    name = "community_libraries_kotlinc_libraries-kotlinc-kotlin-compiler-common_provided",
-    lib = "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
-)
-
 jvm_library(
     name = "coverage",
     srcs = glob(
@@ -35,6 +30,7 @@ jvm_library(
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
+        "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
         "@community//java/openapi:java",
         "@community//java/java-psi-api:psi",
         "@community//java/java-frontback-psi-api:frontback-psi",
@@ -54,7 +50,6 @@ jvm_library(
         "@community//plugins/coverage-common:coverage",
         "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
         "@community//platform/statistics",
-        ":community_libraries_kotlinc_libraries-kotlinc-kotlin-compiler-common_provided",
     ],
 )
 
@@ -70,7 +65,6 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         ":coverage",
-        "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
         "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common_test_lib",
         "@community//libraries/assertj-core",
         "@community//libraries/assertj-core:assertj-core_test_lib",
@@ -125,7 +119,11 @@ jvm_library(
     ),
     module_name = "intellij.qodana.jvm.coverage.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"],
+    runtime_deps = [
+        # do not sort,
+        "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
+        "@community//plugins/kotlin:kotlin-plugin-community-main",
+    ],
 )
 
 jvm_library(

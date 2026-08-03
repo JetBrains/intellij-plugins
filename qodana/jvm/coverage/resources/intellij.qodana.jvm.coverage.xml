@@ -5,6 +5,7 @@
     <plugin id="org.jetbrains.kotlin"/>
     <plugin id="Coverage"/>
     <module name="intellij.java.psi"/>
+    <module name="intellij.libraries.kotlinc.kotlin.compiler.common"/>
     <module name="intellij.platform.analysis"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.coverage"/>

@@ -3,6 +3,7 @@
 <dependencies>
   <plugin id="org.jetbrains.kotlin"/>
   <module name="intellij.kotlin.references"/>
+  <module name="intellij.libraries.kotlinc.kotlin.compiler.common"/>
   <module name="intellij.platform.analysis"/>
   <module name="intellij.platform.core"/>
   <module name="intellij.platform.core.impl"/>
