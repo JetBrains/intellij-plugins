@@ -112,7 +112,7 @@ public final class CucumberJavaTestUtil {
 
   public static void attachStandardCucumberLibraries(@NotNull ModifiableRootModel model) {
     IntelliJProjectConfiguration.LibraryRoots libraryRoots;
-    libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java");
+    libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.libraries.cucumber", "cucumber-java");
     PsiTestUtil.addProjectLibrary(model, "cucumber-java", libraryRoots.getClassesPaths());
 
     PsiTestUtil.addProjectLibrary(model, "cucumber-jvm-deps",
@@ -139,7 +139,7 @@ public final class CucumberJavaTestUtil {
 
   public static void attachCucumberExpressionsLibrary(@NotNull ModifiableRootModel model) {
     IntelliJProjectConfiguration.LibraryRoots libraryRoots;
-    libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-expressions");
+    libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.libraries.cucumber", "cucumber-expressions");
     PsiTestUtil.addProjectLibrary(model, "cucumber-expressions", libraryRoots.getClassesPaths());
   }
 }

@@ -4,17 +4,9 @@
   - name: $MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/cucumber/cucumber-core/1/cucumber-core-1.jar
   - name: $MAVEN_REPOSITORY$/info/cukes/gherkin/2/gherkin-2.jar
   reason: <- intellij.cucumber.java
-- name: lib/cucumber-expressions.jar
-  library: cucumber-expressions
-  module: intellij.cucumber.java
-  files:
-  - name: $MAVEN_REPOSITORY$/io/cucumber/cucumber-expressions/6/cucumber-expressions-6.jar
 - name: lib/cucumber-java.jar
   modules:
   - name: intellij.cucumber.java
-    libraries:
-      cucumber-java:
-      - name: $MAVEN_REPOSITORY$/info/cukes/cucumber-java/1/cucumber-java-1.jar
 - name: lib/cucumber-jvmFormatter.jar
   modules:
   - name: intellij.cucumber.jvmFormatter
@@ -27,6 +19,14 @@
 - name: lib/cucumber-jvmFormatter5.jar
   modules:
   - name: intellij.cucumber.jvmFormatter5
+- name: lib/intellij.libraries.cucumber.jar
+  contentModules:
+  - name: intellij.libraries.cucumber
+    libraries:
+      cucumber-expressions:
+      - name: $MAVEN_REPOSITORY$/io/cucumber/cucumber-expressions/6/cucumber-expressions-6.jar
+      cucumber-java:
+      - name: $MAVEN_REPOSITORY$/info/cukes/cucumber-java/1/cucumber-java-1.jar
 - name: lib/intellij.libraries.hamcrest.jar
   contentModules:
   - name: intellij.libraries.hamcrest

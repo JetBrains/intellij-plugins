@@ -19,6 +19,7 @@
   </content>
   <content>
     <module name="intellij.libraries.hamcrest" loading="embedded"/>
+    <module name="intellij.libraries.cucumber" loading="embedded"/>
   </content>
 
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->

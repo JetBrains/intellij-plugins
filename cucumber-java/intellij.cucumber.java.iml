@@ -55,42 +55,7 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
     <orderEntry type="module" module-name="intellij.tools.ide.metrics.benchmark" scope="TEST" />
-    <orderEntry type="module-library">
-      <library name="cucumber-expressions" type="repository">
-        <properties maven-id="io.cucumber:cucumber-expressions:6.1.2">
-          <verification>
-            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-expressions/6.1.2/cucumber-expressions-6.1.2.jar">
-              <sha256sum>1907742356e7c8554acd29903da2fc096ffe6ec170907f76ef4190e44b076135</sha256sum>
-            </artifact>
-          </verification>
-        </properties>
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-expressions/6.1.2/cucumber-expressions-6.1.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-expressions/6.1.2/cucumber-expressions-6.1.2-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="cucumber-java" type="repository">
-        <properties include-transitive-deps="false" maven-id="info.cukes:cucumber-java:1.2.4">
-          <verification>
-            <artifact url="file://$MAVEN_REPOSITORY$/info/cukes/cucumber-java/1.2.4/cucumber-java-1.2.4.jar">
-              <sha256sum>3133b140f91f9b61e8e28cd40779e2404a352a8d8a117978c3e15ba176d61f7f</sha256sum>
-            </artifact>
-          </verification>
-        </properties>
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-java/1.2.4/cucumber-java-1.2.4.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-java/1.2.4/cucumber-java-1.2.4-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
+    <orderEntry type="module" module-name="intellij.libraries.cucumber" />
     <orderEntry type="module-library" scope="TEST">
       <library name="cucumber-core-3" type="repository">
         <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-core:3.0.2">
