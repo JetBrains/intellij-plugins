@@ -17,6 +17,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//plugins/kotlin/jsr223"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -89,6 +90,7 @@ jvm_library(
         "@community//libraries/jackson/databind:databind_test_lib",
         "@community//libraries/jackson/module-kotlin:libraries-jackson-module-kotlin_test_lib",
         "@community//libraries/jackson/dataformat-yaml:libraries-jackson-dataformat-yaml_test_lib",
+        "@community//plugins/kotlin/jsr223:jsr223_test_lib",
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
     ],
