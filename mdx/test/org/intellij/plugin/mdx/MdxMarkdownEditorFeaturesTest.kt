@@ -81,7 +81,7 @@ class MdxMarkdownEditorFeaturesTest : MdxTestBase() {
     assertNotNull(LanguageFillParagraphExtension.INSTANCE.forLanguage(myFixture.file.language))
     performEditorAction(FILL_PARAGRAPH_ACTION_ID)
 
-    myFixture.checkResultByFile("${testName}_after.mdx")
+    myFixture.checkResultByFile("${testName}_after.mdx", true)
   }
 
   @Test

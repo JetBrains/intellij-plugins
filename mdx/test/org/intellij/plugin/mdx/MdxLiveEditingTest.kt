@@ -1,8 +1,10 @@
 package org.intellij.plugin.mdx
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.editorActions.CompletionAutoPopupHandler
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
+import com.intellij.openapi.editor.LanguageLineWrapPositionStrategy
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.PlatformTestUtil
@@ -10,6 +12,8 @@ import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.TestModeFlags
 import com.intellij.testFramework.assertNoErrorLogged
 import org.intellij.plugin.mdx.completion.MdxXmlAutoPopupEnabler
+import org.intellij.plugin.mdx.lang.MdxLanguage
+import org.intellij.plugins.markdown.lang.supportsMarkdown
 import org.junit.jupiter.api.Test
 
 /**
@@ -68,6 +72,16 @@ class MdxLiveEditingTest : MdxTestBase() {
     myFixture.configureByFile("$testName.mdx")
     myFixture.type(completionChar.toString())
     myFixture.checkResultByFile("${testName}_after.mdx")
+  }
+
+  private fun checkAutoWrapOnTyping(text: String) {
+    CodeStyle.doWithTemporarySettings(myFixture.project, CodeStyle.getSettings(myFixture.project)) { settings ->
+      settings.WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN = true
+      settings.getCommonSettings(MdxLanguage).RIGHT_MARGIN = 80
+      myFixture.configureByFile("$testName.mdx")
+      myFixture.type(text)
+      myFixture.checkResultByFile("${testName}_after.mdx")
+    }
   }
 
   @Test
@@ -206,6 +220,26 @@ class MdxLiveEditingTest : MdxTestBase() {
     // capitalized JSX component (never a void element) such as <Input> still auto-closes.
     checkTyping('>')
   }
+
+  // --- Markdown hard wrapping ---------------------------------------------------------------
+
+  @Test
+  fun testUsesMarkdownEditorIntegrations() {
+    assertEquals(
+      "com.intellij.markdown.frontend.editor.MarkdownLineWrapPositionStrategy",
+      LanguageLineWrapPositionStrategy.INSTANCE.forLanguage(MdxLanguage).javaClass.name,
+    )
+    assertTrue(MdxLanguage.supportsMarkdown())
+  }
+
+  @Test
+  fun testAutoWrapLongMarkdownLine() = checkAutoWrapOnTyping("synchronization")
+
+  @Test
+  fun testAutoWrapKeepsMultiParagraphBlockQuote() = checkAutoWrapOnTyping("synchronization")
+
+  @Test
+  fun testAutoWrapDoesNotBreakInlineLink() = checkAutoWrapOnTyping("X")
 
   // --- Brace typing in JSX body (MdxBraceTypedHandler) ------------------------------------
 
