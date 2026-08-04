@@ -1,11 +1,16 @@
 package org.intellij.plugin.mdx
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.injected.editor.EditorWindow
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.testFramework.TestDataPath
+import org.intellij.plugin.mdx.lang.MdxLanguage
+import org.intellij.plugins.markdown.lang.MarkdownLanguage
+import org.intellij.plugins.markdown.lang.formatter.settings.MarkdownCustomCodeStyleSettings
 import org.junit.jupiter.api.Test
 import java.awt.datatransfer.StringSelection
 
@@ -31,6 +36,22 @@ class MdxFormatterTest : MdxTestBase() {
     WriteCommandAction.runWriteCommandAction(myFixture.project) {
       val file = myFixture.file
       CodeStyleManager.getInstance(myFixture.project).reformatText(file, 0, file.textLength)
+    }
+  }
+
+  private fun withMarkdownReflowSettings(wrapTextIfLong: Boolean = true, action: () -> Unit) {
+    CodeStyle.doWithTemporarySettings(myFixture.project, CodeStyle.getSettings(myFixture.project)) { settings ->
+      configureMarkdownReflow(settings, wrapTextIfLong)
+      action()
+    }
+  }
+
+  private fun configureMarkdownReflow(settings: CodeStyleSettings, wrapTextIfLong: Boolean) {
+    settings.getCommonSettings(MarkdownLanguage.INSTANCE).RIGHT_MARGIN = 20
+    settings.getCommonSettings(MdxLanguage).RIGHT_MARGIN = 20
+    settings.getCustomSettings(MarkdownCustomCodeStyleSettings::class.java).apply {
+      WRAP_TEXT_IF_LONG = wrapTextIfLong
+      KEEP_LINE_BREAKS_INSIDE_TEXT_BLOCKS = false
     }
   }
 
@@ -89,13 +110,38 @@ class MdxFormatterTest : MdxTestBase() {
   @Test
   fun testMarkdownProse() = doTest()
 
-    /** Separate paragraphs in a blockquote must not be folded into one line. */
-    @Test
-    fun testBlockquoteWithMultipleParagraphsIsNotFolded() = doTest()
+  @Test
+  fun testMarkdownReflowMatchesMarkdown() = withMarkdownReflowSettings {
+    val source = "One two three four five six seven eight nine ten eleven twelve thirteen."
 
-    /** Formatting an already-correctly-formatted document must be a no-op (idempotence). */
-    @Test
-    fun testIdempotent() = doTest("Idempotent_after", "Idempotent_after")
+    myFixture.configureByText("sample.md", source)
+    reformat()
+    val markdownResult = myFixture.file.text
+
+    myFixture.configureByText("sample.mdx", source)
+    reformat()
+    assertEquals(markdownResult, myFixture.file.text)
+    reformat()
+    assertEquals(markdownResult, myFixture.file.text)
+  }
+
+  @Test
+  fun testMarkdownReflowRespectsWrapTextSetting() = withMarkdownReflowSettings(wrapTextIfLong = false) {
+    val source = "One two three four five six seven eight nine ten eleven twelve thirteen."
+    myFixture.configureByText("sample.mdx", source)
+
+    reformat()
+
+    assertEquals(source, myFixture.file.text)
+  }
+
+  /** Separate paragraphs in a blockquote must not be folded into one line. */
+  @Test
+  fun testBlockquoteWithMultipleParagraphsIsNotFolded() = doTest()
+
+  /** Formatting an already-correctly-formatted document must be a no-op (idempotence). */
+  @Test
+  fun testIdempotent() = doTest("Idempotent_after", "Idempotent_after")
 
   /**
    * Enter right after a code fence nested in a JSX flow element indents the new line to the flow body

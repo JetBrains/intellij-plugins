@@ -21,6 +21,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.DocumentBasedFormattingModel
 import com.intellij.psi.formatter.FormatterUtil
 import com.intellij.psi.formatter.FormattingDocumentModelImpl
+import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.psi.formatter.xml.SyntheticBlock
 import com.intellij.psi.templateLanguages.SimpleTemplateLanguageFormattingModelBuilder
 import com.intellij.psi.tree.IElementType
@@ -32,6 +33,8 @@ import org.intellij.plugins.markdown.injection.MarkdownCodeFenceUtils
 import org.intellij.plugins.markdown.lang.MarkdownElementType
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets
+import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
+import org.intellij.plugins.markdown.lang.formatter.settings.MarkdownCustomCodeStyleSettings
 
 internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilder() {
   override fun createTemplateLanguageBlock(node: ASTNode,
@@ -39,9 +42,31 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
                                            alignment: Alignment?,
                                            foreignChildren: MutableList<DataLanguageBlockWrapper>?,
                                            codeStyleSettings: CodeStyleSettings): TemplateLanguageBlock {
+    if (isWrapEligibleMarkdownText(node, foreignChildren)) {
+      return MdxTextWrappingBlock(this, codeStyleSettings, node, wrap, alignment)
+    }
+
     val documentModel = FormattingDocumentModelImpl.createOn(node.psi.containingFile)
     val mdxForeignChildren = filterForeignChildren(node, foreignChildren)
     return MdxBlock(this, codeStyleSettings, node, mdxForeignChildren, MdxJsxHtmlPolicy(codeStyleSettings, documentModel))
+  }
+
+  private fun isWrapEligibleMarkdownText(node: ASTNode, foreignChildren: List<DataLanguageBlockWrapper>?): Boolean {
+    if (node.elementType !== MarkdownTokenTypes.TEXT ||
+        node.treeParent?.elementType !== MarkdownElementTypes.PARAGRAPH ||
+        !foreignChildren.isNullOrEmpty()) {
+      return false
+    }
+
+    var ancestor = node.treeParent
+    while (ancestor != null) {
+      if (ancestor.elementType === MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_FLOW_ELEMENT) ||
+          ancestor.elementType === MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_TEXT_ELEMENT)) {
+        return false
+      }
+      ancestor = ancestor.treeParent
+    }
+    return true
   }
 
   override fun createModel(formattingContext: FormattingContext): FormattingModel {
@@ -174,6 +199,53 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
     return psi is XmlTag || PsiTreeUtil.findChildOfType(psi, XmlTag::class.java) != null
   }
 
+  /**
+   * Markdown's formatter reflows paragraphs by splitting each text token into word-range blocks. Template-language
+   * formatting would otherwise expose the entire token as one block, so Reformat Code has nowhere to insert a wrap.
+   */
+  private class MdxTextWrappingBlock(
+    blockFactory: TemplateLanguageBlockFactory,
+    settings: CodeStyleSettings,
+    node: ASTNode,
+    wrap: Wrap?,
+    alignment: Alignment?,
+  ) : TemplateLanguageBlock(node, wrap, alignment, blockFactory, settings, null) {
+    override fun getTemplateTextElementType(): IElementType = MarkdownElementType.platformType(MdxTokenTypes.JSX_BLOCK_CONTENT)
+
+    override fun getIndent(): Indent = Indent.getNoneIndent()
+
+    override fun isLeaf(): Boolean = false
+
+    override fun buildChildren(): List<Block> {
+      val markdownSettings = settings.getCustomSettings(MarkdownCustomCodeStyleSettings::class.java)
+      val wrapping = Wrap.createWrap(
+        if (markdownSettings.WRAP_TEXT_IF_LONG) WrapType.NORMAL else WrapType.NONE,
+        false,
+      )
+      return splitTextForWrapping(node.text).map { range ->
+        MdxTextRangeBlock(node, range.shiftRight(node.startOffset), wrapping)
+      }.toList()
+    }
+
+    override fun getSpacing(child1: Block?, child2: Block): Spacing {
+      val markdownSettings = settings.getCustomSettings(MarkdownCustomCodeStyleSettings::class.java)
+      val maxSpaces = if (markdownSettings.FORCE_ONE_SPACE_BETWEEN_WORDS) 1 else Integer.MAX_VALUE
+      return Spacing.createSpacing(1, maxSpaces, 0, markdownSettings.KEEP_LINE_BREAKS_INSIDE_TEXT_BLOCKS, 0)
+    }
+  }
+
+  private class MdxTextRangeBlock(node: ASTNode, private val range: TextRange, wrap: Wrap) : AbstractBlock(node, wrap, null) {
+    override fun getTextRange(): TextRange = range
+
+    override fun buildChildren(): List<Block> = emptyList()
+
+    override fun getSpacing(child1: Block?, child2: Block): Spacing? = null
+
+    override fun getIndent(): Indent = Indent.getNoneIndent()
+
+    override fun isLeaf(): Boolean = true
+  }
+
   private class MdxBlock(blockFactory: TemplateLanguageBlockFactory,
                          settings: CodeStyleSettings,
                          node: ASTNode,
@@ -296,5 +368,29 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
     private fun createBlankLineAfterFrontMatterSpacing(): Spacing {
       return Spacing.createSpacing(0, 0, 2, false, 0)
     }
+  }
+}
+
+private fun splitTextForWrapping(text: String): Sequence<TextRange> = sequence {
+  var start = -1
+  var length = -1
+  for ((index, char) in text.withIndex()) {
+    if (char == ' ' || char == '\t' || char == '\n') {
+      if (length > 0) {
+        yield(TextRange.from(start, length))
+      }
+      start = -1
+      length = -1
+    }
+    else {
+      if (start == -1) {
+        start = index
+        length = 0
+      }
+      length++
+    }
+  }
+  if (length > 0) {
+    yield(TextRange.from(start, length))
   }
 }
