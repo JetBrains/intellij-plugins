@@ -72,6 +72,8 @@
         implementation="org.intellij.plugin.mdx.highlighting.MdxInjectedHighlightingSettingProvider"/>
     <enterHandlerDelegate implementation="org.intellij.plugin.mdx.editor.MdxCodeFenceEnterHandler" order="first"/>
     <editorActionHandler action="EditorTab" implementationClass="org.intellij.plugin.mdx.editor.MdxCodeFenceTabHandler"/>
+    <editorActionHandler action="EditorPaste" implementationClass="org.intellij.plugin.mdx.editor.MdxCodeFencePasteHandler"
+                         order="first"/>
 
     <lang.parserDefinition language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSParserDefinition"/>
     <stubElementRegistryExtension implementation="org.intellij.plugin.mdx.js.MdxJSStubRegistryExtension"/>

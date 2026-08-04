@@ -2,9 +2,11 @@ package org.intellij.plugin.mdx
 
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.TestDataPath
 import org.junit.jupiter.api.Test
+import java.awt.datatransfer.StringSelection
 
 @TestDataPath($$"$PROJECT_ROOT/contrib/mdx/testData/format")
 class MdxFormatterTest : MdxTestBase() {
@@ -31,6 +33,20 @@ class MdxFormatterTest : MdxTestBase() {
         val virtualFile = myFixture.copyFileToProject("${testName}_after.mdx")
         val psiFile = myFixture.psiManager.findFile(virtualFile) ?: error("No PSI file for $virtualFile")
         return psiFile.text
+    }
+
+    private fun doActionTest(actionId: String) {
+        myFixture.configureByFile("$testName.mdx")
+        myFixture.performEditorAction(actionId)
+        assertEquals(expectedText(), topLevelHost().text)
+    }
+
+    /** Pastes [clipboard] at the fixture's caret. Its body is deliberately indented by two, not the project's four. */
+    private fun doPasteTest(clipboard: String = "const a = 1\nif (a) {\n  console.log(a)\n}") {
+        myFixture.configureByFile("$testName.mdx")
+        CopyPasteManager.getInstance().setContents(StringSelection(clipboard))
+        myFixture.performEditorAction("EditorPaste")
+        assertEquals(expectedText(), topLevelHost().text)
     }
 
     @Test
@@ -263,6 +279,18 @@ class MdxFormatterTest : MdxTestBase() {
         assertEquals(expectedText(), topLevelHost().text)
     }
 
+    /**
+     * Enter and Tab in a fence whose body has no code yet take the sandbox base from the fence's opening line, so
+     * the line they open lands at that base (Enter) or one indent step past it (Tab), not at column zero. Since
+     * every line of such a body is blank, its whitespace is the fence indentation rather than content and is
+     * dedented for the sandbox; otherwise it would feed the sandbox indenter on top of the base. WEB-78468.
+     */
+    @Test
+    fun testEnterInEmptyIndentedCodeFenceIndentsToFenceBase() = doActionTest("EditorEnter")
+
+    @Test
+    fun testTabInEmptyIndentedCodeFenceIndentsOneStepFromFenceBase() = doActionTest("EditorTab")
+
     /** Tab inside a code fence indents one level from the fence base instead of to column zero. */
     @Test
     fun testTabInsideCodeFenceInsideJsxKeepsFenceIndent() {
@@ -270,6 +298,30 @@ class MdxFormatterTest : MdxTestBase() {
         myFixture.performEditorAction("EditorTab")
         assertEquals(expectedText(), topLevelHost().text)
     }
+
+    /**
+     * Pasting a multi-line block into an *indented* fence must land it at the fence base, formatted the way the
+     * fence language would format it. The platform's paste indents each pasted line through `adjustLineIndent`,
+     * which is a no-op inside a fence (MdxFormattingModelBuilder reports the fence as a leaf), so the clipboard
+     * text used to be dropped in verbatim: every line after the first sat at its own absolute column, losing the
+     * fence indent entirely. MdxCodeFencePasteHandler replays the paste in a sandbox instead. WEB-78468.
+     */
+    @Test
+    fun testPasteIntoIndentedCodeFenceIsIndentedToFenceBase() = doPasteTest()
+
+    /**
+     * Same for a fence at column zero, where nothing is lost but the block is still not normalized: the pasted
+     * body keeps the clipboard's own two-space indent instead of the project's indent size. WEB-78468.
+     */
+    @Test
+    fun testPasteIntoTopLevelCodeFenceIsFormatted() = doPasteTest()
+
+    /**
+     * A fence whose body has no code yet has no indentation to infer the sandbox base from, so it must come from
+     * the fence's own opening line — otherwise the replayed action's output is written back at column zero.
+     */
+    @Test
+    fun testPasteIntoEmptyIndentedCodeFenceIsIndentedToFenceBase() = doPasteTest("const a = 2;")
 
     /**
      * A code fence whose body contains JSX (including a line-starting closing tag like `</Foo>`) must parse as

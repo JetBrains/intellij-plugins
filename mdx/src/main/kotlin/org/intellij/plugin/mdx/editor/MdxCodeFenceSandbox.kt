@@ -1,10 +1,13 @@
 package org.intellij.plugin.mdx.editor
 
+import com.intellij.ide.DataManager
 import com.intellij.injected.editor.DocumentWindow
 import com.intellij.injected.editor.EditorWindow
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.CustomizedDataContext
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
@@ -60,9 +63,16 @@ internal object MdxCodeFenceSandbox {
     if (caret !in contentStart..contentEnd || selectionStart < contentStart || selectionEnd > contentEnd) return false
 
     val content = hostDocument.getText(TextRange(contentStart, contentEnd))
-    val base = commonIndent(content)
+    // A body with no code in it yet — an empty fence, or just the blank line the caret sits on — carries no
+    // indentation to infer the base from, so it comes from the fence's own opening line instead. Otherwise the
+    // base would be zero, shift() would be a no-op both ways, and the replayed action's output (indented from
+    // column zero, as the sandbox file is) would be written straight back at column zero.
+    val bodyIndent = commonIndent(content)
+    val base = bodyIndent ?: lineIndent(hostDocument, startLine)
     val offsets = intArrayOf(caret - contentStart, selectionStart - contentStart, selectionEnd - contentStart)
-    val (dedented, dedentedOffsets) = shift(content, offsets, -base)
+    // In such a body every line is blank and its whitespace *is* the fence indentation, so dedent those lines as
+    // well. Left in place it would feed the sandbox indenter, which would then indent on top of the base.
+    val (dedented, dedentedOffsets) = shift(content, offsets, -base, dedentBlankLines = bodyIndent == null)
 
     val extension = languageAndExtension.second ?: languageAndExtension.first.associatedFileType?.defaultExtension ?: "txt"
     val file = PsiFileFactory.getInstance(project)
@@ -80,18 +90,20 @@ internal object MdxCodeFenceSandbox {
       if (dedentedOffsets[1] != dedentedOffsets[2]) {
         sandboxEditor.selectionModel.setSelection(dedentedOffsets[1].coerceIn(0, length), dedentedOffsets[2].coerceIn(0, length))
       }
-      val sandboxContext = DataContext { dataId ->
-        when (dataId) {
-          CommonDataKeys.EDITOR.name -> sandboxEditor
-          CommonDataKeys.PSI_FILE.name -> file
-          CommonDataKeys.PROJECT.name -> project
-          else -> null
-        }
+      // Built on a DataManager context rather than as a bare DataContext lambda: dispatching without a caret makes
+      // the platform re-wrap the context (per caret, and again inside the paste handler), and it only knows how to
+      // snapshot context kinds it produced itself. The sandbox editor's own component supplies little beyond the
+      // editor, so the keys the replayed handlers read are set explicitly.
+      val sandboxContext = CustomizedDataContext.withSnapshot(
+        DataManager.getInstance().getDataContext(sandboxEditor.contentComponent)
+      ) { sink ->
+        sink[CommonDataKeys.EDITOR] = sandboxEditor
+        sink[CommonDataKeys.PSI_FILE] = file
+        sink[CommonDataKeys.PROJECT] = project
       }
       // The action handler asserts a current command; one is active in the intercepted action, so this names it.
       CommandProcessor.getInstance().executeCommand(project, {
-        EditorActionManager.getInstance().getActionHandler(actionId)
-          .execute(sandboxEditor, sandboxEditor.caretModel.currentCaret, sandboxContext)
+        EditorActionManager.getInstance().getActionHandler(actionId).execute(sandboxEditor, null, sandboxContext)
       }, null, null)
       documentManager.commitDocument(sandboxDocument)
 
@@ -99,7 +111,7 @@ internal object MdxCodeFenceSandbox {
                                      sandboxEditor.selectionModel.selectionStart,
                                      sandboxEditor.selectionModel.selectionEnd)
       val (reindented, hostOffsets) = shift(sandboxDocument.text, resultOffsets, base)
-      hostDocument.replaceString(contentStart, contentEnd, reindented)
+      runWriteAction { hostDocument.replaceString(contentStart, contentEnd, reindented) }
       documentManager.commitDocument(hostDocument)
       hostEditor.caretModel.moveToOffset(contentStart + hostOffsets[0])
       if (hostOffsets[1] != hostOffsets[2]) {
@@ -112,9 +124,15 @@ internal object MdxCodeFenceSandbox {
     return true
   }
 
-  /** Minimum leading-space indentation across the non-blank lines of [content]. */
-  private fun commonIndent(content: String): Int =
-    content.split('\n').filter { it.isNotBlank() }.minOfOrNull { line -> line.takeWhile { it == ' ' }.length } ?: 0
+  /** Minimum leading-space indentation across the non-blank lines of [content], or null if it has none. */
+  private fun commonIndent(content: String): Int? =
+    content.split('\n').filter { it.isNotBlank() }.minOfOrNull { line -> line.takeWhile { it == ' ' }.length }
+
+  /** Leading-space indentation of [line] in [document]. */
+  private fun lineIndent(document: Document, line: Int): Int =
+    document.immutableCharSequence
+      .subSequence(document.getLineStartOffset(line), document.getLineEndOffset(line))
+      .takeWhile { it == ' ' }.length
 
   /**
    * Shifts the indentation of every line by [delta] spaces — negative removes leading spaces (dedent), positive
@@ -127,8 +145,10 @@ internal object MdxCodeFenceSandbox {
    * [replay] write back text above the caret, and such a host change spans whole fence-content lines, so it
    * invalidates the shreds of the injected DocumentWindow the caret lives in: the window's length then collapses
    * below the offset `EnterHandler` snapshotted before calling the delegate, tripping "Wrong caret offset change".
+   * [dedentBlankLines] opts out of that protection for a body whose lines are *all* blank, where their whitespace
+   * is the fence indentation rather than content, and where there is no other line left to protect.
    */
-  private fun shift(text: String, offsets: IntArray, delta: Int): Pair<String, IntArray> {
+  private fun shift(text: String, offsets: IntArray, delta: Int, dedentBlankLines: Boolean = false): Pair<String, IntArray> {
     if (delta == 0) return text to offsets
     val indent = if (delta > 0) " ".repeat(delta) else ""
     val out = StringBuilder()
@@ -137,7 +157,7 @@ internal object MdxCodeFenceSandbox {
     for ((index, line) in text.split('\n').withIndex()) {
       if (index > 0) out.append('\n')
       val bearsOffset = offsets.any { it in lineStart..(lineStart + line.length) }
-      val blank = line.isBlank()
+      val blank = line.isBlank() && !dedentBlankLines
       val leading = line.takeWhile { it == ' ' }.length
       val removed = if (delta < 0 && !blank) minOf(-delta, leading) else 0
       val prepend = delta > 0 && (!blank || bearsOffset)
