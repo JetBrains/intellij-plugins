@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.libraries.vuex
 
 import com.intellij.lang.javascript.completion.JSLookupPriority
-import com.intellij.lang.javascript.completion.ml.JSMLTrackingCompletionProvider
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
@@ -14,10 +13,12 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
+import org.jetbrains.vuejs.lang.commonJsProperties
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.filterOutDollarPrefixedProperties
 import org.jetbrains.vuejs.lang.filterOutJsKeywordsGlobalObjectsAndCommonProperties
 import org.jetbrains.vuejs.lang.getVueTestDataPath
+import org.jetbrains.vuejs.lang.isGenericJsItem
 import java.io.File
 
 class VuexCompletionTest : BasePlatformTestCase() {
@@ -31,16 +32,18 @@ class VuexCompletionTest : BasePlatformTestCase() {
     !it.lookupString.startsWith("this.")
   }
 
-  private val filterOutJsTextReferences: (item: LookupElementInfo) -> Boolean = { info ->
+  /** Filters out inherited `Object.prototype` members, which JS completion suggests for store state and getters objects. */
+  private val filterOutInheritedObjectMembers: (item: LookupElementInfo) -> Boolean = { info ->
     info.priority > JSLookupPriority.NESTING_LEVEL_1.priorityValue
-    || info.lookupElement.getUserData(JSMLTrackingCompletionProvider.JS_PROVIDER_KEY) != JSMLTrackingCompletionProvider.Kind.TEXT_REFERENCE
+    || info.lookupString !in commonJsProperties
+    || !info.isGenericJsItem
   }
 
   private val filterOutNoise = (
     filterOutJsKeywordsGlobalObjectsAndCommonProperties
       and filterOutMappersAndStore
       and filterOutThisProperties
-      and filterOutJsTextReferences
+      and filterOutInheritedObjectMembers
       and { !it.lookupString.contains("=>") }
       and { it.lookupString !in listOf("commit", "dispatch", "categoryModule") })
 

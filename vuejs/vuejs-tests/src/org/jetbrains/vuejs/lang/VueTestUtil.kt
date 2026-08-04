@@ -4,7 +4,6 @@ import com.intellij.codeInsight.completion.FusCompletionKeys
 import com.intellij.lang.javascript.completion.JSCompletionContributor
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.completion.JSPatternBasedCompletionContributor
-import com.intellij.lang.javascript.completion.ml.JSMLTrackingCompletionProvider
 import com.intellij.lang.javascript.refactoring.JSRefactoringSettings
 import com.intellij.polySymbols.testFramework.LookupElementInfo
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
@@ -20,6 +19,13 @@ fun vueRelativeTestDataPath(): String = "/contrib$VUE_TEST_DATA_PATH"
 
 val filterOutAriaAttributes: (LookupElementInfo) -> Boolean = { !it.lookupString.contains("aria-") }
 
+/**
+ * `true` for items contributed by the generic JavaScript completion providers - keywords, global symbols,
+ * object members, text references in string literals, and so on.
+ */
+internal val LookupElementInfo.isGenericJsItem: Boolean
+  get() = lookupElement.getUserData(FusCompletionKeys.LOOKUP_ELEMENT_CONTRIBUTOR) is JSPatternBasedCompletionContributor
+
 val filterOutMostOfGlobalJSSymbolsInVue: (item: LookupElementInfo) -> Boolean = { info ->
   info.priority >= JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
   || info.lookupElement.getUserData(FusCompletionKeys.LOOKUP_ELEMENT_CONTRIBUTOR).let {
@@ -28,14 +34,15 @@ val filterOutMostOfGlobalJSSymbolsInVue: (item: LookupElementInfo) -> Boolean = 
   || info.lookupString.startsWith("A")
 }
 
-private val commonJsProperties = setOf("constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "toLocaleString",
-                                       "toString", "valueOf")
+/** Members of `Object.prototype`, which are suggested for any JS/TS object. */
+internal val commonJsProperties = setOf("constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "toLocaleString",
+                                        "toString", "valueOf")
 
 val filterOutJsKeywordsGlobalObjectsAndCommonProperties: (item: LookupElementInfo) -> Boolean = { info ->
   (info.priority > JSLookupPriority.MAX_PRIORITY.priorityValue
    && (info.priority.toInt() != JSLookupPriority.NESTING_LEVEL_REST.priorityValue
        || info.lookupString !in commonJsProperties))
-  || info.lookupElement.getUserData(JSMLTrackingCompletionProvider.JS_PROVIDER_KEY) == null
+  || !info.isGenericJsItem
 }
 
 val filterOutDollarPrefixedProperties: (item: LookupElementInfo) -> Boolean = { info ->
