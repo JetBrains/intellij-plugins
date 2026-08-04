@@ -11,7 +11,7 @@ version '1.0-SNAPSHOT'
 repositories {
   mavenCentral()
   maven {
-    url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
+    url "https://cache-redirector.jetbrains.com/packages.jetbrains.team/maven/p/ij/intellij-dependencies"
   }
 }
 
