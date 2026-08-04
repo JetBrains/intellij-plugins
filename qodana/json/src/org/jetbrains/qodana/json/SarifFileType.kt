@@ -26,8 +26,7 @@ object SarifFileType : JsonFileType(), INativeFileType {
 
   override fun getIcon(): Icon = QodanaIcons.Icons.Sarif
 
-  override fun openFileInAssociatedApplication(project: Project?, file: VirtualFile): Boolean  {
-    if (project == null) return false
+  override fun openFileInAssociatedApplication(project: Project, file: VirtualFile): Boolean  {
     if (QodanaRegistry.openSarifInEditor) {
       return OpenFileDescriptor(project, file).navigateInEditor(project, true)
     }
