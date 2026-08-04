@@ -200,12 +200,15 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
       return Indent.getNoneIndent()
     }
 
-    override fun isRequiredRange(range: TextRange): Boolean {
-      return !range.subSequence(myNode.psi.containingFile.text).isBlank()
-    }
-
     override fun isLeaf(): Boolean {
       if (myNode.elementType === MarkdownElementTypes.LINK_DEFINITION) {
+        return true
+      }
+      // The Markdown parser represents block quote continuation markers (`>`) as whitespace nodes. The
+      // template formatter normally omits whitespace-only children, which leaves those markers uncovered
+      // when it is asked for indentation while hard-wrapping a quoted line. Keep the quote opaque instead:
+      // Markdown's enter handler still adds the continuation marker after the indentation is calculated.
+      if (myNode.elementType === MarkdownElementTypes.BLOCK_QUOTE) {
         return true
       }
       // A code fence is opaque to the formatter (its body is reformatted by MdxCodeFencePostFormatProcessor),

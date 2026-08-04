@@ -89,9 +89,13 @@ class MdxFormatterTest : MdxTestBase() {
   @Test
   fun testMarkdownProse() = doTest()
 
-  /** Formatting an already-correctly-formatted document must be a no-op (idempotence). */
-  @Test
-  fun testIdempotent() = doTest("Idempotent_after", "Idempotent_after")
+    /** Separate paragraphs in a blockquote must not be folded into one line. */
+    @Test
+    fun testBlockquoteWithMultipleParagraphsIsNotFolded() = doTest()
+
+    /** Formatting an already-correctly-formatted document must be a no-op (idempotence). */
+    @Test
+    fun testIdempotent() = doTest("Idempotent_after", "Idempotent_after")
 
   /**
    * Enter right after a code fence nested in a JSX flow element indents the new line to the flow body
