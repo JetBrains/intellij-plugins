@@ -205,7 +205,6 @@
     <defaultLiveTemplates file="liveTemplates/actionscript_iterations.xml"/>
     <defaultLiveTemplates file="liveTemplates/actionscript_miscellaneous.xml"/>
     <liveTemplateOptionalProcessor implementation="com.intellij.lang.javascript.FlexShortenFQNamesProcessor"/>
-    <lang.refactoringSupport language="Mxml" implementationClass="com.intellij.lang.javascript.flex.MxmlRefactoringSupportProvider"/>
     <lang.refactoringSupport language="JavaScript"
                              implementationClass="com.intellij.lang.javascript.flex.ActionScriptRefactoringSupportProvider"
                              order="before JavascriptRefactoringSupportProvider, before CoffeeScriptRefactoringSupportProvider"/>
