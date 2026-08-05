@@ -44,6 +44,6 @@ internal class FailureConditionsContributor : SarifReportContributor {
   // a map that never contains null values, and itself is never empty (but null)
   @OptIn(ExperimentalTypeInference::class)
   @Suppress("UNCHECKED_CAST")
-  private fun <K : Any, V : Any> smallMap(@BuilderInference f: suspend SequenceScope<Pair<K, V?>>.() -> Unit): Map<K, V>? =
+  private fun <K : Any, V : Any> smallMap(f: suspend SequenceScope<Pair<K, V?>>.() -> Unit): Map<K, V>? =
     sequence(f).mapNotNull { if (it.second != null) it as Pair<K, V> else null }.toMap().takeUnless { it.isEmpty() }
 }
