@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.xml.XmlText
 import org.intellij.plugin.mdx.js.MdxJSLanguage
 import org.intellij.plugin.mdx.lang.parse.MdxElementTypes
 import org.intellij.plugin.mdx.lang.psi.MdxFile
@@ -23,7 +24,7 @@ import org.intellij.plugins.markdown.lang.MarkdownElementType
  * Registered order="first" so it wins over the platform XML enter handler, which would otherwise expand
  * tags directly on the injected fragment.
  */
-internal class MdxCodeFenceEnterHandler : EnterHandlerDelegate {
+internal class MdxEnterHandler : EnterHandlerDelegate {
   override fun preprocessEnter(file: PsiFile,
                                editor: Editor,
                                caretOffset: Ref<Int>,
@@ -34,6 +35,7 @@ internal class MdxCodeFenceEnterHandler : EnterHandlerDelegate {
     if (insertLineInsideOpaqueFence(file, editor)) return Result.Stop
     if (insertLineAfterFenceInFlow(file, editor)) return Result.Stop
     if (insertLineBetweenEmptyJsxTagsInEsmBlock(file, editor)) return Result.Stop
+    if (insertLineSplittingJsxText(file, editor)) return Result.Stop
     return Result.Continue
   }
 
@@ -158,6 +160,34 @@ internal class MdxCodeFenceEnterHandler : EnterHandlerDelegate {
       node = node.treeParent
     }
     return false
+  }
+
+  /**
+   * Handles Enter splitting an existing run of JSX text (e.g. `<div>ab<caret>cd</div>`): the platform's
+   * default Enter routes the split through the XML/JS formatter's adjustLineIndent, which indents the moved
+   * half one level too deep once any other reformat has already run earlier in the session — a stateful bug
+   * in the platform's generic template-language indent-resolution machinery (MdxBlock never contributes an
+   * indent of its own for this content; it defers entirely to the foreign XmlTagBlock). Inserting the line
+   * here, copying the split line's own indentation, sidesteps that path entirely. WEB-78468.
+   */
+  private fun insertLineSplittingJsxText(file: PsiFile, editor: Editor): Boolean {
+    if (editor.caretModel.caretCount != 1) return false
+    val document = editor.document
+    val caret = editor.caretModel.offset
+
+    val mdxFile = file.viewProvider.allFiles.firstOrNull { it is MdxFile } ?: return false
+    PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
+
+    val jsFile = file.viewProvider.getPsi(MdxJSLanguage.INSTANCE) ?: return false
+    val xmlText = PsiTreeUtil.getParentOfType(jsFile.findElementAt(caret - 1), XmlText::class.java) ?: return false
+    if (caret <= xmlText.textRange.startOffset || caret >= xmlText.textRange.endOffset) return false
+
+    val lineStart = document.getLineStartOffset(document.getLineNumber(caret))
+    val indent = " ".repeat(leadingSpaces(document.charsSequence, lineStart))
+    document.insertString(caret, "\n$indent")
+    PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
+    editor.caretModel.moveToOffset(caret + 1 + indent.length)
+    return true
   }
 
   private fun leadingSpaces(text: CharSequence, lineStart: Int): Int {

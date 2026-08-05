@@ -70,7 +70,7 @@
     <colorSettingsPage implementation="org.intellij.plugin.mdx.highlighting.MdxColorSettingsPage"/>
     <defaultHighlightingSettingProvider
         implementation="org.intellij.plugin.mdx.highlighting.MdxInjectedHighlightingSettingProvider"/>
-    <enterHandlerDelegate implementation="org.intellij.plugin.mdx.editor.MdxCodeFenceEnterHandler" order="first"/>
+    <enterHandlerDelegate implementation="org.intellij.plugin.mdx.editor.MdxEnterHandler" order="first"/>
     <editorActionHandler action="EditorTab" implementationClass="org.intellij.plugin.mdx.editor.MdxCodeFenceTabHandler"/>
     <editorActionHandler action="EditorPaste" implementationClass="org.intellij.plugin.mdx.editor.MdxCodeFencePasteHandler"
                          order="first"/>
@@ -102,8 +102,8 @@
                             implementationClass="org.intellij.plugin.mdx.completion.MdxVoidTagSelfCloseCompletionContributor"
     />
     <xml.autoPopupEnabler implementation="org.intellij.plugin.mdx.completion.MdxXmlAutoPopupEnabler"/>
-    <typedHandler implementationClass="org.intellij.plugin.mdx.js.MdxTagClosingTypedHandler" order="after xmlGt, before js"/>
-    <typedHandler implementationClass="org.intellij.plugin.mdx.js.MdxBraceTypedHandler"/>
+    <typedHandler implementation="org.intellij.plugin.mdx.js.MdxTagClosingTypedHandler" order="after xmlGt, before js"/>
+    <typedHandler implementation="org.intellij.plugin.mdx.js.MdxBraceTypedHandler"/>
     <quoteHandler fileType="MDX" className="org.intellij.plugins.markdown.braces.MarkdownQuoteHandler"/>
     <xml.zenCodingGenerator implementation="org.intellij.plugin.mdx.emmet.MdxZenCodingGenerator"/>
     <codeInsight.fillParagraph language="MDX"

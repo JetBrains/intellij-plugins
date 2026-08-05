@@ -15,7 +15,7 @@ import com.intellij.openapi.editor.actionSystem.EditorActionHandler
  * that loses the fence indent completely. Replaying the paste against a standalone file of the fence language
  * lets that language's own indenter run from column zero, and the sandbox re-indents the result to the fence base.
  *
- * Unlike [MdxCodeFenceEnterHandler] and [MdxCodeFenceTabHandler] this is not an
+ * Unlike [MdxEnterHandler] and [MdxCodeFenceTabHandler] this is not an
  * [com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler]: the platform paste handler opens its own
  * write actions (under a cancellable progress), so it must not be wrapped in one.
  */

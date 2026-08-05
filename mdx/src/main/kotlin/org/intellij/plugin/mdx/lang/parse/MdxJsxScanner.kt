@@ -278,11 +278,9 @@ internal object MdxJsxScanner {
             TagKind.OPENING -> stack.add(tag.name)
             TagKind.SELF_CLOSING -> Unit
             TagKind.CLOSING -> {
-              val closeIndex = stack.indexOfLast { it == tag.name || it == null || tag.name == null }
-              if (closeIndex != -1) {
-                while (stack.size > closeIndex) {
-                  stack.removeAt(stack.lastIndex)
-                }
+              val top = stack.lastOrNull()
+              if (top == tag.name || top == null || tag.name == null) {
+                stack.removeAt(stack.lastIndex)
               }
             }
           }
