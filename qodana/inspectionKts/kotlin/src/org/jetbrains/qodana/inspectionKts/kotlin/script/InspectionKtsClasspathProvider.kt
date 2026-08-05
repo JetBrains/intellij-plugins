@@ -217,7 +217,7 @@ private fun pluginJars(pluginClassLoader: PluginClassLoader): List<File> {
       isKotlinPlugin -> {
         jarName.contains("intellij.libraries.kotlinc.kotlin.compiler.common") || // Kotlin PSI
         jarName.contains("kotlinc.high-level-api") || // Semantics of Kotlin PSI (old JAR naming)
-        jarName.contains("kotlinc.analysis-api") // Semantics of Kotlin PSI
+        jarName.contains("kotlinc.analysis.api") // Semantics of Kotlin PSI
       }
       isYamlPlugin -> {
         jarName.contains("intellij.yaml") // YAML PSI
