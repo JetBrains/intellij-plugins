@@ -133,6 +133,18 @@ class MdxLiveEditingTest : MdxTestBase() {
     checkTyping('>')
   }
 
+  /**
+   * Completing the innermost of several same-named nested tags (`<a>` six levels deep under a
+   * differently-named `<data>`) must not crash: the auto-close feature's own `</a>` insertion, landing
+   * mid-keystroke before the typed `>` completes the tag, used to let
+   * [org.intellij.plugin.mdx.lang.parse.MdxJsxScanner.scanJsxElement]'s tag-matching stack reach past
+   * the still-open `<data>` and pop it along with the outer `<a>`, producing two overlapping
+   * MDX_JSX_FLOW_ELEMENT ranges and throwing "Intersecting parsed nodes detected" from the incremental
+   * lexer. WEB-78468.
+   */
+  @Test
+  fun testAutoCloseInDeeplyNestedSameNameTags() = checkTyping('>')
+
   @Test
   fun testNoAutoCloseInsideArrowFunctionExpression() {
     // Regression (WEB-78468): typing `>` to complete an `=>` arrow inside a `{…}` attribute expression

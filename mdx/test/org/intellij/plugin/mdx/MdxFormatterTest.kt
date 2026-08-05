@@ -280,6 +280,18 @@ class MdxFormatterTest : MdxTestBase() {
   }
 
   /**
+   * Splitting an existing text line inside a JSX flow element's body with Enter must keep the moved half
+   * at the body's indent level, aligned with the sibling text line above it — not indent it one level
+   * deeper: the platform's default Enter routes the split through the XML/JS formatter, which over-indents
+   * once any other reformat has already run earlier in the session (MdxEnterHandler inserts the
+   * line itself to avoid that path entirely). WEB-78468.
+   */
+  @Test
+  fun testEnterSplittingTextInJsxFlowElementBodyKeepsSiblingIndent() {
+    doTestEnterAutoFormatting()
+  }
+
+  /**
    * Enter and Tab in a fence whose body has no code yet take the sandbox base from the fence's opening line, so
    * the line they open lands at that base (Enter) or one indent step past it (Tab), not at column zero. Since
    * every line of such a body is blank, its whitespace is the fence indentation rather than content and is
