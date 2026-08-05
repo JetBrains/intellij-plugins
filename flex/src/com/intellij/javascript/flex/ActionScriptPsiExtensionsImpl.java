@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSNewExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
@@ -31,6 +32,9 @@ import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSNamespaceDeclaration;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptDocReferenceSet;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptReferenceSet;
+import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -263,5 +267,15 @@ public class ActionScriptPsiExtensionsImpl implements ActionScriptPsiExtensions 
   @Override
   public @Nullable String calcNamespaceReference(@NotNull JSElement element) {
     return ActionScriptFlexPsiImplUtil.calcNamespaceReference(element);
+  }
+
+  @Override
+  public @Nullable JSReferenceSet createJSDocReferenceSet(@NotNull PsiElement holder, @Nullable String text, boolean soft) {
+    return DialectDetector.isActionScript(holder) ? new ActionScriptDocReferenceSet(holder, text, 0, soft) : null;
+  }
+
+  @Override
+  public @Nullable JSReferenceSet createStringLiteralReferenceSet(@NotNull JSLiteralExpression element) {
+    return DialectDetector.isActionScript(element) ? new ActionScriptReferenceSet(element, true) : null;
   }
 }

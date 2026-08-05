@@ -23,9 +23,9 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptDocReferenceSet;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ReadAction;
@@ -840,7 +840,7 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
       }
 
       if (clazz == null && context != null) {
-        final PsiReference[] references = new JSDocReferenceSet(context, link, 0, false).getReferences();
+        final PsiReference[] references = new ActionScriptDocReferenceSet(context, link, 0, false).getReferences();
         if (references.length > 0) {
           final PsiElement resolve = references[references.length - 1].resolve();
           if (resolve != null) return resolve;

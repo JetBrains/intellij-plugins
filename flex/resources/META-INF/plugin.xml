@@ -360,7 +360,8 @@
     <xml.undefinedElementFixProvider implementation="com.intellij.javascript.flex.mxml.schema.FlexUndefinedElementFixProvider"/>
     <completion.contributor language="ECMA Script Level 4" id="ActionScriptMethodsCompletionContributor" order="before JSPatternBasedCompletionContributor" implementationClass="com.intellij.lang.javascript.flex.completion.ActionScriptMethodsCompletionContributor"/>
     <completion.contributor language="XML" implementationClass="com.intellij.javascript.flex.completion.FlexTextReferenceCompletionProvider"
-                            id="FlexTextReferenceCompletionProvider"
+                            order="after JSCompletionContributor"/>
+    <completion.contributor language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.completion.FlexTextReferenceCompletionProvider"
                             order="after JSCompletionContributor"/>
 
     <notificationGroup id="AIR Packaging" displayType="BALLOON" bundle="messages.FlexBundle" key="notification.group.air.packaging"/>
