@@ -1,5 +1,6 @@
 package org.intellij.plugin.mdx
 
+import com.intellij.injected.editor.EditorWindow
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.ide.CopyPasteManager
@@ -35,11 +36,18 @@ class MdxFormatterTest : MdxTestBase() {
         return psiFile.text
     }
 
+    /**
+     * Compares the host *document*, not PSI: the caret may land in an injected fragment, so `myFixture.file` is not
+     * the .mdx file, and the platform's own Enter path leaves PSI uncommitted.
+     */
     private fun doActionTest(actionId: String) {
         myFixture.configureByFile("$testName.mdx")
         myFixture.performEditorAction(actionId)
-        assertEquals(expectedText(), topLevelHost().text)
+        assertEquals(expectedText(), hostDocumentText())
     }
+
+    private fun hostDocumentText(): String =
+        ((myFixture.editor as? EditorWindow)?.delegate ?: myFixture.editor).document.text
 
     /** Pastes [clipboard] at the fixture's caret. Its body is deliberately indented by two, not the project's four. */
     private fun doPasteTest(clipboard: String = "const a = 1\nif (a) {\n  console.log(a)\n}") {
@@ -290,6 +298,37 @@ class MdxFormatterTest : MdxTestBase() {
 
     @Test
     fun testTabInEmptyIndentedCodeFenceIndentsOneStepFromFenceBase() = doActionTest("EditorTab")
+
+    /**
+     * Enter inside a fence the sandbox cannot replay — no language in the info string, or a language with no
+     * injection — must still carry the line's indentation over. Markdown's list indent provider answers with an
+     * empty indent for any offset inside a code fence and is chosen for MDX by language alone, so the new line
+     * used to land in column zero. WEB-78468.
+     */
+    @Test
+    fun testEnterInFenceWithoutLanguageKeepsIndent() = doActionTest("EditorEnter")
+
+    /** As above for a fence whose info string names a language nothing injects into. */
+    @Test
+    fun testEnterInFenceWithUninjectedLanguageKeepsIndent() = doActionTest("EditorEnter")
+
+    /**
+     * Enter on the fence's own opening line opens the first body line, which must land at the fence's indent. The
+     * caret is not in the body, so the sandbox declines it and the same empty Markdown indent applied. WEB-78468.
+     */
+    @Test
+    fun testEnterOnFenceOpeningLineIndentsFirstBodyLine() = doActionTest("EditorEnter")
+
+    /** As above for an opening line with no info string at all. */
+    @Test
+    fun testEnterOnFenceOpeningLineWithoutInfoStringIndentsFirstBodyLine() = doActionTest("EditorEnter")
+
+    /**
+     * ```<caret>``` on one line is a single unterminated fence of six backticks; Enter splits it, and the
+     * backticks carried onto the new line must keep the fence's indent instead of dropping to column zero.
+     */
+    @Test
+    fun testEnterBetweenAdjacentFenceBackticksIndentsSplitLine() = doActionTest("EditorEnter")
 
     /** Tab inside a code fence indents one level from the fence base instead of to column zero. */
     @Test

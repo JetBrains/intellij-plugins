@@ -31,9 +31,44 @@ internal class MdxCodeFenceEnterHandler : EnterHandlerDelegate {
                                dataContext: DataContext,
                                originalHandler: EditorActionHandler?): Result {
     if (MdxCodeFenceSandbox.replay(editor, "EditorEnter")) return Result.Stop
+    if (insertLineInsideOpaqueFence(file, editor)) return Result.Stop
     if (insertLineAfterFenceInFlow(file, editor)) return Result.Stop
     if (insertLineBetweenEmptyJsxTagsInEsmBlock(file, editor)) return Result.Stop
     return Result.Continue
+  }
+
+  /**
+   * Handles Enter inside a fence the sandbox above could not replay — one whose info string names no language or
+   * a language with no injection support, and any caret on the fence's own opening line — by carrying the current
+   * line's indentation over itself. On the opening line that indentation is the fence's own, which is exactly what
+   * the first body line needs.
+   */
+  private fun insertLineInsideOpaqueFence(file: PsiFile, editor: Editor): Boolean {
+    if (editor.caretModel.caretCount != 1) return false
+    val mdxFile = file.viewProvider.allFiles.firstOrNull { it is MdxFile } ?: return false
+
+    val document = editor.document
+    val caret = editor.caretModel.offset
+    PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
+
+    val fence = MarkdownCodeFenceUtils.getCodeFence(mdxFile.findElementAt((caret - 1).coerceAtLeast(0)) ?: return false)
+                ?: return false
+    // Anywhere within the fence, including its opening line — Enter there opens the first body line and needs the
+    // same treatment. Past the closing backticks belongs to insertLineAfterFenceInFlow instead.
+    if (caret <= fence.textRange.startOffset || caret >= fence.textRange.endOffset) return false
+
+    val line = document.getLineNumber(caret)
+    val lineEnd = document.getLineEndOffset(line)
+    val indent = " ".repeat(leadingSpaces(document.charsSequence, document.getLineStartOffset(line)))
+
+    if (caret == lineEnd && lineEnd < document.textLength) {
+      document.insertString(lineEnd + 1, "$indent\n")
+    }
+    else {
+      document.insertString(caret, "\n$indent")
+    }
+    editor.caretModel.moveToOffset(caret + 1 + indent.length)
+    return true
   }
 
   /**
