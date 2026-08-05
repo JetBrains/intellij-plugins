@@ -116,7 +116,7 @@ internal suspend fun compileInspectionKtsFile(
     }
     else {
       val inspectionsKtsData = processor.process(project, file)
-                               ?: error("Failed to process inspection data with ${processor::javaClass.name} processor")
+                               ?: error("Failed to process inspection data with ${processor.javaClass.name} processor")
       InspectionKtsResultData(emptySet(), setOf(inspectionsKtsData))
     }
   }

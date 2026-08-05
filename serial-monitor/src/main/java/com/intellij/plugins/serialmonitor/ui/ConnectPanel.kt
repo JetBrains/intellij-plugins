@@ -24,7 +24,7 @@ import com.intellij.util.application
 import com.intellij.util.ui.JBUI
 import org.jetbrains.annotations.Nls
 
-internal val SERIAL_MONITOR = Key<SerialMonitor>(SerialMonitor::javaClass.name)
+internal val SERIAL_MONITOR = Key<SerialMonitor>(SerialMonitor::class.java.name)
 
 internal class ConnectPanel(private val toolWindow: ToolWindow) : OnePixelSplitter(false, 0.4f, 0.1f, 0.9f) {
 
