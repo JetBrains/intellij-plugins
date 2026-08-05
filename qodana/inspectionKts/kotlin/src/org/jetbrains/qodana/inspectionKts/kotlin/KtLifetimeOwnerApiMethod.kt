@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtElement
 
-internal fun KaSession.ktLifetimeOwnerPsiViewerApiMethods(
+context(session: KaSession)
+internal fun ktLifetimeOwnerPsiViewerApiMethods(
   nodeContext: PsiViewerPropertyNode.Context,
   parentProvider: KtLifetimeOwnerProvider,
   ktLifetimeOwner: KaLifetimeOwner
@@ -75,7 +76,8 @@ internal class KtLifetimeOwnerApiMethod(
   }
 }
 
-internal fun KaSession.evalKtLifetimeOwnerApiMethod(
+context(session: KaSession)
+internal fun evalKtLifetimeOwnerApiMethod(
   method: KtLifetimeOwnerApiMethod,
   ktLifetimeOwner: KaLifetimeOwner?
 ): KtLifetimeOwnerApiMethod.Evaluated? {
@@ -84,7 +86,7 @@ internal fun KaSession.evalKtLifetimeOwnerApiMethod(
   val isPsiViewerSupportedType = PsiViewerPropertyNode.Factory.findMatchingFactory(methodType) != null
   if (!isPsiViewerSupportedType) return null
 
-  val value = method.evaluator(this, ktLifetimeOwner)
+  val value = method.evaluator(session, ktLifetimeOwner)
   return KtLifetimeOwnerApiMethod.Evaluated(value, method)
 }
 

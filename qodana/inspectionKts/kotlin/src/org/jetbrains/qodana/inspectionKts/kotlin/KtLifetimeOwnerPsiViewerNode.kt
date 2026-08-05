@@ -8,8 +8,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
@@ -40,7 +41,7 @@ internal class KtLifetimeOwnerPsiViewerNode(
   override val children = PsiViewerPropertyNode.Children.Async {
     val ktLifetimeOwnerApiMethods: List<Pair<Class<*>, List<PsiViewerApiMethod>>> = readAction {
       analyze(ktLifetimeOwnerProvider.entrypointKtElement) {
-        val ktLifetimeOwner = ktLifetimeOwnerProvider.valueProvider(this@analyze) ?: return@analyze emptyList()
+        val ktLifetimeOwner = ktLifetimeOwnerProvider.valueProvider(useSiteSession) ?: return@analyze emptyList()
         ktLifetimeOwnerPsiViewerApiMethods(nodeContext, parentProvider = ktLifetimeOwnerProvider, ktLifetimeOwner)
       }
     }

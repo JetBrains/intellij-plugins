@@ -10,7 +10,7 @@ import com.intellij.openapi.application.readAction
 import com.intellij.ui.SimpleTextAttributes
 import icons.KotlinBaseResourcesIcons
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtConstructor
