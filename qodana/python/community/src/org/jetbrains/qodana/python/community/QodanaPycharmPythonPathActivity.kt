@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.python.community
 
-import com.intellij.openapi.application.readAction
 import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
@@ -20,34 +19,25 @@ import org.jetbrains.qodana.staticAnalysis.QodanaLinterProjectActivity
 private const val QODANA_PYTHON_PATH_ENV = "QODANA_PYTHON_PATH"
 private const val QODANA_PYTHON_PATH_PROPERTY = "qodana.python.path"
 
+private val logger = fileLogger()
+
 internal class QodanaPycharmPythonPathActivity : QodanaLinterProjectActivity() {
   private object Key : ActivityKey {
     override val presentableName: String = "$QODANA_PYTHON_PATH_ENV environment update"
   }
 
-  private companion object {
-    val logger = fileLogger()
-  }
-
   override suspend fun run(project: Project) {
     coroutineScope {
       project.trackActivity(Key) {
-        val variable =
-          PySdkFromEnvironmentVariable.create(project, propertyName = QODANA_PYTHON_PATH_PROPERTY, envVarName = QODANA_PYTHON_PATH_ENV)
-            ?.getOrLog(logger)
-          ?: return@trackActivity
-
-        suspend fun configureSdkForModules(modules: List<Module>) {
-          variable.configureSdkForModulesLogIfError(logger, modules.toTypedArray())
+        val modules = project.modules
+        if (configureSdkFromQodanaPythonPath(project, modules) != QodanaPythonPathConfigurationResult.Success) {
+          return@trackActivity
         }
 
-        val modules = readAction { project.modules.toList() }
-        configureSdkForModules(modules)
-
-        fun setSdkForModules(modules: List<Module>) {
+        fun setSdkForModules(modules: Array<Module>) {
           this@coroutineScope.launch(QodanaDispatchers.Default) {
             project.trackActivity(Key) {
-              configureSdkForModules(modules)
+              configureSdkFromQodanaPythonPath(project, modules)
             }
           }
         }
@@ -55,13 +45,34 @@ internal class QodanaPycharmPythonPathActivity : QodanaLinterProjectActivity() {
         val currentModules = ModuleManager.getInstance(project).modules
         val listener = object : ModuleListener {
           override fun modulesAdded(project: Project, modules: List<Module>) {
-            setSdkForModules(modules)
+            setSdkForModules(modules.toTypedArray())
           }
         }
         project.messageBus.connect(this@coroutineScope).subscribe(ModuleListener.TOPIC, listener)
-        setSdkForModules(currentModules.toList())
+        setSdkForModules(currentModules)
       }
       awaitCancellation()
     }
   }
+}
+
+internal enum class QodanaPythonPathConfigurationResult {
+  NoPath,
+  Failure,
+  Success,
+}
+
+internal suspend fun configureSdkFromQodanaPythonPath(
+  project: Project,
+  modules: Array<Module>,
+): QodanaPythonPathConfigurationResult {
+  val variable = PySdkFromEnvironmentVariable.create(
+    project,
+    propertyName = QODANA_PYTHON_PATH_PROPERTY,
+    envVarName = QODANA_PYTHON_PATH_ENV,
+  ) ?: return QodanaPythonPathConfigurationResult.NoPath
+
+  val sdk = variable.getOrLog(logger) ?: return QodanaPythonPathConfigurationResult.Failure
+  sdk.configureSdkForModulesLogIfError(logger, modules)
+  return QodanaPythonPathConfigurationResult.Success
 }
