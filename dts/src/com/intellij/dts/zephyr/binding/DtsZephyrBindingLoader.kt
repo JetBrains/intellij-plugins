@@ -2,6 +2,7 @@ package com.intellij.dts.zephyr.binding
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.ManagingFS
 import com.intellij.openapi.vfs.readText
 import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
@@ -37,6 +38,7 @@ private fun loadFileData(text: String): Map<*, *>? {
 @RequiresBackgroundThread
 fun loadExternalBindings(root: Path): Map<String, BindingFile> {
   ThreadingAssertions.assertBackgroundThread()
+  ManagingFS.getInstance().flushPendingUpdates()
 
   if (!Files.isDirectory(root)) return emptyMap()
 

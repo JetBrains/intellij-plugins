@@ -8,15 +8,12 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.openapi.vfs.newvfs.ManagingFS
 import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import java.io.IOException
-import java.nio.file.FileVisitOption
-import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.SimpleFileVisitor
-import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.isDirectory
 import kotlin.io.path.name
 
@@ -49,6 +46,7 @@ object DtsZephyrFileUtil {
   @RequiresBackgroundThread
   fun searchForRoot(project: Project): Path? {
     ThreadingAssertions.assertBackgroundThread()
+    ManagingFS.getInstance().flushPendingUpdates()
 
     val candidates = mutableListOf<Path>()
 
@@ -89,6 +87,7 @@ object DtsZephyrFileUtil {
 
   fun getAllBoardDirs(root: Path?): Sequence<Path> {
     if (root == null) return emptySequence()
+    ManagingFS.getInstance().flushPendingUpdates()
 
     val boards = root.resolve(BOARDS_PATH)
     if (!Files.isDirectory(boards)) return emptySequence()

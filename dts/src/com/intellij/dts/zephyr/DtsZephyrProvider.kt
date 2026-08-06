@@ -26,8 +26,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
-import java.nio.file.Files
-import java.nio.file.InvalidPathException
 import java.nio.file.Path
 
 private fun settings(project: Project): Flow<DtsSettings.State> = channelFlow {
