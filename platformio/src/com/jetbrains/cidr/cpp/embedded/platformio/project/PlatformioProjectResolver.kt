@@ -41,6 +41,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.ManagingFS
 import com.intellij.util.asSafely
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.ui.EDT
@@ -69,12 +70,15 @@ import com.jetbrains.cidr.lang.toolchains.CidrSwitchBuilder
 import com.jetbrains.cidr.lang.workspace.compiler.GCCCompilerKind
 import com.jetbrains.cidr.lang.workspace.compiler.OCCompilerKind
 import com.jetbrains.cidr.lang.workspace.compiler.UnknownCompilerKind
+import com.jetbrains.cidr.util.flushPendingVfsUpdates
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.VisibleForTesting
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
+import java.io.IOError
+import java.io.IOException
 import java.nio.file.Path
 import java.util.Base64
 import java.util.UUID
@@ -420,6 +424,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
                                   listener: ExternalSystemTaskNotificationListener,
                                   projectPath: String): String {
     val compDbFile = Path.of(projectPath).resolve("compile_commands.json").toFile()
+    flushPendingVfsUpdates(compDbFile)
     val compDbPresent = compDbFile.isFile
 
     val parameters = mutableListOf("run", "-t", "compiledb")
@@ -452,6 +457,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
                      parameters: List<String>,
                      logStdout: Boolean = false): ProcessOutput {
     checkCancelled()
+    ManagingFS.getInstance().flushPendingUpdatesOrNotify()
 
     val commandLine = PlatformioCliBuilder(false, project).withParams(parameters).withVerboseAllowed(false)
     val processHandler = try {

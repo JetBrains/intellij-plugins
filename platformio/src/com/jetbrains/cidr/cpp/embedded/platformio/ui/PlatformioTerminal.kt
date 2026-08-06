@@ -22,6 +22,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts.TabTitle
+import com.intellij.openapi.vfs.newvfs.ManagingFS
 import com.intellij.terminal.JBTerminalSystemSettingsProviderBase
 import com.intellij.terminal.TerminalExecutionConsole
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
@@ -46,6 +47,10 @@ fun doRun(service: PlatformioService,
           reloadProject: Boolean) {
   val project = service.project
   try {
+    WriteIntentReadAction.run {
+      FileDocumentManager.getInstance().saveAllDocuments()
+    }
+    ManagingFS.getInstance().flushPendingUpdates()
     val processHandler = TerminalEmulatorOSProcessHandler(commandLine)
 
     val console = TerminalExecutionConsole(project, processHandler, settingsProvider())
@@ -128,11 +133,6 @@ fun doRun(service: PlatformioService,
     actions.add(closeAction)
 
     RunContentManager.getInstance(project).showRunContent(executor, descriptor)
-
-    WriteIntentReadAction.run {
-      FileDocumentManager.getInstance().saveAllDocuments()
-    }
-
     console.attachToProcess(processHandler)
 
     processHandler.addProcessListener(object : ProcessListener {

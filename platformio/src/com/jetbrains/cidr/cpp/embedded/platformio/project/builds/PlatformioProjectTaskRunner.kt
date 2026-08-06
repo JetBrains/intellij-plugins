@@ -25,6 +25,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.ManagingFS
 import com.intellij.task.ModuleBuildTask
 import com.intellij.task.ModuleFilesBuildTask
 import com.intellij.task.ProjectModelBuildTask
@@ -114,6 +115,7 @@ class PlatformioTaskRunner : CidrTaskRunner {
         }
       }
 
+      ManagingFS.getInstance().flushPendingUpdates()
       val processHandler = CapturingProcessHandler(compilerCommandLine.build())
       processHandler.addProcessListener(object : ProcessListener {
         override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
