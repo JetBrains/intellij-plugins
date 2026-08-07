@@ -20,7 +20,7 @@ jvm_library(
     visibility = ["//visibility:public"],
     deps = [
         # do not sort,
-        "@lib//:jetbrains-annotations",
+        "@community//libraries/jetbrains/annotations",
         "@community//platform/core-api:core",
         "@community//platform/core-impl",
         "@community//platform/core-ui",
@@ -74,6 +74,7 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         ":eslint",
+        "@community//libraries/jetbrains/annotations:annotations_test_lib",
         "@community//platform/core-api:core_test_lib",
         "@community//platform/core-impl:core-impl_test_lib",
         "@community//platform/core-ui:core-ui_test_lib",
@@ -136,7 +137,7 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
-        "@lib//:jetbrains-annotations",
+        "@community//libraries/jetbrains/annotations",
         "//contrib/javascript/eslint",
     ],
 )
@@ -166,7 +167,8 @@ jvm_library(
     ],
     deps = [
         # do not sort,
-        "@lib//:jetbrains-annotations",
+        "@community//libraries/jetbrains/annotations",
+        "@community//libraries/jetbrains/annotations:annotations_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
         "//contrib/javascript/eslint",

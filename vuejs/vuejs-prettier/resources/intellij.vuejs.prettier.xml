@@ -3,6 +3,7 @@
   <dependencies>
     <plugin id="intellij.prettierJS"/>
     <module name="intellij.javascript.web"/>
+    <module name="intellij.libraries.jetbrains.annotations"/>
     <module name="intellij.platform.codeStyle"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.vuejs.backend"/>

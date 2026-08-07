@@ -24,7 +24,7 @@ jvm_library(
         "@community//platform/core-api:core",
         "//plugins/fileWatcher",
         "@lib//:kotlin-stdlib",
-        "@lib//:jetbrains-annotations",
+        "@community//libraries/jetbrains/annotations",
     ],
 )
 
@@ -44,6 +44,7 @@ jvm_library(
         "//contrib/terraform:terraform_test_lib",
         "@community//platform/core-api:core_test_lib",
         "//plugins/fileWatcher:fileWatcher_test_lib",
+        "@community//libraries/jetbrains/annotations:annotations_test_lib",
     ],
 )
 ### auto-generated section `build intellij.terraform.watchers` end

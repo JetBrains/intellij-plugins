@@ -1,12 +1,13 @@
 <idea-plugin visibility="internal">
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="com.intellij.plugins.watcher"/>
     <plugin id="org.intellij.plugins.hcl"/>
+    <module name="intellij.libraries.jetbrains.annotations"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.macro"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
   
   <extensions defaultExtensionNs="com.intellij.plugins.watcher">
     <consumer implementation="com.intellij.terraform.watchers.TfFmtTaskConsumer"/>

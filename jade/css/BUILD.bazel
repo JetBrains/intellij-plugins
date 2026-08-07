@@ -19,7 +19,7 @@ jvm_library(
     visibility = ["//visibility:public"],
     deps = [
         # do not sort,
-        "@lib//:jetbrains-annotations",
+        "@community//libraries/jetbrains/annotations",
         "//contrib/jade",
         "@community//RegExpSupport:regexp",
         "//plugins/css",
@@ -54,6 +54,7 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         ":css",
+        "@community//libraries/jetbrains/annotations:annotations_test_lib",
         "//contrib/jade:jade_test_lib",
         "@community//RegExpSupport:regexp_test_lib",
         "//plugins/css:css_test_lib",
