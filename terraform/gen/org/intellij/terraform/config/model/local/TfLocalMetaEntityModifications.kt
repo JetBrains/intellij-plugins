@@ -21,7 +21,7 @@ interface TfLocalMetaEntityBuilder : WorkspaceEntityBuilder<TfLocalMetaEntity> {
 }
 
 internal object TfLocalMetaEntityType : EntityType<TfLocalMetaEntity, TfLocalMetaEntityBuilder>() {
-  override val entityClass: Class<TfLocalMetaEntity> get() = TfLocalMetaEntity::class.java
+  override val entityImplClass: Class<*> get() = TfLocalMetaEntityImpl::class.java
   override val entityImplBuilderClass: Class<*> get() = TfLocalMetaEntityImpl.Builder::class.java
   operator fun invoke(
     timeStampLow: Int,

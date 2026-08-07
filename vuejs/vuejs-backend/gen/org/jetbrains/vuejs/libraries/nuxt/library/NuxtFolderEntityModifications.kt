@@ -20,7 +20,7 @@ internal interface NuxtFolderEntityBuilder : WorkspaceEntityBuilder<NuxtFolderEn
 }
 
 internal object NuxtFolderEntityType : EntityType<NuxtFolderEntity, NuxtFolderEntityBuilder>() {
-  override val entityClass: Class<NuxtFolderEntity> get() = NuxtFolderEntity::class.java
+  override val entityImplClass: Class<*> get() = NuxtFolderEntityImpl::class.java
   override val entityImplBuilderClass: Class<*> get() = NuxtFolderEntityImpl.Builder::class.java
   operator fun invoke(
     nuxtFolderUrl: VirtualFileUrl,

@@ -26,12 +26,6 @@ import org.intellij.terraform.config.model.local.TfLocalMetaEntityBuilder
 @OptIn(WorkspaceEntityInternalApi::class)
 internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityData) : TfLocalMetaEntity, WorkspaceEntityBase(dataSource) {
 
-  private companion object {
-
-    private val connections = listOf<ConnectionId>()
-
-  }
-
   override val timeStampLow: Int
     get() {
       readField("timeStampLow")
@@ -52,7 +46,6 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
       readField("lockFile")
       return dataSource.lockFile
     }
-
   override val entitySource: EntitySource
     get() {
       readField("entitySource")
@@ -60,9 +53,8 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
     }
 
   override fun connectionIdList(): List<ConnectionId> {
-    return connections
+    return emptyList()
   }
-
 
   internal class Builder(result: TfLocalMetaEntityData?) : ModifiableWorkspaceEntityBase<TfLocalMetaEntity, TfLocalMetaEntityData>(result),
                                                            TfLocalMetaEntityBuilder {
@@ -87,7 +79,7 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
       index(this, "lockFile", this.lockFile)
 // Process linked entities that are connected without a builder
       processLinkedEntities(builder)
-      checkInitialization() // TODO uncomment and check failed tests
+      checkInitialization()
     }
 
     private fun checkInitialization() {
@@ -104,7 +96,7 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
     }
 
     override fun connectionIdList(): List<ConnectionId> {
-      return connections
+      return emptyList()
     }
 
     // Relabeling code, move information from dataSource to this builder
@@ -118,14 +110,12 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
       updateChildToParentReferences(parents)
     }
 
-
     override var entitySource: EntitySource
       get() = getEntityData().entitySource
       set(value) {
         checkModificationAllowed()
         getEntityData(true).entitySource = value
         changedProperty.add("entitySource")
-
       }
     override var timeStampLow: Int
       get() = getEntityData().timeStampLow
@@ -160,7 +150,6 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
 
     override fun getEntityClass(): Class<TfLocalMetaEntity> = TfLocalMetaEntity::class.java
   }
-
 }
 
 @OptIn(WorkspaceEntityInternalApi::class)
@@ -169,11 +158,8 @@ internal class TfLocalMetaEntityData : WorkspaceEntityData<TfLocalMetaEntity>() 
   var timeStampHigh: Int = 0
   lateinit var jsonPath: String
   lateinit var lockFile: VirtualFileUrl
-
-
   internal fun isJsonPathInitialized(): Boolean = ::jsonPath.isInitialized
   internal fun isLockFileInitialized(): Boolean = ::lockFile.isInitialized
-
   override fun wrapAsModifiable(diff: MutableEntityStorage): WorkspaceEntityBuilder<TfLocalMetaEntity> {
     val modifiable = TfLocalMetaEntityImpl.Builder(null)
     modifiable.diff = diff

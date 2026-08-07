@@ -25,12 +25,6 @@ import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 @OptIn(WorkspaceEntityInternalApi::class)
 internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEntity, WorkspaceEntityBase(dataSource) {
 
-  private companion object {
-
-    private val connections = listOf<ConnectionId>()
-
-  }
-
   override val depsFile: VirtualFileUrl?
     get() {
       readField("depsFile")
@@ -41,7 +35,6 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
       readField("denoTypes")
       return dataSource.denoTypes
     }
-
   override val entitySource: EntitySource
     get() {
       readField("entitySource")
@@ -49,9 +42,8 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
     }
 
   override fun connectionIdList(): List<ConnectionId> {
-    return connections
+    return emptyList()
   }
-
 
   internal class Builder(result: DenoEntityData?) : ModifiableWorkspaceEntityBase<DenoEntity, DenoEntityData>(result), DenoEntityBuilder {
     internal constructor() : this(DenoEntityData())
@@ -76,7 +68,7 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
       index(this, "denoTypes", this.denoTypes)
 // Process linked entities that are connected without a builder
       processLinkedEntities(builder)
-      checkInitialization() // TODO uncomment and check failed tests
+      checkInitialization()
     }
 
     private fun checkInitialization() {
@@ -87,7 +79,7 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
     }
 
     override fun connectionIdList(): List<ConnectionId> {
-      return connections
+      return emptyList()
     }
 
     // Relabeling code, move information from dataSource to this builder
@@ -99,14 +91,12 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
       updateChildToParentReferences(parents)
     }
 
-
     override var entitySource: EntitySource
       get() = getEntityData().entitySource
       set(value) {
         checkModificationAllowed()
         getEntityData(true).entitySource = value
         changedProperty.add("entitySource")
-
       }
     override var depsFile: VirtualFileUrl?
       get() = getEntityData().depsFile
@@ -129,15 +119,12 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
 
     override fun getEntityClass(): Class<DenoEntity> = DenoEntity::class.java
   }
-
 }
 
 @OptIn(WorkspaceEntityInternalApi::class)
 internal class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
   var depsFile: VirtualFileUrl? = null
   var denoTypes: VirtualFileUrl? = null
-
-
   override fun wrapAsModifiable(diff: MutableEntityStorage): WorkspaceEntityBuilder<DenoEntity> {
     val modifiable = DenoEntityImpl.Builder(null)
     modifiable.diff = diff

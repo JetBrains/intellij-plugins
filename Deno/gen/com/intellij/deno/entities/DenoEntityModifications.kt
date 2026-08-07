@@ -18,7 +18,7 @@ interface DenoEntityBuilder : WorkspaceEntityBuilder<DenoEntity> {
 }
 
 internal object DenoEntityType : EntityType<DenoEntity, DenoEntityBuilder>() {
-  override val entityClass: Class<DenoEntity> get() = DenoEntity::class.java
+  override val entityImplClass: Class<*> get() = DenoEntityImpl::class.java
   override val entityImplBuilderClass: Class<*> get() = DenoEntityImpl.Builder::class.java
   operator fun invoke(
     entitySource: EntitySource,

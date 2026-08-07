@@ -14,9 +14,7 @@ internal object MetadataStorageImpl : MetadataStorageBase() {
   override fun initializeMetadata() {
     val primitiveTypeIntNotNullable = ValueTypeMetadata.SimpleType.PrimitiveType(isNullable = false, type = "Int")
     val primitiveTypeStringNotNullable = ValueTypeMetadata.SimpleType.PrimitiveType(isNullable = false, type = "String")
-
     var typeMetadata: StorageTypeMetadata
-
     typeMetadata =
       FinalClassMetadata.ObjectMetadata(fqName = "org.intellij.terraform.config.model.local.TfLocalMetaEntity\$LockEntitySource",
                                         properties = listOf(OwnPropertyMetadata(isComputable = false,
@@ -28,9 +26,7 @@ internal object MetadataStorageImpl : MetadataStorageBase() {
                                                                                   typeMetadata = FinalClassMetadata.KnownClass(fqName = "com.intellij.platform.workspace.storage.url.VirtualFileUrl")),
                                                                                 withDefault = false)),
                                         supertypes = listOf("com.intellij.platform.workspace.storage.EntitySource"))
-
     addMetadata(typeMetadata)
-
     typeMetadata = EntityMetadata(fqName = "org.intellij.terraform.config.model.local.TfLocalMetaEntity",
                                   entityDataFqName = "org.intellij.terraform.config.model.local.impl.TfLocalMetaEntityData",
                                   supertypes = listOf("com.intellij.platform.workspace.storage.WorkspaceEntity"),
@@ -70,7 +66,6 @@ internal object MetadataStorageImpl : MetadataStorageBase() {
                                                                           withDefault = false)),
                                   extProperties = listOf(),
                                   isAbstract = false)
-
     addMetadata(typeMetadata)
   }
 

@@ -28,12 +28,6 @@ import org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntityBuilder
 @OptIn(WorkspaceEntityInternalApi::class)
 internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData) : NuxtFolderEntity, WorkspaceEntityBase(dataSource) {
 
-  private companion object {
-
-    private val connections = listOf<ConnectionId>()
-
-  }
-
   override val nuxtFolderUrl: VirtualFileUrl
     get() {
       readField("nuxtFolderUrl")
@@ -44,7 +38,6 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
       readField("libraryFileUrls")
       return dataSource.libraryFileUrls
     }
-
   override val entitySource: EntitySource
     get() {
       readField("entitySource")
@@ -52,9 +45,8 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
     }
 
   override fun connectionIdList(): List<ConnectionId> {
-    return connections
+    return emptyList()
   }
-
 
   internal class Builder(result: NuxtFolderEntityData?) : ModifiableWorkspaceEntityBase<NuxtFolderEntity, NuxtFolderEntityData>(result),
                                                           NuxtFolderEntityBuilder {
@@ -80,7 +72,7 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
       index(this, "libraryFileUrls", this.libraryFileUrls)
 // Process linked entities that are connected without a builder
       processLinkedEntities(builder)
-      checkInitialization() // TODO uncomment and check failed tests
+      checkInitialization()
     }
 
     private fun checkInitialization() {
@@ -97,7 +89,7 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
     }
 
     override fun connectionIdList(): List<ConnectionId> {
-      return connections
+      return emptyList()
     }
 
     override fun afterModification() {
@@ -116,14 +108,12 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
       updateChildToParentReferences(parents)
     }
 
-
     override var entitySource: EntitySource
       get() = getEntityData().entitySource
       set(value) {
         checkModificationAllowed()
         getEntityData(true).entitySource = value
         changedProperty.add("entitySource")
-
       }
     override var nuxtFolderUrl: VirtualFileUrl
       get() = getEntityData().nuxtFolderUrl
@@ -159,17 +149,14 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
 
     override fun getEntityClass(): Class<NuxtFolderEntity> = NuxtFolderEntity::class.java
   }
-
 }
 
 @OptIn(WorkspaceEntityInternalApi::class)
 internal class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
   lateinit var nuxtFolderUrl: VirtualFileUrl
   lateinit var libraryFileUrls: MutableList<VirtualFileUrl>
-
   internal fun isNuxtFolderUrlInitialized(): Boolean = ::nuxtFolderUrl.isInitialized
   internal fun isLibraryFileUrlsInitialized(): Boolean = ::libraryFileUrls.isInitialized
-
   override fun wrapAsModifiable(diff: MutableEntityStorage): WorkspaceEntityBuilder<NuxtFolderEntity> {
     val modifiable = NuxtFolderEntityImpl.Builder(null)
     modifiable.diff = diff
