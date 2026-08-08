@@ -30,7 +30,7 @@
     <psiViewer.propertyNodeFactory implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinDomainClassPsiViewerNode$Factory"/>
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
-    <scriptDefinitionsSource implementation="org.jetbrains.qodana.inspectionKts.kotlin.script.QodanaScriptDefinitionSource"/>
+    <scriptDefinitionsProvider implementation="org.jetbrains.qodana.inspectionKts.kotlin.script.QodanaScriptDefinitionsProvider"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <resolveScopeProvider implementation="org.jetbrains.qodana.inspectionKts.kotlin.script.InspectionKtsResolveScopeProvider"/>
