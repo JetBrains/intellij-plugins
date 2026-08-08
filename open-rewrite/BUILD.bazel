@@ -69,6 +69,7 @@ jvm_library(
         "@community//java/compiler/impl",
         "@community//java/java-frontback-psi-api:frontback-psi",
         "//plugins/microservices/microservices-jvm/config/yaml",
+        "@community//java/java-backend:backend",
     ],
 )
 
@@ -133,6 +134,7 @@ jvm_library(
         "@community//java/compiler/impl:impl_test_lib",
         "@community//java/java-frontback-psi-api:frontback-psi_test_lib",
         "//plugins/microservices/microservices-jvm/config/yaml:yaml_test_lib",
+        "@community//java/java-backend:backend_test_lib",
     ],
 )
 ### auto-generated section `build intellij.openRewrite` end

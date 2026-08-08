@@ -57,5 +57,6 @@
     <orderEntry type="module" module-name="intellij.java.compiler.impl" />
     <orderEntry type="module" module-name="intellij.java.frontback.psi" />
     <orderEntry type="module" module-name="intellij.microservices.jvm.config.yaml" />
+    <orderEntry type="module" module-name="intellij.java.backend" />
   </component>
 </module>

@@ -32,6 +32,7 @@
     <plugin id="com.intellij.modules.lang"/>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="com.intellij.css"/>
+    <module name="intellij.platform.ide.impl"/>
     <!-- endregion -->
   </dependencies>
 

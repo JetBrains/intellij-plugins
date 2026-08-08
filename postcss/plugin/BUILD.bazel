@@ -15,7 +15,11 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = ["//plugins/css/plugin"],
+    runtime_deps = [
+        # do not sort,
+        "//plugins/css/plugin",
+        "@community//platform/platform-impl:ide-impl",
+    ],
 )
 
 jvm_library(
@@ -31,6 +35,7 @@ jvm_library(
         # do not sort,
         ":plugin",
         "//plugins/css/plugin:plugin_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
     ],
 )
 ### auto-generated section `build intellij.postcss.plugin` end
