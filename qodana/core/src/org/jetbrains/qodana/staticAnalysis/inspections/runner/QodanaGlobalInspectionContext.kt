@@ -32,6 +32,7 @@ open class QodanaGlobalInspectionContext(
   val profile: QodanaProfile,
   val qodanaRunScope: CoroutineScope,
   val coverageStatisticsData: CoverageStatisticsData,
+  val isIncremental: Boolean = false,
 ) : GlobalInspectionContextImpl(project, contentManager) {
   private val completedLocalAnalysisFiles = AtomicInteger()
   private var scheduledLocalAnalysisFiles: Int? = null

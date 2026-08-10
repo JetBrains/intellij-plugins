@@ -26,7 +26,7 @@ import java.time.Duration
 import java.time.Instant
 
 object UsageCollector : CounterUsagesCollector() {
-  private val GROUP = QodanaEventLogGroup("qodana.usage", 15)
+  private val GROUP = QodanaEventLogGroup("qodana.usage", 16)
 
   override fun getGroup() = GROUP.eventLogGroup
 
@@ -79,7 +79,7 @@ object UsageCollector : CounterUsagesCollector() {
   private val excludeField = EventFields.RoundedInt("exclude")
   private val stopThresholdField = EventFields.RoundedInt("stopThreshold")
   private val bootstrapField = EventFields.Boolean("bootstrap")
-  private val scriptField = EventFields.String("script", listOf("php-migration", "local-changes", "migrate-classes", "scoped", "other"))
+  private val scriptField = EventFields.String("script", listOf("php-migration", "migrate-classes", "scoped", "other"))
   private val phpMigrationFromLevelField = EventFields.StringValidatedByRegexpReference("phpMigrationFromLevel", "version")
   private val phpMigrationToLevelField = EventFields.StringValidatedByRegexpReference("phpMigrationToLevel", "version")
 
@@ -223,7 +223,7 @@ object UsageCollector : CounterUsagesCollector() {
     args += logFailureConditions(config.failureConditions)
     when (config.script.name) {
       DEFAULT_SCRIPT_NAME -> {}
-      "local-changes", "migrate-classes", "scoped" -> {
+      "migrate-classes", "scoped" -> {
         args += scriptField with config.script.name
       }
       "php-migration" -> {

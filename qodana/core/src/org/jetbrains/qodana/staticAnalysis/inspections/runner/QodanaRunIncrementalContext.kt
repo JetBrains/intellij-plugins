@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -14,7 +13,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCovera
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
-import org.jetbrains.qodana.staticAnalysis.script.LocalChangesService
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.nio.file.Path
 
@@ -46,10 +44,6 @@ class QodanaRunIncrementalContext private constructor(
       additionalFiles: Map<VirtualFile, Set<String>>,
       onFileIncluded: ((VirtualFile) -> Unit)?
     ): QodanaRunIncrementalContext {
-      project.serviceAsync<LocalChangesService>()
-        .isIncrementalAnalysis
-        .set(true)
-      
       return QodanaRunIncrementalContext(
         project,
         loadedProfile,

@@ -1,11 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.testFramework.assertInstanceOf
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase.Companion.runTest
-import org.jetbrains.qodana.staticAnalysis.script.CHANGES_SCRIPT_NAME
-import org.jetbrains.qodana.staticAnalysis.script.LocalChangesScript
-import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
-import org.junit.Ignore
 import org.junit.Test
 import java.nio.file.Path
 
@@ -21,7 +16,6 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
     )
 
     val cliArgs = listOf(
-      "-c",
       "-d", "test",
       "-p", "$testProjectPath/empty.xml",
       "--fail-threshold", "15",
@@ -30,15 +24,13 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
       "$testProjectPath",
       "$testProjectPath/out")
 
-    val (script, runContext, config, app) = buildScript(cliArgs, testProject, projectFiles, this)
+    val (_, runContext, config, _) = buildScript(cliArgs, testProject, projectFiles, this)
 
-    assertEquals(CHANGES_SCRIPT_NAME, app.config.script.name) // from -c
     assertEquals(Path.of("test"), config.onlyDirectory)
     assertEquals(15, config.failureConditions.severityThresholds.any)
     assertEquals(false, config.runPromoInspections)
     assertEquals(true, config.disableSanityInspections)
     assertEquals("empty", runContext.baseProfile.name)
-    assertEquals(true, script is LocalChangesScript)
   }
 
   @Test
@@ -63,7 +55,6 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
     )
 
     val cliArgs = listOf(
-      "--changes",
       "-p", "$testProjectPath/conventions.xml",
       "--fail-threshold", "10",
       "--disable-sanity",
@@ -72,14 +63,12 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
       "$testProjectPath",
       "$testProjectPath/out")
 
-    val (script, runContext, config, app) = buildScript(cliArgs, testProject, projectFiles, this)
+    val (_, runContext, config, _) = buildScript(cliArgs, testProject, projectFiles, this)
 
-    assertEquals(CHANGES_SCRIPT_NAME, app.config.script.name) // from --changes
     assertEquals(10, config.failureConditions.severityThresholds.any)
     assertEquals(false, config.runPromoInspections)
     assertEquals(true, config.disableSanityInspections)
     assertEquals("default.name.conventions", runContext.baseProfile.name)
-    assertEquals(true, script is LocalChangesScript)
     assertEquals(Path.of("src2"), config.onlyDirectory)
   }
 
@@ -103,15 +92,14 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
     }
   }
 
-  @Ignore("AT-4013")
   @Test
-  fun `changes arg overrides default script`() = runTest {
+  fun `local-changes script from yaml does not exist`() {
     val testProjectPath = project.basePath
 
     val qodanaYAML = """
       version: 1.0
       script:
-        name: default
+        name: local-changes
       runPromoInspections: true
       disableSanityInspections: true
     """.trimIndent()
@@ -121,65 +109,11 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
     )
 
     val cliArgs = listOf(
-      "-c",
-      "$testProjectPath",
-      "$testProjectPath/out")
-
-    val (script, _, _, _) = buildScript(cliArgs, project, projectFiles, this)
-
-    assertInstanceOf<LocalChangesScript>(script)
-  }
-
-  @Ignore("AT-4013")
-  @Test
-  fun `changes arg works with changes script`() = runTest {
-    val testProjectPath = project.basePath
-
-    val qodanaYAML = """
-      version: 1.0
-      script:
-        name: $CHANGES_SCRIPT_NAME
-      runPromoInspections: true
-      disableSanityInspections: true
-    """.trimIndent()
-
-    val projectFiles = listOf(
-      "qodana.yaml" to qodanaYAML,
-    )
-
-    val cliArgs = listOf(
-      "-c",
-      "$testProjectPath",
-      "$testProjectPath/out")
-
-    val (script, _, _, _) = buildScript(cliArgs, project, projectFiles, this)
-
-    assertInstanceOf<LocalChangesScript>(script)
-  }
-
-  @Test
-  fun `changes arg fails with other script`() {
-    val testProjectPath = project.basePath
-
-    val qodanaYAML = """
-      version: 1.0
-      script:
-        name: $TEAMCITY_CHANGES_SCRIPT_NAME
-      runPromoInspections: true
-      disableSanityInspections: true
-    """.trimIndent()
-
-    val projectFiles = listOf(
-      "qodana.yaml" to qodanaYAML,
-    )
-
-    val cliArgs = listOf(
-      "-c",
       "$testProjectPath",
       "$testProjectPath/out")
 
     assertThrows(QodanaException::class.java,
-                 "Cannot combine '--changes' option with configured script '$TEAMCITY_CHANGES_SCRIPT_NAME' in yaml.") {
+                 "Script 'local-changes' does not exist") {
       runTest { buildScript(cliArgs, project, projectFiles, this) }
     }
   }

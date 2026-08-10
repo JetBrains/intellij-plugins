@@ -162,7 +162,6 @@
           "enum": [
             "default",
             "php-migration",
-            "local-changes",
             "teamcity-changes",
             "migrate-classes"
           ]

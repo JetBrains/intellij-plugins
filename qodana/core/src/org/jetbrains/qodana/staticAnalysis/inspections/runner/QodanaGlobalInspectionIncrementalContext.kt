@@ -31,7 +31,7 @@ class QodanaGlobalInspectionIncrementalContext(
   qodanaRunScope: CoroutineScope,
   coverageStatisticsData: CoverageStatisticsData,
   val scopeExtended: Map<VirtualFile, Set<String>>
-): QodanaGlobalInspectionContext(project, contentManager, config, outputPath, profile, qodanaRunScope, coverageStatisticsData) {
+): QodanaGlobalInspectionContext(project, contentManager, config, outputPath, profile, qodanaRunScope, coverageStatisticsData, isIncremental = true) {
   private val extenderCache = ConcurrentHashMap<String, InspectionToolScopeExtender?>()
 
   override fun shouldSkip(inspectionId: String, psiFile: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {

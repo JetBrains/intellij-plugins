@@ -9,8 +9,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileYamlConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
-import org.jetbrains.qodana.staticAnalysis.script.CHANGES_SCRIPT_NAME
-import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.runner.RunWith
@@ -51,7 +49,6 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
   fun `long options`(): Unit = runBlocking {
     val args = listOf(
       "--profile-name", "NAMENAMENAME",
-      "--changes",
       "--profile-path", "PATH/profile.xml",
       "--only-directory", "PROJECT_PATH/src",
       "--baseline", "/home/user/baseline/qodana.sarif.json",
@@ -71,7 +68,6 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
     assertEquals(Path.of("PROJECT_PATH/").toAbsolutePath().pathString, app.config.projectPath.toString())
     assertEquals("/OUT_PATH", app.config.outPath.invariantSeparatorsPathString)
     assertEquals(Path.of("PROJECT_PATH/src"), app.config.onlyDirectory)
-    assertEquals(CHANGES_SCRIPT_NAME, app.config.script.name) // from --changes
     assertEquals("/home/user/baseline/qodana.sarif.json", app.config.baseline)
     assertEquals(true, app.config.includeAbsent)
     assertTrue(app.config.disableSanityInspections)
@@ -110,7 +106,6 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
   fun `short options`(): Unit = runBlocking {
     val args = listOf(
       "-n", "NAMENAMENAME",
-      "-c",
       "-p", "PATH/profile.xml",
       "-d", "PROJECT_PATH/src",
       "-b", "/home/user/baseline/qodana.sarif.json",
@@ -126,7 +121,6 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
     assertEquals(Path.of("PROJECT_PATH/").toAbsolutePath().pathString, app.config.projectPath.toString())
     assertEquals("/OUT_PATH", app.config.outPath.invariantSeparatorsPathString)
     assertEquals(Path.of("PROJECT_PATH/src"), app.config.onlyDirectory)
-    assertEquals(CHANGES_SCRIPT_NAME, app.config.script.name) // from -c
     assertEquals("/home/user/baseline/qodana.sarif.json", app.config.baseline)
   }
 
@@ -172,7 +166,6 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
   fun `deprecated options`(): Unit = runBlocking {
     val args = listOf(
       "-profileName", "NAMENAMENAME",
-      "-changes",
       "-profilePath", "PATH/profile.xml",
       "--stub-profile", "this/should/be/ignored",
       "PROJECT_PATH/",
@@ -186,7 +179,6 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
     assertEquals("command line", app.config.profileSource)
     assertEquals(Path.of("PROJECT_PATH/").toAbsolutePath(), app.config.projectPath)
     assertEquals("/OUT_PATH", app.config.outPath.invariantSeparatorsPathString)
-    assertEquals(CHANGES_SCRIPT_NAME, app.config.script.name) // from -c
   }
 
   @Test
@@ -229,10 +221,9 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
   }
 
   @Test
-  fun `combining non-default script with changes should fail`(): Unit = runBlocking {
+  fun `local-changes script does not exist`(): Unit = runBlocking {
     val args = listOf(
-      "--changes",
-      "--script", TEAMCITY_CHANGES_SCRIPT_NAME,
+      "--script", "local-changes",
       "PROJECT_PATH/",
       "/OUT_PATH",
     )
@@ -240,22 +231,16 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
     val e = assertThrows<QodanaException> {
       QodanaInspectionApplicationFactory().buildApplication(args)
     }
-    assertEquals("Cannot combine '--script' option with '--changes'. Consider using '--script local-changes' instead of '--changes'",
-                 e.message)
+    assertEquals("Can't find script implementation for 'local-changes' value", e.message)
   }
 
   @Test
-  fun `combining local-changes script with changes should not fail`(): Unit = runBlocking {
-    val args = listOf(
-      "--changes",
-      "--script", CHANGES_SCRIPT_NAME,
-      "PROJECT_PATH/",
-      "/OUT_PATH",
-    )
-
-    val app = QodanaInspectionApplicationFactory().buildApplication(args)
-
-    assertEquals(app?.config?.script?.name, CHANGES_SCRIPT_NAME)
+  fun `changes options do not select a script`(): Unit = runBlocking {
+    for (option in listOf("--changes", "-c", "-changes")) {
+      assertThrows<QodanaException> {
+        QodanaInspectionApplicationFactory().buildApplication(listOf(option, "PROJECT_PATH/", "/OUT_PATH"))
+      }
+    }
   }
 
 

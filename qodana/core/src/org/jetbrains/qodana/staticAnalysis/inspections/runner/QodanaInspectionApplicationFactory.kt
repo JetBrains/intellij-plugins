@@ -20,8 +20,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlReader
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlReader.defaultConfigPath
-import org.jetbrains.qodana.staticAnalysis.script.CHANGES_SCRIPT_NAME
-import org.jetbrains.qodana.staticAnalysis.script.DEFAULT_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.PrintWriter
@@ -49,12 +47,10 @@ class QodanaInspectionApplicationFactory {
     addOption(null, "config-dir", true, QodanaBundle.message("config.dir.option.description"))
     addOption("n", "profile-name", true, QodanaBundle.message("profileName.option.description"))
     addOption("p", "profile-path", true, QodanaBundle.message("profilePath.option.description"))
-    addOption("c", "changes", false, QodanaBundle.message("changes.option.description"))
     addOption(null, "source-directory", true, QodanaBundle.message("source.directory.option.description"))
     addOption("d", "only-directory", true, QodanaBundle.message("only.directory.option.description"))
     addOption("profileName", null, true, QodanaBundle.message("profileName.deprecated.option.description"))
     addOption("profilePath", null, true, QodanaBundle.message("profilePath.deprecated.option.description"))
-    addOption("changes", null, false, QodanaBundle.message("changes.deprecated.option.description"))
     addOption(null, "fixes-strategy", true, QodanaBundle.message("fixes.strategy.inspections.option.description"))
     addOption(null, "stub-profile", true, QodanaBundle.message("stubProfile.option.description"))
   }
@@ -193,37 +189,14 @@ class QodanaInspectionApplicationFactory {
     return QodanaInspectionApplication(qodanaConfig, projectApi)
   }
 
-  private fun determineScript(cli: CommandLine, config: QodanaYamlConfig): QodanaScriptConfig {
-    val cliScript: QodanaScriptConfig? = cli.getOptionValue("script")?.let {
+  private fun determineScript(cli: CommandLine, config: QodanaYamlConfig): QodanaScriptConfig =
+    cli.getOptionValue("script")?.let {
       val parsedConfig = QodanaScriptFactory.parseConfigFromArgument(it)
       if (parsedConfig == null) {
         throw QodanaException("Can't find script implementation for '$it' value")
       }
       parsedConfig
-    }
-    val hasDeprecatedCliFlag = cli.hasOption("c") || cli.hasOption("changes")
-    val fromConfig = config.script
-
-    // null/default would be overridden, changes is just redundant
-    val allowedScriptNames = hashSetOf(null, DEFAULT_SCRIPT_NAME, CHANGES_SCRIPT_NAME)
-
-    return when {
-      !hasDeprecatedCliFlag -> cliScript ?: config.script
-      cliScript?.name !in allowedScriptNames -> {
-        throw QodanaException(
-          "Cannot combine '--script' option with '--changes'. Consider using '--script local-changes' instead of '--changes'")
-      }
-      fromConfig.name !in allowedScriptNames -> {
-        throw QodanaException("Cannot combine '--changes' option with configured script '${fromConfig.name}' in yaml." +
-                              "Consider using '--script local-changes' to overwrite the yaml configuration.")
-      }
-      else -> {
-        QodanaMessageReporter.DEFAULT.reportMessage(1, "Consider using '--script $CHANGES_SCRIPT_NAME' or configuring it via yaml, " +
-                                                       "instead of using '--changes'")
-        QodanaScriptConfig(CHANGES_SCRIPT_NAME)
-      }
-    }
-  }
+    } ?: config.script
 
   private fun buildHelpString(): String {
     val sw = StringWriter()
