@@ -9,8 +9,8 @@ import com.intellij.lang.typescript.kolar.KolarTranspiler
 import com.intellij.lang.typescript.kolar.KolarVirtualCode
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
@@ -68,8 +68,7 @@ private data class VueTranspiledFile(
   }
 
   private fun getTranspiledFile(): TranspiledFile? =
-    PsiManager.getInstance(project)
-      .findFile(file)
+    file.findPsiFile(project)
       ?.let { it as VueFile }
       ?.let { VueTranspiledFileBuilder.getTranspiledFile(it) }
 }
