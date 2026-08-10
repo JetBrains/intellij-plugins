@@ -16,7 +16,7 @@ AstroFile:test.astro
         PsiElement(JS:IDENTIFIER)('here')
       PsiWhiteSpace(' ')
       JSReferenceExpression
-        PsiElement(JS:IS_KEYWORD)('is')
+        PsiElement(JS:IDENTIFIER)('is')
       PsiWhiteSpace(' ')
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('end')

@@ -85,7 +85,7 @@ JSFile:test.js.v-for.expr
       PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     JSReferenceExpression
-      PsiElement(JS:OF_KEYWORD)('of')
+      PsiElement(JS:IDENTIFIER)('of')
     PsiErrorElement:Statements are not allowed in Vue expressions
       PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
@@ -322,7 +322,7 @@ JSFile:test.js.v-for.expr
       <empty list>
     PsiWhiteSpace(' ')
     JSReferenceExpression
-      PsiElement(JS:OF_KEYWORD)('of')
+      PsiElement(JS:IDENTIFIER)('of')
     PsiErrorElement:Expected end of expression
       <empty list>
     PsiWhiteSpace(' ')

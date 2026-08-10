@@ -11,7 +11,7 @@ JSFile:test.keywords.binding
 JSFile:test.keywords.binding
   Angular2Binding
     JSReferenceExpression
-      PsiElement(JS:UNDEFINED_KEYWORD)('undefined')
+      PsiElement(JS:IDENTIFIER)('undefined')
 ------
 JSFile:test.keywords.binding
   Angular2Binding

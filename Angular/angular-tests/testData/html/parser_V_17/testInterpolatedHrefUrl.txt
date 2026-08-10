@@ -74,7 +74,7 @@ HtmlFile:test.html
                 PsiElement(JS:NEQEQ)('!==')
                 PsiWhiteSpace(' ')
                 JSReferenceExpression
-                  PsiElement(JS:UNDEFINED_KEYWORD)('undefined')
+                  PsiElement(JS:IDENTIFIER)('undefined')
           PsiElement(JS:RPAR)(')')
         PsiWhiteSpace(' ')
         Angular2HtmlBlockContents
