@@ -38,6 +38,9 @@ class VueKolarTranspiler(
     return VueTranspiledFile(project, file)
   }
 
+  override fun getRelatedFiles(files: Collection<VirtualFile>): Collection<VirtualFile> =
+    VueKolarContext.getRelatedFiles(project, files)
+
   override fun supportsInjectedFile(file: PsiFile): Boolean =
     file.language is VueJSLanguage
     || file.language is VueTSLanguage
