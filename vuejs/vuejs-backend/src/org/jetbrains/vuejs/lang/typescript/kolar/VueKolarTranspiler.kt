@@ -44,8 +44,8 @@ class VueKolarTranspiler(
 }
 
 private data class VueTranspiledFile(
-  val project: Project,
-  val file: VirtualFile,
+  private val project: Project,
+  private val file: VirtualFile,
 ) : KolarTranspiledFile {
 
   override fun createVirtualCode(
