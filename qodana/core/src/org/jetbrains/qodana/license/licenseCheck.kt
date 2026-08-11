@@ -1,10 +1,13 @@
 package org.jetbrains.qodana.license
 
 import com.intellij.ide.nls.NlsMessages
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.ui.LicensingFacade
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import kotlin.system.exitProcess
+
+private val LOG = Logger.getInstance("#org.jetbrains.qodana.license")
 
 /**
  * On failure to obtain license will exit app with exit code = 7.
@@ -19,7 +22,7 @@ fun checkLicense(): QodanaLicense {
     return license
   }
   catch (e: QodanaException) {
-    e.printStackTrace()
+    LOG.warn("License check failed", e)
     println("""There is no valid license or license has expired.""")
     exitProcess(7)
   }

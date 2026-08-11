@@ -5,6 +5,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import kotlinx.coroutines.CancellationException
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -55,11 +56,44 @@ class QodanaTerminalErrorTest {
   }
 
   @Test
-  fun `an unexpected error is reported`() {
-    val generic = RuntimeException("kaboom")
+  fun `an internal fault is reported as a Qodana bug, not as a stack trace`() {
+    report(RuntimeException("kaboom"))
 
-    report(generic)
-
-    assertEquals(listOf<Throwable>(generic), reporter.errors)
+    assertEquals(emptyList<Throwable>(), reporter.errors)
+    val message = soleMessage()
+    assertTrue(message, message.contains("internal error"))
+    assertTrue(message, message.contains("jb.gg/qodana-issue"))
+    // The throwable identifies the fault, so it must precede the log pointer rather than land in its argument slot.
+    assertTrue(message, message.indexOf("java.lang.RuntimeException: kaboom") < message.indexOf("idea.log"))
   }
+
+  @Test
+  fun `an Error is reported as a Qodana bug`() {
+    // A failed assert or a broken linter image is our defect.
+    report(AssertionError("invariant broken"))
+
+    assertEquals(emptyList<Throwable>(), reporter.errors)
+    val message = soleMessage()
+    assertTrue(message, message.contains("internal error"))
+    assertTrue(message, message.contains("jb.gg/qodana-issue"))
+  }
+
+  @Test
+  fun `a throwable without a message is still named`() {
+    report(RuntimeException())
+
+    assertTrue(soleMessage(), soleMessage().contains("java.lang.RuntimeException"))
+    assertFalse(soleMessage(), soleMessage().contains("null"))
+  }
+
+  @Test
+  fun `an anonymous throwable is still named`() {
+    report(object : RuntimeException("kaboom") {})
+
+    // getSimpleName() is empty for an anonymous class, which would render a bare leading colon.
+    assertFalse(soleMessage(), soleMessage().contains(": : "))
+    assertTrue(soleMessage(), soleMessage().contains("kaboom"))
+  }
+
+  private fun soleMessage(): String = reporter.messages.single().orEmpty()
 }

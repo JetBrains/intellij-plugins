@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ModernApplicationStarter
 import com.intellij.openapi.diagnostic.logger
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionApplication
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionApplicationFactory
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import kotlin.system.exitProcess
 
 internal class QodanaApplicationStarter : ModernApplicationStarter() {
@@ -26,7 +27,8 @@ internal class QodanaApplicationStarter : ModernApplicationStarter() {
       exitProcess(1)
     }
     catch (e: Exception) {
-      e.printStackTrace() // workaround for IDEA-289086
+      // Same disposition as a terminal failure inside startup(): the trace goes to idea.log, the console gets one line.
+      QodanaInspectionApplication.reportTerminalError(e, QodanaMessageReporter.DEFAULT)
       exitProcess(1)
     }
   }

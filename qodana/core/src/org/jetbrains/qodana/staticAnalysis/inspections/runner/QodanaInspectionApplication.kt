@@ -68,11 +68,11 @@ class QodanaInspectionApplication(
   private val reporter = QodanaMessageReporter.DEFAULT
 
   suspend fun startup() {
-    config.license = checkLicense()
-    if (!config.skipPreamble) printLicenseInfo(config.license)
-
     try {
+      config.license = checkLicense()
+
       if (!config.skipPreamble) {
+        printLicenseInfo(config.license)
         printProductHeader()
         printAppInfo()
       }
@@ -289,7 +289,13 @@ class QodanaInspectionApplication(
         // QodanaCancellationException, ProcessCanceledException, IndicatorCancellationException — all CancellationException.
         is CancellationException -> reporter.reportError(cancellationThrowableToReport(e) ?: e)
         is QodanaException -> reporter.reportError("Qodana exited abnormally because: ${e.message}")
-        else -> reporter.reportError(e)
+        // The trace is a developer diagnostic and goes to idea.log only; the console gets one actionable line.
+        else -> {
+          LOG.warn("Qodana failed with a terminal error", e)
+          reporter.reportError(
+            QodanaBundle.message("cli.internal.error", e.toString(), PathManager.getLogDir().resolve("idea.log"))
+          )
+        }
       }
     }
   }
