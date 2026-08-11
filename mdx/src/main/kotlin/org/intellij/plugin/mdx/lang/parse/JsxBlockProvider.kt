@@ -38,8 +38,8 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
         val expressionEnd = MdxJsxScanner.scanExpression(localText, 0)
         if (expressionEnd != -1 && localText.subSequence(expressionEnd, localText.length).isBlank()) {
           ImmediateBlock(
-            MdxElementTypes.MDX_JSX_EXPRESSION,
-            listOf(SequentialParser.Node(absoluteStart..absoluteStart + expressionEnd, MdxTokenTypes.JSX_BLOCK_CONTENT)),
+            MdxElementTypes.MDX_EXPRESSION,
+            listOf(SequentialParser.Node(absoluteStart..absoluteStart + expressionEnd, MdxTokenTypes.EMBEDDED_JS_CONTENT)),
           )
         }
         else null

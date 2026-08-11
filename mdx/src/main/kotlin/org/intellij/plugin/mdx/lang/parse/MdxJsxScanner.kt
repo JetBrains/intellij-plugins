@@ -434,8 +434,8 @@ internal object MdxJsxScanner {
       nodes.add(SequentialParser.Node(tag.range.shiftRight(shift), tagType))
     }
     for (expression in element.expressions) {
-      nodes.add(SequentialParser.Node(expression.shiftRight(shift), MdxTokenTypes.JSX_BLOCK_CONTENT))
-      nodes.add(SequentialParser.Node(expression.shiftRight(shift), MdxElementTypes.MDX_JSX_EXPRESSION))
+      nodes.add(SequentialParser.Node(expression.shiftRight(shift), MdxTokenTypes.EMBEDDED_JS_CONTENT))
+      nodes.add(SequentialParser.Node(expression.shiftRight(shift), MdxElementTypes.MDX_EXPRESSION))
     }
     if (includeRoot) {
       nodes.add(SequentialParser.Node(element.range.shiftRight(shift), type))
@@ -459,7 +459,7 @@ internal object MdxJsxScanner {
 
   fun createEsmNodes(block: EsmBlock, shift: Int = 0, includeRoot: Boolean = true): List<SequentialParser.Node> {
     return buildList {
-      add(SequentialParser.Node(block.range.shiftRight(shift), MdxTokenTypes.JSX_BLOCK_CONTENT))
+      add(SequentialParser.Node(block.range.shiftRight(shift), MdxTokenTypes.EMBEDDED_JS_CONTENT))
       if (includeRoot) {
         add(SequentialParser.Node(block.range.shiftRight(shift), MdxElementTypes.MDX_ESM_BLOCK))
       }
@@ -479,7 +479,7 @@ internal object MdxJsxScanner {
 
   private fun MutableList<SequentialParser.Node>.addContentNode(range: IntRange, shift: Int) {
     if (range.first < range.last) {
-      add(SequentialParser.Node(range.shiftRight(shift), MdxTokenTypes.JSX_BLOCK_CONTENT))
+      add(SequentialParser.Node(range.shiftRight(shift), MdxTokenTypes.EMBEDDED_JS_CONTENT))
     }
   }
 

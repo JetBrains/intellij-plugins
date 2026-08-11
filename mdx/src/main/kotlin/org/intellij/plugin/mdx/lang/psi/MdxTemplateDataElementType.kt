@@ -26,7 +26,7 @@ object MdxTemplateDataElementType : MdxTemplateDataElementTypeBase(),
 
 open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLATE_JSX",
                                                                     MdxLanguage,
-                                                                    MarkdownElementType.platformType(MdxTokenTypes.JSX_BLOCK_CONTENT),
+                                                                    MarkdownElementType.platformType(MdxTokenTypes.EMBEDDED_JS_CONTENT),
                                                                     MdxTokenTypes.OUTER_ELEMENT_TYPE) {
   override fun collectTemplateModifications(sourceCode: CharSequence, baseLexer: Lexer): TemplateDataModifications {
     val modifications = TemplateDataModifications()

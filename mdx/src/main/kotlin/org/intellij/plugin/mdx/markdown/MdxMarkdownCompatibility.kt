@@ -52,13 +52,13 @@ class MdxMarkdownActionPromoterExtension : MarkdownActionPromoterExtension {
 
 object MdxMarkdown {
   private val specialRegionTypes = setOf(
-    MarkdownElementType.platformType(MdxElementTypes.JSX_BLOCK),
+    MarkdownElementType.platformType(MdxElementTypes.MDX_BLOCK),
     MarkdownElementType.platformType(MdxElementTypes.MDX_ESM_BLOCK),
     MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_OPENING_ELEMENT),
     MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_CLOSING_ELEMENT),
     MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_SELF_CLOSING_ELEMENT),
     MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_ATTRIBUTE),
-    MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_EXPRESSION),
+    MarkdownElementType.platformType(MdxElementTypes.MDX_EXPRESSION),
     MarkdownElementTypes.CODE_BLOCK,
     MarkdownElementTypes.CODE_FENCE,
     MarkdownElementTypes.CODE_SPAN,

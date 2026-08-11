@@ -9,7 +9,7 @@ import org.intellij.plugin.mdx.lang.MdxLanguage
 
 object MdxElementTypes {
   @JvmField
-  val JSX_BLOCK: IElementType = MarkdownElementType("JSX_BLOCK")
+  val MDX_BLOCK: IElementType = MarkdownElementType("JSX_BLOCK")
   @JvmField
   val MDX_ESM_BLOCK: IElementType = MarkdownElementType("MDX_ESM_BLOCK")
   @JvmField
@@ -25,6 +25,6 @@ object MdxElementTypes {
   @JvmField
   val MDX_JSX_ATTRIBUTE: IElementType = MarkdownElementType("MDX_JSX_ATTRIBUTE")
   @JvmField
-  val MDX_JSX_EXPRESSION: IElementType = MarkdownElementType("MDX_JSX_EXPRESSION")
+  val MDX_EXPRESSION: IElementType = MarkdownElementType("MDX_JSX_EXPRESSION")
   val MDX_FILE_NODE_TYPE = IStubFileElementType<PsiFileStub<PsiFile>>("MDX", MdxLanguage)
 }

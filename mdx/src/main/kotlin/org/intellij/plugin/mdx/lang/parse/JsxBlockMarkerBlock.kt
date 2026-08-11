@@ -106,7 +106,7 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   }
 
   override fun getDefaultNodeType(): IElementType {
-    return MdxElementTypes.JSX_BLOCK
+    return MdxElementTypes.MDX_BLOCK
   }
 
   private fun scheduleClose(offset: Int) {
@@ -163,7 +163,7 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
       MdxBlockKind.ESM -> {
         val block = MdxJsxScanner.scanEsmBlock(source, blockStartOffset, currentEndOffset)
         if (block == null || !block.balanced) {
-          listOf(SequentialParser.Node(blockStartOffset..currentEndOffset, MdxTokenTypes.JSX_BLOCK_CONTENT))
+          listOf(SequentialParser.Node(blockStartOffset..currentEndOffset, MdxTokenTypes.EMBEDDED_JS_CONTENT))
         }
         else {
           MdxJsxScanner.createEsmNodes(block)
@@ -171,8 +171,8 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
       }
       MdxBlockKind.EXPRESSION -> {
         listOf(
-          SequentialParser.Node(blockStartOffset..currentEndOffset, MdxTokenTypes.JSX_BLOCK_CONTENT),
-          SequentialParser.Node(blockStartOffset..currentEndOffset, MdxElementTypes.MDX_JSX_EXPRESSION),
+          SequentialParser.Node(blockStartOffset..currentEndOffset, MdxTokenTypes.EMBEDDED_JS_CONTENT),
+          SequentialParser.Node(blockStartOffset..currentEndOffset, MdxElementTypes.MDX_EXPRESSION),
         )
       }
     }

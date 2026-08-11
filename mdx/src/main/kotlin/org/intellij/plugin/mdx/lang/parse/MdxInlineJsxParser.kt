@@ -39,7 +39,7 @@ internal class MdxInlineJsxParser : SequentialParser {
               for (expression in element.expressions) {
                 val expressionRange = toTokenRange(tokens, range, expression)
                 if (expressionRange != null && rootRange != null && expressionRange.isStrictlyInside(rootRange)) {
-                  result.withNode(SequentialParser.Node(expressionRange, MdxElementTypes.MDX_JSX_EXPRESSION))
+                  result.withNode(SequentialParser.Node(expressionRange, MdxElementTypes.MDX_EXPRESSION))
                 }
                 excludeTokens(tokens, range, expression, excludedTokenIndexes)
               }
@@ -50,7 +50,7 @@ internal class MdxInlineJsxParser : SequentialParser {
           '{' -> {
             val expressionEnd = MdxJsxScanner.scanExpression(text, offset, limit)
             if (expressionEnd != -1) {
-              addNode(result, tokens, range, offset..expressionEnd, MdxElementTypes.MDX_JSX_EXPRESSION)
+              addNode(result, tokens, range, offset..expressionEnd, MdxElementTypes.MDX_EXPRESSION)
               excludeTokens(tokens, range, offset..expressionEnd, excludedTokenIndexes)
               offset = expressionEnd
               continue

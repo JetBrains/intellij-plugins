@@ -193,7 +193,7 @@ text[0] == '<' → run FIND_START_REGEX against the line:
 ```
 
 After matching, `JsxBlockUtil.parseParenthesis()` scans the first line to seed the tag stack and
-emit initial `JSX_BLOCK_CONTENT` tokens.
+emit initial `EMBEDDED_JS_CONTENT` tokens.
 
 **2e. `JsxBlockMarkerBlock.doProcessToken()` — consuming the block body** (`lang/parse/JsxBlockMarkerBlock.kt`)
 
@@ -201,7 +201,7 @@ emit initial `JSX_BLOCK_CONTENT` tokens.
 - On each new line, calls `JsxBlockUtil.parseParenthesis()` which:
   - Finds all tag matches via `TAG_REGEX`
   - Pushes open tags onto `tagOrBracketStack`, pops on close tags
-  - Text between tags → `JSX_BLOCK_CONTENT` if inside a tag, `TEXT` if outside
+  - Text between tags → `EMBEDDED_JS_CONTENT` if inside a tag, `TEXT` if outside
 - Block ends when `endCheckingRegex` matches the previous line, OR 2+ blank lines with empty stack
 - **`allowsSubBlocks() = false`** — the Markdown parser does NOT recurse into this block
 
@@ -224,7 +224,7 @@ MdxFile
 └── MarkdownParagraph ("more text")
 ```
 
-Note: content inside the JSX block is NOT parsed as Markdown. The `JSX_BLOCK_CONTENT` tokens
+Note: content inside the JSX block is NOT parsed as Markdown. The `EMBEDDED_JS_CONTENT` tokens
 are opaque from the Markdown parser's perspective. This is the root cause of WEB-78468.
 
 ### Phase 3: JS/JSX PSI Tree (Template Data)
@@ -232,7 +232,7 @@ are opaque from the Markdown parser's perspective. This is the root cause of WEB
 **3a. `MdxTemplateDataElementType.collectTemplateModifications()`** (`lang/psi/MdxTemplateDataElementType.kt`)
 
 Runs the base lexer over the source. Tokens are classified:
-- `JSX_BLOCK_CONTENT` → kept as JS template data
+- `EMBEDDED_JS_CONTENT` → kept as JS template data
 - Any other token → `addOuterRange(range)` → replaced by `MdxOuterLanguagePatcher` with `"\n;"`
 
 Special handling for import/export: if the consumed block doesn't end with `;`, inserts one via
@@ -330,7 +330,7 @@ else                                         → NoneIndent
 ```
 
 `MdxBlock.getChildAttributes()`:
-- `JSX_BLOCK_CONTENT` children → `NormalIndent`
+- `EMBEDDED_JS_CONTENT` children → `NormalIndent`
 - other children → `NoneIndent`
 
 **5c. JS/JSX formatting — `MdxJsFormattingModelBuilder`** (`format/MdxJsFormattingModelBuilder.kt`)
@@ -364,7 +364,7 @@ Delegates indent tab/space settings for `.mdx` files to the JS/JSX code style se
 | | Official MDX | Our Implementation |
 |---|---|---|
 | **Goal** | Compile MDX → JavaScript module | IDE features (highlight, complete, navigate, format) |
-| **JSX nesting** | Fully recursive mdast (Markdown inside JSX = Markdown nodes) | Flat opaque `JSX_BLOCK_CONTENT`; `allowsSubBlocks=false` |
+| **JSX nesting** | Fully recursive mdast (Markdown inside JSX = Markdown nodes) | Flat opaque `EMBEDDED_JS_CONTENT`; `allowsSubBlocks=false` |
 | **Expression `{}`** | First-class; Acorn-validated | Not explicitly handled; treated as JS text in virtual file |
 | **Two parse trees** | No — one unified AST | Yes — Markdown PSI + JS PSI linked via template language |
 | **JS validation** | Acorn inside micromark extensions | ES6Parser on stitched virtual file |

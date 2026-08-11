@@ -160,7 +160,7 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
   // Element types whose embedded JavaScript must not be reformatted by the JS formatter: inline
   // JSX/expressions in Markdown text.
   private val ignoredForeignElementTypes = setOf(
-    MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_EXPRESSION),
+    MarkdownElementType.platformType(MdxElementTypes.MDX_EXPRESSION),
     MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_TEXT_ELEMENT),
   )
 
@@ -210,7 +210,7 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
     wrap: Wrap?,
     alignment: Alignment?,
   ) : TemplateLanguageBlock(node, wrap, alignment, blockFactory, settings, null) {
-    override fun getTemplateTextElementType(): IElementType = MarkdownElementType.platformType(MdxTokenTypes.JSX_BLOCK_CONTENT)
+    override fun getTemplateTextElementType(): IElementType = MarkdownElementType.platformType(MdxTokenTypes.EMBEDDED_JS_CONTENT)
 
     override fun getIndent(): Indent = Indent.getNoneIndent()
 
@@ -254,7 +254,7 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
                                                                                                             foreignChildren) {
 
     override fun getTemplateTextElementType(): IElementType {
-      return MarkdownElementType.platformType(MdxTokenTypes.JSX_BLOCK_CONTENT)
+      return MarkdownElementType.platformType(MdxTokenTypes.EMBEDDED_JS_CONTENT)
     }
 
     override fun getIndent(): Indent? {
