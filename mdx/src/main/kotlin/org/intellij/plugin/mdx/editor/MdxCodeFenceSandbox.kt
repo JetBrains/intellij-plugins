@@ -124,6 +124,41 @@ internal object MdxCodeFenceSandbox {
     return true
   }
 
+  /**
+   * Enter inside a fence [replay] couldn't sandbox — one whose info string names no language or a language
+   * with no injection support, and any caret on the fence's own opening line — by carrying the current
+   * line's indentation over itself. On the opening line that indentation is the fence's own, which is
+   * exactly what the first body line needs.
+   */
+  fun insertLineInsideOpaqueFence(editor: Editor): Boolean {
+    if (editor.caretModel.caretCount != 1) return false
+    val project = editor.project ?: return false
+    val document = editor.document
+    val caret = editor.caretModel.offset
+    val documentManager = PsiDocumentManager.getInstance(project)
+    documentManager.commitDocument(document)
+    val mdxFile = documentManager.getPsiFile(document) as? MdxFile ?: return false
+
+    val fence = MarkdownCodeFenceUtils.getCodeFence(mdxFile.findElementAt((caret - 1).coerceAtLeast(0)) ?: return false)
+                ?: return false
+    // past the closing backticks belongs to MdxEnterHandler.insertLineAfterFenceInFlow instead
+    if (caret <= fence.textRange.startOffset || caret >= fence.textRange.endOffset) return false
+
+    val line = document.getLineNumber(caret)
+    val lineEnd = document.getLineEndOffset(line)
+    val indent = " ".repeat(lineIndent(document, line))
+
+    // no re-commit here, unlike replay: an opaque fence body has no injected/foreign PSI to refresh
+    if (caret == lineEnd && lineEnd < document.textLength) {
+      document.insertString(lineEnd + 1, "$indent\n")
+    }
+    else {
+      document.insertString(caret, "\n$indent")
+    }
+    editor.caretModel.moveToOffset(caret + 1 + indent.length)
+    return true
+  }
+
   /** Minimum leading-space indentation across the non-blank lines of [content], or null if it has none. */
   private fun commonIndent(content: String): Int? =
     content.split('\n').filter { it.isNotBlank() }.minOfOrNull { line -> line.takeWhile { it == ' ' }.length }

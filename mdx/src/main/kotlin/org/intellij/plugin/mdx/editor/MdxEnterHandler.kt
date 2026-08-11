@@ -4,8 +4,10 @@ import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate.Result
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
@@ -18,12 +20,14 @@ import org.intellij.plugin.mdx.lang.parse.MdxElementTypes
 import org.intellij.plugin.mdx.lang.psi.MdxFile
 import org.intellij.plugins.markdown.injection.MarkdownCodeFenceUtils
 
-/**
- * Enter inside an MDX code fence, replayed in a sandbox of the fence language (see [MdxCodeFenceSandbox]).
- * Registered order="first" so it wins over the platform XML enter handler, which would otherwise expand
- * tags directly on the injected fragment.
- */
+/** Registered order="first": must win over the platform XML enter handler, which would otherwise expand tags directly on the injected fragment. */
 internal class MdxEnterHandler : EnterHandlerDelegate {
+  private val rules: List<(MdxEnterContext) -> Boolean> = listOf(
+    ::insertLineAfterFenceInFlow,
+    ::insertLineBetweenEmptyJsxTagsInEsmBlock,
+    ::insertLineSplittingJsxText,
+  )
+
   override fun preprocessEnter(file: PsiFile,
                                editor: Editor,
                                caretOffset: Ref<Int>,
@@ -31,74 +35,25 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
                                dataContext: DataContext,
                                originalHandler: EditorActionHandler?): Result {
     if (MdxCodeFenceSandbox.replay(editor, "EditorEnter")) return Result.Stop
-    if (insertLineInsideOpaqueFence(file, editor)) return Result.Stop
-    if (insertLineAfterFenceInFlow(file, editor)) return Result.Stop
-    if (insertLineBetweenEmptyJsxTagsInEsmBlock(file, editor)) return Result.Stop
-    if (insertLineSplittingJsxText(file, editor)) return Result.Stop
-    return Result.Continue
+    if (MdxCodeFenceSandbox.insertLineInsideOpaqueFence(editor)) return Result.Stop
+    val context = MdxEnterContext.resolve(file, editor) ?: return Result.Continue
+    return if (rules.any { it(context) }) Result.Stop else Result.Continue
   }
 
-  /**
-   * Handles Enter inside a fence the sandbox above could not replay — one whose info string names no language or
-   * a language with no injection support, and any caret on the fence's own opening line — by carrying the current
-   * line's indentation over itself. On the opening line that indentation is the fence's own, which is exactly what
-   * the first body line needs.
-   */
-  private fun insertLineInsideOpaqueFence(file: PsiFile, editor: Editor): Boolean {
-    if (editor.caretModel.caretCount != 1) return false
-    val mdxFile = file.viewProvider.allFiles.firstOrNull { it is MdxFile } ?: return false
+  /** Enter right after a fence closes inside a JSX flow element: the default XML formatter would over-indent it a level. */
+  private fun insertLineAfterFenceInFlow(context: MdxEnterContext): Boolean {
+    val document = context.document
+    val caret = context.caret
 
-    val document = editor.document
-    val caret = editor.caretModel.offset
-    PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
-
-    val fence = MarkdownCodeFenceUtils.getCodeFence(mdxFile.findElementAt((caret - 1).coerceAtLeast(0)) ?: return false)
+    val fence = MarkdownCodeFenceUtils.getCodeFence(context.mdxFile.findElementAt((caret - 1).coerceAtLeast(0)) ?: return false)
                 ?: return false
-    // Anywhere within the fence, including its opening line — Enter there opens the first body line and needs the
-    // same treatment. Past the closing backticks belongs to insertLineAfterFenceInFlow instead.
-    if (caret <= fence.textRange.startOffset || caret >= fence.textRange.endOffset) return false
-
-    val line = document.getLineNumber(caret)
-    val lineEnd = document.getLineEndOffset(line)
-    val indent = " ".repeat(leadingSpaces(document.charsSequence, document.getLineStartOffset(line)))
-
-    if (caret == lineEnd && lineEnd < document.textLength) {
-      document.insertString(lineEnd + 1, "$indent\n")
-    }
-    else {
-      document.insertString(caret, "\n$indent")
-    }
-    editor.caretModel.moveToOffset(caret + 1 + indent.length)
-    return true
-  }
-
-  /**
-   * Handles Enter right after a code fence nested in a JSX flow element: such a fence is projected as an
-   * OUTER block inside a real XmlTag, so the platform's default Enter routes through the XML formatter and
-   * indents the new line one level too deep. Inserting the newline here at the fence's own column stops
-   * that over-indenting default from running.
-   */
-  private fun insertLineAfterFenceInFlow(file: PsiFile, editor: Editor): Boolean {
-    if (editor.caretModel.caretCount != 1) return false
-    // [file] may be the MdxJS (JS) view; reach the MDX host root through the shared view provider.
-    val mdxFile = file.viewProvider.allFiles.firstOrNull { it is MdxFile } ?: return false
-
-    val document = editor.document
-    val caret = editor.caretModel.offset
-    PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
-
-    val fence = MarkdownCodeFenceUtils.getCodeFence(mdxFile.findElementAt((caret - 1).coerceAtLeast(0)) ?: return false)
-                ?: return false
-    if (caret < fence.textRange.endOffset) return false // caret still inside the fence body (sandbox handles it)
-    // The caret must be at the end of the fence's closing line (only trailing spaces after the closer).
+    if (caret < fence.textRange.endOffset) return false // still inside the fence body (sandbox handles it)
     if (document.charsSequence.subSequence(fence.textRange.endOffset, caret).any { it != ' ' && it != '\t' }) return false
     if (!isInsideFlowElement(fence)) return false // top-level fences already indent correctly
 
     val fenceLineStart = document.getLineStartOffset(document.getLineNumber(fence.textRange.startOffset))
     val indent = " ".repeat(leadingSpaces(document.charsSequence, fenceLineStart))
-    document.insertString(caret, "\n$indent")
-    PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
-    editor.caretModel.moveToOffset(caret + 1 + indent.length)
+    context.insertAndMoveCaret("\n$indent", 1 + indent.length)
     return true
   }
 
@@ -112,32 +67,20 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
     return false
   }
 
-  /**
-   * Handles Enter between an empty JSX tag pair (`<div><caret></div>`) nested inside an ESM statement's
-   * function/expression body: MdxFormattingModelBuilder deliberately treats the whole MDX_ESM_BLOCK as one
-   * opaque leaf (to leave import/export syntax untouched), so it has no structural indent info for the
-   * nested tags and the platform's default Enter handling drops the closing tag to column 0 instead of
-   * aligning it with the opening tag's line.
-   */
-  private fun insertLineBetweenEmptyJsxTagsInEsmBlock(file: PsiFile, editor: Editor): Boolean {
-    if (editor.caretModel.caretCount != 1) return false
-    val document = editor.document
-    val caret = editor.caretModel.offset
+  /** `<div><caret></div>` inside an ESM block: MDX_ESM_BLOCK is an opaque leaf, so the default handling drops the closing tag to column 0. */
+  private fun insertLineBetweenEmptyJsxTagsInEsmBlock(context: MdxEnterContext): Boolean {
+    val document = context.document
+    val caret = context.caret
     if (caret == 0 || document.charsSequence[caret - 1] != '>') return false
 
-    val mdxFile = file.viewProvider.allFiles.firstOrNull { it is MdxFile } ?: return false
-    PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
-
-    val jsFile = file.viewProvider.getPsi(MdxJSLanguage.INSTANCE) ?: return false
+    val jsFile = context.jsFile ?: return false
     val tag = emptyJsxTagEndingAt(jsFile, caret) ?: return false
-    if (!isInsideEsmBlock(mdxFile, tag.textRange.startOffset)) return false
+    if (!isInsideEsmBlock(context.mdxFile, tag.textRange.startOffset)) return false
 
     val lineStart = document.getLineStartOffset(document.getLineNumber(caret))
     val baseIndent = " ".repeat(leadingSpaces(document.charsSequence, lineStart))
     val childIndent = baseIndent + " ".repeat(CodeStyle.getIndentSize(jsFile))
-    document.insertString(caret, "\n$childIndent\n$baseIndent")
-    PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
-    editor.caretModel.moveToOffset(caret + 1 + childIndent.length)
+    context.insertAndMoveCaret("\n$childIndent\n$baseIndent", 1 + childIndent.length)
     return true
   }
 
@@ -148,9 +91,7 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
     return if (value.isEmpty && value.startOffset == offset) tag else null
   }
 
-  // The offset sits inside embedded JS/JSX content, which PsiFile.findElementAt would resolve straight
-  // into the foreign JS tree (the host's OUTER_ELEMENT_TYPE delegation) instead of the host AST — so this
-  // walks the raw host ASTNode tree directly to see whether an MDX_ESM_BLOCK actually covers the offset.
+  // walks the raw host AST, not PSI: PsiFile.findElementAt here would resolve straight into the foreign JS tree
   private fun isInsideEsmBlock(mdxFile: PsiFile, offset: Int): Boolean {
     val esmBlockType = MdxElementTypes.MDX_ESM_BLOCK
     var node = mdxFile.node?.findLeafElementAt(offset)
@@ -161,31 +102,18 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
     return false
   }
 
-  /**
-   * Handles Enter splitting an existing run of JSX text (e.g. `<div>ab<caret>cd</div>`): the platform's
-   * default Enter routes the split through the XML/JS formatter's adjustLineIndent, which indents the moved
-   * half one level too deep once any other reformat has already run earlier in the session — a stateful bug
-   * in the platform's generic template-language indent-resolution machinery (MdxBlock never contributes an
-   * indent of its own for this content; it defers entirely to the foreign XmlTagBlock). Inserting the line
-   * here, copying the split line's own indentation, sidesteps that path entirely. WEB-78468.
-   */
-  private fun insertLineSplittingJsxText(file: PsiFile, editor: Editor): Boolean {
-    if (editor.caretModel.caretCount != 1) return false
-    val document = editor.document
-    val caret = editor.caretModel.offset
+  /** Enter splitting a run of JSX text (`<div>ab<caret>cd</div>`): the default XML/JS formatter over-indents it a level once any reformat has already run earlier in the session (WEB-78468) — inserting the line directly sidesteps that. */
+  private fun insertLineSplittingJsxText(context: MdxEnterContext): Boolean {
+    val document = context.document
+    val caret = context.caret
 
-    val mdxFile = file.viewProvider.allFiles.firstOrNull { it is MdxFile } ?: return false
-    PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
-
-    val jsFile = file.viewProvider.getPsi(MdxJSLanguage.INSTANCE) ?: return false
+    val jsFile = context.jsFile ?: return false
     val xmlText = PsiTreeUtil.getParentOfType(jsFile.findElementAt(caret - 1), XmlText::class.java) ?: return false
     if (caret <= xmlText.textRange.startOffset || caret >= xmlText.textRange.endOffset) return false
 
     val lineStart = document.getLineStartOffset(document.getLineNumber(caret))
     val indent = " ".repeat(leadingSpaces(document.charsSequence, lineStart))
-    document.insertString(caret, "\n$indent")
-    PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
-    editor.caretModel.moveToOffset(caret + 1 + indent.length)
+    context.insertAndMoveCaret("\n$indent", 1 + indent.length)
     return true
   }
 
@@ -194,4 +122,30 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
     while (offset < text.length && text[offset] == ' ') offset++
     return offset - lineStart
   }
+}
+
+private class MdxEnterContext private constructor(
+  val editor: Editor,
+  val document: Document,
+  val mdxFile: MdxFile,
+  val caret: Int,
+) {
+  val project: Project get() = mdxFile.project
+  val jsFile: PsiFile? by lazy { mdxFile.viewProvider.getPsi(MdxJSLanguage.INSTANCE) }
+
+  companion object {
+    fun resolve(file: PsiFile, editor: Editor): MdxEnterContext? {
+      if (editor.caretModel.caretCount != 1) return null
+      val mdxFile = file.viewProvider.allFiles.firstOrNull { it is MdxFile } as? MdxFile ?: return null
+      val document = editor.document
+      PsiDocumentManager.getInstance(mdxFile.project).commitDocument(document)
+      return MdxEnterContext(editor, document, mdxFile, editor.caretModel.offset)
+    }
+  }
+}
+
+private fun MdxEnterContext.insertAndMoveCaret(text: String, caretOffset: Int, at: Int = caret) {
+  document.insertString(at, text)
+  PsiDocumentManager.getInstance(project).commitDocument(document)
+  editor.caretModel.moveToOffset(at + caretOffset)
 }
