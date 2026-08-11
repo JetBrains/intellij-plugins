@@ -6,6 +6,11 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findPsiFile
+import com.intellij.util.gist.GistManager
+import com.intellij.util.gist.VirtualFileGist
+import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.IOUtil
+import kotlinx.serialization.json.Json
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.toString
@@ -16,22 +21,42 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.V
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.VueEmbeddedCode.Companion.SCRIPT_ID
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.getMappingsForCode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.useIR
+import java.io.DataInput
+import java.io.DataOutput
+
+private const val TRANSPILED_FILE_GIST_VERSION: Int = 1
 
 @Service(Service.Level.APP)
 class VueTranspiledFileBuilder {
   private val plugin: VueLanguagePlugin =
     VueTsxPlugin(VueCompilerOptions())
 
+  private val transpiledFileGist: VirtualFileGist<TranspiledFile> =
+    GistManager.getInstance().newVirtualFileGist(
+      "vue-transpiled-file",
+      TRANSPILED_FILE_GIST_VERSION,
+      TranspiledFileExternalizer,
+      ::getTranspiledFileInternal,
+    )
+
   fun getTranspiledFile(
     project: Project,
     file: VirtualFile,
+  ): TranspiledFile? =
+    transpiledFileGist.getFileData(project, file)
+
+  fun getTranspiledFileInternal(
+    project: Project?,
+    file: VirtualFile,
   ): TranspiledFile? {
+    project ?: return null
+
     return file.findPsiFile(project)
       ?.let { it as VueFile }
-      ?.let { getTranspiledFile(it) }
+      ?.let { getTranspiledFileInternal(it) }
   }
 
-  private fun getTranspiledFile(
+  private fun getTranspiledFileInternal(
     file: VueFile,
   ): TranspiledFile {
     val code = VueEmbeddedCode(
@@ -55,6 +80,21 @@ class VueTranspiledFileBuilder {
     val generatedCode: String,
     val mappings: List<VueMapping>,
   )
+
+  private object TranspiledFileExternalizer :
+    DataExternalizer<TranspiledFile> {
+
+    override fun save(out: DataOutput, value: TranspiledFile) {
+      IOUtil.writeUTF(out, value.generatedCode)
+      IOUtil.writeUTF(out, Json.encodeToString(value.mappings))
+    }
+
+    override fun read(`in`: DataInput): TranspiledFile =
+      TranspiledFile(
+        generatedCode = IOUtil.readUTF(`in`),
+        mappings = Json.decodeFromString(IOUtil.readUTF(`in`)),
+      )
+  }
 
   companion object {
     fun getInstance(): VueTranspiledFileBuilder = service()
