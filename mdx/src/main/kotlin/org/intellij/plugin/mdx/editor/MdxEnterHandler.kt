@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
@@ -108,13 +109,22 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
     val caret = context.caret
 
     val jsFile = context.jsFile ?: return false
-    val xmlText = PsiTreeUtil.getParentOfType(jsFile.findElementAt(caret - 1), XmlText::class.java) ?: return false
-    if (caret <= xmlText.textRange.startOffset || caret >= xmlText.textRange.endOffset) return false
+    val before = jsFile.findElementAt(caret - 1) ?: return false
+    val after = jsFile.findElementAt(caret) ?: return false
+    val owner = jsxTextRunOwner(before) ?: return false
+    if (jsxTextRunOwner(after) != owner) return false
 
     val lineStart = document.getLineStartOffset(document.getLineNumber(caret))
     val indent = " ".repeat(leadingSpaces(document.charsSequence, lineStart))
     context.insertAndMoveCaret("\n$indent", 1 + indent.length)
     return true
+  }
+
+  // Text runs split into separate XmlText siblings around embedded whitespace, with the whitespace itself a
+  // standalone sibling belonging to neither — so caret needs matching owners on both sides, not one XmlText's interior.
+  private fun jsxTextRunOwner(element: PsiElement): PsiElement? {
+    PsiTreeUtil.getParentOfType(element, XmlText::class.java)?.let { return it.parent }
+    return (element as? PsiWhiteSpace)?.parent
   }
 
   private fun leadingSpaces(text: CharSequence, lineStart: Int): Int {

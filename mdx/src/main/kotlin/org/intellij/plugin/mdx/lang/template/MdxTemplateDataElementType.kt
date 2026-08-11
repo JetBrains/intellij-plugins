@@ -257,8 +257,7 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
   }
 
   private fun BlockedRange.allowsCandidate(candidate: IntRange, sourceCode: CharSequence): Boolean {
-    if (kind != BlockedRangeKind.INDENTED_CODE) return false
-    return firstNonWhitespaceOffset(sourceCode, range.first, range.last) == candidate.first
+    return kind == BlockedRangeKind.INDENTED_CODE && firstNonWhitespaceOffset(sourceCode, range.first, range.last) == candidate.first
   }
 
   private fun firstNonWhitespaceOffset(text: CharSequence, start: Int, end: Int): Int {

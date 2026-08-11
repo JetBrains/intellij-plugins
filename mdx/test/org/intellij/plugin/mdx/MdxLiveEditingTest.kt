@@ -290,4 +290,82 @@ class MdxLiveEditingTest : MdxTestBase() {
   @Test
   fun testAutoCloseBacktickInsideJsxText() = checkTyping('`')
 
+  // --- Enter auto-indent inside JSX flow elements and code fences (MdxEnterHandler) -------------
+
+  /**
+   * Pressing Enter between braces inside an indented code fence expands the block: a body line one indent
+   * step deeper than the opening line, then the closer on its own line (MdxEnterHandler). It must
+   * also not corrupt the incremental lexer: the fence body is indented to +4 under `<div>`, and the pre-fix
+   * MdxJsxScanner.skipCodeFence (≤3-space rule) failed to skip it on the re-lex triggered by the edit,
+   * scanning `{`/`}` as JSX and throwing "Intersecting parsed nodes". After the scanner fix the host stays
+   * well-formed. The caret lands in the injected TS fragment, so the host is read via the top-level file. WEB-78468.
+   */
+  @Test
+  fun testEnterBetweenBracesInCodeFenceInsideJsxDoesNotCorruptLexer() = checkTyping('\n')
+
+  /**
+   * Enter between a JSX element's tags inside an indented fence expands it like braces: a body line one step
+   * deeper, the closing tag on its own line at the fence base (MdxEnterHandler runs before a
+   * competing JS/XML delegate that would mis-indent it on the injected 0-based fragment).
+   */
+  @Test
+  fun testEnterBetweenJsxTagsInCodeFenceInsideJsxIsIndented() = checkTyping('\n')
+
+  /** As above for a component tag (`<Foo></Foo>`). */
+  @Test
+  fun testEnterBetweenComponentTagsInCodeFenceInsideJsxIsIndented() = checkTyping('\n')
+
+  /** Enter right after a lone opening tag (no matching closer) keeps the new line at the tag's own indent. */
+  @Test
+  fun testEnterAfterOpeningJsxTagInCodeFenceInsideJsxIsIndented() = checkTyping('\n')
+
+  /**
+   * Enter between an empty JSX tag pair nested inside an ESM statement's function/expression body (e.g.
+   * `export function f() { return <div></div> }`) indents the body line one step and keeps the closing tag
+   * at the statement's own indent: MdxFormattingModelBuilder deliberately treats the whole MDX_ESM_BLOCK as
+   * one opaque leaf (to leave import/export syntax untouched), so it has no structural indent info here and
+   * the platform's default Enter handling would otherwise drop the closing tag to column 0. WEB-78468.
+   */
+  @Test
+  fun testEnterBetweenJsxTagsInEsmBlockIsIndented() = checkTyping('\n')
+
+  /**
+   * Enter below a whitespace-only line of an indented fence must leave that line alone. The sandbox round trip
+   * used to dedent it to nothing and re-indent it back as an *empty* line, so writing the body back changed text
+   * above the caret; that host change spans whole CODE_FENCE_CONTENT lines and invalidates the shreds of the
+   * injected DocumentWindow the caret lives in, collapsing its length below the offset `EnterHandler` snapshotted
+   * before calling the delegate ("Wrong caret offset change by MdxEnterHandler"). Both fixtures hinge on
+   * lines that are *only* whitespace — keep them intact. WEB-78468.
+   */
+  @Test
+  fun testEnterBelowIndentedBlankLineInInjectedFenceKeepsInjectionValid() = checkTyping('\n')
+
+  /**
+   * As above, but the caret sits *on* a whitespace-only line indented less than the fence base. Re-indenting that
+   * line to the base on write-back replaced it whole, which desynced the injected document from its PSI
+   * ("After patch: doc: ... ---PSI: ...") — the same corruption, caught one step earlier. The line keeps its own
+   * whitespace; only the line Enter opens gets the fence base. WEB-78468.
+   */
+  @Test
+  fun testEnterOnUnderIndentedBlankLineInInjectedFenceKeepsInjectionValid() = checkTyping('\n')
+
+  /**
+   * Splitting an existing text line inside a JSX flow element's body with Enter must keep the moved half
+   * at the body's indent level, aligned with the sibling text line above it — not indent it one level
+   * deeper: the platform's default Enter routes the split through the XML/JS formatter, which over-indents
+   * once any other reformat has already run earlier in the session (MdxEnterHandler inserts the
+   * line itself to avoid that path entirely). WEB-78468.
+   */
+  @Test
+  fun testEnterSplittingTextInJsxFlowElementBodyKeepsSiblingIndent() = checkTyping('\n')
+
+  /**
+   * As [testEnterSplittingTextInJsxFlowElementBodyKeepsSiblingIndent], but the caret sits right after a space
+   * rather than directly between two non-space characters: the JS/JSX parser splits JSX text into separate
+   * `XmlText` siblings around embedded whitespace, so a caret right against that whitespace isn't strictly
+   * inside either sibling — a case the original guard missed entirely. WEB-78468.
+   */
+  @Test
+  fun testEnterAfterSpaceInJsxFlowElementBodyKeepsSiblingIndent() = checkTyping('\n')
+
 }
