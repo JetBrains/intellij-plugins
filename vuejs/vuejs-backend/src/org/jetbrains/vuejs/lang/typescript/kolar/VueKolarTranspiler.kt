@@ -52,7 +52,8 @@ private data class VueTranspiledFile(
     snapshot: KolarScriptSnapshot,
     ctx: KolarCodegenContext,
   ): KolarVirtualCode? {
-    val transpiledFile = VueTranspiledFileBuilder.getTranspiledFile(project, file)
+    val transpiledFile = VueTranspiledFileBuilder.getInstance()
+                           .getTranspiledFile(project, file)
                          ?: return null
 
     return KolarVirtualCode(

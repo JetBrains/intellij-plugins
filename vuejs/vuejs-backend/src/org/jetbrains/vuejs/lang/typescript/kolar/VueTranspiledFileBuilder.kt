@@ -1,6 +1,8 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar
 
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findPsiFile
@@ -15,7 +17,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.V
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.getMappingsForCode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.useIR
 
-object VueTranspiledFileBuilder {
+@Service(Service.Level.APP)
+class VueTranspiledFileBuilder {
   private val plugin: VueLanguagePlugin =
     VueTsxPlugin(VueCompilerOptions())
 
@@ -52,4 +55,8 @@ object VueTranspiledFileBuilder {
     val generatedCode: String,
     val mappings: List<VueMapping>,
   )
+
+  companion object {
+    fun getInstance(): VueTranspiledFileBuilder = service()
+  }
 }
