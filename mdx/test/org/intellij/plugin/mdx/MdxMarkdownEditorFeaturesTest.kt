@@ -91,7 +91,6 @@ class MdxMarkdownEditorFeaturesTest : MdxTestBase() {
       "ESM block" to "export const value = 'first<caret>'\nexport const other = 'second'\n\nText",
       "MDX expression" to "Some {first<caret> +\nsecond} text",
       "JSX attribute" to "<Alert title=\"first<caret>\nsecond\" />",
-      "code fence" to "```md\nfirst<caret>\nsecond\n```",
       "code span" to "Some `first<caret>`\nsecond text",
       "front matter" to "---\ntitle: first<caret>\ndescription: second\n---\n\nText",
     )

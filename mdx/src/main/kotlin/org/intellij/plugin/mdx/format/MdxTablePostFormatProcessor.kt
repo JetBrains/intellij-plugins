@@ -28,7 +28,7 @@ internal class MdxTablePostFormatProcessor : PostFormatProcessor {
       PsiTreeUtil.findChildrenOfType(source, MarkdownTable::class.java)
     }
     for (table in tables) {
-      processTable(table, document)
+      processTable(table, document, settings)
       PsiDocumentManager.getInstance(source.project).commitDocument(document)
     }
     return source
@@ -42,7 +42,7 @@ internal class MdxTablePostFormatProcessor : PostFormatProcessor {
     PsiDocumentManager.getInstance(source.project).commitDocument(document)
     for (table in PsiTreeUtil.findChildrenOfType(source, MarkdownTable::class.java)) {
       if (rangeToReformat.intersects(table.textRange)) {
-        processTable(table, document)
+        processTable(table, document, settings)
         PsiDocumentManager.getInstance(source.project).commitDocument(document)
       }
     }
@@ -53,9 +53,9 @@ internal class MdxTablePostFormatProcessor : PostFormatProcessor {
     return file is MdxFile && settings.getCustomSettings(MarkdownCustomCodeStyleSettings::class.java).FORMAT_TABLES
   }
 
-  private fun processTable(table: MarkdownTable, document: Document) {
+  private fun processTable(table: MarkdownTable, document: Document, settings: CodeStyleSettings) {
     val lineRange = getTableLineRange(table, document) ?: return
-    val formattedText = formatAsMarkdownTable(table, document, lineRange) ?: return
+    val formattedText = formatAsMarkdownTable(table, document, lineRange, settings) ?: return
     val rangeStart = document.getLineStartOffset(lineRange.startLine)
     val rangeEnd = document.getLineEndOffset(lineRange.endLine)
     document.replaceString(rangeStart, rangeEnd, formattedText)
@@ -75,7 +75,7 @@ internal class MdxTablePostFormatProcessor : PostFormatProcessor {
     return TableLineRange(startLine, endLine)
   }
 
-  private fun formatAsMarkdownTable(table: MarkdownTable, document: Document, range: TableLineRange): String? {
+  private fun formatAsMarkdownTable(table: MarkdownTable, document: Document, range: TableLineRange, settings: CodeStyleSettings): String? {
     val indent = getTableIndent(document, range)
     val text = (range.startLine..range.endLine).joinToString("\n") { line ->
       val lineStart = document.getLineStartOffset(line)
@@ -83,10 +83,11 @@ internal class MdxTablePostFormatProcessor : PostFormatProcessor {
       val lineText = document.charsSequence.subSequence(lineStart, lineEnd).toString()
       lineText.drop(getLineIndent(document, line).length)
     }
+    val tableStyle = settings.getCustomSettings(MarkdownCustomCodeStyleSettings::class.java).tableStyle
     val markdownFile = MarkdownPsiElementFactory.createFile(table.project, text)
     val markdownTable = PsiTreeUtil.findChildOfType(markdownFile, MarkdownTable::class.java) ?: return null
     val markdownDocument = markdownFile.viewProvider.document ?: return null
-    TableFormattingUtils.reformatAllColumns(markdownTable, markdownDocument, trimToMaxContent = true)
+    TableFormattingUtils.reformatAllColumns(markdownTable, markdownDocument, tableStyle, trimToMaxContent = true)
     return markdownDocument.text.removeSuffix("\n").lines().joinToString("\n") { "$indent$it" }
   }
 
