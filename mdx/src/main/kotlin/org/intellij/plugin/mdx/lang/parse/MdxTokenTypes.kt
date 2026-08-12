@@ -1,14 +1,13 @@
 package org.intellij.plugin.mdx.lang.parse
 
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.OuterLanguageElementType
-import org.intellij.markdown.IElementType
-import org.intellij.markdown.MarkdownElementType
 import org.intellij.plugin.mdx.lang.MdxLanguage
+import org.intellij.plugins.markdown.lang.MarkdownElementType
 
 object MdxTokenTypes {
   @JvmField
-  val EMBEDDED_JS_CONTENT: IElementType = MarkdownElementType("JSX_BLOCK_CONTENT", true)
+  val EMBEDDED_JS_CONTENT: IElementType = MarkdownElementType.platformType(MdxMarkdownLibTokenTypes.EMBEDDED_JS_CONTENT)
   @JvmField
-  val OUTER_ELEMENT_TYPE = OuterLanguageElementType("OUTER_BLOCK", MdxLanguage)
-
+  val OUTER_ELEMENT_TYPE: IElementType = OuterLanguageElementType("OUTER_BLOCK", MdxLanguage)
 }

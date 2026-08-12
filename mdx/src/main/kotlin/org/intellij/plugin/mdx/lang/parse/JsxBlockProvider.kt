@@ -39,7 +39,7 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
         if (expressionEnd != -1 && localText.subSequence(expressionEnd, localText.length).isBlank()) {
           ImmediateBlock(
             MdxMarkdownLibElementTypes.MDX_EXPRESSION,
-            listOf(SequentialParser.Node(absoluteStart..absoluteStart + expressionEnd, MdxTokenTypes.EMBEDDED_JS_CONTENT)),
+            listOf(SequentialParser.Node(absoluteStart..absoluteStart + expressionEnd, MdxMarkdownLibTokenTypes.EMBEDDED_JS_CONTENT)),
           )
         }
         else null

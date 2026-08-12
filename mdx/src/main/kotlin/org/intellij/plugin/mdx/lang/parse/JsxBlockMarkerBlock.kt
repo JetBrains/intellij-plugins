@@ -163,7 +163,7 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
       MdxBlockKind.ESM -> {
         val block = MdxJsxScanner.scanEsmBlock(source, blockStartOffset, currentEndOffset)
         if (block == null || !block.balanced) {
-          listOf(SequentialParser.Node(blockStartOffset..currentEndOffset, MdxTokenTypes.EMBEDDED_JS_CONTENT))
+          listOf(SequentialParser.Node(blockStartOffset..currentEndOffset, MdxMarkdownLibTokenTypes.EMBEDDED_JS_CONTENT))
         }
         else {
           MdxJsxScanner.createEsmNodes(block)
@@ -171,7 +171,7 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
       }
       MdxBlockKind.EXPRESSION -> {
         listOf(
-          SequentialParser.Node(blockStartOffset..currentEndOffset, MdxTokenTypes.EMBEDDED_JS_CONTENT),
+          SequentialParser.Node(blockStartOffset..currentEndOffset, MdxMarkdownLibTokenTypes.EMBEDDED_JS_CONTENT),
           SequentialParser.Node(blockStartOffset..currentEndOffset, MdxMarkdownLibElementTypes.MDX_EXPRESSION),
         )
       }

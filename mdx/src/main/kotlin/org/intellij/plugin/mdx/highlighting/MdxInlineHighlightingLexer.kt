@@ -4,12 +4,12 @@ import com.intellij.lexer.LexerBase
 import com.intellij.psi.tree.IElementType
 import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
 import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
-import org.intellij.plugins.markdown.lang.MarkdownElementType
+import org.intellij.plugin.mdx.lang.parse.MdxMarkdownLibTokenTypes
 import org.intellij.plugins.markdown.lang.lexer.MarkdownLexerAdapter
 
 /**
  * Re-lexes inline content like [MarkdownLexerAdapter] does, but collapses every balanced `{expression}`
- * span into one [MdxTokenTypes.EMBEDDED_JS_CONTENT] token, so the editor highlighter's JS/JSX layer covers
+ * span into one [MdxMarkdownLibTokenTypes.EMBEDDED_JS_CONTENT] token, so the editor highlighter's JS/JSX layer covers
  * it instead of flattening it into plain `MARKDOWN_TEXT`.
  */
 internal class MdxInlineHighlightingLexer : LexerBase() {
@@ -88,7 +88,7 @@ internal class MdxInlineHighlightingLexer : LexerBase() {
   override fun getBufferEnd(): Int = bufferEnd
 
   companion object {
-    private val JSX_BLOCK_CONTENT: IElementType = MarkdownElementType.platformType(MdxTokenTypes.EMBEDDED_JS_CONTENT)
+    private val JSX_BLOCK_CONTENT: IElementType = MdxTokenTypes.EMBEDDED_JS_CONTENT
 
     /** Upper bound for a single inline `{expression}` scan; keeps the re-lexer linear on pathological input. */
     private const val MAX_INLINE_EXPRESSION_SCAN = 2000

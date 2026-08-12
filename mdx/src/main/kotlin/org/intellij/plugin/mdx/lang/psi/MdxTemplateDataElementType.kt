@@ -5,28 +5,22 @@ import com.intellij.lexer.Lexer
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.templateLanguages.TemplateDataElementType
 import com.intellij.psi.templateLanguages.TemplateDataModifications
-import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.intellij.plugin.mdx.lang.MdxLanguage
 import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
 import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
-import org.intellij.plugins.markdown.lang.MarkdownElementType
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
 
 object MdxTemplateDataElementType : MdxTemplateDataElementTypeBase(),
                                     JSEmbeddedBlockElementType {
 
   override fun isModule(): Boolean = true
-
-  override fun getTemplateDataInsertionTokens(): TokenSet {
-    return TokenSet.forAllMatching(IElementType.TRUE)
-  }
 }
 
 
 open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLATE_JSX",
                                                                     MdxLanguage,
-                                                                    MarkdownElementType.platformType(MdxTokenTypes.EMBEDDED_JS_CONTENT),
+                                                                    MdxTokenTypes.EMBEDDED_JS_CONTENT,
                                                                     MdxTokenTypes.OUTER_ELEMENT_TYPE) {
   override fun collectTemplateModifications(sourceCode: CharSequence, baseLexer: Lexer): TemplateDataModifications {
     val modifications = TemplateDataModifications()
