@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.vcs.CheckoutProvider
+import com.intellij.openapi.vcs.VcsBundle
 import com.intellij.openapi.vcs.ui.VcsCloneComponent
 import com.intellij.openapi.vcs.ui.cloneDialog.VcsCloneDialogComponentStateListener
 
@@ -68,7 +69,7 @@ internal class PerforceCloneDialogComponent(
         .columns(COLUMNS_MEDIUM)
         .component
     }
-    row(PerforceBundle.message("checkout.directory.label")) {
+    row(VcsBundle.message("clone.dialog.directory.to.clone.label.text")) {
       directoryField = textFieldWithBrowseButton(
         FileChooserDescriptorFactory.createSingleFolderDescriptor()
           .withTitle(PerforceBundle.message("checkout.directory.chooser.title")),
