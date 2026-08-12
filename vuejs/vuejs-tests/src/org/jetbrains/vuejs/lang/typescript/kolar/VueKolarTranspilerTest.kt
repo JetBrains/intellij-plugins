@@ -27,7 +27,7 @@ class VueKolarTranspilerTest :
 
   fun doTest() {
     doConfiguredTest(
-      configureFile = false,
+      configureFileName = "src/App.vue",
     ) {
       val actualDir = transpile()
       val expectedDir = getExpectedTranspiledDataDir()
