@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFileFactory
@@ -33,8 +34,14 @@ internal object MdxCodeFenceSandbox {
    * If the caret (and any selection) sits inside an MDX code fence body, runs [actionId] against a sandbox of
    * the fence language and writes the result back, returning true. Returns false if the action does not apply
    * (no fence, multiple carets, selection crossing the fence boundary, ...) so the caller can fall back.
+   *
+   * A fence whose info string names no language, or a language nothing can inject into, still sandboxes as
+   * plain text unless [allowPlainTextFallback] is false: plain text has no formatter of its own, so this only
+   * ever preserves the body's existing indentation rather than reformatting it. [MdxCodeFenceTabHandler] opts
+   * out, since Tab's indent step is sized from the sandbox file's own code-style bucket (plain text), which can
+   * differ from the host's.
    */
-  fun replay(editor: Editor, actionId: String): Boolean {
+  fun replay(editor: Editor, actionId: String, allowPlainTextFallback: Boolean = true): Boolean {
     val project = editor.project ?: return false
     if (!editor.document.isWritable || editor.isViewer || editor.caretModel.caretCount != 1) return false
 
@@ -52,26 +59,38 @@ internal object MdxCodeFenceSandbox {
 
     val element = hostFile.findElementAt((caret - 1).coerceAtLeast(0)) ?: return false
     val fence = MarkdownCodeFenceUtils.getCodeFence(element) ?: return false
-    val languageAndExtension = CodeFenceLanguageGuesser.guessLanguageWithExtensionForInjection(fence.fenceLanguage ?: return false)
-                               ?: return false
+    val languageAndExtension = fence.fenceLanguage?.let(CodeFenceLanguageGuesser::guessLanguageWithExtensionForInjection)
+                               ?: if (allowPlainTextFallback) PlainTextLanguage.INSTANCE to "text" else return false
 
     val startLine = hostDocument.getLineNumber(fence.textRange.startOffset)
     val endLine = hostDocument.getLineNumber((fence.textRange.endOffset - 1).coerceAtLeast(fence.textRange.startOffset))
-    if (endLine <= startLine) return false
-    val contentStart = hostDocument.getLineStartOffset(startLine + 1)
-    val contentEnd = hostDocument.getLineEndOffset(endLine - 1)
-    if (caret !in contentStart..contentEnd || selectionStart < contentStart || selectionEnd > contentEnd) return false
 
-    val content = hostDocument.getText(TextRange(contentStart, contentEnd))
+    val hasBody = endLine > startLine + 1
+
+    val contentStart: Int
+    val contentEnd: Int
+    if (hasBody) {
+      contentStart = hostDocument.getLineStartOffset(startLine + 1)
+      contentEnd = hostDocument.getLineEndOffset(endLine - 1)
+      if (caret !in contentStart..contentEnd || selectionStart < contentStart || selectionEnd > contentEnd) return false
+    }
+    else {
+      // past the closing backticks, or before the fence starts, belongs to whatever runs after this delegate
+      if (caret <= fence.textRange.startOffset || caret >= fence.textRange.endOffset) return false
+      if (selectionStart != caret || selectionEnd != caret) return false // nothing to sandbox a real selection into
+      contentStart = caret
+      contentEnd = caret
+    }
+
+    val content = if (hasBody) hostDocument.getText(TextRange(contentStart, contentEnd)) else ""
     // A body with no code in it yet — an empty fence, or just the blank line the caret sits on — carries no
-    // indentation to infer the base from, so it comes from the fence's own opening line instead. Otherwise the
-    // base would be zero, shift() would be a no-op both ways, and the replayed action's output (indented from
-    // column zero, as the sandbox file is) would be written straight back at column zero.
+    // indentation to infer the base from, so it comes from the fence's own opening line instead (or, with no
+    // body at all, the caret's own current line — on the opening line that's the same line). Otherwise the base
+    // would be zero, shift() would be a no-op both ways, and the replayed action's output (indented from column
+    // zero, as the sandbox file is) would be written straight back at column zero.
     val bodyIndent = commonIndent(content)
-    val base = bodyIndent ?: lineIndent(hostDocument, startLine)
+    val base = bodyIndent ?: lineIndent(hostDocument, if (hasBody) startLine else hostDocument.getLineNumber(caret))
     val offsets = intArrayOf(caret - contentStart, selectionStart - contentStart, selectionEnd - contentStart)
-    // In such a body every line is blank and its whitespace *is* the fence indentation, so dedent those lines as
-    // well. Left in place it would feed the sandbox indenter, which would then indent on top of the base.
     val (dedented, dedentedOffsets) = shift(content, offsets, -base, dedentBlankLines = bodyIndent == null)
 
     val extension = languageAndExtension.second ?: languageAndExtension.first.associatedFileType?.defaultExtension ?: "txt"
@@ -121,41 +140,6 @@ internal object MdxCodeFenceSandbox {
     finally {
       EditorFactory.getInstance().releaseEditor(sandboxEditor)
     }
-    return true
-  }
-
-  /**
-   * Enter inside a fence [replay] couldn't sandbox — one whose info string names no language or a language
-   * with no injection support, and any caret on the fence's own opening line — by carrying the current
-   * line's indentation over itself. On the opening line that indentation is the fence's own, which is
-   * exactly what the first body line needs.
-   */
-  fun insertLineInsideOpaqueFence(editor: Editor): Boolean {
-    if (editor.caretModel.caretCount != 1) return false
-    val project = editor.project ?: return false
-    val document = editor.document
-    val caret = editor.caretModel.offset
-    val documentManager = PsiDocumentManager.getInstance(project)
-    documentManager.commitDocument(document)
-    val mdxFile = documentManager.getPsiFile(document) as? MdxFile ?: return false
-
-    val fence = MarkdownCodeFenceUtils.getCodeFence(mdxFile.findElementAt((caret - 1).coerceAtLeast(0)) ?: return false)
-                ?: return false
-    // past the closing backticks belongs to MdxEnterHandler.insertLineAfterFenceInFlow instead
-    if (caret <= fence.textRange.startOffset || caret >= fence.textRange.endOffset) return false
-
-    val line = document.getLineNumber(caret)
-    val lineEnd = document.getLineEndOffset(line)
-    val indent = " ".repeat(lineIndent(document, line))
-
-    // no re-commit here, unlike replay: an opaque fence body has no injected/foreign PSI to refresh
-    if (caret == lineEnd && lineEnd < document.textLength) {
-      document.insertString(lineEnd + 1, "$indent\n")
-    }
-    else {
-      document.insertString(caret, "\n$indent")
-    }
-    editor.caretModel.moveToOffset(caret + 1 + indent.length)
     return true
   }
 

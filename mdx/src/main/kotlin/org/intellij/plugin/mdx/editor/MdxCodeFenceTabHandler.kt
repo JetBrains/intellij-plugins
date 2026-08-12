@@ -15,7 +15,7 @@ internal class MdxCodeFenceTabHandler(private val baseHandler: EditorActionHandl
     baseHandler?.isEnabled(editor, caret, dataContext) == true
 
   override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext?) {
-    if (!MdxCodeFenceSandbox.replay(editor, "EditorTab")) {
+    if (!MdxCodeFenceSandbox.replay(editor, "EditorTab", allowPlainTextFallback = false)) {
       baseHandler?.execute(editor, caret, dataContext)
     }
   }

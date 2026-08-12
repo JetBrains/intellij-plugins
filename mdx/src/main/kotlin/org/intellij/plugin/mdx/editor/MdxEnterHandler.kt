@@ -36,7 +36,6 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
                                dataContext: DataContext,
                                originalHandler: EditorActionHandler?): Result {
     if (MdxCodeFenceSandbox.replay(editor, "EditorEnter")) return Result.Stop
-    if (MdxCodeFenceSandbox.insertLineInsideOpaqueFence(editor)) return Result.Stop
     val context = MdxEnterContext.resolve(file, editor) ?: return Result.Continue
     return if (rules.any { it(context) }) Result.Stop else Result.Continue
   }

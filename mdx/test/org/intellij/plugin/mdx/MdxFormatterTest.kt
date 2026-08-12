@@ -328,6 +328,16 @@ class MdxFormatterTest : MdxTestBase() {
   fun testPasteIntoEmptyIndentedCodeFenceIsIndentedToFenceBase() = doPasteTest("const a = 2;")
 
   /**
+   * Pasting into a fence with no language (nothing to inject, so no language formatter to reflow it) must still
+   * add the fence base to every pasted line, via the sandbox's plain-text fallback. Before that fallback
+   * existed, `adjustLineIndent` no-op'd for this fence body the same way it does for a real one, so only the
+   * first pasted line landed at the fence base and every line after it kept its own absolute column.
+   */
+  @Test
+  fun testPasteIntoOpaqueCodeFenceIsIndentedToFenceBase() = doPasteTest()
+
+
+  /**
    * A code fence whose body contains JSX (including a line-starting closing tag like `</Foo>`) must parse as
    * one fence and reformat without crashing, not have its `</Foo>` line mistaken for the flow element's own
    * closing tag.
