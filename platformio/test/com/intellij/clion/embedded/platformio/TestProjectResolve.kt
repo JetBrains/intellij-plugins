@@ -30,7 +30,7 @@ import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.cpp.external.system.model.ExternalModule
 import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.OCLanguageKind
-import com.jetbrains.cidr.lang.workspace.compiler.GCCCompilerKind
+import com.jetbrains.cidr.lang.workspace.compiler.OCCompilerId
 import org.jetbrains.annotations.NonNls
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -144,7 +144,7 @@ class TestProjectResolve {
     val languageConfig = projectNode.findExternalModule().data
       .resolveConfigurations.first()
       .languageConfigurations.first { it.languageKind == langKind }!!
-    assertEquals(GCCCompilerKind, languageConfig.compilerKind)
+    assertEquals(OCCompilerId.GCC, languageConfig.compilerKind?.id)
     val switches = languageConfig.compilerSwitches?.toSet() ?: emptySet()
     val missingSwitches = mandatorySwitches - switches
     assertTrue(missingSwitches.isEmpty()) { "Missing switches for ${langKind.displayName}: ${missingSwitches.joinToString()}" }
