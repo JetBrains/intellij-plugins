@@ -78,6 +78,12 @@ class Angular2CopyPasteTest : Angular2TestCase("copyPaste") {
     doTest("html", "html")
   }
 
+  @Test
+  fun testPasteAngularSymbolIntoStringDoesNotAddImport() {
+    // WEB-77726
+    doTestFiles("source.component.ts", "eslint.config.mjs")
+  }
+
   private fun doSameFileTest(ext: String, pasteSignature: String) {
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_13_3_5,
                      Angular2TestModule.ANGULAR_COMMON_13_3_5,
@@ -89,11 +95,15 @@ class Angular2CopyPasteTest : Angular2TestCase("copyPaste") {
   }
 
   private fun doTest(srcExt: String, destExt: String) {
+    doTestFiles("source.component.$srcExt", "destination.component.$destExt")
+  }
+
+  private fun doTestFiles(sourceFile: String, destinationFile: String) {
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_13_3_5,
                      Angular2TestModule.ANGULAR_COMMON_13_3_5,
                      Angular2TestModule.ANGULAR_CDK_14_2_0,
                      configureFile = false, dir = true, checkResult = true) {
-      configureAndCopyPaste("source.component.$srcExt", "destination.component.$destExt")
+      configureAndCopyPaste(sourceFile, destinationFile)
     }
   }
 
