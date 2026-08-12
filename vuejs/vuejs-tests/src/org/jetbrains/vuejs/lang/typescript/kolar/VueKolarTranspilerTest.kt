@@ -1,8 +1,8 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar
 
-import com.intellij.lang.typescript.kolar.KolarScriptSnapshot
-import com.intellij.lang.typescript.kolar.KolarTranspiledFile
+import com.intellij.lang.typescript.kolar.KolarTranspilerService
+import com.intellij.openapi.components.service
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -11,6 +11,7 @@ import com.intellij.testFramework.PlatformTestUtil.assertDirectoriesEqual
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
+import org.jetbrains.vuejs.lang.html.isVueFile
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -42,15 +43,15 @@ class VueKolarTranspilerTest :
   }
 
   private fun CodeInsightTestFixture.transpile(): VirtualFile {
-    val transpiler = VueKolarTranspiler(project)
-    val fileMap = getSourceFileMap(transpiler::isEnabled)
+    val service = project.service<KolarTranspilerService>()
+    val fileMap = getSourceFileMap { file -> service.isAcceptable(file) && file.isVueFile }
 
     assert(fileMap.isNotEmpty())
 
     for ((path, file) in fileMap) {
       addFileToProject(
         "$__TRANSPILE__/$path.ts",
-        code(transpiler, file),
+        code(service, file),
       )
     }
 
@@ -83,12 +84,13 @@ class VueKolarTranspilerTest :
   }
 
   private fun code(
-    transpiler: VueKolarTranspiler,
+    service: KolarTranspilerService,
     sourceFile: VirtualFile,
   ): String {
-    val transpiledFile = transpiler.getFileInfo(sourceFile) as KolarTranspiledFile
-    val code = transpiledFile.createVirtualCode(KolarScriptSnapshot.create(""), EmptyKolarCodegenContext)!!
-    return code.snapshot.text
+    val generatedScript = service.scripts[sourceFile]?.generated
+                          ?: error("No generated script found for $sourceFile")
+
+    return generatedScript.root.snapshot.text
   }
 
   @Test
