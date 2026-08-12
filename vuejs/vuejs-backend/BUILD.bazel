@@ -1,6 +1,15 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
+# Checkout directories that plugin layouts copy into a distribution verbatim (`withResource*`). They are
+# resolved against the module content root and exist in no jar, so a dev assembly that materializes its own
+# project tree has to declare them. Consumed through `ULTIMATE_EXTRA_PROJECT_FILES`.
+filegroup(
+    name = "dev_dist_resources",
+    srcs = glob(["gen-resources/vue-service/**"]) + glob(["vue-language-tools/**"]),
+    visibility = ["//visibility:public"],
+)
+
 ### auto-generated section `build intellij.vuejs.backend` start
 create_kotlinc_options(
     name = "custom_backend",
@@ -209,12 +218,3 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.vuejs.backend` end
-
-# Checkout directories that plugin layouts copy into a distribution verbatim (`withResource*`). They are
-# resolved against the module content root and exist in no jar, so a dev assembly that materializes its own
-# project tree has to declare them. Consumed through `ULTIMATE_EXTRA_PROJECT_FILES`.
-filegroup(
-    name = "dev_dist_resources",
-    srcs = glob(["gen-resources/vue-service/**"]) + glob(["vue-language-tools/**"]),
-    visibility = ["//visibility:public"],
-)

@@ -1,6 +1,15 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+# Checkout directories that plugin layouts copy into a distribution verbatim (`withResource*`). They are
+# resolved against the module content root and exist in no jar, so a dev assembly that materializes its own
+# project tree has to declare them. Consumed through `ULTIMATE_EXTRA_PROJECT_FILES`.
+filegroup(
+    name = "dev_dist_resources",
+    srcs = glob(["plugin-resources/**"]),
+    visibility = ["//visibility:public"],
+)
+
 ### auto-generated section `build intellij.javascript.eslint` start
 jvm_library(
     name = "eslint",
@@ -296,12 +305,3 @@ jps_test(
     runtime_deps = [":eslint-tests_test_lib"],
 )
 ### auto-generated section `test intellij.javascript.eslint.tests` end
-
-# Checkout directories that plugin layouts copy into a distribution verbatim (`withResource*`). They are
-# resolved against the module content root and exist in no jar, so a dev assembly that materializes its own
-# project tree has to declare them. Consumed through `ULTIMATE_EXTRA_PROJECT_FILES`.
-filegroup(
-    name = "dev_dist_resources",
-    srcs = glob(["plugin-resources/**"]),
-    visibility = ["//visibility:public"],
-)
