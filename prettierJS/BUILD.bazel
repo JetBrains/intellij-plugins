@@ -274,3 +274,12 @@ jps_test(
     runtime_deps = [":prettierJS-tests_test_lib"],
 )
 ### auto-generated section `test intellij.prettierJS.tests` end
+
+# Checkout directories that plugin layouts copy into a distribution verbatim (`withResource*`). They are
+# resolved against the module content root and exist in no jar, so a dev assembly that materializes its own
+# project tree has to declare them. Consumed through `ULTIMATE_EXTRA_PROJECT_FILES`.
+filegroup(
+    name = "dev_dist_resources",
+    srcs = glob(["gen/prettierLanguageService/**"]),
+    visibility = ["//visibility:public"],
+)
