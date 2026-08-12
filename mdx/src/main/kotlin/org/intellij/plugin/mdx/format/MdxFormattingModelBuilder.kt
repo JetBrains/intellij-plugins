@@ -30,7 +30,6 @@ import com.intellij.psi.xml.XmlTag
 import org.intellij.plugin.mdx.lang.parse.MdxElementTypes
 import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
 import org.intellij.plugins.markdown.injection.MarkdownCodeFenceUtils
-import org.intellij.plugins.markdown.lang.MarkdownElementType
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
@@ -60,8 +59,8 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
 
     var ancestor = node.treeParent
     while (ancestor != null) {
-      if (ancestor.elementType === MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_FLOW_ELEMENT) ||
-          ancestor.elementType === MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_TEXT_ELEMENT)) {
+      if (ancestor.elementType === MdxElementTypes.MDX_JSX_FLOW_ELEMENT ||
+          ancestor.elementType === MdxElementTypes.MDX_JSX_TEXT_ELEMENT) {
         return false
       }
       ancestor = ancestor.treeParent
@@ -142,7 +141,7 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
       return false
     }
 
-    val jsxElementType = MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_TEXT_ELEMENT)
+    val jsxElementType = MdxElementTypes.MDX_JSX_TEXT_ELEMENT
     var child = node.firstChildNode
     var jsxChild: ASTNode? = null
     while (child != null) {
@@ -160,11 +159,11 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
   // Element types whose embedded JavaScript must not be reformatted by the JS formatter: inline
   // JSX/expressions in Markdown text.
   private val ignoredForeignElementTypes = setOf(
-    MarkdownElementType.platformType(MdxElementTypes.MDX_EXPRESSION),
-    MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_TEXT_ELEMENT),
+    MdxElementTypes.MDX_EXPRESSION,
+    MdxElementTypes.MDX_JSX_TEXT_ELEMENT,
   )
 
-  private val esmBlockElementType = MarkdownElementType.platformType(MdxElementTypes.MDX_ESM_BLOCK)
+  private val esmBlockElementType = MdxElementTypes.MDX_ESM_BLOCK
 
   /**
    * Single walk collecting every host-tree range whose embedded JavaScript must stay untouched by the JS
@@ -210,7 +209,7 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
     wrap: Wrap?,
     alignment: Alignment?,
   ) : TemplateLanguageBlock(node, wrap, alignment, blockFactory, settings, null) {
-    override fun getTemplateTextElementType(): IElementType = MarkdownElementType.platformType(MdxTokenTypes.EMBEDDED_JS_CONTENT)
+    override fun getTemplateTextElementType(): IElementType = MdxTokenTypes.EMBEDDED_JS_CONTENT
 
     override fun getIndent(): Indent = Indent.getNoneIndent()
 
@@ -254,7 +253,7 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
                                                                                                             foreignChildren) {
 
     override fun getTemplateTextElementType(): IElementType {
-      return MarkdownElementType.platformType(MdxTokenTypes.EMBEDDED_JS_CONTENT)
+      return MdxTokenTypes.EMBEDDED_JS_CONTENT
     }
 
     override fun getIndent(): Indent? {
@@ -262,7 +261,7 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
       // template block also indented, foreign-nested content would double-indent (e.g. <div><div><div>).
       // So the template layer contributes no indent of its own and defers to the foreign formatter.
       if (MarkdownCodeFenceUtils.isCodeFence(myNode)) {
-        val flowType = MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_FLOW_ELEMENT)
+        val flowType = MdxElementTypes.MDX_JSX_FLOW_ELEMENT
         var ancestor = myNode.treeParent
         while (ancestor != null) {
           if (ancestor.elementType === flowType) return Indent.getNormalIndent()
@@ -320,7 +319,7 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
     override fun getChildAttributes(newChildIndex: Int): ChildAttributes {
       // A new line inside a JSX flow element's body (e.g. Enter after a nested code fence) indents one level
       // under the opening tag; other blocks defer, preserving the caret line's existing indentation.
-      return if (myNode.elementType === MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_FLOW_ELEMENT)) {
+      return if (myNode.elementType === MdxElementTypes.MDX_JSX_FLOW_ELEMENT) {
         ChildAttributes(Indent.getNormalIndent(), null)
       }
       else {
@@ -352,7 +351,7 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
     // itself force its own line (matches real TSX, e.g. `<div><span>a</span></div>` stays on one line, but
     // `<div><span>a</span><div>b</div></div>` puts `<div>b</div>` and the closing `</div>` on their own lines).
     private fun shouldWrapBeforeClosingTag(parent: DataLanguageBlockWrapper? = getForeignBlockParent()): Boolean {
-      if (myNode.elementType !== MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_CLOSING_ELEMENT)) {
+      if (myNode.elementType !== MdxElementTypes.MDX_JSX_CLOSING_ELEMENT) {
         return false
       }
       val parentTag = parent?.node?.psi as? XmlTag ?: return false

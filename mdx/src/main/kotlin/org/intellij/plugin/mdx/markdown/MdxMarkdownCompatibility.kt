@@ -15,7 +15,6 @@ import org.intellij.plugin.mdx.lang.MdxLanguage
 import org.intellij.plugin.mdx.lang.parse.MdxElementTypes
 import org.intellij.plugin.mdx.lang.psi.MdxFile
 import org.intellij.plugins.markdown.lang.MarkdownCompatibilityChecker
-import org.intellij.plugins.markdown.lang.MarkdownElementType
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes
 import org.intellij.plugins.markdown.ui.actions.MarkdownActionPromoterExtension
 
@@ -52,13 +51,13 @@ class MdxMarkdownActionPromoterExtension : MarkdownActionPromoterExtension {
 
 object MdxMarkdown {
   private val specialRegionTypes = setOf(
-    MarkdownElementType.platformType(MdxElementTypes.MDX_BLOCK),
-    MarkdownElementType.platformType(MdxElementTypes.MDX_ESM_BLOCK),
-    MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_OPENING_ELEMENT),
-    MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_CLOSING_ELEMENT),
-    MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_SELF_CLOSING_ELEMENT),
-    MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_ATTRIBUTE),
-    MarkdownElementType.platformType(MdxElementTypes.MDX_EXPRESSION),
+    MdxElementTypes.MDX_BLOCK,
+    MdxElementTypes.MDX_ESM_BLOCK,
+    MdxElementTypes.MDX_JSX_OPENING_ELEMENT,
+    MdxElementTypes.MDX_JSX_CLOSING_ELEMENT,
+    MdxElementTypes.MDX_JSX_SELF_CLOSING_ELEMENT,
+    MdxElementTypes.MDX_JSX_ATTRIBUTE,
+    MdxElementTypes.MDX_EXPRESSION,
     MarkdownElementTypes.CODE_BLOCK,
     MarkdownElementTypes.CODE_FENCE,
     MarkdownElementTypes.CODE_SPAN,

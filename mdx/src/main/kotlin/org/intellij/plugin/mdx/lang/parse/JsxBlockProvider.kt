@@ -20,7 +20,7 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
       MdxBlockKind.ESM -> {
         val block = MdxJsxScanner.scanEsmBlock(localText, 0)
         if (block != null && block.balanced && localText.subSequence(block.range.last, localText.length).isBlank()) {
-          ImmediateBlock(MdxElementTypes.MDX_ESM_BLOCK, MdxJsxScanner.createEsmNodes(block, absoluteStart, includeRoot = false))
+          ImmediateBlock(MdxMarkdownLibElementTypes.MDX_ESM_BLOCK, MdxJsxScanner.createEsmNodes(block, absoluteStart, includeRoot = false))
         }
         else null
       }
@@ -28,7 +28,7 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
         val element = MdxJsxScanner.scanJsxElement(localText, 0)
         if (element != null && element.balanced && localText.subSequence(element.range.last, localText.length).isBlank()) {
           ImmediateBlock(
-            MdxElementTypes.MDX_JSX_FLOW_ELEMENT,
+            MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT,
             MdxJsxScanner.createFlowElementNodes(localText, element, absoluteStart, includeRoot = false),
           )
         }
@@ -38,7 +38,7 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
         val expressionEnd = MdxJsxScanner.scanExpression(localText, 0)
         if (expressionEnd != -1 && localText.subSequence(expressionEnd, localText.length).isBlank()) {
           ImmediateBlock(
-            MdxElementTypes.MDX_EXPRESSION,
+            MdxMarkdownLibElementTypes.MDX_EXPRESSION,
             listOf(SequentialParser.Node(absoluteStart..absoluteStart + expressionEnd, MdxTokenTypes.EMBEDDED_JS_CONTENT)),
           )
         }

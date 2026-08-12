@@ -16,7 +16,6 @@ import com.intellij.psi.util.elementType
 import org.intellij.plugin.mdx.lang.parse.MdxElementTypes
 import org.intellij.plugin.mdx.lang.psi.MdxFile
 import org.intellij.plugins.markdown.injection.aliases.CodeFenceLanguageGuesser
-import org.intellij.plugins.markdown.lang.MarkdownElementType
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFence
 
 /**
@@ -98,7 +97,7 @@ internal class MdxCodeFencePostFormatProcessor : PostFormatProcessor {
 
   /** Number of MDX JSX flow elements the fence is nested in; each level adds one indent step. */
   private fun jsxDepth(fence: MarkdownCodeFence): Int {
-    val flowType = MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_FLOW_ELEMENT)
+    val flowType = MdxElementTypes.MDX_JSX_FLOW_ELEMENT
     var depth = 0
     var parent = fence.parent
     while (parent != null) {

@@ -427,15 +427,15 @@ internal object MdxJsxScanner {
     for (tag in element.tags) {
       nodes.addTagContentNodes(tag, shift)
       val tagType = when (tag.kind) {
-        TagKind.OPENING -> MdxElementTypes.MDX_JSX_OPENING_ELEMENT
-        TagKind.CLOSING -> MdxElementTypes.MDX_JSX_CLOSING_ELEMENT
-        TagKind.SELF_CLOSING -> MdxElementTypes.MDX_JSX_SELF_CLOSING_ELEMENT
+        TagKind.OPENING -> MdxMarkdownLibElementTypes.MDX_JSX_OPENING_ELEMENT
+        TagKind.CLOSING -> MdxMarkdownLibElementTypes.MDX_JSX_CLOSING_ELEMENT
+        TagKind.SELF_CLOSING -> MdxMarkdownLibElementTypes.MDX_JSX_SELF_CLOSING_ELEMENT
       }
       nodes.add(SequentialParser.Node(tag.range.shiftRight(shift), tagType))
     }
     for (expression in element.expressions) {
       nodes.add(SequentialParser.Node(expression.shiftRight(shift), MdxTokenTypes.EMBEDDED_JS_CONTENT))
-      nodes.add(SequentialParser.Node(expression.shiftRight(shift), MdxElementTypes.MDX_EXPRESSION))
+      nodes.add(SequentialParser.Node(expression.shiftRight(shift), MdxMarkdownLibElementTypes.MDX_EXPRESSION))
     }
     if (includeRoot) {
       nodes.add(SequentialParser.Node(element.range.shiftRight(shift), type))
@@ -447,12 +447,12 @@ internal object MdxJsxScanner {
                              element: Element,
                              shift: Int = 0,
                              includeRoot: Boolean = true): List<SequentialParser.Node> {
-    val nodes = createElementNodes(element, MdxElementTypes.MDX_JSX_FLOW_ELEMENT, shift, includeRoot = false).toMutableList()
+    val nodes = createElementNodes(element, MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT, shift, includeRoot = false).toMutableList()
     flowChildParagraphRange(text, element)?.let {
       nodes.add(SequentialParser.Node(it.shiftRight(shift), MarkdownElementTypes.PARAGRAPH))
     }
     if (includeRoot) {
-      nodes.add(SequentialParser.Node(element.range.shiftRight(shift), MdxElementTypes.MDX_JSX_FLOW_ELEMENT))
+      nodes.add(SequentialParser.Node(element.range.shiftRight(shift), MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT))
     }
     return nodes
   }
@@ -461,7 +461,7 @@ internal object MdxJsxScanner {
     return buildList {
       add(SequentialParser.Node(block.range.shiftRight(shift), MdxTokenTypes.EMBEDDED_JS_CONTENT))
       if (includeRoot) {
-        add(SequentialParser.Node(block.range.shiftRight(shift), MdxElementTypes.MDX_ESM_BLOCK))
+        add(SequentialParser.Node(block.range.shiftRight(shift), MdxMarkdownLibElementTypes.MDX_ESM_BLOCK))
       }
     }
   }
@@ -471,7 +471,7 @@ internal object MdxJsxScanner {
     for (attribute in tag.attributes) {
       addContentNode(offset..attribute.first, shift)
       addContentNode(attribute, shift)
-      add(SequentialParser.Node(attribute.shiftRight(shift), MdxElementTypes.MDX_JSX_ATTRIBUTE))
+      add(SequentialParser.Node(attribute.shiftRight(shift), MdxMarkdownLibElementTypes.MDX_JSX_ATTRIBUTE))
       offset = attribute.last
     }
     addContentNode(offset..tag.range.last, shift)

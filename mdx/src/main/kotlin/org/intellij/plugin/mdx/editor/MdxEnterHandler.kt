@@ -17,7 +17,6 @@ import org.intellij.plugin.mdx.js.MdxJSLanguage
 import org.intellij.plugin.mdx.lang.parse.MdxElementTypes
 import org.intellij.plugin.mdx.lang.psi.MdxFile
 import org.intellij.plugins.markdown.injection.MarkdownCodeFenceUtils
-import org.intellij.plugins.markdown.lang.MarkdownElementType
 
 /**
  * Enter inside an MDX code fence, replayed in a sandbox of the fence language (see [MdxCodeFenceSandbox]).
@@ -104,7 +103,7 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
   }
 
   private fun isInsideFlowElement(element: PsiElement): Boolean {
-    val flowType = MarkdownElementType.platformType(MdxElementTypes.MDX_JSX_FLOW_ELEMENT)
+    val flowType = MdxElementTypes.MDX_JSX_FLOW_ELEMENT
     var parent = element.parent
     while (parent != null) {
       if (parent.node?.elementType === flowType) return true
@@ -153,7 +152,7 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
   // into the foreign JS tree (the host's OUTER_ELEMENT_TYPE delegation) instead of the host AST — so this
   // walks the raw host ASTNode tree directly to see whether an MDX_ESM_BLOCK actually covers the offset.
   private fun isInsideEsmBlock(mdxFile: PsiFile, offset: Int): Boolean {
-    val esmBlockType = MarkdownElementType.platformType(MdxElementTypes.MDX_ESM_BLOCK)
+    val esmBlockType = MdxElementTypes.MDX_ESM_BLOCK
     var node = mdxFile.node?.findLeafElementAt(offset)
     while (node != null) {
       if (node.elementType === esmBlockType) return true

@@ -20,18 +20,18 @@ internal class MdxInlineJsxParser : SequentialParser {
           '<' -> {
             val element = MdxJsxScanner.scanJsxElement(text, offset, limit)
             if (element != null && element.balanced) {
-              val rootRange = addNode(result, tokens, range, element.range, MdxElementTypes.MDX_JSX_TEXT_ELEMENT)
+              val rootRange = addNode(result, tokens, range, element.range, MdxMarkdownLibElementTypes.MDX_JSX_TEXT_ELEMENT)
               for (tag in element.tags) {
                 val tagType = when (tag.kind) {
-                  MdxJsxScanner.TagKind.OPENING -> MdxElementTypes.MDX_JSX_OPENING_ELEMENT
-                  MdxJsxScanner.TagKind.CLOSING -> MdxElementTypes.MDX_JSX_CLOSING_ELEMENT
-                  MdxJsxScanner.TagKind.SELF_CLOSING -> MdxElementTypes.MDX_JSX_SELF_CLOSING_ELEMENT
+                  MdxJsxScanner.TagKind.OPENING -> MdxMarkdownLibElementTypes.MDX_JSX_OPENING_ELEMENT
+                  MdxJsxScanner.TagKind.CLOSING -> MdxMarkdownLibElementTypes.MDX_JSX_CLOSING_ELEMENT
+                  MdxJsxScanner.TagKind.SELF_CLOSING -> MdxMarkdownLibElementTypes.MDX_JSX_SELF_CLOSING_ELEMENT
                 }
                 val tagRange = addNode(result, tokens, range, tag.range, tagType)
                 for (attribute in tag.attributes) {
                   val attributeRange = toTokenRange(tokens, range, attribute)
                   if (attributeRange != null && tagRange != null && attributeRange.isStrictlyInside(tagRange)) {
-                    result.withNode(SequentialParser.Node(attributeRange, MdxElementTypes.MDX_JSX_ATTRIBUTE))
+                    result.withNode(SequentialParser.Node(attributeRange, MdxMarkdownLibElementTypes.MDX_JSX_ATTRIBUTE))
                   }
                 }
                 excludeTokens(tokens, range, tag.range, excludedTokenIndexes)
@@ -39,7 +39,7 @@ internal class MdxInlineJsxParser : SequentialParser {
               for (expression in element.expressions) {
                 val expressionRange = toTokenRange(tokens, range, expression)
                 if (expressionRange != null && rootRange != null && expressionRange.isStrictlyInside(rootRange)) {
-                  result.withNode(SequentialParser.Node(expressionRange, MdxElementTypes.MDX_EXPRESSION))
+                  result.withNode(SequentialParser.Node(expressionRange, MdxMarkdownLibElementTypes.MDX_EXPRESSION))
                 }
                 excludeTokens(tokens, range, expression, excludedTokenIndexes)
               }
@@ -50,7 +50,7 @@ internal class MdxInlineJsxParser : SequentialParser {
           '{' -> {
             val expressionEnd = MdxJsxScanner.scanExpression(text, offset, limit)
             if (expressionEnd != -1) {
-              addNode(result, tokens, range, offset..expressionEnd, MdxElementTypes.MDX_EXPRESSION)
+              addNode(result, tokens, range, offset..expressionEnd, MdxMarkdownLibElementTypes.MDX_EXPRESSION)
               excludeTokens(tokens, range, offset..expressionEnd, excludedTokenIndexes)
               offset = expressionEnd
               continue

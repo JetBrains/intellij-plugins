@@ -15,7 +15,7 @@ import org.intellij.plugins.markdown.lang.parser.MarkdownParserManager
 
 class MdxParserDefinition : MarkdownParserDefinition() {
   override fun getFileNodeType(): IFileElementType {
-    return MdxElementTypes.MDX_FILE_NODE_TYPE
+    return MdxMarkdownLibElementTypes.MDX_FILE_NODE_TYPE
   }
 
   override fun createLexer(project: Project): Lexer {

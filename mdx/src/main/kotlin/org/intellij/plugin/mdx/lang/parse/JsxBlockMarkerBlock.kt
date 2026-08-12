@@ -106,7 +106,7 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   }
 
   override fun getDefaultNodeType(): IElementType {
-    return MdxElementTypes.MDX_BLOCK
+    return MdxMarkdownLibElementTypes.MDX_BLOCK
   }
 
   private fun scheduleClose(offset: Int) {
@@ -172,7 +172,7 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
       MdxBlockKind.EXPRESSION -> {
         listOf(
           SequentialParser.Node(blockStartOffset..currentEndOffset, MdxTokenTypes.EMBEDDED_JS_CONTENT),
-          SequentialParser.Node(blockStartOffset..currentEndOffset, MdxElementTypes.MDX_EXPRESSION),
+          SequentialParser.Node(blockStartOffset..currentEndOffset, MdxMarkdownLibElementTypes.MDX_EXPRESSION),
         )
       }
     }
