@@ -5,6 +5,7 @@ import com.intellij.openapi.vcs.FileStatus
 import com.intellij.openapi.vcs.FileStatusManager
 import com.intellij.openapi.vcs.VcsConfiguration
 import com.intellij.openapi.vcs.VcsShowConfirmationOption
+import com.intellij.openapi.vcs.changes.unversionedFiles
 import com.intellij.testFramework.UsefulTestCase.assertNull
 import com.intellij.testFramework.UsefulTestCase.assertOneElement
 import com.intellij.testFramework.UsefulTestCase.assertSameElements

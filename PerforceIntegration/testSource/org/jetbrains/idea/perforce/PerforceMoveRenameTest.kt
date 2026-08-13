@@ -7,6 +7,7 @@ import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.VcsShowConfirmationOption
 import com.intellij.openapi.vcs.actions.VcsContextFactory
 import com.intellij.openapi.vcs.changes.Change
+import com.intellij.openapi.vcs.changes.unversionedFiles
 import com.intellij.openapi.vcs.impl.AbstractVcsHelperImpl
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile

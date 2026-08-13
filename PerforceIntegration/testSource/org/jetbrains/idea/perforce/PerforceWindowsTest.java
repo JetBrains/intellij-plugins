@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.VcsConfiguration;
 import com.intellij.openapi.vcs.VcsDirectoryMapping;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
+import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import junit.framework.TestCase;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.*;
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
 import static com.intellij.testFramework.UsefulTestCase.assertSameElements;
@@ -56,18 +58,18 @@ public class PerforceWindowsTest extends TestCase {
 
       VirtualFile file = tc.createFileInCommand(tc.createDirInCommand(tc.getWorkingCopyDir(), "a b"), "a.txt", "aaa");
       tc.getChangeListManager().waitUntilRefreshed();
-      assertSameElements(tc.getChangeListManager().getUnversionedFiles(), file);
+      assertSameElements(getUnversionedFiles(tc.getChangeListManager()), file);
 
       tc.addFile("a b/a.txt");
       tc.refreshChanges();
 
       assertEquals(file, tc.getSingleChange().getVirtualFile());
-      assertEmpty(tc.getChangeListManager().getUnversionedFiles());
+      assertEmpty(getUnversionedFiles(tc.getChangeListManager()));
 
       tc.rollbackChange(tc.getSingleChange());
       tc.getChangeListManager().waitUntilRefreshed();
       assertEmpty(tc.getChangeListManager().getAllChanges());
-      assertSameElements(tc.getChangeListManager().getUnversionedFiles(), file);
+      assertSameElements(getUnversionedFiles(tc.getChangeListManager()), file);
     }
     finally {
       tc.after();
@@ -123,24 +125,24 @@ public class PerforceWindowsTest extends TestCase {
 
       tc.refreshInfoAndClient();
       tc.refreshChanges();
-      assertOneElement(tc.getChangeListManager().getUnversionedFiles());
+      assertOneElement(getUnversionedFiles(tc.getChangeListManager()));
       assertEmpty(tc.getChangeListManager().getDeletedFiles());
 
       tc.setVcsMappings(new VcsDirectoryMapping(drive + ":", "Perforce"));
       tc.refreshInfoAndClient();
       tc.refreshChanges();
-      assertOneElement(tc.getChangeListManager().getUnversionedFiles());
+      assertOneElement(getUnversionedFiles(tc.getChangeListManager()));
       assertEmpty(tc.getChangeListManager().getDeletedFiles());
 
       tc.addFile("foo/a.txt");
       tc.refreshChanges();
-      assertEmpty(tc.getChangeListManager().getUnversionedFiles());
+      assertEmpty(getUnversionedFiles(tc.getChangeListManager()));
       tc.getSingleChange();
       assertEmpty(tc.getChangeListManager().getDeletedFiles());
 
       tc.setVcsMappings(new VcsDirectoryMapping(drive + ":\\", "Perforce"));
       tc.refreshChanges();
-      assertEmpty(tc.getChangeListManager().getUnversionedFiles());
+      assertEmpty(getUnversionedFiles(tc.getChangeListManager()));
       tc.getSingleChange();
       assertEmpty(tc.getChangeListManager().getDeletedFiles());
     }

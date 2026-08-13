@@ -8,6 +8,7 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
+import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -480,7 +481,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     setVcsMappings(new VcsDirectoryMapping(dir1.getPath(), PerforceVcs.getInstance(myProject).getName()));
     refreshChanges();
 
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(ChangeListManagerExtensionsKt.getUnversionedFiles(getChangeListManager()));
     assertEquals(file1, getSingleChange().getVirtualFile());
     assertEquals(getChangeListManager().getDefaultListName(), assertOneElement(getChangeListManager().getChangeLists()).getName());
   }

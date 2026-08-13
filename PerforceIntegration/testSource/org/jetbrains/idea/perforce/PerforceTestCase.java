@@ -22,6 +22,7 @@ import com.intellij.openapi.vcs.VcsDirectoryMapping;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vcs.changes.Change;
+import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
 import com.intellij.openapi.vcs.changes.LocallyDeletedChange;
 import com.intellij.openapi.vcs.changes.VcsAnnotationLocalChangesListenerImpl;
@@ -77,6 +78,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.*;
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static com.intellij.testFramework.UsefulTestCase.assertEquals;
 import static com.intellij.testFramework.UsefulTestCase.assertFalse;
@@ -812,7 +814,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
 
   protected void assertChangesViewEmpty() {
     assertEmpty(getChangeListManager().getAllChanges());
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(getUnversionedFiles(getChangeListManager()));
     assertEmpty(getChangeListManager().getDeletedFiles());
     assertEmpty(getChangeListManager().getModifiedWithoutEditing());
   }
@@ -853,7 +855,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     refreshChanges();
 
     assertEmpty(getChangeListManager().getAllChanges());
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(getUnversionedFiles(getChangeListManager()));
   }
 
   protected void checkNativeList(final long number, final String comment) {

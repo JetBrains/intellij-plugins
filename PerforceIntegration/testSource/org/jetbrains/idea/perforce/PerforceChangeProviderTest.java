@@ -15,6 +15,7 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
+import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
@@ -48,6 +49,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.*;
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static com.intellij.testFramework.UsefulTestCase.assertEquals;
 import static com.intellij.testFramework.UsefulTestCase.assertNull;
@@ -96,7 +98,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     final ChangeListManagerImpl clManager = getChangeListManager();
     clManager.ensureUpToDate();
 
-    assertOrderedEquals(clManager.getUnversionedFiles(), file);
+    assertOrderedEquals(getUnversionedFiles(clManager), file);
     assertTrue(clManager.isUnversioned(file));
     assertEmpty(assertOneElement(clManager.getChangeLists()).getChanges());
 
@@ -106,7 +108,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     Assert.assertEquals(Change.Type.NEW, getSingleChange().getType());
 
-    assertEmpty(clManager.getUnversionedFiles());
+    assertEmpty(getUnversionedFiles(clManager));
     assertFalse(clManager.isUnversioned(file));
   }
 
@@ -945,7 +947,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     refreshVfs();
     getChangeListManager().waitUntilRefreshed();
     assertEmpty(getChangeListManager().getModifiedWithoutEditing());
-    assertSize(n, getChangeListManager().getUnversionedFiles());
+    assertSize(n, getUnversionedFiles(getChangeListManager()));
   }
 
   @Test
@@ -967,7 +969,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     openForEdit(file2);
     refreshChanges();
 
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(getUnversionedFiles(getChangeListManager()));
     assertSize(2, getChangeListManager().getAllChanges());
 
     setUseP4Config();
@@ -975,7 +977,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
                    new VcsDirectoryMapping(dir2.getPath(), PerforceVcs.getInstance(myProject).getName()));
 
     refreshChanges();
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(getUnversionedFiles(getChangeListManager()));
     assertSize(2, getChangeListManager().getAllChanges());
   }
 
@@ -992,7 +994,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     }
 
     setP4ConfigRoots(roots.toArray(VirtualFile.EMPTY_ARRAY));
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(getUnversionedFiles(getChangeListManager()));
     assertEmpty(getChangeListManager().getAllChanges());
 
     List<String> commands = new ArrayList<>();
@@ -1091,7 +1093,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     refreshChanges();
 
     assertEquals(atRoot, getSingleChange().getVirtualFile());
-    assertOrderedEquals(getChangeListManager().getUnversionedFiles(), inBarXml);
+    assertOrderedEquals(getUnversionedFiles(getChangeListManager()), inBarXml);
     assertEquals(FileStatus.IGNORED, FileStatusManager.getInstance(myProject).getStatus(inFoo));
     assertEquals(FileStatus.IGNORED, FileStatusManager.getInstance(myProject).getStatus(inBar));
 
@@ -1119,7 +1121,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     getChangeListManager().waitUntilRefreshed();
 
     assertEmpty(getChangeListManager().getAllChanges());
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(getUnversionedFiles(getChangeListManager()));
   }
 
   @Test
@@ -1154,7 +1156,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     getChangeListManager().waitUntilRefreshed();
     assertEmpty(getChangeListManager().getAllChanges());
     assertEmpty(getChangeListManager().getDeletedFiles());
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(getUnversionedFiles(getChangeListManager()));
   }
 
   @Test
@@ -1169,7 +1171,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     setVcsMappings(new VcsDirectoryMapping(myWorkingCopyDir.getPath(), "Perforce"));
 
     assertEmpty(getChangeListManager().getAllChanges());
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(getUnversionedFiles(getChangeListManager()));
     assertEmpty(getChangeListManager().getDeletedFiles());
   }
 
@@ -1186,7 +1188,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     refreshChanges();
 
     assertSize(2, getChangeListManager().getAllChanges());
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(getUnversionedFiles(getChangeListManager()));
 
     submitFileWithClient("test", "//depot/a.txt");
     submitFileWithClient("dir2", "//depot/b.txt");
@@ -1194,7 +1196,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     refreshChanges();
 
     assertEmpty(getChangeListManager().getAllChanges());
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(getUnversionedFiles(getChangeListManager()));
   }
 
   @Test
@@ -1289,7 +1291,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     refreshChanges();
     assertEquals(file, getSingleChange().getVirtualFile());
-    assertOrderedEquals(getChangeListManager().getUnversionedFiles(), link);
+    assertOrderedEquals(getUnversionedFiles(getChangeListManager()), link);
 
     addFile("link.txt");
     submitDefaultList("initial");

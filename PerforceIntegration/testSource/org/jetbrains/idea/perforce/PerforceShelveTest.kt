@@ -5,6 +5,7 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.LocalChangeList
 import com.intellij.openapi.vcs.changes.ui.RollbackWorker
+import com.intellij.openapi.vcs.changes.unversionedFiles
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.UsefulTestCase.assertOneElement
 import org.jetbrains.idea.perforce.actions.ShelfUtils

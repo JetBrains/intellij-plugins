@@ -14,6 +14,7 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
+import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
 import com.intellij.openapi.vcs.changes.ContentRevision;
 import com.intellij.openapi.vcs.changes.CurrentContentRevision;
@@ -49,6 +50,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.*;
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static com.intellij.testFramework.UsefulTestCase.assertEquals;
 import static com.intellij.testFramework.UsefulTestCase.assertFalse;
@@ -455,7 +457,7 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshChanges();
 
     assertEmpty(getChangeListManager().getModifiedWithoutEditing());
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(getUnversionedFiles(getChangeListManager()));
     assertEmpty(getChangeListManager().getDefaultChangeList().getChanges());
 
     renameFileInCommand(file, "b.txt");
@@ -767,20 +769,20 @@ public class OfflineModeTest extends PerforceTestCase {
 
     getChangeListManager().waitUntilRefreshed();
 
-    assertSameElements(getChangeListManager().getUnversionedFiles(), fileB);
+    assertSameElements(getUnversionedFiles(getChangeListManager()), fileB);
     assertEmpty(getChangeListManager().getModifiedWithoutEditing());
 
     goOffline();
     refreshChanges();
 
-    assertSameElements(getChangeListManager().getUnversionedFiles(), fileB);
+    assertSameElements(getUnversionedFiles(getChangeListManager()), fileB);
     assertEmpty(getChangeListManager().getModifiedWithoutEditing());
 
     editExternally(fileA, "hijacked");
     VirtualFile fileC = createFileInCommand("c.txt", "");
     getChangeListManager().waitUntilRefreshed();
 
-    assertSameElements(getChangeListManager().getUnversionedFiles(), fileB, fileC);
+    assertSameElements(getUnversionedFiles(getChangeListManager()), fileB, fileC);
     assertSameElements(getChangeListManager().getModifiedWithoutEditing(), fileA);
   }
 
@@ -801,7 +803,7 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshVfs();
     refreshChanges();
     getChangeListManager().waitUntilRefreshed();
-    assertSameElements(getChangeListManager().getUnversionedFiles(), fileB);
+    assertSameElements(getUnversionedFiles(getChangeListManager()), fileB);
     assertSameElements(getChangeListManager().getIgnoredFilePaths(), ignoredFiles);
   }
 

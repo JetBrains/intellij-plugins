@@ -11,6 +11,7 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vcs.annotate.FileAnnotation;
 import com.intellij.openapi.vcs.changes.Change;
+import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -39,6 +40,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.*;
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static com.intellij.testFramework.UsefulTestCase.assertEquals;
 import static com.intellij.testFramework.UsefulTestCase.assertFalse;
@@ -356,7 +358,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     submitDefaultList("initial");
 
     refreshChanges();
-    assertSameElements(getChangeListManager().getUnversionedFiles(), unversioned);
+    assertSameElements(getUnversionedFiles(getChangeListManager()), unversioned);
 
     EdtTestUtil.runInEdtAndWait((() -> new ActionEdit().processFiles(myProject, myWorkingCopyDir)));
     waitForAsyncRefresh();
@@ -364,7 +366,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     getChangeListManager().waitUntilRefreshed();
     assertEquals(toAdd, getSingleChange().getVirtualFile());
     assertEquals(FileStatus.UNKNOWN, FileStatusManager.getInstance(myProject).getStatus(unversioned));
-    assertSameElements(getChangeListManager().getUnversionedFiles(), unversioned);
+    assertSameElements(getUnversionedFiles(getChangeListManager()), unversioned);
 
     ProcessOutput result = runP4WithClient("opened");
     verify(result);

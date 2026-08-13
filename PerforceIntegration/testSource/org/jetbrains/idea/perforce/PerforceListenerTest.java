@@ -2,6 +2,7 @@ package org.jetbrains.idea.perforce;
 
 import com.intellij.openapi.vcs.VcsConfiguration;
 import com.intellij.openapi.vcs.VcsTestUtil;
+import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.junit.Test;
 
@@ -36,6 +37,6 @@ public class PerforceListenerTest extends PerforceTestCase {
     VirtualFile file2 = VcsTestUtil.copyFileInCommand(myProject, file, dir2, "b.txt");
     refreshChanges();
     assertEquals(file2, getSingleChange().getVirtualFile());
-    assertEmpty(getChangeListManager().getUnversionedFiles());
+    assertEmpty(ChangeListManagerExtensionsKt.getUnversionedFiles(getChangeListManager()));
   }
 }
