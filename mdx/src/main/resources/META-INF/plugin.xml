@@ -62,7 +62,7 @@
     <fileType name="MDX" implementationClass="org.intellij.plugin.mdx.lang.MdxFileType"
               fieldName="INSTANCE" language="MDX" extensions="mdx"/>
     <lang.fileViewProviderFactory language="MDX"
-                                  implementationClass="org.intellij.plugin.mdx.lang.psi.MdxFileViewProviderFactory"/>
+                                  implementationClass="org.intellij.plugin.mdx.lang.template.MdxFileViewProviderFactory"/>
     <lang.parserDefinition language="MDX"
                            implementationClass="org.intellij.plugin.mdx.lang.parse.MdxParserDefinition"/>
 
@@ -81,7 +81,7 @@
     <lang.parserDefinition language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSParserDefinition"/>
     <stubElementRegistryExtension implementation="org.intellij.plugin.mdx.js.MdxJSStubRegistryExtension"/>
     <outerLanguageRangePatcher language="MdxJS"
-                               implementationClass="org.intellij.plugin.mdx.lang.psi.MdxOuterLanguagePatcher"/>
+                               implementationClass="org.intellij.plugin.mdx.lang.template.MdxOuterLanguagePatcher"/>
     <lang.importOptimizer language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSImportOptimizer" order="first"/>
     <lang.inspectionSuppressor language="MDX"
                                implementationClass="org.intellij.plugin.mdx.codeInspection.MdxInspectionSuppressor"/>

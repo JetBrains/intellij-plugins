@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
-import org.intellij.plugin.mdx.lang.psi.MdxFileViewProvider
+import org.intellij.plugin.mdx.lang.template.MdxFileViewProvider
 
 /**
  * Auto-closes JSX/HTML tags (and the `<>` fragment) when `>` is typed in an MDX file. Neither

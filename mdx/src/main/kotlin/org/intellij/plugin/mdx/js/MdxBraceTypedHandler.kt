@@ -6,7 +6,7 @@ import com.intellij.openapi.editor.EditorModificationUtilEx
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import org.intellij.plugin.mdx.lang.psi.MdxFileViewProvider
+import org.intellij.plugin.mdx.lang.template.MdxFileViewProvider
 import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
 
 /**

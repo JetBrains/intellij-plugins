@@ -1,4 +1,4 @@
-package org.intellij.plugin.mdx.lang.psi
+package org.intellij.plugin.mdx.lang.template
 
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageParserDefinitions

@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.JSNodeVisitor
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.formatter.JSSpacingProcessor
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import org.intellij.plugin.mdx.lang.psi.MdxTemplateDataElementType
+import org.intellij.plugin.mdx.lang.template.MdxTemplateDataElementType
 import java.util.function.BiConsumer
 
 class MdxJsSpacingProcessor(parent: ASTNode?,

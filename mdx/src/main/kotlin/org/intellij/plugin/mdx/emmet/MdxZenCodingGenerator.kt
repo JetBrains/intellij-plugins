@@ -13,7 +13,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import org.intellij.plugin.mdx.js.MdxJSLanguage
-import org.intellij.plugin.mdx.lang.psi.MdxFileViewProvider
+import org.intellij.plugin.mdx.lang.template.MdxFileViewProvider
 
 internal class MdxZenCodingGenerator : JSXZenCodingGenerator() {
   override fun isMyContext(callback: CustomTemplateCallback, wrapping: Boolean): Boolean {

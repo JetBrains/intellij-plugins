@@ -6,7 +6,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.xml.util.HtmlUtil
-import org.intellij.plugin.mdx.lang.psi.MdxFileViewProvider
+import org.intellij.plugin.mdx.lang.template.MdxFileViewProvider
 
 /**
  * When a void HTML element (`input`, `br`, `img`, `hr`, …) is chosen from JSX tag-name completion,

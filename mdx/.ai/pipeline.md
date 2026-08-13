@@ -152,7 +152,7 @@ When IntelliJ needs a PSI file for a given language it calls `createFile(lang)`:
 `MarkdownToplevelLexer` is unusual: it runs the **full Markdown parser** internally and then replays
 the resulting token sequence. The "lexer" is a cached parser run.
 
-`MdxFlavourDescriptor` (in `lang/parse/MdxHighlightingLexerBase.kt`) extends `CommonMarkFlavourDescriptor`:
+`MdxFlavourDescriptor` (in `lang/parse/MdxFlavourDescriptor.kt`) extends `CommonMarkFlavourDescriptor`:
 - `sequentialParserManager` → delegated to `GFMFlavourDescriptor` (GFM inlines: tables, strikethrough)
 - `createInlinesLexer()` → delegated to `GFMFlavourDescriptor`
 - `markerProcessorFactory` → `MdxProcessFactory` → creates `MdxMarkerProcessor`
@@ -229,7 +229,7 @@ are opaque from the Markdown parser's perspective. This is the root cause of WEB
 
 ### Phase 3: JS/JSX PSI Tree (Template Data)
 
-**3a. `MdxTemplateDataElementType.collectTemplateModifications()`** (`lang/psi/MdxTemplateDataElementType.kt`)
+**3a. `MdxTemplateDataElementType.collectTemplateModifications()`** (`lang/template/MdxTemplateDataElementType.kt`)
 
 Runs the base lexer over the source. Tokens are classified:
 - `EMBEDDED_JS_CONTENT` → kept as JS template data
@@ -238,7 +238,7 @@ Runs the base lexer over the source. Tokens are classified:
 Special handling for import/export: if the consumed block doesn't end with `;`, inserts one via
 `modifications.addRangeToRemove()`.
 
-**3b. `MdxOuterLanguagePatcher`** (`lang/psi/MdxOuterLanguagePatcher.kt`)
+**3b. `MdxOuterLanguagePatcher`** (`lang/template/MdxOuterLanguagePatcher.kt`)
 
 Returns `"\n;"` for every outer range placeholder. This keeps the stitched JS file syntactically
 valid — each Markdown paragraph becomes an empty JS statement.

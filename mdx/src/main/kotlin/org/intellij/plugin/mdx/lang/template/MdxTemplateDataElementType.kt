@@ -1,4 +1,4 @@
-package org.intellij.plugin.mdx.lang.psi
+package org.intellij.plugin.mdx.lang.template
 
 import com.intellij.lang.javascript.types.JSEmbeddedBlockElementType
 import com.intellij.lexer.Lexer
