@@ -1,9 +1,13 @@
 package org.intellij.plugin.mdx.lang.parse
 
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.IFileElementType
+import org.intellij.plugin.mdx.lang.MdxLanguage
 import org.intellij.plugins.markdown.lang.MarkdownElementType
 
 object MdxElementTypes {
+  @JvmField
+  val MDX_FILE_NODE_TYPE: IFileElementType = IFileElementType("MDX", MdxLanguage)
   @JvmField
   val MDX_BLOCK: IElementType = MarkdownElementType.platformType(MdxMarkdownLibElementTypes.MDX_BLOCK)
   @JvmField
