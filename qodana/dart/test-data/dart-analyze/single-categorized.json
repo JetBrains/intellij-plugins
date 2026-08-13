@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "diagnostics": [
+    {
+      "code": "await_only_futures",
+      "severity": "WARNING",
+      "type": "STATIC_WARNING",
+      "location": {
+        "file": "lib/main.dart"
+      },
+      "problemMessage": "Uses 'await' on an instance of 'int', which is not a subtype of 'Future'. Try removing the 'await' or changing the expression.",
+      "correctionMessage": null
+    }
+  ]
+}

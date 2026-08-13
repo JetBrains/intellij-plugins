@@ -1,0 +1,6 @@
+name: flutter_app
+environment:
+  sdk: ^3.4.0
+dependencies:
+  flutter:
+    sdk: flutter

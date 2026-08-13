@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "diagnostics": [
+    {
+      "code": "include_file_not_found",
+      "severity": "WARNING",
+      "location": {
+        "file": "core-lints/analysis_options.yaml",
+        "range": {
+          "start": { "offset": 9, "line": 1, "column": 10 },
+          "end": { "offset": 32, "line": 1, "column": 33 }
+        }
+      },
+      "problemMessage": "The URI 'package:lints/core.yaml' included in 'core-lints/analysis_options.yaml' can't be found when analyzing '.'."
+    },
+    {
+      "code": "unnecessary_late",
+      "severity": "WARNING",
+      "location": {
+        "file": "root.dart",
+        "range": {
+          "start": { "offset": 0, "line": 1, "column": 1 },
+          "end": { "offset": 4, "line": 1, "column": 5 }
+        }
+      },
+      "problemMessage": "Unnecessary 'late' modifier.",
+      "correctionMessage": "Try removing the 'late'."
+    },
+    {
+      "code": "unnecessary_this",
+      "severity": "WARNING",
+      "location": {
+        "file": "root.dart",
+        "range": {
+          "start": { "offset": 89, "line": 6, "column": 20 },
+          "end": { "offset": 93, "line": 6, "column": 24 }
+        }
+      },
+      "problemMessage": "Unnecessary 'this.' qualifier.",
+      "correctionMessage": "Try removing 'this.'."
+    },
+    {
+      "code": "unnecessary_late",
+      "severity": "WARNING",
+      "location": {
+        "file": "lib/included.dart",
+        "range": {
+          "start": { "offset": 0, "line": 1, "column": 1 },
+          "end": { "offset": 4, "line": 1, "column": 5 }
+        }
+      },
+      "problemMessage": "Unnecessary 'late' modifier.",
+      "correctionMessage": "Try removing the 'late'."
+    }
+  ]
+}

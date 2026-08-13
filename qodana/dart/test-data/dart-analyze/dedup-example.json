@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "diagnostics": [
+    {
+      "code": "undefined_identifier",
+      "severity": "ERROR",
+      "location": {
+        "file": "lib/main.dart",
+        "range": {
+          "start": { "offset": 14, "line": 1, "column": 15 },
+          "end": { "offset": 21, "line": 1, "column": 22 }
+        }
+      },
+      "problemMessage": "Undefined name 'missing'.",
+      "correctionMessage": "Try correcting the name to one that is defined, or defining the name."
+    }
+  ]
+}

@@ -219,24 +219,26 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
     register(tool, inspection, LocalInspectionEP.LOCAL_INSPECTION.point)
   }
 
-  protected fun registerGlobalTool(tool: GlobalInspectionTool) {
+  protected fun registerGlobalTool(tool: GlobalInspectionTool, presentation: String? = null) {
     val inspection = InspectionEP(
       tool.javaClass.canonicalName,
       DefaultPluginDescriptor(PluginId.getId("qodanaTest"), javaClass.classLoader)
     )
 
-    register(tool, inspection, InspectionEP.GLOBAL_INSPECTION.point)
+    register(tool, inspection, InspectionEP.GLOBAL_INSPECTION.point, presentation)
   }
 
   private fun <T : InspectionEP> register(
     tool: InspectionProfileEntry,
     emptyInspection: T,
     extensionPoint: ExtensionPoint<T>,
+    presentation: String? = null,
   ) {
     emptyInspection.apply {
       shortName = tool.shortName
       displayName = tool.displayName
       groupDisplayName = tool.groupDisplayName
+      this.presentation = presentation
       level = "WARNING"
       enabledByDefault = true
       implementationClass = tool.javaClass.canonicalName

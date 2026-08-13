@@ -1,0 +1,3 @@
+name: core
+environment:
+  sdk: ^3.4.0
