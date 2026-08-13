@@ -839,8 +839,8 @@ internal object MdxJsxScanner {
   private fun isCompleteBeforeLineBreak(text: CharSequence, lastSignificantOffset: Int): Boolean {
     if (lastSignificantOffset == -1) return false
     val char = text[lastSignificantOffset]
-    if (char in LINE_END_CONTINUATION_CHARS) return false
-    return !(char == '>' && text.getOrNull(lastSignificantOffset - 1) == '=')
+    return char !in LINE_END_CONTINUATION_CHARS &&
+           (char != '>' || text.getOrNull(lastSignificantOffset - 1) != '=')
   }
 
   private fun nextLineContinuesEsm(text: CharSequence, start: Int, limit: Int, previousSignificantOffset: Int): Boolean {

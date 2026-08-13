@@ -12,5 +12,5 @@ internal class MdxJSLanguage private constructor() : JSLanguageDialect("MdxJS", 
   }
 
   override fun getAssociatedFileType(): LanguageFileType =
-    MdxFileType.INSTANCE
+    MdxFileType
 }

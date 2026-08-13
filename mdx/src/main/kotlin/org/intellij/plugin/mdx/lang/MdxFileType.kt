@@ -3,10 +3,9 @@ package org.intellij.plugin.mdx.lang
 import com.intellij.openapi.fileTypes.LanguageFileType
 import org.intellij.plugin.mdx.MdxBundle
 import org.jetbrains.annotations.Nls
-import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
 
-internal class MdxFileType private constructor() : LanguageFileType(MdxLanguage) {
+internal object MdxFileType : LanguageFileType(MdxLanguage) {
   override fun getName(): String {
     return "MDX"
   }
@@ -28,10 +27,5 @@ internal class MdxFileType private constructor() : LanguageFileType(MdxLanguage)
     return false
   }
 
-  companion object {
-    val INSTANCE: LanguageFileType = MdxFileType()
-
-    @NonNls
-    val DEFAULT_EXTENSION = "mdx"
-  }
+  const val DEFAULT_EXTENSION = "mdx"
 }

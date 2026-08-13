@@ -23,6 +23,6 @@ internal class MdxInjectedHighlightingSettingProvider : DefaultHighlightingSetti
     val isTypeScript = !isJavaScript && TypeScriptUtil.TYPESCRIPT_FILE_TYPES.contains(fileType)
     if (!isJavaScript && !isTypeScript) return null
     val hostFileType = FileTypeRegistry.getInstance().getFileTypeByFileName(file.delegate.name)
-    return if (hostFileType == MdxFileType.INSTANCE) FileHighlightingSetting.SKIP_INSPECTION else null
+    return if (hostFileType == MdxFileType) FileHighlightingSetting.SKIP_INSPECTION else null
   }
 }
