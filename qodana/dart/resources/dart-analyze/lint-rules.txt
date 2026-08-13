@@ -1,0 +1,111 @@
+# Generated from package:lints 6.1.0 and package:flutter_lints 6.0.0.
+# Sources:
+# https://pub.dev/packages/lints/versions/6.1.0
+# https://pub.dev/api/archives/lints-6.1.0.tar.gz
+# https://pub.dev/packages/flutter_lints/versions/6.0.0
+# https://pub.dev/api/archives/flutter_lints-6.0.0.tar.gz
+# https://github.com/dart-lang/lints/blob/6.1.0/rules.md
+# https://github.com/flutter/packages/blob/main/packages/flutter_lints/lib/flutter.yaml
+# https://dart.dev/lints
+core: avoid_empty_else | Avoid empty statements in else clauses.
+core: avoid_relative_lib_imports | Avoid relative imports for files in `lib/`.
+core: avoid_shadowing_type_parameters | Avoid shadowing type parameters.
+core: avoid_types_as_parameter_names | Avoid types as parameter names.
+core: await_only_futures | Await only futures.
+core: camel_case_extensions | Name extensions using UpperCamelCase.
+core: camel_case_types | Name types using UpperCamelCase.
+core: collection_methods_unrelated_type | Invocation of various collection methods with arguments of unrelated types.
+core: curly_braces_in_flow_control_structures | DO use curly braces for all flow control structures.
+core: dangling_library_doc_comments | Attach library doc comments to library directives.
+core: depend_on_referenced_packages | Depend on referenced packages.
+core: empty_catches | Avoid empty catch blocks.
+core: file_names | Name source files using `lowercase_with_underscores`.
+core: hash_and_equals | Always override `hashCode` if overriding `==`.
+core: implicit_call_tearoffs | Explicitly tear-off `call` methods when using an object as a Function.
+core: library_annotations | Attach library annotations to library directives.
+core: no_duplicate_case_values | Don't use more than one case with same value.
+core: no_wildcard_variable_uses | Don't use wildcard parameters or variables.
+core: non_constant_identifier_names | Name non-constant identifiers using lowerCamelCase.
+core: null_check_on_nullable_type_parameter | Don't use `null` check on a potentially nullable type parameter.
+core: prefer_generic_function_type_aliases | Prefer generic function type aliases.
+core: prefer_is_empty | Use `isEmpty` for `Iterable`s and `Map`s.
+core: prefer_is_not_empty | Use `isNotEmpty` for `Iterable`s and `Map`s.
+core: prefer_iterable_whereType | Prefer to use `whereType` on iterable.
+core: prefer_typing_uninitialized_variables | Prefer typing uninitialized variables and fields.
+core: provide_deprecation_message | Provide a deprecation message, via `@Deprecated("message")`.
+core: secure_pubspec_urls | Use secure urls in `pubspec.yaml`.
+core: strict_top_level_inference | Specify type annotations.
+core: type_literal_in_constant_pattern | Don't use constant patterns with type literals.
+core: unintended_html_in_doc_comment | Use of angle brackets in a doc comment is treated as HTML by Markdown.
+core: unnecessary_overrides | Don't override a method to do a super method invocation with the same parameters.
+core: unrelated_type_equality_checks | Equality operator `==` invocation with references of unrelated types.
+core: use_string_in_part_of_directives | Use string in part of directives.
+core: valid_regexps | Use valid regular expression syntax.
+core: void_checks | Don't assign to `void`.
+recommended: annotate_overrides | Annotate overridden members.
+recommended: avoid_function_literals_in_foreach_calls | Avoid using `forEach` with a function literal.
+recommended: avoid_init_to_null | Don't explicitly initialize variables to `null`.
+recommended: avoid_renaming_method_parameters | Don't rename parameters of overridden methods.
+recommended: avoid_return_types_on_setters | Avoid return types on setters.
+recommended: avoid_returning_null_for_void | Avoid returning `null` for `void`.
+recommended: avoid_single_cascade_in_expression_statements | Avoid single cascade in expression statements.
+recommended: constant_identifier_names | Prefer using lowerCamelCase for constant names.
+recommended: control_flow_in_finally | Avoid control flow in `finally` blocks.
+recommended: empty_constructor_bodies | Use `;` instead of `{}` for empty constructor bodies.
+recommended: empty_statements | Avoid empty statements.
+recommended: exhaustive_cases | Define case clauses for all constants in enum-like classes.
+recommended: implementation_imports | Don't import implementation files from another package.
+recommended: invalid_runtime_check_with_js_interop_types | Avoid runtime type tests with JS interop types where the result may not be platform-consistent.
+recommended: library_prefixes | Use `lowercase_with_underscores` when specifying a library prefix.
+recommended: library_private_types_in_public_api | Avoid using private types in public APIs.
+recommended: no_leading_underscores_for_library_prefixes | Avoid leading underscores for library prefixes.
+recommended: no_leading_underscores_for_local_identifiers | Avoid leading underscores for local identifiers.
+recommended: null_closures | Do not pass `null` as an argument where a closure is expected.
+recommended: overridden_fields | Don't override fields.
+recommended: package_names | Use `lowercase_with_underscores` for package names.
+recommended: prefer_adjacent_string_concatenation | Use adjacent strings to concatenate string literals.
+recommended: prefer_collection_literals | Use collection literals when possible.
+recommended: prefer_conditional_assignment | Prefer using `??=` over testing for `null`.
+recommended: prefer_contains | Use contains for `List` and `String` instances.
+recommended: prefer_final_fields | Private field could be `final`.
+recommended: prefer_for_elements_to_map_fromIterable | Prefer `for` elements when building maps from iterables.
+recommended: prefer_function_declarations_over_variables | Use a function declaration to bind a function to a name.
+recommended: prefer_if_null_operators | Prefer using `??` operators.
+recommended: prefer_initializing_formals | Use initializing formals when possible.
+recommended: prefer_inlined_adds | Inline list item declarations where possible.
+recommended: prefer_interpolation_to_compose_strings | Use interpolation to compose strings and values.
+recommended: prefer_is_not_operator | Prefer is! operator.
+recommended: prefer_null_aware_operators | Prefer using `null`-aware operators.
+recommended: prefer_spread_collections | Use spread collections.
+recommended: recursive_getters | Property getter recursively returns itself.
+recommended: slash_for_doc_comments | Prefer using `///` for doc comments.
+recommended: type_init_formals | Don't type annotate initializing formals.
+recommended: unnecessary_brace_in_string_interps | Avoid using braces in interpolation when not needed.
+recommended: unnecessary_const | Avoid `const` keyword.
+recommended: unnecessary_constructor_name | Unnecessary `.new` constructor name.
+recommended: unnecessary_getters_setters | Avoid wrapping fields in getters and setters just to be "safe".
+recommended: unnecessary_late | Don't specify the `late` modifier when it is not needed.
+recommended: unnecessary_library_name | Don't have a library name in a `library` declaration.
+recommended: unnecessary_new | Unnecessary new keyword.
+recommended: unnecessary_null_aware_assignments | Avoid `null` in `null`-aware assignment.
+recommended: unnecessary_null_in_if_null_operators | Avoid using `null` in `??` operators.
+recommended: unnecessary_nullable_for_final_variable_declarations | Use a non-nullable type for a final variable initialized with a non-nullable value.
+recommended: unnecessary_string_escapes | Remove unnecessary backslashes in strings.
+recommended: unnecessary_string_interpolations | Unnecessary string interpolation.
+recommended: unnecessary_this | Don't access members with `this` unless avoiding shadowing.
+recommended: unnecessary_to_list_in_spreads | Unnecessary `toList()` in spreads.
+recommended: unnecessary_underscores | Unnecessary underscores can be removed.
+recommended: use_function_type_syntax_for_parameters | Use generic function type syntax for parameters.
+recommended: use_null_aware_elements | If-elements testing for null can be replaced with null-aware elements.
+recommended: use_rethrow_when_possible | Use rethrow to rethrow a caught exception.
+recommended: use_super_parameters | Use super-initializer parameters where possible.
+flutter: avoid_print | Avoid `print` calls in production code.
+flutter: avoid_unnecessary_containers | Avoid unnecessary containers.
+flutter: avoid_web_libraries_in_flutter | Avoid using web-only libraries outside Flutter web plugin packages.
+flutter: no_logic_in_create_state | Don't put any logic in createState.
+flutter: prefer_const_constructors_in_immutables | Prefer declaring `const` constructors on `@immutable` classes.
+flutter: sized_box_for_whitespace | Prefer `SizedBox` for whitespace.
+flutter: sort_child_properties_last | Sort child properties last in widget instance creations.
+flutter: use_build_context_synchronously | Do not use `BuildContext` across asynchronous gaps.
+flutter: use_full_hex_values_for_flutter_colors | Prefer an 8-digit hexadecimal integer (for example, 0xFFFFFFFF) to instantiate a Color.
+flutter: use_key_in_widget_constructors | Use key in widget constructors.

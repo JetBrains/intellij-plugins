@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "diagnostics": [
+    {
+      "code": "undefined_identifier",
+      "severity": "ERROR",
+      "type": "COMPILE_TIME_ERROR",
+      "location": {
+        "file": "lib/main.dart",
+        "range": {
+          "start": { "offset": 16, "line": 2, "column": 3 },
+          "end": { "offset": 29, "line": 2, "column": 16 }
+        }
+      },
+      "problemMessage": "Undefined name 'appDiagnostic'.",
+      "correctionMessage": "Try correcting the name to one that is defined, or defining the name."
+    }
+  ]
+}
