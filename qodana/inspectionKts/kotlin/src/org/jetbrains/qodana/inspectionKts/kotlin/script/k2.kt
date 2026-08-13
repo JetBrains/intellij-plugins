@@ -7,7 +7,7 @@ import kotlin.script.experimental.intellij.ScriptDefinitionsProvider
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 internal class QodanaScriptDefinitionsProvider(val project: Project) : ScriptDefinitionsProvider {
-  override val id: String = "QodanaInspectionsKts"
+  override val id: String = "QodanaInspections"
 
   override fun provideDefinitions(
     baseHostConfiguration: ScriptingHostConfiguration,
