@@ -1,5 +1,5 @@
 JSFile:ParsingLongText.mdx(0,6988)
-  PsiElement(OUTER_BLOCK)('---\ntitle: "Some title"\n\n---\n\n\n')(0,31)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('---\ntitle: "Some title"\n\n---\n\n\n')(0,31)
   PsiWhiteSpace('')(31,31)
   JSEmptyStatement(31,31)
     <empty list>

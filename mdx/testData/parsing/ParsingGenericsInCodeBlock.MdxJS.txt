@@ -20,7 +20,7 @@ JSFile:ParsingGenericsInCodeBlock.mdx(0,248)
       PsiElement(JS:FROM_KEYWORD)('from')(46,50)
       PsiWhiteSpace(' ')(50,51)
       PsiElement(JS:STRING_LITERAL)(''@theme/TabItem'')(51,67)
-  PsiElement(OUTER_BLOCK)('\n\n')(67,69)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\n')(67,69)
   PsiWhiteSpace('')(69,69)
   JSEmptyStatement(69,69)
     <empty list>
@@ -89,7 +89,7 @@ JSFile:ParsingGenericsInCodeBlock.mdx(0,248)
         PsiWhiteSpace('\n')(183,184)
         XmlText(184,184)
           <empty list>
-        PsiElement(OUTER_BLOCK)('```kotlin\nval bar: Bar<Baz> = Something()\n```')(184,229)
+        PsiElement(OUTER_MARKDOWN_CONTENT)('```kotlin\nval bar: Bar<Baz> = Something()\n```')(184,229)
         PsiWhiteSpace('')(229,229)
         XmlText(229,229)
           <empty list>

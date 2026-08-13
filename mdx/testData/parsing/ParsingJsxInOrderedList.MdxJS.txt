@@ -1,5 +1,5 @@
 JSFile:ParsingJsxInOrderedList.mdx(0,40)
-  PsiElement(OUTER_BLOCK)('1. one\n   ')(0,10)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('1. one\n   ')(0,10)
   PsiWhiteSpace('')(10,10)
   JSEmptyStatement(10,10)
     <empty list>
@@ -18,7 +18,7 @@ JSFile:ParsingJsxInOrderedList.mdx(0,40)
       XmlToken:XML_EMPTY_ELEMENT_END('/>')(22,24)
   JSEmptyStatement(24,24)
     <empty list>
-  PsiElement(OUTER_BLOCK)('\n2. two\n3. three')(24,40)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n2. two\n3. three')(24,40)
   PsiWhiteSpace('')(40,40)
   JSEmptyStatement(40,40)
     <empty list>

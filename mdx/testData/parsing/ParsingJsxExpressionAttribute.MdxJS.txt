@@ -14,7 +14,7 @@ JSFile:ParsingJsxExpressionAttribute.mdx(0,197)
       PsiElement(JS:FROM_KEYWORD)('from')(18,22)
       PsiWhiteSpace(' ')(22,23)
       PsiElement(JS:STRING_LITERAL)(''@storybook/addon-docs/blocks'')(23,53)
-  PsiElement(OUTER_BLOCK)('\n\n')(53,55)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\n')(53,55)
   PsiWhiteSpace('')(55,55)
   JSEmptyStatement(55,55)
     <empty list>
@@ -45,7 +45,7 @@ JSFile:ParsingJsxExpressionAttribute.mdx(0,197)
       XmlToken:XML_EMPTY_ELEMENT_END('/>')(137,139)
   JSEmptyStatement(139,139)
     <empty list>
-  PsiElement(OUTER_BLOCK)('\n\n#### Selection Type\n\nSome text after the source element.')(139,197)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\n#### Selection Type\n\nSome text after the source element.')(139,197)
   PsiWhiteSpace('')(197,197)
   JSEmptyStatement(197,197)
     <empty list>

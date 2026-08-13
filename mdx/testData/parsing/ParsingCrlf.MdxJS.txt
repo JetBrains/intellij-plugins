@@ -1,5 +1,5 @@
 JSFile:ParsingCrlf.mdx(0,46)
-  PsiElement(OUTER_BLOCK)('# Heading\nA paragraph line.\n\n')(0,29)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('# Heading\nA paragraph line.\n\n')(0,29)
   PsiWhiteSpace('')(29,29)
   JSEmptyStatement(29,29)
     <empty list>

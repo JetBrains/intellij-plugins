@@ -1,5 +1,5 @@
 JSFile:EsmInMarkdownContainersIsText.mdx(0,48)
-  PsiElement(OUTER_BLOCK)('- aaa\n- import bbb\n- ccc\n\n> export const bbb = 1')(0,48)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('- aaa\n- import bbb\n- ccc\n\n> export const bbb = 1')(0,48)
   PsiWhiteSpace('')(48,48)
   JSEmptyStatement(48,48)
     <empty list>

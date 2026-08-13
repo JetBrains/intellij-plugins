@@ -1,5 +1,5 @@
 JSFile:ParsingJsxInBlockquote.mdx(0,41)
-  PsiElement(OUTER_BLOCK)('> ')(0,2)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('> ')(0,2)
   PsiWhiteSpace('')(2,2)
   JSEmptyStatement(2,2)
     <empty list>
@@ -18,7 +18,7 @@ JSFile:ParsingJsxInBlockquote.mdx(0,41)
       XmlToken:XML_TAG_END('>')(25,26)
   JSEmptyStatement(26,26)
     <empty list>
-  PsiElement(OUTER_BLOCK)('\n>\n> text after')(26,41)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n>\n> text after')(26,41)
   PsiWhiteSpace('')(41,41)
   JSEmptyStatement(41,41)
     <empty list>

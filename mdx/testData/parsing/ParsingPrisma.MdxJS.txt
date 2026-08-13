@@ -1,5 +1,5 @@
 JSFile:ParsingPrisma.mdx(0,8187)
-  PsiElement(OUTER_BLOCK)('---\ntitle: 'Under the hood'\nmetaTitle: 'Prisma under the hood'\nmetaDescription: 'Learn about Prisma internals and how it works "under the hood". Prisma tools are based on an engine-layer which manages the communication with the database.'\n---\n\n## Overview\n\nThis page gives an overview of the Prisma internals and how it works "under the hood".\n\nNote that **this page does not contain any practical information that is relevant for _using_ Prisma**. It rather aims at providing a _mental model_ for what the Prisma toolkit _actually_ is and how the different tools that are available to developers are structured.\n\nIf you're new to Prisma, be sure to check out the [Quickstart](../getting-started/quickstart) and [Introduction](./introduction) pages first.\n\n## Modules and interfaces\n\nThe tools in the Prisma toolkit are built with respect to two dimensions:\n\n- **Module**: A set of functionality that's offered by Prisma\n- **Interface**: A way to _use_ the functionality of a module\n\nThe following illustration gives an overview of the tools that exist (or are planned) in the Prisma toolkit:\n\n![](https://i.imgur.com/mxJTGOu.png)\n\n### Modules\n\nPrisma provides a number of features which are implemented in the form of _modules_. Here is an overview of the modules Prisma provides:\n\n- **Query**: Send queries to your database\n- **Migrate**: Perform schema migrations in your database\n- **Introspect**: Read a database schema and translate into [Prisma data model](../reference/tools-and-interfaces/prisma-schema/data-model)\n- **Schema**: Construct and modify a [Prisma schema file](../reference/tools-and-interfaces/prisma-schema/prisma-schema-file)\n- **Generate**: Generate clients for Prisma data sources\n\n### Interface\n\n_Interfaces_ offer a way to actually _use_ the functionality of a module. The module-interface-matrix above shows four different levels of interfaces (from bottom to top):\n\n- **Engines** Implements the _core functionality_ consumed by the higher-level interfaces\n- **Library**: A way to _programmatically_ use the functionality of a module\n- **CLI**: A way to use the functionality of a module on the _command line_\n- **GUI**: A way to _visually_ use the functionality of a module\n\n## Prisma engines\n\nAt the core of each module, there typically is a [Prisma engine](https://github.com/prisma/prisma-engines) that implements the core set of functionality. Engines are implemented in [Rust](https://www.rust-lang.org/) and expose a low-level API that is used by the higher-level interfaces.\n\nA Prisma engine is the **direct interface to the database**, any higher-level interfaces always communicate with the database _through_ the engine-layer.\n\nAs an example, Prisma Client connects to the [query engine](../reference/tools-and-interfaces/prisma-client/query-engine) in order to read and write data in a database:\n\n![](https://i.imgur.com/I8do25A.png)\n\n### Using custom engine binaries\n\nBy default, all binaries are automatically downloaded into the `node_modules/@prisma/cli` folder when you install or update `@prisma/cli`. You might want to use a [custom binary](https://github.com/prisma/prisma-engines) file if:\n\n* Automated download of binaries is not possible.\n* You have created your own engine binary (for testing, or for an OS that is not officially supported).\n\nUse the following environment variables to specify custom locations for your binaries:\n\n* `PRISMA_QUERY_ENGINE_BINARY` (Query engine)\n* `PRISMA_MIGRATION_ENGINE_BINARY` (Migration engine)\n* `PRISMA_INTROSPECTION_ENGINE_BINARY` (Introspection engine)\n* `PRISMA_FMT_BINARY` (for `npx prisma format`)\n\n\n#### The `prisma/.env` file\n\nTo set an environment variable in the `prisma/.env` file:\n\n1. Add the environment variable to the `prisma/.env` file:\n\n   ')(0,3747)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('---\ntitle: 'Under the hood'\nmetaTitle: 'Prisma under the hood'\nmetaDescription: 'Learn about Prisma internals and how it works "under the hood". Prisma tools are based on an engine-layer which manages the communication with the database.'\n---\n\n## Overview\n\nThis page gives an overview of the Prisma internals and how it works "under the hood".\n\nNote that **this page does not contain any practical information that is relevant for _using_ Prisma**. It rather aims at providing a _mental model_ for what the Prisma toolkit _actually_ is and how the different tools that are available to developers are structured.\n\nIf you're new to Prisma, be sure to check out the [Quickstart](../getting-started/quickstart) and [Introduction](./introduction) pages first.\n\n## Modules and interfaces\n\nThe tools in the Prisma toolkit are built with respect to two dimensions:\n\n- **Module**: A set of functionality that's offered by Prisma\n- **Interface**: A way to _use_ the functionality of a module\n\nThe following illustration gives an overview of the tools that exist (or are planned) in the Prisma toolkit:\n\n![](https://i.imgur.com/mxJTGOu.png)\n\n### Modules\n\nPrisma provides a number of features which are implemented in the form of _modules_. Here is an overview of the modules Prisma provides:\n\n- **Query**: Send queries to your database\n- **Migrate**: Perform schema migrations in your database\n- **Introspect**: Read a database schema and translate into [Prisma data model](../reference/tools-and-interfaces/prisma-schema/data-model)\n- **Schema**: Construct and modify a [Prisma schema file](../reference/tools-and-interfaces/prisma-schema/prisma-schema-file)\n- **Generate**: Generate clients for Prisma data sources\n\n### Interface\n\n_Interfaces_ offer a way to actually _use_ the functionality of a module. The module-interface-matrix above shows four different levels of interfaces (from bottom to top):\n\n- **Engines** Implements the _core functionality_ consumed by the higher-level interfaces\n- **Library**: A way to _programmatically_ use the functionality of a module\n- **CLI**: A way to use the functionality of a module on the _command line_\n- **GUI**: A way to _visually_ use the functionality of a module\n\n## Prisma engines\n\nAt the core of each module, there typically is a [Prisma engine](https://github.com/prisma/prisma-engines) that implements the core set of functionality. Engines are implemented in [Rust](https://www.rust-lang.org/) and expose a low-level API that is used by the higher-level interfaces.\n\nA Prisma engine is the **direct interface to the database**, any higher-level interfaces always communicate with the database _through_ the engine-layer.\n\nAs an example, Prisma Client connects to the [query engine](../reference/tools-and-interfaces/prisma-client/query-engine) in order to read and write data in a database:\n\n![](https://i.imgur.com/I8do25A.png)\n\n### Using custom engine binaries\n\nBy default, all binaries are automatically downloaded into the `node_modules/@prisma/cli` folder when you install or update `@prisma/cli`. You might want to use a [custom binary](https://github.com/prisma/prisma-engines) file if:\n\n* Automated download of binaries is not possible.\n* You have created your own engine binary (for testing, or for an OS that is not officially supported).\n\nUse the following environment variables to specify custom locations for your binaries:\n\n* `PRISMA_QUERY_ENGINE_BINARY` (Query engine)\n* `PRISMA_MIGRATION_ENGINE_BINARY` (Migration engine)\n* `PRISMA_INTROSPECTION_ENGINE_BINARY` (Introspection engine)\n* `PRISMA_FMT_BINARY` (for `npx prisma format`)\n\n\n#### The `prisma/.env` file\n\nTo set an environment variable in the `prisma/.env` file:\n\n1. Add the environment variable to the `prisma/.env` file:\n\n   ')(0,3747)
   PsiWhiteSpace('')(3747,3747)
   JSEmptyStatement(3747,3747)
     <empty list>
@@ -70,7 +70,7 @@ JSFile:ParsingPrisma.mdx(0,8187)
         PsiWhiteSpace('\n\n')(3878,3880)
         XmlText(3880,3880)
           <empty list>
-        PsiElement(OUTER_BLOCK)('   ```\n   PRISMA_QUERY_ENGINE_BINARY=custom/path/my-query-engine-binary\n   ```')(3880,3958)
+        PsiElement(OUTER_MARKDOWN_CONTENT)('   ```\n   PRISMA_QUERY_ENGINE_BINARY=custom/path/my-query-engine-binary\n   ```')(3880,3958)
         PsiWhiteSpace('')(3958,3958)
         XmlText(3958,3958)
           <empty list>
@@ -86,7 +86,7 @@ JSFile:ParsingPrisma.mdx(0,8187)
         PsiWhiteSpace('\n\n')(3978,3980)
         XmlText(3980,3980)
           <empty list>
-        PsiElement(OUTER_BLOCK)('   ```\n   PRISMA_QUERY_ENGINE_BINARY=c:\custom\path\my-query-engine-binary\n   ```')(3980,4061)
+        PsiElement(OUTER_MARKDOWN_CONTENT)('   ```\n   PRISMA_QUERY_ENGINE_BINARY=c:\custom\path\my-query-engine-binary\n   ```')(3980,4061)
         PsiWhiteSpace('')(4061,4061)
         XmlText(4061,4061)
           <empty list>
@@ -100,7 +100,7 @@ JSFile:ParsingPrisma.mdx(0,8187)
       XmlToken:XML_TAG_END('>')(4091,4092)
   JSEmptyStatement(4092,4092)
     <empty list>
-  PsiElement(OUTER_BLOCK)('\n\n2. Run the following command to output the paths to all binaries:\n\n   ```terminal \n   npx prisma -v\n   ```\n\n   The output shows that the query engine path comes from the `PRISMA_QUERY_ENGINE_BINARY` environment variable:\n\n   ')(4092,4319)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\n2. Run the following command to output the paths to all binaries:\n\n   ```terminal \n   npx prisma -v\n   ```\n\n   The output shows that the query engine path comes from the `PRISMA_QUERY_ENGINE_BINARY` environment variable:\n\n   ')(4092,4319)
   PsiWhiteSpace('')(4319,4319)
   JSEmptyStatement(4319,4319)
     <empty list>
@@ -171,7 +171,7 @@ JSFile:ParsingPrisma.mdx(0,8187)
         PsiWhiteSpace('\n\n')(4450,4452)
         XmlText(4452,4452)
           <empty list>
-        PsiElement(OUTER_BLOCK)('   ```\n   Current platform     : darwin\n   |Query Engine         : query-engine d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /custom/my-query-engine-windows)\n   Migration Engine     : migration-engine-cli d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/migration-engine-windows)\n   Introspection Engine : introspection-core d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/introspection-engine-windows)\n   Format Binary        : prisma-fmt d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/prisma-fmt-windows)\n   ```')(4452,5064)
+        PsiElement(OUTER_MARKDOWN_CONTENT)('   ```\n   Current platform     : darwin\n   |Query Engine         : query-engine d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /custom/my-query-engine-windows)\n   Migration Engine     : migration-engine-cli d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/migration-engine-windows)\n   Introspection Engine : introspection-core d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/introspection-engine-windows)\n   Format Binary        : prisma-fmt d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/prisma-fmt-windows)\n   ```')(4452,5064)
         PsiWhiteSpace('')(5064,5064)
         XmlText(5064,5064)
           <empty list>
@@ -187,7 +187,7 @@ JSFile:ParsingPrisma.mdx(0,8187)
         PsiWhiteSpace('\n\n')(5086,5088)
         XmlText(5088,5088)
           <empty list>
-        PsiElement(OUTER_BLOCK)('    ```\n    Current platform     : windows\n    |Query Engine         : query-engine d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\custom\my-query-engine-windows.exe)\n    Migration Engine     : migration-engine-cli d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\myproject\node_modules\@prisma\cli\migration-engine-windows.exe)\n    Introspection Engine : introspection-core d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\myproject\node_modules\@prisma\cli\introspection-engine-windows.exe)\n    Format Binary        : prisma-fmt d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\myproject\node_modules\@prisma\cli\prisma-fmt-windows.exe)\n    ```')(5088,5732)
+        PsiElement(OUTER_MARKDOWN_CONTENT)('    ```\n    Current platform     : windows\n    |Query Engine         : query-engine d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\custom\my-query-engine-windows.exe)\n    Migration Engine     : migration-engine-cli d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\myproject\node_modules\@prisma\cli\migration-engine-windows.exe)\n    Introspection Engine : introspection-core d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\myproject\node_modules\@prisma\cli\introspection-engine-windows.exe)\n    Format Binary        : prisma-fmt d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\myproject\node_modules\@prisma\cli\prisma-fmt-windows.exe)\n    ```')(5088,5732)
         PsiWhiteSpace('')(5732,5732)
         XmlText(5732,5732)
           <empty list>
@@ -201,7 +201,7 @@ JSFile:ParsingPrisma.mdx(0,8187)
       XmlToken:XML_TAG_END('>')(5764,5765)
   JSEmptyStatement(5765,5765)
     <empty list>
-  PsiElement(OUTER_BLOCK)('\n\n> **Note**: It is possible to [use an `.env` file in a location outside the `prisma` folder](../reference/tools-and-interfaces/prisma-schema#manage-env-files-manually).\n\n#### Global environment variable\n\nTo set the an environment variable globally (in this example, `PRISMA_QUERY_ENGINE_BINARY`):\n\n1. Run the following command to set the environment variable:\n\n    ')(5765,6132)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\n> **Note**: It is possible to [use an `.env` file in a location outside the `prisma` folder](../reference/tools-and-interfaces/prisma-schema#manage-env-files-manually).\n\n#### Global environment variable\n\nTo set the an environment variable globally (in this example, `PRISMA_QUERY_ENGINE_BINARY`):\n\n1. Run the following command to set the environment variable:\n\n    ')(5765,6132)
   PsiWhiteSpace('')(6132,6132)
   JSEmptyStatement(6132,6132)
     <empty list>
@@ -272,7 +272,7 @@ JSFile:ParsingPrisma.mdx(0,8187)
         PsiWhiteSpace('\t\n\n')(6264,6267)
         XmlText(6267,6267)
           <empty list>
-        PsiElement(OUTER_BLOCK)('    ```terminal \n    export PRISMA_QUERY_ENGINE_BINARY=/custom/my-query-engine-unix\n    ```')(6267,6358)
+        PsiElement(OUTER_MARKDOWN_CONTENT)('    ```terminal \n    export PRISMA_QUERY_ENGINE_BINARY=/custom/my-query-engine-unix\n    ```')(6267,6358)
         PsiWhiteSpace('')(6358,6358)
         XmlText(6358,6358)
           <empty list>
@@ -288,7 +288,7 @@ JSFile:ParsingPrisma.mdx(0,8187)
         PsiWhiteSpace('\n\n')(6381,6383)
         XmlText(6383,6383)
           <empty list>
-        PsiElement(OUTER_BLOCK)('    ```terminal \n    set PRISMA_QUERY_ENGINE_BINARY=c:\custom\my-query-engine-windows.exe\n    ```')(6383,6480)
+        PsiElement(OUTER_MARKDOWN_CONTENT)('    ```terminal \n    set PRISMA_QUERY_ENGINE_BINARY=c:\custom\my-query-engine-windows.exe\n    ```')(6383,6480)
         PsiWhiteSpace('')(6480,6480)
         XmlText(6480,6480)
           <empty list>
@@ -302,7 +302,7 @@ JSFile:ParsingPrisma.mdx(0,8187)
       XmlToken:XML_TAG_END('>')(6513,6514)
   JSEmptyStatement(6514,6514)
     <empty list>
-  PsiElement(OUTER_BLOCK)('\n\n2. Run the following command to output the paths to all binaries:\n\n   ```terminal \n   npx prisma -v\n   ```\n\n   The output shows that the query engine path comes from the `PRISMA_QUERY_ENGINE_BINARY` environment variable:\n\n   ')(6514,6741)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\n2. Run the following command to output the paths to all binaries:\n\n   ```terminal \n   npx prisma -v\n   ```\n\n   The output shows that the query engine path comes from the `PRISMA_QUERY_ENGINE_BINARY` environment variable:\n\n   ')(6514,6741)
   PsiWhiteSpace('')(6741,6741)
   JSEmptyStatement(6741,6741)
     <empty list>
@@ -373,7 +373,7 @@ JSFile:ParsingPrisma.mdx(0,8187)
         PsiWhiteSpace('\n\n')(6872,6874)
         XmlText(6874,6874)
           <empty list>
-        PsiElement(OUTER_BLOCK)('   ```\n   Current platform     : darwin\n   |Query Engine         : query-engine d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /custom/my-query-engine-windows)\n   Migration Engine     : migration-engine-cli d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/migration-engine-windows)\n   Introspection Engine : introspection-core d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/introspection-engine-windows)\n   Format Binary        : prisma-fmt d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/prisma-fmt-windows)\n   ```')(6874,7486)
+        PsiElement(OUTER_MARKDOWN_CONTENT)('   ```\n   Current platform     : darwin\n   |Query Engine         : query-engine d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /custom/my-query-engine-windows)\n   Migration Engine     : migration-engine-cli d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/migration-engine-windows)\n   Introspection Engine : introspection-core d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/introspection-engine-windows)\n   Format Binary        : prisma-fmt d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at /myproject/node_modules/@prisma/cli/prisma-fmt-windows)\n   ```')(6874,7486)
         PsiWhiteSpace('')(7486,7486)
         XmlText(7486,7486)
           <empty list>
@@ -389,7 +389,7 @@ JSFile:ParsingPrisma.mdx(0,8187)
         PsiWhiteSpace('\n\n')(7508,7510)
         XmlText(7510,7510)
           <empty list>
-        PsiElement(OUTER_BLOCK)('    ```\n    Current platform     : windows\n    |Query Engine         : query-engine d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\custom\my-query-engine-windows.exe)\n    Migration Engine     : migration-engine-cli d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\myproject\node_modules\@prisma\cli\migration-engine-windows.exe)\n    Introspection Engine : introspection-core d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\myproject\node_modules\@prisma\cli\introspection-engine-windows.exe)\n    Format Binary        : prisma-fmt d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\myproject\node_modules\@prisma\cli\prisma-fmt-windows.exe)\n    ```')(7510,8154)
+        PsiElement(OUTER_MARKDOWN_CONTENT)('    ```\n    Current platform     : windows\n    |Query Engine         : query-engine d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\custom\my-query-engine-windows.exe)\n    Migration Engine     : migration-engine-cli d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\myproject\node_modules\@prisma\cli\migration-engine-windows.exe)\n    Introspection Engine : introspection-core d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\myproject\node_modules\@prisma\cli\introspection-engine-windows.exe)\n    Format Binary        : prisma-fmt d6ff7119649922b84e413b3b69660e2f49e2ddf3 (at c:\myproject\node_modules\@prisma\cli\prisma-fmt-windows.exe)\n    ```')(7510,8154)
         PsiWhiteSpace('')(8154,8154)
         XmlText(8154,8154)
           <empty list>

@@ -1,5 +1,5 @@
 JSFile:ParsingJsxInListItem.mdx(0,56)
-  PsiElement(OUTER_BLOCK)('- first item\n- ')(0,15)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('- first item\n- ')(0,15)
   PsiWhiteSpace('')(15,15)
   JSEmptyStatement(15,15)
     <empty list>
@@ -15,7 +15,7 @@ JSFile:ParsingJsxInListItem.mdx(0,56)
       XmlToken:XML_TAG_END('>')(33,34)
   JSEmptyStatement(34,34)
     <empty list>
-  PsiElement(OUTER_BLOCK)('\n  - ')(34,39)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n  - ')(34,39)
   PsiWhiteSpace('')(39,39)
   JSEmptyStatement(39,39)
     <empty list>

@@ -1,5 +1,5 @@
 JSFile:ParsingInlineJsxInEmphasis.mdx(0,84)
-  PsiElement(OUTER_BLOCK)('A paragraph with *emphasis and an ')(0,34)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('A paragraph with *emphasis and an ')(0,34)
   PsiWhiteSpace('')(34,34)
   JSEmptyStatement(34,34)
     <empty list>
@@ -11,7 +11,7 @@ JSFile:ParsingInlineJsxInEmphasis.mdx(0,84)
       XmlToken:XML_EMPTY_ELEMENT_END('/>')(40,42)
   JSEmptyStatement(42,42)
     <empty list>
-  PsiElement(OUTER_BLOCK)(' inline* and a [')(42,58)
+  PsiElement(OUTER_MARKDOWN_CONTENT)(' inline* and a [')(42,58)
   PsiWhiteSpace('')(58,58)
   JSEmptyStatement(58,58)
     <empty list>
@@ -23,7 +23,7 @@ JSFile:ParsingInlineJsxInEmphasis.mdx(0,84)
       XmlToken:XML_EMPTY_ELEMENT_END('/>')(64,66)
   JSEmptyStatement(66,66)
     <empty list>
-  PsiElement(OUTER_BLOCK)('](https://x) link.')(66,84)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('](https://x) link.')(66,84)
   PsiWhiteSpace('')(84,84)
   JSEmptyStatement(84,84)
     <empty list>

@@ -18,7 +18,7 @@ JSFile:ParsingMultilineEsm.mdx(0,78)
       PsiElement(JS:FROM_KEYWORD)('from')(20,24)
       PsiWhiteSpace(' ')(24,25)
       PsiElement(JS:STRING_LITERAL)(''./mod.js'')(25,35)
-  PsiElement(OUTER_BLOCK)('\n\n')(35,37)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\n')(35,37)
   PsiWhiteSpace('')(37,37)
   JSEmptyStatement(37,37)
     <empty list>

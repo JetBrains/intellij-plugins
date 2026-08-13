@@ -1,5 +1,5 @@
 JSFile:ParsingCodeBlockInJsx.mdx(0,76)
-  PsiElement(OUTER_BLOCK)('# Markdown\n\n')(0,12)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('# Markdown\n\n')(0,12)
   PsiWhiteSpace('')(12,12)
   JSEmptyStatement(12,12)
     <empty list>
@@ -11,7 +11,7 @@ JSFile:ParsingCodeBlockInJsx.mdx(0,76)
       PsiWhiteSpace('\n')(17,18)
       XmlText(18,18)
         <empty list>
-      PsiElement(OUTER_BLOCK)('```c\n#include <stdio.h>\n```')(18,45)
+      PsiElement(OUTER_MARKDOWN_CONTENT)('```c\n#include <stdio.h>\n```')(18,45)
       PsiWhiteSpace('')(45,45)
       XmlText(45,45)
         <empty list>
@@ -21,7 +21,7 @@ JSFile:ParsingCodeBlockInJsx.mdx(0,76)
       XmlToken:XML_TAG_END('>')(51,52)
   JSEmptyStatement(52,52)
     <empty list>
-  PsiElement(OUTER_BLOCK)('\n\n# Markdown with errors')(52,76)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\n# Markdown with errors')(52,76)
   PsiWhiteSpace('')(76,76)
   JSEmptyStatement(76,76)
     <empty list>

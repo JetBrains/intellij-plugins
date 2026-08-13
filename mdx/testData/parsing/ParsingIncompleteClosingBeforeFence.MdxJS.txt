@@ -13,7 +13,7 @@ JSFile:ParsingIncompleteClosingBeforeFence.mdx(0,37)
     <empty list>
   PsiErrorElement:Statement expected(11,11)
     <empty list>
-  PsiElement(OUTER_BLOCK)('    ```tsx\n\n    ```')(11,30)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('    ```tsx\n\n    ```')(11,30)
   PsiWhiteSpace('')(30,30)
   PsiErrorElement:Statement expected(30,30)
     <empty list>

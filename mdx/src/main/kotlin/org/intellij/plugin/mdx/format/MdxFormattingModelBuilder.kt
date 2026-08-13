@@ -29,6 +29,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import org.intellij.plugin.mdx.lang.parse.MdxElementTypes
 import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
+import org.intellij.plugin.mdx.lang.template.MdxTemplateElementTypes
 import org.intellij.plugins.markdown.injection.MarkdownCodeFenceUtils
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets
@@ -71,7 +72,7 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
   override fun createModel(formattingContext: FormattingContext): FormattingModel {
     val file = formattingContext.containingFile
     val node = formattingContext.psiElement.node
-    if (node.elementType === MdxTokenTypes.OUTER_ELEMENT_TYPE) {
+    if (node.elementType === MdxTemplateElementTypes.OUTER_MARKDOWN_CONTENT) {
       return SimpleTemplateLanguageFormattingModelBuilder().createModel(formattingContext)
     }
     // Fall back to a no-op dummy model only while the PSI is transiently broken (e.g. an unbalanced `{`

@@ -9,6 +9,7 @@ import com.intellij.psi.tree.TokenSet
 import org.intellij.plugin.mdx.lang.MdxLanguage
 import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
 import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
+import org.intellij.plugin.mdx.lang.template.MdxTemplateElementTypes
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
 
 object MdxTemplateDataElementType : MdxTemplateDataElementTypeBase(),
@@ -21,7 +22,7 @@ object MdxTemplateDataElementType : MdxTemplateDataElementTypeBase(),
 open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLATE_JSX",
                                                                     MdxLanguage,
                                                                     MdxTokenTypes.EMBEDDED_JS_CONTENT,
-                                                                    MdxTokenTypes.OUTER_ELEMENT_TYPE) {
+                                                                    MdxTemplateElementTypes.OUTER_MARKDOWN_CONTENT) {
   override fun collectTemplateModifications(sourceCode: CharSequence, baseLexer: Lexer): TemplateDataModifications {
     val modifications = TemplateDataModifications()
     val templateRanges = collectTemplateRanges(sourceCode, baseLexer)

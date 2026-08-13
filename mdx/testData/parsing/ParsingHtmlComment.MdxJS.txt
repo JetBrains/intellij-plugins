@@ -10,7 +10,7 @@ JSFile:ParsingHtmlComment.mdx(0,24)
       PsiElement(JS:MINUS)('-')(2,3)
       PsiErrorElement:Expression expected(3,3)
         <empty list>
-    PsiElement(OUTER_BLOCK)('-')(3,4)
+    PsiElement(OUTER_MARKDOWN_CONTENT)('-')(3,4)
     PsiWhiteSpace('')(4,4)
   PsiWhiteSpace(' ')(4,5)
   JSExpressionStatement(5,7)

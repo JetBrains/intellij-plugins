@@ -1,5 +1,5 @@
 JSFile:ParsingTomlFrontMatter.mdx(0,55)
-  PsiElement(OUTER_BLOCK)('+++\ntitle = "Hello MDX"\npublished = true\n+++\n\n# Heading')(0,55)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('+++\ntitle = "Hello MDX"\npublished = true\n+++\n\n# Heading')(0,55)
   PsiWhiteSpace('')(55,55)
   JSEmptyStatement(55,55)
     <empty list>

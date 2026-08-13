@@ -1,5 +1,5 @@
 JSFile:ParsingNestedFence.mdx(0,33)
-  PsiElement(OUTER_BLOCK)('````md\n```js\nconst x = 1\n```\n````')(0,33)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('````md\n```js\nconst x = 1\n```\n````')(0,33)
   PsiWhiteSpace('')(33,33)
   JSEmptyStatement(33,33)
     <empty list>

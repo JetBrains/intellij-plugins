@@ -46,7 +46,7 @@ JSFile:ParsingEsm.mdx(0,161)
             PsiElement(JS:XML_RBRACE)('}')(81,82)
           PsiWhiteSpace(' ')(82,83)
           XmlToken:XML_EMPTY_ELEMENT_END('/>')(83,85)
-  PsiElement(OUTER_BLOCK)('\n\nAn ')(85,90)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\nAn ')(85,90)
   PsiWhiteSpace('')(90,90)
   JSEmptyStatement(90,90)
     <empty list>
@@ -62,7 +62,7 @@ JSFile:ParsingEsm.mdx(0,161)
       XmlToken:XML_TAG_END('>')(118,119)
   JSEmptyStatement(119,119)
     <empty list>
-  PsiElement(OUTER_BLOCK)(' component and a ')(119,136)
+  PsiElement(OUTER_MARKDOWN_CONTENT)(' component and a ')(119,136)
   PsiWhiteSpace('')(136,136)
   JSEmptyStatement(136,136)
     <empty list>
@@ -81,7 +81,7 @@ JSFile:ParsingEsm.mdx(0,161)
       XmlToken:XML_TAG_END('>')(159,160)
   JSEmptyStatement(160,160)
     <empty list>
-  PsiElement(OUTER_BLOCK)('.')(160,161)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('.')(160,161)
   PsiWhiteSpace('')(161,161)
   JSEmptyStatement(161,161)
     <empty list>

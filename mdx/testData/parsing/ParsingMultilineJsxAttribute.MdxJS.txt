@@ -1,5 +1,5 @@
 JSFile:ParsingMultilineJsxAttribute.mdx(0,107)
-  PsiElement(OUTER_BLOCK)('## Exercise\n\nThis is some question.\n\n')(0,37)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('## Exercise\n\nThis is some question.\n\n')(0,37)
   PsiWhiteSpace('')(37,37)
   JSEmptyStatement(37,37)
     <empty list>
@@ -35,7 +35,7 @@ JSFile:ParsingMultilineJsxAttribute.mdx(0,107)
       XmlToken:XML_TAG_END('>')(79,80)
   JSEmptyStatement(80,80)
     <empty list>
-  PsiElement(OUTER_BLOCK)('\n\nThis is another question.')(80,107)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\nThis is another question.')(80,107)
   PsiWhiteSpace('')(107,107)
   JSEmptyStatement(107,107)
     <empty list>

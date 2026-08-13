@@ -1,5 +1,5 @@
 JSFile:ParsingGfmTable.mdx(0,103)
-  PsiElement(OUTER_BLOCK)('| Left | Center | Right |\n| :--- | :----: | ----: |\n| a    | b      | c     |\n| d    | e      | f     |')(0,103)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('| Left | Center | Right |\n| :--- | :----: | ----: |\n| a    | b      | c     |\n| d    | e      | f     |')(0,103)
   PsiWhiteSpace('')(103,103)
   JSEmptyStatement(103,103)
     <empty list>

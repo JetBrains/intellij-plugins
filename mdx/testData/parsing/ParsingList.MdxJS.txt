@@ -1,5 +1,5 @@
 JSFile:ParsingList.mdx(0,30)
-  PsiElement(OUTER_BLOCK)('* ')(0,2)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('* ')(0,2)
   PsiWhiteSpace('')(2,2)
   JSEmptyStatement(2,2)
     <empty list>
@@ -11,7 +11,7 @@ JSFile:ParsingList.mdx(0,30)
       XmlToken:XML_EMPTY_ELEMENT_END('/>')(12,14)
   JSEmptyStatement(14,14)
     <empty list>
-  PsiElement(OUTER_BLOCK)('\n * ')(14,18)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n * ')(14,18)
   PsiWhiteSpace('')(18,18)
   JSEmptyStatement(18,18)
     <empty list>

@@ -1,5 +1,5 @@
 JSFile:ParsingWithNewLines.mdx(0,2374)
-  PsiElement(OUTER_BLOCK)('---\ntitle: "They LinkedIn"\ndate: "2017"\nlede: "A Chrome extension that lets you see through the LinkedIn jargon."\nlink: "https://chrome.google.com/webstore/detail/they-linkedin/cmjockpmecfhkaeadcgneakffkioombe"\nrepo: "https://github.com/prichey/they-linkedin"\norder: 9\npublish: true\nlang: "Node.js"\n---\n\n')(0,304)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('---\ntitle: "They LinkedIn"\ndate: "2017"\nlede: "A Chrome extension that lets you see through the LinkedIn jargon."\nlink: "https://chrome.google.com/webstore/detail/they-linkedin/cmjockpmecfhkaeadcgneakffkioombe"\nrepo: "https://github.com/prichey/they-linkedin"\norder: 9\npublish: true\nlang: "Node.js"\n---\n\n')(0,304)
   PsiWhiteSpace('')(304,304)
   JSEmptyStatement(304,304)
     <empty list>
@@ -26,7 +26,7 @@ JSFile:ParsingWithNewLines.mdx(0,2374)
       PsiWhiteSpace(' ')(364,365)
       PsiElement(JS:STRING_LITERAL)(''components/ExternalAnchor'')(365,392)
     PsiElement(JS:SEMICOLON)(';')(392,393)
-  PsiElement(OUTER_BLOCK)('\n\n')(393,395)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\n')(393,395)
   PsiWhiteSpace('')(395,395)
   JSEmptyStatement(395,395)
     <empty list>
@@ -53,7 +53,7 @@ JSFile:ParsingWithNewLines.mdx(0,2374)
       PsiWhiteSpace(' ')(464,465)
       PsiElement(JS:STRING_LITERAL)(''./screenshot-zoom.jpg'')(465,488)
     PsiElement(JS:SEMICOLON)(';')(488,489)
-  PsiElement(OUTER_BLOCK)('\n\nLinkedIn can be a useful resource whenever you're looking for a job, or looking to fill a job, and is a total waste of time the other 93% of the time. (All opinions my own, obviously.) I maintain ')(489,687)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\nLinkedIn can be a useful resource whenever you're looking for a job, or looking to fill a job, and is a total waste of time the other 93% of the time. (All opinions my own, obviously.) I maintain ')(489,687)
   PsiWhiteSpace('')(687,687)
   JSEmptyStatement(687,687)
     <empty list>
@@ -80,7 +80,7 @@ JSFile:ParsingWithNewLines.mdx(0,2374)
       XmlToken:XML_TAG_END('>')(764,765)
   JSEmptyStatement(765,765)
     <empty list>
-  PsiElement(OUTER_BLOCK)(' out of sadistic compulsion, though I rarely 'do' anything on the site. Out of all the feeds to which I subject myself regularly, LinkedIn seems to have the highest noise to signal ratio. It is also, by far, the most jargon-y. The back-patting is endless and the paradigm-shifting synergy is streamlined.\n\nSomeone saner than I would, given these opinions about a free and totally optional website on the internet, probably just delete her profile or unsubscribe from email notifications. Instead, I made an amusing Chrome plugin.\n\n')(765,1296)
+  PsiElement(OUTER_MARKDOWN_CONTENT)(' out of sadistic compulsion, though I rarely 'do' anything on the site. Out of all the feeds to which I subject myself regularly, LinkedIn seems to have the highest noise to signal ratio. It is also, by far, the most jargon-y. The back-patting is endless and the paradigm-shifting synergy is streamlined.\n\nSomeone saner than I would, given these opinions about a free and totally optional website on the internet, probably just delete her profile or unsubscribe from email notifications. Instead, I made an amusing Chrome plugin.\n\n')(765,1296)
   PsiWhiteSpace('')(1296,1296)
   JSEmptyStatement(1296,1296)
     <empty list>
@@ -113,7 +113,7 @@ JSFile:ParsingWithNewLines.mdx(0,2374)
       XmlToken:XML_TAG_END('>')(1418,1419)
   JSEmptyStatement(1419,1419)
     <empty list>
-  PsiElement(OUTER_BLOCK)(', inspired by John Carpenter's ')(1419,1450)
+  PsiElement(OUTER_MARKDOWN_CONTENT)(', inspired by John Carpenter's ')(1419,1450)
   PsiWhiteSpace('')(1450,1450)
   JSEmptyStatement(1450,1450)
     <empty list>
@@ -140,7 +140,7 @@ JSFile:ParsingWithNewLines.mdx(0,2374)
       XmlToken:XML_TAG_END('>')(1524,1525)
   JSEmptyStatement(1525,1525)
     <empty list>
-  PsiElement(OUTER_BLOCK)(' and an episode of the podcast ')(1525,1556)
+  PsiElement(OUTER_MARKDOWN_CONTENT)(' and an episode of the podcast ')(1525,1556)
   PsiWhiteSpace('')(1556,1556)
   JSEmptyStatement(1556,1556)
     <empty list>
@@ -167,7 +167,7 @@ JSFile:ParsingWithNewLines.mdx(0,2374)
       XmlToken:XML_TAG_END('>')(1723,1724)
   JSEmptyStatement(1724,1724)
     <empty list>
-  PsiElement(OUTER_BLOCK)(', lets you see past the jargon. It works similar to ')(1724,1776)
+  PsiElement(OUTER_MARKDOWN_CONTENT)(', lets you see past the jargon. It works similar to ')(1724,1776)
   PsiWhiteSpace('')(1776,1776)
   JSEmptyStatement(1776,1776)
     <empty list>
@@ -191,7 +191,7 @@ JSFile:ParsingWithNewLines.mdx(0,2374)
       XmlToken:XML_TAG_END('>')(1848,1849)
   JSEmptyStatement(1849,1849)
     <empty list>
-  PsiElement(OUTER_BLOCK)(' but it only runs on linkedin.com. It replaces phrases like "People you may know" with "Synergistic partners", and "What people are talking about now" with "Your boss expects you to know about this". Etc.\n\n')(1849,2055)
+  PsiElement(OUTER_MARKDOWN_CONTENT)(' but it only runs on linkedin.com. It replaces phrases like "People you may know" with "Synergistic partners", and "What people are talking about now" with "Your boss expects you to know about this". Etc.\n\n')(1849,2055)
   PsiWhiteSpace('')(2055,2055)
   JSEmptyStatement(2055,2055)
     <empty list>
@@ -248,7 +248,7 @@ JSFile:ParsingWithNewLines.mdx(0,2374)
       XmlToken:XML_TAG_END('>')(2167,2168)
   JSEmptyStatement(2168,2168)
     <empty list>
-  PsiElement(OUTER_BLOCK)('\n\nIf you found any of this interesting, send me a note. I'd love to add you to my professional network. And, if you would, please endorse me for 'growth hacking' and 'thought leadership'. Thanks in advance!')(2168,2374)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('\n\nIf you found any of this interesting, send me a note. I'd love to add you to my professional network. And, if you would, please endorse me for 'growth hacking' and 'thought leadership'. Thanks in advance!')(2168,2374)
   PsiWhiteSpace('')(2374,2374)
   JSEmptyStatement(2374,2374)
     <empty list>

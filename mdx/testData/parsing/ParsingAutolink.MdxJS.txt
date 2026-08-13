@@ -1,5 +1,5 @@
 JSFile:ParsingAutolink.mdx(0,37)
-  PsiElement(OUTER_BLOCK)('Visit ')(0,6)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('Visit ')(0,6)
   PsiWhiteSpace('')(6,6)
   JSEmptyStatement(6,6)
     <empty list>
@@ -10,5 +10,5 @@ JSFile:ParsingAutolink.mdx(0,37)
       PsiErrorElement:Tag start is not closed(13,13)
         <empty list>
   PsiComment(JS:END_OF_LINE_COMMENT)('//example.com>')(13,27)
-  PsiElement(OUTER_BLOCK)(' for more.')(27,37)
+  PsiElement(OUTER_MARKDOWN_CONTENT)(' for more.')(27,37)
   PsiWhiteSpace('')(37,37)
