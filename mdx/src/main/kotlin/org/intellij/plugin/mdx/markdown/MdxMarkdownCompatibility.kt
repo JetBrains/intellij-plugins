@@ -74,7 +74,7 @@ object MdxMarkdown {
   }
 
   fun areCaretsInMarkdown(file: MdxFile, editor: Editor): Boolean {
-    return ReadAction.compute<Boolean, Throwable> {
+    return ReadAction.computeBlocking<Boolean, Throwable> {
       editor.caretModel.allCarets.all { caret ->
         isMarkdownSelectionRange(file, caret.selectionStart, caret.selectionEnd)
       }
