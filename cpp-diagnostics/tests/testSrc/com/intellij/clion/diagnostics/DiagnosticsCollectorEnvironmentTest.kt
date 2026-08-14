@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Test
 class DiagnosticsCollectorEnvironmentTest {
   companion object {
     private val projectDir = CidrTestDataFixture.getCppDiagnosticsTestData()
-  }
 
-  private val tempDir = tempDirTestFixture(projectDir.resolve("simple-cmake-project"))
-  private val project by clionProjectTestFixture(tempDir)
+    private val tempDir = tempDirTestFixture(projectDir.resolve("simple-cmake-project"))
+    private val project by clionProjectTestFixture(tempDir)
+  }
 
   @Test
   fun testEnvironmentFile() = clionTimeoutRunBlocking {

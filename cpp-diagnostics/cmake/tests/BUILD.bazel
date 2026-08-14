@@ -54,6 +54,8 @@ jvm_library(
         "//CIDR/clion-toolchains:clion-toolchains_test_lib",
         "//CIDR/clion-cmake/core",
         "//CIDR/clion-cmake/core:core_test_lib",
+        "@community//libraries/assertj-core",
+        "@community//libraries/assertj-core:assertj-core_test_lib",
         "@community//libraries/junit5",
         "@community//libraries/junit5:junit5_test_lib",
         "@community//libraries/kotlinx/serialization/core",
