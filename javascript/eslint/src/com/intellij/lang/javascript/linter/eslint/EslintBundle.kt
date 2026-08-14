@@ -9,14 +9,16 @@ import java.util.function.Supplier
 @NonNls
 private const val BUNDLE = "messages.EslintBundle"
 
-object EslintBundle : DynamicBundle(BUNDLE) {
+object EslintBundle {
+  private val instance = DynamicBundle(EslintBundle::class.java, BUNDLE)
+
   @JvmStatic
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): @Nls String =
-    getMessage(key, *params)
+    instance.getMessage(key, *params)
 
   @JvmStatic
   fun messagePointer(
     @PropertyKey(resourceBundle = BUNDLE) key: String,
     vararg params: Any,
-  ): Supplier<@Nls String> = getLazyMessage(key, *params)
+  ): Supplier<@Nls String> = instance.getLazyMessage(key, *params)
 }

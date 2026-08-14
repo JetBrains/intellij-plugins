@@ -8,15 +8,17 @@ import org.jetbrains.annotations.PropertyKey
 @NonNls
 private const val BUNDLE = "messages.CloudFormationBundle"
 
-object CloudFormationBundle : DynamicBundle(BUNDLE) {
+object CloudFormationBundle {
+  private val instance = DynamicBundle(CloudFormationBundle::class.java, BUNDLE)
+
   @Nls
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
-    return if (containsKey(key)) getMessage(key, *params) else CloudFormationDeprecatedMessagesBundle.message(key, *params)
+    return if (instance.containsKey(key)) instance.getMessage(key, *params) else CloudFormationDeprecatedMessagesBundle.message(key, *params)
   }
 
   @JvmStatic
   fun messagePointer(@PropertyKey(resourceBundle = BUNDLE) key: String,
                      vararg params: Any): java.util.function.Supplier<String> {
-    return if (containsKey(key))  getLazyMessage(key, *params) else CloudFormationDeprecatedMessagesBundle.messagePointer(key, *params)
+    return if (instance.containsKey(key))  instance.getLazyMessage(key, *params) else CloudFormationDeprecatedMessagesBundle.messagePointer(key, *params)
   }
 }

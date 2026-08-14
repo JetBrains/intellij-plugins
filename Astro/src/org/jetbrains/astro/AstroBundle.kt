@@ -10,14 +10,15 @@ import java.util.function.Supplier
 @NonNls
 private const val BUNDLE = "messages.AstroBundle"
 
-object AstroBundle : DynamicBundle(BUNDLE) {
+object AstroBundle {
+  private val instance = DynamicBundle(AstroBundle::class.java, BUNDLE)
 
   @JvmStatic
   @Nls
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String =
-    if (containsKey(key)) getMessage(key, *params) else AstroDeprecatedMessagesBundle.message(key, *params)
+    if (instance.containsKey(key)) instance.getMessage(key, *params) else AstroDeprecatedMessagesBundle.message(key, *params)
 
   @JvmStatic
   fun messagePointer(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): Supplier<@Nls String> =
-    if (containsKey(key)) getLazyMessage(key, *params) else AstroDeprecatedMessagesBundle.messagePointer(key, *params)
+    if (instance.containsKey(key)) instance.getLazyMessage(key, *params) else AstroDeprecatedMessagesBundle.messagePointer(key, *params)
 }

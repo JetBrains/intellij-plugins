@@ -8,37 +8,34 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 import java.util.function.Supplier
 
-class Angular2Bundle : DynamicBundle(BUNDLE) {
+object Angular2Bundle {
+  const val BUNDLE: @NonNls String = "messages.Angular2Bundle"
+  private val instance = DynamicBundle(Angular2Bundle::class.java, BUNDLE)
 
-  companion object {
-    const val BUNDLE: @NonNls String = "messages.Angular2Bundle"
-    private val INSTANCE: Angular2Bundle = Angular2Bundle()
+  @JvmStatic
+  fun message(key: @PropertyKey(resourceBundle = BUNDLE) String, vararg params: Any): @Nls String {
+    return instance.getMessage(key, *params)
+  }
 
-    @JvmStatic
-    fun message(key: @PropertyKey(resourceBundle = BUNDLE) String, vararg params: Any): @Nls String {
-      return INSTANCE.getMessage(key, *params)
+  @JvmStatic
+  fun htmlMessage(key: @PropertyKey(resourceBundle = BUNDLE) String, vararg params: Any): @Nls String {
+    return "<html>" + instance.getMessage(key, *params) + "</html>"
+  }
+
+  @JvmStatic
+  fun icuHtmlMessage(key: @PropertyKey(resourceBundle = BUNDLE) String, vararg params: Pair<String, Any>): @Nls String {
+    return try {
+      "<html>" + MessageFormat.format(instance.getMessage(key), params.toMap()) + "</html>"
     }
-
-    @JvmStatic
-    fun htmlMessage(key: @PropertyKey(resourceBundle = BUNDLE) String, vararg params: Any): @Nls String {
-      return "<html>" + INSTANCE.getMessage(key, *params) + "</html>"
+    catch (e: IllegalArgumentException) {
+      logger<Angular2Bundle>().error(e)
+      "Bad message: $key"
     }
+  }
 
-    @JvmStatic
-    fun icuHtmlMessage(key: @PropertyKey(resourceBundle = BUNDLE) String, vararg params: Pair<String, Any>): @Nls String {
-      return try {
-        "<html>" + MessageFormat.format(INSTANCE.getMessage(key), params.toMap()) + "</html>"
-      }
-      catch (e: IllegalArgumentException) {
-        logger<Angular2Bundle>().error(e)
-        "Bad message: $key"
-      }
-    }
-
-    @JvmStatic
-    fun messagePointer(key: @PropertyKey(resourceBundle = BUNDLE) String,
-                       vararg params: Any): Supplier<String> {
-      return INSTANCE.getLazyMessage(key, *params)
-    }
+  @JvmStatic
+  fun messagePointer(key: @PropertyKey(resourceBundle = BUNDLE) String,
+                     vararg params: Any): Supplier<String> {
+    return instance.getLazyMessage(key, *params)
   }
 }

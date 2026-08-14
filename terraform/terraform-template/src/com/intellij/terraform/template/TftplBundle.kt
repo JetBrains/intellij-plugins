@@ -5,12 +5,12 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 
-object TftplBundle : DynamicBundle(TftplBundle::class.java, TftplBundle.BUNDLE) {
-
+object TftplBundle {
   @NonNls
   private const val BUNDLE: String = "messages.TftplBundle"
+  private val instance = DynamicBundle(TftplBundle::class.java, BUNDLE)
 
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): @Nls String {
-    return getMessage(key, *params)
+    return instance.getMessage(key, *params)
   }
 }

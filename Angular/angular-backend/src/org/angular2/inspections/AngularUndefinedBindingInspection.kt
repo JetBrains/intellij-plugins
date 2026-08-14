@@ -26,7 +26,7 @@ import org.angular2.inspections.quickfixes.CreateDirectiveInputIntentionAction
 import org.angular2.inspections.quickfixes.CreateDirectiveOutputIntentionAction
 import org.angular2.inspections.quickfixes.InputKind
 import org.angular2.lang.Angular2Bundle
-import org.angular2.lang.Angular2Bundle.Companion.BUNDLE
+import org.angular2.lang.Angular2Bundle.BUNDLE
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.Angular2HtmlLanguage

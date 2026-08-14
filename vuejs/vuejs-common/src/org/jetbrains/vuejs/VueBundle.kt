@@ -10,16 +10,17 @@ import java.util.function.Supplier
 @NonNls
 private const val BUNDLE = "messages.VueBundle"
 
-object VueBundle : DynamicBundle(BUNDLE) {
+object VueBundle {
+  private val instance = DynamicBundle(VueBundle::class.java, BUNDLE)
 
   @JvmStatic
   @Nls
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
-    return getMessage(key, *params)
+    return instance.getMessage(key, *params)
   }
 
   @JvmStatic
   fun messagePointer(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): Supplier<@Nls String> {
-    return getLazyMessage(key, *params)
+    return instance.getLazyMessage(key, *params)
   }
 }

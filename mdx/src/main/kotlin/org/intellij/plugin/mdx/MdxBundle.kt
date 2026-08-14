@@ -7,8 +7,10 @@ import org.jetbrains.annotations.PropertyKey
 
 private const val BUNDLE: @NonNls String = "messages.MdxBundle"
 
-internal object MdxBundle : DynamicBundle(BUNDLE) {
+internal object MdxBundle {
+  private val instance = DynamicBundle(MdxBundle::class.java, BUNDLE)
+
   fun message(key: @PropertyKey(resourceBundle = BUNDLE) String, vararg params: Any): @Nls String {
-    return getMessage(key, *params)
+    return instance.getMessage(key, *params)
   }
 }

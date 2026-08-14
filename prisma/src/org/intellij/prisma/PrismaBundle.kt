@@ -5,17 +5,18 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 
 @NonNls
-const val PRISMA_BUNDLE = "messages.PrismaBundle"
+internal const val PRISMA_BUNDLE = "messages.PrismaBundle"
 
-object PrismaBundle : DynamicBundle(PRISMA_BUNDLE) {
+object PrismaBundle {
+  private val instance = DynamicBundle(PrismaBundle::class.java, PRISMA_BUNDLE)
 
   @Suppress("SpreadOperator")
   @JvmStatic
   fun message(@PropertyKey(resourceBundle = PRISMA_BUNDLE) key: String, vararg params: Any) =
-    getMessage(key, *params)
+    instance.getMessage(key, *params)
 
   @Suppress("SpreadOperator", "unused")
   @JvmStatic
   fun messagePointer(@PropertyKey(resourceBundle = PRISMA_BUNDLE) key: String, vararg params: Any) =
-    getLazyMessage(key, *params)
+    instance.getLazyMessage(key, *params)
 }
