@@ -1,8 +1,9 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="com.intellij.cpp-diagnostics"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.cidr.common.testFramework.core.nolang"/>
+    <module name="intellij.clion.diagnostics.core"/>
     <module name="intellij.clion.testFramework.nolang"/>
     <module name="intellij.clion.testFramework.nolang.junit5.core"/>
     <module name="intellij.clion.toolchains"/>
@@ -11,6 +12,6 @@
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.testFramework"/>
     <module name="intellij.platform.testFramework.junit5"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
 </idea-plugin>

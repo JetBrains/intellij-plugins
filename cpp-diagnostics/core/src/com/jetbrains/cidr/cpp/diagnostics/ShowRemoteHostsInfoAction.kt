@@ -17,7 +17,7 @@ import com.jetbrains.cidr.project.workspace.CidrWorkspace
 import com.jetbrains.cidr.project.workspace.WorkspaceWithEnvironment
 import com.jetbrains.cidr.toolchains.EnvironmentProblems
 
-private class ShowRemoteHostsInfoAction : CidrProjectAction() {
+internal class ShowRemoteHostsInfoAction : CidrProjectAction() {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = true
   }

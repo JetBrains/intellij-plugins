@@ -2,5 +2,10 @@
   modules:
   - name: intellij.clion.diagnostics
   contentModules:
-  - name: intellij.clion.diagnostics.cmake
   - name: intellij.clion.diagnostics.docker
+- name: lib/modules/intellij.clion.diagnostics.cmake.jar
+  contentModules:
+  - name: intellij.clion.diagnostics.cmake
+- name: lib/modules/intellij.clion.diagnostics.core.jar
+  contentModules:
+  - name: intellij.clion.diagnostics.core

@@ -30,26 +30,26 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="kotlin-stdlib" level="project" />
-    <orderEntry type="module" module-name="intellij.cmake.core" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.clion.diagnostics" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.clion.toolchains" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core.nolang" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.util.execution" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.workspaceModel" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.core.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.util" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.libraries.kotlinx.serialization.core" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.libraries.kotlinx.serialization.json" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core.nolang" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.clion.diagnostics.cmake" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.clion.diagnostics.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.clion.testFramework.nolang" scope="TEST" />
     <orderEntry type="module" module-name="intellij.clion.testFramework.nolang.junit5.cmake" scope="TEST" />
     <orderEntry type="module" module-name="intellij.clion.testFramework.nolang.junit5.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.clion.toolchains" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.cmake.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.junit5" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.kotlinx.serialization.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.kotlinx.serialization.json" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.clion.diagnostics.cmake" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.libraries.junit5" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.util" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.clion.diagnostics.cmake" />
 </module>

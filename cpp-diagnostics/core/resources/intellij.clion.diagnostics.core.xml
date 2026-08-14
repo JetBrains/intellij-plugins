@@ -1,0 +1,60 @@
+<idea-plugin visibility="internal">
+  <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.cidr.projectModel"/>
+    <module name="intellij.cidr.psi.base"/>
+    <module name="intellij.cidr.util"/>
+    <module name="intellij.cidr.util.execution"/>
+    <module name="intellij.cidr.workspaceModel"/>
+    <module name="intellij.clion.toolchains"/>
+    <module name="intellij.libraries.kotlinx.serialization.core"/>
+    <module name="intellij.libraries.kotlinx.serialization.json"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.editor.ui"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.remote.core"/>
+    <module name="intellij.platform.ssh.ui"/>
+    <module name="intellij.platform.util.ex"/>
+    <!-- endregion -->
+  </dependencies>
+
+  <resource-bundle>messages.CppDiagnosticsBundle</resource-bundle>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.clion.diagnostics.workspaceDescriptionProvider"
+                    interface="com.jetbrains.cidr.cpp.diagnostics.workspace.WorkspaceDescriptionProvider"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.clion.diagnostics.toolchainDescriptionProvider"
+                    interface="com.jetbrains.cidr.cpp.diagnostics.toolchain.ToolchainDescriptionProvider"
+                    dynamic="true"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij.clion.diagnostics">
+    <workspaceDescriptionProvider implementation="com.jetbrains.cidr.cpp.diagnostics.workspace.WorkspaceWithEnvironmentDescriptionProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <troubleInfoCollector implementation="com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction"/>
+    <registryKey key="cpp.diagnostics.track.events" description="Track various events to dump them in the diagnostics info"
+                 defaultValue="false" restartRequired="true"/>
+    <registryKey key="cpp.diagnostics.also.open.in.editor" description="Show C/C++ diagnostic results in editor"
+                 defaultValue="false"/>
+  </extensions>
+
+  <projectListeners>
+    <listener class="com.jetbrains.cidr.cpp.diagnostics.CdOCWorkspaceEventsListener"
+              topic="com.jetbrains.cidr.lang.workspace.OCWorkspaceListener"/>
+  </projectListeners>
+
+  <actions resource-bundle="messages.CppDiagnosticsBundle">
+    <action id="com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction" class="com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction">
+      <add-to-group group-id="HelpDiagnosticTools" anchor="after" relative-to-action="LogDebugConfigure"/>
+    </action>
+
+    <action id="ShowRemoteHostsInfo" class="com.jetbrains.cidr.cpp.diagnostics.ShowRemoteHostsInfoAction"/>
+  </actions>
+</idea-plugin>
