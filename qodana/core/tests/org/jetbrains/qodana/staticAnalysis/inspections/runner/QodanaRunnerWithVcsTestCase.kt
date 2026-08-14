@@ -20,13 +20,14 @@ import java.nio.file.Path
 
 abstract class QodanaRunnerWithVcsTestCase : QodanaRunnerTestCase() {
   private lateinit var gitIgnoreChecker: VcsIgnoreChecker
+  protected open val makeInitialCommit: Boolean = true
 
   private val projectPath: String
     get() = FileUtil.toSystemIndependentName(project.stateStore.projectBasePath.toString())
 
   override fun setUp() {
     super.setUp()
-    ReadAction.nonBlocking{ createRepository(project, projectPath) }.submit(AppExecutorUtil.getAppExecutorService()).get()
+    ReadAction.nonBlocking{ createRepository(project, projectPath, makeInitialCommit) }.submit(AppExecutorUtil.getAppExecutorService()).get()
 
     (project.service<ProjectLevelVcsManager>() as ProjectLevelVcsManagerImpl).waitForInitialized()
 

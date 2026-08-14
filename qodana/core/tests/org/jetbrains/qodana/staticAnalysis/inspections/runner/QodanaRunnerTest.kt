@@ -1451,13 +1451,6 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     assertSarifResults()
   }
 
-  @Test
-  @Ignore("TODO: What exactly should be tested here?")
-  fun `testVersion control provenance`(): Unit = runBlocking {
-    // The SARIF result includes a node named versionControlProvenance.
-    // Ensure that this is correctly copied from the actual version control system.
-    // This requires configuring Git (user.name, user.email) and running 'git init' in the temporary project directory.
-  }
 }
 
 private class EmptyRangeNotAtStartTool : LocalInspectionTool() {
