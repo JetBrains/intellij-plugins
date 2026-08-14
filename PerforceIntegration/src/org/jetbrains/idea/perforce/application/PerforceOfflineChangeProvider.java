@@ -46,24 +46,6 @@ public class PerforceOfflineChangeProvider implements ChangeProvider {
   @Override
   public void getChanges(@NotNull VcsDirtyScope dirtyScope, @NotNull ChangelistBuilder builder, @NotNull ProgressIndicator progress,
                          final @NotNull ChangeListManagerGate addGate) throws VcsException {
-    builder.reportAdditionalInfo(() -> {
-      HyperlinkLabel label = new HyperlinkLabel();
-      label.setForeground(JBColor.RED);
-      label.setHyperlinkText(PerforceBundle.message("connection.offline") + ' ', PerforceBundle.message("connection.go.online"), "");
-      label.addHyperlinkListener(new HyperlinkListener() {
-        @Override
-        public void hyperlinkUpdate(HyperlinkEvent e) {
-          if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            final PerforceSettings settings = PerforceSettings.getSettings(myProject);
-            if (!settings.ENABLED) {
-              settings.enable();
-            }
-          }
-        }
-      });
-      return label;
-    });
-
     ChangeListManager clm = ChangeListManager.getInstance(dirtyScope.getProject());
 
     Set<VirtualFile> writable = PerforceChangeProvider.collectWritableFiles(

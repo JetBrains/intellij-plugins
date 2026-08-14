@@ -141,6 +141,7 @@
     <dependencySupport kind="vcs" coordinate="perforce" displayName="Perforce Helix Core"/>
 
     <vcs name="Perforce" vcsClass="org.jetbrains.idea.perforce.application.PerforceVcs" displayName="Perforce"/>
+    <changeListManagerStatusProvider implementation="org.jetbrains.idea.perforce.application.PerforceChangesOfflineStatusProvider"/>
     <checkoutProvider implementation="org.jetbrains.idea.perforce.checkout.PerforceCheckoutProvider"/>
     <openapi.vcs.ui.cloneDialog.VcsCloneDialogExtension
       id="org.jetbrains.idea.perforce.checkout.PerforceCloneDialogExtension"
