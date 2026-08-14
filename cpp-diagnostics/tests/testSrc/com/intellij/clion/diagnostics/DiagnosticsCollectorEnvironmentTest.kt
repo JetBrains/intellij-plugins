@@ -1,6 +1,7 @@
 package com.intellij.clion.diagnostics
 
 import com.intellij.clion.testFramework.nolang.junit5.core.clionProjectTestFixture
+import com.intellij.clion.testFramework.nolang.junit5.core.clionTimeoutRunBlocking
 import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
 import com.intellij.testFramework.junit5.TestApplication
 import com.jetbrains.cidr.CidrTestDataFixture
@@ -19,21 +20,14 @@ class DiagnosticsCollectorEnvironmentTest {
   private val project by clionProjectTestFixture(tempDir)
 
   @Test
-  fun testEnvironmentFile() {
-    val environment = CPPTestUtil.getTestToolchain().environment
-
-    try {
+  fun testEnvironmentFile() = clionTimeoutRunBlocking {
+    CPPTestUtil.withEnvironmentReset {
       CPPTestUtil.changeTestToolchain { testToolchain ->
         testToolchain.environment = "/foo/bar"
       }
 
       val out = collectToolchains(project).toText()
       assertThat(out).contains("Environment file: /foo/bar")
-    }
-    finally {
-      CPPTestUtil.changeTestToolchain { testToolchain ->
-        testToolchain.environment = environment
-      }
     }
   }
 }
