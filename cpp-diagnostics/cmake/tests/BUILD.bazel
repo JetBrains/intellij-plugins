@@ -27,6 +27,10 @@ jvm_library(
         "//contrib/cpp-diagnostics/cmake",
         "//contrib/cpp-diagnostics/cmake:cmake_test_lib",
     ],
+    resource_strip_prefix = "testResources",
+    resources = glob(
+        ["testResources/**/*"],
+    ),
     visibility = ["//visibility:public"],
     runtime_deps = [":tests"],
     deps = [

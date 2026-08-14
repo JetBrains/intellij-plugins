@@ -1,4 +1,4 @@
-<idea-plugin package="com.intellij.clion.diagnostics.cmake">
+<idea-plugin visibility="internal">
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="com.intellij.cpp-diagnostics"/>

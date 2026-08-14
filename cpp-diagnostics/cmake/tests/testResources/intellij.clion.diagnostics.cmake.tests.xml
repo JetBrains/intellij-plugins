@@ -1,0 +1,24 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="com.intellij.cpp-diagnostics"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.cidr.common.testFramework.core.nolang"/>
+    <module name="intellij.cidr.util.execution"/>
+    <module name="intellij.cidr.workspaceModel"/>
+    <module name="intellij.clion.diagnostics.cmake"/>
+    <module name="intellij.clion.testFramework.nolang"/>
+    <module name="intellij.clion.testFramework.nolang.junit5.cmake"/>
+    <module name="intellij.clion.testFramework.nolang.junit5.core"/>
+    <module name="intellij.clion.toolchains"/>
+    <module name="intellij.cmake.core"/>
+    <module name="intellij.libraries.junit5"/>
+    <module name="intellij.libraries.kotlinx.serialization.core"/>
+    <module name="intellij.libraries.kotlinx.serialization.json"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.testFramework"/>
+    <module name="intellij.platform.testFramework.junit5"/>
+    <!-- endregion -->
+  </dependencies>
+</idea-plugin>
