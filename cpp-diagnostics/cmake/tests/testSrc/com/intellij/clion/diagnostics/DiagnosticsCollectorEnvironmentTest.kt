@@ -1,6 +1,6 @@
 package com.intellij.clion.diagnostics
 
-import com.intellij.clion.testFramework.nolang.junit5.core.clionProjectTestFixture
+import com.intellij.clion.testFramework.nolang.junit5.cmake.cmakeProjectTestFixture
 import com.intellij.clion.testFramework.nolang.junit5.core.clionTimeoutRunBlocking
 import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
 import com.intellij.testFramework.junit5.TestApplication
@@ -16,7 +16,7 @@ class DiagnosticsCollectorEnvironmentTest {
     private val projectDir = CidrTestDataFixture.getCppDiagnosticsTestData()
 
     private val tempDir = tempDirTestFixture(projectDir.resolve("simple-cmake-project"))
-    private val project by clionProjectTestFixture(tempDir)
+    private val project by cmakeProjectTestFixture(tempDir)
   }
 
   @Test
