@@ -30,7 +30,7 @@
     <orderEntry type="module" module-name="intellij.qodana.rust" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="kodein-di-jvm" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.kodein.di.jvm" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="qodana-sarif" level="project" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
