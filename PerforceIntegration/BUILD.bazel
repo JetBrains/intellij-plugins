@@ -93,6 +93,8 @@ jvm_library(
 exports_files(
     [
         "intellij.vcs.perforce.iml",
+        "resources/META-INF/git-plugin-extensions.xml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

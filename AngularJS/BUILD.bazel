@@ -181,6 +181,9 @@ jvm_library(
 exports_files(
     [
         "intellij.angularJS.iml",
+        "resources/META-INF/angularjs-css-support.xml",
+        "resources/META-INF/angularjs-diagram.xml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

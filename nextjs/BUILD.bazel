@@ -91,6 +91,7 @@ jvm_library(
 exports_files(
     [
         "intellij.nextjs.iml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

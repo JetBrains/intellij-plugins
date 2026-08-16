@@ -96,6 +96,7 @@ jvm_library(
 exports_files(
     [
         "intellij.flex.css.iml",
+        "resources/intellij.flex.css.xml",
     ],
     visibility = ["//visibility:public"],
 )

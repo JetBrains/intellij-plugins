@@ -58,6 +58,7 @@ jvm_library(
 exports_files(
     [
         "intellij.gauge.gradle.iml",
+        "resources/intellij.gauge.gradle.xml",
     ],
     visibility = ["//visibility:public"],
 )

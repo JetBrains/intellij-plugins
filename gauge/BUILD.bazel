@@ -137,6 +137,7 @@ jvm_library(
 exports_files(
     [
         "intellij.gauge.iml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

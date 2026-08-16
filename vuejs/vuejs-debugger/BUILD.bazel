@@ -53,6 +53,7 @@ jvm_library(
 exports_files(
     [
         "intellij.vuejs.debugger.iml",
+        "resources/intellij.vuejs.debugger.xml",
     ],
     visibility = ["//visibility:public"],
 )

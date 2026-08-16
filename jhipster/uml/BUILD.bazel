@@ -70,6 +70,7 @@ jvm_library(
 exports_files(
     [
         "intellij.jhipster.uml.iml",
+        "resources/intellij.jhipster.uml.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -46,6 +46,7 @@ jvm_library(
 exports_files(
     [
         "intellij.angular.plugin.iml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

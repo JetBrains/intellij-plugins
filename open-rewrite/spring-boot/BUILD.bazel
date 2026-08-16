@@ -55,6 +55,7 @@ jvm_library(
 exports_files(
     [
         "intellij.openRewrite.spring.boot.iml",
+        "resources/intellij.openRewrite.spring.boot.xml",
     ],
     visibility = ["//visibility:public"],
 )

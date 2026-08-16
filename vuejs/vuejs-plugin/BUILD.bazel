@@ -55,6 +55,7 @@ jvm_library(
 exports_files(
     [
         "intellij.vuejs.plugin.iml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

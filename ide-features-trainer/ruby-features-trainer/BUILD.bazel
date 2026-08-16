@@ -70,6 +70,7 @@ jvm_library(
 exports_files(
     [
         "intellij.ruby.featuresTrainer.iml",
+        "resources/intellij.ruby.featuresTrainer.xml",
     ],
     visibility = ["//visibility:public"],
 )

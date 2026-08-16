@@ -74,6 +74,7 @@ jvm_library(
 exports_files(
     [
         "intellij.phoneGap.javascript.iml",
+        "resources/intellij.phoneGap.javascript.xml",
     ],
     visibility = ["//visibility:public"],
 )

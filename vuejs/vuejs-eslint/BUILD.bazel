@@ -71,6 +71,7 @@ jvm_library(
 exports_files(
     [
         "intellij.vuejs.eslint.iml",
+        "resources/intellij.vuejs.eslint.xml",
     ],
     visibility = ["//visibility:public"],
 )

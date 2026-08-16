@@ -75,6 +75,7 @@ jvm_library(
 exports_files(
     [
         "intellij.terraform.template.iml",
+        "resource/intellij.terraform.template.xml",
     ],
     visibility = ["//visibility:public"],
 )

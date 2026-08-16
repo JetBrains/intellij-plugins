@@ -51,6 +51,7 @@ jvm_library(
 exports_files(
     [
         "intellij.openRewrite.micronaut.iml",
+        "resources/intellij.openRewrite.micronaut.xml",
     ],
     visibility = ["//visibility:public"],
 )

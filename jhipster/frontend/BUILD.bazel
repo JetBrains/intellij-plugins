@@ -43,6 +43,7 @@ jvm_library(
 exports_files(
     [
         "intellij.jhipster.frontend.iml",
+        "resources/intellij.jhipster.frontend.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -70,6 +70,7 @@ jvm_library(
 exports_files(
     [
         "intellij.openRewrite.maven.iml",
+        "resources/intellij.openRewrite.maven.xml",
     ],
     visibility = ["//visibility:public"],
 )

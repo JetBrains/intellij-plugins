@@ -87,6 +87,7 @@ jvm_library(
 exports_files(
     [
         "intellij.javascript.debugger.featuresTrainer.iml",
+        "resources/META-INF/js-debugger-features-trainer.xml",
     ],
     visibility = ["//visibility:public"],
 )

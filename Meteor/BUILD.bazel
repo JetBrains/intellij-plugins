@@ -146,6 +146,9 @@ jvm_library(
 exports_files(
     [
         "intellij.meteor.iml",
+        "resources/META-INF/meteor-file-watcher.xml",
+        "resources/META-INF/meteor-live-edit.xml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

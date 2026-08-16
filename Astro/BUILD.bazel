@@ -133,6 +133,7 @@ jvm_library(
 exports_files(
     [
         "intellij.astro.iml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -88,6 +88,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.testFramework.iml",
+        "resources/intellij.qodana.testFramework.xml",
     ],
     visibility = ["//visibility:public"],
 )

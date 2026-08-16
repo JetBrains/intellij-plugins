@@ -53,6 +53,7 @@ jvm_library(
 exports_files(
     [
         "intellij.clion.embedded.platformio.terminal.iml",
+        "resources/intellij.clion.embedded.platformio.terminal.xml",
     ],
     visibility = ["//visibility:public"],
 )

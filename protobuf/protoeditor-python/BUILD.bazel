@@ -78,6 +78,7 @@ jvm_library(
 exports_files(
     [
         "intellij.protoeditor.python.iml",
+        "resources/intellij.protoeditor.python.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -46,6 +46,7 @@ jvm_library(
 exports_files(
     [
         "intellij.postcss.copyright.iml",
+        "resources/intellij.postcss.copyright.xml",
     ],
     visibility = ["//visibility:public"],
 )

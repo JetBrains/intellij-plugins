@@ -51,6 +51,7 @@ jvm_library(
 exports_files(
     [
         "intellij.makefile.terminal.iml",
+        "resources/intellij.makefile.terminal.xml",
     ],
     visibility = ["//visibility:public"],
 )

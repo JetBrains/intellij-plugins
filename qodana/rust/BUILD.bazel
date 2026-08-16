@@ -89,6 +89,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.rust.iml",
+        "resources/intellij.qodana.rust.xml",
     ],
     visibility = ["//visibility:public"],
 )

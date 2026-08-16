@@ -53,6 +53,7 @@ jvm_library(
 exports_files(
     [
         "intellij.terraform.watchers.iml",
+        "resources/intellij.terraform.watchers.xml",
     ],
     visibility = ["//visibility:public"],
 )

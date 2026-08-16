@@ -55,6 +55,7 @@ jvm_library(
 exports_files(
     [
         "intellij.vuejs.webpack.iml",
+        "resources/intellij.vuejs.webpack.xml",
     ],
     visibility = ["//visibility:public"],
 )

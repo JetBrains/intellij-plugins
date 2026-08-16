@@ -186,6 +186,7 @@ jvm_library(
 exports_files(
     [
         "intellij.angular.backend.iml",
+        "resources/intellij.angular.backend.xml",
     ],
     visibility = ["//visibility:public"],
 )

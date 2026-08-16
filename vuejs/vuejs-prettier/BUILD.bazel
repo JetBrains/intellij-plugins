@@ -61,6 +61,7 @@ jvm_library(
 exports_files(
     [
         "intellij.vuejs.prettier.iml",
+        "resources/intellij.vuejs.prettier.xml",
     ],
     visibility = ["//visibility:public"],
 )

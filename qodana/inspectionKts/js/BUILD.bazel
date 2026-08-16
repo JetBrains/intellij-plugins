@@ -74,6 +74,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.inspectionKts.js.iml",
+        "resources/intellij.qodana.inspectionKts.js.xml",
     ],
     visibility = ["//visibility:public"],
 )

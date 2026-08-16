@@ -52,6 +52,7 @@ jvm_library(
 exports_files(
     [
         "intellij.terraform.copyright.iml",
+        "resources/intellij.terraform.copyright.xml",
     ],
     visibility = ["//visibility:public"],
 )

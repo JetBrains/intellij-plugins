@@ -142,6 +142,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.go.iml",
+        "resources/intellij.qodana.go.xml",
     ],
     visibility = ["//visibility:public"],
 )

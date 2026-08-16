@@ -141,6 +141,7 @@ jvm_library(
 exports_files(
     [
         "intellij.prettierJS.iml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

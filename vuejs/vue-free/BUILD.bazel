@@ -80,6 +80,7 @@ jvm_library(
 exports_files(
     [
         "intellij.vuejs.free.iml",
+        "resources/intellij.vuejs.free.xml",
     ],
     visibility = ["//visibility:public"],
 )

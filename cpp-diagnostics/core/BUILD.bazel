@@ -83,6 +83,7 @@ jvm_library(
 exports_files(
     [
         "intellij.clion.diagnostics.core.iml",
+        "resources/intellij.clion.diagnostics.core.xml",
     ],
     visibility = ["//visibility:public"],
 )

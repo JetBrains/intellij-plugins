@@ -51,6 +51,7 @@ jvm_library(
 exports_files(
     [
         "intellij.openRewrite.quarkus.iml",
+        "resources/intellij.openRewrite.quarkus.xml",
     ],
     visibility = ["//visibility:public"],
 )

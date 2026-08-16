@@ -113,6 +113,7 @@ jvm_library(
 exports_files(
     [
         "intellij.postcss.paid.iml",
+        "resources/intellij.postcss.paid.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -82,6 +82,7 @@ jvm_library(
 exports_files(
     [
         "intellij.jade.css.iml",
+        "resources/intellij.jade.css.xml",
     ],
     visibility = ["//visibility:public"],
 )

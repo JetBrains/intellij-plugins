@@ -51,6 +51,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.packageChecker.iml",
+        "resources/intellij.qodana.packageChecker.xml",
     ],
     visibility = ["//visibility:public"],
 )

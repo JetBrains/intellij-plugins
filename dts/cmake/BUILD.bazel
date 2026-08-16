@@ -59,6 +59,7 @@ jvm_library(
 exports_files(
     [
         "intellij.dts.cmake.iml",
+        "resources/intellij.dts.cmake.xml",
     ],
     visibility = ["//visibility:public"],
 )

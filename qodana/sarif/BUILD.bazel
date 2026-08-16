@@ -43,6 +43,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.sarif.iml",
+        "resources/intellij.qodana.sarif.xml",
     ],
     visibility = ["//visibility:public"],
 )

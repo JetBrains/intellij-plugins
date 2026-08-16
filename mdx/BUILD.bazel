@@ -118,6 +118,7 @@ jvm_library(
 exports_files(
     [
         "intellij.mdx.iml",
+        "src/main/resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -98,6 +98,7 @@ jvm_library(
 exports_files(
     [
         "intellij.appcode.reveal.iml",
+        "resources/intellij.appcode.reveal.xml",
     ],
     visibility = ["//visibility:public"],
 )

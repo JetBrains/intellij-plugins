@@ -53,6 +53,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.jvm.swagger.iml",
+        "resources/intellij.qodana.jvm.swagger.xml",
     ],
     visibility = ["//visibility:public"],
 )

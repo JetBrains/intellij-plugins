@@ -75,6 +75,7 @@ jvm_library(
 exports_files(
     [
         "intellij.vuejs.common.iml",
+        "resources/intellij.vuejs.common.xml",
     ],
     visibility = ["//visibility:public"],
 )

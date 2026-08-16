@@ -155,6 +155,9 @@ jvm_library(
 exports_files(
     [
         "intellij.karma.iml",
+        "resources/META-INF/karma-coverage.xml",
+        "resources/META-INF/karma-debug.xml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

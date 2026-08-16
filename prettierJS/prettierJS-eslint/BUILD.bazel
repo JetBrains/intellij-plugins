@@ -65,6 +65,7 @@ jvm_library(
 exports_files(
     [
         "intellij.prettierJS.eslint.iml",
+        "resources/intellij.prettierJS.eslint.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -130,6 +130,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.python.coverage.iml",
+        "resources/intellij.qodana.python.coverage.xml",
     ],
     visibility = ["//visibility:public"],
 )

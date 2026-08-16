@@ -66,6 +66,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.jvm.groovy.iml",
+        "resources/intellij.qodana.jvm.groovy.xml",
     ],
     visibility = ["//visibility:public"],
 )

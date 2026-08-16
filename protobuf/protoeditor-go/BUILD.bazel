@@ -79,6 +79,7 @@ jvm_library(
 exports_files(
     [
         "intellij.protoeditor.go.iml",
+        "resources/intellij.protoeditor.go.xml",
     ],
     visibility = ["//visibility:public"],
 )

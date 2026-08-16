@@ -38,6 +38,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.poly.iml",
+        "resources/intellij.qodana.poly.xml",
     ],
     visibility = ["//visibility:public"],
 )

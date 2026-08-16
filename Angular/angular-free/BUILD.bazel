@@ -82,6 +82,7 @@ jvm_library(
 exports_files(
     [
         "intellij.angular.free.iml",
+        "resources/intellij.angular.free.xml",
     ],
     visibility = ["//visibility:public"],
 )

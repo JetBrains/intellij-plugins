@@ -140,6 +140,9 @@ jvm_library(
 exports_files(
     [
         "intellij.jade.iml",
+        "resources/META-INF/jade-liveEdit.xml",
+        "resources/META-INF/jade-watcher.xml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

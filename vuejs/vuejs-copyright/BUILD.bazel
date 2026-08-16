@@ -41,6 +41,7 @@ jvm_library(
 exports_files(
     [
         "intellij.vuejs.copyright.iml",
+        "resources/intellij.vuejs.copyright.xml",
     ],
     visibility = ["//visibility:public"],
 )

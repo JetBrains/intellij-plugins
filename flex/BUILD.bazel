@@ -202,6 +202,12 @@ jvm_library(
 exports_files(
     [
         "intellij.flex.iml",
+        "resources/META-INF/flex-ant-support.xml",
+        "resources/META-INF/flex-copyright.xml",
+        "resources/META-INF/flex-duplicates.xml",
+        "resources/META-INF/flex-maven-support.xml",
+        "resources/META-INF/flex-uml-support.xml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

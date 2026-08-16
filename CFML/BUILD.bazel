@@ -164,6 +164,8 @@ jvm_library(
 exports_files(
     [
         "intellij.cfml.iml",
+        "resources/META-INF/plugin.xml",
+        "resources/cfmlInjections.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -80,6 +80,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.jvm.kotlin.iml",
+        "resources/intellij.qodana.jvm.kotlin.xml",
     ],
     visibility = ["//visibility:public"],
 )

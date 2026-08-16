@@ -59,6 +59,7 @@ jvm_library(
 exports_files(
     [
         "intellij.vuejs.markdown.iml",
+        "resources/intellij.vuejs.markdown.xml",
     ],
     visibility = ["//visibility:public"],
 )

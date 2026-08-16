@@ -151,6 +151,7 @@ jvm_library(
 exports_files(
     [
         "intellij.prisma.iml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

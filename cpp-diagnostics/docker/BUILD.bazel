@@ -57,6 +57,7 @@ jvm_library(
 exports_files(
     [
         "intellij.clion.diagnostics.docker.iml",
+        "resources/intellij.clion.diagnostics.docker.xml",
     ],
     visibility = ["//visibility:public"],
 )

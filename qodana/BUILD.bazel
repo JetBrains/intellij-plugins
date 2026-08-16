@@ -223,6 +223,8 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.iml",
+        "core/resources/META-INF/plugin.xml",
+        "core/resources/META-INF/static-analysis-git.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -54,6 +54,7 @@ jvm_library(
 exports_files(
     [
         "intellij.gauge.maven.iml",
+        "resources/intellij.gauge.maven.xml",
     ],
     visibility = ["//visibility:public"],
 )

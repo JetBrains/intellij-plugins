@@ -70,6 +70,7 @@ jvm_library(
 exports_files(
     [
         "intellij.errorProne.iml",
+        "resources/META-INF/plugin.xml",
     ],
     visibility = ["//visibility:public"],
 )

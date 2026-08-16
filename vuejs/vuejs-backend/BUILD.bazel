@@ -214,6 +214,7 @@ jvm_library(
 exports_files(
     [
         "intellij.vuejs.backend.iml",
+        "resources/intellij.vuejs.backend.xml",
     ],
     visibility = ["//visibility:public"],
 )

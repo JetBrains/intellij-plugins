@@ -75,6 +75,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.jvm.gradle.iml",
+        "resources/intellij.qodana.jvm.gradle.xml",
     ],
     visibility = ["//visibility:public"],
 )

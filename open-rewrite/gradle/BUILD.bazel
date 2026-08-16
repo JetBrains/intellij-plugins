@@ -80,6 +80,7 @@ jvm_library(
 exports_files(
     [
         "intellij.openRewrite.gradle.iml",
+        "resources/intellij.openRewrite.gradle.xml",
     ],
     visibility = ["//visibility:public"],
 )

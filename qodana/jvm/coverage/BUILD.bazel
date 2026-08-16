@@ -109,6 +109,7 @@ jvm_library(
 exports_files(
     [
         "intellij.qodana.jvm.coverage.iml",
+        "resources/intellij.qodana.jvm.coverage.xml",
     ],
     visibility = ["//visibility:public"],
 )

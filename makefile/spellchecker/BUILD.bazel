@@ -51,6 +51,7 @@ jvm_library(
 exports_files(
     [
         "intellij.makefile.spellchecker.iml",
+        "resources/intellij.makefile.spellchecker.xml",
     ],
     visibility = ["//visibility:public"],
 )
