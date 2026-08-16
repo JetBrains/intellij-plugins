@@ -186,7 +186,13 @@ jvm_library(
 exports_files(
     [
         "intellij.angular.backend.iml",
+        "resources/colorSchemes/Angular2Darcula.xml",
+        "resources/colorSchemes/Angular2Dark.xml",
+        "resources/colorSchemes/Angular2HighContrast.xml",
+        "resources/colorSchemes/Angular2IntelliJLight.xml",
+        "resources/colorSchemes/Angular2Light.xml",
         "resources/intellij.angular.backend.xml",
+        "resources/liveTemplates/Angular2.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -143,6 +143,8 @@ exports_files(
         "resources/META-INF/jade-liveEdit.xml",
         "resources/META-INF/jade-watcher.xml",
         "resources/META-INF/plugin.xml",
+        "resources/colorScheme/JadeDarcula.xml",
+        "resources/colorScheme/JadeDefault.xml",
     ],
     visibility = ["//visibility:public"],
 )

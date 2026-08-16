@@ -71,6 +71,7 @@ exports_files(
     [
         "intellij.errorProne.iml",
         "resources/META-INF/plugin.xml",
+        "resources/library/error-prone.xml",
     ],
     visibility = ["//visibility:public"],
 )

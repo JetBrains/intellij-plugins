@@ -149,6 +149,7 @@ exports_files(
         "resources/META-INF/meteor-file-watcher.xml",
         "resources/META-INF/meteor-live-edit.xml",
         "resources/META-INF/plugin.xml",
+        "resources/liveTemplates/Meteor.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -125,6 +125,8 @@ exports_files(
     [
         "intellij.gherkin.iml",
         "resources/META-INF/plugin.xml",
+        "resources/colorSchemes/GherkinDarcula.xml",
+        "resources/colorSchemes/GherkinDefault.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -138,6 +138,7 @@ exports_files(
     [
         "intellij.gauge.iml",
         "resources/META-INF/plugin.xml",
+        "resources/liveTemplates/gaugeTemplates.xml",
     ],
     visibility = ["//visibility:public"],
 )

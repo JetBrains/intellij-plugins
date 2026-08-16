@@ -166,6 +166,13 @@ exports_files(
         "intellij.cfml.iml",
         "resources/META-INF/plugin.xml",
         "resources/cfmlInjections.xml",
+        "resources/com/intellij/coldFusion/model/info/Lucee_tags.xml",
+        "resources/com/intellij/coldFusion/model/info/Railo_tags.xml",
+        "resources/com/intellij/coldFusion/model/info/cf10_tags.xml",
+        "resources/com/intellij/coldFusion/model/info/cf11_tags.xml",
+        "resources/com/intellij/coldFusion/model/info/cf8_tags.xml",
+        "resources/com/intellij/coldFusion/model/info/tags.xml",
+        "resources/liveTemplates/cfml_default.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -122,6 +122,7 @@ exports_files(
         "intellij.handlebars.iml",
         "resources/META-INF/javascript-ex.xml",
         "resources/META-INF/plugin.xml",
+        "resources/liveTemplates/Handlebars.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -184,6 +184,7 @@ exports_files(
         "resources/META-INF/angularjs-css-support.xml",
         "resources/META-INF/angularjs-diagram.xml",
         "resources/META-INF/plugin.xml",
+        "resources/liveTemplates/AngularJS.xml",
     ],
     visibility = ["//visibility:public"],
 )

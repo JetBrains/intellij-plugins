@@ -208,6 +208,9 @@ exports_files(
         "resources/META-INF/flex-maven-support.xml",
         "resources/META-INF/flex-uml-support.xml",
         "resources/META-INF/plugin.xml",
+        "resources/com/intellij/lang/javascript/flex/flexunit/SocketPolicyFile.xml",
+        "resources/liveTemplates/actionscript_iterations.xml",
+        "resources/liveTemplates/actionscript_miscellaneous.xml",
     ],
     visibility = ["//visibility:public"],
 )

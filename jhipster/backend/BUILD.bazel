@@ -84,6 +84,7 @@ jvm_library(
 exports_files(
     [
         "intellij.jhipster.backend.iml",
+        "resources/com/intellij/jhipster/liveTemplates.xml",
         "resources/intellij.jhipster.backend.xml",
     ],
     visibility = ["//visibility:public"],

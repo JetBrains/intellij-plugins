@@ -102,6 +102,7 @@ exports_files(
     [
         "intellij.javascript.jshint.iml",
         "resources/META-INF/plugin.xml",
+        "resources/com/intellij/lang/javascript/linter/jshint/jshint-documentation.xml",
     ],
     visibility = ["//visibility:public"],
 )

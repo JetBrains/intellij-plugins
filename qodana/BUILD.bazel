@@ -225,6 +225,11 @@ exports_files(
         "intellij.qodana.iml",
         "core/resources/META-INF/plugin.xml",
         "core/resources/META-INF/static-analysis-git.xml",
+        "core/resources/qodana-profiles/.idea/codeStyles/Project.xml",
+        "core/resources/qodana-profiles/.idea/codeStyles/codeStyleConfig.xml",
+        "core/resources/qodana-profiles/.idea/misc.xml",
+        "core/resources/qodana-profiles/.idea/modules.xml",
+        "core/resources/qodana-profiles/.idea/vcs.xml",
     ],
     visibility = ["//visibility:public"],
 )

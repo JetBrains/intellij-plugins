@@ -85,6 +85,9 @@ exports_files(
     [
         "intellij.javascript.featuresTrainer.iml",
         "resources/intellij.javascript.featuresTrainer.xml",
+        "resources/learnProjects/javascript/LearnJavaScriptProject/.idea/misc.xml",
+        "resources/learnProjects/javascript/LearnJavaScriptProject/.idea/modules.xml",
+        "resources/learnProjects/javascript/LearnJavaScriptProject/.idea/workspace.xml",
     ],
     visibility = ["//visibility:public"],
 )

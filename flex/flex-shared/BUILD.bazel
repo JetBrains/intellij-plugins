@@ -62,6 +62,7 @@ jvm_library(
 exports_files(
     [
         "intellij.flex.shared.iml",
+        "resources/com/intellij/flex/model/bc/flex-compiler-options.xml",
     ],
     visibility = ["//visibility:public"],
 )

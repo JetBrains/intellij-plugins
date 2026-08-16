@@ -84,6 +84,8 @@ exports_files(
     [
         "intellij.cloudFormation.iml",
         "src/main/resources/META-INF/plugin.xml",
+        "src/main/resources/liveTemplates/cloudformation_json.xml",
+        "src/main/resources/liveTemplates/cloudformation_yaml.xml",
     ],
     visibility = ["//visibility:public"],
 )

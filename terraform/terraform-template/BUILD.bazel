@@ -76,6 +76,7 @@ exports_files(
     [
         "intellij.terraform.template.iml",
         "resource/intellij.terraform.template.xml",
+        "resource/liveTemplates/terraformTemplate.xml",
     ],
     visibility = ["//visibility:public"],
 )

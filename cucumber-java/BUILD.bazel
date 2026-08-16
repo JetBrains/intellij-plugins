@@ -168,6 +168,7 @@ exports_files(
     [
         "intellij.cucumber.java.iml",
         "resources/META-INF/plugin.xml",
+        "resources/library/cucumber-jvm-deps.xml",
     ],
     visibility = ["//visibility:public"],
 )
