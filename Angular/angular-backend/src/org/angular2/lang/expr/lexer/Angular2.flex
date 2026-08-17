@@ -262,7 +262,7 @@ LINE_TERMINATOR_SEQUENCE=\R
   "&"{TAG_NAME}";" |
   "&#"(x|X)({DIGIT}|[a-fA-F])+";" |
   "&#"{DIGIT}+";"             { return XML_CHAR_ENTITY_REF; }
-  [^&\'\"\n\r\\]+ | "&"       { return STRING_LITERAL_PART; }
+  [^&\'\"\\]+ | "&"           { return STRING_LITERAL_PART; }
   [^]                         { yypushback(yytext().length()); yybegin(YYEXPRESSION); }
 }
 
