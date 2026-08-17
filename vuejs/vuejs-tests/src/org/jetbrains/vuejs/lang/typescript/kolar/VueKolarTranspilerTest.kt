@@ -21,7 +21,7 @@ private const val __TRANSPILE__: String = "__transpile__"
 
 @RunWith(JUnit4::class)
 class VueKolarTranspilerTest :
-  VueTestCase("kolar", VueTestMode.NO_PLUGIN) {
+  VueTestCase("kolar", VueTestMode.TS_GO_PROXY) {
 
   override val dirModeByDefault: Boolean = true
 
