@@ -19,6 +19,7 @@ fun getRequiredHybridModeBundledVersion(
     VueTestMode.LEGACY_PLUGIN,
       -> VueLanguageToolsVersion.LEGACY
 
+    VueTestMode.TS_GO_PROXY,
     VueTestMode.NO_PLUGIN,
       -> return null
   }

@@ -5,12 +5,15 @@ import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.waitEmptyServiceQueueForService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
+import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
+import com.intellij.lang.typescript.tsc.TypeScriptGoTypeEvaluatorMode
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.polySymbols.testFramework.HybridTestMode
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
 import com.intellij.testFramework.runInEdtAndWait
+import org.jetbrains.vuejs.VueLspUtils.waitTypeScriptGoLspServerInit
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.getVueTestDataPath
@@ -22,6 +25,7 @@ import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptSer
 enum class VueTestMode {
   DEFAULT,
   LEGACY_PLUGIN,
+  TS_GO_PROXY,
   NO_PLUGIN,
 
   ;
@@ -66,19 +70,36 @@ abstract class VueTestCase(
       .getBundledVersion()
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
-    val bundledVersion = configuration.getVueLanguageToolsVersion()
-                         ?: return
+    when (testMode) {
+      VueTestMode.DEFAULT,
+      VueTestMode.LEGACY_PLUGIN,
+        -> {
+        val bundledVersion = configuration.getVueLanguageToolsVersion()!!
+        setForceLegacyPluginUsage(bundledVersion == VueLanguageToolsVersion.LEGACY, testRootDisposable)
 
-    setForceLegacyPluginUsage(bundledVersion == VueLanguageToolsVersion.LEGACY, testRootDisposable)
+        val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
+          it is VuePluginTypeScriptService
+          && it.runtime == VueServiceRuntime.Bundled(bundledVersion)
+        } as TypeScriptServerServiceImpl
 
-    val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
-      it is VuePluginTypeScriptService
-      && it.runtime == VueServiceRuntime.Bundled(bundledVersion)
-    } as TypeScriptServerServiceImpl
+        service.assertProcessStarted()
+        runInEdtAndWait {
+          waitEmptyServiceQueueForService(service)
+        }
+      }
 
-    service.assertProcessStarted()
-    runInEdtAndWait {
-      waitEmptyServiceQueueForService(service)
+      VueTestMode.TS_GO_PROXY -> {
+        TypeScriptServiceTestMixin.setUpTypeScriptService(
+          fixture = myFixture,
+          tsGoTypeEvaluatorMode = TypeScriptGoTypeEvaluatorMode.PROXY,
+        ) {
+          it::class == TypeScriptGoLspService::class
+        }
+
+        waitTypeScriptGoLspServerInit(project)
+      }
+
+      VueTestMode.NO_PLUGIN -> return
     }
 
     if (configuration.configurators.any { it is VueTsConfigFile && it.enabled }) {
