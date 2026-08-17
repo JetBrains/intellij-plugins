@@ -105,5 +105,6 @@
     <orderEntry type="module" module-name="intellij.xml.ui.common" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.analysis.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lsp.impl" scope="TEST" />
   </component>
 </module>

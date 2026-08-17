@@ -212,6 +212,8 @@ jvm_library(
         "@community//xml/xml-analysis-impl:analysis-impl_test_lib",
         "@community//xml/impl",
         "@community//xml/impl:impl_test_lib",
+        "@community//platform/lsp-impl",
+        "@community//platform/lsp-impl:lsp-impl_test_lib",
     ],
 )
 ### auto-generated section `build intellij.vuejs.tests` end
