@@ -20,7 +20,7 @@ class DiagnosticsCollectorEnvironmentTest {
   }
 
   @Test
-  fun testEnvironmentFile() = clionTimeoutRunBlocking {
+  fun testEnvironmentFile(): Unit = clionTimeoutRunBlocking {
     CPPTestUtil.withEnvironmentReset {
       CPPTestUtil.changeTestToolchain { testToolchain ->
         testToolchain.environment = "/foo/bar"

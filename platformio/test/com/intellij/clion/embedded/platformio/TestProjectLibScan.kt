@@ -46,7 +46,7 @@ class TestProjectLibScan {
   }
 
   @Test
-  fun testScanLibraries() = clionTimeoutRunBlocking {
+  fun testScanLibraries(): Unit = clionTimeoutRunBlocking {
     ToolSetKindAssumption.assumeToolSetKind().isNotRemoteLike()
 
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
