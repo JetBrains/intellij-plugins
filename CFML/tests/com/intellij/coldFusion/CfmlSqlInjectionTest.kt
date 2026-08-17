@@ -12,6 +12,7 @@ import com.intellij.database.util.DbSqlUtil
 import com.intellij.database.util.SqlDialects
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -20,7 +21,7 @@ import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.sql.database.SqlDataSourceImpl
 import com.intellij.sql.database.SqlDataSourceManager
-import com.intellij.sql.dialects.SqlDialectMappings
+import com.intellij.sql.dialects.setDialectMappingSync
 import com.intellij.sql.psi.SqlCommonKeywords
 import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
@@ -130,7 +131,9 @@ fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSour
   val project = project
   for (file in ddlFiles) {
     val virtualFile = copyFileToProject(file)
-    SqlDialectMappings.getInstance(project).setMapping(virtualFile, dialect)
+    runWriteAction {
+      project.setDialectMappingSync(virtualFile, dialect)
+    }
     urls.add(virtualFile.url)
   }
 
