@@ -20,6 +20,10 @@ class VueFindUsagesTest :
   class WithLegacyPluginTest :
     VueFindUsagesTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
+  @Ignore
+  class WithTsGoProxyTest :
+    VueFindUsagesTestBase(testMode = VueTestMode.TS_GO_PROXY)
+
   class WithoutServiceTest :
     VueFindUsagesTestBase(testMode = VueTestMode.NO_PLUGIN)
 }

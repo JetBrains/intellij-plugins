@@ -83,6 +83,17 @@ class VueHighlightingTest :
 
   }
 
+  @Ignore
+  class WithTsGoProxyTest :
+    VueHighlightingTestBase(testMode = VueTestMode.TS_GO_PROXY) {
+
+    override fun setUp() {
+      super.setUp()
+
+      disableTypeScriptServiceWarnings()
+    }
+  }
+
   class WithoutServiceTest :
     VueHighlightingTestBase(testMode = VueTestMode.NO_PLUGIN) {
 
