@@ -45,7 +45,7 @@ class VueTranspiledFileBuilder {
   ): TranspiledFile? =
     transpiledFileGist.getFileData(project, file)
 
-  fun getTranspiledFileInternal(
+  private fun getTranspiledFileInternal(
     project: Project?,
     file: VirtualFile,
   ): TranspiledFile? {
