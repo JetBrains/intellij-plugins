@@ -70,6 +70,8 @@ abstract class VueTestCase(
       .getBundledVersion()
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
+    configureVueSettings(project, testRootDisposable, testMode)
+
     when (testMode) {
       VueTestMode.DEFAULT,
       VueTestMode.LEGACY_PLUGIN,
@@ -89,6 +91,8 @@ abstract class VueTestCase(
       }
 
       VueTestMode.TS_GO_PROXY -> {
+        disableAstLoadingFilter()
+
         TypeScriptServiceTestMixin.setUpTypeScriptService(
           fixture = myFixture,
           tsGoTypeEvaluatorMode = TypeScriptGoTypeEvaluatorMode.PROXY,
