@@ -755,7 +755,7 @@
       "default": false
     },
     "maxRuntimeNotifications": {
-      "description": "Maximum amount of internal errors to collect in the report",
+      "description": "Maximum amount of distinct internal errors to collect in the report. Repeated reports of the same error are merged into a single entry",
       "type": "integer",
       "default": 100
     },

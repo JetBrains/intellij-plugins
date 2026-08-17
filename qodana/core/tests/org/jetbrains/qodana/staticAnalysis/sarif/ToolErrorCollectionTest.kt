@@ -24,6 +24,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfi
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.FULL_SARIF_REPORT_NAME
 import org.jetbrains.qodana.staticAnalysis.profile.SanityInspectionGroup
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.QodanaConfigureNotificationCollector
+import org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Test
@@ -83,21 +84,32 @@ class ToolErrorCollectionTest : QodanaRunnerTestCase() {
     runTest(emptyTool)
   }
 
+  /**
+   * An inspection is reported as failed once per inspected file, so the three files of this test all fail the same way.
+   * They must end up as a single notification that counts the occurrences and lists every affected file, otherwise one
+   * broken inspection floods the report and uses up `maxRuntimeNotifications`.
+   */
+  @Test
+  fun oneNotificationPerFailureAcrossFiles() {
+    val tool = LocalTool()
+    registerTool(tool)
+    runAnalysisWith(tool)
+
+    val notifications = collectedNotifications()
+
+    assertThat(notifications).hasSize(1)
+    val notification = notifications.single()
+    assertThat(notification.message.text).isEqualTo("Inspection SimpleLocal failed")
+    assertThat((notification.properties!![RuntimeNotificationCollector.OCCURRENCES_PROPERTY] as Number).toInt()).isEqualTo(3)
+    // The files are inspected concurrently, so only their set is defined, not their order.
+    assertThat(notification.locations!!.map { it.physicalLocation.artifactLocation.uri.replace('\\', '/') })
+      .containsExactlyInAnyOrder("test-module/pack/Bar.java", "test-module/pack/Baz.java", "test-module/pack/Foo.java")
+  }
+
   private fun runTest(tool: InspectionProfileEntry) {
-    reinstantiateInspectionRelatedServices(project, testRootDisposable)
-    updateQodanaConfig {
-      it.copy(
-        profile = QodanaProfileConfig.named("qodana.single:${tool.shortName}"),
-      )
-    }
+    runAnalysisWith(tool)
 
-    runBeforeAnalysis{ config, project -> QodanaConfigureNotificationCollector().configureForQodana(config, project) }
-    LoggedErrorProcessor.executeWith<Nothing>(TestAwareErrorProcessor, ::runAnalysis)
-
-    val actual = SarifUtil.readReport(qodanaConfig.outPath / FULL_SARIF_REPORT_NAME)
-      .runs.orEmpty()
-      .flatMap { run -> run.invocations.orEmpty() }
-      .flatMap { it.toolExecutionNotifications.orEmpty() }
+    val actual = collectedNotifications()
 
     val expected = getTestDataPath("expected_notifications.json")
       .bufferedReader()
@@ -126,6 +138,24 @@ class ToolErrorCollectionTest : QodanaRunnerTestCase() {
       }
     }
   }
+
+  private fun runAnalysisWith(tool: InspectionProfileEntry) {
+    reinstantiateInspectionRelatedServices(project, testRootDisposable)
+    updateQodanaConfig {
+      it.copy(
+        profile = QodanaProfileConfig.named("qodana.single:${tool.shortName}"),
+      )
+    }
+
+    runBeforeAnalysis{ config, project -> QodanaConfigureNotificationCollector().configureForQodana(config, project) }
+    LoggedErrorProcessor.executeWith<Nothing>(TestAwareErrorProcessor, ::runAnalysis)
+  }
+
+  private fun collectedNotifications(): List<Notification> =
+    SarifUtil.readReport(qodanaConfig.outPath / FULL_SARIF_REPORT_NAME)
+      .runs.orEmpty()
+      .flatMap { run -> run.invocations.orEmpty() }
+      .flatMap { it.toolExecutionNotifications.orEmpty() }
 }
 
 private object TestAwareErrorProcessor : LoggedErrorProcessor() {
