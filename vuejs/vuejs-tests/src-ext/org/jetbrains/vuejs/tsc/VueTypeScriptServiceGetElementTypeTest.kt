@@ -2,8 +2,6 @@
 package org.jetbrains.vuejs.tsc
 
 import com.intellij.javascript.types.TSType
-import com.intellij.lang.javascript.JSTestUtils
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
@@ -11,6 +9,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.T
 import com.intellij.lang.typescript.tsc.TypeScriptServiceGetElementTypeTest
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.psi.PsiElement
+import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
@@ -23,7 +22,7 @@ class VueTypeScriptServiceGetElementTypeTest :
   TypeScriptServiceGetElementTypeTest() {
 
   override fun setUpTypeScriptService() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
+    runInEdtAndWait { myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0) }
     TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
       it is VuePluginTypeScriptService
       && it.runtime == VueServiceRuntime.Bundled(VueLanguageToolsVersion.DEFAULT)
@@ -32,12 +31,18 @@ class VueTypeScriptServiceGetElementTypeTest :
 
   override fun calculateType(element: PsiElement, typeRequestKind: TypeScriptTypeRequestKind): JSType? {
     return super.calculateType(element, typeRequestKind).also {
-      assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VuePluginTypeScriptService::class.java)
+      assertServiceIsVuePlugin()
     }
   }
 
   override fun calculateTSType(element: PsiElement, typeRequestKind: TypeScriptTypeRequestKind): TSType? {
     return super.calculateTSType(element, typeRequestKind).also {
+      assertServiceIsVuePlugin()
+    }
+  }
+
+  private fun assertServiceIsVuePlugin() {
+    inReadAction {
       assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VuePluginTypeScriptService::class.java)
     }
   }
@@ -56,7 +61,7 @@ class VueTypeScriptServiceGetElementTypeTest :
     unwrapp<caret>ed
     </script>
     """.trimIndent()
-    myFixture.configureByText("App.vue", code)
+    configureByText("App.vue", code)
     doTestInstantiateMappedType()
   }
 
@@ -69,13 +74,10 @@ class VueTypeScriptServiceGetElementTypeTest :
     const a:number = 42
     </script>
     """.trimIndent()
-    myFixture.configureByText("App.vue", code)
-    val element = JSTestUtils.findElementByText(myFixture, "a:number = 42", JSVariable::class.java)
+    configureByText("App.vue", code)
+    val element = findElement("a:number = 42", JSVariable::class)
     val jsType = calculateType(element)
     assertNotNull(jsType)
-    JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) {
-      val unwrapRefType = VueUnwrapRefType(jsType!!, element).substitute()
-      assertEquals("number", unwrapRefType.getTypeText(JSType.TypeTextFormat.PRESENTABLE))
-    }
+    assertPresentableTypeText("number", element) { VueUnwrapRefType(jsType!!, element).substitute() }
   }
 }

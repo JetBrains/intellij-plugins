@@ -5,6 +5,7 @@ import com.intellij.application.options.editor.WebEditorOptions
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.ide.util.PsiNavigationSupport
+import com.intellij.javascript.JSBuiltInTypeEngineEvaluation
 import com.intellij.openapi.project.Project
 import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.util.parentOfType
@@ -31,7 +32,12 @@ class CreateAttributeQuickFix(private val myAttributeName: String) : LocalQuickF
     if (tag == null || tag.getAttribute(myAttributeName) != null) {
       return
     }
-    val attributeDescriptor = tag.descriptor?.getAttributeDescriptor(myAttributeName, tag)
+    // The descriptor is only needed for the quotes heuristic below, and building one resolves the type of the
+    // matching directive input. A quick fix is applied on EDT, where language service requests are forbidden,
+    // so the built-in type engine has to answer here.
+    val attributeDescriptor = JSBuiltInTypeEngineEvaluation.forceTypeEngine {
+      tag.descriptor?.getAttributeDescriptor(myAttributeName, tag)
+    }
 
     val insertQuotes = WebEditorOptions.getInstance().isInsertQuotesForAttributeValue
                        && !preferNoValue(tag, attributeDescriptor)
