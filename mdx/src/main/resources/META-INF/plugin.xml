@@ -72,7 +72,6 @@
     <defaultHighlightingSettingProvider
         implementation="org.intellij.plugin.mdx.highlighting.MdxInjectedHighlightingSettingProvider"/>
     <enterHandlerDelegate implementation="org.intellij.plugin.mdx.editor.MdxEnterHandler" order="first"/>
-    <editorActionHandler action="EditorTab" implementationClass="org.intellij.plugin.mdx.editor.MdxCodeFenceTabHandler"/>
     <editorActionHandler action="EditorPaste" implementationClass="org.intellij.plugin.mdx.editor.MdxCodeFencePasteHandler"
                          order="first"/>
     <lang.lineWrapStrategy language="MDX"

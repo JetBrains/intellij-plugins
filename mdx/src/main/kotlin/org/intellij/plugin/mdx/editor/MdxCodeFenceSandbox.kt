@@ -34,14 +34,8 @@ internal object MdxCodeFenceSandbox {
    * If the caret (and any selection) sits inside an MDX code fence body, runs [actionId] against a sandbox of
    * the fence language and writes the result back, returning true. Returns false if the action does not apply
    * (no fence, multiple carets, selection crossing the fence boundary, ...) so the caller can fall back.
-   *
-   * A fence whose info string names no language, or a language nothing can inject into, still sandboxes as
-   * plain text unless [allowPlainTextFallback] is false: plain text has no formatter of its own, so this only
-   * ever preserves the body's existing indentation rather than reformatting it. [MdxCodeFenceTabHandler] opts
-   * out, since Tab's indent step is sized from the sandbox file's own code-style bucket (plain text), which can
-   * differ from the host's.
    */
-  fun replay(editor: Editor, actionId: String, allowPlainTextFallback: Boolean = true): Boolean {
+  fun replay(editor: Editor, actionId: String): Boolean {
     val project = editor.project ?: return false
     if (!editor.document.isWritable || editor.isViewer || editor.caretModel.caretCount != 1) return false
 
@@ -59,8 +53,10 @@ internal object MdxCodeFenceSandbox {
 
     val element = hostFile.findElementAt((caret - 1).coerceAtLeast(0)) ?: return false
     val fence = MarkdownCodeFenceUtils.getCodeFence(element) ?: return false
-    val languageAndExtension = fence.fenceLanguage?.let(CodeFenceLanguageGuesser::guessLanguageWithExtensionForInjection)
-                               ?: if (allowPlainTextFallback) PlainTextLanguage.INSTANCE to "text" else return false
+    val guessedLanguageAndExtension = fence.fenceLanguage?.let(CodeFenceLanguageGuesser::guessLanguageWithExtensionForInjection)
+    val languageAndExtension = guessedLanguageAndExtension
+                               ?: (PlainTextLanguage.INSTANCE to "text")
+    val isPlainTextFallback = guessedLanguageAndExtension == null
 
     val startLine = hostDocument.getLineNumber(fence.textRange.startOffset)
     val endLine = hostDocument.getLineNumber((fence.textRange.endOffset - 1).coerceAtLeast(fence.textRange.startOffset))
@@ -89,11 +85,14 @@ internal object MdxCodeFenceSandbox {
     // would be zero, shift() would be a no-op both ways, and the replayed action's output (indented from column
     // zero, as the sandbox file is) would be written straight back at column zero.
     val bodyIndent = commonIndent(content)
-    val base = bodyIndent ?: lineIndent(hostDocument, if (hasBody) startLine else hostDocument.getLineNumber(caret))
+    val preservesHostIndentation = isPlainTextFallback && actionId == "EditorEnter" &&
+      bodyIndent != null && lineAt(content, caret - contentStart).isBlank()
+    val base = if (preservesHostIndentation) 0
+               else bodyIndent ?: lineIndent(hostDocument, if (hasBody) startLine else hostDocument.getLineNumber(caret))
     val offsets = intArrayOf(caret - contentStart, selectionStart - contentStart, selectionEnd - contentStart)
     val (dedented, dedentedOffsets) = shift(content, offsets, -base, dedentBlankLines = bodyIndent == null)
 
-    val extension = languageAndExtension.second ?: languageAndExtension.first.associatedFileType?.defaultExtension ?: "txt"
+    val extension = languageAndExtension.second ?: languageAndExtension.first.associatedFileType?.defaultExtension ?: "text"
     val file = PsiFileFactory.getInstance(project)
       .createFileFromText("fence.$extension", languageAndExtension.first, dedented)
     val sandboxDocument = documentManager.getDocument(file) ?: return false
@@ -146,6 +145,17 @@ internal object MdxCodeFenceSandbox {
   /** Minimum leading-space indentation across the non-blank lines of [content], or null if it has none. */
   private fun commonIndent(content: String): Int? =
     content.split('\n').filter { it.isNotBlank() }.minOfOrNull { line -> line.takeWhile { it == ' ' }.length }
+
+  /** The line of [text] containing character offset [offset]. */
+  private fun lineAt(text: String, offset: Int): String {
+    var lineStart = 0
+    for (line in text.split('\n')) {
+      val lineEnd = lineStart + line.length
+      if (offset in lineStart..lineEnd) return line
+      lineStart = lineEnd + 1
+    }
+    return ""
+  }
 
   /** Leading-space indentation of [line] in [document]. */
   private fun lineIndent(document: Document, line: Int): Int =

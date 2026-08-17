@@ -278,6 +278,14 @@ class MdxFormatterTest : MdxTestBase() {
   fun testEnterInFenceWithUninjectedLanguageKeepsIndent() = doActionTest("EditorEnter")
 
   /**
+   * Enter on a blank line that already carries the fence's indentation as literal whitespace, inside a fence
+   * without a language, must not double it. Running the language-less sandbox directly on that indentation
+   * (rather than a dedented copy that needs it re-added afterward) leaves nothing to double. WEB-78468.
+   */
+  @Test
+  fun testEnterOnPreIndentedBlankLineInFenceWithoutLanguageKeepsIndent() = doActionTest("EditorEnter")
+
+  /**
    * Enter on the fence's own opening line opens the first body line, which must land at the fence's indent. The
    * caret is not in the body, so the sandbox declines it and the same empty Markdown indent applied. WEB-78468.
    */
