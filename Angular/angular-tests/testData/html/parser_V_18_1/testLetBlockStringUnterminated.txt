@@ -15,16 +15,8 @@ HtmlFile:test.html
                 PsiElement(JS:EQ)('=')
                 PsiWhiteSpace(' ')
                 JSLiteralExpression
-                  PsiElement(JS:STRING_LITERAL)('"foo + test(12); ')
+                  PsiElement(JS:STRING_LITERAL)('"foo + test(12); \nthe end')
                 PsiErrorElement:Unclosed string literal
                   <empty list>
-                PsiWhiteSpace('\n')
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('the')
-                PsiErrorElement:Unexpected token 'end'
-                  <empty list>
-                PsiWhiteSpace(' ')
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('end')
         PsiErrorElement:Incomplete @let block - missing ;
           <empty list>

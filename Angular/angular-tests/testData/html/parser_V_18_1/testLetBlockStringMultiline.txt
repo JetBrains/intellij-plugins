@@ -14,24 +14,20 @@ HtmlFile:test.html
                 PsiWhiteSpace(' ')
                 PsiElement(JS:EQ)('=')
                 PsiWhiteSpace(' ')
-                JSLiteralExpression
-                  PsiElement(JS:STRING_LITERAL)('"foo ')
-                PsiErrorElement:Unclosed string literal
-                  <empty list>
-                PsiWhiteSpace('\n  ')
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('bar')
-                PsiErrorElement:Unexpected token 'check'
-                  <empty list>
-                PsiWhiteSpace('\n  ')
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('check')
-                PsiErrorElement:Unexpected token '" + test(12)'
-                  <empty list>
-                JSLiteralExpression
-                  PsiElement(JS:STRING_LITERAL)('" + test(12)')
-                PsiErrorElement:Unclosed string literal
-                  <empty list>
+                JSBinaryExpression
+                  JSLiteralExpression
+                    PsiElement(JS:STRING_LITERAL)('"foo \n  bar\n  check"')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  JSCallExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('test')
+                    JSArgumentList
+                      PsiElement(JS:LPAR)('(')
+                      JSLiteralExpression
+                        PsiElement(JS:NUMERIC_LITERAL)('12')
+                      PsiElement(JS:RPAR)(')')
         PsiElement(NG:BLOCK_SEMICOLON)(';')
     PsiWhiteSpace(' ')
     XmlToken:XML_DATA_CHARACTERS('the')

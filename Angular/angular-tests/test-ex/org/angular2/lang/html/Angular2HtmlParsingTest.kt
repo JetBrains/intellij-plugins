@@ -453,4 +453,12 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
     """.trimIndent())
   }
 
+  fun testMultilineStringInInterpolation() {
+    doTestHtml("""
+      Label: <b></b>
+        <span>{{ (false) ? 'Pretty short string' : 'Really really long string which will take up multiple lines
+        and that should be okay, but in this case it is not.' }}</span>
+    """.trimIndent())
+  }
+
 }
