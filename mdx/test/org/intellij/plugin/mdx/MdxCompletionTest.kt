@@ -334,6 +334,15 @@ class MdxCompletionTest : MdxTestBase() {
   }
 
   @Test
+  fun testCodeFenceLanguageCompletionBetweenAdjacentDelimiters() {
+    // The shape typing three backticks leaves behind, with auto-close having added the closer. Six adjacent
+    // backticks are a collapsed code span, not a fence, so MarkdownFenceLangCompletionContributor.beforeCompletion
+    // has to swap in its own dummy identifier for FENCE_LANG to match -- and it used to do that only for
+    // MarkdownFile, leaving .mdx with an empty lookup here while the uncollapsed fence above worked.
+    assertCompletionContains("```<caret>```", "javascript")
+  }
+
+  @Test
   fun testCodeFenceLanguageCompletionInPlainMarkdown() {
     // Baseline: code fence language completion must work in plain .md
     myFixture.configureByText("test.md", "```ja<caret>\n```")

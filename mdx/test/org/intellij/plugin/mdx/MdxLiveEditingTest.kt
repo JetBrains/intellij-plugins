@@ -276,6 +276,8 @@ class MdxLiveEditingTest : MdxTestBase() {
   }
 
 
+  // --- Backtick typing: auto-close and the fence language popup ------------------------------
+
   @Test
   fun testAutoCloseBacktick() = checkTyping('`')
 
@@ -289,6 +291,22 @@ class MdxLiveEditingTest : MdxTestBase() {
    */
   @Test
   fun testAutoCloseBacktickInsideJsxText() = checkTyping('`')
+
+  /**
+   * Typing the third backtick of a fence must offer the language list, the way it does in plain Markdown.
+   * `MarkdownTypedHandler.checkAutoPopup` is what schedules that popup, and it used to bail on anything that is not
+   * a `MarkdownFile` — so in .mdx no handler reacted to the backtick at all and no lookup ever appeared. The lookup
+   * *contents* are asserted by MdxCompletionTest.testCodeFenceLanguageCompletionBetweenAdjacentDelimiters.
+   */
+  @Test
+  fun testFenceLanguageAutoPopupFiresOnThirdBacktick() {
+    // Typed from scratch, so each backtick auto-closes and the third leaves the caret amid six of them.
+    myFixture.configureByText("test.mdx", "<caret>")
+    myFixture.type("``")
+    typeAndPumpAutoPopup('`')
+    assertEquals("``````", myFixture.editor.document.text)
+    assertNotNull("Expected an auto-popup lookup after typing the third backtick of a code fence", myFixture.lookup)
+  }
 
   // --- Enter auto-indent inside JSX flow elements and code fences (MdxEnterHandler) -------------
 
