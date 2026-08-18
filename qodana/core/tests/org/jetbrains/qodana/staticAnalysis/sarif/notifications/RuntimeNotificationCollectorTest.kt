@@ -50,12 +50,8 @@ class RuntimeNotificationCollectorTest {
     assertThat(subject.notifications.map { it.locationUris.single() }).containsExactly("a.json", "b.json")
   }
 
-  /**
-   * Files are inspected concurrently, so the same failure gets different frames below the throw site depending on
-   * whether its file ran on the caller thread or was dispatched to a worker. That must not split it in two.
-   */
   @Test
-  fun `differing scheduling frames do not split one failure`() {
+  fun `differing scheduling frames are kept apart`() {
     val throwSite = "java.lang.IllegalStateException: boom\n\tat Tool.run(Tool.kt:1)"
     subject.add(toolError("Tool", "a.json", stackTrace = "$throwSite\n" +
                                                         "\tat com.intellij.concurrency.JobLauncherImpl\$1MyProcessQueueTask.call(JobLauncherImpl.java:395)\n" +
@@ -64,9 +60,9 @@ class RuntimeNotificationCollectorTest {
                                                         "\tat com.intellij.concurrency.JobLauncherImpl.processQueue(JobLauncherImpl.java:483)\n" +
                                                         "\tat com.intellij.codeInspection.ex.GlobalInspectionContextImpl.runTools(GlobalInspectionContextImpl.java:423)"))
 
-    val notification = subject.notifications.single()
-    assertThat(notification.occurrences).isEqualTo(2)
-    assertThat(notification.locationUris).containsExactly("a.json", "b.json")
+    assertThat(subject.notifications).hasSize(2)
+    assertThat(subject.notifications.map { it.occurrences }).containsExactly(null, null)
+    assertThat(subject.notifications.flatMap { it.locationUris }).containsExactly("a.json", "b.json")
   }
 
   @Test
@@ -99,12 +95,36 @@ class RuntimeNotificationCollectorTest {
   }
 
   @Test
-  fun `listed files are capped while the occurrence count stays exact`() {
-    repeat(60) { subject.add(toolError("Tool", "file$it.json")) }
+  fun `listed files are capped by the budget while the occurrence count stays exact`() {
+    val collector = collector(maxRuntimeNotifications = 5)
 
-    val notification = subject.notifications.single()
+    repeat(60) { collector.add(toolError("Tool", "file$it.json")) }
+
+    val notification = collector.notifications.single()
     assertThat(notification.occurrences).isEqualTo(60)
-    assertThat(notification.locationUris).hasSize(50)
+    assertThat(notification.locationUris).hasSize(5)
+  }
+
+  @Test
+  fun `the same report added twice is retained once`() {
+    val report = toolError("Tool", "a.json")
+
+    subject.add(report)
+    subject.add(report)
+
+    assertThat(subject.notifications).hasSize(1)
+    assertThat(subject.notifications.single().locationUris).containsExactly("a.json")
+  }
+
+  @Test
+  fun `merging a report of several files stops at the budget`() {
+    val collector = collector(maxRuntimeNotifications = 3)
+
+    collector.add(toolError("Tool", listOf("a.json", "b.json")))
+    collector.add(toolError("Tool", listOf("c.json", "d.json", "e.json")))
+
+    assertThat(collector.notifications.single().locationUris)
+      .containsExactly("a.json", "b.json", "c.json")
   }
 
   @Test
@@ -120,7 +140,6 @@ class RuntimeNotificationCollectorTest {
 
 
   private fun collector(maxRuntimeNotifications: Int) = RuntimeNotificationCollector().apply {
-    // Relative location uris keep this independent of the host os, as they are never relativized against the project.
     initializeForRun(Path.of("project"), maxRuntimeNotifications)
   }
 
@@ -128,12 +147,19 @@ class RuntimeNotificationCollectorTest {
     toolId: String,
     file: String,
     stackTrace: String = "java.lang.IllegalStateException: $toolId\n\tat Tool.run(Tool.kt:1)",
+  ): Notification = toolError(toolId, listOf(file), stackTrace)
+
+  private fun toolError(
+    toolId: String,
+    files: List<String>,
+    stackTrace: String = "java.lang.IllegalStateException: $toolId\n\tat Tool.run(Tool.kt:1)",
   ): Notification =
     Notification()
       .withMessage(Message().withText("Inspection $toolId failed"))
       .withLevel(Notification.Level.ERROR)
-      .withLocations(setOf(Location().withPhysicalLocation(
-        PhysicalLocation().withArtifactLocation(ArtifactLocation().withUri(file)))))
+      .withLocations(files.mapTo(LinkedHashSet()) {
+        Location().withPhysicalLocation(PhysicalLocation().withArtifactLocation(ArtifactLocation().withUri(it)))
+      })
       .withException(Exception().withMessage(stackTrace))
       .withProperties(PropertyBag().apply { put("toolId", toolId) })
       .withKind(ToolErrorInspectListener.TOOL_ERROR_NOTIFICATION)

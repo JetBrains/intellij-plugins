@@ -28,15 +28,6 @@ class RuntimeNotificationCollector {
      * Absent when the failure was reported once.
      */
     const val OCCURRENCES_PROPERTY: String = "occurrences"
-
-    /**
-     * Upper bound on the files listed by one notification. [OCCURRENCES_PROPERTY] keeps the exact count regardless,
-     * so a failure affecting thousands of files cannot inflate the report.
-     */
-    private const val MAX_MERGED_LOCATIONS = 50
-
-    /** Lines of the stack trace that identify a failure: the exception header plus the frame it was thrown from. */
-    private const val EXCEPTION_SIGNATURE_LINES = 2
   }
 
   private val _notifications = ConcurrentLinkedDeque<Notification>()
@@ -44,6 +35,9 @@ class RuntimeNotificationCollector {
   /** The notification retained per distinct failure, into which further reports of that same failure are merged. */
   private val retainedByFailure = ConcurrentHashMap<FailureKey, Notification>()
   private val capacity = AtomicInteger(0)
+
+  @Volatile
+  private var maxRuntimeNotifications = 0
   private lateinit var projectPath: Path
 
   val notifications: List<Notification> get() = _notifications.toList()
@@ -51,8 +45,9 @@ class RuntimeNotificationCollector {
   fun initializeForRun(config: QodanaConfig) = initializeForRun(config.projectPath, config.maxRuntimeNotifications)
 
   @VisibleForTesting
-  fun initializeForRun(projectPath: Path, maxRuntimeNotifications: Int) {
+  internal fun initializeForRun(projectPath: Path, maxRuntimeNotifications: Int) {
     this.projectPath = projectPath
+    this.maxRuntimeNotifications = maxRuntimeNotifications
     _notifications.clear()
     retainedByFailure.clear()
     capacity.set(maxRuntimeNotifications)
@@ -65,42 +60,33 @@ class RuntimeNotificationCollector {
       return
     }
 
-    // An inspection is reported as failed once per inspected file, so one project-wide failure -- an unreachable
-    // package-checker server, a misconfigured tool -- arrives here once per (inspection, file) pair, every time with the
-    // same stack trace. Retain one notification per distinct failure and fold the affected files into it, otherwise the
-    // duplicates both bloat the report and exhaust `maxRuntimeNotifications`, silently dropping unrelated tool errors.
-    val stored = retainedByFailure.compute(notification.failureKey) { _, retained ->
+    var isNewFailure = false
+    retainedByFailure.compute(notification.failureKey) { _, retained ->
       when {
         retained != null -> retained.also {
           tryRelativizeArtifactLocation(notification)
           it.merge(notification)
         }
-        consumeCapacity() -> notification.also(::tryRelativizeArtifactLocation)
+        consumeCapacity() -> {
+          isNewFailure = true
+          notification.also(::tryRelativizeArtifactLocation)
+        }
         else -> null
       }
     }
-    if (stored === notification) _notifications += notification
+    if (isNewFailure) _notifications += notification
   }
 
   private fun consumeCapacity(): Boolean = capacity.getAndUpdate { i -> maxOf(i - 1, 0) } > 0
 
   /**
-   * Identity of a failure. The location is whichever file was being inspected at the time, so it is deliberately left
-   * out, and so is the tail of the stack trace -- see [exceptionSignature].
+   * Identity of a failure: everything about it except which file was being inspected at the time. The stack trace is
+   * compared in full.
    */
-  private data class FailureKey(val kind: String?, val message: String?, val exceptionSignature: String?)
+  private data class FailureKey(val kind: String?, val message: String?, val stackTrace: String?)
 
   private val Notification.failureKey: FailureKey
-    get() = FailureKey(qodanaKind, message?.text, exceptionSignature)
-
-  /**
-   * The head of the stack trace: the exception header and the frame that threw it. The frames below record how the
-   * inspection happened to be scheduled -- files are inspected concurrently, and one that runs on the caller thread
-   * gets different frames than one dispatched to a worker -- so the full trace differs between identical failures and
-   * cannot identify them.
-   */
-  private val Notification.exceptionSignature: String?
-    get() = exception?.message?.lineSequence()?.take(EXCEPTION_SIGNATURE_LINES)?.joinToString("\n")
+    get() = FailureKey(qodanaKind, message?.text, exception?.message)
 
   private val Notification.occurrences: Int
     get() = (properties?.get(OCCURRENCES_PROPERTY) as? Number)?.toInt() ?: 1
@@ -112,8 +98,14 @@ class RuntimeNotificationCollector {
 
     val known = locations.orEmpty()
     val additional = duplicate.locations.orEmpty().filterNotNull()
-    if (additional.isEmpty() || known.size >= MAX_MERGED_LOCATIONS) return
-    withLocations(LinkedHashSet<Location>(known).apply { addAll(additional) })
+    if (additional.isEmpty() || known.size >= maxRuntimeNotifications) return
+
+    val merged = LinkedHashSet<Location>(known)
+    for (location in additional) {
+      if (merged.size >= maxRuntimeNotifications) break
+      merged += location
+    }
+    withLocations(merged)
   }
 
   private fun tryRelativizeArtifactLocation(notification: Notification) {

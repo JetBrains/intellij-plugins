@@ -85,24 +85,37 @@ class ToolErrorCollectionTest : QodanaRunnerTestCase() {
   }
 
   /**
-   * An inspection is reported as failed once per inspected file, so the three files of this test all fail the same way.
-   * They must end up as a single notification that counts the occurrences and lists every affected file, otherwise one
-   * broken inspection floods the report and uses up `maxRuntimeNotifications`.
+   * Reports of the very same failure are folded into one notification that counts them and lists every affected file.
    */
   @Test
-  fun oneNotificationPerFailureAcrossFiles() {
+  fun identicalFailuresAreReportedOnce() {
+    val tool = ReplayingLocalTool()
+    registerTool(tool)
+    runAnalysisWith(tool)
+
+    val notification = collectedNotifications().single()
+
+    assertThat(notification.message.text).isEqualTo("Inspection ReplayingLocal failed")
+    assertThat(notification.occurrenceCount).isEqualTo(3)
+    assertThat(notification.locationUris)
+      .containsExactlyInAnyOrder("test-module/pack/Bar.java", "test-module/pack/Baz.java", "test-module/pack/Foo.java")
+  }
+
+  @Test
+  fun distinctFailuresAreKeptApart() {
     val tool = LocalTool()
     registerTool(tool)
     runAnalysisWith(tool)
 
     val notifications = collectedNotifications()
 
-    assertThat(notifications).hasSize(1)
-    val notification = notifications.single()
-    assertThat(notification.message.text).isEqualTo("Inspection SimpleLocal failed")
-    assertThat((notification.properties!![RuntimeNotificationCollector.OCCURRENCES_PROPERTY] as Number).toInt()).isEqualTo(3)
-    // The files are inspected concurrently, so only their set is defined, not their order.
-    assertThat(notification.locations!!.map { it.physicalLocation.artifactLocation.uri.replace('\\', '/') })
+    assertThat(notifications).isNotEmpty()
+    assertThat(notifications.map { it.message.text }.distinct()).containsExactly("Inspection SimpleLocal failed")
+    // No notification may be a plain copy of another one in the same report.
+    assertThat(notifications.map { it.message.text to it.exception?.message }).doesNotHaveDuplicates()
+    // Every file is reported, and none of them twice.
+    assertThat(notifications.sumOf { it.occurrenceCount }).isEqualTo(3)
+    assertThat(notifications.flatMap { it.locationUris })
       .containsExactlyInAnyOrder("test-module/pack/Bar.java", "test-module/pack/Baz.java", "test-module/pack/Foo.java")
   }
 
@@ -156,6 +169,13 @@ class ToolErrorCollectionTest : QodanaRunnerTestCase() {
       .runs.orEmpty()
       .flatMap { run -> run.invocations.orEmpty() }
       .flatMap { it.toolExecutionNotifications.orEmpty() }
+
+  private val Notification.occurrenceCount: Int
+    get() = (properties?.get(RuntimeNotificationCollector.OCCURRENCES_PROPERTY) as? Number)?.toInt() ?: 1
+
+  /** The reported files, with separators normalized. */
+  private val Notification.locationUris: List<String>
+    get() = locations.orEmpty().map { it.physicalLocation.artifactLocation.uri.replace('\\', '/') }
 }
 
 private object TestAwareErrorProcessor : LoggedErrorProcessor() {
@@ -205,6 +225,21 @@ private class LocalTool : LocalInspectionTool() {
     object : JavaElementVisitor() {
       override fun visitClass(aClass: PsiClass) {
         error(TestAwareErrorProcessor.TAG)
+      }
+    }
+}
+
+private class ReplayingLocalTool : LocalInspectionTool() {
+  private val failure by lazy { IllegalStateException(TestAwareErrorProcessor.TAG) }
+
+  override fun getGroupDisplayName(): String = "TestGroup"
+
+  override fun getShortName(): String = "ReplayingLocal"
+
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
+    object : JavaElementVisitor() {
+      override fun visitClass(aClass: PsiClass) {
+        throw failure
       }
     }
 }
