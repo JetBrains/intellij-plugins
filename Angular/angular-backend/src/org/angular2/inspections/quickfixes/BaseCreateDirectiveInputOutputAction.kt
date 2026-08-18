@@ -84,16 +84,8 @@ abstract class BaseCreateDirectiveInputOutputAction(context: PsiElement, fieldNa
 
   abstract fun inferType(context: PsiElement?): JSType?
 
-  protected open fun getTargetClasses(context: XmlAttribute): List<TypeScriptClass> {
-    val scope = Angular2DeclarationsScope(context)
-    return Angular2ApplicableDirectivesProvider(context.parent, scope = scope).matched
-      .asSequence()
-      .filterIsInstance<Angular2ClassBasedEntity>()
-      .mapNotNull { it.typeScriptClass }
-      .filter { !JSProjectUtil.isInLibrary(it) }
-      .distinct()
-      .toList()
-  }
+  protected open fun getTargetClasses(context: XmlAttribute): List<TypeScriptClass> =
+    findTargetClasses(context)
 
   private fun choose(
     project: Project,
@@ -117,5 +109,17 @@ abstract class BaseCreateDirectiveInputOutputAction(context: PsiElement, fieldNa
         }
   }
 
-
+  companion object {
+    /** Editable classes of the directives that match the tag [context] belongs to. */
+    fun findTargetClasses(context: XmlAttribute): List<TypeScriptClass> {
+      val scope = Angular2DeclarationsScope(context)
+      return Angular2ApplicableDirectivesProvider(context.parent, scope = scope).matched
+        .asSequence()
+        .filterIsInstance<Angular2ClassBasedEntity>()
+        .mapNotNull { it.typeScriptClass }
+        .filter { !JSProjectUtil.isInLibrary(it) }
+        .distinct()
+        .toList()
+    }
+  }
 }

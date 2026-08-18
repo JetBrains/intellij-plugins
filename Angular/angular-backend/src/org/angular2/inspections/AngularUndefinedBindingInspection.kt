@@ -99,7 +99,7 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
     @PropertyKey(resourceBundle = BUNDLE)
     val messageKey: String = when (info.type) {
       EVENT -> {
-        quickFixes.add(CreateDirectiveOutputIntentionAction(attribute, info.name))
+        LocalQuickFix.from(CreateDirectiveOutputIntentionAction(attribute, info.name))?.let { quickFixes.add(it) }
         if (Angular2SignalUtils.supportsModels(attribute)) {
           quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL))
           quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL_REQUIRED))

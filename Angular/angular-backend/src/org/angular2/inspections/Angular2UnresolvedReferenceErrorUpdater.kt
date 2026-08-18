@@ -66,7 +66,8 @@ class Angular2UnresolvedReferenceErrorUpdater : JSUnresolvedReferenceErrorUpdate
         else {
           quickFixes.add(CreateComponentFieldIntentionAction(expression))
           if (expression.parentOfType<Angular2EmbeddedExpression>() is Angular2Action) {
-            quickFixes.add(CreateDirectiveOutputIntentionAction(expression, expression.referenceName!!))
+            LocalQuickFix.from(CreateDirectiveOutputIntentionAction(expression, expression.referenceName!!))
+              ?.let { quickFixes.add(it) }
           }
         }
       }
