@@ -10,7 +10,6 @@ jvm_library(
     ),
     module_name = "intellij.serial.monitor.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["@lib//:kotlin-stdlib"],
 )
 
 jvm_library(

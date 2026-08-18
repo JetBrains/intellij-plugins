@@ -22,6 +22,7 @@ jvm_library(
     visibility = ["//visibility:public"],
     deps = [
         # do not sort,
+        "@lib//:kotlin-stdlib",
         "@community//platform/analysis-api:analysis",
         "@community//platform/code-style-api:codeStyle",
         "@community//platform/core-api:core",
@@ -76,12 +77,6 @@ jvm_library(
         "@community//platform/analysis-impl:analysis-impl_test_lib",
         "@community//platform/execution-impl:execution-impl_test_lib",
         "@community//platform/projectModel-api:projectModel_test_lib",
-        "@community//platform/refactoring",
-        "@community//platform/refactoring:refactoring_test_lib",
-        "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
-        "@community//platform/structure-view-impl:structureView",
-        "@community//platform/structure-view-impl:structureView_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
         "@community//platform/util/jdom:jdom_test_lib",
         "@community//platform/util:util-ui_test_lib",
@@ -137,6 +132,7 @@ jvm_library(
     ],
     deps = [
         # do not sort,
+        "@lib//:kotlin-stdlib",
         "@community//platform/analysis-api:analysis",
         "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/code-style-api:codeStyle",
