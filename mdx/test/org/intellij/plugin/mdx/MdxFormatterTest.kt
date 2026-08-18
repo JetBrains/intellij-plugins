@@ -2,7 +2,6 @@ package org.intellij.plugin.mdx
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.injected.editor.EditorWindow
-import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.psi.codeStyle.CodeStyleManager
@@ -49,8 +48,6 @@ class MdxFormatterTest : MdxTestBase() {
     }
   }
 
-  private fun topLevelHost() = InjectedLanguageManager.getInstance(myFixture.project).getTopLevelFile(myFixture.file)
-
   private fun expectedText(): String {
     val virtualFile = myFixture.copyFileToProject("${testName}_after.mdx")
     val psiFile = myFixture.psiManager.findFile(virtualFile) ?: error("No PSI file for $virtualFile")
@@ -75,7 +72,7 @@ class MdxFormatterTest : MdxTestBase() {
     myFixture.configureByFile("$testName.mdx")
     CopyPasteManager.getInstance().setContents(StringSelection(clipboard))
     myFixture.performEditorAction("EditorPaste")
-    assertEquals(expectedText(), topLevelHost().text)
+    assertEquals(expectedText(), hostDocumentText())
   }
 
   @Test
@@ -238,7 +235,7 @@ class MdxFormatterTest : MdxTestBase() {
   fun testEnterInsideIndentedInjectedCodeFenceKeepsInjectionValid() {
     myFixture.configureByFile("$testName.mdx")
     myFixture.type("\n")
-    assertEquals(expectedText(), topLevelHost().viewProvider.document!!.text)
+    assertEquals(expectedText(), hostDocumentText())
   }
 
   /**
@@ -249,7 +246,7 @@ class MdxFormatterTest : MdxTestBase() {
   fun testFunctionKeywordCompletionInsideIndentedTsxCodeFenceKeepsIndent() {
     myFixture.configureByFile("$testName.mdx")
     selectCompletionItem("function")
-    assertEquals(expectedText(), topLevelHost().viewProvider.document!!.text)
+    assertEquals(expectedText(), hostDocumentText())
   }
 
   /**
@@ -305,11 +302,7 @@ class MdxFormatterTest : MdxTestBase() {
 
   /** Tab inside a code fence indents one level from the fence base instead of to column zero. */
   @Test
-  fun testTabInsideCodeFenceInsideJsxKeepsFenceIndent() {
-    myFixture.configureByFile("$testName.mdx")
-    myFixture.performEditorAction("EditorTab")
-    assertEquals(expectedText(), topLevelHost().text)
-  }
+  fun testTabInsideCodeFenceInsideJsxKeepsFenceIndent() = doActionTest("EditorTab")
 
   /**
    * Pasting a multi-line block into an *indented* fence must land it at the fence base, formatted the way the
