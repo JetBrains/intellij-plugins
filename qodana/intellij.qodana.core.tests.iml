@@ -52,7 +52,7 @@
     <orderEntry type="module" module-name="intellij.libraries.guava" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.commons.cli" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.diff" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="flexmark" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.flexmark" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.jsoup" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.externalProcessAuthHelper" scope="TEST" />

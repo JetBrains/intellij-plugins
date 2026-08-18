@@ -47,6 +47,9 @@
     <module name="intellij.qodana.poly"/>
     <module name="intellij.qodana.inspectionKts.mcp"/>
   </content>
+  <content>
+    <module name="intellij.libraries.flexmark" loading="embedded"/>
+  </content>
   <dependencies>
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.libraries.commons.cli"/>
