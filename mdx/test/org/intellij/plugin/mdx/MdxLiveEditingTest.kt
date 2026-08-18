@@ -329,6 +329,9 @@ class MdxLiveEditingTest : MdxTestBase() {
   @Test
   fun testEnterBetweenJsxTagsInEsmBlockIsIndented() = checkTyping('\n')
 
+  @Test
+  fun testEnterBetweenJsxTagsAfterLeadingBlankLineIsIndented() = checkTyping('\n')
+
   /**
    * Enter below a whitespace-only line of an indented fence must leave that line alone. The sandbox round trip
    * used to dedent it to nothing and re-indent it back as an *empty* line, so writing the body back changed text

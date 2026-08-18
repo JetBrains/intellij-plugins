@@ -84,25 +84,16 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
     return DocumentBasedFormattingModel(getRootBlock(file, file.viewProvider, formattingContext.codeStyleSettings), formattingContext.project, formattingContext.codeStyleSettings, file.fileType, file)
   }
 
-  // False when the MDX PSI is transiently incomplete (e.g. an unclosed `{`/code fence swallows a following
-  // JSX tag), so the parser mislabels JSX tokens as PsiWhiteSpace, leaving a non-blank gap that crashes the
-  // formatter.
+  // Valid leading/trailing whitespace nodes use the real model. Return false only when transiently incomplete
+  // MDX PSI (e.g. an unclosed `{`/code fence swallowing a following JSX tag) mislabels non-blank JSX tokens as
+  // PsiWhiteSpace, leaving a gap that crashes the formatter.
   private fun isMdxPsiComplete(file: PsiFile): Boolean {
     var child: ASTNode? = file.node?.firstChildNode ?: return true
-    var sawSubstantialChild = false
     while (child != null) {
-      if (FormatterUtil.containsWhiteSpacesOnly(child)) {
+      if (FormatterUtil.containsWhiteSpacesOnly(child) && !child.chars.isBlank()) {
         // containsWhiteSpacesOnly trusts the node's declared WHITE_SPACE type without checking its actual
         // characters, so a mislabeled node needs its text verified here to be caught.
-        if (!child.chars.isBlank()) {
-          return false
-        }
-      }
-      else if (child.textLength > 0 && !sawSubstantialChild) {
-        if (child.startOffset != 0) {
-          return false
-        }
-        sawSubstantialChild = true
+        return false
       }
       child = child.treeNext
     }
