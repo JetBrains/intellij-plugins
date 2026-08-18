@@ -65,6 +65,8 @@
                                   implementationClass="org.intellij.plugin.mdx.lang.template.MdxFileViewProviderFactory"/>
     <lang.parserDefinition language="MDX"
                            implementationClass="org.intellij.plugin.mdx.lang.parse.MdxParserDefinition"/>
+    <languageStubDefinition language="MDX"
+                            implementationClass="org.intellij.plugin.mdx.lang.MdxLanguageStubDefinition"/>
 
     <editorHighlighterProvider filetype="MDX"
                                implementationClass="org.intellij.plugin.mdx.highlighting.MdxEditorHighlighterProvider"/>
@@ -78,7 +80,7 @@
                            implementationClass="com.intellij.markdown.frontend.editor.MarkdownLineWrapPositionStrategy"/>
 
     <lang.parserDefinition language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSParserDefinition"/>
-    <stubElementRegistryExtension implementation="org.intellij.plugin.mdx.js.MdxJSStubRegistryExtension"/>
+    <stubElementRegistryExtension implementation="org.intellij.plugin.mdx.js.MdxStubRegistryExtension"/>
     <outerLanguageRangePatcher language="MdxJS"
                                implementationClass="org.intellij.plugin.mdx.lang.template.MdxOuterLanguagePatcher"/>
     <lang.importOptimizer language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSImportOptimizer" order="first"/>
