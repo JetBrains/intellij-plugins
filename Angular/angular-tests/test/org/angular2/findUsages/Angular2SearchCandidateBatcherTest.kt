@@ -17,10 +17,9 @@ import org.junit.Test
  * is nevertheless batched by the config of its associated component `.ts` file (resolved through
  * [com.intellij.lang.javascript.config.JSConfigProvider.getTSConfigGraphFile]) instead of being pushed into the
  * config-less fallback batch. Covered cases:
- * - templates whose component is part of the query's config graph land in the query's bucket (the query's own module
- *   `moduleA`, and `moduleC` whose component is imported into `moduleA`);
- * - `moduleD`, whose config imports `moduleA`'s component (so its graph includes the query) but is not imported back,
- *   forms its own relevant bucket;
+ * - templates are grouped by the directly including config of their component (`moduleA`'s two templates share a
+ *   bucket, while `moduleC` and `moduleD` remain separate buckets);
+ * - only buckets whose config graph includes the query are retained;
  * - `moduleB`, scoped to an unrelated config, is excluded entirely.
  *
  * Shares the batching assertions with the plain-TypeScript `JSSearchCandidateBatcherTest` via
@@ -46,12 +45,9 @@ class Angular2SearchCandidateBatcherTest : Angular2TestCase("findUsages") {
           "moduleD/component-d.html",
         ),
         expected = listOf(
-          // Query bucket: moduleA's own templates and moduleC's template (its component is imported into moduleA, so
-          // it is part of moduleA's config graph).
-          listOf("moduleA/component-a1.html", "moduleA/component-a2.html", "moduleC/component-c.html"),
-          // Separate relevant bucket: moduleD's config graph includes the query's component (moduleD imports it),
-          // even though moduleA does not import moduleD.
+          listOf("moduleA/component-a1.html", "moduleA/component-a2.html"),
           listOf("moduleD/component-d.html"),
+          listOf("moduleC/component-c.html"),
         )
         // moduleB is scoped to an unrelated config and is excluded entirely.
       )
