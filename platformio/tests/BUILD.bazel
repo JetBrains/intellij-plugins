@@ -27,6 +27,10 @@ jvm_library(
         "//contrib/platformio",
         "//contrib/platformio:platformio_test_lib",
     ],
+    resource_strip_prefix = "testResources",
+    resources = glob(
+        ["testResources/**/*"],
+    ),
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
