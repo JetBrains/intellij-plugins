@@ -1,6 +1,6 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="training"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.core.ui"/>
@@ -10,10 +10,11 @@
     <module name="intellij.platform.ide.progress"/>
     <module name="intellij.platform.lang.core"/>
     <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.refactoring"/>
     <module name="intellij.platform.util.ui"/>
     <module name="intellij.ruby.backend"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
   <extensions defaultExtensionNs="training">
     <ift.language.extension language="ruby" defaultProductName="RubyMine" implementationClass="org.jetbrains.ruby.ift.RubyLangSupport"/>
     <ift.learning.course language="ruby" implementationClass="org.jetbrains.ruby.ift.RubyLearningCourse"/>
