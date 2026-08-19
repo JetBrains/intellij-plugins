@@ -10,11 +10,11 @@ interface SarifReportContributor {
 
   companion object {
     fun runContributors(run: Run, project: Project, config: QodanaConfig) {
-      for (contributor in EP_NAME.extensionList) {
+      EP_NAME.forEachExtensionSafe { contributor ->
         contributor.contribute(run, project, config)
       }
     }
 
-    val EP_NAME = ExtensionPointName.create<SarifReportContributor>("org.intellij.qodana.sarifReportContributor")
+    private val EP_NAME = ExtensionPointName.create<SarifReportContributor>("org.intellij.qodana.sarifReportContributor")
   }
 }

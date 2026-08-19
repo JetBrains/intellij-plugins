@@ -5,6 +5,7 @@ import junit.framework.TestCase
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.withSystemProperty
 import org.junit.Test
+import java.nio.file.Path
 
 class OriginalUriBaseIdsTest : QodanaTestCase() {
 
@@ -128,6 +129,34 @@ class OriginalUriBaseIdsTest : QodanaTestCase() {
       val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
       assertNull(srcRoot.uri)
       assertNull(srcRoot.uriBaseId)
+    }
+  }
+
+  @Test
+  fun `open directory is added between project and source roots`() = runTest {
+    withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "project") {
+      val originalUriBaseIds = createOriginalUriBaseIds()
+
+      originalUriBaseIds.addOpenDirForRider(Path.of("solution"))
+
+      val openDir = originalUriBaseIds[OPENDIR_URI_BASE] as ArtifactLocation
+      checkArtifactLocation(openDir, "project/", PROJECTROOT_URI_BASE, OPENDIR_DESCRIPTION)
+      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
+      checkArtifactLocation(srcRoot, "solution/", OPENDIR_URI_BASE, SRCROOT_DESCRIPTION)
+    }
+  }
+
+  @Test
+  fun `open directory is rooted when project is repository root`() = runTest {
+    withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "") {
+      val originalUriBaseIds = createOriginalUriBaseIds()
+
+      originalUriBaseIds.addOpenDirForRider(Path.of("solution"))
+
+      val openDir = originalUriBaseIds[OPENDIR_URI_BASE] as ArtifactLocation
+      checkArtifactLocation(openDir, null, null, OPENDIR_DESCRIPTION)
+      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
+      checkArtifactLocation(srcRoot, "solution/", OPENDIR_URI_BASE, SRCROOT_DESCRIPTION)
     }
   }
 

@@ -43,6 +43,7 @@ import com.jetbrains.qodana.sarif.model.ToolComponent
 import com.jetbrains.qodana.sarif.model.ToolComponentReference
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.getQodanaProductName
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
@@ -69,6 +70,7 @@ const val PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY: String = "qodana.path.
 private const val PROJECT_DIR_PREFIX = "file://\$PROJECT_DIR\$/"
 internal const val SRCROOT_URI_BASE = "SRCROOT"
 internal const val PROJECTROOT_URI_BASE = "PROJECTROOT"
+internal const val OPENDIR_URI_BASE = "OPENDIR"
 
 /** The CI job build URL where Qodana is run, e.g. `https://github.com/JetBrains/qodana-action/actions/runs/1`. */
 internal const val QODANA_JOB_URL = "QODANA_JOB_URL"
@@ -99,7 +101,9 @@ internal const val PROBLEM_TYPE = "problemType"
 internal const val PROBLEM_HAS_FIXES = "hasFixes"
 internal const val PROBLEM_HAS_CLEANUP = "hasCleanup"
 
-internal const val SRCROOT_DESCRIPTION = "The subdirectory within the project that was analyzed (--project-dir qodana CLI parameter)"
+internal const val SRCROOT_DESCRIPTION = "The subdirectory within the project that was analyzed. Could be solution directory for .NET projects or --project-dir qodana CLI parameter for others"
+
+internal const val OPENDIR_DESCRIPTION = "The directory Qodana was opened in (--project-dir qodana CLI parameter)"
 
 internal const val PROJECTROOT_DESCRIPTION = "The root directory of the repository or workspace (--repository-root qodana CLI parameter)"
 
@@ -180,6 +184,25 @@ internal fun createOriginalUriBaseIds() = OriginalUriBaseIds().apply {
   } else {
     put(SRCROOT_URI_BASE, ArtifactLocation().withDescription(Message().withText(SRCROOT_DESCRIPTION)))
   }
+}
+
+@ApiStatus.Internal
+fun OriginalUriBaseIds.addOpenDirForRider(relativePathFromProjectDir: Path) {
+  require(!relativePathFromProjectDir.isAbsolute) { "The solution directory path must be relative to the project directory" }
+
+  val normalizedPath = relativePathFromProjectDir.normalize()
+  if (normalizedPath.toString().isEmpty()) return
+
+  val openDir = this[SRCROOT_URI_BASE] ?: ArtifactLocation()
+  openDir.withDescription(Message().withText(OPENDIR_DESCRIPTION))
+  put(OPENDIR_URI_BASE, openDir)
+  put(
+    SRCROOT_URI_BASE,
+    ArtifactLocation()
+      .withUri(normalizeUriBasePath(normalizedPath.toString()))
+      .withUriBaseId(OPENDIR_URI_BASE)
+      .withDescription(Message().withText(SRCROOT_DESCRIPTION))
+  )
 }
 
 private fun normalizeUriBasePath(path: String): String {

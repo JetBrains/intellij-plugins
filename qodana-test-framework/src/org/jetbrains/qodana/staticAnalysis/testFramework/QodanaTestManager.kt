@@ -188,7 +188,7 @@ class QodanaTestManager {
 
   suspend fun loadInspectionProfile(project: Project) = LoadedProfile.load(qodanaConfig, project, QodanaMessageReporter.DEFAULT)
 
-  fun computeSarifResult(getTestDataPath: (String) -> Path): Pair<String, String> {
+  fun computeSarifResult(getTestDataPath: (String) -> Path, includeOriginalUriBaseIds: Boolean = false, ): Pair<String, String> {
     val comparator = compareBy<Result> { it.ruleId }
       .thenBy { it.locations.getOrNull(0)?.physicalLocation?.artifactLocation?.uri }
       .thenBy { it.locations.getOrNull(0)?.physicalLocation?.region?.startLine }
@@ -207,6 +207,9 @@ class QodanaTestManager {
       sarifRun.properties!![promoResultsKey]?.let { SarifUtil.readResultsFromObject(it) }?.distinct()?.sortedWith(comparator)
 
     val run = Run().withResults(sortedMainResults).withAutomationDetails(sarifRun.automationDetails)
+    if (includeOriginalUriBaseIds) {
+      sarifRun.originalUriBaseIds?.let { run.originalUriBaseIds = it }
+    }
 
     if (sortedSanityResults?.isNotEmpty() == true || sortedPromoResults?.isNotEmpty() == true) {
       run.properties = PropertyBag().apply {
