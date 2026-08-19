@@ -155,18 +155,11 @@ fun QodanaWorkflowExtension.implementsMethod(method: Method): Boolean {
   }
 }
 
-/**
- * Appends a [OpenProjectTaskBuilder.beforeOpen] callback while preserving any callback already set on the builder.
- */
+@Deprecated("Use `OpenProjectTaskBuilder.beforeOpenTasks` directly")
 @ApiStatus.Internal
+@Suppress("DeprecatedCallableAddReplaceWith")
 fun OpenProjectTaskBuilder.appendBeforeOpen(action: suspend (Project) -> Boolean) {
-  val existingBeforeOpen = beforeOpen
-  beforeOpen = callback@{ project ->
-    if (existingBeforeOpen?.invoke(project) == false) {
-      return@callback false
-    }
-    action(project)
-  }
+  beforeOpenTasks += action
 }
 
 @ApiStatus.Internal
@@ -199,9 +192,6 @@ interface QodanaWorkflowExtension {
 
   /**
    * Called while [OpenProjectTaskBuilder] is being configured for a Qodana analysis run.
-   * Implementations may customize the open task and attach additional [OpenProjectTaskBuilder.beforeOpen] callbacks.
-   * Use [appendBeforeOpen] instead of assigning [OpenProjectTaskBuilder.beforeOpen] directly, so callbacks from
-   * multiple workflow extensions compose correctly.
    */
   suspend fun configureProjectOpening(config: QodanaConfig, openProjectTaskBuilder: OpenProjectTaskBuilder) {}
 
