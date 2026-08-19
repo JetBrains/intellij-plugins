@@ -70,11 +70,14 @@
     <orderEntry type="module" module-name="intellij.markdown.projectView" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.markdown" scope="TEST" />
     <orderEntry type="module" module-name="intellij.mdx" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.mdx.shared" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.mdx.backend" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.mdx.frontend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5.codeInsight" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit5" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit5.suites" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.mdx" />
+  <component name="TestModuleProperties" production-module="intellij.mdx.shared" />
 </module>

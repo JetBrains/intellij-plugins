@@ -1,0 +1,72 @@
+<idea-plugin visibility="internal">
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="org.intellij.plugins.markdown"/>
+    <plugin id="JavaScript"/>
+    <plugin id="com.intellij.modules.ultimate"/>
+    <module name="intellij.javascript.common"/>
+    <module name="intellij.javascript.parser"/>
+    <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.libraries.gson"/>
+    <module name="intellij.libraries.kotlinx.collections.immutable"/>
+    <module name="intellij.libraries.kotlinx.coroutines.core"/>
+    <module name="intellij.libraries.markdown"/>
+    <module name="intellij.markdown"/>
+    <module name="intellij.markdown.projectView"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.codeStyle"/>
+    <module name="intellij.platform.codeStyle.impl"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.core.ui"/>
+    <module name="intellij.platform.editor.ex"/>
+    <module name="intellij.platform.editor.ui"/>
+    <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.lang"/>
+    <module name="intellij.platform.lang.impl"/>
+    <module name="intellij.platform.markdown.utils"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.util.ui"/>
+    <module name="intellij.xml.emmet"/>
+    <module name="intellij.xml.parser"/>
+    <module name="intellij.xml.psi"/>
+    <module name="intellij.xml.psi.impl"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType name="MDX" implementationClass="org.intellij.plugin.mdx.lang.MdxFileType"
+              fieldName="INSTANCE" language="MDX" extensions="mdx"/>
+    <lang.fileViewProviderFactory language="MDX"
+                                  implementationClass="org.intellij.plugin.mdx.lang.template.MdxFileViewProviderFactory"/>
+    <lang.parserDefinition language="MDX"
+                           implementationClass="org.intellij.plugin.mdx.lang.parse.MdxParserDefinition"/>
+    <lang.parserDefinition language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSParserDefinition"/>
+    <outerLanguageRangePatcher language="MdxJS"
+                               implementationClass="org.intellij.plugin.mdx.lang.template.MdxOuterLanguagePatcher"/>
+
+    <editorHighlighterProvider filetype="MDX"
+                               implementationClass="org.intellij.plugin.mdx.highlighting.MdxEditorHighlighterProvider"/>
+    <colorSettingsPage implementation="org.intellij.plugin.mdx.highlighting.MdxColorSettingsPage"/>
+    <enterHandlerDelegate implementation="org.intellij.plugin.mdx.editor.MdxEnterHandler" order="first"/>
+    <typedHandler implementation="org.intellij.plugin.mdx.js.MdxTagClosingTypedHandler" order="after xmlGt, before js"/>
+    <typedHandler implementation="org.intellij.plugin.mdx.js.MdxBraceTypedHandler"/>
+    <quoteHandler fileType="MDX" className="org.intellij.plugin.mdx.editor.MdxQuoteHandler"/>
+    <lang.lineWrapStrategy language="MDX"
+                           implementationClass="org.intellij.plugin.mdx.editor.MdxLineWrapPositionStrategy"/>
+    <xml.autoPopupEnabler implementation="org.intellij.plugin.mdx.completion.MdxXmlAutoPopupEnabler"/>
+    <!--suppress PluginXmlRegistrationCheck -->
+    <codeInsight.inlayProvider language="MDX"
+                               implementationClass="org.intellij.plugins.markdown.editor.tables.ui.MarkdownTableInlayProvider"
+                               id="MdxMarkdownTableInlayProvider"/>
+    <codeInsight.fillParagraph language="MDX"
+                               implementationClass="org.intellij.plugins.markdown.editor.MarkdownParagraphFillHandler"/>
+    <lang.psiStructureViewFactory language="MDX"
+                                  implementationClass="com.intellij.markdown.projectView.MarkdownStructureViewFactory"/>
+    <lang.foldingBuilder language="MDX" implementationClass="org.intellij.plugins.markdown.folding.MarkdownFoldingBuilder"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.intellij.markdown">
+    <markdownCompatibilityChecker implementation="org.intellij.plugin.mdx.markdown.MdxMarkdownCompatibilityChecker"/>
+  </extensions>
+</idea-plugin>

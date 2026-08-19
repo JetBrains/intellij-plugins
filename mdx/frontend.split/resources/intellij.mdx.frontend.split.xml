@@ -1,0 +1,31 @@
+<idea-plugin>
+  <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.libraries.rd.core"/>
+    <module name="intellij.libraries.rd.framework"/>
+    <module name="intellij.mdx.shared"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.ui"/>
+    <module name="intellij.platform.editor.ui"/>
+    <module name="intellij.platform.frontend.split"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.lang"/>
+    <module name="intellij.platform.lang.impl"/>
+    <module name="intellij.platform.split.protocol"/>
+    <module name="intellij.rd.client"/>
+    <module name="intellij.rd.ide.model.generated"/>
+    <module name="intellij.rd.platform"/>
+    <!-- endregion -->
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <rdclient.editorActionHandlerStrategyCustomizer
+        implementation="com.intellij.mdx.frontend.split.MdxFrontendEditorActionCustomizer"/>
+    <rdclient.highlighterSuppressionHandler
+        implementation="com.intellij.mdx.frontend.split.MdxFrontendHighlightingSuppressor"/>
+    <rdclient.actionCustomization actionId="CommentByBlockComment" backend="remote"
+                                  implementationClass="com.intellij.mdx.frontend.split.MdxDelegatingActionCustomization"/>
+    <rdclient.actionCustomization actionId="CommentByLineComment" backend="remote"
+                                  implementationClass="com.intellij.mdx.frontend.split.MdxDelegatingActionCustomization"/>
+  </extensions>
+</idea-plugin>

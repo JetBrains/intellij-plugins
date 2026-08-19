@@ -1,0 +1,34 @@
+package com.intellij.mdx.backend.completion
+
+import com.intellij.codeInsight.completion.CompletionContributor
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionProvider
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.patterns.PlatformPatterns
+import com.intellij.util.ProcessingContext
+import org.intellij.plugin.mdx.lang.psi.MdxFile
+import org.intellij.plugins.markdown.lang.MarkdownElementTypes
+import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
+
+class MdxImportExportCompletionContributor : CompletionContributor() {
+
+  init {
+    extend(CompletionType.BASIC, PlatformPatterns.psiElement(MarkdownTokenTypes.TEXT), object : CompletionProvider<CompletionParameters>() {
+      override fun addCompletions(parameters: CompletionParameters,
+                                  context: ProcessingContext,
+                                  result: CompletionResultSet) {
+        val node = parameters.position.node
+        val nodeParent = node.treeParent
+        if (nodeParent.psi.containingFile is MdxFile) {
+          if (nodeParent.elementType == MarkdownElementTypes.PARAGRAPH &&
+              (nodeParent.firstChildNode == node || nodeParent.text.trim().startsWith(node.text))) {
+            result.addElement(LookupElementBuilder.create("export ").bold())
+            result.addElement(LookupElementBuilder.create("import ").bold())
+          }
+        }
+      }
+    })
+  }
+}

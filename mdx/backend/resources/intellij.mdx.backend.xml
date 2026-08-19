@@ -1,0 +1,77 @@
+<idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="JavaScript"/>
+    <module name="intellij.javascript.analysis.impl"/>
+    <module name="intellij.javascript.backend"/>
+    <module name="intellij.javascript.common"/>
+    <module name="intellij.javascript.parser"/>
+    <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.libraries.markdown"/>
+    <module name="intellij.markdown"/>
+    <module name="intellij.markdown.model"/>
+    <module name="intellij.mdx.shared"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.backend"/>
+    <module name="intellij.platform.codeStyle"/>
+    <module name="intellij.platform.codeStyle.impl"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.editor.ex"/>
+    <module name="intellij.platform.editor.ui"/>
+    <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.kernel.backend"/>
+    <module name="intellij.platform.lang"/>
+    <module name="intellij.platform.lang.impl"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.rpc.backend"/>
+    <module name="intellij.platform.util.ui"/>
+    <module name="intellij.xml.emmet"/>
+    <module name="intellij.xml.impl"/>
+    <module name="intellij.xml.parser"/>
+    <module name="intellij.xml.psi"/>
+    <module name="intellij.xml.psi.impl"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <applicationListeners>
+    <listener class="com.intellij.mdx.backend.js.MdxTagNameSynchronizer$MyCommandListener"
+              topic="com.intellij.openapi.command.CommandListener"/>
+    <listener class="com.intellij.mdx.backend.js.MdxTagNameSynchronizer$MyDynamicPluginListener"
+              topic="com.intellij.ide.plugins.DynamicPluginListener"/>
+  </applicationListeners>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <editorFactoryListener implementation="com.intellij.mdx.backend.js.MdxEditorFactoryListener"/>
+    <languageStubDefinition language="MDX"
+                            implementationClass="com.intellij.mdx.backend.lang.MdxLanguageStubDefinition"/>
+    <stubElementRegistryExtension implementation="com.intellij.mdx.backend.js.MdxStubRegistryExtension"/>
+    <defaultHighlightingSettingProvider
+        implementation="com.intellij.mdx.backend.highlighting.MdxInjectedHighlightingSettingProvider"/>
+    <xml.zenCodingGenerator implementation="com.intellij.mdx.backend.emmet.MdxZenCodingGenerator"/>
+    <lang.formatter language="MDX" implementationClass="com.intellij.mdx.backend.format.MdxFormattingModelBuilder"/>
+    <lang.formatter language="MdxJS" implementationClass="com.intellij.mdx.backend.format.MdxJsFormattingModelBuilder"/>
+    <postFormatProcessor implementation="com.intellij.mdx.backend.format.MdxTablePostFormatProcessor"/>
+    <postFormatProcessor implementation="com.intellij.mdx.backend.format.MdxCodeFencePostFormatProcessor"/>
+    <fileIndentOptionsProvider implementation="com.intellij.mdx.backend.format.MdxFileIndentOptionsProvider"/>
+    <lang.importOptimizer language="MdxJS" implementationClass="com.intellij.mdx.backend.js.MdxJSImportOptimizer" order="first"/>
+    <lang.inspectionSuppressor language="MDX"
+                               implementationClass="com.intellij.mdx.backend.codeInspection.MdxInspectionSuppressor"/>
+    <completion.contributor language="Markdown"
+                            id="MdxImportExportCompletionContributor"
+                            implementationClass="com.intellij.mdx.backend.completion.MdxImportExportCompletionContributor"
+    />
+    <completion.contributor language="MdxJS"
+                            id="MdxVoidTagSelfCloseCompletionContributor"
+                            order="first"
+                            implementationClass="com.intellij.mdx.backend.completion.MdxVoidTagSelfCloseCompletionContributor"
+    />
+  </extensions>
+
+  <extensions defaultExtensionNs="JavaScript">
+    <importModulePathStrategy order="after TypeScript"
+                              implementation="com.intellij.mdx.backend.js.MdxImportModulePathStrategy" />
+    <handlersFactory language="MdxJS" implementationClass="com.intellij.mdx.backend.js.MdxJSHandlersFactory"/>
+    <moduleExportsProvider id="mdx" implementation="com.intellij.mdx.backend.js.MdxModuleExportsProvider"/>
+  </extensions>
+</idea-plugin>

@@ -1,0 +1,81 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.mdx.frontend.split` start
+jvm_library(
+    name = "frontend.split",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.mdx.frontend.split",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = ["//remote-dev/cwm-guest:frontend-split"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//contrib/mdx/shared",
+        "@community//libraries/rd/core",
+        "@community//libraries/rd/framework",
+        "@community//platform/core-api:core",
+        "@community//platform/core-ui",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/ide-core",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-impl",
+        "//remote-dev/cwm-model-generated:split-protocol",
+        "//remote-dev/rd-client",
+        "//remote-dev/rd-ide-model-generated",
+        "//remote-dev/rd-platform",
+    ],
+)
+
+content_module_jar(module = ":frontend.split")
+
+jvm_library(
+    name = "frontend.split_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.mdx.frontend.split",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":frontend.split",
+        "//contrib/mdx/shared:shared_test_lib",
+        "@community//libraries/rd/core:core_test_lib",
+        "@community//libraries/rd/framework:framework_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "//remote-dev/cwm-guest:frontend-split_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "//remote-dev/cwm-model-generated:split-protocol_test_lib",
+        "//remote-dev/rd-client:rd-client_test_lib",
+        "//remote-dev/rd-ide-model-generated:rd-ide-model-generated_test_lib",
+        "//remote-dev/rd-platform:rd-platform_test_lib",
+    ],
+)
+### auto-generated section `build intellij.mdx.frontend.split` end
+
+### auto-generated section `iml intellij.mdx.frontend.split` start
+exports_files(
+    [
+        "intellij.mdx.frontend.split.iml",
+        "resources/intellij.mdx.frontend.split.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.mdx.frontend.split` end

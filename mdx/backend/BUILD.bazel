@@ -1,0 +1,115 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.mdx.backend` start
+jvm_library(
+    name = "backend",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.mdx.backend",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = ["//plugins/JavaScriptLanguage/plugin"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//contrib/mdx/shared",
+        "@community//platform/kernel/rpc.backend",
+        "@community//platform/kernel/backend",
+        "@community//platform/platform-impl/rpc",
+        "@community//platform/backend",
+        "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+        "//plugins/JavaScriptLanguage/javascript-backend",
+        "//plugins/JavaScriptLanguage/javascript-common",
+        "//plugins/JavaScriptLanguage/javascript-parser",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "@community//libraries/markdown",
+        "@community//plugins/markdown/core:markdown",
+        "@community//plugins/markdown/model",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/code-style-api:codeStyle",
+        "@community//platform/code-style-impl:codeStyle-impl",
+        "@community//platform/core-api:core",
+        "@community//platform/core-impl",
+        "@community//platform/editor-ui-ex:editor-ex",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-impl",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/util:util-ui",
+        "@community//xml/emmet",
+        "@community//xml/impl",
+        "@community//xml/xml-parser:parser",
+        "@community//xml/xml-psi-api:psi",
+        "@community//xml/xml-psi-impl:psi-impl",
+    ],
+)
+
+content_module_jar(module = ":backend")
+
+jvm_library(
+    name = "backend_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.mdx.backend",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":backend",
+        "//contrib/mdx/shared:shared_test_lib",
+        "@community//platform/kernel/rpc.backend:rpc.backend_test_lib",
+        "@community//platform/kernel/backend:backend_test_lib",
+        "@community//platform/platform-impl/rpc:rpc_test_lib",
+        "@community//platform/backend:backend_test_lib",
+        "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+        "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
+        "@community//libraries/markdown:markdown_test_lib",
+        "@community//plugins/markdown/core:markdown_test_lib",
+        "@community//plugins/markdown/model:model_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/code-style-api:codeStyle_test_lib",
+        "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/editor-ui-ex:editor-ex_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+        "@community//xml/emmet:emmet_test_lib",
+        "@community//xml/impl:impl_test_lib",
+        "@community//xml/xml-parser:parser_test_lib",
+        "@community//xml/xml-psi-api:psi_test_lib",
+        "@community//xml/xml-psi-impl:psi-impl_test_lib",
+    ],
+)
+### auto-generated section `build intellij.mdx.backend` end
+
+### auto-generated section `iml intellij.mdx.backend` start
+exports_files(
+    [
+        "intellij.mdx.backend.iml",
+        "resources/intellij.mdx.backend.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.mdx.backend` end

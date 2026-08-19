@@ -415,4 +415,21 @@ class MdxCompletionTest : MdxTestBase() {
     assertTrue("Expected 'MyComponent' in tag-name completion at a bare '<' before a later JSX element, got: $strings",
                strings.contains("MyComponent"))
   }
+
+  //todo: it doesn't work in runtime because of TypeScriptConfigAccessibilityChecker.checkImpl and work in test because it's LightVirtualFile
+  @Test
+  fun testCodeFenceCompletionInMdxFile() {
+    val testCase = """
+    <div>
+      ```typescript
+      function myFunction() {
+
+      }
+      <caret>
+      ```
+    </div>
+    """.trimIndent()
+    val strings = completionStrings(testCase)
+    assertTrue(strings.any { it.contains("myFunction") })
+  }
 }

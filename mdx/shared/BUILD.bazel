@@ -1,0 +1,116 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.mdx.shared` start
+jvm_library(
+    name = "shared",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.mdx.shared",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//plugins/JavaScriptLanguage/plugin",
+        "//plugins/ultimate-plugin",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//libraries/kotlinx/coroutines/core",
+        "@community//libraries/markdown",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/code-style-api:codeStyle",
+        "@community//platform/core-api:core",
+        "@community//platform/editor-ui-ex:editor-ex",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/markdown-utils",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//xml/xml-parser:parser",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-impl",
+        "@community//libraries/gson",
+        "@community//platform/core-ui",
+        "@community//platform/core-impl",
+        "@community//platform/platform-util-io:ide-util-io",
+        "@community//plugins/markdown/core:markdown",
+        "@community//plugins/markdown/projectView",
+        "@community//platform/code-style-impl:codeStyle-impl",
+        "@community//xml/xml-psi-api:psi",
+        "@community//xml/xml-psi-impl:psi-impl",
+        "@community//xml/emmet",
+        "//plugins/JavaScriptLanguage/javascript-common",
+        "//plugins/JavaScriptLanguage/javascript-parser",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+        "@community//platform/util:util-ui",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    ],
+)
+
+content_module_jar(module = ":shared")
+
+jvm_library(
+    name = "shared_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.mdx.shared",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":shared",
+        "@community//libraries/kotlinx/coroutines/core:core_test_lib",
+        "@community//libraries/markdown:markdown_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/code-style-api:codeStyle_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/editor-ui-ex:editor-ex_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/markdown-utils:markdown-utils_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//xml/xml-parser:parser_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//libraries/gson:gson_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//plugins/markdown/core:markdown_test_lib",
+        "@community//plugins/markdown/projectView:projectView_test_lib",
+        "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+        "@community//xml/xml-psi-api:psi_test_lib",
+        "@community//xml/xml-psi-impl:psi-impl_test_lib",
+        "@community//xml/emmet:emmet_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
+        "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
+        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+    ],
+)
+### auto-generated section `build intellij.mdx.shared` end
+
+### auto-generated section `iml intellij.mdx.shared` start
+exports_files(
+    [
+        "intellij.mdx.shared.iml",
+        "resources/intellij.mdx.shared.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.mdx.shared` end

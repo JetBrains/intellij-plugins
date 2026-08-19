@@ -12,120 +12,15 @@
     ]]>
   </description>
 
-  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="JavaScript"/>
-    <plugin id="com.intellij.modules.ultimate"/>
-    <module name="intellij.javascript.analysis.impl"/>
-    <module name="intellij.javascript.backend"/>
-    <module name="intellij.javascript.psi.impl"/>
-    <module name="intellij.libraries.gson"/>
-    <module name="intellij.libraries.kotlinx.collections.immutable"/>
-    <module name="intellij.libraries.kotlinx.coroutines.core"/>
-    <module name="intellij.libraries.markdown"/>
-    <module name="intellij.markdown.frontend"/>
-    <module name="intellij.markdown.model"/>
-    <module name="intellij.markdown.projectView"/>
-    <module name="intellij.platform.analysis"/>
-    <module name="intellij.platform.codeStyle"/>
-    <module name="intellij.platform.codeStyle.impl"/>
-    <module name="intellij.platform.core"/>
-    <module name="intellij.platform.core.impl"/>
-    <module name="intellij.platform.core.ui"/>
-    <module name="intellij.platform.editor.ex"/>
-    <module name="intellij.platform.editor.ui"/>
-    <module name="intellij.platform.ide.impl"/>
-    <module name="intellij.platform.lang"/>
-    <module name="intellij.platform.lang.impl"/>
-    <module name="intellij.platform.markdown.utils"/>
-    <module name="intellij.platform.projectModel"/>
-    <module name="intellij.platform.util.ui"/>
-    <module name="intellij.xml.emmet"/>
-    <module name="intellij.xml.impl"/>
-    <module name="intellij.xml.parser"/>
-    <module name="intellij.xml.psi"/>
   </dependencies>
-  <!-- endregion -->
-  <content namespace="jetbrains"/>
-  <depends>org.intellij.plugins.markdown</depends>
-  <applicationListeners>
-    <listener class="org.intellij.plugin.mdx.js.MdxTagNameSynchronizer$MyCommandListener"
-              topic="com.intellij.openapi.command.CommandListener"/>
-    <listener class="org.intellij.plugin.mdx.js.MdxTagNameSynchronizer$MyDynamicPluginListener"
-              topic="com.intellij.ide.plugins.DynamicPluginListener"/>
-  </applicationListeners>
-  <projectListeners>
-    <listener class="org.intellij.plugin.mdx.editor.MdxCodeFenceCompletionIndentRestorer"
-              topic="com.intellij.codeInsight.lookup.LookupManagerListener"/>
-  </projectListeners>
-  <extensions defaultExtensionNs="com.intellij">
-    <fileType name="MDX" implementationClass="org.intellij.plugin.mdx.lang.MdxFileType"
-              fieldName="INSTANCE" language="MDX" extensions="mdx"/>
-    <lang.fileViewProviderFactory language="MDX"
-                                  implementationClass="org.intellij.plugin.mdx.lang.template.MdxFileViewProviderFactory"/>
-    <lang.parserDefinition language="MDX"
-                           implementationClass="org.intellij.plugin.mdx.lang.parse.MdxParserDefinition"/>
-    <languageStubDefinition language="MDX"
-                            implementationClass="org.intellij.plugin.mdx.lang.MdxLanguageStubDefinition"/>
 
-    <editorHighlighterProvider filetype="MDX"
-                               implementationClass="org.intellij.plugin.mdx.highlighting.MdxEditorHighlighterProvider"/>
-    <colorSettingsPage implementation="org.intellij.plugin.mdx.highlighting.MdxColorSettingsPage"/>
-    <defaultHighlightingSettingProvider
-        implementation="org.intellij.plugin.mdx.highlighting.MdxInjectedHighlightingSettingProvider"/>
-    <enterHandlerDelegate implementation="org.intellij.plugin.mdx.editor.MdxEnterHandler" order="first"/>
-    <editorActionHandler action="EditorPaste" implementationClass="org.intellij.plugin.mdx.editor.MdxCodeFencePasteHandler"
-                         order="first"/>
-    <lang.lineWrapStrategy language="MDX"
-                           implementationClass="com.intellij.markdown.frontend.editor.MarkdownLineWrapPositionStrategy"/>
-
-    <lang.parserDefinition language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSParserDefinition"/>
-    <stubElementRegistryExtension implementation="org.intellij.plugin.mdx.js.MdxStubRegistryExtension"/>
-    <outerLanguageRangePatcher language="MdxJS"
-                               implementationClass="org.intellij.plugin.mdx.lang.template.MdxOuterLanguagePatcher"/>
-    <lang.importOptimizer language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSImportOptimizer" order="first"/>
-    <lang.inspectionSuppressor language="MDX"
-                               implementationClass="org.intellij.plugin.mdx.codeInspection.MdxInspectionSuppressor"/>
-    <editorFactoryListener implementation="org.intellij.plugin.mdx.js.MdxEditorFactoryListener"/>
-    <lang.formatter language="MDX" implementationClass="org.intellij.plugin.mdx.format.MdxFormattingModelBuilder"/>
-    <lang.formatter language="MdxJS" implementationClass="org.intellij.plugin.mdx.format.MdxJsFormattingModelBuilder"/>
-    <postFormatProcessor implementation="org.intellij.plugin.mdx.format.MdxTablePostFormatProcessor"/>
-    <postFormatProcessor implementation="org.intellij.plugin.mdx.format.MdxCodeFencePostFormatProcessor"/>
-    <fileIndentOptionsProvider implementation="org.intellij.plugin.mdx.format.MdxFileIndentOptionsProvider"/>
-    <!--suppress PluginXmlRegistrationCheck -->
-    <codeInsight.inlayProvider language="MDX"
-                               implementationClass="org.intellij.plugins.markdown.editor.tables.ui.MarkdownTableInlayProvider"
-                               id="MdxMarkdownTableInlayProvider"/>
-    <completion.contributor language="Markdown"
-                            id="MdxImportExportCompletionContributor"
-                            implementationClass="org.intellij.plugin.mdx.completion.MdxImportExportCompletionContributor"
-    />
-    <completion.contributor language="MdxJS"
-                            id="MdxVoidTagSelfCloseCompletionContributor"
-                            order="first"
-                            implementationClass="org.intellij.plugin.mdx.completion.MdxVoidTagSelfCloseCompletionContributor"
-    />
-    <xml.autoPopupEnabler implementation="org.intellij.plugin.mdx.completion.MdxXmlAutoPopupEnabler"/>
-    <typedHandler implementation="org.intellij.plugin.mdx.js.MdxTagClosingTypedHandler" order="after xmlGt, before js"/>
-    <typedHandler implementation="org.intellij.plugin.mdx.js.MdxBraceTypedHandler"/>
-    <quoteHandler fileType="MDX" className="org.intellij.plugin.mdx.editor.MdxQuoteHandler"/>
-    <xml.zenCodingGenerator implementation="org.intellij.plugin.mdx.emmet.MdxZenCodingGenerator"/>
-    <codeInsight.fillParagraph language="MDX"
-                               implementationClass="org.intellij.plugins.markdown.editor.MarkdownParagraphFillHandler"/>
-    <lang.psiStructureViewFactory language="MDX"
-                                  implementationClass="com.intellij.markdown.projectView.MarkdownStructureViewFactory"/>
-    <lang.foldingBuilder language="MDX" implementationClass="org.intellij.plugins.markdown.folding.MarkdownFoldingBuilder"/>
-  </extensions>
-
-  <extensions defaultExtensionNs="org.intellij.markdown">
-    <markdownCompatibilityChecker implementation="org.intellij.plugin.mdx.markdown.MdxMarkdownCompatibilityChecker"/>
-    <actionPromoterExtension implementation="org.intellij.plugin.mdx.markdown.MdxMarkdownActionPromoterExtension"/>
-  </extensions>
-
-  <extensions defaultExtensionNs="JavaScript">
-    <importModulePathStrategy order="after TypeScript"
-                              implementation="org.intellij.plugin.mdx.js.MdxImportModulePathStrategy" />
-    <handlersFactory language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSHandlersFactory"/>
-    <moduleExportsProvider id="mdx" implementation="org.intellij.plugin.mdx.js.MdxModuleExportsProvider"/>
-  </extensions>
+  <content namespace="jetbrains">
+    <module name="intellij.mdx" loading="embedded"/>
+    <module name="intellij.mdx.shared" loading="required"/>
+    <module name="intellij.mdx.backend" required-if-available="intellij.platform.backend"/>
+    <module name="intellij.mdx.frontend" required-if-available="intellij.platform.frontend"/>
+    <module name="intellij.mdx.frontend.split" required-if-available="intellij.platform.frontend.split"/>
+  </content>
 </idea-plugin>

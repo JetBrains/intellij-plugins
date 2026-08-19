@@ -1,0 +1,83 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.mdx.frontend` start
+jvm_library(
+    name = "frontend",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.mdx.frontend",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//contrib/mdx/shared",
+        "@community//platform/platform-impl/rpc",
+        "@community//platform/kernel/shared:kernel",
+        "@community//platform/platform-frontend:frontend",
+        "@community//plugins/markdown/core/frontend",
+        "@community//plugins/markdown/core:markdown",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/core-impl",
+        "@community//platform/core-ui",
+        "@community//platform/editor-ui-ex:editor-ex",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-impl",
+    ],
+)
+
+content_module_jar(module = ":frontend")
+
+jvm_library(
+    name = "frontend_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.mdx.frontend",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":frontend",
+        "//contrib/mdx/shared:shared_test_lib",
+        "@community//platform/platform-impl/rpc:rpc_test_lib",
+        "@community//platform/kernel/shared:kernel_test_lib",
+        "@community//platform/platform-frontend:frontend_test_lib",
+        "@community//plugins/markdown/core/frontend:frontend_test_lib",
+        "@community//plugins/markdown/core:markdown_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/editor-ui-ex:editor-ex_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+    ],
+)
+### auto-generated section `build intellij.mdx.frontend` end
+
+### auto-generated section `iml intellij.mdx.frontend` start
+exports_files(
+    [
+        "intellij.mdx.frontend.iml",
+        "resources/intellij.mdx.frontend.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.mdx.frontend` end

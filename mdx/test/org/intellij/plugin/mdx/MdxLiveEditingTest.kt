@@ -224,15 +224,6 @@ class MdxLiveEditingTest : MdxTestBase() {
   // --- Markdown hard wrapping ---------------------------------------------------------------
 
   @Test
-  fun testUsesMarkdownEditorIntegrations() {
-    assertEquals(
-      "com.intellij.markdown.frontend.editor.MarkdownLineWrapPositionStrategy",
-      LanguageLineWrapPositionStrategy.INSTANCE.forLanguage(MdxLanguage).javaClass.name,
-    )
-    assertTrue(MdxLanguage.supportsMarkdown())
-  }
-
-  @Test
   fun testAutoWrapLongMarkdownLine() = checkAutoWrapOnTyping("synchronization")
 
   @Test
