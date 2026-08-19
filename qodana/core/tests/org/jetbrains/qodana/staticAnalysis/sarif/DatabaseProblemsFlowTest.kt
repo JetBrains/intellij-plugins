@@ -14,7 +14,6 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV1
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -51,7 +50,7 @@ class DatabaseProblemsFlowTest : QodanaTestCase() {
     val testDataPath = getTestDataPath()
 
     val testSarifPath = testDataPath.resolve("test-sarif.json")
-    val report = SarifReport().withRuns(listOf(Run().withResults(database.resultsFlowByGroup("", QodanaMessageReporter.EMPTY).toList())))
+    val report = SarifReport().withRuns(listOf(Run().withResults(database.resultsFlowByGroup("").toList())))
     val writer = StringWriter()
     SarifUtil.writeReport(writer, report)
 
@@ -61,7 +60,7 @@ class DatabaseProblemsFlowTest : QodanaTestCase() {
   @Test
   fun `iterate twice on FileProblemsIterable`(): Unit = runBlocking {
     val testDataPath = getTestDataPath()
-    val databaseProblemsFlow = database.resultsFlowByGroup("", QodanaMessageReporter.EMPTY)
+    val databaseProblemsFlow = database.resultsFlowByGroup("")
 
     val testSarifPath = testDataPath.resolve("test-sarif.json")
     val expectedResults = SarifUtil.readReport(testSarifPath)
@@ -84,7 +83,7 @@ class DatabaseProblemsFlowTest : QodanaTestCase() {
   @Test
   fun `iterate in parallel on FileProblemsIterable`(): Unit = runBlocking {
     val testDataPath = getTestDataPath()
-    val databaseProblemsFlow = database.resultsFlowByGroup("", QodanaMessageReporter.EMPTY)
+    val databaseProblemsFlow = database.resultsFlowByGroup("")
 
     val testSarifPath = testDataPath.resolve("test-sarif.json")
     val expectedResults = SarifUtil.readReport(testSarifPath)

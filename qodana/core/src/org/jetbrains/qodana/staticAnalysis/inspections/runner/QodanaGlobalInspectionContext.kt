@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
+import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInspection.ex.EnabledInspectionsProvider
 import com.intellij.codeInspection.ex.GlobalInspectionContextImpl
 import com.intellij.codeInspection.ex.InspectionToolWrapper
@@ -21,7 +22,6 @@ import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.script.QodanaProgressIndicator
 import java.nio.file.Path
-import java.util.concurrent.atomic.AtomicInteger
 
 /** @param outputPath in the Docker container, this is `/data/results` */
 open class QodanaGlobalInspectionContext(
@@ -34,8 +34,7 @@ open class QodanaGlobalInspectionContext(
   val coverageStatisticsData: CoverageStatisticsData,
   val isIncremental: Boolean = false,
 ) : GlobalInspectionContextImpl(project, contentManager) {
-  private val completedLocalAnalysisFiles = AtomicInteger()
-  private var scheduledLocalAnalysisFiles: Int? = null
+  private var localAnalysisReporter: QodanaProgressIndicator.LocalAnalysisReporter? = null
 
   /** In the Docker container, this is `/data/results`. */
   override fun getOutputPath(): Path = outputPath
@@ -94,17 +93,41 @@ open class QodanaGlobalInspectionContext(
     super.classifyTool(outGlobalTools, outLocalTools, outGlobalSimpleTools, currentTools, toolWrapper)
   }
 
+  override fun runTools(scope: AnalysisScope, runGlobalToolsOnly: Boolean, isOfflineInspections: Boolean) {
+    registerLocalAnalysisIndicator()
+    super.runTools(scope, runGlobalToolsOnly, isOfflineInspections)
+  }
+
+  private fun registerLocalAnalysisIndicator() {
+    (myProgressIndicator as? QodanaProgressIndicator)?.let { progressIndicator ->
+      localAnalysisReporter = progressIndicator.jobProgressReporters.computeIfAbsent(
+        stdJobDescriptors.LOCAL_ANALYSIS,
+      ) {
+        QodanaProgressIndicator.LocalAnalysisReporter(
+          { stdJobDescriptors.LOCAL_ANALYSIS.totalAmount },
+          progressIndicator.messageReporter,
+          progressIndicator.timeSource,
+          progressIndicator.progressLogInterval,
+        )
+      } as QodanaProgressIndicator.LocalAnalysisReporter
+    }
+  }
+
   override fun incrementJobDoneAmount(job: JobDescriptor, message: String) {
     super.incrementJobDoneAmount(job, message)
-    if (job === stdJobDescriptors.LOCAL_ANALYSIS) {
-      val completedFiles = completedLocalAnalysisFiles.incrementAndGet()
-      val totalFiles = scheduledLocalAnalysisFiles ?: job.totalAmount
-      (myProgressIndicator as? QodanaProgressIndicator)?.reportLocalAnalysisProgress("${job.displayName} $message", completedFiles.progressPercent(totalFiles))
+    (myProgressIndicator as? QodanaProgressIndicator)?.let { progressIndicator ->
+      val text = "${job.displayName} $message"
+      if (job === stdJobDescriptors.BUILD_GRAPH) {
+        progressIndicator.reportCounterProcess(job, text)
+      }
+      else {
+        progressIndicator.reportPercentProgress(job, text)
+      }
     }
   }
 
   override fun onScheduledFilesCounted(scheduledFilesCount: Int) {
-    scheduledLocalAnalysisFiles = scheduledFilesCount
+    localAnalysisReporter?.setScheduledFilesCount(scheduledFilesCount)
     if (scheduledFilesCount == 0) {
       ConsoleLog.info(QodanaBundle.message("progress.code.analysis.no.files"))
     }
@@ -118,8 +141,4 @@ open class QodanaGlobalInspectionContext(
   }
 
   fun coverageComputationState() = coverageStatisticsData.coverageComputationState
-}
-
-private fun Int.progressPercent(total: Int): Int {
-  return this * 100 / total
 }

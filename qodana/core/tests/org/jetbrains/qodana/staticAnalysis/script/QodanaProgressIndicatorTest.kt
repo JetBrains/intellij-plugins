@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.script
 
+import com.intellij.codeInspection.ex.JobDescriptor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NotNullLazyValue
@@ -18,17 +19,20 @@ import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TestTimeSource
 
 class QodanaProgressIndicatorTest : QodanaTestCase() {
   @Test
   fun `indicator logs only local analysis progress once per percent`() {
     val reporter = RecordingMessageReporter()
     val indicator = QodanaProgressIndicator(reporter)
+    val job = JobDescriptor("Analyzing code")
 
-    indicator.reportLocalAnalysisProgress("Analyzing code in src/A.kt", 0)
-    indicator.reportLocalAnalysisProgress("Analyzing code in src/D.kt", 42)
-    indicator.reportLocalAnalysisProgress("Analyzing code in src/D.kt", 42)
-    indicator.reportLocalAnalysisProgress("Analyzing code in src/E.kt", 100)
+    indicator.reportPercentProgress(job, "Analyzing code in src/A.kt", 0)
+    indicator.reportPercentProgress(job, "Analyzing code in src/D.kt", 42)
+    indicator.reportPercentProgress(job, "Analyzing code in src/D.kt", 42)
+    indicator.reportPercentProgress(job, "Analyzing code in src/E.kt", 100)
 
     assertThat(reporter.messages.map { it.substringBefore(" [") }).containsExactly(
       "Analyzing code 42%",
@@ -67,6 +71,7 @@ class QodanaProgressIndicatorTest : QodanaTestCase() {
       "Analyzing code 33%",
       "Analyzing code 100%",
     )
+    assertThat(reporter.messages).contains("${buildGraph.displayName.removeSuffix(" in")}: 1 files")
   }
 
   @Test
@@ -112,6 +117,85 @@ class QodanaProgressIndicatorTest : QodanaTestCase() {
     assertThat(stdout).contains("No files found for analysis")
   }
 
+  @Test
+  fun `indicator logs progress independently for jobs with the same phase text and never decreases`() {
+    val reporter = RecordingMessageReporter()
+    val indicator = QodanaProgressIndicator(reporter)
+    val firstJob = JobDescriptor("Phase")
+    val secondJob = JobDescriptor("Phase")
+
+    indicator.reportPercentProgress(firstJob, "Phase", 50)
+    indicator.reportPercentProgress(secondJob, "Phase", 40)
+    indicator.reportPercentProgress(firstJob, "Phase", 33)
+    indicator.reportPercentProgress(firstJob, "Phase", 100)
+
+    assertThat(reporter.messages).containsExactly(
+      "Phase 50%",
+      "Phase 40%",
+      "Phase 100%",
+    )
+  }
+
+  @Test
+  fun `context reports build graph files and external usages progress independently`() = runTest {
+    val reporter = RecordingMessageReporter()
+    val context = createContext(this)
+    context.progressIndicator = QodanaProgressIndicator(reporter)
+    val buildGraph = context.stdJobDescriptors.BUILD_GRAPH
+    buildGraph.totalAmount = 2
+    val externalUsages = context.stdJobDescriptors.FIND_EXTERNAL_USAGES
+    externalUsages.totalAmount = 2
+
+    context.incrementJobDoneAmount(buildGraph, "in src/A.kt")
+    context.incrementJobDoneAmount(externalUsages, "in src/A.kt")
+
+    assertThat(reporter.messages).containsExactly(
+      "${buildGraph.displayName.removeSuffix(" in")}: 1 files",
+      "${externalUsages.displayName.removeSuffix(" in")} 50%",
+    )
+  }
+
+  @Test
+  fun `indicator throttles processed files without treating 100 files as completion`() {
+    val timeSource = TestTimeSource()
+    val reporter = RecordingMessageReporter()
+    val indicator = QodanaProgressIndicator(reporter, timeSource)
+    val job = JobDescriptor("Processing project usages in")
+
+    job.doneAmount = 1
+    indicator.reportCounterProcess(job, "Processing project usages in src/A.kt")
+    timeSource += 4.seconds
+    job.doneAmount = 100
+    indicator.reportCounterProcess(job, "Processing project usages in src/B.kt")
+    timeSource += 1.seconds
+    job.doneAmount = 101
+    indicator.reportCounterProcess(job, "Processing project usages in src/C.kt")
+
+    assertThat(reporter.messages).containsExactly(
+      "Processing project usages: 1 files",
+      "Processing project usages: 101 files",
+    )
+  }
+
+  @Test
+  fun `indicator throttles percent progress within a phase`() {
+    val timeSource = TestTimeSource()
+    val reporter = RecordingMessageReporter()
+    val indicator = QodanaProgressIndicator(reporter, timeSource)
+    val job = JobDescriptor("Phase A")
+
+    indicator.reportPercentProgress(job, "Phase A", 10)
+    timeSource += 4.seconds
+    indicator.reportPercentProgress(job, "Phase A", 20)
+    timeSource += 1.seconds
+    indicator.reportPercentProgress(job, "Phase A", 30)
+
+    assertThat(reporter.messages).containsExactly(
+      "Phase A 10%",
+      "Phase A 30%",
+    )
+  }
+
   private fun createContext(qodanaRunScope: CoroutineScope): TestQodanaGlobalInspectionContext {
     val config = qodanaConfig()
     return TestQodanaGlobalInspectionContext(
@@ -137,6 +221,12 @@ class QodanaProgressIndicatorTest : QodanaTestCase() {
     }
     return captured.toString()
   }
+}
+
+private fun QodanaProgressIndicator.reportPercentProgress(job: JobDescriptor, text: String, percent: Int) {
+  job.totalAmount = 100
+  job.doneAmount = percent
+  reportPercentProgress(job, text)
 }
 
 private class RecordingMessageReporter : QodanaMessageReporter by QodanaMessageReporter.EMPTY {
@@ -167,7 +257,10 @@ private class TestQodanaGlobalInspectionContext(
   qodanaRunScope = qodanaRunScope,
   coverageStatisticsData = coverageStatisticsData,
 ) {
+  private var localAnalysisReporter: QodanaProgressIndicator.LocalAnalysisReporter? = null
+
   fun reportLocalAnalysisFilesScheduled(totalScheduledFiles: Int) {
+    localAnalysisReporter?.setScheduledFilesCount(totalScheduledFiles)
     onScheduledFilesCounted(totalScheduledFiles)
   }
 
@@ -175,5 +268,18 @@ private class TestQodanaGlobalInspectionContext(
     get() = myProgressIndicator
     set(value) {
       myProgressIndicator = value
+      (value as? QodanaProgressIndicator)?.let { progressIndicator ->
+        val reporter = QodanaProgressIndicator.LocalAnalysisReporter(
+          { stdJobDescriptors.LOCAL_ANALYSIS.totalAmount },
+          progressIndicator.messageReporter,
+          progressIndicator.timeSource,
+          progressIndicator.progressLogInterval,
+        )
+        localAnalysisReporter = reporter
+        progressIndicator.jobProgressReporters.putIfAbsent(
+          stdJobDescriptors.LOCAL_ANALYSIS,
+          reporter,
+        )
+      }
     }
 }

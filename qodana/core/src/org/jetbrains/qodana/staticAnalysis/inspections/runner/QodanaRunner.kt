@@ -342,7 +342,7 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
       val inspectionGroupStateIsPresent = groupName in scriptResult.profileState.stateByGroupName
 
       if (inspectionGroupStateIsPresent) {
-        db.resultsFlowByGroup(groupName, messageReporter).toList()
+        db.resultsFlowByGroup(groupName).toList()
       }
       else {
         null

@@ -11,11 +11,9 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV1
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.Test
 import java.io.StringWriter
 import java.nio.file.Path
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.absolutePathString
 
 class DatabaseProblemsDuplicatesTest : QodanaTestCase() {
@@ -28,16 +26,6 @@ class DatabaseProblemsDuplicatesTest : QodanaTestCase() {
   @Test
   fun `duplicates eliminated tags are merged`(): Unit = runBlocking {
     QodanaToolResultDatabase.create(getTempOutputPath()).use { database ->
-      val messages = ConcurrentHashMap.newKeySet<String>()
-      val reporter = object : QodanaMessageReporter {
-        override fun reportError(e: Throwable) {}
-
-        override fun reportError(message: String?) {
-          messages.add(message)
-        }
-
-        override fun reportMessage(minVerboseLevel: Int, message: String?) {}
-      }
       commonPathsInspectionsSample.forEach { p ->
         val run = gson.fromJson(getTestDataPath().resolve(p).toFile().readText(), Run::class.java)
         run.results.forEach { r ->
@@ -46,11 +34,10 @@ class DatabaseProblemsDuplicatesTest : QodanaTestCase() {
       }
       val testDataPath = getTestDataPath()
       val testSarifPath = testDataPath.resolve("test-sarif.json")
-      val report = SarifReport().withRuns(listOf(Run().withResults(database.resultsFlowByGroup("", reporter).toList())))
+      val report = SarifReport().withRuns(listOf(Run().withResults(database.resultsFlowByGroup("").toList())))
       val writer = StringWriter()
       SarifUtil.writeReport(writer, report)
       assertSameLinesWithFile(testSarifPath.absolutePathString(), writer.toString())
-      assertTrue(messages.any { it.startsWith("Duplicates of problems was found.") })
     }
   }
 

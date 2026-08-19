@@ -12,7 +12,6 @@ import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.VULNERABLE_API_INSPECTION_ID
-import org.jetbrains.qodana.util.QodanaMessageReporter
 
 private val LOG = logger<QodanaToolResultDatabase>()
 private val GSON = SarifUtil.createGson()
@@ -27,25 +26,25 @@ private val GSON = SarifUtil.createGson()
  *
  * When using this flow in other places, it may be necessary to convert it to a proper list first.
  */
-fun QodanaToolResultDatabase.resultsFlowByGroup(inspectionGroup: String, messageReporter: QodanaMessageReporter): Flow<Result> =
-  uniqueResultsFlow(inspectionGroup, messageReporter).transform { result ->
+fun QodanaToolResultDatabase.resultsFlowByGroup(inspectionGroup: String): Flow<Result> =
+  uniqueResultsFlow(inspectionGroup).transform { result ->
     updateRelatedLocations(result)
     emit(result)
   }
 
-private fun QodanaToolResultDatabase.uniqueResultsFlow(inspectionGroup: String, messageReporter: QodanaMessageReporter): Flow<Result> = flow {
+private fun QodanaToolResultDatabase.uniqueResultsFlow(inspectionGroup: String): Flow<Result> = flow {
   select(inspectionGroup).use { query ->
     val sameHashResults = mutableListOf<String>()
     var previousHash = ""
     for (resultSet in query.executeQuery()) {
       if (previousHash != resultSet.hash && sameHashResults.any()) {
-        processSameHash(sameHashResults, messageReporter)?.let { emit(it) }
+        processSameHash(sameHashResults)?.let { emit(it) }
         sameHashResults.clear()
       }
       previousHash = resultSet.hash
       sameHashResults.add(resultSet.json)
     }
-    processSameHash(sameHashResults, messageReporter)?.let { emit(it) }
+    processSameHash(sameHashResults)?.let { emit(it) }
   }
 }.flowOn(StaticAnalysisDispatchers.IO)
 
@@ -62,19 +61,19 @@ private fun QodanaToolResultDatabase.updateRelatedLocations(result: Result) {
   }
 }
 
-private fun processSameHash(resultJsons: List<String>, messageReporter: QodanaMessageReporter): Result? {
+private fun processSameHash(resultJsons: List<String>): Result? {
   val results = resultJsons.parseResults()
   if (results.isEmpty() || results.size == 1) return results.firstOrNull()
 
   val uniqueResults = results.toSet()
   if (uniqueResults.size != results.size) {
     val first = results.first()
-    messageReporter.reportError("Duplicates of problems was found. " +
-                                "inspectionId: ${first.ruleId}, " +
-                                "file:${first.locations.firstOrNull()?.physicalLocation?.artifactLocation?.uri}, " +
-                                "line: ${first.locations.firstOrNull()?.physicalLocation?.region?.startLine}, " +
-                                "column: ${first.locations.firstOrNull()?.physicalLocation?.region?.startColumn}, " +
-                                "length: ${first.locations.firstOrNull()?.physicalLocation?.region?.charLength}")
+    LOG.debug("Duplicates of problems was found. " +
+              "inspectionId: ${first.ruleId}, " +
+              "file:${first.locations.firstOrNull()?.physicalLocation?.artifactLocation?.uri}, " +
+              "line: ${first.locations.firstOrNull()?.physicalLocation?.region?.startLine}, " +
+              "column: ${first.locations.firstOrNull()?.physicalLocation?.region?.startColumn}, " +
+              "length: ${first.locations.firstOrNull()?.physicalLocation?.region?.charLength}")
   }
 
   val uniqueTags = uniqueResults.flatMap { it.getOrAssignProperties().tags }.distinct()

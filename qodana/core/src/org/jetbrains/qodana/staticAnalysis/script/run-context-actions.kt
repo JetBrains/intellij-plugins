@@ -104,7 +104,7 @@ suspend fun QodanaRunContext.getResultsForInspectionGroup(
 ): List<Result> {
   val consumer = context.consumer
   consumer.close()
-  return context.database.resultsFlowByGroup(inspectionGroupState.inspectionGroup.name, messageReporter).toList()
+  return context.database.resultsFlowByGroup(inspectionGroupState.inspectionGroup.name).toList()
 }
 
 suspend fun QodanaRunContext.writeProfiles(profile: QodanaProfile) {
