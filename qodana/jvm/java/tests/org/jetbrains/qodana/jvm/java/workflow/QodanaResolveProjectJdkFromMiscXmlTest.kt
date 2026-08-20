@@ -66,7 +66,7 @@ class QodanaResolveProjectJdkFromMiscXmlTest : QodanaPluginLightTestBase() {
       runConversionBeforeOpen = false
       runConfigurators = false
       showWelcomeScreen = false
-      beforeOpen = { project ->
+      beforeOpenTasks += { project ->
         block(project)
         true
       }
