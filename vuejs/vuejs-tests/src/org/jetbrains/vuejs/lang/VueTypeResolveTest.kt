@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.JSTestUtils.runInBackgroundReadActionAndWait
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSType
@@ -383,12 +384,14 @@ class VueTypeResolveTest : BasePlatformTestCase() {
   }
 
   private fun doTest(vararg testCases: Pair<String, String>, prefix: String = "") {
-    for (test in testCases) {
-      val caretMarker = if (test.first.contains("<caret>")) "" else "<caret>"
-      val element = findElementBySignature("$prefix$caretMarker${test.first}")
-      TestCase.assertNotNull(test.first, element)
-      val expected = test.second
-      assertEquals(test.first, expected, getElementTypeText(element))
+    runInBackgroundReadActionAndWait {
+      for (test in testCases) {
+        val caretMarker = if (test.first.contains("<caret>")) "" else "<caret>"
+        val element = findElementBySignature("$prefix$caretMarker${test.first}")
+        assertNotNull(test.first, element)
+        val expected = test.second
+        assertEquals(test.first, expected, getElementTypeText(element))
+      }
     }
   }
 

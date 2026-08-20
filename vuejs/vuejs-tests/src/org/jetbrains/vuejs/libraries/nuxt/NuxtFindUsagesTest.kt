@@ -2,6 +2,8 @@
 package org.jetbrains.vuejs.libraries.nuxt
 
 import com.intellij.javascript.testFramework.web.checkJsFileUsages
+import com.intellij.lang.javascript.JSTestUtils.runInBackgroundReadActionAndWait
+import com.intellij.lang.javascript.config.graph.JSGraphBuildExecutor
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.vuejs.lang.VueTestModule
@@ -10,6 +12,18 @@ import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class NuxtFindUsagesTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/nuxt/findUsages"
+
+  override fun tearDown() {
+    try {
+      JSGraphBuildExecutor.getService(project).finishAllTasks()
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
+  }
 
   fun testScriptSetupComponentFileAllScope() {
     doTest("components/AppAlert.vue", GlobalSearchScope.everythingScope(project))
@@ -29,6 +43,8 @@ class NuxtFindUsagesTest : BasePlatformTestCase() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NUXT_2_15_6)
 
     myFixture.configureFromTempProjectFile(component)
-    myFixture.checkJsFileUsages(testName, scope = scope)
+    runInBackgroundReadActionAndWait {
+      myFixture.checkJsFileUsages(testName, scope = scope)
+    }
   }
 }
