@@ -87,10 +87,10 @@
     <orderEntry type="module" module-name="intellij.platform.vcs.log.impl" />
     <orderEntry type="module" module-name="intellij.platform.vcs.log" />
     <orderEntry type="module" module-name="intellij.platform.util" />
-    <orderEntry type="library" name="jetbrains.qodana.publisher" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.qodana.publisher" />
     <orderEntry type="module" module-name="intellij.libraries.netty.buffer" />
-    <orderEntry type="library" name="jetbrains.qodana.web.ui" level="project" />
-    <orderEntry type="library" name="jetbrains.qodana.sarif.converter" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.qodana.web.ui" />
+    <orderEntry type="module" module-name="intellij.libraries.qodana.sarif.converter" />
     <orderEntry type="module" module-name="intellij.platform.sqlite" />
     <orderEntry type="module" module-name="intellij.platform.inspect" />
     <orderEntry type="module" module-name="intellij.platform.statistics" />
@@ -109,12 +109,12 @@
     <orderEntry type="module" module-name="intellij.platform.backend.observation" />
     <orderEntry type="module" module-name="intellij.libraries.jetbrains.annotations" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
-    <orderEntry type="library" name="jetbrains.qodana.cloud.kotlin.client" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.qodana.cloud.kotlin.client" />
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.serialization.core" />
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.serialization.json" />
     <orderEntry type="module" module-name="intellij.platform.ide.ui" />
     <orderEntry type="module" module-name="intellij.platform.ide.progress" />
-    <orderEntry type="library" name="jetbrains.qodana.configuration" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.qodana.configuration" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem" />
   </component>

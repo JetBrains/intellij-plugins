@@ -94,10 +94,10 @@
     <orderEntry type="module" module-name="intellij.platform.vcs.log" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.mockito" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="jetbrains.qodana.publisher" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.qodana.publisher" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.netty.buffer" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="jetbrains.qodana.web.ui" level="project" />
-    <orderEntry type="library" scope="TEST" name="jetbrains.qodana.sarif.converter" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.qodana.web.ui" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.qodana.sarif.converter" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.sqlite" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.coroutines.test" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.inspect" scope="TEST" />
@@ -119,13 +119,13 @@
     <orderEntry type="module" module-name="intellij.platform.backend.observation" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.jetbrains.annotations" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="jetbrains.qodana.cloud.kotlin.client" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.qodana.cloud.kotlin.client" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.serialization.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.serialization.json" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.langInjection" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ide.ui" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.statistics.testFramework" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="jetbrains.qodana.configuration" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.qodana.configuration" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem" scope="TEST" />
     <orderEntry type="module" module-name="intellij.packageChecker" scope="TEST" />

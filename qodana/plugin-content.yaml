@@ -66,6 +66,37 @@
     libraries:
       jline:
       - name: $MAVEN_REPOSITORY$/org/jline/jline/3/jline-3.jar
+- name: lib/intellij.libraries.qodana.cloud.kotlin.client.jar
+  contentModules:
+  - name: intellij.libraries.qodana.cloud.kotlin.client
+    libraries:
+      jetbrains.qodana.cloud.kotlin.client:
+      - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/qodana-cloud-kotlin-client/0/qodana-cloud-kotlin-client-0.jar
+- name: lib/intellij.libraries.qodana.configuration.jar
+  contentModules:
+  - name: intellij.libraries.qodana.configuration
+    libraries:
+      jetbrains.qodana.configuration:
+      - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/configuration/0/configuration-0.jar
+- name: lib/intellij.libraries.qodana.publisher.jar
+  contentModules:
+  - name: intellij.libraries.qodana.publisher
+    libraries:
+      jetbrains.qodana.publisher:
+      - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/publisher/3/publisher-3.jar
+- name: lib/intellij.libraries.qodana.sarif.converter.jar
+  contentModules:
+  - name: intellij.libraries.qodana.sarif.converter
+    libraries:
+      jetbrains.qodana.sarif.converter:
+      - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/sarif-converter/0/sarif-converter-0.jar
+      - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/qodana-model/0/qodana-model-0.jar
+- name: lib/intellij.libraries.qodana.web.ui.jar
+  contentModules:
+  - name: intellij.libraries.qodana.web.ui
+    libraries:
+      jetbrains.qodana.web.ui:
+      - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/qodana-web-ui/0/qodana-web-ui-0.jar
 - name: lib/intellij.qodana.sarif.jar
   contentModules:
   - name: intellij.qodana.sarif
@@ -76,32 +107,6 @@
 - name: lib/intellij.qodana.util.jar
   contentModules:
   - name: intellij.qodana.util
-- name: lib/jetbrains.qodana.cloud.kotlin.client.jar
-  library: jetbrains.qodana.cloud.kotlin.client
-  files:
-  - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/qodana-cloud-kotlin-client/0/qodana-cloud-kotlin-client-0.jar
-  reason: <- intellij.qodana
-- name: lib/jetbrains.qodana.configuration.jar
-  library: jetbrains.qodana.configuration
-  files:
-  - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/configuration/0/configuration-0.jar
-  reason: <- intellij.qodana
-- name: lib/jetbrains.qodana.publisher.jar
-  library: jetbrains.qodana.publisher
-  files:
-  - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/publisher/3/publisher-3.jar
-  reason: <- intellij.qodana
-- name: lib/jetbrains.qodana.sarif.converter.jar
-  library: jetbrains.qodana.sarif.converter
-  files:
-  - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/sarif-converter/0/sarif-converter-0.jar
-  - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/qodana-model/0/qodana-model-0.jar
-  reason: <- intellij.qodana
-- name: lib/jetbrains.qodana.web.ui.jar
-  library: jetbrains.qodana.web.ui
-  files:
-  - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/qodana-web-ui/0/qodana-web-ui-0.jar
-  reason: <- intellij.qodana
 - name: lib/modules/intellij.qodana.coverage.jar
   contentModules:
   - name: intellij.qodana.coverage
