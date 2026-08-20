@@ -5,6 +5,7 @@
     <plugin id="com.jetbrains.rust"/>
     <plugin id="org.intellij.qodana"/>
     <module name="intellij.libraries.kotlinx.io"/>
+    <module name="intellij.libraries.qodana.sarif"/>
     <module name="intellij.libraries.rd.core"/>
     <module name="intellij.libraries.rd.framework"/>
     <module name="intellij.platform.analysis"/>

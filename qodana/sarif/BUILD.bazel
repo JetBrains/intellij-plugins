@@ -13,10 +13,10 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    exports = ["@lib//:qodana-sarif"],
+    exports = ["@community//libraries/qodana/sarif"],
     runtime_deps = [
         # do not sort,
-        "@lib//:qodana-sarif",
+        "@community//libraries/qodana/sarif",
         "@community//platform/backend",
     ],
 )
@@ -30,10 +30,15 @@ jvm_library(
     ),
     module_name = "intellij.qodana.sarif",
     visibility = ["//visibility:public"],
-    exports = ["@lib//:qodana-sarif"],
+    exports = [
+        # do not sort,
+        "@community//libraries/qodana/sarif",
+        "@community//libraries/qodana/sarif:sarif_test_lib",
+    ],
     runtime_deps = [
         # do not sort,
         ":sarif",
+        "@community//libraries/qodana/sarif:sarif_test_lib",
         "@community//platform/backend:backend_test_lib",
     ],
 )

@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="qodana-sarif" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.qodana.sarif" exported="" />
     <orderEntry type="module" module-name="intellij.platform.backend" scope="RUNTIME" />
   </component>
 </module>
