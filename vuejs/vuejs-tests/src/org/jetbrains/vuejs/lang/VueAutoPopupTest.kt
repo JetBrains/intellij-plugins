@@ -14,7 +14,6 @@ class VueAutoPopupTest :
   class WithLegacyPluginTest :
     VueAutoPopupTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
-  @Ignore
   class WithTsGoProxyTest :
     VueAutoPopupTestBase(testMode = VueTestMode.TS_GO_PROXY)
 

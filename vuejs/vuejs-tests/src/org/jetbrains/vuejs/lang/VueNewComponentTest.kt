@@ -29,7 +29,6 @@ class VueNewComponentTest :
   class WithLegacyPluginTest :
     VueNewComponentTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
-  @Ignore
   class WithTsGoProxyTest :
     VueNewComponentTestBase(testMode = VueTestMode.TS_GO_PROXY)
 

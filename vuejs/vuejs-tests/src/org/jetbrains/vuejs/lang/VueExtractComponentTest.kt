@@ -16,7 +16,6 @@ class VueExtractComponentTest :
   class WithLegacyPluginTest :
     VueExtractComponentTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
-  @Ignore
   class WithTsGoProxyTest :
     VueExtractComponentTestBase(testMode = VueTestMode.TS_GO_PROXY)
 

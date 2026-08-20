@@ -39,7 +39,6 @@ class VueRenameTest :
   class WithLegacyPluginTest :
     VueRenameTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
-  @Ignore
   class WithTsGoProxyTest :
     VueRenameTestBase(testMode = VueTestMode.TS_GO_PROXY)
 
