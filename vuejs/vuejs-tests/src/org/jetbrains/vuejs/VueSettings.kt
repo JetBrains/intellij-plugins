@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs
 
+import com.intellij.lang.javascript.config.graph.JSGraphBuildExecutor
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings.TypeScriptCompilerVersionType
 import com.intellij.openapi.Disposable
@@ -22,6 +23,8 @@ internal fun configureVueSettings(
       val tsCompilerSettings = TypeScriptCompilerSettings.getSettings(project)
       val oldVersionType = tsCompilerSettings.versionType
       tsCompilerSettings.versionType = TypeScriptCompilerVersionType.TS_GO_PROXY_RECOMMENDED_VERSION
+
+      JSGraphBuildExecutor.getService(project).enableAsyncMode(disposable)
 
       Disposer.register(disposable) {
         tsCompilerSettings.versionType = oldVersionType
