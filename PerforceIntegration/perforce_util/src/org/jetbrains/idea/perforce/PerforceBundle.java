@@ -11,17 +11,16 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-public final class PerforceBundle extends DynamicBundle {
+public final class PerforceBundle {
   private static final @NonNls String BUNDLE = "messages.PerforceBundle";
-  public static final PerforceBundle INSTANCE = new PerforceBundle();
-
-  private PerforceBundle() { super(BUNDLE); }
+  public static final DynamicBundle INSTANCE = new DynamicBundle(PerforceBundle.class, BUNDLE);
 
   public static @NotNull @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.containsKey(key) ? INSTANCE.getMessage(key, params) : PerforceDeprecatedMessagesBundle.message(key, params);
   }
 
-  public static @NotNull Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+  public static @NotNull Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key,
+                                                              Object @NotNull ... params) {
     return INSTANCE.containsKey(key) ? INSTANCE.getLazyMessage(key, params) : PerforceDeprecatedMessagesBundle.messagePointer(key, params);
   }
 }

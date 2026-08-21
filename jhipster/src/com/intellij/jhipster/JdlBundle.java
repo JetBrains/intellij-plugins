@@ -10,13 +10,9 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-public final class JdlBundle extends DynamicBundle {
+public final class JdlBundle {
   public static final @NonNls String BUNDLE = "messages.JdlBundle";
-  private static final JdlBundle INSTANCE = new JdlBundle();
-
-  public JdlBundle() {
-    super(BUNDLE);
-  }
+  private static final DynamicBundle INSTANCE = new DynamicBundle(JdlBundle.class, BUNDLE);
 
   public static @NotNull @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getMessage(key, params);

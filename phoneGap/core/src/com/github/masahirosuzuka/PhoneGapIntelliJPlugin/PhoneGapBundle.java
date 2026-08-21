@@ -10,20 +10,17 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-public final class PhoneGapBundle extends DynamicBundle {
+public final class PhoneGapBundle {
 
   public static @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return ourInstance.getMessage(key, params);
   }
 
-  public static @NotNull Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+  public static @NotNull Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key,
+                                                              Object @NotNull ... params) {
     return ourInstance.getLazyMessage(key, params);
   }
 
   public static final @NonNls String BUNDLE = "messages.PhoneGapBundle";
-  private static final PhoneGapBundle ourInstance = new PhoneGapBundle();
-
-  private PhoneGapBundle() {
-    super(BUNDLE);
-  }
+  private static final DynamicBundle ourInstance = new DynamicBundle(PhoneGapBundle.class, BUNDLE);
 }

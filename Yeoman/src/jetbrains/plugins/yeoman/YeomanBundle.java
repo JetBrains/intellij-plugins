@@ -8,20 +8,17 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-public final class YeomanBundle extends DynamicBundle {
+public final class YeomanBundle {
   public static final @NonNls String BUNDLE = "messages.YeomanBundle";
 
   public static @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return ourInstance.getMessage(key, params);
   }
 
-  public static @NotNull Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+  public static @NotNull Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key,
+                                                              Object @NotNull ... params) {
     return ourInstance.getLazyMessage(key, params);
   }
 
-  private static final YeomanBundle ourInstance = new YeomanBundle();
-
-  private YeomanBundle() {
-    super(BUNDLE);
-  }
+  private static final DynamicBundle ourInstance = new DynamicBundle(YeomanBundle.class, BUNDLE);
 }
