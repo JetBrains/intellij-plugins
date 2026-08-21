@@ -14,6 +14,8 @@ class VueTsConfigFile(
   val types: List<String> = emptyList(),
   val vueCompilerOptions: VueCompilerOptions? = null,
   val enabled: Boolean = true,
+  // TODO: remove after migration on TsType
+  val checkUsage: Boolean = enabled,
 ) : PolySymbolsTestConfigurator {
 
   override fun configure(

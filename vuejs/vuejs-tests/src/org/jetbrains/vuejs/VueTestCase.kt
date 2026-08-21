@@ -106,7 +106,7 @@ abstract class VueTestCase(
       VueTestMode.NO_PLUGIN -> return
     }
 
-    if (configuration.configurators.any { it is VueTsConfigFile && it.enabled }) {
+    if (configuration.configurators.any { it is VueTsConfigFile && it.checkUsage }) {
       TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(
         testRootDisposable,
         myFixture.tempDirFixture.getFile(VueTsConfigFile.FILE_NAME)!!,
