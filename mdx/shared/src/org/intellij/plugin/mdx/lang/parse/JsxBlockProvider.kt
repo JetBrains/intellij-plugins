@@ -18,15 +18,15 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
     val absoluteStart = pos.offset + start.offsetInLine
     val immediateBlock = when (start.kind) {
       MdxBlockKind.ESM -> {
-        val block = MdxJsxScanner.scanEsmBlock(localText, 0)
-        if (block != null && block.balanced && localText.subSequence(block.range.last, localText.length).isBlank()) {
+        val block = MdxEsmScanner.scanBlock(localText, 0)
+        if (block != null && block.terminated && localText.subSequence(block.range.last, localText.length).isBlank()) {
           ImmediateBlock(MdxMarkdownLibElementTypes.MDX_ESM_BLOCK, MdxJsxScanner.createEsmNodes(block, absoluteStart, includeRoot = false))
         }
         else null
       }
       MdxBlockKind.JSX -> {
         val element = MdxJsxScanner.scanJsxElement(localText, 0)
-        if (element != null && element.balanced && localText.subSequence(element.range.last, localText.length).isBlank()) {
+        if (element != null && element.terminated && localText.subSequence(element.range.last, localText.length).isBlank()) {
           ImmediateBlock(
             MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT,
             MdxJsxScanner.createFlowElementNodes(localText, element, absoluteStart, includeRoot = false),
@@ -82,7 +82,7 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
       return null
     }
     return when {
-      constraints.types.isEmpty() && MdxJsxScanner.isLineStartEsm(text, offset) ->
+      constraints.types.isEmpty() && MdxEsmScanner.isLineStart(text, offset) ->
         StartInfo(offset, MdxBlockKind.ESM)
       text[offset] == '<' && isLineStartJsxBlock(text, offset) ->
         StartInfo(offset, MdxBlockKind.JSX)
@@ -99,7 +99,7 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
 
     val localText = text.subSequence(offset, text.length)
     val element = MdxJsxScanner.scanJsxElement(localText, 0)
-    return element == null || !element.balanced || localText.subSequence(element.range.last, localText.length).isBlank()
+    return element == null || !element.terminated || localText.subSequence(element.range.last, localText.length).isBlank()
   }
 
   private data class StartInfo(val offsetInLine: Int, val kind: MdxBlockKind)

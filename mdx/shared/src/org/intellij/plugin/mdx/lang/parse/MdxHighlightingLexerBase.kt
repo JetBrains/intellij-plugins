@@ -14,9 +14,9 @@ import org.intellij.markdown.parser.constraints.MarkdownConstraints
 import org.intellij.markdown.parser.markerblocks.MarkerBlockProvider
 import org.intellij.markdown.parser.markerblocks.providers.CodeBlockProvider
 import org.intellij.markdown.parser.markerblocks.providers.HtmlBlockProvider
-import org.intellij.markdown.parser.sequentialparsers.EmphasisLikeParser
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 import org.intellij.markdown.parser.sequentialparsers.SequentialParserManager
+import org.intellij.markdown.parser.sequentialparsers.impl.InlineLinkParser
 import org.intellij.plugins.markdown.lang.parser.MarkdownDefaultMarkerProcessor
 import java.net.URI
 
@@ -28,11 +28,13 @@ object MdxFlavourDescriptor : CommonMarkFlavourDescriptor() {
   override val sequentialParserManager: SequentialParserManager = object : SequentialParserManager() {
     override fun getParserSequence(): List<SequentialParser> {
       val parsers = myGfmFlavourDescriptor.sequentialParserManager.getParserSequence()
-      val emphasisIndex = parsers.indexOfFirst { it is EmphasisLikeParser }
-      if (emphasisIndex == -1) {
-        return parsers + MdxInlineJsxParser()
+      val inlineLinkIndex = parsers.indexOfFirst { it is InlineLinkParser }
+      val insertionIndex = if (inlineLinkIndex == -1) parsers.size else inlineLinkIndex
+      return buildList(parsers.size + 1) {
+        addAll(parsers.subList(0, insertionIndex))
+        add(MdxInlineJsxParser())
+        addAll(parsers.subList(insertionIndex, parsers.size))
       }
-      return parsers.subList(0, emphasisIndex) + MdxInlineJsxParser() + parsers.subList(emphasisIndex, parsers.size)
     }
   }
 

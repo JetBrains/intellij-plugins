@@ -289,6 +289,20 @@ class MdxOracleTest : MdxTestBase() {
     )
   }
 
+  @Test
+  fun testHtmlCommentInCodeSpanIsOpaque() {
+    assertNoErrors("`<!-- an HTML comment -->`")
+  }
+
+  @Test
+  fun testMarkdownLikeTextInInlineJsxExpressionAttributeStaysJsx() {
+    myFixture.configureByText("foo.mdx", "Text <Alert value={[Target](./target.mdx)} /> end")
+    assertTrue(
+      "The inline Alert tag must remain in the MdxJS PSI",
+      nodesOfTypeAllRoots(XML_TAG_NAME).any { it.text == "Alert" }
+    )
+  }
+
   /** Oracle: `<Comp a={1 < 2} b={useMemo<Foo>(() => x)} />` is one flow element. GREEN. */
   @Test
   fun testOperatorInAttributeHasNoErrors() {
@@ -296,6 +310,36 @@ class MdxOracleTest : MdxTestBase() {
     assertTrue(
       "Oracle: a `Comp` JSX element is expected in the JS root",
       nodesOfTypeAllRoots(XML_TAG_NAME).any { it.text == "Comp" }
+    )
+  }
+
+  @Test
+  fun testMismatchedMultilineTagRemainsJsx() {
+    myFixture.configureByText("foo.mdx", "<div>\n  Hello\n</span>\n\n# After")
+
+    val tagNames = nodesOfTypeAllRoots(XML_TAG_NAME).map { it.text }
+    assertTrue("Both sides of the malformed JSX element must remain in MdxJS PSI: $tagNames", "div" in tagNames && "span" in tagNames)
+    assertTrue("The platform JSX parser must report the mismatched closer", collectPsiErrorElements().isNotEmpty())
+    assertHasMarkdownHeading("After", 1)
+  }
+
+  @Test
+  fun testAncestorClosingTagFlushesIncompleteNestedTag() {
+    myFixture.configureByText("foo.mdx", "<Outer>\n  <Inner>\n</Outer>\n\n# After")
+
+    val tagNames = nodesOfTypeAllRoots(XML_TAG_NAME).map { it.text }
+    assertTrue("Recovered JSX names are missing: $tagNames", tagNames.containsAll(listOf("Outer", "Inner")))
+    assertTrue("The platform JSX parser must report the unclosed Inner element", collectPsiErrorElements().isNotEmpty())
+    assertHasMarkdownHeading("After", 1)
+  }
+
+  @Test
+  fun testUnclosedMultilineTagRemainsJsxAtEof() {
+    myFixture.configureByText("foo.mdx", "<Panel>\n  content")
+
+    assertTrue(
+      "An incomplete opening tag must remain in MdxJS PSI",
+      nodesOfTypeAllRoots(XML_TAG_NAME).any { it.text == "Panel" }
     )
   }
 

@@ -26,12 +26,8 @@ object MdxJsxScanner {
     val range: IntRange,
     val tags: List<Tag>,
     val expressions: List<IntRange>,
-    val balanced: Boolean,
-  )
-
-  data class EsmBlock(
-    val range: IntRange,
-    val balanced: Boolean,
+    val incomplete: Boolean,
+    val terminated: Boolean,
   )
 
   fun isLineStartExpression(text: CharSequence, start: Int): Boolean {
@@ -46,12 +42,6 @@ object MdxJsxScanner {
     return indent != -1 &&
            lineStart + indent == start &&
            (parseTag(text, start, text.length) != null || isIncompleteOpeningTagStart(text, start, text.length))
-  }
-
-  fun isLineStartEsm(text: CharSequence, start: Int): Boolean {
-    val lineStart = lineStart(text, start)
-    val indent = smallIndent(text, lineStart, start)
-    return indent != -1 && lineStart + indent == start && isEsmKeywordAt(text, start)
   }
 
   /**
@@ -82,6 +72,10 @@ object MdxJsxScanner {
    * the other MdxJsxScanner ranges. WEB-78468.
    */
   fun incompleteOpeningTagRange(text: CharSequence, start: Int, limit: Int = text.length): IntRange? {
+    if (text.getOrNull(start) != '<') return null
+    if (start + 1 >= limit || text[start + 1] == '\n' || text[start + 1] == '\r') {
+      return start..start + 1
+    }
     if (!isIncompleteOpeningTagStart(text, start, limit)) return null
     var offset = start + 1
     while (offset < limit && isNamePart(text[offset])) {
@@ -241,12 +235,13 @@ object MdxJsxScanner {
     val opening = parseTag(text, start, limit) ?: return null
     if (opening.kind == TagKind.CLOSING) return null
     if (opening.kind == TagKind.SELF_CLOSING) {
-      return Element(start..opening.range.last, listOf(opening), opening.expressions, true)
+      return Element(start..opening.range.last, listOf(opening), opening.expressions, incomplete = false, terminated = true)
     }
 
     val tags = mutableListOf(opening)
     val expressions = opening.expressions.toMutableList()
     val stack = mutableListOf(opening.name)
+    var incomplete = false
     var offset = opening.range.last
     while (offset < limit) {
       // Skip fenced code blocks whole: their {/}/< are code, not MDX expressions or tags.
@@ -261,7 +256,7 @@ object MdxJsxScanner {
         '{' -> {
           val expressionEnd = scanExpression(text, offset, limit)
           if (expressionEnd == -1) {
-            return Element(start..limit, tags, expressions, false)
+            return Element(start..limit, tags, expressions, incomplete = true, terminated = false)
           }
           expressions.add(offset..expressionEnd)
           offset = expressionEnd
@@ -282,141 +277,38 @@ object MdxJsxScanner {
               if (top == tag.name || top == null || tag.name == null) {
                 stack.removeAt(stack.lastIndex)
               }
+              else {
+                val ancestorIndex = stack.indexOfLast { it == tag.name }
+                if (ancestorIndex >= 0) {
+                  while (stack.lastIndex > ancestorIndex) {
+                    stack.removeAt(stack.lastIndex)
+                    incomplete = true
+                  }
+                  stack.removeAt(stack.lastIndex)
+                }
+                else {
+                  // JSXmlTokensParser consumes an unrelated closer as "matches nothing" and completes
+                  // the current element as not closed. This gives the surrounding language a stable
+                  // recovery boundary instead of discarding JSX or consuming unrelated Markdown.
+                  stack.removeAt(stack.lastIndex)
+                  incomplete = true
+                }
+              }
             }
           }
           offset = tag.range.last
           if (stack.isEmpty()) {
-            return Element(start..offset, tags, expressions, true)
+            return Element(start..offset, tags, expressions, incomplete, terminated = true)
           }
         }
         else -> offset++
       }
     }
-    return Element(start..limit, tags, expressions, false)
+    return Element(start..limit, tags, expressions, incomplete = true, terminated = false)
   }
 
   fun scanExpression(text: CharSequence, start: Int, limit: Int = text.length): Int {
-    if (text.getOrNull(start) != '{') return -1
-    var offset = start + 1
-    var depth = 1
-    while (offset < limit) {
-      when (text[offset]) {
-        '\'' -> offset = scanQuoted(text, offset, limit, '\'')
-        '"' -> offset = scanQuoted(text, offset, limit, '"')
-        '`' -> offset = scanTemplate(text, offset, limit)
-        '/' -> offset = scanSlash(text, offset, limit)
-        '{' -> {
-          depth++
-          offset++
-        }
-        '}' -> {
-          depth--
-          offset++
-          if (depth == 0) return offset
-        }
-        else -> offset++
-      }
-      if (offset == -1) return -1
-    }
-    return -1
-  }
-
-  fun scanEsmBlock(text: CharSequence, start: Int, limit: Int = text.length): EsmBlock? {
-    if (limit - start > MAX_SCAN_LENGTH || !isEsmKeywordAt(text, start)) return null
-    var offset = start
-    var parenDepth = 0
-    var braceDepth = 0
-    var bracketDepth = 0
-    var lastSignificantOffset = -1
-    while (offset < limit) {
-      when (text[offset]) {
-        '\'' -> {
-          offset = scanQuoted(text, offset, limit, '\'')
-          if (offset != -1) lastSignificantOffset = offset - 1
-        }
-        '"' -> {
-          offset = scanQuoted(text, offset, limit, '"')
-          if (offset != -1) lastSignificantOffset = offset - 1
-        }
-        '`' -> {
-          offset = scanTemplate(text, offset, limit)
-          if (offset != -1) lastSignificantOffset = offset - 1
-        }
-        '/' -> {
-          val end = scanSlash(text, offset, limit)
-          if (end == offset + 1) {
-            lastSignificantOffset = offset
-          }
-          offset = end
-        }
-        '<' -> {
-          val element = scanJsxElement(text, offset, limit)
-          if (element != null && element.balanced) {
-            offset = element.range.last
-            lastSignificantOffset = offset - 1
-          }
-          else {
-            lastSignificantOffset = offset
-            offset++
-          }
-        }
-        '(' -> {
-          parenDepth++
-          lastSignificantOffset = offset
-          offset++
-        }
-        ')' -> {
-          if (parenDepth > 0) parenDepth--
-          lastSignificantOffset = offset
-          offset++
-        }
-        '{' -> {
-          braceDepth++
-          lastSignificantOffset = offset
-          offset++
-        }
-        '}' -> {
-          if (braceDepth > 0) braceDepth--
-          lastSignificantOffset = offset
-          offset++
-        }
-        '[' -> {
-          bracketDepth++
-          lastSignificantOffset = offset
-          offset++
-        }
-        ']' -> {
-          if (bracketDepth > 0) bracketDepth--
-          lastSignificantOffset = offset
-          offset++
-        }
-        ';' -> {
-          lastSignificantOffset = offset
-          offset++
-          if (parenDepth == 0 && braceDepth == 0 && bracketDepth == 0) {
-            return EsmBlock(start..offset, true)
-          }
-        }
-        '\n' -> {
-          if (parenDepth == 0 &&
-              braceDepth == 0 &&
-              bracketDepth == 0 &&
-              isCompleteBeforeLineBreak(text, lastSignificantOffset) &&
-              !nextLineContinuesEsm(text, offset + 1, limit, lastSignificantOffset)) {
-            return EsmBlock(start..lastSignificantOffset + 1, true)
-          }
-          offset++
-        }
-        else -> {
-          if (!text[offset].isWhitespace()) {
-            lastSignificantOffset = offset
-          }
-          offset++
-        }
-      }
-      if (offset == -1) return EsmBlock(start..limit, false)
-    }
-    return EsmBlock(start..limit, parenDepth == 0 && braceDepth == 0 && bracketDepth == 0)
+    return MdxJsBoundaryScanner.findExpressionEnd(text, start, limit)
   }
 
   fun createElementNodes(element: Element,
@@ -457,7 +349,7 @@ object MdxJsxScanner {
     return nodes
   }
 
-  fun createEsmNodes(block: EsmBlock, shift: Int = 0, includeRoot: Boolean = true): List<SequentialParser.Node> {
+  fun createEsmNodes(block: MdxEsmScanner.Block, shift: Int = 0, includeRoot: Boolean = true): List<SequentialParser.Node> {
     return buildList {
       add(SequentialParser.Node(block.range.shiftRight(shift), MdxMarkdownLibTokenTypes.EMBEDDED_JS_CONTENT))
       if (includeRoot) {
@@ -579,29 +471,6 @@ object MdxJsxScanner {
   }
 
   /**
-   * The contiguous ranges of fenced code blocks opening on their own line within `[start, limit)` — each from
-   * the opener line start to just past the closing fence. Unlike the lexer's HARD-blocked token ranges (which
-   * are fragmented by the fence-info and newline tokens), these are whole-fence spans, so the MdxJS projection
-   * can carve a fence out of an enclosing JSX flow element (the fence stays OUTER while the element around it
-   * is still projected as a real tag). WEB-78468.
-   */
-  fun codeFenceRanges(text: CharSequence, start: Int, limit: Int): List<IntRange> {
-    val ranges = mutableListOf<IntRange>()
-    var lineStart = start
-    while (lineStart < limit) {
-      val fenceEnd = if (isAtLineStart(text, lineStart)) skipCodeFence(text, lineStart, limit) else -1
-      if (fenceEnd != -1) {
-        ranges.add(lineStart..fenceEnd)
-        lineStart = nextLineStart(text, fenceEnd, limit)
-      }
-      else {
-        lineStart = nextLineStart(text, lineEnd(text, lineStart, limit), limit)
-      }
-    }
-    return ranges
-  }
-
-  /**
    * If the line at [start] opens a fenced code block (any amount of leading spaces, 3+ backticks or
    * tildes), returns the offset just past the closing fence (or [limit] if the fence is unterminated);
    * otherwise returns -1. The fence body is treated as opaque so that `{`/`}`/`<` inside it are not
@@ -696,8 +565,19 @@ object MdxJsxScanner {
       else null
     }
 
-    val attributes = mutableListOf<IntRange>()
-    val expressions = mutableListOf<IntRange>()
+    return parseOpeningTagTail(text, start, name, offset, limit, emptyList(), emptyList())
+  }
+
+  private fun parseOpeningTagTail(text: CharSequence,
+                                  start: Int,
+                                  name: String,
+                                  initialOffset: Int,
+                                  limit: Int,
+                                  initialAttributes: List<IntRange>,
+                                  initialExpressions: List<IntRange>): Tag? {
+    val attributes = initialAttributes.toMutableList()
+    val expressions = initialExpressions.toMutableList()
+    var offset = initialOffset
     var selfClosing = false
     while (offset < limit) {
       offset = skipSpaces(text, offset, limit)
@@ -713,8 +593,23 @@ object MdxJsxScanner {
           offset++
         }
         '{' -> {
-          val expressionEnd = scanExpression(text, offset, limit)
-          if (expressionEnd == -1) return null
+          val expressionEnds = MdxJsBoundaryScanner.findExpressionEndCandidates(text, offset, limit)
+          if (expressionEnds.isEmpty()) return null
+          if (expressionEnds.size > 1) {
+            for (expressionEnd in expressionEnds) {
+              parseOpeningTagTail(
+                text,
+                start,
+                name,
+                expressionEnd,
+                limit,
+                attributes,
+                expressions + listOf(offset..expressionEnd),
+              )?.let { return it }
+            }
+            return null
+          }
+          val expressionEnd = expressionEnds.single()
           expressions.add(offset..expressionEnd)
           offset = expressionEnd
         }
@@ -731,8 +626,23 @@ object MdxJsxScanner {
             when (text.getOrNull(offset)) {
               '\'', '"' -> offset = scanQuoted(text, offset, limit, text[offset])
               '{' -> {
-                val expressionEnd = scanExpression(text, offset, limit)
-                if (expressionEnd == -1) return null
+                val expressionEnds = MdxJsBoundaryScanner.findExpressionEndCandidates(text, offset, limit)
+                if (expressionEnds.isEmpty()) return null
+                if (expressionEnds.size > 1) {
+                  for (expressionEnd in expressionEnds) {
+                    parseOpeningTagTail(
+                      text,
+                      start,
+                      name,
+                      expressionEnd,
+                      limit,
+                      attributes + listOf(attributeStart..expressionEnd),
+                      expressions + listOf(offset..expressionEnd),
+                    )?.let { return it }
+                  }
+                  return null
+                }
+                val expressionEnd = expressionEnds.single()
                 expressions.add(offset..expressionEnd)
                 offset = expressionEnd
               }
@@ -795,106 +705,6 @@ object MdxJsxScanner {
     return -1
   }
 
-  private fun scanTemplate(text: CharSequence, start: Int, limit: Int): Int {
-    var offset = start + 1
-    while (offset < limit) {
-      when (text[offset]) {
-        '\\' -> offset += 2
-        '`' -> return offset + 1
-        '$' -> {
-          if (text.getOrNull(offset + 1) == '{') {
-            val expressionEnd = scanExpression(text, offset + 1, limit)
-            if (expressionEnd == -1) return -1
-            offset = expressionEnd
-          }
-          else {
-            offset++
-          }
-        }
-        else -> offset++
-      }
-    }
-    return -1
-  }
-
-  private fun scanSlash(text: CharSequence, start: Int, limit: Int): Int {
-    if (text.getOrNull(start + 1) == '/') {
-      var offset = start + 2
-      while (offset < limit && text[offset] != '\n') {
-        offset++
-      }
-      return offset
-    }
-    if (text.getOrNull(start + 1) == '*') {
-      var offset = start + 2
-      while (offset + 1 < limit) {
-        if (text.startsWith("*/", offset, ignoreCase = false)) return offset + 2
-        offset++
-      }
-      return -1
-    }
-    return start + 1
-  }
-
-  private fun isCompleteBeforeLineBreak(text: CharSequence, lastSignificantOffset: Int): Boolean {
-    if (lastSignificantOffset == -1) return false
-    val char = text[lastSignificantOffset]
-    return char !in LINE_END_CONTINUATION_CHARS &&
-           (char != '>' || text.getOrNull(lastSignificantOffset - 1) != '=')
-  }
-
-  private fun nextLineContinuesEsm(text: CharSequence, start: Int, limit: Int, previousSignificantOffset: Int): Boolean {
-    val next = firstNonWhitespaceOffset(text, start, limit)
-    if (next == -1) return false
-    if (hasLineBreakBefore(text, start, next)) return false
-    val lineStart = lineStart(text, next)
-    if (smallIndent(text, lineStart, next) == -1) return true
-    if (keywordAt(text, next, "from")) return true
-    if (keywordEndsAt(text, previousSignificantOffset, "from")) {
-      return text[next] == '\'' || text[next] == '"' || text[next] == '`'
-    }
-    if (keywordEndsAt(text, previousSignificantOffset, "import")) {
-      return isImportContinuationStart(text[next])
-    }
-    if (keywordEndsAt(text, previousSignificantOffset, "export")) {
-      return isExportContinuationStart(text[next])
-    }
-    return text[next] in NEXT_LINE_CONTINUATION_CHARS
-  }
-
-  private fun keywordEndsAt(text: CharSequence, endOffset: Int, keyword: String): Boolean {
-    val start = endOffset - keyword.length + 1
-    return start >= 0 && keywordAt(text, start, keyword)
-  }
-
-  private fun isImportContinuationStart(char: Char): Boolean {
-    return char == '{' || char == '*' || char == '\'' || char == '"' || char == '`' || isNameStart(char)
-  }
-
-  private fun isExportContinuationStart(char: Char): Boolean {
-    return char == '{' || char == '*' || isNameStart(char)
-  }
-
-  private fun hasLineBreakBefore(text: CharSequence, start: Int, end: Int): Boolean {
-    var offset = start
-    while (offset < end) {
-      if (text[offset] == '\n') return true
-      offset++
-    }
-    return false
-  }
-
-  private fun firstNonWhitespaceOffset(text: CharSequence, start: Int, limit: Int): Int {
-    var offset = start
-    while (offset < limit) {
-      if (!text[offset].isWhitespace()) {
-        return offset
-      }
-      offset++
-    }
-    return -1
-  }
-
   private fun skipSpaces(text: CharSequence, start: Int, limit: Int): Int {
     var offset = start
     while (offset < limit && text[offset].isWhitespace()) {
@@ -917,18 +727,6 @@ object MdxJsxScanner {
 
   private fun isAttributeNamePart(char: Char): Boolean {
     return char.isLetterOrDigit() || char == '_' || char == '-' || char == '.' || char == ':' || char == '$'
-  }
-
-  private fun isEsmKeywordAt(text: CharSequence, start: Int): Boolean {
-    return keywordAt(text, start, "import") || keywordAt(text, start, "export")
-  }
-
-  private fun keywordAt(text: CharSequence, start: Int, keyword: String): Boolean {
-    if (start + keyword.length > text.length) return false
-    if (keyword.indices.any { text[start + it] != keyword[it] }) return false
-    val before = text.getOrNull(start - 1)
-    val after = text.getOrNull(start + keyword.length)
-    return before?.let { !isNamePart(it) } != false && after?.let { !isNamePart(it) } != false
   }
 
   private fun lineStart(text: CharSequence, offset: Int): Int {
@@ -955,6 +753,4 @@ object MdxJsxScanner {
     return first + delta..last + delta
   }
 
-  private val LINE_END_CONTINUATION_CHARS = setOf('=', '+', '-', '*', '/', '%', '&', '|', '^', '!', '~', '?', '.', ',', ':', '(', '[', '{', '<')
-  private val NEXT_LINE_CONTINUATION_CHARS = setOf('.', '?', ':', ',', '+', '-', '*', '/', '%', '&', '|', ')', ']', '}', '(')
 }

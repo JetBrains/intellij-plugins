@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.intellij.plugin.mdx.js.MdxJSLanguage
-import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
+import org.intellij.plugin.mdx.lang.parse.MdxEsmScanner
 
 internal class MdxJSImportOptimizer : ImportOptimizer {
   override fun supports(file: PsiFile): Boolean {
@@ -43,8 +43,8 @@ internal class MdxJSImportOptimizer : ImportOptimizer {
     val offsets = mutableListOf<Int>()
     var offset = 0
     while (offset < text.length) {
-      if (MdxJsxScanner.isLineStartEsm(text, offset)) {
-        val blockEnd = MdxJsxScanner.scanEsmBlock(text, offset)?.range?.last ?: text.length
+      if (MdxEsmScanner.isLineStart(text, offset)) {
+        val blockEnd = MdxEsmScanner.scanBlock(text, offset)?.range?.last ?: text.length
         collectMissingSeparatorOffsets(text, offset, blockEnd, offsets)
         offset = blockEnd.coerceAtLeast(offset + 1)
       }

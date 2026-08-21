@@ -187,6 +187,19 @@ class MdxHighlightTest : MdxTestBase() {
         )
     }
 
+    @Test
+    fun testMismatchedMultilineTagNamesRemainColoredAsJsx() {
+        val tokens = editorHighlightingTokens("<dix>\n    Hello\n</div>")
+        assertTrue(
+            "A temporarily renamed opening tag must keep JSX coloring: ${keysOf(tokens, "dix")}",
+            keysOf(tokens, "dix").any { it.contains("XML_TAG_NAME") }
+        )
+        assertTrue(
+            "The mismatched closing tag must keep JSX coloring: ${keysOf(tokens, "div")}",
+            keysOf(tokens, "div").any { it.contains("XML_TAG_NAME") }
+        )
+    }
+
     /**
      * Redesign target (WEB-78468): a block-level flow `{expression}` (`<div>{typeof window}</div>`)
      * must carry embedded-JS coloring in the editor highlighter — `typeof` a JS keyword, the braces

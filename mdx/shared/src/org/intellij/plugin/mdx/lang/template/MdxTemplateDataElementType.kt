@@ -6,10 +6,19 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.templateLanguages.TemplateDataElementType
 import com.intellij.psi.templateLanguages.TemplateDataModifications
 import com.intellij.psi.tree.TokenSet
+import org.intellij.markdown.IElementType
+import org.intellij.markdown.MarkdownElementType
+import org.intellij.markdown.MarkdownElementTypes
+import org.intellij.markdown.ast.ASTNode
+import org.intellij.markdown.ast.accept
+import org.intellij.markdown.ast.visitors.RecursiveVisitor
+import org.intellij.markdown.parser.CancellationToken
+import org.intellij.markdown.parser.MarkdownParser
 import org.intellij.plugin.mdx.lang.MdxLanguage
-import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
+import org.intellij.plugin.mdx.lang.parse.MdxFlavourDescriptor
+import org.intellij.plugin.mdx.lang.parse.MdxJsBoundaryScanner
+import org.intellij.plugin.mdx.lang.parse.MdxMarkdownLibElementTypes
 import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
-import org.intellij.plugin.mdx.lang.template.MdxTemplateElementTypes
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
 
 object MdxTemplateDataElementType : MdxTemplateDataElementTypeBase(),
@@ -24,182 +33,191 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
                                                                     MdxTokenTypes.EMBEDDED_JS_CONTENT,
                                                                     MdxTemplateElementTypes.OUTER_MARKDOWN_CONTENT) {
   override fun collectTemplateModifications(sourceCode: CharSequence, baseLexer: Lexer): TemplateDataModifications {
-    val modifications = TemplateDataModifications()
-    val templateRanges = collectTemplateRanges(sourceCode, baseLexer)
+    val structure = collectTemplateStructure(sourceCode)
+    val comments = collectHtmlComments(sourceCode, baseLexer, structure.opaqueRanges)
+    val invalidComments = comments.invalid
+    val embeddedRanges = (structure.embeddedRanges.flatMap { it.subtract(comments.opaque) } + invalidComments)
+      .sortedWith(compareBy<TextRange> { it.startOffset }.thenBy { it.endOffset })
+      .mergeTouchingRanges()
+
+    val operations = mutableListOf<Modification>()
     var offset = 0
-    var pendingSemicolon = false
-    for (range in templateRanges) {
-      if (offset < range.first) {
-        if (pendingSemicolon) {
-          modifications.addRangeToRemove(offset, ";")
-          pendingSemicolon = false
-        }
-        modifications.addOuterRange(TextRange.create(offset, range.first), true)
+    for (range in embeddedRanges) {
+      if (offset < range.startOffset) {
+        operations.add(Modification.Outer(TextRange.create(offset, range.startOffset)))
       }
-      if (pendingSemicolon) {
-        modifications.addRangeToRemove(range.first, ";")
-      }
-      // Hide one dash of a single-line `<!--` opener from the JS view: JS otherwise reads it as an
-      // XML-style comment, but `<!-` is a malformed JSX tag, so the JSX parser reports it as an error.
-      if (isInvalidSingleLineComment(sourceCode, range)) {
-        modifications.addOuterRange(TextRange.create(range.first + 3, range.first + 4), true)
-      }
-      pendingSemicolon = needsStatementSemicolon(sourceCode, range)
-      offset = range.last
+      offset = maxOf(offset, range.endOffset)
     }
     if (offset < sourceCode.length) {
-      if (pendingSemicolon) {
-        modifications.addRangeToRemove(offset, ";")
-        pendingSemicolon = false
-      }
-      modifications.addOuterRange(TextRange.create(offset, sourceCode.length), true)
+      operations.add(Modification.Outer(TextRange.create(offset, sourceCode.length)))
     }
-    if (pendingSemicolon) {
-      modifications.addRangeToRemove(sourceCode.length, ";")
+
+    // JavaScript accepts `<!--` as a legacy line-comment opener. MDX explicitly rejects HTML
+    // comments, so hide one dash and let the existing JSX parser report malformed markup.
+    for (range in invalidComments) {
+      operations.add(Modification.Outer(TextRange.create(range.startOffset + 3, range.startOffset + 4)))
+    }
+
+    for (root in structure.roots) {
+      if (!root.kind.requiresStatementSeparator) continue
+      for (range in structure.embeddedRanges.filter { root.range.contains(it) }) {
+        val continuesAtBoundary = structure.embeddedRanges.any {
+          it !== range && it.startOffset == range.endOffset && it.endOffset > range.endOffset
+        }
+        if (!continuesAtBoundary && !endsWithSemicolon(sourceCode, range)) {
+          operations.add(Modification.Remove(range.endOffset, ";"))
+        }
+      }
+    }
+    for (comment in invalidComments) {
+      if (!endsWithSemicolon(sourceCode, comment)) {
+        operations.add(Modification.Remove(comment.endOffset, ";"))
+      }
+    }
+
+    val modifications = TemplateDataModifications()
+    for (operation in operations.sortedWith(compareBy<Modification> { it.offset }.thenBy { it.priority })) {
+      when (operation) {
+        is Modification.Outer -> modifications.addOuterRange(operation.range, true)
+        is Modification.Remove -> modifications.addRangeToRemove(operation.offset, operation.text)
+      }
     }
     return modifications
   }
 
-  private fun collectTemplateRanges(sourceCode: CharSequence, baseLexer: Lexer): List<IntRange> {
-    val blockedRanges = collectBlockedRanges(sourceCode, baseLexer)
-    val ranges = mutableListOf<TemplateRange>()
-    var offset = 0
-    while (offset < sourceCode.length) {
-      val blockedRange = blockedRanges.firstOrNull {
-        it.kind == BlockedRangeKind.HARD && offset >= it.range.first && offset < it.range.last
-      }
-      if (blockedRange != null) {
-        offset = blockedRange.range.last
-        continue
-      }
-
-      // A single-line `<!--...-->` is invalid MDX; route it to JSX explicitly since the scanner itself
-      // rejects `<!`.
-      val invalidComment = blockedRanges.firstOrNull {
-        it.kind == BlockedRangeKind.INVALID_COMMENT && offset == it.range.first
-      }
-      if (invalidComment != null) {
-        ranges.add(TemplateRange(invalidComment.range, TemplateRangeKind.JSX))
-        offset = invalidComment.range.last
-        continue
-      }
-
-      when (sourceCode[offset]) {
-        '<' -> {
-          val element = MdxJsxScanner.scanJsxElement(sourceCode, offset)
-          if (element != null && element.balanced && !element.range.intersectsAny(blockedRanges, sourceCode)) {
-            ranges.add(TemplateRange(element.range, TemplateRangeKind.JSX))
-            offset = element.range.last
-            continue
-          }
-          // A balanced element whose only opaque content is code fences (e.g. `<div>` wrapping a fence) is
-          // still projected as a real tag: carve the fences out so they stay OUTER and project the rest.
-          if (element != null && element.balanced) {
-            val fences = MdxJsxScanner.codeFenceRanges(sourceCode, element.range.first, element.range.last)
-            if (fences.isNotEmpty()) {
-              val carved = carveAround(element.range, fences)
-              if (carved.none { it.intersectsAny(blockedRanges, sourceCode) }) {
-                carved.forEach { ranges.add(TemplateRange(it, TemplateRangeKind.JSX)) }
-                offset = element.range.last
-                continue
-              }
-            }
-          }
-          // A still-unbalanced `<Name…` prefix (mid-typing) would otherwise stay outside the MdxJS layer,
-          // so JSX tag-name completion would find nothing; project just the incomplete opening tag.
-          val incompleteRange = MdxJsxScanner.incompleteOpeningTagRange(sourceCode, offset)
-          if (incompleteRange != null && !incompleteRange.intersectsAny(blockedRanges, sourceCode)) {
-            ranges.add(TemplateRange(incompleteRange, TemplateRangeKind.JSX))
-            offset = incompleteRange.last
-            continue
-          }
+  /**
+   * Derives template ranges from the same Markdown structure that drives the base PSI and editor
+   * highlighter. This follows RMarkdown's template-data pattern and deliberately does not rescan JSX.
+   */
+  private fun collectTemplateStructure(sourceCode: CharSequence): TemplateStructure {
+    val root = MarkdownParser(MdxFlavourDescriptor, cancellationToken = CancellationToken.NonCancellable)
+      .parse(MarkdownElementType("MDX_TEMPLATE_ROOT"), sourceCode)
+    val roots = mutableListOf<TemplateRoot>()
+    val opaqueRanges = mutableListOf<TextRange>()
+    var templateRootDepth = 0
+    var opaqueDepth = 0
+    root.accept(object : RecursiveVisitor() {
+      override fun visitNode(node: ASTNode) {
+        val rootKind = node.type.rootKind()
+        if (rootKind != null && templateRootDepth == 0) {
+          roots.add(TemplateRoot(TextRange(node.startOffset, node.endOffset), rootKind))
         }
-        '{' -> {
-          val expressionEnd = MdxJsxScanner.scanExpression(sourceCode, offset)
-          if (expressionEnd != -1 && !(offset..expressionEnd).intersectsAny(blockedRanges, sourceCode)) {
-            ranges.add(TemplateRange(offset..expressionEnd, TemplateRangeKind.EXPRESSION))
-            offset = expressionEnd
-            continue
-          }
+        if (rootKind != null) templateRootDepth++
+        val opaque = node.type in OPAQUE_MARKDOWN_ELEMENTS
+        if (opaque && opaqueDepth == 0) {
+          opaqueRanges.add(TextRange(opaqueStart(sourceCode, node.startOffset), node.endOffset))
         }
-        else -> {
-          if (MdxJsxScanner.isLineStartEsm(sourceCode, offset)) {
-            val block = MdxJsxScanner.scanEsmBlock(sourceCode, offset)
-            if (block != null && !block.range.intersectsAny(blockedRanges, sourceCode)) {
-              ranges.add(TemplateRange(block.range, TemplateRangeKind.ESM))
-              offset = block.range.last
-              continue
-            }
-          }
-        }
+        if (opaque) opaqueDepth++
+        super.visitNode(node)
+        if (opaque) opaqueDepth--
+        if (rootKind != null) templateRootDepth--
       }
-      offset++
+    })
+    val normalizedRoots = roots
+      .map { it.withExactExpressionRange(sourceCode) }
+      .mergeAdjacentEsm(sourceCode)
+    val embeddedRanges = normalizedRoots.flatMap { templateRoot ->
+      if (templateRoot.kind == RootKind.JSX) {
+        templateRoot.range.subtract(opaqueRanges)
+      }
+      else {
+        listOf(templateRoot.range)
+      }
     }
-    return ranges.mergeTemplateRanges(sourceCode).map { it.range }
+    return TemplateStructure(embeddedRanges, normalizedRoots, opaqueRanges)
   }
 
-  private fun collectBlockedRanges(sourceCode: CharSequence, baseLexer: Lexer): List<BlockedRange> {
-    val ranges = mutableListOf<BlockedRange>()
-    var htmlCommentStart = -1
+  private fun TemplateRoot.withExactExpressionRange(sourceCode: CharSequence): TemplateRoot {
+    if (kind != RootKind.EXPRESSION) return this
+    val expressionEnd = MdxJsBoundaryScanner.findExpressionEnd(sourceCode, range.startOffset, range.endOffset)
+    return if (expressionEnd == -1) this else copy(range = TextRange(range.startOffset, expressionEnd))
+  }
+
+  private fun List<TemplateRoot>.mergeAdjacentEsm(sourceCode: CharSequence): List<TemplateRoot> {
+    if (isEmpty()) return emptyList()
+    val result = mutableListOf<TemplateRoot>()
+    var current = first()
+    for (next in drop(1)) {
+      val gap = sourceCode.subSequence(current.range.endOffset, next.range.startOffset)
+      if (current.kind == RootKind.ESM && next.kind == RootKind.ESM &&
+          gap.isNotEmpty() && gap.all { it.isWhitespace() } && gap.count { it == '\n' } == 1) {
+        current = current.copy(range = TextRange(current.range.startOffset, next.range.endOffset))
+      }
+      else {
+        result.add(current)
+        current = next
+      }
+    }
+    result.add(current)
+    return result
+  }
+
+  private fun opaqueStart(sourceCode: CharSequence, startOffset: Int): Int {
+    var lineStart = startOffset
+    while (lineStart > 0 && sourceCode[lineStart - 1] != '\n') lineStart--
+    return if (sourceCode.subSequence(lineStart, startOffset).all { it.isWhitespace() }) lineStart else startOffset
+  }
+
+  private fun TextRange.subtract(exclusions: List<TextRange>): List<TextRange> {
+    val result = mutableListOf<TextRange>()
+    var offset = startOffset
+    for (exclusion in exclusions) {
+      if (exclusion.endOffset <= offset || exclusion.startOffset >= endOffset) continue
+      val exclusionStart = exclusion.startOffset.coerceAtLeast(startOffset)
+      val exclusionEnd = exclusion.endOffset.coerceAtMost(endOffset)
+      if (offset < exclusionStart) {
+        result.add(TextRange(offset, exclusionStart))
+      }
+      offset = maxOf(offset, exclusionEnd)
+    }
+    if (offset < endOffset) {
+      result.add(TextRange(offset, endOffset))
+    }
+    return result
+  }
+
+  private fun collectHtmlComments(sourceCode: CharSequence, baseLexer: Lexer, opaqueRanges: List<TextRange>): HtmlComments {
+    val hardRanges = mutableListOf<TextRange>()
     baseLexer.start(sourceCode)
     while (baseLexer.tokenType != null) {
-      val tokenStart = baseLexer.tokenStart
-      val tokenEnd = baseLexer.tokenEnd
-      val tokenText = sourceCode.subSequence(tokenStart, tokenEnd)
-      if (baseLexer.tokenType == MarkdownTokenTypes.CODE_LINE) {
-        ranges.add(BlockedRange(tokenStart..tokenEnd, BlockedRangeKind.INDENTED_CODE))
-      }
-      else if (baseLexer.tokenType in HARD_CODE_TOKENS) {
-        ranges.add(BlockedRange(tokenStart..tokenEnd, BlockedRangeKind.HARD))
-      }
-
-      var tokenOffset = 0
-      while (tokenOffset < tokenText.length) {
-        if (htmlCommentStart == -1) {
-          val startInToken = tokenText.indexOf("<!--", tokenOffset)
-          if (startInToken == -1) break
-          htmlCommentStart = tokenStart + startInToken
-          tokenOffset = startInToken + 4
-        }
-        val endInToken = tokenText.indexOf("-->", tokenOffset)
-        if (endInToken == -1) break
-        val commentEnd = tokenStart + endInToken + 3
-        ranges.add(BlockedRange(htmlCommentStart..commentEnd, commentBlockedKind(sourceCode, htmlCommentStart, commentEnd)))
-        htmlCommentStart = -1
-        tokenOffset = endInToken + 3
+      if (baseLexer.tokenType in HARD_CODE_TOKENS) {
+        hardRanges.add(TextRange(baseLexer.tokenStart, baseLexer.tokenEnd))
       }
       baseLexer.advance()
     }
-    if (htmlCommentStart != -1) {
-      ranges.add(BlockedRange(htmlCommentStart..sourceCode.length, BlockedRangeKind.HARD))
+
+    val invalid = mutableListOf<TextRange>()
+    val opaque = mutableListOf<TextRange>()
+    var start = sourceCode.indexOf("<!--")
+    while (start >= 0) {
+      val endMarker = sourceCode.indexOf("-->", start + 4)
+      if (endMarker < 0) break
+      val end = endMarker + 3
+      val singleLine = (start until end).none { sourceCode[it] == '\n' }
+      val inCode = (hardRanges + opaqueRanges).any { it.startOffset <= start && end <= it.endOffset }
+      if (!inCode) {
+        (if (singleLine) invalid else opaque).add(TextRange(start, end))
+      }
+      start = sourceCode.indexOf("<!--", end)
     }
-    return ranges.mergeTouchingBlockedRanges()
+    return HtmlComments(invalid, opaque)
   }
 
-  // Multi-line `<!-- ... -->` stays opaque (HARD, never an error); only single-line is invalid MDX.
-  private fun commentBlockedKind(sourceCode: CharSequence, start: Int, end: Int): BlockedRangeKind {
-    val spansSingleLine = (start until end).none { sourceCode[it] == '\n' }
-    return if (spansSingleLine) BlockedRangeKind.INVALID_COMMENT else BlockedRangeKind.HARD
+  private fun IElementType.rootKind(): RootKind? = when (this) {
+    MdxMarkdownLibElementTypes.MDX_ESM_BLOCK -> RootKind.ESM
+    MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT,
+    MdxMarkdownLibElementTypes.MDX_JSX_TEXT_ELEMENT -> RootKind.JSX
+    MdxMarkdownLibElementTypes.MDX_EXPRESSION -> RootKind.EXPRESSION
+    else -> null
   }
 
-  private fun isInvalidSingleLineComment(sourceCode: CharSequence, range: IntRange): Boolean {
-    val text = sourceCode.subSequence(range.first, range.last)
-    return text.startsWith("<!--") && text.endsWith("-->") && text.none { it == '\n' }
-  }
-
-  private fun needsStatementSemicolon(sourceCode: CharSequence, range: IntRange): Boolean {
-    val text = sourceCode.subSequence(range.first, range.last).trim()
-    return (text.startsWith("import") || text.startsWith("export") || text.startsWith("<")) && !text.endsWith(';')
-  }
-
-  private fun List<TemplateRange>.mergeTemplateRanges(sourceCode: CharSequence): List<TemplateRange> {
+  private fun List<TextRange>.mergeTouchingRanges(): List<TextRange> {
     if (isEmpty()) return emptyList()
-    val sorted = sortedBy { it.range.first }
-    val result = mutableListOf<TemplateRange>()
-    var current = sorted.first()
-    for (range in sorted.drop(1)) {
-      if (range.range.first <= current.range.last || canMergeThroughSingleLineBreak(current, range, sourceCode)) {
-        current = TemplateRange(current.range.first..maxOf(current.range.last, range.range.last), current.kind)
+    val result = mutableListOf<TextRange>()
+    var current = first()
+    for (range in drop(1)) {
+      if (range.startOffset <= current.endOffset) {
+        current = TextRange(current.startOffset, maxOf(current.endOffset, range.endOffset))
       }
       else {
         result.add(current)
@@ -210,88 +228,45 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
     return result
   }
 
-  private fun canMergeThroughSingleLineBreak(left: TemplateRange, right: TemplateRange, sourceCode: CharSequence): Boolean {
-    if (left.kind != TemplateRangeKind.ESM || right.kind != TemplateRangeKind.ESM) return false
-    val gap = sourceCode.subSequence(left.range.last, right.range.first)
-    return gap.isNotEmpty() && gap.all { it.isWhitespace() } && gap.count { it == '\n' } == 1
+  private fun endsWithSemicolon(sourceCode: CharSequence, range: TextRange): Boolean {
+    var offset = range.endOffset - 1
+    while (offset >= range.startOffset && sourceCode[offset].isWhitespace()) offset--
+    return offset >= range.startOffset && sourceCode[offset] == ';'
   }
 
-  private fun List<BlockedRange>.mergeTouchingBlockedRanges(): List<BlockedRange> {
-    if (isEmpty()) return emptyList()
-    val sorted = sortedWith(compareBy<BlockedRange> { it.range.first }.thenBy { it.range.last })
-    val result = mutableListOf<BlockedRange>()
-    var current = sorted.first()
-    for (range in sorted.drop(1)) {
-      if (range.kind == current.kind && range.range.first <= current.range.last) {
-        current = BlockedRange(current.range.first..maxOf(current.range.last, range.range.last), current.kind)
-      }
-      else {
-        result.add(current)
-        current = range
-      }
-    }
-    result.add(current)
-    return result
+  private data class TemplateStructure(val embeddedRanges: List<TextRange>,
+                                       val roots: List<TemplateRoot>,
+                                       val opaqueRanges: List<TextRange>)
+
+  private data class TemplateRoot(val range: TextRange, val kind: RootKind)
+
+  private data class HtmlComments(val invalid: List<TextRange>, val opaque: List<TextRange>)
+
+  private sealed class Modification(val offset: Int, val priority: Int) {
+    class Remove(offset: Int, val text: String) : Modification(offset, 0)
+    class Outer(val range: TextRange) : Modification(range.startOffset, 1)
   }
 
-  /** [range] split into the sub-ranges left after removing [gaps] (which stay OUTER); empty pieces dropped. */
-  private fun carveAround(range: IntRange, gaps: List<IntRange>): List<IntRange> {
-    val result = mutableListOf<IntRange>()
-    var cursor = range.first
-    for (gap in gaps.sortedBy { it.first }) {
-      val gapStart = gap.first.coerceIn(range.first, range.last)
-      val gapEnd = gap.last.coerceIn(range.first, range.last)
-      if (cursor < gapStart) result.add(cursor..gapStart)
-      cursor = maxOf(cursor, gapEnd)
-    }
-    if (cursor < range.last) result.add(cursor..range.last)
-    return result
-  }
-
-  private fun IntRange.intersectsAny(ranges: List<BlockedRange>, sourceCode: CharSequence): Boolean {
-    return ranges.any { blockedRange ->
-      first < blockedRange.range.last &&
-      blockedRange.range.first < last &&
-      !blockedRange.allowsCandidate(this, sourceCode)
-    }
-  }
-
-  private fun BlockedRange.allowsCandidate(candidate: IntRange, sourceCode: CharSequence): Boolean {
-    return kind == BlockedRangeKind.INDENTED_CODE && firstNonWhitespaceOffset(sourceCode, range.first, range.last) == candidate.first
-  }
-
-  private fun firstNonWhitespaceOffset(text: CharSequence, start: Int, end: Int): Int {
-    var offset = start
-    while (offset < end) {
-      if (!text[offset].isWhitespace()) return offset
-      offset++
-    }
-    return -1
-  }
-
-  private data class BlockedRange(val range: IntRange, val kind: BlockedRangeKind)
-
-  private data class TemplateRange(val range: IntRange, val kind: TemplateRangeKind)
-
-  private enum class BlockedRangeKind {
-    HARD,
-    INDENTED_CODE,
-    INVALID_COMMENT
-  }
-
-  private enum class TemplateRangeKind {
-    ESM,
-    JSX,
-    EXPRESSION
+  private enum class RootKind(val requiresStatementSeparator: Boolean) {
+    ESM(true),
+    JSX(true),
+    EXPRESSION(false),
   }
 
   private companion object {
+    private val OPAQUE_MARKDOWN_ELEMENTS = setOf(
+      MarkdownElementTypes.CODE_BLOCK,
+      MarkdownElementTypes.CODE_FENCE,
+      MarkdownElementTypes.CODE_SPAN,
+    )
+
     private val HARD_CODE_TOKENS = TokenSet.create(
       MarkdownTokenTypes.CODE_FENCE_START,
       MarkdownTokenTypes.CODE_FENCE_CONTENT,
       MarkdownTokenTypes.CODE_FENCE_END,
       MarkdownTokenTypes.BACKTICK,
       MarkdownTokenTypes.ESCAPED_BACKTICKS,
+      MarkdownTokenTypes.CODE_LINE,
     )
   }
 }

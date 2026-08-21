@@ -1,14 +1,5 @@
 JSFile:ParsingAutolink.mdx(0,37)
-  PsiElement(OUTER_MARKDOWN_CONTENT)('Visit ')(0,6)
-  PsiWhiteSpace('')(6,6)
-  JSEmptyStatement(6,6)
-    <empty list>
-  JSExpressionStatement(6,13)
-    XmlTag:https:(6,13)
-      XmlToken:XML_START_TAG_START('<')(6,7)
-      XmlToken:XML_TAG_NAME('https:')(7,13)
-      PsiErrorElement:Tag start is not closed(13,13)
-        <empty list>
-  PsiComment(JS:END_OF_LINE_COMMENT)('//example.com>')(13,27)
-  PsiElement(OUTER_MARKDOWN_CONTENT)(' for more.')(27,37)
+  PsiElement(OUTER_MARKDOWN_CONTENT)('Visit <https://example.com> for more.')(0,37)
   PsiWhiteSpace('')(37,37)
+  JSEmptyStatement(37,37)
+    <empty list>

@@ -4,6 +4,7 @@ import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.editorActions.CompletionAutoPopupHandler
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.LanguageLineWrapPositionStrategy
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.CodeStyleManager
@@ -158,6 +159,18 @@ class MdxLiveEditingTest : MdxTestBase() {
    */
   @Test
   fun testAutoCloseInDeeplyNestedSameNameTags() = checkTyping('>')
+
+  @Test
+  fun testRenamingMultilineOpeningTagKeepsMdxJsPsi() {
+    myFixture.configureByText("test.mdx", "<div>\n  Hello\n</div>")
+    WriteCommandAction.runWriteCommandAction(myFixture.project) {
+      myFixture.editor.document.replaceString(1, 4, "dix")
+    }
+    PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
+
+    val tagNames = nodesOfTypeAllRoots(XML_TAG_NAME).map { it.text }
+    assertTrue("Transiently mismatched tags must remain in MdxJS PSI: $tagNames", tagNames.containsAll(listOf("dix", "div")))
+  }
 
   @Test
   fun testNoAutoCloseInsideArrowFunctionExpression() {

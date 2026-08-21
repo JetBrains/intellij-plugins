@@ -73,6 +73,7 @@ class MdxMarkdownReferencesTest : MdxTestBase() {
       "ESM block" to "import target from './tar<caret>get.mdx'\n\nText",
       "MDX expression" to "Some {[Target](./tar<caret>get.mdx)} text",
       "JSX attribute" to "<Alert href=\"./tar<caret>get.mdx\" />",
+      "inline JSX expression attribute" to "Text <Alert value={[Target](./tar<caret>get.mdx)} /> end",
       "code span" to "`[Target](./tar<caret>get.mdx)`",
       "front matter" to "---\ntarget: ./tar<caret>get.mdx\n---\n\nText",
     )
