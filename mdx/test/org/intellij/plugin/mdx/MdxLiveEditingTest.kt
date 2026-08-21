@@ -368,7 +368,7 @@ class MdxLiveEditingTest : MdxTestBase() {
    * Pressing Enter between braces inside an indented code fence expands the block: a body line one indent
    * step deeper than the opening line, then the closer on its own line (MdxEnterHandler). It must
    * also not corrupt the incremental lexer: the fence body is indented to +4 under `<div>`, and the pre-fix
-   * MdxJsxScanner.skipCodeFence (≤3-space rule) failed to skip it on the re-lex triggered by the edit,
+   * fence scan (≤3-space rule) failed to skip it on the re-lex triggered by the edit,
    * scanning `{`/`}` as JSX and throwing "Intersecting parsed nodes". After the scanner fix the host stays
    * well-formed. The caret lands in the injected TS fragment, so the host is read via the top-level file. WEB-78468.
    */

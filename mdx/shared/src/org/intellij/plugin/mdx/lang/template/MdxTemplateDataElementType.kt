@@ -16,7 +16,7 @@ import org.intellij.markdown.parser.CancellationToken
 import org.intellij.markdown.parser.MarkdownParser
 import org.intellij.plugin.mdx.lang.MdxLanguage
 import org.intellij.plugin.mdx.lang.parse.MdxFlavourDescriptor
-import org.intellij.plugin.mdx.lang.parse.MdxJsBoundaryScanner
+import org.intellij.plugin.mdx.lang.parse.MdxExpressionBoundaryScanner
 import org.intellij.plugin.mdx.lang.parse.MdxMarkdownLibElementTypes
 import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
@@ -58,9 +58,9 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
       operations.add(Modification.Outer(TextRange.create(range.startOffset + 3, range.startOffset + 4)))
     }
 
-    for (root in structure.roots) {
-      if (!root.kind.requiresStatementSeparator) continue
-      for (range in structure.embeddedRanges.filter { root.range.contains(it) }) {
+    for ((rootRange, rootKind) in structure.roots) {
+      if (!rootKind.requiresStatementSeparator) continue
+      for (range in structure.embeddedRanges.filter { rootRange.contains(it) }) {
         val continuesAtBoundary = structure.embeddedRanges.any {
           it !== range && it.startOffset == range.endOffset && it.endOffset > range.endOffset
         }
@@ -129,7 +129,7 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
 
   private fun TemplateRoot.withExactExpressionRange(sourceCode: CharSequence): TemplateRoot {
     if (kind != RootKind.EXPRESSION) return this
-    val expressionEnd = MdxJsBoundaryScanner.findExpressionEnd(sourceCode, range.startOffset, range.endOffset)
+    val expressionEnd = MdxExpressionBoundaryScanner.findExpressionEnd(sourceCode, range.startOffset, range.endOffset)
     return if (expressionEnd == -1) this else copy(range = TextRange(range.startOffset, expressionEnd))
   }
 

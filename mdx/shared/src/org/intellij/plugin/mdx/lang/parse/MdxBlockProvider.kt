@@ -8,7 +8,7 @@ import org.intellij.markdown.parser.markerblocks.MarkerBlock
 import org.intellij.markdown.parser.markerblocks.MarkerBlockProvider
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 
-class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
+class MdxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
   override fun createMarkerBlocks(pos: LookaheadText.Position,
                                   productionHolder: ProductionHolder,
                                   stateInfo: MarkerProcessor.StateInfo): List<MarkerBlock> {
@@ -20,7 +20,10 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
       MdxBlockKind.ESM -> {
         val block = MdxEsmScanner.scanBlock(localText, 0)
         if (block != null && block.terminated && localText.subSequence(block.range.last, localText.length).isBlank()) {
-          ImmediateBlock(MdxMarkdownLibElementTypes.MDX_ESM_BLOCK, MdxJsxScanner.createEsmNodes(block, absoluteStart, includeRoot = false))
+          ImmediateBlock(
+            MdxMarkdownLibElementTypes.MDX_ESM_BLOCK,
+            MdxBlockNodeFactory.createEsmNodes(block, absoluteStart, includeRoot = false),
+          )
         }
         else null
       }
@@ -29,13 +32,13 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
         if (element != null && element.terminated && localText.subSequence(element.range.last, localText.length).isBlank()) {
           ImmediateBlock(
             MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT,
-            MdxJsxScanner.createFlowElementNodes(localText, element, absoluteStart, includeRoot = false),
+            MdxBlockNodeFactory.createFlowElementNodes(localText, element, absoluteStart, includeRoot = false),
           )
         }
         else null
       }
       MdxBlockKind.EXPRESSION -> {
-        val expressionEnd = MdxJsxScanner.scanExpression(localText, 0)
+        val expressionEnd = MdxExpressionBoundaryScanner.findExpressionEnd(localText, 0, localText.length)
         if (expressionEnd != -1 && localText.subSequence(expressionEnd, localText.length).isBlank()) {
           ImmediateBlock(
             MdxMarkdownLibElementTypes.MDX_EXPRESSION,
@@ -47,7 +50,7 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
     }
     if (immediateBlock != null) {
       return listOf(
-        ImmediateJsxBlockMarkerBlock(
+        ImmediateMdxBlockMarkerBlock(
           stateInfo.currentConstraints,
           productionHolder,
           immediateBlock.type,
@@ -55,17 +58,33 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
         ),
       )
     }
-    return listOf(
-      JsxBlockMarkerBlock(
+    val marker = when (start.kind) {
+      MdxBlockKind.JSX -> MdxJsxBlockMarkerBlock(
         stateInfo.currentConstraints,
         productionHolder,
-        start.kind,
         absoluteStart,
         start.offsetInLine,
         pos.originalText,
         localText.toString(),
-      ),
-    )
+      )
+      MdxBlockKind.ESM -> MdxOpaqueBlockMarkerBlock(
+        stateInfo.currentConstraints,
+        productionHolder,
+        MdxOpaqueBlockKind.ESM,
+        absoluteStart,
+        pos.originalText,
+        localText.toString(),
+      )
+      MdxBlockKind.EXPRESSION -> MdxOpaqueBlockMarkerBlock(
+        stateInfo.currentConstraints,
+        productionHolder,
+        MdxOpaqueBlockKind.EXPRESSION,
+        absoluteStart,
+        pos.originalText,
+        localText.toString(),
+      )
+    }
+    return listOf(marker)
   }
 
   override fun interruptsParagraph(pos: LookaheadText.Position, constraints: MarkdownConstraints): Boolean {
@@ -86,7 +105,7 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
         StartInfo(offset, MdxBlockKind.ESM)
       text[offset] == '<' && isLineStartJsxBlock(text, offset) ->
         StartInfo(offset, MdxBlockKind.JSX)
-      text[offset] == '{' && MdxJsxScanner.isLineStartExpression(text, offset) ->
+      text[offset] == '{' ->
         StartInfo(offset, MdxBlockKind.EXPRESSION)
       else -> null
     }
@@ -107,7 +126,7 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
   private data class ImmediateBlock(val type: org.intellij.markdown.IElementType, val children: List<SequentialParser.Node>)
 }
 
-internal enum class MdxBlockKind {
+private enum class MdxBlockKind {
   JSX,
   ESM,
   EXPRESSION

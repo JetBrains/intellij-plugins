@@ -5,7 +5,6 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parents
 import com.intellij.xml.psi.codeInsight.XmlAutoPopupEnabler
-import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
 import org.intellij.plugin.mdx.lang.psi.MdxFile
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
@@ -20,8 +19,18 @@ import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
 internal class MdxXmlAutoPopupEnabler : XmlAutoPopupEnabler {
   override fun shouldShowPopup(file: PsiFile, offset: Int): Boolean {
     if (file !is MdxFile) return false
-    if (!MdxJsxScanner.isJsxTagStartContext(file.text, offset)) return false
+    if (!isJsxTagStartContext(file.text, offset)) return false
     return !isInNonJsxContext(file, offset)
+  }
+
+  private fun isJsxTagStartContext(text: CharSequence, offset: Int): Boolean {
+    if (offset <= 0 || offset > text.length) return false
+    var index = offset - 1
+    if (text[index] == '<') return true
+    while (index >= 0 && isJsxNamePart(text[index])) {
+      index--
+    }
+    return index >= 0 && text[index] == '<'
   }
 
   /**
@@ -32,6 +41,10 @@ internal class MdxXmlAutoPopupEnabler : XmlAutoPopupEnabler {
   private fun isInNonJsxContext(file: PsiFile, offset: Int): Boolean {
     val element = PsiUtilCore.getElementAtOffset(file, (offset - 1).coerceAtLeast(0))
     return element.parents(withSelf = true).any { it.elementType in NON_JSX_ELEMENT_TYPES }
+  }
+
+  private fun isJsxNamePart(char: Char): Boolean {
+    return char.isLetterOrDigit() || char == '_' || char == '-' || char == '.' || char == ':'
   }
 }
 

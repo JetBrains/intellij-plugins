@@ -214,7 +214,7 @@ class MdxCompletionTest : MdxTestBase() {
   @Test
   fun testHtmlAttributeCompletionWithCodeFenceInBody() {
     // JSX attribute completions on the opening tag must work even when the element body
-    // contains an indented code fence — skipCodeFence must not break the JSX injection range.
+    // contains an indented code fence — fence scanning must not break the JSX injection range.
     val strings = completionStrings("<div on<caret>>\n    ```tsx\n    const x = 1\n    ```\n</div>")
     assertTrue("Expected event-handler attributes (e.g. 'onClick') when div body has a code fence",
                strings.contains("onClick") || strings.any { it.startsWith("on") })

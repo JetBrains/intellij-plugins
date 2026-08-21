@@ -32,7 +32,7 @@ object MdxFlavourDescriptor : CommonMarkFlavourDescriptor() {
       val insertionIndex = if (inlineLinkIndex == -1) parsers.size else inlineLinkIndex
       return buildList(parsers.size + 1) {
         addAll(parsers.subList(0, insertionIndex))
-        add(MdxInlineJsxParser())
+        add(MdxInlineElementParser())
         addAll(parsers.subList(insertionIndex, parsers.size))
       }
     }
@@ -62,7 +62,7 @@ private class MdxMarkerProcessor(
   override fun getMarkerBlockProviders(): List<MarkerBlockProvider<StateInfo>> =
     buildList {
       add(MdxHtmlCommentBlockProvider())
-      add(JsxBlockProvider())
+      add(MdxBlockProvider())
       addAll(super.getMarkerBlockProviders())
       removeIf { it is HtmlBlockProvider }
       removeIf { it is CodeBlockProvider }

@@ -1,12 +1,12 @@
 package org.intellij.plugin.mdx
 
 import com.intellij.testFramework.junit5.TestApplication
-import org.intellij.plugin.mdx.lang.parse.MdxJsBoundaryScanner
+import org.intellij.plugin.mdx.lang.parse.MdxExpressionBoundaryScanner
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class MdxJsBoundaryScannerTest {
+class MdxExpressionBoundaryScannerTest {
   @Test
   fun stringAndTemplateBracesDoNotEndExpression() {
     assertExpressionEnd("{'}'}")
@@ -31,9 +31,9 @@ class MdxJsBoundaryScannerTest {
   @Test
   fun unterminatedExpressionHasNoBoundary() {
     val text = "{`unterminated"
-    assertEquals(-1, MdxJsBoundaryScanner.findExpressionEnd(text, 0, text.length))
+    assertEquals(-1, MdxExpressionBoundaryScanner.findExpressionEnd(text, 0, text.length))
     val regularExpression = "{/unterminated"
-    assertEquals(-1, MdxJsBoundaryScanner.findExpressionEnd(regularExpression, 0, regularExpression.length))
+    assertEquals(-1, MdxExpressionBoundaryScanner.findExpressionEnd(regularExpression, 0, regularExpression.length))
   }
 
   @Test
@@ -42,6 +42,6 @@ class MdxJsBoundaryScannerTest {
   }
 
   private fun assertExpressionEnd(text: String) {
-    assertEquals(text.length, MdxJsBoundaryScanner.findExpressionEnd(text, 0, text.length), text)
+    assertEquals(text.length, MdxExpressionBoundaryScanner.findExpressionEnd(text, 0, text.length), text)
   }
 }

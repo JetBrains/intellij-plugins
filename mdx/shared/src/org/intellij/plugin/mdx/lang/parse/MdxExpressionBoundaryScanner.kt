@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.JSTokenTypes
  * comments, regular expressions, and nested JSX are consumed by the platform JavaScript lexer; this
  * class only counts ordinary JavaScript braces.
  */
-internal object MdxJsBoundaryScanner {
+internal object MdxExpressionBoundaryScanner {
   /** Returns the end offset after the top-level `}`, or `-1` if the expression reaches [end]. */
   fun findExpressionEnd(buffer: CharSequence, start: Int, end: Int): Int {
     if (buffer.getOrNull(start) != '{') return -1

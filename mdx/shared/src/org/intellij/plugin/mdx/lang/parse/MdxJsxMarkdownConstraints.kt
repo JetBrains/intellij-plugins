@@ -50,7 +50,7 @@ internal class MdxJsxMarkdownConstraints(
     // relax to the parent constraints, or the fence ends early and orphans the rest of its body.
     if (lineIndent <= blockStartIndent &&
         pos.currentLine.startsWith("</", nonWhitespaceOffset) &&
-        !MdxJsxScanner.isInsideCodeFence(pos.originalText, blockStartOffset, pos.offset)) {
+        !MdxMarkdownFenceScanner.containsOffset(pos.originalText, blockStartOffset, pos.offset)) {
       return parent.applyToNextLine(pos)
     }
     if (lineIndent < blockStartIndent) {

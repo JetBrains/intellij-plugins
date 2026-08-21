@@ -2,7 +2,7 @@ package org.intellij.plugin.mdx.highlighting
 
 import com.intellij.lexer.LexerBase
 import com.intellij.psi.tree.IElementType
-import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
+import org.intellij.plugin.mdx.lang.parse.MdxExpressionBoundaryScanner
 import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
 import org.intellij.plugin.mdx.lang.parse.MdxMarkdownLibTokenTypes
 import org.intellij.plugins.markdown.lang.lexer.MarkdownLexerAdapter
@@ -43,7 +43,7 @@ internal class MdxInlineHighlightingLexer : LexerBase() {
         // Bound the scan window, or a densely-`{`-populated element re-scans to its end on every brace
         // (O(n^2) per keystroke); an expression longer than this is simply left uncollapsed.
         val scanLimit = minOf(endOffset, tokenStart + MAX_INLINE_EXPRESSION_SCAN)
-        val expressionEnd = MdxJsxScanner.scanExpression(buffer, tokenStart, scanLimit)
+        val expressionEnd = MdxExpressionBoundaryScanner.findExpressionEnd(buffer, tokenStart, scanLimit)
         if (expressionEnd != -1) {
           addToken(JSX_BLOCK_CONTENT, tokenStart, expressionEnd)
           cursor = expressionEnd
