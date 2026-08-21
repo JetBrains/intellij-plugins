@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.typescript.service
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings.TypeScriptCompilerVersionType
 import com.intellij.openapi.project.Project
+import com.intellij.util.application
 
 internal fun isVueServiceCompatibleTypeScriptEnabled(
   project: Project,
@@ -13,6 +14,10 @@ internal fun isVueServiceCompatibleTypeScriptEnabled(
     TypeScriptCompilerVersionType.EMBEDDED_TS_GO,
     TypeScriptCompilerVersionType.TS_GO_PROXY_RECOMMENDED_VERSION,
       -> false
+
+    // adapter for `TypeScriptServiceTestMixin.setUpTypeScriptService(PROXY)`
+    TypeScriptCompilerVersionType.SERVICE_DIRECTORY,
+      -> !application.isUnitTestMode
 
     else -> true
   }
