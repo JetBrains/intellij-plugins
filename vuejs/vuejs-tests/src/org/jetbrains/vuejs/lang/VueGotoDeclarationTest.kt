@@ -48,7 +48,6 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.web.scopes.VueBindingShorthandSymbol
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
@@ -61,9 +60,8 @@ class VueGotoDeclarationTest :
   class WithLegacyPluginTest :
     VueGotoDeclarationWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
-  @Ignore
   class WithTsGoProxyTest :
-    VueGotoDeclarationTestBase(testMode = VueTestMode.TS_GO_PROXY)
+    VueGotoDeclarationWithPluginTestBase(testMode = VueTestMode.TS_GO_PROXY)
 
   class WithoutServiceTest :
     VueGotoDeclarationTestBase(testMode = VueTestMode.NO_PLUGIN)
