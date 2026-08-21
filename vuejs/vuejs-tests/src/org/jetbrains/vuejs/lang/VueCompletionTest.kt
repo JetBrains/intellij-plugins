@@ -35,7 +35,6 @@ class VueCompletionTest :
   class WithLegacyPluginTest :
     VueCompletionWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
-  @Ignore
   class WithTsGoProxyTest :
     VueCompletionTestBase(testMode = VueTestMode.TS_GO_PROXY) {
 
