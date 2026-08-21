@@ -10,7 +10,7 @@ import org.jetbrains.vuejs.VueTsConfig.CompilerOptions
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.junit.jupiter.api.assertNull
 
-class VueTsConfigFile(
+data class VueTsConfigFile(
   val types: List<String> = emptyList(),
   val vueCompilerOptions: VueCompilerOptions? = null,
   val enabled: Boolean = true,
