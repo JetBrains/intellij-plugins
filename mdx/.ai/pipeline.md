@@ -1,411 +1,251 @@
-# MDX Parser & Formatter: Detailed Pipeline Analysis
+# MDX Parser and Formatter Pipeline
 
----
+This document describes the current IntelliJ MDX implementation. The plugin is an editor pipeline,
+not an MDX compiler: it maintains a Markdown PSI tree and a JavaScript/JSX template-data PSI tree
+over the same document.
 
-## Part 1 — Official MDX Pipeline (`@mdx-js/mdx`)
+## Reference model
 
-The official pipeline is a **compiler**: it takes `.mdx` source and produces a JavaScript ES module.
-It has 7 stages across 3 AST layers.
+The official `@mdx-js/mdx` pipeline tokenizes MDX with micromark, builds mdast, applies remark and
+rehype transformations, converts to ESTree, and emits JavaScript. Its relevant syntax nodes are:
 
+| MDX syntax | mdast node |
+|---|---|
+| Top-level `import` or `export` | `mdxjsEsm` |
+| Block JSX | `mdxJsxFlowElement` |
+| Inline JSX | `mdxJsxTextElement` |
+| Line-start `{...}` | `mdxFlowExpression` |
+| Inline `{...}` | `mdxTextExpression` |
+
+Markdown remains recursive inside an `mdxJsxFlowElement`: headings, lists, paragraphs, and code
+fences are children of the JSX element rather than opaque text.
+
+## Two PSI roots
+
+`MdxFileViewProvider` exposes two PSI files for one `.mdx` document:
+
+```text
+.mdx source
+├── MdxLanguage
+│   └── MdxParserDefinition
+│       └── Markdown PSI with first-class MDX nodes
+└── MdxJSLanguage
+    └── MdxTemplateDataElementType
+        └── JavaScript/JSX PSI over projected embedded ranges
 ```
-MDX source text
-     │
-     ▼ Stage 1 ── micromark (tokenizer)
-  token stream
-     │
-     ▼ Stage 2 ── mdast-util-from-markdown + mdast-util-mdx (AST builder)
-    mdast   ← Markdown AST; JSX/ESM/expressions are first-class nodes
-     │
-     ▼ Stage 3 ── remark plugins (user transforms on mdast)
-    mdast
-     │
-     ▼ Stage 4 ── mdast-util-to-hast (convert to HTML AST)
-    hast
-     │
-     ▼ Stage 5 ── rehype plugins (user transforms on hast)
-    hast
-     │
-     ▼ Stage 6 ── rehype-recma (convert to JS AST)
-    esast / estree
-     │
-     ▼ Stage 6b ── recma plugins (core MDX transforms + user transforms)
-    esast
-     │
-     ▼ Stage 7 ── astring (code generator)
-  JavaScript module (.js)
-```
 
-### Stage 1: Tokenization (micromark)
+The Markdown tree owns source structure. The JavaScript tree supplies JavaScript and JSX language
+features for the ranges selected from that structure.
 
-micromark is a **state-machine** tokenizer for CommonMark. MDX plugs in four extensions:
+## Markdown parsing
 
-| Extension | Trigger | What it tokenizes |
+### Flavour and parser entry points
+
+`MarkdownToplevelLexer(MdxFlavourDescriptor)` runs the Markdown parser and replays its token stream.
+`MarkdownParserAdapter(MdxFlavourDescriptor)` then builds PSI from those tokens.
+
+`MdxFlavourDescriptor` extends CommonMark and delegates GFM inline behavior to
+`GFMFlavourDescriptor`. Its marker and inline parser order makes three MDX-specific changes:
+
+- `MdxHtmlCommentBlockProvider` gives closed multiline HTML comments an opaque block owner while
+  leaving single-line HTML comments invalid MDX.
+- `MdxBlockProvider` runs before the standard block providers. `MdxCodeFenceProvider` replaces the
+  standard fence provider so an unclosed fence can recover at the active JSX boundary. The general
+  raw-HTML and indented-code providers are removed because MDX disables those constructs.
+- `MdxInlineElementParser` runs before `InlineLinkParser`, allowing MDX JSX and expressions to claim
+  their ranges before Markdown link parsing.
+
+### Block recognition
+
+At a constrained line start, `MdxBlockProvider` dispatches one of three kinds:
+
+| Kind | Start condition | Boundary owner |
 |---|---|---|
-| `mdxjs-esm` | line starts with `import ` or `export ` | ESM block until blank line |
-| `mdx-jsx` | `<` not followed by whitespace | JSX tags, attributes, children |
-| `mdx-expression` | `{` | balanced `{...}` expression spans |
-| `mdx-md` | always | **disables** indented code, autolinks `<url>`, raw HTML, HTML comments |
+| ESM | Top-level `import` or `export`, after at most three spaces | `MdxEsmScanner` |
+| JSX | A parsed JSX tag or recoverable opening-tag prefix | `MdxJsxScanner` |
+| Expression | `{` after at most three spaces | `MdxExpressionBoundaryScanner` |
 
-The state machine processes characters one at a time, producing a flat event stream of
-`(enter, exit, data)` events. Acorn is called inside `mdxjs-esm` and `mdx-expression` to
-validate that the JavaScript is syntactically legal.
+A complete single-line construct is emitted immediately. Multiline constructs share the line and
+finalization lifecycle in `MdxBlockMarkerBlock`, but use separate ownership policies:
 
-**Key tokenization rules:**
-- `<` followed by whitespace → plain text (not JSX)
-- `{` starts expression; balanced brace counting determines end
-- ESM block ends at the first blank line or EOF
-- Acorn validates JS on each line; if the last char causes an Acorn error the parser assumes
-  the statement continues and reads the next line
+- `MdxJsxBlockMarkerBlock` scans only through the lines the marker has observed. It allows nested
+  Markdown once the opening tag is complete. Finalized code-fence and HTML-comment productions,
+  together with provisional flow code spans, are passed to the JSX scanner as explicit opaque
+  ranges. Element and opacity scans are cached by observed limit and production count. A nested JSX
+  marker returns `PASS` after scheduling its close, so the ancestor continues to observe the
+  boundary and owns its closing tag too.
+- `MdxOpaqueBlockMarkerBlock` handles ESM and flow expressions. It never allows sub-blocks and
+  returns `CANCEL`, keeping JavaScript content opaque to competing Markdown markers.
 
-### Stage 2: AST Construction (mdast)
+JSX no longer captures an eager whole-source element range. That range could cross a Markdown block
+whose ownership had not yet been established, making the result depend on edit order. Incomplete
+JSX instead keeps the conservative incremental scan and `CANCEL` behavior. The scanner distinguishes
+a matching closer, an immediate mismatch-recovery boundary, and an unterminated observed prefix;
+the marker publishes matched and recovered roots, plus EOF recovery, but never a movable prefix.
+Named tags and fragments only close identical identities.
 
-`mdast-util-from-markdown` consumes the event stream and produces nodes.
-`mdast-util-mdx` adds handlers for MDX-specific events:
+`MdxJsxMarkdownConstraints` carries JSX ownership and tag or fragment identity through nested
+Markdown constraints. It stores absolute line indentation, advances the real list or blockquote
+parent constraints, and classifies a closing tag as current, ancestor, or mismatched. Every JSX
+wrapper is retained when a Markdown modifier is added; dropping one would let that block consume an
+ancestor closing tag.
 
-| Node type | Example source | What it represents |
-|---|---|---|
-| `MdxjsEsm` | `import Foo from './Foo'` | top-level import/export |
-| `MdxJsxFlowElement` | `<Foo>\n...\n</Foo>` | block-level JSX component |
-| `MdxJsxTextElement` | `inline <Foo />` | inline JSX component |
-| `MdxFlowExpression` | `{2 + 2}` on its own line | block-level JS expression |
-| `MdxTextExpression` | `{name}` in prose | inline JS expression |
+`MdxBlockNodeFactory` converts JSX and ESM scanner results to Markdown nodes. Recognition and node
+projection are kept separate deliberately.
 
-**Critical property**: `MdxJsxFlowElement.children` is a full mdast array — Markdown inside JSX
-is parsed recursively as Markdown. Headings, lists, code fences, and paragraphs all work inside
-a JSX component:
+### Inline recognition
 
-```
-Source:
-  <Callout>
-    ## Important
-    - item one
-  </Callout>
+`MdxInlineElementParser` scans inline ranges for:
 
-mdast result:
-  MdxJsxFlowElement { name: "Callout", children: [
-    Heading { depth: 2 },
-    List { children: [ListItem "item one"] }
-  ]}
-```
+- terminated JSX elements and recoverable opening-tag prefixes;
+- balanced `{...}` expressions.
 
-### Stages 3–5: remark / hast / rehype
+It excludes claimed Markdown tokens from later inline parsers and emits MDX JSX/expression nodes.
+Placing it before `InlineLinkParser` prevents Markdown-looking text inside JSX attributes from being
+interpreted as links. Inline parsing then continues in separate ownership spaces: the outer space
+omits each complete JSX root but glues the text on either side so emphasis and links can wrap it;
+each element body is parsed in its own inner space with tags, attributes, and expressions excluded.
+Standalone expressions stay opaque within whichever space contains them. A delimiter inside an
+element therefore cannot pair with one outside it.
 
-Standard Unified pipeline. Plugins operate on their respective AST layer.
-MDX-specific nodes survive as-is through the hast conversion.
+### Scanner ownership
 
-### Stage 6: ESAST / Recma
+| Component | Responsibility |
+|---|---|
+| `MdxJsxScanner` | JSX tags, attributes, exact-identity nesting, immediate mismatch recovery, and JSX ranges |
+| `MdxExpressionBoundaryScanner` | JavaScript `{...}` boundaries using the platform JS/JSX lexer |
+| `MdxEsmScanner` | Top-level module-statement completeness, recovery, and missing separators |
+| `MdxCodeFenceProvider` | Standard fence ownership plus recovery from an unclosed fence at an active JSX closer |
+| `MdxMarkdownFenceScanner` | Narrow fence boundaries used while recovering paragraph nodes before nested Markdown AST nodes exist |
+| `MdxMarkdownCodeSpanScanner` | Provisional flow code-span opacity before paragraph inline parsing runs |
+| `MdxHtmlCommentBoundary` | Closed multiline HTML-comment boundaries shared by block and JSX scanning |
 
-`rehype-recma` converts hast to an estree-compatible AST. Core recma plugins then run:
+`MdxExpressionBoundaryScanner` and `MdxEsmScanner` delegate strings, templates, comments, regular
+expressions, and nested JSX tokenization to `JSFlexAdapter`. JSX scanning does not rediscover fences
+or comments from raw text: finalized Markdown productions supply those opaque ranges. Closed fences
+remain opaque even when their content contains a matching JSX closing tag. An unclosed fence yields
+only to the current or an ancestor JSX closer; a mismatched closer remains fence content. The raw
+fence scanner is intentionally narrow and remains limited to paragraph recovery. Indentation inside
+a JSX flow body is owned by JSX constraints, so it is not capped at three spaces.
 
-- **`recma-build-jsx`**: compiles `MdxJsxFlowElement` → `_jsx(Component, {props}, children)` calls
-- **`recma-stringify`**: wraps everything in a default-exported function `_createMdxContent(props)`
-  and re-exports named exports
+### Resulting Markdown structure
 
-### Stage 7: Code Generation (astring)
+For this source:
 
-astring serializes the estree to a JavaScript string. Output is a standard ES module for bundlers.
-
----
-
-## Part 2 — Our Implementation Pipeline (IntelliJ plugin)
-
-Our goal is NOT to compile MDX to JS — it is to provide **editor features**: syntax highlighting,
-code completion, navigation, formatting, and inspections.
-
-We use IntelliJ's **template language** infrastructure, which allows one file to have two separate
-PSI trees parsed independently and then linked together.
-
-```
-.mdx file on disk
-       │
-       ▼  MdxFileViewProviderFactory
-  MdxFileViewProvider
-  ├── [base language]           MdxLanguage (Markdown-based)
-  │        │
-  │        ▼ Phase 2: MdxParserDefinition
-  │   Markdown PSI tree
-  │   (contains opaque JSX_BLOCK nodes)
-  │
-  └── [template data language]  MdxJSLanguage (ES6 + JSX dialect)
-           │
-           ▼ Phase 3: MdxTemplateDataElementType → MdxJSParserDefinition
-      JS/JSX PSI tree
-      (stitched from JSX_BLOCK_CONTENT regions)
-```
-
-### Phase 1: File Open → ViewProvider
-
-`MdxFileViewProviderFactory.createFileViewProvider()` returns `MdxFileViewProvider`.
-
-`MdxFileViewProvider` extends both:
-- `MultiplePsiFilesPerDocumentFileViewProvider` — manages multiple PSI roots for one document
-- `TemplateLanguageFileViewProvider` — declares which language is "base" vs "template data"
-
-When IntelliJ needs a PSI file for a given language it calls `createFile(lang)`:
-- `lang == MdxLanguage` → standard parse using `MdxParserDefinition`
-- `lang == MdxJSLanguage` → creates JS `PsiFileImpl` and sets `contentElementType = MdxTemplateDataElementType`
-
-### Phase 2: Markdown PSI Tree
-
-**2a. Lexer — `MarkdownToplevelLexer(MdxFlavourDescriptor)`**
-
-`MarkdownToplevelLexer` is unusual: it runs the **full Markdown parser** internally and then replays
-the resulting token sequence. The "lexer" is a cached parser run.
-
-`MdxFlavourDescriptor` (in `lang/parse/MdxFlavourDescriptor.kt`) extends `CommonMarkFlavourDescriptor`:
-- `sequentialParserManager` → delegated to `GFMFlavourDescriptor` (GFM inlines: tables, strikethrough)
-- `createInlinesLexer()` → delegated to `GFMFlavourDescriptor`
-- `markerProcessorFactory` → `MdxProcessFactory` → creates `MdxMarkerProcessor`
-
-**2b. Parser — `MarkdownParserAdapter(MdxFlavourDescriptor)`**
-
-Wraps the token stream in a `PsiBuilder` and builds the PSI tree.
-
-**2c. Block providers in `MdxMarkerProcessor`**
-
-For each new line, the processor asks each block provider in order whether it wants to open a block:
-
-```
-1. CodeBlockProvider       (indented code: 4 spaces)
-2. HorizontalRuleProvider  (--- or ***)
-3. CodeFenceProvider       (``` or ~~~)
-4. SetextHeaderProvider    (underline === or ---)
-5. BlockQuoteProvider      (> prefix)
-6. ListMarkerProvider      (- / * / 1.)
-7. JsxBlockProvider        ← MDX custom (runs before HtmlBlockProvider)
-8. HtmlBlockProvider
-9. GitHubTableMarkerProvider
-10. AtxHeaderProvider      (# headings)
-11. CommentAwareLinkReferenceDefinitionProvider
-```
-
-**2d. `JsxBlockProvider.matches()` — detection logic** (`lang/parse/JsxBlockProvider.kt`)
-
-Called on every line start. Returns a group index (0–3) for JSX, 6 for import/export, or -1.
-
-```
-text[0] != '<' → check FIND_START_IMPORT_EXPORT regex (import/export keyword)
-text[0] == '<' → run FIND_START_REGEX against the line:
-  group 0: <script|pre|style (close regex: </script|style|pre>)
-  group 1: known block-level HTML tag names  (close: blank line)
-  group 2: any complete open/close/self-closing tag  (close: blank line)
-  group 3: <TagName...  (multiline, no close regex — wait for blank + empty stack)
-```
-
-After matching, `JsxBlockUtil.parseParenthesis()` scans the first line to seed the tag stack and
-emit initial `EMBEDDED_JS_CONTENT` tokens.
-
-**2e. `JsxBlockMarkerBlock.doProcessToken()` — consuming the block body** (`lang/parse/JsxBlockMarkerBlock.kt`)
-
-*JSX block mode* (`isExportImport = false`):
-- On each new line, calls `JsxBlockUtil.parseParenthesis()` which:
-  - Finds all tag matches via `TAG_REGEX`
-  - Pushes open tags onto `tagOrBracketStack`, pops on close tags
-  - Text between tags → `EMBEDDED_JS_CONTENT` if inside a tag, `TEXT` if outside
-- Block ends when `endCheckingRegex` matches the previous line, OR 2+ blank lines with empty stack
-- **`allowsSubBlocks() = false`** — the Markdown parser does NOT recurse into this block
-
-*Import/export mode* (`isExportImport = true`):
-- Calls `JsxBlockUtil.parseExportParenthesis()` which tracks `{` `(` `}` `)` balance
-- Blank line + empty bracket stack → block ends
-- Blank line + non-empty stack → keep consuming (multi-line object literal)
-
-**2f. Output: Markdown PSI structure**
-
-```
-MdxFile
-├── MarkdownParagraph ("# Heading")
-├── JSX_BLOCK                         ← opaque; allowsSubBlocks=false
-│   ├── JSX_BLOCK_CONTENT "<Callout>"
-│   ├── TEXT " some content "         ← TEXT because outside any nested tag
-│   └── JSX_BLOCK_CONTENT "</Callout>"
-├── JSX_BLOCK                         ← import statement
-│   └── JSX_BLOCK_CONTENT "import Foo from './Foo'"
-└── MarkdownParagraph ("more text")
-```
-
-Note: content inside the JSX block is NOT parsed as Markdown. The `EMBEDDED_JS_CONTENT` tokens
-are opaque from the Markdown parser's perspective. This is the root cause of WEB-78468.
-
-### Phase 3: JS/JSX PSI Tree (Template Data)
-
-**3a. `MdxTemplateDataElementType.collectTemplateModifications()`** (`lang/template/MdxTemplateDataElementType.kt`)
-
-Runs the base lexer over the source. Tokens are classified:
-- `EMBEDDED_JS_CONTENT` → kept as JS template data
-- Any other token → `addOuterRange(range)` → replaced by `MdxOuterLanguagePatcher` with `"\n;"`
-
-Special handling for import/export: if the consumed block doesn't end with `;`, inserts one via
-`modifications.addRangeToRemove()`.
-
-**3b. `MdxOuterLanguagePatcher`** (`lang/template/MdxOuterLanguagePatcher.kt`)
-
-Returns `"\n;"` for every outer range placeholder. This keeps the stitched JS file syntactically
-valid — each Markdown paragraph becomes an empty JS statement.
-
-**3c. Virtual JS file (conceptual)**
-
-Given this source:
 ```mdx
-# Hello world
-import Foo from './Foo'
+import Callout from './Callout'
 
-<Foo>
-  some content
-</Foo>
+<Callout>
+## Important
 
-More text here
+- item one
+</Callout>
 ```
 
-The virtual JS file seen by the JS parser:
-```js
-\n;                       // "# Hello world" replaced
-import Foo from './Foo';  // kept, semicolon ensured
-\n;
-<Foo>
-\n;                       // "  some content" is TEXT token → replaced
-</Foo>
-\n;                       // "More text here" replaced
+the base tree is conceptually:
+
+```text
+MdxFile
+├── MDX_ESM_BLOCK
+│   └── EMBEDDED_JS_CONTENT
+└── MDX_JSX_FLOW_ELEMENT
+    ├── MDX_JSX_OPENING_ELEMENT
+    ├── ATX_2
+    ├── UNORDERED_LIST
+    └── MDX_JSX_CLOSING_ELEMENT
 ```
 
-**3d. `MdxJSParserDefinition` + `MdxJSLanguageParser`** (`js/MdxJSLanguageParser.kt`)
+The heading and list are real Markdown descendants of the JSX flow element.
 
-The virtual file is parsed by `MdxJSParserDefinition` (extends `ECMA6ParserDefinition`).
-`MdxJSLanguageParser` extends `ES6Parser` with one override in `statementParser`: if the current
-token is `XML_START_TAG_START`, it parses the JSX expression as an expression statement rather
-than expecting a normal JS statement. Everything else is standard ES6 parsing.
+## JavaScript template-data projection
 
-**3e. Output: JS PSI tree**
+`MdxTemplateDataElementType.collectTemplateModifications()` reparses the source with the same
+`MdxFlavourDescriptor` and derives template roots from its AST. It does not maintain an independent
+JSX/ESM text walk.
 
-```
-JSFile (MdxJSLanguage)
-├── OuterLanguageElement "\n;"         ← placeholder for "# Hello world"
-├── ES6ImportDeclaration "import Foo from './Foo'"
-├── OuterLanguageElement "\n;"
-├── ExpressionStatement
-│   └── XmlElement <Foo>
-│       ├── OuterLanguageElement "\n;" ← placeholder for "some content"
-│       └── XmlClosingTag </Foo>
-└── OuterLanguageElement "\n;"         ← placeholder for "More text here"
-```
+The projection performs these steps:
 
-### Phase 4: Syntax Highlighting
+1. Collect top-level ESM, JSX, and expression roots.
+2. Collect code blocks, code fences, and code spans as opaque Markdown ranges.
+3. Subtract opaque ranges from JSX roots while retaining ESM and expression roots whole.
+4. Handle invalid single-line and opaque multiline HTML comments.
+5. Mark every non-embedded range as outer language and add virtual semicolons where adjacent
+   JavaScript statements need separation.
 
-Separate from parsing — must be fast and incremental.
+`MdxOuterLanguagePatcher` represents outer ranges as `\n;`. `MdxJSLanguageParser`, based on the ES6
+parser with JSX enabled, parses the resulting virtual JavaScript file. The source document itself is
+not rewritten.
 
-```
-MdxEditorHighlighterProvider
-  └── MdxEditorHighlighter
-        └── MdxHighlightingLexer  (LayeredLexer)
-              ├── base: MdxHighlightingLexerBase
-              │     MergingLexerAdapterBase(MarkdownToplevelLexer(MdxFlavourDescriptor))
-              │     merge function: collapses consecutive JSX_BLOCK_CONTENT spans into one,
-              │     stopping at double-newlines
-              └── layer: MarkdownMergingLexer
-                    registered for INLINE_HOLDING_ELEMENT_TYPES
-                    handles inline elements (bold, italic, code spans, links)
+The same Markdown flavour is therefore the semantic source of truth for both PSI roots, even though
+the template-data pipeline performs its own parser invocation.
+
+## Highlighting
+
+Highlighting uses a parallel layered lexer pipeline:
+
+```text
+MdxHighlightingLexer
+├── MdxHighlightingLexerBase
+│   └── MarkdownToplevelLexer(MdxFlavourDescriptor)
+└── MdxInlineHighlightingLexer for Markdown inline containers
 ```
 
-`MdxSyntaxHighlighter` (extends `MarkdownSyntaxHighlighter`) maps token types → `TextAttributesKey`.
+`MdxHighlightingLexerBase` merges adjacent embedded-JavaScript spans. The inline layer collapses a
+balanced `{...}` into one embedded token so JavaScript highlighting covers expressions in prose.
+`MdxEditorHighlighter` registers the JavaScript/JSX highlighter for embedded content and JSX tag
+tokens.
 
-### Phase 5: Formatting
+## Formatting
 
-**5a. Entry: `MdxFormattingModelBuilder.createModel()`** (`format/MdxFormattingModelBuilder.kt`)
+Formatting interleaves the two PSI roots:
 
-- Node is `OUTER_ELEMENT_TYPE` → `SimpleTemplateLanguageFormattingModelBuilder` (no-op for outer elements)
-- Otherwise → `DocumentBasedFormattingModel` with the full block tree
+- `MdxFormattingModelBuilder` builds the template-language model.
+- `MdxBlock` represents Markdown blocks and delegates embedded ranges to data-language wrappers.
+- `MdxJsFormattingModelBuilder` and its XML policy adapt JavaScript/JSX formatting to MDX.
+- `MdxFileIndentOptionsProvider` uses JavaScript indentation settings for `.mdx` files.
 
-**5b. Block tree — `MdxBlock`**
+Formatter changes must preserve both Markdown nesting and the projected JavaScript ranges.
 
-`TemplateLanguageFormattingModelBuilder.getRootBlock()` builds a hybrid block tree interleaving
-`MdxBlock` (Markdown) and `DataLanguageBlockWrapper` (JS) nodes.
+## Structural invariants
 
-`MdxBlock.getIndent()`:
-```
-if node text is whitespace-only              → NoneIndent
-else if DataLanguageBlockWrapper ancestor exists:
-    if HtmlPolicy says don't indent children → NoneIndent
-    else                                     → NormalIndent
-else                                         → NoneIndent
-```
+- Markdown AST nodes, not a separate template scan, decide which source ranges are MDX.
+- JSX flow children remain available to the Markdown block parser.
+- A complete nested JSX marker is transparent to ancestor JSX markers; ESM, expressions, fences,
+  and HTML comments are opaque.
+- JSX scans are bounded by the marker's observed prefix. Incomplete editor input uses conservative
+  recovery and must not publish a movable root over a Markdown sibling.
+- A matching JSX closer, an unrelated closer used for immediate recovery, and EOF are distinct
+  scanner outcomes; named tags and fragments never close one another.
+- JSX constraint wrappers retain tag identity and survive list and blockquote modifier recognition,
+  preserving every ancestor closing boundary.
+- Finalized fence and HTML-comment productions are explicit JSX-scanner opacity. Closed fences never
+  yield; unclosed fences yield only to the current or an ancestor JSX closer.
+- Code blocks, fences, and spans are subtracted from JSX roots during template projection.
+- Inline Markdown delimiters pair only within the outer paragraph or one JSX element body; complete
+  JSX roots and standalone expressions remain opaque gaps in their containing space.
+- Closed multiline HTML comments are owned by a comment-only block provider. Single-line HTML
+  comments retain the existing invalid-MDX diagnostics.
+- Scanner `IntRange.last` values are exclusive text offsets.
+- Incomplete editor input may produce recoverable MDX roots, but stable Markdown siblings must not be
+  swallowed.
 
-`MdxBlock.getChildAttributes()`:
-- `EMBEDDED_JS_CONTENT` children → `NormalIndent`
-- other children → `NoneIndent`
+## Tests
 
-**5c. JS/JSX formatting — `MdxJsFormattingModelBuilder`** (`format/MdxJsFormattingModelBuilder.kt`)
-
-Extends `JavascriptFormattingModelBuilder`. Overrides `createModel()` to inject a custom XML policy
-via `getPolicy()`:
-
-*JSX mode* (`DialectDetector.isJSX()` → true, custom `HtmlPolicy`):
-- `isInlineTag(tag)` → true when tag name is capitalized (treats `<MyComponent>` as inline)
-- `insertLineBreakBeforeTag()` → always false
-- `allowWrapBeforeText()` → false
-- `getWrappingTypeForTagBegin()` → `NONE` inside return statements or after text siblings;
-  otherwise delegates up
-
-*Non-JSX mode* (custom `XmlPolicy`):
-- Root-level tags get `NORMAL` wrap; nested tags use default
-
-**5d. Spacing — `MdxJsBlockContext` + `MdxJsSpacingProcessor`**
-
-`MdxJsBlockContext` overrides `createSpacingStrategy()` to wire in `MdxJsSpacingProcessor`
-for MDX-specific spacing rules between AST nodes in the JS/JSX tree.
-
-**5e. Indent options — `MdxFileIndentOptionsProvider`**
-
-Delegates indent tab/space settings for `.mdx` files to the JS/JSX code style settings.
-
----
-
-## Key Structural Comparison
-
-| | Official MDX | Our Implementation |
-|---|---|---|
-| **Goal** | Compile MDX → JavaScript module | IDE features (highlight, complete, navigate, format) |
-| **JSX nesting** | Fully recursive mdast (Markdown inside JSX = Markdown nodes) | Flat opaque `EMBEDDED_JS_CONTENT`; `allowsSubBlocks=false` |
-| **Expression `{}`** | First-class; Acorn-validated | Not explicitly handled; treated as JS text in virtual file |
-| **Two parse trees** | No — one unified AST | Yes — Markdown PSI + JS PSI linked via template language |
-| **JS validation** | Acorn inside micromark extensions | ES6Parser on stitched virtual file |
-| **Formatter** | None (Prettier plugin) | Two-tier: TemplateLanguageFormattingModelBuilder + JavascriptFormattingModelBuilder |
-| **Core limitation** | None for parsing | `JsxBlockProvider` regex can't handle Markdown inside JSX or `<` in code blocks |
-
----
-
-## Parsing test workflow
-
-Two test classes drive the parsing gate (run **one class at a time** — running several MDX test
-classes together pollutes JVM/application state and yields false failures):
+Use the owning test module and fully qualified class names:
 
 ```sh
-./tests.cmd --module intellij.mdx.tests --test 'org.intellij.plugin.mdx.MdxParsingTest'
-./tests.cmd --module intellij.mdx.tests --test 'org.intellij.plugin.mdx.MdxRedesignTargetTest'   # append #methodName for one test
+./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxJsxScannerTest
+./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxEsmScannerTest
+./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxExpressionBoundaryScannerTest
+./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxMarkdownFenceScannerTest
+./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxOracleTest
+./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxParsingTest
 ```
 
-- **`MdxParsingTest`** — golden self-snapshots (`checkAllPsiRoots`). Each `parsing/<Name>.mdx` has a
-  `<Name>.MDX.txt` (base Markdown PSI) and `<Name>.MdxJS.txt` (template-data JS PSI). These capture
-  CURRENT behavior as a regression net; they are all green by construction. Regenerate after an
-  intentional change: add `-Dpass.idea.tests.overwrite.data=true` to the run (overwrites the
-  committed `.txt` snapshots in place), then review the diff.
-- **`MdxRedesignTargetTest`** — correctness/acceptance, keyed to the mdast oracle
-  (`testData/oracle/<Name>.mdast.json`, the mdxjs.com toolchain). Tests that are RED here are
-  intentional: they assert spec-correct behaviour the current parser does not yet produce. Do NOT
-  weaken them; they go green only when the parser is fixed.
+- Scanner tests pin the individual boundary contracts.
+- `MdxOracleTest` asserts structural behavior against the official MDX model.
+- `MdxParsingTest` checks both PSI roots against golden files under `testData/parsing`.
+- `MdxLiveEditingTest`, `MdxHighlightTest`, and `MdxFormatterTest` cover editor integration.
 
-### Which `parsing/` fixtures are spec-correct vs capture-current-bug
-
-Cross-checked against `testData/oracle/*.mdast.json`:
-
-| Spec-correct (PSI already matches the oracle) | Captures a current bug (snapshot ≠ oracle; redesign target) |
-|---|---|
-| ParsingFrontMatter, ParsingTomlFrontMatter (`yaml`/`toml`) | ParsingCodeBlockInJsx, ParsingGenericsInCodeBlock, ParsingJsxExpressionAttribute (opaque fence / bogus JSX errors) |
-| ParsingGfmTable (`table`), ParsingStrikethrough (`delete`) | ParsingMarkdownInJsx, ParsingMarkdownInJsxIndented (Markdown inside JSX is opaque) |
-| ParsingNestedFence (opaque `code`), ParsingTsxCodeBlock | ParsingTaskList (`[ ]`/`[x]` not GFM checkboxes) |
-| ParsingMemberExpressionComponent (`Foo.Bar`), ParsingExportDefault (ESM) | ParsingGfmAlert (`[!NOTE]` parsed as reference link) |
-| ParsingInlineJsxInEmphasis, ParsingJsxInBlockquote, ParsingJsxInListItem | ParsingEmptyExpression (`{}` is text, not an expression) |
-| ParsingFragments, ParsingOperatorInAttribute, ParsingJsxInAttributeArray | ParsingFlowExpressionWithJsx (`{a < b ? ...}` split, not one expression) |
-| ParsingCrlf, ParsingWhitespaceOnly, ParsingEsm, ParsingMultilineEsm | ParsingJsxInOrderedList, ParsingMultilineJsxAttribute (JSX/body opaque under list/element) |
-| ParsingList, ParsingExpressions, ParsingNestedComponents, ParsingInlineJsx | ParsingImportInProse (BOL `import`/`export` → oracle parseError) |
-| ParsingInlineExpressionComment, ParsingJsxInMarkdownInline, ParsingEmbedded | ParsingHtmlComment, ParsingAutolink (invalid MDX → oracle parseError) |
-| ParsingAlert (a JSX `<Alert>` component), ParsingPrisma, ParsingLongText | ParsingIndentedCode (indented code disabled in MDX; oracle = paragraph) |
+Only regenerate golden files for an intentional PSI change. Run the exact parsing test with
+`-Dpass.idea.tests.overwrite.data=true`, then inspect every resulting fixture diff.

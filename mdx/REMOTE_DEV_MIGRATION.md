@@ -7,7 +7,7 @@
 - Plan root: `contrib/mdx`
 - Root descriptor: `contrib/mdx/src/main/resources/META-INF/plugin.xml`
 - Root JPS module: `intellij.mdx`
-- Last verified: 2026-08-20 against `85d46456e9bbe`; DataGrip excludes `intellij.mdx` from compatible-plugin publication, and unrelated WebStorm/dev-server and MDX test edits were preserved.
+- Last verified: 2026-08-25 against `mdx` at `0e956f9fe2655`; the rescanner series compiles with the split modules, the full MDX suite passes 364/364 tests, and the shared split-mode inspection reports no issues.
 
 ## Current Split State
 
@@ -32,6 +32,7 @@
 - Architecture: one plugin with a metadata-only root, required shared content, conditional backend/frontend content, and a minimal thin-client-only adapter.
 - Compatibility: preserve the plugin id, MDX/MdxJS language identities, file type, and existing `org.intellij.plugin.mdx` shared API packages.
 - Line wrapping: register the MDX-specific strategy from shared ownership, as required by the split-mode API restriction.
+- Parser boundaries: keep Markdown AST ownership and the JSX, expression, ESM, fence, and opacity scanners in shared; the backend import optimizer reuses the shared ESM scanner.
 - Product compatibility: DataGrip does not bundle the JavaScript plugin required by MDX, so it explicitly excludes `intellij.mdx` from compatible non-bundled plugin publication; this is independent of Full Line's optional MDX content module.
 - Completed milestone checklist:
   - [x] Normalize the root descriptor and establish the canonical content-module layout.
@@ -44,15 +45,16 @@
   - [x] Restore a non-empty root plugin classpath entry for dev-build and packaged runtime loading.
   - [x] Resolve post-migration descriptor dependencies, frontend editor-action ownership, project-structure allowlisting, and inspection findings.
   - [x] Move the MDX line-wrap registration to shared ownership and add an MDX-owned strategy there.
+  - [x] Reapply the AST-first rescanner and parser-boundary redesign to the split shared/backend layout.
 
 ## Current In-Progress Task
 
 - Status: complete
-- Active milestone: none; the MDX `com.intellij.lang.lineWrapStrategy` registration now has shared ownership.
-- Current worker skill: `remote-dev-language-plugin` with `remote-dev-module-layout` and focused test validation.
-- Verified starting evidence: the split-mode restriction classifies `LineWrapPositionStrategy` and `com.intellij.lang.lineWrapStrategy` as shared because frontend-only ownership can break editor/document patching; before `85d46456e9bbe`, MDX registered `com.intellij.markdown.frontend.editor.MarkdownLineWrapPositionStrategy` from its frontend descriptor.
-- Completed outcome: `MdxLineWrapPositionStrategy` and the MDX registration now live in `intellij.mdx.shared`; Markdown's own strategy remains in `intellij.markdown.frontend`.
-- Last completed step: `85d46456e9bbe` moved the MDX registration and added the shared MDX strategy.
+- Active milestone: none; the rescanner and parser-boundary redesign is adapted to the split module layout.
+- Current worker skill: `remote-dev-language-plugin` with code-style, split-mode inspection, and focused test validation.
+- Verified starting evidence: parser, lexer, PSI, and template projection belong in `intellij.mdx.shared`, while import optimization remains backend-owned and may depend on shared language-core APIs.
+- Completed outcome: the seven rescanner commits keep scanner and parser ownership in `intellij.mdx.shared`; `MdxJSImportOptimizer` remains in `intellij.mdx.backend` and reuses the shared `MdxEsmScanner` contract.
+- Last completed step: the split modules compiled, the shared split-mode inspection found no issues in 48 files, and the full MDX suite passed 364/364 tests.
 - Next optional step: continue the manual split-runtime checklist with at least 500 ms Direct Ping.
 - Handoff condition: no automated follow-up work remains; manual runtime observations should be recorded below if performed.
 
@@ -66,7 +68,7 @@
 - `intellij.mdx.shared`
   - Descriptor: `shared/resources/intellij.mdx.shared.xml`
   - Kind: shared
-  - Role: language/file type, parser/lexer, PSI/template-data core, syntax highlighting and colors, typing, Enter, quote handling, line wrapping, the code-fence editing sandbox, and shared Markdown integration
+  - Role: language/file type, parser/lexer, PSI/template-data core, explicit parser-boundary scanners, syntax highlighting and colors, typing, Enter, quote handling, line wrapping, the code-fence editing sandbox, and shared Markdown integration
   - Constraint: no frontend-, backend-, split-, or monolith-only platform dependency
 
 - `intellij.mdx.backend`
@@ -96,7 +98,7 @@
 - PSI and core language model
   - Owner: shared
   - Registrations: file type, view provider, MDX/MdxJS parser definitions, outer-language range patcher
-  - State: complete; shared compilation and parser/editor tests pass
+  - State: complete; the AST-first scanner redesign is shared-owned, shared compilation passes, and parser/editor regressions are covered by the full MDX suite
 
 - Highlighting and color settings
   - Owner: shared for syntax highlighting and settings; backend for injected-highlighting policy; frontend-split for duplicate suppression
@@ -124,6 +126,7 @@
 - [x] Embed the legacy root content module in a top-level plugin JAR so dev-build descriptor loading has a non-empty classpath.
 - [x] Resolve the reported post-migration descriptor, frontend action ownership, Full Line allowlist, and code-inspection findings.
 - [x] Move the MDX line-wrap registration from frontend to shared ownership and add `MdxLineWrapPositionStrategy` to the shared module.
+- [x] Reapply the rescanner and parser-boundary redesign without moving language-core scanning into backend or frontend modules.
 
 ### Manual split-runtime verification
 
@@ -139,6 +142,8 @@
 
 ## Validation
 
+- Rescanner rebase: the seven-commit series is based directly on `mdx` at `0e956f9fe2655`; parser/scanner sources are in `intellij.mdx.shared`, while `MdxJSImportOptimizer` remains in `intellij.mdx.backend`.
+- Rescanner validation: the test build compiled shared, backend, frontend, and test modules; 364/364 MDX tests passed, and the split-mode compatibility inspection reported zero issues across 48 shared files.
 - Line-wrap ownership: `85d46456e9bbe` moves the MDX registration from `intellij.mdx.frontend.xml` to the shared descriptor and adds `MdxLineWrapPositionStrategy`; Markdown's own frontend registration is unchanged.
 - Line-wrap regression tests: `MarkdownSoftWrapTest` passed 2/2 and `MdxLiveEditingTest` passed 46/46.
 - Generated metadata: `./build/jpsModelToBazel.cmd` completed successfully with no generated-file changes.
@@ -176,3 +181,4 @@
 - 2026-08-19: embedded the legacy `intellij.mdx` content module in `lib/intellij.mdx.jar`, restoring the root classpath entry required by dev-build plugin descriptor loading while preserving Full Line compatibility.
 - 2026-08-19: fixed the post-migration Markdown descriptor dependencies, moved the paste action wrapper and Markdown promoter registration to frontend ownership, allowlisted the intentional Full Line MDX dependencies, and resolved the supplied inspection findings.
 - 2026-08-20: `85d46456e9bbe` moved the MDX line-wrap registration from frontend to shared ownership and introduced the MDX-owned `MdxLineWrapPositionStrategy`; Markdown's frontend strategy and registration were unchanged.
+- 2026-08-25: rebased the seven-commit rescanner and parser-boundary redesign onto the split MDX layout, keeping language-core scanners shared and import optimization backend-owned; 364/364 MDX tests passed.
