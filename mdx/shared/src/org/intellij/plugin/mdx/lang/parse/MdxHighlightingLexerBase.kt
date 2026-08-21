@@ -61,6 +61,7 @@ private class MdxMarkerProcessor(
 
   override fun getMarkerBlockProviders(): List<MarkerBlockProvider<StateInfo>> =
     buildList {
+      add(MdxHtmlCommentBlockProvider())
       add(JsxBlockProvider())
       addAll(super.getMarkerBlockProviders())
       removeIf { it is HtmlBlockProvider }

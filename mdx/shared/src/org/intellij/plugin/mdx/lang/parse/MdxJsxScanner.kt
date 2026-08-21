@@ -244,6 +244,11 @@ object MdxJsxScanner {
     var incomplete = false
     var offset = opening.range.last
     while (offset < limit) {
+      val commentEnd = MdxHtmlCommentBoundary.findClosedMultilineCommentEnd(text, offset, limit)
+      if (commentEnd != -1) {
+        offset = commentEnd
+        continue
+      }
       // Skip fenced code blocks whole: their {/}/< are code, not MDX expressions or tags.
       if (isAtLineStart(text, offset)) {
         val fenceEnd = skipCodeFence(text, offset, limit)

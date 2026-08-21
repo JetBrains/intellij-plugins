@@ -31,9 +31,10 @@ internal class MdxJsxMarkdownConstraints(
   }
 
   override fun addModifierIfNeeded(pos: LookaheadText.Position?): MarkdownConstraints? {
-    // Delegate to the block-start constraints so a `- item`/`1.`/`> ...` line inside the JSX block
-    // still gets a real list-item/blockquote modifier instead of collapsing into a flat paragraph.
-    return parent.addModifierIfNeeded(pos)
+    // Delegate modifier recognition, but retain every JSX wrapper. Returning the modified parent
+    // directly loses the closing boundary of nested JSX and lets a list item consume ancestor tags.
+    val modifiedParent = parent.addModifierIfNeeded(pos) ?: return null
+    return copy(parent = modifiedParent, charsEaten = modifiedParent.charsEaten)
   }
 
   override fun applyToNextLine(pos: LookaheadText.Position?): MarkdownConstraints {
@@ -58,7 +59,7 @@ internal class MdxJsxMarkdownConstraints(
     return copy(charsEaten = nonWhitespaceOffset)
   }
 
-  private fun copy(charsEaten: Int): MdxJsxMarkdownConstraints {
+  private fun copy(parent: MarkdownConstraints = this.parent, charsEaten: Int): MdxJsxMarkdownConstraints {
     return MdxJsxMarkdownConstraints(parent, blockStartIndent, blockStartOffset, charsEaten)
   }
 

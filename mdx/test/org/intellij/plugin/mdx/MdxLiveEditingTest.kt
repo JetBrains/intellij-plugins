@@ -6,6 +6,7 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.LanguageLineWrapPositionStrategy
+import com.intellij.openapi.editor.highlighter.HighlighterIterator
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.PlatformTestUtil
@@ -162,7 +163,7 @@ class MdxLiveEditingTest : MdxTestBase() {
 
   @Test
   fun testRenamingMultilineOpeningTagKeepsMdxJsPsi() {
-    myFixture.configureByText("test.mdx", "<div>\n  Hello\n</div>")
+    myFixture.configureByFile("$testName.mdx")
     WriteCommandAction.runWriteCommandAction(myFixture.project) {
       myFixture.editor.document.replaceString(1, 4, "dix")
     }
@@ -170,6 +171,55 @@ class MdxLiveEditingTest : MdxTestBase() {
 
     val tagNames = nodesOfTypeAllRoots(XML_TAG_NAME).map { it.text }
     assertTrue("Transiently mismatched tags must remain in MdxJS PSI: $tagNames", tagNames.containsAll(listOf("dix", "div")))
+  }
+
+  @Test
+  fun testNestedJsxStructureAndHighlightingDoNotDependOnEditOrder() {
+    myFixture.configureByFile("$testName.mdx")
+    val fresh = nestedJsxSignature()
+    assertEquals("The final text must have both base JSX flow elements", 2, fresh.count { it.startsWith("base:") })
+    assertEquals("The final text must project four opening/closing tag names", 4, fresh.count { it.startsWith("tag:") })
+
+    myFixture.configureByFile("${testName}_withoutList.mdx")
+    WriteCommandAction.runWriteCommandAction(myFixture.project) {
+      val document = myFixture.editor.document
+      document.insertString(document.text.indexOf("  </div>"), "    - \n")
+    }
+    assertEquals("Adding the Markdown block last must converge to the fresh parse", fresh, nestedJsxSignature())
+
+    myFixture.configureByFile("${testName}_listOnly.mdx")
+    WriteCommandAction.runWriteCommandAction(myFixture.project) {
+      val document = myFixture.editor.document
+      document.insertString(document.textLength, "  </div>\n</div>\n")
+      document.insertString(0, "<div>\n  <div>\n")
+    }
+    assertEquals("Wrapping the Markdown block last must converge to the fresh parse", fresh, nestedJsxSignature())
+  }
+
+  private fun nestedJsxSignature(): List<String> {
+    PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
+    val signature = mutableListOf<String>()
+    signature.addAll(
+      nodesOfType(myFixture.file, "MDX_JSX_FLOW_ELEMENT")
+        .filter { it.firstChild != null }
+        .map { "base:${it.textRange}" }
+        .sorted(),
+    )
+    signature.addAll(
+      nodesOfTypeAllRoots(XML_TAG_NAME)
+        .map { "tag:${it.text}@${it.textRange}" }
+        .sorted(),
+    )
+
+    val iterator: HighlighterIterator = myFixture.editor.highlighter.createIterator(0)
+    while (!iterator.atEnd()) {
+      val tokenText = myFixture.editor.document.charsSequence.subSequence(iterator.start, iterator.end).toString()
+      if (tokenText == "div") {
+        signature.add("highlight:${iterator.start}:${iterator.textAttributesKeys.map { it.externalName }}")
+      }
+      iterator.advance()
+    }
+    return signature
   }
 
   @Test

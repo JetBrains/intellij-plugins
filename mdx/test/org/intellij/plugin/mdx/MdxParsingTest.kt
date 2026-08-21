@@ -107,6 +107,36 @@ class MdxParsingTest : MdxTestBase() {
     doTest()
   }
 
+  @Test
+  fun testParsingMismatchedMultilineTagRecovery() {
+    myFixture.configureByFile("$testName.mdx")
+
+    val tagNames = nodesOfTypeAllRoots(XML_TAG_NAME).map { it.text }
+    assertTrue("Both sides of the malformed JSX element must remain in MdxJS PSI: $tagNames", "div" in tagNames && "span" in tagNames)
+    assertTrue("The platform JSX parser must report the mismatched closer", collectPsiErrorElements().isNotEmpty())
+    assertHasMarkdownHeading("After", 1)
+  }
+
+  @Test
+  fun testParsingAncestorClosingTagRecovery() {
+    myFixture.configureByFile("$testName.mdx")
+
+    val tagNames = nodesOfTypeAllRoots(XML_TAG_NAME).map { it.text }
+    assertTrue("Recovered JSX names are missing: $tagNames", tagNames.containsAll(listOf("Outer", "Inner")))
+    assertTrue("The platform JSX parser must report the unclosed Inner element", collectPsiErrorElements().isNotEmpty())
+    assertHasMarkdownHeading("After", 1)
+  }
+
+  @Test
+  fun testParsingUnclosedMultilineTagAtEof() {
+    myFixture.configureByFile("$testName.mdx")
+
+    assertTrue(
+      "An incomplete opening tag must remain in MdxJS PSI",
+      nodesOfTypeAllRoots(XML_TAG_NAME).any { it.text == "Panel" },
+    )
+  }
+
   /**
    * WEB-59041 regression anchor: fenced code inside a JSX element. The scanner keeps the fenced code
    * opaque inside a structured `<div>` flow element (no stray XmlTag for the `<...>` in the code).

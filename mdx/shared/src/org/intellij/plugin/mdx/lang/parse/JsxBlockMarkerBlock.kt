@@ -50,6 +50,11 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   if (kind == MdxBlockKind.JSX) MdxJsxMarkdownConstraints(myConstraints, blockStartIndent, blockStartOffset) else myConstraints,
   productionHolder.mark()
 ) {
+  private val hasJsxParent = myConstraints is MdxJsxMarkdownConstraints
+  private val terminatedJsxElement = if (kind == MdxBlockKind.JSX) {
+    MdxJsxScanner.scanJsxElement(source, blockStartOffset)?.takeIf { it.terminated }
+  }
+  else null
   private var currentEndOffset = blockStartOffset + initialText.length
   private var finalized = false
   private var closeScheduled = false
@@ -70,12 +75,12 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
       return MarkerBlock.ProcessingResult.DEFAULT
     }
     if (pos.offsetInCurrentLine != -1) {
-      return MarkerBlock.ProcessingResult.CANCEL
+      return activeProcessingResult()
     }
     suppressSubBlocks = false
     if (isTerminated()) {
       scheduleClose(pos.offset)
-      return MarkerBlock.ProcessingResult.CANCEL
+      return activeProcessingResult()
     }
     val candidateEndOffset = pos.nextLineOrEofOffset
     if (!shouldAppendLine(pos, candidateEndOffset)) {
@@ -90,7 +95,7 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
     if (isTerminated()) {
       scheduleClose(pos.nextLineOrEofOffset)
     }
-    return MarkerBlock.ProcessingResult.CANCEL
+    return activeProcessingResult()
   }
 
   override fun acceptAction(action: MarkerBlock.ClosingAction): Boolean {
@@ -115,6 +120,9 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   }
 
   private fun shouldAppendLine(pos: LookaheadText.Position, candidateEndOffset: Int): Boolean {
+    if (terminatedJsxElement != null) {
+      return true
+    }
     if (isTerminated(candidateEndOffset)) {
       return true
     }
@@ -136,12 +144,15 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   }
 
   private fun hasCompleteOpeningTag(): Boolean {
-    return MdxJsxScanner.scanJsxElement(source, blockStartOffset, currentEndOffset) != null
+    val openingTagEnd = terminatedJsxElement?.tags?.firstOrNull()?.range?.last
+    return openingTagEnd?.let { currentEndOffset >= it }
+           ?: (MdxJsxScanner.scanJsxElement(source, blockStartOffset, currentEndOffset) != null)
   }
 
   private fun isTerminated(candidateEndOffset: Int): Boolean {
     return when (kind) {
-      MdxBlockKind.JSX -> MdxJsxScanner.scanJsxElement(source, blockStartOffset, candidateEndOffset)?.terminated == true
+      MdxBlockKind.JSX -> terminatedJsxElement?.range?.last?.let { candidateEndOffset >= it }
+                           ?: (MdxJsxScanner.scanJsxElement(source, blockStartOffset, candidateEndOffset)?.terminated == true)
       MdxBlockKind.ESM -> {
         val block = MdxEsmScanner.scanBlock(source, blockStartOffset, candidateEndOffset)
         block != null && (block.terminated || block.recoveryBoundary || candidateEndOffset == source.length)
@@ -150,12 +161,21 @@ internal class JsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
     }
   }
 
+  private fun activeProcessingResult(): MarkerBlock.ProcessingResult {
+    return if (hasJsxParent && terminatedJsxElement != null) {
+      MarkerBlock.ProcessingResult.PASS
+    }
+    else {
+      MarkerBlock.ProcessingResult.CANCEL
+    }
+  }
+
   private fun finalizeProductions() {
     if (finalized) return
     finalized = true
     val nodes = when (kind) {
       MdxBlockKind.JSX -> {
-        val element = MdxJsxScanner.scanJsxElement(source, blockStartOffset, currentEndOffset)
+        val element = terminatedJsxElement ?: MdxJsxScanner.scanJsxElement(source, blockStartOffset, currentEndOffset)
         // A marker may be finalized merely because a nested Markdown block takes over. Its current
         // range is then only a scanner snapshot and can cross the nested block's eventual JSX root.
         // Publish recovered roots only at boundaries that cannot later move: a consumed closing tag

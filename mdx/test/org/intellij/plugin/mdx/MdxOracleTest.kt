@@ -3,6 +3,7 @@ package org.intellij.plugin.mdx
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlTag
 import org.junit.jupiter.api.Test
 
 /**
@@ -209,6 +210,70 @@ class MdxOracleTest : MdxTestBase() {
     assertNestedInJsxElement(list!!, "Box")
   }
 
+  @Test
+  fun testNestedJsxKeepsBaseAndProjectedOwnershipAcrossMarkdownBlocks() {
+    val cases = mapOf(
+      "empty list item" to "<div>\n  <div>\n    - \n  </div>\n</div>",
+      "unordered list item" to "<div>\n  <div>\n    - item\n  </div>\n</div>",
+      "ordered list item" to "<div>\n  <div>\n    1. item\n  </div>\n</div>",
+      "task list item" to "<div>\n  <div>\n    - [ ] item\n  </div>\n</div>",
+      "heading" to "<div>\n  <div>\n    ## Heading\n  </div>\n</div>",
+      "blockquote" to "<div>\n  <div>\n    > quote\n  </div>\n</div>",
+      "fence" to "<div>\n  <div>\n    ```md\n    body\n    ```\n  </div>\n</div>",
+    )
+
+    for ((description, text) in cases) {
+      assertNestedJsxOwnership(text, expectedDepth = 2, description)
+    }
+  }
+
+  @Test
+  fun testThreeNestedJsxLevelsKeepBaseAndProjectedOwnership() {
+    val text = "<div>\n  <div>\n    <div>\n      - item\n    </div>\n  </div>\n</div>"
+
+    assertNestedJsxOwnership(text, expectedDepth = 3, "three JSX levels")
+  }
+
+  private fun assertNestedJsxOwnership(text: String, expectedDepth: Int, description: String) {
+    myFixture.configureByText("nested.mdx", text)
+
+    val baseElements = nodesOfType(myFixture.file, "MDX_JSX_FLOW_ELEMENT")
+      .filter { it.firstChild != null }
+      .sortedByDescending { it.textRange.length }
+    assertEquals(
+      "$description: expected $expectedDepth distinct base MDX JSX elements, got " +
+        baseElements.map { "${it.textRange}:'${it.text}'" },
+      expectedDepth,
+      baseElements.map { it.textRange }.distinct().size,
+    )
+    assertEquals("$description: outer base JSX must span the full input", text, baseElements.firstOrNull()?.text)
+    for (index in 0..<baseElements.lastIndex) {
+      assertTrue(
+        "$description: ${baseElements[index].textRange} must own ${baseElements[index + 1].textRange} in the base PSI",
+        PsiTreeUtil.isAncestor(baseElements[index], baseElements[index + 1], true),
+      )
+    }
+
+    val projectedTags = allRoots()
+      .flatMap { PsiTreeUtil.collectElementsOfType(it, XmlTag::class.java) }
+      .filter { it.name == "div" }
+      .distinctBy { it.textRange }
+      .sortedByDescending { it.textRange.length }
+    assertEquals(
+      "$description: expected $expectedDepth distinct projected XmlTag elements, got " +
+        projectedTags.map { "${it.textRange}:'${it.text}'" },
+      expectedDepth,
+      projectedTags.size,
+    )
+    assertEquals("$description: outer projected JSX must span the full input", text, projectedTags.firstOrNull()?.text)
+    for (index in 0..<projectedTags.lastIndex) {
+      assertTrue(
+        "$description: ${projectedTags[index].textRange} must own ${projectedTags[index + 1].textRange} in MdxJS PSI",
+        PsiTreeUtil.isAncestor(projectedTags[index], projectedTags[index + 1], true),
+      )
+    }
+  }
+
   /** WEB-78468. Oracle: `{/* */}` is an MDX expression whose body is a JS block comment. GREEN. */
   @Test
   fun testMdxComment() {
@@ -310,36 +375,6 @@ class MdxOracleTest : MdxTestBase() {
     assertTrue(
       "Oracle: a `Comp` JSX element is expected in the JS root",
       nodesOfTypeAllRoots(XML_TAG_NAME).any { it.text == "Comp" }
-    )
-  }
-
-  @Test
-  fun testMismatchedMultilineTagRemainsJsx() {
-    myFixture.configureByText("foo.mdx", "<div>\n  Hello\n</span>\n\n# After")
-
-    val tagNames = nodesOfTypeAllRoots(XML_TAG_NAME).map { it.text }
-    assertTrue("Both sides of the malformed JSX element must remain in MdxJS PSI: $tagNames", "div" in tagNames && "span" in tagNames)
-    assertTrue("The platform JSX parser must report the mismatched closer", collectPsiErrorElements().isNotEmpty())
-    assertHasMarkdownHeading("After", 1)
-  }
-
-  @Test
-  fun testAncestorClosingTagFlushesIncompleteNestedTag() {
-    myFixture.configureByText("foo.mdx", "<Outer>\n  <Inner>\n</Outer>\n\n# After")
-
-    val tagNames = nodesOfTypeAllRoots(XML_TAG_NAME).map { it.text }
-    assertTrue("Recovered JSX names are missing: $tagNames", tagNames.containsAll(listOf("Outer", "Inner")))
-    assertTrue("The platform JSX parser must report the unclosed Inner element", collectPsiErrorElements().isNotEmpty())
-    assertHasMarkdownHeading("After", 1)
-  }
-
-  @Test
-  fun testUnclosedMultilineTagRemainsJsxAtEof() {
-    myFixture.configureByText("foo.mdx", "<Panel>\n  content")
-
-    assertTrue(
-      "An incomplete opening tag must remain in MdxJS PSI",
-      nodesOfTypeAllRoots(XML_TAG_NAME).any { it.text == "Panel" }
     )
   }
 
