@@ -39,6 +39,24 @@ class VueCompletionTest :
   class WithTsGoProxyTest :
     VueCompletionTestBase(testMode = VueTestMode.TS_GO_PROXY) {
 
+    @Rule
+    @JvmField
+    val rule: TestRule = TrackFailedTestRule(
+      "testCastedObjectProps",
+      "testComputedTypeJS",
+      "testComputedTypeTS",
+      "testDefineExpose",
+      "testExternalSymbolsImport",
+      "testNoCompletionInVueAttributes",
+      "testScriptSetup",
+      "testScriptSetupGeneric",
+      "testScriptSetupTs",
+      "testVue2CompositionApi",
+      "testVue3CompositionApi",
+      "testVueDefaultSymbols",
+      "testVueOutObjectLiteralTs",
+    )
+
     override fun adjustConfigurators(
       configurators: List<PolySymbolsTestConfigurator>,
     ): List<PolySymbolsTestConfigurator> {
