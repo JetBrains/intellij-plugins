@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.util.RecursionManager
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.and
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
@@ -16,6 +17,7 @@ import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.config.VueCompilerOptions
+import org.jetbrains.vuejs.withDisabledConfigUsageCheck
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -35,7 +37,35 @@ class VueCompletionTest :
 
   @Ignore
   class WithTsGoProxyTest :
-    VueCompletionTestBase(testMode = VueTestMode.TS_GO_PROXY)
+    VueCompletionTestBase(testMode = VueTestMode.TS_GO_PROXY) {
+
+    override fun adjustConfigurators(
+      configurators: List<PolySymbolsTestConfigurator>,
+    ): List<PolySymbolsTestConfigurator> {
+      val result = super.adjustConfigurators(configurators)
+
+      return when (name) {
+        "testCompleteComputedPropsInInterpolation",
+        "testCompleteMethodsInBoundAttributes",
+        "testCompletePropsInInterpolation",
+        "testEnum",
+        "testPropsDataOptionsJS",
+        "testScriptSetup",
+        "testScriptSetupTs",
+        "testSlotProps",
+        "testStyleVBind",
+        "testVue2CompositionApi",
+        "testVue3CompositionApi",
+        "testVueDefaultSymbols",
+        "testVueTscComponent",
+        "testVueTscComponentAliasedExport",
+        "testVueTscComponentWithSlots",
+          -> result.withDisabledConfigUsageCheck()
+
+        else -> result
+      }
+    }
+  }
 
   class WithoutServiceTest :
     VueCompletionTestBase(testMode = VueTestMode.NO_PLUGIN) {
