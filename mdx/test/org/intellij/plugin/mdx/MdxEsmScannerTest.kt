@@ -43,5 +43,111 @@ class MdxEsmScannerTest {
 
     assertTrue(block?.terminated == true)
     assertEquals(text.length, block?.range?.last)
+    assertTrue(MdxEsmScanner.findMissingStatementSeparators(text, 0, text.length).isEmpty())
+  }
+
+  @Test
+  fun findsMissingStatementSeparatorAtTopLevel() {
+    val text = "import First from 'first'import Second from 'second'"
+
+    assertEquals(
+      listOf(text.lastIndexOf("import")),
+      MdxEsmScanner.findMissingStatementSeparators(text, 0, text.length),
+    )
+  }
+
+  @Test
+  fun ignoresEsmKeywordsOwnedByJavaScriptTokens() {
+    val statements = listOf(
+      "export const value = \"import\"",
+      "export const value = `export`",
+      "export const value = /import/",
+      "export const value = <span>export</span>",
+      "export const value = () => { import('module') }",
+    )
+
+    for (statement in statements) {
+      assertTrue(
+        MdxEsmScanner.findMissingStatementSeparators(statement, 0, statement.length).isEmpty(),
+        statement,
+      )
+    }
+  }
+
+  @Test
+  fun regularExpressionBracesDoNotAffectDelimiterDepth() {
+    val statement = "export const pattern = /[{]/;"
+    val block = MdxEsmScanner.scanBlock("$statement\n# Heading", 0)
+
+    assertTrue(block?.terminated == true)
+    assertEquals(statement.length, block?.range?.last)
+  }
+
+  @Test
+  fun lexerOwnedBracesDoNotAffectDelimiterDepth() {
+    val statements = listOf(
+      "export const string = '}'",
+      "export const template = `before } after`",
+      "export const comment = /* } */ 1",
+      "export const element = <div data-label=\"}\">{'{'}</div>",
+    )
+
+    for (statement in statements) {
+      val block = MdxEsmScanner.scanBlock("$statement\n# Heading", 0)
+      assertTrue(block?.terminated == true, statement)
+      assertEquals(statement.length, block?.range?.last, statement)
+    }
+  }
+
+  @Test
+  fun exportedFunctionBodyMayStartOnNextLine() {
+    val statement = """
+      export default function Layout(props)
+      {
+        return props.children
+      }
+    """.trimIndent()
+    val block = MdxEsmScanner.scanBlock("$statement\n# Heading", 0)
+
+    assertTrue(block?.terminated == true)
+    assertEquals(statement.length, block?.range?.last)
+  }
+
+  @Test
+  fun nextLineMdxExpressionDoesNotBecomeAnEsmContinuation() {
+    val statement = "export const value = 1"
+    val block = MdxEsmScanner.scanBlock("$statement\n{value}", 0)
+
+    assertTrue(block?.terminated == true)
+    assertEquals(statement.length, block?.range?.last)
+  }
+
+  @Test
+  fun multilineJsxRemainsInsideExport() {
+    val statement = """
+      export const element = <div data-label="}">
+        {'{'}
+      </div>
+    """.trimIndent()
+    val block = MdxEsmScanner.scanBlock("$statement\n# Heading", 0)
+
+    assertTrue(block?.terminated == true)
+    assertEquals(statement.length, block?.range?.last)
+  }
+
+  @Test
+  fun unterminatedLexicalConstructsRemainUnterminated() {
+    val statements = listOf(
+      "export const string = 'unfinished",
+      "export const string = \"unfinished\\\"",
+      "export const template = `unfinished",
+      "export const comment = /* unfinished",
+      "export const pattern = /unfinished",
+    )
+
+    for (statement in statements) {
+      val block = MdxEsmScanner.scanBlock(statement, 0)
+      assertFalse(block?.terminated == true, statement)
+    }
   }
 }

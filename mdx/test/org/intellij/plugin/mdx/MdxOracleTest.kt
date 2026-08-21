@@ -593,6 +593,14 @@ class MdxOracleTest : MdxTestBase() {
     assertHasMarkdownHeading("Heading", depth = 1)
   }
 
+  @Test
+  fun testExportedFunctionWithNextLineBodyDoesNotConsumeMarkdown() {
+    assertNoErrors(
+      "export default function Layout(props)\n{\n  return props.children\n}\n\n# Heading"
+    )
+    assertHasMarkdownHeading("Heading", depth = 1)
+  }
+
   // --- front matter (implemented & green) -------------------------------------------------------
 
   /** Oracle: a leading `---`...`---` block is a `yaml` node; FRONT_MATTER_HEADER is recognized. GREEN. */

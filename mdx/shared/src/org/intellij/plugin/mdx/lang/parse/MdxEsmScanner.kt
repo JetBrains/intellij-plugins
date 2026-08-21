@@ -22,168 +22,90 @@ object MdxEsmScanner {
 
   fun scanBlock(text: CharSequence, start: Int, limit: Int = text.length): Block? {
     if (limit - start > MAX_SCAN_LENGTH || !isEsmKeywordAt(text, start)) return null
-    var offset = start
-    var parenDepth = 0
-    var braceDepth = 0
-    var bracketDepth = 0
-    var lastSignificantOffset = -1
-    var statementStart = start
-    while (offset < limit) {
-      when (text[offset]) {
-        '\'' -> {
-          offset = scanQuoted(text, offset, limit, '\'')
-          if (offset != -1) lastSignificantOffset = offset - 1
-        }
-        '"' -> {
-          offset = scanQuoted(text, offset, limit, '"')
-          if (offset != -1) lastSignificantOffset = offset - 1
-        }
-        '`' -> {
-          offset = scanTemplate(text, offset, limit)
-          if (offset != -1) lastSignificantOffset = offset - 1
-        }
-        '/' -> {
-          val end = scanSlash(text, offset, limit)
-          if (end == offset + 1) {
-            lastSignificantOffset = offset
-          }
-          offset = end
-        }
-        '<' -> {
-          val element = MdxJsxScanner.scanJsxElement(text, offset, limit)
-          if (element != null && element.terminated) {
-            offset = element.range.last
-            lastSignificantOffset = offset - 1
-          }
-          else {
-            lastSignificantOffset = offset
-            offset++
-          }
-        }
-        '(' -> {
-          parenDepth++
-          lastSignificantOffset = offset
-          offset++
-        }
-        ')' -> {
-          if (parenDepth > 0) parenDepth--
-          lastSignificantOffset = offset
-          offset++
-        }
-        '{' -> {
-          braceDepth++
-          lastSignificantOffset = offset
-          offset++
-        }
-        '}' -> {
-          if (braceDepth > 0) braceDepth--
-          lastSignificantOffset = offset
-          offset++
-        }
-        '[' -> {
-          bracketDepth++
-          lastSignificantOffset = offset
-          offset++
-        }
-        ']' -> {
-          if (bracketDepth > 0) bracketDepth--
-          lastSignificantOffset = offset
-          offset++
-        }
-        ';' -> {
-          lastSignificantOffset = offset
-          offset++
-          if (parenDepth == 0 && braceDepth == 0 && bracketDepth == 0) {
-            val nextStatement = nextEsmStatementOnSameLine(text, offset, limit)
-            if (nextStatement == -1) {
-              return Block(start..offset, true)
+
+    val tokens = tokenize(text, start, limit)
+    val nesting = NestingState()
+    var lastSignificantEnd = -1
+    var statement = ModuleStatementState()
+    var lexicalState = LexicalState()
+
+    for ((index, token) in tokens.withIndex()) {
+      val atTopLevel = nesting.atTopLevel
+      lexicalState.accept(text, token)
+      if (token.type == JSTokenTypes.WHITE_SPACE) {
+        var lineBreak = text.indexOf('\n', token.start)
+        while (lineBreak in token.start..<token.end) {
+          if (atTopLevel) {
+            if (hasBlankLineAfter(text, lineBreak + 1, text.length)) {
+              return Block(start..lastSignificantEnd, terminated = false, recoveryBoundary = true)
             }
-            statementStart = nextStatement
-            lastSignificantOffset = -1
-            offset = nextStatement
+            if (lastSignificantEnd != -1 &&
+                lexicalState.isTerminated &&
+                statement.isTerminated &&
+                isCompleteBeforeLineBreak(text, lastSignificantEnd - 1) &&
+                !nextLineContinuesEsm(text, lineBreak + 1, text.length, lastSignificantEnd - 1)) {
+              return Block(start..lastSignificantEnd, true)
+            }
           }
-        }
-        '\n' -> {
-          if (parenDepth == 0 && braceDepth == 0 && bracketDepth == 0 && hasBlankLineAfter(text, offset + 1, text.length)) {
-            return Block(start..lastSignificantOffset + 1, terminated = false, recoveryBoundary = true)
-          }
-          if (parenDepth == 0 &&
-              braceDepth == 0 &&
-              bracketDepth == 0 &&
-              isCompleteBeforeLineBreak(text, lastSignificantOffset) &&
-              isModuleStatementTerminated(text, statementStart, lastSignificantOffset + 1) &&
-              !nextLineContinuesEsm(text, offset + 1, text.length, lastSignificantOffset)) {
-            return Block(start..lastSignificantOffset + 1, true)
-          }
-          offset++
-        }
-        else -> {
-          if (!text[offset].isWhitespace()) {
-            lastSignificantOffset = offset
-          }
-          offset++
+          lineBreak = text.indexOf('\n', lineBreak + 1)
         }
       }
-      if (offset == -1) return Block(start..limit, false)
+
+      if (token.type.isTrivia()) continue
+
+      statement.accept(token.type, atTopLevel)
+      nesting.accept(token.type)
+      lastSignificantEnd = token.end
+
+      if (token.type == JSTokenTypes.SEMICOLON && atTopLevel) {
+        val next = tokens.nextSignificant(index + 1)
+        if (next == null || hasLineBreakBefore(text, token.end, next.start) || !isEsmKeywordAt(text, next.start)) {
+          return Block(start..token.end, true)
+        }
+        statement = ModuleStatementState()
+        lexicalState = LexicalState()
+        lastSignificantEnd = -1
+      }
     }
-    val delimitersBalanced = parenDepth == 0 && braceDepth == 0 && bracketDepth == 0
+
     return Block(
       start..limit,
-      delimitersBalanced && isModuleStatementTerminated(text, statementStart, limit),
+      nesting.atTopLevel && lexicalState.isTerminated && statement.isTerminated,
     )
   }
 
-  private fun scanQuoted(text: CharSequence, start: Int, limit: Int, quote: Char): Int {
-    var offset = start + 1
-    while (offset < limit) {
-      when (text[offset]) {
-        '\\' -> offset += 2
-        quote -> return offset + 1
-        else -> offset++
-      }
-    }
-    return -1
-  }
-
-  private fun scanTemplate(text: CharSequence, start: Int, limit: Int): Int {
-    var offset = start + 1
-    while (offset < limit) {
-      when (text[offset]) {
-        '\\' -> offset += 2
-        '`' -> return offset + 1
-        '$' -> {
-          if (text.getOrNull(offset + 1) == '{') {
-            val expressionEnd = MdxJsxScanner.scanExpression(text, offset + 1, limit)
-            if (expressionEnd == -1) return -1
-            offset = expressionEnd
-          }
-          else {
-            offset++
-          }
+  /** Returns adjacent top-level ESM keyword offsets that have no whitespace or semicolon before them. */
+  fun findMissingStatementSeparators(text: CharSequence, start: Int, end: Int): List<Int> {
+    val nesting = NestingState()
+    return buildList {
+      for ((tokenType, tokenStart) in tokenize(text, start, end)) {
+        if (tokenStart > start &&
+            nesting.atTopLevel &&
+            tokenType.isEsmKeyword() &&
+            !hasStatementSeparatorBefore(text, tokenStart)) {
+          add(tokenStart)
         }
-        else -> offset++
+        nesting.accept(tokenType)
       }
     }
-    return -1
   }
 
-  private fun scanSlash(text: CharSequence, start: Int, limit: Int): Int {
-    if (text.getOrNull(start + 1) == '/') {
-      var offset = start + 2
-      while (offset < limit && text[offset] != '\n') {
-        offset++
+  private fun tokenize(text: CharSequence, start: Int, limit: Int): List<Token> {
+    val lexer = JSFlexAdapter(DialectOptionHolder.JS_WITH_JSX)
+    lexer.start(text, start, limit, 0)
+    return buildList {
+      while (lexer.tokenType != null) {
+        add(Token(lexer.tokenType!!, lexer.tokenStart, lexer.tokenEnd))
+        lexer.advance()
       }
-      return offset
     }
-    if (text.getOrNull(start + 1) == '*') {
-      var offset = start + 2
-      while (offset + 1 < limit) {
-        if (text[offset] == '*' && text[offset + 1] == '/') return offset + 2
-        offset++
-      }
-      return -1
+  }
+
+  private fun List<Token>.nextSignificant(startIndex: Int): Token? {
+    for (index in startIndex..<size) {
+      if (!this[index].type.isTrivia()) return this[index]
     }
-    return start + 1
+    return null
   }
 
   private fun isCompleteBeforeLineBreak(text: CharSequence, lastSignificantOffset: Int): Boolean {
@@ -210,12 +132,6 @@ object MdxEsmScanner {
       return isExportContinuationStart(text[next])
     }
     return text[next] in NEXT_LINE_CONTINUATION_CHARS
-  }
-
-  private fun nextEsmStatementOnSameLine(text: CharSequence, start: Int, limit: Int): Int {
-    val next = firstNonWhitespaceOffset(text, start, limit)
-    if (next == -1 || hasLineBreakBefore(text, start, next)) return -1
-    return if (isEsmKeywordAt(text, next)) next else -1
   }
 
   private fun keywordEndsAt(text: CharSequence, endOffset: Int, keyword: String): Boolean {
@@ -260,55 +176,6 @@ object MdxEsmScanner {
     return -1
   }
 
-  private fun isModuleStatementTerminated(buffer: CharSequence, start: Int, end: Int): Boolean {
-    val lexer = JSFlexAdapter(DialectOptionHolder.JS_WITH_JSX)
-    lexer.start(buffer, start, end, 0)
-
-    var first: IElementType? = null
-    var second: IElementType? = null
-    var significantCount = 0
-    var sawFrom = false
-    var sawModuleSpecifierAfterFrom = false
-    while (lexer.tokenType != null) {
-      val tokenType = lexer.tokenType!!
-      if (!tokenType.isTrivia()) {
-        significantCount++
-        if (first == null) first = tokenType
-        else if (second == null) second = tokenType
-        if (tokenType == JSTokenTypes.FROM_KEYWORD) {
-          sawFrom = true
-        }
-        else if (sawFrom && tokenType == JSTokenTypes.STRING_LITERAL) {
-          sawModuleSpecifierAfterFrom = true
-        }
-      }
-      lexer.advance()
-    }
-
-    return when (first) {
-      JSTokenTypes.IMPORT_KEYWORD -> when (second) {
-        null -> false
-        JSTokenTypes.STRING_LITERAL, JSTokenTypes.LPAR, JSTokenTypes.DOT -> true
-        else -> sawModuleSpecifierAfterFrom
-      }
-      JSTokenTypes.EXPORT_KEYWORD -> when {
-        second == null -> false
-        sawFrom -> sawModuleSpecifierAfterFrom
-        second == JSTokenTypes.MULT -> false
-        second == JSTokenTypes.DEFAULT_KEYWORD && significantCount == 2 -> false
-        else -> true
-      }
-      else -> true
-    }
-  }
-
-  private fun IElementType.isTrivia(): Boolean {
-    return this == JSTokenTypes.WHITE_SPACE ||
-           this == JSTokenTypes.END_OF_LINE_COMMENT ||
-           this == JSTokenTypes.C_STYLE_COMMENT ||
-           this == JSTokenTypes.XML_STYLE_COMMENT
-  }
-
   private fun isEsmKeywordAt(text: CharSequence, start: Int): Boolean {
     return keywordAt(text, start, "import") || keywordAt(text, start, "export")
   }
@@ -347,10 +214,179 @@ object MdxEsmScanner {
     return if (indent <= 3) indent else -1
   }
 
+  private fun IElementType.isTrivia(): Boolean {
+    return this == JSTokenTypes.WHITE_SPACE ||
+           this == JSTokenTypes.END_OF_LINE_COMMENT ||
+           this == JSTokenTypes.C_STYLE_COMMENT ||
+           this == JSTokenTypes.XML_STYLE_COMMENT
+  }
+
+  private fun IElementType.isEsmKeyword(): Boolean {
+    return this == JSTokenTypes.IMPORT_KEYWORD || this == JSTokenTypes.EXPORT_KEYWORD
+  }
+
+  private fun hasStatementSeparatorBefore(text: CharSequence, offset: Int): Boolean {
+    val previous = text.getOrNull(offset - 1) ?: return true
+    return previous.isWhitespace() || previous == ';'
+  }
+
   private fun CharSequence.getOrNull(index: Int): Char? {
     return if (index in indices) this[index] else null
   }
 
-  private val LINE_END_CONTINUATION_CHARS = setOf('=', '+', '-', '*', '/', '%', '&', '|', '^', '!', '~', '?', '.', ',', ':', '(', '[', '{', '<')
-  private val NEXT_LINE_CONTINUATION_CHARS = setOf('.', '?', ':', ',', '+', '-', '*', '/', '%', '&', '|', ')', ']', '}', '(')
+  private data class Token(val type: IElementType, val start: Int, val end: Int)
+
+  private class ModuleStatementState {
+    private var first: IElementType? = null
+    private var second: IElementType? = null
+    private var significantCount = 0
+    private var sawFrom = false
+    private var sawModuleSpecifierAfterFrom = false
+    private var requiresTopLevelBody = false
+    private var sawTopLevelBody = false
+
+    fun accept(tokenType: IElementType, atTopLevel: Boolean) {
+      significantCount++
+      if (first == null) first = tokenType
+      else if (second == null) second = tokenType
+      if (atTopLevel && (tokenType == JSTokenTypes.FUNCTION_KEYWORD || tokenType == JSTokenTypes.CLASS_KEYWORD)) {
+        requiresTopLevelBody = true
+      }
+      else if (atTopLevel && requiresTopLevelBody && tokenType == JSTokenTypes.LBRACE) {
+        sawTopLevelBody = true
+      }
+      if (tokenType == JSTokenTypes.FROM_KEYWORD) {
+        sawFrom = true
+      }
+      else if (sawFrom && JSTokenTypes.STRING_LITERALS.contains(tokenType)) {
+        sawModuleSpecifierAfterFrom = true
+      }
+    }
+
+    val isTerminated: Boolean
+      get() = (!requiresTopLevelBody || sawTopLevelBody) && when (first) {
+        JSTokenTypes.IMPORT_KEYWORD -> when (second) {
+          null -> false
+          JSTokenTypes.STRING_LITERAL, JSTokenTypes.SINGLE_QUOTE_STRING_LITERAL, JSTokenTypes.LPAR, JSTokenTypes.DOT -> true
+          else -> sawModuleSpecifierAfterFrom
+        }
+        JSTokenTypes.EXPORT_KEYWORD -> when {
+          second == null -> false
+          sawFrom -> sawModuleSpecifierAfterFrom
+          second == JSTokenTypes.MULT -> false
+          second == JSTokenTypes.DEFAULT_KEYWORD && significantCount == 2 -> false
+          else -> true
+        }
+        else -> true
+      }
+  }
+
+  private class LexicalState {
+    private var templateDelimiters = 0
+    private var hasUnterminatedToken = false
+
+    fun accept(text: CharSequence, token: Token) {
+      when (token.type) {
+        JSTokenTypes.BACKQUOTE -> templateDelimiters++
+        JSTokenTypes.STRING_LITERAL, JSTokenTypes.SINGLE_QUOTE_STRING_LITERAL -> {
+          if (!isQuotedLiteralTerminated(text, token.start, token.end)) hasUnterminatedToken = true
+        }
+        JSTokenTypes.C_STYLE_COMMENT -> {
+          if (token.end - token.start < 4 || text[token.end - 2] != '*' || text[token.end - 1] != '/') {
+            hasUnterminatedToken = true
+          }
+        }
+        JSTokenTypes.REGEXP_LITERAL -> {
+          if (!isRegularExpressionTerminated(text, token.start, token.end)) hasUnterminatedToken = true
+        }
+      }
+    }
+
+    val isTerminated: Boolean
+      get() = !hasUnterminatedToken && templateDelimiters % 2 == 0
+  }
+
+  private class NestingState {
+    private var parenDepth = 0
+    private var braceDepth = 0
+    private var bracketDepth = 0
+    private val jsxState = JsxState()
+
+    fun accept(tokenType: IElementType) {
+      jsxState.accept(tokenType)
+      when (tokenType) {
+        JSTokenTypes.LPAR -> parenDepth++
+        JSTokenTypes.RPAR -> if (parenDepth > 0) parenDepth--
+        JSTokenTypes.LBRACE -> braceDepth++
+        JSTokenTypes.RBRACE -> if (braceDepth > 0) braceDepth--
+        JSTokenTypes.LBRACKET -> bracketDepth++
+        JSTokenTypes.RBRACKET -> if (bracketDepth > 0) bracketDepth--
+      }
+    }
+
+    val atTopLevel: Boolean
+      get() = parenDepth == 0 && braceDepth == 0 && bracketDepth == 0 && jsxState.isBalanced
+  }
+
+  private class JsxState {
+    private var depth = 0
+    private var inClosingTag = false
+
+    fun accept(tokenType: IElementType) {
+      when (tokenType) {
+        JSTokenTypes.XML_START_TAG_START -> depth++
+        JSTokenTypes.XML_END_TAG_START -> inClosingTag = true
+        JSTokenTypes.XML_EMPTY_TAG_END -> {
+          if (depth > 0) depth--
+          inClosingTag = false
+        }
+        JSTokenTypes.XML_TAG_END -> {
+          if (inClosingTag && depth > 0) depth--
+          inClosingTag = false
+        }
+      }
+    }
+
+    val isBalanced: Boolean
+      get() = depth == 0 && !inClosingTag
+  }
+
+  private fun isQuotedLiteralTerminated(text: CharSequence, start: Int, end: Int): Boolean {
+    if (end - start < 2) return false
+    val quote = text[start]
+    if ((quote != '\'' && quote != '"') || text[end - 1] != quote) return false
+
+    var precedingBackslashes = 0
+    var offset = end - 2
+    while (offset > start && text[offset] == '\\') {
+      precedingBackslashes++
+      offset--
+    }
+    return precedingBackslashes % 2 == 0
+  }
+
+  private fun isRegularExpressionTerminated(text: CharSequence, start: Int, end: Int): Boolean {
+    var escaped = false
+    var inCharacterClass = false
+    var offset = start + 1
+    while (offset < end) {
+      val char = text[offset]
+      when {
+        escaped -> escaped = false
+        char == '\\' -> escaped = true
+        char == '[' -> inCharacterClass = true
+        char == ']' -> inCharacterClass = false
+        char == '/' && !inCharacterClass -> return true
+      }
+      offset++
+    }
+    return false
+  }
+
+  private val LINE_END_CONTINUATION_CHARS = setOf(
+    '=', '+', '-', '*', '/', '%', '&', '|', '^', '!', '~', '?', '.', ',', ':', '(', '[', '{', '<',
+  )
+  private val NEXT_LINE_CONTINUATION_CHARS = setOf(
+    '.', '?', ':', ',', '+', '-', '*', '/', '%', '&', '|', ')', ']', '}', '(',
+  )
 }
