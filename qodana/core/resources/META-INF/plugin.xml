@@ -49,6 +49,7 @@
   </content>
   <content>
     <module name="intellij.libraries.flexmark" loading="embedded"/>
+    <module name="intellij.libraries.qodana.sarif" loading="embedded"/>
     <module name="intellij.libraries.qodana.cloud.kotlin.client" loading="embedded"/>
     <module name="intellij.libraries.qodana.configuration" loading="embedded"/>
     <module name="intellij.libraries.qodana.publisher" loading="embedded"/>

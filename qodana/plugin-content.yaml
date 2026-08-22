@@ -91,6 +91,12 @@
       jetbrains.qodana.sarif.converter:
       - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/sarif-converter/0/sarif-converter-0.jar
       - name: $MAVEN_REPOSITORY$/org/jetbrains/qodana/qodana-model/0/qodana-model-0.jar
+- name: lib/intellij.libraries.qodana.sarif.jar
+  contentModules:
+  - name: intellij.libraries.qodana.sarif
+    libraries:
+      qodana-sarif:
+      - name: $MAVEN_REPOSITORY$/com/jetbrains/qodana/qodana-sarif/1/qodana-sarif-1.jar
 - name: lib/intellij.libraries.qodana.web.ui.jar
   contentModules:
   - name: intellij.libraries.qodana.web.ui
