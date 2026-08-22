@@ -151,13 +151,8 @@ dev_dist_plugin_content(
     name = "gauge_dev_content",
     descriptor_module = ":gauge",
     libraries = [
-        "@lib//:org.jetbrains.kotlin/kotlin-stdlib-2.4.10-RC2.jar",
-        "@ultimate_lib//:com.github.javaparser/javaparser-core-2.5.1.jar",
-        "@ultimate_lib//:com.thoughtworks.gauge/gauge-java-0.7.3.jar",
-        "@ultimate_lib//:commons-lang/commons-lang-2.6.jar",
-        "@ultimate_lib//:org.javassist/javassist-3.21.0-GA.jar",
-        "@ultimate_lib//:org.json/json-20190722.jar",
-        "@ultimate_lib//:org.reflections/reflections-0.9.11.jar",
+        "@lib//:kotlin-stdlib",
+        "@ultimate_lib//:gauge-com-thoughtworks-gauge-gauge-java",
     ],
     prepacked_content_modules = {
         "//contrib/gauge/gradle": "modules/intellij.gauge.gradle.jar",

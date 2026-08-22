@@ -159,7 +159,7 @@ dev_dist_plugin_content(
         "//contrib/open-rewrite/spring-boot:openRewrite-spring-boot",
     ],
     descriptor_module = ":open-rewrite",
-    libraries = ["@lib//:org.jetbrains.kotlin/kotlin-stdlib-2.4.10-RC2.jar"],
+    libraries = ["@lib//:kotlin-stdlib"],
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev content intellij.openRewrite` end

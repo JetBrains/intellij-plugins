@@ -166,7 +166,7 @@ exports_files(
 dev_dist_plugin_content(
     name = "terraform_dev_content",
     descriptor_module = ":terraform",
-    libraries = ["@ultimate_lib//:org.intellij.plugins.hcl.terraform/terraform-metadata-2026.1.10.jar"],
+    libraries = ["@ultimate_lib//:terraform-terraform-metadata"],
     prepacked_content_modules = {
         "//contrib/terraform/copyright": "modules/intellij.terraform.copyright.jar",
         "//contrib/terraform/terraform-template:template": "modules/intellij.terraform.template.jar",

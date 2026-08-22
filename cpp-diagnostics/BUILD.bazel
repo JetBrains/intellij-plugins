@@ -45,7 +45,7 @@ dev_dist_plugin_content(
     name = "clion-diagnostics_dev_content",
     content_modules = ["//contrib/cpp-diagnostics/docker"],
     descriptor_module = ":clion-diagnostics",
-    libraries = ["@lib//:org.jetbrains.kotlin/kotlin-stdlib-2.4.10-RC2.jar"],
+    libraries = ["@lib//:kotlin-stdlib"],
     prepacked_content_modules = {
         "//contrib/cpp-diagnostics/cmake": "modules/intellij.clion.diagnostics.cmake.jar",
         "//contrib/cpp-diagnostics/core": "modules/intellij.clion.diagnostics.core.jar",

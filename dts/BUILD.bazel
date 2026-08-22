@@ -103,7 +103,7 @@ dev_dist_plugin_content(
     name = "dts_dev_content",
     content_modules = ["//contrib/dts/pp"],
     descriptor_module = ":dts",
-    libraries = ["@lib//:org.jetbrains.kotlin/kotlin-stdlib-2.4.10-RC2.jar"],
+    libraries = ["@lib//:kotlin-stdlib"],
     prepacked_content_modules = {
         "//contrib/dts/cmake": "modules/intellij.dts.cmake.jar",
     },

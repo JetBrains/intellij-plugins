@@ -197,8 +197,8 @@ dev_dist_plugin_content(
     name = "angularJS_dev_content",
     descriptor_module = ":angularJS",
     libraries = [
-        "@ultimate_lib//:com.mscharhag.oleaster/oleaster-matcher-0.2.0.jar",
-        "@ultimate_lib//:com.mscharhag.oleaster/oleaster-runner-0.2.0.jar",
+        "@ultimate_lib//:angular_j_s-oleaster-matcher",
+        "@ultimate_lib//:angular_j_s-oleaster-runner",
     ],
     visibility = ["//visibility:public"],
 )

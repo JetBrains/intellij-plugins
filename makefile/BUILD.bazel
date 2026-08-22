@@ -102,7 +102,7 @@ exports_files(
 dev_dist_plugin_content(
     name = "makefile_dev_content",
     descriptor_module = ":makefile",
-    libraries = ["@lib//:org.jetbrains.kotlin/kotlin-stdlib-2.4.10-RC2.jar"],
+    libraries = ["@lib//:kotlin-stdlib"],
     prepacked_content_modules = {
         "//contrib/makefile/spellchecker": "modules/intellij.makefile.spellchecker.jar",
         "//contrib/makefile/terminal": "modules/intellij.makefile.terminal.jar",
