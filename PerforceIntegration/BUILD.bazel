@@ -104,10 +104,8 @@ exports_files(
 
 ### auto-generated section `dev content intellij.vcs.perforce` start
 dev_dist_plugin_content(
-    name = "vcs-perforce_dev_content",
     content_modules = ["//contrib/PerforceIntegration/perforce_util:vcs-perforce-util"],
     descriptor_module = ":vcs-perforce",
-    visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev content intellij.vcs.perforce` end
 

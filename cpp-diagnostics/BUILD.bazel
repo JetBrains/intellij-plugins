@@ -42,14 +42,11 @@ exports_files(
 
 ### auto-generated section `dev content intellij.clion.diagnostics` start
 dev_dist_plugin_content(
-    name = "clion-diagnostics_dev_content",
     content_modules = ["//contrib/cpp-diagnostics/docker"],
     descriptor_module = ":clion-diagnostics",
-    libraries = ["@lib//:kotlin-stdlib"],
-    prepacked_content_modules = {
-        "//contrib/cpp-diagnostics/cmake": "modules/intellij.clion.diagnostics.cmake.jar",
-        "//contrib/cpp-diagnostics/core": "modules/intellij.clion.diagnostics.core.jar",
-    },
-    visibility = ["//visibility:public"],
+    prepacked_content_modules = [
+        "//contrib/cpp-diagnostics/cmake",
+        "//contrib/cpp-diagnostics/core",
+    ],
 )
 ### auto-generated section `dev content intellij.clion.diagnostics` end

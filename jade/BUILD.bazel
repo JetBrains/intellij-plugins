@@ -153,12 +153,8 @@ exports_files(
 
 ### auto-generated section `dev content intellij.jade` start
 dev_dist_plugin_content(
-    name = "jade_dev_content",
     descriptor_module = ":jade",
-    prepacked_content_modules = {
-        "//contrib/jade/css": "modules/intellij.jade.css.jar",
-    },
-    visibility = ["//visibility:public"],
+    prepacked_content_modules = ["//contrib/jade/css"],
 )
 ### auto-generated section `dev content intellij.jade` end
 

@@ -178,7 +178,6 @@ exports_files(
 
 ### auto-generated section `dev content intellij.cucumber.java` start
 dev_dist_plugin_content(
-    name = "cucumber-java_dev_content",
     content_modules = [
         "//libraries/cucumber",
         "@community//libraries/hamcrest",
@@ -214,7 +213,6 @@ dev_dist_plugin_content(
         "@ultimate_lib//:libraries-cucumber-cucumber-expressions",
         "@ultimate_lib//:libraries-cucumber-cucumber-java",
     ],
-    visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev content intellij.cucumber.java` end
 

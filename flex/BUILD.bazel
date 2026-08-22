@@ -220,15 +220,11 @@ exports_files(
 
 ### auto-generated section `dev content intellij.flex` start
 dev_dist_plugin_content(
-    name = "flex_dev_content",
     content_modules = [
         "//contrib/flex/flex-shared:shared",
         "//contrib/flex/jps-plugin:jps",
     ],
     descriptor_module = ":flex",
-    prepacked_content_modules = {
-        "//contrib/flex/css": "modules/intellij.flex.css.jar",
-    },
-    visibility = ["//visibility:public"],
+    prepacked_content_modules = ["//contrib/flex/css"],
 )
 ### auto-generated section `dev content intellij.flex` end

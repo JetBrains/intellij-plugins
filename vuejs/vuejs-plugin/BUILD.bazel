@@ -65,20 +65,17 @@ exports_files(
 
 ### auto-generated section `dev content intellij.vuejs.plugin` start
 dev_dist_plugin_content(
-    name = "plugin_dev_content",
     content_modules = ["//contrib/vuejs/vuejs-backend:backend"],
     descriptor_module = ":plugin",
-    libraries = ["@lib//:kotlin-stdlib"],
-    prepacked_content_modules = {
-        "//contrib/vuejs/vue-free:free": "modules/intellij.vuejs.free.jar",
-        "//contrib/vuejs/vuejs-common:common": "modules/intellij.vuejs.common.jar",
-        "//contrib/vuejs/vuejs-copyright:copyright": "modules/intellij.vuejs.copyright.jar",
-        "//contrib/vuejs/vuejs-debugger:debugger": "modules/intellij.vuejs.debugger.jar",
-        "//contrib/vuejs/vuejs-eslint:eslint": "modules/intellij.vuejs.eslint.jar",
-        "//contrib/vuejs/vuejs-markdown:markdown": "modules/intellij.vuejs.markdown.jar",
-        "//contrib/vuejs/vuejs-prettier:prettier": "modules/intellij.vuejs.prettier.jar",
-        "//contrib/vuejs/vuejs-webpack:webpack": "modules/intellij.vuejs.webpack.jar",
-    },
-    visibility = ["//visibility:public"],
+    prepacked_content_modules = [
+        "//contrib/vuejs/vue-free:free",
+        "//contrib/vuejs/vuejs-common:common",
+        "//contrib/vuejs/vuejs-copyright:copyright",
+        "//contrib/vuejs/vuejs-debugger:debugger",
+        "//contrib/vuejs/vuejs-eslint:eslint",
+        "//contrib/vuejs/vuejs-markdown:markdown",
+        "//contrib/vuejs/vuejs-prettier:prettier",
+        "//contrib/vuejs/vuejs-webpack:webpack",
+    ],
 )
 ### auto-generated section `dev content intellij.vuejs.plugin` end

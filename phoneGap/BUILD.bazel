@@ -52,13 +52,11 @@ exports_files(
 
 ### auto-generated section `dev content intellij.phoneGap` start
 dev_dist_plugin_content(
-    name = "phoneGap_dev_content",
     descriptor_module = ":phoneGap",
-    prepacked_content_modules = {
-        "//contrib/phoneGap/core": "modules/intellij.phoneGap.core.jar",
-        "//contrib/phoneGap/javascript": "modules/intellij.phoneGap.javascript.jar",
-    },
-    visibility = ["//visibility:public"],
+    prepacked_content_modules = [
+        "//contrib/phoneGap/core",
+        "//contrib/phoneGap/javascript",
+    ],
 )
 ### auto-generated section `dev content intellij.phoneGap` end
 

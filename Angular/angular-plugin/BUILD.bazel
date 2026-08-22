@@ -56,13 +56,11 @@ exports_files(
 
 ### auto-generated section `dev content intellij.angular.plugin` start
 dev_dist_plugin_content(
-    name = "angular-plugin_dev_content",
     content_modules = ["//contrib/Angular/angular-backend"],
     descriptor_module = ":angular-plugin",
-    prepacked_content_modules = {
-        "//contrib/Angular/angular-free": "modules/intellij.angular.free.jar",
-        "//contrib/Angular/angular-tslint": "modules/intellij.angular.tslint.jar",
-    },
-    visibility = ["//visibility:public"],
+    prepacked_content_modules = [
+        "//contrib/Angular/angular-free",
+        "//contrib/Angular/angular-tslint",
+    ],
 )
 ### auto-generated section `dev content intellij.angular.plugin` end

@@ -148,17 +148,12 @@ exports_files(
 
 ### auto-generated section `dev content intellij.gauge` start
 dev_dist_plugin_content(
-    name = "gauge_dev_content",
     descriptor_module = ":gauge",
-    libraries = [
-        "@lib//:kotlin-stdlib",
-        "@ultimate_lib//:gauge-com-thoughtworks-gauge-gauge-java",
+    libraries = ["@ultimate_lib//:gauge-com-thoughtworks-gauge-gauge-java"],
+    prepacked_content_modules = [
+        "//contrib/gauge/gradle",
+        "//contrib/gauge/maven",
     ],
-    prepacked_content_modules = {
-        "//contrib/gauge/gradle": "modules/intellij.gauge.gradle.jar",
-        "//contrib/gauge/maven": "modules/intellij.gauge.maven.jar",
-    },
-    visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev content intellij.gauge` end
 

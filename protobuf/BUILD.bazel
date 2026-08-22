@@ -58,7 +58,6 @@ exports_files(
 
 ### auto-generated section `dev content intellij.protoeditor` start
 dev_dist_plugin_content(
-    name = "protoeditor_dev_content",
     content_modules = [
         "//contrib/protobuf/protoeditor-core",
         "//contrib/protobuf/protoeditor-go",
@@ -67,12 +66,8 @@ dev_dist_plugin_content(
     descriptor_module = ":protoeditor",
     libraries = [
         "@lib//:google-protobuf-java-util",
-        "@lib//:kotlin-stdlib",
         "@lib//:truth",
     ],
-    prepacked_content_modules = {
-        "//contrib/protobuf/protoeditor-python": "modules/intellij.protoeditor.python.jar",
-    },
-    visibility = ["//visibility:public"],
+    prepacked_content_modules = ["//contrib/protobuf/protoeditor-python"],
 )
 ### auto-generated section `dev content intellij.protoeditor` end

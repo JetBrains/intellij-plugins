@@ -159,15 +159,6 @@ exports_files(
 )
 ### auto-generated section `iml intellij.prisma` end
 
-### auto-generated section `dev content intellij.prisma` start
-dev_dist_plugin_content(
-    name = "prisma_dev_content",
-    descriptor_module = ":prisma",
-    libraries = ["@lib//:kotlin-stdlib"],
-    visibility = ["//visibility:public"],
-)
-### auto-generated section `dev content intellij.prisma` end
-
 ### auto-generated section `build intellij.prisma.tests` start
 create_kotlinc_options(
     name = "custom_prisma-tests",

@@ -81,9 +81,7 @@ exports_files(
 
 ### auto-generated section `dev content intellij.errorProne` start
 dev_dist_plugin_content(
-    name = "error-prone_dev_content",
     content_modules = ["//contrib/error-prone/jps-plugin:errorProne-jps"],
     descriptor_module = ":error-prone",
-    visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev content intellij.errorProne` end

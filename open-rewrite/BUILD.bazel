@@ -150,7 +150,6 @@ exports_files(
 
 ### auto-generated section `dev content intellij.openRewrite` start
 dev_dist_plugin_content(
-    name = "open-rewrite_dev_content",
     content_modules = [
         "//contrib/open-rewrite/gradle",
         "//contrib/open-rewrite/maven",
@@ -159,8 +158,6 @@ dev_dist_plugin_content(
         "//contrib/open-rewrite/spring-boot:openRewrite-spring-boot",
     ],
     descriptor_module = ":open-rewrite",
-    libraries = ["@lib//:kotlin-stdlib"],
-    visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev content intellij.openRewrite` end
 

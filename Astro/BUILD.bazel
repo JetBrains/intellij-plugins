@@ -140,12 +140,3 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.astro` end
-
-### auto-generated section `dev content intellij.astro` start
-dev_dist_plugin_content(
-    name = "astro_dev_content",
-    descriptor_module = ":astro",
-    libraries = ["@lib//:kotlin-stdlib"],
-    visibility = ["//visibility:public"],
-)
-### auto-generated section `dev content intellij.astro` end

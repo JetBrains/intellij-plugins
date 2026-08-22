@@ -100,14 +100,9 @@ exports_files(
 
 ### auto-generated section `dev content intellij.dts` start
 dev_dist_plugin_content(
-    name = "dts_dev_content",
     content_modules = ["//contrib/dts/pp"],
     descriptor_module = ":dts",
-    libraries = ["@lib//:kotlin-stdlib"],
-    prepacked_content_modules = {
-        "//contrib/dts/cmake": "modules/intellij.dts.cmake.jar",
-    },
-    visibility = ["//visibility:public"],
+    prepacked_content_modules = ["//contrib/dts/cmake"],
 )
 ### auto-generated section `dev content intellij.dts` end
 
