@@ -167,7 +167,6 @@ exports_files(
 ### auto-generated section `dev content intellij.clion.embedded.platformio` start
 dev_dist_plugin_content(
     name = "platformio_dev_content",
-    content_modules = ["//contrib/platformio/terminal"],
     descriptor_module = ":platformio",
     libraries = [
         "@lib//:com.google.code.gson/gson-2.13.2.jar",
@@ -184,11 +183,13 @@ dev_dist_plugin_content(
         "@lib//:org.jetbrains.kotlin/kotlin-stdlib-2.4.10-RC2.jar",
         "@lib//:org.jetbrains.kotlinx/kotlinx-collections-immutable-jvm-0.5.0.jar",
         "@lib//:org.jmock/jmock-2.5.1.jar",
-        "@lib//:org.slf4j/log4j-over-slf4j-1.7.36.jar",
         "@lib//:org.slf4j/slf4j-api-2.0.13.jar",
         "@lib//:org.slf4j/slf4j-jdk14-2.0.13.jar",
         "@ultimate_lib//:org.antlr/antlr4-runtime-4.13.2.jar",
     ],
+    prepacked_content_modules = {
+        "//contrib/platformio/terminal": "modules/intellij.clion.embedded.platformio.terminal.jar",
+    },
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev content intellij.clion.embedded.platformio` end

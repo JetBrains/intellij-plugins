@@ -222,7 +222,6 @@ exports_files(
 dev_dist_plugin_content(
     name = "flex_dev_content",
     content_modules = [
-        "//contrib/flex/css",
         "//contrib/flex/flex-shared:shared",
         "//contrib/flex/jps-plugin:jps",
     ],
@@ -248,7 +247,6 @@ dev_dist_plugin_content(
         "@lib//:org.jetbrains.kotlin/kotlin-test-2.4.10-RC2.jar",
         "@lib//:org.jetbrains.kotlin/kotlin-test-junit5-2.2.20.jar",
         "@lib//:org.jetbrains.kotlinx/kotlinx-collections-immutable-jvm-0.5.0.jar",
-        "@lib//:org.jetbrains/annotations-26.0.2.jar",
         "@lib//:org.jmock/jmock-2.5.1.jar",
         "@lib//:org.slf4j/log4j-over-slf4j-1.7.36.jar",
         "@lib//:org.slf4j/slf4j-api-2.0.13.jar",
@@ -280,6 +278,9 @@ dev_dist_plugin_content(
         "@lib//ant/lib:ant-xz.jar",
         "@lib//ant/lib:ant.jar",
     ],
+    prepacked_content_modules = {
+        "//contrib/flex/css": "modules/intellij.flex.css.jar",
+    },
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev content intellij.flex` end

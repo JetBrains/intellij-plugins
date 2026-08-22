@@ -43,24 +43,17 @@ exports_files(
 ### auto-generated section `dev content intellij.clion.diagnostics` start
 dev_dist_plugin_content(
     name = "clion-diagnostics_dev_content",
-    content_modules = [
-        "//contrib/cpp-diagnostics/cmake",
-        "//contrib/cpp-diagnostics/core",
-        "//contrib/cpp-diagnostics/docker",
-    ],
+    content_modules = ["//contrib/cpp-diagnostics/docker"],
     descriptor_module = ":clion-diagnostics",
     libraries = [
-        "@lib//:com.hankcs/aho-corasick-double-array-trie-1.2.3.jar",
-        "@lib//:eawtstub.jar",
-        "@lib//:org.jetbrains.diogen/diogen-analysis-0.5.0.jar",
-        "@lib//:org.jetbrains.intellij.deps/intellij-deps-java-atk-wrapper-263.33.jar",
         "@lib//:org.jetbrains.kotlin/kotlin-stdlib-2.4.10-RC2.jar",
         "@lib//:org.jetbrains.kotlinx/kotlinx-serialization-core-jvm-1.9.0.jar",
         "@lib//:org.jetbrains.kotlinx/kotlinx-serialization-json-jvm-1.9.0.jar",
-        "@lib//:org.slf4j/log4j-over-slf4j-1.7.36.jar",
-        "@lib//:org.slf4j/slf4j-api-2.0.13.jar",
-        "@lib//:org.slf4j/slf4j-jdk14-2.0.13.jar",
     ],
+    prepacked_content_modules = {
+        "//contrib/cpp-diagnostics/cmake": "modules/intellij.clion.diagnostics.cmake.jar",
+        "//contrib/cpp-diagnostics/core": "modules/intellij.clion.diagnostics.core.jar",
+    },
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev content intellij.clion.diagnostics` end

@@ -165,11 +165,6 @@ exports_files(
 ### auto-generated section `dev content intellij.terraform` start
 dev_dist_plugin_content(
     name = "terraform_dev_content",
-    content_modules = [
-        "//contrib/terraform/copyright",
-        "//contrib/terraform/terraform-template:template",
-        "//contrib/terraform/watchers",
-    ],
     descriptor_module = ":terraform",
     libraries = [
         "@lib//:com.fasterxml.jackson.core/jackson-core-2.19.0.jar",
@@ -191,15 +186,18 @@ dev_dist_plugin_content(
         "@lib//:org.jetbrains.intellij.deps/intellij-deps-java-atk-wrapper-263.33.jar",
         "@lib//:org.jetbrains.kotlin/kotlin-stdlib-2.4.10-RC2.jar",
         "@lib//:org.jetbrains.kotlinx/kotlinx-collections-immutable-jvm-0.5.0.jar",
-        "@lib//:org.jetbrains/annotations-26.0.2.jar",
         "@lib//:org.jetbrains/markdown-jvm-0.7.8.jar",
         "@lib//:org.jmock/jmock-2.5.1.jar",
         "@lib//:org.jspecify/jspecify-1.0.0.jar",
-        "@lib//:org.slf4j/log4j-over-slf4j-1.7.36.jar",
         "@lib//:org.slf4j/slf4j-api-2.0.13.jar",
         "@lib//:org.slf4j/slf4j-jdk14-2.0.13.jar",
         "@ultimate_lib//:org.intellij.plugins.hcl.terraform/terraform-metadata-2026.1.10.jar",
     ],
+    prepacked_content_modules = {
+        "//contrib/terraform/copyright": "modules/intellij.terraform.copyright.jar",
+        "//contrib/terraform/terraform-template:template": "modules/intellij.terraform.template.jar",
+        "//contrib/terraform/watchers": "modules/intellij.terraform.watchers.jar",
+    },
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev content intellij.terraform` end

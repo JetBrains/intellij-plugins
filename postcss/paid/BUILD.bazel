@@ -21,6 +21,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
+    content_module_jar = True,
     module_name = "intellij.postcss.paid",
     resource_jars = [":paid_resources"],
     resource_strip_prefix = "resources",

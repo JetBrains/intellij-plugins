@@ -149,10 +149,6 @@ exports_files(
 ### auto-generated section `dev content intellij.gauge` start
 dev_dist_plugin_content(
     name = "gauge_dev_content",
-    content_modules = [
-        "//contrib/gauge/gradle",
-        "//contrib/gauge/maven",
-    ],
     descriptor_module = ":gauge",
     libraries = [
         "@lib//:com.google.android/annotations-4.1.1.4.jar",
@@ -178,18 +174,15 @@ dev_dist_plugin_content(
         "@lib//:io.grpc/grpc-util-1.73.0.jar",
         "@lib//:io.perfmark/perfmark-api-0.27.0.jar",
         "@lib//:org.codehaus.mojo/animal-sniffer-annotations-1.24.jar",
-        "@lib//:org.codehaus.plexus/plexus-archiver-4.8.0.jar",
         "@lib//:org.easymock/easymock-5.6.0.jar",
         "@lib//:org.glassfish.jaxb/jaxb-runtime-2.3.9.jar",
         "@lib//:org.glassfish.jaxb/txw2-2.3.9.jar",
         "@lib//:org.jetbrains.diogen/diogen-analysis-0.5.0.jar",
-        "@lib//:org.jetbrains.idea.maven/maven-indexer-api-rt-2023.2.jar",
         "@lib//:org.jetbrains.intellij.deps/intellij-deps-java-atk-wrapper-263.33.jar",
         "@lib//:org.jetbrains.intellij.deps/sa-jdwp-1.25.jar",
         "@lib//:org.jetbrains.kotlin/kotlin-stdlib-2.4.10-RC2.jar",
         "@lib//:org.jetbrains.kotlinx/kotlinx-collections-immutable-jvm-0.5.0.jar",
         "@lib//:org.jmock/jmock-2.5.1.jar",
-        "@lib//:org.slf4j/log4j-over-slf4j-1.7.36.jar",
         "@lib//:org.slf4j/slf4j-api-2.0.13.jar",
         "@lib//:org.slf4j/slf4j-jdk14-2.0.13.jar",
         "@ultimate_lib//:com.github.javaparser/javaparser-core-2.5.1.jar",
@@ -199,6 +192,10 @@ dev_dist_plugin_content(
         "@ultimate_lib//:org.json/json-20190722.jar",
         "@ultimate_lib//:org.reflections/reflections-0.9.11.jar",
     ],
+    prepacked_content_modules = {
+        "//contrib/gauge/gradle": "modules/intellij.gauge.gradle.jar",
+        "//contrib/gauge/maven": "modules/intellij.gauge.maven.jar",
+    },
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev content intellij.gauge` end
