@@ -247,7 +247,6 @@ exports_files(
 dev_dist_plugin_content(
     name = "qodana_dev_content",
     content_modules = [
-        "//contrib/qodana/rust",
         "//contrib/qodana/sarif",
         "//contrib/qodana/util",
         "//libraries/qodana/cloud-kotlin-client:libraries-qodana-cloud-kotlin-client",
@@ -257,13 +256,14 @@ dev_dist_plugin_content(
         "//libraries/qodana/web-ui:libraries-qodana-web-ui",
         "@community//libraries/flexmark",
         "@community//libraries/jline",
+        "@community//libraries/qodana/sarif",
     ],
     descriptor_module = ":qodana",
     libraries = [
         "@lib//:kotlin-stdlib",
         "@lib//:libraries-flexmark-flexmark",
         "@lib//:libraries-jline-jline",
-        "@lib//:qodana-sarif",
+        "@lib//:libraries-qodana-sarif-qodana-sarif",
         "@ultimate_lib//:libraries-qodana-cloud-kotlin-client-jetbrains-qodana-cloud-kotlin-client",
         "@ultimate_lib//:libraries-qodana-configuration-jetbrains-qodana-configuration",
         "@ultimate_lib//:libraries-qodana-publisher-jetbrains-qodana-publisher",
@@ -294,6 +294,7 @@ dev_dist_plugin_content(
         "//contrib/qodana/poly": "modules/intellij.qodana.poly.jar",
         "//contrib/qodana/python/community": "modules/intellij.qodana.python.community.jar",
         "//contrib/qodana/python/coverage": "modules/intellij.qodana.python.coverage.jar",
+        "//contrib/qodana/rust": "modules/intellij.qodana.rust.jar",
         "//contrib/qodana/yaml": "modules/intellij.qodana.yaml.jar",
     },
     visibility = ["//visibility:public"],
