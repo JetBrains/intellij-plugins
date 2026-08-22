@@ -1,4 +1,5 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dev_dist_content.bzl", "dev_dist_plugin_content")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.webassembly` start
@@ -72,10 +73,25 @@ exports_files(
     [
         "intellij.webassembly.iml",
         "src/main/resources/META-INF/plugin.xml",
+        "plugin-content.yaml",
     ],
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.webassembly` end
+
+### auto-generated section `dev content intellij.webassembly` start
+dev_dist_plugin_content(
+    name = "webassembly_dev_content",
+    descriptor_module = ":webassembly",
+    libraries = [
+        "@lib//:com.google.code.gson/gson-2.13.2.jar",
+        "@lib//:org.jetbrains.kotlin/kotlin-stdlib-2.4.10-RC2.jar",
+        "@lib//:org.jmock/jmock-2.5.1.jar",
+        "@lib//:org.slf4j/slf4j-api-2.0.13.jar",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `dev content intellij.webassembly` end
 
 ### auto-generated section `build intellij.webassembly.tests` start
 jvm_library(
