@@ -1,10 +1,9 @@
 package com.intellij.lang.javascript.linter.jshint;
 
-import com.intellij.lang.javascript.linter.jshint.JSHintBundle;
 import com.intellij.lang.javascript.linter.option.OptionEnumType;
 import com.intellij.lang.javascript.linter.option.OptionEnumVariant;
 import com.intellij.ui.HyperlinkAdapter;
-import com.intellij.util.net.HttpConfigurable;
+import com.intellij.util.net.HttpProxyConfigurable;
 import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
@@ -135,7 +134,7 @@ public final class JSHintUtil {
           retryCallback.run();
         }
         else if (proxy.equals(e.getDescription())) {
-          HttpConfigurable.editConfigurable(null);
+          HttpProxyConfigurable.editConfigurable(null);
         }
       }
     });
