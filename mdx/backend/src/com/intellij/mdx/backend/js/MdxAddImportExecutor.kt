@@ -79,14 +79,16 @@ internal class MdxAddImportExecutor(place: PsiElement) : ES6AddImportExecutor(pl
     val prefixEnd = lines[openingIndex].start
     val prefixText = text.subSequence(prefixStart, prefixEnd).toString()
 
-    // Skip past the closing delimiter and any blank separator lines, keeping its own blank-line gap.
+    // If an existing import/export block already follows (possibly after blank separator lines), group
+    // the relocated import with it. Otherwise insert right at the closing delimiter's line end, i.e.
+    // immediately after it, leaving any blank lines before the body untouched.
     var insertLine = closingIndex + 1
     while (insertLine < lines.size && lines[insertLine].content.isBlank()) {
       insertLine++
     }
     val insertAt = when {
-      insertLine < lines.size -> lines[insertLine].start
-      else -> lines[lines.lastIndex].end
+      insertLine < lines.size && isEsmLine(lines[insertLine].content) -> lines[insertLine].start
+      else -> lines[closingIndex].end
     }
     return Relocation(prefixStart, prefixEnd, prefixText, insertAt)
   }
