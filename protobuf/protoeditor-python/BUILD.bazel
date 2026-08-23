@@ -1,4 +1,5 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.protoeditor.python` start
@@ -12,7 +13,6 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    content_module_jar = True,
     module_name = "intellij.protoeditor.python",
     resource_strip_prefix = "resources",
     resources = glob(
@@ -41,6 +41,8 @@ jvm_library(
         "@community//python/python-psi-impl:psi-impl",
     ],
 )
+
+content_module_jar(module = ":protoeditor-python")
 
 jvm_library(
     name = "protoeditor-python_test_lib",

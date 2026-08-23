@@ -68,14 +68,14 @@ dev_dist_plugin_content(
     content_modules = ["//contrib/vuejs/vuejs-backend:backend"],
     descriptor_module = ":plugin",
     prepacked_content_modules = [
-        "//contrib/vuejs/vue-free:free",
-        "//contrib/vuejs/vuejs-common:common",
-        "//contrib/vuejs/vuejs-copyright:copyright",
-        "//contrib/vuejs/vuejs-debugger:debugger",
-        "//contrib/vuejs/vuejs-eslint:eslint",
-        "//contrib/vuejs/vuejs-markdown:markdown",
-        "//contrib/vuejs/vuejs-prettier:prettier",
-        "//contrib/vuejs/vuejs-webpack:webpack",
+        "//contrib/vuejs/vue-free:free_content_module_jar",
+        "//contrib/vuejs/vuejs-common:common_content_module_jar",
+        "//contrib/vuejs/vuejs-copyright:copyright_content_module_jar",
+        "//contrib/vuejs/vuejs-debugger:debugger_content_module_jar",
+        "//contrib/vuejs/vuejs-eslint:eslint_content_module_jar",
+        "//contrib/vuejs/vuejs-markdown:markdown_content_module_jar",
+        "//contrib/vuejs/vuejs-prettier:prettier_content_module_jar",
+        "//contrib/vuejs/vuejs-webpack:webpack_content_module_jar",
     ],
 )
 ### auto-generated section `dev content intellij.vuejs.plugin` end

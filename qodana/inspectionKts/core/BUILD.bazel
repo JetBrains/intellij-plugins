@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
 ### auto-generated section `build intellij.qodana.inspectionKts` start
@@ -11,7 +12,6 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    content_module_jar = True,
     module_name = "intellij.qodana.inspectionKts",
     resource_strip_prefix = "resources",
     resources = glob(
@@ -51,6 +51,8 @@ jvm_library(
         "@community//libraries/jackson/dataformat-yaml:libraries-jackson-dataformat-yaml",
     ],
 )
+
+content_module_jar(module = ":qodana-inspectionKts")
 
 jvm_library(
     name = "qodana-inspectionKts_test_lib",

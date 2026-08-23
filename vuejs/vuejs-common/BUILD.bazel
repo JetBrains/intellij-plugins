@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.vuejs.common` start
@@ -13,7 +14,6 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    content_module_jar = True,
     module_name = "intellij.vuejs.common",
     resource_strip_prefix = "resources",
     resources = glob(
@@ -40,6 +40,8 @@ jvm_library(
         "//plugins/css",
     ],
 )
+
+content_module_jar(module = ":common")
 
 jvm_library(
     name = "common_test_lib",

@@ -102,7 +102,7 @@ exports_files(
 dev_dist_plugin_content(
     content_modules = ["//contrib/dts/pp"],
     descriptor_module = ":dts",
-    prepacked_content_modules = ["//contrib/dts/cmake"],
+    prepacked_content_modules = ["//contrib/dts/cmake:cmake_content_module_jar"],
 )
 ### auto-generated section `dev content intellij.dts` end
 

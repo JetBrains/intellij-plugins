@@ -49,8 +49,8 @@ exports_files(
 dev_dist_plugin_content(
     descriptor_module = ":plugin",
     prepacked_content_modules = [
-        "//contrib/postcss/copyright",
-        "//contrib/postcss/paid",
+        "//contrib/postcss/copyright:copyright_content_module_jar",
+        "//contrib/postcss/paid:paid_content_module_jar",
     ],
 )
 ### auto-generated section `dev content intellij.postcss.plugin` end

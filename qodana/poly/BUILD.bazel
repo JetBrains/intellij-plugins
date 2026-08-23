@@ -1,4 +1,5 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.qodana.poly` start
@@ -8,7 +9,6 @@ jvm_library(
         [],
         allow_empty = True,
     ),
-    content_module_jar = True,
     module_name = "intellij.qodana.poly",
     resource_strip_prefix = "resources",
     resources = glob(
@@ -17,6 +17,8 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = ["//contrib/qodana"],
 )
+
+content_module_jar(module = ":poly")
 
 jvm_library(
     name = "poly_test_lib",

@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.gauge.gradle` start
@@ -11,7 +12,6 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    content_module_jar = True,
     module_name = "intellij.gauge.gradle",
     resource_strip_prefix = "resources",
     resources = glob(
@@ -30,6 +30,8 @@ jvm_library(
         "@community//plugins/gradle",
     ],
 )
+
+content_module_jar(module = ":gradle")
 
 jvm_library(
     name = "gradle_test_lib",

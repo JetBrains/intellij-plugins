@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### skip generation section `test intellij.qodana.coverage.tests`
@@ -13,7 +14,6 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    content_module_jar = True,
     module_name = "intellij.qodana.coverage",
     resource_strip_prefix = "resources",
     resources = glob(
@@ -39,6 +39,8 @@ jvm_library(
         "//contrib/qodana/util",
     ],
 )
+
+content_module_jar(module = ":coverage")
 
 jvm_library(
     name = "coverage_test_lib",

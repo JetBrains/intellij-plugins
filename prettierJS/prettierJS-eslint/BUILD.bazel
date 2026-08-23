@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.prettierJS.eslint` start
@@ -11,7 +12,6 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    content_module_jar = True,
     module_name = "intellij.prettierJS.eslint",
     resource_strip_prefix = "resources",
     resources = glob(
@@ -34,6 +34,8 @@ jvm_library(
         "@community//platform/util",
     ],
 )
+
+content_module_jar(module = ":eslint")
 
 jvm_library(
     name = "eslint_test_lib",

@@ -1,4 +1,5 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.qodana.json` start
@@ -12,7 +13,6 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    content_module_jar = True,
     module_name = "intellij.qodana.json",
     resource_strip_prefix = "resources",
     resources = glob(
@@ -36,6 +36,8 @@ jvm_library(
         "@community//libraries/kotlinx/coroutines/core",
     ],
 )
+
+content_module_jar(module = ":json")
 
 jvm_library(
     name = "json_test_lib",

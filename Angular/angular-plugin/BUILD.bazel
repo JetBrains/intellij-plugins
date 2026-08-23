@@ -59,8 +59,8 @@ dev_dist_plugin_content(
     content_modules = ["//contrib/Angular/angular-backend"],
     descriptor_module = ":angular-plugin",
     prepacked_content_modules = [
-        "//contrib/Angular/angular-free",
-        "//contrib/Angular/angular-tslint",
+        "//contrib/Angular/angular-free:angular-free_content_module_jar",
+        "//contrib/Angular/angular-tslint:angular-tslint_content_module_jar",
     ],
 )
 ### auto-generated section `dev content intellij.angular.plugin` end

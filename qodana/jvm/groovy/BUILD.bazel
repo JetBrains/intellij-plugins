@@ -1,4 +1,5 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.qodana.jvm.groovy` start
@@ -12,7 +13,6 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    content_module_jar = True,
     module_name = "intellij.qodana.jvm.groovy",
     resource_strip_prefix = "resources",
     resources = glob(
@@ -31,6 +31,8 @@ jvm_library(
         "//contrib/qodana",
     ],
 )
+
+content_module_jar(module = ":groovy")
 
 jvm_library(
     name = "groovy_test_lib",

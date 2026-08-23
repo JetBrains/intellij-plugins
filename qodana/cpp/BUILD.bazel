@@ -1,5 +1,6 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.qodana.cpp` start
@@ -22,7 +23,6 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    content_module_jar = True,
     kotlinc_opts = ":custom_cpp",
     module_name = "intellij.qodana.cpp",
     resource_strip_prefix = "resources",
@@ -63,6 +63,8 @@ jvm_library(
         "//remote-dev/rd-ide-model-generated",
     ],
 )
+
+content_module_jar(module = ":cpp")
 
 jvm_library(
     name = "cpp_test_lib",
