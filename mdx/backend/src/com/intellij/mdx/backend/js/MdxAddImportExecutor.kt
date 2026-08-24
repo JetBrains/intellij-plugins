@@ -79,15 +79,16 @@ internal class MdxAddImportExecutor(place: PsiElement) : ES6AddImportExecutor(pl
     val prefixEnd = lines[openingIndex].start
     val prefixText = text.subSequence(prefixStart, prefixEnd).toString()
 
-    // If an existing import/export block already follows (possibly after blank separator lines), group
-    // the relocated import with it. Otherwise insert right at the closing delimiter's line end, i.e.
-    // immediately after it, leaving any blank lines before the body untouched.
+    // If an existing import already follows (possibly after blank separator lines), group the relocated
+    // import with it. Otherwise insert right at the closing delimiter's line end, i.e. immediately after
+    // it, leaving any blank lines before the body (or a leading `export`, which isn't an import to group
+    // with) untouched.
     var insertLine = closingIndex + 1
     while (insertLine < lines.size && lines[insertLine].content.isBlank()) {
       insertLine++
     }
     val insertAt = when {
-      insertLine < lines.size && isEsmLine(lines[insertLine].content) -> lines[insertLine].start
+      insertLine < lines.size && isImportLine(lines[insertLine].content) -> lines[insertLine].start
       else -> lines[closingIndex].end
     }
     return Relocation(prefixStart, prefixEnd, prefixText, insertAt)
@@ -116,6 +117,8 @@ internal class MdxAddImportExecutor(place: PsiElement) : ES6AddImportExecutor(pl
     val trimmed = content.trimStart()
     return startsWithKeyword(trimmed, "import") || startsWithKeyword(trimmed, "export")
   }
+
+  private fun isImportLine(content: String): Boolean = startsWithKeyword(content.trimStart(), "import")
 
   private fun startsWithKeyword(text: String, keyword: String): Boolean {
     if (!text.startsWith(keyword)) return false
