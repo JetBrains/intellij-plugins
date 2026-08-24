@@ -160,6 +160,96 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
     assertEmptySarifResults()
   }
 
+  @Test
+  fun `reports diagnostics only from files included by Qodana`() {
+    createModuleWithTwoDiagnostics()
+
+    updateQodanaConfig {
+      it.copy(
+        profile = QodanaProfileConfig.named("qodana.single:$DART_PROJECT_SETUP_SHORT_NAME"),
+        include = listOf(InspectScope(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, paths = listOf("test-module/lib/included.dart"))),
+      )
+    }
+    runAnalysis()
+
+    assertEquals(
+      listOf("test-module/lib/included.dart"),
+      manager.sarifRun.results.map { it.locations.single().physicalLocation.artifactLocation.uri },
+    )
+  }
+
+  @Test
+  fun `includes an inspection everywhere when no paths are configured`() {
+    updateQodanaConfig {
+      it.copy(
+        profile = QodanaProfileConfig.named("qodana.single:$DART_PROJECT_SETUP_SHORT_NAME"),
+        include = listOf(InspectScope(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME)),
+      )
+    }
+    runAnalysis()
+
+    assertEquals(listOf("test-module/lib/main.dart"), sarifResultPaths())
+  }
+
+  @Test
+  fun `keeps an enabled inspection active outside included paths`() {
+    createModuleWithTwoDiagnostics()
+
+    updateQodanaConfig {
+      it.copy(
+        profile = dartAnalyzeProfile(),
+        include = listOf(InspectScope(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, paths = listOf("test-module/lib/included.dart"))),
+      )
+    }
+    runAnalysis()
+
+    assertEquals(listOf("test-module/lib/included.dart", "test-module/lib/main.dart"), sarifResultPaths())
+  }
+
+  @Test
+  fun `excludes an inspection only from configured files`() {
+    createModuleWithTwoDiagnostics()
+
+    updateQodanaConfig {
+      it.copy(
+        profile = dartAnalyzeProfile(),
+        exclude = listOf(InspectScope(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, paths = listOf("test-module/lib/main.dart"))),
+      )
+    }
+    runAnalysis()
+
+    assertEquals(listOf("test-module/lib/included.dart"), sarifResultPaths())
+  }
+
+  @Test
+  fun `excludes an inspection everywhere when no paths are configured`() {
+    updateQodanaConfig {
+      it.copy(
+        profile = dartAnalyzeProfile(),
+        exclude = listOf(InspectScope(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME)),
+      )
+    }
+    runAnalysis()
+
+    assertEmptySarifResults()
+  }
+
+  @Test
+  fun `include wins when include and exclude overlap`() {
+    createModuleWithTwoDiagnostics()
+
+    updateQodanaConfig {
+      it.copy(
+        profile = QodanaProfileConfig.named("qodana.single:$DART_PROJECT_SETUP_SHORT_NAME"),
+        include = listOf(InspectScope(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, paths = listOf("test-module/lib/included.dart"))),
+        exclude = listOf(InspectScope(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, paths = listOf("test-module/lib/included.dart"))),
+      )
+    }
+    runAnalysis()
+
+    assertEquals(listOf("test-module/lib/included.dart"), sarifResultPaths())
+  }
+
   private fun enableCoreLint(module: Path) {
     Files.writeString(
       module.resolve("analysis_options.yaml"),
@@ -231,7 +321,7 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
   }
 
   @Test
-  fun `reports a pub get failure with the executable exit code through SARIF`() {
+  fun `reports a pub get failure without a file location through SARIF`() {
     createDartModule("legacy-module", sdkConstraint = ">=2.7.0 <3.0.0")
     updateQodanaConfig { it.copy(profile = QodanaProfileConfig.named("qodana.single:$DART_PROJECT_SETUP_SHORT_NAME")) }
     runAnalysis()
@@ -240,8 +330,39 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
     assertEquals(DART_PROJECT_SETUP_SHORT_NAME, result.ruleId)
     assertEquals(Level.ERROR, result.level)
     assertTrue(result.message.text.contains("must be 2.12.0"))
-    assertEquals("legacy-module/pubspec.yaml", result.locations.single().physicalLocation.artifactLocation.uri)
+    assertTrue(result.message.text.contains("legacy-module"))
+    assertTrue(result.locations.all { it.physicalLocation == null })
   }
+
+  @Test
+  fun `reports setup failures for each failed module without file locations`() {
+    createDartModule("legacy-module", sdkConstraint = ">=2.7.0 <3.0.0")
+    createDartModule("legacy-module-2", sdkConstraint = ">=2.7.0 <3.0.0")
+    updateQodanaConfig { it.copy(profile = QodanaProfileConfig.named("qodana.single:$DART_PROJECT_SETUP_SHORT_NAME")) }
+    runAnalysis()
+
+    val results = manager.sarifRun.results.filter { it.ruleId == DART_PROJECT_SETUP_SHORT_NAME }
+    assertEquals(2, results.size)
+    assertEquals(setOf("legacy-module", "legacy-module-2"), results.map { result ->
+      when {
+        result.message.text.contains("legacy-module-2") -> "legacy-module-2"
+        result.message.text.contains("legacy-module") -> "legacy-module"
+        else -> error("Missing module path in '${result.message.text}'")
+      }
+    }.toSet())
+    assertTrue(results.all { result -> result.locations.all { it.physicalLocation == null } })
+  }
+
+  private fun createModuleWithTwoDiagnostics() {
+    val module = createDartModule("test-module")
+    val includedFile = module.resolve("lib/included.dart")
+    Files.writeString(includedFile, "void included() { missing; }")
+    LocalFileSystem.getInstance().refreshAndFindFileByNioFile(includedFile)
+    analyzeResponses["test-module"] = readDartAnalyzeTestData("two-uncategorized.json")
+  }
+
+  private fun sarifResultPaths(): List<String> =
+    manager.sarifRun.results.map { it.locations.single().physicalLocation.artifactLocation.uri }.sorted()
 
   private fun createDartModule(moduleName: String, isFlutter: Boolean = false, sdkConstraint: String = "^3.4.0"): Path {
     val moduleDirectory = Path.of(project.basePath!!, moduleName)
@@ -343,6 +464,7 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
       analyzeResponses,
       preparationFailures = mapOf(
         "legacy-module" to "The lower bound of sdk must be 2.12.0 or higher to enable null safety.",
+        "legacy-module-2" to "The lower bound of sdk must be 2.12.0 or higher to enable null safety.",
       ),
     ).create()
   }
