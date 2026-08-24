@@ -9,7 +9,7 @@ import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javaee.ExternalResourceManagerExImpl;
+import com.intellij.javaee.ExternalResourceManagerExBase;
 import com.intellij.lang.javascript.BaseJSCompletionTestCase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -181,7 +181,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     String testName = getTestName(false);
     myFixture.configureByFiles(testName + ".js2", testName + ".dtd");
     final VirtualFile relativeFile = VfsUtilCore.findRelativeFile(testName + ".dtd", myFixture.getFile().getVirtualFile());
-    ExternalResourceManagerExImpl.registerResourceTemporarily(JSAttributeImpl.URN_FLEX_META, relativeFile.getPath(), getTestRootDisposable());
+    ExternalResourceManagerExBase.registerResourceTemporarily(JSAttributeImpl.URN_FLEX_META, relativeFile.getPath(), getTestRootDisposable());
 
     complete();
     checkResultByFile("", getExtension());
