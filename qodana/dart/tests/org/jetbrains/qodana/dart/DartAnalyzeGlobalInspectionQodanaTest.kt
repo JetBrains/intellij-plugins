@@ -25,6 +25,7 @@ import java.nio.file.Path
 @TestDataPath($$"$CONTENT_ROOT/../test-data/DartAnalyzeGlobalInspectionQodanaTest")
 class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
   private lateinit var analyzeResponses: MutableMap<String, RecordedDartAnalyzeResponse>
+  private lateinit var recordedExecutions: MutableList<Pair<String, String>>
 
   override val testData: Path = Path.of(PluginPathManager.getPluginHomePath("qodana"), "dart", "test-data")
   override val testDataBasePath: Path = Path.of(javaClass.simpleName)
@@ -282,6 +283,81 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
   }
 
   @Test
+  fun `does not reduce analyzed modules when an inspection is excluded from a file`() {
+    copyMiniMonorepoIntoProject()
+    updateQodanaConfig {
+      it.copy(
+        profile = dartAnalyzeProfile(),
+        exclude = listOf(InspectScope(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, paths = listOf("packages/core/lib/main.dart"))),
+      )
+    }
+    runAnalysis()
+
+    assertEquals(
+      listOf(
+        "apps/app/lib/main.dart",
+        "packages/core/nested_flutter_app/lib/main.dart",
+        "packages/flutter_app/lib/main.dart",
+      ),
+      sarifResultPaths(),
+    )
+    assertRecordedAnalyzedModules(
+      "apps/app",
+      "packages/core",
+      "packages/core/nested_flutter_app",
+      "packages/flutter_app",
+    )
+  }
+
+  @Test
+  fun `analyzes modules intersecting only directory scopes`() {
+    copyMiniMonorepoIntoProject()
+    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile(), onlyDirectory = Path.of("packages/core")) }
+    runAnalysis()
+
+    assertEquals(
+      listOf("packages/core/lib/main.dart", "packages/core/nested_flutter_app/lib/main.dart"),
+      sarifResultPaths(),
+    )
+    assertRecordedAnalyzedModules("packages/core", "packages/core/nested_flutter_app")
+  }
+
+  @Test
+  fun `analyzes a module when only directory selects its source directory or file`() {
+    copyMiniMonorepoIntoProject()
+    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile(), onlyDirectory = Path.of("packages/core/lib")) }
+    runAnalysis()
+
+    assertEquals(listOf("packages/core/lib/main.dart"), sarifResultPaths())
+    assertRecordedAnalyzedModules("packages/core")
+
+    recordedExecutions.clear()
+    updateQodanaConfig { it.copy(onlyDirectory = Path.of("packages/core/lib/main.dart")) }
+    runAnalysis()
+
+    assertEquals(listOf("packages/core/lib/main.dart"), sarifResultPaths())
+    assertRecordedAnalyzedModules("packages/core")
+  }
+
+  @Test
+  fun `does not analyze parent modules when only directory selects nested Dart or Flutter modules`() {
+    createDartModule("test-module/example")
+    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile(), onlyDirectory = Path.of("test-module/example/lib/main.dart")) }
+    runAnalysis()
+
+    assertEquals(listOf("test-module/example/lib/main.dart"), sarifResultPaths())
+    assertRecordedAnalyzedModules("test-module/example")
+
+    recordedExecutions.clear()
+    copyMiniMonorepoIntoProject()
+    updateQodanaConfig { it.copy(onlyDirectory = Path.of("packages/core/nested_flutter_app")) }
+    runAnalysis()
+
+    assertEquals(listOf("packages/core/nested_flutter_app/lib/main.dart"), sarifResultPaths())
+    assertRecordedAnalyzedModules("packages/core/nested_flutter_app")
+  }
+
+  @Test
   fun `deduplicates diagnostics reported by a parent and an example subproject`() {
     analyzeResponses["test-module"] = readDartAnalyzeTestData("dedup-root.json")
     Files.writeString(Path.of(project.basePath!!, "test-module/lib/main.dart"), "void main() {}")
@@ -363,6 +439,12 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
 
   private fun sarifResultPaths(): List<String> =
     manager.sarifRun.results.map { it.locations.single().physicalLocation.artifactLocation.uri }.sorted()
+
+  private fun assertRecordedAnalyzedModules(vararg modules: String) {
+    if (recordedExecutions.isNotEmpty()) {
+      assertEquals(modules.toList().sorted(), recordedExecutions.filter { it.first == "analyze" }.map { it.second }.sorted())
+    }
+  }
 
   private fun createDartModule(moduleName: String, isFlutter: Boolean = false, sdkConstraint: String = "^3.4.0"): Path {
     val moduleDirectory = Path.of(project.basePath!!, moduleName)
@@ -451,6 +533,7 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
   }
 
   private fun createRunnerFactory(): DartAnalyzeRunnerFactory {
+    recordedExecutions = mutableListOf()
     analyzeResponses = mutableMapOf(
       "test-module" to readDartAnalyzeTestData("single-uncategorized.json"),
       "apps/app" to readDartAnalyzeTestData("single-app-uncategorized.json"),
@@ -466,6 +549,7 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
         "legacy-module" to "The lower bound of sdk must be 2.12.0 or higher to enable null safety.",
         "legacy-module-2" to "The lower bound of sdk must be 2.12.0 or higher to enable null safety.",
       ),
+      executions = recordedExecutions,
     ).create()
   }
 

@@ -25,6 +25,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -65,7 +66,8 @@ internal open class DartAnalyzeGlobalInspection(
     val qodanaContext = globalContext as? QodanaGlobalInspectionContext ?: return
     if (!qodanaContext.hasEnabledDartAnalyzeTool()) return
 
-    val modules = findDartModules(qodanaContext.config.projectPath)
+    val allModules = findDartModules(qodanaContext.config.projectPath)
+    val modules = allModules.filter { it.intersects(scope, allModules) }
     val reportedDiagnostics = HashSet<String>()
     val job = JobDescriptor(QodanaDartBundle.message("inspection.dart.analyze.progress"))
     job.totalAmount = modules.size
@@ -117,6 +119,27 @@ internal open class DartAnalyzeGlobalInspection(
   }
 
   private suspend fun analyze(module: DartModule): DartAnalyzeRunResult = runnerFactory.create(module.type).analyze(module.path)
+
+  private fun DartModule.intersects(scope: AnalysisScope, modules: List<DartModule>): Boolean {
+    val moduleRoot = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(path) ?: return false
+    val nestedModuleRoots = modules.asSequence()
+      .filter { it != this && it.path.startsWith(path) }
+      .mapNotNull { LocalFileSystem.getInstance().refreshAndFindFileByNioFile(it.path) }
+      .toSet()
+    var intersects = false
+    VfsUtilCore.iterateChildrenRecursively(moduleRoot, { file ->
+      !file.isDirectory || file == moduleRoot || file !in nestedModuleRoots
+    }) { file ->
+      if (!file.isDirectory && scope.contains(file)) {
+        intersects = true
+        false
+      }
+      else {
+        true
+      }
+    }
+    return intersects
+  }
 
   private fun DartAnalyzeDiagnostic.belongsTo(module: DartModule, modules: List<DartModule>): Boolean {
     val file = location?.file ?: return true
