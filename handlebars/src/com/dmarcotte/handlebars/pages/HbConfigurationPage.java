@@ -36,7 +36,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public final class HbConfigurationPage implements SearchableConfigurable {
+public class HbConfigurationPage implements SearchableConfigurable {
   private final JCheckBox myAutoGenerateClosingTagCheckBox;
   private final JPanel myWholePanel;
   private final JCheckBox myFormattingCheckBox;

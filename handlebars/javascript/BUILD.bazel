@@ -1,0 +1,61 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.handlebars.javascript` start
+jvm_library(
+    name = "javascript",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.handlebars.javascript",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "//contrib/handlebars",
+        "//plugins/JavaScriptLanguage/javascript-backend",
+        "@community//platform/core-api:core",
+        "@community//platform/ide-core",
+        "@lib//:kotlin-stdlib",
+    ],
+)
+
+content_module_jar(module = ":javascript")
+
+jvm_library(
+    name = "javascript_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.handlebars.javascript",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":javascript",
+        "//contrib/handlebars:handlebars_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+    ],
+)
+### auto-generated section `build intellij.handlebars.javascript` end
+
+### auto-generated section `iml intellij.handlebars.javascript` start
+exports_files(
+    [
+        "intellij.handlebars.javascript.iml",
+        "resources/intellij.handlebars.javascript.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.handlebars.javascript` end

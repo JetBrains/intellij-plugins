@@ -1,0 +1,17 @@
+<idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="com.dmarcotte.handlebars"/>
+    <module name="intellij.javascript.backend"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.ide.core"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <extensions defaultExtensionNs="JavaScript">
+    <lang.templates instance="com.intellij.handlebars.javascript.HbJavaScriptConfigurationPage"
+                    id="editor.preferences.handlebarsOptions"
+                    key="hb.pages.options.title"
+                    bundle="messages.HbBundle"/>
+  </extensions>
+</idea-plugin>
