@@ -68,9 +68,6 @@ const val SARIF_AUTOMATION_GUID_PROPERTY: String = "qodana.automation.guid"
 const val PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY: String = "qodana.path.to.project.dir.from.project.root"
 
 private const val PROJECT_DIR_PREFIX = "file://\$PROJECT_DIR\$/"
-internal const val SRCROOT_URI_BASE = "SRCROOT"
-internal const val PROJECTROOT_URI_BASE = "PROJECTROOT"
-internal const val OPENDIR_URI_BASE = "OPENDIR"
 
 /** The CI job build URL where Qodana is run, e.g. `https://github.com/JetBrains/qodana-action/actions/runs/1`. */
 internal const val QODANA_JOB_URL = "QODANA_JOB_URL"
@@ -101,11 +98,30 @@ internal const val PROBLEM_TYPE = "problemType"
 internal const val PROBLEM_HAS_FIXES = "hasFixes"
 internal const val PROBLEM_HAS_CLEANUP = "hasCleanup"
 
-internal const val SRCROOT_DESCRIPTION = "The subdirectory within the project that was analyzed. Could be solution directory for .NET projects or --project-dir qodana CLI parameter for others"
+@ApiStatus.Internal
+enum class OriginalUriBaseId(val uriBaseId: String, val description: String) {
+  PROJECTROOT("PROJECTROOT", "The root directory of the repository or workspace (--repository-root qodana CLI parameter)"),
+  OPENDIR("OPENDIR", "The directory Qodana was opened in (--project-dir qodana CLI parameter)"),
+  SRCROOT("SRCROOT", "The project directory within the repository that was analyzed (--project-dir qodana CLI parameter)"),
+  RIDER_SRCROOT("SRCROOT", "The solution directory that was analyzed");
 
-internal const val OPENDIR_DESCRIPTION = "The directory Qodana was opened in (--project-dir qodana CLI parameter)"
+  fun createEntry(uri: String? = null): OriginalBaseUriEntry {
+    val artifactLocation = ArtifactLocation().withDescription(Message().withText(description))
+    uri
+      ?.let(::normalizeUriBasePath)
+      ?.takeIf { it.isNotEmpty() }
+      ?.let(artifactLocation::withUri)
+    return OriginalBaseUriEntry(this, artifactLocation)
+  }
 
-internal const val PROJECTROOT_DESCRIPTION = "The root directory of the repository or workspace (--repository-root qodana CLI parameter)"
+  fun createEntry(path: Path): OriginalBaseUriEntry = createEntry(path.toString())
+}
+
+@ApiStatus.Internal
+class OriginalBaseUriEntry internal constructor(
+  val base: OriginalUriBaseId,
+  val artifactLocation: ArtifactLocation,
+)
 
 fun createSarifReport(runs: List<Run>): SarifReport {
   val schema = URI("https://raw.githubusercontent.com/schemastore/schemastore/master/src/schemas/json/sarif-2.1.0-rtm.5.json")
@@ -125,7 +141,8 @@ fun createRun(): Run {
     .withProperties(PropertyBag().apply {
       put("deviceId", EventLogConfiguration.getInstance().getOrCreate("FUS").deviceId)
     })
-    .withOriginalUriBaseIds(createOriginalUriBaseIds())
+    // by default, initialise with default SRCROOT only
+    .withOriginalUriBaseIds(createOriginalUriBaseIds(*createRepositoryRootEntries(OriginalUriBaseId.SRCROOT)))
 }
 
 fun SarifReport.getOrCreateRun(): Run {
@@ -167,42 +184,29 @@ private fun createDriver(): ToolComponent {
     .withRules(mutableListOf())
 }
 
-internal fun createOriginalUriBaseIds() = OriginalUriBaseIds().apply {
-  val relativePath = normalizeUriBasePath(System.getProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY) ?: "")
-  if (relativePath.isNotEmpty()) {
-    put(
-      SRCROOT_URI_BASE,
-      ArtifactLocation()
-        .withUri(relativePath)
-        .withUriBaseId(PROJECTROOT_URI_BASE)
-        .withDescription(Message().withText(SRCROOT_DESCRIPTION))
-    )
-    put(
-      PROJECTROOT_URI_BASE,
-      ArtifactLocation().withDescription(Message().withText(PROJECTROOT_DESCRIPTION))
-    )
-  } else {
-    put(SRCROOT_URI_BASE, ArtifactLocation().withDescription(Message().withText(SRCROOT_DESCRIPTION)))
+@ApiStatus.Internal
+fun createRepositoryRootEntries(srcRoot: OriginalUriBaseId): Array<OriginalBaseUriEntry> {
+  val srcRootEntry = srcRoot.createEntry(System.getProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY))
+  return if (srcRootEntry.artifactLocation.uri == null) {
+    arrayOf(srcRootEntry)
+  }
+  else {
+    arrayOf(OriginalUriBaseId.PROJECTROOT.createEntry(), srcRootEntry)
   }
 }
 
+/**
+ * Creates chain of originalUriBaseIds.
+ * The first one is considered the topmost one; each subsequent uses previous as baseUri
+ */
 @ApiStatus.Internal
-fun OriginalUriBaseIds.addOpenDirForRider(relativePathFromProjectDir: Path) {
-  require(!relativePathFromProjectDir.isAbsolute) { "The solution directory path must be relative to the project directory" }
-
-  val normalizedPath = relativePathFromProjectDir.normalize()
-  if (normalizedPath.toString().isEmpty()) return
-
-  val openDir = this[SRCROOT_URI_BASE] ?: ArtifactLocation()
-  openDir.withDescription(Message().withText(OPENDIR_DESCRIPTION))
-  put(OPENDIR_URI_BASE, openDir)
-  put(
-    SRCROOT_URI_BASE,
-    ArtifactLocation()
-      .withUri(normalizeUriBasePath(normalizedPath.toString()))
-      .withUriBaseId(OPENDIR_URI_BASE)
-      .withDescription(Message().withText(SRCROOT_DESCRIPTION))
-  )
+fun createOriginalUriBaseIds(vararg entries: OriginalBaseUriEntry): OriginalUriBaseIds = OriginalUriBaseIds().apply {
+  var previousBase: OriginalUriBaseId? = null
+  for (entry in entries) {
+    previousBase?.let { entry.artifactLocation.withUriBaseId(it.uriBaseId) }
+    put(entry.base.uriBaseId, entry.artifactLocation)
+    previousBase = entry.base
+  }
 }
 
 private fun normalizeUriBasePath(path: String): String {
@@ -391,7 +395,7 @@ internal suspend fun getPhysicalLocation(problem: CommonDescriptor,
 
 fun getArtifactLocation(fileUrl: String): ArtifactLocation? {
   return if (fileUrl.startsWith(PROJECT_DIR_PREFIX)) {
-    ArtifactLocation().withUri(fileUrl.removePrefix(PROJECT_DIR_PREFIX)).withUriBaseId(SRCROOT_URI_BASE)
+    ArtifactLocation().withUri(fileUrl.removePrefix(PROJECT_DIR_PREFIX)).withUriBaseId(OriginalUriBaseId.SRCROOT.uriBaseId)
   }
   else {
     ArtifactLocation().withUri(fileUrl)

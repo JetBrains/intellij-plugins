@@ -22,11 +22,8 @@ import com.jetbrains.qodana.sarif.model.VersionControlDetails
 import org.jetbrains.qodana.report.ReportDescriptorBuilder
 import org.jetbrains.qodana.report.ReportResult
 import org.jetbrains.qodana.report.ReportValidator
-import org.jetbrains.qodana.staticAnalysis.sarif.PROJECTROOT_DESCRIPTION
-import org.jetbrains.qodana.staticAnalysis.sarif.PROJECTROOT_URI_BASE
+import org.jetbrains.qodana.staticAnalysis.sarif.OriginalUriBaseId
 import org.jetbrains.qodana.staticAnalysis.sarif.QODANA_SEVERITY_KEY
-import org.jetbrains.qodana.staticAnalysis.sarif.SRCROOT_DESCRIPTION
-import org.jetbrains.qodana.staticAnalysis.sarif.SRCROOT_URI_BASE
 import java.net.URI
 import java.util.UUID
 
@@ -59,7 +56,7 @@ class SingleMarkerReportDescriptorBuilder(
         .withPhysicalLocation(
           PhysicalLocation()
             .withArtifactLocation(
-              ArtifactLocation().withUri(parameters.path).withUriBaseId(SRCROOT_URI_BASE)
+              ArtifactLocation().withUri(parameters.path).withUriBaseId(OriginalUriBaseId.SRCROOT.uriBaseId)
             )
             .withRegion(
               Region().withStartColumn(parameters.column).withStartLine(parameters.line).withCharLength(parameters.markerLength.toInt())
@@ -80,18 +77,23 @@ class SingleMarkerReportDescriptorBuilder(
     val originalUriBaseIds = parameters.projectDirBaseURI?.let { projectDirBaseURI ->
       OriginalUriBaseIds().apply {
         put(
-          SRCROOT_URI_BASE,
+          OriginalUriBaseId.SRCROOT.uriBaseId,
           ArtifactLocation()
             .withUri(projectDirBaseURI)
-            .withUriBaseId(PROJECTROOT_URI_BASE)
-            .withDescription(Message().withText(SRCROOT_DESCRIPTION))
+            .withUriBaseId(OriginalUriBaseId.PROJECTROOT.uriBaseId)
+            .withDescription(Message().withText(OriginalUriBaseId.SRCROOT.description))
         )
         put(
-          PROJECTROOT_URI_BASE,
-          ArtifactLocation().withDescription(Message().withText(PROJECTROOT_DESCRIPTION))
+          OriginalUriBaseId.PROJECTROOT.uriBaseId,
+          ArtifactLocation().withDescription(Message().withText(OriginalUriBaseId.PROJECTROOT.description))
         )
       }
-    } ?: OriginalUriBaseIds().apply { put(SRCROOT_URI_BASE, ArtifactLocation().withDescription(Message().withText(SRCROOT_DESCRIPTION))) }
+    } ?: OriginalUriBaseIds().apply {
+      put(
+        OriginalUriBaseId.SRCROOT.uriBaseId,
+        ArtifactLocation().withDescription(Message().withText(OriginalUriBaseId.SRCROOT.description))
+      )
+    }
 
     val run = Run(tool)
       .withAutomationDetails(automationDetails)

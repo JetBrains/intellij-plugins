@@ -5,20 +5,19 @@ import junit.framework.TestCase
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.withSystemProperty
 import org.junit.Test
-import java.nio.file.Path
 
 class OriginalUriBaseIdsTest : QodanaTestCase() {
 
   @Test
   fun `empty property creates only SRCROOT`() = runTest {
     withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "") {
-      val originalUriBaseIds = createOriginalUriBaseIds()
+      val originalUriBaseIds = createRegularOriginalUriBaseIds()
 
-      assertTrue(originalUriBaseIds.containsKey(SRCROOT_URI_BASE))
-      assertFalse(originalUriBaseIds.containsKey(PROJECTROOT_URI_BASE))
+      assertTrue(originalUriBaseIds.containsKey(OriginalUriBaseId.SRCROOT.uriBaseId))
+      assertFalse(originalUriBaseIds.containsKey(OriginalUriBaseId.PROJECTROOT.uriBaseId))
 
-      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
-      checkArtifactLocation(srcRoot, null, null, SRCROOT_DESCRIPTION)
+      val srcRoot = originalUriBaseIds[OriginalUriBaseId.SRCROOT.uriBaseId] as ArtifactLocation
+      checkArtifactLocation(srcRoot, null, null, OriginalUriBaseId.SRCROOT.description)
     }
   }
 
@@ -26,40 +25,40 @@ class OriginalUriBaseIdsTest : QodanaTestCase() {
   fun `null property creates only SRCROOT`() = runTest {
     System.clearProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY)
 
-    val originalUriBaseIds = createOriginalUriBaseIds()
-    assertTrue(originalUriBaseIds.containsKey(SRCROOT_URI_BASE))
-    assertFalse(originalUriBaseIds.containsKey(PROJECTROOT_URI_BASE))
+    val originalUriBaseIds = createRegularOriginalUriBaseIds()
+    assertTrue(originalUriBaseIds.containsKey(OriginalUriBaseId.SRCROOT.uriBaseId))
+    assertFalse(originalUriBaseIds.containsKey(OriginalUriBaseId.PROJECTROOT.uriBaseId))
 
-    val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
-    checkArtifactLocation(srcRoot, null, null, SRCROOT_DESCRIPTION)
+    val srcRoot = originalUriBaseIds[OriginalUriBaseId.SRCROOT.uriBaseId] as ArtifactLocation
+    checkArtifactLocation(srcRoot, null, null, OriginalUriBaseId.SRCROOT.description)
   }
 
   @Test
   fun `non-empty property creates both SRCROOT and PROJECTROOT`() = runTest {
     withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "subdir/project") {
-      val originalUriBaseIds = createOriginalUriBaseIds()
+      val originalUriBaseIds = createRegularOriginalUriBaseIds()
 
-      assertTrue(originalUriBaseIds.containsKey(SRCROOT_URI_BASE))
-      assertTrue(originalUriBaseIds.containsKey(PROJECTROOT_URI_BASE))
+      assertTrue(originalUriBaseIds.containsKey(OriginalUriBaseId.SRCROOT.uriBaseId))
+      assertTrue(originalUriBaseIds.containsKey(OriginalUriBaseId.PROJECTROOT.uriBaseId))
 
-      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
+      val srcRoot = originalUriBaseIds[OriginalUriBaseId.SRCROOT.uriBaseId] as ArtifactLocation
       checkArtifactLocation(
         srcRoot,
         "subdir/project/",
-        PROJECTROOT_URI_BASE,
-        SRCROOT_DESCRIPTION
+        OriginalUriBaseId.PROJECTROOT.uriBaseId,
+        OriginalUriBaseId.SRCROOT.description
       )
 
-      val projectRoot = originalUriBaseIds[PROJECTROOT_URI_BASE] as ArtifactLocation
-      checkArtifactLocation(projectRoot, null, null, PROJECTROOT_DESCRIPTION)
+      val projectRoot = originalUriBaseIds[OriginalUriBaseId.PROJECTROOT.uriBaseId] as ArtifactLocation
+      checkArtifactLocation(projectRoot, null, null, OriginalUriBaseId.PROJECTROOT.description)
     }
   }
 
   @Test
   fun `path normalization adds trailing slash`() = runTest {
     withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "subdir/project") {
-      val originalUriBaseIds = createOriginalUriBaseIds()
-      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
+      val originalUriBaseIds = createRegularOriginalUriBaseIds()
+      val srcRoot = originalUriBaseIds[OriginalUriBaseId.SRCROOT.uriBaseId] as ArtifactLocation
 
       assertTrue(srcRoot.uri.endsWith("/"))
       TestCase.assertEquals("subdir/project/", srcRoot.uri)
@@ -69,8 +68,8 @@ class OriginalUriBaseIdsTest : QodanaTestCase() {
   @Test
   fun `path normalization preserves existing trailing slash`() = runTest {
     withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "subdir/project/") {
-      val originalUriBaseIds = createOriginalUriBaseIds()
-      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
+      val originalUriBaseIds = createRegularOriginalUriBaseIds()
+      val srcRoot = originalUriBaseIds[OriginalUriBaseId.SRCROOT.uriBaseId] as ArtifactLocation
 
       TestCase.assertEquals("subdir/project/", srcRoot.uri)
     }
@@ -79,8 +78,8 @@ class OriginalUriBaseIdsTest : QodanaTestCase() {
   @Test
   fun `path normalization removes leading slash`() = runTest {
     withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "/subdir/project") {
-      val originalUriBaseIds = createOriginalUriBaseIds()
-      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
+      val originalUriBaseIds = createRegularOriginalUriBaseIds()
+      val srcRoot = originalUriBaseIds[OriginalUriBaseId.SRCROOT.uriBaseId] as ArtifactLocation
 
       assertFalse(srcRoot.uri.startsWith("/"))
       TestCase.assertEquals("subdir/project/", srcRoot.uri)
@@ -90,8 +89,8 @@ class OriginalUriBaseIdsTest : QodanaTestCase() {
   @Test
   fun `path normalization converts backslashes to forward slashes`() = runTest {
     withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "subdir\\project") {
-      val originalUriBaseIds = createOriginalUriBaseIds()
-      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
+      val originalUriBaseIds = createRegularOriginalUriBaseIds()
+      val srcRoot = originalUriBaseIds[OriginalUriBaseId.SRCROOT.uriBaseId] as ArtifactLocation
 
       assertFalse(srcRoot.uri.contains("\\"))
       TestCase.assertEquals("subdir/project/", srcRoot.uri)
@@ -101,8 +100,8 @@ class OriginalUriBaseIdsTest : QodanaTestCase() {
   @Test
   fun `path normalization handles complex windows path`() = runTest {
     withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "\\subdir\\project\\") {
-      val originalUriBaseIds = createOriginalUriBaseIds()
-      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
+      val originalUriBaseIds = createRegularOriginalUriBaseIds()
+      val srcRoot = originalUriBaseIds[OriginalUriBaseId.SRCROOT.uriBaseId] as ArtifactLocation
 
       TestCase.assertEquals("subdir/project/", srcRoot.uri)
     }
@@ -111,8 +110,8 @@ class OriginalUriBaseIdsTest : QodanaTestCase() {
   @Test
   fun `path normalization trims whitespace`() = runTest {
     withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "  subdir/project  ") {
-      val originalUriBaseIds = createOriginalUriBaseIds()
-      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
+      val originalUriBaseIds = createRegularOriginalUriBaseIds()
+      val srcRoot = originalUriBaseIds[OriginalUriBaseId.SRCROOT.uriBaseId] as ArtifactLocation
 
       TestCase.assertEquals("subdir/project/", srcRoot.uri)
     }
@@ -121,12 +120,12 @@ class OriginalUriBaseIdsTest : QodanaTestCase() {
   @Test
   fun `whitespace-only property creates only SRCROOT`() = runTest {
     withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "   ") {
-      val originalUriBaseIds = createOriginalUriBaseIds()
+      val originalUriBaseIds = createRegularOriginalUriBaseIds()
 
-      assertTrue(originalUriBaseIds.containsKey(SRCROOT_URI_BASE))
-      assertFalse(originalUriBaseIds.containsKey(PROJECTROOT_URI_BASE))
+      assertTrue(originalUriBaseIds.containsKey(OriginalUriBaseId.SRCROOT.uriBaseId))
+      assertFalse(originalUriBaseIds.containsKey(OriginalUriBaseId.PROJECTROOT.uriBaseId))
 
-      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
+      val srcRoot = originalUriBaseIds[OriginalUriBaseId.SRCROOT.uriBaseId] as ArtifactLocation
       assertNull(srcRoot.uri)
       assertNull(srcRoot.uriBaseId)
     }
@@ -135,28 +134,28 @@ class OriginalUriBaseIdsTest : QodanaTestCase() {
   @Test
   fun `open directory is added between project and source roots`() = runTest {
     withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "project") {
-      val originalUriBaseIds = createOriginalUriBaseIds()
+      val entries = createRepositoryRootEntries(OriginalUriBaseId.OPENDIR) +
+                    OriginalUriBaseId.RIDER_SRCROOT.createEntry("solution")
+      val originalUriBaseIds = createOriginalUriBaseIds(*entries)
 
-      originalUriBaseIds.addOpenDirForRider(Path.of("solution"))
-
-      val openDir = originalUriBaseIds[OPENDIR_URI_BASE] as ArtifactLocation
-      checkArtifactLocation(openDir, "project/", PROJECTROOT_URI_BASE, OPENDIR_DESCRIPTION)
-      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
-      checkArtifactLocation(srcRoot, "solution/", OPENDIR_URI_BASE, SRCROOT_DESCRIPTION)
+      val openDir = originalUriBaseIds[OriginalUriBaseId.OPENDIR.uriBaseId] as ArtifactLocation
+      checkArtifactLocation(openDir, "project/", OriginalUriBaseId.PROJECTROOT.uriBaseId, OriginalUriBaseId.OPENDIR.description)
+      val srcRoot = originalUriBaseIds[OriginalUriBaseId.RIDER_SRCROOT.uriBaseId] as ArtifactLocation
+      checkArtifactLocation(srcRoot, "solution/", OriginalUriBaseId.OPENDIR.uriBaseId, OriginalUriBaseId.RIDER_SRCROOT.description)
     }
   }
 
   @Test
   fun `open directory is rooted when project is repository root`() = runTest {
     withSystemProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY, "") {
-      val originalUriBaseIds = createOriginalUriBaseIds()
+      val entries = createRepositoryRootEntries(OriginalUriBaseId.OPENDIR) +
+                    OriginalUriBaseId.RIDER_SRCROOT.createEntry("solution")
+      val originalUriBaseIds = createOriginalUriBaseIds(*entries)
 
-      originalUriBaseIds.addOpenDirForRider(Path.of("solution"))
-
-      val openDir = originalUriBaseIds[OPENDIR_URI_BASE] as ArtifactLocation
-      checkArtifactLocation(openDir, null, null, OPENDIR_DESCRIPTION)
-      val srcRoot = originalUriBaseIds[SRCROOT_URI_BASE] as ArtifactLocation
-      checkArtifactLocation(srcRoot, "solution/", OPENDIR_URI_BASE, SRCROOT_DESCRIPTION)
+      val openDir = originalUriBaseIds[OriginalUriBaseId.OPENDIR.uriBaseId] as ArtifactLocation
+      checkArtifactLocation(openDir, null, null, OriginalUriBaseId.OPENDIR.description)
+      val srcRoot = originalUriBaseIds[OriginalUriBaseId.RIDER_SRCROOT.uriBaseId] as ArtifactLocation
+      checkArtifactLocation(srcRoot, "solution/", OriginalUriBaseId.OPENDIR.uriBaseId, OriginalUriBaseId.RIDER_SRCROOT.description)
     }
   }
 
@@ -165,4 +164,7 @@ class OriginalUriBaseIdsTest : QodanaTestCase() {
     TestCase.assertEquals(expectedUriBaseId, artifactLocation.uriBaseId)
     TestCase.assertEquals(expectedDescription, artifactLocation.description?.text)
   }
+
+  private fun createRegularOriginalUriBaseIds() =
+    createOriginalUriBaseIds(*createRepositoryRootEntries(OriginalUriBaseId.SRCROOT))
 }

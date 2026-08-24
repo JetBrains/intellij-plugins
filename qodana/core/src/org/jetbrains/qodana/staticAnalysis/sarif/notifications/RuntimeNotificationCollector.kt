@@ -10,7 +10,7 @@ import com.jetbrains.qodana.sarif.model.Notification
 import com.jetbrains.qodana.sarif.model.Run
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.profile.SanityInspectionGroup.Companion.SANITY_FAILURE_NOTIFICATION
-import org.jetbrains.qodana.staticAnalysis.sarif.SRCROOT_URI_BASE
+import org.jetbrains.qodana.staticAnalysis.sarif.OriginalUriBaseId
 import org.jetbrains.qodana.staticAnalysis.sarif.SarifReportContributor
 import org.jetbrains.qodana.staticAnalysis.sarif.qodanaKind
 import java.nio.file.Path
@@ -41,11 +41,11 @@ class RuntimeNotificationCollector {
   private fun tryRelativizeArtifactLocation(notification: Notification) {
     notification.locations?.forEach { original ->
       val path = original?.physicalLocation?.artifactLocation?.uri?.toNioPathOrNull() ?: return@forEach
-      val hasSrcRoot = original.physicalLocation.artifactLocation.uriBaseId == SRCROOT_URI_BASE
+      val hasSrcRoot = original.physicalLocation.artifactLocation.uriBaseId == OriginalUriBaseId.SRCROOT.uriBaseId
 
       if (hasSrcRoot || !path.isAbsolute) return@forEach
       original.physicalLocation.artifactLocation
-        .withUriBaseId(SRCROOT_URI_BASE)
+        .withUriBaseId(OriginalUriBaseId.SRCROOT.uriBaseId)
         .withUri(projectPath.relativize(path).toString())
     }
   }
