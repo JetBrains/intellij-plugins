@@ -1,0 +1,17 @@
+<idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="com.intellij.plugins.watcher"/>
+    <plugin id="com.jetbrains.plugins.meteor"/>
+    <module name="intellij.javascript.parser"/>
+    <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.libraries.jetbrains.annotations"/>
+    <module name="intellij.platform.core"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <extensions defaultExtensionNs="com.intellij.plugins.watcher">
+    <suppressor implementation="com.intellij.meteor.watcher.MeteorJSTaskSuppressor"/>
+  </extensions>
+
+</idea-plugin>

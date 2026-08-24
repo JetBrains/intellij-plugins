@@ -1,6 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="com.intellij.plugins.watcher">
-    <suppressor implementation="com.jetbrains.plugins.meteor.fw.MeteorJSTaskSuppressor"/>
-  </extensions>
-
-</idea-plugin>

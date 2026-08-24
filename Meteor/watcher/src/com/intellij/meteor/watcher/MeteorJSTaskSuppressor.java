@@ -1,4 +1,4 @@
-package com.jetbrains.plugins.meteor.fw;
+package com.intellij.meteor.watcher;
 
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;

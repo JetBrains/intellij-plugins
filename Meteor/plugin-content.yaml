@@ -1,3 +1,9 @@
 - name: lib/meteor.jar
   modules:
   - name: intellij.meteor
+- name: lib/modules/intellij.meteor.liveEdit.jar
+  contentModules:
+  - name: intellij.meteor.liveEdit
+- name: lib/modules/intellij.meteor.watcher.jar
+  contentModules:
+  - name: intellij.meteor.watcher

@@ -1,4 +1,4 @@
-package com.jetbrains.plugins.meteor.runner.liveEdit;
+package com.intellij.meteor.liveEdit;
 
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;

@@ -1,0 +1,22 @@
+<idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="com.intellij.plugins.html.instantEditing"/>
+    <plugin id="com.jetbrains.plugins.meteor"/>
+    <module name="intellij.javascript.backend"/>
+    <module name="intellij.javascript.debugger.backend"/>
+    <module name="intellij.libraries.jetbrains.annotations"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.debugger"/>
+    <module name="intellij.platform.execution"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.projectModel"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <extensions defaultExtensionNs="com.jetbrains.liveEdit">
+    <updateConfigurationProvider implementation="com.intellij.meteor.liveEdit.MeteorUpdateConfigurationProvider" order="first"/>
+    <updateConfigurationProvider implementation="com.intellij.meteor.liveEdit.MeteorClientUpdateConfigurationProvider"
+                                 order="first"/>
+  </extensions>
+</idea-plugin>
