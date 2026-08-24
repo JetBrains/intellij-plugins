@@ -61,8 +61,8 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
     override fun relabel(dataSource: WorkspaceEntity, parents: Set<WorkspaceEntity>?) {
       dataSource as DenoEntity
       if (this.entitySource != dataSource.entitySource) this.entitySource = dataSource.entitySource
-      if (this.depsFile != dataSource?.depsFile) this.depsFile = dataSource.depsFile
-      if (this.denoTypes != dataSource?.denoTypes) this.denoTypes = dataSource.denoTypes
+      if (this.depsFile != dataSource.depsFile) this.depsFile = dataSource.depsFile
+      if (this.denoTypes != dataSource.denoTypes) this.denoTypes = dataSource.denoTypes
       updateChildToParentReferences(parents)
     }
 
