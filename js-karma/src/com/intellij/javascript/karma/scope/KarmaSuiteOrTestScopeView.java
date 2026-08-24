@@ -27,7 +27,9 @@ public class KarmaSuiteOrTestScopeView extends KarmaScopeView {
     myTestNameView = new TestFullNameView(fullTestNamePopupTitle);
     myTestFileTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
     PathShortener.enablePathShortening(myTestFileTextFieldWithBrowseButton.getTextField(), null);
-    var descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor().withTitle(JavaScriptBundle.message("rc.testRunScope.testFile.browseTitle"));
+    var descriptor = FileChooserDescriptorFactory.singleFileOrDir()
+      .withTitle(JavaScriptBundle.message("rc.testRunScope.testFile.browseTitle"))
+      .withEnvironmentRestricted(true);
     SwingHelper.installFileCompletionAndBrowseDialog(project, myTestFileTextFieldWithBrowseButton, descriptor);
     myPanel = new FormBuilder()
       .setAlignLabelOnRight(false)

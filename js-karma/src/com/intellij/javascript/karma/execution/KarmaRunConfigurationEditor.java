@@ -79,7 +79,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myKarmaPackageField = new NodePackageField(myNodeInterpreterField, KarmaUtil.PKG_DESCRIPTOR, null);
     myWorkingDirComponent = createWorkingDirComponent(project);
     myConfigPathField = createConfigurationFileTextField(project);
-    myEnvVarsComponent = new EnvironmentVariablesTextFieldWithBrowseButton();
+    myEnvVarsComponent = new EnvironmentVariablesTextFieldWithBrowseButton(project);
     myKarmaOptionsEditor = createOptionsEditor(KarmaBundle.message("run_config.karma_options.placeholder.text"));
     JPanel scopeKindPanel = createScopeKindRadioButtonPanel();
     mySelectedScopeKindPanel = new JPanel(new BorderLayout());
@@ -113,7 +113,9 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
 
   private static @NotNull TextFieldWithBrowseButton createWorkingDirComponent(@NotNull Project project) {
     TextFieldWithBrowseButton textFieldWithBrowseButton = new TextFieldWithBrowseButton();
-    var descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(JavaScriptBundle.message("rc.workingDirectory.browseDialogTitle"));
+    var descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
+      .withTitle(JavaScriptBundle.message("rc.workingDirectory.browseDialogTitle"))
+      .withEnvironmentRestricted(true);
     SwingHelper.installFileCompletionAndBrowseDialog(project, textFieldWithBrowseButton, descriptor);
     PathShortener.enablePathShortening(textFieldWithBrowseButton.getTextField(), null);
     return textFieldWithBrowseButton;
@@ -204,7 +206,9 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
         return FileUtil.getLocationRelativeToUserHome(path, false);
       }));
     });
-    var descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor().withTitle(KarmaBundle.message("runConfiguration.config_file.browse_dialog.title"));
+    var descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
+      .withTitle(KarmaBundle.message("runConfiguration.config_file.browse_dialog.title"))
+      .withEnvironmentRestricted(true);
     SwingHelper.installFileCompletionAndBrowseDialog(project, textFieldWithHistoryWithBrowseButton, descriptor);
     return textFieldWithHistoryWithBrowseButton;
   }
