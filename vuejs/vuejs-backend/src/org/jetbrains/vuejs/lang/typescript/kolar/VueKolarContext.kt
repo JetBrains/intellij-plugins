@@ -32,11 +32,7 @@ internal object VueKolarContext {
     if (importGraphs.isEmpty())
       return emptyList()
 
-    val excludedFiles = files.asSequence()
-      .filter { it.isVueFile }
-      .toSet()
-
-    return FileTypeIndex.getFiles(VueFileType, VueProjectScope(importGraphs, excludedFiles))
+    return FileTypeIndex.getFiles(VueFileType, VueProjectScope(importGraphs))
   }
 
   private fun isVueProjectSourceFile(
@@ -56,11 +52,9 @@ internal object VueKolarContext {
 
 private class VueProjectScope(
   private val importGraphs: List<JSImportGraph>,
-  private val excludedFiles: Set<VirtualFile>,
 ) : GlobalSearchScope() {
   override fun contains(file: VirtualFile): Boolean =
     importGraphs.any { it.containsFile(file) }
-    && file !in excludedFiles
 
   override fun isSearchInModuleContent(aModule: Module): Boolean = true
   override fun isSearchInLibraries(): Boolean = false
