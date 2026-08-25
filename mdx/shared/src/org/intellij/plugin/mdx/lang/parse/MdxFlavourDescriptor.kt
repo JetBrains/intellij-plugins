@@ -18,6 +18,7 @@ import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 import org.intellij.markdown.parser.sequentialparsers.SequentialParserManager
 import org.intellij.markdown.parser.sequentialparsers.impl.InlineLinkParser
 import org.intellij.plugins.markdown.lang.parser.MarkdownDefaultMarkerProcessor
+import org.intellij.plugins.markdown.lang.parser.blocks.CodeFenceMarkerProvider
 import java.net.URI
 
 object MdxFlavourDescriptor : CommonMarkFlavourDescriptor() {
@@ -63,8 +64,10 @@ private class MdxMarkerProcessor(
     buildList {
       add(MdxHtmlCommentBlockProvider())
       add(MdxBlockProvider())
+      add(MdxCodeFenceProvider())
       addAll(super.getMarkerBlockProviders())
       removeIf { it is HtmlBlockProvider }
       removeIf { it is CodeBlockProvider }
+      removeIf { it is CodeFenceMarkerProvider && it !is MdxCodeFenceProvider }
     }
 }

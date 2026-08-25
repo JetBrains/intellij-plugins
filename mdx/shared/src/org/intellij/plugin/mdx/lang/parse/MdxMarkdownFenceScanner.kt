@@ -49,22 +49,6 @@ internal object MdxMarkdownFenceScanner {
     return limit
   }
 
-  /** Returns whether [offset] is inside a fence that opens at or after the line start [from]. */
-  fun containsOffset(text: CharSequence, from: Int, offset: Int): Boolean {
-    var lineStart = from.coerceAtLeast(0)
-    while (lineStart < offset && lineStart < text.length) {
-      val fenceEnd = findEnd(text, lineStart)
-      if (fenceEnd != -1) {
-        if (offset < fenceEnd) return true
-        lineStart = nextLineStart(text, fenceEnd, text.length)
-      }
-      else {
-        lineStart = nextLineStart(text, lineEnd(text, lineStart, text.length), text.length)
-      }
-    }
-    return false
-  }
-
   private fun fenceIndent(text: CharSequence, lineStart: Int, limit: Int): Int {
     var indent = 0
     while (lineStart + indent < limit && text[lineStart + indent] == ' ') {

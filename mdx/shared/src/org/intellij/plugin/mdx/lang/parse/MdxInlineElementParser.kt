@@ -27,7 +27,7 @@ internal class MdxInlineElementParser : SequentialParser {
       when (text[offset]) {
         '<' -> {
           val element = MdxJsxScanner.scanJsxElement(text, offset, limit, opaqueRanges)
-          if (element?.terminated == true) {
+          if (element != null && element.termination != MdxJsxScanner.Termination.UNTERMINATED) {
             val rootRange = addNode(result, tokens, element.range, MdxMarkdownLibElementTypes.MDX_JSX_TEXT_ELEMENT)
             val innerExcludedTokenIndexes = mutableSetOf<Int>()
             for ((tagRange, tagKind, _, attributes) in element.tags) {

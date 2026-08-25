@@ -11,8 +11,6 @@ import org.intellij.markdown.parser.MarkdownParser
 import org.intellij.plugin.mdx.lang.parse.MdxFlavourDescriptor
 import org.intellij.plugin.mdx.lang.parse.MdxMarkdownFenceScanner
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 @TestApplication
@@ -34,15 +32,6 @@ class MdxMarkdownFenceScannerTest {
     val fenceEnd = text.indexOf("\nafter")
 
     assertEquals(MdxMarkdownFenceScanner.findEnd(text, 0), fenceEnd)
-  }
-
-  @Test
-  fun reportsOffsetsInsideFence() {
-    val text = "before\n```md\n</not-a-tag>\n```\nafter"
-    val from = text.indexOf("```md")
-
-    assertTrue(MdxMarkdownFenceScanner.containsOffset(text, from, text.indexOf("</not-a-tag>")))
-    assertFalse(MdxMarkdownFenceScanner.containsOffset(text, from, text.indexOf("after")))
   }
 
   @Test

@@ -130,7 +130,15 @@ object MdxCodeFenceSandbox {
                                      sandboxEditor.selectionModel.selectionStart,
                                      sandboxEditor.selectionModel.selectionEnd)
       val (reindented, hostOffsets) = shift(sandboxDocument.text, resultOffsets, base)
-      runWriteAction { hostDocument.replaceString(contentStart, contentEnd, reindented) }
+      changedContent(content, reindented)?.let { replacement ->
+        runWriteAction {
+          hostDocument.replaceString(
+            contentStart + replacement.start,
+            contentStart + replacement.end,
+            replacement.text,
+          )
+        }
+      }
       documentManager.commitDocument(hostDocument)
       hostEditor.caretModel.moveToOffset(contentStart + hostOffsets[0])
       if (hostOffsets[1] != hostOffsets[2]) {
@@ -163,6 +171,29 @@ object MdxCodeFenceSandbox {
     document.immutableCharSequence
       .subSequence(document.getLineStartOffset(line), document.getLineEndOffset(line))
       .takeWhile { it == ' ' }.length
+
+  private fun changedContent(original: String, updated: String): ContentReplacement? {
+    if (original == updated) return null
+    var prefixLength = 0
+    while (prefixLength < original.length &&
+           prefixLength < updated.length &&
+           original[prefixLength] == updated[prefixLength]) {
+      prefixLength++
+    }
+
+    var suffixLength = 0
+    while (suffixLength < original.length - prefixLength &&
+           suffixLength < updated.length - prefixLength &&
+           original[original.lastIndex - suffixLength] == updated[updated.lastIndex - suffixLength]) {
+      suffixLength++
+    }
+
+    return ContentReplacement(
+      prefixLength,
+      original.length - suffixLength,
+      updated.substring(prefixLength, updated.length - suffixLength),
+    )
+  }
 
   /**
    * Shifts the indentation of every line by [delta] spaces — negative removes leading spaces (dedent), positive
@@ -204,4 +235,6 @@ object MdxCodeFenceSandbox {
     }
     return out.toString() to mapped
   }
+
+  private data class ContentReplacement(val start: Int, val end: Int, val text: String)
 }

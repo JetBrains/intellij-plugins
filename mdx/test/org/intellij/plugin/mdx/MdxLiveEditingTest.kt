@@ -5,7 +5,6 @@ import com.intellij.codeInsight.editorActions.CompletionAutoPopupHandler
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.editor.LanguageLineWrapPositionStrategy
 import com.intellij.openapi.editor.highlighter.HighlighterIterator
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.CodeStyleManager
@@ -15,7 +14,6 @@ import com.intellij.testFramework.TestModeFlags
 import com.intellij.testFramework.assertNoErrorLogged
 import org.intellij.plugin.mdx.completion.MdxXmlAutoPopupEnabler
 import org.intellij.plugin.mdx.lang.MdxLanguage
-import org.intellij.plugins.markdown.lang.supportsMarkdown
 import org.junit.jupiter.api.Test
 
 /**
@@ -162,6 +160,18 @@ class MdxLiveEditingTest : MdxTestBase() {
   fun testAutoCloseInDeeplyNestedSameNameTags() = checkTyping('>')
 
   @Test
+  fun testAutoCloseInDeepMixedNameTagsConvergesToFreshParse() {
+    myFixture.configureByFile("${testName}_after.mdx")
+    val fresh = nestedJsxSignature()
+
+    myFixture.configureByFile("$testName.mdx")
+    assertNoErrorLogged { myFixture.type(">") }
+
+    myFixture.checkResultByFile("${testName}_after.mdx")
+    assertEquals("Typing the inner tag must converge to the fresh parse", fresh, nestedJsxSignature())
+  }
+
+  @Test
   fun testRenamingMultilineOpeningTagKeepsMdxJsPsi() {
     myFixture.configureByFile("$testName.mdx")
     WriteCommandAction.runWriteCommandAction(myFixture.project) {
@@ -196,6 +206,25 @@ class MdxLiveEditingTest : MdxTestBase() {
     assertEquals("Wrapping the Markdown block last must converge to the fresh parse", fresh, nestedJsxSignature())
   }
 
+  @Test
+  fun testTypingUnclosedFenceInsideJsxKeepsOuterHighlighting() {
+    myFixture.configureByFile("${testName}_after.mdx")
+    val finalText = myFixture.editor.document.text
+    val fresh = nestedJsxSignature()
+    val freshHighlights = fresh.filter { it.startsWith("highlight:") }
+    assertEquals("Both outer tag names must remain highlighted", 2, freshHighlights.size)
+    assertTrue(
+      "Both outer tag names must retain JSX tag-name colors: $freshHighlights",
+      freshHighlights.all { it.contains("XML_TAG_NAME") },
+    )
+
+    myFixture.configureByFile("$testName.mdx")
+    // Each typed backtick is auto-closed, so the third keystroke leaves one unclosed six-character fence.
+    myFixture.type("```")
+    assertEquals(finalText, myFixture.editor.document.text)
+    assertEquals("Typing the fence last must converge to the fresh parse", fresh, nestedJsxSignature())
+  }
+
   private fun nestedJsxSignature(): List<String> {
     PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
     val signature = mutableListOf<String>()
@@ -211,10 +240,10 @@ class MdxLiveEditingTest : MdxTestBase() {
         .sorted(),
     )
 
+    val tagRanges = nodesOfTypeAllRoots(XML_TAG_NAME).map { it.textRange.startOffset to it.textRange.endOffset }.toSet()
     val iterator: HighlighterIterator = myFixture.editor.highlighter.createIterator(0)
     while (!iterator.atEnd()) {
-      val tokenText = myFixture.editor.document.charsSequence.subSequence(iterator.start, iterator.end).toString()
-      if (tokenText == "div") {
+      if (iterator.start to iterator.end in tagRanges) {
         signature.add("highlight:${iterator.start}:${iterator.textAttributesKeys.map { it.externalName }}")
       }
       iterator.advance()
@@ -374,6 +403,11 @@ class MdxLiveEditingTest : MdxTestBase() {
    */
   @Test
   fun testEnterBetweenBracesInCodeFenceInsideJsxDoesNotCorruptLexer() = checkTyping('\n')
+
+  @Test
+  fun testEnterInsideJavaScriptFenceNestedUnderTwoJsxElementsKeepsInjectionValid() {
+    assertNoErrorLogged { checkTyping('\n') }
+  }
 
   /**
    * Enter between a JSX element's tags inside an indented fence expands it like braces: a body line one step

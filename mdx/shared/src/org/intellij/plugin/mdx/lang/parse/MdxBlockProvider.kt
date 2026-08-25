@@ -29,7 +29,9 @@ class MdxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
       }
       MdxBlockKind.JSX -> {
         val element = MdxJsxScanner.scanJsxElement(localText, 0)
-        if (element != null && element.terminated && localText.subSequence(element.range.last, localText.length).isBlank()) {
+        if (element != null &&
+            element.termination != MdxJsxScanner.Termination.UNTERMINATED &&
+            localText.subSequence(element.range.last, localText.length).isBlank()) {
           ImmediateBlock(
             MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT,
             MdxBlockNodeFactory.createFlowElementNodes(localText, element, absoluteStart, includeRoot = false),
@@ -63,7 +65,8 @@ class MdxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
         stateInfo.currentConstraints,
         productionHolder,
         absoluteStart,
-        start.offsetInLine,
+        pos.offsetInCurrentLine + start.offsetInLine,
+        MdxJsxScanner.openingElementIdentity(pos.originalText, absoluteStart),
         pos.originalText,
         localText.toString(),
       )
@@ -118,7 +121,9 @@ class MdxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
 
     val localText = text.subSequence(offset, text.length)
     val element = MdxJsxScanner.scanJsxElement(localText, 0)
-    return element == null || !element.terminated || localText.subSequence(element.range.last, localText.length).isBlank()
+    return element == null ||
+           element.termination == MdxJsxScanner.Termination.UNTERMINATED ||
+           localText.subSequence(element.range.last, localText.length).isBlank()
   }
 
   private data class StartInfo(val offsetInLine: Int, val kind: MdxBlockKind)

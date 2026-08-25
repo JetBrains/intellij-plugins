@@ -1,6 +1,7 @@
 package org.intellij.plugin.mdx.lang.parse
 
 import org.intellij.markdown.IElementType
+import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.parser.LookaheadText
 import org.intellij.markdown.parser.ProductionHolder
 import org.intellij.markdown.parser.constraints.MarkdownConstraints
@@ -49,6 +50,9 @@ internal abstract class MdxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   protected var closeScheduled = false
     private set
   private var finalized = false
+  private var cachedOpacityLimit = -1
+  private var cachedOpacityProductionCount = -1
+  private var cachedOpacity = MdxOpaqueRanges.EMPTY
 
   override fun allowsSubBlocks(): Boolean = false
 
@@ -116,6 +120,27 @@ internal abstract class MdxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   protected abstract fun isTerminated(candidateEndOffset: Int): Boolean
 
   protected abstract fun createNodes(): List<SequentialParser.Node>
+
+  protected fun opaqueMarkdownRanges(limit: Int): MdxOpaqueRanges {
+    val productions = productionHolder.production
+    val productionCount = productions.size
+    if (limit == cachedOpacityLimit && productionCount == cachedOpacityProductionCount) {
+      return cachedOpacity
+    }
+    val blockRanges = productions.asSequence()
+      .filter { it.type == MarkdownElementTypes.CODE_FENCE || it.type == MarkdownElementTypes.HTML_BLOCK }
+      .map { it.range }
+      .filter { it.first >= blockStartOffset && it.last <= limit }
+      .toList()
+    val blockOpacity = MdxOpaqueRanges.of(blockRanges)
+    val codeSpanRanges = MdxMarkdownCodeSpanScanner.findRanges(source, blockStartOffset, source.length, blockOpacity)
+    cachedOpacity = MdxOpaqueRanges.of(blockRanges + codeSpanRanges)
+    cachedOpacityLimit = limit
+    cachedOpacityProductionCount = productionCount
+    return cachedOpacity
+  }
+
+  protected fun productionCount(): Int = productionHolder.production.size
 
   private fun scheduleClose(offset: Int) {
     closeScheduled = true

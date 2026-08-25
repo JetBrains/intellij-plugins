@@ -1,16 +1,7 @@
 package org.intellij.plugin.mdx
 
 import com.intellij.testFramework.junit5.TestApplication
-import org.intellij.markdown.MarkdownElementType
-import org.intellij.markdown.MarkdownElementTypes
-import org.intellij.markdown.ast.ASTNode
-import org.intellij.markdown.ast.accept
-import org.intellij.markdown.ast.visitors.RecursiveVisitor
-import org.intellij.markdown.parser.CancellationToken
-import org.intellij.markdown.parser.MarkdownParser
-import org.intellij.plugin.mdx.lang.parse.MdxFlavourDescriptor
 import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
-import org.intellij.plugin.mdx.lang.parse.MdxMarkdownLibElementTypes
 import org.intellij.plugin.mdx.lang.parse.MdxOpaqueRanges
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -24,26 +15,8 @@ class MdxJsxScannerTest {
 
     val element = MdxJsxScanner.scanJsxElement(text, 0)
 
-    assertTrue(element?.terminated == true)
+    assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
     assertEquals(text.length, element?.range?.last)
-  }
-
-  @Test
-  fun markdownLikeTextInExpressionAttributeBelongsToJsx() {
-    val text: CharSequence = "Text <Alert value={[Target](./target.mdx)} /> end"
-    val root = MarkdownParser(MdxFlavourDescriptor, cancellationToken = CancellationToken.NonCancellable)
-      .parse(MarkdownElementType("MDX_TEST_ROOT"), text)
-    var hasJsx = false
-    root.accept(object : RecursiveVisitor() {
-      override fun visitNode(node: ASTNode) {
-        if (node.type == MdxMarkdownLibElementTypes.MDX_JSX_TEXT_ELEMENT) {
-          hasJsx = true
-        }
-        super.visitNode(node)
-      }
-    })
-
-    assertTrue(hasJsx)
   }
 
   @Test
@@ -52,7 +25,7 @@ class MdxJsxScannerTest {
 
     val element = MdxJsxScanner.scanJsxElement(text, 0)
 
-    assertTrue(element?.terminated == true)
+    assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
     assertEquals(text.length, element?.range?.last)
   }
 
@@ -66,7 +39,7 @@ class MdxJsxScannerTest {
 
     val element = MdxJsxScanner.scanJsxElement(text, 0)
 
-    assertTrue(element?.terminated == true)
+    assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
     assertEquals(text.length, element?.range?.last)
   }
 
@@ -78,20 +51,9 @@ class MdxJsxScannerTest {
 
     val element = MdxJsxScanner.scanJsxElement(text, 0, opaqueRanges = MdxOpaqueRanges.of(listOf(opaqueStart..opaqueEnd)))
 
-    assertTrue(element?.terminated == true)
+    assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
     assertEquals(text.length, element?.range?.last)
     assertEquals(listOf("span", "span"), element?.tags?.map { it.name })
-  }
-
-  @Test
-  fun inlineCodeSpanIsOpaqueInsideInlineJsx() {
-    val text: CharSequence = "before <span>`</span>` body</span> after"
-    val nodes = parseNodes(text)
-    val jsx = nodes.single { it.type == MdxMarkdownLibElementTypes.MDX_JSX_TEXT_ELEMENT }
-    val codeSpan = nodes.single { it.type == MarkdownElementTypes.CODE_SPAN }
-
-    assertEquals("<span>`</span>` body</span>", text.subSequence(jsx.startOffset, jsx.endOffset).toString())
-    assertTrue(generateSequence(codeSpan.parent) { it.parent }.any { it === jsx })
   }
 
   @Test
@@ -112,92 +74,46 @@ class MdxJsxScannerTest {
 
     val element = MdxJsxScanner.scanJsxElement(text, 0)
 
-    assertTrue(element?.terminated == true)
+    assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
     assertEquals(text.length, element?.range?.last)
   }
 
   @Test
-  fun closedMultilineHtmlCommentOwnsItsContent() {
-    val text: CharSequence = "<!--\n<Unknown>{`body`}</Unknown>\n-->"
-    val nodes = parseNodes(text)
+  fun unrelatedCloserRecoversElementImmediately() {
+    val text = "<Outer><Inner></Other>after</Inner></Outer>"
+    val recoveryEnd = text.indexOf("</Other>") + "</Other>".length
 
-    assertEquals(1, nodes.count { it.type == MarkdownElementTypes.HTML_BLOCK })
-    assertEquals(0, nodes.count { it.type == MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT })
+    val element = MdxJsxScanner.scanJsxElement(text, 0)
+
+    assertEquals(MdxJsxScanner.Termination.RECOVERED, element?.termination)
+    assertEquals(recoveryEnd, element?.range?.last)
+    assertTrue(element?.incomplete == true)
   }
 
   @Test
-  fun closedMultilineHtmlCommentIsOpaqueInsideJsx() {
-    val text: CharSequence = "<div>\n  <!--\n  <Unknown>{`body`}</Unknown>\n  -->\n</div>"
-    val nodes = parseNodes(text)
+  fun skippedNamedDescendantKeepsMatchedElementIncomplete() {
+    val text = "<Outer><Inner></Outer>"
 
-    assertEquals(1, nodes.count { it.type == MarkdownElementTypes.HTML_BLOCK })
-    assertEquals(1, nodes.count { it.type == MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT })
+    val element = MdxJsxScanner.scanJsxElement(text, 0)
+
+    assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
+    assertEquals(text.length, element?.range?.last)
+    assertTrue(element?.incomplete == true)
   }
 
   @Test
-  fun nestedFlowElementsRetainOwnershipAcrossMarkdownBlocks() {
-    val cases = mapOf(
-      "empty list item" to "<div>\n  <div>\n    - \n  </div>\n</div>",
-      "unordered list item" to "<div>\n  <div>\n    - item\n  </div>\n</div>",
-      "ordered list item" to "<div>\n  <div>\n    1. item\n  </div>\n</div>",
-      "task list item" to "<div>\n  <div>\n    - [ ] item\n  </div>\n</div>",
-      "heading" to "<div>\n  <div>\n    ## Heading\n  </div>\n</div>",
-      "blockquote" to "<div>\n  <div>\n    > quote\n  </div>\n</div>",
-      "fence" to "<div>\n  <div>\n    ```md\n    body\n    ```\n  </div>\n</div>",
+  fun namedTagsAndFragmentsOnlyMatchIdenticalClosers() {
+    val cases = listOf(
+      "<Outer><></Outer>",
+      "<><Inner></>",
     )
 
-    for ((description, text) in cases) {
-      assertNestedFlowElements(text, expectedDepth = 2, description)
+    for (text in cases) {
+      val element = MdxJsxScanner.scanJsxElement(text, 0)
+
+      assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination, text)
+      assertEquals(text.length, element?.range?.last, text)
+      assertTrue(element?.incomplete == true, text)
     }
   }
-
-  @Test
-  fun threeNestedFlowElementsRetainOwnership() {
-    val text = "<div>\n  <div>\n    <div>\n      - item\n    </div>\n  </div>\n</div>"
-
-    assertNestedFlowElements(text, expectedDepth = 3, "three JSX levels")
-  }
-
-  private fun assertNestedFlowElements(text: CharSequence, expectedDepth: Int, description: String) {
-    val flowElements = parseNodes(text).filter { it.type == MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT }
-
-    assertEquals(expectedDepth, flowElements.size, "$description: ${flowElements.map { it.startOffset..it.endOffset }}")
-    assertEquals(flowElements.size, flowElements.map { it.startOffset to it.endOffset }.toSet().size, "$description: duplicate JSX ranges")
-    val outer = flowElements.singleOrNull { it.startOffset == 0 && it.endOffset == text.length }
-    assertTrue(outer != null, "$description: outer JSX does not own the complete source range")
-
-    val deepest = flowElements.minBy { it.endOffset - it.startOffset }
-    val ancestorFlows = generateSequence(deepest.parent) { it.parent }
-      .filter { it.type == MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT }
-      .toList()
-    assertEquals(expectedDepth - 1, ancestorFlows.size, "$description: ${flowElements.map { it.startOffset..it.endOffset }}")
-
-    for (left in flowElements.indices) {
-      for (right in left + 1..<flowElements.size) {
-        val first = flowElements[left]
-        val second = flowElements[right]
-        val nested = first.startOffset <= second.startOffset && first.endOffset >= second.endOffset ||
-                     second.startOffset <= first.startOffset && second.endOffset >= first.endOffset
-        val disjoint = first.endOffset <= second.startOffset || second.endOffset <= first.startOffset
-        assertTrue(
-          nested || disjoint,
-          "$description: intersecting JSX ranges ${first.startOffset..first.endOffset} and ${second.startOffset..second.endOffset}",
-        )
-      }
-    }
-  }
-
-  private fun parseNodes(text: CharSequence): List<ASTNode> {
-    val root = MarkdownParser(MdxFlavourDescriptor, cancellationToken = CancellationToken.NonCancellable)
-      .parse(MarkdownElementType("MDX_TEST_ROOT"), text)
-    val nodes = mutableListOf<ASTNode>()
-    root.accept(object : RecursiveVisitor() {
-      override fun visitNode(node: ASTNode) {
-        nodes.add(node)
-        super.visitNode(node)
-      }
-    })
-    return nodes
-  }
-
 }

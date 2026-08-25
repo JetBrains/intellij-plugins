@@ -6,7 +6,8 @@ import org.intellij.markdown.parser.constraints.MarkdownConstraints
 internal class MdxJsxMarkdownConstraints(
   private val parent: MarkdownConstraints,
   private val blockStartIndent: Int,
-  private val blockStartOffset: Int,
+  private val elementIdentity: MdxJsxScanner.ElementIdentity?,
+  private val opaqueBlock: Boolean = false,
   override val charsEaten: Int = blockStartIndent,
 ) : MarkdownConstraints {
   override val indent: Int
@@ -21,7 +22,9 @@ internal class MdxJsxMarkdownConstraints(
   override fun startsWith(other: MarkdownConstraints): Boolean {
     if (other === this) return true
     if (other is MdxJsxMarkdownConstraints) {
-      return parent.startsWith(other.parent) && blockStartIndent == other.blockStartIndent
+      return parent.startsWith(other.parent) &&
+             blockStartIndent == other.blockStartIndent &&
+             elementIdentity == other.elementIdentity
     }
     return parent.startsWith(other)
   }
@@ -41,38 +44,71 @@ internal class MdxJsxMarkdownConstraints(
     if (pos == null) {
       return parent.applyToNextLine(pos)
     }
-    val lineIndent = leadingSpaces(pos.currentLine)
-    val nonWhitespaceOffset = firstNonWhitespaceOffset(pos.currentLine)
+    if (opaqueBlock) {
+      val modifiedParent = parent.applyToNextLine(pos)
+      val contentOffset = firstNonWhitespaceOffset(pos.currentLine, modifiedParent.charsEaten)
+      return copy(
+        parent = modifiedParent,
+        charsEaten = if (contentOffset == -1) pos.currentLine.length else contentOffset,
+      )
+    }
+    val modifiedParent = parent.applyToNextLine(pos)
+    val nonWhitespaceOffset = firstNonWhitespaceOffset(pos.currentLine, modifiedParent.charsEaten)
     if (nonWhitespaceOffset == -1) {
-      return copy(charsEaten = pos.currentLine.length)
+      return copy(parent = modifiedParent, charsEaten = pos.currentLine.length)
     }
-    // A `</tag>` line inside a code fence is opaque fence content, not a closing tag — it must not
-    // relax to the parent constraints, or the fence ends early and orphans the rest of its body.
-    if (lineIndent <= blockStartIndent &&
-        pos.currentLine.startsWith("</", nonWhitespaceOffset) &&
-        !MdxMarkdownFenceScanner.containsOffset(pos.originalText, blockStartOffset, pos.offset)) {
-      return parent.applyToNextLine(pos)
+    if (nonWhitespaceOffset <= blockStartIndent &&
+        closingBoundary(pos) != MdxJsxClosingBoundary.NONE) {
+      return modifiedParent
     }
-    if (lineIndent < blockStartIndent) {
-      return parent.applyToNextLine(pos)
+    if (nonWhitespaceOffset < blockStartIndent) {
+      return modifiedParent
     }
-    return copy(charsEaten = nonWhitespaceOffset)
+    return copy(parent = modifiedParent, charsEaten = nonWhitespaceOffset)
   }
 
-  private fun copy(parent: MarkdownConstraints = this.parent, charsEaten: Int): MdxJsxMarkdownConstraints {
-    return MdxJsxMarkdownConstraints(parent, blockStartIndent, blockStartOffset, charsEaten)
+  fun asOpaqueBlockConstraints(): MdxJsxMarkdownConstraints {
+    val opaqueParent = if (parent is MdxJsxMarkdownConstraints) parent.asOpaqueBlockConstraints() else parent
+    return copy(parent = opaqueParent, opaqueBlock = true, charsEaten = charsEaten)
   }
 
-  private fun leadingSpaces(line: CharSequence): Int {
-    var offset = 0
-    while (offset < line.length && line[offset] == ' ') {
-      offset++
+  fun closingBoundary(pos: LookaheadText.Position): MdxJsxClosingBoundary {
+    val markdownConstraints = markdownConstraints().applyToNextLine(pos)
+    val tagOffset = firstNonWhitespaceOffset(pos.currentLine, markdownConstraints.charsEaten)
+    if (tagOffset == -1) return MdxJsxClosingBoundary.NONE
+    val closingIdentity = MdxJsxScanner.closingElementIdentity(pos.currentLine, tagOffset, pos.currentLine.length)
+                          ?: return MdxJsxClosingBoundary.NONE
+
+    var constraints: MarkdownConstraints = this
+    var current = true
+    while (constraints is MdxJsxMarkdownConstraints) {
+      if (constraints.elementIdentity == closingIdentity) {
+        return if (current) MdxJsxClosingBoundary.CURRENT else MdxJsxClosingBoundary.ANCESTOR
+      }
+      constraints = constraints.parent
+      current = false
     }
-    return offset
+    return MdxJsxClosingBoundary.MISMATCHED
   }
 
-  private fun firstNonWhitespaceOffset(line: CharSequence): Int {
-    var offset = 0
+  private fun markdownConstraints(): MarkdownConstraints {
+    var constraints = parent
+    while (constraints is MdxJsxMarkdownConstraints) {
+      constraints = constraints.parent
+    }
+    return constraints
+  }
+
+  private fun copy(
+    parent: MarkdownConstraints = this.parent,
+    opaqueBlock: Boolean = this.opaqueBlock,
+    charsEaten: Int,
+  ): MdxJsxMarkdownConstraints {
+    return MdxJsxMarkdownConstraints(parent, blockStartIndent, elementIdentity, opaqueBlock, charsEaten)
+  }
+
+  private fun firstNonWhitespaceOffset(line: CharSequence, start: Int = 0): Int {
+    var offset = start.coerceIn(0, line.length)
     while (offset < line.length) {
       if (line[offset] != ' ' && line[offset] != '\t') {
         return offset
@@ -81,4 +117,11 @@ internal class MdxJsxMarkdownConstraints(
     }
     return -1
   }
+}
+
+internal enum class MdxJsxClosingBoundary {
+  NONE,
+  CURRENT,
+  ANCESTOR,
+  MISMATCHED,
 }

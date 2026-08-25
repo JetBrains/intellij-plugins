@@ -9,6 +9,12 @@ internal object MdxJsxScanner {
     SELF_CLOSING
   }
 
+  enum class Termination {
+    MATCHED,
+    RECOVERED,
+    UNTERMINATED,
+  }
+
   data class Tag(
     val range: IntRange,
     val kind: TagKind,
@@ -22,8 +28,10 @@ internal object MdxJsxScanner {
     val tags: List<Tag>,
     val expressions: List<IntRange>,
     val incomplete: Boolean,
-    val terminated: Boolean,
+    val termination: Termination,
   )
+
+  data class ElementIdentity(val name: String?)
 
   fun isLineStartJsx(text: CharSequence, start: Int): Boolean {
     val lineStart = lineStart(text, start)
@@ -82,7 +90,13 @@ internal object MdxJsxScanner {
     val opening = parseTag(text, start, limit) ?: return null
     if (opening.kind == TagKind.CLOSING) return null
     if (opening.kind == TagKind.SELF_CLOSING) {
-      return Element(start..opening.range.last, listOf(opening), opening.expressions, incomplete = false, terminated = true)
+      return Element(
+        start..opening.range.last,
+        listOf(opening),
+        opening.expressions,
+        incomplete = false,
+        termination = Termination.MATCHED,
+      )
     }
 
     val tags = mutableListOf(opening)
@@ -96,24 +110,11 @@ internal object MdxJsxScanner {
         offset = opaqueEnd.coerceAtMost(limit)
         continue
       }
-      val commentEnd = MdxHtmlCommentBoundary.findClosedMultilineCommentEnd(text, offset, limit)
-      if (commentEnd != -1) {
-        offset = commentEnd
-        continue
-      }
-      // Skip fenced code blocks whole: their {/}/< are code, not MDX expressions or tags.
-      if (isAtLineStart(text, offset)) {
-        val fenceEnd = MdxMarkdownFenceScanner.findEnd(text, offset, limit)
-        if (fenceEnd != -1) {
-          offset = fenceEnd
-          continue
-        }
-      }
       when (text[offset]) {
         '{' -> {
           val expressionEnd = MdxExpressionBoundaryScanner.findExpressionEnd(text, offset, limit)
           if (expressionEnd == -1) {
-            return Element(start..limit, tags, expressions, incomplete = true, terminated = false)
+            return Element(start..limit, tags, expressions, incomplete = true, termination = Termination.UNTERMINATED)
           }
           expressions.add(offset..expressionEnd)
           offset = expressionEnd
@@ -131,7 +132,7 @@ internal object MdxJsxScanner {
             TagKind.SELF_CLOSING -> Unit
             TagKind.CLOSING -> {
               val top = stack.lastOrNull()
-              if (top == tag.name || top == null || tag.name == null) {
+              if (top == tag.name) {
                 stack.removeAt(stack.lastIndex)
               }
               else {
@@ -147,25 +148,30 @@ internal object MdxJsxScanner {
                   // JSXmlTokensParser consumes an unrelated closer as "matches nothing" and completes
                   // the current element as not closed. This gives the surrounding language a stable
                   // recovery boundary instead of discarding JSX or consuming unrelated Markdown.
-                  stack.removeAt(stack.lastIndex)
-                  incomplete = true
+                  return Element(start..tag.range.last, tags, expressions, incomplete = true, termination = Termination.RECOVERED)
                 }
               }
             }
           }
           offset = tag.range.last
           if (stack.isEmpty()) {
-            return Element(start..offset, tags, expressions, incomplete, terminated = true)
+            return Element(start..offset, tags, expressions, incomplete, Termination.MATCHED)
           }
         }
         else -> offset++
       }
     }
-    return Element(start..limit, tags, expressions, incomplete = true, terminated = false)
+    return Element(start..limit, tags, expressions, incomplete = true, termination = Termination.UNTERMINATED)
   }
 
-  private fun isAtLineStart(text: CharSequence, offset: Int): Boolean {
-    return offset == 0 || text.getOrNull(offset - 1) == '\n'
+  fun openingElementIdentity(text: CharSequence, start: Int, limit: Int = text.length): ElementIdentity? {
+    val tag = parseTag(text, start, limit) ?: return null
+    return if (tag.kind == TagKind.OPENING) ElementIdentity(tag.name) else null
+  }
+
+  fun closingElementIdentity(text: CharSequence, start: Int, limit: Int = text.length): ElementIdentity? {
+    val tag = parseTag(text, start, limit) ?: return null
+    return if (tag.kind == TagKind.CLOSING) ElementIdentity(tag.name) else null
   }
 
   private fun parseTag(text: CharSequence, start: Int, limit: Int): Tag? {

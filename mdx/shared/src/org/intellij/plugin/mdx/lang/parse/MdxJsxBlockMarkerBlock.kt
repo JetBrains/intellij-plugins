@@ -11,17 +11,20 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
                                       productionHolder: ProductionHolder,
                                       blockStartOffset: Int,
                                       blockStartIndent: Int,
+                                      elementIdentity: MdxJsxScanner.ElementIdentity?,
                                       source: CharSequence,
                                       initialText: String) : MdxBlockMarkerBlock(
-  MdxJsxMarkdownConstraints(myConstraints, blockStartIndent, blockStartOffset),
+  MdxJsxMarkdownConstraints(myConstraints, blockStartIndent, elementIdentity),
   productionHolder,
   blockStartOffset,
   source,
   initialText,
 ) {
   private val hasJsxParent = myConstraints is MdxJsxMarkdownConstraints
-  private val terminatedElement = MdxJsxScanner.scanJsxElement(source, blockStartOffset)?.takeIf { it.terminated }
   private var suppressSubBlocks = false
+  private var cachedScanLimit = -1
+  private var cachedScanProductionCount = -1
+  private var cachedElement: MdxJsxScanner.Element? = null
 
   override fun allowsSubBlocks(): Boolean {
     return !closeScheduled && !suppressSubBlocks && hasCompleteOpeningTag()
@@ -40,7 +43,7 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   }
 
   override fun activeProcessingResult(): MarkerBlock.ProcessingResult {
-    return if (hasJsxParent && terminatedElement != null) {
+    return if (hasJsxParent && closeScheduled) {
       MarkerBlock.ProcessingResult.PASS
     }
     else {
@@ -49,19 +52,18 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   }
 
   override fun shouldAppendLine(pos: LookaheadText.Position, candidateEndOffset: Int): Boolean {
-    return terminatedElement != null ||
-           isTerminated(candidateEndOffset) ||
+    return isTerminated(candidateEndOffset) ||
            constraints.applyToNextLine(pos).extendsPrev(constraints) ||
-           MdxJsxScanner.scanJsxElement(source, blockStartOffset, candidateEndOffset) != null
+           scanElement(candidateEndOffset) != null
   }
 
   override fun isTerminated(candidateEndOffset: Int): Boolean {
-    return terminatedElement?.range?.last?.let { candidateEndOffset >= it }
-           ?: (MdxJsxScanner.scanJsxElement(source, blockStartOffset, candidateEndOffset)?.terminated == true)
+    val termination = scanElement(candidateEndOffset)?.termination ?: return false
+    return termination != MdxJsxScanner.Termination.UNTERMINATED
   }
 
   override fun createNodes(): List<SequentialParser.Node> {
-    val element = terminatedElement ?: MdxJsxScanner.scanJsxElement(source, blockStartOffset, currentEndOffset)
+    val element = scanElement(currentEndOffset)
     // A marker may be finalized merely because a nested Markdown block takes over. Its current
     // range is then only a scanner snapshot and can cross the nested block's eventual JSX root.
     // Publish recovered roots only at boundaries that cannot later move: a consumed closing tag
@@ -78,15 +80,24 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
         )
       }
     }
-    if (!element.terminated && currentEndOffset < source.length) {
+    if (element.termination == MdxJsxScanner.Termination.UNTERMINATED && currentEndOffset < source.length) {
       return emptyList()
     }
     return MdxBlockNodeFactory.createFlowElementNodes(source, element)
   }
 
   private fun hasCompleteOpeningTag(): Boolean {
-    val openingTagEnd = terminatedElement?.tags?.firstOrNull()?.range?.last
-    return openingTagEnd?.let { currentEndOffset >= it }
-           ?: (MdxJsxScanner.scanJsxElement(source, blockStartOffset, currentEndOffset) != null)
+    return scanElement(currentEndOffset) != null
+  }
+
+  private fun scanElement(limit: Int): MdxJsxScanner.Element? {
+    val productionCount = productionCount()
+    if (limit == cachedScanLimit && productionCount == cachedScanProductionCount) {
+      return cachedElement
+    }
+    cachedElement = MdxJsxScanner.scanJsxElement(source, blockStartOffset, limit, opaqueMarkdownRanges(limit))
+    cachedScanLimit = limit
+    cachedScanProductionCount = productionCount
+    return cachedElement
   }
 }
