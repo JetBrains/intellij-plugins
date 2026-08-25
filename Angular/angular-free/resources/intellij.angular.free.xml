@@ -4,7 +4,6 @@
     <plugin id="HtmlTools"/>
     <plugin id="com.intellij.platform.images"/>
     <module name="intellij.libraries.fastutil"/>
-    <module name="intellij.libraries.icu4j"/>
     <module name="intellij.libraries.opentelemetry"/>
     <module name="intellij.libraries.stream"/>
     <module name="intellij.platform.analysis"/>
