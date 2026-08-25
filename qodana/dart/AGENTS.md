@@ -12,13 +12,12 @@ Dart analysis tests must pass with both the native Dart/Flutter executable and t
 
 `DartAnalyzeTestSupport.kt` uses the native runner when the corresponding environment variable points to an executable file:
 
-- `QODANA_DART_PATH` must contain the Dart SDK `bin` directory, with `dart` inside it.
-- `QODANA_FLUTTER_PATH` must contain the Flutter SDK `bin` directory, with `flutter` inside it.
+- `QODANA_FLUTTER_PATH` must contain the Dart or Flutter SDK `bin` directory, with the required executable inside it.
 
 If the required executable is unavailable, the test uses `RecordedDartAnalyzeProcessExecutor` and fixtures from `test-data/dart-analyze`. Force mock mode explicitly with:
 
 ```text
-QODANA_DART_PATH=/nonexistent QODANA_FLUTTER_PATH=/nonexistent
+QODANA_FLUTTER_PATH=/nonexistent
 ```
 
 Run the focused class with:
@@ -27,7 +26,7 @@ Run the focused class with:
 ./tests.cmd --module intellij.qodana.dart.tests --test org.jetbrains.qodana.dart.DartAnalyzeGlobalInspectionQodanaTest
 ```
 
-Run the same command with the two environment variables above to verify mock mode. Run it with valid SDK `bin` paths to verify native mode.
+Run the same command with the environment variable above to verify mock mode. Run it with valid SDK `bin` paths to verify native mode.
 
 ## Updating a scenario
 
