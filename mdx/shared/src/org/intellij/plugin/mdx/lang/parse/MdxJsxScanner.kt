@@ -72,7 +72,12 @@ internal object MdxJsxScanner {
     return start..limit
   }
 
-  fun scanJsxElement(text: CharSequence, start: Int, limit: Int = text.length): Element? {
+  fun scanJsxElement(
+    text: CharSequence,
+    start: Int,
+    limit: Int = text.length,
+    opaqueRanges: MdxOpaqueRanges = MdxOpaqueRanges.EMPTY,
+  ): Element? {
     if (limit - start > MAX_SCAN_LENGTH) return null
     val opening = parseTag(text, start, limit) ?: return null
     if (opening.kind == TagKind.CLOSING) return null
@@ -86,6 +91,11 @@ internal object MdxJsxScanner {
     var incomplete = false
     var offset = opening.range.last
     while (offset < limit) {
+      val opaqueEnd = opaqueRanges.endOffsetContaining(offset)
+      if (opaqueEnd != null) {
+        offset = opaqueEnd.coerceAtMost(limit)
+        continue
+      }
       val commentEnd = MdxHtmlCommentBoundary.findClosedMultilineCommentEnd(text, offset, limit)
       if (commentEnd != -1) {
         offset = commentEnd

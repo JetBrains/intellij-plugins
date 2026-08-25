@@ -11,6 +11,7 @@ import org.intellij.markdown.parser.MarkdownParser
 import org.intellij.plugin.mdx.lang.parse.MdxFlavourDescriptor
 import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
 import org.intellij.plugin.mdx.lang.parse.MdxMarkdownLibElementTypes
+import org.intellij.plugin.mdx.lang.parse.MdxOpaqueRanges
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -67,6 +68,30 @@ class MdxJsxScannerTest {
 
     assertTrue(element?.terminated == true)
     assertEquals(text.length, element?.range?.last)
+  }
+
+  @Test
+  fun suppliedOpaqueRangeHidesMatchingClosingTag() {
+    val text = "<span>`</span>` body</span>"
+    val opaqueStart = text.indexOf('`')
+    val opaqueEnd = text.indexOf('`', opaqueStart + 1) + 1
+
+    val element = MdxJsxScanner.scanJsxElement(text, 0, opaqueRanges = MdxOpaqueRanges.of(listOf(opaqueStart..opaqueEnd)))
+
+    assertTrue(element?.terminated == true)
+    assertEquals(text.length, element?.range?.last)
+    assertEquals(listOf("span", "span"), element?.tags?.map { it.name })
+  }
+
+  @Test
+  fun inlineCodeSpanIsOpaqueInsideInlineJsx() {
+    val text: CharSequence = "before <span>`</span>` body</span> after"
+    val nodes = parseNodes(text)
+    val jsx = nodes.single { it.type == MdxMarkdownLibElementTypes.MDX_JSX_TEXT_ELEMENT }
+    val codeSpan = nodes.single { it.type == MarkdownElementTypes.CODE_SPAN }
+
+    assertEquals("<span>`</span>` body</span>", text.subSequence(jsx.startOffset, jsx.endOffset).toString())
+    assertTrue(generateSequence(codeSpan.parent) { it.parent }.any { it === jsx })
   }
 
   @Test

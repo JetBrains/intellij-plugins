@@ -266,6 +266,12 @@ class MdxParsingTest : MdxTestBase() {
     doTest()
   }
 
+  /** Markdown delimiters are paired only within the outer paragraph or one JSX element's content. */
+  @Test
+  fun testParsingInlineJsxOwnership() {
+    doTest()
+  }
+
   /**
    * WEB-78468 group D regression anchor: a JSX flow element (`<Note>...</Note>`) inside a Markdown
    * blockquote, followed by plain text. Snapshot captures CURRENT parser behavior.
