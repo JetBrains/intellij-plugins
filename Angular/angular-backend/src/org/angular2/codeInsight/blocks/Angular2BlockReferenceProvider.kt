@@ -3,12 +3,13 @@ package org.angular2.codeInsight.blocks
 
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.references.PsiPolySymbolReferenceProvider
+import com.intellij.polySymbols.utils.withName
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 
 class Angular2BlockReferenceProvider : PsiPolySymbolReferenceProvider<Angular2HtmlBlock> {
 
   override fun getReferencedSymbol(psiElement: Angular2HtmlBlock): PolySymbol? =
-    psiElement.definition
+    psiElement.definition?.withName(psiElement.nameElement.text.removePrefix("@"))
 
   override fun getReferencedSymbolNameOffset(psiElement: Angular2HtmlBlock): Int = 1
 
