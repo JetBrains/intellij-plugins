@@ -142,14 +142,14 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
         }
         sb.append("<font style=\"color:#ff0000;\">");
         if (!errors.isEmpty()) {
-          sb.append('\n').append(AngularJSBundle.icuMessage("angularjs.ui.router.diagram.node.tooltip.errors", errors.size()))
+          sb.append('\n').append(AngularJSBundle.message("angularjs.ui.router.diagram.node.tooltip.errors", errors.size()))
             .append(":\n");
           for (String error : errors) {
             sb.append(error).append('\n');
           }
         }
         if (!warnings.isEmpty()) {
-          sb.append('\n').append(AngularJSBundle.icuMessage("angularjs.ui.router.diagram.node.tooltip.warnings", errors.size()))
+          sb.append('\n').append(AngularJSBundle.message("angularjs.ui.router.diagram.node.tooltip.warnings", warnings.size()))
             .append(":\n");
           for (String warning : warnings) {
             sb.append(warning).append('\n');
