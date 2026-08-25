@@ -72,7 +72,7 @@ internal class AsyncInspectionToolResultWriter(
   private suspend fun writeProblem(problem: Problem, profileState: QodanaProfile.QodanaProfileState) {
     try {
       val sarif = problem.getSarif(macroManager, database) ?: return
-      val inspectionGroup = profileState.stateByInspectionId[sarif.ruleId]!!.inspectionGroup.name
+      val inspectionGroup = profileState.getInspectionState(sarif.ruleId)!!.inspectionGroup.name
       val fingerprint = requireNotNull(sarif.fingerprintOf(BaselineEqualityV1)) { "Fingerprints not generated" }
       withContext(StaticAnalysisDispatchers.IO) {
         database.insert(inspectionGroup,

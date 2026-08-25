@@ -12,6 +12,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspec
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.sarif.SarifReportContributor
+import org.jetbrains.qodana.staticAnalysis.sarif.appendDerivedComponents
 import org.jetbrains.qodana.staticAnalysis.sarif.fillComponents
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.sarif.maybeApplyFixes
@@ -51,6 +52,7 @@ abstract class QodanaSingleRunScript(
         }
       }
 
+      appendDerivedComponents(run().tool, runContext.qodanaProfile, inspectionContext.profileState.registeredDerivedInspections)
       maybeApplyFixes(run(), runContext)
       SarifReportContributor.runContributors(run(), runContext.project, runContext.config)
       val scriptResult = QodanaScriptResult.create(inspectionContext)

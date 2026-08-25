@@ -17,6 +17,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaCancellation
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.applyBaselineCalculation
 import org.jetbrains.qodana.staticAnalysis.sarif.SarifReportContributor
+import org.jetbrains.qodana.staticAnalysis.sarif.appendDerivedComponents
 import org.jetbrains.qodana.staticAnalysis.sarif.fillComponents
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.script.AnalysisKind
@@ -49,6 +50,7 @@ class QodanaInIdeScript(private val runContext: QodanaRunContext) : QodanaScript
       runContext.writeProjectDescriptionAfterWork()
       val results = runContext.getResultsForInspectionGroup(inspectionContext)
       run.results = results
+      appendDerivedComponents(run.tool, runContext.qodanaProfile, inspectionContext.profileState.registeredDerivedInspections)
       applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
 
       SarifReportContributor.runContributors(run, runContext.project, runContext.config)

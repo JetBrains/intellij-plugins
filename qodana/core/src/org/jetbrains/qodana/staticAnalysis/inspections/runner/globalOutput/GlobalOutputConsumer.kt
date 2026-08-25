@@ -8,6 +8,7 @@ import org.jdom.Element
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.Problem
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.XmlProblem
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import java.nio.file.Path
 
@@ -23,6 +24,9 @@ interface GlobalOutputConsumer {
   companion object {
     val EP_NAME: ExtensionPointName<GlobalOutputConsumer> =
       ExtensionPointName.create("org.intellij.qodana.globalOutputConsumer")
+
+    /** Creates a problem from a standard global-inspection XML element. */
+    fun createXmlProblem(element: Element): Problem = XmlProblem(element)
 
     /**
      * Runs registered global output providers. [DefaultGlobalOutputConsumer] consumes all the non-consumed files
@@ -49,7 +53,7 @@ interface GlobalOutputConsumer {
     }
 
     fun reportingInspectionAllowed(profileState: QodanaProfile.QodanaProfileState, inspectionId: String): Boolean {
-      return profileState.stateByInspectionId[inspectionId]?.onConsumeProblem(inspectionId, null, null) == true
+      return profileState.getInspectionState(inspectionId)?.onConsumeProblem(inspectionId, null, null) == true
     }
 
     suspend fun consumeOutputXmlFile(path: Path, action: suspend (String, Element) -> Unit) {

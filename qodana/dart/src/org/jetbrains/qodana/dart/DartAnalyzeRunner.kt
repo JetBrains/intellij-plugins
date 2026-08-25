@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.dart
 
+import com.intellij.execution.configurations.PathEnvironmentVariableUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.platform.eel.ExecuteProcessException
 import com.intellij.platform.eel.ThrowsChecked
@@ -94,9 +95,11 @@ private val LOG = Logger.getInstance(DartAnalyzeRunner::class.java)
 
 internal fun configuredExecutableResolver(
   executablePath: () -> String?,
+  pathExecutableResolver: (String) -> Path? = PathEnvironmentVariableUtil::findFirst,
   isExecutable: (Path) -> Boolean = { Files.isRegularFile(it) && Files.isExecutable(it) },
 ): DartExecutableResolver = DartExecutableResolver { executableName, isWindows ->
-  val configuredPath = executablePath()?.takeIf(String::isNotBlank) ?: return@DartExecutableResolver DartExecutable.Missing
+  val configuredPath = executablePath()?.takeIf(String::isNotBlank)
+    ?: return@DartExecutableResolver pathExecutableResolver(executableName)?.let(DartExecutable::Available) ?: DartExecutable.Missing
   val configuredPathValue = runCatching { Path.of(configuredPath) }.getOrNull() ?: return@DartExecutableResolver DartExecutable.Unusable(configuredPath)
   val executableNames = executableNames(executableName, isWindows)
   val executableCandidates = if (Files.isDirectory(configuredPathValue)) {
@@ -140,7 +143,7 @@ private fun DartExecutable.toFailure(envName: String): DartAnalyzeRunResult.Fail
 
 internal sealed interface DartAnalyzeRunResult {
   data class Success(val diagnostics: List<DartAnalyzeDiagnostic>) : DartAnalyzeRunResult
-  data class Failure(val message: String, val inspectionId: String = DART_PROJECT_SETUP_SHORT_NAME) : DartAnalyzeRunResult
+  data class Failure(val message: String, val inspectionId: String = DART_ANALYZE_SHORT_NAME) : DartAnalyzeRunResult
 }
 
 internal interface DartAnalyzeProcessExecutor {

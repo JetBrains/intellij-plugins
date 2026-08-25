@@ -14,6 +14,20 @@
       },
       "problemMessage": "Undefined name 'missing'.",
       "correctionMessage": "Try correcting the name to one that is defined, or defining the name."
+    },
+    {
+      "code": "unused_local_variable",
+      "severity": "WARNING",
+      "type": "STATIC_WARNING",
+      "location": {
+        "file": "lib/main.dart",
+        "range": {
+          "start": { "offset": 27, "line": 1, "column": 28 },
+          "end": { "offset": 33, "line": 1, "column": 34 }
+        }
+      },
+      "problemMessage": "The value of the local variable 'unused' isn't used.",
+      "correctionMessage": "Try removing the variable or using it."
     }
   ]
 }

@@ -12,6 +12,8 @@ groups:
 inspections:
   - group: QodanaOpengrepInspections
     enabled: true
+  - inspection: DartAnalyze
+    enabled: true
   - group: AllPqcInspections
     enabled: false
   - group: PqcMinLevel1

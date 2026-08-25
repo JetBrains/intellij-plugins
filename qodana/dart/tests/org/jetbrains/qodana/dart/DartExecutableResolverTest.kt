@@ -23,7 +23,7 @@ class DartExecutableResolverTest {
 
   @Test
   fun `reports missing executable configuration`() = runBlocking {
-    val result = DartExecutableRunner({ null }, FakeExecutor()).analyze(tempDirectory)
+    val result = runnerWithoutExecutable { null }.analyze(tempDirectory)
 
     assertTrue(result is DartAnalyzeRunResult.Failure)
     assertTrue((result as DartAnalyzeRunResult.Failure).message.contains("must point to the SDK bin directory"))
@@ -31,7 +31,7 @@ class DartExecutableResolverTest {
 
   @Test
   fun `reports a blank executable configuration`() = runBlocking {
-    val result = DartExecutableRunner({ "  " }, FakeExecutor()).analyze(tempDirectory)
+    val result = runnerWithoutExecutable { "  " }.analyze(tempDirectory)
 
     assertTrue(result is DartAnalyzeRunResult.Failure)
     assertTrue((result as DartAnalyzeRunResult.Failure).message.contains("must point to the SDK bin directory"))
@@ -94,6 +94,12 @@ class DartExecutableResolverTest {
 
   private fun noDiagnosticsResourceText(): String =
     requireNotNull(javaClass.getResource("/dart-analyze/no-diagnostics.json")).readText()
+
+  private fun runnerWithoutExecutable(executablePath: () -> String?): DartExecutableRunner = DartExecutableRunner(
+    executablePath,
+    FakeExecutor(),
+    configuredExecutableResolver(executablePath, pathExecutableResolver = { null }),
+  )
 
   private class FakeExecutor(vararg results: DartAnalyzeProcessResult) : DartAnalyzeProcessExecutor {
     private val results = ArrayDeque(results.asList())

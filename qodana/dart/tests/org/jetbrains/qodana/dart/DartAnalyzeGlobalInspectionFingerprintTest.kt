@@ -22,8 +22,8 @@ internal class DartAnalyzeGlobalInspectionFingerprintTest : DartAnalyzeProjectQo
     assertEquals(initialSignatures, retriggeredResults.mapValues { resultSignature(it.value) })
     assertEquals(initialFingerprints, retriggeredResults.mapValues { fingerprints(it.value) })
 
-    val errors = requireNotNull(initialFingerprints[DART_ANALYZE_ERROR_SHORT_NAME])
-    val information = requireNotNull(initialFingerprints[DART_ANALYZE_INFO_SHORT_NAME])
+    val errors = requireNotNull(initialFingerprints["undefined_identifier"])
+    val information = requireNotNull(initialFingerprints["await_only_futures"])
     assertNotEquals(errors.first, information.first)
     assertNotEquals(errors.second, information.second)
   }
@@ -33,7 +33,7 @@ internal class DartAnalyzeGlobalInspectionFingerprintTest : DartAnalyzeProjectQo
     assertEquals("Expected exactly one SARIF result per inspection", 2, sarifResults.size)
     val results = sarifResults.associateBy { it.ruleId }
     assertEquals(
-      setOf(DART_ANALYZE_ERROR_SHORT_NAME, DART_ANALYZE_INFO_SHORT_NAME),
+      setOf("undefined_identifier", "await_only_futures"),
       results.keys,
     )
     return results
