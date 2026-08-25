@@ -12,6 +12,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspec
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionProfileLoader
 import org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmbeddedProfile
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentSkipListMap
 
 private const val EFFECTIVE_PROFILE_NAME = "qodana.effective.profile"
 
@@ -143,6 +144,10 @@ class QodanaProfile(
                            val stateByGroupName: Map<String, GroupState>) {
 
     private val receivedCounters = ConcurrentHashMap<String, Int>()
+    private val derivedInspections = ConcurrentSkipListMap<String, DerivedInspectionData>()
+
+    val registeredDerivedInspections: Collection<DerivedInspection>
+      get() = derivedInspections.values.map { it.inspection }
 
     fun onReceive(inspectionId: String, size: Int) {
       receivedCounters.compute(inspectionId) { _, v ->
@@ -158,11 +163,34 @@ class QodanaProfile(
     }
 
     fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {
-      return stateByInspectionId[inspectionId]?.shouldSkip(inspectionId, file, wrappers) ?: false
+      return getInspectionState(inspectionId)?.shouldSkip(inspectionId, file, wrappers) ?: false
+    }
+
+    fun registerRuntimeInspections(inspections: Collection<DetectedProblemGroup>) {
+      val mainInspections = inspections.filter { stateByInspectionId[it.parentInspectionId] === mainState }
+      DerivedInspectionProvider.createDerivedInspections(mainState.context.project, mainInspections).forEach { inspection ->
+        if (stateByInspectionId.containsKey(inspection.id)) return@forEach
+        derivedInspections.putIfAbsent(inspection.id, DerivedInspectionData(inspection, mainState))
+      }
+    }
+
+    fun getInspectionState(inspectionId: String): GroupState? =
+      stateByInspectionId[inspectionId] ?: derivedInspections[inspectionId]?.state
+
+    fun hasInspection(inspectionId: String, parentInspectionId: String): Boolean {
+      if (stateByInspectionId.containsKey(inspectionId)) {
+        return mainState.context.effectiveProfile.getInspectionTool(inspectionId, mainState.context.project)?.mainToolId == parentInspectionId
+      }
+      return derivedInspections[inspectionId]?.inspection?.parentInspectionId == parentInspectionId
     }
 
     fun onFinish() {
-      stateByInspectionId.values.distinct().forEach { it.onFinish() }
+      (stateByInspectionId.values + derivedInspections.values.map { it.state }).distinct().forEach { it.onFinish() }
     }
+
+    private data class DerivedInspectionData(
+      val inspection: DerivedInspection,
+      val state: GroupState,
+    )
   }
 }

@@ -22,6 +22,7 @@ import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.sarif.SarifReportContributor
 import org.jetbrains.qodana.staticAnalysis.sarif.createRun
 import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
+import org.jetbrains.qodana.staticAnalysis.sarif.appendDerivedComponents
 import org.jetbrains.qodana.staticAnalysis.sarif.fillComponents
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.sarif.maybeApplyFixes
@@ -161,6 +162,7 @@ abstract class ComparingScript(
     runContext: QodanaRunContext) {
     runContext.runAnalysis(scope, context, progressIndicator)
     run.results = runContext.getResultsForInspectionGroup(context)
+    appendDerivedComponents(run.tool, runContext.qodanaProfile, context.profileState.registeredDerivedInspections)
     val mainProfileState = context.profileState.mainState
     if (runContext.config.isAboveStopThreshold(mainProfileState.getCount())) {
       runContext.messageReporter.reportMessage(

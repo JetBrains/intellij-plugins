@@ -49,6 +49,7 @@ import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.getQodanaProductName
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.qodanaProductCode
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
+import org.jetbrains.qodana.staticAnalysis.profile.DerivedInspection
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import org.jetbrains.qodana.staticAnalysis.sarif.textFormat.htmlToMarkdown
@@ -258,6 +259,24 @@ suspend fun fillComponents(tool: Tool, qodanaProfile: QodanaProfile) {
   tool.extensions = components.values.sortedBy { it.name }.toSet()
 }
 
+suspend fun appendDerivedComponents(
+  tool: Tool,
+  qodanaProfile: QodanaProfile,
+  derivedInspections: Collection<DerivedInspection>,
+) {
+  val driver = tool.driver ?: return
+  derivedInspections.forEach { inspection ->
+    val parentTools = qodanaProfile.mainGroup.profile.getToolsOrNull(inspection.parentInspectionId, null)
+      ?: return@forEach
+    val parentToolWrapper = parentTools.getInspectionTool(null)
+    val pluginId = parentToolWrapper.extension?.pluginDescriptor?.pluginId?.idString
+    val component = if (pluginId == null) driver else tool.extensions.firstOrNull { it.name == pluginId } ?: return@forEach
+    val parentRule = component.rules.firstOrNull { it.id == inspection.parentInspectionId } ?: return@forEach
+
+    component.rules.add(createDerivedRule(parentTools, parentRule.relationships, inspection))
+  }
+}
+
 fun createTaxonomyReference(taxonomyIndex: Int, taxonomyId: String): ReportingDescriptorRelationship {
   val productCode = ApplicationInfo.getInstance().build.productCode
   return ReportingDescriptorRelationship(
@@ -269,7 +288,40 @@ fun createTaxonomyReference(taxonomyIndex: Int, taxonomyId: String): ReportingDe
     .withKinds(setOf("superset"))
 }
 
-suspend fun createRule(tools: ToolsImpl, taxonomyIndex: Int, taxonomyId: String): ReportingDescriptor {
+suspend fun createRule(tools: ToolsImpl, taxonomyIndex: Int, taxonomyId: String): ReportingDescriptor =
+  createRuleWithRelationships(
+    tools,
+    setOf(createTaxonomyReference(taxonomyIndex, taxonomyId)),
+    tools.shortName,
+    tools.getInspectionTool(null).displayName,
+    taxonomyId,
+  )
+
+private suspend fun createDerivedRule(
+  parentTools: ToolsImpl,
+  parentRelationships: Set<ReportingDescriptorRelationship>,
+  inspection: DerivedInspection,
+): ReportingDescriptor = createRuleWithRelationships(
+  parentTools,
+  parentRelationships,
+  inspection.id,
+  inspection.displayName,
+  null,
+  inspection.fullDescription,
+).apply {
+  val ruleProperties = properties ?: PropertyBag()
+  ruleProperties["parentRuleId"] = inspection.parentInspectionId
+  properties = ruleProperties
+}
+
+private suspend fun createRuleWithRelationships(
+  tools: ToolsImpl,
+  relationships: Set<ReportingDescriptorRelationship>,
+  ruleId: String,
+  displayName: String,
+  taxonomyId: String?,
+  fullDescription: String? = null,
+): ReportingDescriptor {
   val defaultToolWrapper = tools.getInspectionTool(null)
 
   val ideaSeverity = tools.level.severity
@@ -285,21 +337,19 @@ suspend fun createRule(tools: ToolsImpl, taxonomyIndex: Int, taxonomyId: String)
         .addCodeQualityCategory(defaultToolWrapper)
     )
 
-  val reportingDescriptorRelationship = createTaxonomyReference(taxonomyIndex, taxonomyId)
-
-  val description = defaultToolWrapper.loadDescription() ?: run {
-    LOG.warn("Missing description for tool ${defaultToolWrapper.id} in taxonomy ${taxonomyId}")
+  val description = fullDescription ?: defaultToolWrapper.loadDescription() ?: run {
+    LOG.warn("Missing description for tool ${defaultToolWrapper.id}" + (taxonomyId?.let { " in taxonomy $it" } ?: ""))
     "No description available"
   }
 
-  return ReportingDescriptor(tools.shortName)
-    .withShortDescription(MultiformatMessageString().withText(defaultToolWrapper.displayName))
+  return ReportingDescriptor(ruleId)
+    .withShortDescription(MultiformatMessageString().withText(displayName))
     .withFullDescription(
       MultiformatMessageString()
         .withText(htmlToPlainText(description))
         .withMarkdown(htmlToMarkdown(description))
     )
-    .withRelationships(setOf(reportingDescriptorRelationship))
+    .withRelationships(relationships)
     .withDefaultConfiguration(defaultConfiguration)
 }
 

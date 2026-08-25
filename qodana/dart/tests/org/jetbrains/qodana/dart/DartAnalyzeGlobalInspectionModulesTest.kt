@@ -26,7 +26,7 @@ internal class DartAnalyzeGlobalInspectionModulesTest : DartAnalyzeProjectQodana
       ),
       sarifResultPaths(),
     )
-    assertTrue(manager.sarifRun.results.all { it.ruleId == DART_ANALYZE_ERROR_SHORT_NAME })
+    assertTrue(manager.sarifRun.results.all { it.ruleId == "undefined_identifier" })
     assertTrue(manager.sarifRun.results.all { it.level == Level.ERROR })
     assertRecordedAnalysisDirectories("")
   }

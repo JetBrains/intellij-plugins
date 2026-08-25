@@ -1,7 +1,8 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
+    <plugin id="com.intellij.modules.qodana.ijVoid"/>
     <plugin id="com.intellij.modules.ultimate"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="org.intellij.qodana"/>
     <module name="intellij.libraries.gson"/>
     <module name="intellij.libraries.jetbrains.annotations"/>
@@ -12,22 +13,24 @@
     <module name="intellij.platform.eel.provider"/>
     <module name="intellij.platform.inspect"/>
     <module name="intellij.platform.lang.impl"/>
-    <!-- endregion -->
+    <module name="intellij.qodana.sarif"/>
   </dependencies>
+  <!-- endregion -->
   <resource-bundle>messages.QodanaDartBundle</resource-bundle>
   <extensions defaultExtensionNs="org.intellij.qodana">
-    <externalToolsProvider implementation="org.jetbrains.qodana.dart.DartAnalyzeInspectionDescriptorProvider"/>
+    <derivedInspectionProvider implementation="org.jetbrains.qodana.dart.DartAnalyzeDerivedInspectionProvider"/>
+    <sarifReportContributor implementation="org.jetbrains.qodana.dart.DartAnalyzeGlobalInspectionOutputConsumer"/>
     <inspectionProfileProvider implementation="org.jetbrains.qodana.dart.DartInspectionProfileProvider"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.dart.DartAnalyzeGlobalInspectionOutputConsumer"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
-    <codeInspection.InspectionExtension implementation="org.jetbrains.qodana.dart.DartAnalyzeGlobalInspectionContextFactory"/>
     <globalInspection language=""
                       hasStaticDescription="true"
                       key="inspection.dart.analyze.name"
                       bundle="messages.QodanaDartBundle"
-                      shortName="DartAnalyzeGlobalInspection"
-                      groupKey="inspection.dart.analyze.group.name"
+                      shortName="DartAnalyze"
+                      groupKey="inspection.dart.analyze.taxonomy.name"
+                      groupPathKey="inspection.dart.analyze.group.name"
                       groupBundle="messages.QodanaDartBundle"
                       enabledByDefault="true"
                       level="WARNING"

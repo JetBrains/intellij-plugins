@@ -92,7 +92,7 @@ class QodanaProblemConsumer(
 
   internal fun consume(problems: List<Problem>, inspectionId: String) {
     profileState.onReceive(inspectionId, problems.size)
-    val profileGroupState = profileState.stateByInspectionId[inspectionId] ?: return
+    val profileGroupState = profileState.getInspectionState(inspectionId) ?: return
     writer.batchConsume(problems) { problem ->
       val relativePath = problem.getFile()
       val module = problem.getModule()

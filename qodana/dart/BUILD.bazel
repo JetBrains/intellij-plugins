@@ -1,10 +1,15 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 exports_files(
     ["resources/intellij.qodana.dart.xml"],
     visibility = ["//visibility:public"],
 )
+
+### auto-generated section `dev intellij.qodana.dart` start
+content_module_jar(module = ":dart")
+### auto-generated section `dev intellij.qodana.dart` end
 
 ### auto-generated section `build intellij.qodana.dart` start
 jvm_library(
@@ -35,10 +40,12 @@ jvm_library(
         "@community//platform/eel",
         "@community//platform/eel-provider",
         "@community//platform/inspect",
+        "@community//platform/platform-util-io:ide-util-io",
         "@community//platform/lang-impl",
         "@community//platform/util",
         "@community//platform/util/jdom",
         "//contrib/qodana",
+        "//contrib/qodana/sarif",
     ],
 )
 
@@ -63,10 +70,12 @@ jvm_library(
         "@community//platform/eel:eel_test_lib",
         "@community//platform/eel-provider:eel-provider_test_lib",
         "@community//platform/inspect:inspect_test_lib",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
         "@community//platform/lang-impl:lang-impl_test_lib",
         "@community//platform/util:util_test_lib",
         "@community//platform/util/jdom:jdom_test_lib",
         "//contrib/qodana:qodana_test_lib",
+        "//contrib/qodana/sarif:sarif_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.dart` end

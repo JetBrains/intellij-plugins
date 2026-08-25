@@ -1,1 +1,1 @@
-void main() { missing; }
+void main() { missing; var unused = 0; }
