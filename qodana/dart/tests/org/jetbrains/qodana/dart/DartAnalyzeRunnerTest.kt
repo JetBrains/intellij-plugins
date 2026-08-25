@@ -225,6 +225,38 @@ class DartAnalyzeRunnerTest {
   }
 
   @Test
+  fun `analyzes Dart modules when the configured SDK has no Flutter executable`() = runBlocking {
+    val sdkDirectory = Files.createDirectory(tempDirectory.resolve("dart-sdk"))
+    val dartExecutableName = if (SystemInfo.isWindows) "dart.exe" else "dart"
+    Files.createFile(sdkDirectory.resolve(dartExecutableName))
+    val resolver = configuredExecutableResolver({ sdkDirectory.toString() }) { Files.isRegularFile(it) }
+    val executor = FakeExecutor(
+      DartAnalyzeProcessResult(0, "", ""),
+      DartAnalyzeProcessResult(0, resourceText("no-diagnostics.json"), ""),
+    )
+
+    val dartResult = DartExecutableRunner(
+      executablePath = { sdkDirectory.toString() },
+      processExecutor = executor,
+      executableResolver = resolver,
+    ).run(sdkDirectory)
+    val flutterPreparation = FlutterExecutableRunner(
+      executablePath = { sdkDirectory.toString() },
+      executableResolver = resolver,
+    ).prepare(sdkDirectory)
+
+    assertTrue(dartResult is DartAnalyzeRunResult.Success)
+    assertTrue(flutterPreparation is DartPreparationResult.Failure)
+    assertEquals(
+      listOf(
+        listOf(sdkDirectory.resolve(dartExecutableName).toString(), "pub", "get"),
+        listOf(sdkDirectory.resolve(dartExecutableName).toString(), "analyze", "--format=json", "."),
+      ),
+      executor.commands,
+    )
+  }
+
+  @Test
   fun `reports a blank executable configuration`() = runBlocking {
     val result = DartExecutableRunner({ "  " }, FakeExecutor()).run(Path.of("/project"))
 

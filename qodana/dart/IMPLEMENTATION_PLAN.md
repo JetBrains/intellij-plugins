@@ -3,7 +3,7 @@
 ## Scope of the current iteration
 
 1. Provide the Qodana Dart plugin without adding a standalone product or product bundling.
-2. Use locally installed Dart and Flutter SDK `bin` directories configured with `QODANA_DART_PATH` and `QODANA_FLUTTER_PATH`.
+2. Use locally installed Dart and Flutter SDK `bin` directories configured with `QODANA_FLUTTER_PATH`.
 3. Split dependency preparation (`dart pub get`) from analysis (`dart analyze --format=json`).
 
 ## Plugin

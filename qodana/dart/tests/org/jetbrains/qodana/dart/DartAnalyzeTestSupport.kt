@@ -45,14 +45,14 @@ internal class DartAnalyzeTestRunnerFactory(
 
   fun create(): DartAnalyzeRunnerFactory = DartAnalyzeRunnerFactory { moduleType ->
     when (moduleType) {
-      DartModuleType.DART -> if (isConfiguredExecutable(DART_PATH_ENV, "dart")) {
+      DartModuleType.DART -> if (isConfiguredExecutable("dart")) {
         DartExecutableRunner()
       }
       else {
         logRecordedRunner("dart")
         DartExecutableRunner(processExecutor = recordedProcessExecutor, executableResolver = recordedExecutableResolver)
       }
-      DartModuleType.FLUTTER -> if (isConfiguredExecutable(FLUTTER_PATH_ENV, "flutter")) {
+      DartModuleType.FLUTTER -> if (isConfiguredExecutable("flutter")) {
         FlutterExecutableRunner()
       }
       else {
@@ -62,8 +62,8 @@ internal class DartAnalyzeTestRunnerFactory(
     }
   }
 
-  private fun isConfiguredExecutable(environmentVariable: String, executableName: String): Boolean =
-    configuredExecutableResolver({ System.getenv(environmentVariable) }).resolve(executableName) is DartExecutable.Available
+  private fun isConfiguredExecutable(executableName: String): Boolean =
+    configuredExecutableResolver({ System.getenv(FLUTTER_PATH_ENV) }).resolve(executableName) is DartExecutable.Available
 
   private fun logRecordedRunner(executableName: String) {
     println("Dart mock: using fallback runner for $executableName executable")

@@ -23,7 +23,6 @@ import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 
-internal const val DART_PATH_ENV = "QODANA_DART_PATH"
 internal const val FLUTTER_PATH_ENV = "QODANA_FLUTTER_PATH"
 
 internal sealed interface DartExecutable {
@@ -47,7 +46,7 @@ internal abstract class DartAnalyzeRunner(
   suspend fun prepare(projectPath: Path): DartPreparationResult {
     val executable = when (val result = executableResolver.resolve(preparationExecutableName)) {
       is DartExecutable.Available -> result.path
-      else -> return DartPreparationResult.Failure(result.toFailure(executableEnv))
+      else -> return DartPreparationResult.Failure(result.unavailable(preparationExecutableName, executableEnv))
     }
     val pubGetResult = try {
       processExecutor.execute(listOf(executable.toString(), "pub", "get"), projectPath)
@@ -75,7 +74,7 @@ internal abstract class DartAnalyzeRunner(
   suspend fun analyze(modulePath: Path): DartAnalyzeRunResult {
     val executable = when (val result = executableResolver.resolve(analysisExecutableName)) {
       is DartExecutable.Available -> result.path
-      else -> return result.toFailure(executableEnv)
+      else -> return result.unavailable(analysisExecutableName, executableEnv)
     }
     val analyzeResult = try {
       processExecutor.execute(
@@ -114,6 +113,9 @@ internal abstract class DartAnalyzeRunner(
   }
 
   private fun String.logValue(): String = replace("\n", "\\n").replace("\r", "\\r").take(LOG_OUTPUT_LIMIT)
+
+  private fun DartExecutable.unavailable(executableName: String, envName: String): DartAnalyzeRunResult.Failure =
+    toFailure(envName).also { LOG.warn("$executableName executable is not available: ${it.message}") }
 }
 
 private const val LOG_OUTPUT_LIMIT = 4_000
@@ -161,7 +163,7 @@ private fun executablePaths(configuredPath: Path, executableName: String): List<
 }
 
 internal class DartExecutableRunner(
-  executablePath: () -> String? = { System.getenv(DART_PATH_ENV) },
+  executablePath: () -> String? = { System.getenv(FLUTTER_PATH_ENV) },
   processExecutor: DartAnalyzeProcessExecutor = DefaultDartAnalyzeProcessExecutor,
   executableResolver: DartExecutableResolver = configuredExecutableResolver(executablePath),
 ) : DartAnalyzeRunner(
@@ -169,7 +171,7 @@ internal class DartExecutableRunner(
   processExecutor,
   "dart",
   "dart",
-  DART_PATH_ENV,
+  FLUTTER_PATH_ENV,
   ::parseDartAnalyzeDiagnostics,
 )
 
