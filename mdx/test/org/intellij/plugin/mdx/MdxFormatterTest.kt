@@ -250,10 +250,11 @@ class MdxFormatterTest : MdxTestBase() {
   }
 
   /**
-   * Enter and Tab in a fence whose body has no code yet take the sandbox base from the fence's opening line, so
-   * the line they open lands at that base (Enter) or one indent step past it (Tab), not at column zero. Since
-   * every line of such a body is blank, its whitespace is the fence indentation rather than content and is
-   * dedented for the sandbox; otherwise it would feed the sandbox indenter on top of the base. WEB-78468.
+   * Enter and Tab in a fence whose body has no code yet take the sandbox prefix from the fence's opening line, so
+   * the line they open lands at that prefix (Enter) or one indent step past it (Tab), not at column zero. Since no
+   * line of such a body carries code, their prefixes are the fence's own rather than content: they are stripped for
+   * the sandbox — otherwise they would feed its indenter on top of the prefix — and restored on the way back, which
+   * is what keeps a blockquoted fence's markers on the lines Enter leaves behind. WEB-78468.
    */
   @Test
   fun testEnterInEmptyIndentedCodeFenceIndentsToFenceBase() = doActionTest("EditorEnter")
@@ -390,6 +391,34 @@ class MdxFormatterTest : MdxTestBase() {
   @Test
   fun testGluedEsmStatementsWithoutJsxStayOpaque() = doTest(testName, testName)
 
+
+  /**
+   * What a code fence line carries in front of its code is not necessarily spaces: a fence inside a blockquote
+   * carries a `>` marker on every one of its lines, and indentation may be tabs. The sandbox round trip has to
+   * strip that whole prefix on the way in and put it back on the way out, including on the line the replayed
+   * action opens — otherwise the new line falls out of the quote, or the tabs turn into spaces. WEB-78468.
+   */
+  @Test
+  fun testEnterInsideBlockquotedCodeFenceKeepsQuoteMarker() = doActionTest("EditorEnter")
+
+  /** A body with no code in it yet takes the prefix from the fence's opening line, markers included. */
+
+  /** Reformat keeps the markers of a blockquoted fence and formats the code between them. */
+  @Test
+  fun testReformatBlockquotedCodeFenceKeepsQuoteMarker() = doTest()
+
+  /** Indentation may be tabs, and a tab is not four spaces to be swapped in on the way back. */
+  @Test
+  fun testEnterInsideTabIndentedCodeFenceKeepsTabs() = doActionTest("EditorEnter")
+
+  /** As above for an ordered item, whose marker is wider. */
+
+  /**
+   * The bullet's stand-in has to be exactly as wide as the bullet: a paste puts every line back at the fence
+   * indent, so a stand-in one character short drops each pasted line out of the list item.
+   */
+  @Test
+  fun testPasteIntoCodeFenceInListItemIsIndentedToItemBody() = doPasteTest()
 
   /** Reformat inserts a blank line after front matter when the following content is flush against it. */
   @Test

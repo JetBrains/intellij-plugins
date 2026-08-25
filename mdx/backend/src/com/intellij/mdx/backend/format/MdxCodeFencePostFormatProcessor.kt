@@ -13,6 +13,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
+import org.intellij.plugin.mdx.editor.fenceIndent
 import org.intellij.plugin.mdx.lang.parse.MdxElementTypes
 import org.intellij.plugin.mdx.lang.psi.MdxFile
 import org.intellij.plugins.markdown.injection.aliases.CodeFenceLanguageGuesser
@@ -77,18 +78,26 @@ internal class MdxCodeFencePostFormatProcessor : PostFormatProcessor {
     val lineText = { line: Int ->
       document.charsSequence.subSequence(document.getLineStartOffset(line), document.getLineEndOffset(line)).toString()
     }
-    val opener = lineText(startLine).trim()
-    val closer = lineText(endLine).trim()
+    val indent = fenceIndent(document, startLine)
+    // The indent is re-emitted as [baseIndent] below, so the fence markers come stripped of the one they carry.
+    val bareLine = { line: Int -> lineText(line).let { it.drop(indent.commonPrefixWith(it).length) }.trim() }
+    val opener = bareLine(startLine)
+    val closer = bareLine(endLine)
     val contentLines = (startLine + 1 until endLine).map { lineText(it) }
 
-    val baseIndent = " ".repeat(jsxDepth(fence) * CodeStyle.getIndentOptions(file).INDENT_SIZE)
+    // A blockquoted fence's prefix is structure, not indentation: its `>` markers have to stay on every line, and
+    // the quote — not the code style — is what says where the fence sits. Anywhere else the fence is placed by its
+    // JSX nesting, one indent step per level.
+    val baseIndent = if ('>' in indent) indent
+    else " ".repeat(jsxDepth(fence) * CodeStyle.getIndentOptions(file).INDENT_SIZE)
     // Formatting "" would yield a spurious blank line between the fences, so keep an empty body empty.
-    val formatted = if (contentLines.isEmpty()) emptyList() else formatCode(file, language, dedent(contentLines))
+    val formatted = if (contentLines.isEmpty()) emptyList() else formatCode(file, language, dedent(contentLines, indent))
 
     val builder = StringBuilder(baseIndent).append(opener)
     for (line in formatted) {
       builder.append('\n')
-      if (line.isNotEmpty()) builder.append(baseIndent)
+      // A line with nothing on it gets no indentation, but still the markers keeping it inside the quote.
+      builder.append(if (line.isNotEmpty()) baseIndent else baseIndent.trimEnd())
       builder.append(line)
     }
     builder.append('\n').append(baseIndent).append(closer)
@@ -107,11 +116,9 @@ internal class MdxCodeFencePostFormatProcessor : PostFormatProcessor {
     return depth
   }
 
-  /** Removes the common leading whitespace from [lines] so the sandbox formatter starts at column zero. */
-  private fun dedent(lines: List<String>): List<String> {
-    val common = lines.filter { it.isNotBlank() }.minOfOrNull { it.takeWhile { c -> c == ' ' || c == '\t' }.length } ?: 0
-    return lines.map { if (it.length >= common) it.substring(common) else it.trimStart() }
-  }
+  /** Removes the fence's own [indent] from [lines] so the sandbox formatter starts at column zero. */
+  private fun dedent(lines: List<String>, indent: String): List<String> =
+    lines.map { it.drop(indent.commonPrefixWith(it).length) }
 
   private fun formatCode(file: MdxFile, language: Language, lines: List<String>): List<String> {
     val code = lines.joinToString("\n")

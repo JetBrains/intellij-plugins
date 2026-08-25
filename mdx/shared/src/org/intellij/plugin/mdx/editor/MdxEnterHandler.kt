@@ -52,8 +52,8 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
     if (document.charsSequence.subSequence(fence.textRange.endOffset, caret).any { it != ' ' && it != '\t' }) return false
     if (!isInsideFlowElement(fence)) return false // top-level fences already indent correctly
 
-    val fenceLineStart = document.getLineStartOffset(document.getLineNumber(fence.textRange.startOffset))
-    val indent = " ".repeat(leadingSpaces(document.charsSequence, fenceLineStart))
+    val fenceLine = document.getLineNumber(fence.textRange.startOffset)
+    val indent = fenceIndent(document, fenceLine)
     context.insertAndMoveCaret("\n$indent", 1 + indent.length)
     return true
   }
@@ -79,7 +79,7 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
     if (!isInsideEsmBlock(context.mdxFile, tag.textRange.startOffset)) return false
 
     val lineStart = document.getLineStartOffset(document.getLineNumber(caret))
-    val baseIndent = " ".repeat(leadingSpaces(document.charsSequence, lineStart))
+    val baseIndent = leadingWhitespace(document.charsSequence, lineStart)
     val childIndent = baseIndent + " ".repeat(CodeStyle.getIndentSize(jsFile))
     context.insertAndMoveCaret("\n$childIndent\n$baseIndent", 1 + childIndent.length)
     return true
@@ -117,7 +117,7 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
     if (jsxTextRunOwner(after) != owner) return false
 
     val lineStart = document.getLineStartOffset(document.getLineNumber(caret))
-    val indent = " ".repeat(leadingSpaces(document.charsSequence, lineStart))
+    val indent = leadingWhitespace(document.charsSequence, lineStart)
     context.insertAndMoveCaret("\n$indent", 1 + indent.length)
     return true
   }
@@ -129,10 +129,11 @@ internal class MdxEnterHandler : EnterHandlerDelegate {
     return (element as? PsiWhiteSpace)?.parent
   }
 
-  private fun leadingSpaces(text: CharSequence, lineStart: Int): Int {
+  /** The indentation of the line starting at [lineStart], spaces or tabs as written. */
+  private fun leadingWhitespace(text: CharSequence, lineStart: Int): String {
     var offset = lineStart
-    while (offset < text.length && text[offset] == ' ') offset++
-    return offset - lineStart
+    while (offset < text.length && (text[offset] == ' ' || text[offset] == '\t')) offset++
+    return text.subSequence(lineStart, offset).toString()
   }
 }
 

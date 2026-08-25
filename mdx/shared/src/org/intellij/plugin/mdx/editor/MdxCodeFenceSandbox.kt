@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.CustomizedDataContext
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
@@ -26,9 +25,9 @@ import org.intellij.plugins.markdown.injection.aliases.CodeFenceLanguageGuesser
  *
  * Editing the injected fence fragment directly is unreliable, since the injected document is a standalone
  * 0-based file whose formatter/indenter fights the host indentation. Instead the fence body is copied into
- * a standalone file of the fence language (dedented to column zero, since indented input confuses the
- * language formatter), the same action is replayed there, and the result is written back re-indented, with
- * caret and selection mapped both ways.
+ * a standalone file of the fence language (stripped of the indent its lines carry — see [fenceIndent] — since
+ * indented input confuses the language formatter), the same action is replayed there, and the result is written
+ * back with that indent restored, with caret and selection mapped both ways.
  */
 object MdxCodeFenceSandbox {
   /**
@@ -80,18 +79,18 @@ object MdxCodeFenceSandbox {
     }
 
     val content = if (hasBody) hostDocument.getText(TextRange(contentStart, contentEnd)) else ""
-    // A body with no code in it yet — an empty fence, or just the blank line the caret sits on — carries no
-    // indentation to infer the base from, so it comes from the fence's own opening line instead (or, with no
-    // body at all, the caret's own current line — on the opening line that's the same line). Otherwise the base
-    // would be zero, shift() would be a no-op both ways, and the replayed action's output (indented from column
-    // zero, as the sandbox file is) would be written straight back at column zero.
-    val bodyIndent = commonIndent(content)
-    val preservesHostIndentation = isPlainTextFallback && actionId == "EditorEnter" &&
-      bodyIndent != null && lineAt(content, caret - contentStart).isBlank()
-    val base = if (preservesHostIndentation) 0
-               else bodyIndent ?: lineIndent(hostDocument, if (hasBody) startLine else hostDocument.getLineNumber(caret))
+    // Every line of the fence carries what its opening line has in front of the backticks, so that is what the
+    // round trip strips and puts back. With no body at all the fence's opening line is the caret's own line.
+    val hasCode = content.lineSequence().any { it.isNotBlank() }
+    // A language-less fence has no formatter to reflow anything, so on Enter the platform's own plain-text indent
+    // copying already carries the caret line's indentation onto the line it opens. Applying the fence indent on top
+    // would add it a second time, so leave the body exactly as the host has it.
+    val preservesHostIndentation = isPlainTextFallback && actionId == "EditorEnter" && hasCode &&
+                                   lineAt(content, caret - contentStart).isBlank()
+    val indent = if (preservesHostIndentation) ""
+                 else fenceIndent(hostDocument, if (hasBody) startLine else hostDocument.getLineNumber(caret))
     val offsets = intArrayOf(caret - contentStart, selectionStart - contentStart, selectionEnd - contentStart)
-    val (dedented, dedentedOffsets) = shift(content, offsets, -base, dedentBlankLines = bodyIndent == null)
+    val (dedented, dedentedOffsets) = shift(content, offsets, indent, strip = true, startsHostLine = hasBody)
 
     val extension = languageAndExtension.second ?: languageAndExtension.first.associatedFileType?.defaultExtension ?: "text"
     val file = PsiFileFactory.getInstance(project)
@@ -129,7 +128,8 @@ object MdxCodeFenceSandbox {
       val resultOffsets = intArrayOf(sandboxEditor.caretModel.offset,
                                      sandboxEditor.selectionModel.selectionStart,
                                      sandboxEditor.selectionModel.selectionEnd)
-      val (reindented, hostOffsets) = shift(sandboxDocument.text, resultOffsets, base)
+      val (reindented, hostOffsets) = shift(sandboxDocument.text, resultOffsets, indent,
+                                            strip = false, startsHostLine = hasBody)
       changedContent(content, reindented)?.let { replacement ->
         runWriteAction {
           hostDocument.replaceString(
@@ -151,10 +151,6 @@ object MdxCodeFenceSandbox {
     return true
   }
 
-  /** Minimum leading-space indentation across the non-blank lines of [content], or null if it has none. */
-  private fun commonIndent(content: String): Int? =
-    content.split('\n').filter { it.isNotBlank() }.minOfOrNull { line -> line.takeWhile { it == ' ' }.length }
-
   /** The line of [text] containing character offset [offset]. */
   private fun lineAt(text: String, offset: Int): String {
     var lineStart = 0
@@ -165,12 +161,6 @@ object MdxCodeFenceSandbox {
     }
     return ""
   }
-
-  /** Leading-space indentation of [line] in [document]. */
-  private fun lineIndent(document: Document, line: Int): Int =
-    document.immutableCharSequence
-      .subSequence(document.getLineStartOffset(line), document.getLineEndOffset(line))
-      .takeWhile { it == ' ' }.length
 
   private fun changedContent(original: String, updated: String): ContentReplacement? {
     if (original == updated) return null
@@ -196,41 +186,43 @@ object MdxCodeFenceSandbox {
   }
 
   /**
-   * Shifts the indentation of every line by [delta] spaces — negative removes leading spaces (dedent), positive
-   * prepends them to non-blank lines (and lines bearing a tracked offset). Returns the shifted text and the
-   * given [offsets] mapped into it.
+   * Strips [indent] off every line of [text] ([strip]) or puts it back in front of every line, returning the text
+   * along with the given [offsets] mapped into it.
    *
-   * A whitespace-only line keeps its own whitespace: dedent leaves it alone, and reindent re-emits it as it came
-   * back from the sandbox (only a blank line the caret landed on is indented, so a newly opened line gets the fence
-   * base). The round trip has to be lossless for lines the replayed action never touches — rewriting them makes
-   * [replay] write back text above the caret, and such a host change spans whole fence-content lines, so it
-   * invalidates the shreds of the injected DocumentWindow the caret lives in: the window's length then collapses
-   * below the offset `EnterHandler` snapshotted before calling the delegate, tripping "Wrong caret offset change".
-   * [dedentBlankLines] opts out of that protection for a body whose lines are *all* blank, where their whitespace
-   * is the fence indentation rather than content, and where there is no other line left to protect.
+   * [startsHostLine] is false for a fence with no body lines at all, where the replaced region is the caret's own
+   * position rather than whole lines: the first line back from the sandbox continues the fence's opening line
+   * there, so it must not be given an indent of its own.
    */
-  private fun shift(text: String, offsets: IntArray, delta: Int, dedentBlankLines: Boolean = false): Pair<String, IntArray> {
-    if (delta == 0) return text to offsets
-    val indent = if (delta > 0) " ".repeat(delta) else ""
+  private fun shift(text: String,
+                    offsets: IntArray,
+                    indent: String,
+                    strip: Boolean,
+                    startsHostLine: Boolean): Pair<String, IntArray> {
+    if (indent.isEmpty()) return text to offsets
     val out = StringBuilder()
     val mapped = offsets.copyOf()
     var lineStart = 0
     for ((index, line) in text.split('\n').withIndex()) {
       if (index > 0) out.append('\n')
-      val bearsOffset = offsets.any { it in lineStart..(lineStart + line.length) }
-      val blank = line.isBlank() && !dedentBlankLines
-      val leading = line.takeWhile { it == ' ' }.length
-      val removed = if (delta < 0 && !blank) minOf(-delta, leading) else 0
-      val prepend = delta > 0 && (!blank || bearsOffset)
+      val applies = index > 0 || startsHostLine
+      val delta = when {
+        !applies -> 0
+        strip -> -indent.commonPrefixWith(line).length
+        else -> indent.length
+      }
       val base = out.length
       for ((k, offset) in offsets.withIndex()) {
         if (offset in lineStart..(lineStart + line.length)) {
-          val column = offset - lineStart
-          mapped[k] = base + if (delta > 0) column + (if (prepend) delta else 0) else maxOf(0, column - removed)
+          mapped[k] = base + maxOf(0, offset - lineStart + delta)
         }
       }
-      if (prepend) out.append(indent)
-      out.append(if (delta < 0) line.substring(removed) else line)
+      if (strip) {
+        out.append(line, -delta, line.length)
+      }
+      else {
+        if (applies) out.append(indent)
+        out.append(line)
+      }
       lineStart += line.length + 1
     }
     return out.toString() to mapped

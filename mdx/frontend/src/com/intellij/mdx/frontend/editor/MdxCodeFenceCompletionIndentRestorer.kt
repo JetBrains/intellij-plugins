@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilCore
+import org.intellij.plugin.mdx.editor.fenceIndent
 import org.intellij.plugin.mdx.lang.psi.MdxFile
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFence
 
@@ -21,8 +22,8 @@ import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFence
  *
  * A fence body is language-injected with its leading indentation as part of the injected document, so the
  * platform's LookupUtil takes the whole `    conso` as the completion prefix and drops the indent when it
- * replaces it with `console`. Until that's fixed upstream, re-indent the caret line to the fence's base
- * indent after an item is inserted.
+ * replaces it with `console`. Until that's fixed upstream, put the fence's own indent (see [fenceIndent])
+ * back in front of the caret line after an item is inserted.
  */
 internal class MdxCodeFenceCompletionIndentRestorer : LookupManagerListener {
   override fun activeLookupChanged(oldLookup: Lookup?, newLookup: Lookup?) {
@@ -57,14 +58,15 @@ internal class MdxCodeFenceCompletionIndentRestorer : LookupManagerListener {
     val caretLine = document.getLineNumber(caret)
     if (caretLine !in (startLine + 1)..<endLine) return // only lines strictly between the fences
 
-    val baseIndent = lineText(document, startLine).takeWhile { it == ' ' }.length
-    if (baseIndent == 0) return
-    val currentIndent = lineText(document, caretLine).takeWhile { it == ' ' }.length
-    if (currentIndent >= baseIndent) return // completion left the indent (or more) intact
+    val indent = fenceIndent(document, startLine)
+    if (indent.isEmpty()) return
+    val present = indent.commonPrefixWith(lineText(document, caretLine)).length
+    if (present >= indent.length) return // completion left the indent (or more) intact
 
-    val missing = baseIndent - currentIndent
-    document.insertString(document.getLineStartOffset(caretLine), " ".repeat(missing))
+    val caretLineStart = document.getLineStartOffset(caretLine)
+    document.replaceString(caretLineStart, caretLineStart + present, indent)
     documentManager.commitDocument(document)
+    val missing = indent.length - present
     hostEditor.caretModel.moveToOffset((caret + missing).coerceAtMost(document.textLength))
   }
 
