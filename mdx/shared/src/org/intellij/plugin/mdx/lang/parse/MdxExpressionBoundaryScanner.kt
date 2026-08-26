@@ -12,6 +12,26 @@ import com.intellij.lang.javascript.JSTokenTypes
  * class only counts ordinary JavaScript braces.
  */
 internal object MdxExpressionBoundaryScanner {
+  /**
+   * Caps speculative reparses after the normal JavaScript lexer failed to find a boundary.
+   * Valid JavaScript never consumes this budget; the cutoff only makes malformed editor input
+   * degrade to an unterminated expression instead of repeatedly reparsing the rest of the file.
+   */
+  internal const val MALFORMED_RECOVERY_ATTEMPT_LIMIT = 64
+
+  internal class RecoveryBudget(
+    private var remainingAttempts: Int = MALFORMED_RECOVERY_ATTEMPT_LIMIT,
+  ) {
+    val exhausted: Boolean
+      get() = remainingAttempts == 0
+
+    fun tryAcquire(): Boolean {
+      if (exhausted) return false
+      remainingAttempts--
+      return true
+    }
+  }
+
   /** Returns the end offset after the top-level `}`, or `-1` if the expression reaches [end]. */
   fun findExpressionEnd(buffer: CharSequence, start: Int, end: Int): Int {
     if (buffer.getOrNull(start) != '{') return -1
@@ -44,13 +64,18 @@ internal object MdxExpressionBoundaryScanner {
    * no boundary in the full range: the caller must validate each candidate against its host grammar.
    * This resolves ambiguous malformed input without overriding valid JavaScript tokens such as `/}/`.
    */
-  fun findExpressionEndCandidates(buffer: CharSequence, start: Int, end: Int): List<Int> {
+  fun findExpressionEndCandidates(
+    buffer: CharSequence,
+    start: Int,
+    end: Int,
+    recoveryBudget: RecoveryBudget = RecoveryBudget(),
+  ): List<Int> {
     val expressionEnd = findExpressionEnd(buffer, start, end)
     if (expressionEnd != -1) return listOf(expressionEnd)
 
     val result = mutableListOf<Int>()
     var candidate = buffer.indexOf('}', start + 1)
-    while (candidate in 0..<end) {
+    while (candidate in 0..<end && recoveryBudget.tryAcquire()) {
       val candidateEnd = candidate + 1
       if (findExpressionEnd(buffer, start, candidateEnd) == candidateEnd) {
         result.add(candidateEnd)

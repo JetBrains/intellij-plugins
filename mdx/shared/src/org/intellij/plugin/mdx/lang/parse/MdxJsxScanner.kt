@@ -85,9 +85,10 @@ internal object MdxJsxScanner {
     start: Int,
     limit: Int = text.length,
     opaqueRanges: MdxOpaqueRanges = MdxOpaqueRanges.EMPTY,
+    recoveryBudget: MdxExpressionBoundaryScanner.RecoveryBudget = MdxExpressionBoundaryScanner.RecoveryBudget(),
   ): Element? {
     if (limit - start > MAX_SCAN_LENGTH) return null
-    val opening = parseTag(text, start, limit) ?: return null
+    val opening = parseTag(text, start, limit, recoveryBudget) ?: return null
     if (opening.kind == TagKind.CLOSING) return null
     if (opening.kind == TagKind.SELF_CLOSING) {
       return Element(
@@ -120,7 +121,7 @@ internal object MdxJsxScanner {
           offset = expressionEnd
         }
         '<' -> {
-          val tag = parseTag(text, offset, limit)
+          val tag = parseTag(text, offset, limit, recoveryBudget)
           if (tag == null) {
             offset++
             continue
@@ -174,7 +175,12 @@ internal object MdxJsxScanner {
     return if (tag.kind == TagKind.CLOSING) ElementIdentity(tag.name) else null
   }
 
-  private fun parseTag(text: CharSequence, start: Int, limit: Int): Tag? {
+  private fun parseTag(
+    text: CharSequence,
+    start: Int,
+    limit: Int,
+    recoveryBudget: MdxExpressionBoundaryScanner.RecoveryBudget = MdxExpressionBoundaryScanner.RecoveryBudget(),
+  ): Tag? {
     if (text.getOrNull(start) != '<' || start + 1 >= limit) return null
     var offset = start + 1
     val closing = text.getOrNull(offset) == '/'
@@ -207,7 +213,7 @@ internal object MdxJsxScanner {
       else null
     }
 
-    return parseOpeningTagTail(text, start, name, offset, limit, emptyList(), emptyList())
+    return parseOpeningTagTail(text, start, name, offset, limit, emptyList(), emptyList(), recoveryBudget)
   }
 
   private fun parseOpeningTagTail(text: CharSequence,
@@ -216,7 +222,8 @@ internal object MdxJsxScanner {
                                   initialOffset: Int,
                                   limit: Int,
                                   initialAttributes: List<IntRange>,
-                                  initialExpressions: List<IntRange>): Tag? {
+                                  initialExpressions: List<IntRange>,
+                                  recoveryBudget: MdxExpressionBoundaryScanner.RecoveryBudget): Tag? {
     val attributes = initialAttributes.toMutableList()
     val expressions = initialExpressions.toMutableList()
     var offset = initialOffset
@@ -235,7 +242,7 @@ internal object MdxJsxScanner {
           offset++
         }
         '{' -> {
-          val expressionEnds = MdxExpressionBoundaryScanner.findExpressionEndCandidates(text, offset, limit)
+          val expressionEnds = MdxExpressionBoundaryScanner.findExpressionEndCandidates(text, offset, limit, recoveryBudget)
           if (expressionEnds.isEmpty()) return null
           if (expressionEnds.size > 1) {
             for (expressionEnd in expressionEnds) {
@@ -247,6 +254,7 @@ internal object MdxJsxScanner {
                 limit,
                 attributes,
                 expressions + listOf(offset..expressionEnd),
+                recoveryBudget,
               )?.let { return it }
             }
             return null
@@ -268,7 +276,7 @@ internal object MdxJsxScanner {
             when (text.getOrNull(offset)) {
               '\'', '"' -> offset = scanQuoted(text, offset, limit, text[offset])
               '{' -> {
-                val expressionEnds = MdxExpressionBoundaryScanner.findExpressionEndCandidates(text, offset, limit)
+                val expressionEnds = MdxExpressionBoundaryScanner.findExpressionEndCandidates(text, offset, limit, recoveryBudget)
                 if (expressionEnds.isEmpty()) return null
                 if (expressionEnds.size > 1) {
                   for (expressionEnd in expressionEnds) {
@@ -280,6 +288,7 @@ internal object MdxJsxScanner {
                       limit,
                       attributes + listOf(attributeStart..expressionEnd),
                       expressions + listOf(offset..expressionEnd),
+                      recoveryBudget,
                     )?.let { return it }
                   }
                   return null

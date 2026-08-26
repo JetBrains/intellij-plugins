@@ -3,6 +3,7 @@ package org.intellij.plugin.mdx
 import com.intellij.testFramework.junit5.TestApplication
 import org.intellij.plugin.mdx.lang.parse.MdxExpressionBoundaryScanner
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 @TestApplication
@@ -39,6 +40,29 @@ class MdxExpressionBoundaryScannerTest {
   @Test
   fun malformedMarkdownLikeJavaScriptStillEndsAtHostBrace() {
     assertExpressionEnd("{[Target](./target.mdx)}")
+  }
+
+  @Test
+  fun malformedRecoveryAttemptsAreBoundedAcrossSearches() {
+    val budget = MdxExpressionBoundaryScanner.RecoveryBudget()
+    val adversarialExpression = "{`" + "}".repeat(MdxExpressionBoundaryScanner.MALFORMED_RECOVERY_ATTEMPT_LIMIT * 64)
+
+    assertEquals(
+      emptyList<Int>(),
+      MdxExpressionBoundaryScanner.findExpressionEndCandidates(
+        adversarialExpression,
+        0,
+        adversarialExpression.length,
+        budget,
+      ),
+    )
+    assertTrue(budget.exhausted)
+
+    val anotherExpression = "{`}"
+    assertEquals(
+      emptyList<Int>(),
+      MdxExpressionBoundaryScanner.findExpressionEndCandidates(anotherExpression, 0, anotherExpression.length, budget),
+    )
   }
 
   private fun assertExpressionEnd(text: String) {

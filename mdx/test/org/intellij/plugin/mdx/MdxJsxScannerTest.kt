@@ -30,6 +30,16 @@ class MdxJsxScannerTest {
   }
 
   @Test
+  fun malformedRegularExpressionRecoversAtHostBrace() {
+    val text = "<Alert value={/} />"
+
+    val element = MdxJsxScanner.scanJsxElement(text, 0)
+
+    assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
+    assertEquals(text.length, element?.range?.last)
+  }
+
+  @Test
   fun scansTemplateLiteralExpressionAttribute() {
     val text = """
       <Source language="tsx" code={`
