@@ -176,7 +176,7 @@ class DartAnalyzeRunnerTest {
   }
 
   @Test
-  fun `finds Dart modules while ignoring metadata directories`() {
+  fun `finds Dart modules while ignoring hidden directories`() {
     val monorepoPath = copyMiniMonorepo()
 
     assertEquals(
@@ -370,7 +370,7 @@ class DartAnalyzeRunnerTest {
     val source = Path.of(PluginPathManager.getPluginHomePath("qodana"), "dart", "test-data", "dart-analyze", "mini-monorepo")
     val target = tempDirectory.resolve("mini-monorepo")
     NioFiles.copyRecursively(source, target)
-    Files.move(target.resolve("git"), target.resolve(".git"))
+    Files.move(target.resolve("git"), target.resolve(".plugin_symlinks"))
     return target
   }
 

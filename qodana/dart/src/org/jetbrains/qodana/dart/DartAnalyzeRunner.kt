@@ -198,7 +198,7 @@ internal fun findDartModuleDirectories(projectPath: Path): List<Path> {
   val moduleDirectories = ArrayList<Path>()
   Files.walkFileTree(projectPath, object : SimpleFileVisitor<Path>() {
     override fun preVisitDirectory(directory: Path, attributes: BasicFileAttributes): FileVisitResult {
-      return if (directory != projectPath && directory.fileName.toString() in DART_MODULE_IGNORED_DIRECTORIES) {
+      return if (directory != projectPath && directory.fileName.toString().startsWith('.')) {
         FileVisitResult.SKIP_SUBTREE
       }
       else {
@@ -218,7 +218,6 @@ internal fun findDartModuleDirectories(projectPath: Path): List<Path> {
   return moduleDirectories.sorted()
 }
 
-private val DART_MODULE_IGNORED_DIRECTORIES = setOf(".dart_tool", ".git")
 private val FLUTTER_MODULE_DECLARATION = Regex("""^\s*(?:sdk\s*:\s*['"]?flutter['"]?\s*(?:#.*)?|flutter\s*:.*)$""")
 
 internal fun isFlutterModule(moduleDirectory: Path): Boolean = runCatching {
