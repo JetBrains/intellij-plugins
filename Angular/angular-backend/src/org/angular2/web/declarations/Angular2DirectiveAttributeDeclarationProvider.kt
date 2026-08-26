@@ -1,6 +1,6 @@
 package org.angular2.web.declarations
 
-import com.intellij.javascript.JSBuiltInTypeEngineEvaluation
+import com.intellij.javascript.JSTypeEngineEvaluation
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSLiteralExpression
@@ -35,7 +35,7 @@ class Angular2DirectiveAttributeDeclarationProvider : PolySymbolDeclarationProvi
   }
 
   override fun getEquivalentDeclarations(element: PsiElement, offsetInElement: Int, target: PolySymbol): Collection<PolySymbolDeclaration> {
-    return JSBuiltInTypeEngineEvaluation.forceBuiltInTypeEngineIfNeeded(element, target.psiContext) {
+    return JSTypeEngineEvaluation.performReferenceResolutionToTargetAtLocation(element, target.psiContext) {
       super.getEquivalentDeclarations(element, offsetInElement, target)
     }
   }

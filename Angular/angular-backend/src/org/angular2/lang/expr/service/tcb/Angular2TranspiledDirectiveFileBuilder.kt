@@ -1,6 +1,6 @@
 package org.angular2.lang.expr.service.tcb
 
-import com.intellij.javascript.JSBuiltInTypeEngineEvaluation
+import com.intellij.javascript.JSTypeEngineEvaluation
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSCallExpression
@@ -68,7 +68,7 @@ object Angular2TranspiledDirectiveFileBuilder {
     CachedValuesManager.getCachedValue(directiveFile) {
       CachedValueProvider.Result.create(withTypeEvaluationLocation(directiveFile) {
         getDirectiveFileCache(directiveFile)?.let {
-          JSBuiltInTypeEngineEvaluation.forceTypeEngine {
+          JSTypeEngineEvaluation.forceBuiltInTypeEngine {
             buildTranspiledDirectiveFile(directiveFile, it)
           }
         }
