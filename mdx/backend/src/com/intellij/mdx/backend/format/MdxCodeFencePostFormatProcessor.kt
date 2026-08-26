@@ -1,6 +1,5 @@
 package com.intellij.mdx.backend.format
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.lang.Language
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
@@ -12,9 +11,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.elementType
 import org.intellij.plugin.mdx.editor.fenceIndent
-import org.intellij.plugin.mdx.lang.parse.MdxElementTypes
 import org.intellij.plugin.mdx.lang.psi.MdxFile
 import org.intellij.plugins.markdown.injection.aliases.CodeFenceLanguageGuesser
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFence
@@ -78,42 +75,27 @@ internal class MdxCodeFencePostFormatProcessor : PostFormatProcessor {
     val lineText = { line: Int ->
       document.charsSequence.subSequence(document.getLineStartOffset(line), document.getLineEndOffset(line)).toString()
     }
+    // Whatever the fence already carries is where it belongs: this runs after the formatter, which has already
+    // placed the fence at its JSX nesting depth, and a blockquoted fence is placed by the quote rather than by the
+    // code style either way. It is re-emitted in front of every line below, so the markers come stripped of it.
     val indent = fenceIndent(document, startLine)
-    // The indent is re-emitted as [baseIndent] below, so the fence markers come stripped of the one they carry.
     val bareLine = { line: Int -> lineText(line).let { it.drop(indent.commonPrefixWith(it).length) }.trim() }
     val opener = bareLine(startLine)
     val closer = bareLine(endLine)
     val contentLines = (startLine + 1 until endLine).map { lineText(it) }
 
-    // A blockquoted fence's prefix is structure, not indentation: its `>` markers have to stay on every line, and
-    // the quote — not the code style — is what says where the fence sits. Anywhere else the fence is placed by its
-    // JSX nesting, one indent step per level.
-    val baseIndent = if ('>' in indent) indent
-    else " ".repeat(jsxDepth(fence) * CodeStyle.getIndentOptions(file).INDENT_SIZE)
     // Formatting "" would yield a spurious blank line between the fences, so keep an empty body empty.
     val formatted = if (contentLines.isEmpty()) emptyList() else formatCode(file, language, dedent(contentLines, indent))
 
-    val builder = StringBuilder(baseIndent).append(opener)
+    val builder = StringBuilder(indent).append(opener)
     for (line in formatted) {
       builder.append('\n')
       // A line with nothing on it gets no indentation, but still the markers keeping it inside the quote.
-      builder.append(if (line.isNotEmpty()) baseIndent else baseIndent.trimEnd())
+      builder.append(if (line.isNotEmpty()) indent else indent.trimEnd())
       builder.append(line)
     }
-    builder.append('\n').append(baseIndent).append(closer)
+    builder.append('\n').append(indent).append(closer)
     return builder.toString()
-  }
-
-  /** Number of MDX JSX flow elements the fence is nested in; each level adds one indent step. */
-  private fun jsxDepth(fence: MarkdownCodeFence): Int {
-    val flowType = MdxElementTypes.MDX_JSX_FLOW_ELEMENT
-    var depth = 0
-    var parent = fence.parent
-    while (parent != null) {
-      if (parent.elementType == flowType) depth++
-      parent = parent.parent
-    }
-    return depth
   }
 
   /** Removes the fence's own [indent] from [lines] so the sandbox formatter starts at column zero. */
