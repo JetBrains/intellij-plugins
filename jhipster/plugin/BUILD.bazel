@@ -42,12 +42,14 @@ exports_files(
 
 ### auto-generated section `dev content intellij.jhipster.plugin` start
 dev_dist_plugin_content(
-    content_modules = ["//contrib/jhipster"],
     descriptor_module = ":plugin",
     prepacked_content_modules = [
         "//contrib/jhipster/backend:backend_content_module_jar",
         "//contrib/jhipster/frontend:frontend_content_module_jar",
         "//contrib/jhipster/uml:uml_content_module_jar",
     ],
+    prepacked_jars = {
+        "//contrib/jhipster:jhipster_content_module_jar": "intellij.jhipster.jar",
+    },
 )
 ### auto-generated section `dev content intellij.jhipster.plugin` end

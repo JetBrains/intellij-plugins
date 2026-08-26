@@ -246,8 +246,6 @@ exports_files(
 ### auto-generated section `dev content intellij.qodana` start
 dev_dist_plugin_content(
     content_modules = [
-        "//contrib/qodana/sarif",
-        "//contrib/qodana/util",
         "//libraries/qodana/cloud-kotlin-client:libraries-qodana-cloud-kotlin-client",
         "//libraries/qodana/configuration",
         "//libraries/qodana/publisher",
@@ -295,6 +293,10 @@ dev_dist_plugin_content(
         "//contrib/qodana/rust:rust_content_module_jar",
         "//contrib/qodana/yaml:yaml_content_module_jar",
     ],
+    prepacked_jars = {
+        "//contrib/qodana/sarif:sarif_content_module_jar": "intellij.qodana.sarif.jar",
+        "//contrib/qodana/util:util_content_module_jar": "intellij.qodana.util.jar",
+    },
 )
 ### auto-generated section `dev content intellij.qodana` end
 

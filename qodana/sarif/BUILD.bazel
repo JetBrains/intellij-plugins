@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.qodana.sarif` start
@@ -20,6 +21,8 @@ jvm_library(
         "@community//platform/backend",
     ],
 )
+
+content_module_jar(module = ":sarif")
 
 jvm_library(
     name = "sarif_test_lib",

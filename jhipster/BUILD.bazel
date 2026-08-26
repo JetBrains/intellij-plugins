@@ -1,4 +1,5 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.jhipster` start
@@ -43,6 +44,8 @@ jvm_library(
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     ],
 )
+
+content_module_jar(module = ":jhipster")
 
 jvm_library(
     name = "jhipster_test_lib",
