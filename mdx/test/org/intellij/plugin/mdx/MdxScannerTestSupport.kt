@@ -136,3 +136,15 @@ internal fun buildEsm(lines: Int): String {
     append(']')
   }
 }
+
+internal fun buildJsx(elements: Int): String {
+  return buildString {
+    append("<Box>\n")
+    repeat(elements) {
+      append("  <Item value={")
+      append(it)
+      append("} />\n")
+    }
+    append("</Box>")
+  }
+}

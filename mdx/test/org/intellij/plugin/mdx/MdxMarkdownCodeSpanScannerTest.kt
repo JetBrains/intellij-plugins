@@ -3,6 +3,7 @@ package org.intellij.plugin.mdx
 import com.intellij.testFramework.junit5.TestApplication
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.plugin.mdx.lang.parse.MdxMarkdownLibElementTypes
+import org.intellij.plugin.mdx.lang.parse.MdxMarkdownCodeSpanScanner
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -61,5 +62,34 @@ class MdxMarkdownCodeSpanScannerTest {
 
     assertEquals(closerEnd, jsx.endOffset)
     assertEquals(closerStart, closingElement.startOffset)
+  }
+
+  @Test
+  fun escapedBackticksCanCloseButCannotOpenCodeSpans() {
+    val escapedOpener = "\\`not code`"
+    val escapedCloser = "`code \\`"
+
+    assertEquals(emptyList<IntRange>(), scan(escapedOpener))
+    assertEquals(listOf(0..escapedCloser.length), scan(escapedCloser))
+  }
+
+  @Test
+  fun incrementalSessionEmitsEachSpanOnce() {
+    val text = "before `one`\nmiddle ``two``\nafter"
+    val session = MdxMarkdownCodeSpanScanner.Session(text, 0)
+
+    val spans = lineEnds(text).flatMap(session::advanceTo)
+
+    assertEquals(
+      listOf(
+        text.indexOf('`')..text.indexOf('`', text.indexOf('`') + 1) + 1,
+        text.indexOf("``")..text.indexOf("``", text.indexOf("``") + 2) + 2,
+      ),
+      spans,
+    )
+  }
+
+  private fun scan(text: String): List<IntRange> {
+    return MdxMarkdownCodeSpanScanner.Session(text, 0).advanceTo(text.length)
   }
 }

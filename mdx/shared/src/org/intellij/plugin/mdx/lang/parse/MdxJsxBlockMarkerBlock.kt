@@ -1,5 +1,6 @@
 package org.intellij.plugin.mdx.lang.parse
 
+import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.parser.LookaheadText
 import org.intellij.markdown.parser.ProductionHolder
 import org.intellij.markdown.parser.constraints.MarkdownConstraints
@@ -21,10 +22,18 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   initialText,
 ) {
   private val hasJsxParent = myConstraints is MdxJsxMarkdownConstraints
+  private val jsxSession = MdxJsxScanner.Session(source, blockStartOffset)
+  private val codeSpanSession = MdxMarkdownCodeSpanScanner.Session(source, blockStartOffset)
   private var suppressSubBlocks = false
-  private var cachedScanLimit = -1
-  private var cachedScanProductionCount = -1
-  private var cachedElement: MdxJsxScanner.Element? = null
+  private var processedProductionCount = initialProductionCount
+  private var scannedLimit = blockStartOffset
+  private var scannedElement: MdxJsxScanner.Element? = null
+  private var currentElement: MdxJsxScanner.Element? = null
+
+  init {
+    scanElement(currentEndOffset)
+    retainCurrentElement()
+  }
 
   override fun allowsSubBlocks(): Boolean {
     return !closeScheduled && !suppressSubBlocks && hasCompleteOpeningTag()
@@ -37,6 +46,7 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   override fun appendLine(candidateEndOffset: Int) {
     val hadCompleteOpeningTag = hasCompleteOpeningTag()
     super.appendLine(candidateEndOffset)
+    retainCurrentElement()
     if (!hadCompleteOpeningTag && hasCompleteOpeningTag() && !isCurrentBlockTerminated()) {
       suppressSubBlocks = true
     }
@@ -52,9 +62,10 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   }
 
   override fun shouldAppendLine(pos: LookaheadText.Position, candidateEndOffset: Int): Boolean {
-    return isTerminated(candidateEndOffset) ||
+    val element = scanElement(candidateEndOffset)
+    return element?.termination?.let { it != MdxJsxScanner.Termination.UNTERMINATED } == true ||
            constraints.applyToNextLine(pos).extendsPrev(constraints) ||
-           scanElement(candidateEndOffset) != null
+           element != null
   }
 
   override fun isTerminated(candidateEndOffset: Int): Boolean {
@@ -87,17 +98,44 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   }
 
   private fun hasCompleteOpeningTag(): Boolean {
-    return scanElement(currentEndOffset) != null
+    return currentElement != null
   }
 
   private fun scanElement(limit: Int): MdxJsxScanner.Element? {
-    val productionCount = productionCount()
-    if (limit == cachedScanLimit && productionCount == cachedScanProductionCount) {
-      return cachedElement
+    if (limit < scannedLimit) {
+      return currentElement
     }
-    cachedElement = MdxJsxScanner.scanJsxElement(source, blockStartOffset, limit, opaqueMarkdownRanges(limit))
-    cachedScanLimit = limit
-    cachedScanProductionCount = productionCount
-    return cachedElement
+    ingestProductionOpacity()
+    if (limit > scannedLimit) {
+      val codeSpanRanges = codeSpanSession.advanceTo(limit, jsxSession.opaqueRangeLookup())
+      jsxSession.addOpaqueRanges(codeSpanRanges)
+    }
+    scannedElement = jsxSession.advanceTo(limit)
+    scannedLimit = limit
+    if (limit == currentEndOffset) {
+      currentElement = scannedElement
+    }
+    return scannedElement
   }
+
+  private fun ingestProductionOpacity() {
+    val productions = productions()
+    if (processedProductionCount >= productions.size) return
+    val ranges = mutableListOf<IntRange>()
+    for (index in processedProductionCount..<productions.size) {
+      val production = productions[index]
+      if ((production.type == MarkdownElementTypes.CODE_FENCE || production.type == MarkdownElementTypes.HTML_BLOCK) &&
+          production.range.first >= blockStartOffset) {
+        ranges.add(production.range)
+      }
+    }
+    processedProductionCount = productions.size
+    jsxSession.addOpaqueRanges(ranges)
+  }
+
+  private fun retainCurrentElement() {
+    check(scannedLimit == currentEndOffset)
+    currentElement = scannedElement
+  }
+
 }

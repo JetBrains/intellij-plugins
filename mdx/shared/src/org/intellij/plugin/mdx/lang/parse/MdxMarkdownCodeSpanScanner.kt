@@ -2,101 +2,214 @@ package org.intellij.plugin.mdx.lang.parse
 
 /** Finds Markdown code spans before paragraph inline parsing has run. */
 internal object MdxMarkdownCodeSpanScanner {
-  fun findRanges(
-    text: CharSequence,
+  internal class Session(
+    source: CharSequence,
     start: Int,
-    limit: Int,
-    opaqueRanges: MdxOpaqueRanges = MdxOpaqueRanges.EMPTY,
-  ): List<IntRange> {
-    val result = mutableListOf<IntRange>()
-    var offset = start
-    while (offset < limit) {
-      val opaqueEnd = opaqueRanges.endOffsetContaining(offset)
-      if (opaqueEnd != null) {
-        offset = opaqueEnd.coerceAtMost(limit)
-        continue
-      }
-      if (text[offset] != '`' || isEscaped(text, offset, start)) {
-        offset++
-        continue
-      }
+    private val scanEnd: Int = source.length,
+  ) {
+    private val text = mdxCancellableText(source)
+    private var cursor = start
+    private var lineStart = start
+    private var onlyWhitespaceOnLine = true
+    private var precedingBackslashes = 0
+    private var exposedEnd = start
+    private var activeSegment: Segment? = null
+    private var nextSpanIndex = 0
 
-      val delimiterLength = backtickRunLength(text, offset, limit)
-      if (isFenceOpening(text, offset, delimiterLength, start, limit)) {
-        offset += delimiterLength
-        continue
+    fun advanceTo(limit: Int, opaqueRanges: MdxOpaqueRangeLookup = MdxOpaqueRanges.EMPTY): List<IntRange> {
+      mdxCancellableText(text)
+      require(limit in exposedEnd..scanEnd) {
+        "Code-span scan limit must advance from $exposedEnd to at most $scanEnd: $limit"
       }
-      var candidate = offset + delimiterLength
-      var closingEnd = -1
-      while (candidate < limit) {
-        val candidateOpaqueEnd = opaqueRanges.endOffsetContaining(candidate)
-        if (candidateOpaqueEnd != null) {
-          candidate = candidateOpaqueEnd.coerceAtMost(limit)
+      exposedEnd = limit
+      val result = mutableListOf<IntRange>()
+
+      while (true) {
+        val segment = activeSegment
+        if (segment != null) {
+          while (nextSpanIndex < segment.spans.size && segment.spans[nextSpanIndex].first < limit) {
+            result.add(segment.spans[nextSpanIndex])
+            nextSpanIndex++
+          }
+          if (limit < segment.endOffset) return result
+
+          cursor = segment.endOffset
+          lineStart = cursor
+          onlyWhitespaceOnLine = true
+          precedingBackslashes = 0
+          activeSegment = null
+          nextSpanIndex = 0
           continue
         }
-        if (text[candidate] == '\n' && startsPotentialMarkdownBlock(text, candidate + 1, limit)) {
-          break
-        }
-        if (text[candidate] != '`') {
-          candidate++
+        if (cursor >= limit) return result
+
+        val opaqueEnd = opaqueRanges.endOffsetContaining(cursor)
+        if (opaqueEnd != null) {
+          consumeThrough(opaqueEnd.coerceAtMost(limit))
           continue
         }
-        val candidateLength = backtickRunLength(text, candidate, limit)
-        if (candidateLength == delimiterLength) {
-          closingEnd = candidate + candidateLength
-          break
+
+        val char = text[cursor]
+        if (char != '`') {
+          consume(char)
+          continue
         }
-        candidate += candidateLength
-      }
 
-      if (closingEnd == -1) {
-        offset += delimiterLength
-      }
-      else {
-        result.add(offset..closingEnd)
-        offset = closingEnd
+        if (precedingBackslashes % 2 != 0) {
+          consumeBacktickRun()
+          continue
+        }
+        activeSegment = indexParagraphSegment(cursor, lineStart, onlyWhitespaceOnLine, opaqueRanges)
       }
     }
-    return result
-  }
 
-  private fun backtickRunLength(text: CharSequence, start: Int, limit: Int): Int {
-    var offset = start
-    while (offset < limit && text[offset] == '`') {
-      offset++
-    }
-    return offset - start
-  }
+    private fun indexParagraphSegment(
+      startOffset: Int,
+      initialLineStart: Int,
+      initialOnlyWhitespace: Boolean,
+      opaqueRanges: MdxOpaqueRangeLookup,
+    ): Segment {
+      val runs = mutableListOf<BacktickRun>()
+      var currentLineStart = initialLineStart
+      var offset = startOffset
+      var firstLine = true
+      var onlyWhitespace = initialOnlyWhitespace
+      while (offset < scanEnd) {
+        val blockLine = opaqueRanges.endOffsetContaining(currentLineStart) == null &&
+                        startsPotentialMarkdownBlock(text, currentLineStart, scanEnd)
+        if (!firstLine && blockLine) break
 
-  private fun isEscaped(text: CharSequence, offset: Int, lowerBound: Int): Boolean {
-    var backslashes = 0
-    var index = offset - 1
-    while (index >= lowerBound && text[index] == '\\') {
-      backslashes++
-      index--
-    }
-    return backslashes % 2 != 0
-  }
+        offset = collectLineRuns(offset, onlyWhitespace, opaqueRanges, runs)
+        if (offset >= scanEnd || blockLine) break
 
-  private fun isFenceOpening(
-    text: CharSequence,
-    offset: Int,
-    delimiterLength: Int,
-    lowerBound: Int,
-    limit: Int,
-  ): Boolean {
-    if (delimiterLength < 3) return false
-    var lineStart = offset
-    while (lineStart > lowerBound && text[lineStart - 1] != '\n') {
-      lineStart--
+        currentLineStart = offset
+        onlyWhitespace = true
+        firstLine = false
+      }
+      return Segment(offset, pairRuns(runs))
     }
-    if (text.subSequence(lineStart, offset).any { it != ' ' && it != '\t' }) return false
-    var infoOffset = offset + delimiterLength
-    while (infoOffset < limit && text[infoOffset] != '\n') {
-      if (text[infoOffset] == '`') return false
-      infoOffset++
+
+    private fun collectLineRuns(
+      startOffset: Int,
+      initialOnlyWhitespace: Boolean,
+      opaqueRanges: MdxOpaqueRangeLookup,
+      runs: MutableList<BacktickRun>,
+    ): Int {
+      var offset = startOffset
+      var onlyWhitespace = initialOnlyWhitespace
+      var backslashes = 0
+      var possibleFenceIndex = -1
+      while (offset < scanEnd) {
+        val opaqueEnd = opaqueRanges.endOffsetContaining(offset)
+        if (opaqueEnd != null) {
+          val end = opaqueEnd.coerceAtMost(scanEnd)
+          while (offset < end) {
+            val char = text[offset]
+            offset++
+            if (char == '\n') {
+              if (possibleFenceIndex != -1) runs[possibleFenceIndex].canOpen = false
+              return offset
+            }
+            onlyWhitespace = false
+          }
+          backslashes = 0
+          continue
+        }
+
+        val char = text[offset]
+        if (char == '\n') {
+          if (possibleFenceIndex != -1) runs[possibleFenceIndex].canOpen = false
+          return offset + 1
+        }
+        if (char == '\\') {
+          onlyWhitespace = false
+          backslashes++
+          offset++
+          continue
+        }
+        if (char != '`') {
+          if (char != ' ' && char != '\t') onlyWhitespace = false
+          backslashes = 0
+          offset++
+          continue
+        }
+
+        if (possibleFenceIndex != -1) possibleFenceIndex = -1
+        val runStart = offset
+        while (offset < scanEnd && text[offset] == '`') {
+          offset++
+        }
+        val run = BacktickRun(runStart, offset - runStart, canOpen = backslashes % 2 == 0)
+        runs.add(run)
+        if (run.length >= 3 && onlyWhitespace) {
+          possibleFenceIndex = runs.lastIndex
+        }
+        onlyWhitespace = false
+        backslashes = 0
+      }
+      if (possibleFenceIndex != -1) runs[possibleFenceIndex].canOpen = false
+      return offset
     }
-    return true
+
+    private fun pairRuns(runs: List<BacktickRun>): List<IntRange> {
+      if (runs.isEmpty()) return emptyList()
+      val nextEqualLength = IntArray(runs.size) { -1 }
+      val latestByLength = HashMap<Int, Int>()
+      for (index in runs.indices.reversed()) {
+        nextEqualLength[index] = latestByLength.put(runs[index].length, index) ?: -1
+      }
+
+      val result = mutableListOf<IntRange>()
+      var index = 0
+      while (index < runs.size) {
+        val closingIndex = nextEqualLength[index]
+        if (!runs[index].canOpen || closingIndex == -1) {
+          index++
+          continue
+        }
+        val closing = runs[closingIndex]
+        result.add(runs[index].start..closing.start + closing.length)
+        index = closingIndex + 1
+      }
+      return result
+    }
+
+    private fun consumeBacktickRun() {
+      while (cursor < scanEnd && text[cursor] == '`') {
+        cursor++
+      }
+      onlyWhitespaceOnLine = false
+      precedingBackslashes = 0
+    }
+
+    private fun consumeThrough(endOffset: Int) {
+      while (cursor < endOffset) {
+        consume(text[cursor])
+      }
+    }
+
+    private fun consume(char: Char) {
+      cursor++
+      when (char) {
+        '\n' -> {
+          lineStart = cursor
+          onlyWhitespaceOnLine = true
+          precedingBackslashes = 0
+        }
+        '\\' -> {
+          onlyWhitespaceOnLine = false
+          precedingBackslashes++
+        }
+        else -> {
+          if (char != ' ' && char != '\t') onlyWhitespaceOnLine = false
+          precedingBackslashes = 0
+        }
+      }
+    }
+
+    private data class Segment(val endOffset: Int, val spans: List<IntRange>)
+
+    private data class BacktickRun(val start: Int, val length: Int, var canOpen: Boolean)
   }
 
   /**
@@ -104,7 +217,11 @@ internal object MdxMarkdownCodeSpanScanner {
    * positives are intentional: failing to hide a code-like range is safer than hiding a JSX
    * boundary across a block that the Markdown parser will own.
    */
-  private fun startsPotentialMarkdownBlock(text: CharSequence, lineStart: Int, limit: Int): Boolean {
+  private fun startsPotentialMarkdownBlock(
+    text: CharSequence,
+    lineStart: Int,
+    limit: Int,
+  ): Boolean {
     var offset = lineStart
     while (offset < limit && (text[offset] == ' ' || text[offset] == '\t' || text[offset] == '\r')) {
       offset++

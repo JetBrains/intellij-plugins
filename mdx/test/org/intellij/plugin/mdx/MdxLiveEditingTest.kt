@@ -14,6 +14,7 @@ import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.TestModeFlags
 import com.intellij.testFramework.assertNoErrorLogged
 import org.intellij.plugin.mdx.completion.MdxXmlAutoPopupEnabler
+import org.intellij.plugin.mdx.js.MdxJSLanguage
 import org.intellij.plugin.mdx.lang.MdxLanguage
 import org.junit.jupiter.api.Test
 
@@ -205,6 +206,30 @@ class MdxLiveEditingTest : MdxTestBase() {
       document.insertString(0, "<div>\n  <div>\n")
     }
     assertEquals("Wrapping the Markdown block last must converge to the fresh parse", fresh, nestedJsxSignature())
+  }
+
+  @Test
+  fun testLargeDocumentCommitsAfterAnEarlyEdit() {
+    val source = buildString {
+      append("export const values = [\n")
+      repeat(10_000) { index ->
+        append("  'value-")
+        append(index)
+        append("',\n")
+      }
+      append("]\n\n<Box>content</Box>\n")
+    }
+    myFixture.configureByText("large.mdx", source)
+    val document = myFixture.editor.document
+    val valueStart = document.text.indexOf("value-0")
+
+    WriteCommandAction.runWriteCommandAction(myFixture.project) {
+      document.replaceString(valueStart, valueStart + "value-0".length, "updated-value")
+    }
+    PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
+
+    assertEquals(document.text, myFixture.file.text)
+    assertTrue(myFixture.file.viewProvider.getPsi(MdxJSLanguage.INSTANCE)?.text?.contains("updated-value") == true)
   }
 
   @Test

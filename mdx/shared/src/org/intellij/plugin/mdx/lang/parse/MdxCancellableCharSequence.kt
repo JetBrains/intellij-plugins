@@ -9,6 +9,25 @@ internal fun mdxCancellableText(text: CharSequence): CharSequence {
   return (text as? MdxCancellableCharSequence) ?: MdxCancellableCharSequence(text)
 }
 
+internal fun mdxLineStart(text: CharSequence, offset: Int): Int {
+  val source = mdxCancellableText(text)
+  var lineStart = offset.coerceAtMost(source.length)
+  while (lineStart > 0 && source[lineStart - 1] != '\n') {
+    lineStart--
+  }
+  return lineStart
+}
+
+internal fun mdxSmallIndent(text: CharSequence, lineStart: Int, offset: Int): Int {
+  val source = mdxCancellableText(text)
+  var indent = 0
+  while (lineStart + indent < offset && source[lineStart + indent] == ' ') {
+    indent++
+    if (indent > 3) return -1
+  }
+  return indent
+}
+
 private class MdxCancellableCharSequence(
   text: CharSequence,
 ) : StringUtil.BombedCharSequence(text) {

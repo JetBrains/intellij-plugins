@@ -4,8 +4,14 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.testFramework.junit5.TestApplication
+import org.intellij.markdown.MarkdownElementType
+import org.intellij.markdown.parser.CancellationToken
+import org.intellij.markdown.parser.MarkdownParser
 import org.intellij.plugin.mdx.lang.parse.MdxEsmScanner
 import org.intellij.plugin.mdx.lang.parse.MdxExpressionBoundaryScanner
+import org.intellij.plugin.mdx.lang.parse.MdxFlavourDescriptor
+import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
+import org.intellij.plugin.mdx.lang.parse.MdxMarkdownCodeSpanScanner
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -14,12 +20,18 @@ import org.junit.jupiter.api.Test
 @TestApplication
 class MdxScannerPerformanceTest {
   @Test
-  fun javaScriptScansStopAfterCancellation() {
+  fun scannerLoopsStopAfterCancellation() {
     assertCancelsDuringScan("{[" + "value,".repeat(10_000) + "]}") { text ->
       MdxExpressionBoundaryScanner.findExpressionEnd(text, 0, text.length)
     }
     assertCancelsDuringScan(buildEsm(10_000)) { text ->
       MdxEsmScanner.scanBlock(text, 0)
+    }
+    assertCancelsDuringScan(buildJsx(10_000)) { text ->
+      MdxJsxScanner.scanJsxElement(text, 0)
+    }
+    assertCancelsDuringScan("before ```code``` ".repeat(10_000)) { text ->
+      MdxMarkdownCodeSpanScanner.Session(text, 0).advanceTo(text.length)
     }
   }
 
@@ -59,6 +71,57 @@ class MdxScannerPerformanceTest {
   fun incrementalSessionsScaleLinearly() {
     assertLinearGrowth("expression", ::expressionAccesses)
     assertLinearGrowth("ESM", ::esmAccesses)
+    assertLinearGrowth("JSX", ::jsxAccesses)
+  }
+
+  @Test
+  fun flowJsxBlockParsingScalesLinearly() {
+    assertLinearGrowth("flow JSX parsing", ::flowJsxParsingAccesses)
+  }
+
+  @Test
+  fun largeJsxElementHasNoArbitraryScanLimit() {
+    val text = buildJsx(18_000)
+    assertTrue(text.length > 250_000)
+
+    val element = MdxJsxScanner.scanJsxElement(text, 0)
+
+    assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
+    assertEquals(text.length, element?.range?.last)
+  }
+
+  @Test
+  fun denseCodeSpansAreIndexedLinearly() {
+    val source = buildString {
+      repeat(2_000) { index ->
+        append("text ```code-")
+        append(index)
+        append("``` ")
+      }
+    }
+    val text = CountingCharSequence(source)
+
+    val spans = MdxMarkdownCodeSpanScanner.Session(text, 0).advanceTo(text.length)
+
+    assertEquals(2_000, spans.size)
+    assertTrue(text.accesses <= source.length * 12L, "${text.accesses} accesses for ${source.length} characters")
+  }
+
+  @Test
+  fun unmatchedCodeSpanDelimitersAreIndexedLinearly() {
+    val source = buildString {
+      for (length in 1..300) {
+        append('x')
+        repeat(length) { append('`') }
+        append(' ')
+      }
+    }
+    val text = CountingCharSequence(source)
+
+    val spans = MdxMarkdownCodeSpanScanner.Session(text, 0).advanceTo(text.length)
+
+    assertEquals(emptyList<IntRange>(), spans)
+    assertTrue(text.accesses <= source.length * 12L, "${text.accesses} accesses for ${source.length} characters")
   }
 
   private fun assertLinearGrowth(name: String, accessCounter: (Int) -> Long) {
@@ -102,6 +165,23 @@ class MdxScannerPerformanceTest {
     for (limit in lineEnds(text)) {
       session.advanceTo(limit)
     }
+    return countingText.accesses
+  }
+
+  private fun jsxAccesses(elements: Int): Long {
+    val text = buildJsx(elements)
+    val countingText = CountingCharSequence(text)
+    val session = MdxJsxScanner.Session(countingText, 0)
+    for (limit in lineEnds(text)) {
+      session.advanceTo(limit)
+    }
+    return countingText.accesses
+  }
+
+  private fun flowJsxParsingAccesses(elements: Int): Long {
+    val countingText = CountingCharSequence(buildJsx(elements))
+    MarkdownParser(MdxFlavourDescriptor, cancellationToken = CancellationToken.NonCancellable)
+      .parse(MarkdownElementType("MDX_PERFORMANCE_TEST_ROOT"), countingText)
     return countingText.accesses
   }
 

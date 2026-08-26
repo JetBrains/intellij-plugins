@@ -69,13 +69,17 @@ A complete single-line construct is emitted immediately. Multiline constructs sh
 finalization lifecycle in `MdxBlockMarkerBlock`, but use separate ownership policies:
 
 - `MdxJsxBlockMarkerBlock` scans only through the lines the marker has observed. It allows nested
-  Markdown once the opening tag is complete. Finalized code-fence and HTML-comment productions,
-  together with provisional flow code spans, are passed to the JSX scanner as explicit opaque
-  ranges. Element and opacity scans are cached by observed limit and production count. A nested JSX
-  marker returns `PASS` after scheduling its close, so the ancestor continues to observe the
-  boundary and owns its closing tag too.
+  Markdown once the opening tag is complete. One persistent JSX session retains its cursor, tag
+  stack, pending tag or expression, accumulated syntax ranges, and incrementally merged opacity.
+  Finalized code-fence and HTML-comment productions, together with provisional flow code spans, are
+  added as explicit opaque ranges. Newly exposed text and code-span candidates are scanned once;
+  late opacity can replay the one line observed before a child marker took ownership and roll back
+  syntax collected from that line. The marker reuses the session's detailed result when it is
+  finalized. A nested JSX marker returns `PASS` after scheduling its close, so the ancestor
+  continues to observe the boundary and owns its closing tag too.
 - `MdxOpaqueBlockMarkerBlock` handles ESM and flow expressions. It never allows sub-blocks and
-  returns `CANCEL`, keeping JavaScript content opaque to competing Markdown markers.
+  returns `CANCEL`, keeping JavaScript content opaque to competing Markdown markers. Its persistent
+  JavaScript scanner session retains the platform lexer and nesting state while the block grows.
 
 JSX no longer captures an eager whole-source element range. That range could cross a Markdown block
 whose ownership had not yet been established, making the result depend on edit order. Incomplete
@@ -121,8 +125,9 @@ element therefore cannot pair with one outside it.
 | `MdxHtmlCommentBoundary` | Closed multiline HTML-comment boundaries shared by block and JSX scanning |
 
 `MdxExpressionBoundaryScanner` and `MdxEsmScanner` delegate strings, templates, comments, regular
-expressions, and nested JSX tokenization to `JSFlexAdapter`. JSX scanning does not rediscover fences
-or comments from raw text: finalized Markdown productions supply those opaque ranges. Closed fences
+expressions, and nested JSX tokenization to `JSFlexAdapter`; growing block sessions keep one lexer
+rather than restarting it for every observed line. JSX scanning does not rediscover fences or
+comments from raw text: finalized Markdown productions supply those opaque ranges. Closed fences
 remain opaque even when their content contains a matching JSX closing tag. An unclosed fence yields
 only to the current or an ancestor JSX closer; a mismatched closer remains fence content. The raw
 fence scanner is intentionally narrow and remains limited to paragraph recovery. Indentation inside

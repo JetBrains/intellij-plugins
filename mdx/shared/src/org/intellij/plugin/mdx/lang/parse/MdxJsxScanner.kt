@@ -1,8 +1,6 @@
 package org.intellij.plugin.mdx.lang.parse
 
 internal object MdxJsxScanner {
-  private const val MAX_SCAN_LENGTH = 250_000
-
   enum class TagKind {
     OPENING,
     CLOSING,
@@ -33,12 +31,224 @@ internal object MdxJsxScanner {
 
   data class ElementIdentity(val name: String?)
 
+  internal class Session(
+    source: CharSequence,
+    private val start: Int,
+    private val scanEnd: Int = source.length,
+    private val baseOpaqueRanges: MdxOpaqueRangeLookup = MdxOpaqueRanges.EMPTY,
+  ) {
+    private val text = mdxCancellableText(source)
+    private val addedOpaqueRanges = MdxMutableOpaqueRanges()
+    private val allOpaqueRanges = MdxOpaqueRangeLookup(::endOffsetContaining)
+    private var recoveryBudget = MdxExpressionBoundaryScanner.RecoveryBudget()
+    private val tags = RetainedAccumulator<Tag>()
+    private val expressions = RetainedAccumulator<IntRange>()
+    private val nesting = NestingState()
+    private var cursor = start
+    private var exposedEnd = start
+    private var activeTag: MdxJsxTagParser? = null
+    private var activeExpression: ExpressionSession? = null
+    private var invalidRoot = text.getOrNull(start) != '<'
+    private var termination: Termination? = null
+    private var previousAdvanceStart = start
+    private var previousAdvanceSnapshot: Snapshot? = snapshot()
+
+    fun advanceTo(limit: Int): Element? {
+      mdxCancellableText(text)
+      require(limit in exposedEnd..scanEnd) {
+        "JSX scan limit must advance from $exposedEnd to at most $scanEnd: $limit"
+      }
+      commitPreviousAdvance()
+      previousAdvanceStart = cursor
+      previousAdvanceSnapshot = snapshot()
+      exposedEnd = limit
+      return scanTo(limit)
+    }
+
+    private fun scanTo(limit: Int): Element? {
+      while (cursor < limit && termination == null && !invalidRoot) {
+        val expression = activeExpression
+        if (expression != null) {
+          val boundary = expression.session.advanceToBoundary(limit)
+          if (boundary.end == -1) return elementAt(limit)
+          if (!boundary.stable) return scanProvisionalExpression(expression, boundary.end, limit)
+          expressions.add(expression.start..boundary.end)
+          cursor = boundary.end
+          activeExpression = null
+          continue
+        }
+
+        val tagSession = activeTag
+        if (tagSession != null) {
+          when (val result = tagSession.advanceTo(limit)) {
+            MdxJsxTagParser.Result.Pending -> return elementAt(limit)
+            MdxJsxTagParser.Result.Invalid -> {
+              activeTag = null
+              if (hasNoTags()) {
+                invalidRoot = true
+                return null
+              }
+              cursor = tagSession.start + 1
+              continue
+            }
+            is MdxJsxTagParser.Result.Complete -> {
+              activeTag = null
+              cursor = result.tag.range.last
+              accept(result.tag)
+              continue
+            }
+          }
+        }
+
+        val opaqueEnd = allOpaqueRanges.endOffsetContaining(cursor)
+        if (opaqueEnd != null) {
+          cursor = opaqueEnd.coerceAtMost(limit)
+          continue
+        }
+        when (text[cursor]) {
+          '{' -> activeExpression = ExpressionSession(
+            cursor,
+            MdxExpressionBoundaryScanner.Session(text, cursor, scanEnd),
+          )
+          '<' -> activeTag = MdxJsxTagParser(text, cursor, scanEnd, recoveryBudget)
+          else -> cursor++
+        }
+      }
+      return elementAt(limit)
+    }
+
+    private fun scanProvisionalExpression(expression: ExpressionSession, expressionEnd: Int, limit: Int): Element? {
+      val state = ProvisionalScanState(
+        cursor,
+        nesting.snapshot(),
+        invalidRoot,
+        termination,
+        tags.checkpoint(),
+        expressions.checkpoint(),
+      )
+      val durableRecoveryBudget = recoveryBudget
+      recoveryBudget = durableRecoveryBudget.copy()
+      expressions.add(expression.start..expressionEnd)
+      cursor = expressionEnd
+      activeExpression = null
+      return try {
+        scanTo(limit)
+      }
+      finally {
+        recoveryBudget = durableRecoveryBudget
+        cursor = state.cursor
+        nesting.restore(state.nesting)
+        invalidRoot = state.invalidRoot
+        termination = state.termination
+        tags.restore(state.tagCheckpoint)
+        expressions.restore(state.expressionCheckpoint)
+        activeTag = null
+        activeExpression = expression
+      }
+    }
+
+    fun addOpaqueRanges(ranges: Collection<IntRange>) {
+      if (ranges.none { it.first < it.last }) return
+      addedOpaqueRanges.addAll(ranges)
+
+      val snapshot = previousAdvanceSnapshot
+      if (snapshot != null && ranges.any { it.first < cursor && previousAdvanceStart < it.last }) {
+        restore(snapshot)
+      }
+    }
+
+    fun opaqueRangeLookup(): MdxOpaqueRangeLookup = allOpaqueRanges
+
+    private fun accept(tag: Tag) {
+      if (hasNoTags() && tag.kind == TagKind.CLOSING) {
+        invalidRoot = true
+        return
+      }
+      tags.add(tag)
+      expressions.addAll(tag.expressions)
+      termination = nesting.accept(tag)
+    }
+
+    private fun elementAt(limit: Int): Element? {
+      if (invalidRoot || hasNoTags()) return null
+      val actualTermination = termination ?: Termination.UNTERMINATED
+      return Element(
+        start..if (termination == null) limit else cursor,
+        tags.snapshot(),
+        expressions.snapshot(),
+        incomplete = termination == null || nesting.incomplete,
+        termination = actualTermination,
+      )
+    }
+
+    private fun hasNoTags(): Boolean = tags.isEmpty
+
+    private fun commitPreviousAdvance() {
+      tags.commit()
+      expressions.commit()
+    }
+
+    private fun endOffsetContaining(offset: Int): Int? {
+      val baseEnd = baseOpaqueRanges.endOffsetContaining(offset)
+      val addedEnd = addedOpaqueRanges.endOffsetContaining(offset)
+      return when {
+        baseEnd == null -> addedEnd
+        addedEnd == null -> baseEnd
+        else -> maxOf(baseEnd, addedEnd)
+      }
+    }
+
+    private fun snapshot(): Snapshot? {
+      if (activeTag != null || activeExpression != null) return null
+      return Snapshot(
+        cursor,
+        nesting.snapshot(),
+        invalidRoot,
+        termination,
+      )
+    }
+
+    private fun restore(snapshot: Snapshot) {
+      cursor = snapshot.cursor
+      nesting.restore(snapshot.nesting)
+      invalidRoot = snapshot.invalidRoot
+      termination = snapshot.termination
+      tags.restore(0)
+      expressions.restore(0)
+      activeTag = null
+      activeExpression = null
+    }
+
+    private data class Snapshot(
+      val cursor: Int,
+      val nesting: NestingSnapshot,
+      val invalidRoot: Boolean,
+      val termination: Termination?,
+    )
+
+    private data class ProvisionalScanState(
+      val cursor: Int,
+      val nesting: NestingSnapshot,
+      val invalidRoot: Boolean,
+      val termination: Termination?,
+      val tagCheckpoint: Int,
+      val expressionCheckpoint: Int,
+    )
+
+    private data class ExpressionSession(
+      val start: Int,
+      val session: MdxExpressionBoundaryScanner.Session,
+    )
+  }
+
   fun isLineStartJsx(text: CharSequence, start: Int): Boolean {
-    val lineStart = lineStart(text, start)
-    val indent = smallIndent(text, lineStart, start)
+    val source = mdxCancellableText(text)
+    val lineStart = mdxLineStart(source, start)
+    val indent = mdxSmallIndent(source, lineStart, start)
     return indent != -1 &&
            lineStart + indent == start &&
-           (parseTag(text, start, text.length) != null || isIncompleteOpeningTagStart(text, start, text.length))
+           (MdxJsxTagParser.parse(source, start, source.length) != null ||
+            isIncompleteOpeningTagStart(source, start, source.length))
   }
 
   /**
@@ -52,25 +262,26 @@ internal object MdxJsxScanner {
    * the other MdxJsxScanner ranges. WEB-78468.
    */
   fun incompleteOpeningTagRange(text: CharSequence, start: Int, limit: Int = text.length): IntRange? {
-    if (text.getOrNull(start) != '<') return null
-    if (start + 1 >= limit || text[start + 1] == '\n' || text[start + 1] == '\r') {
+    val source = mdxCancellableText(text)
+    if (source.getOrNull(start) != '<') return null
+    if (start + 1 >= limit || source[start + 1] == '\n' || source[start + 1] == '\r') {
       return start..start + 1
     }
-    if (!isIncompleteOpeningTagStart(text, start, limit)) return null
+    if (!isIncompleteOpeningTagStart(source, start, limit)) return null
     var offset = start + 1
-    while (offset < limit && isNamePart(text[offset])) {
+    while (offset < limit && MdxJsxTagParser.isNamePart(source[offset])) {
       offset++
     }
     while (offset < limit) {
-      when (text[offset]) {
+      when (source[offset]) {
         '\n' -> return start..offset
         '{' -> {
-          val expressionEnd = MdxExpressionBoundaryScanner.findExpressionEnd(text, offset, limit)
+          val expressionEnd = MdxExpressionBoundaryScanner.findExpressionEnd(source, offset, limit)
           if (expressionEnd == -1) return null
           offset = expressionEnd
         }
         '\'', '"' -> {
-          val quoteEnd = scanQuoted(text, offset, limit, text[offset])
+          val quoteEnd = MdxJsxTagParser.scanQuoted(source, offset, limit, source[offset])
           if (quoteEnd == -1) return null
           offset = quoteEnd
         }
@@ -85,241 +296,27 @@ internal object MdxJsxScanner {
     start: Int,
     limit: Int = text.length,
     opaqueRanges: MdxOpaqueRanges = MdxOpaqueRanges.EMPTY,
-    recoveryBudget: MdxExpressionBoundaryScanner.RecoveryBudget = MdxExpressionBoundaryScanner.RecoveryBudget(),
   ): Element? {
-    if (limit - start > MAX_SCAN_LENGTH) return null
-    val opening = parseTag(text, start, limit, recoveryBudget) ?: return null
-    if (opening.kind == TagKind.CLOSING) return null
-    if (opening.kind == TagKind.SELF_CLOSING) {
-      return Element(
-        start..opening.range.last,
-        listOf(opening),
-        opening.expressions,
-        incomplete = false,
-        termination = Termination.MATCHED,
-      )
-    }
-
-    val tags = mutableListOf(opening)
-    val expressions = opening.expressions.toMutableList()
-    val stack = mutableListOf(opening.name)
-    var incomplete = false
-    var offset = opening.range.last
-    while (offset < limit) {
-      val opaqueEnd = opaqueRanges.endOffsetContaining(offset)
-      if (opaqueEnd != null) {
-        offset = opaqueEnd.coerceAtMost(limit)
-        continue
-      }
-      when (text[offset]) {
-        '{' -> {
-          val expressionEnd = MdxExpressionBoundaryScanner.findExpressionEnd(text, offset, limit)
-          if (expressionEnd == -1) {
-            return Element(start..limit, tags, expressions, incomplete = true, termination = Termination.UNTERMINATED)
-          }
-          expressions.add(offset..expressionEnd)
-          offset = expressionEnd
-        }
-        '<' -> {
-          val tag = parseTag(text, offset, limit, recoveryBudget)
-          if (tag == null) {
-            offset++
-            continue
-          }
-          tags.add(tag)
-          expressions.addAll(tag.expressions)
-          when (tag.kind) {
-            TagKind.OPENING -> stack.add(tag.name)
-            TagKind.SELF_CLOSING -> Unit
-            TagKind.CLOSING -> {
-              val top = stack.lastOrNull()
-              if (top == tag.name) {
-                stack.removeAt(stack.lastIndex)
-              }
-              else {
-                val ancestorIndex = stack.indexOfLast { it == tag.name }
-                if (ancestorIndex >= 0) {
-                  while (stack.lastIndex > ancestorIndex) {
-                    stack.removeAt(stack.lastIndex)
-                    incomplete = true
-                  }
-                  stack.removeAt(stack.lastIndex)
-                }
-                else {
-                  // JSXmlTokensParser consumes an unrelated closer as "matches nothing" and completes
-                  // the current element as not closed. This gives the surrounding language a stable
-                  // recovery boundary instead of discarding JSX or consuming unrelated Markdown.
-                  return Element(start..tag.range.last, tags, expressions, incomplete = true, termination = Termination.RECOVERED)
-                }
-              }
-            }
-          }
-          offset = tag.range.last
-          if (stack.isEmpty()) {
-            return Element(start..offset, tags, expressions, incomplete, Termination.MATCHED)
-          }
-        }
-        else -> offset++
-      }
-    }
-    return Element(start..limit, tags, expressions, incomplete = true, termination = Termination.UNTERMINATED)
+    return Session(text, start, limit, opaqueRanges).advanceTo(limit)
   }
 
   fun openingElementIdentity(text: CharSequence, start: Int, limit: Int = text.length): ElementIdentity? {
-    val tag = parseTag(text, start, limit) ?: return null
+    val tag = MdxJsxTagParser.parse(text, start, limit) ?: return null
     return if (tag.kind == TagKind.OPENING) ElementIdentity(tag.name) else null
   }
 
   fun closingElementIdentity(text: CharSequence, start: Int, limit: Int = text.length): ElementIdentity? {
-    val tag = parseTag(text, start, limit) ?: return null
+    val tag = MdxJsxTagParser.parse(text, start, limit) ?: return null
     return if (tag.kind == TagKind.CLOSING) ElementIdentity(tag.name) else null
-  }
-
-  private fun parseTag(
-    text: CharSequence,
-    start: Int,
-    limit: Int,
-    recoveryBudget: MdxExpressionBoundaryScanner.RecoveryBudget = MdxExpressionBoundaryScanner.RecoveryBudget(),
-  ): Tag? {
-    if (text.getOrNull(start) != '<' || start + 1 >= limit) return null
-    var offset = start + 1
-    val closing = text.getOrNull(offset) == '/'
-    if (closing) offset++
-
-    val name: String?
-    if (!closing && text.getOrNull(offset) == '>') {
-      name = null
-      return Tag(start..offset + 1, TagKind.OPENING, name, emptyList(), emptyList())
-    }
-    else if (closing && text.getOrNull(offset) == '>') {
-      name = null
-      return Tag(start..offset + 1, TagKind.CLOSING, name, emptyList(), emptyList())
-    }
-    else {
-      val nameStart = offset
-      if (!isNameStart(text.getOrNull(offset))) return null
-      offset++
-      while (offset < limit && isNamePart(text[offset])) {
-        offset++
-      }
-      name = text.subSequence(nameStart, offset).toString()
-    }
-
-    if (closing) {
-      offset = skipSpaces(text, offset, limit)
-      return if (text.getOrNull(offset) == '>') {
-        Tag(start..offset + 1, TagKind.CLOSING, name, emptyList(), emptyList())
-      }
-      else null
-    }
-
-    return parseOpeningTagTail(text, start, name, offset, limit, emptyList(), emptyList(), recoveryBudget)
-  }
-
-  private fun parseOpeningTagTail(text: CharSequence,
-                                  start: Int,
-                                  name: String,
-                                  initialOffset: Int,
-                                  limit: Int,
-                                  initialAttributes: List<IntRange>,
-                                  initialExpressions: List<IntRange>,
-                                  recoveryBudget: MdxExpressionBoundaryScanner.RecoveryBudget): Tag? {
-    val attributes = initialAttributes.toMutableList()
-    val expressions = initialExpressions.toMutableList()
-    var offset = initialOffset
-    var selfClosing = false
-    while (offset < limit) {
-      offset = skipSpaces(text, offset, limit)
-      when (text.getOrNull(offset)) {
-        null -> return null
-        '>' -> return Tag(start..offset + 1, if (selfClosing) TagKind.SELF_CLOSING else TagKind.OPENING, name, attributes, expressions)
-        '/' -> {
-          val next = skipSpaces(text, offset + 1, limit)
-          if (text.getOrNull(next) == '>') {
-            return Tag(start..next + 1, TagKind.SELF_CLOSING, name, attributes, expressions)
-          }
-          selfClosing = true
-          offset++
-        }
-        '{' -> {
-          val expressionEnds = MdxExpressionBoundaryScanner.findExpressionEndCandidates(text, offset, limit, recoveryBudget)
-          if (expressionEnds.isEmpty()) return null
-          if (expressionEnds.size > 1) {
-            for (expressionEnd in expressionEnds) {
-              parseOpeningTagTail(
-                text,
-                start,
-                name,
-                expressionEnd,
-                limit,
-                attributes,
-                expressions + listOf(offset..expressionEnd),
-                recoveryBudget,
-              )?.let { return it }
-            }
-            return null
-          }
-          val expressionEnd = expressionEnds.single()
-          expressions.add(offset..expressionEnd)
-          offset = expressionEnd
-        }
-        else -> {
-          val attributeStart = offset
-          if (!isAttributeNameStart(text.getOrNull(offset))) return null
-          offset++
-          while (offset < limit && isAttributeNamePart(text[offset])) {
-            offset++
-          }
-          offset = skipSpaces(text, offset, limit)
-          if (text.getOrNull(offset) == '=') {
-            offset = skipSpaces(text, offset + 1, limit)
-            when (text.getOrNull(offset)) {
-              '\'', '"' -> offset = scanQuoted(text, offset, limit, text[offset])
-              '{' -> {
-                val expressionEnds = MdxExpressionBoundaryScanner.findExpressionEndCandidates(text, offset, limit, recoveryBudget)
-                if (expressionEnds.isEmpty()) return null
-                if (expressionEnds.size > 1) {
-                  for (expressionEnd in expressionEnds) {
-                    parseOpeningTagTail(
-                      text,
-                      start,
-                      name,
-                      expressionEnd,
-                      limit,
-                      attributes + listOf(attributeStart..expressionEnd),
-                      expressions + listOf(offset..expressionEnd),
-                      recoveryBudget,
-                    )?.let { return it }
-                  }
-                  return null
-                }
-                val expressionEnd = expressionEnds.single()
-                expressions.add(offset..expressionEnd)
-                offset = expressionEnd
-              }
-              null -> return null
-              else -> {
-                while (offset < limit && !text[offset].isWhitespace() && text[offset] != '>' && text[offset] != '/') {
-                  offset++
-                }
-              }
-            }
-            if (offset == -1) return null
-          }
-          attributes.add(attributeStart..offset)
-        }
-      }
-    }
-    return null
   }
 
   private fun isIncompleteOpeningTagStart(text: CharSequence, start: Int, limit: Int): Boolean {
     if (text.getOrNull(start) != '<' || start + 1 >= limit || text.getOrNull(start + 1) == '/') return false
     var offset = start + 1
     if (text.getOrNull(offset) == '>') return false
-    if (!isNameStart(text.getOrNull(offset))) return false
+    if (!MdxJsxTagParser.isNameStart(text.getOrNull(offset))) return false
     offset++
-    while (offset < limit && isNamePart(text[offset])) {
+    while (offset < limit && MdxJsxTagParser.isNamePart(text[offset])) {
       offset++
     }
     // A `>`/`<` outside an expression breaks the tag; one inside an unterminated `{...}` attribute
@@ -334,7 +331,7 @@ internal object MdxJsxScanner {
           offset = expressionEnd
         }
         '\'', '"' -> {
-          val quoteEnd = scanQuoted(text, offset, limit, text[offset])
+          val quoteEnd = MdxJsxTagParser.scanQuoted(text, offset, limit, text[offset])
           if (quoteEnd == -1) return true
           offset = quoteEnd
         }
@@ -344,60 +341,108 @@ internal object MdxJsxScanner {
     return true
   }
 
-  private fun scanQuoted(text: CharSequence, start: Int, limit: Int, quote: Char): Int {
-    var offset = start + 1
-    while (offset < limit) {
-      when (text[offset]) {
-        '\\' -> offset += 2
-        quote -> return offset + 1
-        else -> offset++
+  private class NestingState {
+    private var topFrame: Frame? = null
+
+    var incomplete: Boolean = false
+      private set
+
+    fun accept(tag: Tag): Termination? {
+      when (tag.kind) {
+        TagKind.OPENING -> topFrame = Frame(tag.name, topFrame)
+        TagKind.SELF_CLOSING -> Unit
+        TagKind.CLOSING -> {
+          val current = topFrame
+          if (current == null) {
+            incomplete = true
+            return Termination.RECOVERED
+          }
+          if (current.name == tag.name) {
+            topFrame = current.parent
+          }
+          else {
+            var ancestor = current.parent
+            while (ancestor != null && ancestor.name != tag.name) {
+              ancestor = ancestor.parent
+            }
+            if (ancestor == null) {
+              incomplete = true
+              return Termination.RECOVERED
+            }
+            incomplete = true
+            topFrame = ancestor.parent
+          }
+        }
       }
+      return if (topFrame == null) Termination.MATCHED else null
     }
-    return -1
-  }
 
-  private fun skipSpaces(text: CharSequence, start: Int, limit: Int): Int {
-    var offset = start
-    while (offset < limit && text[offset].isWhitespace()) {
-      offset++
+    fun snapshot(): NestingSnapshot = NestingSnapshot(topFrame, incomplete)
+
+    fun restore(snapshot: NestingSnapshot) {
+      topFrame = snapshot.topFrame
+      incomplete = snapshot.incomplete
     }
-    return offset
   }
 
-  private fun isNameStart(char: Char?): Boolean {
-    return char != null && (char.isLetter() || char == '_')
-  }
+  private class Frame(
+    val name: String?,
+    val parent: Frame?,
+  )
 
-  private fun isNamePart(char: Char): Boolean {
-    return char.isLetterOrDigit() || char == '_' || char == '-' || char == '.' || char == ':'
-  }
+  private data class NestingSnapshot(
+    val topFrame: Frame?,
+    val incomplete: Boolean,
+  )
 
-  private fun isAttributeNameStart(char: Char?): Boolean {
-    return char != null && (char.isLetter() || char == '_' || char == ':' || char == '$')
-  }
+  /**
+   * Shares an append-only committed prefix and owns the current advance's immutable suffix. Later
+   * commits and rollbacks therefore cannot change a retained result.
+   */
+  private class RetainedAccumulator<E> {
+    private val committed = mutableListOf<E>()
+    private val provisional = mutableListOf<E>()
 
-  private fun isAttributeNamePart(char: Char): Boolean {
-    return char.isLetterOrDigit() || char == '_' || char == '-' || char == '.' || char == ':' || char == '$'
-  }
+    val isEmpty: Boolean
+      get() = committed.isEmpty() && provisional.isEmpty()
 
-  private fun lineStart(text: CharSequence, offset: Int): Int {
-    var lineStart = offset.coerceAtMost(text.length)
-    while (lineStart > 0 && text[lineStart - 1] != '\n') {
-      lineStart--
+    fun add(value: E) {
+      provisional.add(value)
     }
-    return lineStart
+
+    fun addAll(values: Collection<E>) {
+      provisional.addAll(values)
+    }
+
+    fun checkpoint(): Int = provisional.size
+
+    fun restore(checkpoint: Int) {
+      if (checkpoint < provisional.size) provisional.subList(checkpoint, provisional.size).clear()
+    }
+
+    fun commit() {
+      committed.addAll(provisional)
+      provisional.clear()
+    }
+
+    fun snapshot(): List<E> = RetainedList(committed, committed.size, provisional.toList())
   }
 
-  private fun smallIndent(text: CharSequence, lineStart: Int, offset: Int): Int {
-    var indent = 0
-    while (lineStart + indent < offset && text[lineStart + indent] == ' ') {
-      indent++
+  private class RetainedList<E>(
+    private val committed: List<E>,
+    private val committedSize: Int,
+    private val provisional: List<E>,
+  ) : AbstractList<E>() {
+    override val size: Int
+      get() = committedSize + provisional.size
+
+    override fun get(index: Int): E {
+      if (index !in indices) throw IndexOutOfBoundsException("index: $index, size: $size")
+      return if (index < committedSize) committed[index] else provisional[index - committedSize]
     }
-    return if (indent <= 3) indent else -1
   }
 
   private fun CharSequence.getOrNull(index: Int): Char? {
     return if (index in indices) this[index] else null
   }
-
 }

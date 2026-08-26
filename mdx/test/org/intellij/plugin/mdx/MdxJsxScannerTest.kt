@@ -54,6 +54,19 @@ class MdxJsxScannerTest {
   }
 
   @Test
+  fun recordsEveryOpeningTagAttributeAndExpression() {
+    val text = "<Card disabled title = \"a > b\" count=42 {...props} value={{ nested: true }} />"
+
+    val tag = MdxJsxScanner.scanJsxElement(text, 0)?.tags?.single()
+
+    assertEquals(
+      listOf("disabled ", "title = \"a > b\"", "count=42", "value={{ nested: true }}"),
+      tag?.attributes?.map { text.substring(it.first, it.last) },
+    )
+    assertEquals(listOf("{...props}", "{{ nested: true }}"), tag?.expressions?.map { text.substring(it.first, it.last) })
+  }
+
+  @Test
   fun suppliedOpaqueRangeHidesMatchingClosingTag() {
     val text = "<span>`</span>` body</span>"
     val opaqueStart = text.indexOf('`')
@@ -125,5 +138,112 @@ class MdxJsxScannerTest {
       assertEquals(text.length, element?.range?.last, text)
       assertTrue(element?.incomplete == true, text)
     }
+  }
+
+  @Test
+  fun incrementalSessionMatchesOneShotPrefixes() {
+    val text = """
+      <Outer
+        title=">">
+        <Inner value={{ nested: true }} />
+        {items.map(item => <Item value={item} />)}
+      </Outer>
+    """.trimIndent()
+    val session = MdxJsxScanner.Session(text, 0)
+
+    for (limit in lineEnds(text)) {
+      assertEquals(
+        MdxJsxScanner.scanJsxElement(text, 0, limit),
+        session.advanceTo(limit),
+        "limit=$limit",
+      )
+    }
+  }
+
+  @Test
+  fun incrementalSessionMatchesOneShotRecoveryAtEveryPrefix() {
+    val cases = listOf(
+      "<Alert value={/} />",
+      "<Outer><Inner></Outer>",
+      "<Outer><Inner></Other>after</Inner></Outer>",
+      "<><Inner></>",
+      "<Outer><></Outer>",
+      "<Outer>{/}</Outer>",
+    )
+
+    for (text in cases) {
+      val session = MdxJsxScanner.Session(text, 0)
+      for (limit in 1..text.length) {
+        assertEquals(
+          MdxJsxScanner.scanJsxElement(text, 0, limit),
+          session.advanceTo(limit),
+          "text=$text, limit=$limit",
+        )
+      }
+    }
+  }
+
+  @Test
+  fun incrementalSessionDoesNotReadBeyondExposedPrefix() {
+    val tags = listOf(
+      "<Alert value={/} /} />",
+      "<Card disabled title=\"a > b\" count=42 {...props} value={{ nested: true }} />",
+      "<Outer>{/}</Outer>",
+    )
+
+    for (text in tags) {
+      val guarded = PrefixGuardCharSequence(text)
+      guarded.expose(1)
+      val session = MdxJsxScanner.Session(guarded, 0)
+      for (limit in 1..text.length) {
+        guarded.expose(limit)
+        assertEquals(MdxJsxScanner.scanJsxElement(text, 0, limit), session.advanceTo(limit), "tag=$text, limit=$limit")
+      }
+    }
+  }
+
+  @Test
+  fun lateOpacityInMixedBatchRollsBackAccumulatedSyntax() {
+    val text = "<Box>\n`{value}</Box>`\n</Box>"
+    val firstLineEnd = text.indexOf('\n') + 1
+    val codeLineEnd = text.indexOf('\n', firstLineEnd) + 1
+    val codeStart = text.indexOf('`')
+    val codeEnd = text.indexOf('`', codeStart + 1) + 1
+    val firstCloserEnd = text.indexOf("</Box>") + "</Box>".length
+    val session = MdxJsxScanner.Session(text, 0)
+
+    session.advanceTo(firstLineEnd)
+    val premature = session.advanceTo(codeLineEnd)
+    assertEquals(firstCloserEnd, premature?.range?.last)
+    assertEquals(1, premature?.expressions?.size)
+    val retainedTags = premature?.tags?.toList()
+    val retainedExpressions = premature?.expressions?.toList()
+
+    session.addOpaqueRanges(listOf(0..1, codeStart..codeEnd))
+    val repaired = session.advanceTo(text.length)
+
+    assertEquals(MdxJsxScanner.Termination.MATCHED, repaired?.termination)
+    assertEquals(text.length, repaired?.range?.last)
+    assertEquals(listOf("Box", "Box"), repaired?.tags?.map { it.name })
+    assertEquals(emptyList<IntRange>(), repaired?.expressions)
+    assertEquals(retainedTags, premature?.tags)
+    assertEquals(retainedExpressions, premature?.expressions)
+  }
+
+  @Test
+  fun incrementallyScansDeepNesting() {
+    val depth = 5_000
+    val openingPrefix = "<E>".repeat(depth)
+    val text = openingPrefix + "</E>".repeat(depth)
+    val session = MdxJsxScanner.Session(text, 0)
+
+    val prefix = session.advanceTo(openingPrefix.length)
+    val element = session.advanceTo(text.length)
+
+    assertEquals(MdxJsxScanner.Termination.UNTERMINATED, prefix?.termination)
+    assertEquals(depth, prefix?.tags?.size)
+    assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
+    assertEquals(text.length, element?.range?.last)
+    assertEquals(depth * 2, element?.tags?.size)
   }
 }

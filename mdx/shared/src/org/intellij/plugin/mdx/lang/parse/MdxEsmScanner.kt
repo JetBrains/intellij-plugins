@@ -149,8 +149,8 @@ object MdxEsmScanner {
 
   fun isLineStart(text: CharSequence, start: Int): Boolean {
     val source = mdxCancellableText(text)
-    val lineStart = lineStart(source, start)
-    val indent = smallIndent(source, lineStart, start)
+    val lineStart = mdxLineStart(source, start)
+    val indent = mdxSmallIndent(source, lineStart, start)
     return indent != -1 && lineStart + indent == start && isEsmKeywordAt(source, start)
   }
 
@@ -202,8 +202,8 @@ object MdxEsmScanner {
     val next = firstNonWhitespaceOffset(text, start, limit)
     if (next == -1) return false
     if (hasLineBreakBefore(text, start, next)) return false
-    val lineStart = lineStart(text, next)
-    if (smallIndent(text, lineStart, next) == -1) return true
+    val lineStart = mdxLineStart(text, next)
+    if (mdxSmallIndent(text, lineStart, next) == -1) return true
     if (keywordAt(text, next, "from")) return true
     if (keywordEndsAt(text, previousSignificantOffset, "from")) {
       return text[next] == '\'' || text[next] == '"' || text[next] == '`'
@@ -311,27 +311,6 @@ object MdxEsmScanner {
 
   private fun isNamePart(char: Char): Boolean {
     return char.isLetterOrDigit() || char == '_' || char == '-' || char == '.' || char == ':'
-  }
-
-  private fun lineStart(text: CharSequence, offset: Int): Int {
-    var lineStart = offset.coerceAtMost(text.length)
-    while (lineStart > 0 && text[lineStart - 1] != '\n') {
-      lineStart--
-    }
-    return lineStart
-  }
-
-  private fun smallIndent(
-    text: CharSequence,
-    lineStart: Int,
-    offset: Int,
-  ): Int {
-    var indent = 0
-    while (lineStart + indent < offset && text[lineStart + indent] == ' ') {
-      indent++
-      if (indent > 3) return -1
-    }
-    return indent
   }
 
   private fun IElementType.isTrivia(): Boolean {

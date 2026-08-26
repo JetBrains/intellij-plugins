@@ -28,6 +28,39 @@ internal object MdxExpressionBoundaryScanner {
       remainingAttempts--
       return true
     }
+
+    fun copy(): RecoveryBudget = RecoveryBudget(remainingAttempts)
+  }
+
+  /** Incrementally validates host-brace candidates after normal JavaScript lexing failed. */
+  internal class RecoveryCandidatesSession(
+    source: CharSequence,
+    private val start: Int,
+    private val scanEnd: Int = source.length,
+    private val recoveryBudget: RecoveryBudget = RecoveryBudget(),
+  ) {
+    private val buffer = mdxCancellableText(source)
+    private var exposedEnd = start
+    private var cursor = start + 1
+
+    fun advanceTo(limit: Int): List<Int> {
+      mdxCancellableText(buffer)
+      require(limit in exposedEnd..scanEnd) {
+        "Expression recovery limit must advance from $exposedEnd to at most $scanEnd: $limit"
+      }
+      exposedEnd = limit
+      return buildList {
+        while (cursor < limit) {
+          val candidateEnd = cursor + 1
+          if (buffer[cursor] == '}' &&
+              recoveryBudget.tryAcquire() &&
+              findExpressionEnd(buffer, start, candidateEnd) == candidateEnd) {
+            add(candidateEnd)
+          }
+          cursor++
+        }
+      }
+    }
   }
 
   internal class Session(
@@ -41,18 +74,20 @@ internal object MdxExpressionBoundaryScanner {
     private var depth = 0
     private var expressionEnd = -1
 
-    fun advanceTo(limit: Int): Int {
+    fun advanceTo(limit: Int): Int = advanceToBoundary(limit).end
+
+    fun advanceToBoundary(limit: Int): Boundary {
       mdxCancellableText(buffer)
       require(limit in exposedEnd..scanEnd) {
         "Expression scan limit must advance from $exposedEnd to at most $scanEnd: $limit"
       }
       exposedEnd = limit
-      val lexer = lexer ?: return -1
-      if (expressionEnd != -1) return expressionEnd
+      val lexer = lexer ?: return Boundary.NOT_FOUND
+      if (expressionEnd != -1) return Boundary(expressionEnd, stable = true)
 
       val provisional = lexer.advanceTo(limit, ::acceptStableToken)
-      if (expressionEnd != -1) return expressionEnd
-      return scanTokens(provisional, depth).expressionEnd
+      if (expressionEnd != -1) return Boundary(expressionEnd, stable = true)
+      return Boundary(scanTokens(provisional, depth).expressionEnd, stable = false)
     }
 
     private fun acceptStableToken(token: MdxJavaScriptToken): Boolean {
@@ -91,6 +126,12 @@ internal object MdxExpressionBoundaryScanner {
     private data class TokenScanResult(val depth: Int, val expressionEnd: Int = -1)
   }
 
+  internal data class Boundary(val end: Int, val stable: Boolean) {
+    companion object {
+      val NOT_FOUND = Boundary(-1, stable = false)
+    }
+  }
+
   /** Returns the end offset after the top-level `}`, or `-1` if the expression reaches [end]. */
   fun findExpressionEnd(buffer: CharSequence, start: Int, end: Int): Int {
     return Session(buffer, start, end).advanceTo(end)
@@ -112,16 +153,7 @@ internal object MdxExpressionBoundaryScanner {
     val expressionEnd = findExpressionEnd(text, start, end)
     if (expressionEnd != -1) return listOf(expressionEnd)
 
-    val result = mutableListOf<Int>()
-    var candidate = findClosingBrace(text, start + 1, end)
-    while (candidate != -1 && recoveryBudget.tryAcquire()) {
-      val candidateEnd = candidate + 1
-      if (findExpressionEnd(text, start, candidateEnd) == candidateEnd) {
-        result.add(candidateEnd)
-      }
-      candidate = findClosingBrace(text, candidateEnd, end)
-    }
-    return result
+    return RecoveryCandidatesSession(text, start, end, recoveryBudget).advanceTo(end)
   }
 
   /**
@@ -162,16 +194,6 @@ internal object MdxExpressionBoundaryScanner {
       }
       return null
     }
-  }
-
-  private fun findClosingBrace(buffer: CharSequence, start: Int, end: Int): Int {
-    var offset = start
-    while (offset < end) {
-      val isClosingBrace = buffer[offset] == '}'
-      offset++
-      if (isClosingBrace) return offset - 1
-    }
-    return -1
   }
 
   private fun CharSequence.getOrNull(index: Int): Char? {
