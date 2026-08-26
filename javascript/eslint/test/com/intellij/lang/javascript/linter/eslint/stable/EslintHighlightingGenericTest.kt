@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.testFramework.DumbModeTestUtils
+import com.intellij.testFramework.TrustedProjectsTestUtil
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.LineSeparator
 import org.junit.Assert
@@ -55,13 +56,15 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
 
   // warn.js would be flagged (no-console / no-debugger), but no highlighting is expected because the project is untrusted.
   fun testNoLintingForUntrustedProject() {
-    try {
-      doHighlightingTestWithInstallation("warn.js") {
-        TrustedProjects.setProjectTrusted(project, false)
+    TrustedProjectsTestUtil.withTrustedProjectsCheckEnabled {
+      try {
+        doHighlightingTestWithInstallation("warn.js") {
+          TrustedProjects.setProjectTrusted(project, false)
+        }
       }
-    }
-    finally {
-      TrustedProjects.setProjectTrusted(project, true)
+      finally {
+        TrustedProjects.setProjectTrusted(project, true)
+      }
     }
   }
 
