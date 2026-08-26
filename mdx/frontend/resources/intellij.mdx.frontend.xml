@@ -18,11 +18,6 @@
     <module name="intellij.platform.lang.impl"/>
   </dependencies>
   <!-- endregion -->
-
-  <projectListeners>
-    <listener class="com.intellij.mdx.frontend.editor.MdxCodeFenceCompletionIndentRestorer"
-              topic="com.intellij.codeInsight.lookup.LookupManagerListener"/>
-  </projectListeners>
   <extensions defaultExtensionNs="com.intellij">
     <editorActionHandler action="EditorPaste"
                          implementationClass="com.intellij.mdx.frontend.editor.MdxCodeFencePasteHandler"

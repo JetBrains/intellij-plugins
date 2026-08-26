@@ -214,9 +214,9 @@ class MdxFormatterTest : MdxTestBase() {
   /**
    * Accepting a JS/TS completion (`console`) inside an *indented* tsx fence nested in <div> must insert the
    * completion and leave the fence indentation intact. The fence body is injected with its leading indent, so
-   * the platform's LookupUtil takes the whole `    conso` as the prefix and would replace it (indent and all)
-   * with `console`, dropping the indent; MdxCodeFenceCompletionIndentRestorer re-indents the caret line back to
-   * the fence base afterwards. WEB-78468.
+   * the platform's LookupUtil used to take the whole `    conso` as the prefix and replace it, indent and all,
+   * with `console` — MDX carried its own listener to put the indent back. The platform no longer drops it, so
+   * this only guards against the regression coming back. WEB-78468.
    */
   @Test
   fun testConsoleCompletionInsideIndentedTsxCodeFenceKeepsIndent() {
