@@ -1,7 +1,5 @@
 package org.intellij.plugin.mdx.lang.parse
 
-import com.intellij.lang.javascript.DialectOptionHolder
-import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JSTokenTypes
 
 /**
@@ -32,30 +30,70 @@ internal object MdxExpressionBoundaryScanner {
     }
   }
 
+  internal class Session(
+    source: CharSequence,
+    start: Int,
+    private val scanEnd: Int = source.length,
+  ) {
+    private val buffer = mdxCancellableText(source)
+    private val lexer = if (buffer.getOrNull(start) == '{') MdxPrefixJavaScriptLexer(buffer, start + 1, scanEnd) else null
+    private var exposedEnd = start
+    private var depth = 0
+    private var expressionEnd = -1
+
+    fun advanceTo(limit: Int): Int {
+      mdxCancellableText(buffer)
+      require(limit in exposedEnd..scanEnd) {
+        "Expression scan limit must advance from $exposedEnd to at most $scanEnd: $limit"
+      }
+      exposedEnd = limit
+      val lexer = lexer ?: return -1
+      if (expressionEnd != -1) return expressionEnd
+
+      val provisional = lexer.advanceTo(limit, ::acceptStableToken)
+      if (expressionEnd != -1) return expressionEnd
+      return scanTokens(provisional, depth).expressionEnd
+    }
+
+    private fun acceptStableToken(token: MdxJavaScriptToken): Boolean {
+      val result = scanToken(token, depth)
+      depth = result.depth
+      expressionEnd = result.expressionEnd
+      return expressionEnd == -1
+    }
+
+    private fun scanToken(token: MdxJavaScriptToken, initialDepth: Int): TokenScanResult {
+      if (token.type == JSTokenTypes.REGEXP_LITERAL && !isMdxRegularExpressionTerminated(buffer, token.start, token.end)) {
+        val recoveredEnd = UnterminatedRegularExpressionRecovery(buffer, token.start, initialDepth).advanceTo(token.end)
+        if (recoveredEnd != null) return TokenScanResult(initialDepth, recoveredEnd)
+      }
+
+      return when (token.type) {
+        // JSX expression containers use XML_LBRACE/XML_RBRACE and are balanced by the JSX lexer.
+        JSTokenTypes.LBRACE -> TokenScanResult(initialDepth + 1)
+        JSTokenTypes.RBRACE -> {
+          if (initialDepth == 0) TokenScanResult(initialDepth, token.end)
+          else TokenScanResult(initialDepth - 1)
+        }
+        else -> TokenScanResult(initialDepth)
+      }
+    }
+
+    private fun scanTokens(tokens: List<MdxJavaScriptToken>, initialDepth: Int): TokenScanResult {
+      var result = TokenScanResult(initialDepth)
+      for (token in tokens) {
+        result = scanToken(token, result.depth)
+        if (result.expressionEnd != -1) return result
+      }
+      return result
+    }
+
+    private data class TokenScanResult(val depth: Int, val expressionEnd: Int = -1)
+  }
+
   /** Returns the end offset after the top-level `}`, or `-1` if the expression reaches [end]. */
   fun findExpressionEnd(buffer: CharSequence, start: Int, end: Int): Int {
-    if (buffer.getOrNull(start) != '{') return -1
-
-    val lexer = JSFlexAdapter(DialectOptionHolder.JS_WITH_JSX)
-    lexer.start(buffer, start + 1, end, 0)
-    var depth = 0
-    while (lexer.tokenType != null) {
-      when (lexer.tokenType) {
-        // JSX expression containers use XML_LBRACE/XML_RBRACE and are balanced by the JSX lexer.
-        JSTokenTypes.LBRACE -> depth++
-        JSTokenTypes.RBRACE -> {
-          if (depth == 0) return lexer.tokenEnd
-          depth--
-        }
-        JSTokenTypes.REGEXP_LITERAL -> {
-          findHostEndInUnterminatedRegularExpression(buffer, lexer.tokenStart, lexer.tokenEnd, depth)?.let {
-            return it
-          }
-        }
-      }
-      lexer.advance()
-    }
-    return -1
+    return Session(buffer, start, end).advanceTo(end)
   }
 
   /**
@@ -70,17 +108,18 @@ internal object MdxExpressionBoundaryScanner {
     end: Int,
     recoveryBudget: RecoveryBudget = RecoveryBudget(),
   ): List<Int> {
-    val expressionEnd = findExpressionEnd(buffer, start, end)
+    val text = mdxCancellableText(buffer)
+    val expressionEnd = findExpressionEnd(text, start, end)
     if (expressionEnd != -1) return listOf(expressionEnd)
 
     val result = mutableListOf<Int>()
-    var candidate = buffer.indexOf('}', start + 1)
-    while (candidate in 0..<end && recoveryBudget.tryAcquire()) {
+    var candidate = findClosingBrace(text, start + 1, end)
+    while (candidate != -1 && recoveryBudget.tryAcquire()) {
       val candidateEnd = candidate + 1
-      if (findExpressionEnd(buffer, start, candidateEnd) == candidateEnd) {
+      if (findExpressionEnd(text, start, candidateEnd) == candidateEnd) {
         result.add(candidateEnd)
       }
-      candidate = buffer.indexOf('}', candidateEnd)
+      candidate = findClosingBrace(text, candidateEnd, end)
     }
     return result
   }
@@ -91,45 +130,48 @@ internal object MdxExpressionBoundaryScanner {
    * platform lexer has identified precisely that failure, prefer an unescaped brace outside a
    * character class as the host boundary. Valid regular expressions remain entirely lexer-owned.
    */
-  private fun findHostEndInUnterminatedRegularExpression(buffer: CharSequence,
-                                                         start: Int,
-                                                         end: Int,
-                                                         initialDepth: Int): Int? {
-    var escaped = false
-    var inCharacterClass = false
-    var offset = start + 1
-    while (offset < end) {
-      val char = buffer[offset]
-      when {
-        escaped -> escaped = false
-        char == '\\' -> escaped = true
-        char == '[' -> inCharacterClass = true
-        char == ']' -> inCharacterClass = false
-        char == '/' && !inCharacterClass -> return null
-      }
-      offset++
-    }
+  private class UnterminatedRegularExpressionRecovery(
+    private val buffer: CharSequence,
+    start: Int,
+    private var depth: Int,
+  ) {
+    private var offset = start + 1
+    private var escaped = false
+    private var inCharacterClass = false
+    private var expressionEnd = -1
 
-    var depth = initialDepth
-    escaped = false
-    inCharacterClass = false
-    offset = start + 1
-    while (offset < end) {
-      val char = buffer[offset]
-      when {
-        escaped -> escaped = false
-        char == '\\' -> escaped = true
-        char == '[' -> inCharacterClass = true
-        char == ']' -> inCharacterClass = false
-        !inCharacterClass && char == '{' -> depth++
-        !inCharacterClass && char == '}' -> {
-          if (depth == 0) return offset + 1
-          depth--
+    fun advanceTo(limit: Int): Int? {
+      if (expressionEnd != -1) return expressionEnd
+      while (offset < limit) {
+        val char = buffer[offset]
+        when {
+          escaped -> escaped = false
+          char == '\\' -> escaped = true
+          char == '[' -> inCharacterClass = true
+          char == ']' -> inCharacterClass = false
+          !inCharacterClass && char == '{' -> depth++
+          !inCharacterClass && char == '}' -> {
+            if (depth == 0) {
+              expressionEnd = offset + 1
+              return expressionEnd
+            }
+            depth--
+          }
         }
+        offset++
       }
-      offset++
+      return null
     }
-    return null
+  }
+
+  private fun findClosingBrace(buffer: CharSequence, start: Int, end: Int): Int {
+    var offset = start
+    while (offset < end) {
+      val isClosingBrace = buffer[offset] == '}'
+      offset++
+      if (isClosingBrace) return offset - 1
+    }
+    return -1
   }
 
   private fun CharSequence.getOrNull(index: Int): Char? {

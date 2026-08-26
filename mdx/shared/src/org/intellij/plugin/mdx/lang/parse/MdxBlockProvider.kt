@@ -70,18 +70,16 @@ class MdxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
         pos.originalText,
         localText.toString(),
       )
-      MdxBlockKind.ESM -> MdxOpaqueBlockMarkerBlock(
+      MdxBlockKind.ESM -> MdxOpaqueBlockMarkerBlock.esm(
         stateInfo.currentConstraints,
         productionHolder,
-        MdxOpaqueBlockKind.ESM,
         absoluteStart,
         pos.originalText,
         localText.toString(),
       )
-      MdxBlockKind.EXPRESSION -> MdxOpaqueBlockMarkerBlock(
+      MdxBlockKind.EXPRESSION -> MdxOpaqueBlockMarkerBlock.expression(
         stateInfo.currentConstraints,
         productionHolder,
-        MdxOpaqueBlockKind.EXPRESSION,
         absoluteStart,
         pos.originalText,
         localText.toString(),

@@ -150,4 +150,66 @@ class MdxEsmScannerTest {
       assertFalse(block?.terminated == true, statement)
     }
   }
+
+  @Test
+  fun incrementalSessionMatchesFreshScansForValidAndMalformedInput() {
+    val blocks = listOf(
+      """
+        export const values = [
+          'first',
+          `second`,
+        ]
+      """.trimIndent(),
+      "import {\n  value,\n} from 'module'",
+      "export default function value() {\n  return <Item />\n}",
+      "import { value\n\n# heading",
+      "export const pattern = /unterminated",
+    )
+
+    for (text in blocks) {
+      val session = MdxEsmScanner.Session(text, 0)
+      for (limit in lineEnds(text)) {
+        assertEquals(MdxEsmScanner.scanBlock(text, 0, limit), session.advanceTo(limit), "ESM=$text, limit=$limit")
+      }
+    }
+  }
+
+  @Test
+  fun validEsmMayExceedPreviousScanLimit() {
+    val text = buildEsm(24_000)
+    assertTrue(text.length > 250_000)
+
+    val block = MdxEsmScanner.scanBlock(text, 0)
+
+    assertTrue(block?.terminated == true)
+    assertEquals(text.length, block?.range?.last)
+  }
+
+  @Test
+  fun malformedExportTerminatesAtEndOfInput() {
+    val text = "export your data regularly to avoid loss."
+
+    val block = MdxEsmScanner.scanBlock(text, 0)
+
+    assertTrue(block?.terminated == true)
+    assertEquals(text.length, block?.range?.last)
+  }
+
+  @Test
+  fun incrementalSessionDoesNotReadBeyondExposedPrefix() {
+    val blocks = listOf(
+      "export const pattern = /} /",
+      $$"export const value = `before ${nested} after`",
+      "import { value } from 'module'",
+    )
+
+    for (text in blocks) {
+      val guarded = PrefixGuardCharSequence(text)
+      val session = MdxEsmScanner.Session(guarded, 0)
+      for (limit in 0..text.length) {
+        guarded.expose(limit)
+        assertEquals(MdxEsmScanner.scanBlock(text, 0, limit), session.advanceTo(limit), "ESM=$text, limit=$limit")
+      }
+    }
+  }
 }
