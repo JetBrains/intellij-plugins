@@ -1,5 +1,7 @@
 package org.intellij.plugin.mdx.lang.parse
 
+import com.intellij.openapi.util.TextRange
+
 /** Incrementally parses one JSX tag without replaying an already observed prefix. */
 internal class MdxJsxTagParser(
   source: CharSequence,
@@ -89,7 +91,7 @@ internal class MdxJsxTagParser(
   }
 
   private fun tag(kind: MdxJsxScanner.TagKind): MdxJsxScanner.Tag {
-    return MdxJsxScanner.Tag(start..cursor, kind, name, emptyList(), emptyList())
+    return MdxJsxScanner.Tag(TextRange(start, cursor), kind, name, emptyList(), emptyList())
   }
 
   private fun finish(result: Result): Result {
@@ -112,8 +114,8 @@ internal class MdxJsxTagParser(
     initialOffset: Int,
     private val scanEnd: Int,
     private val recoveryBudget: MdxExpressionBoundaryScanner.RecoveryBudget,
-    initialAttributes: List<IntRange> = emptyList(),
-    initialExpressions: List<IntRange> = emptyList(),
+    initialAttributes: List<TextRange> = emptyList(),
+    initialExpressions: List<TextRange> = emptyList(),
     private var selfClosing: Boolean = false,
   ) {
     private var cursor = initialOffset
@@ -277,7 +279,7 @@ internal class MdxJsxTagParser(
     }
 
     private fun forkAfterExpression(expression: ExpressionState, expressionEnd: Int): OpeningTagTail {
-      val recoveredAttributes = expression.attributeStart?.let { attributes + listOf(it..expressionEnd) } ?: attributes
+      val recoveredAttributes = expression.attributeStart?.let { attributes + TextRange(it, expressionEnd) } ?: attributes
       return OpeningTagTail(
         text,
         tagStart,
@@ -286,13 +288,13 @@ internal class MdxJsxTagParser(
         scanEnd,
         recoveryBudget,
         recoveredAttributes,
-        expressions + listOf(expression.start..expressionEnd),
+        expressions + TextRange(expression.start, expressionEnd),
         selfClosing,
       )
     }
 
     private fun finishAttribute(end: Int) {
-      attributes.add(attributeStart..end)
+      attributes.add(TextRange(attributeStart, end))
       attributeStart = -1
     }
 
@@ -303,7 +305,7 @@ internal class MdxJsxTagParser(
     }
 
     private fun tag(kind: MdxJsxScanner.TagKind): MdxJsxScanner.Tag {
-      return MdxJsxScanner.Tag(tagStart..cursor, kind, name, attributes.toList(), expressions.toList())
+      return MdxJsxScanner.Tag(TextRange(tagStart, cursor), kind, name, attributes.toList(), expressions.toList())
     }
 
     private fun finish(result: Result): Result {

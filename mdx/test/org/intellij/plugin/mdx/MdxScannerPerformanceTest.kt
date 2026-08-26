@@ -3,6 +3,7 @@ package org.intellij.plugin.mdx
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
+import com.intellij.openapi.util.TextRange
 import com.intellij.testFramework.junit5.TestApplication
 import org.intellij.markdown.MarkdownElementType
 import org.intellij.markdown.parser.CancellationToken
@@ -12,6 +13,8 @@ import org.intellij.plugin.mdx.lang.parse.MdxExpressionBoundaryScanner
 import org.intellij.plugin.mdx.lang.parse.MdxFlavourDescriptor
 import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
 import org.intellij.plugin.mdx.lang.parse.MdxMarkdownCodeSpanScanner
+import org.intellij.plugin.mdx.lang.template.MdxTemplateDataElementTypeBase
+import org.intellij.plugins.markdown.lang.lexer.MarkdownToplevelLexer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -86,6 +89,16 @@ class MdxScannerPerformanceTest {
   }
 
   @Test
+  fun templateProjectionScalesLinearly() {
+    assertLinearGrowth("template projection", ::templateProjectionAccesses)
+  }
+
+  @Test
+  fun templateProjectionStopsAfterCancellation() {
+    assertCancelsDuringScan(buildJsx(10_000), TemplateProjector::project)
+  }
+
+  @Test
   fun largeJsxElementHasNoArbitraryScanLimit() {
     val text = buildJsx(18_000)
     assertTrue(text.length > 250_000)
@@ -93,7 +106,7 @@ class MdxScannerPerformanceTest {
     val element = MdxJsxScanner.scanJsxElement(text, 0)
 
     assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
-    assertEquals(text.length, element?.range?.last)
+    assertEquals(text.length, element?.range?.endOffset)
   }
 
   @Test
@@ -126,7 +139,7 @@ class MdxScannerPerformanceTest {
 
     val spans = MdxMarkdownCodeSpanScanner.Session(text, 0).advanceTo(text.length)
 
-    assertEquals(emptyList<IntRange>(), spans)
+    assertEquals(emptyList<TextRange>(), spans)
     assertTrue(text.accesses <= source.length * 12L, "${text.accesses} accesses for ${source.length} characters")
   }
 
@@ -223,6 +236,37 @@ class MdxScannerPerformanceTest {
     MarkdownParser(MdxFlavourDescriptor, cancellationToken = CancellationToken.NonCancellable)
       .parse(MarkdownElementType("MDX_PERFORMANCE_TEST_ROOT"), countingText)
     return countingText.accesses
+  }
+
+  private fun templateProjectionAccesses(elements: Int): Long {
+    val text = buildString {
+      repeat(elements) {
+        append("<Item value={")
+        append(it)
+        append("} /> ")
+      }
+      append('\n')
+      repeat(elements) {
+        append("`code-")
+        append(it)
+        append("` ")
+      }
+      append('\n')
+      repeat(elements) {
+        append("<!-- invalid-")
+        append(it)
+        append(" -->\n")
+      }
+    }
+    val countingText = CountingCharSequence(text)
+    TemplateProjector.project(countingText)
+    return countingText.accesses
+  }
+
+  private object TemplateProjector : MdxTemplateDataElementTypeBase() {
+    fun project(sourceCode: CharSequence) {
+      collectTemplateModifications(sourceCode, MarkdownToplevelLexer(MdxFlavourDescriptor))
+    }
   }
 
   private companion object {

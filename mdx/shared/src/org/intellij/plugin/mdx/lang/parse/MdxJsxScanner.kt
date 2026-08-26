@@ -1,5 +1,7 @@
 package org.intellij.plugin.mdx.lang.parse
 
+import com.intellij.openapi.util.TextRange
+
 internal object MdxJsxScanner {
   enum class TagKind {
     OPENING,
@@ -14,17 +16,17 @@ internal object MdxJsxScanner {
   }
 
   data class Tag(
-    val range: IntRange,
+    val range: TextRange,
     val kind: TagKind,
     val name: String?,
-    val attributes: List<IntRange>,
-    val expressions: List<IntRange>,
+    val attributes: List<TextRange>,
+    val expressions: List<TextRange>,
   )
 
   data class Element(
-    val range: IntRange,
+    val range: TextRange,
     val tags: List<Tag>,
-    val expressions: List<IntRange>,
+    val expressions: List<TextRange>,
     val incomplete: Boolean,
     val termination: Termination,
   )
@@ -35,14 +37,14 @@ internal object MdxJsxScanner {
     source: CharSequence,
     private val start: Int,
     private val scanEnd: Int = source.length,
-    private val baseOpaqueRanges: MdxOpaqueRangeLookup = MdxOpaqueRanges.EMPTY,
+    private val baseOpaqueRanges: MdxOpaqueRangeLookup = MdxTextRangeSet.EMPTY,
   ) {
     private val text = mdxCancellableText(source)
-    private val addedOpaqueRanges = MdxMutableOpaqueRanges()
+    private val addedOpaqueRanges = MdxMutableTextRangeSet()
     private val allOpaqueRanges = MdxOpaqueRangeLookup(::endOffsetContaining)
     private var recoveryBudget = MdxExpressionBoundaryScanner.RecoveryBudget()
     private val tags = RetainedAccumulator<Tag>()
-    private val expressions = RetainedAccumulator<IntRange>()
+    private val expressions = RetainedAccumulator<TextRange>()
     private val nesting = NestingState()
     private var cursor = start
     private var exposedEnd = start
@@ -72,7 +74,7 @@ internal object MdxJsxScanner {
           val boundary = expression.session.advanceToBoundary(limit)
           if (boundary.end == -1) return elementAt(limit)
           if (!boundary.stable) return scanProvisionalExpression(expression, boundary.end, limit)
-          expressions.add(expression.start..boundary.end)
+          expressions.add(TextRange(expression.start, boundary.end))
           cursor = boundary.end
           activeExpression = null
           continue
@@ -93,7 +95,7 @@ internal object MdxJsxScanner {
             }
             is MdxJsxTagParser.Result.Complete -> {
               activeTag = null
-              cursor = result.tag.range.last
+              cursor = result.tag.range.endOffset
               accept(result.tag)
               continue
             }
@@ -128,7 +130,7 @@ internal object MdxJsxScanner {
       )
       val durableRecoveryBudget = recoveryBudget
       recoveryBudget = durableRecoveryBudget.copy()
-      expressions.add(expression.start..expressionEnd)
+      expressions.add(TextRange(expression.start, expressionEnd))
       cursor = expressionEnd
       activeExpression = null
       return try {
@@ -147,12 +149,12 @@ internal object MdxJsxScanner {
       }
     }
 
-    fun addOpaqueRanges(ranges: Collection<IntRange>) {
-      if (ranges.none { it.first < it.last }) return
+    fun addOpaqueRanges(ranges: Collection<TextRange>) {
+      if (ranges.none { !it.isEmpty }) return
       addedOpaqueRanges.addAll(ranges)
 
       val snapshot = previousAdvanceSnapshot
-      if (snapshot != null && ranges.any { it.first < cursor && previousAdvanceStart < it.last }) {
+      if (snapshot != null && ranges.any { it.intersects(previousAdvanceStart, cursor) }) {
         restore(snapshot)
       }
     }
@@ -173,7 +175,7 @@ internal object MdxJsxScanner {
       if (invalidRoot || hasNoTags()) return null
       val actualTermination = termination ?: Termination.UNTERMINATED
       return Element(
-        start..if (termination == null) limit else cursor,
+        TextRange(start, if (termination == null) limit else cursor),
         tags.snapshot(),
         expressions.snapshot(),
         incomplete = termination == null || nesting.incomplete,
@@ -258,14 +260,13 @@ internal object MdxJsxScanner {
    * `{…` expression or unterminated quote (e.g. the static `<Broken attr={"unterminated}`) yields
    * `null` so it keeps its existing outer-language parse rather than being reinterpreted as JSX.
    * Used to project a freshly-typed `<My` into the MdxJS layer so the platform JSX tag-name completion
-   * runs while the tag is still unbalanced. Ranges use an exclusive `.last` (a text offset), matching
-   * the other MdxJsxScanner ranges. WEB-78468.
+   * runs while the tag is still unbalanced. WEB-78468.
    */
-  fun incompleteOpeningTagRange(text: CharSequence, start: Int, limit: Int = text.length): IntRange? {
+  fun incompleteOpeningTagRange(text: CharSequence, start: Int, limit: Int = text.length): TextRange? {
     val source = mdxCancellableText(text)
     if (source.getOrNull(start) != '<') return null
     if (start + 1 >= limit || source[start + 1] == '\n' || source[start + 1] == '\r') {
-      return start..start + 1
+      return TextRange(start, start + 1)
     }
     if (!isIncompleteOpeningTagStart(source, start, limit)) return null
     var offset = start + 1
@@ -274,7 +275,7 @@ internal object MdxJsxScanner {
     }
     while (offset < limit) {
       when (source[offset]) {
-        '\n' -> return start..offset
+        '\n' -> return TextRange(start, offset)
         '{' -> {
           val expressionEnd = MdxExpressionBoundaryScanner.findExpressionEnd(source, offset, limit)
           if (expressionEnd == -1) return null
@@ -288,14 +289,14 @@ internal object MdxJsxScanner {
         else -> offset++
       }
     }
-    return start..limit
+    return TextRange(start, limit)
   }
 
   fun scanJsxElement(
     text: CharSequence,
     start: Int,
     limit: Int = text.length,
-    opaqueRanges: MdxOpaqueRanges = MdxOpaqueRanges.EMPTY,
+    opaqueRanges: MdxTextRangeSet = MdxTextRangeSet.EMPTY,
   ): Element? {
     return Session(text, start, limit, opaqueRanges).advanceTo(limit)
   }

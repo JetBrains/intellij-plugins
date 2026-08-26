@@ -1,5 +1,6 @@
 package org.intellij.plugin.mdx.lang.parse
 
+import com.intellij.openapi.util.TextRange
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.parser.sequentialparsers.RangesListBuilder
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
@@ -11,7 +12,7 @@ internal class MdxInlineElementParser : SequentialParser {
     if (rangesToGlue.isEmpty()) return result.withFurtherProcessing(emptyList())
 
     val tokenPartition = TokenPartition(tokens, rangesToGlue)
-    val outerExcludedRanges = mutableListOf<IntRange>()
+    val outerExcludedRanges = mutableListOf<TextRange>()
     val innerParsingSpaces = mutableListOf<List<IntRange>>()
     val text = tokens.originalText
     val opaqueRanges = tokenPartition.opaqueRanges()
@@ -30,7 +31,7 @@ internal class MdxInlineElementParser : SequentialParser {
           val element = MdxJsxScanner.scanJsxElement(text, offset, limit, opaqueRanges)
           if (element != null && element.termination != MdxJsxScanner.Termination.UNTERMINATED) {
             val rootRange = addNode(result, tokenPartition, element.range, MdxMarkdownLibElementTypes.MDX_JSX_TEXT_ELEMENT)
-            val innerExcludedRanges = mutableListOf<IntRange>()
+            val innerExcludedRanges = mutableListOf<TextRange>()
             for ((tagRange, tagKind, _, attributes) in element.tags) {
               val tagType = when (tagKind) {
                 MdxJsxScanner.TagKind.OPENING -> MdxMarkdownLibElementTypes.MDX_JSX_OPENING_ELEMENT
@@ -59,7 +60,7 @@ internal class MdxInlineElementParser : SequentialParser {
                 .takeIf { it.isNotEmpty() }
                 ?.let(innerParsingSpaces::add)
             }
-            offset = element.range.last
+            offset = element.range.endOffset
             continue
           }
           val openingPrefix = MdxJsxScanner.incompleteOpeningTagRange(text, offset, limit)
@@ -67,14 +68,14 @@ internal class MdxInlineElementParser : SequentialParser {
             addNode(result, tokenPartition, openingPrefix, MdxMarkdownLibElementTypes.MDX_JSX_TEXT_ELEMENT)
             addNode(result, tokenPartition, openingPrefix, MdxMarkdownLibElementTypes.MDX_JSX_OPENING_ELEMENT)
             outerExcludedRanges.add(openingPrefix)
-            offset = openingPrefix.last
+            offset = openingPrefix.endOffset
             continue
           }
         }
         '{' -> {
           val expressionEnd = MdxExpressionBoundaryScanner.findExpressionEnd(text, offset, limit)
           if (expressionEnd != -1) {
-            val expressionRange = offset..expressionEnd
+            val expressionRange = TextRange(offset, expressionEnd)
             addNode(result, tokenPartition, expressionRange, MdxMarkdownLibElementTypes.MDX_EXPRESSION)
             outerExcludedRanges.add(expressionRange)
             offset = expressionEnd
@@ -94,20 +95,20 @@ internal class MdxInlineElementParser : SequentialParser {
 
   private fun addNode(result: SequentialParser.ParsingResultBuilder,
                       tokenPartition: TokenPartition,
-                      charRange: IntRange,
+                      charRange: TextRange,
                       type: IElementType): IntRange? {
     val tokenRange = tokenPartition.toTokenRange(charRange) ?: return null
     result.withNode(SequentialParser.Node(tokenRange, type))
     return tokenRange
   }
 
-  private fun elementContentRange(element: MdxJsxScanner.Element): IntRange? {
+  private fun elementContentRange(element: MdxJsxScanner.Element): TextRange? {
     val opening = element.tags.firstOrNull() ?: return null
     val closing = element.tags.lastOrNull() ?: return null
     if (opening.kind != MdxJsxScanner.TagKind.OPENING || closing.kind != MdxJsxScanner.TagKind.CLOSING) {
       return null
     }
-    return (opening.range.last..closing.range.first).takeIf { it.first < it.last }
+    return TextRange(opening.range.endOffset, closing.range.startOffset).takeIf { !it.isEmpty }
   }
 
   private fun IntRange.isStrictlyInside(parent: IntRange): Boolean {
@@ -127,7 +128,7 @@ internal class MdxInlineElementParser : SequentialParser {
     }
     private val parsingTokens = allTokens.filter(::isParsingToken)
 
-    fun opaqueRanges(): MdxOpaqueRanges {
+    fun opaqueRanges(): MdxTextRangeSet {
       val ranges = buildList {
         var position = 0
         while (position < allTokens.size) {
@@ -142,35 +143,35 @@ internal class MdxInlineElementParser : SequentialParser {
             end = allTokens[position].end
             position++
           }
-          if (start < end) add(start..end)
+          if (start < end) add(TextRange(start, end))
         }
       }
-      return MdxOpaqueRanges.fromSortedNonOverlapping(ranges)
+      return MdxTextRangeSet.of(ranges)
     }
 
-    fun toTokenRange(charRange: IntRange): IntRange? {
-      val first = firstEndingAfter(allTokens, charRange.first)
-      val afterLast = firstStartingAtOrAfter(allTokens, charRange.last)
+    fun toTokenRange(charRange: TextRange): IntRange? {
+      val first = firstEndingAfter(allTokens, charRange.startOffset)
+      val afterLast = firstStartingAtOrAfter(allTokens, charRange.endOffset)
       if (first >= afterLast) return null
       return allTokens[first].index..(allTokens[afterLast - 1].index + 1)
     }
 
-    fun parsingSpace(charRange: IntRange? = null, excludedRanges: Collection<IntRange>): List<IntRange> {
-      val first = if (charRange == null) 0 else firstEndingAfter(parsingTokens, charRange.first)
-      val afterLast = if (charRange == null) parsingTokens.size else firstStartingAtOrAfter(parsingTokens, charRange.last)
+    fun parsingSpace(charRange: TextRange? = null, excludedRanges: Collection<TextRange>): List<IntRange> {
+      val first = if (charRange == null) 0 else firstEndingAfter(parsingTokens, charRange.startOffset)
+      val afterLast = if (charRange == null) parsingTokens.size else firstStartingAtOrAfter(parsingTokens, charRange.endOffset)
       if (first >= afterLast) return emptyList()
 
-      val exclusions = MdxOpaqueRanges.mergeOverlapping(excludedRanges)
+      val exclusions = MdxTextRangeSet.of(excludedRanges)
       var exclusionIndex = 0
       val result = RangesListBuilder()
       for (position in first..<afterLast) {
         val token = parsingTokens[position]
-        while (exclusionIndex < exclusions.size && exclusions[exclusionIndex].last <= token.start) {
+        while (exclusionIndex < exclusions.size && exclusions[exclusionIndex].endOffset <= token.start) {
           exclusionIndex++
         }
         val excluded = exclusionIndex < exclusions.size &&
-                       exclusions[exclusionIndex].first < token.end &&
-                       token.start < exclusions[exclusionIndex].last
+                       exclusions[exclusionIndex].startOffset < token.end &&
+                       token.start < exclusions[exclusionIndex].endOffset
         if (!excluded) {
           result.put(token.index)
         }

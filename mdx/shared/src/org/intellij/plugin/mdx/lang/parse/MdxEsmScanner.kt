@@ -3,11 +3,12 @@ package org.intellij.plugin.mdx.lang.parse
 import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.tree.IElementType
 
 object MdxEsmScanner {
   data class Block(
-    val range: IntRange,
+    val range: TextRange,
     val terminated: Boolean,
     val recoveryBoundary: Boolean = false,
   )
@@ -63,12 +64,12 @@ object MdxEsmScanner {
         offset++
         if (!isLineBreak) continue
         if (pendingSemicolonEnd != -1) {
-          terminalBlock = Block(start..pendingSemicolonEnd, terminated = true)
+          terminalBlock = Block(TextRange(start, pendingSemicolonEnd), terminated = true)
           return
         }
         if (nesting.atTopLevel) {
           if (hasBlankLineAfter(text, lineBreak + 1, visibleEnd)) {
-            terminalBlock = Block(start..lastSignificantEnd, terminated = false, recoveryBoundary = true)
+            terminalBlock = Block(TextRange(start, lastSignificantEnd), terminated = false, recoveryBoundary = true)
             return
           }
           if (lastSignificantEnd != -1 &&
@@ -76,7 +77,7 @@ object MdxEsmScanner {
               statement.isTerminated &&
               isCompleteBeforeLineBreak(text, lastSignificantEnd - 1) &&
               !nextLineContinuesEsm(text, lineBreak + 1, visibleEnd, lastSignificantEnd - 1)) {
-            terminalBlock = Block(start..lastSignificantEnd, terminated = true)
+            terminalBlock = Block(TextRange(start, lastSignificantEnd), terminated = true)
             return
           }
         }
@@ -90,7 +91,7 @@ object MdxEsmScanner {
       }
       if (!token.type.isTrivia() && pendingSemicolonEnd != -1) {
         if (hasLineBreakBefore(text, pendingSemicolonEnd, token.start) || !token.type.isEsmKeyword()) {
-          terminalBlock = Block(start..pendingSemicolonEnd, terminated = true)
+          terminalBlock = Block(TextRange(start, pendingSemicolonEnd), terminated = true)
           return
         }
         statement = ModuleStatementState()
@@ -114,9 +115,9 @@ object MdxEsmScanner {
     private fun currentBlock(limit: Int): Block {
       terminalBlock?.let { return it }
       if (pendingSemicolonEnd != -1) {
-        return Block(start..pendingSemicolonEnd, terminated = true)
+        return Block(TextRange(start, pendingSemicolonEnd), terminated = true)
       }
-      return Block(start..limit, nesting.atTopLevel && lexicalState.isTerminated && statement.isTerminated)
+      return Block(TextRange(start, limit), nesting.atTopLevel && lexicalState.isTerminated && statement.isTerminated)
     }
 
     private fun snapshot(): State = State(

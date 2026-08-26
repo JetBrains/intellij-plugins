@@ -23,7 +23,7 @@ class MdxEsmScannerTest {
     val complete = "import\n{hello}\nfrom\n'./hello.mdx'"
     val block = MdxEsmScanner.scanBlock(complete, 0)
     assertTrue(block?.terminated == true)
-    assertEquals(complete.length, block?.range?.last)
+    assertEquals(complete.length, block?.range?.endOffset)
   }
 
   @Test
@@ -33,7 +33,7 @@ class MdxEsmScannerTest {
 
     assertFalse(block?.terminated == true)
     assertTrue(block?.recoveryBoundary == true)
-    assertEquals(statement.length, block?.range?.last)
+    assertEquals(statement.length, block?.range?.endOffset)
   }
 
   @Test
@@ -42,7 +42,7 @@ class MdxEsmScannerTest {
     val block = MdxEsmScanner.scanBlock(text, 0)
 
     assertTrue(block?.terminated == true)
-    assertEquals(text.length, block?.range?.last)
+    assertEquals(text.length, block?.range?.endOffset)
     assertTrue(MdxEsmScanner.findMissingStatementSeparators(text, 0, text.length).isEmpty())
   }
 
@@ -80,7 +80,7 @@ class MdxEsmScannerTest {
     val block = MdxEsmScanner.scanBlock("$statement\n# Heading", 0)
 
     assertTrue(block?.terminated == true)
-    assertEquals(statement.length, block?.range?.last)
+    assertEquals(statement.length, block?.range?.endOffset)
   }
 
   @Test
@@ -95,7 +95,7 @@ class MdxEsmScannerTest {
     for (statement in statements) {
       val block = MdxEsmScanner.scanBlock("$statement\n# Heading", 0)
       assertTrue(block?.terminated == true, statement)
-      assertEquals(statement.length, block?.range?.last, statement)
+      assertEquals(statement.length, block?.range?.endOffset, statement)
     }
   }
 
@@ -110,7 +110,7 @@ class MdxEsmScannerTest {
     val block = MdxEsmScanner.scanBlock("$statement\n# Heading", 0)
 
     assertTrue(block?.terminated == true)
-    assertEquals(statement.length, block?.range?.last)
+    assertEquals(statement.length, block?.range?.endOffset)
   }
 
   @Test
@@ -119,7 +119,7 @@ class MdxEsmScannerTest {
     val block = MdxEsmScanner.scanBlock("$statement\n{value}", 0)
 
     assertTrue(block?.terminated == true)
-    assertEquals(statement.length, block?.range?.last)
+    assertEquals(statement.length, block?.range?.endOffset)
   }
 
   @Test
@@ -132,7 +132,7 @@ class MdxEsmScannerTest {
     val block = MdxEsmScanner.scanBlock("$statement\n# Heading", 0)
 
     assertTrue(block?.terminated == true)
-    assertEquals(statement.length, block?.range?.last)
+    assertEquals(statement.length, block?.range?.endOffset)
   }
 
   @Test
@@ -182,7 +182,7 @@ class MdxEsmScannerTest {
     val block = MdxEsmScanner.scanBlock(text, 0)
 
     assertTrue(block?.terminated == true)
-    assertEquals(text.length, block?.range?.last)
+    assertEquals(text.length, block?.range?.endOffset)
   }
 
   @Test
@@ -192,7 +192,7 @@ class MdxEsmScannerTest {
     val block = MdxEsmScanner.scanBlock(text, 0)
 
     assertTrue(block?.terminated == true)
-    assertEquals(text.length, block?.range?.last)
+    assertEquals(text.length, block?.range?.endOffset)
   }
 
   @Test

@@ -1,5 +1,6 @@
 package org.intellij.plugin.mdx
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.testFramework.junit5.TestApplication
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.plugin.mdx.lang.parse.MdxMarkdownLibElementTypes
@@ -69,8 +70,8 @@ class MdxMarkdownCodeSpanScannerTest {
     val escapedOpener = "\\`not code`"
     val escapedCloser = "`code \\`"
 
-    assertEquals(emptyList<IntRange>(), scan(escapedOpener))
-    assertEquals(listOf(0..escapedCloser.length), scan(escapedCloser))
+    assertEquals(emptyList<TextRange>(), scan(escapedOpener))
+    assertEquals(listOf(TextRange(0, escapedCloser.length)), scan(escapedCloser))
   }
 
   @Test
@@ -82,14 +83,14 @@ class MdxMarkdownCodeSpanScannerTest {
 
     assertEquals(
       listOf(
-        text.indexOf('`')..text.indexOf('`', text.indexOf('`') + 1) + 1,
-        text.indexOf("``")..text.indexOf("``", text.indexOf("``") + 2) + 2,
+        TextRange(text.indexOf('`'), text.indexOf('`', text.indexOf('`') + 1) + 1),
+        TextRange(text.indexOf("``"), text.indexOf("``", text.indexOf("``") + 2) + 2),
       ),
       spans,
     )
   }
 
-  private fun scan(text: String): List<IntRange> {
+  private fun scan(text: String): List<TextRange> {
     return MdxMarkdownCodeSpanScanner.Session(text, 0).advanceTo(text.length)
   }
 }

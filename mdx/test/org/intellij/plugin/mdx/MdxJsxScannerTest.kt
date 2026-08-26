@@ -1,8 +1,9 @@
 package org.intellij.plugin.mdx
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.testFramework.junit5.TestApplication
 import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
-import org.intellij.plugin.mdx.lang.parse.MdxOpaqueRanges
+import org.intellij.plugin.mdx.lang.parse.MdxTextRangeSet
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -16,7 +17,7 @@ class MdxJsxScannerTest {
     val element = MdxJsxScanner.scanJsxElement(text, 0)
 
     assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
-    assertEquals(text.length, element?.range?.last)
+    assertEquals(text.length, element?.range?.endOffset)
   }
 
   @Test
@@ -26,7 +27,7 @@ class MdxJsxScannerTest {
     val element = MdxJsxScanner.scanJsxElement(text, 0)
 
     assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
-    assertEquals(text.length, element?.range?.last)
+    assertEquals(text.length, element?.range?.endOffset)
   }
 
   @Test
@@ -36,7 +37,7 @@ class MdxJsxScannerTest {
     val element = MdxJsxScanner.scanJsxElement(text, 0)
 
     assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
-    assertEquals(text.length, element?.range?.last)
+    assertEquals(text.length, element?.range?.endOffset)
   }
 
   @Test
@@ -50,7 +51,7 @@ class MdxJsxScannerTest {
     val element = MdxJsxScanner.scanJsxElement(text, 0)
 
     assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
-    assertEquals(text.length, element?.range?.last)
+    assertEquals(text.length, element?.range?.endOffset)
   }
 
   @Test
@@ -61,9 +62,9 @@ class MdxJsxScannerTest {
 
     assertEquals(
       listOf("disabled ", "title = \"a > b\"", "count=42", "value={{ nested: true }}"),
-      tag?.attributes?.map { text.substring(it.first, it.last) },
+      tag?.attributes?.map { it.substring(text) },
     )
-    assertEquals(listOf("{...props}", "{{ nested: true }}"), tag?.expressions?.map { text.substring(it.first, it.last) })
+    assertEquals(listOf("{...props}", "{{ nested: true }}"), tag?.expressions?.map { it.substring(text) })
   }
 
   @Test
@@ -72,10 +73,14 @@ class MdxJsxScannerTest {
     val opaqueStart = text.indexOf('`')
     val opaqueEnd = text.indexOf('`', opaqueStart + 1) + 1
 
-    val element = MdxJsxScanner.scanJsxElement(text, 0, opaqueRanges = MdxOpaqueRanges.of(listOf(opaqueStart..opaqueEnd)))
+    val element = MdxJsxScanner.scanJsxElement(
+      text,
+      0,
+      opaqueRanges = MdxTextRangeSet.of(listOf(TextRange(opaqueStart, opaqueEnd))),
+    )
 
     assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
-    assertEquals(text.length, element?.range?.last)
+    assertEquals(text.length, element?.range?.endOffset)
     assertEquals(listOf("span", "span"), element?.tags?.map { it.name })
   }
 
@@ -98,7 +103,7 @@ class MdxJsxScannerTest {
     val element = MdxJsxScanner.scanJsxElement(text, 0)
 
     assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
-    assertEquals(text.length, element?.range?.last)
+    assertEquals(text.length, element?.range?.endOffset)
   }
 
   @Test
@@ -109,7 +114,7 @@ class MdxJsxScannerTest {
     val element = MdxJsxScanner.scanJsxElement(text, 0)
 
     assertEquals(MdxJsxScanner.Termination.RECOVERED, element?.termination)
-    assertEquals(recoveryEnd, element?.range?.last)
+    assertEquals(recoveryEnd, element?.range?.endOffset)
     assertTrue(element?.incomplete == true)
   }
 
@@ -120,7 +125,7 @@ class MdxJsxScannerTest {
     val element = MdxJsxScanner.scanJsxElement(text, 0)
 
     assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
-    assertEquals(text.length, element?.range?.last)
+    assertEquals(text.length, element?.range?.endOffset)
     assertTrue(element?.incomplete == true)
   }
 
@@ -135,7 +140,7 @@ class MdxJsxScannerTest {
       val element = MdxJsxScanner.scanJsxElement(text, 0)
 
       assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination, text)
-      assertEquals(text.length, element?.range?.last, text)
+      assertEquals(text.length, element?.range?.endOffset, text)
       assertTrue(element?.incomplete == true, text)
     }
   }
@@ -214,18 +219,18 @@ class MdxJsxScannerTest {
 
     session.advanceTo(firstLineEnd)
     val premature = session.advanceTo(codeLineEnd)
-    assertEquals(firstCloserEnd, premature?.range?.last)
+    assertEquals(firstCloserEnd, premature?.range?.endOffset)
     assertEquals(1, premature?.expressions?.size)
     val retainedTags = premature?.tags?.toList()
     val retainedExpressions = premature?.expressions?.toList()
 
-    session.addOpaqueRanges(listOf(0..1, codeStart..codeEnd))
+    session.addOpaqueRanges(listOf(TextRange(0, 1), TextRange(codeStart, codeEnd)))
     val repaired = session.advanceTo(text.length)
 
     assertEquals(MdxJsxScanner.Termination.MATCHED, repaired?.termination)
-    assertEquals(text.length, repaired?.range?.last)
+    assertEquals(text.length, repaired?.range?.endOffset)
     assertEquals(listOf("Box", "Box"), repaired?.tags?.map { it.name })
-    assertEquals(emptyList<IntRange>(), repaired?.expressions)
+    assertEquals(emptyList<TextRange>(), repaired?.expressions)
     assertEquals(retainedTags, premature?.tags)
     assertEquals(retainedExpressions, premature?.expressions)
   }
@@ -243,7 +248,7 @@ class MdxJsxScannerTest {
     assertEquals(MdxJsxScanner.Termination.UNTERMINATED, prefix?.termination)
     assertEquals(depth, prefix?.tags?.size)
     assertEquals(MdxJsxScanner.Termination.MATCHED, element?.termination)
-    assertEquals(text.length, element?.range?.last)
+    assertEquals(text.length, element?.range?.endOffset)
     assertEquals(depth * 2, element?.tags?.size)
   }
 }

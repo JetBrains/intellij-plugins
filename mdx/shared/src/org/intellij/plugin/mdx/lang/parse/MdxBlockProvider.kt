@@ -19,7 +19,7 @@ class MdxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
     val immediateBlock = when (start.kind) {
       MdxBlockKind.ESM -> {
         val block = MdxEsmScanner.scanBlock(localText, 0)
-        if (block != null && block.terminated && localText.subSequence(block.range.last, localText.length).isBlank()) {
+        if (block != null && block.terminated && localText.subSequence(block.range.endOffset, localText.length).isBlank()) {
           ImmediateBlock(
             MdxMarkdownLibElementTypes.MDX_ESM_BLOCK,
             MdxBlockNodeFactory.createEsmNodes(block, absoluteStart, includeRoot = false),
@@ -31,7 +31,7 @@ class MdxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
         val element = MdxJsxScanner.scanJsxElement(localText, 0)
         if (element != null &&
             element.termination != MdxJsxScanner.Termination.UNTERMINATED &&
-            localText.subSequence(element.range.last, localText.length).isBlank()) {
+            localText.subSequence(element.range.endOffset, localText.length).isBlank()) {
           ImmediateBlock(
             MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT,
             MdxBlockNodeFactory.createFlowElementNodes(localText, element, absoluteStart, includeRoot = false),
@@ -121,7 +121,7 @@ class MdxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
     val element = MdxJsxScanner.scanJsxElement(localText, 0)
     return element == null ||
            element.termination == MdxJsxScanner.Termination.UNTERMINATED ||
-           localText.subSequence(element.range.last, localText.length).isBlank()
+           localText.subSequence(element.range.endOffset, localText.length).isBlank()
   }
 
   private data class StartInfo(val offsetInLine: Int, val kind: MdxBlockKind)

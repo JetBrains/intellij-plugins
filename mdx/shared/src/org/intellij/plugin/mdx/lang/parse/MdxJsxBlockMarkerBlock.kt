@@ -1,5 +1,6 @@
 package org.intellij.plugin.mdx.lang.parse
 
+import com.intellij.openapi.util.TextRange
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.parser.LookaheadText
 import org.intellij.markdown.parser.ProductionHolder
@@ -86,8 +87,8 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
       }
       else {
         listOf(
-          SequentialParser.Node(openingPrefix, MdxMarkdownLibElementTypes.MDX_JSX_OPENING_ELEMENT),
-          SequentialParser.Node(openingPrefix, MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT),
+          SequentialParser.Node(openingPrefix.toMarkdownRange(), MdxMarkdownLibElementTypes.MDX_JSX_OPENING_ELEMENT),
+          SequentialParser.Node(openingPrefix.toMarkdownRange(), MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT),
         )
       }
     }
@@ -121,12 +122,12 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   private fun ingestProductionOpacity() {
     val productions = productions()
     if (processedProductionCount >= productions.size) return
-    val ranges = mutableListOf<IntRange>()
+    val ranges = mutableListOf<TextRange>()
     for (index in processedProductionCount..<productions.size) {
       val production = productions[index]
       if ((production.type == MarkdownElementTypes.CODE_FENCE || production.type == MarkdownElementTypes.HTML_BLOCK) &&
           production.range.first >= blockStartOffset) {
-        ranges.add(production.range)
+        ranges.add(production.range.toTextRange())
       }
     }
     processedProductionCount = productions.size

@@ -1,5 +1,6 @@
 package org.intellij.plugin.mdx.lang.parse
 
+import com.intellij.openapi.util.TextRange
 import org.intellij.markdown.parser.LookaheadText
 import org.intellij.markdown.parser.ProductionHolder
 import org.intellij.markdown.parser.constraints.MarkdownConstraints
@@ -93,21 +94,21 @@ internal class MdxOpaqueBlockMarkerBlock private constructor(
     override fun advanceTo(limit: Int): ScanResult {
       val block = session.advanceTo(limit)
       val terminated = block != null && (block.terminated || block.recoveryBoundary || limit == source.length)
-      return EsmScanResult(start..limit, block, terminated)
+      return EsmScanResult(TextRange(start, limit), block, terminated)
     }
   }
 
   private data class EsmScanResult(
-    val range: IntRange,
+    val range: TextRange,
     val block: MdxEsmScanner.Block?,
     override val terminated: Boolean,
   ) : ScanResult {
     override val boundaryEndOffset: Int?
-      get() = block?.range?.last
+      get() = block?.range?.endOffset
 
     override fun createNodes(): List<SequentialParser.Node> {
       return if (block == null || !terminated) {
-        listOf(SequentialParser.Node(range, MdxMarkdownLibTokenTypes.EMBEDDED_JS_CONTENT))
+        listOf(SequentialParser.Node(range.toMarkdownRange(), MdxMarkdownLibTokenTypes.EMBEDDED_JS_CONTENT))
       }
       else {
         MdxBlockNodeFactory.createEsmNodes(block)
@@ -123,24 +124,24 @@ internal class MdxOpaqueBlockMarkerBlock private constructor(
 
     override fun advanceTo(limit: Int): ScanResult {
       val expressionEnd = session.advanceTo(limit)
-      return ExpressionScanResult(start..limit, expressionEnd)
+      return ExpressionScanResult(TextRange(start, limit), expressionEnd)
     }
   }
 
   private data class ExpressionScanResult(
-    val range: IntRange,
+    val range: TextRange,
     private val expressionEnd: Int,
   ) : ScanResult {
     override val terminated: Boolean
-      get() = boundaryEndOffset == range.last
+      get() = boundaryEndOffset == range.endOffset
     override val boundaryEndOffset: Int?
       get() = expressionEnd.takeIf { it != -1 }
 
     override fun createNodes(): List<SequentialParser.Node> {
-      val nodeRange = boundaryEndOffset?.let { range.first..it } ?: range
+      val nodeRange = boundaryEndOffset?.let { TextRange(range.startOffset, it) } ?: range
       return listOf(
-        SequentialParser.Node(nodeRange, MdxMarkdownLibTokenTypes.EMBEDDED_JS_CONTENT),
-        SequentialParser.Node(nodeRange, MdxMarkdownLibElementTypes.MDX_EXPRESSION),
+        SequentialParser.Node(nodeRange.toMarkdownRange(), MdxMarkdownLibTokenTypes.EMBEDDED_JS_CONTENT),
+        SequentialParser.Node(nodeRange.toMarkdownRange(), MdxMarkdownLibElementTypes.MDX_EXPRESSION),
       )
     }
   }

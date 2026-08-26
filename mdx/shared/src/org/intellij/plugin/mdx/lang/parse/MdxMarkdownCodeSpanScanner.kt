@@ -1,5 +1,7 @@
 package org.intellij.plugin.mdx.lang.parse
 
+import com.intellij.openapi.util.TextRange
+
 /** Finds Markdown code spans before paragraph inline parsing has run. */
 internal object MdxMarkdownCodeSpanScanner {
   internal class Session(
@@ -16,18 +18,18 @@ internal object MdxMarkdownCodeSpanScanner {
     private var activeSegment: Segment? = null
     private var nextSpanIndex = 0
 
-    fun advanceTo(limit: Int, opaqueRanges: MdxOpaqueRangeLookup = MdxOpaqueRanges.EMPTY): List<IntRange> {
+    fun advanceTo(limit: Int, opaqueRanges: MdxOpaqueRangeLookup = MdxTextRangeSet.EMPTY): List<TextRange> {
       mdxCancellableText(text)
       require(limit in exposedEnd..scanEnd) {
         "Code-span scan limit must advance from $exposedEnd to at most $scanEnd: $limit"
       }
       exposedEnd = limit
-      val result = mutableListOf<IntRange>()
+      val result = mutableListOf<TextRange>()
 
       while (true) {
         val segment = activeSegment
         if (segment != null) {
-          while (nextSpanIndex < segment.spans.size && segment.spans[nextSpanIndex].first < limit) {
+          while (nextSpanIndex < segment.spans.size && segment.spans[nextSpanIndex].startOffset < limit) {
             result.add(segment.spans[nextSpanIndex])
             nextSpanIndex++
           }
@@ -151,7 +153,7 @@ internal object MdxMarkdownCodeSpanScanner {
       return offset
     }
 
-    private fun pairRuns(runs: List<BacktickRun>): List<IntRange> {
+    private fun pairRuns(runs: List<BacktickRun>): List<TextRange> {
       if (runs.isEmpty()) return emptyList()
       val nextEqualLength = IntArray(runs.size) { -1 }
       val latestByLength = HashMap<Int, Int>()
@@ -159,7 +161,7 @@ internal object MdxMarkdownCodeSpanScanner {
         nextEqualLength[index] = latestByLength.put(runs[index].length, index) ?: -1
       }
 
-      val result = mutableListOf<IntRange>()
+      val result = mutableListOf<TextRange>()
       var index = 0
       while (index < runs.size) {
         val closingIndex = nextEqualLength[index]
@@ -168,7 +170,7 @@ internal object MdxMarkdownCodeSpanScanner {
           continue
         }
         val closing = runs[closingIndex]
-        result.add(runs[index].start..closing.start + closing.length)
+        result.add(TextRange(runs[index].start, closing.start + closing.length))
         index = closingIndex + 1
       }
       return result
@@ -207,7 +209,7 @@ internal object MdxMarkdownCodeSpanScanner {
       }
     }
 
-    private data class Segment(val endOffset: Int, val spans: List<IntRange>)
+    private data class Segment(val endOffset: Int, val spans: List<TextRange>)
 
     private data class BacktickRun(val start: Int, val length: Int, var canOpen: Boolean)
   }
