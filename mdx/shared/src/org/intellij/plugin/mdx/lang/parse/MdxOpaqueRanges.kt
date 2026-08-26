@@ -27,25 +27,33 @@ internal class MdxOpaqueRanges private constructor(private val ranges: List<IntR
     val EMPTY = MdxOpaqueRanges(emptyList())
 
     fun of(ranges: Collection<IntRange>): MdxOpaqueRanges {
-      if (ranges.isEmpty()) return EMPTY
+      return fromSortedNonOverlapping(mergeOverlapping(ranges))
+    }
+
+    internal fun mergeOverlapping(ranges: Collection<IntRange>): List<IntRange> {
       val sorted = ranges
         .filter { it.first < it.last }
         .sortedWith(compareBy<IntRange> { it.first }.thenBy { it.last })
-      if (sorted.isEmpty()) return EMPTY
+      if (sorted.isEmpty()) return emptyList()
 
-      val merged = mutableListOf<IntRange>()
-      var current = sorted.first()
-      for (range in sorted.drop(1)) {
-        if (range.first <= current.last) {
-          current = current.first..maxOf(current.last, range.last)
+      return buildList {
+        var current = sorted.first()
+        for (range in sorted.drop(1)) {
+          if (range.first <= current.last) {
+            current = current.first..maxOf(current.last, range.last)
+          }
+          else {
+            add(current)
+            current = range
+          }
         }
-        else {
-          merged.add(current)
-          current = range
-        }
+        add(current)
       }
-      merged.add(current)
-      return MdxOpaqueRanges(merged)
+    }
+
+    /** Creates a lookup from ranges that are already sorted, non-empty, and non-overlapping. */
+    internal fun fromSortedNonOverlapping(ranges: List<IntRange>): MdxOpaqueRanges {
+      return if (ranges.isEmpty()) EMPTY else MdxOpaqueRanges(ranges)
     }
   }
 }

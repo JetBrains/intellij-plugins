@@ -80,6 +80,12 @@ class MdxScannerPerformanceTest {
   }
 
   @Test
+  fun inlineJsxParsingScalesLinearly() {
+    assertLinearGrowth("inline JSX parsing", ::inlineJsxParsingAccesses)
+    assertLinearGrowth("mixed inline parsing", ::mixedInlineParsingAccesses)
+  }
+
+  @Test
   fun largeJsxElementHasNoArbitraryScanLimit() {
     val text = buildJsx(18_000)
     assertTrue(text.length > 250_000)
@@ -179,7 +185,41 @@ class MdxScannerPerformanceTest {
   }
 
   private fun flowJsxParsingAccesses(elements: Int): Long {
-    val countingText = CountingCharSequence(buildJsx(elements))
+    return markdownParsingAccesses(buildJsx(elements))
+  }
+
+  private fun inlineJsxParsingAccesses(elements: Int): Long {
+    val text = buildString {
+      append("before ")
+      repeat(elements) {
+        append("<Item value={")
+        append(it)
+        append("}>text</Item> ")
+      }
+      append("after")
+    }
+    return markdownParsingAccesses(text)
+  }
+
+  private fun mixedInlineParsingAccesses(elements: Int): Long {
+    val text = buildString {
+      append("prefix ")
+      repeat(elements) {
+        append("*before <Item data={{ value: ")
+        append(it)
+        append(" }}>`code-")
+        append(it)
+        append("` {")
+        append(it)
+        append("}</Item> after* ")
+      }
+      append("suffix")
+    }
+    return markdownParsingAccesses(text)
+  }
+
+  private fun markdownParsingAccesses(text: String): Long {
+    val countingText = CountingCharSequence(text)
     MarkdownParser(MdxFlavourDescriptor, cancellationToken = CancellationToken.NonCancellable)
       .parse(MarkdownElementType("MDX_PERFORMANCE_TEST_ROOT"), countingText)
     return countingText.accesses

@@ -110,7 +110,9 @@ interpreted as links. Inline parsing then continues in separate ownership spaces
 omits each complete JSX root but glues the text on either side so emphasis and links can wrap it;
 each element body is parsed in its own inner space with tags, attributes, and expressions excluded.
 Standalone expressions stay opaque within whichever space contains them. A delimiter inside an
-element therefore cannot pair with one outside it.
+element therefore cannot pair with one outside it. Character ranges are projected through one
+indexed token view; merged exclusion intervals are then swept once for the outer paragraph and only
+across each element's own inner content.
 
 ### Scanner ownership
 
