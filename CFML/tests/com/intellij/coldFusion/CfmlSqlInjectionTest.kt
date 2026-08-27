@@ -6,7 +6,6 @@ import com.intellij.database.Dbms
 import com.intellij.database.psi.DbDataSource
 import com.intellij.database.psi.DbPsiFacade
 import com.intellij.database.psi.DbPsiFacadeImpl
-import com.intellij.database.testFramework.DatabaseTestUtils
 import com.intellij.database.testFramework.DatabaseTestUtils.setDialectMapping
 import com.intellij.database.util.DbSqlUtil
 import com.intellij.database.util.SqlDialects
@@ -137,26 +136,25 @@ fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSour
     urls.add(virtualFile.url)
   }
 
+  UIUtil.dispatchAllInvocationEvents()
   IndexingTestUtil.waitUntilIndexesAreReady(project) // wait after setMapping
   val dataSource = SqlDataSourceImpl(dialect.dbms.name, project, null)
+  dataSource.isAutoSync = false
   dataSource.urls = urls
 
   val dbPsiFacade = DbPsiFacade.getInstance(project) as DbPsiFacadeImpl
   val manager = SqlDataSourceManager.getInstance(project)
   TestCase.assertNotNull(manager)
 
-  dbPsiFacade.createDataSourceWrapperElement(dataSource, manager)
-  UIUtil.dispatchAllInvocationEvents()
+  val dataSourceElement = dbPsiFacade.createDataSourceWrapperElement(dataSource, manager)
+  manager.addDataSource(dataSource)
   Disposer.register(testRootDisposable, Disposable {
     manager.removeDataSource(dataSource)
     UIUtil.dispatchAllInvocationEvents()
     dbPsiFacade.flushUpdates()
     UIUtil.dispatchAllInvocationEvents()
   })
-  val dataSourceElement = dbPsiFacade.dataSources.first { it.delegate == dataSource }
-  TestCase.assertNotNull(dataSourceElement)
 
-  DatabaseTestUtils.invokeOnPooledThreadSync { dataSource.waitComputed() }
   UIUtil.dispatchAllInvocationEvents()
   dbPsiFacade.flushUpdates()
   UIUtil.dispatchAllInvocationEvents()
