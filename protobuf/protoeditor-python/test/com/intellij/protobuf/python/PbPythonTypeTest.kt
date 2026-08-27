@@ -1,10 +1,18 @@
 package com.intellij.protobuf.python
 
 import com.intellij.protobuf.gencodeutils.TypeExpectationMarker
+import com.intellij.protobuf.python.inspection.PbMessagePositionalArgumentsNotAllowedInspection
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.util.parentOfType
+import com.jetbrains.python.inspections.PyArgumentListInspection
 import com.jetbrains.python.inspections.PyCallingNonCallableInspection
+import com.jetbrains.python.inspections.PyEnumInspection
+import com.jetbrains.python.inspections.PyMethodOverridingInspection
+import com.jetbrains.python.inspections.PyOverloadsInspection
+import com.jetbrains.python.inspections.PyOverridesInspection
+import com.jetbrains.python.inspections.PyTypeAliasRedeclarationInspection
 import com.jetbrains.python.inspections.PyTypeCheckerInspection
+import com.jetbrains.python.inspections.PyTypeHintsInspection
 import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferencesInspection
 import com.jetbrains.python.psi.PyExpression
 import com.jetbrains.python.psi.types.TypeEvalContext
@@ -19,9 +27,18 @@ class PbPythonTypeTest : PbPythonTestBase() {
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(
-      PyTypeCheckerInspection::class.java,
       PyUnresolvedReferencesInspection::class.java,
+      PyTypeCheckerInspection::class.java,
+      PyArgumentListInspection::class.java,
       PyCallingNonCallableInspection::class.java,
+      PyEnumInspection::class.java,
+      PyMethodOverridingInspection::class.java,
+      PyOverloadsInspection::class.java,
+      PyOverridesInspection::class.java,
+      PyTypeHintsInspection::class.java,
+      PyTypeAliasRedeclarationInspection::class.java,
+
+      PbMessagePositionalArgumentsNotAllowedInspection::class.java
     )
   }
 
