@@ -145,7 +145,7 @@ fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSour
   val manager = SqlDataSourceManager.getInstance(project)
   TestCase.assertNotNull(manager)
 
-  manager.addDataSource(dataSource)
+  dbPsiFacade.createDataSourceWrapperElement(dataSource, manager)
   UIUtil.dispatchAllInvocationEvents()
   Disposer.register(testRootDisposable, Disposable {
     manager.removeDataSource(dataSource)
