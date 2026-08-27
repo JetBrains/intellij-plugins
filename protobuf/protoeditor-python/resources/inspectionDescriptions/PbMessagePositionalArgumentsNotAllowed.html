@@ -1,0 +1,16 @@
+<html>
+<body>
+<p>
+  Reports positional arguments used when creating a Protobuf message in Python.
+</p>
+<p>
+  Protobuf message constructors accept only keyword arguments that match message fields.
+  Passing positional arguments causes a <code>TypeError</code> at runtime.
+</p>
+<p>Example:</p>
+<pre><code lang="Python">
+ProtoMessage("value")             # Incorrect
+ProtoMessage(field_name="value")  # Correct
+</code></pre>
+</body>
+</html>

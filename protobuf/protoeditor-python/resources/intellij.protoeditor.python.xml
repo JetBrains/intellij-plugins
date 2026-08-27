@@ -45,5 +45,15 @@
       implementation="com.intellij.protobuf.python.documentation.PbPythonDocumentationTargetProvider"/>
     <platform.backend.documentation.linkHandler
       implementation="com.intellij.protobuf.python.documentation.PbPythonDocumentationLinkHandler"/>
+
+    <!-- Additional Inspections -->
+    <localInspection language="Python"
+                     implementationClass="com.intellij.protobuf.python.inspection.PbMessagePositionalArgumentsNotAllowedInspection"
+                     bundle="messages.PbPythonBundle"
+                     key="inspection.message.positional.argument.display.name"
+                     groupBundle="messages.ProtobufLangBundle"
+                     groupKey="protobuf.inspections.group.name"
+                     enabledByDefault="true"
+                     level="ERROR"/>
   </extensions>
 </idea-plugin>
