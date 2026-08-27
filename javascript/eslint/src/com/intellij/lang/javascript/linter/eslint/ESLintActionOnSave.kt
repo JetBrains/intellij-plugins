@@ -22,9 +22,15 @@ import kotlinx.coroutines.withContext
 internal class ESLintActionOnSave : ActionsOnSaveFileDocumentManagerListener.DocumentUpdatingActionOnSave() {
   override val presentableName: String = "ESLint"
 
-  override fun isEnabledForProject(project: Project): Boolean =
-    EslintConfiguration.getInstance(project).isFixOnSaveEnabled ||
-    StandardJSConfiguration.getInstance(project).isFixOnSaveEnabled
+  override fun isEnabledForProject(project: Project): Boolean {
+    // Called on EDT under a write-intent read action, so it must not create the services: loading their state is a
+    // blocking file read, which is an IJent RPC on WSL-backed projects and freezes the EDT (WEB-78877).
+    // StandardJSConfiguration.isFixOnSaveEnabled() reads EslintConfiguration, so while the latter does not exist
+    // there is no answer to give without performing that read.
+    val eslintConfiguration = project.getServiceIfCreated(EslintConfiguration::class.java) ?: return false
+    return eslintConfiguration.isFixOnSaveEnabled ||
+           project.getServiceIfCreated(StandardJSConfiguration::class.java)?.isFixOnSaveEnabled == true
+  }
 
   override suspend fun updateDocument(project: Project, document: Document) {
     val (action, psiFile) = readAction { getActionAndFileToProcess(project, document) } ?: return

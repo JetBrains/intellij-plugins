@@ -23,7 +23,10 @@ import kotlinx.coroutines.withContext
 internal class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.DocumentUpdatingActionOnSave() {
   override val presentableName: @NlsSafe String = "Prettier"
 
-  override fun isEnabledForProject(project: Project): Boolean = PrettierConfiguration.getInstance(project).isRunOnSave
+  // Called on EDT under a write-intent read action, so it must not create the service: loading its state is a
+  // blocking file read, which is an IJent RPC on WSL-backed projects and freezes the EDT (WEB-78877).
+  override fun isEnabledForProject(project: Project): Boolean =
+    project.getServiceIfCreated(PrettierConfiguration::class.java)?.isRunOnSave == true
 
   override suspend fun updateDocument(project: Project, document: Document) {
     val (file, psiFile) = readAction { getFileToProcess(project, document) } ?: return
