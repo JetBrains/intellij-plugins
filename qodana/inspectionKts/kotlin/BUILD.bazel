@@ -12,6 +12,11 @@ jvm_provided_library(
     lib = "@community//libraries/kotlinc/kotlin-scripting-jvm:libraries-kotlinc-kotlin-scripting-jvm",
 )
 
+jvm_provided_library(
+    name = "community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-compiler-impl_provided",
+    lib = "@community//libraries/kotlinc/kotlin-scripting-compiler-impl:libraries-kotlinc-kotlin-scripting-compiler-impl",
+)
+
 jvm_library(
     name = "kotlin",
     srcs = glob(
@@ -37,7 +42,6 @@ jvm_library(
         "@community//java/java-psi-api:psi",
         "@community//libraries/kotlinc/analysis-api:libraries-kotlinc-analysis-api",
         "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
-        "@lib//:kotlinc-kotlin-scripting-compiler-impl-provided",
         "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
         "@community//platform/projectModel-api:projectModel",
         "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
@@ -57,6 +61,7 @@ jvm_library(
         "@community//platform/indexing-api:indexing",
         ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-common_provided",
         ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-jvm_provided",
+        ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-compiler-impl_provided",
     ],
 )
 
@@ -85,7 +90,8 @@ jvm_library(
         "@community//libraries/kotlinc/kotlin-scripting-common:libraries-kotlinc-kotlin-scripting-common_test_lib",
         "@community//libraries/kotlinc/kotlin-scripting-jvm:libraries-kotlinc-kotlin-scripting-jvm",
         "@community//libraries/kotlinc/kotlin-scripting-jvm:libraries-kotlinc-kotlin-scripting-jvm_test_lib",
-        "@lib//:kotlinc-kotlin-scripting-compiler-impl-provided",
+        "@community//libraries/kotlinc/kotlin-scripting-compiler-impl:libraries-kotlinc-kotlin-scripting-compiler-impl",
+        "@community//libraries/kotlinc/kotlin-scripting-compiler-impl:libraries-kotlinc-kotlin-scripting-compiler-impl_test_lib",
         "@community//plugins/dev/intellij.dev.psiViewer:psiViewer_test_lib",
         "@community//platform/projectModel-api:projectModel_test_lib",
         "//contrib/qodana/inspectionKts/core:qodana-inspectionKts_test_lib",
