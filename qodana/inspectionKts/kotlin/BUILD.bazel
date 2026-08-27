@@ -3,6 +3,11 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
 ### auto-generated section `build intellij.qodana.inspectionKts.kotlin` start
 jvm_provided_library(
+    name = "community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-common_provided",
+    lib = "@community//libraries/kotlinc/kotlin-scripting-common:libraries-kotlinc-kotlin-scripting-common",
+)
+
+jvm_provided_library(
     name = "community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-jvm_provided",
     lib = "@community//libraries/kotlinc/kotlin-scripting-jvm:libraries-kotlinc-kotlin-scripting-jvm",
 )
@@ -32,7 +37,6 @@ jvm_library(
         "@community//java/java-psi-api:psi",
         "@community//libraries/kotlinc/analysis-api:libraries-kotlinc-analysis-api",
         "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
-        "@lib//:kotlinc-kotlin-scripting-common-provided",
         "@lib//:kotlinc-kotlin-scripting-compiler-impl-provided",
         "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
         "@community//platform/projectModel-api:projectModel",
@@ -51,6 +55,7 @@ jvm_library(
         "@community//platform/backend/workspace",
         "@community//plugins/kotlin/base/scripting/scripting.shared",
         "@community//platform/indexing-api:indexing",
+        ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-common_provided",
         ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-jvm_provided",
     ],
 )
@@ -76,7 +81,8 @@ jvm_library(
         "@community//java/java-psi-api:psi_test_lib",
         "@community//libraries/kotlinc/analysis-api:libraries-kotlinc-analysis-api_test_lib",
         "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common_test_lib",
-        "@lib//:kotlinc-kotlin-scripting-common-provided",
+        "@community//libraries/kotlinc/kotlin-scripting-common:libraries-kotlinc-kotlin-scripting-common",
+        "@community//libraries/kotlinc/kotlin-scripting-common:libraries-kotlinc-kotlin-scripting-common_test_lib",
         "@community//libraries/kotlinc/kotlin-scripting-jvm:libraries-kotlinc-kotlin-scripting-jvm",
         "@community//libraries/kotlinc/kotlin-scripting-jvm:libraries-kotlinc-kotlin-scripting-jvm_test_lib",
         "@lib//:kotlinc-kotlin-scripting-compiler-impl-provided",
