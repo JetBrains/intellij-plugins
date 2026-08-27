@@ -66,6 +66,18 @@ class RuntimeNotificationCollectorTest {
   }
 
   @Test
+  fun `one failure reported under differing message texts is retained once`() {
+    val stackTrace = "java.lang.IllegalStateException: boom\n\tat Tool.run(Tool.kt:1)"
+    listOf("a.json", "b.json").forEach { file ->
+      subject.add(toolError("Tool", file, stackTrace).withMessage(Message().withText("Inspection Tool failed on $file")))
+    }
+
+    val notification = subject.notifications.single()
+    assertThat(notification.occurrences).isEqualTo(2)
+    assertThat(notification.locationUris).containsExactly("a.json", "b.json")
+  }
+
+  @Test
   fun `a failure reported once carries no occurrence count`() {
     subject.add(toolError("Tool", "a.json"))
 
@@ -161,7 +173,7 @@ class RuntimeNotificationCollectorTest {
         Location().withPhysicalLocation(PhysicalLocation().withArtifactLocation(ArtifactLocation().withUri(it)))
       })
       .withException(Exception().withMessage(stackTrace))
-      .withProperties(PropertyBag().apply { put("toolId", toolId) })
+      .withProperties(PropertyBag().apply { put(ToolErrorInspectListener.TOOL_ID, toolId) })
       .withKind(ToolErrorInspectListener.TOOL_ERROR_NOTIFICATION)
 
   private val Notification.occurrences: Int?

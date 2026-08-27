@@ -24,7 +24,7 @@ internal class ToolErrorInspectListener : InspectListener {
     const val TOOL_ERROR_NOTIFICATION = "toolError"
 
     private const val EXCEPTION_CLASS = "exceptionClass"
-    private const val TOOL_ID = "toolId"
+    internal const val TOOL_ID = "toolId"
     private val ignored = listOf(CancellationException::class, ProcessCanceledException::class, IndexNotReadyException::class)
 
     private fun Throwable.isRelevant() = ignored.none { it.isInstance(this) }

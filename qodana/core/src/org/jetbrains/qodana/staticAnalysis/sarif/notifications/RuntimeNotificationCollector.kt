@@ -80,13 +80,16 @@ class RuntimeNotificationCollector {
   private fun consumeCapacity(): Boolean = capacity.getAndUpdate { i -> maxOf(i - 1, 0) } > 0
 
   /**
-   * Identity of a failure: everything about it except which file was being inspected at the time. The stack trace is
-   * compared in full.
+   * Identity of a failure: which inspection failed and how, regardless of which file was being inspected at the time.
+   * The stack trace is compared in full.
    */
-  private data class FailureKey(val kind: String?, val message: String?, val stackTrace: String?)
+  private data class FailureKey(val toolId: String?, val stackTrace: String?)
 
   private val Notification.failureKey: FailureKey
-    get() = FailureKey(qodanaKind, message?.text, exception?.message)
+    get() = FailureKey(
+      toolId = properties?.get(ToolErrorInspectListener.TOOL_ID) as? String,
+      stackTrace = exception?.message,
+    )
 
   private val Notification.occurrences: Int
     get() = (properties?.get(OCCURRENCES_PROPERTY) as? Number)?.toInt() ?: 1
