@@ -8,6 +8,9 @@
     <content url="file://$MODULE_DIR$/test-data">
       <sourceFolder url="file://$MODULE_DIR$/test-data" type="java-test-resource" />
     </content>
+    <content url="file://$MODULE_DIR$/testResources">
+      <sourceFolder url="file://$MODULE_DIR$/testResources" type="java-test-resource" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />

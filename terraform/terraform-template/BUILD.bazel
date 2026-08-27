@@ -1,6 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
-load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `build intellij.terraform.template` start
 jvm_library(
@@ -86,6 +86,14 @@ exports_files(
 ### auto-generated section `iml intellij.terraform.template` end
 
 ### auto-generated section `build intellij.terraform.template.tests` start
+resourcegroup(
+    name = "template-tests_test_resources",
+    srcs = glob(
+        ["testResources/**/*"],
+    ),
+    strip_prefix = "testResources",
+)
+
 jvm_library(
     name = "template-tests",
     srcs = glob(
@@ -111,6 +119,7 @@ jvm_library(
         "//contrib/terraform/terraform-template:template",
         "//contrib/terraform/terraform-template:template_test_lib",
     ],
+    resource_jars = [":template-tests_test_resources"],
     resource_strip_prefix = "test-data",
     resources = glob(
         ["test-data/**/*"],

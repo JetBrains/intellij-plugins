@@ -158,6 +158,10 @@ jvm_library(
         "//contrib/cucumber:gherkin",
         "//contrib/cucumber:gherkin_test_lib",
     ],
+    resource_strip_prefix = "testResources",
+    resources = glob(
+        ["testResources/**/*"],
+    ),
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,

@@ -5,6 +5,9 @@
     <content url="file://$MODULE_DIR$/src/test/kotlin">
       <sourceFolder url="file://$MODULE_DIR$/src/test/kotlin" isTestSource="true" />
     </content>
+    <content url="file://$MODULE_DIR$/testResources">
+      <sourceFolder url="file://$MODULE_DIR$/testResources" type="java-test-resource" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="kotlin-stdlib" level="project" />
