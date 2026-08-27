@@ -6,23 +6,27 @@ import com.intellij.database.Dbms
 import com.intellij.database.psi.DbDataSource
 import com.intellij.database.psi.DbPsiFacade
 import com.intellij.database.psi.DbPsiFacadeImpl
+import com.intellij.database.testFramework.DatabaseTestUtils
 import com.intellij.database.testFramework.DatabaseTestUtils.setDialectMapping
 import com.intellij.database.util.DbSqlUtil
 import com.intellij.database.util.SqlDialects
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.sql.database.SqlDataSourceAutoSyncManager
 import com.intellij.sql.database.SqlDataSourceImpl
 import com.intellij.sql.database.SqlDataSourceManager
 import com.intellij.sql.dialects.setDialectMappingSync
 import com.intellij.sql.psi.SqlCommonKeywords
 import com.intellij.testFramework.IndexingTestUtil
+import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.FileContentUtil
 import com.intellij.util.ui.UIUtil
@@ -155,6 +159,11 @@ fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSour
     UIUtil.dispatchAllInvocationEvents()
   })
 
+  DatabaseTestUtils.invokeOnPooledThreadSync {
+    timeoutRunBlocking {
+      project.service<SqlDataSourceAutoSyncManager>().awaitComputed(dataSource)
+    }
+  }
   UIUtil.dispatchAllInvocationEvents()
   dbPsiFacade.flushUpdates()
   UIUtil.dispatchAllInvocationEvents()
