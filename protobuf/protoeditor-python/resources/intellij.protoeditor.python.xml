@@ -39,5 +39,11 @@
     <!-- Gutter Icons: `.proto` -> `.pyi` and generated `.py` navigation -->
     <codeInsight.lineMarkerProvider language="protobuf"
                                     implementationClass="com.intellij.protobuf.python.gutter.PbPythonLineMarkerProvider"/>
+
+    <!-- Quick Documentation -->
+    <platform.backend.documentation.psiTargetProvider
+      implementation="com.intellij.protobuf.python.documentation.PbPythonDocumentationTargetProvider"/>
+    <platform.backend.documentation.linkHandler
+      implementation="com.intellij.protobuf.python.documentation.PbPythonDocumentationLinkHandler"/>
   </extensions>
 </idea-plugin>
