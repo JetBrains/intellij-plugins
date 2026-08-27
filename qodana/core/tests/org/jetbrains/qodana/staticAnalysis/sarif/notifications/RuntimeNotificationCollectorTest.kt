@@ -10,13 +10,19 @@ import com.jetbrains.qodana.sarif.model.PropertyBag
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.qodana.staticAnalysis.profile.SanityInspectionGroup
 import org.jetbrains.qodana.staticAnalysis.sarif.withKind
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 
 
 class RuntimeNotificationCollectorTest {
 
-  private val subject = collector(maxRuntimeNotifications = 100)
+  private lateinit var subject: RuntimeNotificationCollector
+
+  @BeforeEach
+  fun setUp() {
+    subject = collector(maxRuntimeNotifications = 100)
+  }
 
   @Test
   fun `same failure reported for every inspected file is retained once`() {
@@ -107,8 +113,8 @@ class RuntimeNotificationCollectorTest {
   }
 
   @Test
-  fun `listed files are capped by the budget while the occurrence count stays exact`() {
-    val collector = collector(maxRuntimeNotifications = 5)
+  fun `listed files are capped by the location limit while the occurrence count stays exact`() {
+    val collector = collector(maxLocationsPerNotification = 5)
 
     repeat(60) { collector.add(toolError("Tool", "file$it.json")) }
 
@@ -129,14 +135,39 @@ class RuntimeNotificationCollectorTest {
   }
 
   @Test
-  fun `merging a report of several files stops at the budget`() {
-    val collector = collector(maxRuntimeNotifications = 3)
+  fun `merging a report of several files stops at the location limit`() {
+    val collector = collector(maxLocationsPerNotification = 3)
 
     collector.add(toolError("Tool", listOf("a.json", "b.json")))
     collector.add(toolError("Tool", listOf("c.json", "d.json", "e.json")))
 
     assertThat(collector.notifications.single().locationUris)
       .containsExactly("a.json", "b.json", "c.json")
+  }
+
+  @Test
+  fun `by default the listed files are capped at fifty`() {
+    val collector = collectorWithDefaultLocationLimit()
+
+    repeat(60) { collector.add(toolError("Tool", "file$it.json")) }
+
+    assertThat(collector.notifications.single().locationUris).hasSize(50)
+  }
+
+  @Test
+  fun `the location limit is taken from the system property`() {
+    val property = RuntimeNotificationCollector.MAX_LOCATIONS_PER_NOTIFICATION_PROPERTY
+    val previous = System.setProperty(property, "2")
+    try {
+      val collector = collectorWithDefaultLocationLimit()
+
+      repeat(5) { collector.add(toolError("Tool", "file$it.json")) }
+
+      assertThat(collector.notifications.single().locationUris).containsExactly("file0.json", "file1.json")
+    }
+    finally {
+      if (previous == null) System.clearProperty(property) else System.setProperty(property, previous)
+    }
   }
 
   @Test
@@ -151,8 +182,16 @@ class RuntimeNotificationCollectorTest {
   }
 
 
-  private fun collector(maxRuntimeNotifications: Int) = RuntimeNotificationCollector().apply {
-    initializeForRun(Path.of("project"), maxRuntimeNotifications)
+  private fun collector(
+    maxRuntimeNotifications: Int = 100,
+    maxLocationsPerNotification: Int = 100,
+  ) = RuntimeNotificationCollector().apply {
+    initializeForRun(Path.of("project"), maxRuntimeNotifications, maxLocationsPerNotification)
+  }
+
+  /** A collector that takes the locations limit from the system property, the way a real run does. */
+  private fun collectorWithDefaultLocationLimit() = RuntimeNotificationCollector().apply {
+    initializeForRun(Path.of("project"), maxRuntimeNotifications = 100)
   }
 
   private fun toolError(

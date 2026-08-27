@@ -28,6 +28,10 @@ class RuntimeNotificationCollector {
      * Absent when the failure was reported once.
      */
     const val OCCURRENCES_PROPERTY: String = "occurrences"
+
+    /** How many affected files at most are listed on the notification retained for a single failure. */
+    const val MAX_LOCATIONS_PER_NOTIFICATION_PROPERTY: String = "qodana.max.locations.per.notifications"
+    const val DEFAULT_MAX_LOCATIONS_PER_NOTIFICATION: Int = 50
   }
 
   private val _notifications = ConcurrentLinkedDeque<Notification>()
@@ -37,7 +41,7 @@ class RuntimeNotificationCollector {
   private val capacity = AtomicInteger(0)
 
   @Volatile
-  private var maxRuntimeNotifications = 0
+  private var maxLocationsPerNotification = DEFAULT_MAX_LOCATIONS_PER_NOTIFICATION
   private lateinit var projectPath: Path
 
   val notifications: List<Notification> get() = _notifications.toList()
@@ -45,9 +49,13 @@ class RuntimeNotificationCollector {
   fun initializeForRun(config: QodanaConfig) = initializeForRun(config.projectPath, config.maxRuntimeNotifications)
 
   @VisibleForTesting
-  internal fun initializeForRun(projectPath: Path, maxRuntimeNotifications: Int) {
+  internal fun initializeForRun(
+    projectPath: Path,
+    maxRuntimeNotifications: Int,
+    maxLocationsPerNotification: Int = Integer.getInteger(MAX_LOCATIONS_PER_NOTIFICATION_PROPERTY, DEFAULT_MAX_LOCATIONS_PER_NOTIFICATION),
+  ) {
     this.projectPath = projectPath
-    this.maxRuntimeNotifications = maxRuntimeNotifications
+    this.maxLocationsPerNotification = maxLocationsPerNotification
     _notifications.clear()
     retainedByFailure.clear()
     capacity.set(maxRuntimeNotifications)
@@ -101,11 +109,11 @@ class RuntimeNotificationCollector {
 
     val known = locations.orEmpty()
     val additional = duplicate.locations.orEmpty().filterNotNull()
-    if (additional.isEmpty() || known.size >= maxRuntimeNotifications) return
+    if (additional.isEmpty() || known.size >= maxLocationsPerNotification) return
 
     val merged = LinkedHashSet<Location>(known)
     for (location in additional) {
-      if (merged.size >= maxRuntimeNotifications) break
+      if (merged.size >= maxLocationsPerNotification) break
       merged += location
     }
     withLocations(merged)
