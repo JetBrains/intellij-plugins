@@ -14,7 +14,6 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
 import com.intellij.openapi.vcs.changes.ContentRevision;
 import com.intellij.openapi.vcs.changes.CurrentContentRevision;
@@ -50,7 +49,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.*;
+import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.getUnversionedFiles;
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static com.intellij.testFramework.UsefulTestCase.assertEquals;
 import static com.intellij.testFramework.UsefulTestCase.assertFalse;
@@ -66,6 +65,7 @@ import static com.intellij.testFramework.UsefulTestCase.assertUnorderedCollectio
 @SuppressWarnings("SameParameterValue")
 public class OfflineModeTest extends PerforceTestCase {
   private static final Logger LOG = Logger.getInstance(OfflineModeTest.class);
+
   @Override
   @Before
   public void before() throws Exception {
@@ -347,12 +347,12 @@ public class OfflineModeTest extends PerforceTestCase {
 
     Collection<Change> changes = ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges();
     assertUnorderedCollection(changes, c -> {
-      Assert.assertTrue(c.getBeforeRevision().getFile().getPath().endsWith("a.txt"));
-      Assert.assertTrue(c.getAfterRevision().getFile().getPath().endsWith("dir2/dir1/c.txt"));
-    }, c -> {
-                                               Assert.assertTrue(c.getBeforeRevision().getFile().getPath().endsWith("b.txt"));
-                                               Assert.assertTrue(c.getAfterRevision().getFile().getPath().endsWith("dir1/b.txt"));
-                                             }
+                                Assert.assertTrue(c.getBeforeRevision().getFile().getPath().endsWith("a.txt"));
+                                Assert.assertTrue(c.getAfterRevision().getFile().getPath().endsWith("dir2/dir1/c.txt"));
+                              }, c -> {
+                                Assert.assertTrue(c.getBeforeRevision().getFile().getPath().endsWith("b.txt"));
+                                Assert.assertTrue(c.getAfterRevision().getFile().getPath().endsWith("dir1/b.txt"));
+                              }
     );
 
     goOnline();
@@ -657,6 +657,7 @@ public class OfflineModeTest extends PerforceTestCase {
   public void testRenameInChangelist() {
     doTestRenameInChangelist();
   }
+
   private void doTestRenameInChangelist() {
     final VirtualFile fileToEdit = createAndSubmit("a.txt", "original content");
 
@@ -878,5 +879,4 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshChanges();
     Assert.assertEquals(Change.Type.MODIFICATION, getSingleChange().getType());
   }
-
 }

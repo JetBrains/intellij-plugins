@@ -181,7 +181,8 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     assertMappedNumber(descr + " (2)", number2);
   }
 
-  @Test public void testRenameChangelist() throws Exception {
+  @Test
+  public void testRenameChangelist() throws Exception {
     VirtualFile file = createFileInCommand("a.txt", "foo");
     addFile("a.txt");
     final long listNumber = createChangeList("descr1", List.of("//depot/a.txt"));
@@ -406,7 +407,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
 
     checkDuplicateDescriptionLists("123...", refA.get(), refB.get(), listNumber, listNumber2);
   }
-  
+
   @Test
   public void testChangeSecondLineOfDescription() throws VcsException {
     VirtualFile file = createFileInCommand(myWorkingCopyDir, "a.txt", "");
@@ -497,16 +498,16 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
 
     assertEquals(file, assertOneElement(getChangeListManager().getAllChanges()).getVirtualFile());
     assertSize(2, getChangeListManager().getChangeLists());
-    
+
     getChangeListManager().removeChangeList("xxx");
     refreshChanges();
     assertSize(1, getChangeListManager().getChangeLists());
     assertEquals(file, getSingleChange().getVirtualFile());
-    
+
     moveToChangelist(num, "//depot/b.txt");
     refreshChanges();
     assertSize(2, getChangeListManager().getChangeLists()); // xxx is non-empty, so show it again
-    
+
     moveToDefaultChangelist("//depot/b.txt");
     refreshChanges();
     assertSize(2, getChangeListManager().getChangeLists()); // still show xxx, because it wasn't deleted explicitly
@@ -524,7 +525,8 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
 
     Collection<Change> changes = getChangeListManager().findChangeList("xxx").getChanges();
     assertSize(2, changes);
-    assertEmpty(PerforceVcs.getInstance(myProject).getCheckinEnvironment().commit(Collections.singletonList(changes.iterator().next()), "single file"));
+    assertEmpty(PerforceVcs.getInstance(myProject).getCheckinEnvironment()
+                  .commit(Collections.singletonList(changes.iterator().next()), "single file"));
 
     refreshVfs();
     getChangeListManager().waitUntilRefreshed();
@@ -547,7 +549,8 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
 
     Collection<Change> changes = getChangeListManager().findChangeList("xxx").getChanges();
     assertSize(2, changes);
-    assertEmpty(PerforceVcs.getInstance(myProject).getCheckinEnvironment().commit(Collections.singletonList(changes.iterator().next()), "single file"));
+    assertEmpty(PerforceVcs.getInstance(myProject).getCheckinEnvironment()
+                  .commit(Collections.singletonList(changes.iterator().next()), "single file"));
 
     refreshVfs();
     getChangeListManager().waitUntilRefreshed();
@@ -566,7 +569,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
 
     VirtualFile file = createFileInCommand("a.txt", "");
     addFile("a.txt");
-    
+
     refreshChanges();
 
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(LocalChangeList.getDefaultName(), getChangeListManager(), file);

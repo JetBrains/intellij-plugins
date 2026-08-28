@@ -22,7 +22,6 @@ import com.intellij.openapi.vcs.VcsDirectoryMapping;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vcs.changes.Change;
-import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
 import com.intellij.openapi.vcs.changes.LocallyDeletedChange;
 import com.intellij.openapi.vcs.changes.VcsAnnotationLocalChangesListenerImpl;
@@ -78,7 +77,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.*;
+import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.getUnversionedFiles;
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static com.intellij.testFramework.UsefulTestCase.assertEquals;
 import static com.intellij.testFramework.UsefulTestCase.assertFalse;
@@ -320,7 +319,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
                                                                                                   RollbackProgressListener.EMPTY);
     });
     if (!exceptions.isEmpty()) {
-      for(VcsException ex: exceptions) {
+      for (VcsException ex : exceptions) {
         ex.printStackTrace();
       }
       fail("Unexpected exception: " + exceptions.get(0).toString());
@@ -347,16 +346,17 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected void rollbackChange(final Change c) {
     rollbackChanges(Collections.singletonList(c));
   }
+
   protected void rollbackChanges(final List<Change> changes) {
     List<VcsException> exceptions = new ArrayList<>();
     //noinspection ConstantConditions
     ApplicationManager.getApplication().invokeAndWait(() -> {
-        //noinspection ConstantConditions
-        PerforceVcs.getInstance(myProject).getRollbackEnvironment().rollbackChanges(changes, exceptions,
-                                                                                    RollbackProgressListener.EMPTY);
-      });
+      //noinspection ConstantConditions
+      PerforceVcs.getInstance(myProject).getRollbackEnvironment().rollbackChanges(changes, exceptions,
+                                                                                  RollbackProgressListener.EMPTY);
+    });
     if (!exceptions.isEmpty()) {
-      for(VcsException ex: exceptions) {
+      for (VcsException ex : exceptions) {
         ex.printStackTrace();
       }
       fail("Unexpected exception: " + exceptions.get(0).toString());
@@ -364,10 +364,10 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   }
 
   protected void refreshInfoAndClient() {
-    Map<VirtualFile,P4Connection> allConnections = PerforceConnectionManager.getInstance(myProject).getAllConnections();
+    Map<VirtualFile, P4Connection> allConnections = PerforceConnectionManager.getInstance(myProject).getAllConnections();
     Map<P4Connection, ConnectionInfo> infoAndClient =
       PerforceInfoAndClient.calculateInfos(allConnections.values(), PerforceRunner.getInstance(myProject),
-                                                   ClientRootsCache.getClientRootsCache(myProject));
+                                           ClientRootsCache.getClientRootsCache(myProject));
     PerforceClientRootsChecker checker = new PerforceClientRootsChecker(infoAndClient, allConnections);
     assertFalse(checker.hasAnyErrors());
   }
@@ -377,11 +377,10 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
       ApplicationManager.getApplication().invokeAndWait(() -> PerforceSettings.getSettings(myProject).disable(true));
     }
     catch (Exception e) {
-     throw new RuntimeException(e);
+      throw new RuntimeException(e);
     }
 
     LOG.debug("goOffline result " + PerforceSettings.getSettings(myProject).ENABLED);
-
   }
 
   protected void goOnline() {
@@ -467,6 +466,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected void setUseP4Config() {
     setUseP4Config(TEST_P4CONFIG);
   }
+
   protected void setUseP4Config(@NotNull String p4ConfigName) {
     getChangeListManager().waitUntilRefreshed();
     PerforceSettings.getSettings(myProject).useP4CONFIG = true;
@@ -529,6 +529,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected void stopPerforceServer() {
     stopPerforceServer(false);
   }
+
   private void stopPerforceServer(boolean fromDisposer) {
     LOG.debug("stopping p4 server");
     final String p4Path = PerforceSettings.getSettings(myProject).pathToExec;
@@ -548,12 +549,12 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
       if (StringUtil.isNotEmpty(out) || StringUtil.isNotEmpty(err) || rc != 0) {
         LOG.debug("rc = " + rc + ", out = " + out + ", err = " + err);
       }
-
     }
     catch (IOException e) {
       if (fromDisposer) {
         e.printStackTrace();
-      } else {
+      }
+      else {
         throw new RuntimeException(e);
       }
     }
@@ -658,12 +659,12 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected static String buildTestClientSpecCore(String clientName, String root) {
     String sep = System.lineSeparator();
     return "Client:\t" + clientName + sep +
-               "Root:\t" + root + sep +
-               "View:" + sep;
+           "Root:\t" + root + sep +
+           "View:" + sep;
   }
 
   protected void setupClient(String spec) {
-    verify(runP4(new String[] { "client", "-i" }, spec));
+    verify(runP4(new String[]{"client", "-i"}, spec));
     PerforceManager.getInstance(myProject).configurationChanged();
   }
 
@@ -672,7 +673,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     verify(result);
     final String stdout = result.getStdout();
     assertTrue("Unexpected 'p4 opened' result: " + stdout,
-                      StringUtil.startsWithConcatenation(stdout, "//depot/", path, "#1 - ", changeType));
+               StringUtil.startsWithConcatenation(stdout, "//depot/", path, "#1 - ", changeType));
   }
 
   protected void submitFile(final String... depotPaths) {
@@ -683,16 +684,16 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     StringBuilder submitSpec = new StringBuilder("Change:\tnew\r\n");
     submitSpec.append("Description:\r\n\ttest\r\n");
     submitSpec.append("Files:\r\n");
-    for(String depotPath: depotPaths) {
+    for (String depotPath : depotPaths) {
       submitSpec.append("\t").append(depotPath).append("\r\n");
     }
-    verify(runP4(new String[] { "-c", client, "submit", "-i"}, submitSpec.toString()));
+    verify(runP4(new String[]{"-c", client, "submit", "-i"}, submitSpec.toString()));
   }
 
   protected List<String> getFilesInDefaultChangelist() {
     ProcessOutput result = runP4WithClient("change", "-o");
     verify(result);
-    final Map<String,List<String>> map = FormParser.execute(result.getStdout(), PerforceRunner.CHANGE_FORM_FIELDS);
+    final Map<String, List<String>> map = FormParser.execute(result.getStdout(), PerforceRunner.CHANGE_FORM_FIELDS);
     final List<String> strings = map.get(PerforceRunner.FILES);
     if (strings != null) {
       return strings;
@@ -703,7 +704,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected List<String> getFilesInList(final long number) {
     ProcessOutput result = runP4WithClient("change", "-o", String.valueOf(number));
     verify(result);
-    final Map<String,List<String>> map = FormParser.execute(result.getStdout(), PerforceRunner.CHANGE_FORM_FIELDS);
+    final Map<String, List<String>> map = FormParser.execute(result.getStdout(), PerforceRunner.CHANGE_FORM_FIELDS);
     final List<String> strings = map.get(PerforceRunner.FILES);
     if (strings != null) {
       return strings;
@@ -714,11 +715,11 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected void editListDescription(final long number, final String description) throws VcsException {
     ProcessOutput result = runP4WithClient("change", "-o", String.valueOf(number));
     verify(result);
-    final Map<String,List<String>> map = FormParser.execute(result.getStdout(), PerforceRunner.CHANGE_FORM_FIELDS);
+    final Map<String, List<String>> map = FormParser.execute(result.getStdout(), PerforceRunner.CHANGE_FORM_FIELDS);
 
     final String specification =
       PerforceChangeListHelper.createSpecification(description, number, map.get(PerforceRunner.FILES), "test", "test", true, false);
-    result = runP4(new String[] {"-c", "test", "change", "-i"}, specification);
+    result = runP4(new String[]{"-c", "test", "change", "-i"}, specification);
     verify(result);
   }
 
@@ -726,9 +727,9 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected String getListDescription(final long number) {
     ProcessOutput result = runP4WithClient("change", "-o", String.valueOf(number));
     verify(result);
-    final Map<String,List<String>> map = FormParser.execute(result.getStdout(), PerforceRunner.CHANGE_FORM_FIELDS);
+    final Map<String, List<String>> map = FormParser.execute(result.getStdout(), PerforceRunner.CHANGE_FORM_FIELDS);
     final List<String> strings = map.get(PerforceRunner.DESCRIPTION);
-    if (strings != null && (! strings.isEmpty())) {
+    if (strings != null && (!strings.isEmpty())) {
       final StringBuilder sb = new StringBuilder();
       for (String string : strings) {
         if (sb.length() != 0) {
@@ -748,7 +749,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected void ensureNoEnvP4Config() {
     String p4ConfigValue = runP4(new String[]{"set", "P4CONFIG"}, null).getStdout();
     if (StringUtil.isNotEmpty(p4ConfigValue)) {
-      runP4(new String[] { "set", "P4CONFIG=" }, null);
+      runP4(new String[]{"set", "P4CONFIG="}, null);
       assertEmpty(runP4(new String[]{"set", "P4CONFIG"}, null).getStdout());
     }
   }
@@ -763,7 +764,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     verify(runP4WithClient("submit", "-c", String.valueOf(number)));
   }
 
-  protected List<VcsFileRevision> getFileHistory(VirtualFile file)  {
+  protected List<VcsFileRevision> getFileHistory(VirtualFile file) {
     try {
       //noinspection ConstantConditions
       return PerforceVcs.getInstance(myProject).getVcsHistoryProvider().createSessionFor(VcsUtil.getFilePath(file)).getRevisionList();
@@ -804,11 +805,11 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     ArrayList<VcsException> exceptions = new ArrayList<>();
     //noinspection ConstantConditions
     ApplicationManager.getApplication().invokeAndWait(() -> {
-        //noinspection ConstantConditions
-        PerforceVcs.getInstance(myProject).getRollbackEnvironment().rollbackMissingFileDeletion(Collections.singletonList(change.getPath()),
-                                                                                                exceptions,
-                                                                                                RollbackProgressListener.EMPTY);
-      });
+      //noinspection ConstantConditions
+      PerforceVcs.getInstance(myProject).getRollbackEnvironment().rollbackMissingFileDeletion(Collections.singletonList(change.getPath()),
+                                                                                              exceptions,
+                                                                                              RollbackProgressListener.EMPTY);
+    });
     assertEmpty(exceptions);
   }
 
@@ -828,7 +829,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
       if (string.length() > 0) {
         long number = PerforceChangeListHelper.parseCreatedListNumber(string);
         assert number != -1;
-        if (! numbers.contains(number)) {
+        if (!numbers.contains(number)) {
           numbers.add(number);
         }
       }
@@ -848,8 +849,8 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     createIOFile(dir2, TEST_P4CONFIG, createP4Config("dir2"));
     getChangeListManager().waitUntilRefreshed();
 
-    verify(runP4(new String[] { "client", "-i" }, buildTestClientSpec("test", dir1.getPath(), "//test/...")));
-    verify(runP4(new String[] { "client", "-i" }, buildTestClientSpec("dir2", dir2.getPath(), "//dir2/...")));
+    verify(runP4(new String[]{"client", "-i"}, buildTestClientSpec("test", dir1.getPath(), "//test/...")));
+    verify(runP4(new String[]{"client", "-i"}, buildTestClientSpec("dir2", dir2.getPath(), "//dir2/...")));
     setUseP4Config();
     setVcsMappings(createMapping(dir1), createMapping(dir2));
     refreshChanges();
@@ -884,7 +885,6 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     finally {
       runP4(new String[]{"set", variable + "="}, null);
     }
-
   }
 
   protected void moveToChangelist(final long newListNumber, final String filePath) {

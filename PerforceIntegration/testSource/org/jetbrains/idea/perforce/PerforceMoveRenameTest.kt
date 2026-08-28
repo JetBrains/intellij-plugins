@@ -180,8 +180,8 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
       assertTrue(revision.commitMessage!!.endsWith("comment2"))
       assertFalse(session.isCurrentRevision(revision.revisionNumber))
     }, Consumer { revision ->
-        assertTrue(revision.commitMessage!!.endsWith("comment1"))
-        assertFalse(session.isCurrentRevision(revision.revisionNumber))
+      assertTrue(revision.commitMessage!!.endsWith("comment1"))
+      assertFalse(session.isCurrentRevision(revision.revisionNumber))
     })
   }
 
@@ -348,7 +348,8 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     assertNull(hadException)
     ensureVfsIsReallyUpToDateAfterPreviousConcurrentRefreshes()
     renameFileInCommand(file1, "bar.txt")
-    assertTrue(hadException?.message?.contains(PerforceBundle.message("exception.text.cannot.assure.no.file.being.on.server", barPath)) == true)
+    assertTrue(hadException?.message?.contains(PerforceBundle.message("exception.text.cannot.assure.no.file.being.on.server",
+                                                                      barPath)) == true)
     hadException = null
     refreshChanges()
 

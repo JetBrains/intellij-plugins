@@ -15,7 +15,6 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
@@ -49,7 +48,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.*;
+import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.getUnversionedFiles;
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static com.intellij.testFramework.UsefulTestCase.assertEquals;
 import static com.intellij.testFramework.UsefulTestCase.assertNull;
@@ -86,7 +85,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
   private void doTestVariants(final Runnable runnable, final boolean insideUpdate) {
     if (insideUpdate) {
       myScheme.doTest(runnable);
-    } else {
+    }
+    else {
       runnable.run();
     }
   }
@@ -670,8 +670,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     ChangeListManagerImpl clManager = ChangeListManagerImpl.getInstanceImpl(myProject);
     VcsDirtyScopeManager.getInstance(myProject).markEverythingDirty();
     clManager.ensureUpToDate();
-    DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(new VirtualFile[] {subTree.myOuterFile, subTree.myInnerFile},
-      clManager.getDefaultListName(), clManager);
+    DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(new VirtualFile[]{subTree.myOuterFile, subTree.myInnerFile},
+                                                                clManager.getDefaultListName(), clManager);
   }
 
   @Test
@@ -697,13 +697,13 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     ChangeListManagerImpl clManager = ChangeListManagerImpl.getInstanceImpl(myProject);
     VcsDirtyScopeManager.getInstance(myProject).markEverythingDirty();
     clManager.ensureUpToDate();
-    DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(new VirtualFile[] {subTree.myOuterFile, subTree.myInnerFile},
-      clManager.getDefaultListName(), clManager);
+    DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(new VirtualFile[]{subTree.myOuterFile, subTree.myInnerFile},
+                                                                clManager.getDefaultListName(), clManager);
 
     VcsDirtyScopeManager.getInstance(myProject).fileDirty(subTree.myNonVersionedUpper);
     clManager.ensureUpToDate();
-    DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(new VirtualFile[] {subTree.myOuterFile, subTree.myInnerFile},
-      clManager.getDefaultListName(), clManager);
+    DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(new VirtualFile[]{subTree.myOuterFile, subTree.myInnerFile},
+                                                                clManager.getDefaultListName(), clManager);
   }
 
   @Test
@@ -790,7 +790,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
   private static void assertAandB(final List<String> files, final String stringA, final String stringB) {
     if (files.get(0).startsWith(stringA)) {
       assert files.get(1).startsWith(stringB);
-    } else {
+    }
+    else {
       assert files.get(0).startsWith(stringB);
       assert files.get(1).startsWith(stringA);
     }
@@ -805,7 +806,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     assert list != null && etalon.trim().equals(list.getComment().trim()) : (list == null ? null : list.getComment().trim());
   }
 
-  @Test public void testDoubleIntegrate() throws Exception {
+  @Test
+  public void testDoubleIntegrate() throws Exception {
     VirtualFile file = createFileInCommand(createDirInCommand(myWorkingCopyDir, "main"), "a.txt", "original");
     String main = new File(myClientRoot, "main").getPath() + File.separator;
     String rel = new File(myClientRoot, "rel").getPath() + File.separator;
@@ -1150,7 +1152,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     if (rollbackLocallyDeleted) {
       rollbackMissingFileDeletion(assertOneElement(getChangeListManager().getDeletedFiles()));
-    } else {
+    }
+    else {
       rollbackChange(getSingleChange());
     }
     getChangeListManager().waitUntilRefreshed();
@@ -1320,5 +1323,4 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     refreshChanges();
     assertEquals(file, getSingleChange().getVirtualFile());
   }
-
 }

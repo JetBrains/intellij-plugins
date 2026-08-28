@@ -19,7 +19,8 @@ public class PerforceListenerTest extends PerforceTestCase {
     verifyOpened("b.txt", "add");
   }
 
-  @Test public void testCopyToAnotherWorkspace() {
+  @Test
+  public void testCopyToAnotherWorkspace() {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
 
     VirtualFile dir1 = createDirInCommand(myWorkingCopyDir, "dir1");

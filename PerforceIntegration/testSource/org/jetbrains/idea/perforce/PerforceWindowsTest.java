@@ -6,7 +6,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.VcsConfiguration;
 import com.intellij.openapi.vcs.VcsDirectoryMapping;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
-import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import junit.framework.TestCase;
@@ -17,7 +16,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.*;
+import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.getUnversionedFiles;
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
 import static com.intellij.testFramework.UsefulTestCase.assertSameElements;
@@ -43,7 +42,7 @@ public class PerforceWindowsTest extends TestCase {
   }
 
   private void doSanityTest(PerforceTestCase tc) throws Exception {
-    tc.name = new TestName(){
+    tc.name = new TestName() {
       @Override
       public String getMethodName() {
         return PerforceWindowsTest.this.getName();
@@ -52,7 +51,8 @@ public class PerforceWindowsTest extends TestCase {
     tc.before();
 
     try {
-      tc.setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY);
+      tc.setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD,
+                                 VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY);
 
       tc.refreshInfoAndClient();
 
@@ -172,6 +172,5 @@ public class PerforceWindowsTest extends TestCase {
     }
     throw new AssertionError("Cannot find an empty drive letter");
   }
-
 }
 

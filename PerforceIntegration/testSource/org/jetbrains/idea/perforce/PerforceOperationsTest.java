@@ -11,7 +11,6 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vcs.annotate.FileAnnotation;
 import com.intellij.openapi.vcs.changes.Change;
-import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -40,7 +39,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.*;
+import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.getUnversionedFiles;
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static com.intellij.testFramework.UsefulTestCase.assertEquals;
 import static com.intellij.testFramework.UsefulTestCase.assertFalse;
@@ -92,6 +91,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
   public void testRenameAddedFile() {
     doTestRenameAddedFile();
   }
+
   private void doTestRenameAddedFile() {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
     final VirtualFile fileToAdd = createFileInCommand("a.txt", null);
@@ -123,6 +123,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
   public void testRenamePackage() throws Exception {
     doTestRenamePackage();
   }
+
   @Test
   public void testRenamePackage_Old() throws Exception {
     forceDisableMoveCommand();
@@ -263,7 +264,8 @@ public class PerforceOperationsTest extends PerforceTestCase {
     assertSize(1, ConnectionSelector.getConnections(myProject, getChangeListManager().getDefaultChangeList()).keySet());
   }
 
-  @Test public void testCommitRestrictedChangeList() throws VcsException {
+  @Test
+  public void testCommitRestrictedChangeList() throws VcsException {
     createFileInCommand("a.txt", "");
     addFile("a.txt");
     String spec = PerforceChangeListHelper.createSpecification("aaa", -1, List.of("//depot/a.txt"), null, null, false, true);
@@ -276,7 +278,8 @@ public class PerforceOperationsTest extends PerforceTestCase {
     assertEmpty(getChangeListManager().getAllChanges());
   }
 
-  @Test public void testSpecialCharactersInFileName() throws VcsException {
+  @Test
+  public void testSpecialCharactersInFileName() throws VcsException {
     String name = "a$#@#.txt";
     VirtualFile file = createFileInCommand(name, "");
     new P4AddOperation(getChangeListManager().getDefaultListName(), file).execute(myProject);
@@ -299,7 +302,6 @@ public class PerforceOperationsTest extends PerforceTestCase {
     new P4AddOperation(getChangeListManager().getDefaultListName(), createFileInCommand("a%.txt", "")).execute(myProject);
     getChangeListManager().waitUntilRefreshed();
     assertSize(3, getChangeListManager().getAllChanges());
-
   }
 
   @Test
@@ -389,7 +391,8 @@ public class PerforceOperationsTest extends PerforceTestCase {
 
     openForEdit(file);
     assertTrue(VfsUtilCore.virtualToIoFile(file).canWrite());
-    EdtTestUtil.runInEdtAndWait(() -> RevertAllUnchangedFilesAction.revertUnchanged(myProject, Collections.singletonList(myWorkingCopyDir), null, null));
+    EdtTestUtil.runInEdtAndWait(
+      () -> RevertAllUnchangedFilesAction.revertUnchanged(myProject, Collections.singletonList(myWorkingCopyDir), null, null));
     waitForAsyncRefresh();
     assertFalse(VfsUtilCore.virtualToIoFile(file).canWrite());
     getChangeListManager().waitUntilRefreshed();
@@ -420,14 +423,13 @@ public class PerforceOperationsTest extends PerforceTestCase {
     getChangeListManager().waitUntilRefreshed();
 
     assertEquals(file, getSingleChange().getVirtualFile());
-    
+
     rollbackChange(getSingleChange());
     getChangeListManager().waitUntilRefreshed();
     assertChangesViewEmpty();
-    
+
     editFileInCommand(file, "another");
     getChangeListManager().waitUntilRefreshed();
     assertEquals(file, getSingleChange().getVirtualFile());
   }
-
 }
