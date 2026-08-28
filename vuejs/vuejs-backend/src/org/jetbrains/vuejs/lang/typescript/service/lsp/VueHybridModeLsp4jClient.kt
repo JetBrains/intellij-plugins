@@ -16,7 +16,11 @@ import com.intellij.platform.lsp.api.Lsp4jClient
 import com.intellij.platform.lsp.api.LspClientManager
 import com.intellij.platform.lsp.api.LspServerNotificationsHandler
 import com.intellij.platform.lsp.api.LspIntegrationProvider
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification
 import org.jetbrains.vuejs.lang.typescript.service.VueLSCoroutineScope
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
@@ -57,7 +61,7 @@ internal class VueHybridModeLsp4jClient<P : LspIntegrationProvider>(
     }
 
     VueLSCoroutineScope.instance(project).cs.launch {
-      val result = getTsserverResponse(command, arguments)
+      val result = getTsserverResponseWithRetries(command, arguments, requestId)
       val responseJson = JsonArray().apply {
         add(
           JsonArray().apply {
@@ -72,6 +76,37 @@ internal class VueHybridModeLsp4jClient<P : LspIntegrationProvider>(
         lsp4jServer.tsserverResponse(responseJson)
       }
     }
+  }
+
+  /**
+   * The server waits for a `tsserver/response` with this requestId.
+   * A missing response blocks every later request of the server, for example a diagnostics pull.
+   * So a failed call must still produce a response; a null result stands for "no data".
+   * A short retry heals a transient failure, for example the tsserver "No Project" error during
+   * the tsserver warm-up. The retry window stays small: the server serializes its requests behind
+   * this response, and the server falls back to an inferred project on a null result.
+   * Throwable, not Exception: in tests a logged error surfaces as an AssertionError.
+   */
+  private suspend fun getTsserverResponseWithRetries(
+    command: String,
+    arguments: JsonElement?,
+    requestId: Int,
+  ): JsonElement? {
+    var lastFailure: Throwable? = null
+    repeat(MAX_TSSERVER_ATTEMPTS) {
+      try {
+        return getTsserverResponse(command, arguments)
+      }
+      catch (e: CancellationException) {
+        throw e
+      }
+      catch (e: Throwable) {
+        lastFailure = e
+        delay(TSSERVER_RETRY_DELAY)
+      }
+    }
+    thisLogger().warn("tsserver request '$command' (seq=$requestId) failed after $MAX_TSSERVER_ATTEMPTS attempts", lastFailure)
+    return null
   }
 
   private suspend fun getTsserverResponse(
@@ -89,6 +124,11 @@ internal class VueHybridModeLsp4jClient<P : LspIntegrationProvider>(
       command = command,
       args = arguments,
     )
+  }
+
+  private companion object {
+    private const val MAX_TSSERVER_ATTEMPTS: Int = 5
+    private val TSSERVER_RETRY_DELAY: Duration = 200.milliseconds
   }
 }
 
