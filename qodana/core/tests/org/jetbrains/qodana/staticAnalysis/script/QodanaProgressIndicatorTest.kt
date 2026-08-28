@@ -13,7 +13,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageStat
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
-import org.jetbrains.qodana.util.QodanaMessageReporter
+import org.jetbrains.qodana.staticAnalysis.testFramework.RecordingMessageReporter
 import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
@@ -227,16 +227,6 @@ private fun QodanaProgressIndicator.reportPercentProgress(job: JobDescriptor, te
   job.totalAmount = 100
   job.doneAmount = percent
   reportPercentProgress(job, text)
-}
-
-private class RecordingMessageReporter : QodanaMessageReporter by QodanaMessageReporter.EMPTY {
-  val messages = mutableListOf<String>()
-
-  override fun reportMessage(minVerboseLevel: Int, message: String?) {
-    if (message != null) {
-      messages.add(message)
-    }
-  }
 }
 
 private class TestQodanaGlobalInspectionContext(

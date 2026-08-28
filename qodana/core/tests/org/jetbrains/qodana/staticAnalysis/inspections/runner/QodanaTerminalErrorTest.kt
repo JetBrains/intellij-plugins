@@ -1,66 +1,57 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
+import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.openapi.progress.ProcessCanceledException
 import kotlinx.coroutines.CancellationException
-import org.jetbrains.qodana.util.QodanaMessageReporter
+import org.jetbrains.qodana.QodanaBundle
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Regression tests for the QD-15440 hang: [QodanaInspectionApplication.reportTerminalError] must handle any terminal
- * exception without rethrowing it, so the caller's `exitProcess` always runs.
+ * Regression tests for a hang where the platform logger's rethrow of a control-flow exception skipped the caller's
+ * `exitProcess`. Returning at all is what each of these proves: phrasing a terminal failure must never rethrow.
  */
 class QodanaTerminalErrorTest {
-  private class RecordingReporter : QodanaMessageReporter {
-    val errors = mutableListOf<Throwable>()
-    val messages = mutableListOf<String?>()
-    override fun reportError(e: Throwable) { errors += e }
-    override fun reportError(message: String?) { messages += message }
-    override fun reportMessage(minVerboseLevel: Int, message: String?) {}
-  }
+  private fun shown(e: Throwable): String? = consoleMessage(e, memoryVerdict(e))
 
-  private val reporter = RecordingReporter()
-
-  // Reaching the return also proves reportTerminalError did not rethrow — the property that keeps exitProcess from being skipped.
-  private fun report(e: Throwable) = QodanaInspectionApplication.reportTerminalError(e, reporter)
+  private fun logged(e: Throwable): Pair<String, Throwable?> = logRecord(e, memoryVerdict(e))!!
 
   @Test
   fun `a cancellation is reported as-is`() {
     // IndicatorCancellationException (the culprit) is package-private; a plain CancellationException is its supertype.
-    val ce = CancellationException("simulated indicator cancellation")
-
-    report(ce)
-
-    assertEquals(listOf<Throwable>(ce), reporter.errors)
-    assertTrue(reporter.messages.isEmpty())
+    assertEquals("simulated indicator cancellation", shown(CancellationException("simulated indicator cancellation")))
   }
 
   @Test
   fun `a ProcessCanceledException is reported via its wrapped QodanaCancellationException reason`() {
-    val reason = QodanaCancellationException("license expired")
-
-    report(ProcessCanceledException(reason))
-
-    assertEquals(listOf<Throwable>(reason), reporter.errors)
+    assertEquals("license expired", shown(ProcessCanceledException(QodanaCancellationException("license expired"))))
   }
 
   @Test
-  fun `a QodanaException is reported with a readable message`() {
-    report(QodanaException("boom"))
+  fun `an argument or config error is reported as itself, not as a Qodana bug`() {
+    val e = InspectionApplicationException("Directory 'nope' does not exist")
 
-    assertTrue(reporter.errors.isEmpty())
-    assertEquals(listOf("Qodana exited abnormally because: boom"), reporter.messages)
+    assertEquals("Directory 'nope' does not exist", shown(e))
+    // The one shape that logs nothing: there is no fault to record.
+    assertNull(logRecord(e, memoryVerdict(e)))
+  }
+
+  @Test
+  fun `a QodanaException is reported with a readable message, and keeps its trace in the log`() {
+    val boom = QodanaException("boom")
+
+    assertEquals("Qodana exited abnormally because: boom", shown(boom))
+    assertEquals(boom, logged(boom).second)
   }
 
   @Test
   fun `an internal fault is reported as a Qodana bug, not as a stack trace`() {
-    report(RuntimeException("kaboom"))
+    val message = shown(RuntimeException("kaboom")).orEmpty()
 
-    assertEquals(emptyList<Throwable>(), reporter.errors)
-    val message = soleMessage()
     assertTrue(message, message.contains("internal error"))
     assertTrue(message, message.contains("jb.gg/qodana-issue"))
     // The throwable identifies the fault, so it must precede the log pointer rather than land in its argument slot.
@@ -68,32 +59,35 @@ class QodanaTerminalErrorTest {
   }
 
   @Test
-  fun `an Error is reported as a Qodana bug`() {
-    // A failed assert or a broken linter image is our defect.
-    report(AssertionError("invariant broken"))
+  fun `an internal fault with no message is identified by its class name, not by null`() {
+    val message = shown(RuntimeException()).orEmpty()
 
-    assertEquals(emptyList<Throwable>(), reporter.errors)
-    val message = soleMessage()
     assertTrue(message, message.contains("internal error"))
-    assertTrue(message, message.contains("jb.gg/qodana-issue"))
+    assertTrue(message, message.contains(RuntimeException::class.java.name))
+    assertFalse(message, message.contains("null"))
   }
 
   @Test
-  fun `a throwable without a message is still named`() {
-    report(RuntimeException())
+  fun `an anonymous internal fault is still identified, though its simple name is empty`() {
+    val e = object : RuntimeException("boom") {}
+    // The pathological case this guards against: Class.getSimpleName() is contractually "" for an anonymous class.
+    assertTrue(e.javaClass.simpleName, e.javaClass.simpleName.isEmpty())
 
-    assertTrue(soleMessage(), soleMessage().contains("java.lang.RuntimeException"))
-    assertFalse(soleMessage(), soleMessage().contains("null"))
+    val message = shown(e).orEmpty()
+
+    assertTrue(message, message.contains("internal error"))
+    assertTrue(message, message.contains(e.javaClass.name))
   }
 
   @Test
-  fun `an anonymous throwable is still named`() {
-    report(object : RuntimeException("kaboom") {})
+  fun `an abort with no recorded reason is reported in our own words, with its trace in the log`() {
+    // A bare ProcessCanceledException has no message, so rendering it would put its class name on the console. The
+    // trace goes to the log as text: Logger.ensureNotControlFlow replaces a control-flow throwable with a synthetic one.
+    val abort = ProcessCanceledException()
 
-    // getSimpleName() is empty for an anonymous class, which would render a bare leading colon.
-    assertFalse(soleMessage(), soleMessage().contains(": : "))
-    assertTrue(soleMessage(), soleMessage().contains("kaboom"))
+    assertEquals(QodanaBundle.message("cli.run.cancelled"), shown(abort))
+    val (message, thrown) = logged(abort)
+    assertNull(thrown)
+    assertTrue(message, message.contains("\tat "))
   }
-
-  private fun soleMessage(): String = reporter.messages.single().orEmpty()
 }

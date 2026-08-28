@@ -10,16 +10,12 @@ import com.intellij.internal.statistic.updater.StatisticsValidationUpdatedServic
 import com.intellij.internal.statistic.updater.updateValidationRules
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.util.application
 import com.intellij.util.io.createParentDirectories
 import com.jetbrains.qodana.sarif.model.SarifReport
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
@@ -54,7 +50,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.absolute
 import kotlin.io.path.exists
-import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.minutes
 
 private const val QODANA_PLUGINS_THIRD_PARTY_ACCEPT = "idea.qodana.thirdpartyplugins.accept"
@@ -68,22 +63,14 @@ class QodanaInspectionApplication(
   private val reporter = QodanaMessageReporter.DEFAULT
 
   suspend fun startup() {
-    try {
-      config.license = checkLicense()
+    config.license = checkLicense()
 
-      if (!config.skipPreamble) {
-        printLicenseInfo(config.license)
-        printProductHeader()
-        printAppInfo()
-      }
-      run()
+    if (!config.skipPreamble) {
+      printLicenseInfo(config.license)
+      printProductHeader()
+      printAppInfo()
     }
-    catch (@Suppress("IncorrectCancellationExceptionHandling") e: Throwable) {
-      reportTerminalError(e, reporter)
-      exitProcess(1)
-    }
-
-    ApplicationManagerEx.getApplicationEx().exit(true, true)
+    run()
   }
 
   @VisibleForTesting
@@ -143,12 +130,6 @@ class QodanaInspectionApplication(
       finally {
         application.removeQodanaAnalysisConfig()
       }
-    }
-    catch (e: Throwable) {
-      if (!Logger.shouldRethrow(e)) {
-        LOG.error(e)
-      }
-      throw e
     }
     finally {
       LOG.info("sessionId: " + EventLogConfiguration.getInstance().getOrCreate("FUS").sessionId)
@@ -277,35 +258,5 @@ class QodanaInspectionApplication(
 
   companion object {
     private val LOG = logger<QodanaInspectionApplication>()
-
-    /**
-     * Reports the exception that terminated [startup]. Deliberately does NOT call `LOG.error`: the platform logger
-     * rethrows control-flow exceptions, which would skip the caller's `exitProcess` and hang the headless linter
-     * (QD-15440).
-     */
-    @VisibleForTesting
-    internal fun reportTerminalError(e: Throwable, reporter: QodanaMessageReporter) {
-      when (e) {
-        // QodanaCancellationException, ProcessCanceledException, IndicatorCancellationException — all CancellationException.
-        is CancellationException -> reporter.reportError(cancellationThrowableToReport(e) ?: e)
-        is QodanaException -> reporter.reportError("Qodana exited abnormally because: ${e.message}")
-        // The trace is a developer diagnostic and goes to idea.log only; the console gets one actionable line.
-        else -> {
-          LOG.warn("Qodana failed with a terminal error", e)
-          reporter.reportError(
-            QodanaBundle.message("cli.internal.error", e.toString(), PathManager.getLogDir().resolve("idea.log"))
-          )
-        }
-      }
-    }
-  }
-}
-
-@VisibleForTesting
-internal fun cancellationThrowableToReport(throwable: Throwable): Throwable? {
-  return when (throwable) {
-    is QodanaCancellationException -> throwable
-    is ProcessCanceledException -> (throwable.cause as? QodanaCancellationException) ?: throwable
-    else -> null
   }
 }
