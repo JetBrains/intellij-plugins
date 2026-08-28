@@ -15,6 +15,7 @@ abstract class PbPythonTestBase : PyTestCase() {
 
   internal data class GeneratedProtoContext(val apiVersion: ApiVersion, val baseName: String) {
     val importName: String = baseName + apiVersion.suffix
+    val protoFilePath: String = "proto/$baseName.proto"
     val generatedPyFileName: String = "$importName.py"
     val generatedPyiFileName: String = "$importName.pyi"
   }

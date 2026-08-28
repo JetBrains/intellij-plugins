@@ -35,5 +35,9 @@
     <typeDeclarationProvider
       implementation="com.intellij.protobuf.python.navigation.PbPythonTypeDeclarationProvider"
       order="first"/>
+
+    <!-- Gutter Icons: `.proto` -> `.pyi` and generated `.py` navigation -->
+    <codeInsight.lineMarkerProvider language="protobuf"
+                                    implementationClass="com.intellij.protobuf.python.gutter.PbPythonLineMarkerProvider"/>
   </extensions>
 </idea-plugin>
