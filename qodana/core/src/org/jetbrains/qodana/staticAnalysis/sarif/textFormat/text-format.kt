@@ -10,6 +10,8 @@ import com.vladsch.flexmark.parser.Parser
 import com.vladsch.flexmark.util.data.MutableDataSet
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import org.jsoup.nodes.Node
+import org.jsoup.nodes.TextNode
 
 private val htmlToMarkdownConverter by lazy { createHtmlToMarkdownConverter() }
 
@@ -29,7 +31,41 @@ private fun createHtmlToMarkdownConverter(): FlexmarkHtmlConverter {
 }
 
 fun htmlToMarkdown(html: String): String {
-  return htmlToMarkdownConverter.convert(html, -1)
+  return htmlToMarkdownConverter.convert(unwrapTables(html), -1)
+}
+
+private fun unwrapTables(html: String): String {
+  if (!html.contains("<table", ignoreCase = true)) return html
+
+  val document = Jsoup.parse(html)
+  document.outputSettings().prettyPrint(false)
+  // Reverse document order unwraps a nested table before the table that holds it.
+  document.select("table").asReversed().forEach(::unwrapTable)
+  return document.html()
+}
+
+private fun unwrapTable(table: Element) {
+  val parent = table.parent() ?: return
+  parent.insertChildren(table.siblingIndex(), flattenRows(table))
+  table.remove()
+}
+
+private fun flattenRows(table: Element): List<Node> = buildList {
+  // A table is a block element, so the first row must not join the text before the table.
+  if (startsAfterText(table)) add(Element("br"))
+  table.select("tr").forEach { row ->
+    row.children().forEachIndexed { index, cell ->
+      if (index > 0) add(TextNode(" "))
+      addAll(cell.childNodes())
+    }
+    add(Element("br"))
+  }
+}
+
+/** Tells if text comes directly before the table, without a line break between them. */
+private fun startsAfterText(table: Element): Boolean {
+  val previous = table.previousSibling()
+  return previous is TextNode && !previous.isBlank
 }
 
 fun htmlToPlainText(html: String): String {
