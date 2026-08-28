@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.linter.eslint.wsl
 
 import com.intellij.lang.javascript.linter.eslint.EslintInspection
-import com.intellij.wsl.WSLTempDirWithNodeInterpreterBase
+import com.intellij.wsl.remote.javascript.WSLTempDirWithNodeInterpreterBase
 import org.junit.Test
 
 class ESLintWSLTest : WSLTempDirWithNodeInterpreterBase() {

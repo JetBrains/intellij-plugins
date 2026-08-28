@@ -3,7 +3,7 @@ package com.intellij.prettier.wsl
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.prettierjs.PrettierConfiguration
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.wsl.WSLTempDirWithNodeInterpreterBase
+import com.intellij.wsl.remote.javascript.WSLTempDirWithNodeInterpreterBase
 import org.junit.Test
 import java.awt.EventQueue
 
