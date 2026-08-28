@@ -185,6 +185,80 @@ class TextFormatTest {
   }
 
   @Test
+  fun `test table in a message is unwrapped`() {
+    // QD-8409: the Spring autowiring inspection builds its message from nested layout tables.
+    @Language("HTML")
+    val html = "<html><table>" +
+               "<tr><td>Could not autowire. There is more than one bean of 'VetAppointmentProvider' type.</td></tr>" +
+               "<tr><td><table><tr><td>Beans:</td><td>" +
+               "onlineVetAppointmentProvider&nbsp;&nbsp; (OnlineVetAppointmentProvider.java)<br>" +
+               "receptionVetAppointmentProvider&nbsp;&nbsp; (ReceptionVetAppointmentProvider.java)<br>" +
+               "</td></tr></table></td></tr>" +
+               "</table></html>"
+
+    val br = "  \n"
+
+    @Language("Markdown")
+    val expectedMarkdown = "Could not autowire. There is more than one bean of 'VetAppointmentProvider' type." + br +
+                           "Beans: onlineVetAppointmentProvider (OnlineVetAppointmentProvider.java)" + br +
+                           "receptionVetAppointmentProvider (ReceptionVetAppointmentProvider.java)"
+
+    assertThat(htmlToMarkdown(html).trimEnd()).isEqualTo(expectedMarkdown)
+  }
+
+  @Test
+  fun `test table with a header cell is unwrapped too`() {
+    @Language("HTML")
+    val html = """
+      <html>
+      <body>
+      <table>
+      <tr><th>Assertion</th><th>Replacement</th></tr>
+      <tr><td>assertTrue(a == b)</td><td>assertEquals(a, b)</td></tr>
+      </table>
+      </body>
+      </html>
+    """.trimIndent()
+
+    val br = "  \n"
+
+    @Language("Markdown")
+    val expectedMarkdown = "Assertion Replacement" + br +
+                           "assertTrue(a == b) assertEquals(a, b)"
+
+    assertThat(htmlToMarkdown(html).trimEnd()).isEqualTo(expectedMarkdown)
+  }
+
+  @Test
+  fun `test table that follows text starts on a new line`() {
+    @Language("HTML")
+    val html = """
+      <html>
+      <body>
+      Reports any <code>assert</code> calls that can be replaced with simpler calls.
+      <table>
+        <tr><th>Example</th><th>&rarr;</th><th>Replacement</th></tr>
+        <tr>
+          <td><code>assertTrue(y() != null);</code></td>
+          <td></td>
+          <td><code>assertNotNull(y());</code></td>
+        </tr>
+      </table>
+      </body>
+      </html>
+    """.trimIndent()
+
+    val br = "  \n"
+
+    @Language("Markdown")
+    val expectedMarkdown = "Reports any `assert` calls that can be replaced with simpler calls. " + br +
+                           "Example \u2192 Replacement" + br +
+                           "`assertTrue(y() != null);` `assertNotNull(y());`"
+
+    assertThat(htmlToMarkdown(html).trimEnd()).isEqualTo(expectedMarkdown)
+  }
+
+  @Test
   fun `test simple markdown to html`() {
     @Language("Markdown")
     val markdown = """
