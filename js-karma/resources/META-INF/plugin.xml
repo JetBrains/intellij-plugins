@@ -33,9 +33,7 @@
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.core.impl"/>
     <module name="intellij.platform.core.ui"/>
-    <module name="intellij.platform.coverage"/>
     <module name="intellij.platform.debugger"/>
-    <module name="intellij.platform.debugger.impl"/>
     <module name="intellij.platform.editor.ui"/>
     <module name="intellij.platform.execution"/>
     <module name="intellij.platform.execution.impl"/>
@@ -55,15 +53,20 @@
     <module name="intellij.xml.psi.impl"/>
   </dependencies>
   <!-- endregion -->
-  <content namespace="jetbrains"/>
+  <content namespace="jetbrains">
+    <module name="intellij.javascript.karma.coverage" loading="optional"/>
+    <module name="intellij.javascript.karma.debug" loading="optional"/>
+  </content>
   <depends>com.intellij.modules.lang</depends>
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.modules.scriptDebugger.ui</depends>
 
-  <depends optional="true" config-file="karma-debug.xml">JavaScriptDebugger</depends>
-
-  <depends optional="true" config-file="karma-coverage.xml">com.intellij.modules.coverage</depends>
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.javascript.karma.debugSupport"
+                    interface="com.intellij.javascript.karma.execution.KarmaDebugSupport"
+                    dynamic="true"/>
+  </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
     <dependencySupport kind="javascript" coordinate="npm:karma" displayName="Karma"/>

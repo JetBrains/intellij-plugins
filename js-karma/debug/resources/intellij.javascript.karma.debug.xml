@@ -1,0 +1,38 @@
+<idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="Karma"/>
+    <module name="intellij.javascript.backend"/>
+    <module name="intellij.javascript.debugger.backend"/>
+    <module name="intellij.javascript.debugger.common"/>
+    <module name="intellij.javascript.testing"/>
+    <module name="intellij.javascript.wip.backend"/>
+    <module name="intellij.javascript.wip.protocol"/>
+    <module name="intellij.libraries.guava"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.core.ui"/>
+    <module name="intellij.platform.debugger"/>
+    <module name="intellij.platform.debugger.impl"/>
+    <module name="intellij.platform.editor.ui"/>
+    <module name="intellij.platform.execution"/>
+    <module name="intellij.platform.execution.impl"/>
+    <module name="intellij.platform.ide"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.scriptDebugger.backend"/>
+    <module name="intellij.platform.scriptDebugger.ui"/>
+    <module name="intellij.platform.smRunner"/>
+    <module name="intellij.platform.testRunner"/>
+    <module name="intellij.platform.util.ui"/>
+    <module name="intellij.platform.webide.impl"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <programRunner implementation="com.intellij.javascript.karma.debug.KarmaDebugProgramRunner"/>
+    <javascript.karma.debugSupport implementation="com.intellij.javascript.karma.debug.KarmaDebugSupportImpl"/>
+  </extensions>
+</idea-plugin>

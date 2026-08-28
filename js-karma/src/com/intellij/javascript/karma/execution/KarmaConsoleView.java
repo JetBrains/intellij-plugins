@@ -17,12 +17,8 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.ExecutionConsoleEx;
 import com.intellij.execution.ui.RunnerLayoutUi;
-import com.intellij.execution.ui.layout.LayoutAttractionPolicy;
-import com.intellij.execution.ui.layout.LayoutViewOptions;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
-import com.intellij.javascript.debugger.JSDebugTabLayouter;
-import com.intellij.javascript.debugger.JavaScriptDebugProcess;
 import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
@@ -35,7 +31,6 @@ import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.debugger.connection.VmConnection;
 
 public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx {
 
@@ -67,7 +62,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     return null;
   }
 
-  private @NotNull Content registerConsoleContent(final @NotNull RunnerLayoutUi ui) {
+  public @NotNull Content registerConsoleContent(final @NotNull RunnerLayoutUi ui) {
     ui.getOptions().setMinimizeActionEnabled(false);
     final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
                                                     getComponent(),
@@ -128,7 +123,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     });
   }
 
-  private void registerKarmaServerTab(@NotNull RunnerLayoutUi ui) {
+  public void registerKarmaServerTab(@NotNull RunnerLayoutUi ui) {
     KarmaServerLogComponent.register(getProperties().getProject(), myServer, ui);
     if (myServer.areBrowsersReady()) {
       selectContentId(ui, TEST_RUN_CONTENT_ID);
@@ -153,10 +148,6 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   public @NotNull KarmaServer getKarmaServer() {
     return myServer;
-  }
-
-  public JSDebugTabLayouter createDebugLayouter(@NotNull JavaScriptDebugProcess<?> debugProcess) {
-    return new KarmaDebugTabLayouter(debugProcess);
   }
 
   /**
@@ -207,27 +198,4 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     }
   }
 
-  private class KarmaDebugTabLayouter extends JSDebugTabLayouter {
-
-    KarmaDebugTabLayouter(@NotNull JavaScriptDebugProcess<? extends VmConnection> debugProcess) {
-      super(debugProcess);
-    }
-
-    @Override
-    public @NotNull Content registerConsoleContent(@NotNull RunnerLayoutUi ui, @NotNull ExecutionConsole console) {
-      return KarmaConsoleView.this.registerConsoleContent(ui);
-    }
-
-    @Override
-    public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
-      super.registerAdditionalContent(ui);
-      registerKarmaServerTab(ui);
-      // Overwrite "initFocusContent(DebuggerContentInfo.CONSOLE_CONTENT, LayoutViewOptions.STARTUP, ...)
-      // from com.intellij.xdebugger.impl.ui.DebuggerSessionTabBase()
-      ui.getDefaults().initContentAttraction(myServer.areBrowsersReady() ? ExecutionConsole.CONSOLE_CONTENT_ID
-                                                                         : KarmaServerLogComponent.KARMA_SERVER_CONTENT_ID,
-                                             LayoutViewOptions.STARTUP,
-                                             new LayoutAttractionPolicy.FocusOnce(false));
-    }
-  }
 }

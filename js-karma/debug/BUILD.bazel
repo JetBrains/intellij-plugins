@@ -1,0 +1,111 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.javascript.karma.debug` start
+jvm_library(
+    name = "debug",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.javascript.karma.debug",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "//contrib/js-karma:karma",
+        "//plugins/JavaScriptLanguage/javascript-backend",
+        "//plugins/JavaScriptDebugger/backend",
+        "//plugins/JavaScriptDebugger/common",
+        "//plugins/JavaScriptDebugger/wip/backend",
+        "//plugins/JavaScriptDebugger/wip/protocol",
+        "//plugins/js-test-common:javascript-testing",
+        "@community//libraries/guava",
+        "@community//platform/util/concurrency",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/core-impl",
+        "@community//platform/core-ui",
+        "@community//platform/xdebugger-api:debugger",
+        "@community//platform/xdebugger-impl:debugger-impl",
+        "@community//platform/execution",
+        "@community//platform/execution-impl",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/platform-api:ide",
+        "@community//platform/ide-core",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/platform-util-io:ide-util-io",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/script-debugger/backend",
+        "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
+        "@community//platform/smRunner",
+        "@community//platform/testRunner",
+        "@community//platform/util:util-ui",
+        "//webcore/impl",
+        "@lib//:kotlin-stdlib",
+    ],
+)
+
+content_module_jar(module = ":debug")
+
+jvm_library(
+    name = "debug_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.javascript.karma.debug",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":debug",
+        "//contrib/js-karma:karma_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
+        "//plugins/JavaScriptDebugger/backend:backend_test_lib",
+        "//plugins/JavaScriptDebugger/common:common_test_lib",
+        "//plugins/JavaScriptDebugger/wip/backend:backend_test_lib",
+        "//plugins/JavaScriptDebugger/wip/protocol:protocol_test_lib",
+        "//plugins/js-test-common:javascript-testing_test_lib",
+        "@community//libraries/guava:guava_test_lib",
+        "@community//platform/util/concurrency:concurrency_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/xdebugger-api:debugger_test_lib",
+        "@community//platform/xdebugger-impl:debugger-impl_test_lib",
+        "@community//platform/execution:execution_test_lib",
+        "@community//platform/execution-impl:execution-impl_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/script-debugger/backend:backend_test_lib",
+        "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui_test_lib",
+        "@community//platform/smRunner:smRunner_test_lib",
+        "@community//platform/testRunner:testRunner_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+        "//webcore/impl:impl_test_lib",
+    ],
+)
+### auto-generated section `build intellij.javascript.karma.debug` end
+
+### auto-generated section `iml intellij.javascript.karma.debug` start
+exports_files(
+    [
+        "intellij.javascript.karma.debug.iml",
+        "resources/intellij.javascript.karma.debug.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.javascript.karma.debug` end

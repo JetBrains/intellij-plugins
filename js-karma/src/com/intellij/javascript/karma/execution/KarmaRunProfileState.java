@@ -1,12 +1,10 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.coverage.CoverageExecutor;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
-import com.intellij.execution.ExecutorRegistry;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
@@ -14,7 +12,6 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.debugger.CommandLineDebugConfigurator;
-import com.intellij.javascript.debugger.locationResolving.JSLocationResolver;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.javascript.nodejs.debug.NodeDebuggableRunProfileState;
@@ -90,11 +87,7 @@ public final class KarmaRunProfileState implements NodeDebuggableRunProfileState
     if (server != null) {
       return Promises.resolvedPromise(server);
     }
-    JSLocationResolver locationResolver = ApplicationManager.getApplication().getService(JSLocationResolver.class);
-    if (locationResolver != null) {
-      // dependency is optional
-      locationResolver.dropCache(myRunConfiguration);
-    }
+    KarmaDebugSupport.dropLocationCacheIfAvailable(myRunConfiguration);
     return registry.startServer(serverSettings);
   }
 
@@ -154,7 +147,7 @@ public final class KarmaRunProfileState implements NodeDebuggableRunProfileState
     if (executor.equals(DefaultDebugExecutor.getDebugExecutorInstance())) {
       return KarmaExecutionType.DEBUG;
     }
-    if (executor.equals(ExecutorRegistry.getInstance().getExecutorById(CoverageExecutor.EXECUTOR_ID))) {
+    if (KarmaExecutionType.isCoverageExecutor(executor)) {
       return KarmaExecutionType.COVERAGE;
     }
     return KarmaExecutionType.RUN;

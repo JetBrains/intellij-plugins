@@ -1,7 +1,6 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution
 
-import com.intellij.coverage.CoverageExecutor
 import com.intellij.execution.Executor
 import com.intellij.execution.configuration.EnvironmentVariablesData
 import com.intellij.execution.executors.DefaultDebugExecutor
@@ -39,7 +38,7 @@ class KarmaServerSettings(private val executor: Executor,
   val nxProjectName: String? = detectNxProjectName(runConfiguration.project, settings)
 
   val isWithCoverage: Boolean
-    get() = executor is CoverageExecutor
+    get() = KarmaExecutionType.isCoverageExecutor(executor)
 
   val isDebug: Boolean
     get() = executor is DefaultDebugExecutor

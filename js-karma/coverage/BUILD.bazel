@@ -1,0 +1,97 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.javascript.karma.coverage` start
+jvm_library(
+    name = "coverage",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.javascript.karma.coverage",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "//contrib/js-karma:karma",
+        "//plugins/JavaScriptLanguage/javascript-backend",
+        "//plugins/JavaScriptLanguage/javascript-coverage",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "//plugins/js-test-common:javascript-testing",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/util/concurrency",
+        "@community//platform/core-api:core",
+        "@community//platform/core-impl",
+        "@community//plugins/coverage-common:coverage",
+        "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/execution",
+        "@community//platform/execution-impl",
+        "@community//platform/ide-core",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-impl",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/smRunner",
+        "@community//platform/testRunner",
+        "@community//xml/xml-psi-impl:psi-impl",
+        "@lib//:kotlin-stdlib",
+    ],
+)
+
+content_module_jar(module = ":coverage")
+
+jvm_library(
+    name = "coverage_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.javascript.karma.coverage",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":coverage",
+        "//contrib/js-karma:karma_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-coverage:javascript-coverage_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+        "//plugins/js-test-common:javascript-testing_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/util/concurrency:concurrency_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//plugins/coverage-common:coverage_test_lib",
+        "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/execution:execution_test_lib",
+        "@community//platform/execution-impl:execution-impl_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/smRunner:smRunner_test_lib",
+        "@community//platform/testRunner:testRunner_test_lib",
+        "@community//xml/xml-psi-impl:psi-impl_test_lib",
+    ],
+)
+### auto-generated section `build intellij.javascript.karma.coverage` end
+
+### auto-generated section `iml intellij.javascript.karma.coverage` start
+exports_files(
+    [
+        "intellij.javascript.karma.coverage.iml",
+        "resources/intellij.javascript.karma.coverage.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.javascript.karma.coverage` end

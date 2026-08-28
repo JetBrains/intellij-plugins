@@ -1,0 +1,34 @@
+<idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="Karma"/>
+    <module name="intellij.javascript.backend"/>
+    <module name="intellij.javascript.coverage"/>
+    <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.javascript.testing"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.coverage"/>
+    <module name="intellij.platform.coverage.agent"/>
+    <module name="intellij.platform.editor.ui"/>
+    <module name="intellij.platform.execution"/>
+    <module name="intellij.platform.execution.impl"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.lang"/>
+    <module name="intellij.platform.lang.impl"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.smRunner"/>
+    <module name="intellij.platform.testRunner"/>
+    <module name="intellij.xml.psi.impl"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <programRunner implementation="com.intellij.javascript.karma.coverage.KarmaCoverageProgramRunner"/>
+    <coverageEngine implementation="com.intellij.javascript.karma.coverage.KarmaCoverageEngine"/>
+    <coverageRunner implementation="com.intellij.javascript.karma.coverage.KarmaCoverageRunner"/>
+    <projectService serviceImplementation="com.intellij.javascript.karma.coverage.KarmaCoverageAnnotator"/>
+  </extensions>
+</idea-plugin>

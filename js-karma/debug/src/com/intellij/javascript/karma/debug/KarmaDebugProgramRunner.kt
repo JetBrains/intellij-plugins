@@ -14,11 +14,16 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.runners.AsyncProgramRunner
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionUtil
+import com.intellij.execution.ui.ExecutionConsole
 import com.intellij.execution.ui.RunContentDescriptor
+import com.intellij.execution.ui.RunnerLayoutUi
+import com.intellij.execution.ui.layout.LayoutAttractionPolicy
+import com.intellij.execution.ui.layout.LayoutViewOptions
 import com.intellij.ide.browsers.BrowserFamily
 import com.intellij.ide.browsers.BrowserSettings
 import com.intellij.ide.browsers.WebBrowserManager
 import com.intellij.javascript.debugger.DebuggableFileFinder
+import com.intellij.javascript.debugger.JSDebugTabLayouter
 import com.intellij.javascript.debugger.JavaScriptDebugProcess
 import com.intellij.javascript.debugger.RemoteDebuggingFileFinder
 import com.intellij.javascript.debugger.common.browser.WebBrowserId
@@ -27,6 +32,7 @@ import com.intellij.javascript.karma.execution.KarmaConsoleView
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration
 import com.intellij.javascript.karma.execution.KarmaRunProgramRunner
 import com.intellij.javascript.karma.server.KarmaServer
+import com.intellij.javascript.karma.server.KarmaServerLogComponent
 import com.intellij.javascript.karma.util.KarmaUtil
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.options.ShowSettingsUtil
@@ -38,6 +44,7 @@ import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ManagingFS
+import com.intellij.ui.content.Content
 import com.intellij.util.ConcurrencyUtil
 import com.intellij.util.SingleAlarm
 import com.intellij.util.Url
@@ -119,7 +126,7 @@ internal class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
           debugProcess.addFirstLineBreakpointPattern("\\.browserify$")
           debugProcess.elementsInspectorEnabled = false
           debugProcess.setConsoleMessagesSupportEnabled(false)
-          debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess))
+          debugProcess.setLayouter(KarmaDebugTabLayouter(consoleView, debugProcess))
           karmaServer.onBrowsersReady {
             openConnectionIfRemoteDebugging(karmaServer, debugProcess.connection)
             val resumeTestRunning = ConcurrencyUtil.once { resumeTestRunning(executionResult.processHandler as OSProcessHandler) }
@@ -222,6 +229,26 @@ internal class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
           logger<KarmaDebugProgramRunner>().warn("process.isAlive()=" + process.isAlive, e)
         }
       }
+    }
+  }
+
+  private class KarmaDebugTabLayouter(
+    private val consoleView: KarmaConsoleView,
+    debugProcess: JavaScriptDebugProcess<VmConnection<*>>,
+  ) : JSDebugTabLayouter(debugProcess) {
+    override fun registerConsoleContent(ui: RunnerLayoutUi, console: ExecutionConsole): Content =
+      consoleView.registerConsoleContent(ui)
+
+    override fun registerAdditionalContent(ui: RunnerLayoutUi) {
+      super.registerAdditionalContent(ui)
+      consoleView.registerKarmaServerTab(ui)
+      val server = consoleView.karmaServer
+      // Override the initial focus from DebuggerSessionTabBase.
+      ui.defaults.initContentAttraction(
+        if (server.areBrowsersReady()) ExecutionConsole.CONSOLE_CONTENT_ID else KarmaServerLogComponent.KARMA_SERVER_CONTENT_ID,
+        LayoutViewOptions.STARTUP,
+        LayoutAttractionPolicy.FocusOnce(false),
+      )
     }
   }
 }
