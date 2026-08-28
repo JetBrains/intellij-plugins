@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs
 
+import com.intellij.injected.editor.DocumentWindow
 import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.waitEmptyServiceQueueForService
@@ -9,9 +10,13 @@ import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
 import com.intellij.lang.typescript.tsc.TypeScriptGoTypeEvaluatorMode
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.platform.lsp.testFramework.waitForDiagnosticsFromLspServer
 import com.intellij.polySymbols.testFramework.HybridTestMode
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
+import com.intellij.testFramework.ExpectedHighlightingData
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.vuejs.VueLspUtils.waitTypeScriptGoLspServerInit
 import org.jetbrains.vuejs.index.VUE_MODULE
@@ -21,6 +26,7 @@ import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceTestMixin.setForceLegacyPluginUsage
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
+import org.junit.ComparisonFailure
 
 enum class VueTestMode {
   DEFAULT,
@@ -134,5 +140,50 @@ abstract class VueTestCase(
   protected fun disableAstLoadingFilterWhenPluginUsed() {
     if (testMode != VueTestMode.NO_PLUGIN)
       disableAstLoadingFilter()
+  }
+
+  override fun CodeInsightTestFixture.runHighlightingCheck(
+    checkWarnings: Boolean,
+    checkInformation: Boolean,
+    checkWeakWarnings: Boolean,
+  ) {
+    if (testMode == VueTestMode.NO_PLUGIN || file.virtualFile.extension != "vue") {
+      checkHighlighting(checkWarnings, checkInformation, checkWeakWarnings)
+      return
+    }
+    val document = editor.document.let { (it as? DocumentWindow)?.delegate ?: it }
+    val data = ExpectedHighlightingData(document, checkWarnings, checkWeakWarnings, checkInformation)
+    data.init()
+    collectAndCheckExpectedHighlighting(data)
+  }
+
+  /**
+   * The LSP server serves the diagnostics asynchronously, so a single highlighting pass can run
+   * before the pull response arrives. A failed check waits for the next diagnostics from the
+   * server and runs again. The last attempt runs even after a wait timeout, because a response
+   * can land between a failed check and the start of the wait.
+   */
+  override fun CodeInsightTestFixture.collectAndCheckExpectedHighlighting(data: ExpectedHighlightingData) {
+    val maxAttempts = if (testMode == VueTestMode.NO_PLUGIN) 1 else 5
+    var lastFailure: ComparisonFailure? = null
+    for (attempt in 1..maxAttempts) {
+      if (attempt > 1) {
+        try {
+          // The tsserver warm-up can hold the diagnostics back for many seconds on a loaded machine.
+          waitForDiagnosticsFromLspServer(project, file.virtualFile, timeout = 10)
+        }
+        catch (_: AssertionError) {
+          // No new diagnostics arrived in time. The next attempt checks the current state anyway.
+        }
+      }
+      try {
+        (this as CodeInsightTestFixtureImpl).collectAndCheckHighlighting(data)
+        return
+      }
+      catch (failure: ComparisonFailure) {
+        lastFailure = failure
+      }
+    }
+    throw lastFailure!!
   }
 }
