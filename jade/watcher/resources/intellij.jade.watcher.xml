@@ -1,0 +1,20 @@
+<idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="com.intellij.plugins.watcher"/>
+    <plugin id="com.jetbrains.plugins.jade"/>
+    <module name="intellij.javascript.psi.impl"/>
+    <module name="intellij.libraries.jetbrains.annotations"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.macro"/>
+    <module name="intellij.xml.psi"/>
+    <module name="intellij.xml.psi.impl"/>
+  </dependencies>
+  <!-- endregion -->
+  <extensions defaultExtensionNs="com.intellij.plugins.watcher">
+    <consumer implementation="com.intellij.jade.watcher.JadeOrPugTaskConsumer"/>
+    <dependency.finder implementation="com.intellij.jade.watcher.JadeFileDependencyFinder"/>
+  </extensions>
+</idea-plugin>

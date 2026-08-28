@@ -53,7 +53,6 @@ jvm_library(
         "@community//platform/ide-core",
         "@community//xml/impl",
         "//plugins/JavaScriptLanguage/javascript-backend",
-        "//plugins/fileWatcher",
         "@community//spellchecker",
         "@community//xml/xml-psi-api:psi",
         "@community//platform/core-ui",
@@ -108,7 +107,6 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
-        "//plugins/fileWatcher:fileWatcher_test_lib",
         "@community//spellchecker:spellchecker_test_lib",
         "@community//plugins/grazie/src:core",
         "@community//plugins/grazie/src:core_test_lib",
@@ -141,7 +139,6 @@ jvm_library(
 exports_files(
     [
         "intellij.jade.iml",
-        "resources/META-INF/jade-watcher.xml",
         "resources/META-INF/plugin.xml",
         "resources/colorScheme/JadeDarcula.xml",
         "resources/colorScheme/JadeDefault.xml",
@@ -153,7 +150,10 @@ exports_files(
 ### auto-generated section `dev intellij.jade` start
 dev_dist_plugin(
     descriptor_module = ":jade",
-    prepacked_content_modules = ["//contrib/jade/css:css_content_module_jar"],
+    prepacked_content_modules = [
+        "//contrib/jade/css:css_content_module_jar",
+        "//contrib/jade/watcher:watcher_content_module_jar",
+    ],
 )
 ### auto-generated section `dev intellij.jade` end
 
@@ -279,6 +279,8 @@ jvm_library(
         "//plugins/css/codeinsight/analysis:analysis_test_lib",
         "//contrib/jade/css",
         "//contrib/jade/css:css_test_lib",
+        "//contrib/jade/watcher",
+        "//contrib/jade/watcher:watcher_test_lib",
         "//plugins/JavaScriptLanguage/javascript-common",
         "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
         "//plugins/JavaScriptLanguage/javascript-codeinsight",

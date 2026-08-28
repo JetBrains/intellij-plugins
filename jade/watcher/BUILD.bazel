@@ -1,0 +1,74 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.jade.watcher` start
+jvm_library(
+    name = "watcher",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.jade.watcher",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@community//libraries/jetbrains/annotations",
+        "@community//platform/core-api:core",
+        "@community//platform/core-impl",
+        "@community//platform/ide-core",
+        "@community//platform/util",
+        "@community//platform/macro",
+        "//plugins/fileWatcher",
+        "//contrib/jade",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "@community//xml/xml-psi-api:psi",
+        "@community//xml/xml-psi-impl:psi-impl",
+    ],
+)
+
+content_module_jar(module = ":watcher")
+
+jvm_library(
+    name = "watcher_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.jade.watcher",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":watcher",
+        "@community//libraries/jetbrains/annotations:annotations_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/macro:macro_test_lib",
+        "//plugins/fileWatcher:fileWatcher_test_lib",
+        "//contrib/jade:jade_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+        "@community//xml/xml-psi-api:psi_test_lib",
+        "@community//xml/xml-psi-impl:psi-impl_test_lib",
+    ],
+)
+### auto-generated section `build intellij.jade.watcher` end
+
+### auto-generated section `iml intellij.jade.watcher` start
+exports_files(
+    [
+        "intellij.jade.watcher.iml",
+        "resources/intellij.jade.watcher.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.jade.watcher` end

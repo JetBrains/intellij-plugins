@@ -24,6 +24,7 @@
     <!-- The implicit main module of the plugin depends on internal module (intellij.javascript.codeinsight), so it's required to set the namespace for it
          todo: extract elements and dependencies to an explicit content module (see IJPL-212351) -->
     <module name="intellij.jade.css"/>
+    <module name="intellij.jade.watcher"/>
   </content>
 
   <extensionPoints>
@@ -70,8 +71,6 @@
     <module name="intellij.xml.psi"/>
     <!-- endregion -->
   </dependencies>
-  <depends optional="true" config-file="jade-watcher.xml">com.intellij.plugins.watcher</depends>
-
   <extensions defaultExtensionNs="com.intellij">
     <dependencySupport kind="javascript" coordinate="npm:pug" displayName="Pug"/>
     <fileType name="Jade" implementationClass="com.jetbrains.plugins.jade.psi.JadeFileType" fieldName="INSTANCE" language="Jade" extensions="jade;pug" />
