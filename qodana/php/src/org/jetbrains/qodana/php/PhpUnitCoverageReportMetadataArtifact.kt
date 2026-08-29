@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.php
 
-import com.jetbrains.php.phpunit.coverage.PhpUnitCoverageEngine
+import com.intellij.php.coverage.PhpUnitCoverageEngine
 import org.jetbrains.qodana.coverage.CoverageEngineType
 import org.jetbrains.qodana.coverage.CoverageMetaDataArtifact
 import org.jetbrains.qodana.report.ReportMetadataArtifactProvider

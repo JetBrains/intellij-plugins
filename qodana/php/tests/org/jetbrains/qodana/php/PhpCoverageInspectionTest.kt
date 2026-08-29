@@ -3,7 +3,7 @@ package org.jetbrains.qodana.php
 import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageFileProvider
 import com.intellij.coverage.CoverageRunner
-import com.intellij.php.coverage.PhpCoverageEngine
+import com.intellij.php.coverage.PhpUnitCoverageEngine
 import com.intellij.rt.coverage.util.ProjectDataLoader
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
@@ -27,10 +27,10 @@ class PhpCoverageInspectionTest: QodanaCoverageInspectionTest("PhpCoverageInspec
     runUnderCover()
     assertSarifResults()
     assertChangedLines(mapOf())
-    assertCoverageProjectDataMatchesGolden("PhpCoverageEngine", "PhpCoverageEngine.xml")
+    assertCoverageProjectDataMatchesGolden("PhpUnitCoverageEngine", "PhpUnitCoverageEngine.xml")
 
-    val engine = CoverageEngine.EP_NAME.findExtensionOrFail(PhpCoverageEngine::class.java)
-    val path = qodanaConfig.coverage.coveragePath.resolve("PhpCoverageEngine")
+    val engine = CoverageEngine.EP_NAME.findExtensionOrFail(PhpUnitCoverageEngine::class.java)
+    val path = qodanaConfig.coverage.coveragePath.resolve("PhpUnitCoverageEngine")
     val coverageRunner = CoverageRunner.getInstanceById("PhpCoverage")!!
     val data = ProjectDataLoader.load(path.toFile())
     val projectDir = qodanaConfig.projectPath
@@ -49,7 +49,7 @@ class PhpCoverageInspectionTest: QodanaCoverageInspectionTest("PhpCoverageInspec
   fun coverageInfoWithProblemReport() {
     runUnderCoverDataInSources()
     assertSarifResults()
-    assertCoverageProjectDataMatchesGolden("PhpCoverageEngine", "PhpCoverageEngine.xml")
+    assertCoverageProjectDataMatchesGolden("PhpUnitCoverageEngine", "PhpUnitCoverageEngine.xml")
   }
 
   @Test
@@ -62,7 +62,7 @@ class PhpCoverageInspectionTest: QodanaCoverageInspectionTest("PhpCoverageInspec
   fun coverageInfoWithoutProblemReport() {
     runUnderCoverDataInSources()
     assertSarifResults()
-    assertCoverageProjectDataMatchesGolden("PhpCoverageEngine", "PhpCoverageEngine.xml")
+    assertCoverageProjectDataMatchesGolden("PhpUnitCoverageEngine", "PhpUnitCoverageEngine.xml")
   }
 
   @Test
@@ -81,7 +81,7 @@ class PhpCoverageInspectionTest: QodanaCoverageInspectionTest("PhpCoverageInspec
   fun incrementalSecondStage() {
     runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
     assertChangedLines(mapOf("src/FooCls.php" to setOf(14, 15, 16)))
-    assertCoverageProjectDataMatchesGolden("PhpCoverageEngine", "PhpCoverageEngine.xml")
+    assertCoverageProjectDataMatchesGolden("PhpUnitCoverageEngine", "PhpUnitCoverageEngine.xml")
     assertSarifResults()
   }
 

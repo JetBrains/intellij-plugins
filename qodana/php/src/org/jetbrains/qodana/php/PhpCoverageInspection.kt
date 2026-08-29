@@ -5,7 +5,7 @@ import com.intellij.codeInspection.options.OptPane
 import com.intellij.codeInspection.options.OptPane.number
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
-import com.intellij.php.coverage.PhpCoverageEngine
+import com.intellij.php.coverage.PhpUnitCoverageEngine
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -39,7 +39,7 @@ class PhpCoverageInspection : CoverageInspectionBase() {
 
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(phpunit, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-      computeCoverageData(globalContext, PhpCoverageEngine::class, PhpCoverageFileProvider)?.let {
+      computeCoverageData(globalContext, PhpUnitCoverageEngine::class, PhpCoverageFileProvider)?.let {
         remapCoverage(globalContext.project, it)
       }?.also { loadNormalizedPaths(globalContext, it) }
     })
@@ -61,7 +61,7 @@ class PhpCoverageInspection : CoverageInspectionBase() {
   override fun cleanup(globalContext: QodanaGlobalInspectionContext) {
     val data = globalContext.getUserData(phpunit)?.value
     if (data != null) {
-      saveCoverageData(globalContext, getCoverageDirectory(PhpCoverageEngine::class.java), removePrefixFromCoverage(data, globalContext.config.projectPath))
+      saveCoverageData(globalContext, getCoverageDirectory(PhpUnitCoverageEngine::class.java), removePrefixFromCoverage(data, globalContext.config.projectPath))
     }
     globalContext.putUserData(phpunit, null)
   }

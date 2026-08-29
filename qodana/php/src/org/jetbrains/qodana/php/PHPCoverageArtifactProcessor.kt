@@ -4,7 +4,7 @@ import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageFileProvider
 import com.intellij.coverage.CoverageSuitesBundle
 import com.intellij.openapi.project.Project
-import com.intellij.php.coverage.PhpCoverageEngine
+import com.intellij.php.coverage.PhpUnitCoverageEngine
 import com.intellij.rt.coverage.util.ProjectDataLoader
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
@@ -16,7 +16,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFro
 class PHPCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
   override suspend fun process(artifacts: Map<String, ReportMetadata>, project: Project): CoverageSuitesBundle? {
     val artifact = (artifacts[PHPUNIT_COVERAGE] as? CoverageMetaDataArtifact) ?: return null
-    val engine = CoverageEngine.EP_NAME.findExtensionOrFail(PhpCoverageEngine::class.java)
+    val engine = CoverageEngine.EP_NAME.findExtensionOrFail(PhpUnitCoverageEngine::class.java)
     val runner = CoverageCloudArtifactsProcessor.getCoverageRunner(artifact.path) ?: return null
     if (runner.acceptsCoverageEngine(engine)) {
       val suite = engine.createCoverageSuite(artifact.id, project, runner, dummyProvider, -1)
