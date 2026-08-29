@@ -1,5 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_content.bzl", "dev_dist_plugin_content")
+load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin_descriptor.bzl", "dev_dist_plugin_descriptor")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
@@ -150,23 +151,17 @@ exports_files(
 )
 ### auto-generated section `iml intellij.prettierJS` end
 
-### auto-generated section `dev content intellij.prettierJS` start
-dev_dist_plugin_content(
-    descriptor_module = ":prettierJS",
-    prepacked_content_modules = ["//contrib/prettierJS/prettierJS-eslint:eslint_content_module_jar"],
-)
-### auto-generated section `dev content intellij.prettierJS` end
-
-### auto-generated section `dev descriptor intellij.prettierJS` start
-dev_dist_plugin_descriptor(
+### auto-generated section `dev intellij.prettierJS` start
+dev_dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
     descriptor_module = ":prettierJS",
     descriptors = {
         "//contrib/prettierJS/prettierJS-eslint:resources/intellij.prettierJS.eslint.xml": "intellij.prettierJS.eslint.xml",
     },
     main_module = "intellij.prettierJS",
+    prepacked_content_modules = ["//contrib/prettierJS/prettierJS-eslint:eslint_content_module_jar"],
 )
-### auto-generated section `dev descriptor intellij.prettierJS` end
+### auto-generated section `dev intellij.prettierJS` end
 
 ### auto-generated section `build intellij.prettierJS.tests` start
 jvm_library(

@@ -1,5 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_content.bzl", "dev_dist_plugin_content")
+load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.gauge` start
@@ -148,8 +149,8 @@ exports_files(
 )
 ### auto-generated section `iml intellij.gauge` end
 
-### auto-generated section `dev content intellij.gauge` start
-dev_dist_plugin_content(
+### auto-generated section `dev intellij.gauge` start
+dev_dist_plugin(
     descriptor_module = ":gauge",
     libraries = ["@ultimate_lib//:gauge-com-thoughtworks-gauge-gauge-java"],
     prepacked_content_modules = [
@@ -157,7 +158,7 @@ dev_dist_plugin_content(
         "//contrib/gauge/maven:maven_content_module_jar",
     ],
 )
-### auto-generated section `dev content intellij.gauge` end
+### auto-generated section `dev intellij.gauge` end
 
 ### auto-generated section `build intellij.gauge.tests` start
 jvm_library(

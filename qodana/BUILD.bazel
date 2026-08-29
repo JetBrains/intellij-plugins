@@ -1,6 +1,7 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_content.bzl", "dev_dist_plugin_content")
+load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin_descriptor.bzl", "dev_dist_plugin_descriptor")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -244,8 +245,8 @@ exports_files(
 )
 ### auto-generated section `iml intellij.qodana` end
 
-### auto-generated section `dev content intellij.qodana` start
-dev_dist_plugin_content(
+### auto-generated section `dev intellij.qodana` start
+dev_dist_plugin(
     content_modules = [
         "//libraries/qodana/cloud-kotlin-client:libraries-qodana-cloud-kotlin-client",
         "//libraries/qodana/configuration",
@@ -256,53 +257,6 @@ dev_dist_plugin_content(
         "@community//libraries/jline",
         "@community//libraries/qodana/sarif",
     ],
-    descriptor_module = ":qodana",
-    libraries = [
-        "@lib//:libraries-flexmark-flexmark",
-        "@lib//:libraries-jline-jline",
-        "@lib//:libraries-qodana-sarif-qodana-sarif",
-        "@ultimate_lib//:libraries-qodana-cloud-kotlin-client-jetbrains-qodana-cloud-kotlin-client",
-        "@ultimate_lib//:libraries-qodana-configuration-jetbrains-qodana-configuration",
-        "@ultimate_lib//:libraries-qodana-publisher-jetbrains-qodana-publisher",
-        "@ultimate_lib//:libraries-qodana-sarif-converter-jetbrains-qodana-sarif-converter",
-        "@ultimate_lib//:libraries-qodana-web-ui-jetbrains-qodana-web-ui",
-    ],
-    prepacked_content_modules = [
-        "//contrib/qodana/coverage:coverage_content_module_jar",
-        "//contrib/qodana/cpp:cpp_content_module_jar",
-        "//contrib/qodana/go:go_content_module_jar",
-        "//contrib/qodana/inspectionKts/core:qodana-inspectionKts_content_module_jar",
-        "//contrib/qodana/inspectionKts/java:java_content_module_jar",
-        "//contrib/qodana/inspectionKts/js:js_content_module_jar",
-        "//contrib/qodana/inspectionKts/kotlin:kotlin_content_module_jar",
-        "//contrib/qodana/inspectionKts/mcp:mcp_content_module_jar",
-        "//contrib/qodana/js:js_content_module_jar",
-        "//contrib/qodana/json:json_content_module_jar",
-        "//contrib/qodana/jvm/coverage:coverage_content_module_jar",
-        "//contrib/qodana/jvm/dev:dev_content_module_jar",
-        "//contrib/qodana/jvm/gradle:gradle_content_module_jar",
-        "//contrib/qodana/jvm/groovy:groovy_content_module_jar",
-        "//contrib/qodana/jvm/java:java_content_module_jar",
-        "//contrib/qodana/jvm/kotlin:kotlin_content_module_jar",
-        "//contrib/qodana/jvm/maven:maven_content_module_jar",
-        "//contrib/qodana/jvm/swagger:swagger_content_module_jar",
-        "//contrib/qodana/packageChecker:packageChecker_content_module_jar",
-        "//contrib/qodana/php:php_content_module_jar",
-        "//contrib/qodana/poly:poly_content_module_jar",
-        "//contrib/qodana/python/community:community_content_module_jar",
-        "//contrib/qodana/python/coverage:coverage_content_module_jar",
-        "//contrib/qodana/rust:rust_content_module_jar",
-        "//contrib/qodana/yaml:yaml_content_module_jar",
-    ],
-    prepacked_jars = {
-        "//contrib/qodana/sarif:sarif_content_module_jar": "intellij.qodana.sarif.jar",
-        "//contrib/qodana/util:util_content_module_jar": "intellij.qodana.util.jar",
-    },
-)
-### auto-generated section `dev content intellij.qodana` end
-
-### auto-generated section `dev descriptor intellij.qodana` start
-dev_dist_plugin_descriptor(
     descriptor = "core/resources/META-INF/plugin.xml",
     descriptor_module = ":qodana",
     descriptors = {
@@ -342,9 +296,50 @@ dev_dist_plugin_descriptor(
         "@community//libraries/jline:resources/intellij.libraries.jline.xml": "intellij.libraries.jline.xml",
         "@community//libraries/qodana/sarif:resources/intellij.libraries.qodana.sarif.xml": "intellij.libraries.qodana.sarif.xml",
     },
+    libraries = [
+        "@lib//:libraries-flexmark-flexmark",
+        "@lib//:libraries-jline-jline",
+        "@lib//:libraries-qodana-sarif-qodana-sarif",
+        "@ultimate_lib//:libraries-qodana-cloud-kotlin-client-jetbrains-qodana-cloud-kotlin-client",
+        "@ultimate_lib//:libraries-qodana-configuration-jetbrains-qodana-configuration",
+        "@ultimate_lib//:libraries-qodana-publisher-jetbrains-qodana-publisher",
+        "@ultimate_lib//:libraries-qodana-sarif-converter-jetbrains-qodana-sarif-converter",
+        "@ultimate_lib//:libraries-qodana-web-ui-jetbrains-qodana-web-ui",
+    ],
     main_module = "intellij.qodana",
+    prepacked_content_modules = [
+        "//contrib/qodana/coverage:coverage_content_module_jar",
+        "//contrib/qodana/cpp:cpp_content_module_jar",
+        "//contrib/qodana/go:go_content_module_jar",
+        "//contrib/qodana/inspectionKts/core:qodana-inspectionKts_content_module_jar",
+        "//contrib/qodana/inspectionKts/java:java_content_module_jar",
+        "//contrib/qodana/inspectionKts/js:js_content_module_jar",
+        "//contrib/qodana/inspectionKts/kotlin:kotlin_content_module_jar",
+        "//contrib/qodana/inspectionKts/mcp:mcp_content_module_jar",
+        "//contrib/qodana/js:js_content_module_jar",
+        "//contrib/qodana/json:json_content_module_jar",
+        "//contrib/qodana/jvm/coverage:coverage_content_module_jar",
+        "//contrib/qodana/jvm/dev:dev_content_module_jar",
+        "//contrib/qodana/jvm/gradle:gradle_content_module_jar",
+        "//contrib/qodana/jvm/groovy:groovy_content_module_jar",
+        "//contrib/qodana/jvm/java:java_content_module_jar",
+        "//contrib/qodana/jvm/kotlin:kotlin_content_module_jar",
+        "//contrib/qodana/jvm/maven:maven_content_module_jar",
+        "//contrib/qodana/jvm/swagger:swagger_content_module_jar",
+        "//contrib/qodana/packageChecker:packageChecker_content_module_jar",
+        "//contrib/qodana/php:php_content_module_jar",
+        "//contrib/qodana/poly:poly_content_module_jar",
+        "//contrib/qodana/python/community:community_content_module_jar",
+        "//contrib/qodana/python/coverage:coverage_content_module_jar",
+        "//contrib/qodana/rust:rust_content_module_jar",
+        "//contrib/qodana/yaml:yaml_content_module_jar",
+    ],
+    prepacked_jars = {
+        "//contrib/qodana/sarif:sarif_content_module_jar": "intellij.qodana.sarif.jar",
+        "//contrib/qodana/util:util_content_module_jar": "intellij.qodana.util.jar",
+    },
 )
-### auto-generated section `dev descriptor intellij.qodana` end
+### auto-generated section `dev intellij.qodana` end
 
 ### auto-generated section `build intellij.qodana.core.tests` start
 create_kotlinc_options(

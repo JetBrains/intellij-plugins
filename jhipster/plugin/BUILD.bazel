@@ -1,4 +1,5 @@
 load("@community//platform/build-scripts/bazel-rules:dev_dist_content.bzl", "dev_dist_plugin_content")
+load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.jhipster.plugin` start
@@ -40,8 +41,8 @@ exports_files(
 )
 ### auto-generated section `iml intellij.jhipster.plugin` end
 
-### auto-generated section `dev content intellij.jhipster.plugin` start
-dev_dist_plugin_content(
+### auto-generated section `dev intellij.jhipster.plugin` start
+dev_dist_plugin(
     descriptor_module = ":plugin",
     prepacked_content_modules = [
         "//contrib/jhipster/backend:backend_content_module_jar",
@@ -52,4 +53,4 @@ dev_dist_plugin_content(
         "//contrib/jhipster:jhipster_content_module_jar": "intellij.jhipster.jar",
     },
 )
-### auto-generated section `dev content intellij.jhipster.plugin` end
+### auto-generated section `dev intellij.jhipster.plugin` end

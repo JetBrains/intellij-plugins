@@ -1,4 +1,5 @@
 load("@community//platform/build-scripts/bazel-rules:dev_dist_content.bzl", "dev_dist_plugin_content")
+load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin_descriptor.bzl", "dev_dist_plugin_descriptor")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -57,24 +58,13 @@ exports_files(
 )
 ### auto-generated section `iml intellij.protoeditor` end
 
-### auto-generated section `dev content intellij.protoeditor` start
-dev_dist_plugin_content(
+### auto-generated section `dev intellij.protoeditor` start
+dev_dist_plugin(
     content_modules = [
         "//contrib/protobuf/protoeditor-core",
         "//contrib/protobuf/protoeditor-go",
         "//contrib/protobuf/protoeditor-jvm",
     ],
-    descriptor_module = ":protoeditor",
-    libraries = [
-        "@lib//:google-protobuf-java-util",
-        "@lib//:truth",
-    ],
-    prepacked_content_modules = ["//contrib/protobuf/protoeditor-python:protoeditor-python_content_module_jar"],
-)
-### auto-generated section `dev content intellij.protoeditor` end
-
-### auto-generated section `dev descriptor intellij.protoeditor` start
-dev_dist_plugin_descriptor(
     descriptor = "resources/META-INF/plugin.xml",
     descriptor_module = ":protoeditor",
     descriptors = {
@@ -82,6 +72,11 @@ dev_dist_plugin_descriptor(
         "//contrib/protobuf/protoeditor-jvm:resources/intellij.protoeditor.jvm.xml": "intellij.protoeditor.jvm.xml",
         "//contrib/protobuf/protoeditor-python:resources/intellij.protoeditor.python.xml": "intellij.protoeditor.python.xml",
     },
+    libraries = [
+        "@lib//:google-protobuf-java-util",
+        "@lib//:truth",
+    ],
     main_module = "intellij.protoeditor",
+    prepacked_content_modules = ["//contrib/protobuf/protoeditor-python:protoeditor-python_content_module_jar"],
 )
-### auto-generated section `dev descriptor intellij.protoeditor` end
+### auto-generated section `dev intellij.protoeditor` end
