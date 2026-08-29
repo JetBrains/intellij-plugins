@@ -7,7 +7,7 @@ These notes are specific to `contrib/CloudFormation` and its `metadata-crawler` 
 ## Architecture
 
 - Runtime resource metadata is not generated from sources in this module at IDE startup. The plugin reads `com/intellij/aws/meta/cloudformation-metadata.xml` and `cloudformation-descriptions.xml` from the external `cloudformation-meta` jar via `CloudFormationMetadataProvider`.
-- The consumed metadata artifact is wired through `intellij.cloudFormation.iml` and packaged through `plugin-content.yaml` as `intellij.aws.cloudformation.meta.jar`.
+- The consumed metadata artifact is wired through `intellij.cloudFormation.iml` and ships as `intellij.aws.cloudformation.meta.jar`.
 - Changing only crawler code does not change editor behavior until a new metadata jar is built/published and the plugin consumes that refreshed artifact.
 - Don't write tests for the crawler, it makes no sense. Because the html on server could be changed without us
 - IDE runs with only one specific metadata, there is no need to make any compatibility or fallback logic to support old metadata
