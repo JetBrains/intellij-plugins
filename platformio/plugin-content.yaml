@@ -1,6 +1,0 @@
-- name: lib/clion-embedded-platformio.jar
-  modules:
-  - name: intellij.clion.embedded.platformio
-- name: lib/modules/intellij.clion.embedded.platformio.terminal.jar
-  contentModules:
-  - name: intellij.clion.embedded.platformio.terminal

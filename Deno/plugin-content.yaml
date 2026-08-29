@@ -1,3 +1,0 @@
-- name: lib/deno.jar
-  modules:
-  - name: intellij.deno

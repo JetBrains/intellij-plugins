@@ -1,3 +1,0 @@
-- name: lib/jboss-drools.jar
-  modules:
-  - name: intellij.jboss.drools

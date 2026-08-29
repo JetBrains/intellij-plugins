@@ -1,3 +1,0 @@
-- name: lib/gherkin.jar
-  modules:
-  - name: intellij.gherkin

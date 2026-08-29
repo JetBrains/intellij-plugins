@@ -1,3 +1,0 @@
-- name: lib/prisma.jar
-  modules:
-  - name: intellij.prisma

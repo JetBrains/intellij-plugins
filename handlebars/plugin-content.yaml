@@ -1,6 +1,0 @@
-- name: lib/handlebars.jar
-  modules:
-  - name: intellij.handlebars
-- name: lib/modules/intellij.handlebars.javascript.jar
-  contentModules:
-  - name: intellij.handlebars.javascript

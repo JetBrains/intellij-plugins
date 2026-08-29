@@ -1,3 +1,0 @@
-- name: lib/tslint.jar
-  modules:
-  - name: intellij.tslint

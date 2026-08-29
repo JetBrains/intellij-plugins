@@ -1,3 +1,0 @@
-- name: lib/javascript-eslint.jar
-  modules:
-  - name: intellij.javascript.eslint

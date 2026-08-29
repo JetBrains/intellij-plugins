@@ -1,3 +1,0 @@
-- name: lib/karma.jar
-  modules:
-  - name: intellij.karma

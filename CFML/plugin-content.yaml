@@ -1,3 +1,0 @@
-- name: lib/cfml.jar
-  modules:
-  - name: intellij.cfml

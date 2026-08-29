@@ -1,3 +1,0 @@
-- name: lib/yeoman.jar
-  modules:
-  - name: intellij.yeoman

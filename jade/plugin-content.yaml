@@ -1,6 +1,0 @@
-- name: lib/jade.jar
-  modules:
-  - name: intellij.jade
-- name: lib/modules/intellij.jade.css.jar
-  contentModules:
-  - name: intellij.jade.css

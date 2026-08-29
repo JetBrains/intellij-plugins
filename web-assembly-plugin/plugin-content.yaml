@@ -1,3 +1,0 @@
-- name: lib/webassembly.jar
-  modules:
-  - name: intellij.webassembly

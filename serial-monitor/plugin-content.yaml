@@ -1,8 +1,0 @@
-- name: lib/jSerialComm-2.11.4.jar
-  library: jetbrains.intellij.deps.jSerialComm
-  files:
-  - name: $MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jSerialComm/2/jSerialComm-2.jar
-  reason: withProjectLibrary
-- name: lib/serial-monitor.jar
-  modules:
-  - name: intellij.serial.monitor
