@@ -8,7 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.libraries.guava" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="cucumber-core-1" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.cucumber.core1" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cucumber.jvmFormatter" scope="TEST" />
     <orderEntry type="module" module-name="intellij.gherkin" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java" scope="TEST" />

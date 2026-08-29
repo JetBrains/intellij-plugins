@@ -1,9 +1,3 @@
-- name: lib/cucumber-core.jar
-  library: cucumber-core-1
-  files:
-  - name: $MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/cucumber/cucumber-core/1/cucumber-core-1.jar
-  - name: $MAVEN_REPOSITORY$/info/cukes/gherkin/2/gherkin-2.jar
-  reason: <- intellij.cucumber.java
 - name: lib/cucumber-java.jar
   modules:
   - name: intellij.cucumber.java
@@ -19,6 +13,13 @@
 - name: lib/cucumber-jvmFormatter5.jar
   modules:
   - name: intellij.cucumber.jvmFormatter5
+- name: lib/intellij.libraries.cucumber.core1.jar
+  contentModules:
+  - name: intellij.libraries.cucumber.core1
+    libraries:
+      cucumber-core-1:
+      - name: $MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/cucumber/cucumber-core/1/cucumber-core-1.jar
+      - name: $MAVEN_REPOSITORY$/info/cukes/gherkin/2/gherkin-2.jar
 - name: lib/intellij.libraries.cucumber.jar
   contentModules:
   - name: intellij.libraries.cucumber

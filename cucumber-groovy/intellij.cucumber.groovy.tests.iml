@@ -44,7 +44,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.java.impl" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="cucumber-core-1" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.cucumber.core1" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cucumber.java" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cucumber.groovy" scope="TEST" />

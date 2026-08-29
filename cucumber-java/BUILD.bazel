@@ -22,7 +22,7 @@ jvm_library(
     deps = [
         # do not sort,
         "@community//libraries/guava",
-        "@lib//:cucumber-core-1",
+        "@community//libraries/cucumber-core1",
         "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter",
         "//contrib/cucumber:gherkin",
         "@community//java/openapi:java",
@@ -79,6 +79,7 @@ jvm_library(
         # do not sort,
         ":cucumber-java",
         "@community//libraries/guava:guava_test_lib",
+        "@community//libraries/cucumber-core1:cucumber-core1_test_lib",
         "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter_test_lib",
         "//contrib/cucumber:gherkin_test_lib",
         "@community//java/openapi:java_test_lib",
@@ -180,6 +181,7 @@ exports_files(
 dev_dist_plugin_content(
     content_modules = [
         "//libraries/cucumber",
+        "@community//libraries/cucumber-core1",
         "@community//libraries/hamcrest",
         "@community//libraries/junit4",
         "@community//plugins/cucumber-jvm-formatter3:cucumber-jvmFormatter3",
@@ -189,12 +191,12 @@ dev_dist_plugin_content(
     ],
     descriptor_module = ":cucumber-java",
     libraries = [
-        "@lib//:cucumber-core-1",
         "@lib//:cucumber-core-2",
         "@lib//:cucumber-jvm_formatter3-cucumber-core-3-0-2",
         "@lib//:cucumber-jvm_formatter4-cucumber-core-4-0-1",
         "@lib//:cucumber-jvm_formatter5-cucumber-java-5-0-0-_r_c1",
         "@lib//:easymock",
+        "@lib//:libraries-cucumber-core1-cucumber-core-1",
         "@lib//:libraries-hamcrest-hamcrest",
         "@lib//:libraries-junit4-_j_unit4",
         "@ultimate_lib//:cucumber-java-cucumber-core-3",
@@ -255,7 +257,8 @@ jvm_library(
         # do not sort,
         "@community//libraries/guava",
         "@community//libraries/guava:guava_test_lib",
-        "@lib//:cucumber-core-1",
+        "@community//libraries/cucumber-core1",
+        "@community//libraries/cucumber-core1:cucumber-core1_test_lib",
         "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter",
         "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter_test_lib",
         "//contrib/cucumber:gherkin",

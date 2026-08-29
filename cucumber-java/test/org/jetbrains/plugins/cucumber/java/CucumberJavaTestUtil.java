@@ -120,8 +120,9 @@ public final class CucumberJavaTestUtil {
   }
 
   private static void attachCucumberCore1(@NotNull ModifiableRootModel model) {
-    PsiTestUtil.addProjectLibrary(model, "cucumber-core",
-                                  IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-core-1"));
+    IntelliJProjectConfiguration.LibraryRoots libraryRoots =
+      IntelliJProjectConfiguration.getModuleLibrary("intellij.libraries.cucumber.core1", "cucumber-core-1");
+    PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryRoots.getClassesPaths());
   }
 
   private static void attachCucumberCore2(@NotNull ModifiableRootModel model) {
