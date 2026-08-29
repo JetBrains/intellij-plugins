@@ -1,4 +1,5 @@
 load("@community//platform/build-scripts/bazel-rules:dev_dist_content.bzl", "dev_dist_plugin_content")
+load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin_descriptor.bzl", "dev_dist_plugin_descriptor")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.angular.plugin` start
@@ -64,3 +65,16 @@ dev_dist_plugin_content(
     ],
 )
 ### auto-generated section `dev content intellij.angular.plugin` end
+
+### auto-generated section `dev descriptor intellij.angular.plugin` start
+dev_dist_plugin_descriptor(
+    descriptor = "resources/META-INF/plugin.xml",
+    descriptor_module = ":angular-plugin",
+    descriptors = {
+        "//contrib/Angular/angular-backend:resources/intellij.angular.backend.xml": "intellij.angular.backend.xml",
+        "//contrib/Angular/angular-free:resources/intellij.angular.free.xml": "intellij.angular.free.xml",
+        "//contrib/Angular/angular-tslint:resources/intellij.angular.tslint.xml": "intellij.angular.tslint.xml",
+    },
+    main_module = "intellij.angular.plugin",
+)
+### auto-generated section `dev descriptor intellij.angular.plugin` end

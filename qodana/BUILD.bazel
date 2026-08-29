@@ -1,6 +1,7 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_content.bzl", "dev_dist_plugin_content")
+load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin_descriptor.bzl", "dev_dist_plugin_descriptor")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.qodana` start
@@ -299,6 +300,51 @@ dev_dist_plugin_content(
     },
 )
 ### auto-generated section `dev content intellij.qodana` end
+
+### auto-generated section `dev descriptor intellij.qodana` start
+dev_dist_plugin_descriptor(
+    descriptor = "core/resources/META-INF/plugin.xml",
+    descriptor_module = ":qodana",
+    descriptors = {
+        "//contrib/qodana/coverage:resources/intellij.qodana.coverage.xml": "intellij.qodana.coverage.xml",
+        "//contrib/qodana/cpp:resources/intellij.qodana.cpp.xml": "intellij.qodana.cpp.xml",
+        "//contrib/qodana/go:resources/intellij.qodana.go.xml": "intellij.qodana.go.xml",
+        "//contrib/qodana/inspectionKts/core:resources/intellij.qodana.inspectionKts.xml": "intellij.qodana.inspectionKts.xml",
+        "//contrib/qodana/inspectionKts/java:resources/intellij.qodana.inspectionKts.java.xml": "intellij.qodana.inspectionKts.java.xml",
+        "//contrib/qodana/inspectionKts/js:resources/intellij.qodana.inspectionKts.js.xml": "intellij.qodana.inspectionKts.js.xml",
+        "//contrib/qodana/inspectionKts/kotlin:resources/intellij.qodana.inspectionKts.kotlin.xml": "intellij.qodana.inspectionKts.kotlin.xml",
+        "//contrib/qodana/inspectionKts/mcp:resources/intellij.qodana.inspectionKts.mcp.xml": "intellij.qodana.inspectionKts.mcp.xml",
+        "//contrib/qodana/js:resources/intellij.qodana.js.xml": "intellij.qodana.js.xml",
+        "//contrib/qodana/json:resources/intellij.qodana.json.xml": "intellij.qodana.json.xml",
+        "//contrib/qodana/jvm/coverage:resources/intellij.qodana.jvm.coverage.xml": "intellij.qodana.jvm.coverage.xml",
+        "//contrib/qodana/jvm/dev:resources/intellij.qodana.jvm.dev.xml": "intellij.qodana.jvm.dev.xml",
+        "//contrib/qodana/jvm/gradle:resources/intellij.qodana.jvm.gradle.xml": "intellij.qodana.jvm.gradle.xml",
+        "//contrib/qodana/jvm/groovy:resources/intellij.qodana.jvm.groovy.xml": "intellij.qodana.jvm.groovy.xml",
+        "//contrib/qodana/jvm/java:resources/intellij.qodana.jvm.java.xml": "intellij.qodana.jvm.java.xml",
+        "//contrib/qodana/jvm/kotlin:resources/intellij.qodana.jvm.kotlin.xml": "intellij.qodana.jvm.kotlin.xml",
+        "//contrib/qodana/jvm/maven:resources/intellij.qodana.jvm.maven.xml": "intellij.qodana.jvm.maven.xml",
+        "//contrib/qodana/jvm/swagger:resources/intellij.qodana.jvm.swagger.xml": "intellij.qodana.jvm.swagger.xml",
+        "//contrib/qodana/packageChecker:resources/intellij.qodana.packageChecker.xml": "intellij.qodana.packageChecker.xml",
+        "//contrib/qodana/php:resources/intellij.qodana.php.xml": "intellij.qodana.php.xml",
+        "//contrib/qodana/poly:resources/intellij.qodana.poly.xml": "intellij.qodana.poly.xml",
+        "//contrib/qodana/python/community:resources/intellij.qodana.python.community.xml": "intellij.qodana.python.community.xml",
+        "//contrib/qodana/python/coverage:resources/intellij.qodana.python.coverage.xml": "intellij.qodana.python.coverage.xml",
+        "//contrib/qodana/rust:resources/intellij.qodana.rust.xml": "intellij.qodana.rust.xml",
+        "//contrib/qodana/sarif:resources/intellij.qodana.sarif.xml": "intellij.qodana.sarif.xml",
+        "//contrib/qodana/util:resources/intellij.qodana.util.xml": "intellij.qodana.util.xml",
+        "//contrib/qodana/yaml:resources/intellij.qodana.yaml.xml": "intellij.qodana.yaml.xml",
+        "//libraries/qodana/cloud-kotlin-client:resources/intellij.libraries.qodana.cloud.kotlin.client.xml": "intellij.libraries.qodana.cloud.kotlin.client.xml",
+        "//libraries/qodana/configuration:resources/intellij.libraries.qodana.configuration.xml": "intellij.libraries.qodana.configuration.xml",
+        "//libraries/qodana/publisher:resources/intellij.libraries.qodana.publisher.xml": "intellij.libraries.qodana.publisher.xml",
+        "//libraries/qodana/sarif-converter:resources/intellij.libraries.qodana.sarif.converter.xml": "intellij.libraries.qodana.sarif.converter.xml",
+        "//libraries/qodana/web-ui:resources/intellij.libraries.qodana.web.ui.xml": "intellij.libraries.qodana.web.ui.xml",
+        "@community//libraries/flexmark:resources/intellij.libraries.flexmark.xml": "intellij.libraries.flexmark.xml",
+        "@community//libraries/jline:resources/intellij.libraries.jline.xml": "intellij.libraries.jline.xml",
+        "@community//libraries/qodana/sarif:resources/intellij.libraries.qodana.sarif.xml": "intellij.libraries.qodana.sarif.xml",
+    },
+    main_module = "intellij.qodana",
+)
+### auto-generated section `dev descriptor intellij.qodana` end
 
 ### auto-generated section `build intellij.qodana.core.tests` start
 create_kotlinc_options(

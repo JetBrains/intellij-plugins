@@ -1,4 +1,5 @@
 load("@community//platform/build-scripts/bazel-rules:dev_dist_content.bzl", "dev_dist_plugin_content")
+load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin_descriptor.bzl", "dev_dist_plugin_descriptor")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.vuejs.plugin` start
@@ -79,3 +80,22 @@ dev_dist_plugin_content(
     ],
 )
 ### auto-generated section `dev content intellij.vuejs.plugin` end
+
+### auto-generated section `dev descriptor intellij.vuejs.plugin` start
+dev_dist_plugin_descriptor(
+    descriptor = "resources/META-INF/plugin.xml",
+    descriptor_module = ":plugin",
+    descriptors = {
+        "//contrib/vuejs/vue-free:resources/intellij.vuejs.free.xml": "intellij.vuejs.free.xml",
+        "//contrib/vuejs/vuejs-backend:resources/intellij.vuejs.backend.xml": "intellij.vuejs.backend.xml",
+        "//contrib/vuejs/vuejs-common:resources/intellij.vuejs.common.xml": "intellij.vuejs.common.xml",
+        "//contrib/vuejs/vuejs-copyright:resources/intellij.vuejs.copyright.xml": "intellij.vuejs.copyright.xml",
+        "//contrib/vuejs/vuejs-debugger:resources/intellij.vuejs.debugger.xml": "intellij.vuejs.debugger.xml",
+        "//contrib/vuejs/vuejs-eslint:resources/intellij.vuejs.eslint.xml": "intellij.vuejs.eslint.xml",
+        "//contrib/vuejs/vuejs-markdown:resources/intellij.vuejs.markdown.xml": "intellij.vuejs.markdown.xml",
+        "//contrib/vuejs/vuejs-prettier:resources/intellij.vuejs.prettier.xml": "intellij.vuejs.prettier.xml",
+        "//contrib/vuejs/vuejs-webpack:resources/intellij.vuejs.webpack.xml": "intellij.vuejs.webpack.xml",
+    },
+    main_module = "intellij.vuejs.plugin",
+)
+### auto-generated section `dev descriptor intellij.vuejs.plugin` end

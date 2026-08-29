@@ -1,5 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_content.bzl", "dev_dist_plugin_content")
+load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin_descriptor.bzl", "dev_dist_plugin_descriptor")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 # Checkout directories that plugin layouts copy into a distribution verbatim (`withResource*`). They are
@@ -164,6 +165,14 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.karma` end
+
+### auto-generated section `dev descriptor intellij.karma` start
+dev_dist_plugin_descriptor(
+    descriptor = "resources/META-INF/plugin.xml",
+    descriptor_module = ":karma",
+    main_module = "intellij.karma",
+)
+### auto-generated section `dev descriptor intellij.karma` end
 
 ### auto-generated section `build intellij.karma.tests` start
 jvm_library(
