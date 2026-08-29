@@ -145,7 +145,6 @@ exports_files(
     [
         "intellij.prettierJS.iml",
         "resources/META-INF/plugin.xml",
-        "plugin-content.yaml",
     ],
     visibility = ["//visibility:public"],
 )

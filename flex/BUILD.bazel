@@ -213,7 +213,6 @@ exports_files(
         "resources/com/intellij/lang/javascript/flex/flexunit/SocketPolicyFile.xml",
         "resources/liveTemplates/actionscript_iterations.xml",
         "resources/liveTemplates/actionscript_miscellaneous.xml",
-        "plugin-content.yaml",
         "dev-dist.yaml",
     ],
     visibility = ["//visibility:public"],

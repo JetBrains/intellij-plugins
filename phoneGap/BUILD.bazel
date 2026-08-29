@@ -45,7 +45,6 @@ exports_files(
     [
         "intellij.phoneGap.iml",
         "resources/META-INF/plugin.xml",
-        "plugin-content.yaml",
     ],
     visibility = ["//visibility:public"],
 )

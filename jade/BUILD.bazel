@@ -146,7 +146,6 @@ exports_files(
         "resources/META-INF/plugin.xml",
         "resources/colorScheme/JadeDarcula.xml",
         "resources/colorScheme/JadeDefault.xml",
-        "plugin-content.yaml",
     ],
     visibility = ["//visibility:public"],
 )

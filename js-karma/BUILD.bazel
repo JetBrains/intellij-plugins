@@ -161,7 +161,6 @@ exports_files(
         "resources/META-INF/karma-coverage.xml",
         "resources/META-INF/karma-debug.xml",
         "resources/META-INF/plugin.xml",
-        "plugin-content.yaml",
     ],
     visibility = ["//visibility:public"],
 )

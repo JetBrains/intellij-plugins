@@ -239,7 +239,6 @@ exports_files(
         "core/resources/qodana-profiles/.idea/misc.xml",
         "core/resources/qodana-profiles/.idea/modules.xml",
         "core/resources/qodana-profiles/.idea/vcs.xml",
-        "plugin-content.yaml",
     ],
     visibility = ["//visibility:public"],
 )

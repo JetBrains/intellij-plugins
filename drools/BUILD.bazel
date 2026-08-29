@@ -101,7 +101,6 @@ exports_files(
     [
         "intellij.jboss.drools.iml",
         "resources/META-INF/plugin.xml",
-        "plugin-content.yaml",
     ],
     visibility = ["//visibility:public"],
 )

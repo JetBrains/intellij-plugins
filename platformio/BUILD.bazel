@@ -159,7 +159,6 @@ exports_files(
     [
         "intellij.clion.embedded.platformio.iml",
         "resources/META-INF/plugin.xml",
-        "plugin-content.yaml",
     ],
     visibility = ["//visibility:public"],
 )

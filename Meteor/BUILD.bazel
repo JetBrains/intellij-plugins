@@ -146,7 +146,6 @@ exports_files(
         "intellij.meteor.iml",
         "resources/META-INF/plugin.xml",
         "resources/liveTemplates/Meteor.xml",
-        "plugin-content.yaml",
     ],
     visibility = ["//visibility:public"],
 )

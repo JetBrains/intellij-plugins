@@ -174,7 +174,6 @@ exports_files(
         "resources/com/intellij/coldFusion/model/info/cf8_tags.xml",
         "resources/com/intellij/coldFusion/model/info/tags.xml",
         "resources/liveTemplates/cfml_default.xml",
-        "plugin-content.yaml",
     ],
     visibility = ["//visibility:public"],
 )

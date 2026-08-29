@@ -73,7 +73,6 @@ exports_files(
     [
         "intellij.webassembly.iml",
         "src/main/resources/META-INF/plugin.xml",
-        "plugin-content.yaml",
     ],
     visibility = ["//visibility:public"],
 )
