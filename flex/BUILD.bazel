@@ -214,6 +214,7 @@ exports_files(
         "resources/liveTemplates/actionscript_iterations.xml",
         "resources/liveTemplates/actionscript_miscellaneous.xml",
         "plugin-content.yaml",
+        "dev-dist.yaml",
     ],
     visibility = ["//visibility:public"],
 )

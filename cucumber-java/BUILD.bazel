@@ -173,6 +173,7 @@ exports_files(
         "resources/META-INF/plugin.xml",
         "resources/library/cucumber-jvm-deps.xml",
         "plugin-content.yaml",
+        "dev-dist.yaml",
     ],
     visibility = ["//visibility:public"],
 )

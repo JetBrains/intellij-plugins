@@ -98,6 +98,7 @@ exports_files(
         "resources/META-INF/git-plugin-extensions.xml",
         "resources/META-INF/plugin.xml",
         "resources/plugin-content.yaml",
+        "resources/dev-dist.yaml",
     ],
     visibility = ["//visibility:public"],
 )
