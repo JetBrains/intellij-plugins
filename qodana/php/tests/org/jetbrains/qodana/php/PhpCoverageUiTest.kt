@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.php
 
 import com.intellij.coverage.view.CoverageViewManager
-import com.intellij.php.coverage.PhpUnitCoverageEngine
+import com.intellij.php.coverage.PhpCoverageEngine
 import com.intellij.rt.coverage.data.LineCoverage
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.coverage.CHANGED_LINES_ARTIFACT_ID
@@ -20,7 +20,7 @@ class PhpCoverageUiTest : QodanaCoverageUiTestBase("PhpCoverageInspectionTest") 
 
     val bundle = manager.currentSuitesBundle
     assertNotNull("Coverage suite was not opened", bundle)
-    assertTrue("Unexpected engine: ${bundle!!.coverageEngine}", bundle.coverageEngine is PhpUnitCoverageEngine)
+    assertTrue("Unexpected engine: ${bundle!!.coverageEngine}", bundle.coverageEngine is PhpCoverageEngine)
     assertEquals(1, manager.activeSuites().size)
     assertNotNull("Coverage view was not created", CoverageViewManager.getInstance(project).getView(bundle))
 

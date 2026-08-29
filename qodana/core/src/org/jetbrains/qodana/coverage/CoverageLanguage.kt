@@ -7,6 +7,7 @@ enum class CoverageEngineType {
   JavaCoverageEngine,
   XMLReportEngine,
   PhpUnitCoverageEngine,
+  PhpCoverageEngine,
   JestCoverageEngine,
   MochaCoverageEngine,
   PyCoverageEngine,
@@ -44,7 +45,7 @@ enum class CoverageLanguage {
 
     private fun mapEngine(engine: CoverageEngineType) = when(engine) {
       CoverageEngineType.JavaCoverageEngine, CoverageEngineType.XMLReportEngine -> JVM
-      CoverageEngineType.PhpUnitCoverageEngine -> PHP
+      CoverageEngineType.PhpUnitCoverageEngine, CoverageEngineType.PhpCoverageEngine -> PHP
       CoverageEngineType.JestCoverageEngine, CoverageEngineType.MochaCoverageEngine -> JavaScript
       CoverageEngineType.PyCoverageEngine -> Python
       CoverageEngineType.GoCoverageEngine -> Go
