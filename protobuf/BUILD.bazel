@@ -72,9 +72,7 @@ dev_dist_plugin(
         "//contrib/protobuf/protoeditor-jvm:resources/intellij.protoeditor.jvm.xml": "intellij.protoeditor.jvm.xml",
         "//contrib/protobuf/protoeditor-python:resources/intellij.protoeditor.python.xml": "intellij.protoeditor.python.xml",
     },
-    libraries = [
-        "@lib//:truth",
-    ],
+    libraries = ["@lib//:truth"],
     main_module = "intellij.protoeditor",
     prepacked_content_modules = ["//contrib/protobuf/protoeditor-python:protoeditor-python_content_module_jar"],
 )
