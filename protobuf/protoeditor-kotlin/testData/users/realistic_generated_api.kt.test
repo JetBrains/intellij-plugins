@@ -1,0 +1,126 @@
+package demo
+
+import com.google.protobuf.ExtensionLite
+import demo.realistic.RealisticUser
+import demo.realistic.RealisticUserKt
+import demo.realistic.copy
+import demo.realistic.profileOrNull
+import demo.realistic.realisticUser
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser
+fun realisticDslFactory() {
+  realis<caret>ticUser {}
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser
+fun realisticDslCopy(existing: RealisticUser) {
+  existing.co<caret>py {}
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.name
+fun realisticDslField() {
+  realisticUser {
+    na<caret>me = "Ada"
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.name
+fun realisticDslHasField() {
+  realisticUser {
+    has<caret>Name()
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.name
+fun realisticDslClearField() {
+  realisticUser {
+    clear<caret>Name()
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.when
+fun realisticDslReservedField() {
+  realisticUser {
+    wh<caret>en_ = "later"
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.aliases
+fun realisticDslRepeatedHelper() {
+  realisticUser {
+    aliases.ad<caret>d("Ada")
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.aliases
+fun realisticDslRepeatedAddAll() {
+  realisticUser {
+    aliases.add<caret>All(listOf("Ada", "Grace"))
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.aliases
+fun realisticDslRepeatedPlusAssignOperator() {
+  realisticUser {
+    aliases +<caret>= listOf("Ada", "Grace")
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.labels
+fun realisticDslMapHelper() {
+  realisticUser {
+    labels.p<caret>ut("score", 1)
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.contact
+fun realisticDslOneofCase() {
+  realisticUser {
+    println(contact<caret>Case)
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.contact
+fun realisticDslClearOneof() {
+  realisticUser {
+    clearCon<caret>tact()
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.profile
+fun realisticDslMessageField() {
+  realisticUser {
+    pro<caret>file = RealisticUser.Profile.newBuilder().build()
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.profile
+fun realisticDslOrNullProperty() {
+  realisticUser {
+    println(profileOr<caret>Null)
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.profile
+fun realisticOrBuilderOrNullProperty(existing: RealisticUser) {
+  println(existing.profileOr<caret>Null)
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.Profile
+fun realisticNestedDslFactory() {
+  RealisticUserKt.pro<caret>file {}
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser.Profile.display_name
+fun realisticNestedDslField() {
+  RealisticUserKt.profile {
+    display<caret>Name = "Ada"
+  }
+}
+
+// EXPECT-NEXT: realistic_api.proto / RealisticUser
+fun realisticDslExtensionHelper(extension: ExtensionLite<RealisticUser, String>) {
+  realisticUser {
+    setEx<caret>tension(extension, "Ada")
+  }
+}

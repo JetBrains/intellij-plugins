@@ -1,0 +1,95 @@
+package demo
+
+import demo.lite.LiteUser
+import demo.lite.copy
+import demo.lite.liteUser
+import demo.lite.profileOrNull
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser
+fun liteDslFactory() {
+  lite<caret>User {}
+}
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser
+fun liteDslCopy(existing: LiteUser) {
+  existing.co<caret>py {}
+}
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser.name
+fun liteDslField() {
+  liteUser {
+    na<caret>me = "Ada"
+  }
+}
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser.name
+fun liteDslHasField() {
+  liteUser {
+    has<caret>Name()
+  }
+}
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser.name
+fun liteDslClearField() {
+  liteUser {
+    clear<caret>Name()
+  }
+}
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser.aliases
+fun liteDslRepeatedHelper() {
+  liteUser {
+    aliases.ad<caret>d("Ada")
+  }
+}
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser.aliases
+fun liteDslRepeatedOperator() {
+  liteUser {
+    aliases +<caret>= listOf("Ada", "Grace")
+  }
+}
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser.labels
+fun liteDslMapOperator() {
+  liteUser {
+    labels<caret>["score"] = 1
+  }
+}
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser.contact
+fun liteDslOneofCase() {
+  liteUser {
+    println(contact<caret>Case)
+  }
+}
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser.contact
+fun liteDslClearOneof() {
+  liteUser {
+    clearCon<caret>tact()
+  }
+}
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser.Profile
+fun liteDslNestedFactory() {
+  liteUser {
+    profile = pro<caret>file {
+      displayName = "Ada"
+    }
+  }
+}
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser.Profile.display_name
+fun liteDslNestedField() {
+  liteUser {
+    profile = profile {
+      display<caret>Name = "Ada"
+    }
+  }
+}
+
+// EXPECT-NEXT: lite_runtime.proto / LiteUser.profile
+fun liteOrBuilderOrNullProperty(existing: LiteUser) {
+  println(existing.profileOr<caret>Null)
+}

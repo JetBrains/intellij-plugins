@@ -1,0 +1,633 @@
+package demo
+
+import demo.proto.Role
+import demo.proto.AddressOrBuilder
+import demo.proto.ExtendableUser
+import demo.proto.OuterProto
+import demo.proto.User
+import demo.proto.UserOrBuilder
+import demo.proto.address
+import demo.proto.copy
+import demo.proto.createUserRequest
+import demo.proto.hTTP2Response
+import demo.proto.legacyMessage
+import demo.proto.outerUser
+import demo.proto.user
+import demo.proto.extendableUser
+import demo.proto.when_
+import com.google.protobuf.ByteString
+import com.google.protobuf.ExtensionLite
+import com.google.protobuf.kotlin.ExtensionList
+
+// EXPECT-NEXT: user.proto / User
+fun javaApiMessageClass() {
+  val user = Use<caret>r.newBuilder().build()
+}
+
+// EXPECT-NEXT: user.proto / User
+fun javaApiMessageSpecificMethod() {
+  val user = User.getDefault<caret>Instance()
+}
+
+// EXPECT-NEXT: user.proto / User
+fun javaApiOrBuilderClass(orBuilder: UserOr<caret>Builder) {
+  println(orBuilder)
+}
+
+// EXPECT-NEXT: user.proto / User.Profile
+fun javaApiNestedOrBuilderClass(orBuilder: User.ProfileOr<caret>Builder) {
+  println(orBuilder)
+}
+
+// EXPECT-NEXT: user.proto / Address
+fun javaApiSecondMessageOrBuilderClass(orBuilder: AddressOr<caret>Builder) {
+  println(orBuilder)
+}
+
+// EXPECT-NEXT: user.proto / User.Profile
+fun javaApiNestedMessageClass() {
+  val profile = User.Pro<caret>file.getDefaultInstance()
+}
+
+// EXPECT-NEXT: user.proto / User.Profile.Visibility
+fun javaApiNestedEnumClass() {
+  val visibility = User.Profile.Visi<caret>bility.PUBLIC
+}
+
+// EXPECT-NEXT: user.proto / User.Profile.PUBLIC
+fun javaApiNestedEnumValue() {
+  val visibility = User.Profile.Visibility.PUB<caret>LIC
+}
+
+// EXPECT-NEXT: outer.proto / OuterUser
+fun javaApiOuterClassMessageClass() {
+  val user = OuterProto.Outer<caret>User.getDefaultInstance()
+}
+
+// EXPECT-NEXT: outer.proto / OuterUser.name
+fun javaApiOuterClassBuilderSetter() {
+  val user = OuterProto.OuterUser.newBuilder()
+    .set<caret>Name("Alice")
+    .build()
+}
+
+// EXPECT-NEXT: outer.proto / OuterRole
+fun javaApiOuterClassEnumClass() {
+  val role = OuterProto.Outer<caret>Role.OUTER_ADMIN
+}
+
+// EXPECT-NEXT: outer.proto / OUTER_ADMIN
+fun javaApiOuterClassEnumValue() {
+  val role = OuterProto.OuterRole.OUTER<caret>_ADMIN
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun javaApiBuilderSetter() {
+  val user = User.newBuilder()
+    .set<caret>Name("Alice")
+    .build()
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun javaApiStringBytesGetter(user: User) {
+  println(user.getName<caret>Bytes())
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun javaApiBuilderStringBytesGetter() {
+  println(User.newBuilder().getName<caret>Bytes())
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun javaApiBuilderStringBytesSetter() {
+  User.newBuilder().setName<caret>Bytes(ByteString.EMPTY)
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun kotlinStringBytesProperty(user: User) {
+  println(user.name<caret>Bytes)
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun javaApiBuilderVariableSetter() {
+  val builder = User.newBuilder()
+  builder.set<caret>Name("Alice")
+}
+
+// EXPECT-NEXT: user.proto / User.address
+fun javaApiBuilderHasField() {
+  val hasAddress = User.newBuilder()
+    .has<caret>Address()
+}
+
+// EXPECT-NEXT: user.proto / User.address
+fun javaApiBuilderClearField() {
+  val user = User.newBuilder()
+    .clear<caret>Address()
+    .build()
+}
+
+// EXPECT-NEXT: user.proto / User.address
+fun javaApiMessageOrBuilderAccessor(user: UserOrBuilder) {
+  println(user.getAddressOr<caret>Builder())
+}
+
+// EXPECT-NEXT: user.proto / User.previous_addresses
+fun javaApiRepeatedMessageOrBuilderListAccessor(user: UserOrBuilder) {
+  println(user.getPreviousAddressesOrBuilder<caret>List())
+}
+
+// EXPECT-NEXT: user.proto / User.previous_addresses
+fun javaApiRepeatedMessageOrBuilderIndexedAccessor(user: UserOrBuilder) {
+  println(user.getPreviousAddressesOr<caret>Builder(0))
+}
+
+// EXPECT-NEXT: user.proto / User.test_oneof
+fun javaApiOneofCaseEnumClass() {
+  val case = User.Test<caret>OneofCase.STRING_CHOICE
+}
+
+// EXPECT-NEXT: user.proto / User.string_choice
+fun javaApiOneofCaseEnumValue() {
+  val case = User.TestOneofCase.STRING<caret>_CHOICE
+}
+
+// EXPECT-NEXT: user.proto / User.test_oneof
+fun javaApiOneofNotSetEnumValue() {
+  val case = User.TestOneofCase.TESTONEOF<caret>_NOT_SET
+}
+
+// EXPECT-NEXT: user.proto / User.test_oneof
+fun javaApiOneofEnumForNumber() {
+  val case = User.TestOneofCase.for<caret>Number(1)
+}
+
+// EXPECT-NEXT: user.proto / User.test_oneof
+fun javaApiOneofEnumValueOf() {
+  val case = User.TestOneofCase.val<caret>ueOf("STRING_CHOICE")
+}
+
+// EXPECT-NEXT: user.proto / User.string_choice
+fun javaApiBuilderOneofFieldSetter() {
+  val user = User.newBuilder()
+    .setString<caret>Choice("text")
+    .build()
+}
+
+// EXPECT-NEXT: user.proto / User.string_choice
+fun javaApiBuilderOneofFieldHas() {
+  val hasChoice = User.newBuilder()
+    .hasString<caret>Choice()
+}
+
+// EXPECT-NEXT: user.proto / User.string_choice
+fun javaApiBuilderOneofFieldBytesSetter() {
+  val user = User.newBuilder()
+    .setStringChoice<caret>Bytes(ByteString.EMPTY)
+    .build()
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun javaApiRepeatedAdder() {
+  val user = User.newBuilder()
+    .add<caret>Roles(Role.ADMIN)
+    .build()
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun javaApiRepeatedAddAll() {
+  val user = User.newBuilder()
+    .addAll<caret>Roles(listOf(Role.ADMIN))
+    .build()
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun javaApiRepeatedSetter() {
+  val user = User.newBuilder()
+    .set<caret>Roles(0, Role.ADMIN)
+    .build()
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun javaApiRepeatedCountAccessor(user: User) {
+  println(user.getRoles<caret>Count())
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun javaApiRepeatedListAccessor(user: User) {
+  println(user.getRoles<caret>List())
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun javaApiRepeatedIndexedAccessor(user: User) {
+  println(user.get<caret>Roles(0))
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun javaApiBuilderRepeatedCountAccessor() {
+  val count = User.newBuilder()
+    .getRoles<caret>Count()
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun javaApiBuilderRepeatedListAccessor() {
+  val roles = User.newBuilder()
+    .getRoles<caret>List()
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun javaApiBuilderRepeatedIndexedAccessor() {
+  val role = User.newBuilder()
+    .get<caret>Roles(0)
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun javaApiBuilderRepeatedClear() {
+  val user = User.newBuilder()
+    .clear<caret>Roles()
+    .build()
+}
+
+// EXPECT-NEXT: user.proto / User.labels
+fun javaApiMapCountAccessor(user: User) {
+  println(user.getLabels<caret>Count())
+}
+
+// EXPECT-NEXT: user.proto / User.labels
+fun javaApiMapMapAccessor(user: User) {
+  println(user.getLabels<caret>Map())
+}
+
+// EXPECT-NEXT: user.proto / User.labels
+fun javaApiMapContainsAccessor(user: User) {
+  println(user.contains<caret>Labels("tier"))
+}
+
+// EXPECT-NEXT: user.proto / User.labels
+fun javaApiMapOrDefaultAccessor(user: User) {
+  println(user.getLabels<caret>OrDefault("tier", 0))
+}
+
+// EXPECT-NEXT: user.proto / User.labels
+fun javaApiMapOrThrowAccessor(user: User) {
+  println(user.getLabels<caret>OrThrow("tier"))
+}
+
+// EXPECT-NEXT: user.proto / User.labels
+fun javaApiBuilderMapPutAccessor() {
+  val user = User.newBuilder()
+    .put<caret>Labels("tier", 1)
+}
+
+// EXPECT-NEXT: user.proto / User.labels
+fun javaApiBuilderMapPutAllAccessor() {
+  val user = User.newBuilder()
+    .putAll<caret>Labels(mapOf("tier" to 1))
+}
+
+// EXPECT-NEXT: user.proto / User.labels
+fun javaApiBuilderMapRemoveAccessor() {
+  val user = User.newBuilder()
+    .remove<caret>Labels("tier")
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun javaApiFieldNumberConstant() {
+  println(User.NAME<caret>_FIELD_NUMBER)
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun javaApiRepeatedFieldNumberConstant() {
+  println(User.ROLES<caret>_FIELD_NUMBER)
+}
+
+// EXPECT-NEXT: user.proto / User.labels
+fun javaApiMapFieldNumberConstant() {
+  println(User.LABELS<caret>_FIELD_NUMBER)
+}
+
+// EXPECT-NEXT: user.proto / Role
+fun javaApiEnumClass() {
+  val role = Ro<caret>le.ADMIN
+}
+
+// EXPECT-NEXT: user.proto / ADMIN
+fun javaApiEnumValue() {
+  val role = Role.AD<caret>MIN
+}
+
+// EXPECT-NEXT: user.proto / Role
+fun javaApiEnumForNumber() {
+  val role = Role.for<caret>Number(1)
+}
+
+// EXPECT-NEXT: user.proto / Role
+fun javaApiEnumValueOf() {
+  val role = Role.val<caret>ueOf("ADMIN")
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun kotlinPropertyAccess(user: User) {
+  println(user.na<caret>me)
+}
+
+// EXPECT-NEXT: user.proto / Address.city
+fun nestedKotlinPropertyAccess(user: User) {
+  println(user.address.ci<caret>ty)
+}
+
+// EXPECT-NEXT: user.proto / User
+fun kotlinDslFactory() {
+  val user = us<caret>er {
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionGet(extension: ExtensionLite<ExtendableUser, String>) {
+  extendableUser {
+    ge<caret>t(extension)
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionGetOperator(extension: ExtensionLite<ExtendableUser, String>) {
+  extendableUser {
+    println(this<caret>[extension])
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionContains(extension: ExtensionLite<ExtendableUser, String>) {
+  extendableUser {
+    conta<caret>ins(extension)
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionContainsOperator(extension: ExtensionLite<ExtendableUser, String>) {
+  extendableUser {
+    println(extension <caret>in this)
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionClear(extension: ExtensionLite<ExtendableUser, String>) {
+  extendableUser {
+    cle<caret>ar(extension)
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionSetExtension(extension: ExtensionLite<ExtendableUser, String>) {
+  extendableUser {
+    setEx<caret>tension(extension, "Ada")
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionSet(extension: ExtensionLite<ExtendableUser, String>) {
+  extendableUser {
+    se<caret>t(extension, "Ada")
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionSetOperator(extension: ExtensionLite<ExtendableUser, String>) {
+  extendableUser {
+    this<caret>[extension] = "Ada"
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionListAdd(extensions: ExtensionList<String, ExtendableUser>) {
+  extendableUser {
+    extensions.ad<caret>d("Ada")
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionListPlusAssign(extensions: ExtensionList<String, ExtendableUser>) {
+  extendableUser {
+    extensions.plusAs<caret>sign("Ada")
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionListPlusAssignOperator(extensions: ExtensionList<String, ExtendableUser>) {
+  extendableUser {
+    extensions +<caret>= "Ada"
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionListPlusAssignIterableOperator(extensions: ExtensionList<String, ExtendableUser>) {
+  extendableUser {
+    extensions +<caret>= listOf("Ada", "Grace")
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionListAddAll(extensions: ExtensionList<String, ExtendableUser>) {
+  extendableUser {
+    extensions.add<caret>All(listOf("Ada", "Grace"))
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionListSet(extensions: ExtensionList<String, ExtendableUser>) {
+  extendableUser {
+    extensions.se<caret>t(0, "Ada")
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionListSetOperator(extensions: ExtensionList<String, ExtendableUser>) {
+  extendableUser {
+    extensions<caret>[0] = "Ada"
+  }
+}
+
+// EXPECT-NEXT: extensions.proto / ExtendableUser
+fun kotlinDslExtensionListClear(extensions: ExtensionList<String, ExtendableUser>) {
+  extendableUser {
+    extensions.cle<caret>ar()
+  }
+}
+
+// EXPECT-NEXT: user.proto / User
+fun kotlinDslCopy(existing: User) {
+  val user = existing.co<caret>py {
+    name = "Alice"
+  }
+}
+
+// EXPECT-NEXT: user.proto / Address
+fun kotlinDslAddressFactory() {
+  val address = add<caret>ress {
+  }
+}
+
+// EXPECT-NEXT: user.proto / CreateUserRequest
+fun kotlinDslCreateUserRequestFactory() {
+  val request = createUser<caret>Request {
+  }
+}
+
+// EXPECT-NEXT: outer.proto / OuterUser
+fun kotlinDslOuterClassFactory() {
+  val user = outer<caret>User {
+  }
+}
+
+// EXPECT-NEXT: user.proto / Legacy_message
+fun kotlinDslFactoryWithUnderscoreInMessageName() {
+  val legacy = legacy<caret>Message {
+  }
+}
+
+// EXPECT-NEXT: user.proto / When
+fun kotlinDslFactoryForKeywordMessageName() {
+  val keywordMessage = wh<caret>en_ {
+  }
+}
+
+// EXPECT-NEXT: user.proto / HTTP2_response
+fun kotlinDslFactoryWithUnusualMessageCapitalization() {
+  val unusualName = hTTP2<caret>Response {
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun kotlinDslField() {
+  val user = user {
+    na<caret>me = "Alice"
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun kotlinDslHasField() {
+  val user = user {
+    has<caret>Name()
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun kotlinDslClearField() {
+  val user = user {
+    clear<caret>Name()
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.when
+fun kotlinDslReservedField() {
+  val user = user {
+    wh<caret>en_ = "later"
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.when
+fun kotlinDslReservedHasField() {
+  val user = user {
+    hasWh<caret>en_()
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.when
+fun kotlinDslReservedClearField() {
+  val user = user {
+    clearWh<caret>en_()
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.line2value
+fun kotlinDslFieldWithDigitInsideName() {
+  val user = user {
+    line2<caret>Value = "second"
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.string_choice
+fun kotlinDslOneofField() {
+  val user = user {
+    string<caret>Choice = "text"
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.test_oneof
+fun kotlinDslOneofCaseProperty() {
+  val user = user {
+    println(testOneof<caret>Case)
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.test_oneof
+fun kotlinDslClearOneof() {
+  val user = user {
+    clearTest<caret>Oneof()
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.labels
+fun kotlinDslMapField() {
+  val user = user {
+    lab<caret>els["tier"] = 1
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun kotlinDslListPlusAssignOperator() {
+  val user = user {
+    roles +<caret>= Role.ADMIN
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun kotlinDslListPlusAssignIterableOperator() {
+  val user = user {
+    roles +<caret>= listOf(Role.ADMIN)
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun kotlinDslListSetOperator() {
+  val user = user {
+    roles<caret>[0] = Role.ADMIN
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.labels
+fun kotlinDslMapSetOperator() {
+  val user = user {
+    labels<caret>["tier"] = 1
+  }
+}
+
+// EXPECT-NEXT: outer.proto / OuterUser.name
+fun kotlinDslOuterClassField() {
+  val user = outerUser {
+    na<caret>me = "Alice"
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.address
+fun kotlinDslNestedMessageField() {
+  val user = user {
+    add<caret>ress = address {
+      city = "Yerevan"
+    }
+  }
+}
+
+// EXPECT-NEXT: user.proto / Address.city
+fun kotlinDslNestedField() {
+  val address = address {
+    ci<caret>ty = "Yerevan"
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.roles
+fun kotlinDslRepeatedPlusAssign() {
+  val user = user {
+    ro<caret>les += Role.PLAYER
+  }
+}
