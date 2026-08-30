@@ -10,6 +10,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.protoeditor.core" />
+    <orderEntry type="module" module-name="intellij.libraries.protobuf.java.util" />
     <orderEntry type="module" module-name="intellij.platform.structureView" />
     <orderEntry type="module" module-name="intellij.protoeditor.jvm" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.protoeditor.python" scope="PROVIDED" />

@@ -17,6 +17,7 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         "//contrib/protobuf/protoeditor-core",
+        "@community//libraries/protobuf-java-util",
         "@community//platform/structure-view-impl:structureView",
     ],
 )
@@ -34,6 +35,7 @@ jvm_library(
         # do not sort,
         ":protoeditor",
         "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
+        "@community//libraries/protobuf-java-util:protobuf-java-util_test_lib",
         "@community//platform/structure-view-impl:structureView_test_lib",
         "//contrib/protobuf/protoeditor-jvm",
         "//contrib/protobuf/protoeditor-jvm:protoeditor-jvm_test_lib",
@@ -71,7 +73,6 @@ dev_dist_plugin(
         "//contrib/protobuf/protoeditor-python:resources/intellij.protoeditor.python.xml": "intellij.protoeditor.python.xml",
     },
     libraries = [
-        "@lib//:google-protobuf-java-util",
         "@lib//:truth",
     ],
     main_module = "intellij.protoeditor",

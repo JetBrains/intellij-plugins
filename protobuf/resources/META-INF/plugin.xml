@@ -26,8 +26,11 @@
 
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
-    <module name="intellij.platform.structureView"/>
     <module name="intellij.spellchecker"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.libraries.protobuf.java.util"/>
+    <module name="intellij.platform.structureView"/>
+    <!-- endregion -->
   </dependencies>
 
   <extensionPoints>
