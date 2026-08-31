@@ -325,6 +325,29 @@ class PbKotlinFindUsagesHandlerFactoryTest : PbKotlinTestBase() {
         )
     }
 
+    fun testFindUsagesIncludesKotlinSyntheticPropertyAccessToJavaGetter() {
+        addLiteRuntimeGeneratedKotlinProjectFiles()
+
+        myFixture.configureByText(
+            "Main.kt",
+            """
+        package demo
+
+        import demo.lite.LiteUser
+
+        fun useGeneratedJavaProperty(existing: LiteUser) {
+          val name = existing.name
+        }
+      """.trimIndent()
+        )
+
+        val protoFile = findProjectFile("src/main/proto/lite_runtime.proto") as PbFile
+        assertUsagesContain(
+            findUsagesForSymbol(protoFile, "LiteUser.name"),
+            "Main.kt" to "name"
+        )
+    }
+
     fun testFindUsagesIncludesGrpcKotlinServiceAndMethodCalls() {
         addGrpcKotlinProjectFiles()
         addGrpcKotlinServiceImplementation()

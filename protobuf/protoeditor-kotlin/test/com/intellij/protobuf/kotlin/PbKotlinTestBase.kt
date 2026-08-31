@@ -556,6 +556,7 @@ abstract class PbKotlinTestBase : BasePlatformTestCase() {
         package demo.lite;
 
         public interface LiteUserOrBuilder extends com.google.protobuf.MessageLiteOrBuilder {
+          String getName();
           boolean hasProfile();
           LiteUser.Profile getProfile();
         }
@@ -575,6 +576,7 @@ abstract class PbKotlinTestBase : BasePlatformTestCase() {
             implements LiteUserOrBuilder, com.google.protobuf.MessageLite {
           public static Builder newBuilder() { return new Builder(); }
           public Builder toBuilder() { return new Builder(); }
+          public String getName() { return ""; }
           public boolean hasProfile() { return false; }
           public Profile getProfile() { return new Profile(); }
 
