@@ -407,63 +407,6 @@
           "kind": "fail",
           "level": "warning",
           "message": {
-            "text": "Constructor 'Baz' coverage is below the threshold 50%",
-            "markdown": "Constructor `Baz` coverage is below the threshold 50%"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/Main.kt",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 11,
-                  "startColumn": 7,
-                  "charOffset": 137,
-                  "charLength": 3,
-                  "snippet": {
-                    "text": "Baz"
-                  },
-                  "sourceLanguage": "kotlin"
-                },
-                "contextRegion": {
-                  "startLine": 11,
-                  "startColumn": 1,
-                  "charOffset": 131,
-                  "charLength": 11,
-                  "snippet": {
-                    "text": "class Baz {"
-                  },
-                  "sourceLanguage": "kotlin"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testKotlin",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "25d4073b26aa2a39",
-            "equalIndicator/v1": "27441f64d9907532b964eeefa8d9b71f981673effdc362eaeaa9eb537fce8b0b"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "kotlin"
-            ]
-          }
-        },
-        {
-          "ruleId": "JvmCoverageInspection",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
             "text": "Class 'Baz' coverage is below the threshold 50%",
             "markdown": "Class `Baz` coverage is below the threshold 50%"
           },
@@ -506,6 +449,63 @@
           "partialFingerprints": {
             "equalIndicator/v2": "25d4073b26aa2a39",
             "equalIndicator/v1": "df33285f5835cee63d4a6c1376c5ad720a85a0f577be719efb614c0a399d3d29"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "kotlin"
+            ]
+          }
+        },
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Constructor 'Baz' coverage is below the threshold 50%",
+            "markdown": "Constructor `Baz` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.kt",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 7,
+                  "charOffset": 137,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "Baz"
+                  },
+                  "sourceLanguage": "kotlin"
+                },
+                "contextRegion": {
+                  "startLine": 11,
+                  "startColumn": 1,
+                  "charOffset": 131,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "class Baz {"
+                  },
+                  "sourceLanguage": "kotlin"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testKotlin",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "25d4073b26aa2a39",
+            "equalIndicator/v1": "27441f64d9907532b964eeefa8d9b71f981673effdc362eaeaa9eb537fce8b0b"
           },
           "properties": {
             "ideaSeverity": "WARNING",

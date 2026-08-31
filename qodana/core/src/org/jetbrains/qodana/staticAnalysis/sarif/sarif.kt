@@ -238,7 +238,8 @@ suspend fun fillComponents(tool: Tool, qodanaProfile: QodanaProfile) {
   val driver = tool.driver ?: createDriver()
   val taxonomy = InspectionsTaxonomy()
   val components = mutableMapOf<String, ToolComponent>()
-  qodanaProfile.mainGroup.profile.tools.forEach { tools ->
+  // The tool order decides the taxonomy indices, and `profile.tools` comes from a concurrent map, so keep it stable.
+  qodanaProfile.mainGroup.profile.tools.sortedBy { it.shortName }.forEach { tools ->
     val defaultToolWrapper = tools.getInspectionTool(null)
     val pluginId = defaultToolWrapper.extension?.pluginDescriptor?.pluginId?.idString
     val pluginVersion = defaultToolWrapper.extension?.pluginDescriptor?.version
@@ -253,7 +254,7 @@ suspend fun fillComponents(tool: Tool, qodanaProfile: QodanaProfile) {
   }
   driver.taxa = taxonomy.taxonomy
   tool.driver = driver
-  tool.extensions = components.values.toSet()
+  tool.extensions = components.values.sortedBy { it.name }.toSet()
 }
 
 fun createTaxonomyReference(taxonomyIndex: Int, taxonomyId: String): ReportingDescriptorRelationship {

@@ -4,64 +4,6 @@
       "language": "en-US",
       "results": [
         {
-          "ruleId": "ConstantValue",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Condition is always false",
-            "markdown": "Condition is always false"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/Main.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 8,
-                  "startColumn": 13,
-                  "charOffset": 174,
-                  "charLength": 5,
-                  "snippet": {
-                    "text": "false"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 6,
-                  "startColumn": 1,
-                  "charOffset": 123,
-                  "charLength": 116,
-                  "snippet": {
-                    "text": "        for (int i = 0; i < 5; i++) {\n\n        if (false) {\n                        System.out.println(\"String 2\");\n"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "f3615aa46d0ab6b6",
-            "equalIndicator/v1": "719507824147638eb417b332651347bb0dce5d90cb146034bd9d4c365d460acc"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "hasFixes": true,
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
           "ruleId": "IncorrectFormatting",
           "kind": "fail",
           "level": "note",
@@ -492,6 +434,64 @@
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
             "problemType": "INCORRECT_FORMATTING",
+            "hasFixes": true,
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition is always false",
+            "markdown": "Condition is always false"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 13,
+                  "charOffset": 174,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "false"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "charOffset": 123,
+                  "charLength": 116,
+                  "snippet": {
+                    "text": "        for (int i = 0; i < 5; i++) {\n\n        if (false) {\n                        System.out.println(\"String 2\");\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testIncorrectFormattingWithAnotherInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "f3615aa46d0ab6b6",
+            "equalIndicator/v1": "719507824147638eb417b332651347bb0dce5d90cb146034bd9d4c365d460acc"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
             "hasFixes": true,
             "tags": [
               "JAVA"

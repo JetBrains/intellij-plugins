@@ -4,6 +4,63 @@
       "language": "en-US",
       "results": [
         {
+          "ruleId": "UNUSED_IMPORT",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Unused import 'import java.util.ArrayList;'",
+            "markdown": "Unused import `import java.util.ArrayList;`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/App.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 27,
+                  "snippet": {
+                    "text": "import java.util.ArrayList;"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 53,
+                  "snippet": {
+                    "text": "import java.util.ArrayList;\nimport java.util.Arrays;\n"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testFormattingProblems",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "79c75b18ba8541c6",
+            "equalIndicator/v1": "afb2230e25a5dd4665183f057c1d31512998d2b6dc5ce3771cbbbb66f1daa8a7"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
           "ruleId": "ArraysAsListWithZeroOrOneArgument",
           "kind": "fail",
           "level": "warning",
@@ -57,63 +114,6 @@
             "problemType": "REGULAR",
             "hasFixes": true,
             "hasCleanup": true,
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "UNUSED_IMPORT",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Unused import 'import java.util.ArrayList;'",
-            "markdown": "Unused import `import java.util.ArrayList;`"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/App.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 27,
-                  "snippet": {
-                    "text": "import java.util.ArrayList;"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 53,
-                  "snippet": {
-                    "text": "import java.util.ArrayList;\nimport java.util.Arrays;\n"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testFormattingProblems",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "79c75b18ba8541c6",
-            "equalIndicator/v1": "afb2230e25a5dd4665183f057c1d31512998d2b6dc5ce3771cbbbb66f1daa8a7"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
             "tags": [
               "JAVA"
             ]
