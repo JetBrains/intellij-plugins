@@ -70,7 +70,6 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
-        "@community//libraries/misc/plugin",
         "@community//platform/navbar/plugin",
         "@community//platform/testRunner/plugin",
         "@community//platform/structure-view-impl/plugin",
@@ -101,7 +100,6 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         ":mdx-tests",
-        "@community//libraries/misc/plugin:plugin_test_lib",
         "@community//platform/navbar/plugin:plugin_test_lib",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",

@@ -179,7 +179,6 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
-        "@community//libraries/misc/plugin",
         "@community//platform/testRunner/plugin",
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/problemsView/plugin",
@@ -212,7 +211,6 @@ jvm_library(
         ":prisma-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
-        "@community//libraries/misc/plugin:plugin_test_lib",
         "@community//platform/testRunner/plugin:plugin_test_lib",
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//platform/problemsView/plugin:plugin_test_lib",
