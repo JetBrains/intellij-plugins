@@ -106,6 +106,7 @@
     <projectOpenProcessor id="PlatformioProjectOpenProcessor"
                           implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor"/>
     <externalSystemManager implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioManager"/>
+    <externalProjectData.extension implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectDataImportExtension"/>
     <projectTaskRunner implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioProjectTaskRunner"
                        id="PlatformioProjectTaskRunner" order="first" />
     <registryKey key="PlatformIO.system.in.process" defaultValue="true" restartRequired="true"
