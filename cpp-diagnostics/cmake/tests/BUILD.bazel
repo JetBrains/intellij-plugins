@@ -65,6 +65,8 @@ jvm_library(
         "@community//libraries/assertj-core:assertj-core_test_lib",
         "@community//libraries/junit6",
         "@community//libraries/junit6:junit6_test_lib",
+        "@community//libraries/junit6-params",
+        "@community//libraries/junit6-params:junit6-params_test_lib",
         "@community//libraries/kotlinx/serialization/core",
         "@community//libraries/kotlinx/serialization/core:core_test_lib",
         "@community//libraries/kotlinx/serialization/json",

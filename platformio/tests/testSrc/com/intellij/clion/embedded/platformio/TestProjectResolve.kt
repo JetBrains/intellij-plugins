@@ -5,6 +5,12 @@ import com.intellij.clion.embedded.platformio.TestUtils.findExternalModule
 import com.intellij.clion.testFramework.nolang.junit5.core.clionProjectTestFixture
 import com.intellij.clion.testFramework.nolang.junit5.core.clionTimeoutRunBlocking
 import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
+import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.CompilerAndToolSet
+import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.RunWithAllLinuxToolchains
+import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.RunWithAllMacOSToolchains
+import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.RunWithAllWindowsToolchains
+import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.SupportedToolchainsProvider
+import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.toolchainFixture
 import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
@@ -17,10 +23,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.PathUtil
 import com.intellij.util.asSafely
-import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.system.OS
 import com.jetbrains.cidr.CidrTestDataFixture
-import com.jetbrains.cidr.assumptions.ToolSetKindAssumption
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTarget
@@ -34,18 +38,28 @@ import com.jetbrains.cidr.lang.workspace.compiler.OCCompilerId
 import org.jetbrains.annotations.NonNls
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedClass
+import org.junit.jupiter.params.provider.ArgumentsSource
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.div
 import kotlin.io.path.readText
 
 @TestApplication
-class TestProjectResolve {
+@ParameterizedClass
+@RunWithAllLinuxToolchains
+@RunWithAllMacOSToolchains
+@RunWithAllWindowsToolchains
+@ArgumentsSource(SupportedToolchainsProvider::class)
+class TestProjectResolve(private val compilerAndToolSet: CompilerAndToolSet) {
   private val projectPathFixture = tempDirTestFixture(CidrTestDataFixture.getPlatformioTestData() / "project1")
 
+  private val toolchainFixture = toolchainFixture(compilerAndToolSet)
+
   private val projectPath by projectPathFixture
-  private val project by clionProjectTestFixture(projectPathFixture)
+  private val project by clionProjectTestFixture(projectPathFixture, toolchainFixture)
 
   private val EXPECTED_ACTIVE_INI_FILES = listOf(
     "platformio.ini",
@@ -82,7 +96,8 @@ class TestProjectResolve {
   fun testScanFiles2023() = doTestScanFiles("-2023")
 
   private fun doTestScanFiles(suffix: String = "") = clionTimeoutRunBlocking {
-    ToolSetKindAssumption.assumeToolSetKind().isNotRemoteLike()
+    assumeTrue(compilerAndToolSet !is CompilerAndToolSet.Docker)
+    assumeTrue(compilerAndToolSet !is CompilerAndToolSet.WSL)
 
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
     val testListener = TaskNotificationListerForTest()
