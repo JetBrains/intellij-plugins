@@ -1,6 +1,8 @@
 package org.angular2.lang.expr.service
 
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil
+import com.intellij.lang.typescript.compiler.TypeScriptServiceEvaluationSupport
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringHash
@@ -20,6 +22,7 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
     process: JSLanguageServiceQueue,
     componentVirtualFile: VirtualFile,
     newContents: TranspiledDirectiveFile?,
+    typeEvaluationSupport: TypeScriptServiceEvaluationSupport,
   ) {
     if (newContents == null) {
       transpiledComponentCacheWriteLock.withLock {
@@ -28,12 +31,19 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
       return
     }
 
+    val resolvedFilePaths = mutableMapOf<VirtualFile, String>()
+    fun getServicePath(file: VirtualFile): String? =
+      resolvedFilePaths[file] ?: JSLanguageServiceUtil.awaitFuture(typeEvaluationSupport.getFilePath(file), JSLanguageServiceUtil.shortTimeout)
+        ?.also { resolvedFilePaths[file] = it }
+
+    val filePath = getServicePath(componentVirtualFile) ?: return
+
     val newInfo = TranspiledComponentInfo(newContents)
 
     if (transpiledComponentCache[componentVirtualFile] == newInfo) {
       return
     }
-    val serviceObject = newContents.toAngular2TranspiledTemplateRequestArgs(myProject, componentVirtualFile)
+    val serviceObject = newContents.toAngular2TranspiledTemplateRequestArgs(myProject, componentVirtualFile, filePath, ::getServicePath)
     val command = Angular2TranspiledTemplateCommand(serviceObject)
     transpiledComponentCacheWriteLock.withLock {
       if (transpiledComponentCache[componentVirtualFile] == newInfo) {

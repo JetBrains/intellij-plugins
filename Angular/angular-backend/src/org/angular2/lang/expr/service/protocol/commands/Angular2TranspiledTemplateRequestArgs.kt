@@ -1,7 +1,6 @@
 package org.angular2.lang.expr.service.protocol.commands
 
 import com.intellij.lang.javascript.service.protocol.LocalFilePath
-import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptFileObject
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -15,24 +14,24 @@ import java.util.NavigableMap
 import java.util.TreeMap
 
 class Angular2TranspiledTemplateRequestArgs private constructor(
-  file: VirtualFile,
+  filePath: String,
   @JvmField val transpiledContent: String?,
   @JvmField val sourceCode: Map<String, String>,
   @JvmField val mappings: List<Angular2TcbMappingInfo>,
 ) : TypeScriptFileObject() {
 
   init {
-    this.file = LocalFilePath.create(TypeScriptCompilerConfigUtil.normalizeNameAndPath(file))
+    this.file = LocalFilePath.create(filePath)
   }
 
   companion object {
     fun build(
-      file: VirtualFile,
+      filePath: String,
       transpiledContent: String,
       sourceCode: Map<String, String>,
       mappings: List<Angular2TcbMappingInfo>,
     ): Angular2TranspiledTemplateRequestArgs {
-      return Angular2TranspiledTemplateRequestArgs(file, transpiledContent, sourceCode, mappings)
+      return Angular2TranspiledTemplateRequestArgs(filePath, transpiledContent, sourceCode, mappings)
     }
   }
 }
@@ -50,7 +49,12 @@ class Angular2TcbMappingInfo(
   @JvmField val flags: List<Int>,
 )
 
-internal fun TranspiledDirectiveFile.toAngular2TranspiledTemplateRequestArgs(project: Project, virtualFile: VirtualFile): Angular2TranspiledTemplateRequestArgs {
+internal fun TranspiledDirectiveFile.toAngular2TranspiledTemplateRequestArgs(
+  project: Project,
+  virtualFile: VirtualFile,
+  filePath: String,
+  getServicePath: (VirtualFile) -> String?,
+): Angular2TranspiledTemplateRequestArgs {
 
   val psiDocumentManager = PsiDocumentManager.getInstance(project)
   val fileDocumentManager = FileDocumentManager.getInstance()
@@ -84,24 +88,27 @@ internal fun TranspiledDirectiveFile.toAngular2TranspiledTemplateRequestArgs(pro
     Pair(this.generatedCode, null)
 
   return Angular2TranspiledTemplateRequestArgs.build(
-    virtualFile,
+    filePath,
     generatedCode,
     this.fileMappings.values.associate {
-      Pair(it.fileName, fileContentsAndSourceMappingOffsetsMap[it.fileName]!!.first)
+      val resolvedFileName = getServicePath(it.sourceFile.viewProvider.virtualFile) ?: "<non-local>"
+      Pair(resolvedFileName, fileContentsAndSourceMappingOffsetsMap[it.fileName]!!.first)
     },
     this.fileMappings.values.map {
-      it.toCodeMapping(fileContentsAndSourceMappingOffsetsMap[it.fileName]?.second, generatedMappingsOffsets)
+      val resolvedFileName = getServicePath(it.sourceFile.viewProvider.virtualFile) ?: "<non-local>"
+      it.toCodeMapping(resolvedFileName, fileContentsAndSourceMappingOffsetsMap[it.fileName]?.second, generatedMappingsOffsets)
     }
   )
 }
 
 private fun Angular2TranspiledDirectiveFileBuilder.FileMappings.toCodeMapping(
+  resolvedFileName: String,
   sourceMappingOffsets: NavigableMap<Int, Int>?,
   generatedMappingOffsets: NavigableMap<Int, Int>?,
 ): Angular2TcbMappingInfo {
   val mappings = sourceMappings.filter { !it.ignored }
   return Angular2TcbMappingInfo(
-    fileName = fileName,
+    fileName = resolvedFileName,
     externalFile = externalFile,
     sourceOffsets = mappings.map { it.sourceOffset.translate(sourceMappingOffsets) },
     sourceLengths = mappings.map { it.sourceLength.translateLength(it.sourceOffset, sourceMappingOffsets) },

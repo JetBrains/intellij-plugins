@@ -240,7 +240,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
         val process = getProcess()
         if (process is TypeScriptLanguageServiceQueueImpl) {
           val cacheData = process.serverState.cacheData
-          (cacheData as? Angular2LanguageServiceCache)?.refreshAndCacheTranspiledTemplate(process, componentVirtualFile, result)
+          (cacheData as? Angular2LanguageServiceCache)?.refreshAndCacheTranspiledTemplate(process, componentVirtualFile, result, typeEvaluationSupport)
         }
       }
 
