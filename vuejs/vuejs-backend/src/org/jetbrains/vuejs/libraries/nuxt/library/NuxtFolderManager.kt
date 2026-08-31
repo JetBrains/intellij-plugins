@@ -25,12 +25,10 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.platform.backend.workspace.WorkspaceModel
+import com.intellij.platform.backend.workspace.findEntitiesByVirtualFile
 import com.intellij.platform.backend.workspace.toVirtualFileUrl
 import com.intellij.platform.backend.workspace.workspaceModel
-import com.intellij.platform.workspace.storage.EntityStorage
 import com.intellij.platform.workspace.storage.MutableEntityStorage
-import com.intellij.platform.workspace.storage.WorkspaceEntity
-import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import com.intellij.platform.workspace.storage.url.VirtualFileUrlManager
 import com.intellij.util.containers.nullize
 import com.intellij.util.xmlb.annotations.XCollection
@@ -153,17 +151,11 @@ internal class NuxtFolderManager(
     updateWorkspaceModel(description) { workspaceModel, storage ->
       val virtualFileUrlManager = workspaceModel.getVirtualFileUrlManager()
       val nuxtFolderUrl = library.nuxtFolder.toVirtualFileUrl(virtualFileUrlManager)
-      val entities = findEntities(storage, nuxtFolderUrl)
+      val entities = storage.getVirtualFileUrlIndex().findEntitiesByVirtualFile(library.nuxtFolder, virtualFileUrlManager)
+        .filter { it is NuxtFolderEntity && it.nuxtFolderUrl == nuxtFolderUrl }.toList()
       entities.forEach(storage::removeEntity)
       storage.addEntity(createEntity(library, virtualFileUrlManager))
     }
-  }
-
-  private fun findEntities(storage: EntityStorage, nuxtFolderUrl: VirtualFileUrl): List<WorkspaceEntity> {
-    return storage.getVirtualFileUrlIndex().findEntitiesByUrl(nuxtFolderUrl)
-      .filter {
-        it is NuxtFolderEntity && it.nuxtFolderUrl == nuxtFolderUrl
-      }.toList()
   }
 
   override fun dispose() {}
