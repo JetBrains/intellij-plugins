@@ -311,6 +311,11 @@ object Angular2TranspiledDirectiveFileBuilder {
     val contextVarMappings: Map<TextRange, TextRange>,
     val directiveVarMappings: Map<Pair<TextRange, Angular2Directive>, TextRange>,
   ) {
+    /**
+     * A local cache-identity key. Do not send this value to the TypeScript node process:
+     * it is not translated for a remote target (e.g. WSL). Resolve the file's path through
+     * `typeEvaluationSupport.getFilePath` for that purpose instead.
+     */
     val fileName: String = this.sourceFile.viewProvider.virtualFile.let { TypeScriptCompilerConfigUtil.normalizeNameAndPath(it) }
                            ?: "<non-local>"
   }
