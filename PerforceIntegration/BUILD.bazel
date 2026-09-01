@@ -127,7 +127,7 @@ jvm_library(
         "@community//platform/vcs-impl",
         "@community//platform/diff-api:diff",
         "@community//platform/platform-util-io:ide-util-io",
-        "@lib//:mockito",
+        "@community//libraries/mockito",
         "@community//platform/forms_rt:java-guiForms-rt",
     ],
 )
@@ -193,7 +193,8 @@ jvm_library(
         "@community//platform/vcs-tests:vcs-testFramework_test_lib",
         "@community//platform/platform-util-io:ide-util-io",
         "@community//platform/ide-core",
-        "@lib//:mockito",
+        "@community//libraries/mockito",
+        "@community//libraries/mockito:mockito_test_lib",
         "@community//platform/forms_rt:java-guiForms-rt",
         "@community//platform/forms_rt:java-guiForms-rt_test_lib",
         "@community//platform/lang-api:lang",

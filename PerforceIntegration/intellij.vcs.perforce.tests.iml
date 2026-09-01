@@ -29,7 +29,7 @@
     <orderEntry type="module" module-name="intellij.platform.vcs.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
     <orderEntry type="module" module-name="intellij.platform.ide.core" scope="TEST" />
-    <orderEntry type="library" name="mockito" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.mockito" />
     <orderEntry type="module" module-name="intellij.java.guiForms.rt" />
     <orderEntry type="module" module-name="intellij.platform.lang" scope="TEST" />
   </component>
