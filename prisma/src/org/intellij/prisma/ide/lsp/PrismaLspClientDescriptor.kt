@@ -31,6 +31,7 @@ import com.intellij.platform.lsp.api.customization.LspSelectionRangeDisabled
 import com.intellij.platform.lsp.api.customization.LspSemanticTokensDisabled
 import com.intellij.platform.lsp.api.customization.LspSignatureHelpCustomizer
 import com.intellij.platform.lsp.api.customization.LspSignatureHelpDisabled
+import com.intellij.platform.lsp.util.messageIfStringOrEmpty
 import org.eclipse.lsp4j.ConfigurationItem
 import org.eclipse.lsp4j.Diagnostic
 import org.intellij.prisma.PrismaBundle
@@ -58,7 +59,7 @@ class PrismaLspClientDescriptor(project: Project)
     override val codeLensCustomizer: LspCodeLensCustomizer = LspCodeLensDisabled
 
     override val diagnosticsCustomizer: LspDiagnosticsCustomizer = object : LspDiagnosticsSupport() {
-      override fun getTooltip(diagnostic: Diagnostic): @NlsSafe String = convertMarkdownToHtml(diagnostic.message)
+      override fun getTooltip(diagnostic: Diagnostic): @NlsSafe String = convertMarkdownToHtml(diagnostic.messageIfStringOrEmpty)
     }
 
     override val formattingCustomizer = object : LspFormattingSupport() {
