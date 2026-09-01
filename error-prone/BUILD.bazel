@@ -84,6 +84,9 @@ exports_files(
 dev_dist_plugin(
     descriptor_module = ":error-prone",
     prepacked_layout_jars = [":jps_errorProne-jps_dev_dist_plugin_jar"],
+    residue_member_jars = {
+        "intellij.errorProne.jps": ["jps/errorProne-jps.jar"],
+    },
 )
 
 dev_dist_plugin_jar(
