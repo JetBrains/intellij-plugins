@@ -26,90 +26,288 @@ groups:
     inspections:
       - JavaKotlinUsingCryptographySignatureEdDSA
       - JavaKotlinUsingCryptographySignatureEd25519
+      - CsharpUsingCryptographyOidEd25519
       - JavaKotlinUsingCryptographySignatureEd448
+      - CsharpUsingCryptographyOidEd448
       - JavaKotlinUsingCryptographySignatureRSA
+      - CsharpUsingCryptographyOidRSA
+      - CsharpUsingCryptographyStringNameRSA
+      - CsharpUsingCryptographyCngAlgorithmRSA
+      - CsharpUsingCryptographyClassRSA
+      - CsharpUsingCryptographyPlatformClassRSA
+      - CsharpUsingCryptographyPaddingRSA
+      - CsharpUsingCryptographyFormatterClassRSA
+      - CsharpUsingCryptographyCertificateKeyRSA
+      - CsharpUsingCryptographySignatureGeneratorRSA
       - JavaKotlinUsingCryptographySignatureDSA
+      - CsharpUsingCryptographyOidDSA
+      - CsharpUsingCryptographyStringNameDSA
+      - CsharpUsingCryptographyClassDSA
+      - CsharpUsingCryptographyPlatformClassDSA
+      - CsharpUsingCryptographyCertificateKeyDSA
       - JavaKotlinUsingCryptographySignatureECDSA
+      - CsharpUsingCryptographyCngAlgorithmECDSA
+      - CsharpUsingCryptographyClassECDSA
+      - CsharpUsingCryptographyCertificateKeyECDSA
+      - CsharpUsingCryptographySignatureGeneratorECDSA
+      - CsharpUsingCryptographyOidEllipticCurve
       - JavaKotlinUsingCryptographyKeyAgreementDiffieHellman
       - JavaKotlinUsingCryptographyKEMDiffieHellman
+      - CsharpUsingCryptographyOidDiffieHellman
       - JavaKotlinUsingCryptographyKeyAgreementECDH
+      - CsharpUsingCryptographyCngAlgorithmECDH
+      - CsharpUsingCryptographyClassECDH
+      - CsharpUsingCryptographyCertificateKeyECDH
       - JavaKotlinUsingCryptographyKeyAgreementECMQV
       - JavaKotlinUsingCryptographyKeyAgreementXDH
       - JavaKotlinUsingCryptographyKeyAgreementX25519
+      - CsharpUsingCryptographyOidX25519
+      - CsharpUsingCryptographyClassX25519
+      - CsharpUsingCryptographyPlatformClassX25519
       - JavaKotlinUsingCryptographyKeyAgreementX448
+      - CsharpUsingCryptographyOidX448
       - JavaKotlinUsingCryptographyCipherArcfour
       - JavaKotlinUsingCryptographyCipherBlowfish
       - JavaKotlinUsingCryptographyCipherChaCha20
+      - CsharpUsingCryptographyChaCha20
       - JavaKotlinUsingCryptographyCipherDES
+      - CsharpUsingCryptographyOidDES
+      - CsharpUsingCryptographyStringNameDES
+      - CsharpUsingCryptographyDESDES
+      - CsharpUsingCryptographyDESCryptoServiceProviderDES
       - JavaKotlinUsingCryptographyCipherTripleDES
+      - CsharpUsingCryptographyOidTripleDES
+      - CsharpUsingCryptographyPbeEncryptionAlgorithmTripleDES
+      - CsharpUsingCryptographyStringNameTripleDES
+      - CsharpUsingCryptographyClassTripleDES
+      - CsharpUsingCryptographyPkcs12ExportPbeTripleDES
       - JavaKotlinUsingCryptographyCipherECIES
       - JavaKotlinUsingCryptographyCipherRC2
+      - CsharpUsingCryptographyOidRC2
+      - CsharpUsingCryptographyStringNameRC2
+      - CsharpUsingCryptographyRC2
       - JavaKotlinUsingCryptographyCipherRC4
+      - CsharpUsingCryptographyOidRC4
       - JavaKotlinUsingCryptographyCipherRC5
       - JavaKotlinUsingCryptographyCipherRSA
       - JavaKotlinUsingCryptographyMacMD5
+      - CsharpUsingCryptographyHmacClassMD5
       - JavaKotlinUsingCryptographyMessageDigestMD2
+      - CsharpUsingCryptographyStringNameMD2
+      - CsharpUsingCryptographyOidMD2
       - JavaKotlinUsingCryptographyMessageDigestMD5
+      - CsharpUsingCryptographyClassMD5
+      - CsharpUsingCryptographyCryptoServiceProviderMD5
+      - CsharpUsingCryptographyCngAlgorithmMD5
+      - CsharpUsingCryptographyHashAlgorithmNameMD5
+      - CsharpUsingCryptographyStringNameMD5
+      - CsharpUsingCryptographyOidMD5
       - JavaKotlinUsingCryptographySSLContextSSL
       - JavaKotlinUsingCryptographySSLContextSSL2
+      - CsharpUsingCryptographyProtocolSSL2
       - JavaKotlinUsingCryptographySSLContextSSL3
+      - CsharpUsingCryptographyProtocolSSL3
       - JavaKotlinUsingCryptographySSLContextTLS1
+      - CsharpUsingCryptographyProtocolTLS1
       - JavaKotlinUsingCryptographySSLContextTLS11
+      - CsharpUsingCryptographyProtocolTLS11
       - JavaKotlinUsingCryptographySSLContextTLS12
+      - CsharpUsingCryptographyProtocolTLS12
       - JavaKotlinUsingCryptographySSLContextDTLS10
       - JavaKotlinUsingCryptographySSLContextDTLS12
 
   - groupId: PqcLevel1Rules  # NIST level 1
     inspections:
+      - CsharpUsingCryptographyOidSLHDSASHA2128
+      - CsharpUsingCryptographySlhDsaAlgorithmSLHDSASHA2128
+      - CsharpUsingCryptographyOidSLHDSASHAKE128
+      - CsharpUsingCryptographySlhDsaAlgorithmSLHDSASHAKE128
       - JavaKotlinUsingCryptographyKEMMLKEM512
+      - CsharpUsingCryptographyOidMLKEM512
+      - CsharpUsingCryptographyMLKemAlgorithmMLKEM512
       - JavaKotlinUsingCryptographyCipherAES128
+      - CsharpUsingCryptographyOidAES128
+      - CsharpUsingCryptographyPbeEncryptionAlgorithmAES128
+      - CsharpUsingCryptographyHmacClassRIPEMD160
       - JavaKotlinUsingCryptographyMacSHA1
+      - CsharpUsingCryptographyHmacClassSHA1
+      - CsharpUsingCryptographyPbkdf2DefaultHmacSHA1
+      - CsharpUsingCryptographyClassRIPEMD160
+      - CsharpUsingCryptographyCryptoServiceProviderRIPEMD160
+      - CsharpUsingCryptographyStringNameRIPEMD160
+      - CsharpUsingCryptographyOidRIPEMD160
       - JavaKotlinUsingCryptographyMessageDigestSHA1
+      - CsharpUsingCryptographyClassSHA1
+      - CsharpUsingCryptographyCryptoServiceProviderSHA1
+      - CsharpUsingCryptographyCngAlgorithmSHA1
+      - CsharpUsingCryptographyHashAlgorithmNameSHA1
+      - CsharpUsingCryptographyRSAEncryptionPaddingSHA1
+      - CsharpUsingCryptographyStringNameSHA1
+      - CsharpUsingCryptographyOidSHA1
+      - CsharpUsingCryptographySubjectKeyIdentifierSHA1
+      - CsharpUsingCryptographyPkcs12ExportPbeSHA1
 
   - groupId: PqcLevel2Rules  # NIST level 2
     inspections:
+      - CsharpUsingCryptographyCompositeMLDsaAlgorithmMLDSA44withRSA
+      - CsharpUsingCryptographyCompositeMLDsaAlgorithmMLDSA44withECDSA
+      - CsharpUsingCryptographyCompositeMLDsaAlgorithmMLDSA44withEd25519
       - JavaKotlinUsingCryptographySignatureMLDSA44
+      - CsharpUsingCryptographyOidMLDSA44
+      - CsharpUsingCryptographyMLDsaAlgorithmMLDSA44
+      - CsharpUsingCryptographyKmacClassSHAKE128
       - JavaKotlinUsingCryptographyMessageDigestSHAKE128
+      - CsharpUsingCryptographyClassSHAKE128
+      - CsharpUsingCryptographyStringNameSHAKE128
+      - CsharpUsingCryptographyOidSHAKE128
 
   - groupId: PqcLevel3Rules  # NIST level 3
     inspections:
+      - CsharpUsingCryptographyCompositeMLDsaAlgorithmMLDSA65withRSA
+      - CsharpUsingCryptographyCompositeMLDsaAlgorithmMLDSA65withECDSA
+      - CsharpUsingCryptographyCompositeMLDsaAlgorithmMLDSA65withEd25519
       - JavaKotlinUsingCryptographySignatureMLDSA65
+      - CsharpUsingCryptographyOidMLDSA65
+      - CsharpUsingCryptographyMLDsaAlgorithmMLDSA65
+      - CsharpUsingCryptographyOidSLHDSASHA2192
+      - CsharpUsingCryptographySlhDsaAlgorithmSLHDSASHA2192
+      - CsharpUsingCryptographyOidSLHDSASHAKE192
+      - CsharpUsingCryptographySlhDsaAlgorithmSLHDSASHAKE192
       - JavaKotlinUsingCryptographyKEMMLKEM768
+      - CsharpUsingCryptographyOidMLKEM768
+      - CsharpUsingCryptographyMLKemAlgorithmMLKEM768
       - JavaKotlinUsingCryptographyCipherAES192
+      - CsharpUsingCryptographyOidAES192
+      - CsharpUsingCryptographyPbeEncryptionAlgorithmAES192
       - JavaKotlinUsingCryptographyMacSHA224
       - JavaKotlinUsingCryptographyMacSHA512224
       - JavaKotlinUsingCryptographyMacSHA3224
       - JavaKotlinUsingCryptographyMessageDigestSHA224
+      - CsharpUsingCryptographyStringNameSHA224
+      - CsharpUsingCryptographyOidSHA224
       - JavaKotlinUsingCryptographyMessageDigestSHA512224
+      - CsharpUsingCryptographyStringNameSHA512224
+      - CsharpUsingCryptographyOidSHA512224
       - JavaKotlinUsingCryptographyMessageDigestSHA3224
+      - CsharpUsingCryptographyStringNameSHA3224
+      - CsharpUsingCryptographyOidSHA3224
 
   - groupId: PqcLevel5Rules  # NIST level 5
     inspections:
+      - CsharpUsingCryptographyCompositeMLDsaAlgorithmMLDSA87withRSA
+      - CsharpUsingCryptographyCompositeMLDsaAlgorithmMLDSA87withECDSA
+      - CsharpUsingCryptographyCompositeMLDsaAlgorithmMLDSA87withEd448
       - JavaKotlinUsingCryptographySignatureMLDSA87
+      - CsharpUsingCryptographyOidMLDSA87
+      - CsharpUsingCryptographyMLDsaAlgorithmMLDSA87
       - JavaKotlinUsingCryptographySignatureMLDSA
+      - CsharpUsingCryptographyCngAlgorithmMLDSA
+      - CsharpUsingCryptographyClassMLDSA
+      - CsharpUsingCryptographyPlatformClassMLDSA
+      - CsharpUsingCryptographyCertificateKeyMLDSA
+      - CsharpUsingCryptographySignatureGeneratorMLDSA
+      - CsharpUsingCryptographyCompositeCertificateKeyMLDSA
+      - CsharpUsingCryptographyCompositeSignatureGeneratorMLDSA
+      - CsharpUsingCryptographyCngAlgorithmSLHDSA
+      - CsharpUsingCryptographyClassSLHDSA
+      - CsharpUsingCryptographyPlatformClassSLHDSA
+      - CsharpUsingCryptographyCertificateKeySLHDSA
+      - CsharpUsingCryptographySignatureGeneratorSLHDSA
+      - CsharpUsingCryptographyOidSLHDSASHA2256
+      - CsharpUsingCryptographySlhDsaAlgorithmSLHDSASHA2256
+      - CsharpUsingCryptographyOidSLHDSASHAKE256
+      - CsharpUsingCryptographySlhDsaAlgorithmSLHDSASHAKE256
       - JavaKotlinUsingCryptographySignatureHSSLMSwithSHA256
       - JavaKotlinUsingCryptographyKEMMLKEM
+      - CsharpUsingCryptographyCngAlgorithmMLKEM
+      - CsharpUsingCryptographyClassMLKEM
+      - CsharpUsingCryptographyPlatformClassMLKEM
+      - CsharpUsingCryptographyCertificateKeyMLKEM
       - JavaKotlinUsingCryptographyKEMMLKEM1024
+      - CsharpUsingCryptographyOidMLKEM1024
+      - CsharpUsingCryptographyMLKemAlgorithmMLKEM1024
       - JavaKotlinUsingCryptographyCipherAES256
+      - CsharpUsingCryptographyOidAES256
+      - CsharpUsingCryptographyPbeEncryptionAlgorithmAES256
+      - CsharpUsingCryptographyPkcs12ExportPbeAES256
       - JavaKotlinUsingCryptographyCipherAES
+      - CsharpUsingCryptographyAesAES
+      - CsharpUsingCryptographyAesCryptoServiceProviderAesManagedAES
+      - CsharpUsingCryptographyAesCcmAES
+      - CsharpUsingCryptographyAesGcmAES
+      - CsharpUsingCryptographyAesCngAES
+      - CsharpUsingCryptographyRijndaelRijndaelManagedAES
+      - CsharpUsingCryptographyStringNameAES
       - JavaKotlinUsingCryptographyMacSHA256
       - JavaKotlinUsingCryptographyKDFSHA256
+      - CsharpUsingCryptographyHmacClassSHA256
       - JavaKotlinUsingCryptographyMacSHA512256
       - JavaKotlinUsingCryptographyMacSHA384
       - JavaKotlinUsingCryptographyKDFSHA384
+      - CsharpUsingCryptographyHmacClassSHA384
       - JavaKotlinUsingCryptographyMacSHA512
       - JavaKotlinUsingCryptographyKDFSHA512
+      - CsharpUsingCryptographyHmacClassSHA512
       - JavaKotlinUsingCryptographyMacSHA3256
+      - CsharpUsingCryptographyHmacClassSHA3256
       - JavaKotlinUsingCryptographyMacSHA3384
+      - CsharpUsingCryptographyHmacClassSHA3384
       - JavaKotlinUsingCryptographyMacSHA3512
+      - CsharpUsingCryptographyHmacClassSHA3512
+      - CsharpUsingCryptographyKmacClassSHAKE256
       - JavaKotlinUsingCryptographyMessageDigestSHA256
+      - CsharpUsingCryptographyClassSHA256
+      - CsharpUsingCryptographyCryptoServiceProviderSHA256
+      - CsharpUsingCryptographyCngAlgorithmSHA256
+      - CsharpUsingCryptographyHashAlgorithmNameSHA256
+      - CsharpUsingCryptographyRSAEncryptionPaddingSHA256
+      - CsharpUsingCryptographyStringNameSHA256
+      - CsharpUsingCryptographyOidSHA256
+      - CsharpUsingCryptographySubjectKeyIdentifierSHA256
+      - CsharpUsingCryptographyPkcs12ExportPbeSHA256
       - JavaKotlinUsingCryptographyMessageDigestSHA384
+      - CsharpUsingCryptographyClassSHA384
+      - CsharpUsingCryptographyCryptoServiceProviderSHA384
+      - CsharpUsingCryptographyCngAlgorithmSHA384
+      - CsharpUsingCryptographyHashAlgorithmNameSHA384
+      - CsharpUsingCryptographyRSAEncryptionPaddingSHA384
+      - CsharpUsingCryptographyStringNameSHA384
+      - CsharpUsingCryptographyOidSHA384
+      - CsharpUsingCryptographySubjectKeyIdentifierSHA384
       - JavaKotlinUsingCryptographyMessageDigestSHA512
+      - CsharpUsingCryptographyClassSHA512
+      - CsharpUsingCryptographyCryptoServiceProviderSHA512
+      - CsharpUsingCryptographyCngAlgorithmSHA512
+      - CsharpUsingCryptographyHashAlgorithmNameSHA512
+      - CsharpUsingCryptographyRSAEncryptionPaddingSHA512
+      - CsharpUsingCryptographyStringNameSHA512
+      - CsharpUsingCryptographyOidSHA512
+      - CsharpUsingCryptographySubjectKeyIdentifierSHA512
       - JavaKotlinUsingCryptographyMessageDigestSHA512256
+      - CsharpUsingCryptographyStringNameSHA512256
+      - CsharpUsingCryptographyOidSHA512256
       - JavaKotlinUsingCryptographyMessageDigestSHA3256
+      - CsharpUsingCryptographyClassSHA3256
+      - CsharpUsingCryptographyHashAlgorithmNameSHA3256
+      - CsharpUsingCryptographyRSAEncryptionPaddingSHA3256
+      - CsharpUsingCryptographyStringNameSHA3256
+      - CsharpUsingCryptographyOidSHA3256
       - JavaKotlinUsingCryptographyMessageDigestSHA3384
+      - CsharpUsingCryptographyClassSHA3384
+      - CsharpUsingCryptographyHashAlgorithmNameSHA3384
+      - CsharpUsingCryptographyRSAEncryptionPaddingSHA3384
+      - CsharpUsingCryptographyStringNameSHA3384
+      - CsharpUsingCryptographyOidSHA3384
       - JavaKotlinUsingCryptographyMessageDigestSHA3512
+      - CsharpUsingCryptographyClassSHA3512
+      - CsharpUsingCryptographyHashAlgorithmNameSHA3512
+      - CsharpUsingCryptographyRSAEncryptionPaddingSHA3512
+      - CsharpUsingCryptographyStringNameSHA3512
+      - CsharpUsingCryptographyOidSHA3512
       - JavaKotlinUsingCryptographyMessageDigestSHAKE256
+      - CsharpUsingCryptographyClassSHAKE256
+      - CsharpUsingCryptographyStringNameSHAKE256
+      - CsharpUsingCryptographyOidSHAKE256
 
   - groupId: PqcMinLevel1  # rules below NIST level 1
     groups:
