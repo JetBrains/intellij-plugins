@@ -52,7 +52,6 @@ exports_files(
     [
         "intellij.protoeditor.iml",
         "resources/META-INF/plugin.xml",
-        "dev-dist.yaml",
     ],
     visibility = ["//visibility:public"],
 )
