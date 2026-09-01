@@ -133,6 +133,8 @@ inspections:
     enabled: true
   - group: AllPqcInspections
     enabled: false
+  - group: PqcMinLevel1
+    enabled: true
   - inspection: HttpUrlsUsage # Spam
     enabled: false
   - group: ALL
