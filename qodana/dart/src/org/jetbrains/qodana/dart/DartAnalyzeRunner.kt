@@ -5,7 +5,6 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.platform.eel.ExecuteProcessException
@@ -15,6 +14,7 @@ import com.intellij.platform.eel.provider.getEelDescriptor
 import com.intellij.platform.eel.provider.toEelApi
 import com.intellij.platform.eel.provider.utils.awaitProcessResult
 import com.intellij.platform.eel.spawnProcess
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolIssue
 import java.nio.file.Files
@@ -51,7 +51,7 @@ internal abstract class DartAnalyzeRunner(
     val pubGetResult = try {
       processExecutor.execute(listOf(executable.toString(), "pub", "get"), projectPath)
     }
-    catch (e: ProcessCanceledException) {
+    catch (e: CancellationException) {
       throw e
     }
     catch (e: Exception) {
@@ -82,7 +82,7 @@ internal abstract class DartAnalyzeRunner(
         modulePath,
       )
     }
-    catch (e: ProcessCanceledException) {
+    catch (e: CancellationException) {
       throw e
     }
     catch (e: Exception) {

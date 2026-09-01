@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.dart
 
-import com.intellij.openapi.progress.ProcessCanceledException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -16,7 +16,7 @@ class DartAnalyzeRunnerEdgeCasesTest {
   lateinit var tempDirectory: Path
 
   @Test
-  fun `rethrows ProcessCanceledException during pub get`() = runBlocking {
+  fun `rethrows CancellationException during pub get`() = runBlocking {
     val executor = CanceledExecutor(cancelOnCall = 1)
 
     val runner = DartExecutableRunner(processExecutor = executor, executableResolver = availableExecutableResolver)
@@ -24,15 +24,15 @@ class DartAnalyzeRunnerEdgeCasesTest {
     val thrown = try {
       runner.prepare(tempDirectory)
       false
-    } catch (_: ProcessCanceledException) {
+    } catch (_: CancellationException) {
       true
     }
-    assertTrue(thrown, "ProcessCanceledException should be re-thrown during pub get")
+    assertTrue(thrown, "CancellationException should be re-thrown during pub get")
     assertEquals(1, executor.callCount)
   }
 
   @Test
-  fun `rethrows ProcessCanceledException during analyze`() = runBlocking {
+  fun `rethrows CancellationException during analyze`() = runBlocking {
     val executor = CanceledExecutor(cancelOnCall = 2)
 
     val runner = DartExecutableRunner(processExecutor = executor, executableResolver = availableExecutableResolver)
@@ -41,10 +41,10 @@ class DartAnalyzeRunnerEdgeCasesTest {
     val thrown = try {
       runner.analyze(tempDirectory)
       false
-    } catch (_: ProcessCanceledException) {
+    } catch (_: CancellationException) {
       true
     }
-    assertTrue(thrown, "ProcessCanceledException should be re-thrown during analyze")
+    assertTrue(thrown, "CancellationException should be re-thrown during analyze")
     assertEquals(2, executor.callCount)
   }
 
@@ -263,7 +263,7 @@ class DartAnalyzeRunnerEdgeCasesTest {
 
     override suspend fun execute(command: List<String>, workingDirectory: Path): DartAnalyzeProcessResult {
       callCount++
-      if (callCount >= cancelOnCall) throw ProcessCanceledException()
+      if (callCount >= cancelOnCall) throw CancellationException()
       return DartAnalyzeProcessResult(0, "", "")
     }
   }

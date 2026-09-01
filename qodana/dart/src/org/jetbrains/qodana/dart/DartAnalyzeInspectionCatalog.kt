@@ -28,13 +28,15 @@ internal object DartAnalyzeInspectionCatalog {
   private const val CORE_LINTS = "core"
   private const val RECOMMENDED_LINTS = "recommended"
   private const val FLUTTER_LINTS = "flutter"
+  private const val OTHER_LINTS = "other"
 
   private val lintRules: Map<String, List<LintRule>> = loadLintRules()
   private val lintDescriptions: Map<String, String> = lintRules.values.flatten().associate { it.code to it.description }
   val coreLintCodes: Set<String> = lintRules.getValue(CORE_LINTS).mapToSortedSet()
   val recommendedLintCodes: Set<String> = lintRules.getValue(RECOMMENDED_LINTS).mapToSortedSet()
   val flutterLintCodes: Set<String> = lintRules.getValue(FLUTTER_LINTS).mapToSortedSet()
-  val categorizedCodes: Set<String> = (coreLintCodes + recommendedLintCodes + flutterLintCodes).toSortedSet()
+  val otherLintCodes: Set<String> = lintRules.getValue(OTHER_LINTS).mapToSortedSet()
+  val categorizedCodes: Set<String> = (coreLintCodes + recommendedLintCodes + flutterLintCodes + otherLintCodes).toSortedSet()
 
   val inspectionIds: List<String> = categorizedCodes.map(::inspectionId)
 
@@ -66,6 +68,9 @@ internal object DartAnalyzeInspectionCatalog {
     coreLintCodes.forEach { code -> addDiagnosticDescriptor(code, lintGroupPath(), coreLintGroupName()) }
     recommendedLintCodes.forEach { code -> addDiagnosticDescriptor(code, lintGroupPath(), recommendedLintGroupName()) }
     flutterLintCodes.forEach { code -> addDiagnosticDescriptor(code, lintGroupPath(), flutterLintGroupName()) }
+    otherLintCodes.forEach { code ->
+      addDiagnosticDescriptor(code, lintGroupPath(), QodanaDartBundle.message("inspection.dart.analyze.lints.group.name"))
+    }
   }
 
   private fun MutableList<ExternalInspectionDescriptor>.addDiagnosticDescriptor(
@@ -114,7 +119,7 @@ internal object DartAnalyzeInspectionCatalog {
       )
       }.groupBy(LintRule::category).mapValues { (_, rules) -> rules.sortedBy(LintRule::code) }
     }
-    require(rules.keys == setOf(CORE_LINTS, RECOMMENDED_LINTS, FLUTTER_LINTS)) { "Unexpected Dart lint rule categories: ${rules.keys}" }
+    require(rules.keys == setOf(CORE_LINTS, RECOMMENDED_LINTS, FLUTTER_LINTS, OTHER_LINTS)) { "Unexpected Dart lint rule categories: ${rules.keys}" }
     require(coreLintCodesDoNotOverlapRecommended(rules)) { "Dart core and recommended lint rules must not overlap" }
     require(lintCodesDoNotOverlap(rules)) { "Dart lint rule categories must not overlap" }
     return rules

@@ -61,6 +61,13 @@ class DartAnalyzeRunnerTest {
   }
 
   @Test
+  fun `uses an individual inspection for diagnostics from other lint rules`() {
+    val diagnostic = DartAnalyzeDiagnostic("always_declare_return_types", "WARNING", "Declare method return types.", null, null)
+
+    assertEquals("DartAnalyze.always_declare_return_types", diagnostic.toExternalToolIssue(Path.of("/project")).inspectionId)
+  }
+
+  @Test
   fun `declares the uncategorized inspection disabled by default`() {
     val descriptor = DartAnalyzeInspectionCatalog.descriptors().single { it.shortName == DART_ANALYZE_UNCATEGORIZED_SHORT_NAME }
 
@@ -74,9 +81,11 @@ class DartAnalyzeRunnerTest {
     assertTrue("await_only_futures" in DartAnalyzeInspectionCatalog.coreLintCodes)
     assertTrue("annotate_overrides" in DartAnalyzeInspectionCatalog.recommendedLintCodes)
     assertTrue("avoid_print" in DartAnalyzeInspectionCatalog.flutterLintCodes)
+    assertTrue("always_declare_return_types" in DartAnalyzeInspectionCatalog.otherLintCodes)
     assertFalse("annotate_overrides" in DartAnalyzeInspectionCatalog.coreLintCodes)
     assertFalse("avoid_print" in DartAnalyzeInspectionCatalog.recommendedLintCodes)
     assertEquals("DartAnalyze.await_only_futures", DartAnalyzeInspectionCatalog.inspectionIdFor("await_only_futures"))
+    assertEquals("DartAnalyze.always_declare_return_types", DartAnalyzeInspectionCatalog.inspectionIdFor("always_declare_return_types"))
   }
 
   @Test
