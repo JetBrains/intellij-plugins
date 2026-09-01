@@ -9,6 +9,9 @@ import com.intellij.openapi.actionSystem.CustomShortcutSet
 import com.intellij.openapi.actionSystem.DataSink
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.UiDataProvider
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
@@ -25,14 +28,19 @@ import com.intellij.ui.TreeUIHelper
 import com.intellij.ui.content.impl.ContentImpl
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.util.ui.tree.TreeUtil
+import com.jetbrains.lang.makefile.MakefileCoroutineScopeProvider
 import com.jetbrains.lang.makefile.MakefileLangBundle
 import com.jetbrains.lang.makefile.MakefileTargetIndex
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.awt.GridLayout
 import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.event.MouseEvent.BUTTON1
 import javax.swing.JPanel
+import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreeSelectionModel
 
@@ -56,7 +64,12 @@ class MakeToolWindowFactory : ToolWindowFactory {
     val options = MakefileToolWindowOptions(project)
 
     DumbService.getInstance(project).runWhenSmart {
-      val model = DefaultTreeModel(options.getRootNode())
+      val model = DefaultTreeModel(DefaultMutableTreeNode())
+
+      project.service<MakefileCoroutineScopeProvider>().coroutineScope.launch {
+        val root = readAction { options.getRootNode() }
+        withContext(Dispatchers.EDT) { model.setRoot(root) }
+      }
 
       val panel = SimpleToolWindowPanel(true)
 
