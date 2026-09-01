@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs
 
+import com.intellij.ide.trustedProjects.TrustedFiles
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.linter.GlobPatternUtil
@@ -14,6 +15,8 @@ internal fun isPrettierFormattingAllowedFor(
   file: VirtualFile,
   checkIsInContent: Boolean = true,
 ): Boolean {
+  if (!TrustedFiles.isTrusted(file, project)) return false
+
   val config = PrettierConfiguration.getInstance(project)
 
   if (checkIsInContent && !ProjectFileIndex.getInstance(project).isInContent(file)) {

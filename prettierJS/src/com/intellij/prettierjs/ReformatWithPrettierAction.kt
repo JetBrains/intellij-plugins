@@ -3,6 +3,7 @@ package com.intellij.prettierjs
 
 import com.intellij.codeInsight.actions.FileTreeIterator
 import com.intellij.codeInsight.actions.VcsFacade
+import com.intellij.ide.trustedProjects.TrustedFiles
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil.awaitFuture
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil.timeout
@@ -51,6 +52,11 @@ class ReformatWithPrettierAction : AnAction(), DumbAware {
       return
     }
     val psiFile = e.getData(CommonDataKeys.PSI_FILE)
+    val virtualFile = psiFile?.virtualFile
+    if (virtualFile != null && !TrustedFiles.isTrusted(virtualFile, project)) {
+      e.presentation.setEnabledAndVisible(false)
+      return
+    }
     val nodePackage = PrettierConfiguration.getInstance(project).getPackage(psiFile)
     e.presentation.setEnabledAndVisible(!nodePackage.isEmptyPath && isAcceptableFileContext(e))
   }
@@ -306,6 +312,13 @@ class ReformatWithPrettierAction : AnAction(), DumbAware {
       forcedInitialText: String?,
     ): CompletableFuture<PrettierLanguageService.FormatResult?> {
       val project = currentFile.getProject()
+
+      val virtualFile = currentFile.getVirtualFile()
+      if (virtualFile != null && !TrustedFiles.isTrusted(virtualFile, project)) {
+        return CompletableFuture.completedFuture<PrettierLanguageService.FormatResult?>(
+          PrettierLanguageService.FormatResult.error(PrettierBundle.message("prettier.safe.mode.error")))
+      }
+
       val text = Ref.create<String?>()
       val filePath = Ref.create<String?>()
       val ignoreFilePath = Ref.create<String?>()
