@@ -227,10 +227,6 @@ dev_dist_plugin(
         ":flex-jps_dev_dist_plugin_jar",
         ":flex-shared_dev_dist_plugin_jar",
     ],
-    residue_member_jars = {
-        "intellij.flex.jps": ["flex-jps.jar"],
-        "intellij.flex.shared": ["flex-shared.jar"],
-    },
 )
 
 dev_dist_plugin_jar(

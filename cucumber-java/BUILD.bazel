@@ -218,12 +218,6 @@ dev_dist_plugin(
         ":cucumber-jvmFormatter5_dev_dist_plugin_jar",
         ":cucumber-jvmFormatter_dev_dist_plugin_jar",
     ],
-    residue_member_jars = {
-        "intellij.cucumber.jvmFormatter": ["cucumber-jvmFormatter.jar"],
-        "intellij.cucumber.jvmFormatter3": ["cucumber-jvmFormatter3.jar"],
-        "intellij.cucumber.jvmFormatter4": ["cucumber-jvmFormatter4.jar"],
-        "intellij.cucumber.jvmFormatter5": ["cucumber-jvmFormatter5.jar"],
-    },
 )
 
 dev_dist_plugin_jar(
