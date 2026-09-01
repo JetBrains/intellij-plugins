@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "dev_dist_plugin_jar")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -226,5 +227,17 @@ dev_dist_plugin(
     ],
     descriptor_module = ":flex",
     prepacked_content_modules = ["//contrib/flex/css:css_content_module_jar"],
+)
+
+dev_dist_plugin_jar(
+    modules = ["//contrib/flex/jps-plugin:jps"],
+    plugin_main_module = "intellij.flex",
+    relative_output_file = "flex-jps.jar",
+)
+
+dev_dist_plugin_jar(
+    modules = ["//contrib/flex/flex-shared:shared"],
+    plugin_main_module = "intellij.flex",
+    relative_output_file = "flex-shared.jar",
 )
 ### auto-generated section `dev intellij.flex` end

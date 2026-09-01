@@ -1,4 +1,5 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "dev_dist_plugin_jar")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -215,6 +216,30 @@ dev_dist_plugin(
         "@ultimate_lib//:libraries-cucumber-cucumber-expressions",
         "@ultimate_lib//:libraries-cucumber-cucumber-java",
     ],
+)
+
+dev_dist_plugin_jar(
+    modules = ["@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter"],
+    plugin_main_module = "intellij.cucumber.java",
+    relative_output_file = "cucumber-jvmFormatter.jar",
+)
+
+dev_dist_plugin_jar(
+    modules = ["@community//plugins/cucumber-jvm-formatter3:cucumber-jvmFormatter3"],
+    plugin_main_module = "intellij.cucumber.java",
+    relative_output_file = "cucumber-jvmFormatter3.jar",
+)
+
+dev_dist_plugin_jar(
+    modules = ["@community//plugins/cucumber-jvm-formatter4:cucumber-jvmFormatter4"],
+    plugin_main_module = "intellij.cucumber.java",
+    relative_output_file = "cucumber-jvmFormatter4.jar",
+)
+
+dev_dist_plugin_jar(
+    modules = ["@community//plugins/cucumber-jvm-formatter5:cucumber-jvmFormatter5"],
+    plugin_main_module = "intellij.cucumber.java",
+    relative_output_file = "cucumber-jvmFormatter5.jar",
 )
 ### auto-generated section `dev intellij.cucumber.java` end
 

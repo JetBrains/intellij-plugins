@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "dev_dist_plugin_jar")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -83,5 +84,11 @@ exports_files(
 dev_dist_plugin(
     content_modules = ["//contrib/error-prone/jps-plugin:errorProne-jps"],
     descriptor_module = ":error-prone",
+)
+
+dev_dist_plugin_jar(
+    modules = ["//contrib/error-prone/jps-plugin:errorProne-jps"],
+    plugin_main_module = "intellij.errorProne",
+    relative_output_file = "jps/errorProne-jps.jar",
 )
 ### auto-generated section `dev intellij.errorProne` end
