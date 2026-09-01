@@ -185,10 +185,6 @@ dev_dist_plugin(
         "@community//libraries/cucumber-core1",
         "@community//libraries/hamcrest",
         "@community//libraries/junit4",
-        "@community//plugins/cucumber-jvm-formatter3:cucumber-jvmFormatter3",
-        "@community//plugins/cucumber-jvm-formatter4:cucumber-jvmFormatter4",
-        "@community//plugins/cucumber-jvm-formatter5:cucumber-jvmFormatter5",
-        "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter",
     ],
     descriptor_module = ":cucumber-java",
     libraries = [
@@ -215,6 +211,12 @@ dev_dist_plugin(
         "@ultimate_lib//:cucumber-java-cucumber-java8-7",
         "@ultimate_lib//:libraries-cucumber-cucumber-expressions",
         "@ultimate_lib//:libraries-cucumber-cucumber-java",
+    ],
+    prepacked_layout_jars = [
+        ":cucumber-jvmFormatter3_dev_dist_plugin_jar",
+        ":cucumber-jvmFormatter4_dev_dist_plugin_jar",
+        ":cucumber-jvmFormatter5_dev_dist_plugin_jar",
+        ":cucumber-jvmFormatter_dev_dist_plugin_jar",
     ],
 )
 
