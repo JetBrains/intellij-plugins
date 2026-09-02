@@ -263,7 +263,7 @@ class DartAnalyzeRunnerEdgeCasesTest {
 
   private fun noDiagnosticsResourceText(): String = requireNotNull(javaClass.getResource("/dart-analyze/no-diagnostics.json")).readText()
 
-  private val availableExecutableResolver = DartExecutableResolver { executableName ->
+  private val availableExecutableResolver = DartExecutableResolver { executableName, _ ->
     DartExecutable.Available(Path.of(executableName))
   }
 

@@ -274,33 +274,33 @@ class DartAnalyzeRunnerTest {
   }
 
   @Test
-  fun `resolves only the executable name supported by the current OS`() {
+  fun `resolves Windows batch wrappers before executables`() {
     val sdkDirectory = Files.createDirectory(tempDirectory.resolve("dart-sdk"))
-    val supportedExecutableName = if (SystemInfo.isWindows) "dart.exe" else "dart"
-    val unsupportedExecutableName = if (SystemInfo.isWindows) "dart" else "dart.exe"
-    Files.createFile(sdkDirectory.resolve(unsupportedExecutableName))
+    val resolver = configuredExecutableResolver({ sdkDirectory.toString() }) { Files.isRegularFile(it) }
 
-    val unavailable = configuredExecutableResolver({ sdkDirectory.toString() }) { Files.isRegularFile(it) }.resolve("dart")
+    val unavailable = resolver.resolve("dart", true)
     assertEquals(DartExecutable.Unusable(sdkDirectory.toString()), unavailable)
-
-    val dartExecutable = Files.createFile(sdkDirectory.resolve(supportedExecutableName))
-    val result = configuredExecutableResolver({ sdkDirectory.toString() }) { Files.isRegularFile(it) }.resolve("dart")
-
-    assertEquals(DartExecutable.Available(dartExecutable), result)
+    val dartExecutable = Files.createFile(sdkDirectory.resolve("dart.exe"))
+    assertEquals(DartExecutable.Available(dartExecutable), resolver.resolve("dart", true))
+    val dartBatchFile = Files.createFile(sdkDirectory.resolve("dart.bat"))
+    assertEquals(DartExecutable.Available(dartBatchFile), resolver.resolve("dart", true))
+    assertEquals(listOf("dart.bat", "dart.exe"), executableNames("dart", true))
+    assertEquals(listOf("dart"), executableNames("dart", false))
   }
 
   @Test
   fun `resolves Dart next to a configured Flutter executable`() {
     val sdkDirectory = Files.createDirectory(tempDirectory.resolve("flutter-sdk"))
-    val flutterExecutableName = if (SystemInfo.isWindows) "flutter.exe" else "flutter"
-    val dartExecutableName = if (SystemInfo.isWindows) "dart.exe" else "dart"
+    val flutterExecutableName = "flutter.bat"
+    val dartExecutableName = "dart.bat"
     Files.createFile(sdkDirectory.resolve(flutterExecutableName))
     val dartExecutable = Files.createFile(sdkDirectory.resolve(dartExecutableName))
 
     val result = configuredExecutableResolver({ sdkDirectory.resolve(flutterExecutableName).toString() }) { Files.isRegularFile(it) }
-      .resolve("dart")
+      .resolve("dart", true)
 
     assertEquals(DartExecutable.Available(dartExecutable), result)
+    assertEquals(listOf("flutter.bat", "flutter.exe"), executableNames("flutter", true))
   }
 
   @Test
@@ -383,7 +383,7 @@ class DartAnalyzeRunnerTest {
     return target
   }
 
-  private val availableExecutableResolver = DartExecutableResolver { executableName ->
+  private val availableExecutableResolver = DartExecutableResolver { executableName, _ ->
     DartExecutable.Available(Path.of(executableName))
   }
 
