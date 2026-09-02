@@ -34,6 +34,8 @@ jvm_library(
         "@community//platform/projectModel-api:projectModel",
         "//contrib/qodana",
         "@community//platform/backend/observation",
+        "@community//platform/backend/workspace",
+        "@community//platform/projectModel-impl",
     ],
 )
 
@@ -58,6 +60,8 @@ jvm_library(
         "@community//platform/projectModel-api:projectModel_test_lib",
         "//contrib/qodana:qodana_test_lib",
         "@community//platform/backend/observation:observation_test_lib",
+        "@community//platform/backend/workspace:workspace_test_lib",
+        "@community//platform/projectModel-impl:projectModel-impl_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.jvm.maven` end

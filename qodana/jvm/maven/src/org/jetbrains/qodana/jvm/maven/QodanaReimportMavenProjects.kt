@@ -1,13 +1,14 @@
 package org.jetbrains.qodana.jvm.maven
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.util.SystemProperties
 import com.intellij.workspaceModel.ide.JpsProjectLoadingManager
+import com.intellij.workspaceModel.ide.impl.WorkspaceModelImpl
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.jetbrains.idea.maven.buildtool.MavenSyncSpec
@@ -31,35 +32,38 @@ class QodanaReimportMavenProjects : QodanaWorkflowExtension {
 
   override suspend fun configureForQodana(config: QodanaConfig, project: Project) {
     val forceReimport = SystemProperties.getBooleanProperty(QODANA_TRIGGER_MAVEN_IMPORT, false)
-    if (MavenSimpleProjectComponent.isNormalProjectInHeadless() && !forceReimport) {
-      return
-    }
+    val headlessImport = MavenSimpleProjectComponent.isNormalProjectInHeadless()
 
     val projectsManager = MavenProjectsManager.getInstance(project)
     val mavenProjects = projectsManager.projects
 
-    val alreadyImported = project.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) == true
+    val reusesModelCache = reusesProjectModelCache(project) && mavenProjects.isNotEmpty()
 
-    if (!alreadyImported && !mavenProjects.isEmpty()) {
+    LOG.info("Maven import state: reusesModelCache=$reusesModelCache, mavenProjects=${mavenProjects.size}, " +
+             "headlessImport=$headlessImport, forceReimport=$forceReimport")
+
+    if (headlessImport && !forceReimport && !reusesModelCache) {
+      return
+    }
+
+    if (reusesModelCache) {
       reimportMavenProjects(mavenProjects, project, projectsManager)
     }
-    else {
-      if (forceReimport) {
-        LOG.info("Re-importing maven project after configuration")
-        if (mavenProjects.isEmpty()) {
-          LOG.info("Trying to re-import the project as maven")
-          importProject(project)
-          LOG.info("Maven re-import finished")
-          if (projectsManager.projects.isEmpty()) {
-            LOG.info("No maven projects were imported")
-          }
-          else {
-            LOG.info("Consider projects as reimported")
-          }
+    else if (forceReimport) {
+      LOG.info("Re-importing maven project after configuration")
+      if (mavenProjects.isEmpty()) {
+        LOG.info("Trying to re-import the project as maven")
+        importProject(project)
+        LOG.info("Maven re-import finished")
+        if (projectsManager.projects.isEmpty()) {
+          LOG.info("No maven projects were imported")
         }
         else {
-          reimportMavenProjects(mavenProjects, project, projectsManager)
+          LOG.info("Consider projects as reimported")
         }
+      }
+      else {
+        reimportMavenProjects(mavenProjects, project, projectsManager)
       }
     }
 
@@ -70,6 +74,12 @@ class QodanaReimportMavenProjects : QodanaWorkflowExtension {
     }
     futureDumb.await()
     LOG.info("Now running in smart mode")
+  }
+
+  private fun reusesProjectModelCache(project: Project): Boolean {
+    // An unknown WorkspaceModel implementation, for example in Rider, gives an unknown state.
+    val workspaceModel = WorkspaceModel.getInstance(project) as? WorkspaceModelImpl ?: return false
+    return workspaceModel.loadedFromCache
   }
 
   private suspend fun reimportMavenProjects(
