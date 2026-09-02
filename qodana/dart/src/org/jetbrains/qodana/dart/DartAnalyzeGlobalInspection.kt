@@ -32,7 +32,6 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolIssue
 import java.nio.file.Path
-import kotlin.math.min
 
 internal fun interface DartAnalyzeRunnerFactory {
   fun create(moduleType: DartModuleType): DartAnalyzeRunner
@@ -88,14 +87,11 @@ internal open class DartAnalyzeGlobalInspection(
       when (val result = runBlockingCancellable { analyze(module) }) {
         is DartAnalyzeRunResult.Success -> {
           result.diagnostics.forEach { diagnostic ->
-            if (diagnostic.belongsTo(module, modules) && qodanaContext.isToolEnabled(DartAnalyzeInspectionCatalog.inspectionIdFor(diagnostic.code))) {
-              val location = diagnostic.location
-              val key = listOf(
-                DartAnalyzeInspectionCatalog.inspectionIdFor(diagnostic.code),
-                location?.file,
-                location?.offset,
-                location?.length,
-              ).joinToString("\u0000")
+            if (
+              diagnostic.belongsTo(module, allModules) &&
+              qodanaContext.isToolEnabled(DartAnalyzeInspectionCatalog.inspectionIdFor(diagnostic.code))
+            ) {
+              val key = diagnostic.deduplicationKey(module.path)
               if (reportedDiagnostics.add(key)) {
                 registerProblem(diagnostic, module.path, manager, globalContext, problemDescriptionsProcessor)
               }
@@ -153,6 +149,15 @@ internal open class DartAnalyzeGlobalInspection(
     return owner == null || owner == module.path.toAbsolutePath().normalize()
   }
 
+  private fun DartAnalyzeDiagnostic.deduplicationKey(modulePath: Path): String {
+    val filePath = location?.file?.let { file ->
+      runCatching {
+        Path.of(file).let { if (it.isAbsolute) it else modulePath.resolve(it) }.toAbsolutePath().normalize()
+      }.getOrNull()
+    } ?: modulePath.toAbsolutePath().normalize()
+    return listOf(code, filePath, location?.offset, location?.length).joinToString("\u0000")
+  }
+
   private fun registerProblem(
     failure: DartAnalyzeRunResult.Failure,
     module: DartModule,
@@ -187,13 +192,13 @@ internal open class DartAnalyzeGlobalInspection(
     val path = Path.of(file).let { if (it.isAbsolute) it else projectPath.resolve(it) }
     val virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(path)
       ?: run {
-        LOG.error("Unable to find Dart analyzer diagnostic file '${path.toQodanaLogPath(projectPath)}'")
+        LOG.warn("Unable to find Dart analyzer diagnostic file '${path.toQodanaLogPath(projectPath)}'")
         return
       }
     runReadActionBlocking {
       val psiFile = PsiManager.getInstance(globalContext.project).findFile(virtualFile)
         ?: run {
-          LOG.error("Unable to create PSI file for Dart analyzer diagnostic file '${path.toQodanaLogPath(projectPath)}'")
+          LOG.warn("Unable to create PSI file for Dart analyzer diagnostic file '${path.toQodanaLogPath(projectPath)}'")
           return@runReadActionBlocking
         }
       val qodanaContext = globalContext as? QodanaGlobalInspectionContext ?: return@runReadActionBlocking
@@ -211,17 +216,17 @@ internal open class DartAnalyzeGlobalInspection(
     }
   }
 
-  private fun DartAnalyzeLocation.rangeIn(textLength: Int): TextRange {
-    val start = offset?.coerceIn(0, textLength) ?: 0
-    val end = min(start + (length ?: 0), textLength)
-    return if (start == end && textLength > 0) TextRange(0, 1) else TextRange(start, end)
-  }
-
   companion object {
     const val SHORT_NAME: String = "DartAnalyzeGlobalInspection"
 
     private val LOG = logger<DartAnalyzeGlobalInspection>()
   }
+}
+
+internal fun DartAnalyzeLocation.rangeIn(textLength: Int): TextRange {
+  val start = offset?.coerceIn(0, textLength) ?: 0
+  val end = start + (length ?: 0).coerceAtLeast(0).coerceAtMost(textLength - start)
+  return TextRange(start, end)
 }
 
 internal class DartAnalyzeGlobalInspectionContextExtension : GlobalInspectionContextExtension<DartAnalyzeGlobalInspectionContextExtension> {

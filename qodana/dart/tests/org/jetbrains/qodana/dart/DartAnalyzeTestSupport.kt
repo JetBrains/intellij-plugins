@@ -75,7 +75,7 @@ internal object DartAnalyzeTestRunnerFactoryHolder {
 }
 
 internal class DartAnalyzeTestGlobalInspection : DartAnalyzeGlobalInspection(
-  DartAnalyzeTestRunnerFactoryHolder.factory ?: error("Dart test runner factory is not configured"),
+  requireNotNull(DartAnalyzeTestRunnerFactoryHolder.factory) { "Dart test runner factory is not configured" },
 )
 
 internal data class RecordedDartAnalyzeResponse(val resourceName: String, val content: String)

@@ -1,8 +1,10 @@
 package org.jetbrains.qodana.dart
 
 import com.intellij.openapi.application.PluginPathManager
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.NioFiles
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.HeavyTestHelper
@@ -37,7 +39,9 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
       DartAnalyzeInspectionDescriptorProvider(),
       testRootDisposable,
     )
-    DartAnalyzeTestRunnerFactoryHolder.factory = createRunnerFactory()
+    val runnerFactory = createRunnerFactory()
+    DartAnalyzeTestRunnerFactoryHolder.factory = runnerFactory
+    Disposer.register(testRootDisposable) { DartAnalyzeTestRunnerFactoryHolder.factory = null }
     registerGlobalTool(DartAnalyzeTestGlobalInspection(), DartAnalyzeGlobalInspectionPresentation::class.java.name)
     GlobalOutputConsumer.EP_NAME.point.registerExtension(DartAnalyzeGlobalInspectionOutputConsumer(), testRootDisposable)
     InspectionExtensionsFactory.EP_NAME.point.registerExtension(
@@ -116,7 +120,8 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
     assertEquals(initialFingerprints, fingerprints(retriggeredResult))
 
     Files.writeString(module.resolve("lib/main.dart"), "Future<void> main() async { await 1; }")
-    LocalFileSystem.getInstance().refreshAndFindFileByNioFile(module.resolve("lib/main.dart"))
+    val mainFile = requireNotNull(LocalFileSystem.getInstance().refreshAndFindFileByNioFile(module.resolve("lib/main.dart")))
+    VfsUtil.markDirtyAndRefresh(false, false, false, mainFile)
     analyzeResponses["test-module"] = readDartAnalyzeTestData("single-categorized.json")
     updateQodanaConfig {
       it.copy(
@@ -135,8 +140,8 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
         "[await_only_futures] Uses 'await' on an instance of 'int', which is not a subtype of 'Future'. Try removing the 'await' or changing the expression.",
         "test-module/lib/main.dart",
         1,
-        1,
-        1,
+        29,
+        5,
       ),
       resultSignature(differentInspectionResult),
     )
@@ -280,6 +285,24 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
     )
     assertTrue(results.all { it.ruleId == DART_ANALYZE_UNCATEGORIZED_SHORT_NAME })
     assertTrue(results.all { it.level == Level.ERROR })
+  }
+
+  @Test
+  fun `does not deduplicate identical diagnostics from sibling modules`() {
+    copyMiniMonorepoIntoProject()
+    analyzeResponses["packages/core"] = readDartAnalyzeTestData("single-app-uncategorized.json")
+    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile()) }
+    runAnalysis()
+
+    assertEquals(
+      listOf(
+        "apps/app/lib/main.dart",
+        "packages/core/lib/main.dart",
+        "packages/core/nested_flutter_app/lib/main.dart",
+        "packages/flutter_app/lib/main.dart",
+      ).sorted(),
+      sarifResultPaths(),
+    )
   }
 
   @Test
