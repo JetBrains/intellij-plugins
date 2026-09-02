@@ -6,7 +6,7 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolQueryStack
-import com.intellij.polySymbols.webTypes.filters.PolySymbolFilter
+import com.intellij.polySymbols.patterns.PolySymbolFilter
 
 class VueBindFilter : PolySymbolFilter {
   override fun filterCodeCompletions(
