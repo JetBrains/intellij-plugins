@@ -1,0 +1,17 @@
+/* Angular type checking code */
+
+/* TCB for blockSwitchExhaustiveWithExpression.ts */
+
+function _tcb1(this: ExhaustiveSwitchWithExpressionComponent) {
+switch(this.state.mode){
+case 'show':
+"" + (this.state.menu);
+break;
+case 'hide':
+break;
+default:
+var _t1 : never = this.state;
+_t1;
+break;
+}
+}

@@ -81,9 +81,11 @@ HtmlFile:test.html
             PsiElement(JS:LPAR)('(')
             ASTWrapperPsiElement(NG:BLOCK_PARAMETER (default never:0))
               Angular2BlockParameter
-                PsiElement(JS:IDENTIFIER)('foo')
-                PsiElement(JS:DOT)('.')
-                PsiElement(JS:IDENTIFIER)('bar')
+                JSReferenceExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('foo')
+                  PsiElement(JS:DOT)('.')
+                  PsiElement(JS:IDENTIFIER)('bar')
             PsiElement(JS:RPAR)(')')
           PsiElement(NG:BLOCK_SEMICOLON)(';')
         XmlText

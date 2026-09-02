@@ -1,0 +1,24 @@
+[
+  {
+    "file-name": "blockSwitchExhaustiveWithExpression.ts",
+    "mappings": [
+      "0:208 => 0:208 (source)",
+      "«state» [223] => «state» [164]} (no types)",
+      "«state» [223] => «this.state» [159]}",
+      "«state.mode» [223] => «this.state.mode» [159]}",
+      "«.» [228] => «.» [169]}",
+      "«mode» [229] => «mode» [170]}",
+      "«'show'» [250] => «'show'» [182]}",
+      "«state» [271] => «state» [201]} (no types)",
+      "«state» [271] => «this.state» [196]}",
+      "«state.menu» [271] => «this.state.menu» [196]}",
+      "«.» [276] => «.» [206]}",
+      "«menu» [277] => «menu» [207]}",
+      "«'hide'» [306] => «'hide'» [226]}",
+      "«@default never» [330] => «_t1» [254]}",
+      "«state» [345] => «state» [273]} (no types)",
+      "«state» [345] => «this.state» [268]}",
+      "362:439 => 362:439 (source)"
+    ]
+  }
+]
