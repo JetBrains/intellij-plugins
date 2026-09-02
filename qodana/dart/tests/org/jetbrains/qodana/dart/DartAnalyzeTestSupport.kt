@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.dart
 
+import com.intellij.openapi.util.SystemInfo
 import java.nio.file.Path
 
 internal class RecordedDartAnalyzeProcessExecutor(
@@ -39,7 +40,7 @@ internal class DartAnalyzeTestRunnerFactory(
   executions: MutableList<Pair<String, String>> = mutableListOf(),
 ) {
   private val recordedProcessExecutor = RecordedDartAnalyzeProcessExecutor(projectPath, analyzeResponses, preparationFailures, executions)
-  private val recordedExecutableResolver = DartExecutableResolver { executableName ->
+  private val recordedExecutableResolver = DartExecutableResolver { executableName, _ ->
     DartExecutable.Available(Path.of(executableName))
   }
 
@@ -63,7 +64,7 @@ internal class DartAnalyzeTestRunnerFactory(
   }
 
   private fun isConfiguredExecutable(executableName: String): Boolean =
-    configuredExecutableResolver({ System.getenv(FLUTTER_PATH_ENV) }).resolve(executableName) is DartExecutable.Available
+    configuredExecutableResolver({ System.getenv(FLUTTER_PATH_ENV) }).resolve(executableName, SystemInfo.isWindows) is DartExecutable.Available
 
   private fun logRecordedRunner(executableName: String) {
     println("Dart mock: using fallback runner for $executableName executable")

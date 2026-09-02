@@ -5,10 +5,10 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.platform.eel.ExecuteProcessException
 import com.intellij.platform.eel.ThrowsChecked
+import com.intellij.platform.eel.isWindows
 import com.intellij.platform.eel.provider.asEelPath
 import com.intellij.platform.eel.provider.getEelDescriptor
 import com.intellij.platform.eel.provider.toEelApi
@@ -32,7 +32,7 @@ internal sealed interface DartExecutable {
 }
 
 internal fun interface DartExecutableResolver {
-  fun resolve(executableName: String): DartExecutable
+  fun resolve(executableName: String, isWindows: Boolean): DartExecutable
 }
 
 internal abstract class DartAnalyzeRunner(
@@ -44,7 +44,7 @@ internal abstract class DartAnalyzeRunner(
   private val parseDiagnostics: (String) -> List<DartAnalyzeDiagnostic>,
 ) {
   suspend fun prepare(projectPath: Path): DartPreparationResult {
-    val executable = when (val result = executableResolver.resolve(preparationExecutableName)) {
+    val executable = when (val result = resolveExecutable(preparationExecutableName, projectPath)) {
       is DartExecutable.Available -> result.path
       else -> return DartPreparationResult.Failure(result.unavailable(preparationExecutableName, executableEnv))
     }
@@ -70,7 +70,7 @@ internal abstract class DartAnalyzeRunner(
   }
 
   suspend fun analyze(modulePath: Path): DartAnalyzeRunResult {
-    val executable = when (val result = executableResolver.resolve(analysisExecutableName)) {
+    val executable = when (val result = resolveExecutable(analysisExecutableName, modulePath)) {
       is DartExecutable.Available -> result.path
       else -> return result.unavailable(analysisExecutableName, executableEnv)
     }
@@ -110,6 +110,9 @@ internal abstract class DartAnalyzeRunner(
 
   private fun String.logValue(): String = replace("\n", "\\n").replace("\r", "\\r").take(LOG_OUTPUT_LIMIT)
 
+  private suspend fun resolveExecutable(executableName: String, modulePath: Path): DartExecutable =
+    executableResolver.resolve(executableName, modulePath.getEelDescriptor().toEelApi().platform.isWindows)
+
   private fun DartExecutable.unavailable(executableName: String, envName: String): DartAnalyzeRunResult.Failure =
     toFailure(envName).also { LOG.warn("$executableName executable is not available: ${it.message}") }
 }
@@ -134,28 +137,29 @@ private val LOG = Logger.getInstance(DartAnalyzeRunner::class.java)
 internal fun configuredExecutableResolver(
   executablePath: () -> String?,
   isExecutable: (Path) -> Boolean = { Files.isRegularFile(it) && Files.isExecutable(it) },
-): DartExecutableResolver = DartExecutableResolver { executableName ->
+): DartExecutableResolver = DartExecutableResolver { executableName, isWindows ->
   val configuredPath = executablePath()?.takeIf(String::isNotBlank) ?: return@DartExecutableResolver DartExecutable.Missing
   val configuredPathValue = runCatching { Path.of(configuredPath) }.getOrNull() ?: return@DartExecutableResolver DartExecutable.Unusable(configuredPath)
+  val executableNames = executableNames(executableName, isWindows)
   val executableCandidates = if (Files.isDirectory(configuredPathValue)) {
-    executableNames(executableName).map(configuredPathValue::resolve)
+    executableNames.map(configuredPathValue::resolve)
   }
   else {
-    executablePaths(configuredPathValue, executableName)
+    executablePaths(configuredPathValue, executableNames)
   }
   executableCandidates.firstOrNull(isExecutable)?.let(DartExecutable::Available)
     ?: DartExecutable.Unusable(configuredPath)
 }
 
-internal fun executableNames(executableName: String): List<String> =
-  if (SystemInfo.isWindows) listOf("$executableName.exe") else listOf(executableName)
+internal fun executableNames(executableName: String, isWindows: Boolean): List<String> =
+  if (isWindows) listOf("$executableName.bat", "$executableName.exe") else listOf(executableName)
 
-private fun executablePaths(configuredPath: Path, executableName: String): List<Path> = buildList {
+private fun executablePaths(configuredPath: Path, executableNames: List<String>): List<Path> = buildList {
   val configuredFileName = configuredPath.fileName?.toString()
-  if (executableNames(executableName).any { it.equals(configuredFileName, ignoreCase = true) }) {
+  if (executableNames.any { it.equals(configuredFileName, ignoreCase = true) }) {
     add(configuredPath)
   }
-  configuredPath.parent?.let { parent -> executableNames(executableName).mapTo(this, parent::resolve) }
+  configuredPath.parent?.let { parent -> executableNames.mapTo(this, parent::resolve) }
 }
 
 internal class DartExecutableRunner(
