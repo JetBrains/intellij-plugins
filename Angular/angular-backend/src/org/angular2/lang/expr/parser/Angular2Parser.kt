@@ -21,6 +21,7 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.angular2.codeInsight.blocks.BLOCK_CASE
+import org.angular2.codeInsight.blocks.BLOCK_DEFAULT_NEVER
 import org.angular2.codeInsight.blocks.BLOCK_DEFER
 import org.angular2.codeInsight.blocks.BLOCK_ELSE_IF
 import org.angular2.codeInsight.blocks.BLOCK_FOR
@@ -593,6 +594,10 @@ class Angular2Parser private constructor(
             else -> parseAliasAsVariable(builder)
           }
           BLOCK_SWITCH, BLOCK_CASE -> when (parameterIndex) {
+            0 -> parser.parseChain(allowEmpty = false)
+            else -> skipContents(builder)
+          }
+          BLOCK_DEFAULT_NEVER -> when (parameterIndex) {
             0 -> parser.parseChain(allowEmpty = false)
             else -> skipContents(builder)
           }
