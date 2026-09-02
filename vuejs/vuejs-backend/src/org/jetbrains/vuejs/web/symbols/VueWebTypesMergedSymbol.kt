@@ -17,6 +17,7 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.html.HtmlAttributeValueProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.html.merge
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
@@ -25,7 +26,6 @@ import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.utils.PsiLinkedPolySymbolDelegate
 import com.intellij.polySymbols.utils.coalesceApiStatus
-import com.intellij.polySymbols.utils.merge
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.codeInsight.toAsset
 import javax.swing.Icon
