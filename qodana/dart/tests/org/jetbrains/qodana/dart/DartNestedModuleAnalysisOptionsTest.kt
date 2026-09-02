@@ -2,6 +2,7 @@ package org.jetbrains.qodana.dart
 
 import com.intellij.codeInspection.lang.InspectionExtensionsFactory
 import com.intellij.openapi.application.PluginPathManager
+import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileYamlConfig
@@ -23,7 +24,7 @@ class DartNestedModuleAnalysisOptionsTest : QodanaRunnerTestCase() {
       DartAnalyzeInspectionDescriptorProvider(),
       testRootDisposable,
     )
-    DartAnalyzeTestRunnerFactoryHolder.factory = DartAnalyzeTestRunnerFactory(
+    val runnerFactory = DartAnalyzeTestRunnerFactory(
       Path.of(project.basePath!!),
       mapOf(
         "test-module" to readDartAnalyzeTestData("nested-root.json"),
@@ -32,6 +33,8 @@ class DartNestedModuleAnalysisOptionsTest : QodanaRunnerTestCase() {
         "test-module/submodule" to readDartAnalyzeTestData("nested-submodule.json"),
       ),
     ).create()
+    DartAnalyzeTestRunnerFactoryHolder.factory = runnerFactory
+    Disposer.register(testRootDisposable) { DartAnalyzeTestRunnerFactoryHolder.factory = null }
     registerGlobalTool(DartAnalyzeTestGlobalInspection(), DartAnalyzeGlobalInspectionPresentation::class.java.name)
     GlobalOutputConsumer.EP_NAME.point.registerExtension(DartAnalyzeGlobalInspectionOutputConsumer(), testRootDisposable)
     InspectionExtensionsFactory.EP_NAME.point.registerExtension(

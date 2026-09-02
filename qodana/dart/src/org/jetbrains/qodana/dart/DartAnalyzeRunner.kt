@@ -61,8 +61,6 @@ internal abstract class DartAnalyzeRunner(
     if (pubGetResult.exitCode != 0) {
       LOG.warn("$preparationExecutableName pub get failed with exit code ${pubGetResult.exitCode}")
       LOG.warn(pubGetResult.standardError)
-    }
-    if (pubGetResult.exitCode != 0) {
       val output = pubGetResult.standardError.ifBlank { pubGetResult.standardOutput }.trim().take(1_000)
       return DartPreparationResult.Failure(DartAnalyzeRunResult.Failure(
         QodanaDartBundle.message("dart.analyze.error.pub.get.exit", preparationExecutableName, pubGetResult.exitCode, output),
@@ -98,8 +96,6 @@ internal abstract class DartAnalyzeRunner(
     if (analyzeResult.exitCode != 0 && diagnostics.isEmpty()) {
       LOG.warn("$analysisExecutableName analyze finished with exit code ${analyzeResult.exitCode}")
       LOG.warn(analyzeResult.standardOutput)
-    }
-    if (analyzeResult.exitCode != 0 && diagnostics.isEmpty()) {
       val output = analyzeResult.standardError.ifBlank { analyzeResult.standardOutput }.trim().take(1_000)
       return DartAnalyzeRunResult.Failure(QodanaDartBundle.message("dart.analyze.error.exit", analysisExecutableName, analyzeResult.exitCode, output))
     }

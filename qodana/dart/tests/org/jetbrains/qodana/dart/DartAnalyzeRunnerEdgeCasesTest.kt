@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.dart
 
+import com.intellij.openapi.util.TextRange
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -121,6 +122,28 @@ class DartAnalyzeRunnerEdgeCasesTest {
     """.trimIndent())
 
     assertTrue(isFlutterModule(module))
+  }
+
+  @Test
+  fun `isFlutterModule returns true for flutter test dev dependency`() {
+    val module = tempDirectory.resolve("dart-package-with-flutter-tests")
+    Files.createDirectory(module)
+    Files.writeString(module.resolve("pubspec.yaml"), """
+      name: dart_package_with_flutter_tests
+      dev_dependencies:
+        flutter_test:
+          sdk: flutter
+    """.trimIndent())
+
+    assertTrue(isFlutterModule(module))
+  }
+
+  @Test
+  fun `rangeIn preserves empty and clamped ranges`() {
+    assertEquals(TextRange(3, 3), DartAnalyzeLocation("lib/main.dart", 3, null, 1).rangeIn(10))
+    assertEquals(TextRange(3, 3), DartAnalyzeLocation("lib/main.dart", 3, 0, 1).rangeIn(10))
+    assertEquals(TextRange(3, 3), DartAnalyzeLocation("lib/main.dart", 3, -1, 1).rangeIn(10))
+    assertEquals(TextRange(10, 10), DartAnalyzeLocation("lib/main.dart", 100, 1, 1).rangeIn(10))
   }
 
   @Test
