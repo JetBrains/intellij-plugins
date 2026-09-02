@@ -9,8 +9,8 @@ import com.intellij.lang.typescript.lsp.TSPluginLoader
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.annotations.ApiStatus
-import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
+import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.vuePluginPath
 import org.jetbrains.vuejs.options.VueSettings
 import java.util.concurrent.ConcurrentHashMap

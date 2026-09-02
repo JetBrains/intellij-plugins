@@ -8,7 +8,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.codeInsight.isGlobalDirectiveName
 import org.jetbrains.vuejs.index.GLOBAL_COMPONENTS
 import org.jetbrains.vuejs.index.GLOBAL_DIRECTIVES

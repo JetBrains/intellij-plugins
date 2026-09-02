@@ -3,9 +3,9 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.DocHidePatternProperty
 import com.intellij.polySymbols.PolySymbol.HideFromCompletionProperty
-import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.polySymbolPattern

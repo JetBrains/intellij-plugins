@@ -9,8 +9,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspClient
 import com.intellij.platform.lsp.api.lsWidget.LspClientWidgetItem
 import org.jetbrains.vuejs.VuejsIcons
-import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
+import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.options.VueConfigurable
 
 internal class VueLspIntegrationHybridModeDefaultProvider :

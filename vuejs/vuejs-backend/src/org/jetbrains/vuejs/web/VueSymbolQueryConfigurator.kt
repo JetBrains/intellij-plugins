@@ -83,7 +83,6 @@ import org.jetbrains.vuejs.web.scopes.VueScriptSetupNamespacedComponentsScope
 import org.jetbrains.vuejs.web.scopes.VueSlotElementScope
 import org.jetbrains.vuejs.web.scopes.VueTopLevelElementsScope
 import org.jetbrains.vuejs.web.scopes.VueWatchSymbolScope
-import kotlin.jvm.java
 
 val VUE_TOP_LEVEL_ELEMENTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-file-top-elements"]
 val VUE_COMPONENTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-components"]

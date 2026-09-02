@@ -1,6 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.nuxt.model
 
+import com.intellij.lang.javascript.buildTools.bundler.WebBundlerDefinitionsProvider
+import com.intellij.lang.javascript.buildTools.bundler.WebBundlerReferenceContributorBase
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -8,8 +10,6 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.asSafely
-import com.intellij.lang.javascript.buildTools.bundler.WebBundlerDefinitionsProvider
-import com.intellij.lang.javascript.buildTools.bundler.WebBundlerReferenceContributorBase
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_COMPONENTS_DEFS

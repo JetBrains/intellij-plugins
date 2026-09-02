@@ -7,12 +7,11 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.model.source.VueCompositionContainer
-import org.jetbrains.vuejs.web.VueCompositionComponentProperty
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
+import org.jetbrains.vuejs.web.VueCompositionComponentProperty
 
 interface VueNamedComponent : VueComponent, VueSymbol {
 

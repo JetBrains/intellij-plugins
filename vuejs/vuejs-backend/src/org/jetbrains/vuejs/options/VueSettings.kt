@@ -22,11 +22,11 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.platform.lsp.api.LspClientManager
 import com.intellij.util.text.SemVer
 import kotlinx.serialization.Serializable
-import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
+import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.allVueServiceRuntimes
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeLoaderFactory
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspIntegrationHybridModeProvider
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeLoaderFactory
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerTakeoverModeLoader
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginLoaderFactory
 import org.jetbrains.vuejs.lang.typescript.service.vueLspPackageName

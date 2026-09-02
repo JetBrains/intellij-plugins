@@ -9,23 +9,23 @@ import com.google.gson.JsonElement
 import com.google.gson.annotations.JsonAdapter
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
 import com.intellij.lang.typescript.lsp.TypeScriptLspClientCommandExecutor.Companion.tsSendNotificationSuspending
-import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.platform.lsp.api.Lsp4jClient
 import com.intellij.platform.lsp.api.LspClientManager
-import com.intellij.platform.lsp.api.LspServerNotificationsHandler
 import com.intellij.platform.lsp.api.LspIntegrationProvider
+import com.intellij.platform.lsp.api.LspServerNotificationsHandler
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification
 import org.jetbrains.vuejs.lang.typescript.service.VueLSCoroutineScope
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 import java.lang.reflect.Type
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 interface VueHMLsp4jServer : JSFrameworkLsp4jServer {
   @JsonNotification("tsserver/response")

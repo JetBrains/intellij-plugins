@@ -3,11 +3,11 @@ package org.jetbrains.vuejs.codeInsight.attributes
 
 import com.intellij.html.impl.providers.HtmlAttributeValueProvider
 import com.intellij.javascript.backend.css.polySymbols.CssClassListInJSLiteralInHtmlAttributeScope.Companion.getClassesFromEmbeddedContent
-import com.intellij.xml.util.getCustomHtmlClassAttributeValue
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
+import com.intellij.xml.util.getCustomHtmlClassAttributeValue
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.Companion.parse
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
