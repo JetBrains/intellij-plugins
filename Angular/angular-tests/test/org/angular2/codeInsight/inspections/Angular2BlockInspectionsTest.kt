@@ -57,13 +57,15 @@ class Angular2BlockInspectionsTest : Angular2TestCase("inspections/blocks") {
   @Test
   fun testDefaultWithParameters() = doHighlightingTest()
 
+  fun testDefaultNever() = doHighlightingTest(Angular2TestModule.ANGULAR_CORE_21_2_0)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(AngularIncorrectBlockUsageInspection())
   }
 
-  private fun doHighlightingTest() {
-    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0,
+  private fun doHighlightingTest(coreModule: Angular2TestModule = Angular2TestModule.ANGULAR_CORE_17_3_0) {
+    doConfiguredTest(coreModule, Angular2TestModule.ANGULAR_COMMON_17_3_0,
                      extension = "html", checkResult = false) {
       myFixture.checkHighlighting()
     }

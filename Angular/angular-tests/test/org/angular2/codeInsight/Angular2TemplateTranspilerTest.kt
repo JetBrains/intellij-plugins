@@ -84,6 +84,11 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
   )
 
   @Test
+  fun testBlockSwitchExhaustive() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_21_2_0,
+  )
+
+  @Test
   fun testEscapedString() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )
@@ -301,7 +306,7 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
         if (dir) "${testName}/tcb._ts" else "$testName.tcb._ts"
       )
 
-      checkTextByFile(
+      val mappingsJson =
         GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(transpiledFile.fileMappings.map { (_, fileInfo) ->
           val sourceFileText = fileInfo.sourceFile.text
 
@@ -345,7 +350,9 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
               result.toString()
             }
           result
-        }),
+        })
+      checkTextByFile(
+        mappingsJson,
         if (dir) "${testName}/mappings.json" else "$testName.mappings.json"
       )
     }

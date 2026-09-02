@@ -35,6 +35,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.blocks.BLOCK_CASE
 import org.angular2.codeInsight.blocks.BLOCK_DEFAULT
+import org.angular2.codeInsight.blocks.BLOCK_DEFAULT_NEVER
 import org.angular2.codeInsight.blocks.BLOCK_DEFER
 import org.angular2.codeInsight.blocks.BLOCK_ELSE
 import org.angular2.codeInsight.blocks.BLOCK_ELSE_IF
@@ -301,6 +302,7 @@ internal class TmplAstSwitchBlock(
   override val nameSpan: TextRange?,
   val expression: JSExpression?,
   val groups: List<TmplAstSwitchBlockCaseGroup>,
+  val exhaustiveCheck: TmplAstSwitchExhaustiveCheck?,
 ) : TmplAstBlockNode
 
 internal class TmplAstSwitchBlockCaseGroup(
@@ -310,6 +312,11 @@ internal class TmplAstSwitchBlockCaseGroup(
 ) : TmplAstBlockNodeWithChildren
 
 internal class TmplAstSwitchBlockCase(
+  override val nameSpan: TextRange?,
+  val expression: JSExpression?,
+) : TmplAstBlockNode
+
+internal class TmplAstSwitchExhaustiveCheck(
   override val nameSpan: TextRange?,
   val expression: JSExpression?,
 ) : TmplAstBlockNode
@@ -1004,7 +1011,11 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
     BLOCK_SWITCH -> TmplAstSwitchBlock(
       nameSpan = nameElement.textRange,
       expression = parameters.getOrNull(0)?.expression,
-      groups = buildSwitchBlockGroups(contents?.children, referenceResolver)
+      groups = buildSwitchBlockGroups(contents?.children, referenceResolver),
+      exhaustiveCheck = contents?.children
+        ?.filterIsInstance<Angular2HtmlBlock>()
+        ?.find { it.name == BLOCK_DEFAULT_NEVER }
+        ?.toTmplAstBlock(referenceResolver) as? TmplAstSwitchExhaustiveCheck
     )
     BLOCK_CASE -> TmplAstSwitchBlockCase(
       nameSpan = nameElement.textRange,
@@ -1013,6 +1024,10 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
     BLOCK_DEFAULT -> TmplAstSwitchBlockCase(
       nameSpan = nameElement.textRange,
       expression = null,
+    )
+    BLOCK_DEFAULT_NEVER -> TmplAstSwitchExhaustiveCheck(
+      nameSpan = nameElement.textRange,
+      expression = parameters.getOrNull(0)?.expression,
     )
     BLOCK_DEFER -> TmplAstDeferredBlock(
       nameSpan = nameElement.textRange,

@@ -171,4 +171,24 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  fun testSwitchBlockExhaustive() {
+    doTestHtml("""
+      @switch (foo) {
+        @case ("a") {
+        }
+        @default never;
+      }
+      @switch (foo) {
+        @case ("a") {
+        }
+        @default never(foo.bar);
+      }
+      @switch (foo) {
+        @case ("a") {
+        }
+        @default never
+      }
+    """.trimIndent())
+  }
+
 }

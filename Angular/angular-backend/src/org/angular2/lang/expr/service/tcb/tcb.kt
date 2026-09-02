@@ -1506,6 +1506,27 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
           clauseScope.render().forEach(::appendStatement)
           appendStatement { append("break;") }
         }
+        if (block.exhaustiveCheck != null) {
+          // `@default never;` enables exhaustive type checking: assigning the switch value (or the
+          // explicitly specified `never(expr)` expression) to a `never`-typed variable makes TypeScript
+          // report an error - anchored on the `@default never` block itself - unless the preceding
+          // `@case`s already narrowed it away completely.
+          appendStatement { append("default:") }
+          val exhaustiveExpression = block.exhaustiveCheck.expression
+          // When no explicit expression is given, the switch expression itself is reused. It has
+          // already been mapped once for the `switch(...)` statement above, so this re-mapping is
+          // ignored to avoid registering a second, conflicting type mapping for the same source range.
+          val exhaustiveValue = if (exhaustiveExpression != null)
+            tcbExpression(exhaustiveExpression, tcb, scope)
+          else
+            Expression { withIgnoreMappings { append(switchExpression) } }
+          val exhaustiveId = tcb.allocateId(null, block.exhaustiveCheck.nameSpan)
+          appendStatement(tsDeclareVariable(exhaustiveId, Expression("never"), exhaustiveValue))
+          // Reference the variable so TypeScript doesn't additionally flag it as unused - only the
+          // "not assignable to never" diagnostic (if any) is meaningful here.
+          appendStatement { append(exhaustiveId).append(";") }
+          appendStatement { append("break;") }
+        }
       }
     })
     return null

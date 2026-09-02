@@ -1,0 +1,8 @@
+@switch(foo) {
+  @case(a) {}
+  @default never;
+}
+@switch(foo) {
+  @case(a) {}
+  @default never<error descr="@default never block cannot have parameters">(foo)</error>;
+}

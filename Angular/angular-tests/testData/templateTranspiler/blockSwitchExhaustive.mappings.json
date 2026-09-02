@@ -1,0 +1,27 @@
+[
+  {
+    "file-name": "blockSwitchExhaustive.ts",
+    "mappings": [
+      "0:354 => 0:354 (source)",
+      "«state» [369] => «state» [139]} (no types)",
+      "«state» [369] => «this.state» [134]}",
+      "«state» [369] => «state» [255]} (ignored)",
+      "«state» [369] => «this.state» [250]} (ignored)",
+      "«state.status» [369] => «this.state.status» [134]}",
+      "«state.status» [369] => «this.state.status» [250]} (ignored)",
+      "«.» [374] => «.» [144]}",
+      "«.» [374] => «.» [260]} (ignored)",
+      "«status» [375] => «status» [145]}",
+      "«status» [375] => «status» [261]} (ignored)",
+      "«'loading'» [398] => «'loading'» [159]}",
+      "«'loaded'» [451] => «'loaded'» [182]}",
+      "«state» [474] => «state» [203]} (no types)",
+      "«state» [474] => «this.state» [198]}",
+      "«state.data» [474] => «this.state.data» [198]}",
+      "«.» [479] => «.» [208]}",
+      "«data» [480] => «data» [209]}",
+      "«@default never» [502] => «_t1» [236]}",
+      "527:593 => 527:593 (source)"
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+/* Angular type checking code */
+
+/* TCB for blockSwitchExhaustive.ts */
+
+function _tcb1(this: NonExhaustiveSwitchComponent) {
+switch(this.state.status){
+case 'loading':
+break;
+case 'loaded':
+"" + (this.state.data);
+break;
+default:
+var _t1 : never = this.state.status;
+_t1;
+break;
+}
+}

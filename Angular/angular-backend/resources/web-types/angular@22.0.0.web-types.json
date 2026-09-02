@@ -2,7 +2,7 @@
   "$schema": "../../../../community/platform/polySymbols/web-types-gen/resources/web-types.json",
   "name": "@angular/core",
   "framework": "angular",
-  "version": "21.2.0-next.1",
+  "version": "22.0.0-next.1",
   "description-markup": "markdown",
   "js-types-syntax": "typescript",
   "default-icon": "icons/angular2.svg",
@@ -17,7 +17,7 @@
       }
     },
     "angular-version": {
-      "V_21_2": {
+      "V_22": {
         "enable-when": {
           "node-packages": [
             "@angular/core"
@@ -407,9 +407,15 @@
         {
           "name": "default never",
           "doc-url": "https://angular.dev/api/core/@switch#exhaustive-type-checking",
-          "description": "Adding `@default never;` after all `@case` blocks enables exhaustive type checking: the compiler verifies that the `@case` conditions cover every possible value of the switch expression and reports a type error otherwise.",
+          "description": "Adding `@default never;` after all `@case` blocks enables exhaustive type checking: the compiler verifies that the `@case` conditions cover every possible value of the switch expression and reports a type error otherwise.\n\nWhen the switched expression is nested within a union, you can explicitly specify the expression to check for exhaustiveness, e.g. `@default never(state);`.",
           "primary-block": "switch",
-          "order": "preferred-last"
+          "order": "preferred-last",
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": false
+            }
+          ]
         },
         {
           "name": "let",

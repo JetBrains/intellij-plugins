@@ -27,7 +27,7 @@ object Angular2LangUtil {
 
   enum class AngularVersion {
     V_2, V_10, V_14_2, V_16, V_17, V_18, V_19, V_19_2,
-    V_20, V_20_1, V_20_2, V_21, V_21_1, V_21_2,
+    V_20, V_20_1, V_20_2, V_21, V_21_1, V_21_2, V_22,
   }
 
   @JvmStatic
