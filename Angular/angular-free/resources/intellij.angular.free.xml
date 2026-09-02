@@ -1,6 +1,6 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="HtmlTools"/>
     <plugin id="com.intellij.platform.images"/>
     <module name="intellij.libraries.fastutil"/>
@@ -14,10 +14,11 @@
     <module name="intellij.platform.ide.impl"/>
     <module name="intellij.platform.lang.core"/>
     <module name="intellij.platform.polySymbols"/>
+    <module name="intellij.platform.polySymbols.web"/>
     <module name="intellij.platform.projectModel"/>
     <module name="intellij.platform.trialPromotion.common"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
   <extensions defaultExtensionNs="com.intellij">
     <pluginWithFreeTierEditorNotificationProvider implementation="org.angular2.editor.AngularFreeTierEditorNotificationProvider"/>
     <polySymbols.webTypes source="web-types/angular-context@0.0.0.web-types.json" enableByDefault="true"/>

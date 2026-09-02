@@ -157,6 +157,8 @@ jvm_library(
         "@community//platform/lang-core:lang-core_test_lib",
         "@community//platform/polySymbols",
         "@community//platform/polySymbols:polySymbols_test_lib",
+        "@community//platform/polySymbols-web",
+        "@community//platform/polySymbols-web:polySymbols-web_test_lib",
         "@community//platform/lsp/testFramework",
         "@community//platform/lsp/testFramework:testFramework_test_lib",
         "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests",
