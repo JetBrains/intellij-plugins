@@ -1,0 +1,131 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    Angular2HtmlBlock (@switch)
+      PsiElement(NG:BLOCK_NAME)('@switch')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockParameters
+        PsiElement(JS:LPAR)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (switch:0))
+          Angular2BlockParameter
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('foo')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        Angular2HtmlBlock (@case)
+          PsiElement(NG:BLOCK_NAME)('@case')
+          PsiWhiteSpace(' ')
+          Angular2HtmlBlockParameters
+            PsiElement(JS:LPAR)('(')
+            ASTWrapperPsiElement(NG:BLOCK_PARAMETER (case:0))
+              Angular2BlockParameter
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"a"')
+            PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace(' ')
+          Angular2HtmlBlockContents
+            PsiElement(NG:BLOCK_START)('{')
+            XmlText
+              PsiWhiteSpace('\n  ')
+            PsiElement(NG:BLOCK_END)('}')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        Angular2HtmlBlock (@default never)
+          PsiElement(NG:BLOCK_NAME)('@default never')
+          PsiElement(NG:BLOCK_SEMICOLON)(';')
+        XmlText
+          PsiWhiteSpace('\n')
+        PsiElement(NG:BLOCK_END)('}')
+    PsiWhiteSpace('\n')
+    Angular2HtmlBlock (@switch)
+      PsiElement(NG:BLOCK_NAME)('@switch')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockParameters
+        PsiElement(JS:LPAR)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (switch:0))
+          Angular2BlockParameter
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('foo')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        Angular2HtmlBlock (@case)
+          PsiElement(NG:BLOCK_NAME)('@case')
+          PsiWhiteSpace(' ')
+          Angular2HtmlBlockParameters
+            PsiElement(JS:LPAR)('(')
+            ASTWrapperPsiElement(NG:BLOCK_PARAMETER (case:0))
+              Angular2BlockParameter
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"a"')
+            PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace(' ')
+          Angular2HtmlBlockContents
+            PsiElement(NG:BLOCK_START)('{')
+            XmlText
+              PsiWhiteSpace('\n  ')
+            PsiElement(NG:BLOCK_END)('}')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        Angular2HtmlBlock (@default never)
+          PsiElement(NG:BLOCK_NAME)('@default never')
+          Angular2HtmlBlockParameters
+            PsiElement(JS:LPAR)('(')
+            ASTWrapperPsiElement(NG:BLOCK_PARAMETER (default never:0))
+              Angular2BlockParameter
+                PsiElement(JS:IDENTIFIER)('foo')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('bar')
+            PsiElement(JS:RPAR)(')')
+          PsiElement(NG:BLOCK_SEMICOLON)(';')
+        XmlText
+          PsiWhiteSpace('\n')
+        PsiElement(NG:BLOCK_END)('}')
+    PsiWhiteSpace('\n')
+    Angular2HtmlBlock (@switch)
+      PsiElement(NG:BLOCK_NAME)('@switch')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockParameters
+        PsiElement(JS:LPAR)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (switch:0))
+          Angular2BlockParameter
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('foo')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        Angular2HtmlBlock (@case)
+          PsiElement(NG:BLOCK_NAME)('@case')
+          PsiWhiteSpace(' ')
+          Angular2HtmlBlockParameters
+            PsiElement(JS:LPAR)('(')
+            ASTWrapperPsiElement(NG:BLOCK_PARAMETER (case:0))
+              Angular2BlockParameter
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"a"')
+            PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace(' ')
+          Angular2HtmlBlockContents
+            PsiElement(NG:BLOCK_START)('{')
+            XmlText
+              PsiWhiteSpace('\n  ')
+            PsiElement(NG:BLOCK_END)('}')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        Angular2HtmlBlock (@default never)
+          PsiElement(NG:BLOCK_NAME)('@default never')
+          PsiErrorElement:Incomplete @default never block - missing ;
+            <empty list>
+        PsiWhiteSpace('\n')
+        PsiElement(NG:BLOCK_END)('}')

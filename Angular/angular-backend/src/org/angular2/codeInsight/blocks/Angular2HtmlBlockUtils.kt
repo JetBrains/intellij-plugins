@@ -34,6 +34,7 @@ const val BLOCK_ELSE: String = "else"
 const val BLOCK_SWITCH: String = "switch"
 const val BLOCK_CASE: String = "case"
 const val BLOCK_DEFAULT: String = "default"
+const val BLOCK_DEFAULT_NEVER: String = "default never"
 const val BLOCK_FOR: String = "for"
 const val BLOCK_EMPTY: String = "empty"
 const val BLOCK_DEFER: String = "defer"
@@ -42,7 +43,7 @@ const val BLOCK_PLACEHOLDER: String = "placeholder"
 const val BLOCK_LOADING: String = "loading"
 const val BLOCK_LET: String = "let"
 
-val BLOCKS_WITH_PRIMARY_EXPRESSION: Set<String> = setOf(BLOCK_IF, BLOCK_ELSE_IF, BLOCK_SWITCH, BLOCK_CASE, BLOCK_FOR, BLOCK_LET)
+val BLOCKS_WITH_PRIMARY_EXPRESSION: Set<String> = setOf(BLOCK_IF, BLOCK_ELSE_IF, BLOCK_SWITCH, BLOCK_CASE, BLOCK_FOR, BLOCK_LET, BLOCK_DEFAULT_NEVER)
 
 val PROP_IS_PRIMARY: PolySymbolProperty<Boolean> = PolySymbolProperty["is-primary"]
 val PROP_NESTED_SECONDARY_BLOCKS: PolySymbolProperty<Boolean> = PolySymbolProperty["nested-secondary-blocks"]

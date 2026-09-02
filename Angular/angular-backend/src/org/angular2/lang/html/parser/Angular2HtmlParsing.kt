@@ -15,6 +15,7 @@ import com.intellij.xml.parsing.XmlParserBundle
 import com.intellij.xml.util.XmlUtil
 import org.angular2.codeInsight.blocks.BLOCK_CASE
 import org.angular2.codeInsight.blocks.BLOCK_DEFAULT
+import org.angular2.codeInsight.blocks.BLOCK_DEFAULT_NEVER
 import org.angular2.codeInsight.blocks.BLOCK_LET
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
@@ -255,6 +256,16 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
         parametersContents.drop()
         parameters.done(Angular2HtmlElementTypes.BLOCK_PARAMETERS)
       }
+    }
+    if (blockName == BLOCK_DEFAULT_NEVER) {
+      if (builder.tokenType == Angular2HtmlTokenTypes.BLOCK_SEMICOLON) {
+        builder.advanceLexer()
+      }
+      else {
+        builder.error(Angular2Bundle.message("angular.parse.template.missing-default-never-closing-semicolon"))
+      }
+      startMarker.done(Angular2HtmlElementTypes.BLOCK)
+      return
     }
     if (builder.tokenType == Angular2HtmlTokenTypes.BLOCK_START) {
       val errorStartMarker = builder.mark()

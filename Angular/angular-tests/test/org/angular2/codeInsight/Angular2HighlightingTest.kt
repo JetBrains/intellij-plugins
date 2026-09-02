@@ -254,6 +254,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testBlockSwitch() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
 
   @Test
+  fun testBlockSwitchExhaustive() = checkHighlighting(ANGULAR_CORE_21_2_0, extension = "ts")
+
+  @Test
   fun testBlockSwitchNg21_1() = checkHighlighting(ANGULAR_CORE_21_1_3, extension = "ts")
 
   @Test

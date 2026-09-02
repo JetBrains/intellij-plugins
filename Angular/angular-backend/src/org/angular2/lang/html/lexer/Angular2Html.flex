@@ -485,6 +485,14 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
     yybegin(YYINITIAL);
     return Angular2HtmlTokenTypes.BLOCK_START;
   }
+  ";" {
+    if (blockName.equals("default never")) {
+      yybegin(YYINITIAL);
+      return Angular2HtmlTokenTypes.BLOCK_SEMICOLON;
+    }
+    yypushback(1);
+    yybegin(YYINITIAL);
+  }
   [^] {
     yypushback(1);
     yybegin(YYINITIAL);
