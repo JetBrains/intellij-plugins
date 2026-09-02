@@ -286,6 +286,9 @@ internal data class DartAnalyzeLocation(
   val offset: Int?,
   val length: Int?,
   val startLine: Int?,
+  val startColumn: Int? = null,
+  val endLine: Int? = null,
+  val endColumn: Int? = null,
 )
 
 internal fun parseDartAnalyzeDiagnostics(json: String): List<DartAnalyzeDiagnostic> {
@@ -314,6 +317,9 @@ private fun JsonObject.toDartAnalyzeLocation(): DartAnalyzeLocation {
     offset,
     length,
     start?.intOrNull("line"),
+    start?.intOrNull("column"),
+    end?.intOrNull("line"),
+    end?.intOrNull("column"),
   )
 }
 
