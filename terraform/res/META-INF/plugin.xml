@@ -272,7 +272,8 @@
     <lang.psiStructureViewFactory language="HCL" implementationClass="org.intellij.terraform.hcl.structureView.HCLStructureViewFactory"/>
     <lang.braceMatcher language="HCL" implementationClass="org.intellij.terraform.hcl.codeinsight.HCLBraceMatcher"/>
     <lang.findUsagesProvider language="HCL" implementationClass="org.intellij.terraform.hcl.findUsages.HCLFindUsagesProvider"/>
-    <usageTypeProvider implementation="org.intellij.terraform.config.findUsages.HCLUsageTypeProvider"/>
+    <usageTypeProvider implementation="org.intellij.terraform.config.findUsages.HclUsageTypeProvider"/>
+    <readWriteAccessDetector implementation="org.intellij.terraform.config.findUsages.HclReadWriteAccessDetector"/>
     <breadcrumbsInfoProvider implementation="org.intellij.terraform.hcl.editor.HCLBreadcrumbsInfoProvider"/>
     <navbar implementation="org.intellij.terraform.hcl.editor.HCLNavBarExtension"/>
     <qualifiedNameProvider implementation="org.intellij.terraform.hcl.navigation.HCLQualifiedNameProvider"/>
