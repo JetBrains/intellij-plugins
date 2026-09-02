@@ -94,6 +94,50 @@ class DartAnalyzeGlobalInspectionQodanaTest : QodanaRunnerTestCase() {
   }
 
   @Test
+  fun `reports CRLF diagnostic at its analyzer column`() {
+    val module = createDartModule("test-module")
+    val mainFile = module.resolve("lib/main.dart")
+    Files.writeString(mainFile, "void main() {\r\n  missing;\r\n}\r\n")
+    val virtualFile = requireNotNull(LocalFileSystem.getInstance().refreshAndFindFileByNioFile(mainFile))
+    VfsUtil.markDirtyAndRefresh(false, false, false, virtualFile)
+    analyzeResponses["test-module"] = readDartAnalyzeTestData("crlf-undefined-identifier.json")
+
+    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile()) }
+    runAnalysis()
+
+    val physicalLocation = manager.sarifRun.results.single().locations.single().physicalLocation
+    assertEquals("void main() {\r\n  missing;\r\n}\r\n", physicalLocation.contextRegion.snippet.text)
+    val region = physicalLocation.region
+    assertEquals("missing", region.snippet.text)
+    assertEquals(2, region.startLine)
+    assertEquals(3, region.startColumn)
+    assertEquals(17, region.charOffset)
+    assertEquals(7, region.charLength)
+  }
+
+  @Test
+  fun `reports LF diagnostic at its analyzer column`() {
+    val module = createDartModule("test-module")
+    val mainFile = module.resolve("lib/main.dart")
+    Files.writeString(mainFile, "void main() {\n  missing;\n}\n")
+    val virtualFile = requireNotNull(LocalFileSystem.getInstance().refreshAndFindFileByNioFile(mainFile))
+    VfsUtil.markDirtyAndRefresh(false, false, false, virtualFile)
+    analyzeResponses["test-module"] = readDartAnalyzeTestData("lf-undefined-identifier.json")
+
+    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile()) }
+    runAnalysis()
+
+    val physicalLocation = manager.sarifRun.results.single().locations.single().physicalLocation
+    assertEquals("void main() {\n  missing;\n}\n", physicalLocation.contextRegion.snippet.text)
+    val region = physicalLocation.region
+    assertEquals("missing", region.snippet.text)
+    assertEquals(2, region.startLine)
+    assertEquals(3, region.startColumn)
+    assertEquals(16, region.charOffset)
+    assertEquals(7, region.charLength)
+  }
+
+  @Test
   fun `keeps fingerprints stable on retrigger and separates inspections`() {
     val module = createDartModule("test-module")
     enableCoreLint(module)

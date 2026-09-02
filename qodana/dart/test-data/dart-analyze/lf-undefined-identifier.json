@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "diagnostics": [
+    {
+      "code": "undefined_identifier",
+      "severity": "ERROR",
+      "type": "COMPILE_TIME_ERROR",
+      "location": {
+        "file": "lib/main.dart",
+        "range": {
+          "start": { "offset": 16, "line": 2, "column": 3 },
+          "end": { "offset": 23, "line": 2, "column": 10 }
+        }
+      },
+      "problemMessage": "Undefined name 'missing'.",
+      "correctionMessage": "Try correcting the name to one that is defined, or defining the name.",
+      "documentation": "https://dart.dev/diagnostics/undefined_identifier"
+    }
+  ]
+}

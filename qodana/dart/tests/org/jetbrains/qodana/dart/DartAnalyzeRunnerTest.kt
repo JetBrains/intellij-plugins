@@ -26,7 +26,7 @@ class DartAnalyzeRunnerTest {
 
     assertEquals(3, diagnostics.size)
     val warningDiagnostic = diagnostics[0]
-    assertEquals(DartAnalyzeLocation("lib/main.dart", 7, 12, 1), warningDiagnostic.location)
+    assertEquals(DartAnalyzeLocation("lib/main.dart", 7, 12, 1, 8, 1, 20), warningDiagnostic.location)
     val warning = warningDiagnostic.toExternalToolIssue(Path.of("/project"))
     assertEquals(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, warning.inspectionId)
     assertEquals(HighlightDisplayLevel.WARNING, warning.severity)

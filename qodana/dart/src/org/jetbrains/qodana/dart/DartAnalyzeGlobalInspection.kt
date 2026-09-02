@@ -20,6 +20,7 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.lang.annotation.ProblemGroup
 import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
@@ -27,6 +28,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
@@ -205,7 +207,7 @@ internal open class DartAnalyzeGlobalInspection(
       if (!qodanaContext.isFileInInspectionScope(DartAnalyzeInspectionCatalog.inspectionIdFor(diagnostic.code), psiFile)) return@runReadActionBlocking
       val descriptor = manager.createProblemDescriptor(
         psiFile,
-        location.rangeIn(psiFile.textLength),
+        location.rangeIn(PsiDocumentManager.getInstance(globalContext.project).getDocument(psiFile) ?: return@runReadActionBlocking),
         diagnostic.description(),
         diagnostic.severity.toProblemHighlightType(),
         false,
@@ -227,6 +229,21 @@ internal fun DartAnalyzeLocation.rangeIn(textLength: Int): TextRange {
   val start = offset?.coerceIn(0, textLength) ?: 0
   val end = start + (length ?: 0).coerceAtLeast(0).coerceAtMost(textLength - start)
   return TextRange(start, end)
+}
+
+internal fun DartAnalyzeLocation.rangeIn(document: Document): TextRange {
+  val start = document.offsetAt(startLine, startColumn)
+  val end = document.offsetAt(endLine, endColumn)
+  if (start != null && end != null && start <= end) return TextRange(start, end)
+  return rangeIn(document.textLength)
+}
+
+private fun Document.offsetAt(line: Int?, column: Int?): Int? {
+  val lineIndex = line?.minus(1) ?: return null
+  val columnIndex = column?.minus(1) ?: return null
+  if (lineIndex !in 0 until lineCount || columnIndex < 0) return null
+  val lineStartOffset = getLineStartOffset(lineIndex)
+  return (lineStartOffset + columnIndex).takeIf { it <= getLineEndOffset(lineIndex) }
 }
 
 internal class DartAnalyzeGlobalInspectionContextExtension : GlobalInspectionContextExtension<DartAnalyzeGlobalInspectionContextExtension> {
