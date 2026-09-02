@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.JavaExecutionUtil;
@@ -22,6 +22,7 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -126,7 +127,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
       }
     }
 
-    final Location location = context.getLocation();
+    final Location<PsiElement> location = context.getLocation();
     if (location == null) {
       LOG.debug("Location is null.");
       return false;
@@ -165,7 +166,8 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     }
 
     if (configuration.getNameFilter() != null && !configuration.getNameFilter().isEmpty()) {
-      final String newProgramParameters = configuration.getProgramParameters() + " --name \"" + configuration.getNameFilter() + "\"";
+      final String newProgramParameters =
+        configuration.getProgramParameters() + " --name " + ParametersListUtil.escape(configuration.getNameFilter());
       configuration.setProgramParameters(newProgramParameters);
     }
 
@@ -179,7 +181,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
 
   @Override
   public boolean isConfigurationFromContext(@NotNull CucumberJavaRunConfiguration runConfiguration, @NotNull ConfigurationContext context) {
-    Location location = context.getLocation();
+    Location<PsiElement> location = context.getLocation();
     if (location == null) {
       return false;
     }

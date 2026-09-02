@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.Location;
@@ -55,6 +55,27 @@ public class CucumberJavaRunConfigurationTest extends BasePlatformTestCase {
     assertFalse(parameters.contains("org.jetbrains.plugins.cucumber.java.run.CucumberJvm"));
   }
 
+  public void testProgramArgumentEscaping() {
+    myFixture.configureByText("test.feature", """
+      Feature: Quoting
+      
+        Scenario<caret> Outline: Check the "Some Policy Name" rule for case <case>
+          Given a step
+          Examples:
+            | case |
+            | one  |
+      """);
+    CucumberJavaRunConfiguration runConfiguration = createTemplateConfiguration();
+    runConfiguration.setProgramParameters("--plugin teamcity");
+    CucumberJavaFeatureRunConfigurationProducer producer = new CucumberJavaScenarioRunConfigurationProducer();
+    ConfigurationContext configurationContext = getConfigurationContext();
+    PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+    producer.setupConfigurationFromContext(runConfiguration, configurationContext, new Ref<>(elementAtCaret));
+
+    assertEquals("--plugin teamcity --name \"^Check the \\\"Some Policy Name\\\" rule for case .*$\"",
+                 runConfiguration.getProgramParameters());
+  }
+
   @Override
   protected String getBasePath() {
     return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "run";
@@ -88,14 +109,12 @@ public class CucumberJavaRunConfigurationTest extends BasePlatformTestCase {
     assertEquals(isRunConfigurationExpected, producer.setupConfigurationFromContext(rc, configurationContext, new Ref<>(psiDirectory)));
   }
 
-  @NotNull
-  private CucumberJavaRunConfiguration createTemplateConfiguration() {
+  private @NotNull CucumberJavaRunConfiguration createTemplateConfiguration() {
     ConfigurationFactory configurationFactory = CucumberJavaRunConfigurationType.getInstance().getConfigurationFactories()[0];
     return new CucumberJavaRunConfiguration("", myFixture.getProject(), configurationFactory);
   }
 
-  @NotNull
-  private ConfigurationContext getConfigurationContext() {
+  private @NotNull ConfigurationContext getConfigurationContext() {
     DataContext dataContext = DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent());
     return ConfigurationContext.getFromContext(dataContext, ActionPlaces.UNKNOWN);
   }
