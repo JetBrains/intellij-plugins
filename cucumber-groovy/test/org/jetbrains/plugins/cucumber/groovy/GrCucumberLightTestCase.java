@@ -1,11 +1,11 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.groovy;
 
+import com.intellij.groovy.testFramework.BaseTest;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.groovy.LibraryLightProjectDescriptor;
 import org.jetbrains.plugins.groovy.RepositoryTestLibrary;
-import org.jetbrains.plugins.groovy.util.BaseTest;
 import org.jetbrains.plugins.groovy.util.LightProjectTest;
 
 import static org.jetbrains.plugins.groovy.GroovyProjectDescriptors.LIB_GROOVY_2_1;
