@@ -1,6 +1,8 @@
 package org.jetbrains.qodana.extensions
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import git4idea.remote.hosting.GitHostingUrlUtil
 import git4idea.repo.GitRepositoryManager
 
 class GitRepositoryInfoProvider : RepositoryInfoProvider {
@@ -21,4 +23,21 @@ class GitRepositoryInfoProvider : RepositoryInfoProvider {
     val origin = gitRepo?.remotes?.find { it.name == "origin" }
     return origin?.firstUrl
   }
+
+  override fun findContentRoot(project: Project, remoteUrl: String): VirtualFile? {
+    return GitRepositoryManager.getInstance(project).repositories
+      .firstOrNull { repository ->
+        repository.remotes.any { remote -> remote.urls.any { areSameRemoteUrls(remoteUrl, it) } }
+      }
+      ?.root
+  }
+}
+
+internal fun areSameRemoteUrls(first: String, second: String): Boolean {
+  val firstUri = GitHostingUrlUtil.getUriFromRemoteUrl(first) ?: return false
+  val secondUri = GitHostingUrlUtil.getUriFromRemoteUrl(second) ?: return false
+
+  return firstUri.host.equals(secondUri.host, ignoreCase = true) &&
+         firstUri.port == secondUri.port &&
+         firstUri.path.equals(secondUri.path, ignoreCase = true)
 }

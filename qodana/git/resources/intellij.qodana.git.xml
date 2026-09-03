@@ -1,0 +1,38 @@
+<idea-plugin>
+  <!-- Generated dependencies; run Generate Product Layouts to regenerate -->
+  <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <plugin id="org.intellij.qodana"/>
+    <module name="intellij.libraries.kotlinx.coroutines.core"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.lang"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.statistics"/>
+    <module name="intellij.platform.vcs"/>
+    <module name="intellij.platform.vcs.dvcs"/>
+    <module name="intellij.platform.vcs.dvcs.impl"/>
+    <module name="intellij.platform.vcs.dvcs.impl.shared"/>
+    <module name="intellij.platform.vcs.impl"/>
+    <module name="intellij.platform.vcs.impl.shared"/>
+    <module name="intellij.platform.vcs.log"/>
+    <module name="intellij.platform.vcs.log.impl"/>
+    <module name="intellij.qodana.sarif"/>
+    <module name="intellij.vcs.git.backend"/>
+    <module name="intellij.vcs.git.shared"/>
+    <!-- endregion -->
+  </dependencies>
+
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <sarifReportContributor implementation="org.jetbrains.qodana.staticAnalysis.sarif.GitReportContributor"/>
+    <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.workflow.QodanaSendGitCommitsSummaryToFus"/>
+    <repositoryRevisionProvider implementation="org.jetbrains.qodana.extensions.GitRepositoryRevisionProvider"/>
+    <repositoryInfoProvider implementation="org.jetbrains.qodana.extensions.GitRepositoryInfoProvider"/>
+    <vcsIgnoredFilesProvider implementation="org.jetbrains.qodana.extensions.GitIgnoredFilesProvider"/>
+    <vcsRevisionProvider implementation="org.jetbrains.qodana.vcs.GitRevisionProvider"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <customScopesProvider implementation="org.jetbrains.qodana.staticAnalysis.scopes.GitIgnoreScopeProvider" id="gitignore"/>
+  </extensions>
+</idea-plugin>

@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.merge
 
-internal interface VcsRevisionProvider {
+interface VcsRevisionProvider {
   companion object {
     val EP_NAME = ExtensionPointName<VcsRevisionProvider>("org.intellij.qodana.vcsRevisionProvider")
   }

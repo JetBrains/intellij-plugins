@@ -1,0 +1,198 @@
+load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.qodana.git` start
+jvm_library(
+    name = "git",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.git",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//contrib/qodana",
+        "//contrib/qodana/sarif",
+        "@community//libraries/kotlinx/coroutines/core",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/ide-core",
+        "@community//platform/lang-api:lang",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/statistics",
+        "@community//platform/util",
+        "@community//platform/vcs-api:vcs",
+        "@community//platform/dvcs-api:vcs-dvcs",
+        "@community//platform/dvcs-impl:vcs-dvcs-impl",
+        "@community//platform/dvcs-impl/shared",
+        "@community//platform/vcs-impl",
+        "@community//platform/vcs-impl/shared",
+        "@community//platform/vcs-log/api:vcs-log",
+        "@community//platform/vcs-log/impl",
+        "@community//plugins/git4idea/backend",
+        "@community//plugins/git4idea/shared",
+    ],
+)
+
+content_module_jar(module = ":git")
+
+jvm_library(
+    name = "git_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.git",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":git",
+        "//contrib/qodana:qodana_test_lib",
+        "//contrib/qodana/sarif:sarif_test_lib",
+        "@community//libraries/kotlinx/coroutines/core:core_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/statistics:statistics_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/vcs-api:vcs_test_lib",
+        "@community//platform/dvcs-api:vcs-dvcs_test_lib",
+        "@community//platform/dvcs-impl:vcs-dvcs-impl_test_lib",
+        "@community//platform/dvcs-impl/shared:shared_test_lib",
+        "@community//platform/vcs-impl:vcs-impl_test_lib",
+        "@community//platform/vcs-impl/shared:shared_test_lib",
+        "@community//platform/vcs-log/api:vcs-log_test_lib",
+        "@community//platform/vcs-log/impl:impl_test_lib",
+        "@community//plugins/git4idea/backend:backend_test_lib",
+        "@community//plugins/git4idea/shared:shared_test_lib",
+    ],
+)
+### auto-generated section `build intellij.qodana.git` end
+
+### auto-generated section `iml intellij.qodana.git` start
+exports_files(
+    [
+        "intellij.qodana.git.iml",
+        "resources/intellij.qodana.git.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.qodana.git` end
+
+### auto-generated section `build intellij.qodana.git.tests` start
+jvm_library(
+    name = "git-tests",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.git.tests",
+    visibility = ["//visibility:public"],
+)
+
+jvm_library(
+    name = "git-tests_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "tests/**/*.kt",
+            "tests/**/*.java",
+            "tests/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    associates = [
+        "//contrib/qodana/git",
+        "//contrib/qodana/git:git_test_lib",
+    ],
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":git-tests",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//contrib/qodana",
+        "//contrib/qodana:qodana_test_lib",
+        "//contrib/qodana:qodana-core-tests",
+        "//contrib/qodana:qodana-core-tests_test_lib",
+        "//contrib/qodana/sarif",
+        "//contrib/qodana/sarif:sarif_test_lib",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/core-api:core",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-ui",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/core-impl",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/ide-core",
+        "@community//platform/ide-core-impl",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/vcs-api:vcs",
+        "@community//platform/vcs-api:vcs_test_lib",
+        "@community//platform/dvcs-api:vcs-dvcs",
+        "@community//platform/dvcs-api:vcs-dvcs_test_lib",
+        "@community//platform/dvcs-impl:vcs-dvcs-impl",
+        "@community//platform/dvcs-impl:vcs-dvcs-impl_test_lib",
+        "@community//platform/vcs-impl",
+        "@community//platform/vcs-impl:vcs-impl_test_lib",
+        "@community//platform/vcs-impl/shared",
+        "@community//platform/vcs-impl/shared:shared_test_lib",
+        "@community//platform/vcs-tests:vcs-testFramework",
+        "@community//platform/vcs-tests:vcs-testFramework_test_lib",
+        "@community//java/testFramework",
+        "@community//java/testFramework:testFramework_test_lib",
+        "//contrib/qodana-test-framework:qodana-testFramework",
+        "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework:testFramework_test_lib",
+        "@community//plugins/git4idea/backend",
+        "@community//plugins/git4idea/backend:backend_test_lib",
+        "@community//plugins/git4idea:vcs-git-backend-tests",
+        "@community//plugins/git4idea:vcs-git-backend-tests_test_lib",
+        "@community//plugins/git4idea/shared",
+        "@community//plugins/git4idea/shared:shared_test_lib",
+        "@community//libraries/junit4",
+        "@community//libraries/junit4:junit4_test_lib",
+        "@community//libraries/junit5",
+        "@community//libraries/junit5:junit5_test_lib",
+    ],
+)
+### auto-generated section `build intellij.qodana.git.tests` end
+
+### auto-generated section `iml intellij.qodana.git.tests` start
+exports_files(
+    [
+        "intellij.qodana.git.tests.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.qodana.git.tests` end
+
+### auto-generated section `test intellij.qodana.git.tests` start
+jps_test(
+    name = "git-tests_test",
+    runtime_deps = [":git-tests_test_lib"],
+)
+### auto-generated section `test intellij.qodana.git.tests` end

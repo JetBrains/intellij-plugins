@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vcs.Ignored
@@ -10,7 +9,6 @@ import com.intellij.openapi.vcs.changes.VcsIgnoreManagerImpl
 import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.project.stateStore
-import com.intellij.util.concurrency.AppExecutorUtil
 import git4idea.GitVcs
 import git4idea.repo.GitRepositoryFiles
 import git4idea.test.createRepository
@@ -27,7 +25,7 @@ abstract class QodanaRunnerWithVcsTestCase : QodanaRunnerTestCase() {
 
   override fun setUp() {
     super.setUp()
-    ReadAction.nonBlocking{ createRepository(project, projectPath, makeInitialCommit) }.submit(AppExecutorUtil.getAppExecutorService()).get()
+    createRepository(project, projectPath, makeInitialCommit)
 
     (project.service<ProjectLevelVcsManager>() as ProjectLevelVcsManagerImpl).waitForInitialized()
 

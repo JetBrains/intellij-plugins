@@ -24,6 +24,7 @@
     <module name="intellij.qodana.yaml"/>
     <module name="intellij.qodana.coverage"/>
     <module name="intellij.qodana.go"/>
+    <module name="intellij.qodana.git"/>
     <module name="intellij.qodana.cpp"/>
     <module name="intellij.qodana.inspectionKts"/>
     <module name="intellij.qodana.inspectionKts.js"/>
@@ -120,12 +121,8 @@
     <module name="intellij.platform.vcs.impl"/>
     <module name="intellij.platform.vcs.log"/>
     <module name="intellij.platform.vcs.log.impl"/>
-    <module name="intellij.vcs.git.backend"/>
-    <module name="intellij.vcs.git.shared"/>
     <!-- endregion -->
   </dependencies>
-
-  <depends optional="true" config-file="static-analysis-git.xml">Git4Idea</depends>
 
   <resource-bundle>messages.QodanaBundle</resource-bundle>
 

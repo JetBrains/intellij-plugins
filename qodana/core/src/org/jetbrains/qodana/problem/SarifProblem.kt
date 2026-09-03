@@ -18,10 +18,10 @@ import com.jetbrains.qodana.sarif.model.Location
 import com.jetbrains.qodana.sarif.model.OriginalUriBaseIds
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
-import git4idea.repo.GitRepositoryManager
 import kotlinx.serialization.Serializable
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.extensions.RepositoryInfoProvider
 import org.jetbrains.qodana.report.ValidatedSarif
 import org.jetbrains.qodana.report.isInBaseline
 import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
@@ -388,22 +388,7 @@ fun Run.revisionId(): String? = versionControlProvenance?.firstOrNull()?.revisio
 private fun pickVcsContentRoot(project: Project, run: Run): VirtualFile? {
   val reportRepoUri = run.versionControlProvenance?.firstOrNull()?.repositoryUri?.toString()
                         ?.takeIf { it.isNotBlank() } ?: return null
-  val normalizedReport = normalizeRepoUrl(reportRepoUri)
-  return GitRepositoryManager.getInstance(project).repositories
-    .firstOrNull { repo ->
-      repo.remotes.any { remote -> remote.urls.any { normalizeRepoUrl(it) == normalizedReport } }
-    }
-    ?.root
-}
-
-@VisibleForTesting
-fun normalizeRepoUrl(url: String): String {
-  var u = url.trim().lowercase()
-  u = u.removePrefix("ssh://").removePrefix("git://").removePrefix("https://").removePrefix("http://")
-  u = u.replace(Regex("^git@([^:/]+):"), "$1/")
-  u = u.removePrefix("git@")
-  u = u.removeSuffix("/").removeSuffix(".git")
-  return u
+  return RepositoryInfoProvider.findContentRoot(project, reportRepoUri)
 }
 
 @Serializable
