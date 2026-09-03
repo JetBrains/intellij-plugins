@@ -1,4 +1,4 @@
-package com.intellij.mdx.backend.emmet
+package org.intellij.plugin.mdx.emmet
 
 import com.intellij.codeInsight.template.CustomTemplateCallback
 import com.intellij.codeInsight.template.emmet.XmlEmmetConstants
@@ -22,7 +22,7 @@ internal class MdxZenCodingGenerator : JSXZenCodingGenerator() {
     if (isAfterUnfinishedTagStart(callback)) return false
     val mdxJsFile = viewProvider.getPsi(MdxJSLanguage.INSTANCE) ?: return false
     val offset = callback.editor.caretModel.offset
-    val context = PsiUtilCore.getElementAtOffset(mdxJsFile, offset)
+    val context = PsiUtilCore.getElementAtOffset(mdxJsFile, (offset - 1).coerceAtLeast(0))
     // Reject when cursor is inside a JSX/XML tag start (e.g. "<inp<caret>")
     // but allow expansion in tag text content (e.g. "<ul>.item*3<caret></ul>")
     val insideTag = PsiTreeUtil.getParentOfType(context, XmlTag::class.java) != null
@@ -43,15 +43,19 @@ internal class MdxZenCodingGenerator : JSXZenCodingGenerator() {
   }
 
   private fun applyAttributesViaJsx(token: TemplateToken, context: PsiElement) {
-    val attributes = token.attributes
+    val attributes = token.attributes.toMutableMap()
     if (attributes.isEmpty()) return
+
+    if ("class" in attributes) attributes.remove("className")
+    if ("for" in attributes) attributes.remove("htmlFor")
+    if ("innerHTML" in attributes) attributes.remove("dangerouslySetInnerHTML")
 
     val template = token.template ?: return
     val jsxFile = context.containingFile.viewProvider.getPsi(MdxJSLanguage.INSTANCE) ?: return
 
-    // Re-parse the token text in the JSX dialect, where the XML tag is exposed at the top level.
+    // Re-parse the source template in the JSX dialect, where the XML tag is exposed at the top level.
     val dummyFile = PsiFileFactory.getInstance(context.project)
-      .createFileFromText("dummy.html", MdxJSLanguage.INSTANCE, token.templateText, false, true)
+      .createFileFromText("dummy.html", MdxJSLanguage.INSTANCE, template.templateText, false, true)
     val tag = PsiTreeUtil.findChildOfType(dummyFile, XmlTag::class.java) ?: return
 
     for ((name, value) in attributes) {

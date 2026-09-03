@@ -26,7 +26,6 @@
     <module name="intellij.platform.projectModel"/>
     <module name="intellij.platform.rpc.backend"/>
     <module name="intellij.platform.util.ui"/>
-    <module name="intellij.xml.emmet"/>
     <module name="intellij.xml.impl"/>
     <module name="intellij.xml.parser"/>
     <module name="intellij.xml.psi"/>
@@ -48,7 +47,6 @@
     <stubElementRegistryExtension implementation="com.intellij.mdx.backend.js.MdxStubRegistryExtension"/>
     <defaultHighlightingSettingProvider
         implementation="com.intellij.mdx.backend.highlighting.MdxInjectedHighlightingSettingProvider"/>
-    <xml.zenCodingGenerator implementation="com.intellij.mdx.backend.emmet.MdxZenCodingGenerator"/>
     <lang.formatter language="MDX" implementationClass="com.intellij.mdx.backend.format.MdxFormattingModelBuilder"/>
     <lang.formatter language="MdxJS" implementationClass="com.intellij.mdx.backend.format.MdxJsFormattingModelBuilder"/>
     <postFormatProcessor implementation="com.intellij.mdx.backend.format.MdxTablePostFormatProcessor"/>

@@ -5,6 +5,7 @@
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.modules.ultimate"/>
     <module name="intellij.javascript.common"/>
+    <module name="intellij.javascript.emmet"/>
     <module name="intellij.javascript.parser"/>
     <module name="intellij.javascript.psi.impl"/>
     <module name="intellij.libraries.gson"/>
@@ -55,6 +56,7 @@
     <lang.lineWrapStrategy language="MDX"
                            implementationClass="org.intellij.plugin.mdx.editor.MdxLineWrapPositionStrategy"/>
     <xml.autoPopupEnabler implementation="org.intellij.plugin.mdx.completion.MdxXmlAutoPopupEnabler"/>
+    <xml.zenCodingGenerator implementation="org.intellij.plugin.mdx.emmet.MdxZenCodingGenerator" order="first"/>
     <!--suppress PluginXmlRegistrationCheck -->
     <codeInsight.inlayProvider language="MDX"
                                implementationClass="org.intellij.plugins.markdown.editor.tables.ui.MarkdownTableInlayProvider"
