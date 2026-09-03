@@ -4,4 +4,7 @@
     <plugin id="com.intellij.modules.qodana.ijVoid"/>
     <plugin id="org.intellij.qodana"/>
   </dependencies>
+  <extensions defaultExtensionNs="com.intellij">
+    <generatedSourcesFilter implementation="org.jetbrains.qodana.poly.QodanaPolyGeneratedSourcesFilter"/>
+  </extensions>
 </idea-plugin>

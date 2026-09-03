@@ -10,7 +10,11 @@ content_module_jar(module = ":poly")
 jvm_library(
     name = "poly",
     srcs = glob(
-        [],
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
         allow_empty = True,
     ),
     module_name = "intellij.qodana.poly",
@@ -19,7 +23,15 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = ["//contrib/qodana"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//contrib/qodana",
+        "@community//platform/core-api:core",
+        "@community//platform/util",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/projectModel-api:projectModel",
+    ],
 )
 
 jvm_library(
@@ -35,6 +47,10 @@ jvm_library(
         # do not sort,
         ":poly",
         "//contrib/qodana:qodana_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.poly` end
