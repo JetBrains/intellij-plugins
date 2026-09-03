@@ -1,0 +1,38 @@
+package demo
+
+import demo.proto.*
+
+// EXPECT-NEXT: user.proto / User
+fun javaApiWildcardMessageClass() {
+  val user = Use<caret>r.newBuilder().build()
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun javaApiWildcardBuilderSetter() {
+  val user = User.newBuilder()
+    .set<caret>Name("Alice")
+    .build()
+}
+
+// EXPECT-NEXT: user.proto / Role
+fun javaApiWildcardEnumClass() {
+  val role = Ro<caret>le.ADMIN
+}
+
+// EXPECT-NEXT: user.proto / ADMIN
+fun javaApiWildcardEnumValue() {
+  val role = Role.AD<caret>MIN
+}
+
+// EXPECT-NEXT: user.proto / User
+fun kotlinDslWildcardFactory() {
+  val user = us<caret>er {
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun kotlinDslWildcardField() {
+  val user = user {
+    na<caret>me = "Alice"
+  }
+}

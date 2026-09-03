@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package groups;
+
+option java_package = "demo.groups";
+option java_multiple_files = true;
+
+message GroupContainer {
+  optional group SingleGroupField = 99 {
+    optional int32 in_group = 100;
+  }
+}
