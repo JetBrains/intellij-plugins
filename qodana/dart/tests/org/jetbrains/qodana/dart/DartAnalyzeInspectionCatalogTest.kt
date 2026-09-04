@@ -4,21 +4,16 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.nio.file.Path
 
 class DartAnalyzeInspectionCatalogTest {
   @Test
   fun `uses the uncategorized inspection for diagnostic codes outside the catalog`() {
-    val diagnostic = DartAnalyzeDiagnostic("future_diagnostic", "WARNING", "Future diagnostic", null, null)
-
-    assertEquals(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, diagnostic.toExternalToolIssue(Path.of("/project")).inspectionId)
+    assertEquals(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, DartAnalyzeInspectionCatalog.inspectionIdFor("future_diagnostic"))
   }
 
   @Test
   fun `uses an individual inspection for catalogued lint rules`() {
-    val diagnostic = DartAnalyzeDiagnostic("always_declare_return_types", "WARNING", "Declare method return types.", null, null)
-
-    assertEquals("DartAnalyze.always_declare_return_types", diagnostic.toExternalToolIssue(Path.of("/project")).inspectionId)
+    assertEquals("DartAnalyze.always_declare_return_types", DartAnalyzeInspectionCatalog.inspectionIdFor("always_declare_return_types"))
   }
 
   @Test

@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.dart
 
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.util.TextRange
 import com.intellij.testFramework.junit5.TestApplication
@@ -14,22 +13,16 @@ import java.nio.file.Path
 @TestApplication
 class DartAnalyzeDiagnosticTest {
   @Test
-  fun `parses diagnostics and converts them to external tool issues`() {
+  fun `parses diagnostics`() {
     val diagnostics = parseDartAnalyzeDiagnostics(resourceText("diagnostics.json"))
 
     assertEquals(3, diagnostics.size)
     val warningDiagnostic = diagnostics[0]
     assertEquals(DartAnalyzeLocation("lib/main.dart", 7, 12, 1, 8, 1, 20), warningDiagnostic.location)
-    val warning = warningDiagnostic.toExternalToolIssue(Path.of("/project"))
-    assertEquals(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, warning.inspectionId)
-    assertEquals(HighlightDisplayLevel.WARNING, warning.severity)
-    assertEquals("[unused_import] Unused import: 'package:example/example.dart'.\nTry removing the import directive.", warning.description)
-    assertEquals("file:///project/lib/main.dart", warning.file)
-    assertEquals(1, warning.line)
-    assertEquals(7, warning.offset)
-    assertEquals(12, warning.length)
-    assertEquals(HighlightDisplayLevel.ERROR, diagnostics[1].toExternalToolIssue(Path.of("/project")).severity)
-    assertEquals(HighlightDisplayLevel.WEAK_WARNING, diagnostics[2].toExternalToolIssue(Path.of("/project")).severity)
+    assertEquals("unused_import", warningDiagnostic.code)
+    assertEquals("WARNING", warningDiagnostic.severity)
+    assertEquals("Unused import: 'package:example/example.dart'.", warningDiagnostic.message)
+    assertEquals("Try removing the import directive.", warningDiagnostic.correction)
   }
 
   @Test
@@ -50,7 +43,7 @@ class DartAnalyzeDiagnosticTest {
   }
 
   @Test
-  fun `converts a diagnostic without a location`() {
+  fun `parses a diagnostic without a location`() {
     val diagnostics = parseDartAnalyzeDiagnostics(
       """
       {"diagnostics":[{"code":"todo","severity":"INFO","problemMessage":"TODO comment found."}]}
@@ -60,11 +53,6 @@ class DartAnalyzeDiagnosticTest {
     val diagnostic = diagnostics[0]
 
     assertNull(diagnostic.location)
-    val issue = diagnostic.toExternalToolIssue(Path.of("/project"))
-    assertNull(issue.file)
-    assertNull(issue.line)
-    assertNull(issue.offset)
-    assertNull(issue.length)
   }
 
   @Test
@@ -97,15 +85,6 @@ class DartAnalyzeDiagnosticTest {
     assertEquals("/tmp/external.dart", Path.of("/tmp/external.dart").toQodanaLogPath(projectPath))
     assertEquals(".", Path.of("/project").toQodanaLogPath(projectPath))
     assertEquals("lib/main.dart", "lib/main.dart".toQodanaLogPath(projectPath))
-  }
-
-  @Test
-  fun `converts absolute and relative paths to file URLs`() {
-    val projectPath = Path.of("/project")
-
-    assertEquals("file:///project/lib/main.dart", "/project/lib/main.dart".toFileUrl(projectPath))
-    assertEquals("file:///project/lib/main.dart", "lib/main.dart".toFileUrl(projectPath))
-    assertNull("\u0000invalid".toFileUrl(projectPath))
   }
 
   private fun resourceText(name: String): String = requireNotNull(javaClass.getResource("/dart-analyze/$name")).readText()
