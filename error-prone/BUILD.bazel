@@ -1,6 +1,19 @@
-load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "dev_dist_plugin_jar")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.errorProne` start
+dev_dist_plugin(
+    content_modules = ["intellij.errorProne.jps"],
+    jars = {
+        "jps/errorProne-jps.jar": {
+            "modules": ["intellij.errorProne.jps"],
+        },
+    },
+    main_module = "intellij.errorProne",
+    module_targets = MODULE_TARGETS,
+)
+### auto-generated section `dev intellij.errorProne` end
 
 ### auto-generated section `build intellij.errorProne` start
 jvm_library(
@@ -78,16 +91,3 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.errorProne` end
-
-### auto-generated section `dev intellij.errorProne` start
-dev_dist_plugin(
-    descriptor_module = ":error-prone",
-    prepacked_layout_jars = [":jps_errorProne-jps_dev_dist_plugin_jar"],
-)
-
-dev_dist_plugin_jar(
-    modules = ["//contrib/error-prone/jps-plugin:errorProne-jps"],
-    plugin_main_module = "intellij.errorProne",
-    relative_output_file = "jps/errorProne-jps.jar",
-)
-### auto-generated section `dev intellij.errorProne` end

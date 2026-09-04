@@ -1,5 +1,24 @@
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_DESCRIPTORS", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.postcss.plugin` start
+dev_dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    descriptor_index = MODULE_DESCRIPTORS,
+    descriptor_modules = [
+        "intellij.postcss.copyright",
+        "intellij.postcss.paid",
+    ],
+    main_module = "intellij.postcss.plugin",
+    module_targets = MODULE_TARGETS,
+    prepacked_content_modules = [
+        # do not sort,
+        "intellij.postcss.copyright",
+        "intellij.postcss.paid",
+    ],
+)
+### auto-generated section `dev intellij.postcss.plugin` end
 
 ### auto-generated section `build intellij.postcss.plugin` start
 jvm_library(
@@ -48,19 +67,3 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.postcss.plugin` end
-
-### auto-generated section `dev intellij.postcss.plugin` start
-dev_dist_plugin(
-    descriptor = "resources/META-INF/plugin.xml",
-    descriptor_module = ":plugin",
-    descriptors = {
-        "//contrib/postcss/copyright:resources/intellij.postcss.copyright.xml": "intellij.postcss.copyright.xml",
-        "//contrib/postcss/paid:resources/intellij.postcss.paid.xml": "intellij.postcss.paid.xml",
-    },
-    main_module = "intellij.postcss.plugin",
-    prepacked_content_modules = [
-        "//contrib/postcss/copyright:copyright_content_module_jar",
-        "//contrib/postcss/paid:paid_content_module_jar",
-    ],
-)
-### auto-generated section `dev intellij.postcss.plugin` end

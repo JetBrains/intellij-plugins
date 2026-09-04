@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.vuejs.markdown` start
+content_module_jar(module = ":markdown")
+### auto-generated section `dev intellij.vuejs.markdown` end
+
 ### auto-generated section `build intellij.vuejs.markdown` start
 jvm_library(
     name = "markdown",
@@ -31,8 +35,6 @@ jvm_library(
         "@community//platform/util",
     ],
 )
-
-content_module_jar(module = ":markdown")
 
 jvm_library(
     name = "markdown_test_lib",

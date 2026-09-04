@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
+### auto-generated section `dev intellij.qodana.inspectionKts.kotlin` start
+content_module_jar(module = ":kotlin")
+### auto-generated section `dev intellij.qodana.inspectionKts.kotlin` end
+
 ### auto-generated section `build intellij.qodana.inspectionKts.kotlin` start
 jvm_provided_library(
     name = "community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-common_provided",
@@ -64,8 +68,6 @@ jvm_library(
         ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-compiler-impl_provided",
     ],
 )
-
-content_module_jar(module = ":kotlin")
 
 jvm_library(
     name = "kotlin_test_lib",

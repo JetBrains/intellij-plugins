@@ -1,5 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 # Checkout directories that plugin layouts copy into a distribution verbatim (`withResource*`). They are
@@ -10,6 +11,14 @@ filegroup(
     srcs = glob(["plugin-resources/**"]),
     visibility = ["//visibility:public"],
 )
+
+### auto-generated section `dev intellij.javascript.eslint` start
+dev_dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    main_module = "intellij.javascript.eslint",
+    module_targets = MODULE_TARGETS,
+)
+### auto-generated section `dev intellij.javascript.eslint` end
 
 ### auto-generated section `build intellij.javascript.eslint` start
 jvm_library(
@@ -136,14 +145,6 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.javascript.eslint` end
-
-### auto-generated section `dev intellij.javascript.eslint` start
-dev_dist_plugin(
-    descriptor = "resources/META-INF/plugin.xml",
-    descriptor_module = ":eslint",
-    main_module = "intellij.javascript.eslint",
-)
-### auto-generated section `dev intellij.javascript.eslint` end
 
 ### auto-generated section `build intellij.javascript.eslint.tests` start
 jvm_library(

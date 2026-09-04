@@ -1,6 +1,21 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+### auto-generated section `dev intellij.terraform` start
+dev_dist_plugin(
+    libraries = ["@ultimate_lib//:terraform-terraform-metadata"],
+    main_module = "intellij.terraform",
+    module_targets = MODULE_TARGETS,
+    prepacked_content_modules = [
+        # do not sort,
+        "intellij.terraform.copyright",
+        "intellij.terraform.template",
+        "intellij.terraform.watchers",
+    ],
+)
+### auto-generated section `dev intellij.terraform` end
 
 ### auto-generated section `build intellij.terraform` start
 jvm_library(
@@ -160,18 +175,6 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.terraform` end
-
-### auto-generated section `dev intellij.terraform` start
-dev_dist_plugin(
-    descriptor_module = ":terraform",
-    libraries = ["@ultimate_lib//:terraform-terraform-metadata"],
-    prepacked_content_modules = [
-        "//contrib/terraform/copyright:copyright_content_module_jar",
-        "//contrib/terraform/terraform-template:template_content_module_jar",
-        "//contrib/terraform/watchers:watchers_content_module_jar",
-    ],
-)
-### auto-generated section `dev intellij.terraform` end
 
 ### auto-generated section `build intellij.terraform.tests` start
 resourcegroup(

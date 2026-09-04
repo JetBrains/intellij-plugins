@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.vuejs.debugger` start
+content_module_jar(module = ":debugger")
+### auto-generated section `dev intellij.vuejs.debugger` end
+
 ### auto-generated section `build intellij.vuejs.debugger` start
 jvm_library(
     name = "debugger",
@@ -28,8 +32,6 @@ jvm_library(
         "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     ],
 )
-
-content_module_jar(module = ":debugger")
 
 jvm_library(
     name = "debugger_test_lib",

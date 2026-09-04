@@ -1,5 +1,21 @@
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.protoeditor` start
+dev_dist_plugin(
+    content_modules = [
+        # do not sort,
+        "intellij.protoeditor.core",
+        "intellij.protoeditor.go",
+        "intellij.protoeditor.jvm",
+    ],
+    libraries = ["@lib//:truth"],
+    main_module = "intellij.protoeditor",
+    module_targets = MODULE_TARGETS,
+    prepacked_content_modules = ["intellij.protoeditor.python"],
+)
+### auto-generated section `dev intellij.protoeditor` end
 
 ### auto-generated section `build intellij.protoeditor` start
 jvm_library(
@@ -56,16 +72,3 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.protoeditor` end
-
-### auto-generated section `dev intellij.protoeditor` start
-dev_dist_plugin(
-    content_modules = [
-        "//contrib/protobuf/protoeditor-core",
-        "//contrib/protobuf/protoeditor-go",
-        "//contrib/protobuf/protoeditor-jvm",
-    ],
-    descriptor_module = ":protoeditor",
-    libraries = ["@lib//:truth"],
-    prepacked_content_modules = ["//contrib/protobuf/protoeditor-python:protoeditor-python_content_module_jar"],
-)
-### auto-generated section `dev intellij.protoeditor` end

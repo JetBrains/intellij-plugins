@@ -1,7 +1,60 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "dev_dist_plugin_jar")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.cucumber.java` start
+dev_dist_plugin(
+    content_modules = [
+        # do not sort,
+        "intellij.libraries.cucumber",
+        "intellij.libraries.cucumber.core1",
+        "intellij.libraries.hamcrest",
+        "intellij.libraries.junit4",
+    ],
+    jars = {
+        "cucumber-jvmFormatter.jar": {
+            "modules": ["intellij.cucumber.jvmFormatter"],
+        },
+        "cucumber-jvmFormatter3.jar": {
+            "modules": ["intellij.cucumber.jvmFormatter3"],
+        },
+        "cucumber-jvmFormatter4.jar": {
+            "modules": ["intellij.cucumber.jvmFormatter4"],
+        },
+        "cucumber-jvmFormatter5.jar": {
+            "modules": ["intellij.cucumber.jvmFormatter5"],
+        },
+    },
+    libraries = [
+        "@lib//:cucumber-core-2",
+        "@lib//:cucumber-jvm_formatter3-cucumber-core-3-0-2",
+        "@lib//:cucumber-jvm_formatter4-cucumber-core-4-0-1",
+        "@lib//:cucumber-jvm_formatter5-cucumber-java-5-0-0-_r_c1",
+        "@lib//:easymock",
+        "@lib//:libraries-cucumber-core1-cucumber-core-1",
+        "@lib//:libraries-hamcrest-hamcrest",
+        "@lib//:libraries-junit4-_j_unit4",
+        "@ultimate_lib//:cucumber-java-cucumber-core-3",
+        "@ultimate_lib//:cucumber-java-cucumber-core-4-8",
+        "@ultimate_lib//:cucumber-java-cucumber-core-5",
+        "@ultimate_lib//:cucumber-java-cucumber-core-5-5",
+        "@ultimate_lib//:cucumber-java-cucumber-core-7",
+        "@ultimate_lib//:cucumber-java-cucumber-java-4-8",
+        "@ultimate_lib//:cucumber-java-cucumber-java-5",
+        "@ultimate_lib//:cucumber-java-cucumber-java-5-5",
+        "@ultimate_lib//:cucumber-java-cucumber-java-7",
+        "@ultimate_lib//:cucumber-java-cucumber-java8-3",
+        "@ultimate_lib//:cucumber-java-cucumber-java8-5",
+        "@ultimate_lib//:cucumber-java-cucumber-java8-5-5",
+        "@ultimate_lib//:cucumber-java-cucumber-java8-7",
+        "@ultimate_lib//:libraries-cucumber-cucumber-expressions",
+        "@ultimate_lib//:libraries-cucumber-cucumber-java",
+    ],
+    main_module = "intellij.cucumber.java",
+    module_targets = MODULE_TARGETS,
+)
+### auto-generated section `dev intellij.cucumber.java` end
 
 ### auto-generated section `build intellij.cucumber.java` start
 jvm_library(
@@ -176,73 +229,6 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.cucumber.java` end
-
-### auto-generated section `dev intellij.cucumber.java` start
-dev_dist_plugin(
-    content_modules = [
-        "//libraries/cucumber",
-        "@community//libraries/cucumber-core1",
-        "@community//libraries/hamcrest",
-        "@community//libraries/junit4",
-    ],
-    descriptor_module = ":cucumber-java",
-    libraries = [
-        "@lib//:cucumber-core-2",
-        "@lib//:cucumber-jvm_formatter3-cucumber-core-3-0-2",
-        "@lib//:cucumber-jvm_formatter4-cucumber-core-4-0-1",
-        "@lib//:cucumber-jvm_formatter5-cucumber-java-5-0-0-_r_c1",
-        "@lib//:easymock",
-        "@lib//:libraries-cucumber-core1-cucumber-core-1",
-        "@lib//:libraries-hamcrest-hamcrest",
-        "@lib//:libraries-junit4-_j_unit4",
-        "@ultimate_lib//:cucumber-java-cucumber-core-3",
-        "@ultimate_lib//:cucumber-java-cucumber-core-4-8",
-        "@ultimate_lib//:cucumber-java-cucumber-core-5",
-        "@ultimate_lib//:cucumber-java-cucumber-core-5-5",
-        "@ultimate_lib//:cucumber-java-cucumber-core-7",
-        "@ultimate_lib//:cucumber-java-cucumber-java-4-8",
-        "@ultimate_lib//:cucumber-java-cucumber-java-5",
-        "@ultimate_lib//:cucumber-java-cucumber-java-5-5",
-        "@ultimate_lib//:cucumber-java-cucumber-java-7",
-        "@ultimate_lib//:cucumber-java-cucumber-java8-3",
-        "@ultimate_lib//:cucumber-java-cucumber-java8-5",
-        "@ultimate_lib//:cucumber-java-cucumber-java8-5-5",
-        "@ultimate_lib//:cucumber-java-cucumber-java8-7",
-        "@ultimate_lib//:libraries-cucumber-cucumber-expressions",
-        "@ultimate_lib//:libraries-cucumber-cucumber-java",
-    ],
-    prepacked_layout_jars = [
-        ":cucumber-jvmFormatter3_dev_dist_plugin_jar",
-        ":cucumber-jvmFormatter4_dev_dist_plugin_jar",
-        ":cucumber-jvmFormatter5_dev_dist_plugin_jar",
-        ":cucumber-jvmFormatter_dev_dist_plugin_jar",
-    ],
-)
-
-dev_dist_plugin_jar(
-    modules = ["@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter"],
-    plugin_main_module = "intellij.cucumber.java",
-    relative_output_file = "cucumber-jvmFormatter.jar",
-)
-
-dev_dist_plugin_jar(
-    modules = ["@community//plugins/cucumber-jvm-formatter3:cucumber-jvmFormatter3"],
-    plugin_main_module = "intellij.cucumber.java",
-    relative_output_file = "cucumber-jvmFormatter3.jar",
-)
-
-dev_dist_plugin_jar(
-    modules = ["@community//plugins/cucumber-jvm-formatter4:cucumber-jvmFormatter4"],
-    plugin_main_module = "intellij.cucumber.java",
-    relative_output_file = "cucumber-jvmFormatter4.jar",
-)
-
-dev_dist_plugin_jar(
-    modules = ["@community//plugins/cucumber-jvm-formatter5:cucumber-jvmFormatter5"],
-    plugin_main_module = "intellij.cucumber.java",
-    relative_output_file = "cucumber-jvmFormatter5.jar",
-)
-### auto-generated section `dev intellij.cucumber.java` end
 
 ### auto-generated section `build intellij.cucumber.java.tests` start
 jvm_library(

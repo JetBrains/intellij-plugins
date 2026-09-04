@@ -2,6 +2,10 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
+### auto-generated section `dev intellij.qodana.go` start
+content_module_jar(module = ":go")
+### auto-generated section `dev intellij.qodana.go` end
+
 ### auto-generated section `build intellij.qodana.go` start
 jvm_provided_library(
     name = "community_platform_ide_provided",
@@ -89,8 +93,6 @@ jvm_library(
         ":community_plugins_coverage-common_coverage-agent_provided",
     ],
 )
-
-content_module_jar(module = ":go")
 
 jvm_library(
     name = "go_test_lib",

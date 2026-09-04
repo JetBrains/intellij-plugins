@@ -1,5 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 # Checkout directories that plugin layouts copy into a distribution verbatim (`withResource*`). They are
@@ -10,6 +11,14 @@ filegroup(
     srcs = glob(["gen/js/**"]),
     visibility = ["//visibility:public"],
 )
+
+### auto-generated section `dev intellij.tslint` start
+dev_dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    main_module = "intellij.tslint",
+    module_targets = MODULE_TARGETS,
+)
+### auto-generated section `dev intellij.tslint` end
 
 ### auto-generated section `build intellij.tslint` start
 resourcegroup(
@@ -127,14 +136,6 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.tslint` end
-
-### auto-generated section `dev intellij.tslint` start
-dev_dist_plugin(
-    descriptor = "resources/META-INF/plugin.xml",
-    descriptor_module = ":tslint",
-    main_module = "intellij.tslint",
-)
-### auto-generated section `dev intellij.tslint` end
 
 ### auto-generated section `build intellij.tslint.tests` start
 jvm_library(

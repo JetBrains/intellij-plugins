@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.vuejs.copyright` start
+content_module_jar(module = ":copyright")
+### auto-generated section `dev intellij.vuejs.copyright` end
+
 ### auto-generated section `build intellij.vuejs.copyright` start
 jvm_library(
     name = "copyright",
@@ -20,8 +24,6 @@ jvm_library(
         "@community//plugins/copyright",
     ],
 )
-
-content_module_jar(module = ":copyright")
 
 jvm_library(
     name = "copyright_test_lib",

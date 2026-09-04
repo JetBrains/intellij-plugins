@@ -2,6 +2,10 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.qodana.jvm.kotlin` start
+content_module_jar(module = ":kotlin")
+### auto-generated section `dev intellij.qodana.jvm.kotlin` end
+
 ### auto-generated section `build intellij.qodana.jvm.kotlin` start
 jvm_library(
     name = "kotlin",
@@ -34,8 +38,6 @@ jvm_library(
         "@community//plugins/kotlin/references",
     ],
 )
-
-content_module_jar(module = ":kotlin")
 
 jvm_library(
     name = "kotlin_test_lib",

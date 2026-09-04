@@ -2,6 +2,10 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
+### auto-generated section `dev intellij.terraform.template` start
+content_module_jar(module = ":template")
+### auto-generated section `dev intellij.terraform.template` end
+
 ### auto-generated section `build intellij.terraform.template` start
 jvm_library(
     name = "template",
@@ -39,8 +43,6 @@ jvm_library(
         "@community//platform/util/jdom",
     ],
 )
-
-content_module_jar(module = ":template")
 
 jvm_library(
     name = "template_test_lib",

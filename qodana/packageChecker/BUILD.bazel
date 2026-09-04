@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.qodana.packageChecker` start
+content_module_jar(module = ":packageChecker")
+### auto-generated section `dev intellij.qodana.packageChecker` end
+
 ### auto-generated section `build intellij.qodana.packageChecker` start
 jvm_library(
     name = "packageChecker",
@@ -27,8 +31,6 @@ jvm_library(
         "//contrib/qodana",
     ],
 )
-
-content_module_jar(module = ":packageChecker")
 
 jvm_library(
     name = "packageChecker_test_lib",

@@ -1,6 +1,18 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.angularJS` start
+dev_dist_plugin(
+    libraries = [
+        "@ultimate_lib//:angular_j_s-oleaster-matcher",
+        "@ultimate_lib//:angular_j_s-oleaster-runner",
+    ],
+    main_module = "intellij.angularJS",
+    module_targets = MODULE_TARGETS,
+)
+### auto-generated section `dev intellij.angularJS` end
 
 ### auto-generated section `build intellij.angularJS` start
 jvm_library(
@@ -188,16 +200,6 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.angularJS` end
-
-### auto-generated section `dev intellij.angularJS` start
-dev_dist_plugin(
-    descriptor_module = ":angularJS",
-    libraries = [
-        "@ultimate_lib//:angular_j_s-oleaster-matcher",
-        "@ultimate_lib//:angular_j_s-oleaster-runner",
-    ],
-)
-### auto-generated section `dev intellij.angularJS` end
 
 ### auto-generated section `build intellij.angularJS.tests` start
 jvm_library(

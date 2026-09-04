@@ -3,6 +3,10 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.qodana.rust` start
+content_module_jar(module = ":rust")
+### auto-generated section `dev intellij.qodana.rust` end
+
 ### auto-generated section `build intellij.qodana.rust` start
 create_kotlinc_options(
     name = "custom_rust",
@@ -50,8 +54,6 @@ jvm_library(
         "@community//libraries/io",
     ],
 )
-
-content_module_jar(module = ":rust")
 
 jvm_library(
     name = "rust_test_lib",

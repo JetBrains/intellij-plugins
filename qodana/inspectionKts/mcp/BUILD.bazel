@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.qodana.inspectionKts.mcp` start
+content_module_jar(module = ":mcp")
+### auto-generated section `dev intellij.qodana.inspectionKts.mcp` end
+
 ### auto-generated section `build intellij.qodana.inspectionKts.mcp` start
 jvm_library(
     name = "mcp",
@@ -34,8 +38,6 @@ jvm_library(
         "@community//platform/platform-api:ide",
     ],
 )
-
-content_module_jar(module = ":mcp")
 
 jvm_library(
     name = "mcp_test_lib",

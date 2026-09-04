@@ -1,4 +1,9 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+### auto-generated section `dev intellij.appcode.reveal` start
+content_module_jar(module = ":appcode-reveal")
+### auto-generated section `dev intellij.appcode.reveal` end
 
 ### auto-generated section `build intellij.appcode.reveal` start
 resourcegroup(

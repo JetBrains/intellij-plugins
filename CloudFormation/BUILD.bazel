@@ -1,6 +1,15 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.cloudFormation` start
+dev_dist_plugin(
+    libraries = ["@ultimate_lib//:cloud_formation-intellij-aws-cloudformation-meta"],
+    main_module = "intellij.cloudFormation",
+    module_targets = MODULE_TARGETS,
+)
+### auto-generated section `dev intellij.cloudFormation` end
 
 ### auto-generated section `build intellij.cloudFormation` start
 jvm_library(
@@ -91,13 +100,6 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.cloudFormation` end
-
-### auto-generated section `dev intellij.cloudFormation` start
-dev_dist_plugin(
-    descriptor_module = ":cloudFormation",
-    libraries = ["@ultimate_lib//:cloud_formation-intellij-aws-cloudformation-meta"],
-)
-### auto-generated section `dev intellij.cloudFormation` end
 
 ### auto-generated section `build intellij.cloudFormation.tests` start
 jvm_library(

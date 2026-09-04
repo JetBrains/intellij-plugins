@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
+### auto-generated section `dev intellij.postcss.paid` start
+content_module_jar(module = ":paid")
+### auto-generated section `dev intellij.postcss.paid` end
+
 ### auto-generated section `build intellij.postcss.paid` start
 resourcegroup(
     name = "paid_resources",
@@ -59,8 +63,6 @@ jvm_library(
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     ],
 )
-
-content_module_jar(module = ":paid")
 
 jvm_library(
     name = "paid_test_lib",

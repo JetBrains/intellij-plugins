@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.jhipster.frontend` start
+content_module_jar(module = ":frontend")
+### auto-generated section `dev intellij.jhipster.frontend` end
+
 ### auto-generated section `build intellij.jhipster.frontend` start
 jvm_library(
     name = "frontend",
@@ -21,8 +25,6 @@ jvm_library(
     runtime_deps = ["@community//platform/platform-frontend:frontend"],
     deps = ["//contrib/jhipster"],
 )
-
-content_module_jar(module = ":frontend")
 
 jvm_library(
     name = "frontend_test_lib",

@@ -1,6 +1,15 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+### auto-generated section `dev intellij.handlebars` start
+dev_dist_plugin(
+    main_module = "intellij.handlebars",
+    module_targets = MODULE_TARGETS,
+    prepacked_content_modules = ["intellij.handlebars.javascript"],
+)
+### auto-generated section `dev intellij.handlebars` end
 
 ### auto-generated section `build intellij.handlebars` start
 resourcegroup(
@@ -123,13 +132,6 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.handlebars` end
-
-### auto-generated section `dev intellij.handlebars` start
-dev_dist_plugin(
-    descriptor_module = ":handlebars",
-    prepacked_content_modules = ["//contrib/handlebars/javascript:javascript_content_module_jar"],
-)
-### auto-generated section `dev intellij.handlebars` end
 
 ### auto-generated section `build intellij.handlebars.tests` start
 jvm_library(

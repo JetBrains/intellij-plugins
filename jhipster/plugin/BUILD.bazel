@@ -1,5 +1,22 @@
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.jhipster.plugin` start
+dev_dist_plugin(
+    main_module = "intellij.jhipster.plugin",
+    module_targets = MODULE_TARGETS,
+    prepacked_content_modules = [
+        # do not sort,
+        "intellij.jhipster.backend",
+        "intellij.jhipster.frontend",
+        "intellij.jhipster.uml",
+    ],
+    prepacked_jars = {
+        "intellij.jhipster": "intellij.jhipster.jar",
+    },
+)
+### auto-generated section `dev intellij.jhipster.plugin` end
 
 ### auto-generated section `build intellij.jhipster.plugin` start
 jvm_library(
@@ -38,17 +55,3 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.jhipster.plugin` end
-
-### auto-generated section `dev intellij.jhipster.plugin` start
-dev_dist_plugin(
-    descriptor_module = ":plugin",
-    prepacked_content_modules = [
-        "//contrib/jhipster/backend:backend_content_module_jar",
-        "//contrib/jhipster/frontend:frontend_content_module_jar",
-        "//contrib/jhipster/uml:uml_content_module_jar",
-    ],
-    prepacked_jars = {
-        "//contrib/jhipster:jhipster_content_module_jar": "intellij.jhipster.jar",
-    },
-)
-### auto-generated section `dev intellij.jhipster.plugin` end

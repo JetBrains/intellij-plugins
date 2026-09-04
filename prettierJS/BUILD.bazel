@@ -1,5 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_DESCRIPTORS", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 # Checkout directories that plugin layouts copy into a distribution verbatim (`withResource*`). They are
@@ -10,6 +11,17 @@ filegroup(
     srcs = glob(["gen/prettierLanguageService/**"]),
     visibility = ["//visibility:public"],
 )
+
+### auto-generated section `dev intellij.prettierJS` start
+dev_dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    descriptor_index = MODULE_DESCRIPTORS,
+    descriptor_modules = ["intellij.prettierJS.eslint"],
+    main_module = "intellij.prettierJS",
+    module_targets = MODULE_TARGETS,
+    prepacked_content_modules = ["intellij.prettierJS.eslint"],
+)
+### auto-generated section `dev intellij.prettierJS` end
 
 ### auto-generated section `build intellij.prettierJS` start
 resourcegroup(
@@ -147,18 +159,6 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.prettierJS` end
-
-### auto-generated section `dev intellij.prettierJS` start
-dev_dist_plugin(
-    descriptor = "resources/META-INF/plugin.xml",
-    descriptor_module = ":prettierJS",
-    descriptors = {
-        "//contrib/prettierJS/prettierJS-eslint:resources/intellij.prettierJS.eslint.xml": "intellij.prettierJS.eslint.xml",
-    },
-    main_module = "intellij.prettierJS",
-    prepacked_content_modules = ["//contrib/prettierJS/prettierJS-eslint:eslint_content_module_jar"],
-)
-### auto-generated section `dev intellij.prettierJS` end
 
 ### auto-generated section `build intellij.prettierJS.tests` start
 jvm_library(

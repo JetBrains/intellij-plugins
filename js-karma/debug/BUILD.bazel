@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.javascript.karma.debug` start
+content_module_jar(module = ":debug")
+### auto-generated section `dev intellij.javascript.karma.debug` end
+
 ### auto-generated section `build intellij.javascript.karma.debug` start
 jvm_library(
     name = "debug",
@@ -52,8 +56,6 @@ jvm_library(
         "@lib//:kotlin-stdlib",
     ],
 )
-
-content_module_jar(module = ":debug")
 
 jvm_library(
     name = "debug_test_lib",

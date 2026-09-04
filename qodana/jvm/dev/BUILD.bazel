@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.qodana.jvm.dev` start
+content_module_jar(module = ":dev")
+### auto-generated section `dev intellij.qodana.jvm.dev` end
+
 ### auto-generated section `build intellij.qodana.jvm.dev` start
 jvm_library(
     name = "dev",
@@ -31,8 +35,6 @@ jvm_library(
         "//contrib/qodana",
     ],
 )
-
-content_module_jar(module = ":dev")
 
 jvm_library(
     name = "dev_test_lib",

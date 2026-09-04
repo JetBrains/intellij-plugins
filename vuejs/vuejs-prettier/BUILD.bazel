@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.vuejs.prettier` start
+content_module_jar(module = ":prettier")
+### auto-generated section `dev intellij.vuejs.prettier` end
+
 ### auto-generated section `build intellij.vuejs.prettier` start
 jvm_library(
     name = "prettier",
@@ -32,8 +36,6 @@ jvm_library(
         "@community//libraries/jetbrains/annotations",
     ],
 )
-
-content_module_jar(module = ":prettier")
 
 jvm_library(
     name = "prettier_test_lib",

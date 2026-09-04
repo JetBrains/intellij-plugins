@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.javascript.karma.coverage` start
+content_module_jar(module = ":coverage")
+### auto-generated section `dev intellij.javascript.karma.coverage` end
+
 ### auto-generated section `build intellij.javascript.karma.coverage` start
 jvm_library(
     name = "coverage",
@@ -45,8 +49,6 @@ jvm_library(
         "@lib//:kotlin-stdlib",
     ],
 )
-
-content_module_jar(module = ":coverage")
 
 jvm_library(
     name = "coverage_test_lib",

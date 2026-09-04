@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.phoneGap.core` start
+content_module_jar(module = ":core")
+### auto-generated section `dev intellij.phoneGap.core` end
+
 ### auto-generated section `build intellij.phoneGap.core` start
 jvm_library(
     name = "core",
@@ -43,8 +47,6 @@ jvm_library(
         "@community//platform/execution",
     ],
 )
-
-content_module_jar(module = ":core")
 
 jvm_library(
     name = "core_test_lib",

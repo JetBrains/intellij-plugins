@@ -1,5 +1,26 @@
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_DESCRIPTORS", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.angular.plugin` start
+dev_dist_plugin(
+    content_modules = ["intellij.angular.backend"],
+    descriptor = "resources/META-INF/plugin.xml",
+    descriptor_index = MODULE_DESCRIPTORS,
+    descriptor_modules = [
+        "intellij.angular.backend",
+        "intellij.angular.free",
+        "intellij.angular.tslint",
+    ],
+    main_module = "intellij.angular.plugin",
+    module_targets = MODULE_TARGETS,
+    prepacked_content_modules = [
+        # do not sort,
+        "intellij.angular.free",
+        "intellij.angular.tslint",
+    ],
+)
+### auto-generated section `dev intellij.angular.plugin` end
 
 ### auto-generated section `build intellij.angular.plugin` start
 jvm_library(
@@ -52,21 +73,3 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.angular.plugin` end
-
-### auto-generated section `dev intellij.angular.plugin` start
-dev_dist_plugin(
-    content_modules = ["//contrib/Angular/angular-backend"],
-    descriptor = "resources/META-INF/plugin.xml",
-    descriptor_module = ":angular-plugin",
-    descriptors = {
-        "//contrib/Angular/angular-backend:resources/intellij.angular.backend.xml": "intellij.angular.backend.xml",
-        "//contrib/Angular/angular-free:resources/intellij.angular.free.xml": "intellij.angular.free.xml",
-        "//contrib/Angular/angular-tslint:resources/intellij.angular.tslint.xml": "intellij.angular.tslint.xml",
-    },
-    main_module = "intellij.angular.plugin",
-    prepacked_content_modules = [
-        "//contrib/Angular/angular-free:angular-free_content_module_jar",
-        "//contrib/Angular/angular-tslint:angular-tslint_content_module_jar",
-    ],
-)
-### auto-generated section `dev intellij.angular.plugin` end

@@ -2,6 +2,10 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.qodana.python.community` start
+content_module_jar(module = ":community")
+### auto-generated section `dev intellij.qodana.python.community` end
+
 ### auto-generated section `build intellij.qodana.python.community` start
 jvm_library(
     name = "community",
@@ -33,8 +37,6 @@ jvm_library(
         "@community//python/python-pyproject:pyproject",
     ],
 )
-
-content_module_jar(module = ":community")
 
 jvm_library(
     name = "community_test_lib",

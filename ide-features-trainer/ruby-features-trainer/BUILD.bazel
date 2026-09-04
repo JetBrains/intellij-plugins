@@ -2,6 +2,10 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.ruby.featuresTrainer` start
+content_module_jar(module = ":ruby-featuresTrainer")
+### auto-generated section `dev intellij.ruby.featuresTrainer` end
+
 ### auto-generated section `build intellij.ruby.featuresTrainer` start
 jvm_library(
     name = "ruby-featuresTrainer",
@@ -36,8 +40,6 @@ jvm_library(
         "@community//platform/progress/shared:ide-progress",
     ],
 )
-
-content_module_jar(module = ":ruby-featuresTrainer")
 
 jvm_library(
     name = "ruby-featuresTrainer_test_lib",

@@ -2,6 +2,10 @@ load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.qodana.git` start
+content_module_jar(module = ":git")
+### auto-generated section `dev intellij.qodana.git` end
+
 ### auto-generated section `build intellij.qodana.git` start
 jvm_library(
     name = "git",
@@ -44,8 +48,6 @@ jvm_library(
         "@community//plugins/git4idea/shared",
     ],
 )
-
-content_module_jar(module = ":git")
 
 jvm_library(
     name = "git_test_lib",

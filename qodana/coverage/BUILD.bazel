@@ -3,6 +3,10 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### skip generation section `test intellij.qodana.coverage.tests`
 
+### auto-generated section `dev intellij.qodana.coverage` start
+content_module_jar(module = ":coverage")
+### auto-generated section `dev intellij.qodana.coverage` end
+
 ### auto-generated section `build intellij.qodana.coverage` start
 jvm_library(
     name = "coverage",
@@ -39,8 +43,6 @@ jvm_library(
         "//contrib/qodana/util",
     ],
 )
-
-content_module_jar(module = ":coverage")
 
 jvm_library(
     name = "coverage_test_lib",

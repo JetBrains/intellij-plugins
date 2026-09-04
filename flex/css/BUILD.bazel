@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.flex.css` start
+content_module_jar(module = ":css")
+### auto-generated section `dev intellij.flex.css` end
+
 ### auto-generated section `build intellij.flex.css` start
 jvm_library(
     name = "css",
@@ -49,8 +53,6 @@ jvm_library(
         "@community//xml/impl",
     ],
 )
-
-content_module_jar(module = ":css")
 
 jvm_library(
     name = "css_test_lib",

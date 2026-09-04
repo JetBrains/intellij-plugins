@@ -1,5 +1,14 @@
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.clion.embedded.platformio` start
+dev_dist_plugin(
+    main_module = "intellij.clion.embedded.platformio",
+    module_targets = MODULE_TARGETS,
+    prepacked_content_modules = ["intellij.clion.embedded.platformio.terminal"],
+)
+### auto-generated section `dev intellij.clion.embedded.platformio` end
 
 ### auto-generated section `build intellij.clion.embedded.platformio` start
 jvm_library(
@@ -161,10 +170,3 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.clion.embedded.platformio` end
-
-### auto-generated section `dev intellij.clion.embedded.platformio` start
-dev_dist_plugin(
-    descriptor_module = ":platformio",
-    prepacked_content_modules = ["//contrib/platformio/terminal:terminal_content_module_jar"],
-)
-### auto-generated section `dev intellij.clion.embedded.platformio` end
