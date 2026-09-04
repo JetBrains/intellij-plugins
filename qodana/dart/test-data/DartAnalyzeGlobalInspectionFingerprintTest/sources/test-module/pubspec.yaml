@@ -1,0 +1,3 @@
+name: fingerprint_module
+environment:
+  sdk: ^3.4.0

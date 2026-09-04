@@ -1,51 +1,23 @@
 package org.jetbrains.qodana.dart
 
-import com.intellij.codeInspection.lang.InspectionExtensionsFactory
-import com.intellij.openapi.application.PluginPathManager
-import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileYamlConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolsProvider
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.GlobalOutputConsumer
-import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
-import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Test
 import java.nio.file.Path
 
 @TestDataPath($$"$CONTENT_ROOT/../test-data/DartNestedModuleAnalysisOptionsTest")
-class DartNestedModuleAnalysisOptionsTest : QodanaRunnerTestCase() {
-  override val testData: Path = Path.of(PluginPathManager.getPluginHomePath("qodana"), "dart", "test-data")
+internal class DartNestedModuleAnalysisOptionsTest : DartAnalyzeQodanaTestCase() {
   override val testDataBasePath: Path = Path.of(javaClass.simpleName)
-
-  override fun setUp() {
-    super.setUp()
-    ExternalToolsProvider.EXTERNAL_TOOLS_EP.point.registerExtension(
-      DartAnalyzeInspectionDescriptorProvider(),
-      testRootDisposable,
-    )
-    val runnerFactory = DartAnalyzeTestRunnerFactory(
-      Path.of(project.basePath!!),
-      mapOf(
-        "test-module" to readDartAnalyzeTestData("nested-root.json"),
-        "test-module/core-lints" to readDartAnalyzeTestData("nested-core-lints.json"),
-        "test-module/no-lints" to readDartAnalyzeTestData("no-diagnostics.json"),
-        "test-module/submodule" to readDartAnalyzeTestData("nested-submodule.json"),
-      ),
-    ).create()
-    DartAnalyzeTestRunnerFactoryHolder.factory = runnerFactory
-    Disposer.register(testRootDisposable) { DartAnalyzeTestRunnerFactoryHolder.factory = null }
-    registerGlobalTool(DartAnalyzeTestGlobalInspection(), DartAnalyzeGlobalInspectionPresentation::class.java.name)
-    GlobalOutputConsumer.EP_NAME.point.registerExtension(DartAnalyzeGlobalInspectionOutputConsumer(), testRootDisposable)
-    InspectionExtensionsFactory.EP_NAME.point.registerExtension(
-      DartAnalyzeGlobalInspectionContextFactory(),
-      testRootDisposable,
-    )
-    reinstantiateInspectionRelatedServices(project, testRootDisposable)
-  }
+  override val analyzeResponses: Map<String, RecordedDartAnalyzeResponse> = mapOf(
+    "test-module" to readDartAnalyzeTestData("nested-root.json"),
+    "test-module/core-lints" to readDartAnalyzeTestData("nested-core-lints.json"),
+    "test-module/no-lints" to readDartAnalyzeTestData("no-diagnostics.json"),
+    "test-module/submodule" to readDartAnalyzeTestData("nested-submodule.json"),
+  )
 
   @Test
-  fun `uses analysis options from a nested Dart module`() {
+  fun `reports diagnostics configured independently by root and nested Dart modules`() {
     runDartAnalysis()
     assertSarifResultCodes(
       listOf(
@@ -56,17 +28,6 @@ class DartNestedModuleAnalysisOptionsTest : QodanaRunnerTestCase() {
         "test-module/submodule/submodule.dart:DartAnalyze.unnecessary_this",
       ),
     )
-  }
-
-  @Test
-  fun `reports diagnostics from an included lib file`() {
-    runDartAnalysis()
-    val diagnosticCodes = manager.sarifRun.results
-      .filter { diagnostic ->
-        diagnostic.locations.single().physicalLocation.artifactLocation.uri.equals("test-module/lib/included.dart")
-      }
-      .map { it.ruleId }
-    assertEquals(listOf("DartAnalyze.unnecessary_late"), diagnosticCodes)
   }
 
   @Test
@@ -88,20 +49,20 @@ class DartNestedModuleAnalysisOptionsTest : QodanaRunnerTestCase() {
     runAnalysis()
 
     val actual = manager.sarifRun.results.map { result ->
-      val location = result.locations.single().physicalLocation.artifactLocation.uri
+      val location = result.singleLocation().physicalLocation.artifactLocation.uri
       "$location:${result.ruleId}"
     }.sorted()
     assertEquals(listOf("test-module/core-lints/lib/await_only_futures.dart:DartAnalyze.await_only_futures"), actual)
   }
 
   private fun runDartAnalysis() {
-    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile()) }
+    updateQodanaConfig { it.copy(profile = nestedDartAnalyzeProfile()) }
     runAnalysis()
   }
 
   private fun assertSarifResultCodes(expected: List<String>) {
     val actual = manager.sarifRun.results.map { result ->
-      val location = result.locations.single().physicalLocation.artifactLocation.uri
+      val location = result.singleLocation().physicalLocation.artifactLocation.uri
       "$location:${result.ruleId}"
     }.sorted()
     assertEquals(expected.sorted(), actual)
@@ -110,7 +71,7 @@ class DartNestedModuleAnalysisOptionsTest : QodanaRunnerTestCase() {
   private fun dartAnalyzeCoreProfile(): QodanaProfileConfig =
     QodanaProfileConfig.named("qodana.single:DartAnalyze.await_only_futures")
 
-  private fun dartAnalyzeProfile(): QodanaProfileConfig = QodanaProfileConfig.named("qodana.single:DartAnalyzeUncategorized").copy(
+  private fun nestedDartAnalyzeProfile(): QodanaProfileConfig = QodanaProfileConfig.named("qodana.single:DartAnalyzeUncategorized").copy(
     inspections = listOf(
       QodanaProfileYamlConfig.InspectionConfig("DartAnalyze.prefer_final_fields", enabled = true),
       QodanaProfileYamlConfig.InspectionConfig("DartAnalyze.unnecessary_late", enabled = true),
