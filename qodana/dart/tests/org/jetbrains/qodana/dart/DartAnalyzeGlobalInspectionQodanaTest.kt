@@ -31,6 +31,14 @@ internal class DartAnalyzeGlobalInspectionQodanaTest : DartAnalyzeProjectQodanaT
   }
 
   @Test
+  fun `does not run pub get when automatic project configuration is disabled`() {
+    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile()) }
+    runAnalysis()
+
+    assertRecordedDartExecutions("analyze" to "test-module")
+  }
+
+  @Test
   fun `does not report uncategorized diagnostics when the inspection is disabled`() {
     updateQodanaConfig { it.copy(profile = QodanaProfileConfig.named("qodana.single:$DART_PROJECT_SETUP_SHORT_NAME")) }
     runAnalysis()
