@@ -5,6 +5,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfi
 import org.junit.Test
 
 internal class DartAnalyzeGlobalInspectionFailureTest : DartAnalyzeProjectQodanaTestCase() {
+  override val autoConfigurePubGet: Boolean = true
   override val preparationFailures: Map<String, String> = mapOf(
     "legacy-module" to "The lower bound of sdk must be 2.12.0 or higher to enable null safety.",
     "legacy-module-2" to "The lower bound of sdk must be 2.12.0 or higher to enable null safety.",
@@ -28,5 +29,9 @@ internal class DartAnalyzeGlobalInspectionFailureTest : DartAnalyzeProjectQodana
       }
     }.toSet())
     assertTrue(results.all { result -> result.locations.all { it.physicalLocation == null } })
+    assertRecordedDartExecutions(
+      "pub get" to "legacy-module",
+      "pub get" to "legacy-module-2",
+    )
   }
 }

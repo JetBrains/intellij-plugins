@@ -33,6 +33,8 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspec
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolIssue
 import java.nio.file.Path
 
+internal const val DART_AUTO_CONFIGURE_PUB_GET_PROPERTY = "qodana.dart.auto.configure.pub.get"
+
 internal fun interface DartAnalyzeRunnerFactory {
   fun create(moduleType: DartModuleType): DartAnalyzeRunner
 }
@@ -73,14 +75,16 @@ internal open class DartAnalyzeGlobalInspection(
 
     for (module in modules) {
       LOG.info("Found ${module.type.name} module at '${module.path.toQodanaLogPath(qodanaContext.config.projectPath)}'")
-      val preparation = runBlockingCancellable { prepare(module) }
-      if (preparation is DartPreparationResult.Failure) {
-        if (qodanaContext.isToolEnabled(preparation.failure.inspectionId)) {
-          registerProblem(preparation.failure, module, qodanaContext)
+      if (System.getProperty(DART_AUTO_CONFIGURE_PUB_GET_PROPERTY).toBoolean()) {
+        val preparation = runBlockingCancellable { prepare(module) }
+        if (preparation is DartPreparationResult.Failure) {
+          if (qodanaContext.isToolEnabled(preparation.failure.inspectionId)) {
+            registerProblem(preparation.failure, module, qodanaContext)
+          }
+          val modulePath: @NlsSafe String = module.path.toQodanaLogPath(qodanaContext.config.projectPath)
+          globalContext.incrementJobDoneAmount(job, modulePath)
+          continue
         }
-        val modulePath: @NlsSafe String = module.path.toQodanaLogPath(qodanaContext.config.projectPath)
-        globalContext.incrementJobDoneAmount(job, modulePath)
-        continue
       }
 
       LOG.info("Analyzing ${module.type.name} module '${module.path.toQodanaLogPath(qodanaContext.config.projectPath)}'")

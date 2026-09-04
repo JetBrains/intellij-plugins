@@ -1,1 +1,3 @@
-include: package:lints/core.yaml
+linter:
+  rules:
+    await_only_futures: true
