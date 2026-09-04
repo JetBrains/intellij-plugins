@@ -1,11 +1,6 @@
 package org.jetbrains.qodana.dart
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.platform.eel.ExecuteProcessException
 import com.intellij.platform.eel.ThrowsChecked
 import com.intellij.platform.eel.isWindows
@@ -16,12 +11,8 @@ import com.intellij.platform.eel.provider.utils.awaitProcessResult
 import com.intellij.platform.eel.spawnProcess
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolIssue
 import java.nio.file.Files
-import java.nio.file.FileVisitResult
 import java.nio.file.Path
-import java.nio.file.SimpleFileVisitor
-import java.nio.file.attribute.BasicFileAttributes
 
 internal const val FLUTTER_PATH_ENV = "QODANA_FLUTTER_PATH"
 
@@ -194,36 +185,6 @@ private fun DartExecutable.toFailure(envName: String): DartAnalyzeRunResult.Fail
   is DartExecutable.Available -> error("An available executable cannot produce a failure")
 }
 
-internal fun findDartModuleDirectories(projectPath: Path): List<Path> {
-  val moduleDirectories = ArrayList<Path>()
-  Files.walkFileTree(projectPath, object : SimpleFileVisitor<Path>() {
-    override fun preVisitDirectory(directory: Path, attributes: BasicFileAttributes): FileVisitResult {
-      return if (directory != projectPath && directory.fileName.toString().startsWith('.')) {
-        FileVisitResult.SKIP_SUBTREE
-      }
-      else {
-        FileVisitResult.CONTINUE
-      }
-    }
-
-    override fun visitFile(file: Path, attributes: BasicFileAttributes): FileVisitResult {
-      if (file.fileName.toString() == "pubspec.yaml") {
-        moduleDirectories.add(file.parent)
-      }
-      return FileVisitResult.CONTINUE
-    }
-
-    override fun visitFileFailed(file: Path, exception: java.io.IOException): FileVisitResult = FileVisitResult.CONTINUE
-  })
-  return moduleDirectories.sorted()
-}
-
-private val FLUTTER_MODULE_DECLARATION = Regex("""^\s*(?:sdk\s*:\s*['"]?flutter['"]?\s*(?:#.*)?|flutter\s*:.*)$""")
-
-internal fun isFlutterModule(moduleDirectory: Path): Boolean = runCatching {
-  Files.readAllLines(moduleDirectory.resolve("pubspec.yaml")).any(FLUTTER_MODULE_DECLARATION::matches)
-}.getOrDefault(false)
-
 internal sealed interface DartAnalyzeRunResult {
   data class Success(val diagnostics: List<DartAnalyzeDiagnostic>) : DartAnalyzeRunResult
   data class Failure(val message: String, val inspectionId: String = DART_PROJECT_SETUP_SHORT_NAME) : DartAnalyzeRunResult
@@ -260,91 +221,3 @@ internal object DefaultDartAnalyzeProcessExecutor : DartAnalyzeProcessExecutor {
     )
   }
 }
-
-internal data class DartAnalyzeDiagnostic(
-  val code: String,
-  val severity: String,
-  val message: String,
-  val correction: String?,
-  val location: DartAnalyzeLocation?,
-) {
-  fun toExternalToolIssue(projectPath: Path): ExternalToolIssue {
-    val location = location
-    return ExternalToolIssue(
-      DartAnalyzeInspectionCatalog.inspectionIdFor(code),
-      severity.toHighlightDisplayLevel(),
-      buildString {
-        append('[').append(code).append("] ").append(message)
-        correction?.takeIf(String::isNotBlank)?.let { append('\n').append(it) }
-      },
-      location?.file?.toFileUrl(projectPath),
-      location?.startLine,
-      location?.offset,
-      location?.length,
-    )
-  }
-}
-
-internal data class DartAnalyzeLocation(
-  val file: String?,
-  val offset: Int?,
-  val length: Int?,
-  val startLine: Int?,
-  val startColumn: Int? = null,
-  val endLine: Int? = null,
-  val endColumn: Int? = null,
-)
-
-internal fun parseDartAnalyzeDiagnostics(json: String): List<DartAnalyzeDiagnostic> {
-  val root = JsonParser.parseString(json).asJsonObject
-  val diagnostics = root.requiredArray("diagnostics")
-  return diagnostics.map { element ->
-    val diagnostic = element.asJsonObject
-    DartAnalyzeDiagnostic(
-      diagnostic.requiredString("code"),
-      diagnostic.requiredString("severity"),
-      diagnostic.requiredString("problemMessage"),
-      diagnostic.string("correctionMessage"),
-      diagnostic.objectOrNull("location")?.toDartAnalyzeLocation(),
-    )
-  }
-}
-
-private fun JsonObject.toDartAnalyzeLocation(): DartAnalyzeLocation {
-  val range = objectOrNull("range")
-  val start = range?.objectOrNull("start")
-  val end = range?.objectOrNull("end")
-  val offset = start?.intOrNull("offset")
-  val length = offset?.let { startOffset -> end?.intOrNull("offset")?.minus(startOffset) }
-  return DartAnalyzeLocation(
-    string("file"),
-    offset,
-    length,
-    start?.intOrNull("line"),
-    start?.intOrNull("column"),
-    end?.intOrNull("line"),
-    end?.intOrNull("column"),
-  )
-}
-
-private fun JsonObject.requiredArray(name: String): JsonArray = get(name)?.takeIf { it.isJsonArray }?.asJsonArray
-  ?: error("Missing '$name' array")
-
-private fun JsonObject.requiredString(name: String): String = string(name) ?: error("Missing '$name' string")
-
-private fun JsonObject.string(name: String): String? = get(name)?.takeUnless { it.isJsonNull }?.asString
-
-private fun JsonObject.intOrNull(name: String): Int? = get(name)?.takeUnless { it.isJsonNull }?.asInt
-
-private fun JsonObject.objectOrNull(name: String): JsonObject? = get(name)?.takeIf { it.isJsonObject }?.asJsonObject
-
-private fun String.toHighlightDisplayLevel(): HighlightDisplayLevel = when (uppercase()) {
-  "ERROR" -> HighlightDisplayLevel.ERROR
-  "WARNING" -> HighlightDisplayLevel.WARNING
-  else -> HighlightDisplayLevel.WEAK_WARNING
-}
-
-internal fun String.toFileUrl(projectPath: Path): String? = runCatching {
-  val path = Path.of(this)
-  VfsUtilCore.pathToUrl((if (path.isAbsolute) path else projectPath.resolve(path)).toString())
-}.getOrNull()
