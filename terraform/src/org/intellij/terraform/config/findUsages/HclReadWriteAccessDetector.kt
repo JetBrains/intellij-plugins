@@ -24,6 +24,13 @@ internal class HclReadWriteAccessDetector : ReadWriteAccessDetector() {
     else -> Access.Read
   }
 
-  private fun isLocalValue(element: PsiElement): Boolean =
-    element is HCLProperty && TfPsiPatterns.LocalsVariable.accepts(element)
+  private fun isLocalValue(element: PsiElement): Boolean {
+    val property = when {
+      element is HCLProperty -> element
+      HCLPsiUtil.isPropertyKey(element) -> element.parent as HCLProperty
+      else -> return false
+    }
+
+    return TfPsiPatterns.LocalsVariable.accepts(property)
+  }
 }

@@ -9,7 +9,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.util.descendantsOfType
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
@@ -47,23 +46,20 @@ internal class HclReadWriteAccessDetectorTest : BasePlatformTestCase() {
   }
 
   fun testLocalAccessUsages() {
-    val config = myFixture.addFileToProject("simple.tf", """
+    myFixture.configureByText("simple.tf", """
       locals {
-        prefix = "some_prefix"
+        pre<caret>fix = "some_prefix"
       }
       output "echo" {
         value = local.prefix
       }
     """.trimIndent())
 
-    val prefixLocal = config.descendantsOfType<HCLProperty>().first {
-      it.name == "prefix" && TfPsiPatterns.LocalsVariable.accepts(it)
-    }
-    assertAccess("simple.tf: value = local.prefix -> Read", prefixLocal)
+    assertAccess("simple.tf: value = local.prefix -> Read", myFixture.elementAtCaret)
   }
 
   fun testResourceAccessUsages() {
-    val config = myFixture.addFileToProject("simple.tf", """
+    val config = myFixture.configureByText("simple.tf", """
       resource "aws_s3_bucket" "this" {
         bucket = "some_bucket"
       }
@@ -77,8 +73,8 @@ internal class HclReadWriteAccessDetectorTest : BasePlatformTestCase() {
   }
 
   fun testDataSourceAccessUsages() {
-    val config = myFixture.addFileToProject("simple.tf", """
-      data "aws_ami" "ubuntu" {
+    myFixture.configureByText("simple.tf", """
+      data "aws_ami" "ubu<caret>ntu" {
         most_recent = true
       }
       output "id" {
@@ -86,12 +82,11 @@ internal class HclReadWriteAccessDetectorTest : BasePlatformTestCase() {
       }
     """.trimIndent())
 
-    val dataSourceBlock = findHclBlockInFile(config, "data", "ubuntu")
-    assertAccess("simple.tf: value = data.aws_ami.ubuntu.id -> Read", dataSourceBlock)
+    assertAccess("simple.tf: value = data.aws_ami.ubuntu.id -> Read", myFixture.elementAtCaret)
   }
 
   fun testUnknownTargetStaysUnclassified() {
-    val config = myFixture.addFileToProject("simple.tf", """
+    val config = myFixture.configureByText("simple.tf", """
       resource "aws_s3_bucket" "this" {
         bucket = "b"
       }
