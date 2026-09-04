@@ -128,6 +128,8 @@ jvm_library(
         "@community//platform/core-api:core_test_lib",
         "@community//platform/core-ui",
         "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
         "@community//platform/lang-impl",
         "@community//platform/lang-impl:lang-impl_test_lib",
         "@community//platform/testFramework",
