@@ -20,7 +20,7 @@ internal class HclReadWriteAccessDetector : ReadWriteAccessDetector() {
     getExpressionAccess(reference.element)
 
   override fun getExpressionAccess(expression: PsiElement): Access = when {
-    expression is HCLBlock || expression is HCLProperty || HCLPsiUtil.isPropertyKey(expression) -> Access.Write
+    expression is HCLProperty || HCLPsiUtil.isPropertyKey(expression) -> Access.Write
     else -> Access.Read
   }
 

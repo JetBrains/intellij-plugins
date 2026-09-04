@@ -17,7 +17,8 @@ internal class HclUsageTypeProvider : UsageTypeProvider {
       return null
 
     return when (element) {
-      is HCLProperty, is HCLBlock -> UsageType.WRITE
+      is HCLProperty -> UsageType.WRITE
+      is HCLBlock -> UsageType.READ
       is HCLExpression if (element.parent as? HCLSelectExpression)?.field === element -> UsageType.READ
       else -> null
     }
