@@ -18,11 +18,8 @@ import org.intellij.plugin.mdx.lang.template.MdxFileViewProvider
 
 internal class MdxZenCodingGenerator : JSXZenCodingGenerator() {
   override fun isMyContext(callback: CustomTemplateCallback, wrapping: Boolean): Boolean {
-    val viewProvider = callback.file.viewProvider as? MdxFileViewProvider ?: return false
     if (isAfterUnfinishedTagStart(callback)) return false
-    val mdxJsFile = viewProvider.getPsi(MdxJSLanguage.INSTANCE) ?: return false
-    val offset = callback.editor.caretModel.offset
-    val context = PsiUtilCore.getElementAtOffset(mdxJsFile, (offset - 1).coerceAtLeast(0))
+    val context = getMdxJsContext(callback) ?: return false
     // Reject when cursor is inside a JSX/XML tag start (e.g. "<inp<caret>")
     // but allow expansion in tag text content (e.g. "<ul>.item*3<caret></ul>")
     val insideTag = PsiTreeUtil.getParentOfType(context, XmlTag::class.java) != null
@@ -74,6 +71,13 @@ internal class MdxZenCodingGenerator : JSXZenCodingGenerator() {
 
     // Rewrite the token text through the JSX file so the base generator's `token.getXmlTag()` resolves it.
     token.setTemplateText(tag.containingFile.text, jsxFile)
+  }
+
+  private fun getMdxJsContext(callback: CustomTemplateCallback): PsiElement? {
+    val viewProvider = callback.file.viewProvider as? MdxFileViewProvider ?: return null
+    val mdxJsFile = viewProvider.getPsi(MdxJSLanguage.INSTANCE) ?: return null
+    val offset = callback.editor.caretModel.offset
+    return PsiUtilCore.getElementAtOffset(mdxJsFile, (offset - 1).coerceAtLeast(0))
   }
 
   private fun isAfterUnfinishedTagStart(callback: CustomTemplateCallback): Boolean {

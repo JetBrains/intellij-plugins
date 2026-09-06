@@ -1,0 +1,15 @@
+<idea-plugin visibility="internal">
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.libraries.jetbrains.annotations"/>
+    <module name="intellij.mdx.shared"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.react.shared"/>
+    <module name="intellij.xml.emmet"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <xml.zenCodingFilter order="first" implementation="com.intellij.mdx.react.MdxReactFilter"/>
+  </extensions>
+</idea-plugin>

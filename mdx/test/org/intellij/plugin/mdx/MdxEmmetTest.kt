@@ -16,5 +16,11 @@ class MdxEmmetTest : MdxTestBase() {
   }
 
   @Test
+  fun testReactClassAttributes() {
+    doEmmetTest("ReactClassAttribute", "ReactClassAttribute_after")
+    doEmmetTest("ReactClassNameAttribute", "ReactClassNameAttribute_after")
+  }
+
+  @Test
   fun testDoubleBracket() = doEmmetTest()
 }

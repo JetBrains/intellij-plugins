@@ -7,21 +7,25 @@
 - Plan root: `contrib/mdx`
 - Root descriptor: `contrib/mdx/src/main/resources/META-INF/plugin.xml`
 - Root JPS module: `intellij.mdx`
-- Last verified: 2026-08-25 against `mdx` at `0e956f9fe2655`; the rescanner series compiles with the split modules, the full MDX suite passes 364/364 tests, and the shared split-mode inspection reports no issues.
+- Last verified: 2026-09-09. The optional React Emmet module is shared. MDX passed 4/4 tests. JSX passed 37/37 tests.
 
 ## Current Split State
 
 - Loading mode: one plugin that supports monolith, backend, and frontend product modes.
-- Architecture: migration complete with a metadata-only root descriptor and four implementation modules:
+- Architecture: migration complete with a metadata-only root descriptor and five implementation modules:
   - `intellij.mdx.shared`
   - `intellij.mdx.backend`
   - `intellij.mdx.frontend`
   - `intellij.mdx.frontend.split`
+  - `intellij.mdx.react`
 - Root descriptor state: metadata-only; the empty `intellij.mdx` legacy content descriptor remains for compatibility and is embedded in the top-level `lib/intellij.mdx.jar` so the plugin has a root classpath entry.
-- Module visibility: the legacy root and shared content modules are `internal`; the Full Line MDX consumer has an explicit dependency on the shared module.
+- Module visibility: the legacy root, MDX shared, MDX React, and React shared content modules are `internal`.
+- Full Line has an explicit dependency on the MDX shared module.
 - Recognized module kinds:
   - root descriptor: `shared`
   - shared descriptor: `shared`
+  - React integration descriptor: `shared`
+  - React shared descriptor: `shared`
   - backend descriptor: `backend`
   - frontend descriptor: `frontend`
   - frontend-split descriptor: `frontend`
@@ -34,6 +38,7 @@
 - Line wrapping: register the MDX-specific strategy from shared ownership, as required by the split-mode API restriction.
 - Parser boundaries: keep Markdown AST ownership and the JSX, expression, ESM, fence, and opacity scanners in shared; the backend import optimizer reuses the shared ESM scanner.
 - Emmet: load the JSX and MDX generators from shared modules so expansion can run on each side.
+- React Emmet: load an optional shared integration module when React is available. Its MDX filter normalizes token attribute names.
 - Product compatibility: DataGrip does not bundle the JavaScript plugin required by MDX, so it explicitly excludes `intellij.mdx` from compatible non-bundled plugin publication; this is independent of Full Line's optional MDX content module.
 - Completed milestone checklist:
   - [x] Normalize the root descriptor and establish the canonical content-module layout.
@@ -51,13 +56,13 @@
 ## Current In-Progress Task
 
 - Status: complete
-- Active milestone: MDX Emmet now has shared ownership.
-- Current worker skill: `remote-dev-language-plugin` with code-style, module, and focused test validation.
-- Verified starting evidence: the new shared JSX generator is unavailable to the backend MDX module. The focused backend build fails at this dependency.
-- Completed outcome: `intellij.mdx.shared` owns the MDX generator and uses `intellij.javascript.emmet`.
-- Last completed step: module generation, focused builds, lint, the Emmet tests, and the format check passed.
+- Active milestone: move React Emmet support into an optional MDX integration module.
+- Current worker skill: code-style, module dependency, remote-dev module layout, and code placement.
+- Verified starting evidence: a shared MDX filter can recognize `MdxFileViewProvider` without a platform Emmet API change.
+- Completed outcome: `intellij.mdx.react` owns the filter and loads in each product mode only when React is available.
+- Last completed step: module generation, lint, module recognition, focused tests, and the format check passed.
 - Next optional step: verify MDX Emmet in a running split IDE with at least 500 ms Direct Ping.
-- Handoff condition: rerun packaging after the current branch synchronizes its nine unrelated JavaScript and React generated files.
+- Handoff condition: no automated follow-up work remains.
 
 ## Module And Descriptor Inventory
 
@@ -90,6 +95,12 @@
   - Role: minimal RD-only highlighting suppression and editor/comment action routing
   - Justification: the official language-split guide assigns these RD-protocol-aware extension points to `.frontend.split`; Markdown's adapters match `MarkdownFileType` exactly and do not cover MDX
 
+- `intellij.mdx.react`
+  - Descriptor: `react/resources/intellij.mdx.react.xml`
+  - Kind: shared
+  - Role: optional MDX and React Emmet integration
+  - Dependency: shared MDX, shared React attribute mapping, and shared Emmet APIs
+
 - `intellij.mdx.tests`
   - Role: parser, formatting, completion, highlighting, typing, and editor regression tests
   - Dependency: root/shared/backend/frontend MDX modules plus the existing platform test modules
@@ -118,8 +129,8 @@
   - State: complete; backend compilation and focused completion/resolve tests pass
 
 - Emmet
-  - Owner: shared
-  - State: complete; the shared generator keeps MDX attribute names, and the focused Emmet tests pass
+  - Owner: shared generator plus the optional shared MDX and React integration
+  - State: complete; the integration filter recognizes MDX directly and maps React attribute names without a platform API change
 
 ## Remaining Work
 
@@ -133,6 +144,7 @@
 - [x] Move the MDX line-wrap registration from frontend to shared ownership and add `MdxLineWrapPositionStrategy` to the shared module.
 - [x] Reapply the rescanner and parser-boundary redesign without moving language-core scanning into backend or frontend modules.
 - [x] Move the MDX Emmet generator and registration to shared ownership.
+- [x] Load the optional MDX and React Emmet filter in each product mode.
 
 ### Manual split-runtime verification
 
@@ -175,11 +187,14 @@
 - `IdeaUltimatePluginModuleDependenciesTest`: both cases were skipped by the test because their checks moved to `AllProductsPackagingTest`, which passed.
 - Fast project-structure checks: no MDX failures; two unrelated local `Permanent Script Dependencies` failures remain outside this migration.
 - Generated metadata and formatting: `jpsModelToBazel` and `//:format.check` pass.
+- React integration kind: `intellij.mdx.react` is shared. The root and existing MDX modules keep their previous recognized kinds.
+- React integration model: the plugin model added `intellij.mdx.react` to the MDX dev distribution.
+- Plugin model note: the run also found nine pre-existing stale JavaScript and React build files. These unrelated generated changes were discarded.
 - Emmet ownership: `MdxZenCodingGenerator` and its registration moved from backend to shared.
-- Emmet behavior: the generator uses the source template and keeps MDX attribute names when React aliases are present.
-- Emmet regression tests: `MdxEmmetTest` passed 3/3.
-- Emmet compilation: the root, shared, and backend MDX Bazel targets build.
-- Emmet lint: the changed Kotlin file has no IDE warnings.
+- Emmet behavior: the optional MDX filter handles tokens with and without an XML tag. The generator consumes the filtered attribute names.
+- React Emmet regression tests: shorthand, `class`, and `className` cases pass. `MdxEmmetTest` passed 4/4. `JSXEmmetTest` passed 37/37.
+- Emmet compilation: the focused test build compiled the root, shared, React integration, backend, frontend, and test modules.
+- Emmet lint: the changed Kotlin, XML, and IML files have no IDE warnings.
 - Packaging: 69/78 checks passed. Nine unrelated JavaScript and React generated-file checks failed. No MDX check failed.
 - Split-mode proof: manual frontend/backend PSI comparison, simulated-latency interaction, visual duplicate-highlighting inspection, and rollback/caret checks remain unverified.
 
@@ -195,4 +210,5 @@
 - 2026-08-19: fixed the post-migration Markdown descriptor dependencies, moved the paste action wrapper and Markdown promoter registration to frontend ownership, allowlisted the intentional Full Line MDX dependencies, and resolved the supplied inspection findings.
 - 2026-08-20: `85d46456e9bbe` moved the MDX line-wrap registration from frontend to shared ownership and introduced the MDX-owned `MdxLineWrapPositionStrategy`; Markdown's frontend strategy and registration were unchanged.
 - 2026-08-25: rebased the seven-commit rescanner and parser-boundary redesign onto the split MDX layout, keeping language-core scanners shared and import optimization backend-owned; 364/364 MDX tests passed.
-- 2026-09-09: moved MDX Emmet to shared ownership and preserved MDX attribute names after React filtering; 3/3 focused tests passed.
+- 2026-09-09: moved MDX Emmet to shared ownership; 3/3 focused tests passed.
+- 2026-09-09: moved React Emmet mapping into an optional shared MDX integration module without a platform Emmet API change.

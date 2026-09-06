@@ -19,6 +19,7 @@
   <content namespace="jetbrains">
     <module name="intellij.mdx" loading="embedded"/>
     <module name="intellij.mdx.shared" loading="required"/>
+    <module name="intellij.mdx.react"/>
     <module name="intellij.mdx.backend" required-if-available="intellij.platform.backend"/>
     <module name="intellij.mdx.frontend" required-if-available="intellij.platform.frontend"/>
     <module name="intellij.mdx.frontend.split" required-if-available="intellij.platform.frontend.split"/>

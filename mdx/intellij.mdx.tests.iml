@@ -43,6 +43,7 @@
     <orderEntry type="module" module-name="intellij.xml.parser" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.psi" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.emmet" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.analysis.impl" scope="TEST" />
@@ -54,8 +55,8 @@
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.structureView" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.react.ultimate" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.react.free" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.react.ultimate.backend" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.react.free.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.react.plugin" scope="TEST" />
     <orderEntry type="module" module-name="intellij.markdown" scope="TEST" />
     <orderEntry type="module" module-name="intellij.yaml" scope="TEST" />
@@ -70,6 +71,7 @@
     <orderEntry type="module" module-name="intellij.javascript.markdown" scope="TEST" />
     <orderEntry type="module" module-name="intellij.mdx" scope="TEST" />
     <orderEntry type="module" module-name="intellij.mdx.shared" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.mdx.react" scope="TEST" />
     <orderEntry type="module" module-name="intellij.mdx.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.mdx.frontend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />

@@ -1,0 +1,67 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.mdx.react` start
+content_module_jar(module = ":react")
+### auto-generated section `dev intellij.mdx.react` end
+
+### auto-generated section `build intellij.mdx.react` start
+jvm_library(
+    name = "react",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.mdx.react",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//libraries/jetbrains/annotations",
+        "//contrib/mdx/shared",
+        "@community//platform/core-api:core",
+        "@community//platform/util",
+        "//plugins/js/react/shared",
+        "@community//xml/emmet",
+    ],
+)
+
+jvm_library(
+    name = "react_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.mdx.react",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":react",
+        "@community//libraries/jetbrains/annotations:annotations_test_lib",
+        "//contrib/mdx/shared:shared_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/util:util_test_lib",
+        "//plugins/js/react/shared:shared_test_lib",
+        "@community//xml/emmet:emmet_test_lib",
+    ],
+)
+### auto-generated section `build intellij.mdx.react` end
+
+### auto-generated section `iml intellij.mdx.react` start
+exports_files(
+    [
+        "intellij.mdx.react.iml",
+        "resources/intellij.mdx.react.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.mdx.react` end
