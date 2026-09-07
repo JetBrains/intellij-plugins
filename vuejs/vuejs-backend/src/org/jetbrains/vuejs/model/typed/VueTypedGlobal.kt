@@ -29,8 +29,8 @@ data class VueTypedGlobal(
 ) : VueDelegatedEntitiesContainer<VueGlobal>(),
     VueGlobal {
 
-  private val typedGlobalComponents: Map<String, VueNamedComponent> get() =
-    CachedValuesManager.getCachedValue(source) {
+  private val typedGlobalComponents: Map<String, VueNamedComponent>
+    get() = CachedValuesManager.getCachedValue(source) {
       val result = resolveSymbolPropertiesFromAugmentations(source, VUE_CORE_MODULES, GLOBAL_COMPONENTS)
         .values
         .mapNotNull { VueTypedComponent.create(it) }
@@ -38,8 +38,8 @@ data class VueTypedGlobal(
       CachedValueProvider.Result.create(result, getVueSymbolsCacheDependencies(source.project))
     }
 
-  private val typedGlobalDirectives: Map<String, VueDirective> get() =
-    CachedValuesManager.getCachedValue(source) {
+  private val typedGlobalDirectives: Map<String, VueDirective>
+    get() = CachedValuesManager.getCachedValue(source) {
       val augmentedProperties = resolveSymbolPropertiesFromAugmentations(
         scope = source,
         moduleNames = setOf(VUE_MODULE),
