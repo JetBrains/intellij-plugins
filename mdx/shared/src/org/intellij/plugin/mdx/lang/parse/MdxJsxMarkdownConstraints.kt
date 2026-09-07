@@ -11,7 +11,7 @@ internal class MdxJsxMarkdownConstraints(
   override val charsEaten: Int = blockStartIndent,
 ) : MarkdownConstraints {
   override val indent: Int
-    get() = charsEaten
+    get() = maxOf(blockStartIndent, parent.indent)
 
   override val types: CharArray
     get() = parent.types
@@ -41,18 +41,17 @@ internal class MdxJsxMarkdownConstraints(
   }
 
   override fun applyToNextLine(pos: LookaheadText.Position?): MarkdownConstraints {
+    val modifiedParent = if (parent is MdxMarkdownConstraints) parent.applyToNextJsxLine(pos) else parent.applyToNextLine(pos)
     if (pos == null) {
-      return parent.applyToNextLine(pos)
+      return modifiedParent
     }
     if (opaqueBlock) {
-      val modifiedParent = parent.applyToNextLine(pos)
       val contentOffset = firstNonWhitespaceOffset(pos.currentLine, modifiedParent.charsEaten)
       return copy(
         parent = modifiedParent,
         charsEaten = if (contentOffset == -1) pos.currentLine.length else contentOffset,
       )
     }
-    val modifiedParent = parent.applyToNextLine(pos)
     val nonWhitespaceOffset = firstNonWhitespaceOffset(pos.currentLine, modifiedParent.charsEaten)
     if (nonWhitespaceOffset == -1) {
       return copy(parent = modifiedParent, charsEaten = pos.currentLine.length)
@@ -91,7 +90,7 @@ internal class MdxJsxMarkdownConstraints(
     return MdxJsxClosingBoundary.MISMATCHED
   }
 
-  private fun markdownConstraints(): MarkdownConstraints {
+  fun markdownConstraints(): MarkdownConstraints {
     var constraints = parent
     while (constraints is MdxJsxMarkdownConstraints) {
       constraints = constraints.parent

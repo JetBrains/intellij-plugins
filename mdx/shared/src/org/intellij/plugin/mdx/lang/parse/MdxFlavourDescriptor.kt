@@ -2,11 +2,11 @@ package org.intellij.plugin.mdx.lang.parse
 
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
-import org.intellij.markdown.flavours.gfm.GFMConstraints
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.GeneratingProvider
 import org.intellij.markdown.lexer.MarkdownLexer
 import org.intellij.markdown.parser.LinkMap
+import org.intellij.markdown.parser.LookaheadText
 import org.intellij.markdown.parser.MarkerProcessor
 import org.intellij.markdown.parser.MarkerProcessorFactory
 import org.intellij.markdown.parser.ProductionHolder
@@ -50,7 +50,7 @@ object MdxFlavourDescriptor : CommonMarkFlavourDescriptor() {
 
 private object MdxProcessFactory : MarkerProcessorFactory {
   override fun createMarkerProcessor(productionHolder: ProductionHolder): MarkerProcessor<*> {
-    return MdxMarkerProcessor(productionHolder, GFMConstraints.BASE)
+    return MdxMarkerProcessor(productionHolder, MdxMarkdownConstraints.BASE)
   }
 }
 
@@ -59,6 +59,16 @@ private class MdxMarkerProcessor(
   constraints: MarkdownConstraints,
 ) :
   MarkdownDefaultMarkerProcessor(productionHolder, constraints) {
+
+  override fun populateConstraintsTokens(
+    pos: LookaheadText.Position,
+    constraints: MarkdownConstraints,
+    productionHolder: ProductionHolder,
+  ) {
+    val markdown = if (constraints is MdxJsxMarkdownConstraints) constraints.markdownConstraints() else constraints
+    val gfm = if (markdown is MdxMarkdownConstraints) markdown.asGfmConstraints() else markdown
+    super.populateConstraintsTokens(pos, gfm, productionHolder)
+  }
 
   override fun getMarkerBlockProviders(): List<MarkerBlockProvider<StateInfo>> =
     buildList {
