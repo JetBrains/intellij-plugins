@@ -36,7 +36,7 @@ private const val MAX_UNNEEDED_WHITESPACE_RATIO = 0.01  // MinifiedFilesUtil.MAX
 private const val PUNCTUATION = "{}[]()<>;:,.=+-*/%!&|^~?\"'`"
 
 /** The same pattern as `GoGeneratedSourcesFilter.GENERATED_PATTERN`. */
-private val GENERATED_MARKER = Regex("""^// Code generated .* DO NOT EDIT\.$""")
+private val GO_GENERATED_MARKER = Regex("""^// Code generated .* DO NOT EDIT\.$""")
 
 private val CONTENT_VERDICT = Key.create<Pair<Long, Boolean>>("qodana.poly.generated.by.content")
 
@@ -49,12 +49,12 @@ internal fun isGeneratedFileName(name: String): Boolean =
  * Go puts the marker before the first line that is not a comment. `GoFilePropertiesParser` therefore
  * tests every line comment in that region, and so does this function.
  */
-internal fun hasGeneratedMarker(text: CharSequence): Boolean {
+internal fun hasGoGeneratedMarker(text: CharSequence): Boolean {
   for (line in text.lineSequence()) {
     val trimmed = line.trimEnd()
     if (trimmed.isBlank()) continue
     if (!trimmed.startsWith("//") && !trimmed.startsWith("/*") && !trimmed.startsWith("*")) return false
-    if (GENERATED_MARKER.matches(trimmed)) return true
+    if (GO_GENERATED_MARKER.matches(trimmed)) return true
   }
   return false
 }
@@ -183,7 +183,7 @@ class QodanaPolyGeneratedSourcesFilter : GeneratedSourcesFilter() {
     val timeStamp = file.timeStamp
     if (cached != null && cached.first == timeStamp) return cached.second
 
-    val verdict = if (wantsMarker) hasGeneratedMarker(readText(file, SAMPLE_LIMIT)) else isMinifiedFile(file)
+    val verdict = if (wantsMarker) hasGoGeneratedMarker(readText(file, SAMPLE_LIMIT)) else isMinifiedFile(file)
     CONTENT_VERDICT.set(file, timeStamp to verdict)
     return verdict
   }
