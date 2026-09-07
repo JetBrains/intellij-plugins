@@ -27,8 +27,17 @@ internal object MdxJsxScanner {
     val range: TextRange,
     val tags: List<Tag>,
     val expressions: List<TextRange>,
+    val elements: List<ElementRecord>,
     val incomplete: Boolean,
     val termination: Termination,
+  )
+
+  /** Indexes follow opening order. Records follow closing order. */
+  data class ElementRecord(
+    val index: Int,
+    val parentIndex: Int?,
+    val range: TextRange,
+    val bodyRange: TextRange?,
   )
 
   data class ElementIdentity(val name: String?)
@@ -45,6 +54,7 @@ internal object MdxJsxScanner {
     private var recoveryBudget = MdxExpressionBoundaryScanner.RecoveryBudget()
     private val tags = RetainedAccumulator<Tag>()
     private val expressions = RetainedAccumulator<TextRange>()
+    private val elements = RetainedAccumulator<ElementRecord>()
     private val nesting = NestingState()
     private var cursor = start
     private var exposedEnd = start
@@ -135,6 +145,7 @@ internal object MdxJsxScanner {
         termination,
         tags.checkpoint(),
         expressions.checkpoint(),
+        elements.checkpoint(),
       )
       val durableRecoveryBudget = recoveryBudget
       recoveryBudget = durableRecoveryBudget.copy()
@@ -152,6 +163,7 @@ internal object MdxJsxScanner {
         termination = state.termination
         tags.restore(state.tagCheckpoint)
         expressions.restore(state.expressionCheckpoint)
+        elements.restore(state.elementCheckpoint)
         activeTag = null
         activeExpression = expression
       }
@@ -177,7 +189,7 @@ internal object MdxJsxScanner {
       }
       tags.add(tag)
       expressions.addAll(tag.expressions)
-      termination = nesting.accept(tag)
+      termination = nesting.accept(tag, elements::add)
     }
 
     private fun elementAt(limit: Int): Element? {
@@ -187,6 +199,7 @@ internal object MdxJsxScanner {
         TextRange(start, if (termination == null) limit else cursor),
         tags.snapshot(),
         expressions.snapshot(),
+        elements.snapshot(),
         incomplete = termination == null || nesting.incomplete,
         termination = actualTermination,
       )
@@ -197,6 +210,7 @@ internal object MdxJsxScanner {
     private fun commitPreviousAdvance() {
       tags.commit()
       expressions.commit()
+      elements.commit()
     }
 
     private fun endOffsetContaining(offset: Int): Int? {
@@ -226,6 +240,7 @@ internal object MdxJsxScanner {
       termination = snapshot.termination
       tags.restore(0)
       expressions.restore(0)
+      elements.restore(0)
       activeTag = null
       activeExpression = null
     }
@@ -244,6 +259,7 @@ internal object MdxJsxScanner {
       val termination: Termination?,
       val tagCheckpoint: Int,
       val expressionCheckpoint: Int,
+      val elementCheckpoint: Int,
     )
 
     private data class ExpressionSession(
@@ -353,55 +369,60 @@ internal object MdxJsxScanner {
 
   private class NestingState {
     private var topFrame: Frame? = null
+    private var nextIndex = 0
 
     var incomplete: Boolean = false
       private set
 
-    fun accept(tag: Tag): Termination? {
+    fun accept(tag: Tag, addElement: (ElementRecord) -> Unit): Termination? {
       when (tag.kind) {
-        TagKind.OPENING -> topFrame = Frame(tag.name, topFrame)
-        TagKind.SELF_CLOSING -> Unit
+        TagKind.OPENING -> topFrame = Frame(tag, nextIndex++, topFrame)
+        TagKind.SELF_CLOSING -> addElement(ElementRecord(nextIndex++, topFrame?.index, tag.range, null))
         TagKind.CLOSING -> {
-          val current = topFrame
-          if (current == null) {
+          var matching = topFrame
+          while (matching != null && matching.opening.name != tag.name) {
+            matching = matching.parent
+          }
+          while (topFrame != null && topFrame !== matching) {
+            val skipped = checkNotNull(topFrame)
+            val end = if (skipped.parent == null) tag.range.endOffset else tag.range.startOffset
+            addElement(skipped.closeAt(tag.range.startOffset, end))
+            topFrame = skipped.parent
             incomplete = true
-            return Termination.RECOVERED
           }
-          if (current.name == tag.name) {
-            topFrame = current.parent
-          }
-          else {
-            var ancestor = current.parent
-            while (ancestor != null && ancestor.name != tag.name) {
-              ancestor = ancestor.parent
-            }
-            if (ancestor == null) {
-              incomplete = true
-              return Termination.RECOVERED
-            }
-            incomplete = true
-            topFrame = ancestor.parent
-          }
+          if (matching == null) return Termination.RECOVERED
+          addElement(matching.closeAt(tag.range.startOffset, tag.range.endOffset))
+          topFrame = matching.parent
         }
       }
       return if (topFrame == null) Termination.MATCHED else null
     }
 
-    fun snapshot(): NestingSnapshot = NestingSnapshot(topFrame, incomplete)
+    fun snapshot(): NestingSnapshot = NestingSnapshot(topFrame, nextIndex, incomplete)
 
     fun restore(snapshot: NestingSnapshot) {
       topFrame = snapshot.topFrame
+      nextIndex = snapshot.nextIndex
       incomplete = snapshot.incomplete
     }
   }
 
   private class Frame(
-    val name: String?,
+    val opening: Tag,
+    val index: Int,
     val parent: Frame?,
-  )
+  ) {
+    fun closeAt(bodyEnd: Int, end: Int): ElementRecord = ElementRecord(
+      index,
+      parent?.index,
+      TextRange(opening.range.startOffset, end),
+      TextRange(opening.range.endOffset, bodyEnd),
+    )
+  }
 
   private data class NestingSnapshot(
     val topFrame: Frame?,
+    val nextIndex: Int,
     val incomplete: Boolean,
   )
 

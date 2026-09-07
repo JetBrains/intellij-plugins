@@ -69,6 +69,16 @@ class MdxJsxScannerTest {
   }
 
   @Test
+  fun recordsElementBodiesAndParentsDuringTagMatching() {
+    val text = "<A><B>one</B><><C /></></A>"
+    val records = MdxJsxScanner.scanJsxElement(text, 0)!!.elements.sortedBy { it.index }
+    assertEquals(listOf(0, 1, 2, 3), records.map { it.index })
+    assertEquals(listOf(null, 0, 0, 2), records.map { it.parentIndex })
+    assertEquals(listOf(text, "<B>one</B>", "<><C /></>", "<C />"), records.map { it.range.substring(text) })
+    assertEquals(listOf("<B>one</B><><C /></>", "one", "<C />", null), records.map { it.bodyRange?.substring(text) })
+  }
+
+  @Test
   fun suppliedOpaqueRangeHidesMatchingClosingTag() {
     val text = "<span>`</span>` body</span>"
     val opaqueStart = text.indexOf('`')
@@ -251,6 +261,7 @@ class MdxJsxScannerTest {
       val premature = session.advanceTo(codeLineEnd)
       val retainedTags = premature?.tags?.toList()
       val retainedExpressions = premature?.expressions?.toList()
+      val retainedElements = premature?.elements?.toList()
       repeat(3) {
         assertSame(premature, session.advanceTo(codeLineEnd))
       }
@@ -270,6 +281,8 @@ class MdxJsxScannerTest {
       assertEquals(emptyList<TextRange>(), complete?.expressions)
       assertEquals(retainedTags, premature?.tags)
       assertEquals(retainedExpressions, premature?.expressions)
+      assertEquals(retainedElements, premature?.elements)
+      assertEquals(listOf(TextRange(0, text.length)), complete?.elements?.map { it.range })
       assertSame(complete, session.advanceTo(text.length))
     }
   }
