@@ -5,6 +5,7 @@ import com.intellij.testFramework.junit5.TestApplication
 import org.intellij.plugin.mdx.lang.parse.MdxJsxScanner
 import org.intellij.plugin.mdx.lang.parse.MdxTextRangeSet
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -233,6 +234,44 @@ class MdxJsxScannerTest {
     assertEquals(emptyList<TextRange>(), repaired?.expressions)
     assertEquals(retainedTags, premature?.tags)
     assertEquals(retainedExpressions, premature?.expressions)
+  }
+
+  @Test
+  fun repeatedLimitsPreserveLateOpacityRollback() {
+    val text = "<Box>\n`{value}</Box>`\n</Box>"
+    val openingEnd = text.indexOf('\n') + 1
+    val codeLineEnd = text.indexOf('\n', openingEnd) + 1
+    val codeStart = text.indexOf('`')
+    val codeEnd = text.indexOf('`', codeStart + 1) + 1
+
+    for (repairAtSameLimit in listOf(false, true)) {
+      val session = MdxJsxScanner.Session(text, 0)
+      val opening = session.advanceTo(openingEnd)
+      assertSame(opening, session.advanceTo(openingEnd))
+      val premature = session.advanceTo(codeLineEnd)
+      val retainedTags = premature?.tags?.toList()
+      val retainedExpressions = premature?.expressions?.toList()
+      repeat(3) {
+        assertSame(premature, session.advanceTo(codeLineEnd))
+      }
+
+      session.addOpaqueRanges(listOf(TextRange(codeStart, codeEnd)))
+      if (repairAtSameLimit) {
+        val repaired = session.advanceTo(codeLineEnd)
+        assertEquals(MdxJsxScanner.Termination.UNTERMINATED, repaired?.termination)
+        assertEquals(listOf("Box"), repaired?.tags?.map { it.name })
+        assertSame(repaired, session.advanceTo(codeLineEnd))
+      }
+      val complete = session.advanceTo(text.length)
+
+      assertEquals(MdxJsxScanner.Termination.MATCHED, complete?.termination)
+      assertEquals(text.length, complete?.range?.endOffset)
+      assertEquals(listOf("Box", "Box"), complete?.tags?.map { it.name })
+      assertEquals(emptyList<TextRange>(), complete?.expressions)
+      assertEquals(retainedTags, premature?.tags)
+      assertEquals(retainedExpressions, premature?.expressions)
+      assertSame(complete, session.advanceTo(text.length))
+    }
   }
 
   @Test

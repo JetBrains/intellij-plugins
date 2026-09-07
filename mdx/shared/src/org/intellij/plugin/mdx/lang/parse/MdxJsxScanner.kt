@@ -54,17 +54,25 @@ internal object MdxJsxScanner {
     private var termination: Termination? = null
     private var previousAdvanceStart = start
     private var previousAdvanceSnapshot: Snapshot? = snapshot()
+    private var lastResult: Element? = null
+    private var resultIsCurrent = false
 
     fun advanceTo(limit: Int): Element? {
       mdxCancellableText(text)
       require(limit in exposedEnd..scanEnd) {
         "JSX scan limit must advance from $exposedEnd to at most $scanEnd: $limit"
       }
-      commitPreviousAdvance()
-      previousAdvanceStart = cursor
-      previousAdvanceSnapshot = snapshot()
-      exposedEnd = limit
-      return scanTo(limit)
+      if (limit == exposedEnd && resultIsCurrent) return lastResult
+      if (limit > exposedEnd) {
+        commitPreviousAdvance()
+        previousAdvanceStart = cursor
+        previousAdvanceSnapshot = snapshot()
+        exposedEnd = limit
+      }
+      return scanTo(limit).also {
+        lastResult = it
+        resultIsCurrent = true
+      }
     }
 
     private fun scanTo(limit: Int): Element? {
@@ -156,6 +164,7 @@ internal object MdxJsxScanner {
       val snapshot = previousAdvanceSnapshot
       if (snapshot != null && ranges.any { it.intersects(previousAdvanceStart, cursor) }) {
         restore(snapshot)
+        resultIsCurrent = false
       }
     }
 
