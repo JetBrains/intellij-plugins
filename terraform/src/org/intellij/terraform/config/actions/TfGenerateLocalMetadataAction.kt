@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nls
 
 internal class TfGenerateLocalMetadataAction : TfExternalToolsAction() {
 
-  override suspend fun invoke(project: Project, @Nls title: String, vararg virtualFiles: VirtualFile) {
+  override suspend fun doInvoke(project: Project, @Nls title: String, vararg virtualFiles: VirtualFile) {
     val tfLocalSchemaService = project.serviceAsync<TfLocalSchemaService>()
     val anyFileInModuleDir = virtualFiles.firstOrNull()
     val lockFile = anyFileInModuleDir?.let { tfLocalSchemaService.findLockFile(it) }

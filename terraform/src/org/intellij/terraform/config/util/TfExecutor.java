@@ -19,6 +19,7 @@ import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.execution.wsl.WSLCommandLineOptions;
 import com.intellij.execution.wsl.WslPath;
+import com.intellij.ide.trustedProjects.TrustedProjects;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationType;
@@ -245,6 +246,9 @@ public final class TfExecutor {
   }
 
   public @NotNull GeneralCommandLine createCommandLine() throws ExecutionException {
+    if (!TrustedProjects.isProjectTrusted(myProject)) {
+      throw new ExecutionException(HCLBundle.message("terraform.execution.untrusted.project"));
+    }
     String exePath =  Objects.requireNonNull(myExePath);
     WslPath wslPath = WslPath.parseWindowsUncPath(exePath);
     if(wslPath != null){

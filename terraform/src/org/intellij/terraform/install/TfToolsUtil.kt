@@ -2,6 +2,8 @@
 package org.intellij.terraform.install
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.intellij.execution.ExecutionException
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
@@ -163,6 +165,9 @@ internal fun getBinaryName(executableName: String): String {
 }
 
 internal suspend fun getToolVersion(project: Project, tool: TfToolType, exePath: String): @NlsSafe String {
+  if (!TrustedProjects.isProjectTrusted(project)) {
+    throw ExecutionException(HCLBundle.message("terraform.execution.untrusted.project"))
+  }
   val eelApi = project.getEelDescriptor().toEelApi()
   val eelExePath = Path(exePath).asEelPath()
   val envVariables = eelApi.exec.fetchLoginShellEnvVariables()

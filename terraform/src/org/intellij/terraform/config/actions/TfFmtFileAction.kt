@@ -22,7 +22,7 @@ import kotlin.io.path.Path
 
 internal class TfFmtFileAction : TfExternalToolsAction() {
 
-  override suspend fun invoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile) {
+  override suspend fun doInvoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile) {
     withBackgroundProgress(project, title) {
       withContext(Dispatchers.EDT) {
         writeIntentReadAction {
@@ -34,12 +34,14 @@ internal class TfFmtFileAction : TfExternalToolsAction() {
 
       val filePaths = virtualFiles.map { it.toNioPath().asEelPath().toString() }.toTypedArray()
       val toolType = getApplicableToolType(virtualFiles.first())
-      TfExecutor.`in`(project, toolType)
+      val success = TfExecutor.`in`(project, toolType)
         .withPresentableName(title)
         .withParameters("fmt", *filePaths)
         .showOutputOnError()
         .executeSuspendable()
       VfsUtil.markDirtyAndRefresh(true, true, true, *virtualFiles)
+      // TfExecutor reports the failure itself, because of showOutputOnError.
+      if (!success) return@withBackgroundProgress
       TfConstants.getNotificationGroup()
         .createNotification(
           title,

@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nls
 
 internal open class TfInitAction(private val notifyOnSuccess: Boolean = true) : TfExternalToolsAction() {
 
-  override suspend fun invoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile) {
+  override suspend fun doInvoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile) {
     virtualFiles.firstOrNull()?.let { project.service<TfActionService>().initTerraform(it, notifyOnSuccess) }
   }
 
