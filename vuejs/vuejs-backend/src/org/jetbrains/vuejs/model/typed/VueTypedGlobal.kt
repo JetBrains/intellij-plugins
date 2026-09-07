@@ -35,7 +35,7 @@ data class VueTypedGlobal(
         .values
         .mapNotNull { VueTypedComponent.create(it) }
         .associateBy { it.name }
-      CachedValueProvider.Result.create(result, getVueSymbolsCacheDependencies(source.project))
+      CachedValueProvider.Result.create(result, getVueSymbolsCacheDependencies(source.project, withGraphModificationTracker = true))
     }
 
   private val typedGlobalDirectives: Map<String, VueDirective>
@@ -55,7 +55,7 @@ data class VueTypedGlobal(
           put(name, VueTypedDirective(source, name))
         }
       }
-      CachedValueProvider.Result.create(result, getVueSymbolsCacheDependencies(source.project))
+      CachedValueProvider.Result.create(result, getVueSymbolsCacheDependencies(source.project, withGraphModificationTracker = true))
     }
 
   override val components: Map<String, VueNamedComponent>
