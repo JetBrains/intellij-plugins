@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
@@ -11,6 +12,7 @@ import com.intellij.openapi.options.advanced.withAdvancedSettingValue
 import com.intellij.openapi.util.Disposer
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.backend.workspace.virtualFile
+import com.intellij.testFramework.TrustedProjectsTestUtil
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.common.waitUntil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -181,6 +183,40 @@ internal abstract class TfBaseLocalMetadataTest : BasePlatformTestCase() {
     loadAndCheckDoMetadata("dummyProp")
     // test metadata refreshed
     loadAndCheckDoMetadata("dummyPro2")
+  }
+
+  fun testLocalMetadataWorksInTrustedProject() {
+    TrustedProjectsTestUtil.withTrustedProjectsCheckEnabled {
+      TrustedProjects.setProjectTrusted(project, true)
+      assertTrue(TrustedProjects.isProjectTrusted(project))
+
+      loadAndCheckDoMetadata("dummyProp")
+      assertNotEmpty(TfCommandLineServiceMock.instance.requestsToVerify())
+    }
+  }
+
+  fun testLocalMetadataRequiresTrust() {
+    TrustedProjectsTestUtil.withTrustedProjectsCheckEnabled {
+      TrustedProjects.setProjectTrusted(project, false)
+      try {
+        assertFalse(TrustedProjects.isProjectTrusted(project))
+        val lock = myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, lockFileText).virtualFile
+        val file = myFixture.configureByText("main.tf", genInspectedMain("dummyProp")).virtualFile
+        assertNull(tfLocalSchemaService.getModel(file))
+        timeoutRunBlocking {
+          assertEmpty(tfLocalSchemaService.scheduleModelRebuild(setOf(lock)).getValue())
+          assertEmpty(tfLocalSchemaService.scheduleModelRebuild(setOf(lock), explicitlyAllowRunningProcess = true).getValue())
+          tfLocalSchemaService.awaitModelsReady()
+        }
+        assertEmpty(TfCommandLineServiceMock.instance.requestsToVerify())
+      }
+      finally {
+        TrustedProjects.setProjectTrusted(project, true)
+      }
+
+      loadAndCheckDoMetadata("dummyProp")
+      assertNotEmpty(TfCommandLineServiceMock.instance.requestsToVerify())
+    }
   }
 
   fun testLocalMetadataNotUpdatedIfForbidden() {

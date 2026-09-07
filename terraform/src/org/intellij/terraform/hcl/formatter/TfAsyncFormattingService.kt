@@ -5,6 +5,7 @@ import com.intellij.application.options.CodeStyle
 import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.FormattingService
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.runBlockingCancellable
@@ -41,6 +42,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   override fun getFeatures(): Set<FormattingService.Feature> = emptySet()
 
   override fun canFormat(file: PsiFile): Boolean {
+    if (!TrustedProjects.isProjectTrusted(file.project)) return false
     if (ApplicationManager.getApplication().isUnitTestMode) return false
 
     val settings = CodeStyle.getCustomSettings(file, HclCodeStyleSettings::class.java)
@@ -57,6 +59,10 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
       private var job: Job? = null
 
       override fun run() {
+        if (!TrustedProjects.isProjectTrusted(project)) {
+          request.onTextReady(null)
+          return
+        }
         try {
           runBlockingCancellable {
             val isToolConfigured = TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)

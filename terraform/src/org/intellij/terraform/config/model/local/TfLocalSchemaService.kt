@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.execution.process.CapturingProcessAdapter
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.readAndEdtWriteAction
 import com.intellij.openapi.components.Service
@@ -169,6 +170,8 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
   }
 
   fun scheduleModelRebuild(virtualFiles: Set<VirtualFile>, explicitlyAllowRunningProcess: Boolean = false): SuspendingLazy<List<TfTypeModel>> {
+    if (!TrustedProjects.isProjectTrusted(project)) return scope.suspendingLazy { emptyList() }
+
     val scheduled = mutableListOf<Deferred<TfTypeModel>>()
     val locks = virtualFiles.mapNotNullTo(mutableSetOf()) { findLockFile(it) }
     for (lock in locks) {

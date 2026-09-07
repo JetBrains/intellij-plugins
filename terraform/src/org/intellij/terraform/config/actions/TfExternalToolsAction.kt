@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.actions
 
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -14,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.isFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.util.getApplicableToolType
@@ -22,6 +24,7 @@ import org.intellij.terraform.isTfOrTofuFile
 import org.intellij.terraform.runtime.TfToolPathDetector
 import org.intellij.terraform.runtime.showIncorrectPathNotification
 import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.TestOnly
 import kotlin.coroutines.cancellation.CancellationException
 
 internal fun isTfOrTofuAvailable(file: VirtualFile): Boolean {
@@ -71,14 +74,36 @@ internal abstract class TfExternalToolsAction : DumbAwareAction() {
     }
   }
 
-  abstract suspend fun invoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile)
+  suspend fun invoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile) {
+    if (!TrustedProjects.isProjectTrusted(project)) {
+      notifyUntrustedProject(title, project)
+      return
+    }
+    doInvoke(project, title, *virtualFiles)
+  }
+
+  protected abstract suspend fun doInvoke(project: Project, title: @Nls String, vararg virtualFiles: VirtualFile)
 
   companion object {
     private val LOG = Logger.getInstance(TfExternalToolsAction::class.java)
+
+    @TestOnly
+    suspend fun awaitTfExternalToolsActions(project: Project) {
+      project.service<CoroutineScopeProvider>().coroutineScope.coroutineContext.job.children.forEach { it.join() }
+    }
   }
 
   @Service(Service.Level.PROJECT)
   private class CoroutineScopeProvider(val coroutineScope: CoroutineScope)
+}
+
+internal fun notifyUntrustedProject(title: @Nls String, project: Project) {
+  TfConstants.getNotificationGroup()
+    .createNotification(
+      title,
+      HCLBundle.message("terraform.execution.untrusted.project"),
+      NotificationType.WARNING
+    ).notify(project)
 }
 
 internal fun notifyError(title: @Nls String, project: Project, ex: Throwable?) {

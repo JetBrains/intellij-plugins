@@ -321,6 +321,8 @@ jvm_library(
         "@community//platform/util/progress:progress_test_lib",
         "@community//platform/util:util-ui",
         "@community//platform/util:util-ui_test_lib",
+        "@community//platform/util-ex",
+        "@community//platform/util-ex:util-ex_test_lib",
         "@community//platform/execution",
         "@community//platform/execution:execution_test_lib",
         "@community//platform/lang-api:lang",
