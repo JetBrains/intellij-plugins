@@ -41,7 +41,10 @@ internal fun isVueComponentQuery(name: String): Boolean {
   return name.getOrNull(0)?.isUpperCase() == true || name.contains('-') || name == "slot"
 }
 
-internal fun getVueSymbolsCacheDependencies(project: Project, withPsiModTracker: Boolean = true): Set<Any> =
+internal fun getVueSymbolsCacheDependencies(
+  project: Project,
+  withPsiModTracker: Boolean = true,
+): Set<Any> =
   setOfNotNull(
     PsiModificationTracker.MODIFICATION_COUNT.takeIf { withPsiModTracker },
     VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
