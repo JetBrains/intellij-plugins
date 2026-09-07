@@ -1,6 +1,7 @@
 package org.intellij.plugin.mdx
 
 import com.intellij.application.options.CodeStyle
+import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.CompletionAutoPopupHandler
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
@@ -331,6 +332,117 @@ class MdxLiveEditingTest : MdxTestBase() {
 
   @Test
   fun testTypeInsideIndentedCodeFenceInJsxBody() = checkTyping('x')
+
+  // --- Brace pairing beyond the JSX body: pinning tests for the brace-matcher redesign -----------
+  // (.air/plans/mdx-brace-matcher-redesign.plan.md, WEB-78468). Outside a JSX body, braces now
+  // auto-close and pair-delete through the platform's generic brace-matching mechanism. See
+  // MdxInlineHighlightingLexer and MdxHighlightingLexerBase for the optimistic unterminated-brace
+  // lexing that makes this possible. MdxBraceTypedHandler still exists. It still supplies the
+  // JSX-body case. Deleting it today regresses testTypeExpressionBraceInsideJsxBody.
+  // See the plan's Task 5 for that open item.
+
+  /**
+   * Pins the desired outcome for the user's prose example (WEB-78468).
+   * Typing `{` between two prose words auto-closes to `{}`, like any other bracket.
+   * See .air/plans/mdx-brace-matcher-redesign.plan.md.
+   */
+  @Test
+  fun testAutoCloseBraceBetweenMarkdownWords() = checkTyping('{')
+
+  /**
+   * Backspace on a balanced `{}` pair flanked by prose removes both braces (WEB-78468).
+   *
+   * Section 2.4 of the plan traces the root cause of the earlier failure. The platform's
+   * `BackspaceHandler` deletes the opener first. It then looks up the highlighter at that same
+   * offset, to decide whether to also delete the closer. With no preceding `{` left to claim it,
+   * the surviving `}` instantly reverted to plain Markdown text. The platform then found no brace
+   * matcher for it, and stopped after removing only the opener.
+   *
+   * The fix collapses an orphaned `}` into JS content too, in MdxInlineHighlightingLexer. This
+   * mirrors how a real JS lexer always tokenizes `}` as a real brace, matched or not.
+   */
+  @Test
+  fun testBackspaceRemovesEmptyBracePairBetweenMarkdownWords() = checkTyping('\b')
+
+  /**
+   * This test confirms Task 3 of .air/plans/mdx-brace-matcher-redesign.plan.md.
+   * A flow-level `{` should still get an eager finalize mid-document, not only at end-of-file.
+   * Typing `{` at the start of a line already auto-closes to `{}` today.
+   * This holds even with a further line of MDX content below it, not at end-of-file.
+   */
+  @Test
+  fun testAutoCloseBraceInMidDocumentFlowExpression() = checkTyping('{')
+
+  /**
+   * This test confirms Task 2 step 4 of .air/plans/mdx-brace-matcher-redesign.plan.md.
+   * That task treats a JSX attribute value as a separate follow-up.
+   * Typing `{` in an attribute value already auto-closes to `{}` today.
+   * This works through a path independent of MdxBraceTypedHandler's JSX-body-only guard.
+   * This test guards that existing behavior against regression.
+   */
+  @Test
+  fun testAutoCloseBraceInJsxAttributeValue() = checkTyping('{')
+
+  /** Typing `{` in an empty file must auto-close to `{}`, like the user's example 2 (WEB-78468). */
+  @Test
+  fun testAutoCloseBraceInEmptyFile() = checkTyping('{')
+
+  /** Typing `{` right after a trailing space at end-of-line must still auto-close to `{}`. */
+  @Test
+  fun testAutoCloseBraceAfterMarkdownText() = checkTyping('{')
+
+  /**
+   * Pins the Option-B outcome from .air/plans/mdx-brace-matcher-redesign.plan.md, section 2.3.
+   * Typing `{` right against a following character, with no separator, must insert only the opener.
+   * This matches `JSBraceMatcher.isPairedBracesAllowedBeforeType`: a real `.js` file does not
+   * auto-close `{` glued directly onto an identifier either. Do not change this to the permissive
+   * `prefix{<caret>}suffix` outcome; that outcome is deliberately rejected.
+   */
+  @Test
+  fun testAutoCloseBraceInMiddleOfMarkdownText() = checkTyping('{')
+
+  /** Typing `{` right before an existing `}` must not insert a second closer. */
+  @Test
+  fun testNoDuplicateCloseBraceBeforeExistingCloser() = checkTyping('{')
+
+  /** Backspace on a bare, unflanked empty `{}` pair must remove both braces in one keystroke. */
+  @Test
+  fun testBackspaceRemovesEmptyBracePair() = checkTyping('\b')
+
+  /** Typing `{` right inside an existing empty `{}` pair must nest a new pair inside it. */
+  @Test
+  fun testAutoCloseNestsInsideExistingEmptyPair() = checkTyping('{')
+
+  /** With pair insertion off, typing `{` must insert only the opener, everywhere in MDX. */
+  @Test
+  fun testNoAutoCloseBraceWhenPairInsertionDisabled() {
+    CodeInsightSettings.runWithTemporarySettings<Unit, Throwable> { settings ->
+      settings.AUTOINSERT_PAIR_BRACKET = false
+      checkTyping('{')
+    }
+  }
+
+  /**
+   * As [testNoAutoCloseBraceWhenPairInsertionDisabled], but inside a JSX element body (WEB-78468).
+   * `MdxBraceTypedHandler` is the sole source of auto-close in this context. An earlier version of
+   * the handler did not read this setting, so it kept inserting `}` even while the setting was off.
+   */
+  @Test
+  fun testNoAutoCloseBraceWhenPairInsertionDisabledInJsxBody() {
+    CodeInsightSettings.runWithTemporarySettings<Unit, Throwable> { settings ->
+      settings.AUTOINSERT_PAIR_BRACKET = false
+      checkTyping('{')
+    }
+  }
+
+  /** With pair insertion off, Backspace on an empty `{}` pair must delete only the opener. */
+  @Test
+  fun testNoPairedBackspaceWhenPairInsertionDisabled() {
+    CodeInsightSettings.runWithTemporarySettings<Unit, Throwable> { settings ->
+      settings.AUTOINSERT_PAIR_BRACKET = false
+      checkTyping('\b')
+    }
+  }
 
   // --- Formatter must not crash on transient/incomplete PSI (MdxFormattingModelBuilder) ----------
 
