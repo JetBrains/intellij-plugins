@@ -13,6 +13,7 @@ import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.ClassUtil
 import com.intellij.rt.coverage.data.ProjectData
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.coverage.CHANGED_LINES_ARTIFACT_ID
@@ -36,7 +37,7 @@ class ICCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
     val fileProvider = ICCoverageFileProvider(artifact.path)
     val changedLinesArtifact = artifacts[CHANGED_LINES_ARTIFACT_ID] as? ChangedLinesMetaDataArtifact
     val noFiltersSuite = engine.createCoverageSuite(artifact.id, project, runner, fileProvider, -1) ?: return null
-    val rawData = withContext(QodanaDispatchers.IO) {
+    val rawData = withContext(Dispatchers.IO) {
       noFiltersSuite.getCoverageData(CoverageDataManager.getInstance(project))
     } ?: return null
 
