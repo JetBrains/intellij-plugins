@@ -66,6 +66,39 @@ class MdxMarkdownCodeSpanScannerTest {
   }
 
   @Test
+  fun headingCodeSpansStartAfterThePreviousParagraph() {
+    for (depth in 1..6) {
+      for (prefix in listOf("", "> ")) {
+        val text = "${prefix}<A>\n${prefix}before `\n$prefix${"#".repeat(depth)} head `</A>`\n$prefix</A>"
+        val nodes = parseMdxNodes(text)
+        val jsx = nodes.single { it.type == MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT }
+        val code = nodes.single { it.type == MarkdownElementTypes.CODE_SPAN }
+
+        assertEquals(text.length, jsx.endOffset, text)
+        assertEquals("`</A>`", text.substring(code.startOffset, code.endOffset), text)
+        assertTrue(generateSequence(code.parent) { it.parent }.any { it.type.toString() == "Markdown:ATX_$depth" }, text)
+        assertTrue(generateSequence(code.parent) { it.parent }.any { it === jsx }, text)
+        assertEquals(listOf(text.lastIndexOf("</A>")), nodes.filter {
+          it.type == MdxMarkdownLibElementTypes.MDX_JSX_CLOSING_ELEMENT
+        }.map { it.startOffset }, text)
+      }
+    }
+  }
+
+  @Test
+  fun codeSpansFollowModifierAndSetextTransitions() {
+    for (middle in listOf("- item `</A>`", "> quote `</A>`", "---\nnext `</A>`")) {
+      val text = "<A>\nbefore `\n$middle\n</A>"
+      val nodes = parseMdxNodes(text)
+      val jsx = nodes.single { it.type == MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT }
+      val code = nodes.single { it.type == MarkdownElementTypes.CODE_SPAN }
+      assertEquals(text.length, jsx.endOffset, text)
+      assertEquals("`</A>`", text.substring(code.startOffset, code.endOffset), text)
+      assertTrue(generateSequence(code.parent) { it.parent }.any { it === jsx }, text)
+    }
+  }
+
+  @Test
   fun escapedBackticksCanCloseButCannotOpenCodeSpans() {
     val escapedOpener = "\\`not code`"
     val escapedCloser = "`code \\`"

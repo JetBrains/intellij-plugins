@@ -10,6 +10,7 @@ import org.intellij.markdown.parser.markerblocks.MarkerBlock
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 
 internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
+                                      private val ownership: MdxMarkdownOwnership,
                                       productionHolder: ProductionHolder,
                                       blockStartOffset: Int,
                                       blockStartIndent: Int,
@@ -24,7 +25,7 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
 ) {
   private val hasJsxParent = myConstraints is MdxJsxMarkdownConstraints
   private val jsxSession = MdxJsxScanner.Session(source, blockStartOffset)
-  private val codeSpanSession = MdxMarkdownCodeSpanScanner.Session(source, blockStartOffset)
+  private val codeSpanSession = MdxMarkdownCodeSpanScanner.Session(source, blockStartOffset, paragraphEnd = ownership::paragraphEnd)
   private var suppressSubBlocks = false
   private var processedProductionCount = initialProductionCount
   private var scannedLimit = blockStartOffset
@@ -38,6 +39,10 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
 
   override fun allowsSubBlocks(): Boolean {
     return !closeScheduled && !suppressSubBlocks && hasCompleteOpeningTag()
+  }
+
+  fun addMarkdownOpacity(range: TextRange) {
+    jsxSession.addOpaqueRanges(listOf(range))
   }
 
   override fun prepareForLine() {
@@ -95,7 +100,7 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
     if (element.termination == MdxJsxScanner.Termination.UNTERMINATED && currentEndOffset < source.length) {
       return emptyList()
     }
-    return MdxBlockNodeFactory.createFlowElementNodes(source, element)
+    return MdxBlockNodeFactory.createFlowElementNodes(element, paragraphRange = ownership.flowParagraphRange(element, constraints))
   }
 
   private fun hasCompleteOpeningTag(): Boolean {

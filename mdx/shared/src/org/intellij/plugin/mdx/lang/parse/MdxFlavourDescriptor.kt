@@ -59,6 +59,28 @@ private class MdxMarkerProcessor(
   constraints: MarkdownConstraints,
 ) :
   MarkdownDefaultMarkerProcessor(productionHolder, constraints) {
+  private val ownership = MdxMarkdownOwnership(::getMarkerBlockProviders)
+  private val providers by lazy {
+    buildList {
+      add(MdxHtmlCommentBlockProvider())
+      add(MdxBlockProvider(ownership))
+      add(MdxCodeFenceProvider())
+      addAll(super.getMarkerBlockProviders())
+      removeIf { it is HtmlBlockProvider }
+      removeIf { it is CodeBlockProvider }
+      removeIf { it is CodeFenceMarkerProvider && it !is MdxCodeFenceProvider }
+    }
+  }
+
+  override fun updateStateInfo(pos: LookaheadText.Position) {
+    super.updateStateInfo(pos)
+    if (pos.offsetInCurrentLine != -1 && pos.offset != 0) return
+    val constraints = if (pos.offsetInCurrentLine == -1) stateInfo.nextConstraints else stateInfo.currentConstraints
+    val fenceOpener = ownership.observeLine(pos, constraints) ?: return
+    for (marker in markersStack) {
+      if (marker is MdxJsxBlockMarkerBlock) marker.addMarkdownOpacity(fenceOpener)
+    }
+  }
 
   override fun populateConstraintsTokens(
     pos: LookaheadText.Position,
@@ -70,14 +92,5 @@ private class MdxMarkerProcessor(
     super.populateConstraintsTokens(pos, gfm, productionHolder)
   }
 
-  override fun getMarkerBlockProviders(): List<MarkerBlockProvider<StateInfo>> =
-    buildList {
-      add(MdxHtmlCommentBlockProvider())
-      add(MdxBlockProvider())
-      add(MdxCodeFenceProvider())
-      addAll(super.getMarkerBlockProviders())
-      removeIf { it is HtmlBlockProvider }
-      removeIf { it is CodeBlockProvider }
-      removeIf { it is CodeFenceMarkerProvider && it !is MdxCodeFenceProvider }
-    }
+  override fun getMarkerBlockProviders(): List<MarkerBlockProvider<StateInfo>> = providers
 }

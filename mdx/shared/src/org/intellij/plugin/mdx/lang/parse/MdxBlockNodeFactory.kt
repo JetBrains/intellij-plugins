@@ -6,14 +6,14 @@ import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 
 internal object MdxBlockNodeFactory {
   fun createFlowElementNodes(
-    text: CharSequence,
     element: MdxJsxScanner.Element,
     shift: Int = 0,
     includeRoot: Boolean = true,
+    paragraphRange: TextRange? = null,
   ): List<SequentialParser.Node> {
     val nodes = createElementNodes(element, shift).toMutableList()
-    flowChildParagraphRange(text, element)?.let {
-      nodes.add(SequentialParser.Node(it.shiftRight(shift).toMarkdownRange(), MarkdownElementTypes.PARAGRAPH))
+    paragraphRange?.let {
+      nodes.add(SequentialParser.Node(it.toMarkdownRange(), MarkdownElementTypes.PARAGRAPH))
     }
     if (includeRoot) {
       nodes.add(SequentialParser.Node(element.range.shiftRight(shift).toMarkdownRange(), MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT))
@@ -70,75 +70,6 @@ internal object MdxBlockNodeFactory {
     if (!range.isEmpty) {
       add(SequentialParser.Node(range.shiftRight(shift).toMarkdownRange(), MdxMarkdownLibTokenTypes.EMBEDDED_JS_CONTENT))
     }
-  }
-
-  private fun flowChildParagraphRange(text: CharSequence, element: MdxJsxScanner.Element): TextRange? {
-    val opening = element.tags.firstOrNull() ?: return null
-    val closing = element.tags.lastOrNull() ?: return null
-    if (opening.kind == MdxJsxScanner.TagKind.SELF_CLOSING || closing.kind != MdxJsxScanner.TagKind.CLOSING) {
-      return null
-    }
-
-    val contentStart = opening.range.endOffset
-    val contentEnd = closing.range.startOffset
-    if (contentStart >= contentEnd) {
-      return null
-    }
-
-    val firstLineEnd = lineEnd(text, contentStart, contentEnd)
-    if (text.subSequence(contentStart, firstLineEnd).isBlank()) {
-      return null
-    }
-
-    // Stop where the block parser starts a sibling block, or the paragraph ranges would overlap.
-    val regionEnd = firstParagraphBoundary(text, firstLineEnd, contentEnd) ?: contentEnd
-    // A continued paragraph keeps trailing spaces, while a single-line paragraph does not.
-    val paragraphEnd = if (regionEnd > firstLineEnd) trimTrailingLineBreaks(text, contentStart, regionEnd)
-                       else trimTrailingWhitespace(text, contentStart, regionEnd)
-    return if (contentStart < paragraphEnd) TextRange(contentStart, paragraphEnd) else null
-  }
-
-  private fun firstParagraphBoundary(text: CharSequence, firstLineEnd: Int, limit: Int): Int? {
-    var lineStart = nextLineStart(text, firstLineEnd, limit)
-    while (lineStart < limit) {
-      val lineEnd = lineEnd(text, lineStart, limit)
-      if (text.subSequence(lineStart, lineEnd).isBlank()) {
-        return lineStart
-      }
-      if (MdxMarkdownFenceScanner.findEnd(text, lineStart, limit) != -1) {
-        return lineStart
-      }
-      lineStart = nextLineStart(text, lineEnd, limit)
-    }
-    return null
-  }
-
-  private fun lineEnd(text: CharSequence, start: Int, limit: Int): Int {
-    var offset = start
-    while (offset < limit && text[offset] != '\n') {
-      offset++
-    }
-    return offset
-  }
-
-  private fun nextLineStart(text: CharSequence, lineEnd: Int, limit: Int): Int {
-    return if (lineEnd < limit && text[lineEnd] == '\n') lineEnd + 1 else limit
-  }
-
-  private fun trimTrailingWhitespace(text: CharSequence, start: Int, end: Int): Int {
-    var offset = end
-    while (offset > start && text[offset - 1].isWhitespace()) {
-      offset--
-    }
-    return offset
-  }
-
-  private fun trimTrailingLineBreaks(text: CharSequence, start: Int, end: Int): Int {
-    var offset = end
-    while (offset > start && (text[offset - 1] == '\n' || text[offset - 1] == '\r')) {
-      offset--
-    }
-    return offset
   }
 
 }

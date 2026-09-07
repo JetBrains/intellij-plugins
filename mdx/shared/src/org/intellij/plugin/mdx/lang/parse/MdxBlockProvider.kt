@@ -8,7 +8,7 @@ import org.intellij.markdown.parser.markerblocks.MarkerBlock
 import org.intellij.markdown.parser.markerblocks.MarkerBlockProvider
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 
-class MdxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
+internal class MdxBlockProvider(private val ownership: MdxMarkdownOwnership) : MarkerBlockProvider<MarkerProcessor.StateInfo> {
   override fun createMarkerBlocks(pos: LookaheadText.Position,
                                   productionHolder: ProductionHolder,
                                   stateInfo: MarkerProcessor.StateInfo): List<MarkerBlock> {
@@ -34,7 +34,12 @@ class MdxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
             localText.subSequence(element.range.endOffset, localText.length).isBlank()) {
           ImmediateBlock(
             MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT,
-            MdxBlockNodeFactory.createFlowElementNodes(localText, element, absoluteStart, includeRoot = false),
+            MdxBlockNodeFactory.createFlowElementNodes(
+              element,
+              absoluteStart,
+              includeRoot = false,
+              paragraphRange = ownership.flowParagraphRange(element, stateInfo.currentConstraints, absoluteStart),
+            ),
           )
         }
         else null
@@ -63,6 +68,7 @@ class MdxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
     val marker = when (start.kind) {
       MdxBlockKind.JSX -> MdxJsxBlockMarkerBlock(
         stateInfo.currentConstraints,
+        ownership,
         productionHolder,
         absoluteStart,
         pos.offsetInCurrentLine + start.offsetInLine,
