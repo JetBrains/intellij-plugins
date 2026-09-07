@@ -54,7 +54,7 @@ class VueLibraryImpl(
 
   private val componentsWithProximity: Pair<VueModelVisitor.Proximity, Map<String, VueNamedComponent>>
     get() = CachedValuesManager.getManager(project).getCachedValue(this) {
-      val dependencies = getVueSymbolsCacheDependencies(project, withPsiModTracker = false)
+      val dependencies = getVueSymbolsCacheDependencies(project, withPsiModificationTracker = false)
         .toMutableList()
       dependencies.add(packageJsonFile)
       val psiDirectory = source

@@ -43,13 +43,13 @@ internal fun isVueComponentQuery(name: String): Boolean {
 
 internal fun getVueSymbolsCacheDependencies(
   project: Project,
-  withPsiModTracker: Boolean = true,
+  withPsiModificationTracker: Boolean = true,
 ): Set<Any> =
   setOfNotNull(
-    PsiModificationTracker.MODIFICATION_COUNT.takeIf { withPsiModTracker },
+    PsiModificationTracker.MODIFICATION_COUNT.takeIf { withPsiModificationTracker },
     VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-    DumbService.getInstance(project).modificationTracker.takeIf { !withPsiModTracker },
-    StubIndex.getInstance().getStubIndexModificationTracker(project).takeIf { !withPsiModTracker },
+    DumbService.getInstance(project).modificationTracker.takeIf { !withPsiModificationTracker },
+    StubIndex.getInstance().getStubIndexModificationTracker(project).takeIf { !withPsiModificationTracker },
     NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
     project.service<TypeScriptConfigService>().graphModificationTracker,
   )
