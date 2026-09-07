@@ -15,6 +15,7 @@ import com.intellij.formatting.templateLanguages.TemplateLanguageBlock
 import com.intellij.formatting.templateLanguages.TemplateLanguageBlockFactory
 import com.intellij.formatting.templateLanguages.TemplateLanguageFormattingModelBuilder
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
@@ -27,6 +28,7 @@ import com.intellij.psi.templateLanguages.SimpleTemplateLanguageFormattingModelB
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.text.CharArrayUtil
 import org.intellij.plugin.mdx.lang.parse.MdxElementTypes
 import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
 import org.intellij.plugin.mdx.lang.template.MdxTemplateElementTypes
@@ -249,9 +251,11 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
     }
 
     override fun getIndent(): Indent? {
-      // Content nested inside a foreign XmlTag is already indented by that tag's own XmlTagBlock; if this
-      // template block also indented, foreign-nested content would double-indent (e.g. <div><div><div>).
-      // So the template layer contributes no indent of its own and defers to the foreign formatter.
+      getListItemChildIndent()?.let { return it }
+      if (myNode.elementType in MarkdownTokenTypeSets.LISTS || myNode.elementType === MarkdownElementTypes.BLOCK_QUOTE) {
+        val tag = getForeignBlockParent()?.node?.psi as? XmlTag
+        if (tag != null && myJsxPolicy.indentChildrenOf(tag)) return Indent.getNormalIndent()
+      }
       if (MarkdownCodeFenceUtils.isCodeFence(myNode)) {
         val flowType = MdxElementTypes.MDX_JSX_FLOW_ELEMENT
         var ancestor = myNode.treeParent
@@ -261,6 +265,27 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
         }
       }
       return Indent.getNoneIndent()
+    }
+
+    private fun getListItemChildIndent(): Indent? {
+      val parentItem = myNode.treeParent?.takeIf { it.elementType === MarkdownElementTypes.LIST_ITEM } ?: return null
+      if (getForeignBlockParent() == null) return null
+      val document = myNode.psi.containingFile.viewProvider.document ?: return null
+      val indent = contentColumn(myNode, document) - contentColumn(parentItem, document)
+      // Paragraphs start after the marker. Apply their offset to continuation lines too.
+      return Indent.getIndent(Indent.Type.SPACES, indent.coerceAtLeast(0), false, true)
+    }
+
+    private fun contentColumn(node: ASTNode, document: Document): Int {
+      val text = document.immutableCharSequence
+      val offset = CharArrayUtil.shiftForward(text, node.startOffset, " \t")
+      val lineStart = document.getLineStartOffset(document.getLineNumber(offset))
+      // Markdown uses tab stops every four columns.
+      var column = 0
+      for (index in lineStart..<offset) {
+        column += if (text[index] == '\t') 4 - column % 4 else 1
+      }
+      return column
     }
 
     override fun isLeaf(): Boolean {
@@ -284,9 +309,7 @@ internal class MdxFormattingModelBuilder : TemplateLanguageFormattingModelBuilde
     }
 
     override fun getSpacing(child1: Block?, child2: Block): Spacing? {
-      // Read-only spacing preserves a top-level Markdown list's relative item depth, but a list inside a JSX
-      // flow element must be re-indented to the element's body level by the foreign XmlTagBlock instead —
-      // freezing it there would leave later items flush while the first indents.
+      // Lists inside JSX follow the body indentation. Other lists preserve their spacing.
       if (isMarkdownListNode(myNode) && getForeignBlockParent() == null) {
         return Spacing.getReadOnlySpacing()
       }

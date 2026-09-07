@@ -42,6 +42,16 @@ class MdxBlockProviderTest {
   private fun ASTNode.text(source: String): String = source.substring(startOffset, endOffset)
 
   @Test
+  fun jsxInListDoesNotOutliveItsItemAfterDedent() {
+    val text = "<div>\n    - outer\n\n      <section>\n  - inner\n    - child\n  </section>\n- sibling\n</div>"
+    val nodes = parseMdxNodes(text)
+    val jsx = nodes.first { it.type == MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT }
+    assertEquals(0, jsx.startOffset)
+    assertEquals(text.length, jsx.endOffset)
+    assertTrue(nodes.any { it.type == MarkdownElementTypes.LIST_ITEM && it.text(text).trim() == "- sibling" })
+  }
+
+  @Test
   fun blockquoteDedentsInsideJsxKeepTheirParents() {
     for (indent in listOf("", "  ", "    ", "      ", "\t")) {
       val text = "<Box>\n$indent> outer\n$indent> > inner\n$indent>\n$indent> after\n</Box>"

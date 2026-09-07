@@ -24,6 +24,7 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   initialText,
 ) {
   private val hasJsxParent = myConstraints is MdxJsxMarkdownConstraints
+  private val markdownConstraints = (myConstraints as? MdxJsxMarkdownConstraints)?.markdownConstraints() ?: myConstraints
   private val jsxSession = MdxJsxScanner.Session(source, blockStartOffset)
   private val codeSpanSession = MdxMarkdownCodeSpanScanner.Session(source, blockStartOffset, paragraphEnd = ownership::paragraphEnd)
   private var suppressSubBlocks = false
@@ -68,9 +69,12 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   }
 
   override fun shouldAppendLine(pos: LookaheadText.Position, candidateEndOffset: Int): Boolean {
+    val nextConstraints = constraints.applyToNextLine(pos)
+    // A JSX block cannot continue after its Markdown container ends.
+    if (!nextConstraints.extendsPrev(markdownConstraints)) return false
     val element = scanElement(candidateEndOffset)
     return element?.termination?.let { it != MdxJsxScanner.Termination.UNTERMINATED } == true ||
-           constraints.applyToNextLine(pos).extendsPrev(constraints) ||
+           nextConstraints.extendsPrev(constraints) ||
            element != null
   }
 
