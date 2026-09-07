@@ -1,6 +1,10 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.mdx.backend` start
+content_module_jar(module = ":backend")
+### auto-generated section `dev intellij.mdx.backend` end
+
 ### auto-generated section `build intellij.mdx.backend` start
 jvm_library(
     name = "backend",
@@ -54,8 +58,6 @@ jvm_library(
         "@community//xml/xml-psi-impl:psi-impl",
     ],
 )
-
-content_module_jar(module = ":backend")
 
 jvm_library(
     name = "backend_test_lib",
