@@ -3,6 +3,7 @@
   <dependencies>
     <plugin id="org.jetbrains.plugins.go"/>
     <module name="intellij.go.coverage"/>
+    <module name="intellij.go.impl"/>
     <module name="intellij.platform.collaborationTools"/>
     <module name="intellij.platform.analysis"/>
     <module name="intellij.platform.core"/>
