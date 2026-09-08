@@ -60,7 +60,10 @@ import java.util.Locale
 
 class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
 
-  override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
+  override fun processQuery(
+    queryParameters: ReferencesSearch.SearchParameters,
+    consumer: Processor<in PsiReference>,
+  ) {
     val element = queryParameters.elementToSearch
     val elementName = (element as? JSPsiNamedElementBase)?.name
 
@@ -225,8 +228,10 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
   }
 }
 
-private class ScriptSetupImportProcessor(target: PsiElement, queryParameters: ReferencesSearch.SearchParameters)
-  : JSFindReferencesResultProcessor(target, queryParameters) {
+private class ScriptSetupImportProcessor(
+  target: PsiElement,
+  queryParameters: ReferencesSearch.SearchParameters,
+) : JSFindReferencesResultProcessor(target, queryParameters) {
   override fun proceedWithReference(
     element: PsiElement,
     collector: SearchRequestCollector,
