@@ -7,7 +7,7 @@ import com.intellij.util.messages.Topic
 @FunctionalInterface
 interface SerialPortsListener {
 
-  @RequiresBackgroundThread
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   fun portsStatusChanged()
 
   companion object {

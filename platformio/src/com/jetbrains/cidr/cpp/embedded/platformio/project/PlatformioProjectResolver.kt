@@ -448,7 +448,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
   private class RunPlatformioExitcodeException(exitCode: Int) : RunPlatformioException(ClionEmbeddedPlatformioBundle.message("platformio.utility.exit.code", exitCode), null)
 
   @Throws(RunPlatformioException::class)
-  @RequiresBackgroundThread
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   private fun runPio(id: ExternalSystemTaskId,
                      pioRunEventId: String,
                      project: Project,

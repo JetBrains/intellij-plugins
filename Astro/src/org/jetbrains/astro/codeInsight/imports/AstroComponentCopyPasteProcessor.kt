@@ -36,30 +36,30 @@ class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponen
   override val dataFlavor: DataFlavor
     get() = ASTRO_COMPONENT_IMPORTS_FLAVOR
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun isAcceptableCopyContext(file: PsiFile, contextElements: List<PsiElement>): Boolean {
     val settings = JSApplicationSettings.getInstance()
     return file is AstroFileImpl && settings.isUseTypeScriptAutoImport
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
     context.containingFile is AstroFileImpl
     && context.parentOfType<AstroFrontmatterScript>(withSelf = true) == null
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun hasUnsupportedContentInCopyContext(parent: PsiElement, textRange: TextRange): Boolean =
     parent.frontmatterScript()
       ?.let { textRange.intersects(it.textRange) } != false
 
-  @RequiresReadLock
-  @RequiresBackgroundThread
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   override fun alreadyHasImport(actualImportedName: String, importedElement: ImportedElement, scope: PsiElement): Boolean =
     scope.frontmatterScript()
       ?.let { super.alreadyHasImport(actualImportedName, importedElement, it) } == true
 
-  @RequiresReadLock
-  @RequiresBackgroundThread
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   override fun processTextRanges(textRanges: List<Pair<PsiElement, TextRange>>): Set<ImportedElement> {
     ThreadingAssertions.assertReadAccess()
     ThreadingAssertions.assertBackgroundThread()
@@ -87,19 +87,19 @@ class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponen
     return result
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     super.getExportScope(file, caret)
     ?: WriteAction.compute<PsiElement, Throwable> {
       AstroComponentSourceEdit.getOrCreateFrontmatterScript(file)
     }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): AstroComponentImportsTransferableData =
     AstroComponentImportsTransferableData(importedElementsDeferred)
 
-  @RequiresReadLock
-  @RequiresBackgroundThread
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   override fun prepareInsertingRequiredImports(
     pasteContext: PsiElement,
     data: AstroComponentImportsTransferableData,

@@ -55,7 +55,7 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
   override val dataFlavor: DataFlavor
     get() = VUE_COMPONENT_IMPORTS_FLAVOR
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun isAcceptableCopyContext(file: PsiFile, contextElements: List<PsiElement>): Boolean {
     val settings = JSApplicationSettings.getInstance()
     return file is VueFile
@@ -66,13 +66,13 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
              }
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
     context.containingFile is VueFile
     && context.parentOfTypes(JSExecutionScope::class, XmlTag::class, PsiFile::class, withSelf = true)
       .let { (it !is JSExecutionScope || it is XmlElement) && it != null }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun hasUnsupportedContentInCopyContext(parent: PsiElement, textRange: TextRange): Boolean {
     var result = false
     parent.acceptChildren(object : JSRecursiveWalkingElementVisitor() {
@@ -86,14 +86,14 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
     return result && isAcceptablePasteContext(parent)
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     super.getExportScope(file, caret)
     ?: WriteAction.compute<PsiElement, Throwable> {
       VueComponentSourceEdit.getOrCreateScriptScope(VueModelManager.findEnclosingContainer(file))
     }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun collectTransferableData(
     rangesWithParents: List<Pair<PsiElement, TextRange>>,
     project: Project,
@@ -149,11 +149,11 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
     }
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): VueComponentImportsTransferableData =
     throw UnsupportedOperationException()
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun processTransferableData(
     values: List<VueComponentImportsTransferableData>,
     exportScope: PsiElement,
@@ -170,8 +170,8 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
     }
   }
 
-  @RequiresReadLock
-  @RequiresBackgroundThread
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   override fun prepareInsertingRequiredImports(
     pasteContext: PsiElement,
     data: VueComponentImportsTransferableData,

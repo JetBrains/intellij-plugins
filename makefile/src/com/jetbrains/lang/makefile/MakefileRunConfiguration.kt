@@ -77,7 +77,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     }
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun getState(executor: Executor, executionEnvironment: ExecutionEnvironment): RunProfileState {
     val makeSettings = project.getService(MakefileProjectSettings::class.java).settings
     val makePath = makeSettings?.path ?: DEFAULT_MAKE_PATH
@@ -107,7 +107,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
    * @throws ExecutionException if WSL is requested but is not installed, or the
    *   requested Linux distribution is missing.
    */
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   @Throws(ExecutionException::class)
   private fun newCommandLine(localMakePath: String, useCygwin: Boolean): GeneralCommandLine =
     when (val remoteMakePath = WslPath.parseWindowsUncPath(windowsUncPath = localMakePath)) {
@@ -115,7 +115,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
       else -> newCommandLineWsl(remoteMakePath)
     }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   private fun newCommandLineLocal(localMakePath: @NlsSafe String, useCygwin: Boolean): GeneralCommandLine {
     val macroManager = PathMacroManager.getInstance(project)
 
@@ -152,7 +152,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
    * @throws ExecutionException if WSL is not installed, or the requested Linux
    *   distribution is missing.
    */
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   @Throws(ExecutionException::class)
   private fun newCommandLineWsl(remoteMakePath: WslPath): GeneralCommandLine {
     val distribution = remoteMakePath.distribution
@@ -308,7 +308,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
       else -> this
     }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   private fun customizeCommandAndEnvironment(command: Array<@NlsSafe String>,
                                              environment: MutableMap<@NlsSafe String, @NlsSafe String>): Array<@NlsSafe String> {
     val extensions = MakefileRunConfigurationCustomizer.EP_NAME.extensionList
@@ -319,7 +319,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     return extensions.firstOrNull()?.customizeCommandAndEnvironment(project, command, environment) ?: command
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   private inline fun Logger.debugInBackground(crossinline lazyMessage: () -> @NonNls String) {
     if (isDebugEnabled) {
       ApplicationManager.getApplication().executeOnPooledThread {

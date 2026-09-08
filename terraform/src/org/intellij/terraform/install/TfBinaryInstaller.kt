@@ -42,7 +42,7 @@ private const val USER_PATH_VALUE_NAME = "Path"
 @Service(Service.Level.PROJECT)
 internal class TfBinaryInstaller(val scope: CoroutineScope) {
 
-  @RequiresBackgroundThread
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   fun runInstallation(binaryName: String, urlProvider: String, installDirectory: Path?): InstallationResult {
     if (binaryName.isEmpty()) {
       logger<TfBinaryInstaller>().error("No binary name provided")

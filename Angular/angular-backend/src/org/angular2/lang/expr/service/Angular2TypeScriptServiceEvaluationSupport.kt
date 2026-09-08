@@ -9,7 +9,7 @@ import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 
 interface Angular2TypeScriptServiceEvaluationSupport : TypeScriptServiceEvaluationSupport {
 
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   fun getGeneratedElementType(transpiledFile: TranspiledDirectiveFile, templateFile: PsiFile, generatedRange: TextRange): JSType?
 
 }

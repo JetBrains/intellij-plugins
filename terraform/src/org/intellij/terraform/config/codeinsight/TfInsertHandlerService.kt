@@ -83,7 +83,7 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
 
   }
 
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   internal fun addBlockRequiredProperties(file: PsiFile, editor: Editor, project: Project) {
     val blockPointer = PsiTreeUtil.getParentOfType(file.findElementAt(editor.caretModel.offset),
                                                    HCLBlock::class.java)?.createSmartPointer() ?: return
@@ -127,7 +127,7 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
     return fixPairs
   }
 
-  @RequiresWriteLock
+  @RequiresWriteLock(generateAssertion = false /* IJPL-115548 */)
   internal fun addRequiredProvidersBlockToConfig(provider: ProviderType, existingTerraformBlock: HCLBlock?, file: PsiFile) {
     val elementGenerator = TfElementGenerator(project)
     val terraformBlock = (existingTerraformBlock

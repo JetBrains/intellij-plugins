@@ -106,7 +106,7 @@ object Angular2FixesFactory {
   }
 
   @JvmStatic
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   fun ensureDeclarationResolvedAfterCodeCompletion(element: PsiElement, editor: Editor) {
     val elementPtr = element.createSmartPointer()
     JSImportsCoroutineScope.get(element.project).launch {

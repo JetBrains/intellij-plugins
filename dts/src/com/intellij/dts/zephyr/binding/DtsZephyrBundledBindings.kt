@@ -36,7 +36,7 @@ class DtsZephyrBundledBindings(scope: CoroutineScope) {
   @TestOnly
   suspend fun awaitInit(): Unit = bindings.join()
 
-  @RequiresBackgroundThread
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   fun getSource(): BindingSource? {
     ThreadingAssertions.assertBackgroundThread()
 

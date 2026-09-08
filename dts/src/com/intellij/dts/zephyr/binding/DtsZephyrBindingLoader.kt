@@ -35,7 +35,7 @@ private fun loadFileData(text: String): Map<*, *>? {
   return null
 }
 
-@RequiresBackgroundThread
+@RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
 fun loadExternalBindings(root: Path): Map<String, BindingFile> {
   ThreadingAssertions.assertBackgroundThread()
   ManagingFS.getInstance().flushPendingUpdates()
@@ -62,7 +62,7 @@ fun loadExternalBindings(root: Path): Map<String, BindingFile> {
   return bindings
 }
 
-@RequiresBackgroundThread
+@RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
 fun loadBundledBindings(dir: VirtualFile): Map<String, BindingFile> {
   ThreadingAssertions.assertBackgroundThread()
 

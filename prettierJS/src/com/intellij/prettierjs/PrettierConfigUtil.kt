@@ -8,7 +8,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import kotlinx.coroutines.future.await
 
-@RequiresReadLock
+@RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
 internal suspend fun resolveConfigForFile(file: PsiFile): PrettierLanguageService.ResolveConfigResult? {
   val project = file.project
   val filePath = if (file.isValid) file.virtualFile.path else null

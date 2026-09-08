@@ -7,7 +7,7 @@ import com.jetbrains.lang.makefile.MakefileRunConfigurationCustomizer
 import org.jetbrains.plugins.terminal.LocalTerminalCustomizer
 
 class TerminalRunConfigurationCustomizer : MakefileRunConfigurationCustomizer {
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun customizeCommandAndEnvironment(project: Project, command: Array<@NlsSafe String>, environment: MutableMap<@NlsSafe String, @NlsSafe String>): Array<@NlsSafe String> {
     /*
      * The result of last successful invocation, needed for the fail-safe scenario.

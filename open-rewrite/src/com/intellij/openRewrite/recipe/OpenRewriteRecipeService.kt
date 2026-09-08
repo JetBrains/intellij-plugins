@@ -115,16 +115,16 @@ internal open class OpenRewriteRecipeService(private val project: Project, priva
   override fun dispose() {
   }
 
-  @RequiresReadLock
-  @RequiresBackgroundThread
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   fun getDescriptors(psiFile: PsiFile?, type: OpenRewriteType): Collection<OpenRewriteRecipeDescriptor> {
     val descriptors = getLibraryDescriptors(type)
     val fileDescriptors = psiFile?.let { getCachedLocalDescriptors(it, type) } ?: emptyMap()
     return if (fileDescriptors.isEmpty()) descriptors.values else fileDescriptors.values + descriptors.values
   }
 
-  @RequiresReadLock
-  @RequiresBackgroundThread
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   fun findDescriptor(name: String, psiFile: PsiFile?, type: OpenRewriteType): OpenRewriteRecipeDescriptor? {
     if (psiFile != null) {
       val localDescriptor = getCachedLocalDescriptors(psiFile, type)[name]
@@ -135,8 +135,8 @@ internal open class OpenRewriteRecipeService(private val project: Project, priva
     return getLibraryDescriptors(type)[name]
   }
 
-  @RequiresReadLock
-  @RequiresBackgroundThread
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   fun getLocalDescriptors(psiFile: PsiFile, type: OpenRewriteType): Collection<OpenRewriteRecipeDescriptor> {
     return getCachedLocalDescriptors(psiFile, type).values
   }

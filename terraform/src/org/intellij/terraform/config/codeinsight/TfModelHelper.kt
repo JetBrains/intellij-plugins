@@ -284,7 +284,7 @@ internal object TfModelHelper {
     return actionType?.configs ?: emptyMap()
   }
 
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   fun getAllTypesForBlockByIdentifier(blockPointer: SmartPsiElementPointer<HCLBlock>): List<BlockType> {
     val block = blockPointer.element ?: return emptyList()
     val typeString = block.getNameElementUnquoted(0) ?: return emptyList()

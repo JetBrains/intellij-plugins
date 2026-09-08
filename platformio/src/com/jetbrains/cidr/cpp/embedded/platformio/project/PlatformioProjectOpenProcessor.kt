@@ -39,7 +39,7 @@ class PlatformioProjectOpenProcessor : CidrProjectOpenProcessor(PlatformioProjec
     return project
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   fun linkPlatformioProject(project: Project, projectPath: VirtualFile) {
     // default project settings
     val settings = PlatformioProjectSettings.default()
