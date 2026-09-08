@@ -65,6 +65,9 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
     consumer: Processor<in PsiReference>,
   ) {
     val element = queryParameters.elementToSearch
+      .takeIf { isVueContext(it) }
+      ?: return
+
     val elementName = (element as? JSPsiNamedElementBase)?.name
 
     if (elementName != null) {
