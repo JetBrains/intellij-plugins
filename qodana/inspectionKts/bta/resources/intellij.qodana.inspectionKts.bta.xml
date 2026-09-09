@@ -11,7 +11,7 @@
     <module name="intellij.platform.ide"/>
     <module name="intellij.platform.ide.core"/>
     <module name="intellij.platform.ide.progress"/>
-    <module name="intellij.qodana.inspectionKts.api"/>
+    <module name="intellij.qodana.inspectionKts.base"/>
   </dependencies>
   <!-- endregion -->
 

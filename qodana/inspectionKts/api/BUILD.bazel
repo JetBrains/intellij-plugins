@@ -1,13 +1,13 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
-### auto-generated section `dev intellij.qodana.inspectionKts.api` start
-content_module_jar(module = ":api")
-### auto-generated section `dev intellij.qodana.inspectionKts.api` end
+### auto-generated section `dev intellij.qodana.inspectionKts.base` start
+content_module_jar(module = ":qodana-inspectionKts-base")
+### auto-generated section `dev intellij.qodana.inspectionKts.base` end
 
-### auto-generated section `build intellij.qodana.inspectionKts.api` start
+### auto-generated section `build intellij.qodana.inspectionKts.base` start
 jvm_library(
-    name = "api",
+    name = "qodana-inspectionKts-base",
     srcs = glob(
         [
             "src/**/*.kt",
@@ -16,7 +16,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    module_name = "intellij.qodana.inspectionKts.api",
+    module_name = "intellij.qodana.inspectionKts.base",
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],
@@ -25,6 +25,7 @@ jvm_library(
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
+        "@community//platform/backend",
         "@community//platform/analysis-api:analysis",
         "@community//platform/analysis-impl",
         "@community//platform/core-api:core",
@@ -48,17 +49,18 @@ jvm_library(
 )
 
 jvm_library(
-    name = "api_test_lib",
+    name = "qodana-inspectionKts-base_test_lib",
     testonly = True,
     srcs = glob(
         [],
         allow_empty = True,
     ),
-    module_name = "intellij.qodana.inspectionKts.api",
+    module_name = "intellij.qodana.inspectionKts.base",
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
-        ":api",
+        ":qodana-inspectionKts-base",
+        "@community//platform/backend:backend_test_lib",
         "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/analysis-impl:analysis-impl_test_lib",
         "@community//platform/core-api:core_test_lib",
@@ -80,14 +82,14 @@ jvm_library(
         "@community//libraries/jackson/dataformat-yaml:libraries-jackson-dataformat-yaml_test_lib",
     ],
 )
-### auto-generated section `build intellij.qodana.inspectionKts.api` end
+### auto-generated section `build intellij.qodana.inspectionKts.base` end
 
-### auto-generated section `iml intellij.qodana.inspectionKts.api` start
+### auto-generated section `iml intellij.qodana.inspectionKts.base` start
 exports_files(
     [
-        "intellij.qodana.inspectionKts.api.iml",
-        "resources/intellij.qodana.inspectionKts.api.xml",
+        "intellij.qodana.inspectionKts.base.iml",
+        "resources/intellij.qodana.inspectionKts.base.xml",
     ],
     visibility = ["//visibility:public"],
 )
-### auto-generated section `iml intellij.qodana.inspectionKts.api` end
+### auto-generated section `iml intellij.qodana.inspectionKts.base` end
