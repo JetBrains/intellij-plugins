@@ -2,13 +2,13 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
-import com.intellij.lang.javascript.typescript.TypeScriptLineMarkersTest
+import com.intellij.lang.javascript.typescript.TypeScriptLineMarkersTestBase
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.vuejs.lang.html.VueFileType
 
-class VueTypeScriptLineMarkersTest : TypeScriptLineMarkersTest() {
+class VueTypeScriptLineMarkersTest : TypeScriptLineMarkersTestBase() {
 
   private val localVarsMap = mapOf(
     Pair("propertyMarker", listOf("interfacePropertyMarker")),
