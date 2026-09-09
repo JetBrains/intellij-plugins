@@ -62,7 +62,6 @@ private class MdxMarkerProcessor(
   private val ownership = MdxMarkdownOwnership(::getMarkerBlockProviders)
   private val providers by lazy {
     buildList {
-      add(MdxHtmlCommentBlockProvider())
       add(MdxBlockProvider(ownership))
       add(MdxCodeFenceProvider())
       addAll(super.getMarkerBlockProviders())

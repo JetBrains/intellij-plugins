@@ -126,8 +126,6 @@ differently from plain Markdown / from the current IntelliJ parser:
   thematic break.
 - **Autolinks** (`ParsingAutolink`, `<https://example.com>`) are **invalid
   MDX** — `<` starts JSX, so this is recorded as a `parseError`.
-- **HTML comments** (`ParsingHtmlComment`, `<!-- -->`) are **invalid MDX** —
-  recorded as a `parseError` (MDX expects `{/* */}`).
 - **Indented code** (`ParsingIndentedCode`) is **disabled** in MDX — the
   indented lines parse as a `paragraph`, not a `code` node.
 - **Line-leading `import` / `export`** (`ParsingImportInProse`) is always

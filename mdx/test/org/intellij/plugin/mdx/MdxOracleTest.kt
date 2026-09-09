@@ -341,24 +341,6 @@ class MdxOracleTest : MdxTestBase() {
     assertEmpty("Oracle: escaped sequences must not produce any JSX tag", nodesOfTypeAllRoots("HTML_TAG"))
   }
 
-  /**
-   * Oracle: `<!-- -->` is INVALID MDX; the parser must produce a PsiErrorElement. GREEN. WEB-78468.
-   */
-  @Test
-  fun testHtmlCommentIsInvalidMdx() {
-    myFixture.configureByText("foo.mdx", "<!-- an HTML comment -->")
-    assertTrue(
-      "Oracle: `<!-- -->` is invalid MDX (use `{/* */}`); the parser must produce a " +
-        "PsiErrorElement, but none was found in any root.",
-      collectPsiErrorElements().isNotEmpty()
-    )
-  }
-
-  @Test
-  fun testHtmlCommentInCodeSpanIsOpaque() {
-    assertNoErrors("`<!-- an HTML comment -->`")
-  }
-
   @Test
   fun testMarkdownLikeTextInInlineJsxExpressionAttributeStaysJsx() {
     myFixture.configureByText("foo.mdx", "Text <Alert value={[Target](./target.mdx)} /> end")

@@ -45,10 +45,8 @@ features for the ranges selected from that structure.
 `MarkdownParserAdapter(MdxFlavourDescriptor)` then builds PSI from those tokens.
 
 `MdxFlavourDescriptor` extends CommonMark and delegates GFM inline behavior to
-`GFMFlavourDescriptor`. Its marker and inline parser order makes three MDX-specific changes:
+`GFMFlavourDescriptor`. Its marker and inline parser order makes two MDX-specific changes:
 
-- `MdxHtmlCommentBlockProvider` gives closed multiline HTML comments an opaque block owner while
-  leaving single-line HTML comments invalid MDX.
 - `MdxBlockProvider` runs before the standard block providers. `MdxCodeFenceProvider` replaces the
   standard fence provider so an unclosed fence can recover at the active JSX boundary. The general
   raw-HTML and indented-code providers are removed because MDX disables those constructs.
@@ -73,7 +71,7 @@ finalization lifecycle in `MdxBlockMarkerBlock`, but use separate ownership poli
   stack, incremental tag or expression parser, accumulated syntax ranges, and incrementally merged
   opacity. `MdxJsxTagParser` advances the tag grammar directly; it does not pre-scan and then replay
   a completed tag. Ambiguous malformed expressions fork only the candidates admitted by the shared
-  recovery budget. Finalized code-fence and HTML-comment productions, together with provisional
+  recovery budget. Finalized code-fence productions, together with provisional
   flow code spans, are added as explicit opaque ranges. When a code-span opener is observed, the
   remaining eligible paragraph segment is indexed once. Late opacity can replay the one line
   observed before a child marker took ownership and roll back syntax collected from that line.
@@ -106,8 +104,8 @@ paragraph projection share this information. This replaces separate guesses abou
 blockquotes, and fences.
 
 `MdxMarkerProcessor.updateStateInfo` announces fence-opener opacity before existing JSX markers scan the line.
-This protects JSX closers inside the fence info string. Completed fence and HTML-comment productions
-then provide their full opaque ranges.
+This protects JSX closers inside the fence info string. Completed fence productions then provide
+their full opaque ranges.
 
 `MdxBlockNodeFactory` converts JSX and ESM results to Markdown nodes. It receives any leading paragraph
 range from `MdxMarkdownOwnership`. Recognition and node projection remain separate.
@@ -145,7 +143,6 @@ Flow parsing keeps the existing block-marker owners and avoids duplicate owners 
 | `MdxCodeFenceProvider` | Standard fence ownership plus recovery from an unclosed fence at an active JSX closer |
 | `MdxMarkdownOwnership` | Shared paragraph boundaries and early fence-opener opacity from real Markdown constraints and providers |
 | `MdxMarkdownCodeSpanScanner` | Provisional flow code-span opacity before paragraph inline parsing runs |
-| `MdxHtmlCommentBoundary` | Closed multiline HTML-comment boundaries shared by block and JSX scanning |
 
 `MdxExpressionBoundaryScanner` and `MdxEsmScanner` delegate strings, templates, comments, regular
 expressions, and nested JSX tokenization to `JSFlexAdapter` through a prefix-bounded lexer. Sessions
@@ -199,15 +196,11 @@ The projection performs these steps:
 2. Collect and merge code blocks, code fences, and code spans as ordered opaque Markdown ranges.
 3. Sweep the ordered roots and opaque ranges once, subtracting opacity from JSX roots while
    retaining ESM and expression roots whole. Each resulting piece keeps its root kind.
-4. Classify HTML comments with a moving cursor over merged lexer and Markdown code ranges, then
-   subtract opaque multiline comments with another ordered sweep. Invalid single-line comments
-   remain embedded so the JavaScript parser can diagnose them.
-5. Sweep the embedded pieces to mark every non-embedded range as outer language and add virtual
+4. Sweep the embedded pieces to mark every non-embedded range as outer language and add virtual
    semicolons where adjacent JavaScript statements need separation.
 
 Opaque-range indentation is indexed in one source pass. Projection therefore avoids rescanning
-every opaque range for every root, every comment for every embedded piece, or every embedded piece
-when deciding statement separators.
+every opaque range for every root or every embedded piece when deciding statement separators.
 
 `MdxOuterLanguagePatcher` represents outer ranges as `\n;`. `MdxJSLanguageParser`, based on the ES6
 parser with JSX enabled, parses the resulting virtual JavaScript file. The source document itself is
@@ -247,8 +240,7 @@ Formatter changes must preserve both Markdown nesting and the projected JavaScri
 
 - Markdown AST nodes, not a separate template scan, decide which source ranges are MDX.
 - JSX flow children remain available to the Markdown block parser.
-- A complete nested JSX marker is transparent to ancestor JSX markers; ESM, expressions, fences,
-  and HTML comments are opaque.
+- A complete nested JSX marker is transparent to ancestor JSX markers. ESM, expressions, and fences are opaque.
 - JSX scans are bounded by the marker's observed prefix. Incomplete editor input uses conservative
   recovery and must not publish a movable root over a Markdown sibling.
 - JavaScript lexer input is bounded by that same observed prefix. Only restartable token prefixes
@@ -261,13 +253,10 @@ Formatter changes must preserve both Markdown nesting and the projected JavaScri
   scanner outcomes; named tags and fragments never close one another.
 - JSX constraint wrappers retain tag identity and survive list and blockquote modifier recognition,
   preserving every ancestor closing boundary.
-- Fence openers become opaque before existing JSX markers scan their line. Completed fence and
-  HTML-comment productions provide the full opaque ranges.
+- Fence openers become opaque before existing JSX markers scan their line. Completed fence productions provide the full opaque ranges.
 - Code blocks, fences, and spans are subtracted from JSX roots during template projection.
 - Inline Markdown delimiters pair only within the outer paragraph or one JSX element body; complete
   JSX roots and standalone expressions remain opaque gaps in their containing space.
-- Closed multiline HTML comments are owned by a comment-only block provider. Single-line HTML
-  comments retain the existing invalid-MDX diagnostics.
 - Scanner source ranges use half-open `TextRange` values. `IntRange` is used only at Markdown
   token and node boundaries, where the Markdown API treats its final value as an exclusive offset.
 - Incomplete editor input may produce recoverable MDX roots, but stable Markdown siblings must not be

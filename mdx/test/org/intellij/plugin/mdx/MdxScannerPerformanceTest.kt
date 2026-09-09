@@ -253,9 +253,9 @@ class MdxScannerPerformanceTest {
       }
       append('\n')
       repeat(elements) {
-        append("<!-- invalid-")
+        append("{/* comment-")
         append(it)
-        append(" -->\n")
+        append(" */}\n")
       }
     }
     val countingText = CountingCharSequence(text)

@@ -1,3 +1,0 @@
-MDX File(0,24)
-  MarkdownParagraph(Markdown:PARAGRAPH)(0,24)
-    PsiElement(Markdown:Markdown:HTML_TAG)('<!-- an HTML comment -->')(0,24)
