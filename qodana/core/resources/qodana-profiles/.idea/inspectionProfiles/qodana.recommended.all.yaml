@@ -129,6 +129,7 @@ groups:
       - JsCoverageInspection
       - PhpCoverageInspection
       - PyCoverageInspection
+      - CppCoverageInspection
 
   - groupId: MetricsInspections # list of inspections responsible for calculating code quality metrics
     inspections:

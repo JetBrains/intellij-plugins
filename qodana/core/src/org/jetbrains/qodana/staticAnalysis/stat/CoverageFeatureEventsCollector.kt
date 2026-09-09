@@ -8,7 +8,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageStat
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 
 object CoverageFeatureEventsCollector : CounterUsagesCollector() {
-  private val GROUP = QodanaEventLogGroup("qodana.coverage", 3)
+  private val GROUP = QodanaEventLogGroup("qodana.coverage", 4)
 
   override fun getGroup() = GROUP.eventLogGroup
 

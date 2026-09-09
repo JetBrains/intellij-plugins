@@ -36,7 +36,7 @@ import org.jetbrains.qodana.ui.run.wizard.WelcomeRunQodanaStep
 internal object QodanaPluginStatsCounterCollector : CounterUsagesCollector() {
   override fun getGroup() = GROUP
 
-  private val GROUP = EventLogGroup("qodana.plugin", 11)
+  private val GROUP = EventLogGroup("qodana.plugin", 12)
 
   // --------------------
   // Open in IDE
