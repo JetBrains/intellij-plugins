@@ -12,6 +12,7 @@ enum class CoverageEngineType {
   MochaCoverageEngine,
   PyCoverageEngine,
   GoCoverageEngine,
+  CMakeCoverageEngine,
   // non-existent engines, fine for now as we don't have cloud artifacts for .NET - but can be used as IDs
   NetLcovCoverageEngine,
   NetCoberturaCoverageEngine,
@@ -37,6 +38,7 @@ enum class CoverageLanguage {
   JavaScript,
   Python,
   Go,
+  Cpp,
   None, // when no coverage was received
   Other;
 
@@ -49,6 +51,7 @@ enum class CoverageLanguage {
       CoverageEngineType.JestCoverageEngine, CoverageEngineType.MochaCoverageEngine -> JavaScript
       CoverageEngineType.PyCoverageEngine -> Python
       CoverageEngineType.GoCoverageEngine -> Go
+      CoverageEngineType.CMakeCoverageEngine -> Cpp
       else -> Other
     }
   }

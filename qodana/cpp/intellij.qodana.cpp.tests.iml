@@ -57,6 +57,14 @@
     <orderEntry type="module" module-name="intellij.libraries.assertj.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.ide.starter.extended.clion" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.cidr.coverage" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.clion.coverage" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.coverage" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.coverage.agent" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.execution" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.coverage" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.analysis" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana.cpp" />
 </module>

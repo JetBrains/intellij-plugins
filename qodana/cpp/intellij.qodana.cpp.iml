@@ -33,13 +33,19 @@
     <orderEntry type="module" module-name="intellij.platform.analysis.impl" />
     <orderEntry type="module" module-name="intellij.platform.analysis" />
     <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.platform.coverage" />
     <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module" module-name="intellij.cmake.core" />
+    <orderEntry type="module" module-name="intellij.clion.coverage" />
     <orderEntry type="module" module-name="intellij.qodana" />
+    <orderEntry type="module" module-name="intellij.qodana.coverage" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
     <orderEntry type="module" module-name="intellij.platform.ide.core" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
     <orderEntry type="module" module-name="intellij.cidr.projectModel" />
+    <orderEntry type="module" module-name="intellij.cidr.coverage" />
+    <orderEntry type="module" module-name="intellij.cidr.psi.base" />
     <orderEntry type="module" module-name="intellij.cidr.workspaceModel" />
     <orderEntry type="module" module-name="intellij.clion.radler.core" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" />
@@ -58,5 +64,6 @@
     <orderEntry type="module" module-name="intellij.rider.rdclient.dotnet.startup" />
     <orderEntry type="module" module-name="intellij.rider.model.generated" />
     <orderEntry type="module" module-name="intellij.rd.ide.model.generated" />
+    <orderEntry type="module" module-name="intellij.platform.coverage.agent" />
   </component>
 </module>

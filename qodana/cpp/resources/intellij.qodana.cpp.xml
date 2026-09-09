@@ -3,8 +3,11 @@
   <dependencies>
     <plugin id="org.jetbrains.plugins.clion.radler"/>
     <plugin id="com.intellij.clion-compdb"/>
+    <module name="intellij.cidr.coverage"/>
     <module name="intellij.cidr.projectModel"/>
+    <module name="intellij.cidr.psi.base"/>
     <module name="intellij.cidr.util"/>
+    <module name="intellij.clion.coverage"/>
     <module name="intellij.clion.makefile.core"/>
     <module name="intellij.clion.meson.core"/>
     <module name="intellij.clion.radler.core"/>
@@ -15,11 +18,15 @@
     <module name="intellij.platform.analysis.impl"/>
     <module name="intellij.platform.backend.observation"/>
     <module name="intellij.platform.core"/>
+    <module name="intellij.platform.coverage"/>
+    <module name="intellij.platform.coverage.agent"/>
     <module name="intellij.platform.externalSystem"/>
     <module name="intellij.platform.ide"/>
     <module name="intellij.platform.ide.core"/>
     <module name="intellij.platform.ide.core.impl"/>
+    <module name="intellij.platform.lang.impl"/>
     <module name="intellij.platform.projectModel"/>
+    <module name="intellij.qodana.coverage"/>
     <module name="intellij.rd.ide.model.generated"/>
     <module name="intellij.rd.platform"/>
     <module name="intellij.rider.model.generated"/>
@@ -41,6 +48,14 @@
   <extensions defaultExtensionNs="com.intellij">
     <cmake.workspace.enabledProfileInitializer implementation="org.jetbrains.qodana.cpp.QodanaCppCMakeEnabledProfileInitializer" order="first"/>
     <externalSystemTaskNotificationListener implementation="org.jetbrains.qodana.cpp.QodanaCppImportFailureListener"/>
+    <globalInspection hasStaticDescription="true"
+                      language="C++"
+                      shortName="CppCoverageInspection"
+                      key="check.cpp.display.name"
+                      bundle="messages.QodanaBundle"
+                      groupKey="coverage.group.display.name"
+                      enabledByDefault="true"
+                      implementationClass="org.jetbrains.qodana.cpp.CppCoverageInspection"/>
   </extensions>
   <extensions defaultExtensionNs="org.intellij">
     <qodana.externalToolsConfigurationProvider implementation="org.jetbrains.qodana.cpp.QodanaRadlerScopeLimitator"/>

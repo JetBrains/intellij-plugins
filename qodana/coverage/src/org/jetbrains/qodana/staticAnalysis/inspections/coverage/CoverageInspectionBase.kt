@@ -156,7 +156,7 @@ abstract class CoverageInspectionBase : GlobalSimpleInspectionTool() {
     logger.info("Coverage for ${engineType.java.simpleName} - provided ${coverageFiles.size} files")
     if (coverageFiles.isEmpty()) return null
     val engine = CoverageEngine.EP_NAME.findExtensionOrFail(engineType.java)
-    val data = retrieveCoverageData(engine, coverageFiles, globalContext) ?: return null
+    val data = retrieveCoverageDataForInspection(engine, coverageFiles, globalContext) ?: return null
     if (data.classes.isEmpty()) {
       logger.error("The engine ${engine.javaClass.simpleName} couldn't load coverage files")
       return null
@@ -165,6 +165,12 @@ abstract class CoverageInspectionBase : GlobalSimpleInspectionTool() {
                               COVERAGE_LANGUAGE_FIELD.with(CoverageLanguage.mapEngine(engineType.java.simpleName)))
     return data
   }
+
+  protected open fun retrieveCoverageDataForInspection(
+    engine: CoverageEngine,
+    coverageFiles: List<Path>,
+    globalContext: QodanaGlobalInspectionContext,
+  ): ProjectData? = retrieveCoverageData(engine, coverageFiles, globalContext)
 
   protected fun provideCoverageFilesWithDiscovery(
     globalContext: QodanaGlobalInspectionContext,
