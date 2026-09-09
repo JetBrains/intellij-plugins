@@ -42,6 +42,8 @@
                                   implementationClass="org.intellij.plugin.mdx.lang.template.MdxFileViewProviderFactory"/>
     <lang.parserDefinition language="MDX"
                            implementationClass="org.intellij.plugin.mdx.lang.parse.MdxParserDefinition"/>
+    <lang.commenter language="MDX" implementationClass="org.intellij.plugin.mdx.lang.MdxCommenter"/>
+    <multiLangCommenter implementation="org.intellij.plugin.mdx.lang.MdxCommentProvider" order="first"/>
     <lang.parserDefinition language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSParserDefinition"/>
     <outerLanguageRangePatcher language="MdxJS"
                                implementationClass="org.intellij.plugin.mdx.lang.template.MdxOuterLanguagePatcher"/>

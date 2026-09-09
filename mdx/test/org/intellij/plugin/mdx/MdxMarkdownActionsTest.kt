@@ -7,6 +7,8 @@ import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.EditorTestUtil
 import org.junit.jupiter.api.Test
 import java.awt.datatransfer.StringSelection
+import java.nio.file.Path
+import kotlin.io.path.readText
 
 @TestDataPath($$"$PROJECT_ROOT/contrib/mdx/testData/markdownActions")
 class MdxMarkdownActionsTest : MdxTestBase() {
@@ -84,6 +86,18 @@ class MdxMarkdownActionsTest : MdxTestBase() {
     assertActionEnabled(SET_HEADER_LEVEL_ACTION_ID)
   }
 
+  @Test
+  fun testCommentActionUsesMdxSyntax() {
+    val before = testDataText(testName)
+    myFixture.configureByText("comments.mdx", before)
+
+    performAction(COMMENT_LINE_ACTION_ID)
+    assertEquals(testDataText("${testName}_after"), myFixture.editor.document.text)
+
+    performAction(COMMENT_LINE_ACTION_ID)
+    assertEquals(before.replace("<selection>", "").replace("</selection>", ""), myFixture.editor.document.text)
+  }
+
   private fun doActionTest(actionId: String, before: String = testName, after: String = "${testName}_after") {
     myFixture.configureByFile("$before.mdx")
     assertActionEnabled(actionId)
@@ -109,6 +123,9 @@ class MdxMarkdownActionsTest : MdxTestBase() {
     return action
   }
 
+  private fun testDataText(caseName: String): String =
+    Path.of(testDataPath, "$caseName.mdx").readText().removeSuffix("\n")
+
   companion object {
     private const val BOLD_ACTION_ID = "org.intellij.plugins.markdown.ui.actions.styling.ToggleBoldAction"
     private const val ITALIC_ACTION_ID = "org.intellij.plugins.markdown.ui.actions.styling.ToggleItalicAction"
@@ -118,5 +135,6 @@ class MdxMarkdownActionsTest : MdxTestBase() {
     private const val HEADER_DOWN_ACTION_ID = "org.intellij.plugins.markdown.ui.actions.styling.HeaderDownAction"
     private const val SET_HEADER_LEVEL_ACTION_ID = "Markdown.Styling.SetHeaderLevel"
     private const val CREATE_OR_CHANGE_LIST_ACTION_ID = "Markdown.Styling.CreateOrChangeList"
+    private const val COMMENT_LINE_ACTION_ID = "CommentByLineComment"
   }
 }
