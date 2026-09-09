@@ -57,7 +57,7 @@ testData directory.
    `contrib/javascript/eslint/test/.../eslint/EslintTestPackages.kt`.
 2. Regenerate the affected combo(s): in a scratch directory, write the `package.json`
    for the combo with the new exact versions, run
-   `npm install --force --registry=https://repo.labs.intellij.net/api/npm/npm-all
+   `npm install --force --registry=https://repo.labs.intellij.net/artifactory/api/npm/npm-all
    --before=<UTC instant 24 hours ago, e.g. 2026-09-06T12:00:00.000Z>`,
    and copy the resulting `package.json` + `package-lock.json` into the matching combo
    directory here (and in `../../quickfix/_package-locks-store` if the fix suite uses it).
