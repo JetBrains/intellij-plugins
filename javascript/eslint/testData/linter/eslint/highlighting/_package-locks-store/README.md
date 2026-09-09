@@ -6,7 +6,10 @@ instead of resolving floating versions from the registry on every run.
 
 `TestNpmPackageInstaller` (in `plugins/JavaScriptLanguage/testFramework`) locates the
 combo directory by name, copies its `package-lock.json` into the test project, and runs
-`npm install --force`. The version-agnostic testData `package.json` files keep a
+`npm ci --force` (WEB-79538). A failed `ci` run logs the npm output. It then falls back
+to `npm install --force --before=<cutoff>`, which re-resolves the tree. A drifted lock
+still installs, but no longer deterministically. Regenerate the lock (see below) when
+the fallback line shows up. The version-agnostic testData `package.json` files keep a
 `$ESLINT_VERSION$` placeholder that `EslintPackageLockTestBase` substitutes at runtime
 from the class-level `@TestNpmPackage` annotation, so one testData tree serves every
 pinned version.
@@ -54,10 +57,13 @@ testData directory.
    `contrib/javascript/eslint/test/.../eslint/EslintTestPackages.kt`.
 2. Regenerate the affected combo(s): in a scratch directory, write the `package.json`
    for the combo with the new exact versions, run
-   `npm install --force --registry=https://repo.labs.intellij.net/api/npm/npm-all`,
+   `npm install --force --registry=https://repo.labs.intellij.net/api/npm/npm-all
+   --before=<UTC instant 24 hours ago, e.g. 2026-09-06T12:00:00.000Z>`,
    and copy the resulting `package.json` + `package-lock.json` into the matching combo
    directory here (and in `../../quickfix/_package-locks-store` if the fix suite uses it).
    Delete `node_modules`; commit only the two files.
+   The `--before` flag keeps a freshly published transitive version out of the lock
+   (WEB-79149). `npm ci` cannot age-gate. It installs what the lock pins.
 3. Rerun the `stable` classes and re-record any goldens that legitimately changed.
 
 ## Triage
