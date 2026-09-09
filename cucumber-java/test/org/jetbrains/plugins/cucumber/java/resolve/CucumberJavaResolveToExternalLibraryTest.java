@@ -32,10 +32,10 @@ public class CucumberJavaResolveToExternalLibraryTest extends BaseCucumberJavaRe
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         IntelliJProjectConfiguration.LibraryRoots
-          libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-core-5.5");
+          libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java.tests", "cucumber-core-5.5");
         PsiTestUtil.addProjectLibrary(model, "my-cucumber-core", libraryRoots.getClassesPaths());
 
-        libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java-5.5");
+        libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java.tests", "cucumber-java-5.5");
         PsiTestUtil.addProjectLibrary(model, "my-cucumber-java", libraryRoots.getClassesPaths());
 
         CucumberJavaTestUtil.attachCucumberExpressionsLibrary(model);

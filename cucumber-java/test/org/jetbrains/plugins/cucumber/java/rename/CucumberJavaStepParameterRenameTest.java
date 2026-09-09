@@ -54,14 +54,14 @@ public class CucumberJavaStepParameterRenameTest {
     String version = "7";
     ModifiableRootModel model = ModuleRootManager.getInstance(moduleFixture.get()).getModifiableModel();
     IntelliJProjectConfiguration.LibraryRoots libraryRoots;
-    libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-core-" + version);
+    libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java.tests", "cucumber-core-" + version);
     PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryRoots.getClassesPaths());
 
-    libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java-" + version);
+    libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java.tests", "cucumber-java-" + version);
     PsiTestUtil.addProjectLibrary(model, "cucumber-java", libraryRoots.getClassesPaths());
 
     if (VersionComparatorUtil.compare(version, CUCUMBER_CORE_VERSION_5) >= 0) {
-      libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java8-" + version);
+      libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java.tests", "cucumber-java8-" + version);
       PsiTestUtil.addProjectLibrary(model, "cucumber-java8", libraryRoots.getClassesPaths());
     }
 

@@ -98,7 +98,7 @@ public class CucumberJava3ResolveTest extends BaseCucumberJavaResolveTest {
         CucumberJavaTestUtil.attachCucumberCore3(model);
         CucumberJavaTestUtil.attachStandardCucumberLibraries(model);
 
-        var libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java8-3");
+        var libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java.tests", "cucumber-java8-3");
         PsiTestUtil.addProjectLibrary(model, "cucumber-java8", libraryRoots.getClassesPaths());
       }
     };

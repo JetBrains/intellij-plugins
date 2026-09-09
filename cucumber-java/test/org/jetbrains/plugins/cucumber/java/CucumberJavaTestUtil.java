@@ -73,14 +73,14 @@ public final class CucumberJavaTestUtil {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         IntelliJProjectConfiguration.LibraryRoots libraryRoots;
-        libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-core-" + version);
+        libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java.tests", "cucumber-core-" + version);
         PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryRoots.getClassesPaths());
 
-        libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java-" + version);
+        libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java.tests", "cucumber-java-" + version);
         PsiTestUtil.addProjectLibrary(model, "cucumber-java", libraryRoots.getClassesPaths());
 
         if (VersionComparatorUtil.compare(version, CUCUMBER_CORE_VERSION_5) >= 0) {
-          libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java8-" + version);
+          libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java.tests", "cucumber-java8-" + version);
           PsiTestUtil.addProjectLibrary(model, "cucumber-java8", libraryRoots.getClassesPaths());
         }
 
@@ -132,7 +132,7 @@ public final class CucumberJavaTestUtil {
 
   public static void attachCucumberCore3(@NotNull ModifiableRootModel model) {
     IntelliJProjectConfiguration.LibraryRoots libraryRoots;
-    libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-core-3");
+    libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java.tests", "cucumber-core-3");
     PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryRoots.getClassesPaths());
 
     attachCucumberExpressionsLibrary(model);
