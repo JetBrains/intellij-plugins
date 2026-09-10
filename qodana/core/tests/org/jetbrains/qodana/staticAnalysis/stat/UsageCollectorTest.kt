@@ -32,6 +32,9 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
     case("cli", "cli")
     case("teamcity", "teamcity")
     case("teamcity-cloud", "teamcity-cloud")
+    case("jetbrains-space", "jetbrains-space")
+    // Space reports both system names.
+    case("space", "jetbrains-space")
     case("gradle", "gradle")
 
     // All other environments are reported as "other".
@@ -46,6 +49,8 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
     // Each build system has its own version scheme, most use numeric versions.
     case("github-actions:2021", "github-actions", "2021")
     case("github-actions:1.2.3.004", "github-actions", "1.2.3.004")
+    case("jetbrains-space:2021.1", "jetbrains-space", "2021.1")
+    case("space:2021.1", "jetbrains-space", "2021.1")
     case("teamcity:2022.04_EAP", "teamcity", "2022.04_EAP")
 
     // Versions that don't match a numeric version with an optional "_EAP" are not reported.
@@ -98,6 +103,38 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
 
     assertEvent(event, "env",
                 "system" to "other")
+  }
+
+  @Test
+  fun logEnv_bitbucket_with_version() {
+    val event = collectEvent {
+      UsageCollector.logEnv("bitbucket:2021")
+    }
+
+    assertEvent(event, "env",
+                "system" to "other")
+  }
+
+  @Test
+  fun logEnv_jetbrains_space_with_version() {
+    val event = collectEvent {
+      UsageCollector.logEnv("jetbrains-space:2021.1")
+    }
+
+    assertEvent(event, "env",
+                "system" to "jetbrains-space",
+                "version" to "2021.1")
+  }
+
+  @Test
+  fun logEnv_space_with_version() {
+    val event = collectEvent {
+      UsageCollector.logEnv("space:2021.1")
+    }
+
+    assertEvent(event, "env",
+                "system" to "jetbrains-space",
+                "version" to "2021.1")
   }
 
   @Test

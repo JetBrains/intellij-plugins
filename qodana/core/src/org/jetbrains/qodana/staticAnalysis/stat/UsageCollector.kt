@@ -53,6 +53,10 @@ object UsageCollector : CounterUsagesCollector() {
     "other"
   )
 
+  private val systemAliases = mapOf(
+    "space" to "jetbrains-space",
+  )
+
   private val systemField = EventFields.String("system", knownSystems)
   private val versionField = EventFields.StringValidatedByInlineRegexp("version", "(?x) \\d+ (?:\\.\\d+)* (?:_EAP)?")
   private val buildField = EventFields.StringValidatedByRegexpReference("build", "integer")
@@ -167,7 +171,8 @@ object UsageCollector : CounterUsagesCollector() {
         )?
       """
     Regex(regex).matchEntire(env)?.let { m ->
-      val (system, version, build) = m.destructured
+      val (rawSystem, version, build) = m.destructured
+      val system = systemAliases[rawSystem] ?: rawSystem
       if (system == "teamcity" || system == "teamcity-cloud")
         return Environment(system, Strings.nullize(version), Strings.nullize(build))
       if (system in knownSystems)
