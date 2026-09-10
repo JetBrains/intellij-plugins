@@ -223,6 +223,8 @@ class QodanaTestManager {
     val actualReport = SarifReport().withRuns(listOf(run))
 
     val writer = StringWriter()
+    // The expected files hold the canonical order, and writing no longer sorts, so order the report first.
+    SarifUtil.sortResults(actualReport)
     SarifUtil.writeReport(writer, actualReport)
 
     val expectedSarif = getTestDataPath("expected.sarif.json").absolutePathString()
