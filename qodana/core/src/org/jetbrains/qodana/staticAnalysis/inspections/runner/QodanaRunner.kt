@@ -126,11 +126,13 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
       setInvocationExitStatus(sarif.getOrCreateRun(), config)
       withContext(NonCancellable) {
         clearResultsDirIfNeeded()
+        SarifUtil.sortResults(sarif)
         writeFullSarifReport(sarif)
         writeShortSarifReport(sarif)
         // if report run was substituted, store original as well
         if (sarifRun != sarif.getOrCreateRun()) {
           createSarifReport(listOf(sarifRun)).let {
+            SarifUtil.sortResults(it)
             writeFullSarifReport(it, VARY_RUN_PREFIX)
             writeShortSarifReport(it, VARY_RUN_PREFIX)
           }

@@ -16,6 +16,7 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.LineColumn
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.project.stateStore
+import com.jetbrains.qodana.sarif.SarifUtil.sortResults
 import com.jetbrains.qodana.sarif.SarifUtil.writeReport
 import com.jetbrains.qodana.sarif.model.ArtifactContent
 import com.jetbrains.qodana.sarif.model.ArtifactLocation
@@ -50,8 +51,11 @@ class ExportToSarifAction : InspectionResultsExportActionProvider(Supplier { "Sa
                             globalInspectionContext: GlobalInspectionContextImpl,
                             project: Project,
                             outputPath: Path) {
-    val file = File(outputPath.toFile(), "report_${SimpleDateFormat("yyyy-MM-dd_hh-mm-ss").format(Date())}.sarif.json")
-    writeReport(file.toPath(), createSarifReport(tree, profile, globalInspectionContext))
+    val timestamp = SimpleDateFormat("yyyy-MM-dd_hh-mm-ss").format(Date())
+    val reportPath: Path = outputPath.resolve("report_$timestamp.sarif.json")
+    val report = createSarifReport(tree, profile, globalInspectionContext)
+    sortResults(report)
+    writeReport(reportPath, report)
   }
 
   companion object {
