@@ -306,7 +306,7 @@ private fun getFromType(cur: PsiElement?): PsiElement? {
   val jsType = (cur as? JSTypeOwner)?.jsType
                  // Functional components do not have source - save on substitution time
                  ?.takeIf { it !is JSGenericTypeImpl || it.type.typeText != FUNCTIONAL_COMPONENT_TYPE }
-                 ?.substitute() ?: return null
+               ?: return null
   val sourceElement = jsType.sourceElement
   return when {
     jsType is JSFunctionType -> sourceElement
