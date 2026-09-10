@@ -5,6 +5,7 @@ import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import com.intellij.openapi.fileTypes.FileTypeEvent
 import com.intellij.openapi.fileTypes.FileTypeListener
 import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.util.ClearableLazyValue
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -30,7 +31,7 @@ object VueFileType : WebFrameworkHtmlFileType(VueLanguage, "Vue.js", "vue") {
 }
 
 val VirtualFile.hasVueFileType: Boolean
-  get() = fileType is VueFileType
+  get() = FileTypeRegistry.getInstance().isFileOfType(this, VueFileType)
 
 private val vueFileTypeAssociations = ClearableLazyValue.create {
   FileTypeManager.getInstance().getAssociations(VueFileType)
