@@ -44,10 +44,12 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.license.isFixesAvailable
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunner
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.projectPath
@@ -59,14 +61,26 @@ private val LOG = logger<QodanaRunner>()
 
 const val ALLOW_NON_BATCH_FIXES = "qodana.allow.non.batch.fixes"
 
+/** `fixesStrategy` asks for fixes. One half of the gate [maybeApplyFixes] applies. */
+@ApiStatus.Internal
+fun QodanaConfig.wantsFixes(): Boolean = fixesStrategy != FixesStrategy.NONE
+
+/** The licence permits fixes. The other half of that gate. */
+@ApiStatus.Internal
+fun QodanaConfig.canApplyFixes(): Boolean = license.type.isFixesAvailable()
+
+/**
+ * Whether this run applies fixes at all. Both halves of [maybeApplyFixes]' gate, in one place, so a caller
+ * that has to predict the answer before the fixes stage runs cannot drift from what that stage decides.
+ */
+@ApiStatus.Internal
+fun QodanaConfig.willApplyFixes(): Boolean = wantsFixes() && canApplyFixes()
+
 suspend fun maybeApplyFixes(sarifRun: Run, runContext: QodanaRunContext) {
   val disableDefaultFixesStrategy = System.getProperty("qodana.disable.default.fixes.strategy", "false").toBoolean()
-  val wantsFixes = runContext.config.fixesStrategy != FixesStrategy.NONE
-  if (!wantsFixes) return
-  val licenseType = runContext.config.license.type
-  val canApplyFixes = licenseType.isFixesAvailable()
-  if (!canApplyFixes) {
-    runContext.messageReporter.reportMessage(1, "Fixes are not available for license type: $licenseType")
+  if (!runContext.config.wantsFixes()) return
+  if (!runContext.config.canApplyFixes()) {
+    runContext.messageReporter.reportMessage(1, "Fixes are not available for license type: ${runContext.config.license.type}")
     return
   }
 

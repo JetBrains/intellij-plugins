@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://json.schemastore.org/qodana-1.0.json",
-  "$comment": "https://www.jetbrains.com/help/qodana/qodana-yaml.html",
+  "$comment": "https://www.jetbrains.com/help/qodana/qodana-yaml.html | Mirrored at https://github.com/SchemaStore/schemastore/blob/master/src/schemas/json/qodana-1.0.json — update both.",
   "additionalProperties": true,
   "definitions": {
     "profile": {
@@ -318,6 +318,24 @@
         "fastAnalysisMode": {
           "description": "Exclude certain files due to their high analysis time. The excluded files will be listed in the logs.",
           "type": "boolean"
+        },
+        "cleanupProfile": {
+          "description": "The Rider code cleanup profile used to apply fixes, instead of the profile implied by 'fixesStrategy'. Requires 'fixesStrategy' to be 'cleanup' or 'apply'. Aliases are case-insensitive. The original profile ids also work: 'Built-in: Reformat Code', 'Built-in: Reformat & Apply Syntax Style', 'Built-in: Full Cleanup'. A profile defined in the solution's committed '.DotSettings' can be named directly - quote the value if it contains a colon.",
+          "anyOf": [
+            {
+              "enum": ["whitespace", "style", "rewrite"],
+              "x-intellij-enum-metadata": {
+                "whitespace": { "description": "Layout only: indentation, line breaks, alignment." },
+                "style": { "description": "Also normalises equivalent forms, such as 'var' versus explicit types, braces, and qualification, and removes some redundant markup." },
+                "rewrite": { "description": "Also changes code: reorders type members, reflows documentation comments, and removes or alters members it determines are unused or can be tightened. The slowest option, and the only one that can change your program's shape - members it judges unused from source may still be reached at runtime by a framework, for example model-bound properties or types resolved by dependency injection." }
+              }
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          ]
         }
       },
       "additionalProperties": false

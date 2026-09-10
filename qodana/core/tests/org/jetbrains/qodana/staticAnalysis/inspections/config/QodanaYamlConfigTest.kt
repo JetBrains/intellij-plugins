@@ -83,6 +83,31 @@ class QodanaYamlConfigTest : HeavyPlatformTestCase() {
   }
 
 
+  @Test
+  @TestFor(issues = ["QD-15445"])
+  fun `load dotnet cleanup profile`() {
+    writeQodanaYaml("""
+      version: 1.0
+      fixesStrategy: cleanup
+      dotnet:
+        cleanupProfile: Custom Profile
+    """)
+
+    assertThat(loadQodanaYaml().dotnet?.cleanupProfile).isEqualTo("Custom Profile")
+  }
+
+  @Test
+  @TestFor(issues = ["QD-15445"])
+  fun `dotnet cleanup profile defaults to absent`() {
+    writeQodanaYaml("""
+      version: 1.0
+      dotnet:
+        solution: My.sln
+    """)
+
+    assertThat(loadQodanaYaml().dotnet?.cleanupProfile).isNull()
+  }
+
   private fun writeQodanaYaml(@Language("YAML") yaml: String) =
     qodanaYamlPath().writeText(yaml.trimIndent())
 
