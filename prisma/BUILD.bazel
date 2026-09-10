@@ -182,6 +182,7 @@ jvm_library(
         "@community//platform/testRunner/plugin",
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/problemsView/plugin",
+        "@community//xml/plugin",
     ],
 )
 
@@ -214,6 +215,7 @@ jvm_library(
         "@community//platform/testRunner/plugin:plugin_test_lib",
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//platform/problemsView/plugin:plugin_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,

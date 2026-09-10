@@ -141,6 +141,7 @@ jvm_library(
     ),
     module_name = "intellij.gherkin.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//xml/plugin"],
 )
 
 jvm_library(
@@ -167,6 +168,7 @@ jvm_library(
         # do not sort,
         ":gherkin-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,
