@@ -14,7 +14,6 @@ import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.html.hasVueFileType
-import org.jetbrains.vuejs.lang.html.isVueFile
 
 class VueKolarTranspiler(
   private val project: Project,
@@ -26,7 +25,8 @@ class VueKolarTranspiler(
 
   override fun isEnabled(file: VirtualFile): Boolean =
     isVueContext(file, project)
-    && file.isVueFile
+    && file.isInLocalFileSystem
+    && file.hasVueFileType
 
   override fun getFileInfo(file: VirtualFile): KolarFileInfo? {
     if (NodeModuleUtil.hasNodeModulesDirInPath(file, null))
