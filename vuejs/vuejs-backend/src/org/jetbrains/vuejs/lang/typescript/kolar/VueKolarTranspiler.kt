@@ -13,7 +13,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.hasVueFileType
 import org.jetbrains.vuejs.lang.html.isVueFile
 
 class VueKolarTranspiler(
@@ -22,7 +22,7 @@ class VueKolarTranspiler(
 
   override fun isHighlightingCandidate(file: VirtualFile): Boolean =
     file.isInLocalFileSystem
-    && file.fileType is VueFileType
+    && file.hasVueFileType
 
   override fun isEnabled(file: VirtualFile): Boolean =
     isVueContext(file, project)

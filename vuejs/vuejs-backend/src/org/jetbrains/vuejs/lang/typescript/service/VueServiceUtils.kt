@@ -10,7 +10,7 @@ import com.intellij.util.text.SemVer
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.vuejs.context.isVue2
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.hasVueFileType
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerHybridModeLoaderFactory
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginLoaderFactory
 
@@ -21,7 +21,8 @@ const val vueTSPluginPackageName: String = "@vue/typescript-plugin"
 const val vueLspPackageName: String = "@vue/language-server"
 
 internal fun isVueServiceContext(project: Project, context: VirtualFile): Boolean {
-  return context.fileType is VueFileType || isVueContext(context, project)
+  return context.hasVueFileType
+         || isVueContext(context, project)
 }
 
 /**
