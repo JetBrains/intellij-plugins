@@ -61,7 +61,7 @@ jvm_library(
         "@community//platform/platform-impl:ide-impl",
         "@community//platform/ide-core",
         "@community//platform/backend/workspace",
-        "@community//plugins/kotlin/base/scripting/scripting.shared",
+        "@community//plugins/kotlin/base/scripting/scripting",
         "@community//platform/indexing-api:indexing",
         ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-common_provided",
         ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-jvm_provided",
@@ -109,7 +109,7 @@ jvm_library(
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
         "@community//platform/backend/workspace:workspace_test_lib",
-        "@community//plugins/kotlin/base/scripting/scripting.shared:scripting.shared_test_lib",
+        "@community//plugins/kotlin/base/scripting/scripting:scripting_test_lib",
         "@community//platform/indexing-api:indexing_test_lib",
     ],
 )
