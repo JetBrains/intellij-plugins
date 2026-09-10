@@ -29,6 +29,9 @@ object VueFileType : WebFrameworkHtmlFileType(VueLanguage, "Vue.js", "vue") {
   }
 }
 
+val VirtualFile.hasVueFileType: Boolean
+  get() = fileType is VueFileType
+
 private val vueFileTypeAssociations = ClearableLazyValue.create {
   FileTypeManager.getInstance().getAssociations(VueFileType)
 }
