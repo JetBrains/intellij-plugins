@@ -1,12 +1,13 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="com.intellij.modules.python"/>
     <plugin id="Pythonid"/>
     <module name="intellij.python"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.python.coverage"/>
     <module name="intellij.qodana.coverage"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
 
   <extensions defaultExtensionNs="org.intellij.qodana">
     <reportMetadataArtifact implementation="org.jetbrains.qodana.python.coverage.PyCoverageReportMetadataArtifact"/>
