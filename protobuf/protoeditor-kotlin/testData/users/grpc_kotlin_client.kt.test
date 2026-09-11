@@ -1,0 +1,25 @@
+package demo
+
+import demo.grpc.GreeterGrpcKt
+import demo.grpc.HelloRequest
+import io.grpc.Channel
+import kotlinx.coroutines.flow.Flow
+
+// EXPECT-NEXT: grpc_service.proto / Greeter
+fun createGrpcClient(channel: Channel): GreeterGrpcKt.GreeterCorou<caret>tineStub =
+  GreeterGrpcKt.GreeterCoroutineStub(channel)
+
+suspend fun invokeGrpcClient(
+  client: GreeterGrpcKt.GreeterCoroutineStub,
+  request: HelloRequest,
+  requests: Flow<HelloRequest>,
+) {
+  // EXPECT-NEXT: grpc_service.proto / Greeter.SayHello
+  client.say<caret>Hello(request)
+  // EXPECT-NEXT: grpc_service.proto / Greeter.ListReplies
+  client.list<caret>Replies(request)
+  // EXPECT-NEXT: grpc_service.proto / Greeter.CollectReplies
+  client.collect<caret>Replies(requests)
+  // EXPECT-NEXT: grpc_service.proto / Greeter.Chat
+  client.ch<caret>at(requests)
+}
