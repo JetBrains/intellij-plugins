@@ -72,7 +72,7 @@ internal class ScopedScript(runContextFactory: ScopedRunContextFactory) :
     // compare before and current, keeping only 'NEW' issues in current
     val baselineReport = getScopedBaselineReport(runContext)
     if (baselineReport != null) {
-      BaselineCalculation.compare(report, baselineReport, Options(false, false, false))
+      BaselineCalculation.compare(report, baselineReport, Options(false, false, false, false))
     }
 
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)

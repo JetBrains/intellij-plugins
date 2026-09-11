@@ -72,7 +72,7 @@ internal suspend fun applyBaselineCalculation(
 private fun getOptions(scope: QodanaAnalysisScope, config: QodanaConfig): BaselineCalculation.Options {
   val limitedScope = config.script.name == TEAMCITY_CHANGES_SCRIPT_NAME || config.script.name == SCOPED_SCRIPT_NAME
 
-  if (!limitedScope) return BaselineCalculation.Options(config.includeAbsent)
+  if (!limitedScope) return BaselineCalculation.Options(config.includeAbsent, false)
   val check: (Result) -> Boolean = { r ->
     r.locations.any {
       val virtualFile = it.physicalLocation?.artifactLocation?.toVirtualFile(config.projectPath)
