@@ -20,21 +20,28 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Key;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.protobuf.lang.psi.PbSymbolOwner;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider.Result;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.SmartList;
-
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /** Utilities for finding PbSymbol elements using protobuf's scoping and resolution rules. */
 public class PbSymbolResolver {
+
+  private static final Key<CachedValue<PbSymbolResolver>> FILE_RESOLVER_KEY =
+      Key.create("PROTO_FILE_SYMBOL_RESOLVER");
+  private static final Key<CachedValue<PbSymbolResolver>> FILE_EXPORTS_RESOLVER_KEY =
+      Key.create("PROTO_FILE_EXPORTS_SYMBOL_RESOLVER");
 
   private final Multimap<QualifiedName, PbSymbol> symbols;
 
@@ -44,28 +51,39 @@ public class PbSymbolResolver {
 
   /** Returns a PbSymbolResolver that can resolve symbols in the given file and its imports. */
   public static PbSymbolResolver forFile(PbFile file) {
-    return new PbSymbolResolver(convertJdkMapToGuava(file.getFullQualifiedSymbolMap()));
+    return CachedValuesManager.getCachedValue(
+        file,
+        FILE_RESOLVER_KEY,
+        () ->
+            Result.create(
+                new PbSymbolResolver(file.getFullQualifiedSymbols()),
+                PbCompositeModificationTracker.byElement(file)));
   }
 
   /** Returns a PbSymbolResolver that can resolve symbols exported by the given file. */
   public static PbSymbolResolver forFileExports(PbFile file) {
-    return new PbSymbolResolver(convertJdkMapToGuava(file.getExportedQualifiedSymbolMap()));
+    return CachedValuesManager.getCachedValue(
+        file,
+        FILE_EXPORTS_RESOLVER_KEY,
+        () ->
+            Result.create(
+                new PbSymbolResolver(file.getExportedQualifiedSymbols()),
+                PbCompositeModificationTracker.byElement(file)));
   }
 
   /** Returns a PbSymbolResolver that can resolve symbols exported by the given files. */
   public static PbSymbolResolver forFileExports(List<PbFile> files) {
+    if (files.isEmpty()) {
+      return empty();
+    }
+    if (files.size() == 1) {
+      return forFileExports(files.getFirst());
+    }
     ImmutableSetMultimap.Builder<QualifiedName, PbSymbol> builder = ImmutableSetMultimap.builder();
     for (PbFile file : files) {
-      Multimap<QualifiedName, PbSymbol> multimap = convertJdkMapToGuava(file.getExportedQualifiedSymbolMap());
-      builder.putAll(multimap);
+      builder.putAll(file.getExportedQualifiedSymbols());
     }
     return new PbSymbolResolver(builder.build());
-  }
-
-  private static Multimap<QualifiedName, PbSymbol> convertJdkMapToGuava(Map<QualifiedName, Collection<PbSymbol>> jdkMap) {
-    Multimap<QualifiedName, PbSymbol> multimap = Multimaps.newListMultimap(new HashMap<>(), SmartList::new);
-    jdkMap.forEach((key, value) -> multimap.putAll(key, value));
-    return multimap;
   }
 
   /** Returns an empty PbSymbolResolver. */

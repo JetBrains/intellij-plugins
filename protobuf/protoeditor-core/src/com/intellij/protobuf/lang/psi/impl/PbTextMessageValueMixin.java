@@ -16,6 +16,7 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.psi.PbMessageType;
 import com.intellij.protobuf.lang.psi.PbNamedTypeElement;
 import com.intellij.protobuf.lang.psi.PbTextField;
@@ -23,6 +24,8 @@ import com.intellij.protobuf.lang.psi.PbTextMessageValue;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.CachedValueProvider.Result;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +43,14 @@ abstract class PbTextMessageValueMixin extends PbTextElementBase implements PbTe
 
   @Override
   public @Nullable PbMessageType getDeclaredMessage() {
+    return CachedValuesManager.getCachedValue(
+        this,
+        () ->
+            Result.create(
+                computeDeclaredMessage(), PbCompositeModificationTracker.byElement(this)));
+  }
+
+  private @Nullable PbMessageType computeDeclaredMessage() {
     PbTextField parentField = PsiTreeUtil.getParentOfType(this, PbTextField.class);
     if (parentField == null) {
       return null;
