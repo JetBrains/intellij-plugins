@@ -1,7 +1,22 @@
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
+
+pkg_files(
+    name = "astro_language_server_resources",
+    srcs = glob(["astro-language-server/**"]),
+    strip_prefix = strip_prefix.from_pkg(),
+)
+
+pkg_files(
+    name = "typescript_astro_plugin_resources",
+    srcs = glob(["typescript-astro-plugin/**"]),
+    strip_prefix = strip_prefix.from_pkg(),
+)
 
 ### auto-generated section `build intellij.astro` start
-jvm_library(
+ij_plugin_module(
     name = "astro",
     srcs = glob(
         [
@@ -14,6 +29,11 @@ jvm_library(
         allow_empty = True,
     ),
     module_name = "intellij.astro",
+    # manually written attribute
+    non_classpath_data = [
+        ":astro_language_server_resources",
+        ":typescript_astro_plugin_resources",
+    ],
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],
@@ -128,6 +148,12 @@ jvm_library(
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
         "@community//json:json_test_lib",
     ],
+)
+
+ij_plugin(
+    name = "astro_plugin",
+    descriptor_module = ":astro_plugin_module",
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.astro` end
 

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- BUILD_USING_BAZEL_MARKER: The ij_plugin Bazel rule also packages this plugin.
+     IjPluginDistributionEquivalenceTest checks that both build methods produce the same distribution. See MRI-4743. -->
 <idea-plugin>
   <name>Yeoman</name>
   <id>com.jetbrains.plugins.yeoman</id>

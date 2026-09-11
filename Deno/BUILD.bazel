@@ -1,5 +1,15 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
+
+pkg_files(
+    name = "deno_service_resources",
+    srcs = glob(["gen-resources/deno-service/**"]),
+    prefix = "deno-service",
+    strip_prefix = strip_prefix.from_pkg("gen-resources/deno-service"),
+)
 
 ### auto-generated section `build intellij.deno` start
 resourcegroup(
@@ -10,7 +20,7 @@ resourcegroup(
     strip_prefix = "gen-resources",
 )
 
-jvm_library(
+ij_plugin_module(
     name = "deno",
     srcs = glob(
         [
@@ -23,6 +33,8 @@ jvm_library(
         allow_empty = True,
     ),
     module_name = "intellij.deno",
+    # manually written attribute
+    non_classpath_data = [":deno_service_resources"],
     resource_jars = [":deno_resources"],
     resource_strip_prefix = "resources",
     resources = glob(
@@ -130,6 +142,12 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
     ],
+)
+
+ij_plugin(
+    name = "deno_plugin",
+    descriptor_module = ":deno_plugin_module",
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.deno` end
 

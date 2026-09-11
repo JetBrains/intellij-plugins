@@ -1,3 +1,5 @@
+<!-- BUILD_USING_BAZEL_MARKER: The ij_plugin Bazel rule also packages this plugin.
+     IjPluginDistributionEquivalenceTest checks that both build methods produce the same distribution. See MRI-4743. -->
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/Astro" package="org.jetbrains.astro">
   <!--suppress PluginXmlCapitalization -->
   <name>Astro</name>

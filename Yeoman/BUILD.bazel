@@ -1,5 +1,15 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
+
+pkg_files(
+    name = "runner_resources",
+    srcs = glob(["resources/runner/**"]),
+    prefix = "runner",
+    strip_prefix = strip_prefix.from_pkg("resources/runner"),
+)
 
 ### auto-generated section `build intellij.yeoman` start
 resourcegroup(
@@ -10,7 +20,7 @@ resourcegroup(
     strip_prefix = "compatibilityResources",
 )
 
-jvm_library(
+ij_plugin_module(
     name = "yeoman",
     srcs = glob(
         [
@@ -21,6 +31,8 @@ jvm_library(
         allow_empty = True,
     ),
     module_name = "intellij.yeoman",
+    # manually written attribute
+    non_classpath_data = [":runner_resources"],
     resource_jars = [":yeoman_resources"],
     resource_strip_prefix = "resources",
     resources = glob(
@@ -95,6 +107,12 @@ jvm_library(
         "@community//platform/util/concurrency:concurrency_test_lib",
         "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
     ],
+)
+
+ij_plugin(
+    name = "yeoman_plugin",
+    descriptor_module = ":yeoman_plugin_module",
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.yeoman` end
 

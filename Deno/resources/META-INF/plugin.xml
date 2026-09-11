@@ -1,3 +1,5 @@
+<!-- BUILD_USING_BAZEL_MARKER: The ij_plugin Bazel rule also packages this plugin.
+     IjPluginDistributionEquivalenceTest checks that both build methods produce the same distribution. See MRI-4743. -->
 <idea-plugin allow-bundled-update="true">
   <id>deno</id>
   <name>Deno</name>
