@@ -43,6 +43,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.performancePlugin.yourkit.YourKitProfilerHandler;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -107,7 +108,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @Override
-  protected FlexJSCompletionTestHelper helper() {
+  protected @NotNull FlexJSCompletionTestHelper helper() {
     return new FlexJSCompletionTestHelper();
   }
 
