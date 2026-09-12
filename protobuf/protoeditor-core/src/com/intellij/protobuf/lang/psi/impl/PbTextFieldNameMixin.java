@@ -16,6 +16,7 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.psi.PbField;
 import com.intellij.protobuf.lang.psi.PbNamedTypeElement;
 import com.intellij.protobuf.lang.psi.PbTextExtensionName;
@@ -25,6 +26,8 @@ import com.intellij.protobuf.lang.resolve.PbTextFieldNameReference;
 import com.intellij.protobuf.lang.util.BuiltInType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.CachedValueProvider.Result;
+import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.Nullable;
 
 abstract class PbTextFieldNameMixin extends PbTextElementBase implements PbTextFieldName {
@@ -35,6 +38,14 @@ abstract class PbTextFieldNameMixin extends PbTextElementBase implements PbTextF
 
   @Override
   public @Nullable PbField getDeclaredField() {
+    return CachedValuesManager.getCachedValue(
+        this,
+        () ->
+            Result.create(
+                computeDeclaredField(), PbCompositeModificationTracker.byElement(this)));
+  }
+
+  private @Nullable PbField computeDeclaredField() {
     PsiReference ref = getEffectiveReference();
     if (ref == null) {
       return null;
@@ -48,6 +59,14 @@ abstract class PbTextFieldNameMixin extends PbTextElementBase implements PbTextF
 
   @Override
   public @Nullable PbNamedTypeElement getDeclaredNamedType() {
+    return CachedValuesManager.getCachedValue(
+        this,
+        () ->
+            Result.create(
+                computeDeclaredNamedType(), PbCompositeModificationTracker.byElement(this)));
+  }
+
+  private @Nullable PbNamedTypeElement computeDeclaredNamedType() {
     PsiReference ref = null;
     PbTextExtensionName extensionName = getExtensionName();
     if (extensionName != null && extensionName.isAnyTypeUrl()) {
@@ -58,7 +77,7 @@ abstract class PbTextFieldNameMixin extends PbTextElementBase implements PbTextF
       PbField field = getDeclaredField();
       if (field != null) {
         PbTypeName typeName = field.getTypeName();
-        if (typeName != null) {
+        if (typeName != null && typeName.getBuiltInType() == null) {
           ref = typeName.getEffectiveReference();
         }
       }
