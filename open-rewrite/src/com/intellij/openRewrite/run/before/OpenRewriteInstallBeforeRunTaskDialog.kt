@@ -14,7 +14,7 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.components.JBTextField
@@ -101,7 +101,7 @@ internal class OpenRewriteInstallBeforeRunTaskDialog(
           var toSelect = getFileFromEditor()
           if (toSelect == null) {
             val scratchesRoot = ScratchFileService.getInstance().getRootPath(ScratchRootType.getInstance())
-            toSelect = LocalFileSystem.getInstance().findFileByPath(scratchesRoot)
+            toSelect = StandardFileSystems.local().findFileByPath(scratchesRoot)
           }
           val descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor().withExtensionFilter(JavaFileType.INSTANCE)
           val file = FileChooser.chooseFile(descriptor, scratchFileField, project, toSelect)
@@ -137,7 +137,7 @@ internal class OpenRewriteInstallBeforeRunTaskDialog(
 
     fun getFileFromEditor(): VirtualFile? {
       val path = FileUtil.toSystemIndependentName(scratchFileField.getText().trim { it <= ' ' })
-      return if (!StringUtil.isEmpty(path)) LocalFileSystem.getInstance().findFileByPath(path) else null
+      return if (!StringUtil.isEmpty(path)) StandardFileSystems.local().findFileByPath(path) else null
     }
 
     fun setFileToEditor(file: VirtualFile?) {

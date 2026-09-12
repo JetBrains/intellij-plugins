@@ -5,7 +5,7 @@ import com.intellij.java.library.MavenCoordinates
 import com.intellij.openapi.components.BaseState
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 
 internal const val DEFAULT_BEFORE_RUN_VERSION = "0.0.1-SNAPSHOT"
@@ -38,7 +38,7 @@ class OpenRewriteInstallBeforeRunTask : BeforeRunTask<OpenRewriteInstallBeforeRu
   fun getScratchVirtualFile(): VirtualFile? {
     val fileUrl = scratchFileUrl ?: return null
     val path = FileUtil.toSystemIndependentName(fileUrl)
-    return if (path.isNotEmpty()) LocalFileSystem.getInstance().findFileByPath(path) else null
+    return if (path.isNotEmpty()) StandardFileSystems.local().findFileByPath(path) else null
   }
 
   fun getCoordinates(): MavenCoordinates {

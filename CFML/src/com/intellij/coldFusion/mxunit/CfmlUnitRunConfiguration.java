@@ -28,7 +28,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -108,7 +108,7 @@ public final class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
         if (StringUtil.isEmpty(path)) {
           throw new RuntimeConfigurationError(CfmlBundle.message("cfml.runconfig.file.name.empty", path));
         }
-        final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
+        final VirtualFile file = StandardFileSystems.local().refreshAndFindFileByPath(path);
         if (file == null || !file.isValid() || file.isDirectory()) {
           throw new RuntimeConfigurationError(CfmlBundle.message("cfml.runconfig.file.not.found", path));
         }
@@ -129,7 +129,7 @@ public final class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
         if (StringUtil.isEmpty(path)) {
           throw new RuntimeConfigurationError(CfmlBundle.message("cfml.runconfig.directory.name.empty", path));
         }
-        final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
+        final VirtualFile file = StandardFileSystems.local().refreshAndFindFileByPath(path);
         if (file == null || !file.isValid() || !file.isDirectory()) {
           throw new RuntimeConfigurationError(CfmlBundle.message("cfml.runconfig.directory.not.found", path));
         }

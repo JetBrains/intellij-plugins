@@ -5,7 +5,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.thoughtworks.gauge.wizard.GaugeModuleImporter;
 import com.thoughtworks.gauge.wizard.GaugeTemplate;
@@ -102,7 +102,7 @@ public final class GaugeMavenImporter implements GaugeModuleImporter {
       Logger.getInstance(GaugeMavenImporter.class).error(e);
       return;
     }
-    LocalFileSystem.getInstance().refresh(false);
+    StandardFileSystems.local().refresh(false);
   }
 
   private static void runAfterSetup(Module module) {

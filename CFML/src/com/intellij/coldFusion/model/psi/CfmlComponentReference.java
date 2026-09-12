@@ -18,7 +18,7 @@ import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -183,7 +183,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
       }
 
       for (String realPath : realPossiblePaths) {
-        VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(realPath);
+        VirtualFile fileByUrl = StandardFileSystems.local().findFileByPath(realPath);
         if (fileByUrl != null) {
           PsiFile file = PsiManager.getInstance(project).findFile(fileByUrl);
           if (file != null) {
@@ -444,7 +444,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
   }
 
   private static void addVariantsFromPath(Collection<Object> variants, String directoryName, String realPath) {
-    VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(realPath);
+    VirtualFile fileByUrl = StandardFileSystems.local().findFileByPath(realPath);
     if (fileByUrl != null) {
       if (fileByUrl.isDirectory()) {
         VirtualFile[] children = fileByUrl.getChildren();

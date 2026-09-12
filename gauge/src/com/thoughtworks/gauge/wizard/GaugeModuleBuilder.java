@@ -42,7 +42,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.NlsContexts;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.ui.components.JBRadioButton;
 import com.intellij.ui.components.panels.VerticalLayout;
 import com.intellij.util.ModalityUiUtil;
@@ -248,7 +248,7 @@ final class GaugeModuleBuilder extends ModuleBuilder {
                 throw new RuntimeException(GaugeBundle.message("unable.to.create.project.exit.code", exitCode));
               }
 
-              LocalFileSystem.getInstance().refresh(false);
+              StandardFileSystems.local().refresh(false);
             }
           }
           catch (IOException | InterruptedException e) {

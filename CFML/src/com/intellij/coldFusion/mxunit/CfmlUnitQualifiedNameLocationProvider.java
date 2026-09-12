@@ -11,7 +11,7 @@ import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
@@ -49,7 +49,7 @@ public class CfmlUnitQualifiedNameLocationProvider implements SMTestLocator, Dum
     }
     PsiElement result;
     String filePath = location[0];
-    VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    VirtualFile virtualFile = StandardFileSystems.local().findFileByPath(filePath);
     if (virtualFile != null) {
       result = PsiManager.getInstance(project).findFile(virtualFile);
       if (!(result instanceof CfmlFile)) {

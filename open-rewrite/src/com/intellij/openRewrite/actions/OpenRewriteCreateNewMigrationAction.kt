@@ -8,7 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiManager
@@ -35,6 +35,6 @@ internal class OpenRewriteCreateNewMigrationAction : DumbAwareAction() {
 
   private fun findDirectory(): VirtualFile? {
     val rootPath = ScratchFileService.getInstance().getRootPath(ScratchRootType.getInstance())
-    return LocalFileSystem.getInstance().findFileByPath(rootPath)?.takeIf { it.isDirectory }
+    return StandardFileSystems.local().findFileByPath(rootPath)?.takeIf { it.isDirectory }
   }
 }

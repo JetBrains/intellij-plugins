@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.NamedColorUtil;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +74,7 @@ public final class CfmlStackTraceFilterProvider implements Filter {
     }
 
     try {
-      ApplicationManager.getApplication().invokeAndWait(() -> vFile.set(LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file)));
+      ApplicationManager.getApplication().invokeAndWait(() -> vFile.set(StandardFileSystems.local().refreshAndFindFileByPath(file.getAbsolutePath())));
     }
     catch (RuntimeException e) {
       // skip

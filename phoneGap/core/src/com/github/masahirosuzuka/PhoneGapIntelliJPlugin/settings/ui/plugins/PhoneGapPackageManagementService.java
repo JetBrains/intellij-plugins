@@ -8,7 +8,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.util.CatchingConsumer;
 import com.intellij.util.concurrency.ThreadingAssertions;
 import com.intellij.util.containers.ContainerUtil;
@@ -155,7 +155,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
 
   private static void scheduleFileSystemRefresh() {
     ThreadingAssertions.assertEventDispatchThread();
-    LocalFileSystem.getInstance().refresh(true);
+    StandardFileSystems.local().refresh(true);
   }
 
   @Override

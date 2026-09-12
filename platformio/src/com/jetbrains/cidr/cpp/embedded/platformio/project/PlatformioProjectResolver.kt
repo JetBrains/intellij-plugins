@@ -39,7 +39,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ManagingFS
 import com.intellij.util.asSafely
@@ -131,7 +131,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
 
     platformioService.projectStatus = PARSING
     try {
-      val projectFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectPath) ?: throw ExternalSystemException(FileNotFoundException(ClionEmbeddedPlatformioBundle.message("project.not.found", projectPath)))
+      val projectFile = StandardFileSystems.local().refreshAndFindFileByPath(projectPath) ?: throw ExternalSystemException(FileNotFoundException(ClionEmbeddedPlatformioBundle.message("project.not.found", projectPath)))
       val projectDir = if (projectFile.isDirectory) projectFile else projectFile.parent
       val boardInfo = project.getUserData(PROJECT_INIT_KEY)
       if (boardInfo != null) {

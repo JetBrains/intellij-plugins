@@ -21,7 +21,7 @@ import com.intellij.coldFusion.UI.config.CfmlProjectConfiguration
 import com.intellij.coldFusion.model.CfmlLanguage
 import com.intellij.javaee.ExternalResourceManagerEx
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -259,7 +259,7 @@ class CfmlCompletionTest : JavaCodeInsightFixtureTestCase() {
     val mappings = HashMap<String, String>()
     for (root in ProjectRootManager.getInstance(project).contentRoots) {
       val directoryName = root.presentableUrl + "/folder/subfolder"
-      val fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName)
+      val fileByUrl = StandardFileSystems.local().findFileByPath(directoryName)
       if (fileByUrl != null) {
         mappings["/myfolder/subfolder"] = directoryName
       }
@@ -282,7 +282,7 @@ class CfmlCompletionTest : JavaCodeInsightFixtureTestCase() {
     val mappings = HashMap<String, String>()
     for (root in ProjectRootManager.getInstance(project).contentRoots) {
       val directoryName = root.presentableUrl + "/folder/subfolder"
-      val fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName)
+      val fileByUrl = StandardFileSystems.local().findFileByPath(directoryName)
       if (fileByUrl != null) {
         mappings["/myfolder/subfolder"] = directoryName
       }
@@ -310,7 +310,7 @@ class CfmlCompletionTest : JavaCodeInsightFixtureTestCase() {
     val mappings = HashMap<String, String>()
     for (root in ProjectRootManager.getInstance(project).contentRoots) {
       val directoryName = root.presentableUrl + "/folder"
-      val fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName)
+      val fileByUrl = StandardFileSystems.local().findFileByPath(directoryName)
       if (fileByUrl != null) {
         mappings["myfolder"] = directoryName
       }
@@ -334,7 +334,7 @@ class CfmlCompletionTest : JavaCodeInsightFixtureTestCase() {
     val mappings = HashMap<String, String>()
     for (root in ProjectRootManager.getInstance(project).contentRoots) {
       val directoryName = root.presentableUrl + "/subfolder"
-      val fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName)
+      val fileByUrl = StandardFileSystems.local().findFileByPath(directoryName)
       if (fileByUrl != null) {
         mappings["/lot"] = directoryName
         mappings["/fot"] = directoryName
@@ -359,7 +359,7 @@ class CfmlCompletionTest : JavaCodeInsightFixtureTestCase() {
     val mappings = HashMap<String, String>()
     for (root in ProjectRootManager.getInstance(project).contentRoots) {
       val directoryName = root.presentableUrl + "/subfolder"
-      val fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName)
+      val fileByUrl = StandardFileSystems.local().findFileByPath(directoryName)
       if (fileByUrl != null) {
         mappings["/abc"] = directoryName
       }
@@ -383,7 +383,7 @@ class CfmlCompletionTest : JavaCodeInsightFixtureTestCase() {
     val mappings = HashMap<String, String>()
     for (root in ProjectRootManager.getInstance(project).contentRoots) {
       val directoryName = root.presentableUrl + "/folder/subfolder"
-      val fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName)
+      val fileByUrl = StandardFileSystems.local().findFileByPath(directoryName)
       if (fileByUrl != null) {
         mappings["/myfolder/subfolder"] = directoryName
       }
@@ -406,7 +406,7 @@ class CfmlCompletionTest : JavaCodeInsightFixtureTestCase() {
     val mappings = HashMap<String, String>()
     for (root in ProjectRootManager.getInstance(project).contentRoots) {
       val directoryName = root.presentableUrl + "/subfolder"
-      val fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName)
+      val fileByUrl = StandardFileSystems.local().findFileByPath(directoryName)
       if (fileByUrl != null) {
         mappings["/subfolder"] = directoryName
       }

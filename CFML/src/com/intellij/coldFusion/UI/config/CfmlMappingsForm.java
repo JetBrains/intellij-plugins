@@ -6,7 +6,7 @@ import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.dsl.listCellRenderer.BuilderKt;
@@ -126,7 +126,7 @@ public class CfmlMappingsForm {
         if (!item.myLogicalPath.startsWith("/") && !item.myLogicalPath.startsWith("\\")) {
           return CfmlBundle.message("incorrect.logical.path");
         }
-        VirtualFile file = LocalFileSystem.getInstance().findFileByPath(item.myDirectoryPath);
+        VirtualFile file = StandardFileSystems.local().findFileByPath(item.myDirectoryPath);
         if (file == null || !file.isValid() || !file.isDirectory()) {
           return CfmlBundle.message("directory.path.is.not.found", item.myDirectoryPath);
         }

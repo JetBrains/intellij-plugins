@@ -22,7 +22,7 @@ import com.intellij.coldFusion.UI.inspections.CfmlFileReferenceInspection;
 import com.intellij.coldFusion.UI.inspections.CfmlReferenceInspection;
 import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
@@ -65,7 +65,7 @@ public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
     Map<String, String> mappings = new HashMap<>();
     for (VirtualFile root : ProjectRootManager.getInstance(getProject()).getContentRoots()) {
       String directoryName = root.getPresentableUrl() + "/folder";
-      VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName);
+      VirtualFile fileByUrl = StandardFileSystems.local().findFileByPath(directoryName);
       if (fileByUrl != null) {
         mappings.put("/myf", directoryName);
       }

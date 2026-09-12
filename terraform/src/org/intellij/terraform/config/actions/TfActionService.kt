@@ -8,9 +8,9 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +35,7 @@ internal class TfActionService(private val project: Project, private val corouti
   fun scheduleTerraformInit(directory: String, notifyOnSuccess: Boolean): Job {
     return coroutineScope.launch {
       val title = HCLBundle.message("progress.title.terraform.init")
-      val dirFile = LocalFileSystem.getInstance().findFileByNioFile(Path(directory))
+      val dirFile = VirtualFileManager.getInstance().findFileByNioPath(Path(directory))
       if (dirFile == null || !dirFile.isDirectory) {
         TfConstants.getNotificationGroup().createNotification(
             title,

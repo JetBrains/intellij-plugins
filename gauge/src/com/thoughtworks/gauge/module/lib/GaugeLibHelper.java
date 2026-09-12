@@ -25,7 +25,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.thoughtworks.gauge.GaugeBootstrapService;
 import com.thoughtworks.gauge.PluginNotInstalledException;
@@ -89,7 +89,7 @@ public final class GaugeLibHelper extends AbstractLibHelper {
       new File(String.format("%s%sout%stest%s%s", moduleDirPath(module), File.separator, File.separator, File.separator, module.getName()));
     //noinspection ResultOfMethodCallIgnored
     outputDir.mkdirs();
-    return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
+    return StandardFileSystems.local().refreshAndFindFileByPath(outputDir.getAbsolutePath());
   }
 
   private static VirtualFile outputPath(Module module) {
@@ -97,11 +97,11 @@ public final class GaugeLibHelper extends AbstractLibHelper {
       String.format("%s%sout%sproduction%s%s", moduleDirPath(module), File.separator, File.separator, File.separator, module.getName()));
     //noinspection ResultOfMethodCallIgnored
     outputDir.mkdirs();
-    return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
+    return StandardFileSystems.local().refreshAndFindFileByPath(outputDir.getAbsolutePath());
   }
 
   private static VirtualFile srcPath(ModifiableRootModel modifiableModel) {
-    return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(moduleDir(modifiableModel.getModule()), SRC_DIR));
+    return StandardFileSystems.local().refreshAndFindFileByPath(new File(moduleDir(modifiableModel.getModule()), SRC_DIR).getAbsolutePath());
   }
 
   private static void addProjectLibIfNeeded(ModifiableRootModel model) {
@@ -121,7 +121,7 @@ public final class GaugeLibHelper extends AbstractLibHelper {
   }
 
   private static void updateLibrary(Library library, ProjectLib newLib) {
-    VirtualFile lib = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(newLib.getDir());
+    VirtualFile lib = StandardFileSystems.local().refreshAndFindFileByPath(newLib.getDir().getAbsolutePath());
     Library.ModifiableModel model = library.getModifiableModel();
     if (lib != null) {
       model.removeRoot(getClassesRootFrom(model), CLASSES);
@@ -153,7 +153,7 @@ public final class GaugeLibHelper extends AbstractLibHelper {
 
   private static void addLib(ProjectLib lib, ModifiableRootModel modifiableRootModel) {
     final Library library = modifiableRootModel.getModuleLibraryTable().createLibrary(lib.getLibName());
-    final VirtualFile libDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(lib.getDir());
+    final VirtualFile libDir = StandardFileSystems.local().refreshAndFindFileByPath(lib.getDir().getAbsolutePath());
     if (libDir != null) {
       final Library.ModifiableModel libModel = library.getModifiableModel();
       libModel.addJarDirectory(libDir, true);

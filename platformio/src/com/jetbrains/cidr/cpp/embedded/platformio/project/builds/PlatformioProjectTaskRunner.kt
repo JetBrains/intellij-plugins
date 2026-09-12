@@ -23,9 +23,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectModelExternalSource
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.ManagingFS
+import com.intellij.openapi.vfs.newvfs.RefreshQueue
 import com.intellij.task.ModuleBuildTask
 import com.intellij.task.ModuleFilesBuildTask
 import com.intellij.task.ProjectModelBuildTask
@@ -163,12 +164,12 @@ class PlatformioTaskRunner : CidrTaskRunner {
       fail(buildProgress, promise)
     }
     finally {
-      val vfs = LocalFileSystem.getInstance()
+      val fileManager = VirtualFileManager.getInstance()
       val toRefresh = mutableListOf<VirtualFile>()
-      val buildDir = project.serviceAsync<PlatformioService>().buildDirectory ?.let { vfs.findFileByNioFile(it) }
+      val buildDir = project.serviceAsync<PlatformioService>().buildDirectory ?.let { fileManager.findFileByNioPath(it) }
       if (buildDir != null) { toRefresh.add(buildDir) }
       toRefresh.addAll(project.serviceAsync<ProjectRootManager>().contentRoots)
-      vfs.refreshFiles(toRefresh, true, true, null)
+      RefreshQueue.getInstance().refresh(true, true, null, toRefresh)
     }
     return promise
   }

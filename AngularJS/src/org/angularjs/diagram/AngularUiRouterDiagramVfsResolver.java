@@ -4,7 +4,7 @@ package org.angularjs.diagram;
 import com.intellij.diagram.DiagramVfsResolver;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.angularjs.codeInsight.router.AngularUiRouterGraphBuilder;
@@ -29,7 +29,7 @@ public final class AngularUiRouterDiagramVfsResolver implements DiagramVfsResolv
 
   @Override
   public @Nullable DiagramObject resolveElementByFQN(@NotNull String fqn, @NotNull Project project) {
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fqn);
+    final VirtualFile file = StandardFileSystems.local().findFileByPath(fqn);
     if (file == null) {
       return null;
     }

@@ -18,7 +18,7 @@ import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -136,7 +136,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
 
     // show error if the file already exists
     Project project = step.getProject();
-    if (LocalFileSystem.getInstance().findFileByPath(filePath) == null) {
+    if (StandardFileSystems.local().findFileByPath(filePath) == null) {
       final String parentDirPath = model.getStepDefinitionFolderPath();
 
       WriteCommandAction.runWriteCommandAction(project, CucumberBundle.message("create.step.definition"), null,
