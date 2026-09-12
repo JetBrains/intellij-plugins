@@ -4,9 +4,10 @@ package org.jetbrains.idea.perforce.operations;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
+import com.intellij.openapi.vfs.newvfs.RefreshQueue;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,12 +32,12 @@ public class RefreshForVcs {
   }
 
   public void run(final Project project) {
-    LocalFileSystem.getInstance().refreshIoFiles(myFiles);
-    LocalFileSystem.getInstance().refreshIoFiles(myDirs);
+    RefreshQueue.getInstance().refreshPaths(false, false, null, ContainerUtil.map(myFiles, File::toPath));
+    RefreshQueue.getInstance().refreshPaths(false, false, null, ContainerUtil.map(myDirs, File::toPath));
 
     List<VirtualFile> vFiles = new ArrayList<>();
     for (File file : myFiles) {
-      ContainerUtil.addIfNotNull(vFiles, LocalFileSystem.getInstance().findFileByIoFile(file));
+      ContainerUtil.addIfNotNull(vFiles, StandardFileSystems.local().findFileByPath(file.getAbsolutePath()));
     }
 
     List<VirtualFile> vDirs = new ArrayList<>();
@@ -50,7 +51,7 @@ public class RefreshForVcs {
   private static VirtualFile refreshDir(final @Nullable File dir) {
     if (dir == null) return null;
 
-    final VirtualFile vf = LocalFileSystem.getInstance().findFileByIoFile(dir);
+    final VirtualFile vf = StandardFileSystems.local().findFileByPath(dir.getAbsolutePath());
     if (vf == null) {
       return refreshDir(dir.getParentFile());
     }

@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.impl.ContentRootChangeListener;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -128,7 +128,7 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
 
   public static @Nullable VirtualFile findNearestLiveParentFor(File ioFile) {
     do {
-      VirtualFile parent = LocalFileSystem.getInstance().findFileByIoFile(ioFile);
+      VirtualFile parent = StandardFileSystems.local().findFileByPath(ioFile.getAbsolutePath());
       if (parent != null) return parent;
       ioFile = ioFile.getParentFile();
       if (ioFile == null) return null;

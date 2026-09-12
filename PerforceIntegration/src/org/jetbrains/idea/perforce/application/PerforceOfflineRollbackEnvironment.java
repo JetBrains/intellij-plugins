@@ -12,7 +12,7 @@ import com.intellij.openapi.vcs.changes.LastUnchangedContentTracker;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
 import com.intellij.openapi.vcs.rollback.DefaultRollbackEnvironment;
 import com.intellij.openapi.vcs.rollback.RollbackProgressListener;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nls;
@@ -129,7 +129,7 @@ public class PerforceOfflineRollbackEnvironment extends DefaultRollbackEnvironme
         final File oldParentFile = new File(oldParentPath.getPath());
         //noinspection ResultOfMethodCallIgnored
         oldParentFile.mkdirs();
-        final VirtualFile oldParentVFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(oldParentFile);
+        final VirtualFile oldParentVFile = StandardFileSystems.local().refreshAndFindFileByPath(oldParentFile.getAbsolutePath());
         if (oldParentVFile != null) {
           file.move(this, oldParentVFile);
         }

@@ -24,7 +24,7 @@ import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
@@ -109,7 +109,7 @@ public final class P4File {
   }
 
   private static VirtualFile findVirtualFile(final @NotNull File file) {
-    return ReadAction.compute(() -> LocalFileSystem.getInstance().findFileByIoFile(file));
+    return ReadAction.compute(() -> StandardFileSystems.local().findFileByPath(file.getAbsolutePath()));
   }
 
   public String getEscapedPath() {
@@ -162,7 +162,7 @@ public final class P4File {
   }
 
   private static void invalidateFStatImpl(final VirtualFile file) {
-    if (file.getFileSystem() == LocalFileSystem.getInstance()) {
+    if (file.getFileSystem() == StandardFileSystems.local()) {
       VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor<Void>(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
         @Override
         public Iterable<VirtualFile> getChildrenIterable(@NotNull VirtualFile file) {

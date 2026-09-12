@@ -7,9 +7,10 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.changes.ChangeList;
 import com.intellij.openapi.vcs.changes.ChangelistBuilder;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.perforce.PerforceAbstractChange;
@@ -34,7 +35,7 @@ public class OpenedResultProcessor {
   private final LocalPathsSet myResolvedWithConflicts;
   private final ResolvedFilesWrapper myResolvedFiles;
   private final PerforceChangeListCalculator myChangelistCalculator;
-  private final LocalFileSystem myLocalFileSystem;
+  private final VirtualFileSystem myLocalFileSystem;
 
   public OpenedResultProcessor(final @NotNull P4Connection connection, final ChangeCreator changeCreator, final ChangelistBuilder builder,
                                final LocalPathsSet resolvedWithConflicts, final ResolvedFilesWrapper resolvedFiles,
@@ -45,7 +46,7 @@ public class OpenedResultProcessor {
     myResolvedWithConflicts = resolvedWithConflicts;
     myResolvedFiles = resolvedFiles;
     myChangelistCalculator = changelistCalculator;
-    myLocalFileSystem = LocalFileSystem.getInstance();
+    myLocalFileSystem = StandardFileSystems.local();
   }
 
   private abstract class MyAbstractProcessor {
@@ -72,7 +73,7 @@ public class OpenedResultProcessor {
       final File file = perforceChange.getFile();
       final int type = perforceChange.getType();
       return (file != null) && (type != PerforceAbstractChange.DELETE) && (type != PerforceAbstractChange.MOVE_DELETE) &&
-             myLocalFileSystem.findFileByIoFile(file) == null && (! file.exists());
+             myLocalFileSystem.findFileByPath(file.getAbsolutePath()) == null && (! file.exists());
     }
 
     @Override
@@ -189,7 +190,7 @@ public class OpenedResultProcessor {
                                     changeList, PerforceVcs.getKey());
       VirtualFile vf = filePath.getVirtualFile();
       if (vf == null) {
-        vf = LocalFileSystem.getInstance().refreshAndFindFileByPath(filePath.getPath());
+        vf = StandardFileSystems.local().refreshAndFindFileByPath(filePath.getPath());
       }
       if (vf != null) {
         vf.putUserData(BRANCHED_FILE, Boolean.TRUE);
@@ -238,9 +239,9 @@ public class OpenedResultProcessor {
       final File ioFile = change.getFile();
       if (ioFile == null) continue;
 
-      VirtualFile file = myLocalFileSystem.findFileByIoFile(ioFile);
+      VirtualFile file = myLocalFileSystem.findFileByPath(ioFile.getAbsolutePath());
       if (file == null && ioFile.exists()) {
-        file = myLocalFileSystem.refreshAndFindFileByIoFile(ioFile);
+        file = myLocalFileSystem.refreshAndFindFileByPath(ioFile.getAbsolutePath());
       }
       if (file != null) {
         file.putUserData(BRANCHED_FILE, null);

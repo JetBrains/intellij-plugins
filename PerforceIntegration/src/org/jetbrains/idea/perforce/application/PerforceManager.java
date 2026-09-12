@@ -14,13 +14,14 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
+import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +73,7 @@ public final class PerforceManager  {
 
   private volatile ClientVersion myClientVersion;
   private volatile boolean myActive;
-  private final LocalFileSystem myLfs;
+  private final VirtualFileSystem myLfs;
   private final PerforceShelf myShelf;
 
   public static PerforceManager getInstance(Project project) {
@@ -108,7 +109,7 @@ public final class PerforceManager  {
     if (ourTraceCalls) {
       myTracer = createTracer();
     }
-    myLfs = LocalFileSystem.getInstance();
+    myLfs = StandardFileSystems.local();
     myShelf = new PerforceShelf(project);
   }
 
@@ -216,7 +217,7 @@ public final class PerforceManager  {
   public @NotNull List<String> getClientRoots(@Nullable P4Connection connection) throws VcsException {
     return ContainerUtil.filter(getCachedClients(connection).getAllRoots(), mainRootValue -> {
       File file = new File(mainRootValue);
-      VirtualFile vf = myLfs.findFileByIoFile(file);
+      VirtualFile vf = myLfs.findFileByPath(file.getAbsolutePath());
       return vf != null && vf.isDirectory() || PerforceClientRootsChecker.isDirectory(file);
     });
   }
@@ -250,7 +251,7 @@ public final class PerforceManager  {
   private boolean isUnderClientRoot(final VirtualFile virtualFile, final String path) {
     final Application application = ApplicationManager.getApplication();
     return application.runReadAction((Computable<Boolean>)() -> {
-      final VirtualFile root = myLfs.findFileByIoFile(new File(path));
+      final VirtualFile root = myLfs.findFileByPath(new File(path).getAbsolutePath());
       if (root != null && ((Comparing.equal(root, virtualFile)) || VfsUtilCore.isAncestor(root, virtualFile, false))) {
         return true;
       }

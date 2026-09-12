@@ -18,7 +18,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vcs.ex.ProjectLevelVcsManagerEx
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.util.coroutines.childScope
 import com.intellij.ui.components.JBCheckBox
@@ -116,7 +116,7 @@ internal class PerforceConfigPanel(private val myProject: Project, private val m
       override fun getInitialFile(): VirtualFile? {
         val file = super.getInitialFile()
         return if (file == null && SystemInfo.isMac) {
-          LocalFileSystem.getInstance().refreshAndFindFileByPath("/Applications/p4vc")
+          StandardFileSystems.local().refreshAndFindFileByPath("/Applications/p4vc")
         }
         else file
       }
