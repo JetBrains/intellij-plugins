@@ -8,7 +8,7 @@ import com.intellij.deno.useDenoLibrary
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.backend.workspace.toVirtualFileUrl
@@ -54,7 +54,7 @@ internal fun getRoots(project: Project): Pair<VirtualFile?, VirtualFile?> {
 
   val denoPackages = service.getDenoCacheDeps()
   val typings = DenoTypings.getInstance(project)
-  val depsVirtualFile = LocalFileSystem.getInstance().findFileByPath(denoPackages)
+  val depsVirtualFile = StandardFileSystems.local().findFileByPath(denoPackages)
   val denoTypingsVirtualFile = typings.getDenoTypingsVirtualFile()
   return depsVirtualFile to denoTypingsVirtualFile
 }

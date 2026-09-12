@@ -5,7 +5,7 @@ import com.intellij.javascript.debugger.DebuggableFileFinder
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
@@ -24,7 +24,7 @@ private val LOG = logger<MeteorFileFinder>()
  * @param workDir System-independent path
  */
 class MeteorFileFinder(workDir: String) : DebuggableFileFinder {
-  private val virtualDir: VirtualFile? = LocalFileSystem.getInstance().findFileByPath(workDir)
+  private val virtualDir: VirtualFile? = StandardFileSystems.local().findFileByPath(workDir)
   private val meteorDir: VirtualFile? = virtualDir?.findChild(DOT_METEOR)
   private val isopacksDir: File = File(workDir, DOT_METEOR + File.separatorChar + "local" + File.separatorChar + "isopacks")
 
@@ -75,7 +75,7 @@ class MeteorFileFinder(workDir: String) : DebuggableFileFinder {
         // it is app script
         val sourceRoot = scriptPath.substring(0, index + 1)
         LOG.assertTrue(urlString.startsWith(METEOR_LOCAL_PACKAGE_SOURCE_PREFIX))
-        return LocalFileSystem.getInstance().findFileByPath("$sourceRoot${urlString.substring(METEOR_LOCAL_PACKAGE_SOURCE_PREFIX.length)}")
+        return StandardFileSystems.local().findFileByPath("$sourceRoot${urlString.substring(METEOR_LOCAL_PACKAGE_SOURCE_PREFIX.length)}")
       }
 
       return findFileForLocalPackage(url)
@@ -158,7 +158,7 @@ class MeteorFileFinder(workDir: String) : DebuggableFileFinder {
       prefixLength = packageName.length
     }
 
-    return LocalFileSystem.getInstance().findFileByPath("$sourceRoot${urlString.substring(prefixLength)}")
+    return StandardFileSystems.local().findFileByPath("$sourceRoot${urlString.substring(prefixLength)}")
   }
 
   private fun readSourceRoot(buildInfo: File, packageName: String?): String? {

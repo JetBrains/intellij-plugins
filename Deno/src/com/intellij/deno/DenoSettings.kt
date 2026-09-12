@@ -22,7 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.roots.AdditionalLibraryRootsListener
 import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspClientManager
@@ -218,7 +218,7 @@ class DenoSettings(
     val libraryProvider = AdditionalLibraryRootsProvider.EP_NAME.findExtensionOrFail(DenoLibraryProvider::class.java)
     val oldRoots = libraryProvider.getRootsToWatch(project)
     ApplicationManager.getApplication().runWriteAction {
-      val fs = LocalFileSystem.getInstance()
+      val fs = StandardFileSystems.local()
       val deps = fs.refreshAndFindFileByPath(getDenoCacheDeps())
       val npm = fs.refreshAndFindFileByPath(getDenoNpm())
       VfsUtil.markDirtyAndRefresh(false, true, true, deps, npm)

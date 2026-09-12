@@ -12,8 +12,8 @@ import com.intellij.lang.javascript.service.protocol.JSLanguageServiceCommand
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -100,7 +100,7 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
     val path = root.resolve(relativePath)
     Files.createDirectories(path.parent)
     Files.writeString(path, content)
-    return checkNotNull(LocalFileSystem.getInstance().refreshAndFindFileByNioFile(path))
+    return checkNotNull(VirtualFileManager.getInstance().refreshAndFindFileByNioPath(path))
   }
 
   private fun createRequestData(file: VirtualFile, content: String, config: VirtualFile? = null): EslintRequestData =

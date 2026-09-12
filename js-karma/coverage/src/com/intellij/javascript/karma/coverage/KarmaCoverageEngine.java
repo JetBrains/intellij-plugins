@@ -21,7 +21,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
@@ -150,7 +150,7 @@ public final class KarmaCoverageEngine extends CoverageEngine {
         ProjectData data = suite.getCoverageData(coverageDataManager);
         if (data != null) {
           for (String path : data.getClasses().keySet()) {
-            VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
+            VirtualFile file = StandardFileSystems.local().findFileByPath(path);
             if (file != null && file.isValid()) {
               ProjectFileIndex projectFileIndex = ProjectFileIndex.getInstance(project);
               VirtualFile contentRoot = projectFileIndex.getContentRootForFile(file);

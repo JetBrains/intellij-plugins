@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
@@ -194,7 +194,7 @@ public class MeteorRunConfiguration extends DebuggableProcessRunConfigurationBas
     VirtualFile dotMeteorVirtualFile = null;
     String workingDirectory = getEffectiveWorkingDirectory();
     if (workingDirectory != null) {
-      VirtualFile workingDir = LocalFileSystem.getInstance().findFileByPath(workingDirectory);
+      VirtualFile workingDir = StandardFileSystems.local().findFileByPath(workingDirectory);
       if (workingDir != null) {
         dotMeteorVirtualFile = workingDir.findChild(MeteorProjectStartupActivity.METEOR_FOLDER);
       }

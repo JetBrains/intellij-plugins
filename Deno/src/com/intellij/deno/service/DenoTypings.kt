@@ -13,7 +13,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.IOException
@@ -90,7 +90,7 @@ class DenoTypings(val project: Project) : Disposable {
   }
 
   fun getDenoTypingsVirtualFile(): VirtualFile? {
-    val typings = LocalFileSystem.getInstance().findFileByPath(getDenoTypings())
+    val typings = StandardFileSystems.local().findFileByPath(getDenoTypings())
     if (typings != null && typings.isValid) return typings
     val bundled = getBundledTypings()
     return VfsUtil.findFileByURL(bundled)?.also {

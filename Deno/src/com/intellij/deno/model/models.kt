@@ -15,7 +15,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -187,7 +187,7 @@ class DenoModel(private val project: Project) {
     val denoNpm = DenoSettings.getService(project).getDenoNpm()
 
     val url = "$denoNpm/$npmRegistry/$packagePath"
-    val packageDirectory = LocalFileSystem.getInstance().findFileByPath(url) ?: return null
+    val packageDirectory = StandardFileSystems.local().findFileByPath(url) ?: return null
     val versionDirectory = packageDirectory.children.firstOrNull {
       it.isDirectory && (version == null || it.name == version || it.name.startsWith(version))
     } ?: return null

@@ -30,7 +30,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.NioFiles;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
@@ -127,7 +127,7 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
   }
 
   private static @Nullable VirtualFile findFile(@NotNull String path) {
-    return FileUtil.isAbsolute(path) ? LocalFileSystem.getInstance().findFileByPath(path) : null;
+    return FileUtil.isAbsolute(path) ? StandardFileSystems.local().findFileByPath(path) : null;
   }
 
   private boolean isTemplate() {

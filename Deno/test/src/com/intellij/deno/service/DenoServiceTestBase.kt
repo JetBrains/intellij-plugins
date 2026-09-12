@@ -17,7 +17,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.StreamUtil
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspClient
 import com.intellij.platform.lsp.api.LspClientManager
@@ -79,11 +79,11 @@ abstract class DenoServiceTestBase : JSTempDirWithNodeInterpreterTest() {
     updateCaches()
 
     //check the vfs refresh result
-    val deps = LocalFileSystem.getInstance().findFileByPath(service.getDenoCacheDeps())
+    val deps = StandardFileSystems.local().findFileByPath(service.getDenoCacheDeps())
     if (deps != null) {
       assertEmpty(deps.children)
     }
-    val npm = LocalFileSystem.getInstance().findFileByPath(service.getDenoNpm())
+    val npm = StandardFileSystems.local().findFileByPath(service.getDenoNpm())
     if (npm != null) {
       assertEmpty(npm.children)
     }

@@ -19,7 +19,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.AsyncFileListener
 import com.intellij.openapi.vfs.AsyncFileListener.ChangeApplier
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
@@ -67,7 +67,7 @@ internal class NuxtFolderManager(
 
   override fun loadState(state: NuxtFolderManagerState) {
     setFolders(state.folders.mapNotNull {
-      LocalFileSystem.getInstance().findFileByPath(it)?.takeIf { file ->
+      StandardFileSystems.local().findFileByPath(it)?.takeIf { file ->
         isAccepted(file, false)
       }
     })

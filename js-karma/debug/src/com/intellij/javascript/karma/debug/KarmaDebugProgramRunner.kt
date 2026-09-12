@@ -41,7 +41,7 @@ import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.HtmlChunk
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ManagingFS
 import com.intellij.ui.content.Content
@@ -192,7 +192,7 @@ internal class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
       val mappings: BiMap<String, VirtualFile> = HashBiMap.create()
       val karmaConfig = karmaServer.karmaConfig
       if (karmaConfig != null) {
-        val basePath = LocalFileSystem.getInstance().findFileByPath(karmaConfig.basePath)
+        val basePath = StandardFileSystems.local().findFileByPath(karmaConfig.basePath)
         if (basePath != null && basePath.isValid) {
           mappings[karmaServer.formatUrlWithoutUrlRoot("/base")] = basePath
         }

@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar
 
 import com.intellij.lang.typescript.kolar.KolarTranspilerService
 import com.intellij.openapi.components.service
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
@@ -38,7 +38,7 @@ class VueKolarTranspilerTest :
 
   private fun CodeInsightTestFixture.getExpectedTranspiledDataDir(): VirtualFile {
     val path = "$testDataPath/${testName}__transpiled"
-    return LocalFileSystem.getInstance().findFileByPath(path)
+    return StandardFileSystems.local().findFileByPath(path)
            ?: throw FileNotFoundException(path)
   }
 
