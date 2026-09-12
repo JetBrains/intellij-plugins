@@ -6,7 +6,7 @@ import com.intellij.codeInspection.GlobalInspectionTool
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ProblemDescriptionsProcessor
 import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.util.PlatformUtils
 import org.rust.cargo.project.model.CargoProject
@@ -42,7 +42,7 @@ class QodanaRustSanityInspection : GlobalInspectionTool() {
                 "inspection.rust.sanity.cargo.project.failed",
                 cargoProject.presentableName, detail)
 
-            val vf = LocalFileSystem.getInstance().findFileByNioFile(cargoProject.manifest)
+            val vf = VirtualFileManager.getInstance().findFileByNioPath(cargoProject.manifest)
             val psiFile = vf?.let { PsiManager.getInstance(project).findFile(it) } ?: continue
 
             // Severity follows the inspection profile (defaulting to level in plugin XML)

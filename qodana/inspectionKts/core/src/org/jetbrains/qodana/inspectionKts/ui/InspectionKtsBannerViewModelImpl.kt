@@ -15,7 +15,6 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileManager
 import kotlinx.coroutines.CoroutineScope
@@ -109,7 +108,7 @@ class InspectionKtsBannerViewModelImpl(
   private fun openExceptionLogInEditorAsync(errorInLogProvider: InspectionKtsErrorLogManager.ErrorInLogProvider, exception: Exception) {
     scope.launch(Dispatchers.Default) {
       val exceptionLocationInLogFile = errorInLogProvider.loggedExceptionLocation(exception) ?: return@launch
-      val logFileVirtualFile = LocalFileSystem.getInstance().findFileByNioFile(exceptionLocationInLogFile.file) ?: return@launch
+      val logFileVirtualFile = VirtualFileManager.getInstance().findFileByNioPath(exceptionLocationInLogFile.file) ?: return@launch
 
       withContext(Dispatchers.EDT) {
         OpenFileDescriptor(project, logFileVirtualFile, exceptionLocationInLogFile.line, 0).navigate(true)

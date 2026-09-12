@@ -7,14 +7,14 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFileManager
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.jetbrains.annotations.ApiStatus
 import java.nio.file.Path
 
 @ApiStatus.Internal
 suspend fun getDocumentByNioPath(file: Path): Document? {
-  val virtualFile = LocalFileSystem.getInstance().findFileByNioFile(file)
+  val virtualFile = VirtualFileManager.getInstance().findFileByNioPath(file)
   val document = if (virtualFile != null) {
     readAction {
       FileDocumentManager.getInstance().getDocument(virtualFile)

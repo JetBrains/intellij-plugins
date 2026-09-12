@@ -1,8 +1,8 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
@@ -79,18 +79,18 @@ class QodanaRunIncrementalContext private constructor(
 
 
 suspend fun resolveVirtualFiles(projectPath: Path, paths: Iterable<Path>): List<VirtualFile> {
-  val fs = LocalFileSystem.getInstance()
+  val fileManager = VirtualFileManager.getInstance()
   return runInterruptible(StaticAnalysisDispatchers.IO) {
     paths.asSequence()
       .map { if (it.isAbsolute) it else projectPath.resolve(it) }
-      .mapNotNull(fs::findFileByNioFile)
+      .mapNotNull(fileManager::findFileByNioPath)
       .toList()
   }
 }
 
 suspend fun resolveVirtualFile(projectPath: Path, path: Path): VirtualFile? {
-  val fs = LocalFileSystem.getInstance()
+  val fileManager = VirtualFileManager.getInstance()
   return runInterruptible(StaticAnalysisDispatchers.IO) {
-    if (path.isAbsolute) fs.findFileByNioFile(path) else fs.findFileByNioFile(projectPath.resolve(path))
+    if (path.isAbsolute) fileManager.findFileByNioPath(path) else fileManager.findFileByNioPath(projectPath.resolve(path))
   }
 }

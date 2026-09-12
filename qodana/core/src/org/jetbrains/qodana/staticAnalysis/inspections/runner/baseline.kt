@@ -1,8 +1,8 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.google.gson.JsonSyntaxException
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.model.ArtifactLocation
@@ -87,8 +87,8 @@ private fun ArtifactLocation.toVirtualFile(projectPath: Path): VirtualFile? {
   if (uriBaseId == OriginalUriBaseId.SRCROOT.uriBaseId) {
     val path = projectPath.resolve(uri)
 
-    return LocalFileSystem.getInstance().findFileByNioFile(path)
+    return VirtualFileManager.getInstance().findFileByNioPath(path)
   }
 
-  return LocalFileSystem.getInstance().findFileByNioFile(Paths.get(uri))
+  return VirtualFileManager.getInstance().findFileByNioPath(Paths.get(uri))
 }

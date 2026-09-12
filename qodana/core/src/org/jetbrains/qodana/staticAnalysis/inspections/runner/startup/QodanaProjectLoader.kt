@@ -30,7 +30,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Predicates
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.findOrCreateFile
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.platform.PlatformProjectOpenProcessor.Companion.isOpenedByPlatformProcessor
@@ -87,7 +87,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
 
   private suspend fun verifyConfig(config: QodanaConfig) {
     val vfsProject = withContext(StaticAnalysisDispatchers.IO) {
-      LocalFileSystem.getInstance().refreshAndFindFileByPath(
+      StandardFileSystems.local().refreshAndFindFileByPath(
         FileUtil.toSystemIndependentName(config.projectPath.toString())
       )
     }

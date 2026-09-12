@@ -7,7 +7,7 @@ import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.VcsIgnoreChecker
 import com.intellij.openapi.vcs.changes.VcsIgnoreManagerImpl
 import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.newvfs.RefreshQueue
 import com.intellij.project.stateStore
 import git4idea.GitVcs
 import git4idea.repo.GitRepositoryFiles
@@ -36,7 +36,7 @@ abstract class QodanaRunnerWithVcsTestCase : QodanaRunnerTestCase() {
   protected fun createGitIgnoreFile(text: String) {
     val file = File("$projectPath/${GitRepositoryFiles.GITIGNORE}")
     file.writeText(text)
-    LocalFileSystem.getInstance().refreshIoFiles(listOf(file))
+    RefreshQueue.getInstance().refreshPaths(false, false, null, listOf(file.toPath()))
   }
 
   protected fun fileIsIgnored(file: Path): Boolean =

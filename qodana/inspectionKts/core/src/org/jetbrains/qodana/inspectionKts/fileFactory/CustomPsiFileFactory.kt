@@ -5,7 +5,7 @@ import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
@@ -38,7 +38,7 @@ interface CustomPsiFileFactory {
 
     suspend fun createOrFindPsiFile(project: Project, contextPath: Path, content: String?): PsiFile? {
       if (content == null) {
-        val virtualFile = LocalFileSystem.getInstance().findFileByNioFile(contextPath)
+        val virtualFile = VirtualFileManager.getInstance().findFileByNioPath(contextPath)
                           ?: return null
         return readAction {
           PsiManager.getInstance(project).findFile(virtualFile)
