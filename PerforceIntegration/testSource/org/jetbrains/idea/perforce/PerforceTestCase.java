@@ -27,10 +27,10 @@ import com.intellij.openapi.vcs.changes.LocallyDeletedChange;
 import com.intellij.openapi.vcs.changes.VcsAnnotationLocalChangesListenerImpl;
 import com.intellij.openapi.vcs.history.VcsFileRevision;
 import com.intellij.openapi.vcs.rollback.RollbackProgressListener;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.WatchRoots;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.RunAll;
@@ -257,10 +257,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   }
 
   private void watchRoot(String tempDir) throws IOException {
-    final LocalFileSystem.WatchRequest request = LocalFileSystem.getInstance().addRootToWatch(new File(tempDir).getCanonicalPath(), true);
-    if (request != null) {
-      Disposer.register(myTestRootDisposable, () -> LocalFileSystem.getInstance().removeWatchedRoot(request));
-    }
+    WatchRoots.getInstance().watch(FileUtil.toSystemIndependentName(new File(tempDir).getCanonicalPath()), true, myTestRootDisposable);
   }
 
   private void enableDebugLogging() {
