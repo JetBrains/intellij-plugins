@@ -13,7 +13,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.ex.http.HttpFileSystem;
 import com.intellij.psi.PsiElement;
@@ -317,7 +317,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     String fullName = BASE_PATH + getTestName(false);
     final String[] files = {fullName + ".mxml"};
 
-    VirtualFile swc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
+    VirtualFile swc = StandardFileSystems.local().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
     VirtualFile asdoc = HttpFileSystem.getInstance().findFileByPath("livedocs.adobe.com/flex/3/langref");
     WriteAction.runAndWait(() -> FlexTestUtils.setupCustomSdk(getModule(), JarFileSystem.getInstance().getJarRootForLocalFile(swc), null, asdoc));
 

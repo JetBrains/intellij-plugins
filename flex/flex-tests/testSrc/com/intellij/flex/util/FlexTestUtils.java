@@ -65,7 +65,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -175,7 +175,7 @@ public final class FlexTestUtils {
     WriteAction.run(() -> {
       final Sdk flexSdk = FlexUtils.getSdkForActiveBC(module);
       final SdkModificator sdkModificator = flexSdk.getSdkModificator();
-      VirtualFile docRoot = LocalFileSystem.getInstance().findFileByPath(getPathToMockFlex(clazz, testName) + "/asdoc");
+      VirtualFile docRoot = StandardFileSystems.local().findFileByPath(getPathToMockFlex(clazz, testName) + "/asdoc");
       sdkModificator.addRoot(docRoot, JavadocOrderRootType.getInstance());
       sdkModificator.commitChanges();
     });
@@ -465,7 +465,7 @@ public final class FlexTestUtils {
   private static VirtualFile copyTo(VirtualFile to, final String path) {
     return WriteAction.compute(() -> {
       try {
-        VirtualFile f = LocalFileSystem.getInstance().findFileByPath(path);
+        VirtualFile f = StandardFileSystems.local().findFileByPath(path);
         if (f.isDirectory()) {
           VirtualFile result = to.createChildDirectory(JSTestUtils.class, f.getName());
           VfsUtil.copyDirectory(JSTestUtils.class, f, result, null);
@@ -493,7 +493,7 @@ public final class FlexTestUtils {
       relativePath = "/" + relativePath;
     }
 
-    VirtualFile root = LocalFileSystem.getInstance().findFileByPath(rootPath + relativePath);
+    VirtualFile root = StandardFileSystems.local().findFileByPath(rootPath + relativePath);
     assert root != null : "path '" + rootPath + relativePath + "' not found";
 
     boolean archive = false;

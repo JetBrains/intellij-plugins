@@ -19,7 +19,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -84,7 +84,7 @@ internal class Flexmojos3GenerateConfigTask(private val myModule: Module,
 
       MavenUtil.invokeAndWaitWriteAction(project) {
         // need to refresh externally created file
-        val file = LocalFileSystem.getInstance().refreshAndFindFileByPath(myConfigFilePath)
+        val file = StandardFileSystems.local().refreshAndFindFileByPath(myConfigFilePath)
         if (file != null) {
           file.refresh(false, false)
 
@@ -131,7 +131,7 @@ internal class Flexmojos3GenerateConfigTask(private val myModule: Module,
               val outputFileName = outputFilePath.substring(lastSlashIndex + 1)
               val outputFolderPath = outputFilePath.substring(0, max(0, lastSlashIndex))
 
-              var outputFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(outputFilePath)
+              var outputFile = StandardFileSystems.local().refreshAndFindFileByPath(outputFilePath)
               if (outputFile == null) {
                 val outputDir = VfsUtil.createDirectoryIfMissing(outputFolderPath)
                 if (outputDir == null) throw IOException(IdeBundle.message("error.failed.to.create.directory", outputFolderPath))
@@ -177,7 +177,7 @@ internal class Flexmojos3GenerateConfigTask(private val myModule: Module,
 
       try {
         val mainClassPath = FlexUtils.findXMLElement(configFile.inputStream, "<flex-config><file-specs><path-element>")
-        val mainClassFile = if (mainClassPath == null) null else LocalFileSystem.getInstance().findFileByPath(mainClassPath)
+        val mainClassFile = if (mainClassPath == null) null else StandardFileSystems.local().findFileByPath(mainClassPath)
         if (mainClassFile == null || mainClassFile.isDirectory) return
 
         val sourceRoot = ProjectRootManager.getInstance(module.project).fileIndex.getSourceRootForFile(mainClassFile)

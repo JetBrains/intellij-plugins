@@ -14,7 +14,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.OSAgnosticPathUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
@@ -126,7 +126,7 @@ public final class ReferenceSupport {
           return RelativeToWhat.Absolute;
         }
       }
-      else if (path.startsWith("/") && LocalFileSystem.getInstance().findFileByPath(path) != null) {
+      else if (path.startsWith("/") && StandardFileSystems.local().findFileByPath(path) != null) {
         return RelativeToWhat.Absolute;
       }
     }

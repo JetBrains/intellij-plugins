@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.projectImport.SelectImportedProjectsStep;
 
@@ -25,7 +25,7 @@ public class SelectFlashBuilderImportedProjectsStep extends SelectImportedProjec
     final FlashBuilderImporter builder = (FlashBuilderImporter)getBuilder();
     if (builder == null) return false;
     // no need in this step if one archive file or one FB project was explicitly selected
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(builder.getInitiallySelectedPath());
+    final VirtualFile file = StandardFileSystems.local().findFileByPath(builder.getInitiallySelectedPath());
 
     if (file != null) {
       if (file.isDirectory()) {

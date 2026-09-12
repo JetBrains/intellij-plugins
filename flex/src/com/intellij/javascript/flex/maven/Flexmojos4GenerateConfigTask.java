@@ -21,8 +21,9 @@ import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.RefreshQueue;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathsList;
 import com.intellij.util.SystemProperties;
@@ -132,7 +133,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
         for (Map.Entry<Module, String> entry : myModuleToConfigFilePath.entrySet()) {
           if (entry.getKey().isDisposed()) continue;
 
-          final VirtualFile configFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(entry.getValue());
+          final VirtualFile configFile = StandardFileSystems.local().refreshAndFindFileByPath(entry.getValue());
           if (configFile != null && !configFile.isDirectory()) {
             Flexmojos3GenerateConfigTask.updateMainClass(entry.getKey(), configFile);
           }
@@ -323,7 +324,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     public void run() {
       WriteAction.run(() -> {
         // need to refresh externally created file
-        final VirtualFile p = LocalFileSystem.getInstance().refreshAndFindFileByPath(Flexmojos4Configurator.getCompilerConfigsDir(project));
+        final VirtualFile p = StandardFileSystems.local().refreshAndFindFileByPath(Flexmojos4Configurator.getCompilerConfigsDir(project));
         if (p == null) {
           return;
         }
@@ -337,7 +338,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
             virtualFiles.add(file);
           }
         }
-        LocalFileSystem.getInstance().refreshFiles(virtualFiles);
+        RefreshQueue.getInstance().refresh(false, false, null, virtualFiles);
 
         final MavenProjectsManager mavenProjectsManager = MavenProjectsManager.getInstance(project);
         for (Map.Entry<MavenProject, List<String>> entry : sourceRoots.entrySet()) {

@@ -21,7 +21,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentManager;
@@ -224,9 +224,9 @@ public class FlexNavigationTest extends JSDaemonAnalyzerTestCase {
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testSdkClass1() throws Exception {
-    VirtualFile asdoc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "SdkAsdoc.zip");
+    VirtualFile asdoc = StandardFileSystems.local().findFileByPath(getTestDataPath() + BASE_PATH + "SdkAsdoc.zip");
     asdoc = JarFileSystem.getInstance().getJarRootForLocalFile(asdoc);
-    VirtualFile swc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
+    VirtualFile swc = StandardFileSystems.local().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
     swc = JarFileSystem.getInstance().getJarRootForLocalFile(swc);
 
     FlexTestUtils.setupCustomSdk(myModule, swc, null, asdoc);
@@ -239,9 +239,9 @@ public class FlexNavigationTest extends JSDaemonAnalyzerTestCase {
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testSdkClass2() throws Exception {
-    VirtualFile asdoc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "SdkAsdoc.zip");
+    VirtualFile asdoc = StandardFileSystems.local().findFileByPath(getTestDataPath() + BASE_PATH + "SdkAsdoc.zip");
     asdoc = JarFileSystem.getInstance().getJarRootForLocalFile(asdoc);
-    VirtualFile swc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
+    VirtualFile swc = StandardFileSystems.local().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
     swc = JarFileSystem.getInstance().getJarRootForLocalFile(swc);
 
     FlexTestUtils.setupCustomSdk(myModule, swc, null, asdoc);
@@ -363,7 +363,7 @@ public class FlexNavigationTest extends JSDaemonAnalyzerTestCase {
   private void doLibClassCssTest(boolean expectedForDoc, @Nullable String expectedClassName) throws Exception {
     String testName = getTestName(false);
     String mockFlex = FlexTestUtils.getPathToMockFlex(getClass(), testName) + "/MonkeyPatchingMockFlex.as";
-    VirtualFile file = LocalFileSystem.getInstance().findFileByPath(mockFlex);
+    VirtualFile file = StandardFileSystems.local().findFileByPath(mockFlex);
     doTest(testName + ".css", file, expectedForDoc ? file : null, expectedClassName);
   }
 
@@ -372,7 +372,7 @@ public class FlexNavigationTest extends JSDaemonAnalyzerTestCase {
     final String testName = getTestName(false);
 
     myAfterCommitRunnable = () -> {
-      final VirtualFile sdkSrc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + testName + "_sdk_src");
+      final VirtualFile sdkSrc = StandardFileSystems.local().findFileByPath(getTestDataPath() + BASE_PATH + testName + "_sdk_src");
       final SdkModificator sdkModificator = FlexTestUtils.getFlexSdkModificator(myModule);
       sdkModificator.addRoot(sdkSrc, OrderRootType.SOURCES);
       sdkModificator.commitChanges();
@@ -380,7 +380,7 @@ public class FlexNavigationTest extends JSDaemonAnalyzerTestCase {
 
     configureByFiles(BASE_PATH + testName, BASE_PATH + testName + "/" + testName + ".as", BASE_PATH + testName + "/mx/events/FlexEvent.as");
 
-    final VirtualFile expectedFile = LocalFileSystem.getInstance()
+    final VirtualFile expectedFile = StandardFileSystems.local()
       .findFileByPath(ModuleRootManager.getInstance(myModule).getSourceRoots()[0].getPath() + "/mx/events/FlexEvent.as");
     assert expectedFile != null;
 
@@ -400,7 +400,7 @@ public class FlexNavigationTest extends JSDaemonAnalyzerTestCase {
 
     configureByFiles(null, BASE_PATH + testName + ".as");
 
-    final VirtualFile sourcesZip = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + testName + ".zip");
+    final VirtualFile sourcesZip = StandardFileSystems.local().findFileByPath(getTestDataPath() + BASE_PATH + testName + ".zip");
     VirtualFile expectedForSource = JarFileSystem.getInstance().getJarRootForLocalFile(sourcesZip).findChild("MyClass3.as");
     assertNotNull(expectedForSource);
 

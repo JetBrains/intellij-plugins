@@ -17,7 +17,7 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.components.JBTabbedPane;
@@ -438,7 +438,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     if (folderPath.isEmpty()) {
       return new ValidationInfo("Folder is not set", myDescriptorFolderTextWithBrowse);
     }
-    final VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(folderPath);
+    final VirtualFile dir = StandardFileSystems.local().findFileByPath(folderPath);
     if (dir != null && !dir.isDirectory()) {
       return new ValidationInfo("Folder for AIR descriptor must be specified", myDescriptorFolderTextWithBrowse);
     }

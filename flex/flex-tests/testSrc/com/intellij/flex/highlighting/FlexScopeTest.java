@@ -26,7 +26,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -187,13 +187,13 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
 
     bcManager.setActiveBuildConfiguration(bcManager.findConfigurationByName("1"));
     VirtualFile sourceFile1 =
-      LocalFileSystem.getInstance()
+      StandardFileSystems.local()
         .findFileByPath(sdks.first.getHomePath() + "/frameworks/projects/spark/src/spark/components/Application.as");
     FlexNavigationTest.doTest(myEditor, sourceFile1, null, null, belongsToSdk(sdks.first));
 
     bcManager.setActiveBuildConfiguration(bcManager.findConfigurationByName("2"));
     VirtualFile sourceFile2 =
-      LocalFileSystem.getInstance()
+      StandardFileSystems.local()
         .findFileByPath(sdks.second.getHomePath() + "/frameworks/projects/spark/src/spark/components/Application.as");
     FlexNavigationTest.doTest(myEditor, sourceFile2, null, null, belongsToSdk(sdks.second));
   }

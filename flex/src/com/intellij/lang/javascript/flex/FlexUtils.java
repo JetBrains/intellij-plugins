@@ -38,7 +38,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -412,7 +412,7 @@ public final class FlexUtils {
                                                          final boolean interactive,
                                                          final String folderPath,
                                                          final String errorMessageTitle) {
-    VirtualFile folder = LocalFileSystem.getInstance().findFileByPath(folderPath);
+    VirtualFile folder = StandardFileSystems.local().findFileByPath(folderPath);
     if (folder == null) {
       try {
         folder = VfsUtil.createDirectories(folderPath);

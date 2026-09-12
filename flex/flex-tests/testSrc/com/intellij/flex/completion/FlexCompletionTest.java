@@ -31,7 +31,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -746,7 +746,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     final Sdk flexSdk = FlexUtils.getSdkForActiveBC(getModule());
     final SdkModificator sdkModificator = flexSdk.getSdkModificator();
     final VirtualFile swcFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + testName + ".swc");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + "/" + testName + ".swc");
     sdkModificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(swcFile), OrderRootType.CLASSES);
     ApplicationManager.getApplication().runWriteAction(() -> sdkModificator.commitChanges());
 
@@ -783,7 +783,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     final String testName = getTestName(false);
 
     final VirtualFile srcFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + testName + "_sdk_src/");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + "/" + testName + "_sdk_src/");
 
     final Sdk flexSdk = FlexUtils.getSdkForActiveBC(getModule());
     final SdkModificator modificator = flexSdk.getSdkModificator();

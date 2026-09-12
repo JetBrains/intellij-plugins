@@ -79,7 +79,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
@@ -408,7 +408,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   public static @Nullable String getApplicationId(final String airDescriptorPath) {
     final VirtualFile descriptorFile = WriteAction.compute(() -> {
-      final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
+      final VirtualFile file = StandardFileSystems.local().refreshAndFindFileByPath(airDescriptorPath);
       if (file != null) {
         file.refresh(false, false);
       }
@@ -426,7 +426,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   public static @Nullable String getApplicationName(final String airDescriptorPath) {
     final VirtualFile descriptorFile = WriteAction.compute(() -> {
-      final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
+      final VirtualFile file = StandardFileSystems.local().refreshAndFindFileByPath(airDescriptorPath);
       if (file != null) {
         file.refresh(false, false);
       }

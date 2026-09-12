@@ -15,7 +15,7 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
@@ -57,7 +57,7 @@ public final class FlexSdkType2 extends SdkType {
 
   @Override
   public boolean isValidSdkHome(final @NotNull String path) {
-    final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(path);
+    final VirtualFile sdkHome = StandardFileSystems.local().findFileByPath(path);
     if (sdkHome == null || !sdkHome.isDirectory()) {
       return false;
     }
@@ -118,7 +118,7 @@ public final class FlexSdkType2 extends SdkType {
 
   @Override
   public String getVersionString(final @NotNull String sdkHome) {
-    final VirtualFile sdkRoot = LocalFileSystem.getInstance().findFileByPath(sdkHome);
+    final VirtualFile sdkRoot = StandardFileSystems.local().findFileByPath(sdkHome);
     final String flexVersion = FlexSdkUtils.doReadFlexSdkVersion(sdkRoot);
     if (flexVersion != null) return flexVersion;
 
@@ -135,7 +135,7 @@ public final class FlexSdkType2 extends SdkType {
 
     sdkModificator.setVersionString(getVersionString(sdkRoot.getPath()));
 
-    VirtualFile libsDir = LocalFileSystem.getInstance().findFileByPath(sdkRoot.getPath() + "/frameworks/libs");
+    VirtualFile libsDir = StandardFileSystems.local().findFileByPath(sdkRoot.getPath() + "/frameworks/libs");
     VirtualFile playerDir = libsDir != null && libsDir.isDirectory() ? libsDir.findChild("player") : null;
     if (playerDir != null) {
       FlexSdkUtils.processPlayerglobalSwcFiles(playerDir, playerglobalSwcFile -> {

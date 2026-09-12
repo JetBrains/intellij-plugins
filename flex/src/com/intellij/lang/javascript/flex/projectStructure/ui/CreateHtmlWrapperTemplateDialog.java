@@ -19,7 +19,7 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -272,7 +272,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     }
 
     final String sdkTemplatePath = sdk.getHomePath() + "/templates/" + wrapperName;
-    final VirtualFile sdkTemplateFolder = LocalFileSystem.getInstance().findFileByPath(sdkTemplatePath);
+    final VirtualFile sdkTemplateFolder = StandardFileSystems.local().findFileByPath(sdkTemplatePath);
     if (sdkTemplateFolder == null || !sdkTemplateFolder.isDirectory()) {
       Messages.showErrorDialog(project, FlexBundle.message("html.wrapper.in.sdk.not.found", sdkTemplatePath), getTitleText());
       return false;

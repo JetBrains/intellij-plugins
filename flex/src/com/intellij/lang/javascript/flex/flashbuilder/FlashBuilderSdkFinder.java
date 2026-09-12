@@ -15,7 +15,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -115,7 +115,7 @@ public class FlashBuilderSdkFinder {
   }
 
   private static @Nullable String guessWorkspacePath(String path, final Collection<VirtualFile> checked) {
-    VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(path);
+    VirtualFile dir = StandardFileSystems.local().findFileByPath(path);
     if (dir != null && !dir.isDirectory()) {
       dir = dir.getParent();
     }
@@ -292,7 +292,7 @@ public class FlashBuilderSdkFinder {
   private static @Nullable Element loadSdkInfoDocument(final String flashBuilderWorkspacePath) {
     try {
       final VirtualFile projectPrefsFile =
-        LocalFileSystem.getInstance().findFileByPath(flashBuilderWorkspacePath + FlashBuilderProjectFinder.PROJECT_PREFS_RELATIVE_PATH);
+        StandardFileSystems.local().findFileByPath(flashBuilderWorkspacePath + FlashBuilderProjectFinder.PROJECT_PREFS_RELATIVE_PATH);
       if (projectPrefsFile == null) return null;
 
       final Properties projectPrefsProperties = new Properties();

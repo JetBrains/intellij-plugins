@@ -68,7 +68,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -720,7 +720,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
       doTestFor(true, new File(root + "/before"), (Runnable)null, testName + "/before/" + "Ref1.as");
     findAndInvokeIntentionAction(infoCollection, "Change Foo.func() signature", myEditor, myFile);
     FileDocumentManager.getInstance().saveAllDocuments();
-    VirtualFile dirAfter = LocalFileSystem.getInstance().findFileByIoFile(new File(root + "/after"));
+    VirtualFile dirAfter = StandardFileSystems.local().findFileByPath(new File(root + "/after").getAbsolutePath());
     VirtualFile actualDir = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(myFile.getVirtualFile());
     PlatformTestUtil.assertDirectoriesEqual(dirAfter, actualDir);
   }
@@ -767,7 +767,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
       doTestFor(true, new File(root + "/before"), (Runnable)null, testName + "/before/" + filename);
     findAndInvokeIntentionAction(infoCollection, "Create constructor '" + superClassName + "'", myEditor, myFile);
     FileDocumentManager.getInstance().saveAllDocuments();
-    VirtualFile dirAfter = LocalFileSystem.getInstance().findFileByIoFile(new File(root + "/after"));
+    VirtualFile dirAfter = StandardFileSystems.local().findFileByPath(new File(root + "/after").getAbsolutePath());
     VirtualFile actualDir = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(myFile.getVirtualFile());
     PlatformTestUtil.assertDirectoriesEqual(dirAfter, actualDir);
   }
@@ -2100,7 +2100,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     try {
       VirtualFile dir = getOrCreateProjectBaseDir().createChildDirectory(this, "module2");
       PsiTestUtil.addSourceRoot(module, dir);
-      VirtualFile f = LocalFileSystem.getInstance().findFileByPath(filePath);
+      VirtualFile f = StandardFileSystems.local().findFileByPath(filePath);
       return VfsUtilCore.copyFile(this, f, dir);
     }
     catch (IOException e) {

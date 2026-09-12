@@ -10,7 +10,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -166,7 +166,7 @@ public class FilesToPackageForm {
           public void actionPerformed(ActionEvent e) {
             FileChooserDescriptor d = new FileChooserDescriptor(true, true, false, true, false, false);
 
-            VirtualFile initialFile = LocalFileSystem.getInstance().findFileByPath((String)getCellEditorValue());
+            VirtualFile initialFile = StandardFileSystems.local().findFileByPath((String)getCellEditorValue());
             VirtualFile file = FileChooser.chooseFile(d, myProject, initialFile);
             if (file != null) {
               myComponent.getChildComponent().setText(file.getPresentableUrl());

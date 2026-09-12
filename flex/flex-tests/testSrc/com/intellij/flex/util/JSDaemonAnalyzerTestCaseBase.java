@@ -37,7 +37,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
@@ -504,7 +504,7 @@ public abstract class JSDaemonAnalyzerTestCaseBase extends HeavyPlatformTestCase
         if (rawProjectRoot != null) {
           FileUtil.copyDir(rawProjectRoot, toDir.toNioPath().toFile());
           File projectRoot = rawProjectRoot.getCanonicalFile();
-          VirtualFile aNull = Objects.requireNonNull(LocalFileSystem.getInstance().refreshAndFindFileByIoFile(projectRoot));
+          VirtualFile aNull = Objects.requireNonNull(StandardFileSystems.local().refreshAndFindFileByPath(projectRoot.getAbsolutePath()));
           editorInfos1 = copyFilesFillingEditorInfos(aNull, toDir, ContainerUtil.map2Array(reversed, String.class, s -> {
             return s.getPath().substring(projectRoot.getPath().length());
           }));
@@ -580,7 +580,7 @@ public abstract class JSDaemonAnalyzerTestCaseBase extends HeavyPlatformTestCase
       if (toFile == null) {
         final File file = new File(toDir.getPath(), relativePath);
         FileUtil.createIfDoesntExist(file);
-        toFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file);
+        toFile = StandardFileSystems.local().refreshAndFindFileByPath(file.getAbsolutePath());
         assertNotNull(file.getCanonicalPath(), toFile);
       }
       toFile.putUserData(VfsTestUtil.TEST_DATA_FILE_PATH, FileUtil.toSystemDependentName(fromFile.getPath()));

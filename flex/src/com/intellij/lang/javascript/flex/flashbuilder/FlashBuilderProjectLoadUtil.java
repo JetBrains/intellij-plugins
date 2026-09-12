@@ -9,7 +9,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import org.jdom.Element;
@@ -128,7 +128,7 @@ public final class FlashBuilderProjectLoadUtil {
   public static List<FlashBuilderProject> loadProjects(final Collection<String> dotProjectFilePaths, final boolean isArchive) {
     final List<FlashBuilderProject> flashBuilderProjects = new ArrayList<>(dotProjectFilePaths.size());
     for (final String dotProjectFilePath : dotProjectFilePaths) {
-      final VirtualFile dotProjectFile = LocalFileSystem.getInstance().findFileByPath(dotProjectFilePath);
+      final VirtualFile dotProjectFile = StandardFileSystems.local().findFileByPath(dotProjectFilePath);
       if (dotProjectFile != null) {
         flashBuilderProjects.add(loadProject(dotProjectFile, isArchive));
       }

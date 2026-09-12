@@ -45,7 +45,7 @@ import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -187,7 +187,7 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   }
 
   protected static String getSomeAbsoluteFolderPath() {
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath("");
+    final VirtualFile file = StandardFileSystems.local().findFileByPath("");
     assert file != null;
     return file.getPath();
   }

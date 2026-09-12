@@ -54,7 +54,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -226,7 +226,7 @@ public final class CompilerConfigGenerator {
     final Map<String, String> filePathToPathInSwc = new HashMap<>();
 
     for (String path : myBC.getCompilerOptions().getFilesToIncludeInSWC()) {
-      final VirtualFile fileOrDir = LocalFileSystem.getInstance().findFileByPath(path);
+      final VirtualFile fileOrDir = StandardFileSystems.local().findFileByPath(path);
       if (fileOrDir == null ||
           compilerConfiguration.isExcludedFromCompilation(fileOrDir) ||
           FileTypeManager.getInstance().isFileIgnored(fileOrDir)) {
@@ -477,7 +477,7 @@ public final class CompilerConfigGenerator {
                                     getPathToFlexUnitMainClass(myModule.getProject(), myBC.getNature(), myBC.getMainClass()));
       for (String libName : flexUnitLibNames) {
         final String libPath = FlexCommonUtils.getPathToBundledJar(libName);
-        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(libPath);
+        final VirtualFile file = StandardFileSystems.local().findFileByPath(libPath);
         assert file != null;
         addLibraryRoots(rootElement, new VirtualFile[]{file}, LinkageType.Merged);
       }
@@ -582,7 +582,7 @@ public final class CompilerConfigGenerator {
     if (myBC.getOutputType() != OutputType.Application) return false;
 
     final String path = FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
-    final VirtualFile file = path.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(path);
+    final VirtualFile file = path.isEmpty() ? null : StandardFileSystems.local().findFileByPath(path);
     return file != null && ModuleRootManager.getInstance(myModule).getFileIndex().isInTestSourceContent(file);
   }
 
@@ -669,7 +669,7 @@ public final class CompilerConfigGenerator {
       else {
         final String configFilePath = appBC.getCompilerOptions().getAdditionalConfigFilePath();
         if (!configFilePath.isEmpty()) {
-          final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(configFilePath);
+          final VirtualFile configFile = StandardFileSystems.local().findFileByPath(configFilePath);
           if (configFile != null) {
             try {
               String path = FlexUtils.findXMLElement(configFile.getInputStream(), "<flex-config><link-report>");

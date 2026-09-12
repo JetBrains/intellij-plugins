@@ -6,7 +6,7 @@ import com.intellij.ide.projectView.PresentationData;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.elements.PackagingElement;
 import com.intellij.packaging.elements.PackagingElementFactory;
@@ -92,7 +92,7 @@ public class FlashBCOutputSourceItem extends PackagingSourceItem {
         result.add(new FileCopyPackagingElement(outputFilePath));
         result.add(new FileCopyPackagingElement(outputFolderPath + "/" + BCUtils.getWrapperFileName(myBc)));
 
-        final VirtualFile wrapperDir = LocalFileSystem.getInstance().findFileByPath(myBc.getWrapperTemplatePath());
+        final VirtualFile wrapperDir = StandardFileSystems.local().findFileByPath(myBc.getWrapperTemplatePath());
         if (wrapperDir != null && wrapperDir.isDirectory()) {
           for (VirtualFile file : wrapperDir.getChildren()) {
             if (!FlexCommonUtils.HTML_WRAPPER_TEMPLATE_FILE_NAME.equals(file.getName())) {

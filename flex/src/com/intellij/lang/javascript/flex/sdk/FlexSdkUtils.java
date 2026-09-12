@@ -29,7 +29,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PairConsumer;
@@ -118,7 +118,7 @@ public final class FlexSdkUtils {
 
   public static @Nullable Sdk createOrGetSdk(final SdkType sdkType, final String path) {
     // todo work with sdk modifiable model if Project Structure is open!
-    final VirtualFile sdkHome = path == null ? null : LocalFileSystem.getInstance().findFileByPath(path);
+    final VirtualFile sdkHome = path == null ? null : StandardFileSystems.local().findFileByPath(path);
     if (sdkHome == null) return null;
     final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
     for (final Sdk flexSdk : projectJdkTable.getSdksOfType(sdkType)) {
@@ -211,7 +211,7 @@ public final class FlexSdkUtils {
   public static Pair<VirtualFile, Boolean> getAirRuntimeDirInfoForFlexmojosSdk(final @NotNull Sdk sdk) throws IOException {
     assert sdk.getSdkType() instanceof FlexmojosSdkType;
     final String airRuntimePath = getAirRuntimePathForFlexmojosSdk(sdk);
-    final VirtualFile airRuntime = LocalFileSystem.getInstance().findFileByPath(airRuntimePath);
+    final VirtualFile airRuntime = StandardFileSystems.local().findFileByPath(airRuntimePath);
     if (airRuntime == null) {
       throw new IOException("Can't find AIR Runtime at " + airRuntimePath);
     }
@@ -256,7 +256,7 @@ public final class FlexSdkUtils {
     final VirtualFile dir = ApplicationManager.getApplication().runWriteAction((NullableComputable<VirtualFile>)() -> {
       try {
         ZipUtil.extract(new File(zipFilePath), new File(outputDirPath), null);
-        final VirtualFile tempDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(outputDirPath);
+        final VirtualFile tempDir = StandardFileSystems.local().refreshAndFindFileByPath(outputDirPath);
         assert tempDir != null;
         return tempDir;
       }
