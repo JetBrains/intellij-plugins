@@ -24,7 +24,6 @@ import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
-import org.jetbrains.vuejs.lang.typescript.service.VueServiceTestMixin.setForceLegacyPluginUsage
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 import org.junit.ComparisonFailure
 
@@ -83,7 +82,6 @@ abstract class VueTestCase(
       VueTestMode.LEGACY_PLUGIN,
         -> {
         val bundledVersion = configuration.getVueLanguageToolsVersion()!!
-        setForceLegacyPluginUsage(bundledVersion == VueLanguageToolsVersion.LEGACY, testRootDisposable)
 
         val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
           it is VuePluginTypeScriptService
