@@ -21,24 +21,15 @@ object VueLspServerHybridModeLoaderFactory {
   }
 
   private fun createLoader(runtime: VueServiceRuntime): Loader {
-    val version = when (runtime) {
-      is VueServiceRuntime.Bundled ->
-        runtime.version.versionString
-    }
-    val descriptor = VueLspServerPackageDescriptor(version)
-    return Loader(descriptor, runtime)
+    return Loader(VueLspServerPackageDescriptor(runtime.version.versionString))
   }
 }
 
 @ApiStatus.Experimental
 private class Loader(
   private val descriptor: LspServerPackageDescriptor,
-  private val runtime: VueServiceRuntime,
 ) : LspServerLoader(descriptor) {
   override fun getSelectedPackage(project: Project): NodePackage {
-    return when (runtime) {
-      is VueServiceRuntime.Bundled ->
-        JSExternalDefinitionsPackage(descriptor.serverPackage)
-    }
+    return JSExternalDefinitionsPackage(descriptor.serverPackage)
   }
 }

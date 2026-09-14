@@ -24,31 +24,22 @@ object VueTSPluginLoaderFactory {
   }
 
   private fun createLoader(runtime: VueServiceRuntime): VueTSPluginLoader {
-    val version = when (runtime) {
-      is VueServiceRuntime.Bundled ->
-        runtime.version.versionString
-    }
-
+    val version = runtime.version.versionString
     val packageVersion = PackageVersion.bundled<VueTSPluginPackageDescriptor>(
       version = version,
       pluginPath = vuePluginPath,
       localPath = "vue-language-tools/typescript-plugin/$version",
       isBundledEnabled = { Registry.`is`("vue.ts.plugin.bundled.enabled") },
     )
-    val descriptor = VueTSPluginPackageDescriptor(packageVersion)
-    return VueTSPluginLoader(descriptor, runtime)
+    return VueTSPluginLoader(VueTSPluginPackageDescriptor(packageVersion))
   }
 }
 
 @ApiStatus.Experimental
 private class VueTSPluginLoader(
   private val descriptor: LspServerPackageDescriptor,
-  private val runtime: VueServiceRuntime,
 ) : TSPluginLoader(descriptor) {
   override fun getSelectedPackage(project: Project): NodePackage {
-    return when (runtime) {
-      is VueServiceRuntime.Bundled ->
-        JSExternalDefinitionsPackage(descriptor.serverPackage)
-    }
+    return JSExternalDefinitionsPackage(descriptor.serverPackage)
   }
 }

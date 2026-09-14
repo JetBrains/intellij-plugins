@@ -87,7 +87,7 @@ abstract class VueTestCase(
 
         val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
           it is VuePluginTypeScriptService
-          && it.runtime == VueServiceRuntime.Bundled(bundledVersion)
+          && it.runtime == VueServiceRuntime(bundledVersion)
         } as TypeScriptServerServiceImpl
 
         service.assertProcessStarted()

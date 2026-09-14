@@ -40,7 +40,7 @@ class VueHybridModeBundledResourcesTest : BaseLspTypeScriptServiceTest() {
 
   fun `test all bundled versions have LSP resources`() {
     for (version in VueLanguageToolsVersion.entries) {
-      val runtime = VueServiceRuntime.Bundled(version)
+      val runtime = VueServiceRuntime(version)
       val loader = VueLspServerHybridModeLoaderFactory.getLoader(runtime)
       val path = loader.getAbsolutePath(project)
                  ?: error("LSP server path is null for $version")
@@ -53,7 +53,7 @@ class VueHybridModeBundledResourcesTest : BaseLspTypeScriptServiceTest() {
 
   fun `test all bundled versions have TS plugin resources`() {
     for (version in VueLanguageToolsVersion.entries) {
-      val runtime = VueServiceRuntime.Bundled(version)
+      val runtime = VueServiceRuntime(version)
       val loader = VueTSPluginLoaderFactory.getLoader(runtime)
       val path = loader.getAbsolutePath(project)
                  ?: error("TS plugin path is null for $version")
