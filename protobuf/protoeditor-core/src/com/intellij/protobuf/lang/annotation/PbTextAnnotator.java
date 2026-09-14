@@ -78,6 +78,15 @@ public class PbTextAnnotator implements Annotator {
       return;
     }
 
+    // Fast check: this annotator only handles specific element types.
+    if (!(element instanceof PbTextField
+        || element instanceof PbTextFieldName
+        || element instanceof PbTextSymbolPath
+        || element instanceof PbTextExtensionName
+        || element instanceof PbTextDomain)) {
+      return;
+    }
+
     // Don't perform any annotations if the element exists within a reserved field.
     if (isReservedFieldOrDescendant(element, holder)) {
       return;
