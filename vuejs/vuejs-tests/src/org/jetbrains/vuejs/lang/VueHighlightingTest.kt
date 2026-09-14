@@ -5,7 +5,6 @@ import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredAltAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredTitleElementInspection
-import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.JSTestUtils.checkHighlightingWithSymbolNames
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
@@ -164,16 +163,6 @@ abstract class VueHighlightingTestBase(
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(VueInspectionsProvider())
-  }
-
-  override fun adjustModules(
-    modules: Array<out WebFrameworkTestModule>,
-  ): Array<out WebFrameworkTestModule> {
-    // WA for `package.json`
-    if (name == "testLocalWebTypes")
-      return modules
-
-    return super.adjustModules(modules)
   }
 
   @Test
