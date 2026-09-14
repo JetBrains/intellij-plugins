@@ -34,7 +34,7 @@ internal class VueTypeScriptPluginServiceWrapper(project: Project) : Disposable 
     private set
 
   private fun getServices(project: Project): List<VuePluginTypeScriptService> {
-    return allVueServiceRuntimes.map {
+    return VueServiceRuntime.ALL.map {
       VuePluginTypeScriptService(project, it)
     }
   }

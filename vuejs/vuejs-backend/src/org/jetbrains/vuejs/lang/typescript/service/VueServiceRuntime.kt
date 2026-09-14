@@ -3,10 +3,11 @@ package org.jetbrains.vuejs.lang.typescript.service
 
 data class VueServiceRuntime(
   val version: VueLanguageToolsVersion,
-)
-
-internal val allVueServiceRuntimes: List<VueServiceRuntime> =
-  listOf(
-    VueServiceRuntime(VueLanguageToolsVersion.LEGACY),
-    VueServiceRuntime(VueLanguageToolsVersion.DEFAULT),
-  )
+) {
+  internal companion object {
+    val ALL: List<VueServiceRuntime> = listOf(
+      VueServiceRuntime(VueLanguageToolsVersion.LEGACY),
+      VueServiceRuntime(VueLanguageToolsVersion.DEFAULT),
+    )
+  }
+}

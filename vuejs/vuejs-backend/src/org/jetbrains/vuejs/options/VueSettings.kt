@@ -16,7 +16,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.platform.lsp.api.LspClientManager
 import kotlinx.serialization.Serializable
-import org.jetbrains.vuejs.lang.typescript.service.allVueServiceRuntimes
+import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspIntegrationHybridModeProvider
 
 @Service(Service.Level.PROJECT)
@@ -96,7 +96,7 @@ internal fun restartVueServicesAsync(project: Project) {
   restartTypeScriptServicesAsync(project)
   ApplicationManager.getApplication().invokeLater(
     {
-      for (runtime in allVueServiceRuntimes) {
+      for (runtime in VueServiceRuntime.ALL) {
         LspClientManager.getInstance(project)
           .stopAndRestartClientsIfNeeded(VueLspIntegrationHybridModeProvider.getProviderClass(runtime))
       }
