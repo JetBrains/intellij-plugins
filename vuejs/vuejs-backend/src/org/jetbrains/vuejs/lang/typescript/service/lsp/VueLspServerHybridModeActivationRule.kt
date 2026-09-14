@@ -35,11 +35,6 @@ private class ActivationHelper(
     val settings = VueSettings.instance(project)
 
     val runtimeMatchesSettings = when (runtime) {
-      is VueServiceRuntime.Manual -> {
-        settings.serviceType == VueLSMode.MANUAL
-        && settings.manualSettings.mode == VueSettings.ManualMode.HYBRID_MODE
-      }
-
       is VueServiceRuntime.Bundled -> {
         settings.serviceType == VueLSMode.AUTO
         && getAppropriateVueLSVersion(project, context) == runtime.version
@@ -55,10 +50,6 @@ private class ActivationHelper(
 
     val settings = VueSettings.instance(project)
     return when (runtime) {
-      is VueServiceRuntime.Manual ->
-        settings.serviceType == VueLSMode.MANUAL
-        && settings.manualSettings.mode == VueSettings.ManualMode.HYBRID_MODE
-
       is VueServiceRuntime.Bundled ->
         settings.serviceType == VueLSMode.AUTO
     }

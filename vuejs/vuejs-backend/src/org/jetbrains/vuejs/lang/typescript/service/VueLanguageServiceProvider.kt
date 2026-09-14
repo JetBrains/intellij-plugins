@@ -11,16 +11,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.lang.html.isVueFile
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTakeoverModeTypeScriptService
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 
 internal class VueLanguageServiceProvider(project: Project) : TypeScriptServiceProvider() {
-  private val lspLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueLspServiceWrapper>() }
   private val tsPluginService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueTypeScriptPluginServiceWrapper>() }
 
   override val allServices: List<TypeScriptService>
     get() {
-      return listOf(lspLanguageService.service) + tsPluginService.services
+      return tsPluginService.services
     }
 
   override fun isHighlightingCandidate(file: VirtualFile): Boolean {
@@ -46,14 +44,5 @@ internal class VueTypeScriptPluginServiceWrapper(project: Project) : Disposable 
 
   override fun dispose() {
     services.forEach(Disposer::dispose)
-  }
-}
-
-@Service(Service.Level.PROJECT)
-private class VueLspServiceWrapper(project: Project) : Disposable {
-  val service = VueLspTakeoverModeTypeScriptService(project)
-
-  override fun dispose() {
-    Disposer.dispose(service)
   }
 }

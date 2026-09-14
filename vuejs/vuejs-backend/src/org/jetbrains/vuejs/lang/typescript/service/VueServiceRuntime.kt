@@ -5,14 +5,10 @@ sealed interface VueServiceRuntime {
   data class Bundled(
     val version: VueLanguageToolsVersion,
   ) : VueServiceRuntime
-
-  data object Manual :
-    VueServiceRuntime
 }
 
 internal val allVueServiceRuntimes: List<VueServiceRuntime> =
   listOf(
     VueServiceRuntime.Bundled(VueLanguageToolsVersion.LEGACY),
     VueServiceRuntime.Bundled(VueLanguageToolsVersion.DEFAULT),
-    VueServiceRuntime.Manual,
   )

@@ -19,9 +19,6 @@ internal class VueLspIntegrationHybridModeDefaultProvider :
 internal class VueLspIntegrationHybridModeLegacyProvider :
   VueLspIntegrationHybridModeProvider(VueServiceRuntime.Bundled(VueLanguageToolsVersion.LEGACY))
 
-internal class VueLspIntegrationHybridModeManualProvider :
-  VueLspIntegrationHybridModeProvider(VueServiceRuntime.Manual)
-
 sealed class VueLspIntegrationHybridModeProvider(
   private val runtime: VueServiceRuntime,
 ) : JSFrameworkLspIntegrationProvider(VueLspServerHybridModeActivationRule(runtime)) {
@@ -48,9 +45,6 @@ sealed class VueLspIntegrationHybridModeProvider(
           VueLanguageToolsVersion.LEGACY ->
             VueLspIntegrationHybridModeLegacyProvider::class.java
         }
-
-        VueServiceRuntime.Manual ->
-          VueLspIntegrationHybridModeManualProvider::class.java
       }
     }
   }
