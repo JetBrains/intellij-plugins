@@ -1,5 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
@@ -145,6 +146,17 @@ jvm_library(
         "@community//platform/util-ex:util-ex_test_lib",
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
     ],
+)
+
+ij_plugin(
+    name = "jade_plugin",
+    descriptor_module = ":jade",
+    content_modules = [
+        # do not sort,
+        "//contrib/jade/css",
+        "//contrib/jade/watcher",
+    ],
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.jade` end
 

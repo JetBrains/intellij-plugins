@@ -1,4 +1,5 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.tsr` start
@@ -64,6 +65,12 @@ jvm_library(
         "@community//platform/util:util-ui_test_lib",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     ],
+)
+
+ij_plugin(
+    name = "tsr_plugin",
+    descriptor_module = ":tsr",
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.tsr` end
 

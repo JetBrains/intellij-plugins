@@ -1,4 +1,5 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `build intellij.gherkin` start
@@ -117,6 +118,12 @@ jvm_library(
         "@community//jps/model-api:model_test_lib",
         "@community//platform/util:util-ui_test_lib",
     ],
+)
+
+ij_plugin(
+    name = "gherkin_plugin",
+    descriptor_module = ":gherkin",
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.gherkin` end
 
