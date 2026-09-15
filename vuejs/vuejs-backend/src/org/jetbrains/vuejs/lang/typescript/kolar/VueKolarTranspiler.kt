@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.lang.typescript.kolar
 
+import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.typescript.kolar.KolarCodegenContext
 import com.intellij.lang.typescript.kolar.KolarFileInfo
@@ -9,7 +10,9 @@ import com.intellij.lang.typescript.kolar.KolarTranspiler
 import com.intellij.lang.typescript.kolar.KolarVirtualCode
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.util.ThreeState
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
@@ -41,6 +44,28 @@ class VueKolarTranspiler(
   override fun supportsInjectedFile(file: PsiFile): Boolean =
     file.language is VueJSLanguage
     || file.language is VueTSLanguage
+
+  override fun supportsTypeEvaluation(
+    virtualFile: VirtualFile,
+    element: PsiElement,
+  ): Boolean =
+    when (element.language) {
+      // setup
+      // TypeScriptLanguageDialect,
+      // ECMA6LanguageDialect,
+
+      // interpolations
+      // VueTSLanguage,
+      VueJSLanguage,
+        -> true
+
+      else -> false
+    }
+
+  override fun isTypeEvaluationEnabledInUsageContext(
+    usageContext: JSServicePoweredTypeEngineUsageContext,
+  ): ThreeState =
+    ThreeState.YES
 }
 
 private data class VueTranspiledFile(
