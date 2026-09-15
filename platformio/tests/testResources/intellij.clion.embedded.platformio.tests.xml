@@ -1,7 +1,7 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="intellij.clion.embedded.platformio"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.cidr.common.testFramework.core.nolang"/>
     <module name="intellij.cidr.core"/>
     <module name="intellij.cidr.debugger.backend"/>
@@ -33,6 +33,7 @@
     <module name="intellij.libraries.junit5"/>
     <module name="intellij.libraries.kotlinx.collections.immutable"/>
     <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.concurrency"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.core.impl"/>
     <module name="intellij.platform.core.ui"/>
@@ -46,6 +47,7 @@
     <module name="intellij.platform.ide"/>
     <module name="intellij.platform.ide.core.impl"/>
     <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.ide.observable"/>
     <module name="intellij.platform.lang"/>
     <module name="intellij.platform.lang.core"/>
     <module name="intellij.platform.lang.impl"/>
@@ -58,6 +60,6 @@
     <module name="intellij.platform.util.ex"/>
     <module name="intellij.platform.welcomeScreen.impl"/>
     <module name="intellij.profiler.clion"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
 </idea-plugin>

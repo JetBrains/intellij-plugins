@@ -40,6 +40,7 @@
     <module name="intellij.maven"/>
     <module name="intellij.platform.analysis"/>
     <module name="intellij.platform.codeStyle"/>
+    <module name="intellij.platform.concurrency"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.core.impl"/>
     <module name="intellij.platform.core.ui"/>
@@ -55,6 +56,7 @@
     <module name="intellij.platform.ide.impl"/>
     <module name="intellij.platform.ide.progress"/>
     <module name="intellij.platform.indexing"/>
+    <module name="intellij.platform.indexing.impl"/>
     <module name="intellij.platform.jps.build"/>
     <module name="intellij.platform.lang"/>
     <module name="intellij.platform.lang.core"/>
@@ -67,8 +69,11 @@
     <module name="intellij.platform.testRunner"/>
     <module name="intellij.platform.usageView"/>
     <module name="intellij.platform.util.ex"/>
+    <module name="intellij.platform.util.progress"/>
+    <module name="intellij.platform.util.text.matching"/>
     <module name="intellij.platform.util.ui"/>
     <module name="intellij.platform.webide"/>
+    <module name="intellij.platform.workspace.storage"/>
     <module name="intellij.properties.backend"/>
     <module name="intellij.properties.backend.psi"/>
     <module name="intellij.properties.psi"/>
