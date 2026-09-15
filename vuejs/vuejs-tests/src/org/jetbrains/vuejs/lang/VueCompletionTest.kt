@@ -74,9 +74,6 @@ class VueCompletionTest :
         "testVue2CompositionApi",
         "testVue3CompositionApi",
         "testVueDefaultSymbols",
-        "testVueTscComponent",
-        "testVueTscComponentAliasedExport",
-        "testVueTscComponentWithSlots",
           -> result.withDisabledConfigUsageCheck()
 
         else -> result
