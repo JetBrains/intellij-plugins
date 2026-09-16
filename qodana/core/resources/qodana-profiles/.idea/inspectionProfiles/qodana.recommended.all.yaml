@@ -179,3 +179,7 @@ inspections:
   - inspection: NullableProblems
     options:
       IGNORE_EXTERNAL_SUPER_NOTNULL: true
+  # C/C++ data flow analysis. CLion disables it by default (CPP-50173, CPP-52133). A headless run wants it,
+  # because it finds the bugs that the backend inspections cannot, such as a null dereference.
+  - group: "category:C_C++/Data Flow Analysis"
+    enabled: true
