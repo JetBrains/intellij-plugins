@@ -49,7 +49,6 @@
     <module name="intellij.platform.statistics"/>
     <module name="intellij.platform.util.diff"/>
     <module name="intellij.platform.util.ui"/>
-    <module name="intellij.platform.webide.impl"/>
     <module name="intellij.xml.parser"/>
     <module name="intellij.xml.ui.common"/>
     <module name="intellij.json.backend"/>

@@ -28,7 +28,6 @@
     <module name="intellij.platform.smRunner"/>
     <module name="intellij.platform.testRunner"/>
     <module name="intellij.platform.util.ui"/>
-    <module name="intellij.platform.webide.impl"/>
   </dependencies>
   <!-- endregion -->
 

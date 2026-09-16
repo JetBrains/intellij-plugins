@@ -50,8 +50,6 @@
     <orderEntry type="module" module-name="intellij.platform.statistics" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.statistics.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.webide" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.webide.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.wsl.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.json" scope="TEST" />
     <orderEntry type="module" module-name="intellij.json.backend" scope="TEST" />

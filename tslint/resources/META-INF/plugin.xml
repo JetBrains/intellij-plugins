@@ -38,7 +38,6 @@
     <module name="intellij.platform.projectModel"/>
     <module name="intellij.platform.statistics"/>
     <module name="intellij.platform.util.ui"/>
-    <module name="intellij.platform.webide.impl"/>
   </dependencies>
   <!-- endregion -->
   <content namespace="jetbrains"/>

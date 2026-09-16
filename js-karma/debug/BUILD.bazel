@@ -52,7 +52,6 @@ jvm_library(
         "@community//platform/smRunner",
         "@community//platform/testRunner",
         "@community//platform/util:util-ui",
-        "//webcore/impl",
         "@lib//:kotlin-stdlib",
     ],
 )
@@ -97,7 +96,6 @@ jvm_library(
         "@community//platform/smRunner:smRunner_test_lib",
         "@community//platform/testRunner:testRunner_test_lib",
         "@community//platform/util:util-ui_test_lib",
-        "//webcore/impl:impl_test_lib",
     ],
 )
 ### auto-generated section `build intellij.javascript.karma.debug` end

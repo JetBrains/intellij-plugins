@@ -33,8 +33,6 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.handlebars" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.webide" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.webide.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.js.liveEdit" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />

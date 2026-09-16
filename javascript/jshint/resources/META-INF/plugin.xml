@@ -40,7 +40,6 @@
     <module name="intellij.platform.projectModel"/>
     <module name="intellij.platform.refactoring"/>
     <module name="intellij.platform.util.ui"/>
-    <module name="intellij.platform.webide.impl"/>
     <module name="intellij.spellchecker"/>
   </dependencies>
   <!-- endregion -->

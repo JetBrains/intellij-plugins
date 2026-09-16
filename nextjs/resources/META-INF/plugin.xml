@@ -35,8 +35,6 @@
     <module name="intellij.platform.polySymbols.web"/>
     <module name="intellij.platform.projectModel"/>
     <module name="intellij.platform.util.ui"/>
-    <module name="intellij.platform.webide"/>
-    <module name="intellij.platform.webide.impl"/>
     <module name="intellij.xml.psi"/>
   </dependencies>
   <!-- endregion -->

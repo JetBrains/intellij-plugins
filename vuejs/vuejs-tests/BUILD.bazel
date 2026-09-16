@@ -167,8 +167,6 @@ jvm_library(
         "@community//platform/polySymbols:polySymbols-testFramework_test_lib",
         "@community//xml/testFramework",
         "@community//xml/testFramework:testFramework_test_lib",
-        "//webcore:webide",
-        "//webcore:webide_test_lib",
         "//plugins/css/codeinsight/analysis",
         "//plugins/css/codeinsight/analysis:analysis_test_lib",
         "//plugins/css/backend",

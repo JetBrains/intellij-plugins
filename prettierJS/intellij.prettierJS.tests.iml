@@ -24,7 +24,6 @@
     <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ide.observable" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.backend" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.webide.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.gson" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.snakeyaml" scope="TEST" />
     <orderEntry type="module" module-name="intellij.json.backend" scope="TEST" />
