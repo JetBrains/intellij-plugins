@@ -183,3 +183,12 @@ inspections:
   # because it finds the bugs that the backend inspections cannot, such as a null dereference.
   - group: "category:C_C++/Data Flow Analysis"
     enabled: true
+  # The data flow analysis reports these four as well. Keep one warning per issue (CPP-51737).
+  - inspection: CppUnreachableCode
+    enabled: false
+  - inspection: CppAssignedValueIsNeverUsed
+    enabled: false
+  - inspection: CppInitializedValueIsAlwaysRewritten
+    enabled: false
+  - inspection: CppParameterValueIsReassigned
+    enabled: false
