@@ -1,16 +1,22 @@
 package org.intellij.plugin.mdx
 
 import com.intellij.codeInsight.hints.BlockConstraints
+import com.intellij.codeInsight.hints.BlockInlayRenderer
 import com.intellij.codeInsight.hints.HorizontalConstraints
+import com.intellij.codeInsight.hints.InlayHintsProviderFactory
 import com.intellij.codeInsight.hints.InlayHintsSink
+import com.intellij.codeInsight.hints.InlineInlayRenderer
 import com.intellij.codeInsight.hints.NoSettings
 import com.intellij.codeInsight.hints.presentation.InlayPresentation
 import com.intellij.codeInsight.hints.presentation.RootInlayPresentation
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.TestDataPath
+import org.intellij.plugin.mdx.lang.MdxLanguage
 import org.intellij.plugins.markdown.editor.tables.ui.MarkdownTableInlayProvider
+import org.intellij.plugins.markdown.lang.psi.impl.MarkdownTable
 import org.junit.jupiter.api.Test
 
 @Suppress("MarkdownIncorrectTableFormatting")
@@ -25,6 +31,58 @@ class MdxMarkdownTableTest : MdxTestBase() {
       "Expected Markdown table inlays to be collectable for MDX files",
       provider.getCollectorFor(myFixture.file, myFixture.editor, NoSettings(), EmptyInlayHintsSink)
     )
+  }
+
+  @Test
+  fun testMarkdownTableInlayProviderIsRegisteredOnceForMdx() {
+    val providers = InlayHintsProviderFactory.EP.extensionList
+      .flatMap { it.getProvidersInfoForLanguage(MdxLanguage) }
+      .filterIsInstance<MarkdownTableInlayProvider>()
+
+    assertEquals(
+      "MarkdownLanguage is the base language of MdxLanguage, so the platform applies the Markdown " +
+        "registration of MarkdownTableInlayProvider to MDX. A second MDX registration makes the platform " +
+        "collect the table bars twice. Providers found: ${providers.map { it.javaClass.name }}",
+      1,
+      providers.size
+    )
+  }
+
+  @Test
+  fun testMarkdownTableBarsAreCollectedOnceInMdx() {
+    myFixture.configureByFile("$testName.mdx")
+    val table = PsiTreeUtil.findChildOfType(myFixture.file, MarkdownTable::class.java)
+                ?: error("Test setup: the MDX file must hold a Markdown table")
+    val tableRange = table.textRange
+
+    myFixture.doHighlighting()
+
+    val inlayModel = myFixture.editor.inlayModel
+    val columnBars = inlayModel.getBlockElementsInRange(
+      tableRange.startOffset,
+      tableRange.startOffset,
+      BlockInlayRenderer::class.java
+    )
+    assertEquals("The table must show one column bar", 1, columnBars.size)
+    assertEquals(
+      "The column bar must hold one presentation. Two presentations mean two providers collected it.",
+      1,
+      columnBars.single().renderer.getConstrainedPresentations().size
+    )
+
+    val rowBars = inlayModel.getInlineElementsInRange(
+      tableRange.startOffset,
+      tableRange.endOffset,
+      InlineInlayRenderer::class.java
+    )
+    assertEquals("Each table row must show one row bar", table.getRows(true).size + 1, rowBars.size)
+    for (rowBar in rowBars) {
+      assertEquals(
+        "A row bar must hold one presentation. Two presentations mean two providers collected it.",
+        1,
+        rowBar.renderer.getConstrainedPresentations().size
+      )
+    }
   }
 
   @Test

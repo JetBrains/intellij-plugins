@@ -59,15 +59,6 @@
                            implementationClass="org.intellij.plugin.mdx.editor.MdxLineWrapPositionStrategy"/>
     <xml.autoPopupEnabler implementation="org.intellij.plugin.mdx.completion.MdxXmlAutoPopupEnabler"/>
     <xml.zenCodingGenerator implementation="org.intellij.plugin.mdx.emmet.MdxZenCodingGenerator" order="first"/>
-    <!--suppress PluginXmlRegistrationCheck -->
-    <codeInsight.inlayProvider language="MDX"
-                               implementationClass="org.intellij.plugins.markdown.editor.tables.ui.MarkdownTableInlayProvider"
-                               id="MdxMarkdownTableInlayProvider"/>
-    <codeInsight.fillParagraph language="MDX"
-                               implementationClass="org.intellij.plugins.markdown.editor.MarkdownParagraphFillHandler"/>
-    <lang.psiStructureViewFactory language="MDX"
-                                  implementationClass="com.intellij.markdown.projectView.MarkdownStructureViewFactory"/>
-    <lang.foldingBuilder language="MDX" implementationClass="org.intellij.plugins.markdown.folding.MarkdownFoldingBuilder"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.intellij.markdown">
