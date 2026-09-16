@@ -17,87 +17,34 @@ class DartAnalyzeRunnerTest {
   @Test
   fun `reports malformed JSON output`() = runBlocking {
     val result = DartExecutableRunner(
-      processExecutor = FakeExecutor(DartAnalyzeProcessResult(0, "", ""), DartAnalyzeProcessResult(0, "not JSON", "")),
+      processExecutor = FakeExecutor(DartAnalyzeProcessResult(0, "not JSON", "")),
       executableResolver = availableExecutableResolver,
-    ).run(tempDirectory)
+    ).analyze(tempDirectory)
 
     assertTrue(result is DartAnalyzeRunResult.Failure)
   }
 
   @Test
   fun `keeps diagnostics from nonzero Dart exit and analyzes the module from its directory`() = runBlocking {
-    val executor = FakeExecutor(
-      DartAnalyzeProcessResult(0, "", ""),
-      DartAnalyzeProcessResult(2, resourceText("diagnostics.json"), "failure"),
-    )
+    val executor = FakeExecutor(DartAnalyzeProcessResult(2, diagnosticsResourceText(), "failure"))
 
     val runner = DartExecutableRunner(processExecutor = executor, executableResolver = availableExecutableResolver)
-    assertEquals(DartPreparationResult.Success, runner.prepare(tempDirectory))
     val result = runner.analyze(tempDirectory)
 
-    assertEquals(
-      listOf(
-        listOf("dart", "pub", "get"),
-        listOf("dart", "analyze", "--format=json", "."),
-      ),
-      executor.commands,
-    )
-    assertEquals(listOf(tempDirectory, tempDirectory), executor.workingDirectories)
+    assertEquals(listOf(listOf("dart", "analyze", "--format=json", ".")), executor.commands)
+    assertEquals(listOf(tempDirectory), executor.workingDirectories)
     assertEquals(3, (result as DartAnalyzeRunResult.Success).diagnostics.size)
   }
 
   @Test
-  fun `uses Flutter executable commands for Flutter modules`() = runBlocking {
-    val executor = FakeExecutor(
-      DartAnalyzeProcessResult(0, "", ""),
-      DartAnalyzeProcessResult(0, resourceText("no-diagnostics.json"), ""),
-    )
-
-    FlutterExecutableRunner(processExecutor = executor, executableResolver = availableExecutableResolver).run(tempDirectory)
-
-    assertEquals(
-      listOf(
-        listOf("flutter", "pub", "get"),
-        listOf("dart", "analyze", "--format=json", "."),
-      ),
-      executor.commands,
-    )
-    assertEquals(listOf(tempDirectory, tempDirectory), executor.workingDirectories)
-  }
-
-  @Test
-  fun `reports a pub get failure without analyzing`() = runBlocking {
-    val executor = FakeExecutor(
-      DartAnalyzeProcessResult(1, "", "The lower bound of sdk must be 2.12.0 or higher to enable null safety."),
-    )
-
-    val result = DartExecutableRunner(processExecutor = executor, executableResolver = availableExecutableResolver).run(tempDirectory)
-
-    val failure = result as DartAnalyzeRunResult.Failure
-    assertEquals(DART_PROJECT_SETUP_SHORT_NAME, failure.inspectionId)
-    assertTrue(failure.message.contains("must be 2.12.0 or higher to enable null safety"))
-    assertTrue(failure.message.contains("exited with code 1"))
-    assertEquals(listOf(listOf("dart", "pub", "get")), executor.commands)
-  }
-
-  @Test
   fun `reports an analyze failure without diagnostics`() = runBlocking {
-    val executor = FakeExecutor(
-      DartAnalyzeProcessResult(0, "", ""),
-      DartAnalyzeProcessResult(3, "{\"diagnostics\":[]}", "Analyzer failed"),
-    )
+    val executor = FakeExecutor(DartAnalyzeProcessResult(3, "{\"diagnostics\":[]}", "Analyzer failed"))
 
-    val result = DartExecutableRunner(processExecutor = executor, executableResolver = availableExecutableResolver).run(tempDirectory)
+    val result = DartExecutableRunner(processExecutor = executor, executableResolver = availableExecutableResolver).analyze(tempDirectory)
 
     val failure = result as DartAnalyzeRunResult.Failure
     assertTrue(failure.message.contains("dart analyze exited with code 3: Analyzer failed"))
-    assertEquals(
-      listOf(
-        listOf("dart", "pub", "get"),
-        listOf("dart", "analyze", "--format=json", "."),
-      ),
-      executor.commands,
-    )
+    assertEquals(listOf(listOf("dart", "analyze", "--format=json", ".")), executor.commands)
   }
 
   @Test
@@ -105,37 +52,24 @@ class DartAnalyzeRunnerTest {
     val result = DartExecutableRunner(
       processExecutor = FailingExecutor(),
       executableResolver = availableExecutableResolver,
-    ).run(tempDirectory)
+    ).analyze(tempDirectory)
 
     assertTrue(result is DartAnalyzeRunResult.Failure)
   }
 
   @Test
-  fun `rethrows CancellationException during pub get`() {
+  fun `rethrows CancellationException during analyze`() {
     val executor = CanceledExecutor(cancelOnCall = 1)
     val runner = DartExecutableRunner(processExecutor = executor, executableResolver = availableExecutableResolver)
 
     assertThrows(CancellationException::class.java) {
-      runBlocking { runner.prepare(tempDirectory) }
+      runBlocking { runner.analyze(tempDirectory) }
     }
 
     assertEquals(1, executor.callCount)
   }
 
-  @Test
-  fun `rethrows CancellationException during analyze`() {
-    val executor = CanceledExecutor(cancelOnCall = 2)
-    val runner = DartExecutableRunner(processExecutor = executor, executableResolver = availableExecutableResolver)
-
-    assertEquals(DartPreparationResult.Success, runBlocking { runner.prepare(tempDirectory) })
-    assertThrows(CancellationException::class.java) {
-      runBlocking { runner.analyze(tempDirectory) }
-    }
-
-    assertEquals(2, executor.callCount)
-  }
-
-  private fun resourceText(name: String): String = requireNotNull(javaClass.getResource("/dart-analyze/$name")).readText()
+  private fun diagnosticsResourceText(): String = requireNotNull(javaClass.getResource("/dart-analyze/diagnostics.json")).readText()
 
   private val availableExecutableResolver = DartExecutableResolver { executableName, _ ->
     DartExecutable.Available(Path.of(executableName))

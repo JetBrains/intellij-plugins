@@ -33,19 +33,12 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspec
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolIssue
 import java.nio.file.Path
 
-internal const val DART_AUTO_CONFIGURE_PUB_GET_PROPERTY = "qodana.dart.auto.configure.pub.get"
-
 internal fun interface DartAnalyzeRunnerFactory {
-  fun create(moduleType: DartModuleType): DartAnalyzeRunner
+  fun create(): DartAnalyzeRunner
 }
 
 internal open class DartAnalyzeGlobalInspection(
-  private val runnerFactory: DartAnalyzeRunnerFactory = DartAnalyzeRunnerFactory { moduleType ->
-    when (moduleType) {
-      DartModuleType.DART -> DartExecutableRunner()
-      DartModuleType.FLUTTER -> FlutterExecutableRunner()
-    }
-  },
+  private val runnerFactory: DartAnalyzeRunnerFactory = DartAnalyzeRunnerFactory { DartExecutableRunner() },
 ) : GlobalInspectionTool() {
   override fun getShortName(): String = SHORT_NAME
 
@@ -75,18 +68,6 @@ internal open class DartAnalyzeGlobalInspection(
 
     for (module in modules) {
       LOG.info("Found ${module.type.name} module at '${module.path.toQodanaLogPath(qodanaContext.config.projectPath)}'")
-      if (System.getProperty(DART_AUTO_CONFIGURE_PUB_GET_PROPERTY).toBoolean()) {
-        val preparation = runBlockingCancellable { prepare(module) }
-        if (preparation is DartPreparationResult.Failure) {
-          if (qodanaContext.isToolEnabled(preparation.failure.inspectionId)) {
-            registerProblem(preparation.failure, module, qodanaContext)
-          }
-          val modulePath: @NlsSafe String = module.path.toQodanaLogPath(qodanaContext.config.projectPath)
-          globalContext.incrementJobDoneAmount(job, modulePath)
-          continue
-        }
-      }
-
       LOG.info("Analyzing ${module.type.name} module '${module.path.toQodanaLogPath(qodanaContext.config.projectPath)}'")
       when (val result = runBlockingCancellable { analyze(module) }) {
         is DartAnalyzeRunResult.Success -> {
@@ -114,11 +95,7 @@ internal open class DartAnalyzeGlobalInspection(
     }
   }
 
-  private suspend fun prepare(module: DartModule): DartPreparationResult = when (module.type) {
-    DartModuleType.DART, DartModuleType.FLUTTER -> runnerFactory.create(module.type).prepare(module.path)
-  }
-
-  private suspend fun analyze(module: DartModule): DartAnalyzeRunResult = runnerFactory.create(module.type).analyze(module.path)
+  private suspend fun analyze(module: DartModule): DartAnalyzeRunResult = runnerFactory.create().analyze(module.path)
 
   private fun DartModule.intersects(scope: AnalysisScope, modules: List<DartModule>): Boolean {
     val moduleRoot = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(path) ?: return false

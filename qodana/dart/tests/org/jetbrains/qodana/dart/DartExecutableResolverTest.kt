@@ -15,7 +15,7 @@ class DartExecutableResolverTest {
 
   @Test
   fun `reports an unavailable executable`() = runBlocking {
-    val result = DartExecutableRunner({ "/missing/dart" }, FakeExecutor()).run(tempDirectory)
+    val result = DartExecutableRunner({ "/missing/dart" }, FakeExecutor()).analyze(tempDirectory)
 
     assertTrue(result is DartAnalyzeRunResult.Failure)
     assertTrue((result as DartAnalyzeRunResult.Failure).message.contains("not executable"))
@@ -23,7 +23,7 @@ class DartExecutableResolverTest {
 
   @Test
   fun `reports missing executable configuration`() = runBlocking {
-    val result = DartExecutableRunner({ null }, FakeExecutor()).run(tempDirectory)
+    val result = DartExecutableRunner({ null }, FakeExecutor()).analyze(tempDirectory)
 
     assertTrue(result is DartAnalyzeRunResult.Failure)
     assertTrue((result as DartAnalyzeRunResult.Failure).message.contains("must point to the SDK bin directory"))
@@ -31,7 +31,7 @@ class DartExecutableResolverTest {
 
   @Test
   fun `reports a blank executable configuration`() = runBlocking {
-    val result = DartExecutableRunner({ "  " }, FakeExecutor()).run(tempDirectory)
+    val result = DartExecutableRunner({ "  " }, FakeExecutor()).analyze(tempDirectory)
 
     assertTrue(result is DartAnalyzeRunResult.Failure)
     assertTrue((result as DartAnalyzeRunResult.Failure).message.contains("must point to the SDK bin directory"))
@@ -41,42 +41,28 @@ class DartExecutableResolverTest {
   fun `reports an SDK directory without a dart executable`() = runBlocking {
     val sdkDirectory = Files.createDirectory(tempDirectory.resolve("dart-sdk"))
 
-    val result = DartExecutableRunner({ sdkDirectory.toString() }, FakeExecutor()).prepare(sdkDirectory)
+    val result = DartExecutableRunner({ sdkDirectory.toString() }, FakeExecutor()).analyze(sdkDirectory)
 
-    assertTrue(result is DartPreparationResult.Failure)
-    assertTrue((result as DartPreparationResult.Failure).failure.message.contains("not executable"))
+    assertTrue(result is DartAnalyzeRunResult.Failure)
+    assertTrue((result as DartAnalyzeRunResult.Failure).message.contains("not executable"))
   }
 
   @Test
-  fun `analyzes Dart modules when the configured SDK has no Flutter executable`() = runBlocking {
+  fun `analyzes a module with the configured Dart SDK`() = runBlocking {
     val sdkDirectory = Files.createDirectory(tempDirectory.resolve("dart-sdk"))
     val dartExecutableName = if (SystemInfo.isWindows) "dart.exe" else "dart"
     Files.createFile(sdkDirectory.resolve(dartExecutableName))
     val resolver = configuredExecutableResolver({ sdkDirectory.toString() }) { Files.isRegularFile(it) }
-    val executor = FakeExecutor(
-      DartAnalyzeProcessResult(0, "", ""),
-      DartAnalyzeProcessResult(0, noDiagnosticsResourceText(), ""),
-    )
+    val executor = FakeExecutor(DartAnalyzeProcessResult(0, noDiagnosticsResourceText(), ""))
 
     val dartResult = DartExecutableRunner(
       executablePath = { sdkDirectory.toString() },
       processExecutor = executor,
       executableResolver = resolver,
-    ).run(sdkDirectory)
-    val flutterPreparation = FlutterExecutableRunner(
-      executablePath = { sdkDirectory.toString() },
-      executableResolver = resolver,
-    ).prepare(sdkDirectory)
+    ).analyze(sdkDirectory)
 
     assertTrue(dartResult is DartAnalyzeRunResult.Success)
-    assertTrue(flutterPreparation is DartPreparationResult.Failure)
-    assertEquals(
-      listOf(
-        listOf(sdkDirectory.resolve(dartExecutableName).toString(), "pub", "get"),
-        listOf(sdkDirectory.resolve(dartExecutableName).toString(), "analyze", "--format=json", "."),
-      ),
-      executor.commands,
-    )
+    assertEquals(listOf(listOf(sdkDirectory.resolve(dartExecutableName).toString(), "analyze", "--format=json", ".")), executor.commands)
   }
 
   @Test
