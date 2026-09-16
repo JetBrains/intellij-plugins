@@ -77,7 +77,6 @@ class QodanaReimportMavenProjects : QodanaWorkflowExtension {
   }
 
   private fun reusesProjectModelCache(project: Project): Boolean {
-    // An unknown WorkspaceModel implementation, for example in Rider, gives an unknown state.
     val workspaceModel = WorkspaceModel.getInstance(project) as? WorkspaceModelImpl ?: return false
     return workspaceModel.loadedFromCache
   }
