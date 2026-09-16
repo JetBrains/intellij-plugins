@@ -1,44 +1,21 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.cucumber.java` start
 dev_dist_plugin(
     content_modules = [
         # do not sort,
+        "intellij.libraries.junit4",
+        "intellij.libraries.hamcrest",
         "intellij.libraries.cucumber",
         "intellij.libraries.cucumber.core1",
-        "intellij.libraries.hamcrest",
-        "intellij.libraries.junit4",
-    ],
-    jars = {
-        "cucumber-jvmFormatter.jar": {
-            "modules": ["intellij.cucumber.jvmFormatter"],
-        },
-        "cucumber-jvmFormatter3.jar": {
-            "modules": ["intellij.cucumber.jvmFormatter3"],
-        },
-        "cucumber-jvmFormatter4.jar": {
-            "modules": ["intellij.cucumber.jvmFormatter4"],
-        },
-        "cucumber-jvmFormatter5.jar": {
-            "modules": ["intellij.cucumber.jvmFormatter5"],
-        },
-    },
-    libraries = [
-        "@lib//:cucumber-core-2",
-        "@lib//:cucumber-jvm_formatter3-cucumber-core-3-0-2",
-        "@lib//:cucumber-jvm_formatter4-cucumber-core-4-0-1",
-        "@lib//:cucumber-jvm_formatter5-cucumber-java-5-0-0-_r_c1",
-        "@lib//:libraries-cucumber-core1-cucumber-core-1",
-        "@lib//:libraries-hamcrest-hamcrest",
-        "@lib//:libraries-junit4-_j_unit4",
-        "@ultimate_lib//:libraries-cucumber-cucumber-expressions",
-        "@ultimate_lib//:libraries-cucumber-cucumber-java",
+        "intellij.cucumber.jvmFormatter",
+        "intellij.cucumber.jvmFormatter3",
+        "intellij.cucumber.jvmFormatter4",
+        "intellij.cucumber.jvmFormatter5",
     ],
     main_module = "intellij.cucumber.java",
-    module_targets = MODULE_TARGETS,
 )
 ### auto-generated section `dev intellij.cucumber.java` end
 

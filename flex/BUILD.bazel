@@ -1,20 +1,15 @@
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.flex` start
 dev_dist_plugin(
-    jars = {
-        "flex-jps.jar": {
-            "modules": ["intellij.flex.jps"],
-        },
-        "flex-shared.jar": {
-            "modules": ["intellij.flex.shared"],
-        },
-    },
+    content_modules = [
+        # do not sort,
+        "intellij.flex.css",
+        "intellij.flex.jps",
+        "intellij.flex.shared",
+    ],
     main_module = "intellij.flex",
-    module_targets = MODULE_TARGETS,
-    prepacked_content_modules = ["intellij.flex.css"],
 )
 ### auto-generated section `dev intellij.flex` end
 

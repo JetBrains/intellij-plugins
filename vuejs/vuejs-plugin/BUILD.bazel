@@ -1,12 +1,21 @@
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_DESCRIPTORS", "MODULE_TARGETS")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.vuejs.plugin` start
 dev_dist_plugin(
-    content_modules = ["intellij.vuejs.backend"],
+    content_modules = [
+        # do not sort,
+        "intellij.vuejs.prettier",
+        "intellij.vuejs.copyright",
+        "intellij.vuejs.debugger",
+        "intellij.vuejs.markdown",
+        "intellij.vuejs.free",
+        "intellij.vuejs.common",
+        "intellij.vuejs.backend",
+        "intellij.vuejs.eslint",
+        "intellij.vuejs.webpack",
+    ],
     descriptor = "resources/META-INF/plugin.xml",
-    descriptor_index = MODULE_DESCRIPTORS,
     descriptor_modules = [
         "intellij.vuejs.backend",
         "intellij.vuejs.common",
@@ -19,18 +28,6 @@ dev_dist_plugin(
         "intellij.vuejs.webpack",
     ],
     main_module = "intellij.vuejs.plugin",
-    module_targets = MODULE_TARGETS,
-    prepacked_content_modules = [
-        # do not sort,
-        "intellij.vuejs.free",
-        "intellij.vuejs.common",
-        "intellij.vuejs.copyright",
-        "intellij.vuejs.debugger",
-        "intellij.vuejs.eslint",
-        "intellij.vuejs.markdown",
-        "intellij.vuejs.prettier",
-        "intellij.vuejs.webpack",
-    ],
 )
 ### auto-generated section `dev intellij.vuejs.plugin` end
 
