@@ -29,37 +29,10 @@ internal fun interface DartExecutableResolver {
 internal abstract class DartAnalyzeRunner(
   private val executableResolver: DartExecutableResolver,
   private val processExecutor: DartAnalyzeProcessExecutor,
-  private val preparationExecutableName: String,
   private val analysisExecutableName: String,
   private val executableEnv: String,
   private val parseDiagnostics: (String) -> List<DartAnalyzeDiagnostic>,
 ) {
-  suspend fun prepare(projectPath: Path): DartPreparationResult {
-    val executable = when (val result = resolveExecutable(preparationExecutableName, projectPath)) {
-      is DartExecutable.Available -> result.path
-      else -> return DartPreparationResult.Failure(result.unavailable(preparationExecutableName, executableEnv))
-    }
-    val pubGetResult = try {
-      processExecutor.execute(listOf(executable.toString(), "pub", "get"), projectPath)
-    }
-    catch (e: CancellationException) {
-      throw e
-    }
-    catch (e: Exception) {
-      return DartPreparationResult.Failure(DartAnalyzeRunResult.Failure(QodanaDartBundle.message("dart.analyze.error.pub.get.process", preparationExecutableName, e.message ?: e.javaClass.name)))
-    }
-    LOG.info("$preparationExecutableName pub get finished with exit code ${pubGetResult.exitCode}; stdout: ${pubGetResult.standardOutput.logValue()}; stderr: ${pubGetResult.standardError.logValue()}")
-    if (pubGetResult.exitCode != 0) {
-      LOG.warn("$preparationExecutableName pub get failed with exit code ${pubGetResult.exitCode}")
-      LOG.warn(pubGetResult.standardError)
-      val output = pubGetResult.standardError.ifBlank { pubGetResult.standardOutput }.trim().take(1_000)
-      return DartPreparationResult.Failure(DartAnalyzeRunResult.Failure(
-        QodanaDartBundle.message("dart.analyze.error.pub.get.exit", preparationExecutableName, pubGetResult.exitCode, output),
-      ))
-    }
-    return DartPreparationResult.Success
-  }
-
   suspend fun analyze(modulePath: Path): DartAnalyzeRunResult {
     val executable = when (val result = resolveExecutable(analysisExecutableName, modulePath)) {
       is DartExecutable.Available -> result.path
@@ -91,12 +64,6 @@ internal abstract class DartAnalyzeRunner(
       return DartAnalyzeRunResult.Failure(QodanaDartBundle.message("dart.analyze.error.exit", analysisExecutableName, analyzeResult.exitCode, output))
     }
     return DartAnalyzeRunResult.Success(diagnostics)
-  }
-
-  suspend fun run(projectPath: Path): DartAnalyzeRunResult {
-    val preparationResult = prepare(projectPath)
-    if (preparationResult is DartPreparationResult.Failure) return preparationResult.failure
-    return analyze(projectPath)
   }
 
   private fun String.logValue(): String = replace("\n", "\\n").replace("\r", "\\r").take(LOG_OUTPUT_LIMIT)
@@ -161,20 +128,6 @@ internal class DartExecutableRunner(
   executableResolver,
   processExecutor,
   "dart",
-  "dart",
-  FLUTTER_PATH_ENV,
-  ::parseDartAnalyzeDiagnostics,
-)
-
-internal class FlutterExecutableRunner(
-  executablePath: () -> String? = { System.getenv(FLUTTER_PATH_ENV) },
-  processExecutor: DartAnalyzeProcessExecutor = DefaultDartAnalyzeProcessExecutor,
-  executableResolver: DartExecutableResolver = configuredExecutableResolver(executablePath),
-) : DartAnalyzeRunner(
-  executableResolver,
-  processExecutor,
-  "flutter",
-  "dart",
   FLUTTER_PATH_ENV,
   ::parseDartAnalyzeDiagnostics,
 )
@@ -188,11 +141,6 @@ private fun DartExecutable.toFailure(envName: String): DartAnalyzeRunResult.Fail
 internal sealed interface DartAnalyzeRunResult {
   data class Success(val diagnostics: List<DartAnalyzeDiagnostic>) : DartAnalyzeRunResult
   data class Failure(val message: String, val inspectionId: String = DART_PROJECT_SETUP_SHORT_NAME) : DartAnalyzeRunResult
-}
-
-internal sealed interface DartPreparationResult {
-  data object Success : DartPreparationResult
-  data class Failure(val failure: DartAnalyzeRunResult.Failure) : DartPreparationResult
 }
 
 internal interface DartAnalyzeProcessExecutor {

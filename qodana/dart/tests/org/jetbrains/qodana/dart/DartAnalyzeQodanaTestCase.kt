@@ -17,24 +17,12 @@ import java.nio.file.Path
 
 internal abstract class DartAnalyzeQodanaTestCase : QodanaRunnerTestCase() {
   protected open val analyzeResponses: Map<String, RecordedDartAnalyzeResponse> = emptyMap()
-  protected open val preparationFailures: Map<String, String> = emptyMap()
-  protected open val autoConfigurePubGet: Boolean = false
   private lateinit var analyzerExecutions: MutableList<Pair<String, String>>
 
   override val testData: Path = Path.of(PluginPathManager.getPluginHomePath("qodana"), "dart", "test-data")
 
   override fun setUp() {
     super.setUp()
-    val originalAutoConfigurePubGet = System.getProperty(DART_AUTO_CONFIGURE_PUB_GET_PROPERTY)
-    System.setProperty(DART_AUTO_CONFIGURE_PUB_GET_PROPERTY, autoConfigurePubGet.toString())
-    Disposer.register(testRootDisposable) {
-      if (originalAutoConfigurePubGet == null) {
-        System.clearProperty(DART_AUTO_CONFIGURE_PUB_GET_PROPERTY)
-      }
-      else {
-        System.setProperty(DART_AUTO_CONFIGURE_PUB_GET_PROPERTY, originalAutoConfigurePubGet)
-      }
-    }
     ExternalToolsProvider.EXTERNAL_TOOLS_EP.point.registerExtension(
       DartAnalyzeInspectionDescriptorProvider(),
       testRootDisposable,
@@ -43,7 +31,6 @@ internal abstract class DartAnalyzeQodanaTestCase : QodanaRunnerTestCase() {
     DartAnalyzeTestRunnerFactoryHolder.factory = DartAnalyzeTestRunnerFactory(
       Path.of(project.basePath!!),
       analyzeResponses,
-      preparationFailures,
       analyzerExecutions,
     ).create()
     Disposer.register(testRootDisposable) { DartAnalyzeTestRunnerFactoryHolder.factory = null }
