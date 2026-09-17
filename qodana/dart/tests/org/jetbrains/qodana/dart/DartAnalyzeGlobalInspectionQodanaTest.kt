@@ -11,12 +11,11 @@ internal class DartAnalyzeGlobalInspectionQodanaTest : DartAnalyzeProjectQodanaT
   )
 
   @Test
-  fun `reports an uncategorized diagnostic through SARIF`() {
-    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile()) }
+  fun `reports a Dart diagnostic through SARIF`() {
     runAnalysis()
 
     val result = singleSarifResult()
-    assertEquals(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, result.ruleId)
+    assertEquals(DART_ANALYZE_ERROR_SHORT_NAME, result.ruleId)
     assertEquals(Level.ERROR, result.level)
     assertNotNull(result.partialFingerprints?.get(BaselineCalculation.EQUAL_INDICATOR, 1))
     assertNotNull(result.partialFingerprints?.get(BaselineCalculation.EQUAL_INDICATOR, 2))
@@ -32,14 +31,13 @@ internal class DartAnalyzeGlobalInspectionQodanaTest : DartAnalyzeProjectQodanaT
 
   @Test
   fun `does not configure the project before analysis`() {
-    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile()) }
     runAnalysis()
 
     assertRecordedDartExecutions("analyze" to "test-module")
   }
 
   @Test
-  fun `does not report uncategorized diagnostics when the inspection is disabled`() {
+  fun `does not report diagnostics when the inspection is disabled`() {
     updateQodanaConfig { it.copy(profile = QodanaProfileConfig.named("qodana.single:$DART_PROJECT_SETUP_SHORT_NAME")) }
     runAnalysis()
 

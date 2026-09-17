@@ -10,6 +10,7 @@ import com.jetbrains.qodana.sarif.model.Result
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolsProvider
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.GlobalOutputConsumer
+import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import java.nio.file.Files
@@ -23,10 +24,12 @@ internal abstract class DartAnalyzeQodanaTestCase : QodanaRunnerTestCase() {
 
   override fun setUp() {
     super.setUp()
+    updateQodanaConfig { it.copy(profile = QodanaProfileConfig.named(DART_STARTER_PROFILE)) }
     ExternalToolsProvider.EXTERNAL_TOOLS_EP.point.registerExtension(
       DartAnalyzeInspectionDescriptorProvider(),
       testRootDisposable,
     )
+    QodanaInspectionProfileProvider.EP_NAME.point.registerExtension(DartInspectionProfileProvider(), testRootDisposable)
     analyzerExecutions = mutableListOf()
     DartAnalyzeTestRunnerFactoryHolder.factory = DartAnalyzeTestRunnerFactory(
       Path.of(project.basePath!!),
@@ -42,8 +45,6 @@ internal abstract class DartAnalyzeQodanaTestCase : QodanaRunnerTestCase() {
     )
     reinstantiateInspectionRelatedServices(project, testRootDisposable)
   }
-
-  protected fun dartAnalyzeProfile(): QodanaProfileConfig = QodanaProfileConfig.named("qodana.single:DartAnalyzeUncategorized")
 
   protected fun singleSarifResult(): Result {
     val results = manager.sarifRun.results

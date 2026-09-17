@@ -30,8 +30,72 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalInspectionDescriptor
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolIssue
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolsProvider
 import java.nio.file.Path
+import java.util.function.Consumer
+
+internal const val DART_ANALYZE_SHORT_NAME = "DartAnalyze"
+internal const val DART_ANALYZE_ERROR_SHORT_NAME = "DartAnalyzeError"
+internal const val DART_ANALYZE_WARNING_SHORT_NAME = "DartAnalyzeWarning"
+internal const val DART_ANALYZE_INFO_SHORT_NAME = "DartAnalyzeInfo"
+internal const val DART_PROJECT_SETUP_SHORT_NAME = "DartProjectSetup"
+
+class DartAnalyzeInspectionDescriptorProvider : ExternalToolsProvider {
+  override fun describeTools(project: com.intellij.openapi.project.Project?): List<ExternalInspectionDescriptor> = listOf(
+    ExternalInspectionDescriptor(
+      DART_ANALYZE_SHORT_NAME,
+      QodanaDartBundle.message("inspection.dart.analyze.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.group.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.group.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.description"),
+      true,
+      HighlightDisplayLevel.WARNING,
+    ),
+    ExternalInspectionDescriptor(
+      DART_ANALYZE_ERROR_SHORT_NAME,
+      QodanaDartBundle.message("inspection.dart.analyze.error.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.group.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.group.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.error.description"),
+      true,
+      HighlightDisplayLevel.ERROR,
+    ),
+    ExternalInspectionDescriptor(
+      DART_ANALYZE_WARNING_SHORT_NAME,
+      QodanaDartBundle.message("inspection.dart.analyze.warning.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.group.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.group.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.warning.description"),
+      true,
+      HighlightDisplayLevel.WARNING,
+    ),
+    ExternalInspectionDescriptor(
+      DART_ANALYZE_INFO_SHORT_NAME,
+      QodanaDartBundle.message("inspection.dart.analyze.info.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.group.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.group.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.info.description"),
+      true,
+      HighlightDisplayLevel.WEAK_WARNING,
+    ),
+    ExternalInspectionDescriptor(
+      DART_PROJECT_SETUP_SHORT_NAME,
+      QodanaDartBundle.message("inspection.dart.project.setup.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.group.name"),
+      QodanaDartBundle.message("inspection.dart.analyze.group.name"),
+      QodanaDartBundle.message("inspection.dart.project.setup.description"),
+      true,
+      HighlightDisplayLevel.ERROR,
+    ),
+  )
+
+  override fun announceJobDescriptors(context: QodanaGlobalInspectionContext): Array<JobDescriptor> = emptyArray()
+
+  override suspend fun runTools(context: QodanaGlobalInspectionContext, consumer: Consumer<ExternalToolIssue>) {
+  }
+}
 
 internal fun interface DartAnalyzeRunnerFactory {
   fun create(): DartAnalyzeRunner
@@ -72,10 +136,7 @@ internal open class DartAnalyzeGlobalInspection(
       when (val result = runBlockingCancellable { analyze(module) }) {
         is DartAnalyzeRunResult.Success -> {
           result.diagnostics.forEach { diagnostic ->
-            if (
-              diagnostic.belongsTo(module, allModules) &&
-              qodanaContext.isToolEnabled(DartAnalyzeInspectionCatalog.inspectionIdFor(diagnostic.code))
-            ) {
+            if (diagnostic.belongsTo(module, allModules)) {
               val key = diagnostic.deduplicationKey(module.path)
               if (reportedDiagnostics.add(key)) {
                 registerProblem(diagnostic, module.path, manager, globalContext, problemDescriptionsProcessor)
@@ -165,7 +226,7 @@ internal open class DartAnalyzeGlobalInspection(
     val file = location?.file
     if (location == null || file == null) {
       return registerProblem(
-        DartAnalyzeRunResult.Failure(diagnostic.description(), DartAnalyzeInspectionCatalog.inspectionIdFor(diagnostic.code)),
+        DartAnalyzeRunResult.Failure(diagnostic.description(), diagnostic.inspectionId()),
         DartModule(projectPath, DartModuleType.DART),
         globalContext as? QodanaGlobalInspectionContext ?: return,
       )
@@ -183,7 +244,7 @@ internal open class DartAnalyzeGlobalInspection(
           return@runReadActionBlocking
         }
       val qodanaContext = globalContext as? QodanaGlobalInspectionContext ?: return@runReadActionBlocking
-      if (!qodanaContext.isFileInInspectionScope(DartAnalyzeInspectionCatalog.inspectionIdFor(diagnostic.code), psiFile)) return@runReadActionBlocking
+      if (!qodanaContext.isFileInInspectionScope(DART_ANALYZE_SHORT_NAME, psiFile)) return@runReadActionBlocking
       val descriptor = manager.createProblemDescriptor(
         psiFile,
         location.rangeIn(PsiDocumentManager.getInstance(globalContext.project).getDocument(psiFile) ?: return@runReadActionBlocking),
@@ -191,7 +252,7 @@ internal open class DartAnalyzeGlobalInspection(
         diagnostic.severity.toProblemHighlightType(),
         false,
       )
-      descriptor.setProblemGroup(ProblemGroup { DartAnalyzeInspectionCatalog.inspectionIdFor(diagnostic.code) })
+      descriptor.setProblemGroup(ProblemGroup { diagnostic.inspectionId() })
       val reference = globalContext.refManager.getReference(psiFile)
       problemDescriptionsProcessor.addProblemElement(reference, descriptor)
     }
@@ -253,7 +314,8 @@ internal class DartAnalyzeGlobalInspectionContextFactory : InspectionExtensionsF
   override fun getSuppressedInspectionIdsIn(element: PsiElement): String? = null
 }
 
-private fun QodanaGlobalInspectionContext.hasEnabledDartAnalyzeTool(): Boolean = effectiveProfile.tools.any { it.isEnabled && it.shortName.isDartAnalyzeTool() }
+private fun QodanaGlobalInspectionContext.hasEnabledDartAnalyzeTool(): Boolean =
+  effectiveProfile.tools.any { it.isEnabled && it.shortName == DART_ANALYZE_SHORT_NAME }
 
 private fun QodanaGlobalInspectionContext.isFileInInspectionScope(inspectionId: String, psiFile: PsiFile): Boolean {
   val tools = effectiveProfile.getToolsOrNull(inspectionId, project) ?: return false
@@ -263,8 +325,14 @@ private fun QodanaGlobalInspectionContext.isFileInInspectionScope(inspectionId: 
 private fun QodanaGlobalInspectionContext.isToolEnabled(shortName: String): Boolean =
   effectiveProfile.tools.any { it.isEnabled && it.shortName == shortName }
 
-internal fun String.isDartAnalyzeTool(): Boolean =
-  this == DART_PROJECT_SETUP_SHORT_NAME || this == DART_ANALYZE_UNCATEGORIZED_SHORT_NAME || startsWith("$DART_ANALYZE_SHORT_NAME.")
+internal fun String.isDartAnalyzeTool(): Boolean = this == DART_ANALYZE_SHORT_NAME
+
+private fun DartAnalyzeDiagnostic.inspectionId(): String = when (severity.uppercase()) {
+  "ERROR" -> DART_ANALYZE_ERROR_SHORT_NAME
+  "WARNING" -> DART_ANALYZE_WARNING_SHORT_NAME
+  "INFO" -> DART_ANALYZE_INFO_SHORT_NAME
+  else -> DART_ANALYZE_SHORT_NAME
+}
 
 @Suppress("HardCodedStringLiteral")
 private fun DartAnalyzeDiagnostic.description(): @InspectionMessage String = buildString {
@@ -273,4 +341,8 @@ private fun DartAnalyzeDiagnostic.description(): @InspectionMessage String = bui
 }
 
 private fun String.toProblemHighlightType(): ProblemHighlightType =
-  if (equals("ERROR", ignoreCase = true)) ProblemHighlightType.ERROR else ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+  when (uppercase()) {
+    "ERROR" -> ProblemHighlightType.ERROR
+    "INFO" -> ProblemHighlightType.INFORMATION
+    else -> ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+  }

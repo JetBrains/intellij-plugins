@@ -3,7 +3,7 @@
   "diagnostics": [
     {
       "code": "prefer_final_fields",
-      "severity": "WARNING",
+      "severity": "INFO",
       "location": {
         "file": "submodule.dart",
         "range": {
@@ -16,7 +16,7 @@
     },
     {
       "code": "unnecessary_this",
-      "severity": "WARNING",
+      "severity": "INFO",
       "location": {
         "file": "submodule.dart",
         "range": {

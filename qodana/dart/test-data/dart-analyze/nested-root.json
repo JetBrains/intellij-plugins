@@ -3,7 +3,7 @@
   "diagnostics": [
     {
       "code": "include_file_not_found",
-      "severity": "WARNING",
+      "severity": "INFO",
       "location": {
         "file": "core-lints/analysis_options.yaml",
         "range": {
@@ -15,7 +15,7 @@
     },
     {
       "code": "unnecessary_late",
-      "severity": "WARNING",
+      "severity": "INFO",
       "location": {
         "file": "root.dart",
         "range": {
@@ -28,7 +28,7 @@
     },
     {
       "code": "unnecessary_this",
-      "severity": "WARNING",
+      "severity": "INFO",
       "location": {
         "file": "root.dart",
         "range": {
@@ -41,7 +41,7 @@
     },
     {
       "code": "unnecessary_late",
-      "severity": "WARNING",
+      "severity": "INFO",
       "location": {
         "file": "lib/included.dart",
         "range": {

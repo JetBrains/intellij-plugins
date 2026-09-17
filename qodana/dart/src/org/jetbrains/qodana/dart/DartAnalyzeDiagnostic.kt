@@ -31,7 +31,7 @@ internal fun parseDartAnalyzeDiagnostics(json: String): List<DartAnalyzeDiagnost
     val diagnostic = element.asJsonObject
     DartAnalyzeDiagnostic(
       diagnostic.requiredString("code"),
-      diagnostic.requiredString("severity"),
+      diagnostic.string("severity").orEmpty(),
       diagnostic.requiredString("problemMessage"),
       diagnostic.string("correctionMessage"),
       diagnostic.objectOrNull("location")?.toDartAnalyzeLocation(),

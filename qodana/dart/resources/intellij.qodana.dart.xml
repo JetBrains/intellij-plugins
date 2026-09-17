@@ -17,6 +17,7 @@
   <resource-bundle>messages.QodanaDartBundle</resource-bundle>
   <extensions defaultExtensionNs="org.intellij.qodana">
     <externalToolsProvider implementation="org.jetbrains.qodana.dart.DartAnalyzeInspectionDescriptorProvider"/>
+    <inspectionProfileProvider implementation="org.jetbrains.qodana.dart.DartInspectionProfileProvider"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.dart.DartAnalyzeGlobalInspectionOutputConsumer"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
