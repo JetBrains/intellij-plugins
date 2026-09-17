@@ -3,6 +3,7 @@
   <dependencies>
     <module name="intellij.maven"/>
     <module name="intellij.platform.backend.observation"/>
+    <module name="intellij.platform.backend.workspace"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.externalSystem.impl"/>
     <module name="intellij.platform.ide"/>
