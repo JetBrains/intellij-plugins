@@ -7,6 +7,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.SingleRootFileViewProvider
+import org.jetbrains.qodana.poly.util.CodeLineScanner
 
 private val GENERATED_NAMES = setOf(
   "package-lock.json",
@@ -24,16 +25,14 @@ private val GENERATED_SUFFIXES = listOf(".pb.go", ".pb.gw.go", ".map")
 private val MINIFIABLE_EXTENSIONS = setOf("js", "jsx", "mjs", "cjs", "ts", "tsx", "css", "scss", "less")
 
 private const val SAMPLE_LIMIT = 4096  // JSMinifiedFileGistService.INITIAL_FILE_READ_LIMIT
-private const val MAX_OFFSET = 2048  // MinifiedFilesUtil.MAX_OFFSET
 private const val MIN_SIZE = 150  // MinifiedFilesUtil.MIN_SIZE
-private const val TAIL_LIMIT = 400  // MinifiedFilesUtil.COUNT_OF_CONSIDERING_CHARACTERS_FROM_END_OF_FILE
-private const val MAX_UNNEEDED_WHITESPACE_RATIO = 0.01  // MinifiedFilesUtil.MAX_UNNEEDED_OFFSET_PERCENTAGE
-
+private const val MIN_LONG_LINE = 120
+private const val MAX_OFFSET = 2048  // MinifiedFilesUtil.MAX_OFFSET
 /**
- * The character stand-in for the token sets that `JSMinifiedFileUtil` passes: `JSTokenTypes.OPERATIONS`,
- * the brace, paren, dot and semicolon types, and `JSTokenTypes.STRING_LITERALS`.
+ * Minified code must space a keyword from its operand, and a short token pushes that cost up.
+ * `new A;` repeated reaches 0.167, while a formatted one-line text starts at 0.25.
  */
-private const val PUNCTUATION = "{}[]()<>;:,.=+-*/%!&|^~?\"'`"
+private const val MAX_SPACE_RATIO = 0.20
 
 /** The same pattern as `GoGeneratedSourcesFilter.GENERATED_PATTERN`. */
 private val GO_GENERATED_MARKER = Regex("""^// Code generated .* DO NOT EDIT\.$""")
@@ -60,103 +59,44 @@ internal fun hasGoGeneratedMarker(text: CharSequence): Boolean {
 }
 
 /**
- * The `MinifiedFilesUtil` rule for the start of a file, ported to a text scanner because Qodana Poly
- * has no `ParserDefinition`.
+ * Reports whether [text] is minified.
  *
- * A comment never counts, so a license banner cannot skew the result. A string length stays out of the
- * ratio, so a base64 blob cannot skew it either. A whitespace run longer than one char rejects the text,
- * so indentation alone disqualifies it. Whitespace next to [PUNCTUATION] counts as unneeded, which
- * separates minified code from unindented code that still has normal spacing.
- */
-internal fun isMinifiedText(text: CharSequence): Boolean = scan(text, scoreSize = true)
-
-/**
- * The same scan for the end of a file, which `MinifiedFilesUtil` also reads.
+ * A minified text meets all four requirements. A comment and a string count for nothing,
+ * and a line that keeps no code votes on nothing.
  *
- * It applies the whitespace-run rule alone. The size and the ratio need a whole file to mean anything,
- * and the text starts at an arbitrary offset, so [scan] would misread them.
+ *  1. The text keeps at least [MIN_SIZE] chars of code.
+ *  2. At least half of the lines that keep code reach [MIN_LONG_LINE] chars of code.
+ *  3. No line separates its code with a whitespace run longer than one char, inside the first
+ *     [MAX_OFFSET] chars of code.
+ *  4. Whitespace takes at most [MAX_SPACE_RATIO] of the text.
+ *
+ * Requirement 1 drops a tiny file.
+ * Requirement 2 counts half of the lines, and not the mean length, so one long line among short lines decides nothing.
+ * A license banner and a base64 blob therefore decide nothing either.
+ * Requirement 3 is the `MinifiedFilesUtil` rule, and its [MAX_OFFSET] cap is the same one.
+ * A bundle can indent a later chunk, so the cap keeps that chunk out of the judgment.
+ * Requirement 4 rejects a formatted text that keeps one long line, where the first three see nothing wrong.
  */
-internal fun isMinifiedTail(text: CharSequence): Boolean = scan(text, scoreSize = false)
+internal fun isMinifiedText(text: CharSequence): Boolean {
+  val scanner = CodeLineScanner()
+  var code = 0
+  var spaces = 0
+  var lines = 0
+  var longLines = 0
 
-private fun scan(text: CharSequence, scoreSize: Boolean): Boolean {
-  var i = 0
-  var nonComment = 0
-  var nonCommentNonString = 0
-  var unneeded = 0
-  var previous = ' '
-  var previousWasComment = false
-
-  while (i < text.length && nonComment < MAX_OFFSET) {
-    val c = text[i]
-    when {
-      c == '/' && text.startsWith("//", i) -> {
-        i = endOfLineComment(text, i)
-        previousWasComment = true
-      }
-      c == '/' && text.startsWith("/*", i) -> {
-        i = endOfBlockComment(text, i)
-        previousWasComment = true
-      }
-      c == '"' || c == '\'' || c == '`' -> {
-        val end = endOfString(text, i)
-        nonComment += end - i
-        previous = c
-        previousWasComment = false
-        i = end
-      }
-      c.isWhitespace() -> {
-        var end = i
-        while (end < text.length && text[end].isWhitespace()) end++
-        if (end - i > 1 && !previousWasComment && end < text.length) return false
-        nonComment += end - i
-        nonCommentNonString += end - i
-        val next = if (end < text.length) text[end] else ' '
-        if (previous in PUNCTUATION || next in PUNCTUATION) unneeded++
-        previousWasComment = false
-        i = end
-      }
-      else -> {
-        nonComment++
-        nonCommentNonString++
-        previous = c
-        previousWasComment = false
-        i++
-      }
-    }
+  for (raw in text.lineSequence()) {
+    val line = scanner.scan(raw)
+    if (line.code == 0) continue
+    if (line.widestGap > 1 && code < MAX_OFFSET) return false
+    code += line.code
+    spaces += line.spaces
+    lines++
+    if (line.code >= MIN_LONG_LINE) longLines++
   }
 
-  if (!scoreSize) return true
-  if (nonCommentNonString == 0) return false
-  return nonComment >= MIN_SIZE && unneeded.toDouble() / nonCommentNonString < MAX_UNNEEDED_WHITESPACE_RATIO
-}
-
-private fun endOfLineComment(text: CharSequence, start: Int): Int {
-  val end = text.indexOf('\n', start)
-  return if (end < 0) text.length else end + 1
-}
-
-private fun endOfBlockComment(text: CharSequence, start: Int): Int {
-  val end = text.indexOf("*/", start + 2)
-  return if (end < 0) text.length else end + 2
-}
-
-/**
- * Only a template literal crosses a line break. A `'` or a `"` that never closes on its line is not a
- * string at all, and it sits in a regular expression, in JSX text, or in a typo. The scanner must give
- * the line break back, or the swallowed text would hide the indentation that rejects the file.
- */
-private fun endOfString(text: CharSequence, start: Int): Int {
-  val quote = text[start]
-  var i = start + 1
-  while (i < text.length) {
-    when {
-      text[i] == '\\' -> i += 2
-      text[i] == quote -> return i + 1
-      text[i] == '\n' && quote != '`' -> return i
-      else -> i++
-    }
-  }
-  return text.length
+  if (lines == 0 || code < MIN_SIZE) return false
+  if (spaces.toDouble() / (code + spaces) > MAX_SPACE_RATIO) return false
+  return longLines * 2 >= lines
 }
 
 /**
@@ -190,18 +130,14 @@ class QodanaPolyGeneratedSourcesFilter : GeneratedSourcesFilter() {
 
   private fun isMinifiedFile(file: VirtualFile): Boolean {
     if (!isMinifiedText(readText(file, SAMPLE_LIMIT))) return false
-    // The file end separates a minified library from a minified library plus formatted code. Only a
-    // file that already looks minified pays this read, and Qodana then leaves that file unanalyzed.
     if (SingleRootFileViewProvider.isTooLargeForContentLoading(file)) return true
-    val text = readText(file, limit = null)
-    val start = text.length - TAIL_LIMIT
-    return start <= 0 || isMinifiedTail(text.subSequence(start, text.length))
+    return isMinifiedText(readText(file, limit = null))
   }
 
   /**
-   * The same read as `JSMinifiedFileGistService.readFileContentPrefix`. It strips the BOM, it detects
-   * the charset, and it normalizes the line separator. [isMinifiedText] needs that last part, because a
-   * `\r\n` would otherwise read as a whitespace run of two chars and reject every file.
+   * The same read as `JSMinifiedFileGistService.readFileContentPrefix`. It strips the BOM and it
+   * detects the charset from the content, which a raw byte read cannot do. It also normalizes the line
+   * separator, though [isMinifiedText] gives the same verdict either way.
    */
   private fun readText(file: VirtualFile, limit: Int?): CharSequence =
     try {

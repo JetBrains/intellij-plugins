@@ -82,11 +82,6 @@ class QodanaPolyGeneratedSourcesFilterTest {
   }
 
   @Test
-  fun `a one line style rule is not minified`() {
-    assertFalse(isMinifiedText("body { margin: 0; } ".repeat(20)))
-  }
-
-  @Test
   fun `formatted code is not minified`() {
     assertFalse(isMinifiedText(List(20) { "  var value$it = $it;" }.joinToString("\n")))
   }
@@ -126,40 +121,85 @@ class QodanaPolyGeneratedSourcesFilterTest {
   }
 
   @Test
-  fun `the scanner needs a normalized line separator`() {
-    val body = "var a=1;".repeat(60) + "\n" + "var b=2;".repeat(60)
-    assertTrue(isMinifiedText(body))
-    assertFalse(isMinifiedText(body.replace("\n", "\r\n")))
+  fun `the line separator does not change the verdict`() {
+    val minified = "var a=1;".repeat(60) + "\n" + "var b=2;".repeat(60)
+    val formatted = List(40) { "  var value$it = compute($it);" }.joinToString("\n")
+    assertTrue(isMinifiedText(minified))
+    assertTrue(isMinifiedText(minified.replace("\n", "\r\n")))
+    assertFalse(isMinifiedText(formatted))
+    assertFalse(isMinifiedText(formatted.replace("\n", "\r\n")))
   }
 
   @Test
-  fun `whitespace next to a string literal is not minified`() {
-    // The platform counts this through JSTokenTypes.STRING_LITERALS in NO_WHITESPACE_REQUIRED_BEFORE.
+  fun `short lines with a string literal are not minified`() {
     val text = List(10) { "export ident from './$it'" }.joinToString("\n")
     assertFalse(isMinifiedText(text))
   }
 
   @Test
-  fun `a formatted tail is not minified`() {
-    assertTrue(isMinifiedTail("function a(b,c){var d=b+c;return d}".repeat(12)))
-    assertFalse(isMinifiedTail(List(12) { "  const value$it = $it;" }.joinToString("\n")))
+  fun `a minified library plus formatted code is not minified`() {
+    val library = "function a(b,c){var d=b+c;return d}".repeat(400)
+    val handWritten = List(60) { "  var value$it = compute($it);" }.joinToString("\n")
+    assertTrue(isMinifiedText(library))
+    assertFalse(isMinifiedText(library + "\n" + handWritten))
+  }
+
+  @Test
+  fun `a backtick in a regular expression does not swallow the file`() {
+    // A minified file holds /[`]/ in a char class. It used to consume the rest of the text.
+    val library = "var C=/[`]/g,f=function(a){return a.replace(C,\"x\")};".repeat(60)
+    val handWritten = List(60) { "  var value$it = compute($it);" }.joinToString("\n")
+    assertFalse(isMinifiedText(library + "\n" + handWritten))
   }
 
   @Test
   fun `an unbalanced quote does not hide the indentation`() {
     val formatted = List(30) { "  var value$it = compute($it);" }.joinToString("\n")
-    assertFalse(isMinifiedText("var re=/['\"]/;\n" + formatted), "a regular expression char class")
-    assertFalse(isMinifiedText("<p>it's</p>\n" + formatted), "JSX text")
-    assertFalse(isMinifiedText("var s='oops;\n" + formatted), "an unterminated string")
+    assertFalse(isMinifiedText("var re=/['\"]/;\n$formatted"), "a regular expression char class")
+    assertFalse(isMinifiedText("<p>it's</p>\n$formatted"), "JSX text")
+    assertFalse(isMinifiedText("var s='oops;\n$formatted"), "an unterminated string")
   }
 
   @Test
-  fun `a template literal crosses a line break`() {
-    assertTrue(isMinifiedText("var t=`a\nb`;function f(x){return x}".repeat(60)))
+  fun `a template literal that spans lines leaves the file in scope`() {
+    // Every quote stops at the line break, so the template content counts as code. The verdict
+    // errs toward analysis, which is the safe direction.
+    assertFalse(isMinifiedText("var t=`a\nb`;function f(x){return x}".repeat(60)))
+    assertTrue(isMinifiedText("var t=`ab`;function f(x){return x}".repeat(60)))
   }
 
   @Test
   fun `a string keeps its escaped quote`() {
     assertTrue(isMinifiedText("var s='it\\'s';function f(x){return x}".repeat(60)))
+  }
+
+  @Test
+  fun `a formatted one line text is not minified`() {
+    // The line is long and its gaps are single spaces, so only the space ratio rejects these.
+    assertFalse(isMinifiedText("body { margin: 0; } ".repeat(20)), "css")
+    assertFalse(isMinifiedText("var a = 1; var b = 2; var c = 3; ".repeat(14)), "js")
+  }
+
+  @Test
+  fun `minified code keeps its keyword spaces`() {
+    // Minified code must space a keyword from its operand, and a short token pushes that cost up.
+    // These two hold the lower bound of the MAX_SPACE_RATIO band, at 0.111 and 0.167.
+    assertTrue(isMinifiedText("function f(a){var b=typeof a;return new Date}".repeat(90)))
+    assertTrue(isMinifiedText("new A;new B;new C;new D;".repeat(30)))
+  }
+
+  @Test
+  fun `padded code is not minified`() {
+    // MinifiedFile1.js and MinifiedFile2.js of the platform corpus differ by two space chars alone,
+    // and the platform calls only the first one minified. This is that rule.
+    val minified = "function a(b,c){var d=b+c;return d}".repeat(120)
+    assertTrue(isMinifiedText(minified))
+    assertFalse(isMinifiedText(minified.replaceFirst("function a(b,c)", "function a(b,c)  ")))
+  }
+
+  @Test
+  fun `whitespace inside a string does not pad the code`() {
+    val minified = """var m={a:"x  y",b:"p  q"};function f(v){return v}""".repeat(40)
+    assertTrue(isMinifiedText(minified))
   }
 }
