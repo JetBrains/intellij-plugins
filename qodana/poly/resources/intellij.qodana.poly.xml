@@ -2,7 +2,13 @@
   <dependencies>
     <plugin id="com.intellij.modules.ultimate"/>
     <plugin id="com.intellij.modules.qodana.ijVoid"/>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="org.intellij.qodana"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.projectModel"/>
+    <!-- endregion -->
   </dependencies>
   <extensions defaultExtensionNs="com.intellij">
     <generatedSourcesFilter implementation="org.jetbrains.qodana.poly.QodanaPolyGeneratedSourcesFilter"/>
