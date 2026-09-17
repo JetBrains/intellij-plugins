@@ -1,17 +1,15 @@
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.clion.diagnostics` start
 dev_dist_plugin(
-    content_modules = ["intellij.clion.diagnostics.docker"],
-    main_module = "intellij.clion.diagnostics",
-    module_targets = MODULE_TARGETS,
-    prepacked_content_modules = [
+    content_modules = [
         # do not sort,
-        "intellij.clion.diagnostics.cmake",
         "intellij.clion.diagnostics.core",
+        "intellij.clion.diagnostics.cmake",
+        "intellij.clion.diagnostics.docker",
     ],
+    main_module = "intellij.clion.diagnostics",
 )
 ### auto-generated section `dev intellij.clion.diagnostics` end
 

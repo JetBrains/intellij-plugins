@@ -9,6 +9,7 @@
     <module name="intellij.libraries.rd.core"/>
     <module name="intellij.libraries.rd.framework"/>
     <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.backend.observation"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.execution"/>
     <module name="intellij.platform.execution.impl"/>
