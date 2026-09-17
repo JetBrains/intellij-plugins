@@ -1,0 +1,14 @@
+rules:
+  - id: js-hardcoded-password
+    pattern: password = "..."
+    message: Hardcoded password detected
+    severity: ERROR
+    languages:
+      - javascript
+
+  - id: go-hardcoded-password
+    pattern: password := "..."
+    message: Hardcoded password detected
+    severity: ERROR
+    languages:
+      - go
