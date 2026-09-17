@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.search.JSFunctionsSearch;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.XmlHighlighterColors;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -177,7 +178,8 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
     assertEquals(1, classes.size());
     assertEquals("mx.core.UIComponent", classes.iterator().next().getQualifiedName());
     JSFunction baseFunction = classes.iterator().next().findFunctionByName(((JSFunction)source).getName());
-    Collection<JSFunction> implementations = JSFunctionsSearch.searchOverridingFunctions(baseFunction, true).findAll();
+    Collection<JSFunction> implementations =
+      ReadAction.computeBlocking(() -> JSFunctionsSearch.searchOverridingFunctions(baseFunction, true).findAll());
     assertEquals(2, implementations.size());
   }
 
