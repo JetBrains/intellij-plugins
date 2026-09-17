@@ -1,12 +1,14 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
+import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.polySymbols.PolySymbolQualifiedName
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
 import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolInfo
 import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
@@ -14,6 +16,8 @@ import com.intellij.polySymbols.html.elements.HtmlElementSymbolInfo
 import com.intellij.polySymbols.query.PolySymbolNamesProvider
 import com.intellij.polySymbols.query.PolySymbolNamesProvider.Target.NAMES_QUERY
 import com.intellij.polySymbols.query.PolySymbolNamesProvider.Target.RENAME_QUERY
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import icons.AngularIcons
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
@@ -75,6 +79,16 @@ class Angular2Framework : WebFramework() {
 
   override fun getAttributeNameCodeCompletionFilter(tag: XmlTag): Angular2AttributeNameCodeCompletionFilter =
     Angular2AttributeNameCodeCompletionFilter(tag)
+
+  override fun shouldInsertAttributeValue(
+    parameters: CompletionParameters,
+    item: PolySymbolCodeCompletionItem,
+    info: HtmlAttributeSymbolInfo,
+  ): Boolean {
+    val attribute = PsiTreeUtil.getParentOfType(parameters.position, XmlAttribute::class.java)
+
+    return attribute?.valueElement == null && super.shouldInsertAttributeValue(parameters, item, info)
+  }
 
   override fun getNames(
     qualifiedName: PolySymbolQualifiedName,
