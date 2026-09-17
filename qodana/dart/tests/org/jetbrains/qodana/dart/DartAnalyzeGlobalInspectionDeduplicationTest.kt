@@ -11,7 +11,6 @@ internal class DartAnalyzeGlobalInspectionDeduplicationTest : DartAnalyzeProject
 
   @Test
   fun `deduplicates diagnostics reported by a parent and an example subproject`() {
-    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile()) }
     runAnalysis()
 
     val result = singleSarifResult()
@@ -21,7 +20,7 @@ internal class DartAnalyzeGlobalInspectionDeduplicationTest : DartAnalyzeProject
     )
     val location = result.singleLocation().physicalLocation
     assertEquals("test-module/example/lib/main.dart", location.artifactLocation.uri)
-    assertEquals(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, result.ruleId)
+    assertEquals(DART_ANALYZE_ERROR_SHORT_NAME, result.ruleId)
     assertEquals(Level.ERROR, result.level)
     assertEquals(1, location.region.startLine)
     assertEquals(15, location.region.startColumn)

@@ -2,7 +2,6 @@ package org.jetbrains.qodana.dart
 
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.model.Result
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileYamlConfig
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
 
@@ -12,14 +11,7 @@ internal class DartAnalyzeGlobalInspectionFingerprintTest : DartAnalyzeProjectQo
   )
 
   @Test
-  fun `keeps fingerprints stable on retrigger and separates inspections`() {
-    updateQodanaConfig {
-      it.copy(
-        profile = dartAnalyzeProfile().copy(
-          inspections = listOf(QodanaProfileYamlConfig.InspectionConfig("DartAnalyze.await_only_futures", enabled = true)),
-        ),
-      )
-    }
+  fun `keeps fingerprints stable on retrigger and separates diagnostics`() {
     runAnalysis()
     val initialResults = resultsByRuleId()
     val initialSignatures = initialResults.mapValues { resultSignature(it.value) }
@@ -30,10 +22,10 @@ internal class DartAnalyzeGlobalInspectionFingerprintTest : DartAnalyzeProjectQo
     assertEquals(initialSignatures, retriggeredResults.mapValues { resultSignature(it.value) })
     assertEquals(initialFingerprints, retriggeredResults.mapValues { fingerprints(it.value) })
 
-    val uncategorized = requireNotNull(initialFingerprints[DART_ANALYZE_UNCATEGORIZED_SHORT_NAME])
-    val categorized = requireNotNull(initialFingerprints["DartAnalyze.await_only_futures"])
-    assertNotEquals(uncategorized.first, categorized.first)
-    assertNotEquals(uncategorized.second, categorized.second)
+    val errors = requireNotNull(initialFingerprints[DART_ANALYZE_ERROR_SHORT_NAME])
+    val information = requireNotNull(initialFingerprints[DART_ANALYZE_INFO_SHORT_NAME])
+    assertNotEquals(errors.first, information.first)
+    assertNotEquals(errors.second, information.second)
   }
 
   private fun resultsByRuleId(): Map<String, Result> {
@@ -41,7 +33,7 @@ internal class DartAnalyzeGlobalInspectionFingerprintTest : DartAnalyzeProjectQo
     assertEquals("Expected exactly one SARIF result per inspection", 2, sarifResults.size)
     val results = sarifResults.associateBy { it.ruleId }
     assertEquals(
-      setOf(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, "DartAnalyze.await_only_futures"),
+      setOf(DART_ANALYZE_ERROR_SHORT_NAME, DART_ANALYZE_INFO_SHORT_NAME),
       results.keys,
     )
     return results

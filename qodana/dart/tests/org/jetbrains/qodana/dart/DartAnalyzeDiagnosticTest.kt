@@ -56,6 +56,17 @@ class DartAnalyzeDiagnosticTest {
   }
 
   @Test
+  fun `parses a diagnostic without severity`() {
+    val diagnostics = parseDartAnalyzeDiagnostics(
+      """
+      {"diagnostics":[{"code":"todo","problemMessage":"TODO comment found."}]}
+      """.trimIndent(),
+    )
+
+    assertEquals("", diagnostics.single().severity)
+  }
+
+  @Test
   fun `preserves empty and clamped ranges`() {
     assertEquals(TextRange(3, 3), DartAnalyzeLocation("lib/main.dart", 3, null, 1).rangeIn(10))
     assertEquals(TextRange(3, 3), DartAnalyzeLocation("lib/main.dart", 3, 0, 1).rangeIn(10))

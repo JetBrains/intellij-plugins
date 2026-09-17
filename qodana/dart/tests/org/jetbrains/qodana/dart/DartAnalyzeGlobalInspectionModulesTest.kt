@@ -20,8 +20,7 @@ internal class DartAnalyzeGlobalInspectionModulesTest : DartAnalyzeProjectQodana
   fun `analyzes all modules regardless of file exclusions`() {
     updateQodanaConfig {
       it.copy(
-        profile = dartAnalyzeProfile(),
-        exclude = listOf(InspectScope(DART_ANALYZE_UNCATEGORIZED_SHORT_NAME, paths = listOf("packages/core/lib/main.dart"))),
+        exclude = listOf(InspectScope(DART_ANALYZE_SHORT_NAME, paths = listOf("packages/core/lib/main.dart"))),
       )
     }
     runAnalysis()
@@ -35,7 +34,7 @@ internal class DartAnalyzeGlobalInspectionModulesTest : DartAnalyzeProjectQodana
       sarifResultPaths(),
     )
     val results = manager.sarifRun.results
-    assertTrue(results.all { it.ruleId == DART_ANALYZE_UNCATEGORIZED_SHORT_NAME })
+    assertTrue(results.all { it.ruleId == DART_ANALYZE_ERROR_SHORT_NAME })
     assertTrue(results.all { it.level == Level.ERROR })
     assertRecordedAnalyzedModules(
       "apps/app",
@@ -47,7 +46,7 @@ internal class DartAnalyzeGlobalInspectionModulesTest : DartAnalyzeProjectQodana
 
   @Test
   fun `analyzes modules intersecting only directory scopes`() {
-    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile(), onlyDirectory = Path.of("packages/core")) }
+    updateQodanaConfig { it.copy(onlyDirectory = Path.of("packages/core")) }
     runAnalysis()
 
     assertEquals(
@@ -59,7 +58,7 @@ internal class DartAnalyzeGlobalInspectionModulesTest : DartAnalyzeProjectQodana
 
   @Test
   fun `analyzes a module when only directory selects its source directory`() {
-    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile(), onlyDirectory = Path.of("packages/core/lib")) }
+    updateQodanaConfig { it.copy(onlyDirectory = Path.of("packages/core/lib")) }
     runAnalysis()
 
     assertEquals(listOf("packages/core/lib/main.dart"), sarifResultPaths())
@@ -68,7 +67,7 @@ internal class DartAnalyzeGlobalInspectionModulesTest : DartAnalyzeProjectQodana
 
   @Test
   fun `analyzes a module when only directory selects its source file`() {
-    updateQodanaConfig { it.copy(profile = dartAnalyzeProfile(), onlyDirectory = Path.of("packages/core/lib/main.dart")) }
+    updateQodanaConfig { it.copy(onlyDirectory = Path.of("packages/core/lib/main.dart")) }
     runAnalysis()
 
     assertEquals(listOf("packages/core/lib/main.dart"), sarifResultPaths())
@@ -79,7 +78,6 @@ internal class DartAnalyzeGlobalInspectionModulesTest : DartAnalyzeProjectQodana
   fun `does not analyze parent modules when only directory selects a nested Flutter module`() {
     updateQodanaConfig {
       it.copy(
-        profile = dartAnalyzeProfile(),
         onlyDirectory = Path.of("packages/core/nested_flutter_app"),
       )
     }

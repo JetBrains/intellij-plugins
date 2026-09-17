@@ -3,7 +3,7 @@
   "diagnostics": [
     {
       "code": "await_only_futures",
-      "severity": "WARNING",
+      "severity": "INFO",
       "location": {
         "file": "lib/await_only_futures.dart",
         "range": {
