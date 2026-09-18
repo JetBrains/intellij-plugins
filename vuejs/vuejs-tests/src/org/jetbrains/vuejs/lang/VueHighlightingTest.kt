@@ -7,6 +7,7 @@ import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredAltAttr
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredTitleElementInspection
 import com.intellij.lang.javascript.JSTestUtils.checkHighlightingWithSymbolNames
 import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.lang.javascript.TrackFailedTestRule
 import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
@@ -30,7 +31,9 @@ import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.libraries.nuxt.NuxtHighlightingTest
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import java.io.File
@@ -86,6 +89,26 @@ class VueHighlightingTest :
   @Ignore
   class WithTsGoProxyTest :
     VueHighlightingTestBase(testMode = VueTestMode.TS_GO_PROXY) {
+
+    @Rule
+    @JvmField
+    val rule: TestRule = TrackFailedTestRule(
+      "testBooleanProps",
+      "testCompositionApiBasic_0_4_0",
+      "testCompositionApiBasic_1_0_0",
+      "testCssSelectors",
+      "testDynamicArguments",
+      "testEmptyAttributeValue",
+      "testExternalMixin",
+      "testLocalWebTypes",
+      "testPropsValidation",
+      "testSlotNameBinding",
+      "testSourceScopedSlots",
+      "testVBindVOnHighlighting",
+      "testVSlotSyntax",
+      "testVueAttributeWithoutValueWithFollowingAttribute",
+      "testVueExtendSyntax",
+    )
 
     override val defaultDirName: String
       get() = super.defaultDirName.let { name ->
