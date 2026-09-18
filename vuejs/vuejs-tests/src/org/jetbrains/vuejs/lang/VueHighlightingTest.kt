@@ -33,6 +33,7 @@ import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+import java.io.File
 
 
 /**
@@ -85,6 +86,13 @@ class VueHighlightingTest :
   @Ignore
   class WithTsGoProxyTest :
     VueHighlightingTestBase(testMode = VueTestMode.TS_GO_PROXY) {
+
+    override val defaultDirName: String
+      get() = super.defaultDirName.let { name ->
+        "${name}_tsgo_proxy"
+          .takeIf { File("$testDataPath/${it}").exists() }
+        ?: name
+      }
 
     override fun setUp() {
       super.setUp()
