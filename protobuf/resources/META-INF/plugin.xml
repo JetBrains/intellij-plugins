@@ -22,6 +22,7 @@
     <module name="intellij.protoeditor.go"/>
     <module name="intellij.protoeditor.python"/>
     <module name="intellij.protoeditor.jvm"/>
+    <module name="intellij.protoeditor.kotlin"/>
   </content>
 
   <dependencies>
