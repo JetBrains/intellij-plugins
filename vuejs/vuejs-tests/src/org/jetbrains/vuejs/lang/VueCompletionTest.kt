@@ -42,18 +42,18 @@ class VueCompletionTest :
       "testCastedObjectProps",
       "testComputedTypeJS",
       "testComputedTypeTS",
-      "testDefineExpose",
       "testExternalSymbolsImport",
-      "testNoCompletionInVueAttributes",
-      "testScriptSetup",
       "testScriptSetupGeneric",
-      "testScriptSetupTs",
       "testStyleVBind",
-      "testVue2CompositionApi",
-      "testVue3CompositionApi",
-      "testVueDefaultSymbols",
       "testVueOutObjectLiteralTs",
     )
+
+    override fun getCodeCompletionExpectedItemsLocation(dir: Boolean, dirName: String): String {
+      require(dir) { "Only `dir` option is supported!" }
+
+      return super.getCodeCompletionExpectedItemsLocation(dir, dirName)
+        .plus(if (myFixture.tempDirFixture.getFile("items-tsgo-proxy") != null) "/items-tsgo-proxy" else "")
+    }
   }
 
   class WithoutServiceTest :
