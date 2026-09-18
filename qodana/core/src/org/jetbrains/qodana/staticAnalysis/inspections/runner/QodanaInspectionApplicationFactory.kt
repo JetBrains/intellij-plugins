@@ -38,6 +38,7 @@ class QodanaInspectionApplicationFactory {
     addOption("b", "baseline", true, QodanaBundle.message("baseline.option.description"))
     addOption(null, "baseline-include-absent", false, QodanaBundle.message("baseline.include.absent.option.description"))
     addOption(null, "fail-threshold", true, QodanaBundle.message("fail.threshold.option.description"))
+    addOption(null, "report-coverage-problems", true, QodanaBundle.message("report.coverage.problems.option.description"))
     addOption(null, "run-promo", true, QodanaBundle.message("run.promo.inspections.option.description"))
     addOption(null, "disable-sanity", false, QodanaBundle.message("disable.sanity.inspections.option.description"))
     addOption(null, "apply-fixes", false, QodanaBundle.message("apply.fixes.inspections.option.description"))
@@ -139,6 +140,7 @@ class QodanaInspectionApplicationFactory {
     val runPromo = commandLine.getOptionValue("run-promo")?.toBoolean() ?: yamlConfig.runPromoInspections
     val disableSanity = commandLine.hasOption("disable-sanity") || yamlConfig.disableSanityInspections
     val failThresholdArg = commandLine.getOptionValue("fail-threshold")?.toInt() ?: yamlConfig.failThreshold
+    val reportCoverageProblems = commandLine.getOptionValue("report-coverage-problems")?.toBoolean() ?: yamlConfig.coverage.reportProblems
 
     val script = determineScript(commandLine, yamlConfig)
 
@@ -158,6 +160,7 @@ class QodanaInspectionApplicationFactory {
       script = script,
       includeAbsent = includeAbsent,
       onlyDirectory = dirToAnalyze ?: yamlConfig.onlyDirectory,
+      reportCoverageProblems = reportCoverageProblems,
       failureConditions = if (failThresholdArg == null) {
         yamlConfig.failureConditions
       }

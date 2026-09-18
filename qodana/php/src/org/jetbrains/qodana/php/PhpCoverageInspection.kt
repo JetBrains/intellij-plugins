@@ -84,11 +84,12 @@ class PhpCoverageInspection : CoverageInspectionBase() {
                            globalContext: QodanaGlobalInspectionContext): PsiElementVisitor {
     loadClassData(data, file.virtualFile, globalContext)
     val missingDataWithoutTracking = data == null && !warnMissingCoverage
-    val dataPresentButReportingDisabled = data != null && !reportProblemsNeeded(globalContext)
+    val reportFileProblems = reportProblemsNeeded(globalContext, file, file.textRange)
+    val dataPresentButReportingDisabled = data != null && !reportFileProblems
     if (missingDataWithoutTracking || dataPresentButReportingDisabled) {
       return PsiElementVisitor.EMPTY_VISITOR
     }
-    if (reportProblemsNeeded(globalContext) &&
+    if (reportFileProblems &&
         issueWithCoverage(data, file, file.textRange, holder.project, fileThreshold, warnMissingCoverage)) {
       reportElement(holder, file.firstChild, QodanaBundle.message("file.coverage.below.threshold", file.virtualFile.presentableName, fileThreshold))
     }
@@ -98,7 +99,7 @@ class PhpCoverageInspection : CoverageInspectionBase() {
         val isDataLoaded = data != null || loadMissingData(holder.project, range, file, warnMissingCoverage, globalContext)
         if (!isDataLoaded) return
 
-        if (reportProblemsNeeded(globalContext) &&
+        if (reportProblemsNeeded(globalContext, file, range) &&
             issueWithCoverage(data, file, range, holder.project, methodThreshold, warnMissingCoverage)) {
           if (function is Method && function.getMethodType(false) == Method.MethodType.CONSTRUCTOR) {
             val clazz = function.containingClass
@@ -116,7 +117,7 @@ class PhpCoverageInspection : CoverageInspectionBase() {
       }
 
       override fun visitPhpClass(clazz: PhpClass) {
-        if (reportProblemsNeeded(globalContext) &&
+        if (reportProblemsNeeded(globalContext, file, clazz.textRange) &&
             issueWithCoverage(data, file, clazz.textRange, holder.project, classThreshold, warnMissingCoverage)) {
           val fqn = if (!clazz.isAnonymous) clazz.name else computeAnonymousName(clazz, "class", file)
           reportElement(holder, highlightedElement(clazz), QodanaBundle.message("class.coverage.below.threshold", fqn, classThreshold))

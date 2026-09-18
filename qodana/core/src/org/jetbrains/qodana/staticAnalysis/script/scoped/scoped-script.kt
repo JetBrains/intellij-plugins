@@ -32,6 +32,7 @@ internal const val SCOPE_ARG = "scope-file"
 const val SCOPED_SCRIPT_NAME = "scoped"
 internal const val SCOPED_BASELINE_PROPERTY = "qodana.scoped.baseline.path"
 internal const val COVERAGE_SKIP_REPORTING_PROPERTY = "qodana.skip.coverage.issues.reporting"
+internal const val COVERAGE_INCREMENTAL_REPORTING_PROPERTY = "qodana.incremental.coverage.issues.reporting"
 const val COVERAGE_SKIP_COMPUTATION_PROPERTY = "qodana.skip.coverage.computation"
 
 internal class ScopedScriptFactory : QodanaScriptFactory {
@@ -80,14 +81,7 @@ internal class ScopedScript(runContextFactory: ScopedRunContextFactory) :
 
   override suspend fun createGlobalInspectionContext(runContext: QodanaRunContext) : QodanaGlobalInspectionContext {
     val skipCoverageComputation = java.lang.Boolean.getBoolean(COVERAGE_SKIP_COMPUTATION_PROPERTY)
-    val skipCoverageReporting = java.lang.Boolean.getBoolean(COVERAGE_SKIP_REPORTING_PROPERTY)
-    val computationState = if (skipCoverageComputation) {
-      QodanaCoverageComputationState.SKIP_COMPUTE
-    } else if (skipCoverageReporting) {
-      QodanaCoverageComputationState.SKIP_REPORT
-    } else {
-      throw QodanaException("Coverage computation mode is not set to 'skip computation' or 'skip reporting'")
-    }
+    val computationState = computeCoverageState(skipCoverageComputation)
     return runContext.createGlobalInspectionContext(coverageComputationState = computationState)
   }
 
@@ -96,6 +90,24 @@ internal class ScopedScript(runContextFactory: ScopedRunContextFactory) :
     val absPath = if (scopedBaselinePath.isAbsolute) scopedBaselinePath else runContext.config.projectPath.resolve(scopedBaselinePath)
     return SarifUtil.readReport(absPath)
   }
+}
+
+internal fun computeCoverageState(
+  skipCoverageComputation: Boolean,
+  defaultState: QodanaCoverageComputationState? = null,
+): QodanaCoverageComputationState {
+  // qodana-cli selects one coverage mode for each scoped stage. Result-producing stages use INCREMENTAL_REPORT.
+  val requestedStates = buildList {
+    if (skipCoverageComputation) add(QodanaCoverageComputationState.SKIP_COMPUTE)
+    if (java.lang.Boolean.getBoolean(COVERAGE_SKIP_REPORTING_PROPERTY)) add(QodanaCoverageComputationState.SKIP_REPORT)
+    if (java.lang.Boolean.getBoolean(COVERAGE_INCREMENTAL_REPORTING_PROPERTY)) add(QodanaCoverageComputationState.INCREMENTAL_REPORT)
+  }
+  if (requestedStates.size > 1) {
+    throw QodanaException("More than one coverage computation mode is set")
+  }
+  return requestedStates.singleOrNull()
+         ?: defaultState
+         ?: throw QodanaException("Coverage computation mode is not set")
 }
 
 

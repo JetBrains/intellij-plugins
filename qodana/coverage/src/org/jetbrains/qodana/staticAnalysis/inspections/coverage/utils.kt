@@ -39,6 +39,7 @@ import org.jetbrains.qodana.coverage.ChangedLinesMetaDataArtifact
 import org.jetbrains.qodana.coverage.readChangedLinesPayload
 import org.jetbrains.qodana.report.ReportMetadata
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_DATA
+import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -46,8 +47,6 @@ import kotlin.io.path.extension
 import kotlin.io.path.name
 
 
-internal val COVERAGE_INSPECTIONS_NAMES = setOf("JsCoverageInspection", "JvmCoverageInspection", "PhpCoverageInspection",
-                                       "PyCoverageInspection", "GoCoverageInspection", "NetCoverageInspection")
 private const val REMAP_CHECK_FILES_CNT = 3
 
 fun normalizeFilePath(path: String): String {
@@ -226,8 +225,20 @@ fun filterClassLinesByAllowed(data: ProjectData, allowed: Map<String, Set<Int>>)
   return newData
 }
 
-fun reportProblemsNeeded(globalContext: QodanaGlobalInspectionContext): Boolean {
-  return !isLocalChanges(globalContext) && globalContext.config.coverage.reportProblems
+fun reportProblemsNeeded(globalContext: QodanaGlobalInspectionContext, psiFile: PsiFile, textRange: TextRange): Boolean {
+  return when (globalContext.coverageComputationState()) {
+    QodanaCoverageComputationState.DEFAULT -> globalContext.config.coverage.reportProblems
+    QodanaCoverageComputationState.INCREMENTAL_REPORT -> {
+      if (!globalContext.config.coverage.reportProblems) return false
+      val changedLines = globalContext.coverageStatisticsData.getChangedRanges(psiFile.virtualFile.url) ?: return false
+      val document = PsiDocumentManager.getInstance(globalContext.project).getDocument(psiFile) ?: return false
+      val startLine = document.getLineNumber(textRange.startOffset) + 1
+      val endLine = document.getLineNumber(textRange.endOffset) + 1
+      changedLines.any { it in startLine..endLine }
+    }
+    QodanaCoverageComputationState.SKIP_COMPUTE,
+    QodanaCoverageComputationState.SKIP_REPORT -> false
+  }
 }
 
 // used to skip coverage inspection run on old code state

@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 
 import com.jetbrains.qodana.sarif.model.Result
+import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_INSPECTIONS_NAMES
 import org.jetbrains.qodana.staticAnalysis.sarif.ContextMarginProvider
 
 /**

@@ -99,11 +99,12 @@ class GoCoverageInspection : CoverageInspectionBase() {
                            globalContext: QodanaGlobalInspectionContext): PsiElementVisitor {
     loadClassData(data, file.virtualFile, globalContext)
     val missingDataWithoutTracking = data == null && !warnMissingCoverage
-    val dataPresentButReportingDisabled = data != null && !reportProblemsNeeded(globalContext)
+    val reportFileProblems = reportProblemsNeeded(globalContext, file, file.textRange)
+    val dataPresentButReportingDisabled = data != null && !reportFileProblems
     if (missingDataWithoutTracking || dataPresentButReportingDisabled) {
       return PsiElementVisitor.EMPTY_VISITOR
     }
-    if (reportProblemsNeeded(globalContext) &&
+    if (reportFileProblems &&
         issueWithCoverage(data, file, file.textRange, holder.project, fileThreshold, warnMissingCoverage)) {
       reportElement(holder, file.firstChild,
                     QodanaBundle.message("file.coverage.below.threshold", file.virtualFile.presentableName, fileThreshold))
@@ -114,7 +115,7 @@ class GoCoverageInspection : CoverageInspectionBase() {
         val isDataLoaded = data != null || loadMissingData(holder.project, range, file, warnMissingCoverage, globalContext)
         if (!isDataLoaded) return
 
-        if (reportProblemsNeeded(globalContext) &&
+        if (reportProblemsNeeded(globalContext, file, range) &&
             issueWithCoverage(data, file, range, holder.project, methodThreshold, warnMissingCoverage)) {
           val message = if (function is GoMethodDeclaration) {
             val receiverTypeName = function.receiverType?.typeReferenceExpression?.identifier?.text
@@ -134,7 +135,7 @@ class GoCoverageInspection : CoverageInspectionBase() {
         val isDataLoaded = data != null || loadMissingData(holder.project, range, file, warnMissingCoverage, globalContext)
         if (!isDataLoaded) return
 
-        if (reportProblemsNeeded(globalContext) &&
+        if (reportProblemsNeeded(globalContext, file, range) &&
             issueWithCoverage(data, file, range, holder.project, methodThreshold, warnMissingCoverage)) {
           val message = QodanaBundle.message("method.coverage.below.threshold", computeAnonymousName(function, file), methodThreshold)
           reportElement(holder, highlightedElement(function), message)

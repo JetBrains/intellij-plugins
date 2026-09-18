@@ -11,6 +11,7 @@ import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_INSPECTIONS_NAMES
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
@@ -102,7 +103,7 @@ internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContext
 
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
 
-    val requireFurtherAnalysis = runContext.config.skipResultStrategy.shouldSkip(run)
+    val requireFurtherAnalysis = runContext.config.skipResultStrategy.shouldSkip(run, COVERAGE_INSPECTIONS_NAMES)
     preserveShouldSkipState(run, requireFurtherAnalysis)
     if (requireFurtherAnalysis) {
       val root = VfsUtil.findFile(runContext.config.projectPath, false)
@@ -160,12 +161,7 @@ internal abstract class ReverseScopedScript(val skipCoverageComputation: Boolean
   DefaultScript(runContextFactory, AnalysisKind.INCREMENTAL) {
 
   override suspend fun createGlobalInspectionContext(runContext: QodanaRunContext): QodanaGlobalInspectionContext {
-    val computationState = if (skipCoverageComputation) {
-      QodanaCoverageComputationState.SKIP_COMPUTE
-    }
-    else {
-      QodanaCoverageComputationState.SKIP_REPORT
-    }
+    val computationState = computeCoverageState(skipCoverageComputation, QodanaCoverageComputationState.SKIP_REPORT)
     return runContext.createGlobalInspectionContext(coverageComputationState = computationState)
   }
 

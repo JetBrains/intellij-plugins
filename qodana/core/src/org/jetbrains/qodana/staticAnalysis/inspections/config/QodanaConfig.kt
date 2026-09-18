@@ -240,8 +240,9 @@ data class QodanaConfig(
       maxRuntimeNotifications: Int = yaml.maxRuntimeNotifications,
       failOnErrorNotification: Boolean = yaml.failOnErrorNotification,
       failureConditions: FailureConditions = yaml.failureConditions,
+      reportCoverageProblems: Boolean = yaml.coverage.reportProblems,
       coverage: QodanaCoverageConfig = QodanaCoverageConfig(
-        reportProblems = yaml.coverage.reportProblems,
+        reportProblems = reportCoverageProblems,
         coveragePath = outPath.resolve("$COVERAGE_OUTPUT_DIR/"),
         codeCoverageLocations = yaml.coverage.codeCoverageLocations.map {
           projectPath.resolve(it)
@@ -347,7 +348,7 @@ enum class SkipResultStrategy {
     }
   }
 
-  suspend fun shouldSkip(run: Run): Boolean {
+  suspend fun shouldSkip(run: Run, excludedRuleIdsForAny: Set<String> = emptySet()): Boolean {
     val newByBaseline: (Result) -> Boolean = { result ->
       result.baselineState == null
       || (result.baselineState != Result.BaselineState.ABSENT
@@ -356,7 +357,7 @@ enum class SkipResultStrategy {
     return withContext(StaticAnalysisDispatchers.Default) {
       when (this@SkipResultStrategy) {
         ALWAYS -> true
-        ANY -> run.results.any { newByBaseline(it) }
+        ANY -> run.results.any { it.ruleId !in excludedRuleIdsForAny && newByBaseline(it) }
         FIXABLE -> run.results.any { newByBaseline(it) && it.hasFixes() }
         NEVER -> false
       }
