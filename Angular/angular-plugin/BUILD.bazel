@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -16,6 +17,30 @@ dev_dist_plugin(
         "intellij.angular.tslint",
     ],
     main_module = "intellij.angular.plugin",
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/Angular/angular-backend:angular-backend.jar": "intellij.angular.backend",
+        "//contrib/Angular/angular-plugin:angular-plugin.jar": "intellij.angular.plugin",
+    },
+    descriptor = "//contrib/Angular/angular-plugin:intellij.angular.plugin_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = [
+        "//contrib/Angular/angular-free:angular-free_content_module_jar",
+        "//contrib/Angular/angular-tslint:angular-tslint_content_module_jar",
+    ],
+    main_module = "intellij.angular.plugin",
+    product = "idea",
+    product_info = "//build/dev-dist-descriptors:idea_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/Angular/angular-backend/gen-resources/ngCli",
+        "module-resource:1:source": "contrib/Angular/angular-backend/gen-resources/angular-service",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/Angular/angular-backend:dev_dist_resources",
+        "module-resource:1:source": "//contrib/Angular/angular-backend:dev_dist_resources",
+    },
 )
 ### auto-generated section `dev intellij.angular.plugin` end
 

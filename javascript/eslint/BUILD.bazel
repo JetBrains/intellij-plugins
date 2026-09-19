@@ -1,4 +1,5 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
@@ -17,6 +18,23 @@ filegroup(
 dev_dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
     main_module = "intellij.javascript.eslint",
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/javascript/eslint:eslint.jar": "intellij.javascript.eslint",
+    },
+    descriptor = "//contrib/javascript/eslint:intellij.javascript.eslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.javascript.eslint",
+    product = "idea",
+    product_info = "//build/dev-dist-descriptors:idea_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/javascript/eslint/plugin-resources",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/javascript/eslint:dev_dist_resources",
+    },
 )
 ### auto-generated section `dev intellij.javascript.eslint` end
 
