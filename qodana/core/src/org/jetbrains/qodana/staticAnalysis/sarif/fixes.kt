@@ -29,12 +29,14 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.blockingContextScope
+import com.intellij.openapi.progress.util.runUnderEmptyProgressIfNone
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.toNioPathOrNull
+import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.platform.util.coroutines.mapConcurrent
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
@@ -57,7 +59,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunner
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.projectPath
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.runTaskAndLogTime
-import org.jetbrains.qodana.staticAnalysis.script.QodanaProgressIndicator
 import java.nio.file.Path
 
 private val LOG = logger<QodanaRunner>()
@@ -214,6 +215,7 @@ private suspend fun reconstructProblems(results: List<Result>,
   val problems = mutableListOf<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>>()
 
   val localProblems = readActionBlocking {
+    runUnderEmptyProgressIfNone {
     InspectionEngine.inspectEx(
       localToolWrappers,
       psiFile,
@@ -222,10 +224,9 @@ private suspend fun reconstructProblems(results: List<Result>,
       false,
       runContext.scope.isAnalyzeInjectedCode,
       true,
-      QodanaProgressIndicator(runContext.messageReporter),
-      PairProcessor.alwaysTrue()
+        PairProcessor.alwaysTrue()
     )
-  }.toList()
+  }}.toList()
   problems.addAll(localProblems)
 
   val globalSimpleProblems = inspectGlobalSimpleTools(globalSimpleToolWrappers, runContext.project, psiFile)
