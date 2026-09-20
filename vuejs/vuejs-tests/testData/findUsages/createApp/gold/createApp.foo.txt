@@ -1,2 +1,2 @@
-<TheComponent.vue:(0,132):(84,87)>	foo
-<index.html:(0,612):(361,364)>	foo
+<TheComponent.vue:(82,87):(2,5)>	v-foo
+<index.html:(359,364):(2,5)>	v-foo

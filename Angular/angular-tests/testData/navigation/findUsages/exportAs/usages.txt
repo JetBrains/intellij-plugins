@@ -1,2 +1,2 @@
-<template.html:(0,126):(103,107)>	bold
-<template.html:(0,126):(40,44)>	bold
+<template.html:(103,107):(0,4)>	"bold"
+<template.html:(40,44):(0,4)>	"bold"

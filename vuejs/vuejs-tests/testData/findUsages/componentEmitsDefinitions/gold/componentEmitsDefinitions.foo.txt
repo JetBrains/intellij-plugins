@@ -1,2 +1,2 @@
-<componentEmitsDefinitions.vue:(0,451):(122,125)>	foo
-<componentEmitsDefinitions.vue:(0,451):(28,31)>	foo
+<componentEmitsDefinitions.vue:(121,125):(1,4)>	@foo=""
+<componentEmitsDefinitions.vue:(27,31):(1,4)>	@foo=""

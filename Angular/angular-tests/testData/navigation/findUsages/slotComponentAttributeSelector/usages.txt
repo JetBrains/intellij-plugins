@@ -1,1 +1,1 @@
-<slots.test.component.html:(0,145):(68,77)>	attr-slot
+<slots.test.component.html:(68,77):(0,9)>	attr-slot

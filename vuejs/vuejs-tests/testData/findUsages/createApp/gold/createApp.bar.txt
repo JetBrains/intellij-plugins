@@ -1,8 +1,8 @@
-<App.vue:(0,194):(28,31)>	Bar
-<App.vue:(0,194):(34,37)>	Bar
-<TheComponent.vue:(0,132):(28,31)>	Bar
-<TheComponent.vue:(0,132):(34,37)>	Bar
-<foo.vue:(0,143):(28,31)>	Bar
-<foo.vue:(0,143):(34,37)>	Bar
-<index.html:(0,612):(287,290)>	Bar
-<index.html:(0,612):(293,296)>	Bar
+<App.vue:(28,31):(0,3)>	<Bar></Bar>
+<App.vue:(34,37):(0,3)>	<Bar></Bar>
+<TheComponent.vue:(28,31):(0,3)>	<Bar></Bar>
+<TheComponent.vue:(34,37):(0,3)>	<Bar></Bar>
+<foo.vue:(28,31):(0,3)>	<Bar></Bar>
+<foo.vue:(34,37):(0,3)>	<Bar></Bar>
+<index.html:(287,290):(0,3)>	<Bar></Bar>
+<index.html:(293,296):(0,3)>	<Bar></Bar>
