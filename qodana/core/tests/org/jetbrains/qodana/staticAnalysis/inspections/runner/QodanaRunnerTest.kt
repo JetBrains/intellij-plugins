@@ -44,6 +44,7 @@ import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManage
 import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
 import org.jetbrains.qodana.staticAnalysis.sarif.configProfile
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
+import org.jetbrains.qodana.staticAnalysis.script.scoped.COVERAGE_INCREMENTAL_REPORTING_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.script.scoped.COVERAGE_SKIP_COMPUTATION_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.script.scoped.REDUCED_SCOPE_PATH
 import org.jetbrains.qodana.staticAnalysis.script.scoped.RESULT_PRINTING_SKIPPED
@@ -426,6 +427,12 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
 
   private fun Run.isResultOutputSkipped() = this.invocations?.first()?.properties?.get(RESULT_PRINTING_SKIPPED) == true
 
+  private fun runReverseScopedNewStageAnalysis() {
+    PlatformTestUtil.withSystemProperty<Nothing>(COVERAGE_INCREMENTAL_REPORTING_PROPERTY, "true") {
+      runAnalysis()
+    }
+  }
+
   @Test
   fun `testReverseScoped-script-new-stage`(): Unit = runBlocking {
     val scope = qodanaConfig.projectPath.resolve("scope")
@@ -459,7 +466,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     try {
       val scopePath = qodanaConfig.outPath.resolve("scope")
       System.setProperty(REDUCED_SCOPE_PATH, scopePath.toString())
-      runAnalysis()
+      runReverseScopedNewStageAnalysis()
       assertSarifResults()
       // resulting report non empty - decision - continue
       assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
@@ -505,7 +512,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     try {
       val scopePath = qodanaConfig.outPath.resolve("scope")
       System.setProperty(REDUCED_SCOPE_PATH, scopePath.toString())
-      runAnalysis()
+      runReverseScopedNewStageAnalysis()
       assertSarifResults()
       // resulting report non empty - decision - continue
       assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
@@ -551,7 +558,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     try {
       val scopePath = qodanaConfig.outPath.resolve("scope")
       System.setProperty(REDUCED_SCOPE_PATH, scopePath.toString())
-      runAnalysis()
+      runReverseScopedNewStageAnalysis()
       assertSarifResults()
       // resulting report empty from new results - decision - report
       assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
@@ -638,7 +645,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     try {
       val scopePath = qodanaConfig.outPath.resolve("scope")
       System.setProperty(REDUCED_SCOPE_PATH, scopePath.toString())
-      runAnalysis()
+      runReverseScopedNewStageAnalysis()
       assertSarifResults()
       assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
       // analysis stopped, file doesn't get created
@@ -682,7 +689,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     try {
       val scopePath = qodanaConfig.outPath.resolve("scope")
       System.setProperty(REDUCED_SCOPE_PATH, scopePath.toString())
-      runAnalysis()
+      runReverseScopedNewStageAnalysis()
       assertSarifResults()
       assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
       val expectedScope = getTestDataPath("scope.json").absolutePathString()
