@@ -21,7 +21,7 @@ interface P4ConnectionParametersProvider {
     @JvmField
     val EP_NAME = ExtensionPointName.create<P4ConnectionParametersProvider>("Perforce.P4ConnectionParametersProvider");
   }
-  @RequiresBackgroundThread
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   fun getConnectionParameters(project: Project): Set<P4ConnectionParameters>
 }
 

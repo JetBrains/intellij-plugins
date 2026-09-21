@@ -4,7 +4,7 @@ import com.intellij.clion.makefile.core.wizard.MakefileProjectOpenProcessor
 import com.intellij.ide.impl.OpenProjectTaskBuilder
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.JDOMUtil
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.projectImport.ProjectOpenProcessor
 import com.jetbrains.cidr.cpp.cmake.CMakeProjectOpenProcessor
 import com.jetbrains.cidr.cpp.compdb.wizard.CompDBProjectOpenProcessor
@@ -68,7 +68,7 @@ fun selectProcessor(config: QodanaConfig, processors: List<ProjectOpenProcessor>
         processors.map { it.name }
     )
 
-    val projectPath = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(config.projectPath)
+    val projectPath = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(config.projectPath)
     if (projectPath == null) throw QodanaException("Project path '${config.projectPath}' was not found")
 
     val requestedBuildSystem = config.cpp?.buildSystem

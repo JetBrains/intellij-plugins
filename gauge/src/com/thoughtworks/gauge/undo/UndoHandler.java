@@ -23,9 +23,10 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.openapi.vfs.encoding.EncodingManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -57,7 +58,7 @@ public final class UndoHandler {
   private void refreshFiles() {
     final Map<Document, String> documentTextMap = new HashMap<>();
     for (String fileName : fileNames) {
-      VirtualFile fileByIoFile = LocalFileSystem.getInstance().findFileByIoFile(new File(fileName));
+      VirtualFile fileByIoFile = StandardFileSystems.local().findFileByPath(new File(fileName).getAbsolutePath());
       if (fileByIoFile != null) {
         Document document = FileDocumentManager.getInstance().getDocument(fileByIoFile);
         if (document != null) documentTextMap.put(document, document.getText());
@@ -82,12 +83,12 @@ public final class UndoHandler {
 
   private static void performUndoableAction(List<String> filesChangedList) {
     for (String fileName : filesChangedList) {
-      LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
+      VirtualFileSystem localFileSystem = StandardFileSystems.local();
       try {
-        VirtualFile virtualFile = localFileSystem.findFileByIoFile(new File(fileName));
+        VirtualFile virtualFile = localFileSystem.findFileByPath(new File(fileName).getAbsolutePath());
         if (virtualFile != null) {
           Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-          localFileSystem.refreshAndFindFileByIoFile(new File(fileName));
+          localFileSystem.refreshAndFindFileByPath(new File(fileName).getAbsolutePath());
           if (document != null) {
             Charset encoding = EncodingManager.getInstance().getEncoding(virtualFile, true);
             if (encoding == null) {

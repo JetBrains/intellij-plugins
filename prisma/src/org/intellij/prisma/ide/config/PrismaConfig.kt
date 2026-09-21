@@ -27,7 +27,7 @@ internal val NESTED_CONFIG_NAMES = EXTENSIONS.map { "prisma.$it" }
 data class PrismaConfigData(val schema: String? = null)
 
 class PrismaConfig(val file: VirtualFile, val data: PrismaConfigData?) {
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   fun resolveSchemaPath(): VirtualFile? {
     val schemaPath = data?.schema?.takeIf { it.isNotBlank() } ?: return null
 

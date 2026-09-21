@@ -34,19 +34,9 @@ private class ActivationHelper(
   override fun isProjectContext(project: Project, context: VirtualFile): Boolean {
     val settings = VueSettings.instance(project)
 
-    val runtimeMatchesSettings = when (runtime) {
-      is VueServiceRuntime.Manual -> {
-        settings.serviceType == VueLSMode.MANUAL
-        && settings.manualSettings.mode == VueSettings.ManualMode.HYBRID_MODE
-      }
-
-      is VueServiceRuntime.Bundled -> {
-        settings.serviceType == VueLSMode.AUTO
-        && getAppropriateVueLSVersion(project, context) == runtime.version
-      }
-    }
-
-    return isVueServiceContext(project, context) && runtimeMatchesSettings
+    return isVueServiceContext(project, context)
+           && settings.serviceType == VueLSMode.AUTO
+           && getAppropriateVueLSVersion(project, context) == runtime.version
   }
 
   override fun isEnabledInSettings(project: Project): Boolean {
@@ -54,13 +44,6 @@ private class ActivationHelper(
       return false
 
     val settings = VueSettings.instance(project)
-    return when (runtime) {
-      is VueServiceRuntime.Manual ->
-        settings.serviceType == VueLSMode.MANUAL
-        && settings.manualSettings.mode == VueSettings.ManualMode.HYBRID_MODE
-
-      is VueServiceRuntime.Bundled ->
-        settings.serviceType == VueLSMode.AUTO
-    }
+    return settings.serviceType == VueLSMode.AUTO
   }
 }

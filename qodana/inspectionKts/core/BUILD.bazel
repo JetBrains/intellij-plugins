@@ -22,10 +22,12 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    exports = ["//contrib/qodana/inspectionKts/api:qodana-inspectionKts-base"],
     runtime_deps = ["@community//plugins/kotlin/jsr223"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
+        "//contrib/qodana/inspectionKts/api:qodana-inspectionKts-base",
         "//contrib/qodana/util",
         "@community//platform/analysis-api:analysis",
         "@community//platform/analysis-impl",
@@ -65,9 +67,15 @@ jvm_library(
     ),
     module_name = "intellij.qodana.inspectionKts",
     visibility = ["//visibility:public"],
+    exports = [
+        # do not sort,
+        "//contrib/qodana/inspectionKts/api:qodana-inspectionKts-base",
+        "//contrib/qodana/inspectionKts/api:qodana-inspectionKts-base_test_lib",
+    ],
     runtime_deps = [
         # do not sort,
         ":qodana-inspectionKts",
+        "//contrib/qodana/inspectionKts/api:qodana-inspectionKts-base_test_lib",
         "//contrib/qodana/util:util_test_lib",
         "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/analysis-impl:analysis-impl_test_lib",

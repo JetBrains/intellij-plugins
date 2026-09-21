@@ -53,9 +53,9 @@ import com.intellij.openapi.vcs.history.VcsRevisionNumber;
 import com.intellij.openapi.vcs.merge.MergeProvider;
 import com.intellij.openapi.vcs.rollback.RollbackEnvironment;
 import com.intellij.openapi.vcs.update.UpdateEnvironment;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.RefreshQueue;
 import com.intellij.util.ThreeState;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
@@ -223,8 +223,7 @@ public final class PerforceVcs extends AbstractVcs {
 
   public void refreshFiles(VirtualFile @NotNull ... filesToRefresh) {
     List<VirtualFile> files = Arrays.asList(filesToRefresh);
-    LocalFileSystem.getInstance()
-      .refreshFiles(files, true, false, null);
+    RefreshQueue.getInstance().refresh(true, false, null, files);
     asyncEditCompleted(files);
     VcsDirtyScopeManager.getInstance(myProject).filesDirty(files, null);
   }

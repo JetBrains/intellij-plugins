@@ -17,7 +17,7 @@ import com.intellij.execution.ui.RunnerLayoutUi
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.components.service
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.ui.content.Content
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.ui.XDebugTabLayouter
@@ -87,7 +87,7 @@ class PlatformioLauncher(
         }
       }
     val projectPath: @SystemIndependent String? = project.basePath
-    val vfs = LocalFileSystem.getInstance()
+    val vfs = StandardFileSystems.local()
     if (projectPath == null ||
         vfs.findFileByPath(projectPath)?.findChild(PlatformioFileType.FILE_NAME) == null
     ) {

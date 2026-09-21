@@ -49,6 +49,7 @@ private class ProblemsViewExportSarifAction : DumbAwareAction() {
 
           launch(QodanaDispatchers.Default) {
             val file = wrapper.file
+            SarifUtil.sortResults(sarifReport)
             SarifUtil.writeReport(file.toPath(), sarifReport)
             markDirtyAndRefresh(true, false, false, file)
           }

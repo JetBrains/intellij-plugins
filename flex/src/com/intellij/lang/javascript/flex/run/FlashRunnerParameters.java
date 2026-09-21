@@ -39,7 +39,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -68,7 +68,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
                                                        final String bcName) {
     if (packagingOptions.isUseGeneratedDescriptor()) return;
     if (packagingOptions.getCustomDescriptorPath().isEmpty()) return;
-    final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(packagingOptions.getCustomDescriptorPath());
+    final VirtualFile descriptorFile = StandardFileSystems.local().findFileByPath(packagingOptions.getCustomDescriptorPath());
     if (descriptorFile == null || descriptorFile.isDirectory()) return;
     if (sdk.getSdkType() == FlexmojosSdkType.getInstance()) return;
 
@@ -656,7 +656,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         throw new RuntimeConfigurationError(FlexBundle.message(key, bcName, moduleName));
       }
       else {
-        final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(packagingOptions.getCustomDescriptorPath());
+        final VirtualFile descriptorFile = StandardFileSystems.local().findFileByPath(packagingOptions.getCustomDescriptorPath());
         if (descriptorFile == null || descriptorFile.isDirectory()) {
           final String key = android
                              ? "bc.0.module.1.android.custom.descriptor.not.found"
@@ -675,7 +675,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     if (StringUtil.isEmpty(adlPath)) {
       throw new RuntimeConfigurationError(FlexBundle.message("adl.not.set.check.sdk.settings", sdk.getName()));
     }
-    final VirtualFile adlFile = LocalFileSystem.getInstance().findFileByPath(adlPath);
+    final VirtualFile adlFile = StandardFileSystems.local().findFileByPath(adlPath);
     if (adlFile == null || adlFile.isDirectory()) {
       throw new RuntimeConfigurationError(sdk.getSdkType() instanceof FlexmojosSdkType
                                           ? FlexBundle.message("adl.not.found.check.sdk.settings", adlPath, sdk.getName())
@@ -687,7 +687,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       if (StringUtil.isEmpty(airRuntimePath)) {
         throw new RuntimeConfigurationError(FlexBundle.message("air.runtime.not.set.check.sdk.settings", sdk.getName()));
       }
-      final VirtualFile airRuntimeDir = LocalFileSystem.getInstance().findFileByPath(airRuntimePath);
+      final VirtualFile airRuntimeDir = StandardFileSystems.local().findFileByPath(airRuntimePath);
       if (airRuntimeDir == null) {
         throw new RuntimeConfigurationError(FlexBundle.message("air.runtime.not.found.check.sdk.settings", airRuntimePath, sdk.getName()));
       }

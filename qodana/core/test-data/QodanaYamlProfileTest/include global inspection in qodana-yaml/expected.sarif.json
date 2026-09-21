@@ -4,6 +4,63 @@
       "language": "en-US",
       "results": [
         {
+          "ruleId": "unused",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class is never used.",
+            "markdown": "Class is never used."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7,
+                  "charOffset": 6,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "A"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 78,
+                  "snippet": {
+                    "text": "class A {\n  public static void main() {\n    System.out.println(\"Hello world\");"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "cb4599b937943d88",
+            "equalIndicator/v1": "94f324626922f2baf18a06f0c70757a8584f4c5f532b8dce3a289a68d59c6c6a"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
           "ruleId": "ConfusingMainMethod",
           "kind": "fail",
           "level": "warning",
@@ -61,18 +118,18 @@
           }
         },
         {
-          "ruleId": "ConfusingMainMethod",
+          "ruleId": "unused",
           "kind": "fail",
           "level": "warning",
           "message": {
-            "text": "Method 'main()' does not have signature 'public static void main(String[])'",
-            "markdown": "Method `main()` does not have signature 'public static void main(String\\[\\])'"
+            "text": "Method is never used.",
+            "markdown": "Method is never used."
           },
           "locations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "test-module/B.java",
+                  "uri": "test-module/A.java",
                   "uriBaseId": "SRCROOT"
                 },
                 "region": {
@@ -91,7 +148,7 @@
                   "charOffset": 0,
                   "charLength": 96,
                   "snippet": {
-                    "text": "class B {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
+                    "text": "class A {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
                   },
                   "sourceLanguage": "JAVA"
                 }
@@ -105,65 +162,8 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "3a6e63c2ab306666",
-            "equalIndicator/v1": "501fdb086a750f67e5de964ed298e69cccc42155434e7706c627db908c6e2ed0"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "ConfusingMainMethod",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Method 'main()' does not have signature 'public static void main(String[])'",
-            "markdown": "Method `main()` does not have signature 'public static void main(String\\[\\])'"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/sub/C.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 2,
-                  "startColumn": 22,
-                  "charOffset": 31,
-                  "charLength": 4,
-                  "snippet": {
-                    "text": "main"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 96,
-                  "snippet": {
-                    "text": "class C {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "29209a7c1c738086",
-            "equalIndicator/v1": "59d36057dfe22b6a44ff1fee6342af9120ebf28ba6cc9ced5f92cadb038eb907"
+            "equalIndicator/v2": "b39d4f59f3149503",
+            "equalIndicator/v1": "46001b5773460026f41203ee811e2b94878507799cf852e325a7ead9cd4c77b3"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -221,122 +221,6 @@
           "partialFingerprints": {
             "equalIndicator/v2": "37af4c1dd5347cf1",
             "equalIndicator/v1": "aa3638d9e5a71b3cc885f8831e3ef67577c3eb6c459ef3ce3d45447874c3df75"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "hasFixes": true,
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "ConstantValue",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Condition '1 == 1' is always 'true'",
-            "markdown": "Condition `1 == 1` is always `true`"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/B.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 4,
-                  "startColumn": 9,
-                  "charOffset": 87,
-                  "charLength": 6,
-                  "snippet": {
-                    "text": "1 == 1"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 2,
-                  "startColumn": 1,
-                  "charOffset": 10,
-                  "charLength": 129,
-                  "snippet": {
-                    "text": "  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {\n      System.out.println(\"Another\");\n    }"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "5427535b1840be7a",
-            "equalIndicator/v1": "d36dd69d7501515dc1e022b22c31bdd64198312f0bb64d896f79fa039861808f"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "hasFixes": true,
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "ConstantValue",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Condition '1 == 1' is always 'true'",
-            "markdown": "Condition `1 == 1` is always `true`"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/sub/C.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 4,
-                  "startColumn": 9,
-                  "charOffset": 87,
-                  "charLength": 6,
-                  "snippet": {
-                    "text": "1 == 1"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 2,
-                  "startColumn": 1,
-                  "charOffset": 10,
-                  "charLength": 129,
-                  "snippet": {
-                    "text": "  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {\n      System.out.println(\"Another\");\n    }"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "243a3b442ab7c9fb",
-            "equalIndicator/v1": "7925bb064df17095eca9642f03c5e28cf6f7bad1ca79f3f84902a17653d3b4f9"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -463,6 +347,235 @@
           }
         },
         {
+          "ruleId": "unused",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class is never used.",
+            "markdown": "Class is never used."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/B.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7,
+                  "charOffset": 6,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "B"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 78,
+                  "snippet": {
+                    "text": "class B {\n  public static void main() {\n    System.out.println(\"Hello world\");"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "638e019171a2186e",
+            "equalIndicator/v1": "25f4d377165a2e0eb42edb86df99582acbc2b192a4a75996cceb73aecf1204f3"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "ConfusingMainMethod",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'main()' does not have signature 'public static void main(String[])'",
+            "markdown": "Method `main()` does not have signature 'public static void main(String\\[\\])'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/B.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 22,
+                  "charOffset": 31,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "main"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 96,
+                  "snippet": {
+                    "text": "class B {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "3a6e63c2ab306666",
+            "equalIndicator/v1": "501fdb086a750f67e5de964ed298e69cccc42155434e7706c627db908c6e2ed0"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "unused",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method is never used.",
+            "markdown": "Method is never used."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/B.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 22,
+                  "charOffset": 31,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "main"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 96,
+                  "snippet": {
+                    "text": "class B {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "d83f445405c7f218",
+            "equalIndicator/v1": "4b2613764fe3aad9f772c2740707b3bf6abad4020538311b80cb45ba5a8089f4"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition '1 == 1' is always 'true'",
+            "markdown": "Condition `1 == 1` is always `true`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/B.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 9,
+                  "charOffset": 87,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "1 == 1"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 10,
+                  "charLength": 129,
+                  "snippet": {
+                    "text": "  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {\n      System.out.println(\"Another\");\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "5427535b1840be7a",
+            "equalIndicator/v1": "d36dd69d7501515dc1e022b22c31bdd64198312f0bb64d896f79fa039861808f"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "hasFixes": true,
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
           "ruleId": "IgnoreResultOfCall",
           "kind": "fail",
           "level": "warning",
@@ -577,6 +690,293 @@
           }
         },
         {
+          "ruleId": "WrongPackageStatement",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Missing package statement: 'sub'",
+            "markdown": "Missing package statement: 'sub'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/sub/C.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7,
+                  "charOffset": 6,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "C"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 78,
+                  "snippet": {
+                    "text": "class C {\n  public static void main() {\n    System.out.println(\"Hello world\");"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "697781967d75440f",
+            "equalIndicator/v1": "0f72bb99ee4f0a643613c629516369e33966d35fc2da5df4144f49ad71ef03dc"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
+            "hasFixes": true,
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "unused",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class is never used.",
+            "markdown": "Class is never used."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/sub/C.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7,
+                  "charOffset": 6,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "C"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 78,
+                  "snippet": {
+                    "text": "class C {\n  public static void main() {\n    System.out.println(\"Hello world\");"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "e44e950aa081d4c0",
+            "equalIndicator/v1": "e8a9fd9fa3f7ff4731f234236b1f84f69c3e4d81d125850a05d142fb2a8cb957"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "ConfusingMainMethod",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'main()' does not have signature 'public static void main(String[])'",
+            "markdown": "Method `main()` does not have signature 'public static void main(String\\[\\])'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/sub/C.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 22,
+                  "charOffset": 31,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "main"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 96,
+                  "snippet": {
+                    "text": "class C {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "29209a7c1c738086",
+            "equalIndicator/v1": "59d36057dfe22b6a44ff1fee6342af9120ebf28ba6cc9ced5f92cadb038eb907"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "unused",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method is never used.",
+            "markdown": "Method is never used."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/sub/C.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 22,
+                  "charOffset": 31,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "main"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 96,
+                  "snippet": {
+                    "text": "class C {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "b5a8a63241cd444d",
+            "equalIndicator/v1": "2e7eaf84771708f8d3abdebd5c0daec1246fe63b8edd6a323725a5a339a30688"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition '1 == 1' is always 'true'",
+            "markdown": "Condition `1 == 1` is always `true`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/sub/C.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 9,
+                  "charOffset": 87,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "1 == 1"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 10,
+                  "charLength": 129,
+                  "snippet": {
+                    "text": "  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {\n      System.out.println(\"Another\");\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "243a3b442ab7c9fb",
+            "equalIndicator/v1": "7925bb064df17095eca9642f03c5e28cf6f7bad1ca79f3f84902a17653d3b4f9"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "hasFixes": true,
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
           "ruleId": "IgnoreResultOfCall",
           "kind": "fail",
           "level": "warning",
@@ -680,406 +1080,6 @@
           "partialFingerprints": {
             "equalIndicator/v2": "1b8a6544bc725134",
             "equalIndicator/v1": "186bbe5ed852faca910cec108fdf775937887814a4a86dcf589cd6c80e25892c"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "WrongPackageStatement",
-          "kind": "fail",
-          "level": "error",
-          "message": {
-            "text": "Missing package statement: 'sub'",
-            "markdown": "Missing package statement: 'sub'"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/sub/C.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 1,
-                  "startColumn": 7,
-                  "charOffset": 6,
-                  "charLength": 1,
-                  "snippet": {
-                    "text": "C"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 78,
-                  "snippet": {
-                    "text": "class C {\n  public static void main() {\n    System.out.println(\"Hello world\");"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "697781967d75440f",
-            "equalIndicator/v1": "0f72bb99ee4f0a643613c629516369e33966d35fc2da5df4144f49ad71ef03dc"
-          },
-          "properties": {
-            "ideaSeverity": "ERROR",
-            "qodanaSeverity": "Critical",
-            "problemType": "REGULAR",
-            "hasFixes": true,
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "unused",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Class is never used.",
-            "markdown": "Class is never used."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/A.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 1,
-                  "startColumn": 7,
-                  "charOffset": 6,
-                  "charLength": 1,
-                  "snippet": {
-                    "text": "A"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 78,
-                  "snippet": {
-                    "text": "class A {\n  public static void main() {\n    System.out.println(\"Hello world\");"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "cb4599b937943d88",
-            "equalIndicator/v1": "94f324626922f2baf18a06f0c70757a8584f4c5f532b8dce3a289a68d59c6c6a"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "unused",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Method is never used.",
-            "markdown": "Method is never used."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/A.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 2,
-                  "startColumn": 22,
-                  "charOffset": 31,
-                  "charLength": 4,
-                  "snippet": {
-                    "text": "main"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 96,
-                  "snippet": {
-                    "text": "class A {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "b39d4f59f3149503",
-            "equalIndicator/v1": "46001b5773460026f41203ee811e2b94878507799cf852e325a7ead9cd4c77b3"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "unused",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Class is never used.",
-            "markdown": "Class is never used."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/B.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 1,
-                  "startColumn": 7,
-                  "charOffset": 6,
-                  "charLength": 1,
-                  "snippet": {
-                    "text": "B"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 78,
-                  "snippet": {
-                    "text": "class B {\n  public static void main() {\n    System.out.println(\"Hello world\");"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "638e019171a2186e",
-            "equalIndicator/v1": "25f4d377165a2e0eb42edb86df99582acbc2b192a4a75996cceb73aecf1204f3"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "unused",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Method is never used.",
-            "markdown": "Method is never used."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/B.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 2,
-                  "startColumn": 22,
-                  "charOffset": 31,
-                  "charLength": 4,
-                  "snippet": {
-                    "text": "main"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 96,
-                  "snippet": {
-                    "text": "class B {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "d83f445405c7f218",
-            "equalIndicator/v1": "4b2613764fe3aad9f772c2740707b3bf6abad4020538311b80cb45ba5a8089f4"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "unused",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Class is never used.",
-            "markdown": "Class is never used."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/sub/C.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 1,
-                  "startColumn": 7,
-                  "charOffset": 6,
-                  "charLength": 1,
-                  "snippet": {
-                    "text": "C"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 78,
-                  "snippet": {
-                    "text": "class C {\n  public static void main() {\n    System.out.println(\"Hello world\");"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "e44e950aa081d4c0",
-            "equalIndicator/v1": "e8a9fd9fa3f7ff4731f234236b1f84f69c3e4d81d125850a05d142fb2a8cb957"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "unused",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Method is never used.",
-            "markdown": "Method is never used."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/sub/C.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 2,
-                  "startColumn": 22,
-                  "charOffset": 31,
-                  "charLength": 4,
-                  "snippet": {
-                    "text": "main"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 96,
-                  "snippet": {
-                    "text": "class C {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "b5a8a63241cd444d",
-            "equalIndicator/v1": "2e7eaf84771708f8d3abdebd5c0daec1246fe63b8edd6a323725a5a339a30688"
           },
           "properties": {
             "ideaSeverity": "WARNING",

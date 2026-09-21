@@ -23,7 +23,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,7 +80,7 @@ public final class JdlRunConfiguration extends RunConfigurationBase<JdlRunConfig
           @Override
           public void processTerminated(@NotNull ProcessEvent event) {
             // we generated something, let's check
-            LocalFileSystem.getInstance().refresh(true);
+            StandardFileSystems.local().refresh(true);
           }
         });
 

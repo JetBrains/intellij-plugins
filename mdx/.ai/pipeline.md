@@ -69,13 +69,21 @@ A complete single-line construct is emitted immediately. Multiline constructs sh
 finalization lifecycle in `MdxBlockMarkerBlock`, but use separate ownership policies:
 
 - `MdxJsxBlockMarkerBlock` scans only through the lines the marker has observed. It allows nested
-  Markdown once the opening tag is complete. Finalized code-fence and HTML-comment productions,
-  together with provisional flow code spans, are passed to the JSX scanner as explicit opaque
-  ranges. Element and opacity scans are cached by observed limit and production count. A nested JSX
-  marker returns `PASS` after scheduling its close, so the ancestor continues to observe the
-  boundary and owns its closing tag too.
+  Markdown once the opening tag is complete. One persistent JSX session retains its cursor, tag
+  stack, incremental tag or expression parser, accumulated syntax ranges, and incrementally merged
+  opacity. `MdxJsxTagParser` advances the tag grammar directly; it does not pre-scan and then replay
+  a completed tag. Ambiguous malformed expressions fork only the candidates admitted by the shared
+  recovery budget. Finalized code-fence and HTML-comment productions, together with provisional
+  flow code spans, are added as explicit opaque ranges. When a code-span opener is observed, the
+  remaining eligible paragraph segment is indexed once. Late opacity can replay the one line
+  observed before a child marker took ownership and roll back syntax collected from that line.
+  Accumulated results use an append-only committed prefix and an immutable provisional suffix, so a
+  result retained by a caller is unchanged by that rollback. The marker reuses the session's
+  detailed result when it is finalized. A nested JSX marker returns `PASS` after scheduling its
+  close, so the ancestor continues to observe the boundary and owns its closing tag too.
 - `MdxOpaqueBlockMarkerBlock` handles ESM and flow expressions. It never allows sub-blocks and
-  returns `CANCEL`, keeping JavaScript content opaque to competing Markdown markers.
+  returns `CANCEL`, keeping JavaScript content opaque to competing Markdown markers. Its persistent
+  JavaScript scanner session retains lexer checkpoints and nesting state while the block grows.
 
 JSX no longer captures an eager whole-source element range. That range could cross a Markdown block
 whose ownership had not yet been established, making the result depend on edit order. Incomplete
@@ -84,14 +92,25 @@ a matching closer, an immediate mismatch-recovery boundary, and an unterminated 
 the marker publishes matched and recovered roots, plus EOF recovery, but never a movable prefix.
 Named tags and fragments only close identical identities.
 
-`MdxJsxMarkdownConstraints` carries JSX ownership and tag or fragment identity through nested
-Markdown constraints. It stores absolute line indentation, advances the real list or blockquote
-parent constraints, and classifies a closing tag as current, ancestor, or mismatched. Every JSX
-wrapper is retained when a Markdown modifier is added; dropping one would let that block consume an
-ancestor closing tag.
+`MdxJsxMarkdownConstraints` carries JSX ownership and tag or fragment identity through nested Markdown constraints.
+It classifies a closing tag as current, ancestor, or mismatched. Every JSX wrapper survives each
+list or blockquote modifier. The stored indentation stays separate from the number of consumed characters.
 
-`MdxBlockNodeFactory` converts JSX and ESM scanner results to Markdown nodes. Recognition and node
-projection are kept separate deliberately.
+`MdxMarkdownConstraints` delegates modifier recognition to GFM and retains the indentation skipped by JSX.
+List continuation uses the stored content indentation. Blockquotes can start beyond three spaces inside JSX.
+Tabs advance to the next tab stop. Ordinary Markdown keeps the CommonMark continuation rules.
+
+`MdxMarkdownOwnership` records each observed line with its actual constraints. It uses the configured
+block providers and `ParagraphMarkerBlock` to determine paragraph ends. Code-span opacity and flow
+paragraph projection share this information. This replaces separate guesses about headings, lists,
+blockquotes, and fences.
+
+`MdxMarkerProcessor.updateStateInfo` announces fence-opener opacity before existing JSX markers scan the line.
+This protects JSX closers inside the fence info string. Completed fence and HTML-comment productions
+then provide their full opaque ranges.
+
+`MdxBlockNodeFactory` converts JSX and ESM results to Markdown nodes. It receives any leading paragraph
+range from `MdxMarkdownOwnership`. Recognition and node projection remain separate.
 
 ### Inline recognition
 
@@ -108,25 +127,36 @@ each element body is parsed in its own inner space with tags, attributes, and ex
 Standalone expressions stay opaque within whichever space contains them. A delimiter inside an
 element therefore cannot pair with one outside it.
 
+When the scanner closes or recovers an element, it emits an immutable `ElementRecord`.
+The record contains the parent index, full range, and optional body range. Indexes follow opening
+order, while records follow closing order. Self-closing elements have no body range.
+
+One token sweep assigns Markdown content to each body's owner. Each complete child stays opaque to
+its parent, so parent emphasis and links can wrap the child without entering its body.
+Flow parsing keeps the existing block-marker owners and avoids duplicate owners for nested flow elements.
+
 ### Scanner ownership
 
-| Component | Responsibility |
+| Module | Responsibility |
 |---|---|
 | `MdxJsxScanner` | JSX tags, attributes, exact-identity nesting, immediate mismatch recovery, and JSX ranges |
 | `MdxExpressionBoundaryScanner` | JavaScript `{...}` boundaries using the platform JS/JSX lexer |
 | `MdxEsmScanner` | Top-level module-statement completeness, recovery, and missing separators |
 | `MdxCodeFenceProvider` | Standard fence ownership plus recovery from an unclosed fence at an active JSX closer |
-| `MdxMarkdownFenceScanner` | Narrow fence boundaries used while recovering paragraph nodes before nested Markdown AST nodes exist |
+| `MdxMarkdownOwnership` | Shared paragraph boundaries and early fence-opener opacity from real Markdown constraints and providers |
 | `MdxMarkdownCodeSpanScanner` | Provisional flow code-span opacity before paragraph inline parsing runs |
 | `MdxHtmlCommentBoundary` | Closed multiline HTML-comment boundaries shared by block and JSX scanning |
 
 `MdxExpressionBoundaryScanner` and `MdxEsmScanner` delegate strings, templates, comments, regular
-expressions, and nested JSX tokenization to `JSFlexAdapter`. JSX scanning does not rediscover fences
-or comments from raw text: finalized Markdown productions supply those opaque ranges. Closed fences
-remain opaque even when their content contains a matching JSX closing tag. An unclosed fence yields
-only to the current or an ancestor JSX closer; a mismatched closer remains fence content. The raw
-fence scanner is intentionally narrow and remains limited to paragraph recovery. Indentation inside
-a JSX flow body is owned by JSX constraints, so it is not capped at three spaces.
+expressions, and nested JSX tokenization to `JSFlexAdapter` through a prefix-bounded lexer. Sessions
+commit tokens only at JavaScript base-state checkpoints; an unterminated lexical suffix is re-lexed
+as more text becomes visible because its token boundaries can still change. ESM evaluates that
+suffix against a disposable semantic snapshot. JSX expressions likewise keep provisional
+continuations separate until their boundary becomes stable.
+
+JSX scanning receives Markdown opacity from the block parser. Closed fences remain opaque when their
+content contains a matching JSX closer. An unclosed fence yields only to the current or an ancestor
+JSX closer. A mismatched closer remains fence content.
 
 ### Resulting Markdown structure
 
@@ -166,11 +196,18 @@ JSX/ESM text walk.
 The projection performs these steps:
 
 1. Collect top-level ESM, JSX, and expression roots.
-2. Collect code blocks, code fences, and code spans as opaque Markdown ranges.
-3. Subtract opaque ranges from JSX roots while retaining ESM and expression roots whole.
-4. Handle invalid single-line and opaque multiline HTML comments.
-5. Mark every non-embedded range as outer language and add virtual semicolons where adjacent
-   JavaScript statements need separation.
+2. Collect and merge code blocks, code fences, and code spans as ordered opaque Markdown ranges.
+3. Sweep the ordered roots and opaque ranges once, subtracting opacity from JSX roots while
+   retaining ESM and expression roots whole. Each resulting piece keeps its root kind.
+4. Classify HTML comments with a moving cursor over merged lexer and Markdown code ranges, then
+   subtract opaque multiline comments with another ordered sweep. Invalid single-line comments
+   remain embedded so the JavaScript parser can diagnose them.
+5. Sweep the embedded pieces to mark every non-embedded range as outer language and add virtual
+   semicolons where adjacent JavaScript statements need separation.
+
+Opaque-range indentation is indexed in one source pass. Projection therefore avoids rescanning
+every opaque range for every root, every comment for every embedded piece, or every embedded piece
+when deciding statement separators.
 
 `MdxOuterLanguagePatcher` represents outer ranges as `\n;`. `MdxJSLanguageParser`, based on the ES6
 parser with JSX enabled, parses the resulting virtual JavaScript file. The source document itself is
@@ -214,18 +251,25 @@ Formatter changes must preserve both Markdown nesting and the projected JavaScri
   and HTML comments are opaque.
 - JSX scans are bounded by the marker's observed prefix. Incomplete editor input uses conservative
   recovery and must not publish a movable root over a Markdown sibling.
+- JavaScript lexer input is bounded by that same observed prefix. Only restartable token prefixes
+  become durable; unstable lexical suffixes and the semantic results derived from them stay
+  provisional.
+- A retained JSX scan result is immutable. Late opacity checks every supplied range against the
+  current provisional scan interval before rolling that interval back. Repeated limits preserve the
+  rollback point and reuse the current result.
 - A matching JSX closer, an unrelated closer used for immediate recovery, and EOF are distinct
   scanner outcomes; named tags and fragments never close one another.
 - JSX constraint wrappers retain tag identity and survive list and blockquote modifier recognition,
   preserving every ancestor closing boundary.
-- Finalized fence and HTML-comment productions are explicit JSX-scanner opacity. Closed fences never
-  yield; unclosed fences yield only to the current or an ancestor JSX closer.
+- Fence openers become opaque before existing JSX markers scan their line. Completed fence and
+  HTML-comment productions provide the full opaque ranges.
 - Code blocks, fences, and spans are subtracted from JSX roots during template projection.
 - Inline Markdown delimiters pair only within the outer paragraph or one JSX element body; complete
   JSX roots and standalone expressions remain opaque gaps in their containing space.
 - Closed multiline HTML comments are owned by a comment-only block provider. Single-line HTML
   comments retain the existing invalid-MDX diagnostics.
-- Scanner `IntRange.last` values are exclusive text offsets.
+- Scanner source ranges use half-open `TextRange` values. `IntRange` is used only at Markdown
+  token and node boundaries, where the Markdown API treats its final value as an exclusive offset.
 - Incomplete editor input may produce recoverable MDX roots, but stable Markdown siblings must not be
   swallowed.
 
@@ -237,9 +281,12 @@ Use the owning test module and fully qualified class names:
 ./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxJsxScannerTest
 ./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxEsmScannerTest
 ./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxExpressionBoundaryScannerTest
-./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxMarkdownFenceScannerTest
+./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxCodeFenceProviderTest
+./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxMarkdownCodeSpanScannerTest
+./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxInlineElementParserTest
 ./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxOracleTest
 ./tests.cmd --module intellij.mdx.tests --test org.intellij.plugin.mdx.MdxParsingTest
+./tests.cmd --module intellij.mdx.tests --test 'org.intellij.plugin.mdx.*'
 ```
 
 - Scanner tests pin the individual boundary contracts.

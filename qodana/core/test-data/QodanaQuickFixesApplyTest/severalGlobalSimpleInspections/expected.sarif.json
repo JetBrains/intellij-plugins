@@ -4,6 +4,43 @@
       "language": "en-US",
       "results": [
         {
+          "ruleId": "testGlobalSimpleInspectionName",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "The file does not start with '// test' comment",
+            "markdown": "The file does not start with '// test' comment"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testSeveralGlobalSimpleInspections",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "0e224a7c995275ec",
+            "equalIndicator/v1": "fd9235c7b8f41d80878848cea609faa7f7ff752c0b07e249e5f15904114e2c03"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
           "ruleId": "UNUSED_IMPORT",
           "kind": "fail",
           "level": "warning",
@@ -107,43 +144,6 @@
           "partialFingerprints": {
             "equalIndicator/v2": "ffd6911417991261",
             "equalIndicator/v1": "9ddd079281c6c53e89c8797368dc7bbaa0e491245829a08f4627ff2e9e076841"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "testGlobalSimpleInspectionName",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "The file does not start with '// test' comment",
-            "markdown": "The file does not start with '// test' comment"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/Main.java",
-                  "uriBaseId": "SRCROOT"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testSeveralGlobalSimpleInspections",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "0e224a7c995275ec",
-            "equalIndicator/v1": "fd9235c7b8f41d80878848cea609faa7f7ff752c0b07e249e5f15904114e2c03"
           },
           "properties": {
             "ideaSeverity": "WARNING",

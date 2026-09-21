@@ -88,7 +88,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -1265,7 +1265,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String name = getTestName(false);
 
     final SdkModificator sdkModificator = FlexTestUtils.getFlexSdkModificator(getModule());
-    final VirtualFile swcFile = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + getBasePath() + "/" + name + ".swc");
+    final VirtualFile swcFile = StandardFileSystems.local().findFileByPath(getTestDataPath() + "/" + getBasePath() + "/" + name + ".swc");
     sdkModificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(swcFile), OrderRootType.CLASSES);
     ApplicationManager.getApplication().runWriteAction(() -> sdkModificator.commitChanges());
 
@@ -1311,19 +1311,19 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String fileRelPath = "pack/" + testName + ".mxml";
 
     final VirtualFile swcFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/" + testName + ".swc");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/" + testName + ".swc");
     final SdkModificator modificator = FlexTestUtils.getFlexSdkModificator(getModule());
     modificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(swcFile), OrderRootType.CLASSES);
     ApplicationManager.getApplication().runWriteAction(() -> modificator.commitChanges());
 
     final Module dependentModule = doCreateRealModule("dependent");
     final VirtualFile contentRoot =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_dependent_module");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_dependent_module");
 
     PsiTestUtil.addSourceRoot(dependentModule, contentRoot);
 
 
-    final String absPath = LocalFileSystem.getInstance().findFileByPath("").getPath();
+    final String absPath = StandardFileSystems.local().findFileByPath("").getPath();
     myAfterCommitRunnable = () -> ApplicationManager.getApplication().runWriteAction(() -> {
       replaceText(fileRelPath, "${SOME_ABSOLUTE_PATH}", absPath);
       ModuleRootModificationUtil.addDependency(myModule, dependentModule);
@@ -1351,7 +1351,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String testName = getTestName(false);
     final String fileRelPath = "pack/" + testName + ".mxml";
 
-    final String absPath = LocalFileSystem.getInstance().findFileByPath("").getPath();
+    final String absPath = StandardFileSystems.local().findFileByPath("").getPath();
     myAfterCommitRunnable = () -> {
       FlexTestUtils.addLibrary(myModule, "lib", getTestDataPath() + getBasePath() + "/", testName + "/" + testName + ".swc", null, null);
       replaceText(fileRelPath, "${SOME_ABSOLUTE_PATH}", absPath);
@@ -1393,9 +1393,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String testName = getTestName(false);
 
     final VirtualFile file =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + getBasePath() + "/" + testName + "/" + testName + ".swc");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + "/" + getBasePath() + "/" + testName + "/" + testName + ".swc");
     final VirtualFile swcFile = JarFileSystem.getInstance().getJarRootForLocalFile(file);
-    final VirtualFile srcFile = LocalFileSystem.getInstance()
+    final VirtualFile srcFile = StandardFileSystems.local()
       .findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/sdk_src/" + testName + "_sdk_src.as");
 
     FlexTestUtils.setupCustomSdk(myModule, swcFile, srcFile.getParent(), null);
@@ -1409,7 +1409,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String testName = getTestName(false);
 
     final VirtualFile srcZipFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + ".zip");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + ".zip");
     final VirtualFile srcFile = JarFileSystem.getInstance().getJarRootForLocalFile(srcZipFile).findChild(testName + "_sdk_src.as");
 
     myAfterCommitRunnable =
@@ -1439,7 +1439,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String testName = getTestName(false);
 
     final VirtualFile srcFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/sdk_src/");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/sdk_src/");
 
     final SdkModificator modificator = FlexTestUtils.getFlexSdkModificator(myModule);
     modificator.addRoot(srcFile, OrderRootType.SOURCES);
@@ -1514,7 +1514,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testConditionalCompilationDefinitionsInNonProjectFiles() throws Exception {
     final String testName = getTestName(false);
     final VirtualFile file =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + getBasePath() + "/" + testName + ".as");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + "/" + getBasePath() + "/" + testName + ".as");
     final File toDirIO = createTempDirectory();
     final VirtualFile toDir = getVirtualFile(toDirIO);
     VirtualFile copyRef =
@@ -1608,7 +1608,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String testName = getTestName(false);
     myAfterCommitRunnable = () -> {
       final VirtualFile srcRoot =
-        LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/");
+        StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/");
       PsiTestUtil.addSourceRoot(myModule, srcRoot);
     };
     doTestFor(true, testName + "/" + testName + ".mxml");
@@ -1756,7 +1756,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
           final VirtualFile testSrcRoot =
             ModuleRootManager.getInstance(myModule).getContentRoots()[0].createChildDirectory(this, "testSrc");
           final VirtualFile testClassFile =
-            LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "Test.as");
+            StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "Test.as");
           assertNotNull(testClassFile);
           testClassFile.copy(this, testSrcRoot, testClassFile.getName());
           PsiTestUtil.addSourceRoot(myModule, testSrcRoot, true);
@@ -1793,7 +1793,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult("Create Skin 'MySkin'", "mxml");
     final VirtualFile verificationFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_Skin.mxml");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_Skin.mxml");
     final VirtualFile skinFile =
       VfsUtilCore.findRelativeFile("/foo/MySkin.mxml", ModuleRootManager.getInstance(myModule).getSourceRoots()[0]);
     assertNotNull(verificationFile);
@@ -1810,7 +1810,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult("Create View 'MyView'", "mxml");
     final VirtualFile verificationFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_View.mxml");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_View.mxml");
     final VirtualFile createdFile =
       VfsUtilCore.findRelativeFile("/foo/bar/MyView.mxml", ModuleRootManager.getInstance(myModule).getSourceRoots()[0]);
     assertNotNull(verificationFile);
@@ -1827,7 +1827,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult("Create View 'MyView'", "mxml");
     final VirtualFile verificationFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_View.mxml");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_View.mxml");
     final VirtualFile createdFile =
       VfsUtilCore.findRelativeFile("foo/MyView.mxml", ModuleRootManager.getInstance(myModule).getSourceRoots()[0]);
     assertNotNull(verificationFile);
@@ -1845,7 +1845,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.class.intention.name", "Foo"), "mxml");
     final VirtualFile verificationFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_Foo.as");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_Foo.as");
     final VirtualFile createdFile =
       VfsUtilCore.findRelativeFile("/foo/Foo.as", ModuleRootManager.getInstance(myModule).getSourceRoots()[0]);
     assertNotNull(verificationFile);
@@ -2136,7 +2136,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     findAndInvokeIntentionAction(highlightInfos, quickFixName, myEditor, myFile);
     assertEmpty(doHighlighting(HighlightSeverity.WARNING));
 
-    final VirtualFile verificationFile = LocalFileSystem.getInstance()
+    final VirtualFile verificationFile = StandardFileSystems.local()
       .findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_other_after." + otherFileExtension);
     assertEquals(StringUtil.convertLineSeparators(VfsUtilCore.loadText(verificationFile)),
                  FileEditorManager.getInstance(myProject).getSelectedTextEditor().getDocument().getText());
@@ -2355,7 +2355,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.class.intention.name", "MyZuperClass"), "mxml");
 
     final VirtualFile expectedFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_2.as");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_2.as");
     final VirtualFile createdFile =
       VfsUtilCore.findRelativeFile("/foo/MyZuperClass.as", ModuleRootManager.getInstance(myModule).getSourceRoots()[0]);
     assertNotNull(expectedFile);
@@ -2374,7 +2374,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doHighlightingWithInvokeFixAndCheckResult("Create MXML Component 'Missing'", "mxml");
 
     final VirtualFile expectedFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_2.mxml");
+      StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_2.mxml");
     final VirtualFile createdFile =
       VfsUtilCore.findRelativeFile("/foo/boo2/Missing.mxml", ModuleRootManager.getInstance(myModule).getSourceRoots()[0]);
     assertNotNull(expectedFile);

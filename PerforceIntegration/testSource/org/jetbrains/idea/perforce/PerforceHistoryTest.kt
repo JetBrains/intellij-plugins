@@ -10,7 +10,7 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.history.VcsHistoryUtil
 import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.encoding.EncodingProjectManager
 import com.intellij.testFramework.PsiTestUtil
@@ -141,7 +141,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     submitDefaultList("moved")
 
     VfsUtil.markDirty(true, true, myWorkingCopyDir)
-    file = LocalFileSystem.getInstance().refreshAndFindFileByPath(newPath)
+    file = StandardFileSystems.local().refreshAndFindFileByPath(newPath)
 
     val history = getFileHistory(file)
     assertEquals(2, history.size)
@@ -214,7 +214,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     // p4 copy to dir2
     verify(runP4WithClient("copy", "//depot/dir1/...", "//depot/dir2/..."))
     VfsUtil.markDirtyAndRefresh(false, true, true, workingCopyDir)
-    val file2 = LocalFileSystem.getInstance().findFileByPath(workingCopyDir.path + "/dir2/" + file1.name)
+    val file2 = StandardFileSystems.local().findFileByPath(workingCopyDir.path + "/dir2/" + file1.name)
     assertNotNull(file2)
 
     // check copied file history is still there

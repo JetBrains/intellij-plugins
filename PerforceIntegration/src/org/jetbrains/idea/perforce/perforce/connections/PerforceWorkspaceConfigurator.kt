@@ -21,7 +21,7 @@ import java.io.IOException
 @Service(Service.Level.PROJECT)
 class PerforceWorkspaceConfigurator(private val project: Project) {
 
-  @RequiresBackgroundThread
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   fun configure(projectRoots: Collection<VirtualFile>, forceCreateConfig: Boolean): Collection<P4Config> {
     if (projectRoots.isEmpty()) return emptyList()
 

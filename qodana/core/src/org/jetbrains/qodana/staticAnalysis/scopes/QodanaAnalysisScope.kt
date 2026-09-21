@@ -5,7 +5,7 @@ import com.intellij.openapi.application.readAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopesCore
@@ -49,7 +49,7 @@ class QodanaAnalysisScope : AnalysisScope {
       val configured = config.onlyDirectory ?: return QodanaAnalysisScope(GlobalSearchScope.projectScope(project), project)
       val absolute = configured.let { if (!it.isAbsolute) config.projectPath.resolve(it) else it }
 
-      val vfsDir = LocalFileSystem.getInstance().findFileByPath(absolute.invariantSeparatorsPathString)
+      val vfsDir = StandardFileSystems.local().findFileByPath(absolute.invariantSeparatorsPathString)
       val searchScope = if (vfsDir == null) {
         onPathNotFound(absolute)
         GlobalSearchScope.projectScope(project)

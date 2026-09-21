@@ -1,3 +1,5 @@
+<!-- BUILD_USING_BAZEL_MARKER: this plugin is also packaged by the `ij_plugin` Bazel rule, and IjPluginDistributionEquivalenceTest
+     checks that the result matches the distribution produced by the build scripts. See IJPL-251444. -->
 <idea-plugin>
   <id>CFML Support</id>
   <name>CFML</name>
@@ -21,6 +23,7 @@ To configure path mappings, open the <b>Settings / Preferences</b> dialog and se
     <module name="intellij.platform.analysis"/>
     <module name="intellij.platform.codeStyle"/>
     <module name="intellij.platform.codeStyle.impl"/>
+    <module name="intellij.platform.concurrency"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.core.impl"/>
     <module name="intellij.platform.core.ui"/>

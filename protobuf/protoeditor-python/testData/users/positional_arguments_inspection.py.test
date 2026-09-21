@@ -1,0 +1,21 @@
+from $importName import SomeMessage
+
+SomeMessage(oneof_int32=1)
+
+SomeMessage(
+  <error descr="A Protobuf message constructor accepts only keyword arguments">1</error>,
+  <error descr="A Protobuf message constructor accepts only keyword arguments">2</error>,
+  oneof_message=SomeMessage()
+)
+
+SomeMessage.Nested_Message(
+  <error descr="A Protobuf message constructor accepts only keyword arguments">"a"</error>,
+  <error descr="A Protobuf message constructor accepts only keyword arguments">"b"</error>
+)
+
+args = []
+kwargs = {}
+SomeMessage(*args, **kwargs)
+
+message = SomeMessage()
+message.CopyFrom(SomeMessage())

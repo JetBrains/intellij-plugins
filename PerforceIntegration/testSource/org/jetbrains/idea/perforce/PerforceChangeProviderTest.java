@@ -20,7 +20,7 @@ import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
 import com.intellij.openapi.vcs.changes.committed.CommittedChangesCache;
 import com.intellij.openapi.vcs.merge.MergeData;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VFileProperty;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -1259,8 +1259,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     final VirtualFile file = createFileInCommand("a.txt", "a");
 
-    final VirtualFile link = LocalFileSystem.getInstance()
-      .refreshAndFindFileByIoFile(IoTestUtil.createSymLink(file.getPath(), myWorkingCopyDir.getPath() + "/link.txt"));
+    final VirtualFile link = StandardFileSystems.local()
+      .refreshAndFindFileByPath(IoTestUtil.createSymLink(file.getPath(), myWorkingCopyDir.getPath() + "/link.txt").getAbsolutePath());
     assertNotNull(link);
 
     addFile("a.txt");
@@ -1286,8 +1286,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     IoTestUtil.assumeSymLinkCreationIsSupported();
 
     VirtualFile file = createFileInCommand("a.txt", "a");
-    VirtualFile link = LocalFileSystem.getInstance()
-      .refreshAndFindFileByIoFile(IoTestUtil.createSymLink(file.getPath(), myWorkingCopyDir.getPath() + "/link.txt"));
+    VirtualFile link = StandardFileSystems.local()
+      .refreshAndFindFileByPath(IoTestUtil.createSymLink(file.getPath(), myWorkingCopyDir.getPath() + "/link.txt").getAbsolutePath());
     assertNotNull(link);
 
     addFile("a.txt");

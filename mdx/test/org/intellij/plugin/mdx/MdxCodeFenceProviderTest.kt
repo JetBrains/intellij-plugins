@@ -10,6 +10,41 @@ import org.junit.jupiter.api.Test
 @TestApplication
 class MdxCodeFenceProviderTest {
   @Test
+  fun fenceDelimitersUseMarkdownOwnershipInsideJsx() {
+    val fences = listOf(
+      "  ```tsx\n{value}\n  ```",
+      "    ~~~md\n</not-a-tag>\n    ~~~",
+      "````md\n```js\nconst x = 1\n```\n````",
+    )
+    for (fence in fences) {
+      val text = "<Box>\n$fence\n</Box>"
+      val nodes = parseMdxNodes(text)
+      val code = nodes.single { it.type == MarkdownElementTypes.CODE_FENCE }
+      assertEquals(text.indexOf("\n</Box>"), code.endOffset, text)
+      assertEquals(MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT, code.parent?.type, text)
+      assertEquals(text.length, code.parent?.endOffset, text)
+    }
+  }
+
+  @Test
+  fun fenceInformationIsOpaqueBeforeJsxScansTheLine() {
+    for (prefix in listOf("", "> ")) {
+      for (indent in listOf("", "  ", "    ", "      ")) {
+        val text = "${prefix}<A>\n$prefix$indent```lang </A>\n$prefix${indent}code\n$prefix$indent```\n$prefix</A>"
+        val nodes = parseMdxNodes(text)
+        val jsx = nodes.single { it.type == MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT }
+        val fence = nodes.single { it.type == MarkdownElementTypes.CODE_FENCE }
+
+        assertEquals(text.length, jsx.endOffset, text)
+        assertTrue(generateSequence(fence.parent) { it.parent }.any { it === jsx }, text)
+        assertEquals(listOf(text.lastIndexOf("</A>")), nodes.filter {
+          it.type == MdxMarkdownLibElementTypes.MDX_JSX_CLOSING_ELEMENT
+        }.map { it.startOffset }, text)
+      }
+    }
+  }
+
+  @Test
   fun unclosedFenceYieldsToActiveJsxCloser() {
     val cases = listOf(
       "<div>\n    ``````\n</div>",

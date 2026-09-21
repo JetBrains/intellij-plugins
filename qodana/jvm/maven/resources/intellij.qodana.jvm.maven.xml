@@ -2,12 +2,15 @@
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <module name="intellij.maven"/>
+    <module name="intellij.platform.backend.observation"/>
+    <module name="intellij.platform.backend.workspace"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.externalSystem.impl"/>
     <module name="intellij.platform.ide"/>
     <module name="intellij.platform.ide.core.impl"/>
     <module name="intellij.platform.ide.impl"/>
     <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.projectModel.impl"/>
   </dependencies>
   <!-- endregion -->
   <extensions defaultExtensionNs="org.intellij.qodana">

@@ -1,32 +1,50 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_DESCRIPTORS", "MODULE_TARGETS")
+load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-# Checkout directories that plugin layouts copy into a distribution verbatim (`withResource*`). They are
-# resolved against the module content root and exist in no jar, so a dev assembly that materializes its own
-# project tree has to declare them. Consumed through `ULTIMATE_EXTRA_PROJECT_FILES`.
+### auto-generated section `dev intellij.karma` start
 filegroup(
     name = "dev_dist_resources",
-    srcs = glob(["resources/js_reporter/**"]),
+    srcs = glob(
+        ["resources/js_reporter/**"],
+    ),
     visibility = ["//visibility:public"],
 )
 
-### auto-generated section `dev intellij.karma` start
 dev_dist_plugin(
+    content_modules = [
+        # do not sort,
+        "intellij.javascript.karma.coverage",
+        "intellij.javascript.karma.debug",
+    ],
     descriptor = "resources/META-INF/plugin.xml",
-    descriptor_index = MODULE_DESCRIPTORS,
     descriptor_modules = [
         "intellij.javascript.karma.coverage",
         "intellij.javascript.karma.debug",
     ],
     main_module = "intellij.karma",
-    module_targets = MODULE_TARGETS,
-    prepacked_content_modules = [
-        # do not sort,
-        "intellij.javascript.karma.coverage",
-        "intellij.javascript.karma.debug",
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/js-karma:karma.jar": "intellij.karma",
+    },
+    descriptor = "//contrib/js-karma:intellij.karma_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = [
+        "//contrib/js-karma/coverage:coverage_content_module_jar",
+        "//contrib/js-karma/debug:debug_content_module_jar",
     ],
+    main_module = "intellij.karma",
+    product = "idea",
+    product_info = "//build/dev-dist-descriptors:idea_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/js-karma/resources/js_reporter",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/js-karma:dev_dist_resources",
+    },
 )
 ### auto-generated section `dev intellij.karma` end
 
@@ -76,7 +94,6 @@ jvm_library(
         "//plugins/js-test-common:javascript-testing",
         "@community//libraries/gson",
         "@community//xml/xml-psi-impl:psi-impl",
-        "//webcore/impl",
         "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
         "@community//platform/script-debugger/backend",
         "@community//platform/core-ui",
@@ -126,7 +143,6 @@ jvm_library(
         "//plugins/js-test-common:javascript-testing_test_lib",
         "@community//libraries/gson:gson_test_lib",
         "@community//xml/xml-psi-impl:psi-impl_test_lib",
-        "//webcore/impl:impl_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
         "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui_test_lib",
@@ -248,8 +264,6 @@ jvm_library(
         "@community//platform/xdebugger-api:debugger_test_lib",
         "@community//plugins/coverage-common:coverage",
         "@community//plugins/coverage-common:coverage_test_lib",
-        "//webcore/impl",
-        "//webcore/impl:impl_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
         "//plugins/JavaScriptDebugger/wip/backend",

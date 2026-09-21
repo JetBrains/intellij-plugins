@@ -12,14 +12,16 @@ internal object PbPythonProtoUtils {
   /**
    * @return A list of either [PbSymbol] or a single [PbFile]
    */
-  fun resolveInProto(source: PbPythonSourceContext, localQn: QualifiedName): List<PbElement> =
+  fun resolveInProto(source: PbPythonSourceContext, localQn: QualifiedName): List<PbElement> {
     if (localQn.components.isEmpty()) {
-      listOf(source.pbFile)
+      return listOf(source.pbFile)
     }
-    else {
-      (resolveInPb2(source, localQn) + resolveInPb1WithNormalizedNames(source, localQn))
-        .distinctBy { it.qualifiedName }
-    }
+
+    val result =
+      resolveInPb2(source, localQn) +
+      resolveInPb1WithNormalizedNames(source, localQn)
+    return result.distinctBy { it.qualifiedName }
+  }
 
   private fun resolveInPb2(
     source: PbPythonSourceContext,

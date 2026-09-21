@@ -40,20 +40,24 @@ internal class MdxInlineHighlightingLexer : LexerBase() {
       val tokenStart = delegate.tokenStart
       val tokenEnd = delegate.tokenEnd
       if (tokenStart == cursor && buffer[tokenStart] == '{') {
-        // Bound the scan window, or a densely-`{`-populated element re-scans to its end on every brace
-        // (O(n^2) per keystroke); an expression longer than this is simply left uncollapsed.
+
         val scanLimit = minOf(endOffset, tokenStart + MAX_INLINE_EXPRESSION_SCAN)
         val expressionEnd = MdxExpressionBoundaryScanner.findExpressionEnd(buffer, tokenStart, scanLimit)
-        if (expressionEnd != -1) {
-          addToken(JSX_BLOCK_CONTENT, tokenStart, expressionEnd)
-          cursor = expressionEnd
-          // Drop delegate tokens fully inside the collapsed span; a straddling token's tail is
+        val collapsedEnd = if (expressionEnd != -1) expressionEnd else findLineEnd(buffer, tokenStart, scanLimit)
+        if (collapsedEnd > tokenStart) {
+          addToken(JSX_BLOCK_CONTENT, tokenStart, collapsedEnd)
+          cursor = collapsedEnd
           // re-emitted below via the emitStart clip.
-          while (delegate.tokenType != null && delegate.tokenEnd <= expressionEnd) {
+          while (delegate.tokenType != null && delegate.tokenEnd <= collapsedEnd) {
             delegate.advance()
           }
           continue
         }
+      }
+      else if (tokenStart == cursor && buffer[tokenStart] == '}') {
+        addToken(JSX_BLOCK_CONTENT, tokenStart, tokenStart + 1)
+        cursor = tokenStart + 1
+        continue
       }
       // Clip a token whose head was consumed by a preceding collapsed expression.
       val emitStart = maxOf(tokenStart, cursor)
@@ -63,6 +67,12 @@ internal class MdxInlineHighlightingLexer : LexerBase() {
       }
       delegate.advance()
     }
+  }
+
+  private fun findLineEnd(buffer: CharSequence, start: Int, limit: Int): Int {
+    var end = start
+    while (end < limit && buffer[end] != '\n') end++
+    return if (end < limit) end + 1 else end
   }
 
   private fun addToken(type: IElementType, start: Int, end: Int) {

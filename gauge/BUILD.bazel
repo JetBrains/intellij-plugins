@@ -1,18 +1,15 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.gauge` start
 dev_dist_plugin(
-    libraries = ["@ultimate_lib//:gauge-com-thoughtworks-gauge-gauge-java"],
-    main_module = "intellij.gauge",
-    module_targets = MODULE_TARGETS,
-    prepacked_content_modules = [
+    content_modules = [
         # do not sort,
         "intellij.gauge.gradle",
         "intellij.gauge.maven",
     ],
+    main_module = "intellij.gauge",
 )
 ### auto-generated section `dev intellij.gauge` end
 

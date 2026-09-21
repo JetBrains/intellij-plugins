@@ -10,8 +10,8 @@ import com.intellij.javascript.testFramework.util.EscapeUtils;
 import com.intellij.javascript.testing.detection.JsTestFrameworkDetectionUtilsKt;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.NioFiles;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -43,7 +43,7 @@ public class KarmaTestLocationProvider implements SMTestLocator {
 
   private static @Nullable Location<PsiFile> getConfigLocation(Project project, @NotNull String locationData) {
     Path location = NioFiles.toPath(locationData);
-    VirtualFile virtualFile = location != null ? LocalFileSystem.getInstance().findFileByNioFile(location) : null;
+    VirtualFile virtualFile = location != null ? VirtualFileManager.getInstance().findFileByNioPath(location) : null;
     if (virtualFile != null && virtualFile.isValid()) {
       PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
       if (psiFile != null && psiFile.isValid()) {

@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.vcs.changes.ChangeListManager
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.profile.codeInspection.InspectionProfileLoadUtil
 import com.intellij.profile.codeInspection.PROFILE_DIR
 import com.intellij.profile.codeInspection.PROJECT_DEFAULT_PROFILE_NAME
@@ -95,7 +95,7 @@ class QodanaYamlProfileItemProvider : QodanaYamlItemProvider {
         if (profileName == currentProfileName) emit(path)
       }
     }.merge().firstOrNull() ?: return null
-    val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(currentProfilePath.toFile()) ?: return null
+    val virtualFile = StandardFileSystems.local().findFileByPath(currentProfilePath.toFile().absolutePath) ?: return null
 
     val changeListManager = ChangeListManager.getInstance(project)
     if (changeListManager.isUnversioned(virtualFile) || changeListManager.isIgnoredFile(virtualFile)) return null

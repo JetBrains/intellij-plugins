@@ -301,7 +301,7 @@ class PrismaConfigManager(private val project: Project, private val coroutineSco
     LOG.warn("Failed to load config file $configFile", e)
   }
 
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   private fun findConfigInDirectory(dir: VirtualFile): VirtualFile? {
     val discoveredConfig = lock.withLock {
       configFileMapping.value[dir]

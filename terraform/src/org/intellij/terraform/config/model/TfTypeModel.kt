@@ -377,7 +377,7 @@ class TfTypeModel(
       return id
     }
 
-    @RequiresReadLock
+    @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
     fun collectProviderLocalNames(psiElement: PsiElement): Map<String, String> {
       val providerNamesService = LocalProviderNamesService.getInstance()
       val gists = getContainingDir(psiElement)?.childrenOfType<PsiFile>()
@@ -391,7 +391,7 @@ class TfTypeModel(
       return if (containingDir.isDirectory) containingDir else null
     }
 
-    @RequiresReadLock
+    @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
     fun getTerraformBlockInModule(psiFile: PsiFile?): HCLBlock? {
       val tfModule = (psiFile as? HCLFile)?.getTerraformModule() ?: return null
       return tfModule.getTerraformBlockWithProvidersOrFirst()

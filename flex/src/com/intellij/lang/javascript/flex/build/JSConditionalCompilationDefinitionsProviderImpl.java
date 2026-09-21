@@ -20,7 +20,7 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Processor;
 import org.jdom.Element;
@@ -117,7 +117,7 @@ public final class JSConditionalCompilationDefinitionsProviderImpl {
   private Collection<Pair<String, String>> getDefinitionsFromConfigFile(final String configFilePath) {
     if (StringUtil.isEmptyOrSpaces(configFilePath)) return Collections.emptyList();
 
-    final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(configFilePath);
+    final VirtualFile configFile = StandardFileSystems.local().findFileByPath(configFilePath);
     if (configFile == null || configFile.isDirectory()) return Collections.emptyList();
 
     final FileDocumentManager documentManager = FileDocumentManager.getInstance();

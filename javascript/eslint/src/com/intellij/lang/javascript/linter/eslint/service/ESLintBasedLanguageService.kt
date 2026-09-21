@@ -38,7 +38,7 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry.Companion.stringValue
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import com.intellij.webcore.util.JsonUtil
@@ -316,7 +316,7 @@ abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStore
 
   private fun findUploadRoot(path: String): String? {
     return ReadAction.compute<String, RuntimeException?>(ThrowableComputable {
-      var file = LocalFileSystem.getInstance().findFileByPath(path)
+      var file = StandardFileSystems.local().findFileByPath(path)
       if (file == null) {
         JSLanguageServiceQueue.Holder.LOGGER.info("Cannot find virtual file by $path")
         return@ThrowableComputable null

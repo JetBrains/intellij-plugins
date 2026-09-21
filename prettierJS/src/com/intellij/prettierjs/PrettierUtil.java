@@ -28,7 +28,7 @@ import com.intellij.openapi.project.BaseProjectDirectories;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -279,7 +279,7 @@ public final class PrettierUtil {
       return findAutoIgnoreFile(project, source);
     }
 
-    return LocalFileSystem.getInstance().findFileByPath(ignorePath);
+    return StandardFileSystems.local().findFileByPath(ignorePath);
   }
 
   private static @Nullable VirtualFile findAutoIgnoreFile(@NotNull Project project, @NotNull VirtualFile source) {

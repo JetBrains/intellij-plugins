@@ -150,7 +150,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     file.language is Angular2HtmlDialect || super.supportsInlayHints(file)
 
 
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   override suspend fun getInlayHints(file: PsiFile, textRange: TextRange): TypeScriptInlayHintsResult? =
     withScopedServiceTraceSpan("getInlayHintsAngular", myLifecycleSpan) {
       val hasTranspiledTemplate = refreshTranspiledTemplateIfNeeded(file.virtualFile
@@ -200,7 +200,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override fun createLSCache(): TypeScriptLanguageServiceCache =
     Angular2LanguageServiceCache(myProject)
 
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   override suspend fun beforeGetErrors(file: VirtualFile) {
     refreshTranspiledTemplateIfNeeded(file)
   }
@@ -223,7 +223,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
         ?.parent?.asSafely<JSLiteralExpression>() != null
     }
 
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   private suspend fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledDirectiveFile? =
     withScopedServiceTraceSpan("refreshTranspiledTemplateIfNeeded") {
       if (DumbService.isDumb(project)) return@withScopedServiceTraceSpan null

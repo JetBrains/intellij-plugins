@@ -1,20 +1,17 @@
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.jhipster.plugin` start
 dev_dist_plugin(
-    main_module = "intellij.jhipster.plugin",
-    module_targets = MODULE_TARGETS,
-    prepacked_content_modules = [
+    content_modules = [
         # do not sort,
+        "intellij.jhipster",
         "intellij.jhipster.backend",
-        "intellij.jhipster.frontend",
         "intellij.jhipster.uml",
+        "intellij.jhipster.frontend",
     ],
-    prepacked_jars = {
-        "intellij.jhipster": "intellij.jhipster.jar",
-    },
+    main_module = "intellij.jhipster.plugin",
 )
 ### auto-generated section `dev intellij.jhipster.plugin` end
 
@@ -43,6 +40,19 @@ jvm_library(
     module_name = "intellij.jhipster.plugin",
     visibility = ["//visibility:public"],
     runtime_deps = [":plugin"],
+)
+
+ij_plugin(
+    name = "plugin_plugin",
+    descriptor_module = ":plugin",
+    content_modules = [
+        # do not sort,
+        "//contrib/jhipster",
+        "//contrib/jhipster/backend",
+        "//contrib/jhipster/uml",
+        "//contrib/jhipster/frontend",
+    ],
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.jhipster.plugin` end
 

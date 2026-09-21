@@ -25,7 +25,7 @@ class VueTypeScriptServiceGetElementTypeTest :
     runInEdtAndWait { myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0) }
     TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
       it is VuePluginTypeScriptService
-      && it.runtime == VueServiceRuntime.Bundled(VueLanguageToolsVersion.DEFAULT)
+      && it.runtime == VueServiceRuntime(VueLanguageToolsVersion.DEFAULT)
     }
   }
 

@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.typescript.TypeScriptLineMarkersTestBase
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.vuejs.lang.html.VueFileType
 
@@ -35,7 +35,7 @@ class VueTypeScriptLineMarkersTest : TypeScriptLineMarkersTestBase() {
   }
 
   override fun configureEditorFile(name: String?) {
-    val tsFile = LocalFileSystem.getInstance().findFileByPath("$testDataPath/$name")
+    val tsFile = StandardFileSystems.local().findFileByPath("$testDataPath/$name")
     var text: String = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
 
     val testName = getTestName(true)
@@ -50,7 +50,7 @@ class VueTypeScriptLineMarkersTest : TypeScriptLineMarkersTestBase() {
   }
 
   override fun checkEditorText(ext: String?) {
-    val tsFile = LocalFileSystem.getInstance().findFileByPath("$testDataPath/${getTestName(false)}_after.$ext")
+    val tsFile = StandardFileSystems.local().findFileByPath("$testDataPath/${getTestName(false)}_after.$ext")
     val text: Any = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
     myFixture.checkResult(surroundWithScriptTag(text))
   }

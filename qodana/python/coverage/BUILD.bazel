@@ -33,6 +33,11 @@ jvm_provided_library(
 )
 
 jvm_provided_library(
+    name = "python_coverage_provided",
+    lib = "//python/coverage",
+)
+
+jvm_provided_library(
     name = "community_python_aliasProvider_provided",
     lib = "@community//python/aliasProvider",
 )
@@ -77,6 +82,7 @@ jvm_library(
         ":community_platform_core_provided",
         ":community_platform_lang-impl_provided",
         ":python_provided",
+        ":python_coverage_provided",
         ":community_python_aliasProvider_provided",
         ":community_python_community-plugin_provided",
         ":community_plugins_coverage_provided",
@@ -109,6 +115,8 @@ jvm_library(
         "@community//platform/lang-impl:lang-impl_test_lib",
         "//python",
         "//python:python_test_lib",
+        "//python/coverage",
+        "//python/coverage:coverage_test_lib",
         "@community//python/aliasProvider",
         "@community//python/aliasProvider:aliasProvider_test_lib",
         "@community//python/pluginCore:community-plugin",
@@ -188,6 +196,8 @@ jvm_library(
         "@community//platform/lang-impl:lang-impl_test_lib",
         "//python",
         "//python:python_test_lib",
+        "//python/coverage",
+        "//python/coverage:coverage_test_lib",
         "@community//python:python-community-plugin-modules",
         "@community//python:python-community-plugin-modules_test_lib",
         "@community//plugins/coverage-common:coverage",

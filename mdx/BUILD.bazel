@@ -1,23 +1,21 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.mdx` start
 content_module_jar(module = ":mdx")
 
 dev_dist_plugin(
-    main_module = "intellij.mdx",
-    module_targets = MODULE_TARGETS,
-    prepacked_content_modules = [
+    content_modules = [
         # do not sort,
-        "intellij.mdx.backend",
-        "intellij.mdx.frontend.split",
-        "intellij.mdx.frontend",
-        "intellij.mdx.react",
         "intellij.mdx.shared",
+        "intellij.mdx.react",
+        "intellij.mdx.backend",
+        "intellij.mdx.frontend",
+        "intellij.mdx.frontend.split",
     ],
+    main_module = "intellij.mdx",
 )
 ### auto-generated section `dev intellij.mdx` end
 
@@ -75,6 +73,7 @@ jvm_library(
         "@community//platform/testRunner/plugin",
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/problemsView/plugin",
+        "@community//xml/plugin",
     ],
 )
 
@@ -107,6 +106,7 @@ jvm_library(
         "@community//platform/testRunner/plugin:plugin_test_lib",
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//platform/problemsView/plugin:plugin_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,

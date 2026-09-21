@@ -2,11 +2,11 @@ package org.intellij.plugin.mdx.lang.parse
 
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
-import org.intellij.markdown.flavours.gfm.GFMConstraints
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.GeneratingProvider
 import org.intellij.markdown.lexer.MarkdownLexer
 import org.intellij.markdown.parser.LinkMap
+import org.intellij.markdown.parser.LookaheadText
 import org.intellij.markdown.parser.MarkerProcessor
 import org.intellij.markdown.parser.MarkerProcessorFactory
 import org.intellij.markdown.parser.ProductionHolder
@@ -50,7 +50,7 @@ object MdxFlavourDescriptor : CommonMarkFlavourDescriptor() {
 
 private object MdxProcessFactory : MarkerProcessorFactory {
   override fun createMarkerProcessor(productionHolder: ProductionHolder): MarkerProcessor<*> {
-    return MdxMarkerProcessor(productionHolder, GFMConstraints.BASE)
+    return MdxMarkerProcessor(productionHolder, MdxMarkdownConstraints.BASE)
   }
 }
 
@@ -59,15 +59,38 @@ private class MdxMarkerProcessor(
   constraints: MarkdownConstraints,
 ) :
   MarkdownDefaultMarkerProcessor(productionHolder, constraints) {
-
-  override fun getMarkerBlockProviders(): List<MarkerBlockProvider<StateInfo>> =
+  private val ownership = MdxMarkdownOwnership(::getMarkerBlockProviders)
+  private val providers by lazy {
     buildList {
       add(MdxHtmlCommentBlockProvider())
-      add(MdxBlockProvider())
+      add(MdxBlockProvider(ownership))
       add(MdxCodeFenceProvider())
       addAll(super.getMarkerBlockProviders())
       removeIf { it is HtmlBlockProvider }
       removeIf { it is CodeBlockProvider }
       removeIf { it is CodeFenceMarkerProvider && it !is MdxCodeFenceProvider }
     }
+  }
+
+  override fun updateStateInfo(pos: LookaheadText.Position) {
+    super.updateStateInfo(pos)
+    if (pos.offsetInCurrentLine != -1 && pos.offset != 0) return
+    val constraints = if (pos.offsetInCurrentLine == -1) stateInfo.nextConstraints else stateInfo.currentConstraints
+    val fenceOpener = ownership.observeLine(pos, constraints) ?: return
+    for (marker in markersStack) {
+      if (marker is MdxJsxBlockMarkerBlock) marker.addMarkdownOpacity(fenceOpener)
+    }
+  }
+
+  override fun populateConstraintsTokens(
+    pos: LookaheadText.Position,
+    constraints: MarkdownConstraints,
+    productionHolder: ProductionHolder,
+  ) {
+    val markdown = if (constraints is MdxJsxMarkdownConstraints) constraints.markdownConstraints() else constraints
+    val gfm = if (markdown is MdxMarkdownConstraints) markdown.asGfmConstraints() else markdown
+    super.populateConstraintsTokens(pos, gfm, productionHolder)
+  }
+
+  override fun getMarkerBlockProviders(): List<MarkerBlockProvider<StateInfo>> = providers
 }

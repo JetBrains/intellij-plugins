@@ -5,7 +5,7 @@ import com.intellij.lang.ant.config.execution.AntBuildMessageView;
 import com.intellij.lang.ant.config.execution.AntMessage;
 import com.intellij.lang.ant.config.execution.AntMessageCustomizer;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +54,7 @@ public final class FlexAntMessageCustomizer extends AntMessageCustomizer {
                 column = Integer.parseInt(colString);
               }
 
-              final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(potentialPath);
+              final VirtualFile file = StandardFileSystems.local().findFileByPath(potentialPath);
               if (file != null) {
                 final String textWithoutPosition = potentialPath + infoAndPosition.substring(0, lineOpenBraceIndex) +
                                                    ": " + text.substring(errorOrWarningIndex + ERROR_MARKER.length());

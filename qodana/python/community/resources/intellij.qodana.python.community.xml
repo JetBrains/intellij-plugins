@@ -1,15 +1,16 @@
 <idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="com.intellij.modules.python"/>
-    <module name="intellij.python.pyproject"/>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.backend.observation"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.lang.impl"/>
     <module name="intellij.platform.projectModel"/>
+    <module name="intellij.python.pyproject"/>
     <module name="intellij.python.sdk.backend"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
 
   <extensions defaultExtensionNs="org.intellij.qodana">
     <psiStructuralFingerprintsProvider language="Python" implementationClass="org.jetbrains.qodana.python.community.psi.PythonPsiStructuralFingerprintsProvider"/>

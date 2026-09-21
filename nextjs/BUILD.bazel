@@ -1,14 +1,15 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.nextjs` start
 dev_dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
+    jars = {
+        "lib/nextjs.jar": ["intellij.nextjs"],
+    },
     main_module = "intellij.nextjs",
-    module_targets = MODULE_TARGETS,
 )
 ### auto-generated section `dev intellij.nextjs` end
 
@@ -42,8 +43,6 @@ jvm_library(
         "@community//platform/platform-impl:ide-impl",
         "@community//platform/projectModel-api:projectModel",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
-        "//webcore:webide",
-        "//webcore/impl",
         "@community//platform/core-ui",
         "@community//platform/platform-util-io:ide-util-io",
         "@community//platform/polySymbols",
@@ -83,8 +82,6 @@ jvm_library(
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",
         "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
-        "//webcore:webide_test_lib",
-        "//webcore/impl:impl_test_lib",
         "//plugins/JavaScriptLanguage/testFramework",
         "//plugins/JavaScriptLanguage/testFramework:testFramework_test_lib",
         "@community//platform/core-ui:core-ui_test_lib",
@@ -187,10 +184,6 @@ jvm_library(
         "@community//platform/testFramework:testFramework_test_lib",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
         "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
-        "//webcore:webide",
-        "//webcore:webide_test_lib",
-        "//webcore/impl",
-        "//webcore/impl:impl_test_lib",
         "//plugins/JavaScriptLanguage/testFramework",
         "//plugins/JavaScriptLanguage/testFramework:testFramework_test_lib",
         "@community//platform/core-ui",

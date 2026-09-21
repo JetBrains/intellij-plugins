@@ -88,7 +88,7 @@ private fun getBaseDir(project: Project): VirtualFile? {
   return ProjectRootManager.getInstance(project).contentRoots.minByOrNull { it.path.length }
 }
 
-@RequiresReadLock
+@RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
 internal fun findConfigFile(workingDirectory: String?, configLocation: String?): VirtualFile? {
   if (!configLocation.isNullOrBlank()) {
     return VfsUtil.findFile(Path(configLocation), false)

@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -63,7 +63,7 @@ public final class MeteorFacade {
     }
 
     return values.stream()
-      .map(el -> LocalFileSystem.getInstance().findFileByPath(el)).filter(el -> el != null && el.isValid())
+      .map(el -> StandardFileSystems.local().findFileByPath(el)).filter(el -> el != null && el.isValid())
       .collect(Collectors.toList());
   }
 

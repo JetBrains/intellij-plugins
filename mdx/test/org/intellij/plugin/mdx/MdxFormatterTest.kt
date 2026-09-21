@@ -6,10 +6,19 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataPath
+import org.intellij.plugin.mdx.js.MdxJSLanguage
 import org.intellij.plugin.mdx.lang.MdxLanguage
+import org.intellij.plugin.mdx.lang.parse.MdxElementTypes
+import org.intellij.plugins.markdown.lang.MarkdownElementTypes
 import org.intellij.plugins.markdown.lang.MarkdownLanguage
 import org.intellij.plugins.markdown.lang.formatter.settings.MarkdownCustomCodeStyleSettings
+import org.intellij.plugins.markdown.lang.psi.impl.MarkdownBlockQuote
+import org.intellij.plugins.markdown.lang.psi.impl.MarkdownList
+import org.intellij.plugins.markdown.lang.psi.impl.MarkdownListItem
 import org.junit.jupiter.api.Test
 import java.awt.datatransfer.StringSelection
 
@@ -130,6 +139,162 @@ class MdxFormatterTest : MdxTestBase() {
   @Test
   fun testBlockquoteWithMultipleParagraphsIsNotFolded() = doTest()
 
+  @Test
+  fun testBlockquoteInsideJsxKeepsIndent() {
+    checkBlockquoteFormatting("<div>\n    > first\n</div>\n")
+  }
+
+  @Test
+  fun testBlockquoteInsideJsxMovesWithBodyIndent() {
+    for (indent in listOf("", "  ", "    ", "        ", "\t")) {
+      checkBlockquoteFormatting(
+        "<div>\n$indent> first\n$indent> second\n</div>\n",
+        "<div>\n    > first\n    > second\n</div>\n",
+      )
+    }
+  }
+
+  @Test
+  fun testBlockquoteInsideJsxKeepsNestedMarkdown() {
+    checkBlockquoteFormatting(
+      """
+        <div>
+          > first **bold** {value} and `code`
+          >
+          > > nested
+          > >
+          > > - outer
+          > >   - inner
+          >
+          > last <Badge />
+        </div>
+      """.trimIndent(),
+      """
+        <div>
+            > first **bold** {value} and `code`
+            >
+            > > nested
+            > >
+            > > - outer
+            > >   - inner
+            >
+            > last <Badge />
+        </div>
+      """.trimIndent(),
+    )
+  }
+
+  @Test
+  fun testBlockquoteInsideNestedJsxUsesBodyIndent() {
+    checkBlockquoteFormatting(
+      "<div>\n<section>\n> first\n> second\n</section>\n</div>\n",
+      "<div>\n    <section>\n        > first\n        > second\n    </section>\n</div>\n",
+    )
+  }
+
+  @Test
+  fun testBlockquoteInsideFragmentUsesBodyIndent() {
+    checkBlockquoteFormatting("<>\n> first\n> second\n</>\n", "<>\n    > first\n    > second\n</>\n")
+  }
+
+  @Test
+  fun testBlockquoteInsideListKeepsRelativeIndent() {
+    checkBlockquoteFormatting(
+      "<div>\n- outer\n\n  > first\n  > second\n- sibling\n</div>\n",
+      "<div>\n    - outer\n\n      > first\n      > second\n    - sibling\n</div>\n",
+    )
+  }
+
+  @Test
+  fun testReformatSelectedBlockquoteInsideJsxUsesBodyIndent() {
+    checkBlockquoteFormatting(
+      "<div>\n<selection>  > first\n  > second</selection>\n</div>\n",
+      "<div>\n    > first\n    > second\n</div>\n",
+    )
+  }
+
+  @Test
+  fun testReformatSelectedBlockquoteWithoutLeadingWhitespaceUsesBodyIndent() {
+    checkBlockquoteFormatting(
+      "<div>\n  <selection>> first\n  > second</selection>\n</div>\n",
+      "<div>\n    > first\n    > second\n</div>\n",
+    )
+  }
+
+  @Test
+  fun testReformatSelectedBlockquoteKeepsUnselectedListIndent() {
+    for (indent in listOf("", "  ", "      ", "\t")) {
+      val quoteIndent = " ".repeat(if (indent == "\t") 6 else indent.length + 2)
+      checkBlockquoteFormatting(
+        "<div>\n$indent- outer\n\n<selection>$indent  > first\n$indent  > second</selection>\n$indent- sibling\n</div>\n",
+        "<div>\n$indent- outer\n\n$quoteIndent> first\n$quoteIndent> second\n$indent- sibling\n</div>\n",
+      )
+    }
+  }
+
+  @Test
+  fun testBlockquoteInsideJsxUsesJavaScriptIndent() {
+    for (indentSize in listOf(2, 4)) {
+      CodeStyle.doWithTemporarySettings(myFixture.project, CodeStyle.getSettings(myFixture.project)) { settings ->
+        settings.getCommonSettings(MdxJSLanguage.INSTANCE).indentOptions!!.apply {
+          INDENT_SIZE = indentSize
+          USE_TAB_CHARACTER = false
+        }
+        val indent = " ".repeat(indentSize)
+        checkBlockquoteFormatting(
+          "<div>\n        > first\n        > second\n</div>\n",
+          "<div>\n$indent> first\n$indent> second\n</div>\n",
+        )
+      }
+    }
+  }
+
+  @Test
+  fun testBlockquoteInsideJsxRespectsTagsWithoutChildIndent() {
+    CodeStyle.doWithTemporarySettings(myFixture.project, CodeStyle.getSettings(myFixture.project)) { settings ->
+      settings.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_DO_NOT_INDENT_CHILDREN_OF = "div"
+      checkBlockquoteFormatting("<div>\n    > first\n    > second\n</div>\n", "<div>\n> first\n> second\n</div>\n")
+    }
+  }
+
+  @Test
+  fun testBlockquoteOutsideJsxKeepsContent() {
+    checkBlockquoteFormatting("> first\n>\n> > nested\n> > - outer\n> >   - inner\n>\n> last\n")
+    checkBlockquoteFormatting("- outer\n\n  > first\n  > second\n- sibling\n")
+  }
+
+  private fun checkBlockquoteFormatting(source: String, expected: String? = null) {
+    myFixture.configureByText("quote.mdx", source)
+    val expectedText = expected ?: myFixture.file.text
+    val selected = myFixture.editor.selectionModel.hasSelection()
+    val structure = blockquoteStructure()
+    assertTrue(structure.any { it.first() === MarkdownElementTypes.BLOCK_QUOTE })
+    repeat(2) {
+      if (selected) {
+        assertTrue(myFixture.editor.selectionModel.hasSelection())
+        myFixture.performEditorAction("ReformatCode")
+      }
+      else {
+        reformat()
+      }
+      assertEquals("Markdown ancestry changed after formatting:\n$source", structure, blockquoteStructure())
+      assertEquals(expectedText, myFixture.file.text)
+    }
+  }
+
+  private fun blockquoteStructure(): List<List<IElementType>> {
+    val containers = PsiTreeUtil.collectElements(myFixture.file) { it is MarkdownBlockQuote || it is MarkdownListItem }
+    return containers.map { element ->
+      generateSequence(element) { it.parent }
+        .filter {
+          it is MarkdownBlockQuote || it is MarkdownList || it is MarkdownListItem ||
+          it.node?.elementType === MdxElementTypes.MDX_JSX_FLOW_ELEMENT
+        }
+        .map { it.node.elementType }
+        .toList()
+    }
+  }
+
   /** Formatting an already-correctly-formatted document must be a no-op (idempotence). */
   @Test
   fun testIdempotent() = doTest("Idempotent_after", "Idempotent_after")
@@ -157,6 +322,213 @@ class MdxFormatterTest : MdxTestBase() {
   /** A Markdown list nested in a JSX flow element: every item aligns at the same indent. */
   @Test
   fun testListInsideJsxFlowElementIsIndentedConsistently() = doTest()
+
+  @Test
+  fun testNestedListInsideJsxKeepsNesting() {
+    checkListFormatting("<div>\n    - outer\n        - inner\n</div>\n")
+  }
+
+  @Test
+  fun testReformatSelectedListInsideJsxKeepsIndent() {
+    checkListSelectionFormatting("<div>\n<selection>    - outer\n        - inner</selection>\n</div>\n")
+  }
+
+  @Test
+  fun testReformatSelectedNestedListInsideJsxKeepsIndent() {
+    checkListSelectionFormatting("<div>\n    - outer\n<selection>        - inner</selection>\n</div>\n")
+  }
+
+  @Test
+  fun testReformatSelectedNestedListWithoutLeadingWhitespaceKeepsIndent() {
+    checkListSelectionFormatting("<div>\n    - outer\n        <selection>- inner</selection>\n</div>\n")
+  }
+
+  @Test
+  fun testReformatSelectedListInsideNestedJsxUsesBodyIndent() {
+    checkListSelectionFormatting(
+      "<div>\n    <section>\n<selection>  - outer\n      - inner</selection>\n    </section>\n</div>\n",
+      "<div>\n    <section>\n        - outer\n            - inner\n    </section>\n</div>\n",
+    )
+  }
+
+  @Test
+  fun testReformatSelectedNestedListKeepsUnselectedParentIndent() {
+    for (indentSize in listOf(2, 4)) {
+      CodeStyle.doWithTemporarySettings(myFixture.project, CodeStyle.getSettings(myFixture.project)) { settings ->
+        settings.getCommonSettings(MdxJSLanguage.INSTANCE).indentOptions!!.INDENT_SIZE = indentSize
+        for (indent in listOf("", "  ", "      ")) {
+          checkListSelectionFormatting("<div>\n$indent- outer\n<selection>$indent    - inner</selection>\n</div>\n")
+        }
+      }
+    }
+  }
+
+  @Test
+  fun testReformatSelectedNestedItemsKeepsEachRelativeIndent() {
+    checkListSelectionFormatting("""
+      <div>
+          - outer
+              - before
+              <selection>- selected
+                  10. child
+              - after</selection>
+              - outside
+          - sibling
+      </div>
+    """.trimIndent())
+  }
+
+  @Test
+  fun testReformatSelectedJsxInsideListKeepsNesting() {
+    checkListSelectionFormatting("""
+      <div>
+          - outer
+
+            <selection><section>
+                - inner
+                  - child
+            </section></selection>
+          - sibling
+      </div>
+    """.trimIndent())
+  }
+
+  @Test
+  fun testReformatSelectedNestedListKeepsUnselectedTabs() {
+    checkListSelectionFormatting(
+      "<div>\n\t- outer\n<selection>\t\t- inner</selection>\n</div>\n",
+      "<div>\n\t- outer\n        - inner\n</div>\n",
+    )
+  }
+
+  @Test
+  fun testReformatSelectedNestedListFormatsInlineMdx() {
+    checkListSelectionFormatting(
+      "<div>\n    - outer {value}\n<selection>        - inner <Badge /> and `code`</selection>\n    - sibling <Badge />\n</div>\n",
+      "<div>\n    - outer {value}\n        - inner <Badge/> and `code`\n    - sibling <Badge />\n</div>\n",
+    )
+  }
+
+  @Test
+  fun testReformatSelectedNestedListKeepsContinuationIndent() {
+    checkListSelectionFormatting("""
+      <div>
+          - outer
+              <selection>- inner
+                continuation
+
+                paragraph</selection>
+          - sibling
+      </div>
+    """.trimIndent())
+  }
+
+  @Test
+  fun testNestedListsInsideJsxMoveWithBodyIndent() {
+    for (marker in listOf("-", "10.", "- [ ]")) {
+      val nestedIndent = if (marker == "10.") "    " else "  "
+      for (indent in listOf("", "  ", "    ", "      ", "\t")) {
+        checkListFormatting(
+          "<div>\n$indent$marker one\n$indent$nestedIndent- nested\n$indent$marker two\n</div>\n",
+          "<div>\n    $marker one\n    $nestedIndent- nested\n    $marker two\n</div>\n",
+        )
+      }
+    }
+  }
+
+  @Test
+  fun testNestedListsInsideJsxKeepEachRelativeIndent() {
+    checkListFormatting(
+      "<div>\n- one\n  - two\n      - three\n  - after two\n- after one\n</div>\n",
+      "<div>\n    - one\n      - two\n          - three\n      - after two\n    - after one\n</div>\n",
+    )
+  }
+
+  @Test
+  fun testNestedListsInsideJsxRespectTabStops() {
+    checkListFormatting(
+      "<div>\n  - one\n  \t- nested\n  - two\n</div>\n",
+      "<div>\n    - one\n      - nested\n    - two\n</div>\n",
+    )
+    checkListFormatting(
+      "<div>\n\t- one\n\t\t- nested\n\t- two\n</div>\n",
+      "<div>\n    - one\n        - nested\n    - two\n</div>\n",
+    )
+  }
+
+  @Test
+  fun testNestedListsInsideNestedJsxKeepNesting() {
+    checkListFormatting(
+      "<div>\n<section>\n- outer\n    - inner\n</section>\n</div>\n",
+      "<div>\n    <section>\n        - outer\n            - inner\n    </section>\n</div>\n",
+    )
+  }
+
+  @Test
+  fun testJsxInsideListStartsNewListIndentContext() {
+    checkListFormatting(
+      "<div>\n- outer\n\n  <section>\n  - inner\n    - child\n  </section>\n- sibling\n</div>\n",
+      "<div>\n    - outer\n\n      <section>\n          - inner\n            - child\n      </section>\n    - sibling\n</div>\n",
+    )
+  }
+
+  @Test
+  fun testNestedListInsideJsxUsesJavaScriptIndent() {
+    for (indentSize in listOf(2, 4)) {
+      CodeStyle.doWithTemporarySettings(myFixture.project, CodeStyle.getSettings(myFixture.project)) { settings ->
+        settings.getCommonSettings(MdxJSLanguage.INSTANCE).indentOptions!!.apply {
+          INDENT_SIZE = indentSize
+          USE_TAB_CHARACTER = false
+        }
+        val indent = " ".repeat(indentSize)
+        checkListFormatting(
+          "<div>\n    - outer\n        - inner\n</div>\n",
+          "<div>\n$indent- outer\n$indent    - inner\n</div>\n",
+        )
+      }
+    }
+  }
+
+  @Test
+  fun testNestedListWithInlineMdxKeepsContent() {
+    checkListFormatting(
+      "<div>\n- outer **bold** {value}\n    - inner <Badge /> and `code`\n- sibling\n</div>\n",
+      "<div>\n    - outer **bold** {value}\n        - inner <Badge/> and `code`\n    - sibling\n</div>\n",
+    )
+  }
+
+  private fun checkListFormatting(source: String, expected: String = source) {
+    myFixture.configureByText("list.mdx", source)
+    val structure = listStructure()
+    assertTrue(structure.isNotEmpty())
+    repeat(2) {
+      reformat()
+      assertEquals("List ancestry changed after formatting:\n$source", structure, listStructure())
+      assertEquals(expected, myFixture.file.text)
+    }
+  }
+
+  private fun checkListSelectionFormatting(source: String, expected: String? = null) {
+    myFixture.configureByText("list.mdx", source)
+    val expectedText = expected ?: myFixture.file.text
+    val structure = listStructure()
+    assertTrue(structure.isNotEmpty())
+    repeat(2) {
+      assertTrue(myFixture.editor.selectionModel.hasSelection())
+      myFixture.performEditorAction("ReformatCode")
+      assertEquals("List ancestry changed after formatting:\n$source", structure, listStructure())
+      assertEquals(expectedText, myFixture.file.text)
+    }
+  }
+
+  private fun listStructure(): List<List<IElementType>> {
+    return PsiTreeUtil.collectElementsOfType(myFixture.file, MarkdownListItem::class.java).map { item ->
+      generateSequence(item.parent) { it.parent }
+        .filterIsInstance<MarkdownList>()
+        .map { it.node.elementType }
+        .toList()
+    }
+  }
 
   /** An empty code fence must not gain a spurious blank body line. */
   @Test

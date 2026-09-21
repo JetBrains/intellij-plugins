@@ -14,13 +14,10 @@ import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.options.VueConfigurable
 
 internal class VueLspIntegrationHybridModeDefaultProvider :
-  VueLspIntegrationHybridModeProvider(VueServiceRuntime.Bundled(VueLanguageToolsVersion.DEFAULT))
+  VueLspIntegrationHybridModeProvider(VueServiceRuntime(VueLanguageToolsVersion.DEFAULT))
 
 internal class VueLspIntegrationHybridModeLegacyProvider :
-  VueLspIntegrationHybridModeProvider(VueServiceRuntime.Bundled(VueLanguageToolsVersion.LEGACY))
-
-internal class VueLspIntegrationHybridModeManualProvider :
-  VueLspIntegrationHybridModeProvider(VueServiceRuntime.Manual)
+  VueLspIntegrationHybridModeProvider(VueServiceRuntime(VueLanguageToolsVersion.LEGACY))
 
 sealed class VueLspIntegrationHybridModeProvider(
   private val runtime: VueServiceRuntime,
@@ -40,17 +37,12 @@ sealed class VueLspIntegrationHybridModeProvider(
 
   companion object {
     fun getProviderClass(runtime: VueServiceRuntime): Class<out JSFrameworkLspIntegrationProvider> {
-      return when (runtime) {
-        is VueServiceRuntime.Bundled -> when (runtime.version) {
-          VueLanguageToolsVersion.DEFAULT ->
-            VueLspIntegrationHybridModeDefaultProvider::class.java
+      return when (runtime.version) {
+        VueLanguageToolsVersion.DEFAULT ->
+          VueLspIntegrationHybridModeDefaultProvider::class.java
 
-          VueLanguageToolsVersion.LEGACY ->
-            VueLspIntegrationHybridModeLegacyProvider::class.java
-        }
-
-        VueServiceRuntime.Manual ->
-          VueLspIntegrationHybridModeManualProvider::class.java
+        VueLanguageToolsVersion.LEGACY ->
+          VueLspIntegrationHybridModeLegacyProvider::class.java
       }
     }
   }

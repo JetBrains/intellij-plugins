@@ -62,8 +62,8 @@ class PrettierConfiguratorService(private val project: Project, @VisibleForTesti
     return value(Unit)
   }
 
-  @RequiresBackgroundThread
-  @RequiresReadLock
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   private fun getDetectionInfo(baseDir: VirtualFile): DetectionInfo {
     val packageJsonFiles = PackageJsonFileManager.getInstance(project)
       .getValidPackageJsonFiles()

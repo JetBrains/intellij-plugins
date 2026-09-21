@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vcs.CheckoutProvider
 import com.intellij.openapi.vcs.VcsException
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.wm.impl.welcomeScreen.cloneableProjects.CloneableProjectsService.CloneStatus
 import com.intellij.openapi.wm.impl.welcomeScreen.cloneableProjects.CloneableProjectsService.CloneTask
 import com.intellij.openapi.wm.impl.welcomeScreen.cloneableProjects.CloneableProjectsService.CloneTaskInfo
@@ -65,7 +65,7 @@ internal class PerforceCloneTask(
         return CloneStatus.FAILURE
       }
 
-      LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetDir)?.refresh(true, true)
+      StandardFileSystems.local().refreshAndFindFileByPath(targetDir.absolutePath)?.refresh(true, true)
 
       writeP4Config(targetDir)
 

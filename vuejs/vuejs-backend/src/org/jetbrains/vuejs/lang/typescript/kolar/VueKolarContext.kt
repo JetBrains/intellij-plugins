@@ -16,7 +16,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.isVueFile
 
 internal object VueKolarContext {
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   fun getRelatedFiles(
     project: Project,
     files: Collection<VirtualFile>,

@@ -33,7 +33,7 @@ internal class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.D
     runPrettierAsActionOnSave(file, psiFile, document)
   }
 
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   private fun getFileToProcess(project: Project, document: Document): Pair<VirtualFile, PsiFile>? {
     val prettierConfiguration = PrettierConfiguration.getInstance(project).takeIf { it.isRunOnSave } ?: return null
     val file = FileDocumentManager.getInstance().getFile(document) ?: return null

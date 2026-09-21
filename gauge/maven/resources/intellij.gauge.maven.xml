@@ -4,6 +4,7 @@
     <plugin id="com.thoughtworks.gauge"/>
     <module name="intellij.maven"/>
     <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.concurrency"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.projectModel"/>
   </dependencies>

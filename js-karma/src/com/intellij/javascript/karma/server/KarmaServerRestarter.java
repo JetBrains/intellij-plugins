@@ -14,8 +14,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.CheckedDisposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.NioFiles;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
@@ -39,7 +39,7 @@ public class KarmaServerRestarter {
                                                  @NotNull Disposable parentDisposable) {
     CheckedDisposable checkedDisposable = Disposer.newCheckedDisposable(parentDisposable);
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByNioFile(configurationFile);
+      VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByNioPath(configurationFile);
       if (virtualFile != null && virtualFile.isValid() && !virtualFile.isDirectory()) {
         Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
         if (document != null && !checkedDisposable.isDisposed()) {

@@ -11,6 +11,8 @@ import com.intellij.codeInspection.ex.GlobalInspectionContextEx
 import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
+import com.intellij.formatting.service.AsyncDocumentFormattingService
+import com.intellij.ide.actionsOnSave.impl.ActionsOnSaveManager
 import com.intellij.modcommand.ActionContext
 import com.intellij.modcommand.ModCommand
 import com.intellij.modcommand.ModCommandExecutor
@@ -24,14 +26,17 @@ import com.intellij.openapi.application.readActionBlocking
 import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.openapi.command.writeCommandAction
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.blockingContextScope
+import com.intellij.openapi.progress.util.runUnderEmptyProgressIfNone
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.toNioPathOrNull
+import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.platform.util.coroutines.mapConcurrent
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
@@ -54,7 +59,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunner
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.projectPath
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.runTaskAndLogTime
-import org.jetbrains.qodana.staticAnalysis.script.QodanaProgressIndicator
 import java.nio.file.Path
 
 private val LOG = logger<QodanaRunner>()
@@ -94,16 +98,47 @@ suspend fun maybeApplyFixes(sarifRun: Run, runContext: QodanaRunContext) {
     }
     finally {
       withContext(StaticAnalysisDispatchers.UI + NonCancellable) {
-        //readaction is not enough
-        writeIntentReadAction {
-          PsiDocumentManager.getInstance(runContext.project).commitAllDocuments()
-          FileDocumentManager.getInstance().saveAllDocuments()
-        }
+        saveDocumentsWithSynchronousFormatOnSave(runContext.project)
       }
       fixesLogger.logFixesAsJson("fixes.json")
       if (fixesLogger.diffIncluded) {
         fixesLogger.logFileModificationsAsJson("files-modifications.json")
       }
+    }
+  }
+}
+
+/**
+ * Commits and saves every modified document, making the format-on-save actions (gofmt and alike) run synchronously,
+ * so that their write-back is on disk before this function returns.
+ *
+ * [AsyncDocumentFormattingService.FORMAT_DOCUMENT_SYNCHRONOUSLY] is per-document state which outlives the save,
+ * so the previous value of every touched document is restored afterwards.
+ */
+private suspend fun saveDocumentsWithSynchronousFormatOnSave(project: Project) {
+  val fileDocumentManager = FileDocumentManager.getInstance()
+  val actionsOnSaveManager = ActionsOnSaveManager.getInstance(project)
+  val previousSyncFormatting = HashMap<Document, Boolean?>()
+
+  fun forceSynchronousFormatOnSave() {
+    for (document in fileDocumentManager.unsavedDocuments) {
+      if (document in previousSyncFormatting) continue
+      previousSyncFormatting[document] = document.getUserData(AsyncDocumentFormattingService.FORMAT_DOCUMENT_SYNCHRONOUSLY)
+      document.putUserData(AsyncDocumentFormattingService.FORMAT_DOCUMENT_SYNCHRONOUSLY, true)
+    }
+  }
+
+  try {
+    forceSynchronousFormatOnSave()
+    writeIntentReadAction {
+      PsiDocumentManager.getInstance(project).commitAllDocuments()
+      fileDocumentManager.saveAllDocuments()
+    }
+    actionsOnSaveManager.awaitPendingActions()
+  }
+  finally {
+    for ((document, previousValue) in previousSyncFormatting) {
+      document.putUserData(AsyncDocumentFormattingService.FORMAT_DOCUMENT_SYNCHRONOUSLY, previousValue)
     }
   }
 }
@@ -180,6 +215,7 @@ private suspend fun reconstructProblems(results: List<Result>,
   val problems = mutableListOf<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>>()
 
   val localProblems = readActionBlocking {
+    runUnderEmptyProgressIfNone {
     InspectionEngine.inspectEx(
       localToolWrappers,
       psiFile,
@@ -188,10 +224,9 @@ private suspend fun reconstructProblems(results: List<Result>,
       false,
       runContext.scope.isAnalyzeInjectedCode,
       true,
-      QodanaProgressIndicator(runContext.messageReporter),
-      PairProcessor.alwaysTrue()
+        PairProcessor.alwaysTrue()
     )
-  }.toList()
+  }}.toList()
   problems.addAll(localProblems)
 
   val globalSimpleProblems = inspectGlobalSimpleTools(globalSimpleToolWrappers, runContext.project, psiFile)

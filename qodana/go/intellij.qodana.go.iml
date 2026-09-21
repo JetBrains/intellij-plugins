@@ -20,6 +20,7 @@
     <orderEntry type="module" module-name="intellij.qodana" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.qodana.coverage" />
     <orderEntry type="module" module-name="intellij.go.plugin" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.go.impl" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.go.coverage" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.platform.coverage" scope="PROVIDED" />

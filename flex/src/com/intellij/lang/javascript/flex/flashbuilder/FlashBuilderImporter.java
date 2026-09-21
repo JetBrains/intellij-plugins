@@ -21,7 +21,7 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
@@ -137,7 +137,7 @@ public final class FlashBuilderImporter extends ProjectImportBuilder<String> {
 
   public String getSuggestedProjectName() {
     final String path = getInitiallySelectedPath();
-    final VirtualFile file = path.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(path);
+    final VirtualFile file = path.isEmpty() ? null : StandardFileSystems.local().findFileByPath(path);
 
     if (file == null) {
       return PathUtil.getFileName(path);
@@ -190,7 +190,7 @@ public final class FlashBuilderImporter extends ProjectImportBuilder<String> {
 
       final String moduleFilePath = flashBuilderProject.getProjectRootPath() + "/" + moduleName + ModuleFileType.DOT_DEFAULT_EXTENSION;
 
-      if (LocalFileSystem.getInstance().findFileByPath(moduleFilePath) != null) {
+      if (StandardFileSystems.local().findFileByPath(moduleFilePath) != null) {
         ApplicationManager.getApplication().runWriteAction(() -> ModuleBuilder.deleteModuleFile(moduleFilePath));
       }
 
@@ -255,7 +255,7 @@ public final class FlashBuilderImporter extends ProjectImportBuilder<String> {
 
         ApplicationManager.getApplication().runWriteAction(() -> {
           for (String dotProjectFile : dotProjectFiles) {
-            final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(PathUtil.getParentPath(dotProjectFile));
+            final VirtualFile file = StandardFileSystems.local().refreshAndFindFileByPath(PathUtil.getParentPath(dotProjectFile));
             if (file != null) {
               file.refresh(false, true);
             }

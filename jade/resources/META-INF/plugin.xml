@@ -1,3 +1,5 @@
+<!-- BUILD_USING_BAZEL_MARKER: this plugin is also packaged by the `ij_plugin` Bazel rule, and IjPluginDistributionEquivalenceTest
+     checks that the result matches the distribution produced by the build scripts. See IJPL-251444. -->
 <idea-plugin package="com.jetbrains.plugins.jade" allow-bundled-update="true">
   <!--suppress PluginXmlCapitalization -->
   <name>Pug (ex-Jade)</name>
@@ -60,6 +62,7 @@
     <module name="intellij.platform.ide.core.impl"/>
     <module name="intellij.platform.ide.impl"/>
     <module name="intellij.platform.indexing"/>
+    <module name="intellij.platform.indexing.impl"/>
     <module name="intellij.platform.lang"/>
     <module name="intellij.platform.lang.impl"/>
     <module name="intellij.platform.macro"/>

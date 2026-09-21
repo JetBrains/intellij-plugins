@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.VcsKey
 import com.intellij.openapi.vcs.VcsRootChecker
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.SystemIndependent
@@ -154,7 +154,7 @@ internal class P4RootChecker : VcsRootChecker() {
         else -> return emptyList()
       }
     }
-    val rootFile = LocalFileSystem.getInstance().findFileByPath(root) ?: return emptyList()
+    val rootFile = StandardFileSystems.local().findFileByPath(root) ?: return emptyList()
     LOG.debug("found root file: ${rootFile.path}")
 
     return unmappedRoots.filter { VfsUtil.isAncestor(rootFile, it, false) }

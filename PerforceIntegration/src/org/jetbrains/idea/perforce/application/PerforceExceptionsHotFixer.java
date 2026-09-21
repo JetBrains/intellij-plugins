@@ -15,8 +15,9 @@ import com.intellij.openapi.vcs.ActionType;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsExceptionsHotFixer;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.openapi.vfs.newvfs.RefreshQueue;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.MutableErrorTreeView;
@@ -245,11 +246,11 @@ public final class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
         String filePathCandidate = messages[0].substring(ourClobberWriteable.length());
         filePathCandidate = PerforceManager.getInstance(myProject).convertP4ParsedPath(null, filePathCandidate);
         filePathCandidate = FileUtil.toSystemDependentName(filePathCandidate);
-        LocalFileSystem lfs = LocalFileSystem.getInstance();
+        VirtualFileSystem lfs = StandardFileSystems.local();
         File ioFile = new File(filePathCandidate);
-        VirtualFile vf = lfs.findFileByIoFile(ioFile);
+        VirtualFile vf = lfs.findFileByPath(ioFile.getAbsolutePath());
         if (vf == null) {
-          vf = lfs.refreshAndFindFileByIoFile(ioFile);
+          vf = lfs.refreshAndFindFileByPath(ioFile.getAbsolutePath());
         }
         if (vf != null) {
           exc.setVirtualFile(vf);

@@ -20,9 +20,10 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.RefreshQueue;
 import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
 import kotlin.coroutines.EmptyCoroutineContext;
@@ -61,7 +62,7 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
   protected Module createMainModule() throws IOException {
     copyTestDataToProjectDir();
 
-    VirtualFile pomXmlFile = LocalFileSystem.getInstance().findFileByPath(getProject().getBasePath() + File.separator + "pom.xml");
+    VirtualFile pomXmlFile = StandardFileSystems.local().findFileByPath(getProject().getBasePath() + File.separator + "pom.xml");
     List<VirtualFile> pomFiles = Collections.singletonList(pomXmlFile);
 
     MavenProjectsManager mavenProjectsManager = MavenProjectsManager.getInstance(getProject());
@@ -100,8 +101,8 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
     String testDataPath = getTestDataPath();
     String basePath = getProject().getBasePath();
     copyDirContent(new File(testDataPath), new File(basePath));
-    VirtualFile projectDirectory = LocalFileSystem.getInstance().findFileByPath(basePath);
-    LocalFileSystem.getInstance().refreshFiles(Collections.singletonList(projectDirectory));
+    VirtualFile projectDirectory = StandardFileSystems.local().findFileByPath(basePath);
+    RefreshQueue.getInstance().refresh(false, false, null, Collections.singletonList(projectDirectory));
   }
 
   @NotNull

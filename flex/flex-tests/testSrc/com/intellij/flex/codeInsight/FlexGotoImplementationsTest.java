@@ -19,7 +19,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -117,7 +117,7 @@ public class FlexGotoImplementationsTest extends JSDaemonAnalyzerTestCase {
 
       File toDirIO = createTempDirectory();
       VirtualFile toDir =
-        LocalFileSystem.getInstance().refreshAndFindFileByPath(toDirIO.getCanonicalPath().replace(File.separatorChar, '/'));
+        StandardFileSystems.local().refreshAndFindFileByPath(toDirIO.getCanonicalPath().replace(File.separatorChar, '/'));
 
       boolean sourceRootAdded = false;
       if (isAddDirToContentRoot()) {

@@ -43,7 +43,7 @@ object DtsZephyrFileUtil {
     return true
   }
 
-  @RequiresBackgroundThread
+  @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
   fun searchForRoot(project: Project): Path? {
     ThreadingAssertions.assertBackgroundThread()
     ManagingFS.getInstance().flushPendingUpdates()

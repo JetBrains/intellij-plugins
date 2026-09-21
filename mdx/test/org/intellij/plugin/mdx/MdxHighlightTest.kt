@@ -281,6 +281,42 @@ class MdxHighlightTest : MdxTestBase() {
     }
 
     /**
+     * An unterminated `{` has no matching `}` yet. In plain prose, it must still color as JS
+     * (WEB-78468, `.air/plans/mdx-brace-matcher-redesign.plan.md`). This lets the platform's
+     * generic brace-matching mechanism auto-close it. Otherwise, the editor highlighter flattens
+     * the `{` into plain Markdown text. Plain Markdown text carries no JS brace token to act on.
+     */
+    @Test
+    fun testUnterminatedBraceInProseIsColoredAsJs() {
+        val tokens = editorHighlightingTokens("some text {")
+        assertTrue(
+            "Oracle (WEB-78468): an unterminated `{` in prose must carry a JS braces color, got ${keysOf(tokens, "{")}.",
+            keysOf(tokens, "{").any { it.contains("JS.BRACES") }
+        )
+    }
+
+    /**
+     * As [testUnterminatedBraceInProseIsColoredAsJs], but for a `{` inside a JSX flow element's
+     * body. The opening and closing tags sit on their own lines. This matches how a real JSX flow
+     * element is written. It also matches how the sibling live-editing fixtures for this element
+     * already exercise it.
+     *
+     * A single-line `<div>{</div>` hits a different, pre-existing limitation. An unbalanced `{`
+     * there stops the block-level scanner from recognizing the tag as JSX at all. The scanner then
+     * falls back to opaque raw HTML for the whole line. The plan tracks that flow-level gap
+     * separately. It is not this test's target.
+     */
+    @Test
+    fun testUnterminatedBraceInJsxBodyIsColoredAsJs() {
+        val tokens = editorHighlightingTokens("<div>\n  {\n</div>")
+        assertTrue(
+            "Oracle (WEB-78468): an unterminated `{` in a JSX element's body must carry a JS braces color, " +
+                "got ${keysOf(tokens, "{")}.",
+            keysOf(tokens, "{").any { it.contains("JS.BRACES") }
+        )
+    }
+
+    /**
      * A ```js fence nested in a JSX component (`<Tabs>`/`<TabItem>`) is colored the same as an
      * identical top-level ```js fence, because Markdown inside a JSX flow element is parsed as
      * Markdown (mdxjs.com). Implemented by WEB-78496 (deriving MDX blocks from Markdown and

@@ -53,8 +53,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.Nls
 import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_EXTENSION
 import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
-import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
-import org.jetbrains.qodana.inspectionKts.projectScope
+import org.jetbrains.qodana.inspectionKts.core.KtsInspectionsManager
+import org.jetbrains.qodana.inspectionKts.core.projectScope
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.nio.file.InvalidPathException

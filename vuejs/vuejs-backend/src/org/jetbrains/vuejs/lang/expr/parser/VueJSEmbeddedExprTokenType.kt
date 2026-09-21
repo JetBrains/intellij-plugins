@@ -4,11 +4,9 @@ package org.jetbrains.vuejs.lang.expr.parser
 import com.intellij.lang.ASTNode
 import com.intellij.lang.PsiBuilder
 import com.intellij.lexer.Lexer
-import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.ILeafElementType
-import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeInfo
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueEmbeddedContentTokenType
@@ -40,13 +38,6 @@ private constructor(
     private fun makeDebugName(prefix: String, langMode: LangMode): String {
       val suffix = if (langMode == LangMode.PENDING) "" else "_${langMode.exprLang.id}"
       return prefix + suffix
-    }
-
-    @Deprecated(message = "please use overload that accepts LangMode of context")
-    @ApiStatus.ScheduledForRemoval
-    fun createInterpolationExpression(project: Project?): VueJSEmbeddedExprTokenType {
-      thisLogger().warn("dysfunctional createInterpolationExpression used. Please update the plugins relying on Vue plugin")
-      return createInterpolationExpression(LangMode.DEFAULT, project)
     }
   }
 

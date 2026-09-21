@@ -19,7 +19,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.util.text.Strings;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -116,7 +116,7 @@ public final class EslintLanguageServiceManager extends MultiRootJSLinterLanguag
                                             !EslintUtil.isCustomLegacyConfigFileName(PathUtil.getFileName(customConfigFilePath));
 
     if (usingCustomConfig && EslintUtil.isUseFlatConfigMode(eslintVersion, customFlatConfigFileSpecified)) {
-      VirtualFile customConfigFile = LocalFileSystem.getInstance().findFileByPath(customConfigFilePath);
+      VirtualFile customConfigFile = StandardFileSystems.local().findFileByPath(customConfigFilePath);
       if (customConfigFile != null) {
         VirtualFile dir = customConfigFile.getParent();
         if (VfsUtilCore.isAncestor(dir, file, false)) {

@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.FixedSizeButton
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.PsiManager
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.TextFieldWithAutoCompletion
@@ -59,7 +59,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
   }
 
   fun updateTargetCompletion(filename: String) {
-    val file = LocalFileSystem.getInstance().findFileByPath(filename)
+    val file = StandardFileSystems.local().findFileByPath(filename)
     if (file != null) {
       val psiFile = PsiManager.getInstance(project).findFile(file)
       if (psiFile != null) {

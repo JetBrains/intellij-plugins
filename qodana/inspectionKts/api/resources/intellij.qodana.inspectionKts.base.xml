@@ -1,0 +1,42 @@
+<idea-plugin visibility="public">
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="com.intellij.modules.ultimate"/>
+    <plugin id="com.intellij.modules.lang"/>
+    <module name="intellij.libraries.jackson"/>
+    <module name="intellij.libraries.jackson.databind"/>
+    <module name="intellij.libraries.jackson.dataformat.yaml"/>
+    <module name="intellij.libraries.jackson.module.kotlin"/>
+    <module name="intellij.libraries.kotlinx.coroutines.core"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.analysis.impl"/>
+    <module name="intellij.platform.backend"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.core.ui"/>
+    <module name="intellij.platform.editor.ui"/>
+    <module name="intellij.platform.ide"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.ide.core.impl"/>
+    <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.lang.core"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.util.ui"/>
+  </dependencies>
+  <!-- endregion -->
+  <resource-bundle>messages.InspectionKtsBundle</resource-bundle>
+  <extensions defaultExtensionNs="org.jetbrains.qodana.inspectionKts">
+    <defaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.api.MainInspectionKtsDefaultImportProvider"/>
+  </extensions>
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.qodana.inspectionKts.defaultImportProvider"
+                    interface="org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.qodana.inspectionKts.btaCompiler"
+                    interface="org.jetbrains.qodana.inspectionKts.api.bta.InspectionKtsBtaCompiler"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.qodana.inspectionKts.postProcessorFactory"
+                    interface="org.jetbrains.qodana.inspectionKts.CompiledInspectionKtsPostProcessorFactory"
+                    dynamic="true"/>
+  </extensionPoints>
+</idea-plugin>

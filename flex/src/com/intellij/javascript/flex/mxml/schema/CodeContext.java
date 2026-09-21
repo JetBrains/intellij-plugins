@@ -45,7 +45,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -295,7 +295,7 @@ public final class CodeContext {
     final String configFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
     final VirtualFile configFile = StringUtil.isEmptyOrSpaces(configFilePath)
                                    ? null
-                                   : LocalFileSystem.getInstance().findFileByPath(configFilePath);
+                                   : StandardFileSystems.local().findFileByPath(configFilePath);
 
     for (FlexCompilerConfigFileUtil.NamespacesInfo info : FlexCompilerConfigFileUtil.getNamespacesInfos(configFile)) {
       if (onlyIncludedInSwc && !info.includedInSwc) continue;
@@ -471,7 +471,7 @@ public final class CodeContext {
   private static void handleAllStandardManifests(final Module module, final @NotNull FlexBuildConfiguration bc) {
     final Sdk sdk = bc.getSdk();
     final String homePath = sdk == null ? null : sdk.getHomePath();
-    final VirtualFile sdkHome = homePath == null ? null : LocalFileSystem.getInstance().findFileByPath(homePath);
+    final VirtualFile sdkHome = homePath == null ? null : StandardFileSystems.local().findFileByPath(homePath);
     if (sdkHome == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) return;
 
     FlexSdkUtils.processStandardNamespaces(bc, (namespace1, relativePath) -> {

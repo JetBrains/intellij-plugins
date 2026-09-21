@@ -7,7 +7,7 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -120,7 +120,7 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
     final String exeType = SystemInfo.isWindows ? "exe" : "uexe";
     final String adlPath = FileUtil.toSystemIndependentName(
       MessageFormat.format(ADL_ARTIFACT_PATTERN, repositoryRootPath, version, exeType));
-    final VirtualFile adlFile = LocalFileSystem.getInstance().findFileByPath(adlPath);
+    final VirtualFile adlFile = StandardFileSystems.local().findFileByPath(adlPath);
     if (adlFile != null && !adlFile.isDirectory()) {
       myAdlPath = adlPath;
 

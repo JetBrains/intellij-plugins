@@ -28,7 +28,7 @@ import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -242,7 +242,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
         }
 
         final String basePath = VfsUtilCore.urlToPath(contentEntry.getUrl()) + (mavenStyle ? "/src/test/flex" : "/testSrc");
-        return UniqueNameGenerator.generateUniqueNameOneBased(basePath, p -> LocalFileSystem.getInstance().findFileByPath(p) == null);
+        return UniqueNameGenerator.generateUniqueNameOneBased(basePath, p -> StandardFileSystems.local().findFileByPath(p) == null);
       }
     }
     return "";
@@ -264,7 +264,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
       final String path = FileUtil.toSystemIndependentName(myTestSourceFolderTextField.getText().trim());
 
       if (path.isEmpty()) return new ValidationInfo("Path is empty", myTestSourceFolderTextField);
-      if (LocalFileSystem.getInstance().findFileByPath(path) != null) {
+      if (StandardFileSystems.local().findFileByPath(path) != null) {
         return new ValidationInfo("File or folder already exists", myTestSourceFolderTextField);
       }
 

@@ -5,7 +5,7 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ public class SwfHighlightingTest extends BasePlatformTestCase {
     final String testName = getTestName(false);
     FlexTestUtils.addLibrary(getModule(), "flex lib", getTestDataPath() + getBasePath(), testName + ".swc", null, null);
     try {
-      VirtualFile swcFile = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + ".swc");
+      VirtualFile swcFile = StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + ".swc");
       VirtualFile swfFile = JarFileSystem.getInstance().getJarRootForLocalFile(swcFile).findChild("library.swf");
       myFixture.openFileInEditor(swfFile);
       JSDaemonAnalyzerLightTestCase.checkHighlightByFile(myFixture, getTestDataPath() + getBasePath() + "/" + getTestName(false) + ".as");
@@ -32,7 +32,7 @@ public class SwfHighlightingTest extends BasePlatformTestCase {
   }
 
   public void testProtectSwf() {
-    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + getTestName(false) + ".swf");
+    VirtualFile vFile = StandardFileSystems.local().findFileByPath(getTestDataPath() + getBasePath() + "/" + getTestName(false) + ".swf");
     myFixture.openFileInEditor(vFile);
     assertFalse(FileDocumentManager.getInstance().requestWriting(myFixture.getEditor().getDocument(), getProject()));
   }

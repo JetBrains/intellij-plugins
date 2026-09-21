@@ -33,19 +33,19 @@ internal val NO_DOC: String = CodeInsightBundle.message("no.documentation.found"
 internal const val ROOT_DOC_ANCHOR: String = "provider-docs-content"
 internal val parentBlocksForDocs = setOf(HCL_RESOURCE_IDENTIFIER, HCL_DATASOURCE_IDENTIFIER, HCL_PROVIDER_IDENTIFIER)
 
-@RequiresReadLock
+@RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
 internal fun getBlockForHclIdentifier(element: HCLIdentifier): HCLBlock? {
   return element.parentsOfType<HCLBlock>(true).firstOrNull {
     block -> block::class.java != element::class.java && parentBlocksForDocs.contains(block.getNameElementUnquoted(0))
   }
 }
 
-@RequiresReadLock
+@RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
 internal fun getBlockForDocumentationLink(element: TfDocumentPsi?, blockTypeLiteral: String): HCLBlock? {
   return element?.parentsOfType<HCLBlock>(false)?.firstOrNull { block -> block.getNameElementUnquoted(1) == blockTypeLiteral }
 }
 
-@RequiresReadLock
+@RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
 internal fun getHelpWindowHeader(element: PsiElement?): @Nls String {
   getTextIfProviderFunction(element)?.let { return it }
   getTextIfRequiredProvider(element)?.let { return it }

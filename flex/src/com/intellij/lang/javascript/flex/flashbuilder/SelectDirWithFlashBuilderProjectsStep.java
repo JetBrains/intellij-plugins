@@ -11,7 +11,7 @@ import com.intellij.openapi.ui.LabeledComponentNoThrow;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.projectImport.ProjectFormatPanel;
 import com.intellij.projectImport.ProjectImportWizardStep;
@@ -242,7 +242,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
     ((FlashBuilderImporter)getBuilder()).setInitiallySelectedPath(path);
     getWizardContext().requestWizardButtonsUpdate();
 
-    final VirtualFile file = path.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(path);
+    final VirtualFile file = path.isEmpty() ? null : StandardFileSystems.local().findFileByPath(path);
 
     final boolean isArchive = file != null && !file.isDirectory() && FlashBuilderProjectFinder.hasArchiveExtension(file.getPath());
     final boolean multiProjectArchive = isArchive && FlashBuilderProjectFinder.isMultiProjectArchive(file.getPath());
@@ -322,7 +322,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
     if (path.isEmpty()) {
       throw new ConfigurationException(FlexBundle.message("specify.flash.builder.workspace.or.project.dir"), CommonBundle.getErrorTitle());
     }
-    final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
+    final VirtualFile file = StandardFileSystems.local().refreshAndFindFileByPath(path);
     if (file == null) {
       throw new ConfigurationException(FlexBundle.message("file.or.folder.not.found", path), CommonBundle.getErrorTitle());
     }

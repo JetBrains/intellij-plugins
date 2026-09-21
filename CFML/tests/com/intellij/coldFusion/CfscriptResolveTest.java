@@ -33,7 +33,7 @@ import com.intellij.coldFusion.model.psi.impl.CfmlFunctionParameterImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagFunctionParameterImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagLoopImpl;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiComment;
@@ -132,7 +132,7 @@ public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
     Map<String, String> mappings = new HashMap<>();
     for (VirtualFile root : ProjectRootManager.getInstance(getProject()).getContentRoots()) {
       String directoryName = root.getPresentableUrl() + "/folder/subfolder";
-      VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName);
+      VirtualFile fileByUrl = StandardFileSystems.local().findFileByPath(directoryName);
       if (fileByUrl != null) {
         mappings.put("myfolder/subfolder", directoryName);
       }

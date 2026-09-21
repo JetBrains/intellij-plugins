@@ -44,7 +44,7 @@ internal class MdxJSImportOptimizer : ImportOptimizer {
     var offset = 0
     while (offset < text.length) {
       if (MdxEsmScanner.isLineStart(text, offset)) {
-        val blockEnd = MdxEsmScanner.scanBlock(text, offset)?.range?.last ?: text.length
+        val blockEnd = MdxEsmScanner.scanBlock(text, offset)?.range?.endOffset ?: text.length
         offsets.addAll(MdxEsmScanner.findMissingStatementSeparators(text, offset, blockEnd))
         offset = blockEnd.coerceAtLeast(offset + 1)
       }

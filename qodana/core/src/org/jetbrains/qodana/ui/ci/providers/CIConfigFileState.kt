@@ -4,7 +4,7 @@ import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.findOrCreateFile
 import com.intellij.openapi.vfs.writeText
 import kotlinx.coroutines.FlowPreview
@@ -87,7 +87,7 @@ sealed class CIConfigFileState(val project: Project, val document: Document, val
 private suspend fun createAndWriteToFile(project: Project, absolutePath: Path, content: String) {
   val virtualFile = edtWriteAction {
     val root = absolutePath.root ?: return@edtWriteAction null
-    val rootVirtualFile = LocalFileSystem.getInstance().findFileByNioFile(root) ?: return@edtWriteAction null
+    val rootVirtualFile = VirtualFileManager.getInstance().findFileByNioPath(root) ?: return@edtWriteAction null
     val newVirtualFile = rootVirtualFile.findOrCreateFile(absolutePath.relativeTo(rootVirtualFile.toNioPath()).toString())
     newVirtualFile.writeText(content)
     newVirtualFile

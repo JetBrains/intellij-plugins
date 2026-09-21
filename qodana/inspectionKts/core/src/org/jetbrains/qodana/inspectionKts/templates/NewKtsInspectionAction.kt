@@ -17,10 +17,10 @@ import com.intellij.psi.util.parents
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_DIRECTORY
+import org.jetbrains.qodana.inspectionKts.core.INSPECTIONS_KTS_DIRECTORY
 import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_EXTENSION
 import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
-import org.jetbrains.qodana.inspectionKts.projectScope
+import org.jetbrains.qodana.inspectionKts.core.projectScope
 
 class NewKtsInspectionAction : CreateFileFromTemplateAction(), DumbAware {
   override fun isAvailable(dataContext: DataContext): Boolean {

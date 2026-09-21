@@ -1,5 +1,15 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
+### auto-generated section `dev intellij.ruby.testing` start
+filegroup(
+    name = "dev_dist_resources",
+    srcs = glob(
+        ["src/rb/**"],
+    ),
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `dev intellij.ruby.testing` end
+
 ### auto-generated section `build intellij.ruby.testing` start
 jvm_library(
     name = "ruby-testing",

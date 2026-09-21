@@ -158,8 +158,8 @@ internal class PbPythonMessageType(
     return createCollectionType(pythonMapping, listOf(keyType, possibleValueTypes), builtins.dictType)
   }
 
-  fun getAlternativeType(anchor: PyElement, builtins: PyBuiltinCache): PyType? =
-    when (pbElement?.qualifiedName) {
+  fun getAlternativeType(anchor: PyElement, builtins: PyBuiltinCache): PyType? {
+    return when (pbElement?.qualifiedName) {
       PbPythonNames.WKT_TIMESTAMP ->
         PbPythonNames.DATETIME.toPyClass(anchor)?.let { PyClassTypeImpl(it, false) }
       PbPythonNames.WKT_DURATION ->
@@ -177,4 +177,5 @@ internal class PbPythonMessageType(
         builtins.getBytesType(LanguageLevel.forElement(anchor))
       else -> null
     }
+  }
 }

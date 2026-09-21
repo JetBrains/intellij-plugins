@@ -72,7 +72,7 @@ internal class PrettierCodeStyleSettingsModifier : CodeStyleSettingsModifier {
     return PrettierCodeStyleStatusBarUIContributor()
   }
 
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   private fun doModifySettings(settings: TransientCodeStyleSettings, psiFile: PsiFile): Boolean {
     val prettierConfig = runBlockingCancellable {
       resolveConfigForFileWithTimeout(psiFile)

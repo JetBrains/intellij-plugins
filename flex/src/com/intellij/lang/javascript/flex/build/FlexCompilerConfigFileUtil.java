@@ -7,7 +7,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.text.CharSequenceReader;
@@ -108,7 +108,7 @@ public final class FlexCompilerConfigFileUtil {
   }
 
   public static @NotNull InfoFromConfigFile getInfoFromConfigFile(final String configFilePath) {
-    final VirtualFile configFile = configFilePath.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(configFilePath);
+    final VirtualFile configFile = configFilePath.isEmpty() ? null : StandardFileSystems.local().findFileByPath(configFilePath);
     if (configFile == null) {
       return InfoFromConfigFile.DEFAULT;
     }

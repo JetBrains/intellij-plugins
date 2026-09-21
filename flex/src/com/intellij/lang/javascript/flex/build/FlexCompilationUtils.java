@@ -18,9 +18,10 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.Decompressor;
@@ -130,7 +131,7 @@ public final class FlexCompilationUtils {
   }
 
   static VirtualFile refreshAndFindFileInWriteAction(final String outputFilePath, final String... possibleBaseDirs) {
-    final LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
+    final VirtualFileSystem localFileSystem = StandardFileSystems.local();
     final Ref<VirtualFile> outputFileRef = new Ref<>();
 
     final Application app = ApplicationManager.getApplication();

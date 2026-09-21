@@ -17,7 +17,7 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -290,7 +290,7 @@ public class AirPackageDialog extends DialogWrapper {
     for (Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCs) {
       final FlexBuildConfiguration bc = moduleAndBC.second;
 
-      if (bc.isSkipCompile() && LocalFileSystem.getInstance().findFileByPath(bc.getActualOutputFilePath()) == null) {
+      if (bc.isSkipCompile() && StandardFileSystems.local().findFileByPath(bc.getActualOutputFilePath()) == null) {
         return new ValidationInfo(
           FlexBundle.message("can.not.package.bc", bc.getName(), FlexBundle.message("compilation.is.switched.off")));
       }

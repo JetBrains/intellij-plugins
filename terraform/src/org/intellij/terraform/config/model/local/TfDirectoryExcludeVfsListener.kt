@@ -5,7 +5,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.AsyncFileListener
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 
@@ -19,7 +19,7 @@ internal class TfDirectoryExcludeVfsListener : AsyncFileListener {
 
     return object : AsyncFileListener.ChangeApplier {
       override fun afterVfsChange() {
-        val fileSystem = LocalFileSystem.getInstance()
+        val fileSystem = StandardFileSystems.local()
         val terraformDirs = terraformPaths.mapNotNull { fileSystem.findFileByPath(it) }
 
         val projects = ProjectManager.getInstance().openProjects

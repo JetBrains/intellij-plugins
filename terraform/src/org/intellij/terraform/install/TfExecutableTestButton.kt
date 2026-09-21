@@ -150,7 +150,7 @@ internal class TfExecutableTestButton(
     }
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   private fun handleInstallationResult(success: InstallationResult) {
     spinnerIcon.isVisible = false
     resultLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
@@ -167,7 +167,7 @@ internal class TfExecutableTestButton(
     }
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   private fun runTestBlocking(title: @ModalProgressTitle String): String = runWithModalProgressBlocking(
     owner = ModalTaskOwner.component(this),
     title = title,
@@ -199,7 +199,7 @@ internal class TfExecutableTestButton(
     } ?: throw IllegalStateException(HCLBundle.message("tool.executor.unrecognized.version", toolType.executableName))
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   fun updateTestButton(toolPath: String?): String {
     installButton.isVisible = false
     this.text =

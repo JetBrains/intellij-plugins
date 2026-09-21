@@ -1,9 +1,9 @@
 package org.jetbrains.qodana.staticAnalysis.script.scoped
 
 import com.intellij.openapi.components.PathMacroManager
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.qodana.sarif.model.ArtifactLocation
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.runInterruptible
@@ -77,7 +77,7 @@ private fun ArtifactLocation.toVirtualFile(projectPath: Path, macroManager: Path
   } else {
     macroManager.expandPath(uri)?.let { Paths.get(it) } ?: return null
   }
-  return LocalFileSystem.getInstance().findFileByNioFile(path)
+  return VirtualFileManager.getInstance().findFileByNioPath(path)
 }
 
 @OptIn(ExperimentalSerializationApi::class)

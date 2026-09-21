@@ -141,7 +141,7 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
   }
 
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   fun getLockFilePsi(file: VirtualFile?): PsiFile? {
     if (!isTfLock(file) || file?.isValid != true) return null
     return PsiManager.getInstance(project).findFile(file).takeIf { it?.isValid == true }

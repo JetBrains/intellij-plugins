@@ -1,16 +1,15 @@
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.makefile` start
 dev_dist_plugin(
-    main_module = "intellij.makefile",
-    module_targets = MODULE_TARGETS,
-    prepacked_content_modules = [
+    content_modules = [
         # do not sort,
         "intellij.makefile.spellchecker",
         "intellij.makefile.terminal",
     ],
+    main_module = "intellij.makefile",
 )
 ### auto-generated section `dev intellij.makefile` end
 
@@ -96,6 +95,17 @@ jvm_library(
         "@community//platform/forms_rt:java-guiForms-rt_test_lib",
         "@community//platform/execution:execution_test_lib",
     ],
+)
+
+ij_plugin(
+    name = "makefile_plugin",
+    descriptor_module = ":makefile",
+    content_modules = [
+        # do not sort,
+        "//contrib/makefile/spellchecker",
+        "//contrib/makefile/terminal",
+    ],
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.makefile` end
 

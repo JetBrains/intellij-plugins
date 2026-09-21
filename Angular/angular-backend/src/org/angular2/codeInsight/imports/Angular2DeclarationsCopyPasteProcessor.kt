@@ -47,26 +47,26 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
   override val dataFlavor: DataFlavor
     get() = ANGULAR2_DECLARATIONS_IMPORTS_FLAVOR
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun isAcceptableCopyContext(file: PsiFile, contextElements: List<PsiElement>): Boolean {
     val settings = JSApplicationSettings.getInstance()
     return settings.isUseTypeScriptAutoImport
            && isAcceptablePasteContext(file) || contextElements.all { isAcceptablePasteContext(it) }
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
     context.containingFile.let { it is Angular2HtmlFile || (it is JSFile && it.language is Angular2ExprDialect) }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun hasUnsupportedContentInCopyContext(parent: PsiElement, textRange: TextRange): Boolean =
     false
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     Angular2SourceUtil.findComponentClass(getContextElementOrFile(file, caret))?.containingFile
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun collectTransferableData(rangesWithParents: List<Pair<PsiElement, TextRange>>, project: Project): Angular2DeclarationsImportsTransferableData? {
     val expressionContexts = rangesWithParents.count { Angular2ExpressionsCopyPasteProcessor.Util.isExpressionContext(it.first) }
     if (expressionContexts != 0 && expressionContexts != rangesWithParents.size)
@@ -111,7 +111,7 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
     return Angular2DeclarationsImportsTransferableData(originFilePath, exportName, pipes, selectors, expressionContexts != 0)
   }
 
-  @RequiresEdt
+  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
   override fun processTransferableData(
     values: List<Angular2DeclarationsImportsTransferableData>,
     exportScope: PsiElement,

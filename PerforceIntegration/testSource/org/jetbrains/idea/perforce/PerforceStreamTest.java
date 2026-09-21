@@ -2,7 +2,7 @@ package org.jetbrains.idea.perforce;
 
 import com.intellij.openapi.vcs.VcsConfiguration;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.junit.Test;
@@ -68,7 +68,7 @@ public class PerforceStreamTest extends PerforceTestCase {
     refreshVfs();
 
     assertTrue(VfsUtilCore.virtualToIoFile(file).exists());
-    file = LocalFileSystem.getInstance().findFileByPath(file.getPath());
+    file = StandardFileSystems.local().findFileByPath(file.getPath());
     assertNotNull(file);
 
     openForEdit(file);

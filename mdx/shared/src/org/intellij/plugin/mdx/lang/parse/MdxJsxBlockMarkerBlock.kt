@@ -1,5 +1,7 @@
 package org.intellij.plugin.mdx.lang.parse
 
+import com.intellij.openapi.util.TextRange
+import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.parser.LookaheadText
 import org.intellij.markdown.parser.ProductionHolder
 import org.intellij.markdown.parser.constraints.MarkdownConstraints
@@ -8,6 +10,7 @@ import org.intellij.markdown.parser.markerblocks.MarkerBlock
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 
 internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
+                                      private val ownership: MdxMarkdownOwnership,
                                       productionHolder: ProductionHolder,
                                       blockStartOffset: Int,
                                       blockStartIndent: Int,
@@ -21,13 +24,26 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   initialText,
 ) {
   private val hasJsxParent = myConstraints is MdxJsxMarkdownConstraints
+  private val markdownConstraints = (myConstraints as? MdxJsxMarkdownConstraints)?.markdownConstraints() ?: myConstraints
+  private val jsxSession = MdxJsxScanner.Session(source, blockStartOffset)
+  private val codeSpanSession = MdxMarkdownCodeSpanScanner.Session(source, blockStartOffset, paragraphEnd = ownership::paragraphEnd)
   private var suppressSubBlocks = false
-  private var cachedScanLimit = -1
-  private var cachedScanProductionCount = -1
-  private var cachedElement: MdxJsxScanner.Element? = null
+  private var processedProductionCount = initialProductionCount
+  private var scannedLimit = blockStartOffset
+  private var scannedElement: MdxJsxScanner.Element? = null
+  private var currentElement: MdxJsxScanner.Element? = null
+
+  init {
+    scanElement(currentEndOffset)
+    retainCurrentElement()
+  }
 
   override fun allowsSubBlocks(): Boolean {
     return !closeScheduled && !suppressSubBlocks && hasCompleteOpeningTag()
+  }
+
+  fun addMarkdownOpacity(range: TextRange) {
+    jsxSession.addOpaqueRanges(listOf(range))
   }
 
   override fun prepareForLine() {
@@ -37,6 +53,7 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   override fun appendLine(candidateEndOffset: Int) {
     val hadCompleteOpeningTag = hasCompleteOpeningTag()
     super.appendLine(candidateEndOffset)
+    retainCurrentElement()
     if (!hadCompleteOpeningTag && hasCompleteOpeningTag() && !isCurrentBlockTerminated()) {
       suppressSubBlocks = true
     }
@@ -52,9 +69,13 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   }
 
   override fun shouldAppendLine(pos: LookaheadText.Position, candidateEndOffset: Int): Boolean {
-    return isTerminated(candidateEndOffset) ||
-           constraints.applyToNextLine(pos).extendsPrev(constraints) ||
-           scanElement(candidateEndOffset) != null
+    val nextConstraints = constraints.applyToNextLine(pos)
+    // A JSX block cannot continue after its Markdown container ends.
+    if (!nextConstraints.extendsPrev(markdownConstraints)) return false
+    val element = scanElement(candidateEndOffset)
+    return element?.termination?.let { it != MdxJsxScanner.Termination.UNTERMINATED } == true ||
+           nextConstraints.extendsPrev(constraints) ||
+           element != null
   }
 
   override fun isTerminated(candidateEndOffset: Int): Boolean {
@@ -75,29 +96,56 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
       }
       else {
         listOf(
-          SequentialParser.Node(openingPrefix, MdxMarkdownLibElementTypes.MDX_JSX_OPENING_ELEMENT),
-          SequentialParser.Node(openingPrefix, MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT),
+          SequentialParser.Node(openingPrefix.toMarkdownRange(), MdxMarkdownLibElementTypes.MDX_JSX_OPENING_ELEMENT),
+          SequentialParser.Node(openingPrefix.toMarkdownRange(), MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT),
         )
       }
     }
     if (element.termination == MdxJsxScanner.Termination.UNTERMINATED && currentEndOffset < source.length) {
       return emptyList()
     }
-    return MdxBlockNodeFactory.createFlowElementNodes(source, element)
+    return MdxBlockNodeFactory.createFlowElementNodes(element, paragraphRange = ownership.flowParagraphRange(element, constraints))
   }
 
   private fun hasCompleteOpeningTag(): Boolean {
-    return scanElement(currentEndOffset) != null
+    return currentElement != null
   }
 
   private fun scanElement(limit: Int): MdxJsxScanner.Element? {
-    val productionCount = productionCount()
-    if (limit == cachedScanLimit && productionCount == cachedScanProductionCount) {
-      return cachedElement
+    if (limit < scannedLimit) {
+      return currentElement
     }
-    cachedElement = MdxJsxScanner.scanJsxElement(source, blockStartOffset, limit, opaqueMarkdownRanges(limit))
-    cachedScanLimit = limit
-    cachedScanProductionCount = productionCount
-    return cachedElement
+    ingestProductionOpacity()
+    if (limit > scannedLimit) {
+      val codeSpanRanges = codeSpanSession.advanceTo(limit, jsxSession.opaqueRangeLookup())
+      jsxSession.addOpaqueRanges(codeSpanRanges)
+    }
+    scannedElement = jsxSession.advanceTo(limit)
+    scannedLimit = limit
+    if (limit == currentEndOffset) {
+      currentElement = scannedElement
+    }
+    return scannedElement
   }
+
+  private fun ingestProductionOpacity() {
+    val productions = productions()
+    if (processedProductionCount >= productions.size) return
+    val ranges = mutableListOf<TextRange>()
+    for (index in processedProductionCount..<productions.size) {
+      val production = productions[index]
+      if ((production.type == MarkdownElementTypes.CODE_FENCE || production.type == MarkdownElementTypes.HTML_BLOCK) &&
+          production.range.first >= blockStartOffset) {
+        ranges.add(production.range.toTextRange())
+      }
+    }
+    processedProductionCount = productions.size
+    jsxSession.addOpaqueRanges(ranges)
+  }
+
+  private fun retainCurrentElement() {
+    check(scannedLimit == currentEndOffset)
+    currentElement = scannedElement
+  }
+
 }

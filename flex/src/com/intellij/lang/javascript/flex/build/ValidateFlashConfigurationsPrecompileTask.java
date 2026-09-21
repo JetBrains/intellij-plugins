@@ -53,7 +53,7 @@ import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -189,7 +189,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
 
     final String additionalConfigFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
     if (!additionalConfigFilePath.isEmpty()) {
-      final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
+      final VirtualFile additionalConfigFile = StandardFileSystems.local().findFileByPath(additionalConfigFilePath);
       if (additionalConfigFile == null || additionalConfigFile.isDirectory()) {
         errorConsumer.consume(FlashProjectStructureProblem
                                 .createCompilerOptionsProblem(ProjectStructureProblemType.Severity.ERROR, FlexBundle
@@ -272,7 +272,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
                                                                            FlexBCConfigurable.Location.HtmlTemplatePath));
       }
       else {
-        final VirtualFile templateDir = LocalFileSystem.getInstance().findFileByPath(bc.getWrapperTemplatePath());
+        final VirtualFile templateDir = StandardFileSystems.local().findFileByPath(bc.getWrapperTemplatePath());
         if (templateDir == null || !templateDir.isDirectory()) {
           errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(ProjectStructureProblemType.Severity.ERROR, bc.getName(), FlexBundle
             .message("html.template.folder.not.found", FileUtil.toSystemDependentName(bc.getWrapperTemplatePath())),
@@ -369,7 +369,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
             .message("not.a.css.runtime.stylesheet", FileUtil.toSystemDependentName(cssPath)),
                                                                                         FlexBCConfigurable.Location.RuntimeStyleSheets));
         }
-        else if (LocalFileSystem.getInstance().findFileByPath(cssPath) == null) {
+        else if (StandardFileSystems.local().findFileByPath(cssPath) == null) {
           errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(ProjectStructureProblemType.Severity.ERROR, bc.getName(), FlexBundle
             .message("css.not.found", FileUtil.toSystemDependentName(cssPath)), FlexBCConfigurable.Location.RuntimeStyleSheets));
         }
@@ -378,7 +378,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
 
     if (nature.isLib()) {
       for (String path : bc.getCompilerOptions().getFilesToIncludeInSWC()) {
-        if (LocalFileSystem.getInstance().findFileByPath(path) == null) {
+        if (StandardFileSystems.local().findFileByPath(path) == null) {
           errorConsumer.consume(FlashProjectStructureProblem.createCompilerOptionsProblem(ProjectStructureProblemType.Severity.ERROR,
                                                                                           FlexBundle
                                                                                             .message("file.to.include.in.swc.not.found",
@@ -447,7 +447,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
                                                                AirPackagingConfigurableBase.Location.CustomDescriptor));
       }
       else {
-        final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(packagingOptions.getCustomDescriptorPath());
+        final VirtualFile descriptorFile = StandardFileSystems.local().findFileByPath(packagingOptions.getCustomDescriptorPath());
         if (descriptorFile == null || descriptorFile.isDirectory()) {
           errorConsumer.consume(FlashProjectStructureProblem
                                   .createPackagingOptionsProblem(ProjectStructureProblemType.Severity.ERROR, packagingOptions, FlexBundle
@@ -478,7 +478,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
                                                                AirPackagingConfigurableBase.Location.FilesToPackage));
       }
       else {
-        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fullPath);
+        final VirtualFile file = StandardFileSystems.local().findFileByPath(fullPath);
         if (file == null) {
           errorConsumer.consume(FlashProjectStructureProblem
                                   .createPackagingOptionsProblem(ProjectStructureProblemType.Severity.ERROR, packagingOptions, FlexBundle
@@ -528,7 +528,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
           .message("ios.provisioning.profile.not.set"), AirPackagingConfigurableBase.Location.ProvisioningProfile));
       }
       else {
-        final VirtualFile provisioningProfile = LocalFileSystem.getInstance().findFileByPath(provisioningProfilePath);
+        final VirtualFile provisioningProfile = StandardFileSystems.local().findFileByPath(provisioningProfilePath);
         if (provisioningProfile == null || provisioningProfile.isDirectory()) {
           errorConsumer.consume(FlashProjectStructureProblem
                                   .createPackagingOptionsProblem(ProjectStructureProblemType.Severity.ERROR, packagingOptions, FlexBundle
@@ -548,7 +548,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
                                                                                          AirPackagingConfigurableBase.Location.Keystore));
       }
       else {
-        final VirtualFile keystore = LocalFileSystem.getInstance().findFileByPath(keystorePath);
+        final VirtualFile keystore = StandardFileSystems.local().findFileByPath(keystorePath);
         if (keystore == null || keystore.isDirectory()) {
           errorConsumer.consume(FlashProjectStructureProblem
                                   .createPackagingOptionsProblem(ProjectStructureProblemType.Severity.ERROR, packagingOptions, FlexBundle

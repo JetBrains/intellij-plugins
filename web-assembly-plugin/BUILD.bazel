@@ -1,4 +1,5 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.webassembly` start
@@ -64,6 +65,12 @@ jvm_library(
         "@community//platform/platform-util-io:ide-util-io_test_lib",
         "@community//platform/util/jdom:jdom_test_lib",
     ],
+)
+
+ij_plugin(
+    name = "webassembly_plugin",
+    descriptor_module = ":webassembly",
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.webassembly` end
 

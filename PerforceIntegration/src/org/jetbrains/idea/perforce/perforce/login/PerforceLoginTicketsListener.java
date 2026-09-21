@@ -9,7 +9,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.ZipAndQueue;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFileCopyEvent;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
@@ -70,7 +70,7 @@ public class PerforceLoginTicketsListener implements VirtualFileListener {
   }
 
   public void pingListening() {
-    LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(ourP4TicketsFile));
+    StandardFileSystems.local().refreshAndFindFileByPath(new File(ourP4TicketsFile).getAbsolutePath());
   }
 
   public PerforceLoginTicketsListener(final Project project, final PerforceLoginManager loginManager, @NotNull Disposable parentDisposable) {

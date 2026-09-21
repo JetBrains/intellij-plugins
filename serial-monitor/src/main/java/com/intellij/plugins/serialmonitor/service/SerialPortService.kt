@@ -230,7 +230,7 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
       }
     }
 
-    @RequiresBackgroundThread
+    @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
     @Throws(SerialMonitorException::class)
     fun connect(profile: SerialPortProfile) {
       this.status = PortStatus.CONNECTING

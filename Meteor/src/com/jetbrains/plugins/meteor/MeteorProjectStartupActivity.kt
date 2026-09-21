@@ -145,7 +145,7 @@ private fun updateLibrariesFiles(project: Project) {
   }
 }
 
-@RequiresReadLock
+@RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
 private fun excludeLocalMeteorFolders(project: Project) {
   for (meteorFolder in MeteorFacade.getInstance().getMeteorFolders(project)) {
     val module = ModuleUtilCore.findModuleForFile(meteorFolder, project)

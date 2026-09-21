@@ -5,7 +5,7 @@ import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
@@ -23,7 +23,7 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
     val targetFile = File(getProject().basePath, testName)
     FileUtil.copy(File(testDataRoot, testName), targetFile)
 
-    val vFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile)!!
+    val vFile = StandardFileSystems.local().refreshAndFindFileByPath(targetFile.absolutePath)!!
 
     var fileText = StringUtil.convertLineSeparators(VfsUtil.loadText(vFile))
 

@@ -4,6 +4,63 @@
       "language": "en-US",
       "results": [
         {
+          "ruleId": "unused",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class is never used.",
+            "markdown": "Class is never used."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7,
+                  "charOffset": 6,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "A"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 78,
+                  "snippet": {
+                    "text": "class A {\n  public static void main() {\n    System.out.println(\"Hello world\");"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testYaml profile with inherited ignoring test global inspection",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "ffe72ab135d486cf",
+            "equalIndicator/v1": "e49482850344c46d373c5213d3a94379a4cf104ca1a430fe8732b15cc7f4be90"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
           "ruleId": "ConfusingMainMethod",
           "kind": "fail",
           "level": "warning",
@@ -61,18 +118,18 @@
           }
         },
         {
-          "ruleId": "ConfusingMainMethod",
+          "ruleId": "unused",
           "kind": "fail",
           "level": "warning",
           "message": {
-            "text": "Method 'main()' does not have signature 'public static void main(String[])'",
-            "markdown": "Method `main()` does not have signature 'public static void main(String\\[\\])'"
+            "text": "Method is never used.",
+            "markdown": "Method is never used."
           },
           "locations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "test-module/tests/B.java",
+                  "uri": "test-module/A.java",
                   "uriBaseId": "SRCROOT"
                 },
                 "region": {
@@ -91,7 +148,7 @@
                   "charOffset": 0,
                   "charLength": 96,
                   "snippet": {
-                    "text": "class B {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
+                    "text": "class A {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
                   },
                   "sourceLanguage": "JAVA"
                 }
@@ -105,8 +162,8 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "579f6f9d758e98d5",
-            "equalIndicator/v1": "1fd202dfd4b5b5ecc2b0111ada06c71efdf32b2a292133f76598895ef1886b84"
+            "equalIndicator/v2": "25a3c36499ead7e7",
+            "equalIndicator/v1": "486c7a41fd03ca2ec346c791e397a8d6b9c0bcc0cf6ad82043ba2060e752bdf9"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -164,64 +221,6 @@
           "partialFingerprints": {
             "equalIndicator/v2": "e320ea93d47d05b3",
             "equalIndicator/v1": "8791ba3a05a1bb5fbd04f578711f55a9b989fc72f0043b8078a656942c7d8796"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "hasFixes": true,
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "ConstantValue",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Condition '1 == 1' is always 'true'",
-            "markdown": "Condition `1 == 1` is always `true`"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/tests/B.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 4,
-                  "startColumn": 9,
-                  "charOffset": 87,
-                  "charLength": 6,
-                  "snippet": {
-                    "text": "1 == 1"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 2,
-                  "startColumn": 1,
-                  "charOffset": 10,
-                  "charLength": 129,
-                  "snippet": {
-                    "text": "  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {\n      System.out.println(\"Another\");\n    }"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testYaml profile with inherited ignoring test global inspection",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "fff434f1a37e267c",
-            "equalIndicator/v1": "8aeb52f63eebbf50b912609149ed80c554e177f554af9124fbbbef68f98747cc"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -348,6 +347,235 @@
           }
         },
         {
+          "ruleId": "unused",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class is never used.",
+            "markdown": "Class is never used."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/tests/B.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7,
+                  "charOffset": 6,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "B"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 78,
+                  "snippet": {
+                    "text": "class B {\n  public static void main() {\n    System.out.println(\"Hello world\");"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testYaml profile with inherited ignoring test global inspection",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "f3f313344e576c43",
+            "equalIndicator/v1": "939dd5bda7724c0a5cb2cdac82775bd84985a8c2a1af5425397afd67ebd9c144"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "ConfusingMainMethod",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'main()' does not have signature 'public static void main(String[])'",
+            "markdown": "Method `main()` does not have signature 'public static void main(String\\[\\])'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/tests/B.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 22,
+                  "charOffset": 31,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "main"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 96,
+                  "snippet": {
+                    "text": "class B {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testYaml profile with inherited ignoring test global inspection",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "579f6f9d758e98d5",
+            "equalIndicator/v1": "1fd202dfd4b5b5ecc2b0111ada06c71efdf32b2a292133f76598895ef1886b84"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "unused",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method is never used.",
+            "markdown": "Method is never used."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/tests/B.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 22,
+                  "charOffset": 31,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "main"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 96,
+                  "snippet": {
+                    "text": "class B {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testYaml profile with inherited ignoring test global inspection",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "9b2a847dec972160",
+            "equalIndicator/v1": "76520f0349dbd771bac6b69211ff5380545a50d7cb80c77147c0ab2b3863fe97"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition '1 == 1' is always 'true'",
+            "markdown": "Condition `1 == 1` is always `true`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/tests/B.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 9,
+                  "charOffset": 87,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "1 == 1"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 10,
+                  "charLength": 129,
+                  "snippet": {
+                    "text": "  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {\n      System.out.println(\"Another\");\n    }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testYaml profile with inherited ignoring test global inspection",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "fff434f1a37e267c",
+            "equalIndicator/v1": "8aeb52f63eebbf50b912609149ed80c554e177f554af9124fbbbef68f98747cc"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "hasFixes": true,
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
           "ruleId": "IgnoreResultOfCall",
           "kind": "fail",
           "level": "warning",
@@ -451,234 +679,6 @@
           "partialFingerprints": {
             "equalIndicator/v2": "3f2bbd8918dae969",
             "equalIndicator/v1": "8d89472ea4b2f1c053e4a5fec99017f38c617ef0a7cf60845dcaebbfab915ca3"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "unused",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Class is never used.",
-            "markdown": "Class is never used."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/A.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 1,
-                  "startColumn": 7,
-                  "charOffset": 6,
-                  "charLength": 1,
-                  "snippet": {
-                    "text": "A"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 78,
-                  "snippet": {
-                    "text": "class A {\n  public static void main() {\n    System.out.println(\"Hello world\");"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testYaml profile with inherited ignoring test global inspection",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "ffe72ab135d486cf",
-            "equalIndicator/v1": "e49482850344c46d373c5213d3a94379a4cf104ca1a430fe8732b15cc7f4be90"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "unused",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Method is never used.",
-            "markdown": "Method is never used."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/A.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 2,
-                  "startColumn": 22,
-                  "charOffset": 31,
-                  "charLength": 4,
-                  "snippet": {
-                    "text": "main"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 96,
-                  "snippet": {
-                    "text": "class A {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testYaml profile with inherited ignoring test global inspection",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "25a3c36499ead7e7",
-            "equalIndicator/v1": "486c7a41fd03ca2ec346c791e397a8d6b9c0bcc0cf6ad82043ba2060e752bdf9"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "unused",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Class is never used.",
-            "markdown": "Class is never used."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/tests/B.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 1,
-                  "startColumn": 7,
-                  "charOffset": 6,
-                  "charLength": 1,
-                  "snippet": {
-                    "text": "B"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 78,
-                  "snippet": {
-                    "text": "class B {\n  public static void main() {\n    System.out.println(\"Hello world\");"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testYaml profile with inherited ignoring test global inspection",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "f3f313344e576c43",
-            "equalIndicator/v1": "939dd5bda7724c0a5cb2cdac82775bd84985a8c2a1af5425397afd67ebd9c144"
-          },
-          "properties": {
-            "ideaSeverity": "WARNING",
-            "qodanaSeverity": "High",
-            "problemType": "REGULAR",
-            "tags": [
-              "JAVA"
-            ]
-          }
-        },
-        {
-          "ruleId": "unused",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Method is never used.",
-            "markdown": "Method is never used."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/tests/B.java",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 2,
-                  "startColumn": 22,
-                  "charOffset": 31,
-                  "charLength": 4,
-                  "snippet": {
-                    "text": "main"
-                  },
-                  "sourceLanguage": "JAVA"
-                },
-                "contextRegion": {
-                  "startLine": 1,
-                  "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 96,
-                  "snippet": {
-                    "text": "class B {\n  public static void main() {\n    System.out.println(\"Hello world\");\n    if (1 == 1) {"
-                  },
-                  "sourceLanguage": "JAVA"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "testYaml profile with inherited ignoring test global inspection",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "9b2a847dec972160",
-            "equalIndicator/v1": "76520f0349dbd771bac6b69211ff5380545a50d7cb80c77147c0ab2b3863fe97"
           },
           "properties": {
             "ideaSeverity": "WARNING",

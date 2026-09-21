@@ -3,7 +3,7 @@ package org.jetbrains.idea.perforce.perforce.connections
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.annotations.Nls
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.ClientRootsCache
@@ -49,7 +49,7 @@ internal class PerforceConnectionTester(
     val isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
       {
         var allConnections = connectionManager.getAllConnections()
-        val clientRootVf = clientRoot?.let { LocalFileSystem.getInstance().refreshAndFindFileByNioFile(it) }
+        val clientRootVf = clientRoot?.let { VirtualFileManager.getInstance().refreshAndFindFileByNioPath(it) }
         if (allConnections.isEmpty() && clientRootVf != null) {
           allConnections = mapOf(clientRootVf to connection)
         }

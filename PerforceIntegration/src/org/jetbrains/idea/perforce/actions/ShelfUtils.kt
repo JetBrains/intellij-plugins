@@ -14,7 +14,7 @@ import com.intellij.openapi.vcs.AbstractVcsHelper
 import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager
 import com.intellij.openapi.vcs.changes.ui.SimpleChangesBrowser
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.MultiMap
@@ -96,7 +96,7 @@ object ShelfUtils {
     val dirtyFiles = selected.mapNotNull { it.file?.let { file -> VcsUtil.getFilePath(file) } }
 
     dirtyFiles.forEach {
-      val file = LocalFileSystem.getInstance().refreshAndFindFileByPath(it.path)
+      val file = StandardFileSystems.local().refreshAndFindFileByPath(it.path)
       if (file != null) {
         VfsUtil.markDirtyAndRefresh(false, false, false, file)
       }

@@ -13,7 +13,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -96,7 +95,7 @@ class RunTFToolGetFix(private val directoryName: String, private val executableN
     val dir = block.containingFile?.containingDirectory ?: return
 
     val vf = dir.virtualFile
-    if (vf.fileSystem !is LocalFileSystem) {
+    if (!vf.isInLocalFileSystem) {
       LOG.warn("Cannot run on non-local FS: $vf")
       return
     }

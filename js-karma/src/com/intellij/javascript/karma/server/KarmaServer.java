@@ -32,8 +32,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.NioFiles;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -319,7 +319,7 @@ public final class KarmaServer {
       return null;
     }
 
-    VirtualFile workingDirFile = LocalFileSystem.getInstance().findFileByNioFile(workingDirPath);
+    VirtualFile workingDirFile = VirtualFileManager.getInstance().findFileByNioPath(workingDirPath);
     if (workingDirFile == null) return null;
 
     AngularCliConfig angularCliConfig = AngularCliConfig.findProjectConfig(workingDirPath);

@@ -1,22 +1,37 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-# Checkout directories that plugin layouts copy into a distribution verbatim (`withResource*`). They are
-# resolved against the module content root and exist in no jar, so a dev assembly that materializes its own
-# project tree has to declare them. Consumed through `ULTIMATE_EXTRA_PROJECT_FILES`.
+### auto-generated section `dev intellij.tslint` start
 filegroup(
     name = "dev_dist_resources",
-    srcs = glob(["gen/js/**"]),
+    srcs = glob(
+        ["gen/js/**"],
+    ),
     visibility = ["//visibility:public"],
 )
 
-### auto-generated section `dev intellij.tslint` start
 dev_dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
     main_module = "intellij.tslint",
-    module_targets = MODULE_TARGETS,
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/tslint:tslint.jar": "intellij.tslint",
+    },
+    descriptor = "//contrib/tslint:intellij.tslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.tslint",
+    product = "idea",
+    product_info = "//build/dev-dist-descriptors:idea_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/tslint/gen/js",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/tslint:dev_dist_resources",
+    },
 )
 ### auto-generated section `dev intellij.tslint` end
 
@@ -62,7 +77,6 @@ jvm_library(
         "@community//platform/projectModel-api:projectModel",
         "//plugins/JavaScriptLanguage/javascript-parser",
         "//plugins/JavaScriptLanguage/javascript-backend",
-        "//webcore/impl",
         "@community//libraries/gson",
         "@community//libraries/snakeyaml",
         "@community//platform/statistics",
@@ -105,7 +119,6 @@ jvm_library(
         "@community//platform/projectModel-api:projectModel_test_lib",
         "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
         "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
-        "//webcore/impl:impl_test_lib",
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",
         "//plugins/JavaScriptLanguage/testFramework",
@@ -200,8 +213,6 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
         "//plugins/JavaScriptLanguage/javascript-backend",
         "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
-        "//webcore/impl",
-        "//webcore/impl:impl_test_lib",
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",
         "//plugins/JavaScriptLanguage/testFramework",

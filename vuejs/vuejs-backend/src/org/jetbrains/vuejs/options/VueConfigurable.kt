@@ -4,24 +4,15 @@
 package org.jetbrains.vuejs.options
 
 import com.intellij.lang.javascript.JavaScriptBundle
-import com.intellij.lang.typescript.lsp.bindPackage
-import com.intellij.lang.typescript.lsp.createBundledNodePackageField
-import com.intellij.lang.typescript.lsp.createNodePackageField
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.openapi.project.Project
-import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Panel
-import com.intellij.ui.dsl.builder.SegmentedButton
 import com.intellij.ui.dsl.builder.bind
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.selected
-import com.intellij.ui.dsl.builder.toNullableProperty
 import com.intellij.ui.layout.ComponentPredicate
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.typescript.service.getVueLspHybridModePackages
-import org.jetbrains.vuejs.lang.typescript.service.getVueTSPluginNodePackages
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerTakeoverModeLoader
 
 class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable {
   private val settings = VueSettings.instance(project)
@@ -29,7 +20,6 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
   override fun Panel.createContent() {
     group(VueBundle.message("vue.configurable.service.group")) {
       lateinit var autoModeSelected: ComponentPredicate
-      lateinit var manualModeSelected: ComponentPredicate
 
       buttonsGroup {
         row {
@@ -41,64 +31,6 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
             .comment(VueBundle.message("vue.configurable.service.auto.help"))
             .also { autoModeSelected = it.selected }
         }
-        row {
-          radioButton(VueBundle.message("vue.configurable.service.manual"), VueLSMode.MANUAL)
-            .comment(VueBundle.message("vue.configurable.service.manual.help"))
-            .also { manualModeSelected = it.selected }
-        }
-
-        indent {
-          lateinit var mode: SegmentedButton<VueSettings.ManualMode>
-
-          row {
-            mode = segmentedButton(
-              items = VueSettings.ManualMode.entries,
-              renderer = {
-                text = it.displayName
-              },
-            ).bind(settings.manualSettings::mode.toNullableProperty())
-          }.apply {
-            rowComment(VueBundle.message("vue.configurable.service.manual.description"))
-          }
-
-          // Takeover mode lsp
-          row(VueBundle.message("vue.configurable.service.languageServerPackage")) {
-            cell(
-              createNodePackageField(project, VueLspServerTakeoverModeLoader.packageDescriptor)
-            ).align(AlignX.FILL)
-              .bindPackage(settings.manualSettings::lspServerPackage)
-          }.visibleIf(mode.isSelected(
-            VueSettings.ManualMode.ONLY_LSP_SERVER,
-          ))
-
-          // Hybrid mode lsp
-          row(VueBundle.message("vue.configurable.service.languageServerPackage")) {
-            cell(
-              createBundledNodePackageField(
-                project = project,
-                packages = getVueLspHybridModePackages(project),
-              )
-            ).align(AlignX.FILL)
-              .bindPackage(settings.manualSettings::lspHybridModePackage)
-          }.visibleIf(mode.isSelected(
-            VueSettings.ManualMode.HYBRID_MODE,
-          ))
-
-          row(VueBundle.message("vue.configurable.service.typescriptPluginPackage")) {
-            cell(
-              createBundledNodePackageField(
-                project = project,
-                packages = getVueTSPluginNodePackages(project),
-              )
-            ).align(AlignX.FILL)
-              .bindPackage(settings.manualSettings::tsPluginPackage)
-          }.visibleIf(mode.isSelected(
-            VueSettings.ManualMode.ONLY_TS_PLUGIN,
-            VueSettings.ManualMode.HYBRID_MODE,
-          ))
-
-        }.visibleIf(manualModeSelected)
-
       }.bind(settings::serviceType)
 
       separator()
@@ -117,8 +49,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
     }
 
     /**
-     * We don't restart services in [VueSettings] because it's tricky to avoid race condition there
-     * when two fields (ts plugin and lsp hybrid mode packages) are updated simultaneously.
+     * We don't restart services in [VueSettings]; the configurable restarts them on apply instead.
      */
     var lastAppliedState = settings.state
 
@@ -137,18 +68,4 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
   override fun getHelpTopic(): String = "settings.vue"
 
   override fun getDisplayName(): String = VueBundle.message("vue.configurable.title")
-}
-
-private fun SegmentedButton<VueSettings.ManualMode>.isSelected(
-  vararg modes: VueSettings.ManualMode,
-): ComponentPredicate {
-  return object : ComponentPredicate() {
-    override fun invoke(): Boolean {
-      return modes.contains(selectedItem)
-    }
-
-    override fun addListener(listener: (Boolean) -> Unit) {
-      whenItemSelected { listener(invoke()) }
-    }
-  }
 }

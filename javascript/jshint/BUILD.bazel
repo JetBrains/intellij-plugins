@@ -1,13 +1,15 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.javascript.jshint` start
 dev_dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
+    jars = {
+        "lib/javascript-jshint.jar": ["intellij.javascript.jshint"],
+    },
     main_module = "intellij.javascript.jshint",
-    module_targets = MODULE_TARGETS,
 )
 ### auto-generated section `dev intellij.javascript.jshint` end
 
@@ -46,7 +48,6 @@ jvm_library(
         "@community//platform/refactoring",
         "@community//platform/util/jdom",
         "@community//platform/util:util-ui",
-        "//webcore/impl",
         "//plugins/JavaScriptLanguage/javascript-parser",
         "//plugins/JavaScriptLanguage/javascript-backend",
         "//plugins/JavaScriptLanguage/javascript-common",
@@ -90,7 +91,6 @@ jvm_library(
         "@community//platform/refactoring:refactoring_test_lib",
         "@community//platform/util/jdom:jdom_test_lib",
         "@community//platform/util:util-ui_test_lib",
-        "//webcore/impl:impl_test_lib",
         "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
         "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
         "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
@@ -104,6 +104,12 @@ jvm_library(
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
         "@community//spellchecker:spellchecker_test_lib",
     ],
+)
+
+ij_plugin(
+    name = "jshint_plugin",
+    descriptor_module = ":jshint",
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.javascript.jshint` end
 

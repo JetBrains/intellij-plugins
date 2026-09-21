@@ -1,5 +1,6 @@
 package org.intellij.plugin.mdx.js
 
+import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorModificationUtilEx
@@ -18,6 +19,7 @@ internal class MdxBraceTypedHandler : TypedHandlerDelegate() {
   override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): Result {
     if (c != '{') return Result.CONTINUE
     if (file.viewProvider !is MdxFileViewProvider) return Result.CONTINUE
+    if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return Result.CONTINUE
 
     val offset = editor.caretModel.offset
     val text = editor.document.charsSequence

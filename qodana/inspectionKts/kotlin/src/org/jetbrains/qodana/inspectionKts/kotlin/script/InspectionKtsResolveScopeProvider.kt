@@ -6,7 +6,7 @@ import com.intellij.psi.ResolveScopeProvider
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.base.projectStructure.isKotlinBinary
-import org.jetbrains.qodana.inspectionKts.InspectionKtsRegistry
+import org.jetbrains.qodana.inspectionKts.core.InspectionKtsRegistry
 
 // QD-8717 FlexInspect (.inspection.kts): unresolved Kotlin PSI APIs if the Kotlin is present in the gradle kts project
 internal class InspectionKtsResolveScopeProvider : ResolveScopeProvider() {

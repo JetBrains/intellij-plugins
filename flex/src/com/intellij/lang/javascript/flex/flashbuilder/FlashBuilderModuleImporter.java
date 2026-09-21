@@ -39,7 +39,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -214,7 +214,7 @@ public class FlashBuilderModuleImporter {
       final Collection<String> cssPaths = new ArrayList<>();
       for (final String path : fbProject.getCssFilesToCompile()) {
         final String cssPath = getAbsolutePathWithLinksHandled(fbProject, path);
-        final VirtualFile cssFile = LocalFileSystem.getInstance().findFileByPath(cssPath);
+        final VirtualFile cssFile = StandardFileSystems.local().findFileByPath(cssPath);
         if (cssFile != null) {
           cssPaths.add(cssFile.getPath());
         }
@@ -273,7 +273,7 @@ public class FlashBuilderModuleImporter {
     if (bc.getOutputType() == OutputType.Library) {
       bc.getCompilerOptions().setFilesToIncludeInSWC(ContainerUtil.mapNotNull(paths, path -> {
         for (VirtualFile srcRoot : rootModel.getSourceRoots()) {
-          final VirtualFile assetFile = LocalFileSystem.getInstance().findFileByPath(srcRoot.getPath() + "/" + path);
+          final VirtualFile assetFile = StandardFileSystems.local().findFileByPath(srcRoot.getPath() + "/" + path);
           if (assetFile != null) {
             return assetFile.getPath();
           }
@@ -535,7 +535,7 @@ public class FlashBuilderModuleImporter {
   }
 
   private static void addSourceRoot(final ContentEntry contentEntry, final String sourceUrl) {
-    final VirtualFile srcDir = LocalFileSystem.getInstance().findFileByPath(VfsUtilCore.urlToPath(sourceUrl));
+    final VirtualFile srcDir = StandardFileSystems.local().findFileByPath(VfsUtilCore.urlToPath(sourceUrl));
 
     final Ref<Boolean> testClassesFound = Ref.create(false);
     final Ref<Boolean> nonTestClassesFound = Ref.create(false);
@@ -683,7 +683,7 @@ public class FlashBuilderModuleImporter {
 
   private static Map<String, String> loadEclipsePathVariables(final String workspacePath) {
     final Map<String, String> eclipsePathVariables = new HashMap<>();
-    final VirtualFile prefsFile = LocalFileSystem.getInstance().findFileByPath(workspacePath + CORE_RESOURCES_PREFS_REL_PATH);
+    final VirtualFile prefsFile = StandardFileSystems.local().findFileByPath(workspacePath + CORE_RESOURCES_PREFS_REL_PATH);
     if (prefsFile == null) return eclipsePathVariables;
 
     final Properties properties = new Properties();

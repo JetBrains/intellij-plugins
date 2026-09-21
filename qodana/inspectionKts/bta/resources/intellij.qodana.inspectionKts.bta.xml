@@ -1,0 +1,28 @@
+<idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.kotlin.buildToolsRuntime"/>
+    <module name="intellij.libraries.kotlinx.coroutines.core"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.analysis.impl"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.editor.ui"/>
+    <module name="intellij.platform.ide"/>
+    <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.ide.progress"/>
+    <module name="intellij.qodana.inspectionKts.base"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey defaultValue="true"
+                 description="Compile .inspection.kts via Kotlin Build Tools API instead of the deprecated Kotlin compiler daemon"
+                 key="qd.inspection.kts.use.bta"
+                 restartRequired="true"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.qodana.inspectionKts">
+    <btaCompiler implementation="org.jetbrains.qodana.inspectionKts.bta.QodanaBtaInspectionKtsCompiler"/>
+  </extensions>
+</idea-plugin>

@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.javascript.bower` start
@@ -25,7 +26,6 @@ jvm_library(
         "@community//platform/platform-util-io:ide-util-io",
         "@community//libraries/gson",
         "@community//platform/projectModel-api:projectModel",
-        "//webcore/impl",
         "@community//libraries/guava",
         "@community//platform/ide-core",
         "@community//platform/lang-impl",
@@ -61,7 +61,6 @@ jvm_library(
         "@community//platform/platform-util-io:ide-util-io_test_lib",
         "@community//libraries/gson:gson_test_lib",
         "@community//platform/projectModel-api:projectModel_test_lib",
-        "//webcore/impl:impl_test_lib",
         "@community//libraries/guava:guava_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
         "@community//platform/lang-impl:lang-impl_test_lib",
@@ -77,6 +76,12 @@ jvm_library(
         "@community//platform/util/concurrency:concurrency_test_lib",
         "@community//platform/execution:execution_test_lib",
     ],
+)
+
+ij_plugin(
+    name = "bower_plugin",
+    descriptor_module = ":bower",
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.javascript.bower` end
 

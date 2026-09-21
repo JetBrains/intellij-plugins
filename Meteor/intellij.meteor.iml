@@ -37,8 +37,6 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.handlebars" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
-    <orderEntry type="module" module-name="intellij.platform.webide" />
-    <orderEntry type="module" module-name="intellij.platform.webide.impl" />
     <orderEntry type="module" module-name="intellij.javascript.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />

@@ -24,7 +24,7 @@ import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vcs.history.VcsRevisionNumber;
 import com.intellij.openapi.vcs.impl.ContentRevisionCache;
 import com.intellij.openapi.vcs.versionBrowser.ChangeBrowserSettings;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
@@ -1310,7 +1310,7 @@ public final class PerforceRunner implements PerforceRunnerI {
 
     LinkedHashMap<String, BaseRevision> map = processResolveOutput(execResult.getStdout());
     for (String path : map.keySet()) {
-      VirtualFile element = LocalFileSystem.getInstance().findFileByPath(path);
+      VirtualFile element = StandardFileSystems.local().findFileByPath(path);
       if (element != null) {
         result.add(element);
       }

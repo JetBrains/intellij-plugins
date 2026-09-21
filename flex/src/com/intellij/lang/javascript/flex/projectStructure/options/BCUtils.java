@@ -26,7 +26,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.SimpleColoredText;
@@ -136,7 +136,7 @@ public final class BCUtils {
     final String playerFolderPath = sdkHome == null ? null : sdkHome + "/frameworks/libs/player";
     if (playerFolderPath != null) {
       final VirtualFile playerDir = ApplicationManager.getApplication().runWriteAction((NullableComputable<VirtualFile>)() -> {
-        final VirtualFile playerFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(playerFolderPath);
+        final VirtualFile playerFolder = StandardFileSystems.local().refreshAndFindFileByPath(playerFolderPath);
         if (playerFolder != null && playerFolder.isDirectory()) {
           playerFolder.refresh(false, true);
           return playerFolder;

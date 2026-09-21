@@ -27,7 +27,7 @@ import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -78,7 +78,7 @@ public final class GaugeConsoleProperties extends SMTRunnerConsoleProperties imp
     return (protocol, path, project, globalSearchScope) -> {
       try {
         String[] fileInfo = path.split(GaugeConstants.SPEC_SCENARIO_DELIMITER);
-        VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fileInfo[0]);
+        VirtualFile file = StandardFileSystems.local().findFileByPath(fileInfo[0]);
         if (file == null) return new ArrayList<>();
         PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
         if (psiFile == null) return new ArrayList<>();

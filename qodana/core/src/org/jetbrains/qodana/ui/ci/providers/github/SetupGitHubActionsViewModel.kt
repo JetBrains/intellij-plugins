@@ -11,8 +11,8 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.NlsContexts
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.findDirectory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -219,7 +219,7 @@ class SetupGitHubActionsViewModel(
 
     val newNioPath = newStringPath.toNioPathSafe()
     val isNewPathConfig = newNioPath != null && isConfigPath(newNioPath)
-    val newVirtualFile = readAction { newNioPath?.let { LocalFileSystem.getInstance().findFileByNioFile(newNioPath) } }
+    val newVirtualFile = readAction { newNioPath?.let { VirtualFileManager.getInstance().findFileByNioPath(newNioPath) } }
 
     if (isNewPathConfig && newVirtualFile != null) {
       val newConfigState = if (newVirtualFile.alreadyContainsQodana()) {

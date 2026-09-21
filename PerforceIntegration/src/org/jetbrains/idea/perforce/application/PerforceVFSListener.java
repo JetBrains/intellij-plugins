@@ -14,7 +14,6 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsVFSListener;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.LastUnchangedContentTracker;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -68,7 +67,7 @@ public final class PerforceVFSListener extends VcsVFSListener {
       public void after(@NotNull List<? extends @NotNull VFileEvent> events) {
         for (VFileEvent event : events) {
           if (event instanceof VFileCreateEvent) {
-            if (!(event.getFileSystem() instanceof LocalFileSystem)) continue;
+            if (!event.getFileSystem().isLocal()) continue;
             FilePath filePath = VcsUtil.getFilePath(event.getPath());
             if (!isUnderMyVcs(filePath)) continue; //call event.getFile() only for the file path under Perforce VCS
 

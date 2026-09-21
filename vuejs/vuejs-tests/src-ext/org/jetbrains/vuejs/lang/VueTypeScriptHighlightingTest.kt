@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.typescript.TypeScriptHighlightingWithoutServerTest
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
@@ -61,13 +61,13 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingWithoutServerTest() 
   private fun skipTest() = toFix.contains(getTestName(false))
 
   override fun configureEditorFile(name: String?) {
-    val tsFile = LocalFileSystem.getInstance().findFileByPath("$testDataPath/$name")
+    val tsFile = StandardFileSystems.local().findFileByPath("$testDataPath/$name")
     val text: Any = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
     myFixture.configureByText(VueFileType, surroundWithScriptTag(text))
   }
 
   override fun checkEditorText(ext: String?) {
-    val tsFile = LocalFileSystem.getInstance().findFileByPath("$testDataPath/${getTestName(false)}_after.$ext")
+    val tsFile = StandardFileSystems.local().findFileByPath("$testDataPath/${getTestName(false)}_after.$ext")
     val text: Any = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
     myFixture.checkResult(surroundWithScriptTag(text))
   }

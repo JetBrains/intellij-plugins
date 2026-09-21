@@ -47,7 +47,7 @@ internal enum class TftplVariableType(@Nls val presentableName: String, val icon
   EXTERNAL_VARIABLE(TftplBundle.message("tftpl.external.variable.title"), AllIcons.Ide.ConfigFile)
 }
 
-@RequiresReadLock
+@RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
 internal fun collectAvailableVariables(currentNode: PsiElement): Sequence<TftplVariable> {
   return collectLocalVariables(currentNode) + collectCallSiteVariables(currentNode)
 }

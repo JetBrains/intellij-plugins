@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.typed
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeOwner
@@ -65,8 +66,12 @@ class VueTypedComponent private constructor(
           ?.let { componentDefinition ->
             when (componentDefinition) {
               is JSTypeOwner ->
-                componentDefinition.jsType
-                  ?.let { getFromVueFile(it) ?: JSApplyNewType(it, it.source).substitute() }
+                componentDefinition.jsType?.let {
+                  getFromVueFile(it)
+                  ?: JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(componentDefinition) {
+                    JSApplyNewType(it, it.source).substitute()
+                  }
+                }
               is TypeScriptClass ->
                 componentDefinition.jsType
               else -> null

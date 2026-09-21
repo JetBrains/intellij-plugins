@@ -1,17 +1,16 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `dev intellij.phoneGap` start
 dev_dist_plugin(
-    main_module = "intellij.phoneGap",
-    module_targets = MODULE_TARGETS,
-    prepacked_content_modules = [
+    content_modules = [
         # do not sort,
         "intellij.phoneGap.core",
         "intellij.phoneGap.javascript",
     ],
+    main_module = "intellij.phoneGap",
 )
 ### auto-generated section `dev intellij.phoneGap` end
 
@@ -49,6 +48,17 @@ jvm_library(
     module_name = "intellij.phoneGap",
     visibility = ["//visibility:public"],
     runtime_deps = [":phoneGap"],
+)
+
+ij_plugin(
+    name = "phoneGap_plugin",
+    descriptor_module = ":phoneGap",
+    content_modules = [
+        # do not sort,
+        "//contrib/phoneGap/core",
+        "//contrib/phoneGap/javascript",
+    ],
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.phoneGap` end
 

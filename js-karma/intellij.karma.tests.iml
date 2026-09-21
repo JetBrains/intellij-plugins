@@ -32,7 +32,6 @@
     <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.debugger" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.coverage" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.webide.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.wip.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.wip.protocol" scope="TEST" />

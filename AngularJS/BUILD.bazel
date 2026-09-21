@@ -1,18 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
-
-### auto-generated section `dev intellij.angularJS` start
-dev_dist_plugin(
-    libraries = [
-        "@ultimate_lib//:angular_j_s-oleaster-matcher",
-        "@ultimate_lib//:angular_j_s-oleaster-runner",
-    ],
-    main_module = "intellij.angularJS",
-    module_targets = MODULE_TARGETS,
-)
-### auto-generated section `dev intellij.angularJS` end
 
 ### auto-generated section `build intellij.angularJS` start
 jvm_library(
@@ -75,7 +63,6 @@ jvm_library(
         "@community//platform/util:util-ui",
         "@community//libraries/fastutil",
         "@community//images",
-        "//webcore/impl",
         "//plugins/css/common/psi",
         "//plugins/css/common",
         "//plugins/JavaScriptLanguage/diagrams",
@@ -172,7 +159,6 @@ jvm_library(
         "@community//images:images_test_lib",
         "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
         "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
-        "//webcore/impl:impl_test_lib",
         "//plugins/css/common/psi:psi_test_lib",
         "//plugins/css/common:common_test_lib",
         "//plugins/JavaScriptLanguage/javascript-common",
@@ -185,6 +171,12 @@ jvm_library(
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
         "@community//json:json_test_lib",
     ],
+)
+
+ij_plugin(
+    name = "angularJS_plugin",
+    descriptor_module = ":angularJS",
+    visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.angularJS` end
 
@@ -347,8 +339,6 @@ jvm_library(
         "@community//images:images_test_lib",
         "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
         "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
-        "//webcore/impl",
-        "//webcore/impl:impl_test_lib",
         "//plugins/css/common/psi",
         "//plugins/css/common/psi:psi_test_lib",
         "//plugins/css/common",

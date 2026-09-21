@@ -14,8 +14,9 @@ import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.webcore.util.JsonUtil;
@@ -112,7 +113,7 @@ public final class JSHintConfigFileUtil {
   }
 
   public static @Nullable JSHintConfigLookupResult loadConfigByPath(@NotNull String configFilePath) {
-    LocalFileSystem fileSystem = LocalFileSystem.getInstance();
+    VirtualFileSystem fileSystem = StandardFileSystems.local();
     String systemIndependentPath = FileUtil.toSystemIndependentName(configFilePath);
     VirtualFile file = fileSystem.findFileByPath(systemIndependentPath);
     if (file == null || !file.isValid()) {

@@ -1,3 +1,5 @@
+<!-- BUILD_USING_BAZEL_MARKER: this plugin is also packaged by the `ij_plugin` Bazel rule, and IjPluginDistributionEquivalenceTest
+     checks that the result matches the distribution produced by the build scripts. See IJPL-251444. -->
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/AngularJS">
   <id>com.intellij.angularjs</id>
   <name>AngularJS</name>
@@ -35,6 +37,7 @@
     <module name="intellij.platform.analysis"/>
     <module name="intellij.platform.codeStyle"/>
     <module name="intellij.platform.codeStyle.impl"/>
+    <module name="intellij.platform.concurrency"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.core.impl"/>
     <module name="intellij.platform.core.ui"/>
@@ -49,7 +52,6 @@
     <module name="intellij.platform.projectModel"/>
     <module name="intellij.platform.refactoring"/>
     <module name="intellij.platform.util.ui"/>
-    <module name="intellij.platform.webide.impl"/>
     <module name="intellij.regexp"/>
     <module name="intellij.xml.impl"/>
     <module name="intellij.xml.parser"/>

@@ -6,7 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.VcsConfiguration;
 import com.intellij.openapi.vcs.VcsDirectoryMapping;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
@@ -121,7 +121,7 @@ public class PerforceWindowsTest extends TestCase {
       tc.addFile("foo/b.txt");
       tc.submitDefaultList("initial");
       new File(tc.myClientRoot, "foo/a.txt").createNewFile();
-      LocalFileSystem.getInstance().refresh(false);
+      StandardFileSystems.local().refresh(false);
 
       tc.refreshInfoAndClient();
       tc.refreshChanges();
@@ -148,7 +148,7 @@ public class PerforceWindowsTest extends TestCase {
     }
     finally {
       try {
-        VirtualFile root = LocalFileSystem.getInstance().findFileByPath(drive + ":/");
+        VirtualFile root = StandardFileSystems.local().findFileByPath(drive + ":/");
         if (root != null) {
           for (VirtualFile file : root.getChildren()) {
             file.delete(this);

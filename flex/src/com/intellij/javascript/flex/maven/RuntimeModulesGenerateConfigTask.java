@@ -6,7 +6,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.JDOMUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
@@ -93,7 +93,7 @@ public final class RuntimeModulesGenerateConfigTask extends MavenProjectsProcess
     MavenUtil.invokeAndWaitWriteAction(project, () -> {
       // need to refresh externally created file
       for (RLMInfo info : myRlmInfos) {
-        final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(info.myConfigFilePath);
+        final VirtualFile file = StandardFileSystems.local().refreshAndFindFileByPath(info.myConfigFilePath);
         if (file != null) {
           file.refresh(false, false);
         }
@@ -102,7 +102,7 @@ public final class RuntimeModulesGenerateConfigTask extends MavenProjectsProcess
   }
 
   private static @Nullable Element getClonedRootElementOfMainConfigFile(final String filePath) {
-    final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    final VirtualFile configFile = StandardFileSystems.local().findFileByPath(filePath);
     if (configFile != null) {
       try {
         final Element element = JDOMUtil.load(configFile.getInputStream());

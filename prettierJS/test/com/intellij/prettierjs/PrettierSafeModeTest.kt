@@ -4,7 +4,7 @@ package com.intellij.prettierjs
 import com.intellij.ide.trustedProjects.TrustedFiles
 import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.TrustedProjectsTestUtil
@@ -31,7 +31,7 @@ class PrettierSafeModeTest : HeavyPlatformTestCase() {
   fun testUntrustedFileBlocksFormattingUntilItsPathIsTrusted() {
     val outsidePath = tempDir.createDir().resolve("app.ts")
     Files.writeString(outsidePath, "let   a =    1")
-    val file = requireNotNull(LocalFileSystem.getInstance().refreshAndFindFileByNioFile(outsidePath))
+    val file = requireNotNull(VirtualFileManager.getInstance().refreshAndFindFileByNioPath(outsidePath))
     TrustedFiles.markExternallyOpened(file)
 
     assertFalse(TrustedFiles.isTrusted(file, project))

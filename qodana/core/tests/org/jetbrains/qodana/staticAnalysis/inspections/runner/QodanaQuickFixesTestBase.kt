@@ -1,7 +1,9 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.application.options.CodeStyle
+import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.toCanonicalPath
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.readText
@@ -73,6 +75,9 @@ abstract class QodanaQuickFixesTestBase(private val strategy: FixesStrategy) : Q
     uris.forEach { uri ->
       val file = VfsUtil.findRelativeFile(uri, projectDir)!!
       assertSameLinesWithFile(afterFixesPath.resolve(file.name).toCanonicalPath(), file.readText())
+      val document = FileDocumentManager.getInstance().getCachedDocument(file)
+      assertNull("FORMAT_DOCUMENT_SYNCHRONOUSLY leaked on ${file.name}",
+                 document?.getUserData(AsyncDocumentFormattingService.FORMAT_DOCUMENT_SYNCHRONOUSLY))
     }
   }
 }

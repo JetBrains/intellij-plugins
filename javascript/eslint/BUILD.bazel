@@ -1,25 +1,40 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
+load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "MODULE_TARGETS")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
-# Checkout directories that plugin layouts copy into a distribution verbatim (`withResource*`). They are
-# resolved against the module content root and exist in no jar, so a dev assembly that materializes its own
-# project tree has to declare them. Consumed through `ULTIMATE_EXTRA_PROJECT_FILES`.
+### auto-generated section `dev intellij.javascript.eslint` start
 filegroup(
     name = "dev_dist_resources",
-    srcs = glob(["plugin-resources/**"]),
+    srcs = glob(
+        ["plugin-resources/**"],
+    ),
     visibility = ["//visibility:public"],
 )
 
-### auto-generated section `dev intellij.javascript.eslint` start
 dev_dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
     main_module = "intellij.javascript.eslint",
-    module_targets = MODULE_TARGETS,
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/javascript/eslint:eslint.jar": "intellij.javascript.eslint",
+    },
+    descriptor = "//contrib/javascript/eslint:intellij.javascript.eslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.javascript.eslint",
+    product = "idea",
+    product_info = "//build/dev-dist-descriptors:idea_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/javascript/eslint/plugin-resources",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/javascript/eslint:dev_dist_resources",
+    },
 )
 ### auto-generated section `dev intellij.javascript.eslint` end
 
@@ -73,7 +88,6 @@ ij_plugin_module(
         "@community//platform/util:util-ui",
         "@community//platform/util/concurrency",
         "@community//platform/statistics",
-        "//webcore/impl",
         "@community//platform/lvcs-api:lvcs",
         "@community//platform/util/jdom",
         "@community//libraries/gson",
@@ -127,7 +141,6 @@ jvm_library(
         "@community//platform/util:util-ui_test_lib",
         "@community//platform/util/concurrency:concurrency_test_lib",
         "@community//platform/statistics:statistics_test_lib",
-        "//webcore/impl:impl_test_lib",
         "@community//platform/lvcs-api:lvcs_test_lib",
         "@community//platform/util/jdom:jdom_test_lib",
         "@community//libraries/gson:gson_test_lib",
@@ -282,10 +295,6 @@ jvm_library(
         "@community//platform/statistics/testFramework:testFramework_test_lib",
         "@community//platform/polySymbols:polySymbols-testFramework",
         "@community//platform/polySymbols:polySymbols-testFramework_test_lib",
-        "//webcore:webide",
-        "//webcore:webide_test_lib",
-        "//webcore/impl",
-        "//webcore/impl:impl_test_lib",
         "@community//platform/wsl-impl",
         "@community//platform/wsl-impl:wsl-impl_test_lib",
         "@community//json",

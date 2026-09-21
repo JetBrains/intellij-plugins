@@ -46,7 +46,7 @@ internal class ESLintActionOnSave : ActionsOnSaveFileDocumentManagerListener.Doc
     }
   }
 
-  @RequiresReadLock
+  @RequiresReadLock(generateAssertion = false /* IJPL-115548 */)
   private fun getActionAndFileToProcess(project: Project, document: Document): Pair<EsLintFixAction, PsiFile>? {
     val action = when {
       EslintConfiguration.getInstance(project).isFixOnSaveEnabled -> EsLintFixAction()

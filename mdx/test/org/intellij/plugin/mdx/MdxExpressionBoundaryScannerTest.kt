@@ -3,6 +3,7 @@ package org.intellij.plugin.mdx
 import com.intellij.testFramework.junit5.TestApplication
 import org.intellij.plugin.mdx.lang.parse.MdxExpressionBoundaryScanner
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 @TestApplication
@@ -39,6 +40,81 @@ class MdxExpressionBoundaryScannerTest {
   @Test
   fun malformedMarkdownLikeJavaScriptStillEndsAtHostBrace() {
     assertExpressionEnd("{[Target](./target.mdx)}")
+  }
+
+  @Test
+  fun malformedRecoveryAttemptsAreBoundedAcrossSearches() {
+    val budget = MdxExpressionBoundaryScanner.RecoveryBudget()
+    val adversarialExpression = "{`" + "}".repeat(MdxExpressionBoundaryScanner.MALFORMED_RECOVERY_ATTEMPT_LIMIT * 64)
+
+    assertEquals(
+      emptyList<Int>(),
+      MdxExpressionBoundaryScanner.findExpressionEndCandidates(
+        adversarialExpression,
+        0,
+        adversarialExpression.length,
+        budget,
+      ),
+    )
+    assertTrue(budget.exhausted)
+
+    val anotherExpression = "{`}"
+    assertEquals(
+      emptyList<Int>(),
+      MdxExpressionBoundaryScanner.findExpressionEndCandidates(anotherExpression, 0, anotherExpression.length, budget),
+    )
+  }
+
+  @Test
+  fun incrementalSessionMatchesFreshScansForValidAndMalformedInput() {
+    val expressions = listOf(
+      """
+        {{
+          nested: {
+            value: `template value`,
+          },
+        }}
+      """.trimIndent(),
+      "{value.replace(/[/}]/g, '')}",
+      "{() => <Item value={{ nested: true }} />}",
+      "{[Target](./target.mdx)}",
+      "{/unterminated",
+      "{\"unterminated",
+    )
+
+    for (text in expressions) {
+      val session = MdxExpressionBoundaryScanner.Session(text, 0)
+      for (limit in lineEnds(text)) {
+        assertEquals(
+          MdxExpressionBoundaryScanner.findExpressionEnd(text, 0, limit),
+          session.advanceTo(limit),
+          "expression=$text, limit=$limit",
+        )
+      }
+    }
+  }
+
+  @Test
+  fun incrementalSessionDoesNotReadBeyondExposedPrefix() {
+    val expressions = listOf(
+      "{/} /}",
+      $$"{`before ${value} after`}",
+      "{/* comment } */ value}",
+    )
+
+    for (text in expressions) {
+      val guarded = PrefixGuardCharSequence(text)
+      guarded.expose(1)
+      val session = MdxExpressionBoundaryScanner.Session(guarded, 0)
+      for (limit in 1..text.length) {
+        guarded.expose(limit)
+        assertEquals(
+          MdxExpressionBoundaryScanner.findExpressionEnd(text, 0, limit),
+          session.advanceTo(limit),
+          "expression=$text, limit=$limit",
+        )
+      }
+    }
   }
 
   private fun assertExpressionEnd(text: String) {

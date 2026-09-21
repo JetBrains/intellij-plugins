@@ -1,3 +1,5 @@
+<!-- BUILD_USING_BAZEL_MARKER: this plugin is also packaged by the `ij_plugin` Bazel rule, and IjPluginDistributionEquivalenceTest
+     checks that the result matches the distribution produced by the build scripts. See IJPL-251444. -->
 <idea-plugin>
   <id>jshint</id>
   <name>JSHint</name>
@@ -24,6 +26,7 @@
     <module name="intellij.libraries.guava"/>
     <module name="intellij.libraries.kotlinx.collections.immutable"/>
     <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.concurrency"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.core.impl"/>
     <module name="intellij.platform.core.ui"/>
@@ -37,7 +40,6 @@
     <module name="intellij.platform.projectModel"/>
     <module name="intellij.platform.refactoring"/>
     <module name="intellij.platform.util.ui"/>
-    <module name="intellij.platform.webide.impl"/>
     <module name="intellij.spellchecker"/>
   </dependencies>
   <!-- endregion -->

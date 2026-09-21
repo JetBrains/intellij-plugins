@@ -22,7 +22,7 @@ import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
 import com.intellij.openapi.vcs.history.VcsFileRevision;
 import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -278,7 +278,7 @@ public class OfflineModeTest extends PerforceTestCase {
     verify(runP4WithClient("edit", ioFile.getAbsolutePath()));
     FileUtil.writeToFile(ioFile, "new content");
 
-    final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(ioFile);
+    final VirtualFile file = StandardFileSystems.local().refreshAndFindFileByPath(ioFile.getAbsolutePath());
     refreshChanges();
     getSingleChange();
 
