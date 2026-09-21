@@ -35,12 +35,6 @@ class GoCoverageInspection : CoverageInspectionBase() {
   @Suppress("MemberVisibilityCanBePrivate")
   var fileThreshold: Int = 50
 
-  companion object {
-    private val go = Key.create<Lazy<ProjectData?>>("qodana.go.coverage")
-    private val goProjectData = Key.create<GoCoverageProjectData>("qodana.go.coverage.projectData")
-    private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.go.normalizedPaths")
-  }
-
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(go, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
       val data = computeCoverageData(globalContext, GoCoverageEngine::class, GoCoverageFileProvider) ?: return@lazy null
@@ -179,4 +173,5 @@ class GoCoverageInspection : CoverageInspectionBase() {
 }
 
 private val go = Key.create<Lazy<ProjectData?>>("qodana.go.coverage")
+private val goProjectData = Key.create<GoCoverageProjectData>("qodana.go.coverage.projectData")
 private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.go.normalizedPaths")

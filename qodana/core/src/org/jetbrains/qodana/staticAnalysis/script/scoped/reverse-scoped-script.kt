@@ -12,7 +12,6 @@ import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_INSPECTIONS_NAMES
-import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
@@ -161,7 +160,7 @@ internal abstract class ReverseScopedScript(val skipCoverageComputation: Boolean
   DefaultScript(runContextFactory, AnalysisKind.INCREMENTAL) {
 
   override suspend fun createGlobalInspectionContext(runContext: QodanaRunContext): QodanaGlobalInspectionContext {
-    val computationState = computeCoverageState(skipCoverageComputation, QodanaCoverageComputationState.SKIP_REPORT)
+    val computationState = computeCoverageState(skipCoverageComputation)
     return runContext.createGlobalInspectionContext(coverageComputationState = computationState)
   }
 

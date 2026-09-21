@@ -94,7 +94,6 @@ internal class ScopedScript(runContextFactory: ScopedRunContextFactory) :
 
 internal fun computeCoverageState(
   skipCoverageComputation: Boolean,
-  defaultState: QodanaCoverageComputationState? = null,
 ): QodanaCoverageComputationState {
   // qodana-cli selects one coverage mode for each scoped stage. Result-producing stages use INCREMENTAL_REPORT.
   val requestedStates = buildList {
@@ -105,9 +104,7 @@ internal fun computeCoverageState(
   if (requestedStates.size > 1) {
     throw QodanaException("More than one coverage computation mode is set")
   }
-  return requestedStates.singleOrNull()
-         ?: defaultState
-         ?: throw QodanaException("Coverage computation mode is not set")
+  return requestedStates.singleOrNull() ?: throw QodanaException("Coverage computation mode is not set")
 }
 
 
