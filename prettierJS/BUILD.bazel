@@ -27,8 +27,62 @@ dev_dist_complex_plugin(
     execution_version = 2,
     independent_artifacts = ["//contrib/prettierJS/prettierJS-eslint:eslint_content_module_jar"],
     main_module = "intellij.prettierJS",
+    product = "CLion",
+    product_info = "//build/dev-dist-descriptors:CLion_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/prettierJS/gen/prettierLanguageService",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/prettierJS:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/prettierJS:prettierJS.jar": "intellij.prettierJS",
+    },
+    descriptor = "//contrib/prettierJS:intellij.prettierJS_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = ["//contrib/prettierJS/prettierJS-eslint:eslint_content_module_jar"],
+    main_module = "intellij.prettierJS",
     product = "idea",
     product_info = "//build/dev-dist-descriptors:idea_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/prettierJS/gen/prettierLanguageService",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/prettierJS:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/prettierJS:prettierJS.jar": "intellij.prettierJS",
+    },
+    descriptor = "//contrib/prettierJS:intellij.prettierJS_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = ["//contrib/prettierJS/prettierJS-eslint:eslint_content_module_jar"],
+    main_module = "intellij.prettierJS",
+    product = "Rider",
+    product_info = "//build/dev-dist-descriptors:Rider_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/prettierJS/gen/prettierLanguageService",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/prettierJS:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/prettierJS:prettierJS.jar": "intellij.prettierJS",
+    },
+    descriptor = "//contrib/prettierJS:intellij.prettierJS_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = ["//contrib/prettierJS/prettierJS-eslint:eslint_content_module_jar"],
+    main_module = "intellij.prettierJS",
+    product = "RustRover",
+    product_info = "//build/dev-dist-descriptors:RustRover_product_info",
     source_tree_prefixes = {
         "module-resource:0:source": "contrib/prettierJS/gen/prettierLanguageService",
     },

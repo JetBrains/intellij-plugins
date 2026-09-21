@@ -10,6 +10,14 @@ dev_dist_plugin(
         "intellij.jade.css",
         "intellij.jade.watcher",
     ],
+    descriptor = "resources/META-INF/plugin.xml",
+    descriptor_modules = [
+        "intellij.jade.css",
+        "intellij.jade.watcher",
+    ],
+    jars = {
+        "lib/jade.jar": ["intellij.jade"],
+    },
     main_module = "intellij.jade",
 )
 ### auto-generated section `dev intellij.jade` end

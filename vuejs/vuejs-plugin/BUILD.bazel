@@ -49,8 +49,98 @@ dev_dist_complex_plugin(
         "//contrib/vuejs/vuejs-webpack:webpack_content_module_jar",
     ],
     main_module = "intellij.vuejs.plugin",
+    product = "CLion",
+    product_info = "//build/dev-dist-descriptors:CLion_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/vuejs/vuejs-backend/vue-language-tools",
+        "module-resource:1:source": "contrib/vuejs/vuejs-backend/gen-resources/vue-service",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/vuejs/vuejs-backend:dev_dist_resources",
+        "module-resource:1:source": "//contrib/vuejs/vuejs-backend:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/vuejs/vuejs-backend:backend.jar": "intellij.vuejs.backend",
+        "//contrib/vuejs/vuejs-plugin:plugin.jar": "intellij.vuejs.plugin",
+    },
+    descriptor = "//contrib/vuejs/vuejs-plugin:intellij.vuejs.plugin_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = [
+        "//contrib/vuejs/vuejs-prettier:prettier_content_module_jar",
+        "//contrib/vuejs/vuejs-copyright:copyright_content_module_jar",
+        "//contrib/vuejs/vuejs-debugger:debugger_content_module_jar",
+        "//contrib/vuejs/vuejs-markdown:markdown_content_module_jar",
+        "//contrib/vuejs/vue-free:free_content_module_jar",
+        "//contrib/vuejs/vuejs-common:common_content_module_jar",
+        "//contrib/vuejs/vuejs-eslint:eslint_content_module_jar",
+        "//contrib/vuejs/vuejs-webpack:webpack_content_module_jar",
+    ],
+    main_module = "intellij.vuejs.plugin",
     product = "idea",
     product_info = "//build/dev-dist-descriptors:idea_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/vuejs/vuejs-backend/vue-language-tools",
+        "module-resource:1:source": "contrib/vuejs/vuejs-backend/gen-resources/vue-service",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/vuejs/vuejs-backend:dev_dist_resources",
+        "module-resource:1:source": "//contrib/vuejs/vuejs-backend:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/vuejs/vuejs-backend:backend.jar": "intellij.vuejs.backend",
+        "//contrib/vuejs/vuejs-plugin:plugin.jar": "intellij.vuejs.plugin",
+    },
+    descriptor = "//contrib/vuejs/vuejs-plugin:intellij.vuejs.plugin_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = [
+        "//contrib/vuejs/vuejs-prettier:prettier_content_module_jar",
+        "//contrib/vuejs/vuejs-copyright:copyright_content_module_jar",
+        "//contrib/vuejs/vuejs-debugger:debugger_content_module_jar",
+        "//contrib/vuejs/vuejs-markdown:markdown_content_module_jar",
+        "//contrib/vuejs/vue-free:free_content_module_jar",
+        "//contrib/vuejs/vuejs-common:common_content_module_jar",
+        "//contrib/vuejs/vuejs-eslint:eslint_content_module_jar",
+        "//contrib/vuejs/vuejs-webpack:webpack_content_module_jar",
+    ],
+    main_module = "intellij.vuejs.plugin",
+    product = "Rider",
+    product_info = "//build/dev-dist-descriptors:Rider_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/vuejs/vuejs-backend/vue-language-tools",
+        "module-resource:1:source": "contrib/vuejs/vuejs-backend/gen-resources/vue-service",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/vuejs/vuejs-backend:dev_dist_resources",
+        "module-resource:1:source": "//contrib/vuejs/vuejs-backend:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/vuejs/vuejs-backend:backend.jar": "intellij.vuejs.backend",
+        "//contrib/vuejs/vuejs-plugin:plugin.jar": "intellij.vuejs.plugin",
+    },
+    descriptor = "//contrib/vuejs/vuejs-plugin:intellij.vuejs.plugin_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = [
+        "//contrib/vuejs/vuejs-prettier:prettier_content_module_jar",
+        "//contrib/vuejs/vuejs-copyright:copyright_content_module_jar",
+        "//contrib/vuejs/vuejs-debugger:debugger_content_module_jar",
+        "//contrib/vuejs/vuejs-markdown:markdown_content_module_jar",
+        "//contrib/vuejs/vue-free:free_content_module_jar",
+        "//contrib/vuejs/vuejs-common:common_content_module_jar",
+        "//contrib/vuejs/vuejs-eslint:eslint_content_module_jar",
+        "//contrib/vuejs/vuejs-webpack:webpack_content_module_jar",
+    ],
+    main_module = "intellij.vuejs.plugin",
+    product = "RustRover",
+    product_info = "//build/dev-dist-descriptors:RustRover_product_info",
     source_tree_prefixes = {
         "module-resource:0:source": "contrib/vuejs/vuejs-backend/vue-language-tools",
         "module-resource:1:source": "contrib/vuejs/vuejs-backend/gen-resources/vue-service",

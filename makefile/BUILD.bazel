@@ -9,6 +9,14 @@ dev_dist_plugin(
         "intellij.makefile.spellchecker",
         "intellij.makefile.terminal",
     ],
+    descriptor = "resources/META-INF/plugin.xml",
+    descriptor_modules = [
+        "intellij.makefile.spellchecker",
+        "intellij.makefile.terminal",
+    ],
+    jars = {
+        "lib/makefile.jar": ["intellij.makefile"],
+    },
     main_module = "intellij.makefile",
 )
 ### auto-generated section `dev intellij.makefile` end

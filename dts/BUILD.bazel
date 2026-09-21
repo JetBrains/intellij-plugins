@@ -9,6 +9,14 @@ dev_dist_plugin(
         "intellij.dts.cmake",
         "intellij.dts.pp",
     ],
+    descriptor = "resources/META-INF/plugin.xml",
+    descriptor_modules = ["intellij.dts.cmake"],
+    jars = {
+        "lib/dts.jar": [
+            "intellij.dts",
+            "intellij.dts.pp",
+        ],
+    },
     main_module = "intellij.dts",
 )
 ### auto-generated section `dev intellij.dts` end

@@ -6,6 +6,11 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 ### auto-generated section `dev intellij.handlebars` start
 dev_dist_plugin(
     content_modules = ["intellij.handlebars.javascript"],
+    descriptor = "resources/META-INF/plugin.xml",
+    descriptor_modules = ["intellij.handlebars.javascript"],
+    jars = {
+        "lib/handlebars.jar": ["intellij.handlebars"],
+    },
     main_module = "intellij.handlebars",
 )
 ### auto-generated section `dev intellij.handlebars` end

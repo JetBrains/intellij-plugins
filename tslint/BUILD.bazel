@@ -24,8 +24,59 @@ dev_dist_complex_plugin(
     descriptor = "//contrib/tslint:intellij.tslint_dev_descriptor",
     execution_version = 2,
     main_module = "intellij.tslint",
+    product = "CLion",
+    product_info = "//build/dev-dist-descriptors:CLion_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/tslint/gen/js",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/tslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/tslint:tslint.jar": "intellij.tslint",
+    },
+    descriptor = "//contrib/tslint:intellij.tslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.tslint",
     product = "idea",
     product_info = "//build/dev-dist-descriptors:idea_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/tslint/gen/js",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/tslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/tslint:tslint.jar": "intellij.tslint",
+    },
+    descriptor = "//contrib/tslint:intellij.tslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.tslint",
+    product = "Rider",
+    product_info = "//build/dev-dist-descriptors:Rider_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/tslint/gen/js",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/tslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/tslint:tslint.jar": "intellij.tslint",
+    },
+    descriptor = "//contrib/tslint:intellij.tslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.tslint",
+    product = "RustRover",
+    product_info = "//build/dev-dist-descriptors:RustRover_product_info",
     source_tree_prefixes = {
         "module-resource:0:source": "contrib/tslint/gen/js",
     },

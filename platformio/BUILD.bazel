@@ -4,6 +4,11 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 ### auto-generated section `dev intellij.clion.embedded.platformio` start
 dev_dist_plugin(
     content_modules = ["intellij.clion.embedded.platformio.terminal"],
+    descriptor = "resources/META-INF/plugin.xml",
+    descriptor_modules = ["intellij.clion.embedded.platformio.terminal"],
+    jars = {
+        "lib/clion-embedded-platformio.jar": ["intellij.clion.embedded.platformio"],
+    },
     main_module = "intellij.clion.embedded.platformio",
 )
 ### auto-generated section `dev intellij.clion.embedded.platformio` end

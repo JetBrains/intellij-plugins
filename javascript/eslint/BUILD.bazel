@@ -27,8 +27,59 @@ dev_dist_complex_plugin(
     descriptor = "//contrib/javascript/eslint:intellij.javascript.eslint_dev_descriptor",
     execution_version = 2,
     main_module = "intellij.javascript.eslint",
+    product = "CLion",
+    product_info = "//build/dev-dist-descriptors:CLion_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/javascript/eslint/plugin-resources",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/javascript/eslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/javascript/eslint:eslint.jar": "intellij.javascript.eslint",
+    },
+    descriptor = "//contrib/javascript/eslint:intellij.javascript.eslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.javascript.eslint",
     product = "idea",
     product_info = "//build/dev-dist-descriptors:idea_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/javascript/eslint/plugin-resources",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/javascript/eslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/javascript/eslint:eslint.jar": "intellij.javascript.eslint",
+    },
+    descriptor = "//contrib/javascript/eslint:intellij.javascript.eslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.javascript.eslint",
+    product = "Rider",
+    product_info = "//build/dev-dist-descriptors:Rider_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/javascript/eslint/plugin-resources",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/javascript/eslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/javascript/eslint:eslint.jar": "intellij.javascript.eslint",
+    },
+    descriptor = "//contrib/javascript/eslint:intellij.javascript.eslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.javascript.eslint",
+    product = "RustRover",
+    product_info = "//build/dev-dist-descriptors:RustRover_product_info",
     source_tree_prefixes = {
         "module-resource:0:source": "contrib/javascript/eslint/plugin-resources",
     },
