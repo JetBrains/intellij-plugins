@@ -24,7 +24,6 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
@@ -33,6 +32,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspec
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalInspectionDescriptor
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolIssue
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolsProvider
+import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
 
@@ -124,93 +124,39 @@ internal open class DartAnalyzeGlobalInspection(
     val qodanaContext = globalContext as? QodanaGlobalInspectionContext ?: return
     if (!qodanaContext.hasEnabledDartAnalyzeTool()) return
 
-    val allModules = findDartModules(qodanaContext.config.projectPath)
-    val modules = allModules.filter { it.intersects(scope, allModules) }
-    val reportedDiagnostics = HashSet<String>()
+    val analysisDirectory = qodanaContext.analysisDirectory()
     val job = JobDescriptor(QodanaDartBundle.message("inspection.dart.analyze.progress"))
-    job.totalAmount = modules.size
+    job.totalAmount = 1
 
-    for (module in modules) {
-      LOG.info("Found ${module.type.name} module at '${module.path.toQodanaLogPath(qodanaContext.config.projectPath)}'")
-      LOG.info("Analyzing ${module.type.name} module '${module.path.toQodanaLogPath(qodanaContext.config.projectPath)}'")
-      when (val result = runBlockingCancellable { analyze(module) }) {
-        is DartAnalyzeRunResult.Success -> {
-          result.diagnostics.forEach { diagnostic ->
-            if (diagnostic.belongsTo(module, allModules)) {
-              val key = diagnostic.deduplicationKey(module.path)
-              if (reportedDiagnostics.add(key)) {
-                registerProblem(diagnostic, module.path, manager, globalContext, problemDescriptionsProcessor)
-              }
-            }
-          }
-        }
-        is DartAnalyzeRunResult.Failure -> {
-          if (qodanaContext.isToolEnabled(result.inspectionId)) {
-            registerProblem(result, module, qodanaContext)
-          }
+    LOG.info("Analyzing Dart project at '${analysisDirectory.toQodanaLogPath(qodanaContext.config.projectPath)}'")
+    when (val result = runBlockingCancellable { analyze(analysisDirectory) }) {
+      is DartAnalyzeRunResult.Success -> result.diagnostics.forEach { diagnostic ->
+        registerProblem(diagnostic, analysisDirectory, manager, globalContext, problemDescriptionsProcessor)
+      }
+      is DartAnalyzeRunResult.Failure -> {
+        if (qodanaContext.isToolEnabled(result.inspectionId)) {
+          registerProblem(result, analysisDirectory, qodanaContext)
         }
       }
-      LOG.info("Finished analyzing ${module.type.name} module '${module.path.toQodanaLogPath(qodanaContext.config.projectPath)}'")
-      val modulePath: @NlsSafe String = module.path.toQodanaLogPath(qodanaContext.config.projectPath)
-      globalContext.incrementJobDoneAmount(job, modulePath)
     }
+    LOG.info("Finished analyzing Dart project at '${analysisDirectory.toQodanaLogPath(qodanaContext.config.projectPath)}'")
+    val directoryPath: @NlsSafe String = analysisDirectory.toQodanaLogPath(qodanaContext.config.projectPath)
+    globalContext.incrementJobDoneAmount(job, directoryPath)
   }
 
-  private suspend fun analyze(module: DartModule): DartAnalyzeRunResult = runnerFactory.create().analyze(module.path)
-
-  private fun DartModule.intersects(scope: AnalysisScope, modules: List<DartModule>): Boolean {
-    val moduleRoot = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(path) ?: return false
-    val nestedModuleRoots = modules.asSequence()
-      .filter { it != this && it.path.startsWith(path) }
-      .mapNotNull { LocalFileSystem.getInstance().refreshAndFindFileByNioFile(it.path) }
-      .toSet()
-    var intersects = false
-    VfsUtilCore.iterateChildrenRecursively(moduleRoot, { file ->
-      !file.isDirectory || file == moduleRoot || file !in nestedModuleRoots
-    }) { file ->
-      if (!file.isDirectory && scope.contains(file)) {
-        intersects = true
-        false
-      }
-      else {
-        true
-      }
-    }
-    return intersects
-  }
-
-  private fun DartAnalyzeDiagnostic.belongsTo(module: DartModule, modules: List<DartModule>): Boolean {
-    val file = location?.file ?: return true
-    val filePath = runCatching {
-      Path.of(file).let { if (it.isAbsolute) it else module.path.resolve(it) }.toAbsolutePath().normalize()
-    }.getOrNull() ?: return true
-    val owner = modules
-      .map { it.path.toAbsolutePath().normalize() }
-      .filter { filePath.startsWith(it) }
-      .maxByOrNull(Path::getNameCount)
-    return owner == null || owner == module.path.toAbsolutePath().normalize()
-  }
-
-  private fun DartAnalyzeDiagnostic.deduplicationKey(modulePath: Path): String {
-    val filePath = location?.file?.let { file ->
-      runCatching {
-        Path.of(file).let { if (it.isAbsolute) it else modulePath.resolve(it) }.toAbsolutePath().normalize()
-      }.getOrNull()
-    } ?: modulePath.toAbsolutePath().normalize()
-    return listOf(code, filePath, location?.offset, location?.length).joinToString("\u0000")
-  }
+  private suspend fun analyze(analysisDirectory: Path): DartAnalyzeRunResult = runnerFactory.create().analyze(analysisDirectory)
 
   private fun registerProblem(
     failure: DartAnalyzeRunResult.Failure,
-    module: DartModule,
+    analysisDirectory: Path,
     qodanaContext: QodanaGlobalInspectionContext,
   ) {
-    val modulePath: @NlsSafe String = module.path.toQodanaLogPath(qodanaContext.config.projectPath)
+    val directoryPath: @NlsSafe String = analysisDirectory.toQodanaLogPath(qodanaContext.config.projectPath)
     val issue = ExternalToolIssue(
       failure.inspectionId,
       HighlightDisplayLevel.ERROR,
-      QodanaDartBundle.message("dart.analyze.error.module", modulePath, failure.message),
-      module = modulePath,
+      QodanaDartBundle.message("dart.analyze.error.module", directoryPath, failure.message),
+      module = directoryPath,
     )
     qodanaContext.consumer.consume(listOf(issue.toElement()), failure.inspectionId)
   }
@@ -227,7 +173,7 @@ internal open class DartAnalyzeGlobalInspection(
     if (location == null || file == null) {
       return registerProblem(
         DartAnalyzeRunResult.Failure(diagnostic.description(), diagnostic.inspectionId()),
-        DartModule(projectPath, DartModuleType.DART),
+        projectPath,
         globalContext as? QodanaGlobalInspectionContext ?: return,
       )
     }
@@ -316,6 +262,12 @@ internal class DartAnalyzeGlobalInspectionContextFactory : InspectionExtensionsF
 
 private fun QodanaGlobalInspectionContext.hasEnabledDartAnalyzeTool(): Boolean =
   effectiveProfile.tools.any { it.isEnabled && it.shortName == DART_ANALYZE_SHORT_NAME }
+
+private fun QodanaGlobalInspectionContext.analysisDirectory(): Path {
+  val onlyDirectory = config.onlyDirectory ?: return config.projectPath
+  val resolved = onlyDirectory.let { if (it.isAbsolute) it else config.projectPath.resolve(it) }
+  return resolved.takeIf(Files::isDirectory) ?: config.projectPath
+}
 
 private fun QodanaGlobalInspectionContext.isFileInInspectionScope(inspectionId: String, psiFile: PsiFile): Boolean {
   val tools = effectiveProfile.getToolsOrNull(inspectionId, project) ?: return false

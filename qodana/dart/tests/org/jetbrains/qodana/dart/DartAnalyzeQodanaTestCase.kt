@@ -60,10 +60,10 @@ internal abstract class DartAnalyzeQodanaTestCase : QodanaRunnerTestCase() {
   protected fun sarifResultPaths(): List<String> =
     manager.sarifRun.results.map { it.singleLocation().physicalLocation.artifactLocation.uri }.sorted()
 
-  protected fun assertRecordedAnalyzedModules(vararg modules: String) {
+  protected fun assertRecordedAnalysisDirectories(vararg directories: String) {
     assertEquals(
-      "Unexpected analyzed Dart modules",
-      modules.toList().sorted(),
+      "Unexpected Dart analysis directories",
+      directories.toList().sorted(),
       analyzerExecutions.filter { it.first == "analyze" }.map { it.second }.sorted(),
     )
   }
@@ -77,7 +77,7 @@ internal abstract class DartAnalyzeProjectQodanaTestCase : DartAnalyzeQodanaTest
   override val testDataBasePath: Path = Path.of(javaClass.simpleName)
 
   protected open val projectSourcePath: Path
-    get() = testData.resolve(testDataBasePath).resolve("sources")
+    get() = testData.resolve(testDataBasePath).resolve("sources/test-module")
 
   override fun createTestStructure() {
     val projectRoot = Path.of(project.basePath!!)
