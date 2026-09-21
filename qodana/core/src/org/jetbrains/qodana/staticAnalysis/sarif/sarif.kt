@@ -46,6 +46,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.getQodanaProductName
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.qodanaProductCode
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.qodanaEnv
@@ -177,8 +178,7 @@ internal fun configProfile(profile: LoadedProfile) =
 private fun createDriver(): ToolComponent {
   val appInfo = ApplicationInfo.getInstance()
 
-  val productCode = ApplicationInfo.getInstance().build.productCode
-  return ToolComponent(productCode)
+  return ToolComponent(qodanaProductCode())
     .withFullName(getQodanaProductName())
     .withVersion(appInfo.build.asStringWithoutProductCode())
     .withRules(mutableListOf())

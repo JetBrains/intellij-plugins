@@ -189,7 +189,10 @@ class QodanaInspectionApplicationFactory {
         return null
       }
     }
-    return QodanaInspectionApplication(qodanaConfig, projectApi)
+    // A baseline file always wins, so the analysis asks Qodana Cloud only when the command line gives none.
+    val downloaded = if (qodanaConfig.baseline != null) null else projectApi?.let { cloudBaseline(it.frontendUrl) }
+    val config = downloaded?.let { qodanaConfig.copy(baseline = it.toString(), baselineFromCloud = true) } ?: qodanaConfig
+    return QodanaInspectionApplication(config, projectApi)
   }
 
   private fun determineScript(cli: CommandLine, config: QodanaYamlConfig): QodanaScriptConfig =

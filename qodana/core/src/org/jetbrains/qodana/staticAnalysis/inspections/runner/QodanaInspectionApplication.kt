@@ -147,7 +147,19 @@ class QodanaInspectionApplication(
 
       publishFixedProblemsReport(sarif)
     }
+    logUsedBaseline()
     return sarif
+  }
+
+  /** Tells which baseline the analysis used, because the problems of the report depend on it. */
+  private fun logUsedBaseline() {
+    val baseline = config.baseline
+    val message = when {
+      baseline == null -> QodanaBundle.message("baseline.used.none")
+      config.baselineFromCloud -> QodanaBundle.message("baseline.used.cloud")
+      else -> QodanaBundle.message("baseline.used.file", baseline)
+    }
+    reporter.reportMessage(1, message)
   }
 
   private suspend fun publishFixedProblemsReport(sarif: SarifReport) {
