@@ -1,6 +1,17 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+### auto-generated section `dev intellij.gherkin` start
+dev_dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {
+        "lib/gherkin.jar": ["intellij.gherkin"],
+    },
+    main_module = "intellij.gherkin",
+)
+### auto-generated section `dev intellij.gherkin` end
 
 ### auto-generated section `build intellij.gherkin` start
 resourcegroup(

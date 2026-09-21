@@ -41,8 +41,76 @@ dev_dist_complex_plugin(
     descriptor = "//contrib/tslint:intellij.tslint_dev_descriptor",
     execution_version = 2,
     main_module = "intellij.tslint",
+    product = "PhpStorm",
+    product_info = "//build/dev-dist-descriptors:PhpStorm_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/tslint/gen/js",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/tslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/tslint:tslint.jar": "intellij.tslint",
+    },
+    descriptor = "//contrib/tslint:intellij.tslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.tslint",
+    product = "Ruby",
+    product_info = "//build/dev-dist-descriptors:Ruby_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/tslint/gen/js",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/tslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/tslint:tslint.jar": "intellij.tslint",
+    },
+    descriptor = "//contrib/tslint:intellij.tslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.tslint",
+    product = "WebStorm",
+    product_info = "//build/dev-dist-descriptors:WebStorm_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/tslint/gen/js",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/tslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/tslint:tslint.jar": "intellij.tslint",
+    },
+    descriptor = "//contrib/tslint:intellij.tslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.tslint",
     product = "idea",
     product_info = "//build/dev-dist-descriptors:idea_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/tslint/gen/js",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/tslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/tslint:tslint.jar": "intellij.tslint",
+    },
+    descriptor = "//contrib/tslint:intellij.tslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.tslint",
+    product = "Python",
+    product_info = "//build/dev-dist-descriptors:Python_product_info",
     source_tree_prefixes = {
         "module-resource:0:source": "contrib/tslint/gen/js",
     },

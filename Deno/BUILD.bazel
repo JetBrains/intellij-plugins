@@ -1,6 +1,7 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
@@ -10,6 +11,30 @@ pkg_files(
     prefix = "deno-service",
     strip_prefix = strip_prefix.from_pkg("gen-resources/deno-service"),
 )
+
+### auto-generated section `dev intellij.deno` start
+filegroup(
+    name = "dev_dist_resources",
+    srcs = glob(
+        ["gen-resources/deno-service/**"],
+    ),
+    visibility = ["//visibility:public"],
+)
+
+dev_dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    file_prefixes = {
+        "deno-service": "contrib/Deno/gen-resources/deno-service",
+    },
+    files = {
+        "deno-service": "//contrib/Deno:dev_dist_resources",
+    },
+    jars = {
+        "lib/deno.jar": ["intellij.deno"],
+    },
+    main_module = "intellij.deno",
+)
+### auto-generated section `dev intellij.deno` end
 
 ### auto-generated section `build intellij.deno` start
 resourcegroup(

@@ -1,6 +1,40 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+### auto-generated section `dev intellij.prisma` start
+filegroup(
+    name = "dev_dist_resources",
+    srcs = glob(
+        ["gen-resources/language-server/**"],
+    ),
+    visibility = ["//visibility:public"],
+)
+
+dev_dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    main_module = "intellij.prisma",
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/prisma:prisma.jar": "intellij.prisma",
+    },
+    descriptor = "//contrib/prisma:intellij.prisma_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.prisma",
+    product = "WebStorm",
+    product_info = "//build/dev-dist-descriptors:WebStorm_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/prisma/gen-resources/language-server",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/prisma:dev_dist_resources",
+    },
+)
+### auto-generated section `dev intellij.prisma` end
 
 ### auto-generated section `build intellij.prisma` start
 create_kotlinc_options(

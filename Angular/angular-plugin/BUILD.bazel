@@ -55,8 +55,104 @@ dev_dist_complex_plugin(
         "//contrib/Angular/angular-tslint:angular-tslint_content_module_jar",
     ],
     main_module = "intellij.angular.plugin",
+    product = "PhpStorm",
+    product_info = "//build/dev-dist-descriptors:PhpStorm_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/Angular/angular-backend/gen-resources/ngCli",
+        "module-resource:1:source": "contrib/Angular/angular-backend/gen-resources/angular-service",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/Angular/angular-backend:dev_dist_resources",
+        "module-resource:1:source": "//contrib/Angular/angular-backend:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/Angular/angular-backend:angular-backend.jar": "intellij.angular.backend",
+        "//contrib/Angular/angular-plugin:angular-plugin.jar": "intellij.angular.plugin",
+    },
+    descriptor = "//contrib/Angular/angular-plugin:intellij.angular.plugin_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = [
+        "//contrib/Angular/angular-free:angular-free_content_module_jar",
+        "//contrib/Angular/angular-tslint:angular-tslint_content_module_jar",
+    ],
+    main_module = "intellij.angular.plugin",
+    product = "Ruby",
+    product_info = "//build/dev-dist-descriptors:Ruby_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/Angular/angular-backend/gen-resources/ngCli",
+        "module-resource:1:source": "contrib/Angular/angular-backend/gen-resources/angular-service",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/Angular/angular-backend:dev_dist_resources",
+        "module-resource:1:source": "//contrib/Angular/angular-backend:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/Angular/angular-backend:angular-backend.jar": "intellij.angular.backend",
+        "//contrib/Angular/angular-plugin:angular-plugin.jar": "intellij.angular.plugin",
+    },
+    descriptor = "//contrib/Angular/angular-plugin:intellij.angular.plugin_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = [
+        "//contrib/Angular/angular-free:angular-free_content_module_jar",
+        "//contrib/Angular/angular-tslint:angular-tslint_content_module_jar",
+    ],
+    main_module = "intellij.angular.plugin",
+    product = "WebStorm",
+    product_info = "//build/dev-dist-descriptors:WebStorm_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/Angular/angular-backend/gen-resources/ngCli",
+        "module-resource:1:source": "contrib/Angular/angular-backend/gen-resources/angular-service",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/Angular/angular-backend:dev_dist_resources",
+        "module-resource:1:source": "//contrib/Angular/angular-backend:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/Angular/angular-backend:angular-backend.jar": "intellij.angular.backend",
+        "//contrib/Angular/angular-plugin:angular-plugin.jar": "intellij.angular.plugin",
+    },
+    descriptor = "//contrib/Angular/angular-plugin:intellij.angular.plugin_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = [
+        "//contrib/Angular/angular-free:angular-free_content_module_jar",
+        "//contrib/Angular/angular-tslint:angular-tslint_content_module_jar",
+    ],
+    main_module = "intellij.angular.plugin",
     product = "idea",
     product_info = "//build/dev-dist-descriptors:idea_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/Angular/angular-backend/gen-resources/ngCli",
+        "module-resource:1:source": "contrib/Angular/angular-backend/gen-resources/angular-service",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/Angular/angular-backend:dev_dist_resources",
+        "module-resource:1:source": "//contrib/Angular/angular-backend:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/Angular/angular-backend:angular-backend.jar": "intellij.angular.backend",
+        "//contrib/Angular/angular-plugin:angular-plugin.jar": "intellij.angular.plugin",
+    },
+    descriptor = "//contrib/Angular/angular-plugin:intellij.angular.plugin_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = [
+        "//contrib/Angular/angular-free:angular-free_content_module_jar",
+        "//contrib/Angular/angular-tslint:angular-tslint_content_module_jar",
+    ],
+    main_module = "intellij.angular.plugin",
+    product = "Python",
+    product_info = "//build/dev-dist-descriptors:Python_product_info",
     source_tree_prefixes = {
         "module-resource:0:source": "contrib/Angular/angular-backend/gen-resources/ngCli",
         "module-resource:1:source": "contrib/Angular/angular-backend/gen-resources/angular-service",

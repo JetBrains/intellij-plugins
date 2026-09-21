@@ -10,6 +10,16 @@ dev_dist_plugin(
         "intellij.terraform.copyright",
         "intellij.terraform.template",
     ],
+    descriptor = "res/META-INF/plugin.xml",
+    descriptor_modules = [
+        "intellij.terraform.copyright",
+        "intellij.terraform.template",
+        "intellij.terraform.watchers",
+    ],
+    jars = {
+        "lib/terraform.jar": ["intellij.terraform"],
+        "lib/terraform-metadata.jar": ["@ultimate_lib//:terraform-terraform-metadata"],
+    },
     main_module = "intellij.terraform",
 )
 ### auto-generated section `dev intellij.terraform` end

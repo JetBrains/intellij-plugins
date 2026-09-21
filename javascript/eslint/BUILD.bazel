@@ -44,8 +44,93 @@ dev_dist_complex_plugin(
     descriptor = "//contrib/javascript/eslint:intellij.javascript.eslint_dev_descriptor",
     execution_version = 2,
     main_module = "intellij.javascript.eslint",
+    product = "GoLand",
+    product_info = "//build/dev-dist-descriptors:GoLand_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/javascript/eslint/plugin-resources",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/javascript/eslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/javascript/eslint:eslint.jar": "intellij.javascript.eslint",
+    },
+    descriptor = "//contrib/javascript/eslint:intellij.javascript.eslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.javascript.eslint",
+    product = "PhpStorm",
+    product_info = "//build/dev-dist-descriptors:PhpStorm_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/javascript/eslint/plugin-resources",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/javascript/eslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/javascript/eslint:eslint.jar": "intellij.javascript.eslint",
+    },
+    descriptor = "//contrib/javascript/eslint:intellij.javascript.eslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.javascript.eslint",
+    product = "Ruby",
+    product_info = "//build/dev-dist-descriptors:Ruby_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/javascript/eslint/plugin-resources",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/javascript/eslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/javascript/eslint:eslint.jar": "intellij.javascript.eslint",
+    },
+    descriptor = "//contrib/javascript/eslint:intellij.javascript.eslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.javascript.eslint",
+    product = "WebStorm",
+    product_info = "//build/dev-dist-descriptors:WebStorm_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/javascript/eslint/plugin-resources",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/javascript/eslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/javascript/eslint:eslint.jar": "intellij.javascript.eslint",
+    },
+    descriptor = "//contrib/javascript/eslint:intellij.javascript.eslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.javascript.eslint",
     product = "idea",
     product_info = "//build/dev-dist-descriptors:idea_product_info",
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/javascript/eslint/plugin-resources",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/javascript/eslint:dev_dist_resources",
+    },
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/javascript/eslint:eslint.jar": "intellij.javascript.eslint",
+    },
+    descriptor = "//contrib/javascript/eslint:intellij.javascript.eslint_dev_descriptor",
+    execution_version = 2,
+    main_module = "intellij.javascript.eslint",
+    product = "Python",
+    product_info = "//build/dev-dist-descriptors:Python_product_info",
     source_tree_prefixes = {
         "module-resource:0:source": "contrib/javascript/eslint/plugin-resources",
     },

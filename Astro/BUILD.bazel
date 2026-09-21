@@ -1,5 +1,6 @@
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
@@ -14,6 +15,35 @@ pkg_files(
     srcs = glob(["typescript-astro-plugin/**"]),
     strip_prefix = strip_prefix.from_pkg(),
 )
+
+### auto-generated section `dev intellij.astro` start
+filegroup(
+    name = "dev_dist_resources",
+    srcs = glob(
+        [
+            "astro-language-server/**",
+            "typescript-astro-plugin/**",
+        ],
+    ),
+    visibility = ["//visibility:public"],
+)
+
+dev_dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    file_prefixes = {
+        "astro-language-server": "contrib/Astro/astro-language-server",
+        "typescript-astro-plugin": "contrib/Astro/typescript-astro-plugin",
+    },
+    files = {
+        "astro-language-server": "//contrib/Astro:dev_dist_resources",
+        "typescript-astro-plugin": "//contrib/Astro:dev_dist_resources",
+    },
+    jars = {
+        "lib/astro.jar": ["intellij.astro"],
+    },
+    main_module = "intellij.astro",
+)
+### auto-generated section `dev intellij.astro` end
 
 ### auto-generated section `build intellij.astro` start
 ij_plugin_module(
