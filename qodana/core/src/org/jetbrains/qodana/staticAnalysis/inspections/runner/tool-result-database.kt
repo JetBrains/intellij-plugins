@@ -55,6 +55,7 @@ private const val SELECT_INSPECTION_IDS = "SELECT DISTINCT inspection FROM resul
 
 private const val INSERT_DUPLICATES_STATEMENT = "INSERT INTO duplicates VALUES (?, ?, ?, ?, ?, ?);"
 private const val SELECT_DUPLICATES_STATEMENT = "SELECT json FROM duplicates WHERE file = ? AND line = ? AND start = ? ORDER BY hash;"
+private const val SELECT_DUPLICATES_IN_FILE_STATEMENT = "SELECT json FROM duplicates WHERE file = ? ORDER BY line, start LIMIT 1;"
 
 private const val INSERT_RELATED_PROBLEM = "INSERT INTO related_problem VALUES (?, ?);"
 private const val SELECT_RELATED_PROBLEM = "SELECT json FROM related_problem WHERE hash = ?;"
@@ -118,6 +119,19 @@ class QodanaToolResultDatabase private constructor(private val connection: Sqlit
     return StringColumnClosableQuery(statement)
   }
 
+  /**
+   * Selects the first duplicate row of [file], in the order of the position.
+   * An empty result means the duplicated code inspection reported nothing in [file],
+   * so the inspection never ran on it.
+   * The order matches the prefix of `idx_duplicates_location`, so the index serves it.
+   */
+  fun selectDuplicateInFile(file: String): StringColumnClosableQuery {
+    val binder = ObjectBinder(paramCount = 1)
+    val statement = connection.prepareStatement(SELECT_DUPLICATES_IN_FILE_STATEMENT, binder)
+    binder.bind(file)
+    return StringColumnClosableQuery(statement)
+  }
+
   fun getResultsFromMetricsTable(@Language("SQLite") query: String, numberOfColumns: Int): MetricColumnClosableQuery {
     val statement = connection.prepareStatement(query, EmptyBinder)
     return MetricColumnClosableQuery(statement, numberOfColumns)
@@ -148,7 +162,8 @@ class QodanaToolResultDatabase private constructor(private val connection: Sqlit
             resultSet.getString(index)!!
           }
           yield(values)
-        } catch (e: Exception) {
+        }
+        catch (e: Exception) {
           yield(emptyArray())
         }
       }
