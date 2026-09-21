@@ -80,7 +80,7 @@ class PhpCoverageInspectionTest: QodanaCoverageInspectionTest("PhpCoverageInspec
   @Test
   fun incrementalSecondStage() {
     runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
-    assertChangedLines(mapOf("src/FooCls.php" to setOf(14, 15, 16)))
+    assertChangedLines(mapOf("src/FooCls.php" to (21..28).toSet() + (70..72).toSet()))
     assertCoverageProjectDataMatchesGolden("PhpUnitCoverageEngine", "PhpUnitCoverageEngine.xml")
     assertSarifResults()
   }
@@ -94,15 +94,21 @@ class PhpCoverageInspectionTest: QodanaCoverageInspectionTest("PhpCoverageInspec
   }
 
   private companion object {
-    // bar() of FooCls: lines 14-16 are covered (count=1 in coverage.xml), so fresh coverage is non-zero.
+    // The scope includes partially covered baz() and uncovered BaseClass lines.
     private const val SCOPE = """
       {
         "files" : [ {
           "path" : "src/FooCls.php",
-          "added" : [ {
-            "firstLine" : 14,
-            "count" : 3
-          } ],
+          "added" : [
+            {
+              "firstLine" : 21,
+              "count" : 8
+            },
+            {
+              "firstLine" : 70,
+              "count" : 3
+            }
+          ],
           "deleted" : [ ]
         } ]
       }

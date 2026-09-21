@@ -59,6 +59,177 @@
               "go"
             ]
           }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'Gaz' coverage is below the threshold 50%",
+            "markdown": "Method `Gaz` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "coverage.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 6,
+                  "charOffset": 362,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "Gaz"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 34,
+                  "startColumn": 1,
+                  "charOffset": 357,
+                  "charLength": 28,
+                  "snippet": {
+                    "text": "func Gaz(x int) func() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "710958aa0557bfb4",
+            "equalIndicator/v1": "6c425667ed793176595f68b1e9705f04d9218d3b3cff2192504c71d9189c7970"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method '(anonymous function in Gaz)' coverage is below the threshold 50%",
+            "markdown": "Method `(anonymous function in Gaz)` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "coverage.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 7,
+                  "charOffset": 392,
+                  "charLength": 12,
+                  "snippet": {
+                    "text": "func() int {"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 35,
+                  "startColumn": 1,
+                  "charOffset": 386,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "\tf := func() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "411b337f00bf9c85",
+            "equalIndicator/v1": "d17f9c8cca534d6bad9615fedc6ca041759a28de212f601b717fb4f6a588a400"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "go"
+            ]
+          }
+        },
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method '(anonymous function in Gaz)' coverage is below the threshold 50%",
+            "markdown": "Method `(anonymous function in Gaz)` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "coverage.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 40,
+                  "startColumn": 7,
+                  "charOffset": 459,
+                  "charLength": 12,
+                  "snippet": {
+                    "text": "func() int {"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 40,
+                  "startColumn": 1,
+                  "charOffset": 453,
+                  "charLength": 18,
+                  "snippet": {
+                    "text": "\tg := func() int {"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "b6ac20ce4c82ac66",
+            "equalIndicator/v1": "d17594a1c1b0d4d50587506e9f913a2ec4068494d9f7d1edb0aeed015434adb7"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "go"
+            ]
+          }
         }
       ],
       "automationDetails": {
@@ -78,9 +249,9 @@
           "totalCoverage": 47,
           "totalLines": 72,
           "totalCoveredLines": 34,
-          "freshCoverage": 100,
-          "freshLines": 3,
-          "freshCoveredLines": 3
+          "freshCoverage": 30,
+          "freshLines": 13,
+          "freshCoveredLines": 4
         }
       }
     }

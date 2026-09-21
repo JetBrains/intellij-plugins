@@ -78,7 +78,7 @@ class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspect
   @Test
   fun incrementalSecondStage() {
     runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
-    assertChangedLines(mapOf("src/FooCls.py" to setOf(11, 12, 13)))
+    assertChangedLines(mapOf("src/FooCls.py" to (20..27).toSet()))
     assertCoverageProjectDataMatchesGolden("PyCoverageEngine", "PyCoverageEngine.xml")
     assertSarifResults()
   }
@@ -92,14 +92,14 @@ class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspect
   }
 
   private companion object {
-    // bar() of FooCls.py: lines 11-13 are covered (hits > 0 in coverage.xml), so fresh coverage is non-zero.
+    // The scope includes covered and uncovered lines from baz().
     private const val SCOPE = """
       {
         "files" : [ {
           "path" : "src/FooCls.py",
           "added" : [ {
-            "firstLine" : 11,
-            "count" : 3
+            "firstLine" : 20,
+            "count" : 8
           } ],
           "deleted" : [ ]
         } ]

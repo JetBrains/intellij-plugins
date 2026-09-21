@@ -59,6 +59,177 @@
               "TypeScript"
             ]
           }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'baz' coverage is below the threshold 50%",
+            "markdown": "Method `baz` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 3,
+                  "charOffset": 413,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "baz"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 26,
+                  "startColumn": 1,
+                  "charOffset": 411,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "  baz(i: number): number {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "c1b66e8a46a6af41",
+            "equalIndicator/v1": "1d573131c72bd1ef6e55388b5b28f7175d276e44890f4067bc2857b632240933"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class 'BarCls' coverage is below the threshold 50%",
+            "markdown": "Class `BarCls` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 58,
+                  "startColumn": 14,
+                  "charOffset": 884,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "BarCls"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 58,
+                  "startColumn": 1,
+                  "charOffset": 871,
+                  "charLength": 21,
+                  "snippet": {
+                    "text": "export class BarCls {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "6ffd617bf1bb1c5b",
+            "equalIndicator/v1": "622f5aef5add14fa6c294b1241fdca10d9269f708b1dc354a986ebebc5bfa020"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JavaScript"
+            ]
+          }
+        },
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Constructor 'BarCls' coverage is below the threshold 50%",
+            "markdown": "Constructor `BarCls` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 63,
+                  "startColumn": 3,
+                  "charOffset": 980,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "constructor"
+                  },
+                  "sourceLanguage": "JavaScript"
+                },
+                "contextRegion": {
+                  "startLine": 63,
+                  "startColumn": 1,
+                  "charOffset": 978,
+                  "charLength": 37,
+                  "snippet": {
+                    "text": "  constructor(singleParam?: number) {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "3cde715e0254d9a9",
+            "equalIndicator/v1": "c81a4c5d10306f75aab484bda6050fe969325fa66736b6b4cc8cb6de8ed517a0"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JavaScript"
+            ]
+          }
         }
       ],
       "automationDetails": {
@@ -78,8 +249,8 @@
           "totalCoverage": 42,
           "totalLines": 28,
           "totalCoveredLines": 12,
-          "freshCoverage": 100,
-          "freshLines": 3,
+          "freshCoverage": 30,
+          "freshLines": 10,
           "freshCoveredLines": 3
         }
       }

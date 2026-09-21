@@ -20,8 +20,8 @@
           "totalCoverage": 40,
           "totalLines": 35,
           "totalCoveredLines": 14,
-          "freshCoverage": 100,
-          "freshLines": 3,
+          "freshCoverage": 37,
+          "freshLines": 8,
           "freshCoveredLines": 3
         }
       }

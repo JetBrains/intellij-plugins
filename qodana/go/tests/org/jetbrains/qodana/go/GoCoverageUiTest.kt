@@ -105,7 +105,15 @@ class GoCoverageUiTest : QodanaCoverageUiTestBase(SOURCE_CLASS) {
 
     openFileInEditor("coverage.go")
     assertEquals(
-      mapOf(3 to LineCoverage.FULL, 4 to LineCoverage.FULL, 5 to LineCoverage.FULL),
+      mapOf(
+        34 to LineCoverage.FULL,
+        35 to LineCoverage.PARTIAL,
+        36 to LineCoverage.NONE, 37 to LineCoverage.NONE, 38 to LineCoverage.NONE, 39 to LineCoverage.NONE,
+        40 to LineCoverage.PARTIAL,
+        41 to LineCoverage.NONE, 42 to LineCoverage.NONE, 43 to LineCoverage.NONE,
+        44 to LineCoverage.PARTIAL,
+        45 to LineCoverage.NONE, 46 to LineCoverage.NONE,
+      ),
       gutterCoverage("coverage.go"),
     )
 
@@ -138,7 +146,7 @@ class GoCoverageUiTest : QodanaCoverageUiTestBase(SOURCE_CLASS) {
       }
       val coveredFile = project.guessProjectDir()?.findFileByRelativePath("coverage.go")?.toNioPath()?.absolute()?.pathString
       assertNotNull(coveredFile)
-      assertTrue("Only three hits overall should in coverage.go stay after filtering", fileToHits[coveredFile!!] == 3L)
+      assertTrue("Seven hits overall should remain in coverage.go after filtering", fileToHits[coveredFile!!] == 7L)
       assertTrue("Only one file should contain hits", fileToHits.size == 1)
     }
   }

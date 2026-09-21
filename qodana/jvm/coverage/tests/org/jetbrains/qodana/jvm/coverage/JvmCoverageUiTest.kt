@@ -73,14 +73,16 @@ class JvmCoverageUiTest : QodanaCoverageUiTestBase("JvmCoverageInspectionTest") 
 
     assertCoverageTree(bundle, """
       -all
-       -foo.bar
-        BarClass
+       -foo
+        FooClass
+        -bar
+         BarClass
     """.trimIndent())
 
     openFileInEditor("src/foo/FooClass.java")
-    assertTrue(
-      "The src/foo/FooClass.java should be unchanged in incremental report",
-      gutterCoverage("src/foo/FooClass.java").isNullOrEmpty()
+    assertEquals(
+      mapOf(5 to LineCoverage.FULL),
+      gutterCoverage("src/foo/FooClass.java")
     )
 
     openFileInEditor("src/foo/bar/BarClass.java")

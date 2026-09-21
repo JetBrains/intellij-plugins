@@ -89,8 +89,7 @@ abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleT
    */
   protected fun runIncrementalAnalysis(
     stage: QodanaCoverageComputationState,
-    scopeJson: String,
-    coverageDataPath: Path = testData.resolve(testDataBasePath).resolve("coverage"),
+    scopeJson: String
   ) {
     require(stage.isIncrementalAnalysis()) { "Stage must be incremental, got $stage" }
     val computationProperty = when (stage) {
@@ -102,7 +101,7 @@ abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleT
     val scopeFile = Files.createTempFile("qodana-scope", ".json")
     try {
       Files.writeString(scopeFile, scopeJson.trimIndent())
-      System.setProperty(COVERAGE_DATA, coverageDataPath.toString())
+      System.setProperty(COVERAGE_DATA, testData.resolve(testDataBasePath).resolve("coverage").toString())
       System.setProperty(computationProperty, "true")
       val (config, _) = manager.updateQodanaConfig(Paths.get(myProject.basePath!!), outputBasePath) {
         it.copy(
