@@ -1,8 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.local
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.execution.process.CapturingProcessAdapter
 import com.intellij.ide.trustedProjects.TrustedProjects
@@ -60,6 +58,7 @@ import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.getVFSParents
 import org.intellij.terraform.config.model.loader.TfMetadataLoader
+import org.intellij.terraform.config.model.loader.tfJsonMapper
 import org.intellij.terraform.config.util.TfExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.config.util.getApplicableToolType
@@ -209,21 +208,20 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
   }
 
   private fun buildProviderMeta(providers: Collection<ProviderInfo>): String? {
-    val mapper = ObjectMapper()
-    val metadataNode = mapper.createObjectNode()
+    val metadataNode = tfJsonMapper.createObjectNode()
     providers.forEach { providerInfo ->
-      val info = mapper.createObjectNode()
+      val info = tfJsonMapper.createObjectNode()
       info.put("type", "providers")
-      val attributes = mapper.createObjectNode()
+      val attributes = tfJsonMapper.createObjectNode()
       attributes.put("name", providerInfo.name)
       attributes.put("namespace", providerInfo.namespace)
       attributes.put("full-name", providerInfo.fullName)
       attributes.put("tier", ProviderTier.TIER_LOCAL.label)
       attributes.put(HCL_VERSION_IDENTIFIER, providerInfo.version)
-      info.set<ObjectNode>("attributes", attributes)
-      metadataNode.set<ObjectNode>(providerInfo.fullName.lowercase(), info)
+      info.set("attributes", attributes)
+      metadataNode.set(providerInfo.fullName.lowercase(), info)
     }
-    return mapper.writeValueAsString(metadataNode)
+    return tfJsonMapper.writeValueAsString(metadataNode)
   }
 
   private fun buildModel(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): Deferred<TfTypeModel> {

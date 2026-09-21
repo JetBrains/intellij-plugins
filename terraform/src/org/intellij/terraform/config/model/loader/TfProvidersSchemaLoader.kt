@@ -1,7 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
-import com.fasterxml.jackson.databind.node.ObjectNode
 import org.intellij.terraform.config.model.ActionType
 import org.intellij.terraform.config.model.Argument
 import org.intellij.terraform.config.model.BlockType
@@ -14,6 +13,7 @@ import org.intellij.terraform.config.model.TfFunction
 import org.intellij.terraform.config.model.array
 import org.intellij.terraform.config.model.obj
 import org.intellij.terraform.config.model.string
+import tools.jackson.databind.node.ObjectNode
 
 internal class TfProvidersSchemaLoader : VersionedMetadataLoader {
   private val supportedVersions: Set<String> = setOf("0.1", "0.2", "1.0")

@@ -1,9 +1,6 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.databind.node.TextNode
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.model.Argument
@@ -29,6 +26,9 @@ import org.intellij.terraform.config.model.loader.TfMetadataLoader.Companion.LOG
 import org.intellij.terraform.config.model.obj
 import org.intellij.terraform.config.model.string
 import org.intellij.terraform.config.model.toMap
+import tools.jackson.databind.node.ArrayNode
+import tools.jackson.databind.node.ObjectNode
+import tools.jackson.databind.node.StringNode
 
 object BaseLoaderV1 : BaseLoader {
   override val version: String
@@ -111,7 +111,7 @@ object BaseLoaderV1 : BaseLoader {
       }
     }
 
-    val conflicts: List<String>? = value.array("ConflictsWith")?.mapNotNull { it.textValue() }?.map { it.pool(context) }
+    val conflicts: List<String>? = value.array("ConflictsWith")?.mapNotNull { it.stringValue(null) }?.map { it.pool(context) }
 
     val deprecated = value.string("Deprecated")
     val has_default: Boolean = value.obj("Default")?.isNotEmpty() ?: false
@@ -235,9 +235,9 @@ abstract class ProviderLoader(protected val base: BaseLoader) : VersionedMetadat
     assert(value is ArrayNode) { "${Constants.TIMEOUTS} should be an array" }
     val array = value as? ArrayNode ?: return null
     for (element in array) {
-      assert(element is TextNode) { "${Constants.TIMEOUTS} array elements should be string, got ${element?.javaClass?.name}" }
+      assert(element is StringNode) { "${Constants.TIMEOUTS} array elements should be string, got ${element?.javaClass?.name}" }
     }
-    val timeouts = array.mapNotNull { it.textValue() }.map { it.pool(context) }
+    val timeouts = array.mapNotNull { it.stringValue(null) }.map { it.pool(context) }
     if (timeouts.isEmpty()) return null
     return BlockType("timeouts", 0,
         description = "Amount of time a specific operation is allowed to take before being considered an error", // TODO: Improve description
@@ -322,7 +322,7 @@ class FunctionsLoaderV1 : VersionedMetadataLoader {
       if (v !is ObjectNode) continue
       assert(v.string("Name").equals(k)) { "Name mismatch: $k != ${v.string("Name")}" }
       val returnType = BaseLoaderV1.parseType(context, v.string("ReturnType")!!)
-      val args = v.array("ArgTypes")!!.mapNotNull { it.textValue() }.map { BaseLoaderV1.parseType(context, it) }.map { Argument(it) }.toMutableList()
+      val args = v.array("ArgTypes")!!.mapNotNull { it.stringValue(null) }.map { BaseLoaderV1.parseType(context, it) }.map { Argument(it) }.toMutableList()
       val variadic = v.boolean("Variadic") ?: false
       var va: VariadicArgument? = null
       if (variadic) {

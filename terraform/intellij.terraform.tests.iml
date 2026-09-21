@@ -33,8 +33,8 @@
     <orderEntry type="module" module-name="intellij.platform.usageView" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.execution.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.libraries.jackson" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.libraries.jackson.databind" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.jackson3" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.jackson3.databind" scope="TEST" />
     <orderEntry type="module-library" scope="TEST">
       <library name="terraform-metadata" type="repository">
         <properties maven-id="org.intellij.plugins.hcl.terraform:terraform-metadata:2026.1.10">
@@ -68,7 +68,7 @@
     <orderEntry type="module" module-name="intellij.platform.vcs.impl.lang" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util.coroutines" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.backend.workspace" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.libraries.jackson.module.kotlin" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.jackson3.module.kotlin" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.caffeine" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.markdown" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.jna" scope="TEST" />

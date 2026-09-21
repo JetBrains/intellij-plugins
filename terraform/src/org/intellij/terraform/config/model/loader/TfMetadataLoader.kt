@@ -1,8 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.options.advanced.AdvancedSettings
@@ -18,6 +16,7 @@ import org.intellij.terraform.config.model.boolean
 import org.intellij.terraform.config.model.ensureHavePrefix
 import org.intellij.terraform.config.model.obj
 import org.intellij.terraform.config.model.string
+import tools.jackson.databind.node.ObjectNode
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -89,7 +88,7 @@ class TfMetadataLoader {
 
     val stream = loadExternalResource("external-data.json") ?: return map
     val json = stream.use {
-      ObjectMapper().readTree(it) as ObjectNode?
+      tfJsonMapper.readTree(it) as? ObjectNode
     }
 
     if (json is ObjectNode) {
@@ -101,8 +100,8 @@ class TfMetadataLoader {
         val hintV = obj["hint"]
         val hint: Hint? = when {
           hintV == null -> null
-          hintV.isTextual -> ReferenceHint(hintV.textValue())
-          hintV.isArray -> SimpleValueHint(*hintV.mapNotNull { it.textValue() }.toTypedArray())
+          hintV.isString -> ReferenceHint(hintV.stringValue())
+          hintV.isArray -> SimpleValueHint(*hintV.mapNotNull { it.stringValue(null) }.toTypedArray())
           else -> null
         }
         val additional = LoadingModel.Additional(fqn, obj.string("description"), hint, obj.boolean("optional"),
@@ -147,7 +146,7 @@ class TfMetadataLoader {
     val json: ObjectNode?
     try {
       json = stream.use {
-        ObjectMapper().readTree(it) as ObjectNode?
+        tfJsonMapper.readTree(it) as? ObjectNode
       }
       if (json == null) {
         logErrorAndFailInInternalMode("In file '$sourceName' no JSON found")
@@ -281,7 +280,7 @@ class TfMetadataLoader {
     val schemasNode = json.obj("schemas") ?: json
     if (schemasNode.has("format_version"))  {
       type = "terraform-providers-schema-json"
-      version = schemasNode.get("format_version").textValue()
+      version = schemasNode.get("format_version").stringValue()
     }
     else {
       type = schemasNode.string("type") ?: "unknown"

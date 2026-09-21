@@ -2,9 +2,6 @@
 package org.intellij.terraform.config.documentation
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.core.JsonFactory
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.fileLogger
@@ -20,6 +17,10 @@ import kotlinx.coroutines.async
 import org.intellij.terraform.config.Constants.LATEST_VERSION
 import org.intellij.terraform.config.Constants.REGISTRY_DOMAIN
 import org.intellij.terraform.config.model.TfTypeModel
+import tools.jackson.core.JacksonException
+import tools.jackson.databind.MapperFeature
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.jacksonMapperBuilder
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -37,7 +38,9 @@ internal class TfMdDocUrlProvider(private val coroutineScope: CoroutineScope) : 
     .executor(AppExecutorUtil.getAppExecutorService())
     .build<String, Deferred<TfProviderInfo?>>(::loadProviderInfo)
 
-  private val mapper = ObjectMapper(JsonFactory()).registerModule(KotlinModule.Builder().build())
+  private val mapper: JsonMapper = jacksonMapperBuilder()
+    .disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+    .build()
 
   override suspend fun getDocUrl(blockData: BlockData, context: String): String? {
     val providerData = blockData.provider?.let { fetchProviderData(it) } ?: return null
@@ -67,14 +70,22 @@ internal class TfMdDocUrlProvider(private val coroutineScope: CoroutineScope) : 
             .connectTimeout(FETCH_TIMEOUT)
             .readTimeout(FETCH_TIMEOUT)
             .readString(ProgressManager.getGlobalProgressIndicator())
-          mapper.reader().readValue(response, TfProviderInfo::class.java)
+          mapper.readValue(response, TfProviderInfo::class.java)
         }
         catch (ex: IOException) {
-          fileLogger().warnWithDebug("Cannot fetch terraform provider info from ${metadataUrl}: ${ex::class.java}: ${ex.message} Enable DEBUG log level to see stack trace", ex)
+          logFetchFailure(metadataUrl, ex)
+          null
+        }
+        catch (ex: JacksonException) {
+          logFetchFailure(metadataUrl, ex)
           null
         }
       }
     }
+  }
+
+  private fun logFetchFailure(metadataUrl: String, ex: Exception) {
+    fileLogger().warnWithDebug("Cannot fetch terraform provider info from ${metadataUrl}: ${ex::class.java}: ${ex.message} Enable DEBUG log level to see stack trace", ex)
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)

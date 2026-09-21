@@ -1,9 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.util.asSafely
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.model.BlockType
@@ -24,6 +21,9 @@ import org.intellij.terraform.config.model.boolean
 import org.intellij.terraform.config.model.number
 import org.intellij.terraform.config.model.obj
 import org.intellij.terraform.config.model.string
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.node.ArrayNode
+import tools.jackson.databind.node.ObjectNode
 import java.util.Locale
 
 internal object TfProvidersSchemaParser {
@@ -195,8 +195,8 @@ Sensitive           bool            `json:"sensitive,omitempty"`
   }
 
   private fun parseType(context: LoadContext, node: JsonNode): HclType {
-    if (node.isTextual) {
-      val string = node.asText()
+    if (node.isString) {
+      val string = node.stringValue()
       return when (string?.lowercase(Locale.getDefault())) {
         "bool" -> Types.Boolean
         "number" -> Types.Number
@@ -213,8 +213,8 @@ Sensitive           bool            `json:"sensitive,omitempty"`
     // Based on cty.Type#MarshalJSON
     if (node.isArray) {
       node as ArrayNode
-      assert(node.get(0).isTextual)
-      when (node.get(0).textValue()) {
+      assert(node.get(0).isString)
+      when (node.get(0).stringValue(null)) {
         "list" -> {
           assert(node.size() == 2)
           return ListType(parseType(context, node.get(1))).pool(context)
@@ -237,7 +237,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
           // optional is a list of names (strings)
           val optional: Set<String>? =
             if (node.size() == 3)
-              (node.get(2) as ArrayNode).elements().asSequence().map { it.textValue() }.toSet()
+              (node.get(2) as ArrayNode).values().asSequence().map { it.stringValue(null) }.toSet()
             else
               null
 
@@ -246,7 +246,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
         "tuple" -> {
           assert(node.get(1).isArray)
           assert(node.size() == 2)
-          val elements = (node.get(1) as ArrayNode).elements().asSequence().map { parseType(context, it) }.toList()
+          val elements = (node.get(1) as ArrayNode).values().asSequence().map { parseType(context, it) }.toList()
           return TupleType(elements).pool(context)
         }
       }
