@@ -4,4 +4,4 @@ profile:
   name: qodana.recommended
 
 coverage:
-  reportProblems: false
+  reportProblems: true

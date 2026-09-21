@@ -2,7 +2,65 @@
   "runs": [
     {
       "language": "en-US",
-      "results": [],
+      "results": [
+        {
+          "ruleId": "PhpCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'FooCls.php' coverage is below the threshold 50%",
+            "markdown": "File `FooCls.php` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.php",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "<?php"
+                  },
+                  "sourceLanguage": "PHP"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "<?php"
+                  },
+                  "sourceLanguage": "PHP"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "09589c4c98cc9178",
+            "equalIndicator/v1": "c06c1255de778d56b7092789255be7ed2bc425e7d3ae33b6987821b04f91d2c6"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "PHP"
+            ]
+          }
+        }
+      ],
       "automationDetails": {
         "id": "tests",
         "guid": "tests",

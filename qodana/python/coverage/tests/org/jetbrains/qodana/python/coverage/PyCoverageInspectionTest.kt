@@ -77,9 +77,17 @@ class PyCoverageInspectionTest : QodanaCoverageInspectionTest("PyCoverageInspect
 
   @Test
   fun incrementalSecondStage() {
-    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
     assertChangedLines(mapOf("src/FooCls.py" to setOf(11, 12, 13)))
     assertCoverageProjectDataMatchesGolden("PyCoverageEngine", "PyCoverageEngine.xml")
+    assertSarifResults()
+  }
+
+  @Test
+  fun incrementalSecondStageWithoutProblemReport() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
+    assertFalse(qodanaConfig.coverage.reportProblems)
+    assertNoCoverageProblems()
     assertSarifResults()
   }
 

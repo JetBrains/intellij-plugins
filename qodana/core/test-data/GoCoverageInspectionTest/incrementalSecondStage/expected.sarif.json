@@ -2,7 +2,65 @@
   "runs": [
     {
       "language": "en-US",
-      "results": [],
+      "results": [
+        {
+          "ruleId": "GoCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'coverage.go' coverage is below the threshold 50%",
+            "markdown": "File `coverage.go` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "coverage.go",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "package sources"
+                  },
+                  "sourceLanguage": "go"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "package sources"
+                  },
+                  "sourceLanguage": "go"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sources",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "a02003bf95d728f6",
+            "equalIndicator/v1": "ce7689d8c43f108ac80279ec97d745e3f4bd6b29d2894b1f02c937e0381fc767"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "go"
+            ]
+          }
+        }
+      ],
       "automationDetails": {
         "id": "tests",
         "guid": "tests",

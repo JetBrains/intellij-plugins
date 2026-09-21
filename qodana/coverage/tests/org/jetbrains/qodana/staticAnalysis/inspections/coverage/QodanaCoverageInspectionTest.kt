@@ -58,6 +58,10 @@ abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleT
     assertSameLinesWithFile(expectedSarif, actualJson)
   }
 
+  protected fun assertNoCoverageProblems() {
+    assertTrue(manager.sarifRun.results.none { it.ruleId == inspection })
+  }
+
   protected fun runUnderCoverDataInSources(customProfile: String? = null) {
     val customProfileConfig = customProfile?.let { getProfileConfig(it) }
     val (config, _) = manager.updateQodanaConfig(Paths.get(myProject.basePath!!), outputBasePath) {
@@ -83,19 +87,23 @@ abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleT
   /**
    * Run the inspection through the scoped script over [scopeJson]
    */
-  protected fun runIncrementalAnalysis(stage: QodanaCoverageComputationState, scopeJson: String) {
+  protected fun runIncrementalAnalysis(
+    stage: QodanaCoverageComputationState,
+    scopeJson: String,
+    coverageDataPath: Path = testData.resolve(testDataBasePath).resolve("coverage"),
+  ) {
     require(stage.isIncrementalAnalysis()) { "Stage must be incremental, got $stage" }
-    val skipProperty = if (stage.isFirstStage()) {
-      "qodana.skip.coverage.computation"
-    }
-    else {
-      "qodana.skip.coverage.issues.reporting"
+    val computationProperty = when (stage) {
+      QodanaCoverageComputationState.SKIP_COMPUTE -> "qodana.skip.coverage.computation"
+      QodanaCoverageComputationState.SKIP_REPORT -> "qodana.skip.coverage.issues.reporting"
+      QodanaCoverageComputationState.INCREMENTAL_REPORT -> "qodana.incremental.coverage.issues.reporting"
+      QodanaCoverageComputationState.DEFAULT -> error("The default state is not incremental")
     }
     val scopeFile = Files.createTempFile("qodana-scope", ".json")
     try {
       Files.writeString(scopeFile, scopeJson.trimIndent())
-      System.setProperty(COVERAGE_DATA, testData.resolve(testDataBasePath).resolve("coverage").toString())
-      System.setProperty(skipProperty, "true")
+      System.setProperty(COVERAGE_DATA, coverageDataPath.toString())
+      System.setProperty(computationProperty, "true")
       val (config, _) = manager.updateQodanaConfig(Paths.get(myProject.basePath!!), outputBasePath) {
         it.copy(
           script = QodanaScriptConfig(SCOPED_SCRIPT_NAME, mapOf("scope-file" to scopeFile.toString())),
@@ -106,7 +114,7 @@ abstract class QodanaCoverageInspectionTest(val inspection: String): JavaModuleT
       manager.runAnalysis(myProject)
     }
     finally {
-      System.clearProperty(skipProperty)
+      System.clearProperty(computationProperty)
       System.clearProperty(COVERAGE_DATA)
       Files.deleteIfExists(scopeFile)
     }

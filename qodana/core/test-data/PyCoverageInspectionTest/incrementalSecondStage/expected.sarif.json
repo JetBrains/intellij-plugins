@@ -2,7 +2,122 @@
   "runs": [
     {
       "language": "en-US",
-      "results": [],
+      "results": [
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'FooCls.py' coverage is below the threshold 50%",
+            "markdown": "File `FooCls.py` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "class FooCls:"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "class FooCls:"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "f21d2dba048fccf0",
+            "equalIndicator/v1": "5b04924d16dd5c7b909bb230ab100a684905e3e57c8f07ad4230405090f9d8f9"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "Python"
+            ]
+          }
+        },
+        {
+          "ruleId": "PyCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Class 'FooCls' coverage is below the threshold 50%",
+            "markdown": "Class `FooCls` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/FooCls.py",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7,
+                  "charOffset": 6,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "FooCls"
+                  },
+                  "sourceLanguage": "Python"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "class FooCls:"
+                  },
+                  "sourceLanguage": "Python"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "qodana",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "b4985849fe465903",
+            "equalIndicator/v1": "a34e0433e30e4d2292404ae544ed5d50f41ec28c4539f52f6bba010781f6f5c0"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "Python"
+            ]
+          }
+        }
+      ],
       "automationDetails": {
         "id": "tests",
         "guid": "tests",

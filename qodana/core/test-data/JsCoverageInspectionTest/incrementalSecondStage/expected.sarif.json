@@ -2,7 +2,65 @@
   "runs": [
     {
       "language": "en-US",
-      "results": [],
+      "results": [
+        {
+          "ruleId": "JsCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'FooCls.ts' coverage is below the threshold 50%",
+            "markdown": "File `FooCls.ts` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "FooCls.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 21,
+                  "snippet": {
+                    "text": "export class FooCls {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 21,
+                  "snippet": {
+                    "text": "export class FooCls {"
+                  },
+                  "sourceLanguage": "TypeScript"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "cde453a784bab7e4",
+            "equalIndicator/v1": "4f67c66321ba42510bcea5068e919afd7ee886a673ae85e0d85a6af545aa4c72"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "TypeScript"
+            ]
+          }
+        }
+      ],
       "automationDetails": {
         "id": "tests",
         "guid": "tests",

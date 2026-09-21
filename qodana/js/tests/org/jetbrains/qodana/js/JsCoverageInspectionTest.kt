@@ -77,9 +77,17 @@ class JsCoverageInspectionTest: QodanaCoverageInspectionTest("JsCoverageInspecti
 
   @Test
   fun incrementalSecondStage() {
-    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
     assertCoverageProjectDataMatchesGolden("JestCoverageEngine", "JestCoverageEngine.info")
     assertChangedLinesMatchesGolden()
+    assertSarifResults()
+  }
+
+  @Test
+  fun incrementalSecondStageWithoutProblemReport() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
+    assertFalse(qodanaConfig.coverage.reportProblems)
+    assertNoCoverageProblems()
     assertSarifResults()
   }
 

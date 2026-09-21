@@ -2,7 +2,65 @@
   "runs": [
     {
       "language": "en-US",
-      "results": [],
+      "results": [
+        {
+          "ruleId": "JvmCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'method4' coverage is below the threshold 50%",
+            "markdown": "Method `method4` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/foo/bar/BarClass.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 16,
+                  "charOffset": 109,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "method4"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 8,
+                  "startColumn": 1,
+                  "charOffset": 94,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "    public int method4() {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "simple",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "e184821c55c84f37",
+            "equalIndicator/v1": "52840e286669e6b426513fb55c22463606f0fcd237b9e92db082f9d76f702390"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
       "automationDetails": {
         "id": "tests",
         "guid": "tests",
@@ -20,9 +78,9 @@
           "totalCoverage": 83,
           "totalLines": 12,
           "totalCoveredLines": 10,
-          "freshCoverage": 100,
+          "freshCoverage": 0,
           "freshLines": 1,
-          "freshCoveredLines": 1
+          "freshCoveredLines": 0
         }
       }
     }

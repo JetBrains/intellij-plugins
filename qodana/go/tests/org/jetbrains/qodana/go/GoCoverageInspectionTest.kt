@@ -138,10 +138,18 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
 
   @Test
   fun incrementalSecondStage() {
-    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
     assertChangedLines(mapOf("coverage.go" to setOf(3, 4, 5)))
     assertCoverageProjectDataMatchesGolden("GoCoverageEngine", "GoCoverageEngine.out")
     assertGoCoverageProjectDataMatchesGolden()
+    assertSarifResults()
+  }
+
+  @Test
+  fun incrementalSecondStageWithoutProblemReport() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
+    assertFalse(qodanaConfig.coverage.reportProblems)
+    assertNoCoverageProblems()
     assertSarifResults()
   }
 

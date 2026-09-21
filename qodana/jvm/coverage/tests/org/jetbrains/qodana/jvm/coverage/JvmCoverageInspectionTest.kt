@@ -116,21 +116,29 @@ class JvmCoverageInspectionTest: QodanaCoverageInspectionTest("JvmCoverageInspec
 
   @Test
   fun incrementalSecondStage() {
-    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
-    assertChangedLines(mapOf("src/foo/FooClass.java" to setOf(4, 5, 6)))
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
+    assertChangedLines(mapOf("src/foo/bar/BarClass.java" to setOf(8, 9, 10)))
     assertChangedLinesMatchesGolden()
     assertCoverageProjectDataMatchesGolden("JavaCoverageEngine", "JavaCoverageEngine.ic")
     assertSarifResults()
   }
 
+  @Test
+  fun incrementalSecondStageWithoutProblemReport() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
+    assertFalse(qodanaConfig.coverage.reportProblems)
+    assertNoCoverageProblems()
+    assertSarifResults()
+  }
+
   private companion object {
-    // method1() of FooClass spans lines 4-6; line 5 (`return 1;`) is covered, so fresh coverage is non-zero.
+    // The coverage data marks method4 on lines 8-10 as uncovered.
     private const val SCOPE = """
       {
         "files" : [ {
-          "path" : "src/foo/FooClass.java",
+          "path" : "src/foo/bar/BarClass.java",
           "added" : [ {
-            "firstLine" : 4,
+            "firstLine" : 8,
             "count" : 3
           } ],
           "deleted" : [ ]
