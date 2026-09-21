@@ -7,7 +7,7 @@ import org.junit.Test
 
 internal class DartAnalyzeGlobalInspectionFingerprintTest : DartAnalyzeProjectQodanaTestCase() {
   override val analyzeResponses: Map<String, RecordedDartAnalyzeResponse> = mapOf(
-    "test-module" to readDartAnalyzeTestData("fingerprints.json"),
+    "" to readDartAnalyzeTestData("fingerprints.json"),
   )
 
   @Test

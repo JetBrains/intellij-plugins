@@ -7,7 +7,7 @@ import org.junit.Test
 
 internal class DartAnalyzeGlobalInspectionQodanaTest : DartAnalyzeProjectQodanaTestCase() {
   override val analyzeResponses: Map<String, RecordedDartAnalyzeResponse> = mapOf(
-    "test-module" to readDartAnalyzeTestData("single-uncategorized.json"),
+    "" to readDartAnalyzeTestData("single-uncategorized.json"),
   )
 
   @Test
@@ -24,7 +24,7 @@ internal class DartAnalyzeGlobalInspectionQodanaTest : DartAnalyzeProjectQodanaT
       result.message.text,
     )
     val location = result.singleLocation().physicalLocation
-    assertEquals("test-module/lib/main.dart", location.artifactLocation.uri)
+    assertEquals("lib/main.dart", location.artifactLocation.uri)
     assertEquals(1, location.region.startLine)
     assertEquals(15, location.region.startColumn)
   }
@@ -33,7 +33,7 @@ internal class DartAnalyzeGlobalInspectionQodanaTest : DartAnalyzeProjectQodanaT
   fun `does not configure the project before analysis`() {
     runAnalysis()
 
-    assertRecordedDartExecutions("analyze" to "test-module")
+    assertRecordedDartExecutions("analyze" to "")
   }
 
   @Test

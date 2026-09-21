@@ -8,19 +8,19 @@ internal class RecordedDartAnalyzeProcessExecutor(
   private val analyzeResponses: Map<String, RecordedDartAnalyzeResponse>,
 ) : DartAnalyzeProcessExecutor {
   override suspend fun execute(command: List<String>, workingDirectory: Path): DartAnalyzeProcessResult {
-    val modulePath = projectPath.toAbsolutePath().normalize().relativize(workingDirectory.toAbsolutePath().normalize()).portablePath()
+    val analysisDirectory = projectPath.toAbsolutePath().normalize().relativize(workingDirectory.toAbsolutePath().normalize()).portablePath()
     return when (command.getOrNull(1)) {
       "analyze" -> {
-        val response = analyzeResponses[modulePath] ?: error("No recorded Dart response for module '$modulePath'")
-        logResponse(modulePath, "from fixture '${response.resourceName}'")
+        val response = analyzeResponses[analysisDirectory] ?: error("No recorded Dart response for analysis directory '$analysisDirectory'")
+        logResponse(analysisDirectory, "from fixture '${response.resourceName}'")
         DartAnalyzeProcessResult(0, response.content, "")
       }
       else -> error("Unexpected Dart command: $command")
     }
   }
 
-  private fun logResponse(modulePath: String, source: String) {
-    println("Dart mock: using response for 'analyze' in module '$modulePath' ($source)")
+  private fun logResponse(analysisDirectory: String, source: String) {
+    println("Dart mock: using response for 'analyze' in analysis directory '$analysisDirectory' ($source)")
   }
 }
 
@@ -32,8 +32,8 @@ private class RecordingDartAnalyzeProcessExecutor(
   override suspend fun execute(command: List<String>, workingDirectory: Path): DartAnalyzeProcessResult {
     val operation = command.getOrNull(1)?.takeIf { it == "analyze" }
     if (operation != null) {
-      val modulePath = projectPath.toAbsolutePath().normalize().relativize(workingDirectory.toAbsolutePath().normalize()).portablePath()
-      executions += operation to modulePath
+      val analysisDirectory = projectPath.toAbsolutePath().normalize().relativize(workingDirectory.toAbsolutePath().normalize()).portablePath()
+      executions += operation to analysisDirectory
     }
     return delegate.execute(command, workingDirectory)
   }
