@@ -163,7 +163,11 @@ internal class TfInspectionsTest : TfInspectionFixtureTestCase() {
   }
 
   fun testInterpolationBinaryExpressionsTypesCheck() {
-    doTest("interpolation_operations_types", HILOperationTypesMismatchInspection())
+    myFixture.enableInspections(HILOperationTypesMismatchInspection())
+    myFixture.configureByFile("interpolation_operations_types/src/test.tf")
+    myFixture.checkHighlighting()
+    myFixture.configureByFile("interpolation_operations_types/src/ternary.tf")
+    myFixture.checkHighlighting()
   }
 
   fun testConvertHILToHCL() {
