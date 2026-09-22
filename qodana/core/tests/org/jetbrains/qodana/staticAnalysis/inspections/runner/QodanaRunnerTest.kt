@@ -44,7 +44,6 @@ import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManage
 import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
 import org.jetbrains.qodana.staticAnalysis.sarif.configProfile
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
-import org.jetbrains.qodana.staticAnalysis.script.scoped.COVERAGE_INCREMENTAL_REPORTING_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.script.scoped.COVERAGE_SKIP_COMPUTATION_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.script.scoped.REDUCED_SCOPE_PATH
 import org.jetbrains.qodana.staticAnalysis.script.scoped.RESULT_PRINTING_SKIPPED
@@ -428,9 +427,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
   private fun Run.isResultOutputSkipped() = this.invocations?.first()?.properties?.get(RESULT_PRINTING_SKIPPED) == true
 
   private fun runReverseScopedNewStageAnalysis() {
-    PlatformTestUtil.withSystemProperty<Nothing>(COVERAGE_INCREMENTAL_REPORTING_PROPERTY, "true") {
-      runAnalysis()
-    }
+    runAnalysis()
   }
 
   @Test

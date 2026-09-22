@@ -230,15 +230,19 @@ fun reportProblemsNeeded(globalContext: QodanaGlobalInspectionContext, psiFile: 
     QodanaCoverageComputationState.DEFAULT -> globalContext.config.coverage.reportProblems
     QodanaCoverageComputationState.INCREMENTAL_REPORT -> {
       if (!globalContext.config.coverage.reportProblems) return false
-      val changedLines = globalContext.coverageStatisticsData.getChangedRanges(psiFile.virtualFile.url) ?: return false
-      val document = PsiDocumentManager.getInstance(globalContext.project).getDocument(psiFile) ?: return false
-      val startLine = document.getLineNumber(textRange.startOffset) + 1
-      val endLine = document.getLineNumber(textRange.endOffset) + 1
-      changedLines.any { it in startLine..endLine }
+      inChangedLines(globalContext, psiFile, textRange)
     }
     QodanaCoverageComputationState.SKIP_COMPUTE,
     QodanaCoverageComputationState.SKIP_REPORT -> false
   }
+}
+
+private fun inChangedLines(globalContext: QodanaGlobalInspectionContext, psiFile: PsiFile, textRange: TextRange): Boolean {
+  val changedLines = globalContext.coverageStatisticsData.getChangedRanges(psiFile.virtualFile.url) ?: return false
+  val document = PsiDocumentManager.getInstance(globalContext.project).getDocument(psiFile) ?: return false
+  val startLine = document.getLineNumber(textRange.startOffset) + 1
+  val endLine = document.getLineNumber(textRange.endOffset) + 1
+  return changedLines.any { it in startLine..endLine }
 }
 
 // used to skip coverage inspection run on old code state

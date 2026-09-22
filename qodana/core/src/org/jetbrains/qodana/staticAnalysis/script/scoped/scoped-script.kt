@@ -80,8 +80,7 @@ internal class ScopedScript(runContextFactory: ScopedRunContextFactory) :
   }
 
   override suspend fun createGlobalInspectionContext(runContext: QodanaRunContext) : QodanaGlobalInspectionContext {
-    val skipCoverageComputation = java.lang.Boolean.getBoolean(COVERAGE_SKIP_COMPUTATION_PROPERTY)
-    val computationState = computeCoverageState(skipCoverageComputation)
+    val computationState = computeCoverageState()
     return runContext.createGlobalInspectionContext(coverageComputationState = computationState)
   }
 
@@ -92,19 +91,24 @@ internal class ScopedScript(runContextFactory: ScopedRunContextFactory) :
   }
 }
 
-internal fun computeCoverageState(
-  skipCoverageComputation: Boolean,
-): QodanaCoverageComputationState {
+private fun computeCoverageState(): QodanaCoverageComputationState {
   // qodana-cli selects one coverage mode for each scoped stage. Result-producing stages use INCREMENTAL_REPORT.
-  val requestedStates = buildList {
-    if (skipCoverageComputation) add(QodanaCoverageComputationState.SKIP_COMPUTE)
-    if (java.lang.Boolean.getBoolean(COVERAGE_SKIP_REPORTING_PROPERTY)) add(QodanaCoverageComputationState.SKIP_REPORT)
-    if (java.lang.Boolean.getBoolean(COVERAGE_INCREMENTAL_REPORTING_PROPERTY)) add(QodanaCoverageComputationState.INCREMENTAL_REPORT)
+  val requestedStates = listOfNotNull(
+    QodanaCoverageComputationState.SKIP_COMPUTE.takeIf {
+      java.lang.Boolean.getBoolean(COVERAGE_SKIP_COMPUTATION_PROPERTY)
+    },
+    QodanaCoverageComputationState.SKIP_REPORT.takeIf {
+      java.lang.Boolean.getBoolean(COVERAGE_SKIP_REPORTING_PROPERTY)
+    },
+    QodanaCoverageComputationState.INCREMENTAL_REPORT.takeIf {
+      java.lang.Boolean.getBoolean(COVERAGE_INCREMENTAL_REPORTING_PROPERTY)
+    },
+  )
+  return when (requestedStates.size) {
+    0 -> throw QodanaException("Coverage computation mode is not set")
+    1 -> requestedStates.single()
+    else -> throw QodanaException("More than one coverage computation mode is set")
   }
-  if (requestedStates.size > 1) {
-    throw QodanaException("More than one coverage computation mode is set")
-  }
-  return requestedStates.singleOrNull() ?: throw QodanaException("Coverage computation mode is not set")
 }
 
 

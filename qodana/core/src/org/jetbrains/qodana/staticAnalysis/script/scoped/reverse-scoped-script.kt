@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_INSPECTIONS_NAMES
+import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
@@ -92,7 +93,7 @@ internal class ReverseScopedScriptFactory : QodanaScriptFactory {
 }
 
 internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContextFactory) :
-  ReverseScopedScript(false, runContextFactory) {
+  ReverseScopedScript(QodanaCoverageComputationState.INCREMENTAL_REPORT, runContextFactory) {
   private val scopeFile: Path = runContextFactory.scopeFile
 
   override suspend fun execute(report: SarifReport, runContext: QodanaRunContext, inspectionContext: QodanaGlobalInspectionContext) {
@@ -119,7 +120,7 @@ internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContext
 }
 
 internal class ReverseScopedScriptOld(runContextFactory: ReverseScopedRunContextFactory) :
-  ReverseScopedScript(true, runContextFactory) {
+  ReverseScopedScript(QodanaCoverageComputationState.SKIP_COMPUTE, runContextFactory) {
   override suspend fun execute(report: SarifReport, runContext: QodanaRunContext, inspectionContext: QodanaGlobalInspectionContext) {
     val baselineReport = getScopedBaselineReport(runContext)
     if (baselineReport == null) {
@@ -142,7 +143,7 @@ internal class ReverseScopedScriptOld(runContextFactory: ReverseScopedRunContext
 
 
 internal class ReverseScopedScriptFixes(runContextFactory: ReverseScopedRunContextFactory) :
-  ReverseScopedScript(true, runContextFactory) {
+  ReverseScopedScript(QodanaCoverageComputationState.SKIP_COMPUTE, runContextFactory) {
   override suspend fun execute(report: SarifReport, runContext: QodanaRunContext, inspectionContext: QodanaGlobalInspectionContext) {
     val baselineReport = getScopedBaselineReport(runContext)
     if (baselineReport == null) {
@@ -156,11 +157,13 @@ internal class ReverseScopedScriptFixes(runContextFactory: ReverseScopedRunConte
   }
 }
 
-internal abstract class ReverseScopedScript(val skipCoverageComputation: Boolean, runContextFactory: ReverseScopedRunContextFactory) :
+internal abstract class ReverseScopedScript(
+  val computationState: QodanaCoverageComputationState,
+  runContextFactory: ReverseScopedRunContextFactory
+) :
   DefaultScript(runContextFactory, AnalysisKind.INCREMENTAL) {
 
   override suspend fun createGlobalInspectionContext(runContext: QodanaRunContext): QodanaGlobalInspectionContext {
-    val computationState = computeCoverageState(skipCoverageComputation)
     return runContext.createGlobalInspectionContext(coverageComputationState = computationState)
   }
 

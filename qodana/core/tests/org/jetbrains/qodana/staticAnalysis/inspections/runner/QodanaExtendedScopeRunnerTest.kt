@@ -5,7 +5,6 @@ import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.registry.QodanaRegistry.SCOPE_EXTENDING_ENABLE_KEY
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
@@ -13,7 +12,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.SkipResultStrategy
 import org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
-import org.jetbrains.qodana.staticAnalysis.script.scoped.COVERAGE_INCREMENTAL_REPORTING_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.script.scoped.REVERSE_SCOPED_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_BASELINE_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPE_ARG
@@ -111,14 +109,7 @@ class QodanaExtendedScopeRunnerTest : QodanaRunnerTestCase() {
         skipResultStrategy = SkipResultStrategy.ANY,
       )
     }
-    if (stage == Stage.NEW) {
-      PlatformTestUtil.withSystemProperty<Nothing>(COVERAGE_INCREMENTAL_REPORTING_PROPERTY, "true") {
-        runAnalysis()
-      }
-    }
-    else {
-      runAnalysis()
-    }
+    runAnalysis()
     assertSarifResults()
 
     val expectedScope = getTestDataPath("scope.json").absolutePathString()
