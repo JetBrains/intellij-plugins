@@ -91,7 +91,7 @@ internal class PbPythonMessageType(
         }
 
         // Optional[paramType]
-        PyUnionType.union(paramType, builtins.noneType)?.let { optionalType ->
+        PyUnionType.unionOrUnknown(paramType, builtins.noneType)?.let { optionalType ->
           PyCallableParameterImpl.nonPsi(fieldName, optionalType, noneExpr, field)
         }
       }
@@ -129,7 +129,7 @@ internal class PbPythonMessageType(
         }
       }
     }
-    val possibleTypes = PyUnionType.union(typesToUnion.filterNotNull())
+    val possibleTypes = PyUnionType.unionOrUnknown(typesToUnion.filterNotNull())
 
     return if (field.isRepeated) {  // Iterable of possible types
       val pythonIterable = PbPythonNames.ITERABLE.toPyClass(anchor)
@@ -149,7 +149,7 @@ internal class PbPythonMessageType(
 
     val pythonMapping = PbPythonNames.MAPPING.toPyClass(anchor)
     val possibleValueTypes = if (valueType is PbPythonMessageType && pythonMapping != null) {
-      PyUnionType.union(valueType, PyClassTypeImpl(pythonMapping, false))
+      PyUnionType.unionOrUnknown(valueType, PyClassTypeImpl(pythonMapping, false))
     }
     else {
       valueType

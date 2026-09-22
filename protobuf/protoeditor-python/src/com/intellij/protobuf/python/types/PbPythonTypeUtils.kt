@@ -47,7 +47,7 @@ internal object PbPythonTypeUtils {
       "int32", "int64", "sint32", "sint64", "sfixed32", "sfixed64",
       "uint32", "uint64", "fixed32", "fixed64",
         -> builtins.intType
-      "float", "double" -> PyUnionType.union(builtins.floatType, builtins.intType)
+      "float", "double" -> PyUnionType.unionOrUnknown(builtins.floatType, builtins.intType)
       "string" -> builtins.strType
       "bool" -> builtins.boolType
       "bytes" -> builtins.getBytesType(LanguageLevel.forElement(anchor))
