@@ -20,6 +20,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlReader
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlReader.defaultConfigPath
+import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.PrintWriter
@@ -191,8 +192,10 @@ class QodanaInspectionApplicationFactory {
     }
     // A baseline file always wins, so the analysis asks Qodana Cloud only when the command line gives none.
     val downloaded = if (qodanaConfig.baseline != null) null else projectApi?.let { cloudBaseline(it.frontendUrl) }
-    val config = downloaded?.let { qodanaConfig.copy(baseline = it.toString(), baselineFromCloud = true) } ?: qodanaConfig
-    return QodanaInspectionApplication(config, projectApi)
+    val baseline = downloaded?.toString() ?: qodanaConfig.baseline
+    // qodana-cli sets QODANA_BASELINE_FROM_CLOUD when the file of --baseline is a baseline that it downloaded.
+    val fromCloud = baseline != null && (downloaded != null || qodanaEnv().QODANA_BASELINE_FROM_CLOUD.value.toBoolean())
+    return QodanaInspectionApplication(qodanaConfig.copy(baseline = baseline, baselineFromCloud = fromCloud), projectApi)
   }
 
   private fun determineScript(cli: CommandLine, config: QodanaYamlConfig): QodanaScriptConfig =

@@ -41,6 +41,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.copyConfigToDir
 import org.jetbrains.qodana.staticAnalysis.inspections.config.removeQodanaAnalysisConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.DefaultRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
+import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsCollector.QodanaActivityKind
@@ -153,6 +154,9 @@ class QodanaInspectionApplication(
 
   /** Tells which baseline the analysis used, because the problems of the report depend on it. */
   private fun logUsedBaseline() {
+    // qodana-cli tells this itself when it downloaded the baseline, so a second line would repeat it.
+    if (qodanaEnv().QODANA_BASELINE_FROM_CLOUD.value.toBoolean()) return
+
     val baseline = config.baseline
     val message = when {
       baseline == null -> QodanaBundle.message("baseline.used.none")
