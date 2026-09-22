@@ -51,6 +51,9 @@ interface QodanaEnv {
   val QODANA_ENV: KeyAndValue
 
   val QODANA_DISABLE_COLLECT_CONTEXT: KeyAndValue
+
+  /** `true` when the file of `--baseline` is a baseline that qodana-cli downloaded from Qodana Cloud. */
+  val QODANA_BASELINE_FROM_CLOUD: KeyAndValue
 }
 
 private class QodanaEnvImpl : QodanaEnv {
@@ -66,6 +69,7 @@ private class QodanaEnvImpl : QodanaEnv {
   override val QODANA_PROJECT_ID by env()
   override val QODANA_ENV by env()
   override val QODANA_DISABLE_COLLECT_CONTEXT by env()
+  override val QODANA_BASELINE_FROM_CLOUD by env()
 
   private fun env(): ReadOnlyProperty<Any?, QodanaEnv.KeyAndValue> = ReadOnlyProperty { _, property ->
     val key = property.name
@@ -87,6 +91,7 @@ abstract class QodanaEnvEmpty : QodanaEnv {
   override val QODANA_PROJECT_ID by empty()
   override val QODANA_ENV by empty()
   override val QODANA_DISABLE_COLLECT_CONTEXT by empty()
+  override val QODANA_BASELINE_FROM_CLOUD: QodanaEnv.KeyAndValue by empty()
 
   protected fun value(value: String): ReadOnlyProperty<Any?, QodanaEnv.KeyAndValue> = ReadOnlyProperty { _, property ->
     val key = property.name
@@ -135,6 +140,7 @@ private class QodanaEnvServiceTestImpl : QodanaEnvService {
       override val QODANA_PROJECT_ID by latestEnvWithValue { QODANA_PROJECT_ID }
       override val QODANA_ENV by latestEnvWithValue { QODANA_ENV }
       override val QODANA_DISABLE_COLLECT_CONTEXT by latestEnvWithValue { QODANA_DISABLE_COLLECT_CONTEXT }
+      override val QODANA_BASELINE_FROM_CLOUD by latestEnvWithValue { QODANA_BASELINE_FROM_CLOUD }
     }
 
   private fun latestEnvWithValue(
