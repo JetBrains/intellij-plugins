@@ -127,7 +127,7 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
     return fixPairs
   }
 
-  @RequiresWriteLock(generateAssertion = false /* IJPL-115548 */)
+  @RequiresWriteLock
   internal fun addRequiredProvidersBlockToConfig(provider: ProviderType, existingTerraformBlock: HCLBlock?, file: PsiFile) {
     val elementGenerator = TfElementGenerator(project)
     val terraformBlock = (existingTerraformBlock
