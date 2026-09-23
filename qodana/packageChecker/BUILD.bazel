@@ -29,6 +29,7 @@ jvm_library(
         "@community//platform/analysis-impl",
         "@community//platform/core-api:core",
         "//contrib/qodana",
+        "@community//platform/monolith",
     ],
 )
 
@@ -48,6 +49,7 @@ jvm_library(
         "@community//platform/analysis-impl:analysis-impl_test_lib",
         "@community//platform/core-api:core_test_lib",
         "//contrib/qodana:qodana_test_lib",
+        "@community//platform/monolith:monolith_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.packageChecker` end
