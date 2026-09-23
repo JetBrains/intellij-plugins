@@ -6,6 +6,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.junit.TestInClassConfigurationProducer;
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.ExecutionTestUtil;
 import com.intellij.testFramework.PlatformTestUtil;
 
 /**
@@ -37,6 +38,6 @@ public abstract class CucumberJavaWithJUnitRunnerIntegrationTest extends JavaTes
     TestInClassConfigurationProducer runConfigurationProducer = new TestInClassConfigurationProducer();
     PsiElement element = PlatformTestUtil.findElementBySignature(
       "MyCucumberTest", "src/test/java/com/sample/MyCucumberTest.java", getProject());
-    return PlatformTestUtil.getRunConfiguration(element, runConfigurationProducer);
+    return ExecutionTestUtil.getRunConfiguration(element, runConfigurationProducer);
   }
 }
