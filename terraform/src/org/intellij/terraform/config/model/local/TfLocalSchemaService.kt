@@ -92,13 +92,13 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
     if (myDeferred == null || myDeferred.isCompleted && myDeferred.getCompletionExceptionOrNull() is CancellationException) {
       if (buildLocalMetadataAutomatically) {
-        scheduleModelRebuild(setOf(lock)).let { scope.launch { it.getValue() } }
+        scheduleModelRebuild(setOf(lock)).let { modelBuildScope.launch { it.getValue() } }
       }
       return null
     }
 
     if (!myDeferred.isCompleted) {
-      scope.launch {
+      modelBuildScope.launch {
         myDeferred.join() // not myDeferred.start() because it logs exceptions
       }
       return null
