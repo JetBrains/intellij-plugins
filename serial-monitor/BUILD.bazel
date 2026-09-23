@@ -18,8 +18,6 @@ dev_dist_complex_plugin(
         "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm": "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
     },
     main_module = "intellij.serial.monitor",
-    product = "CLion",
-    product_info = "//build/dev-dist-descriptors:CLion_product_info",
     resource_inputs = {
         "@dev_launch_jserialcomm//:files": "layout-source:resource-generator:0:0",
     },

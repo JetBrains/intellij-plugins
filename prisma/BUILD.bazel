@@ -25,8 +25,6 @@ dev_dist_complex_plugin(
     descriptor = "//contrib/prisma:intellij.prisma_dev_descriptor",
     execution_version = 2,
     main_module = "intellij.prisma",
-    product = "WebStorm",
-    product_info = "//build/dev-dist-descriptors:WebStorm_product_info",
     source_tree_prefixes = {
         "module-resource:0:source": "contrib/prisma/gen-resources/language-server",
     },
