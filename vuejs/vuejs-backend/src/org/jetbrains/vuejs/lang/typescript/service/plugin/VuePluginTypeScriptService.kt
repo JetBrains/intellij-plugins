@@ -169,7 +169,7 @@ open class VuePluginTypeScriptService(
    */
   private fun getProjectRootPath(file: VirtualFile): @NonNls String? {
     val psiFile = PsiManager.getInstance(project).findFile(file)
-    val configFile = getPreferableConfig(psiFile, false)?.configFile
+    val configFile = getPreferableConfig(psiFile, true)?.configFile
                      ?: project.getBaseDirectories().firstOrNull { VfsUtilCore.isAncestor(it, file, false) }
 
     return configFile?.path
