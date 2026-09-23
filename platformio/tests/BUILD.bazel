@@ -1,5 +1,12 @@
-load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("//build:intellij_dev_ultimate.bzl", "clion_dev_test")
+
+clion_dev_test(
+    name = "tests_test",
+    test_module = "intellij.clion.embedded.platformio.tests",
+)
+
+### skip generation section `test intellij.clion.embedded.platformio.tests`
 
 ### auto-generated section `build intellij.clion.embedded.platformio.tests` start
 jvm_library(
@@ -171,10 +178,3 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.clion.embedded.platformio.tests` end
-
-### auto-generated section `test intellij.clion.embedded.platformio.tests` start
-jps_test(
-    name = "tests_test",
-    runtime_deps = [":tests_test_lib"],
-)
-### auto-generated section `test intellij.clion.embedded.platformio.tests` end
