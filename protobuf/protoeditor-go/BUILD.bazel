@@ -1,5 +1,13 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("//goland/intellij-go/testFramework:go_sdk_test_dependencies.bzl", go_sdk_test_deps_targets = "all_test_dep_targets")
+
+jps_test(
+    name = "protoeditor-go-tests_test",
+    data = go_sdk_test_deps_targets,
+    runtime_deps = [":protoeditor-go-tests_test_lib"],
+)
+### skip generation section `test intellij.protoeditor.go.tests`
 
 ### auto-generated section `build intellij.protoeditor.go` start
 jvm_library(
@@ -159,10 +167,3 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.protoeditor.go.tests` end
-
-### auto-generated section `test intellij.protoeditor.go.tests` start
-jps_test(
-    name = "protoeditor-go-tests_test",
-    runtime_deps = [":protoeditor-go-tests_test_lib"],
-)
-### auto-generated section `test intellij.protoeditor.go.tests` end
