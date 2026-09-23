@@ -217,6 +217,8 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-duplicates-detection:javascript-duplicatesDetection_test_lib",
         "@community//platform/todo",
         "@community//platform/todo:todo_test_lib",
+        "@community//platform/scratch/plugin",
+        "@community//platform/scratch/plugin:plugin_test_lib",
     ],
 )
 ### auto-generated section `build intellij.flex.tests` end

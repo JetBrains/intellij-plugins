@@ -318,6 +318,8 @@ jvm_library(
         "@community//platform/testFramework/junit5/codeInsight:codeInsight_test_lib",
         "@community//platform/testFramework/junit5",
         "@community//platform/testFramework/junit5:junit5_test_lib",
+        "@community//platform/scratch/plugin",
+        "@community//platform/scratch/plugin:plugin_test_lib",
     ],
 )
 ### auto-generated section `build intellij.prisma.tests` end

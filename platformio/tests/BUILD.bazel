@@ -170,6 +170,8 @@ jvm_library(
         "@community//platform/welcome-screen-impl:welcomeScreen-impl_test_lib",
         "//plugins/profiler/clion",
         "//plugins/profiler/clion:clion_test_lib",
+        "@community//platform/scratch/plugin",
+        "@community//platform/scratch/plugin:plugin_test_lib",
     ],
 )
 ### auto-generated section `build intellij.clion.embedded.platformio.tests` end

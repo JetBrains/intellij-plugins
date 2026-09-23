@@ -224,6 +224,8 @@ jvm_library(
         "@community//xml/impl:impl_test_lib",
         "@community//platform/lsp-impl",
         "@community//platform/lsp-impl:lsp-impl_test_lib",
+        "@community//platform/scratch/plugin",
+        "@community//platform/scratch/plugin:plugin_test_lib",
     ],
 )
 ### auto-generated section `build intellij.vuejs.tests` end

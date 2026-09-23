@@ -287,6 +287,8 @@ jvm_library(
         "@community//jps/model-api:model_test_lib",
         "@community//platform/testRunner",
         "@community//platform/testRunner:testRunner_test_lib",
+        "@community//platform/scratch/plugin",
+        "@community//platform/scratch/plugin:plugin_test_lib",
     ],
 )
 ### auto-generated section `build intellij.karma.tests` end

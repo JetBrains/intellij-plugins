@@ -159,6 +159,8 @@ jvm_library(
         "@community//libraries/junit6:junit6_test_lib",
         "@community//libraries/junit6-params",
         "@community//libraries/junit6-params:junit6-params_test_lib",
+        "@community//platform/scratch/plugin",
+        "@community//platform/scratch/plugin:plugin_test_lib",
     ],
 )
 ### auto-generated section `build intellij.openRewrite.maven.tests` end

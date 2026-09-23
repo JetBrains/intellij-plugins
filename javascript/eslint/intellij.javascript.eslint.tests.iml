@@ -67,5 +67,6 @@
     <orderEntry type="module" module-name="intellij.vuejs.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.idea.customization.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.xml.parser" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.scratch.plugin" scope="TEST" />
   </component>
 </module>

@@ -61,6 +61,8 @@ jvm_library(
         "@community//android/android-common:common_test_lib",
         "@community//android/android-test-framework:testFramework",
         "@community//android/android-test-framework:testFramework_test_lib",
+        "@community//platform/scratch/plugin",
+        "@community//platform/scratch/plugin:plugin_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.android.tests` end

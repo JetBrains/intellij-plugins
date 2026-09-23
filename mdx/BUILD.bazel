@@ -240,6 +240,8 @@ jvm_library(
         "@community//libraries/junit6:junit6_test_lib",
         "@community//libraries/junit6-suites",
         "@community//libraries/junit6-suites:junit6-suites_test_lib",
+        "@community//platform/scratch/plugin",
+        "@community//platform/scratch/plugin:plugin_test_lib",
     ],
 )
 ### auto-generated section `build intellij.mdx.tests` end

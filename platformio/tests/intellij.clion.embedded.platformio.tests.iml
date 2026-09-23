@@ -72,6 +72,7 @@
     <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.welcomeScreen.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.profiler.clion" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.scratch.plugin" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.clion.embedded.platformio" />
 </module>
