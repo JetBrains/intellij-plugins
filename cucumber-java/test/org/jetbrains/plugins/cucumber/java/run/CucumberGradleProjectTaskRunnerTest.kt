@@ -1,11 +1,11 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.run
 
+import com.intellij.gradle.testFramework.annotations.BaseGradleVersionSource
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.use
 import org.gradle.util.GradleVersion
 import org.jetbrains.plugins.gradle.execution.build.GradleProjectTaskRunnerTestCase
-import org.jetbrains.plugins.gradle.testFramework.annotations.BaseGradleVersionSource
 import org.junit.jupiter.params.ParameterizedTest
 
 class CucumberGradleProjectTaskRunnerTest : GradleProjectTaskRunnerTestCase() {
