@@ -9,7 +9,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.ExecutionDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.application.ApplicationManager;
@@ -239,7 +239,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
     public void update(@NotNull AnActionEvent e) {
       boolean enabled = getContentSize() > 0;
       if (!enabled) {
-        enabled = e.getData(LangDataKeys.CONSOLE_VIEW) != null;
+        enabled = e.getData(ExecutionDataKeys.CONSOLE_VIEW) != null;
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         if (editor != null && editor.getDocument().getTextLength() == 0) {
           enabled = false;

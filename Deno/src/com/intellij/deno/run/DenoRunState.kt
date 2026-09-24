@@ -16,7 +16,7 @@ import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.debug.NodeDebugCommandLineConfigurator
 import com.intellij.javascript.nodejs.debug.NodeDebuggableRunProfileState
 import com.intellij.openapi.actionSystem.DataSink
-import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.actionSystem.ExecutionDataKeys
 import com.intellij.terminal.TerminalExecutionConsole
 import org.jetbrains.concurrency.Promise
 
@@ -75,7 +75,7 @@ class DenoRunState(environment: ExecutionEnvironment, runConfiguration: DenoRunC
         }
         return object : ConsoleViewImpl(environment.project, scope, isViewer, true) {
           override fun uiDataSnapshot(sink: DataSink) {
-            sink[LangDataKeys.RUN_PROFILE] = environment.runProfile
+            sink[ExecutionDataKeys.RUN_PROFILE] = environment.runProfile
           }
         }
       }
