@@ -106,10 +106,12 @@ public class PbTextFieldNameReference extends PsiReferenceBase<PbTextFieldName> 
 
       // Make sure that group fields use the capitalized type name rather than the lowercase field
       // name.
-      PbGroupDefinition group =
-          PbPsiUtil.resolveRefToType(fieldType.getEffectiveReference(), PbGroupDefinition.class);
-      if (group != null && !name.equals(group.getName())) {
-        return null;
+      if (fieldType.getBuiltInType() == null && !name.equals(field.getName())) {
+        PbGroupDefinition group =
+            PbPsiUtil.resolveRefToType(fieldType.getEffectiveReference(), PbGroupDefinition.class);
+        if (group != null && !name.equals(group.getName())) {
+          return null;
+        }
       }
 
       return field;

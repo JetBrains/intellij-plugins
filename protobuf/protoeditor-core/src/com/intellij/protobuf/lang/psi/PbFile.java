@@ -15,6 +15,7 @@
  */
 package com.intellij.protobuf.lang.psi;
 
+import com.google.common.collect.Multimap;
 import com.intellij.psi.impl.PsiFileEx;
 import com.intellij.psi.impl.source.PsiFileWithStubSupport;
 import com.intellij.psi.util.QualifiedName;
@@ -82,6 +83,14 @@ public interface PbFile
   Map<QualifiedName, Collection<PbSymbol>> getLocalQualifiedSymbolMap();
 
   /**
+   * Returns a multimap of all symbols defined in this file.
+   *
+   * @see #getLocalQualifiedSymbolMap()
+   */
+  @NotNull
+  Multimap<QualifiedName, PbSymbol> getLocalQualifiedSymbols();
+
+  /**
    * Returns a map of all fully-qualified symbols exported when this file is imported.
    *
    * <p>Specifically, the result contains the following:
@@ -97,6 +106,14 @@ public interface PbFile
   Map<QualifiedName, Collection<PbSymbol>> getExportedQualifiedSymbolMap();
 
   /**
+   * Returns a multimap of all fully-qualified symbols exported when this file is imported.
+   *
+   * @see #getExportedQualifiedSymbolMap()
+   */
+  @NotNull
+  Multimap<QualifiedName, PbSymbol> getExportedQualifiedSymbols();
+
+  /**
    * Returns a map of all fully-qualified symbols defined in this and imported files.
    *
    * <p>Specifically, the result contains the following:
@@ -110,6 +127,14 @@ public interface PbFile
    */
   @NotNull
   Map<QualifiedName, Collection<PbSymbol>> getFullQualifiedSymbolMap();
+
+  /**
+   * Returns a multimap of all fully-qualified symbols defined in this and imported files.
+   *
+   * @see #getFullQualifiedSymbolMap()
+   */
+  @NotNull
+  Multimap<QualifiedName, PbSymbol> getFullQualifiedSymbols();
 
   /**
    * Returns the {@link PbSymbolOwner} that owns the elements defined in this file. This is either
