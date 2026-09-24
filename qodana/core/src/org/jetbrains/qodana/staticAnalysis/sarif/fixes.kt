@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ex.GlobalInspectionContextEx
 import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
+import com.intellij.concurrency.ConcurrencyUtils
 import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.ide.actionsOnSave.impl.ActionsOnSaveManager
 import com.intellij.modcommand.ActionContext
@@ -29,14 +30,12 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.blockingContextScope
-import com.intellij.openapi.progress.util.runUnderEmptyProgressIfNone
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.toNioPathOrNull
-import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.platform.util.coroutines.mapConcurrent
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
@@ -215,7 +214,7 @@ private suspend fun reconstructProblems(results: List<Result>,
   val problems = mutableListOf<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>>()
 
   val localProblems = readActionBlocking {
-    runUnderEmptyProgressIfNone {
+    ConcurrencyUtils.runWithIndicatorOrContextCancellation {
     InspectionEngine.inspectEx(
       localToolWrappers,
       psiFile,
