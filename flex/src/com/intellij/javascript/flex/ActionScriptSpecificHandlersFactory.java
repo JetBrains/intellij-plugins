@@ -18,6 +18,8 @@ import com.intellij.lang.javascript.index.JSCustomIndexer;
 import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.ExpectedTypeEvaluator;
 import com.intellij.lang.javascript.psi.JSExpectedTypeKind;
+import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
@@ -61,6 +63,10 @@ public final class ActionScriptSpecificHandlersFactory extends JSDialectSpecific
   public @NotNull ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(@NotNull JSReferenceExpressionImpl referenceExpression,
                                                                                                                 boolean ignorePerformanceLimits) {
     return new ActionScriptReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits);
+  }
+
+  public static @Nullable JSType findActionScriptExpectedType(@NotNull JSExpression parent) {
+    return new ActionScriptExpectedTypeEvaluator(parent,  JSExpectedTypeKind.EXPECTED).findExpectedType();
   }
 
   @Override

@@ -1,7 +1,9 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.completion;
 
+import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.javascript.flex.ActionScriptSpecificHandlersFactory;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
@@ -29,6 +31,7 @@ import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSForInStatement;
 import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSParameterItem;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
@@ -52,6 +55,7 @@ import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.lang.javascript.types.TypeFromUsageDetector;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -215,6 +219,105 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
       }
     }
     return variants.isEmpty() ? null : variants;
+  }
+
+  private @NotNull List<LookupElement> addVariantsForUnqualifiedReference(@NotNull JSReferenceExpression location) {
+    final JSType expectedType = ActionScriptSpecificHandlersFactory.findActionScriptExpectedType(location);
+    if (expectedType == null) return Collections.emptyList();
+
+    final List<LookupElement> variants = new ArrayList<>();
+    addVariantsForUnqualifiedExpectedType(expectedType, location, variants);
+
+    return variants;
+  }
+
+  private void addVariantsForUnqualifiedExpectedType(final @NotNull JSType expectedType,
+                                                       @NotNull JSReferenceExpression location,
+                                                       @NotNull List<LookupElement> variants) {
+    final PsiElement parent = location.getParent();
+    int qualifiedStaticVariantsStart = Integer.MAX_VALUE;
+
+    final PsiElement parentInOriginalTree = CompletionUtil.getOriginalOrSelf(parent);
+
+    JSSinkResolveProcessor processor = createProcessor(expectedType, parentInOriginalTree);
+
+    JSClass ourClass = JSResolveUtil.getClassOfContext(parentInOriginalTree);
+    processVariantsIfDoingSmartCompletion(expectedType, variants, parentInOriginalTree, processor, ourClass);
+
+    processClasses(parentInOriginalTree, processor);
+
+    qualifiedStaticVariantsStart =
+      processContextClass(location, expectedType, parent, variants, qualifiedStaticVariantsStart, processor, ourClass);
+
+    int i = 0;
+    Set<String> used = new HashSet<>();
+    final List<PsiElement> results = processor.getResults();
+    if (results != null) {
+      String referencedParameterName = null;
+      if (parent instanceof JSArgumentList) {
+        final JSParameterItem parameter = JSResolveUtil.findParameterForUsedArgument(location, (JSArgumentList)parent);
+        if (parameter != null) {
+          referencedParameterName = parameter.getName();
+        }
+      }
+
+      for (PsiElement o : results) {
+        JSNamedElement namedElement = (JSNamedElement)o;
+        String name = namedElement.getName();
+        String additionalPrefix = null;
+
+        if ((namedElement instanceof JSVariable || namedElement instanceof JSFunction) && needToQualify(qualifiedStaticVariantsStart, i)) {
+          PsiElement element = JSResolveUtil.findParent(namedElement);
+          if (element instanceof JSClass) {
+            additionalPrefix = name;
+            name = ((JSClass)element).getName() + "." + name;
+          }
+        }
+
+        if (name == null || !used.add(name)) {
+          if (i < qualifiedStaticVariantsStart) --qualifiedStaticVariantsStart;
+          continue;
+        }
+        final JSLookupPriority priority = JSLookupPriority.getSmartVariantPriority(name.equals(referencedParameterName));
+        LookupElement prioritizedLookupItem = JSLookupUtilImpl.createPrioritizedLookupItem(
+          namedElement, name, priority, false, new JSLookupContext(location), false, additionalPrefix);
+        variants.add(prioritizedLookupItem);
+        ++i;
+      }
+    }
+  }
+
+  private void processVariantsIfDoingSmartCompletion(@NotNull JSType expectedType,
+                                                     @NotNull List<LookupElement> variants,
+                                                     PsiElement parentInOriginalTree,
+                                                     @NotNull JSResolveProcessorEx processor,
+                                                     JSClass ourClass) {
+    if (JSCompletionContributor.getInstance().isDoingSmartCodeCompleteAction()) {          // to avoid duplicates in plain completion
+      processor.setToProcessHierarchy(true);
+      processor.configureClassScope(ourClass);
+      JSResolveUtil.treeWalkUp(processor, parentInOriginalTree, parentInOriginalTree.getParent(), parentInOriginalTree);
+      processor.setAllowUnqualifiedStaticsFromInstance(false);
+
+      if (expectedType instanceof JSBooleanType) {
+        variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
+          null, "true", JSLookupPriority.SMART_PRIORITY
+        ));
+        variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
+          null, "false", JSLookupPriority.SMART_PRIORITY
+        ));
+      }
+    }
+  }
+
+  private @NotNull JSSinkResolveProcessor createProcessor(JSType expectedType, PsiElement parentInOriginalTree) {
+    final CompletionResultSink resultSink = new CompletionResultSink(parentInOriginalTree, null);
+    resultSink.setSmartCompletionInheritanceProcessingContext(
+      JSSmartCompletionVariantsHandler.initProcessingContext(parentInOriginalTree)
+    );
+    JSSinkResolveProcessor processor = createSinkResolveProcessor(expectedType, resultSink);
+    processor.setAllowUnqualifiedStaticsFromInstance(true);
+    processor.setLocalResolve(true);
+    return processor;
   }
 
   @Override
@@ -479,8 +582,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
     });
   }
 
-  @Override
-  protected @NotNull JSSinkResolveProcessor createSinkResolveProcessor(JSType expectedType, CompletionResultSink resultSink) {
+  private @NotNull JSSinkResolveProcessor createSinkResolveProcessor(JSType expectedType, CompletionResultSink resultSink) {
     return new ActionScriptSinkResolveProcessor<>(resultSink) {
 
       @Override
