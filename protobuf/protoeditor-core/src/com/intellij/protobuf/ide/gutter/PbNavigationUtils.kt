@@ -10,10 +10,9 @@ import com.intellij.util.asSafely
 fun findProtoDefinitions(psiElement: PsiElement): Sequence<PbElement> {
   val identifierOwner = psiElement.parentOfType<PsiNameIdentifierOwner>(true) ?: return emptySequence()
   val converters = collectRpcConvertersForLanguage(psiElement.language)
-                     .takeIf(Collection<PbGeneratedCodeConverter>::isNotEmpty)
-                   ?: return emptySequence()
   return IMPLEMENTATION_SEARCHER_EP_NAME.extensionList.asSequence()
     .flatMap { it.findDeclarationsForCodeElement(identifierOwner, converters) }
+    .distinct()
 }
 
 fun findImplementations(pbElement: PsiElement): Sequence<PsiElement> {
@@ -23,6 +22,7 @@ fun findImplementations(pbElement: PsiElement): Sequence<PsiElement> {
   val converters = collectRpcConverters()
   return IMPLEMENTATION_SEARCHER_EP_NAME.extensionList.asSequence()
     .flatMap { it.findImplementationsForProtoElement(identifierOwner, converters) }
+    .distinct()
 }
 
 
