@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -31,6 +31,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -45,7 +46,7 @@ public final class FlexCompositeSdk extends UserDataHolderBase implements Sdk, C
 
   private static final SdkType TYPE = new SdkType(TYPE_ID) {
     @Override
-    public String suggestHomePath() {
+    public String suggestHomePath(@NotNull Path path) {
       return null;
     }
 

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,7 +42,7 @@ public final class FlexSdkType2 extends SdkType {
   }
 
   @Override
-  public @Nullable String suggestHomePath() {
+  public @Nullable String suggestHomePath(@NotNull Path _path) {
     final String path = PropertiesComponent.getInstance().getValue(LAST_SELECTED_FLEX_SDK_HOME_KEY);
     if (path != null) return PathUtil.getParentPath(path);
     return null;
