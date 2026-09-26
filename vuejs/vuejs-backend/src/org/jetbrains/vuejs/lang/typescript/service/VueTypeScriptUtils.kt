@@ -11,7 +11,6 @@ internal fun isVueServiceCompatibleTypeScriptEnabled(
 ): Boolean {
   val tsCompilerSettings = TypeScriptCompilerSettings.getSettings(project)
   return when (tsCompilerSettings.versionType) {
-    TypeScriptCompilerVersionType.EMBEDDED_TS_GO,
     TypeScriptCompilerVersionType.TS_GO_PROXY_RECOMMENDED_VERSION,
       -> false
 

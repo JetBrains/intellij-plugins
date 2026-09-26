@@ -9,7 +9,6 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerSer
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspClientDescriptor
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspIntegrationProvider
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
-import com.intellij.lang.typescript.tsc.TypeScriptGoTypeEvaluatorMode
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.thisLogger
@@ -171,13 +170,7 @@ abstract class Angular2TestCase(
         -> Registry.get("typescript.ts-go.enabled").setValue(true, testRootDisposable)
     }
     configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
-    val service = TypeScriptServiceTestMixin.setUpTypeScriptService(
-      myFixture,
-      tsGoTypeEvaluatorMode = if (serviceKind == TypeScriptServiceKind.TsGoProxy)
-        TypeScriptGoTypeEvaluatorMode.PROXY
-      else
-        TypeScriptGoTypeEvaluatorMode.TS_GO_FORK
-    ) {
+    val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
       it::class == expectedServerClass
     }
     thisLogger().info("Using $service for the test")
