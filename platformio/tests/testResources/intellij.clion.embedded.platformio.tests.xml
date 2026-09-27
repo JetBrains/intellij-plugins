@@ -30,7 +30,7 @@
     <module name="intellij.libraries.jediterm.core"/>
     <module name="intellij.libraries.jediterm.ui"/>
     <module name="intellij.libraries.junit4"/>
-    <module name="intellij.libraries.junit5"/>
+    <module name="intellij.libraries.junit6"/>
     <module name="intellij.libraries.kotlinx.collections.immutable"/>
     <module name="intellij.platform.analysis"/>
     <module name="intellij.platform.concurrency"/>

@@ -122,8 +122,8 @@ jvm_library(
         "//tests/intellij.qodana.testsFramework:qodana-testsFramework_test_lib",
         "//tests/intellij.ide.starter.extended:ide-starter-extended",
         "//tests/intellij.ide.starter.extended:ide-starter-extended_test_lib",
-        "@community//libraries/junit5",
-        "@community//libraries/junit5:junit5_test_lib",
+        "@community//libraries/junit6",
+        "@community//libraries/junit6:junit6_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.poly.tests` end

@@ -161,8 +161,8 @@ jvm_library(
         "@community//java/java-runtime:rt_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
-        "@community//libraries/junit5",
-        "@community//libraries/junit5:junit5_test_lib",
+        "@community//libraries/junit6",
+        "@community//libraries/junit6:junit6_test_lib",
     ],
 )
 ### auto-generated section `build intellij.cloudFormation.tests` end
