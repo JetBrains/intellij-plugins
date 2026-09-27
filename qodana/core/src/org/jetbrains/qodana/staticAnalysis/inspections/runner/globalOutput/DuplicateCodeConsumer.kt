@@ -130,8 +130,8 @@ private class DuplicatesProblem(private val project: Project, private val elemen
       val end = Integer.parseInt(fragment.getAttributeValue("end"))
 
       // A file without any row is a file that the inspection never analyzed.
-      val exact = selectJson(database, file, line, start)
-      val json = exact ?: selectFileJson(database, file) ?: continue
+      val exact = selectExactMatchDuplicate(database, file, line, start)
+      val json = exact ?: selectFallbackDuplicate(database, file) ?: continue
       if (exact != null) {
         if (exactJson == null) exactJson = exact
       }
@@ -165,7 +165,7 @@ private class DuplicatesProblem(private val project: Project, private val elemen
 
   override fun getModule(): String? = null
 
-  private fun selectJson(database: QodanaToolResultDatabase, file: String, line: Int, start: Int): String? {
+  private fun selectExactMatchDuplicate(database: QodanaToolResultDatabase, file: String, line: Int, start: Int): String? {
     database.selectDuplicate(file, line, start).use { query ->
       val jsons = query.executeQuery().toList()
       if (jsons.size > 1) {
@@ -175,7 +175,7 @@ private class DuplicatesProblem(private val project: Project, private val elemen
     }
   }
 
-  private fun selectFileJson(database: QodanaToolResultDatabase, file: String): String? {
+  private fun selectFallbackDuplicate(database: QodanaToolResultDatabase, file: String): String? {
     database.selectDuplicateInFile(file).use { query ->
       return query.executeQuery().firstOrNull()
     }
