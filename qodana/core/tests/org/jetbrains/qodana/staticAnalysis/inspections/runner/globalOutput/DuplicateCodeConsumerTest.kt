@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.VfsTestUtil
+import com.jetbrains.qodana.sarif.model.Level
 import com.jetbrains.qodana.sarif.model.Result
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.runBlocking
@@ -66,6 +67,30 @@ class DuplicateCodeConsumerTest : QodanaRunnerTestCase() {
 
     assertEquals(listOf("test-module/A.java:3", "test-module/A.java:4"), result.locationLines())
     assertEmpty(notifications())
+  }
+
+  @Test
+  fun `prefers an exact-match row over a fallback row as the template`() {
+    val a = createSourceFile("A.java")
+    val b = createSourceFile("B.java")
+    val first = CONTENT.indexOf("int x")
+    val second = CONTENT.indexOf("int y")
+
+    // The first fragment of the cluster falls back to another cluster's row in A.java. The second
+    // fragment has an exact-match row in B.java. The consumer must pick the exact-match row as the
+    // template, so the resulting level comes from B.java's row, not from the A.java fallback.
+    val result = consume(
+      problems = listOf(
+        problemXml(a, line = 3, offset = columnOf(first), length = 10, severity = "WEAK WARNING"),
+        problemXml(b, line = 3, offset = columnOf(first), length = 10, severity = "ERROR"),
+      ),
+      fragments = listOf(
+        fragmentXml(a, line = 0, start = second, end = second + 10),
+        fragmentXml(b, line = 3, start = first, end = first + 10),
+      ),
+    )
+
+    assertEquals(Level.ERROR, result.level)
   }
 
   @Test
@@ -215,6 +240,7 @@ class DuplicateCodeConsumerTest : QodanaRunnerTestCase() {
     offset: Int,
     length: Int,
     module: String = "test-module",
+    severity: String = "WEAK WARNING",
   ): String = """
     <problem>
       <file>${file.url}</file>
@@ -225,7 +251,7 @@ class DuplicateCodeConsumerTest : QodanaRunnerTestCase() {
       <language>JAVA</language>
       <module>$module</module>
       <description>Duplicated code</description>
-      <problem_class id="$INSPECTION" severity="WEAK WARNING">Duplicated code</problem_class>
+      <problem_class id="$INSPECTION" severity="$severity">Duplicated code</problem_class>
     </problem>
   """.trimIndent()
 

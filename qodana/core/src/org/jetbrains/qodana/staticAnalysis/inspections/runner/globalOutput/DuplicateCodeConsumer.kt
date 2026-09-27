@@ -118,7 +118,10 @@ private class DuplicatesProblem(private val project: Project, private val elemen
   override suspend fun getSarif(macroManager: PathMacroManager, database: QodanaToolResultDatabase): Result? {
     macroManager.collapsePathsRecursively(element)
 
-    var clusterJson: String? = null
+    // A file-level fallback row can come from another cluster in the same file, so an exact-match
+    // row from any fragment of this cluster is a better template than any fallback row.
+    var exactJson: String? = null
+    var fallbackJson: String? = null
     val locations = mutableListOf<Location>()
     for (fragment in element.getChildren("fragment")) {
       val file = fragment.getAttributeValue(ElementToSarifConverter.FILE)
@@ -127,8 +130,14 @@ private class DuplicatesProblem(private val project: Project, private val elemen
       val end = Integer.parseInt(fragment.getAttributeValue("end"))
 
       // A file without any row is a file that the inspection never analyzed.
-      val json = selectJson(database, file, line, start) ?: selectFileJson(database, file) ?: continue
-      if (clusterJson == null) clusterJson = json
+      val exact = selectJson(database, file, line, start)
+      val json = exact ?: selectFileJson(database, file) ?: continue
+      if (exact != null) {
+        if (exactJson == null) exactJson = exact
+      }
+      else if (fallbackJson == null) {
+        fallbackJson = json
+      }
 
       val location = createLocation(macroManager, json, file, start, end - start)
       if (location == null) {
@@ -138,6 +147,7 @@ private class DuplicatesProblem(private val project: Project, private val elemen
       locations.add(location)
     }
 
+    val clusterJson = exactJson ?: fallbackJson
     // A cluster needs two members to be a duplicate.
     if (clusterJson == null || locations.size < 2) return null
 
