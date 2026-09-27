@@ -234,8 +234,8 @@ jvm_library(
         "@community//platform/testFramework/junit5/codeInsight:codeInsight_test_lib",
         "@community//libraries/junit5",
         "@community//libraries/junit5:junit5_test_lib",
-        "@community//libraries/junit5-suites",
-        "@community//libraries/junit5-suites:junit5-suites_test_lib",
+        "@community//libraries/junit6-suites",
+        "@community//libraries/junit6-suites:junit6-suites_test_lib",
     ],
 )
 ### auto-generated section `build intellij.mdx.tests` end
