@@ -140,6 +140,8 @@ jvm_library(
         "@community//platform/lang-core:lang-core_test_lib",
         "@community//platform/lang-impl",
         "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/buildView",
+        "@community//platform/buildView:buildView_test_lib",
         "@community//platform/projectModel-api:projectModel",
         "@community//platform/projectModel-api:projectModel_test_lib",
         "@community//platform/statistics",
