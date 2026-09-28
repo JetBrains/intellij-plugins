@@ -27,9 +27,9 @@ class VueKolarTranspiler(
     && file.hasVueFileType
 
   override fun isEnabled(file: VirtualFile): Boolean =
-    isVueContext(file, project)
-    && file.isInLocalFileSystem
+    file.isInLocalFileSystem
     && file.hasVueFileType
+    && isVueContext(file, project)
 
   override fun getFileInfo(file: VirtualFile): KolarFileInfo? {
     if (NodeModuleUtil.hasNodeModulesDirInPath(file, null))
