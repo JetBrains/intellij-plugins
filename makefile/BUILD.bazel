@@ -18,6 +18,9 @@ dev_dist_plugin(
         "lib/makefile.jar": ["intellij.makefile"],
     },
     main_module = "intellij.makefile",
+    mode_refused_content_modules = {
+        "frontend": ["intellij.makefile.spellchecker"],
+    },
 )
 ### auto-generated section `dev intellij.makefile` end
 

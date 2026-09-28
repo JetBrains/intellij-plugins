@@ -10,6 +10,9 @@ dev_dist_plugin(
         "lib/clion-embedded-platformio.jar": ["intellij.clion.embedded.platformio"],
     },
     main_module = "intellij.clion.embedded.platformio",
+    mode_refused_content_modules = {
+        "frontend": ["intellij.clion.embedded.platformio.terminal"],
+    },
 )
 ### auto-generated section `dev intellij.clion.embedded.platformio` end
 

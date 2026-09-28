@@ -29,6 +29,17 @@ dev_dist_plugin(
         "intellij.vuejs.webpack",
     ],
     main_module = "intellij.vuejs.plugin",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.vuejs.prettier",
+            "intellij.vuejs.debugger",
+            "intellij.vuejs.markdown",
+            "intellij.vuejs.free",
+            "intellij.vuejs.backend",
+            "intellij.vuejs.eslint",
+            "intellij.vuejs.webpack",
+        ],
+    },
 )
 
 dev_dist_complex_plugin(

@@ -19,6 +19,12 @@ dev_dist_plugin(
         "lib/jade.jar": ["intellij.jade"],
     },
     main_module = "intellij.jade",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.jade.css",
+            "intellij.jade.watcher",
+        ],
+    },
 )
 ### auto-generated section `dev intellij.jade` end
 

@@ -18,6 +18,9 @@ dev_dist_plugin(
         ],
     },
     main_module = "intellij.dts",
+    mode_refused_content_modules = {
+        "frontend": ["intellij.dts.cmake"],
+    },
 )
 ### auto-generated section `dev intellij.dts` end
 

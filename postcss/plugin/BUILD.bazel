@@ -18,6 +18,9 @@ dev_dist_plugin(
         "lib/postcss-plugin.jar": ["intellij.postcss.plugin"],
     },
     main_module = "intellij.postcss.plugin",
+    mode_refused_content_modules = {
+        "frontend": ["intellij.postcss.paid"],
+    },
 )
 ### auto-generated section `dev intellij.postcss.plugin` end
 

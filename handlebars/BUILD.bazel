@@ -12,6 +12,9 @@ dev_dist_plugin(
         "lib/handlebars.jar": ["intellij.handlebars"],
     },
     main_module = "intellij.handlebars",
+    mode_refused_content_modules = {
+        "frontend": ["intellij.handlebars.javascript"],
+    },
 )
 ### auto-generated section `dev intellij.handlebars` end
 

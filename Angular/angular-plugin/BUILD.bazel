@@ -17,6 +17,12 @@ dev_dist_plugin(
         "intellij.angular.tslint",
     ],
     main_module = "intellij.angular.plugin",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.angular.backend",
+            "intellij.angular.tslint",
+        ],
+    },
 )
 
 dev_dist_complex_plugin(

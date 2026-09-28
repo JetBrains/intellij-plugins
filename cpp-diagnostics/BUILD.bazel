@@ -22,6 +22,12 @@ dev_dist_plugin(
         ],
     },
     main_module = "intellij.clion.diagnostics",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.clion.diagnostics.cmake",
+            "intellij.clion.diagnostics.docker",
+        ],
+    },
 )
 ### auto-generated section `dev intellij.clion.diagnostics` end
 

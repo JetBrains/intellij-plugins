@@ -25,6 +25,13 @@ dev_dist_plugin(
         ],
     },
     main_module = "intellij.protoeditor",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.protoeditor.go",
+            "intellij.protoeditor.python",
+            "intellij.protoeditor.jvm",
+        ],
+    },
 )
 ### auto-generated section `dev intellij.protoeditor` end
 

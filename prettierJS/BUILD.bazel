@@ -17,6 +17,9 @@ dev_dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
     descriptor_modules = ["intellij.prettierJS.eslint"],
     main_module = "intellij.prettierJS",
+    mode_refused_content_modules = {
+        "frontend": ["intellij.prettierJS.eslint"],
+    },
 )
 
 dev_dist_complex_plugin(

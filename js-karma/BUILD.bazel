@@ -24,6 +24,12 @@ dev_dist_plugin(
         "intellij.javascript.karma.debug",
     ],
     main_module = "intellij.karma",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.javascript.karma.coverage",
+            "intellij.javascript.karma.debug",
+        ],
+    },
 )
 
 dev_dist_complex_plugin(

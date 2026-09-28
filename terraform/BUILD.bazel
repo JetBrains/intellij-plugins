@@ -21,6 +21,13 @@ dev_dist_plugin(
         "lib/terraform-metadata.jar": ["@ultimate_lib//:terraform-terraform-metadata"],
     },
     main_module = "intellij.terraform",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.terraform.watchers",
+            "intellij.terraform.copyright",
+            "intellij.terraform.template",
+        ],
+    },
 )
 ### auto-generated section `dev intellij.terraform` end
 
