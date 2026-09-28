@@ -38,8 +38,11 @@ abstract class VueDocumentationWithPluginTestBase(
   @Rule
   @JvmField
   val rule: TestRule = TrackFailedTestRule(
+    "testEmitEvents",
     "testFromDefinitions",
+    "testGenericComponentProp",
     "testPrimeVueMergedProps",
+    "testPropWithDefaults",
   )
 }
 

@@ -51,8 +51,11 @@ class VueCompletionTest :
     override fun getCodeCompletionExpectedItemsLocation(dir: Boolean, dirName: String): String {
       require(dir) { "Only `dir` option is supported!" }
 
+      val separateExpectedData = myFixture.tempDirFixture.getFile("items-tsgo-proxy") != null
+                                 || name == "testScriptSetupGlobalsTs"
+
       return super.getCodeCompletionExpectedItemsLocation(dir, dirName)
-        .plus(if (myFixture.tempDirFixture.getFile("items-tsgo-proxy") != null) "/items-tsgo-proxy" else "")
+        .plus(if (separateExpectedData) "/items-tsgo-proxy" else "")
     }
   }
 
