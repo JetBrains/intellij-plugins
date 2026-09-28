@@ -6,6 +6,7 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
 import com.intellij.javascript.types.TSType
+import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
@@ -222,8 +223,13 @@ open class VuePluginTypeScriptService(
     virtualFile: VirtualFile,
     element: PsiElement,
   ): Boolean =
-    element.language is VueTSLanguage
-    || super.supportsTypeEvaluation(virtualFile, element)
+    when (element.language) {
+      TypeScriptLanguageDialect,
+      VueTSLanguage,
+        -> true
+
+      else -> super.supportsTypeEvaluation(virtualFile, element)
+    }
 
   private inner class VueCompilerServiceEvaluationSupport(
     project: Project,
