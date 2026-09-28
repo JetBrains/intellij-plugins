@@ -55,7 +55,7 @@ private const val SELECT_INSPECTION_IDS = "SELECT DISTINCT inspection FROM resul
 
 private const val INSERT_DUPLICATES_STATEMENT = "INSERT INTO duplicates VALUES (?, ?, ?, ?, ?, ?);"
 private const val SELECT_EXACT_DUPLICATES_STATEMENT = "SELECT json FROM duplicates WHERE file = ? AND line = ? AND start = ? ORDER BY hash;"
-private const val SELECT_FALLBACK_STATEMENT = "SELECT json FROM duplicates WHERE file = ? ORDER BY line, start LIMIT 1;"
+private const val SELECT_FALLBACK_DUPLICATE_STATEMENT = "SELECT json FROM duplicates WHERE file = ? ORDER BY line, start LIMIT 1;"
 
 private const val INSERT_RELATED_PROBLEM = "INSERT INTO related_problem VALUES (?, ?);"
 private const val SELECT_RELATED_PROBLEM = "SELECT json FROM related_problem WHERE hash = ?;"
@@ -127,7 +127,7 @@ class QodanaToolResultDatabase private constructor(private val connection: Sqlit
    */
   fun selectDuplicateInFile(file: String): StringColumnClosableQuery {
     val binder = ObjectBinder(paramCount = 1)
-    val statement = connection.prepareStatement(SELECT_FALLBACK_STATEMENT, binder)
+    val statement = connection.prepareStatement(SELECT_FALLBACK_DUPLICATE_STATEMENT, binder)
     binder.bind(file)
     return StringColumnClosableQuery(statement)
   }
