@@ -12,12 +12,14 @@ import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.concurrency.ConcurrencyUtils
+import com.intellij.diagnostic.rethrowControlFlowException
 import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.ide.actionsOnSave.impl.ActionsOnSaveManager
 import com.intellij.modcommand.ActionContext
 import com.intellij.modcommand.ModCommand
 import com.intellij.modcommand.ModCommandExecutor
 import com.intellij.modcommand.ModCommandQuickFix
+import com.intellij.modcommand.ModCommandService
 import com.intellij.modcommand.ModCompositeCommand
 import com.intellij.modcommand.ModUpdateFileText
 import com.intellij.openapi.application.EDT
@@ -25,6 +27,7 @@ import com.intellij.openapi.application.WriteIntentReadAction
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.readActionBlocking
 import com.intellij.openapi.application.writeIntentReadAction
+import com.intellij.openapi.command.executeCommand
 import com.intellij.openapi.command.writeCommandAction
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
@@ -153,6 +156,7 @@ private suspend fun applyFixes(sarifRun: Run, runContext: QodanaRunContext, fixe
         runFixesForFile(runContext, uri, results, projectDir, cleanup, fixesLogger)
       }
       catch (e: Exception) {
+        rethrowControlFlowException(e)
         LOG.error("Failed to apply fixes for $uri", e)
       }
     }
@@ -309,18 +313,14 @@ private suspend fun applyOther(
 ): Int {
   if (problems.isEmpty()) return 0
 
-  return withContext(Dispatchers.EDT) {
-    LOG.debug("Applying fixes for $uri")
-    writeCommandAction(runContext.project, QodanaBundle.message("apply.fixes.command")) {
-      val fixed = fixProblems(runContext, problems, uri, fixesLogger)
-      LOG.debug("Applying fixes for $uri is finished. $fixed problems were fixed.")
-      fixed
-    }
-  }
+  LOG.debug("Applying fixes for $uri")
+  val fixed = fixProblems(runContext, problems, uri, fixesLogger)
+  LOG.debug("Applying fixes for $uri is finished. $fixed problems were fixed.")
+  return fixed
 }
 
 
-private fun fixProblems(
+private suspend fun fixProblems(
   runContext: QodanaRunContext,
   problems: List<Pair<InspectionToolWrapper<*, *>, List<ProblemDescriptor>>>,
   uri: String,
@@ -329,13 +329,18 @@ private fun fixProblems(
   var counter = 0
   problems.forEach { (tool, problemDescriptors) ->
     problemDescriptors.forEach { problem ->
-      val descriptionMessage = problem.messageWithLine()
+      val (descriptionMessage, isElementValid) = readAction { problem.messageWithLine() to problem.isElementValid() }
+      if (!isElementValid) {
+        LOG.debug("Element for problem '$descriptionMessage' is invalid. Fix won't be applied.")
+        return@forEach
+      }
       try {
         if (tryToFixProblem(runContext, problem, descriptionMessage, tool, uri, fixesLogger)) {
           counter++
         }
       }
       catch (e: Exception) {
+        rethrowControlFlowException(e)
         LOG.error("Fixes apply error for problem '$descriptionMessage'", e)
       }
     }
@@ -343,7 +348,7 @@ private fun fixProblems(
   return counter
 }
 
-private fun tryToFixProblem(
+private suspend fun tryToFixProblem(
   runContext: QodanaRunContext,
   descriptor: ProblemDescriptor,
   descriptionMessage: String,
@@ -351,21 +356,34 @@ private fun tryToFixProblem(
   uri: String,
   fixesLogger: FixesLogger
 ): Boolean {
-  val element = descriptor.psiElement
-  if (element == null || !element.isValid) {
-    LOG.debug("Element for problem '$descriptionMessage' is invalid. Fix won't be applied.")
-    return false
-  }
-  val project = element.project
   if (tryToApplyModCommandFixes(runContext, descriptor, descriptionMessage, toolWrapper, uri, fixesLogger)) return true
 
   if (!java.lang.Boolean.getBoolean(ALLOW_NON_BATCH_FIXES)) return false
+  return writeCommandAction(runContext.project, QodanaBundle.message("apply.fixes.command")) {
+    tryToApplyNonModCommandFix(runContext, descriptor, descriptionMessage, toolWrapper, uri, fixesLogger)
+  }
+}
+
+private fun tryToApplyNonModCommandFix(
+  runContext: QodanaRunContext,
+  descriptor: ProblemDescriptor,
+  descriptionMessage: String,
+  toolWrapper: InspectionToolWrapper<*, *>,
+  uri: String,
+  fixesLogger: FixesLogger
+): Boolean {
+  val project = runContext.project
   val nonModCommandFix = descriptor.fixes?.firstOrNull { it !is ModCommandQuickFix }
   if (nonModCommandFix == null) {
     LOG.debug("No batch fix for problem '$descriptionMessage' is found.")
     return false
   }
+  if (!descriptor.isElementValid()) {
+    LOG.debug("Element for problem '$descriptionMessage' is invalid. Fix won't be applied.")
+    return false
+  }
   LOG.debug("Non-batch fix for problem '$descriptionMessage' is found.")
+  val textBefore = if (fixesLogger.diffIncluded) descriptor.containingFileText(true) else null
   nonModCommandFix.applyFix(project, descriptor)
   LOG.debug("Non-batch fix for problem '$descriptionMessage' is applied successfully.")
   PsiDocumentManager.getInstance(project).apply {
@@ -379,9 +397,9 @@ private fun tryToFixProblem(
         fixesLogger.logAppliedFix(runContext.messageReporter, toolWrapper, descriptionMessage, uri,
                                   nonModCommandFix.name, file.relativePath(runContext.config.projectPath))
       }
-      if (fixesLogger.diffIncluded && psiFile != null) {
+      if (textBefore != null && psiFile != null) {
         fixesLogger.addFileModificationToQueue(psiFile.virtualFile.relativePath(runContext.config.projectPath),
-                                               descriptionMessage, descriptor.containingFileText(), uncommitedDoc.charsSequence)
+                                               descriptionMessage, textBefore, uncommitedDoc.charsSequence)
       }
     }
   }
@@ -389,7 +407,7 @@ private fun tryToFixProblem(
   return true
 }
 
-private fun tryToApplyModCommandFixes(
+private suspend fun tryToApplyModCommandFixes(
   runContext: QodanaRunContext,
   descriptor: ProblemDescriptor,
   descriptionMessage: String,
@@ -397,20 +415,44 @@ private fun tryToApplyModCommandFixes(
   uri: String,
   fixesLogger: FixesLogger
 ): Boolean {
+  val project = runContext.project
   val fixes = descriptor.fixes?.filterIsInstance<ModCommandQuickFix>() ?: emptyList()
   LOG.debug("${fixes.size} fixes for problem '$descriptionMessage' are found.")
-  fixes.forEach {
-    val modCommand = it.perform(runContext.project, descriptor)
-    val result = ModCommandExecutor.getInstance().executeInBatch(ActionContext.from(descriptor), modCommand)
+  for (fix in fixes) {
+    val prepared = withContext(Dispatchers.Default) { readAction { prepareModCommandFix(project, descriptor, fix) } }
+    if (prepared == null) {
+      LOG.debug("Fix '${fix.familyName}' for problem '$descriptionMessage' is not available.")
+      continue
+    }
+    val result = withContext(Dispatchers.EDT) {
+      writeIntentReadAction {
+        var result: ModCommandExecutor.BatchExecutionResult = ModCommandExecutor.Result.ABORT
+        executeCommand(project, QodanaBundle.message("apply.fixes.command")) {
+          result = ModCommandExecutor.getInstance().executeInBatch(prepared.context, prepared.command)
+        }
+        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(prepared.context.file.fileDocument)
+        result
+      }
+    }
     if (result == ModCommandExecutor.Result.SUCCESS) {
       LOG.debug("Fix for problem '$descriptionMessage' is applied successfully.")
-      logModCommand(runContext, toolWrapper, descriptionMessage, uri, it.name, modCommand, fixesLogger)
+      logModCommand(runContext, toolWrapper, descriptionMessage, uri, prepared.name, prepared.command, fixesLogger)
       return true
     } else {
       LOG.debug("Fix attempt for problem '$descriptionMessage' failed with message '${result.message}'.")
     }
   }
   return false
+}
+
+private class PreparedModCommandFix(val context: ActionContext, val command: ModCommand, val name: String)
+
+private fun prepareModCommandFix(project: Project, descriptor: ProblemDescriptor, fix: ModCommandQuickFix): PreparedModCommandFix? {
+  if (!descriptor.isElementValid()) return null
+  val context = ActionContext.from(descriptor)
+  val action = ModCommandService.getInstance().unwrap(fix)
+  if (action != null && action.getPresentation(context) == null) return null
+  return PreparedModCommandFix(context, fix.perform(project, descriptor), fix.name)
 }
 
 private fun logModCommand(
@@ -446,6 +488,8 @@ private fun logModCommand(
 }
 
 private fun VirtualFile.relativePath(base: Path) = toNioPathOrNull()?.let { FileUtil.toSystemIndependentName(base.relativize(it).toString()) } ?: path
+
+private fun ProblemDescriptor.isElementValid(): Boolean = psiElement?.isValid == true
 
 private fun ProblemDescriptor.messageWithLine() =
   "${lineNumber}: ${ProblemDescriptorUtil.renderDescriptionMessage(this, psiElement)}"

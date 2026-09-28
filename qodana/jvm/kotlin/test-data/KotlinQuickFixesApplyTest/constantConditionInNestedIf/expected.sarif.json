@@ -1,0 +1,79 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "KotlinConstantConditions",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition 'i < 3' is always false",
+            "markdown": "Condition 'i \\< 3' is always false"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.kt",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 13,
+                  "charOffset": 54,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "i < 3"
+                  },
+                  "sourceLanguage": "kotlin"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 93,
+                  "snippet": {
+                    "text": "fun check(i: Int): Int {\n    if (i > 5) {\n        if (i < 3) {\n            return 1\n        }"
+                  },
+                  "sourceLanguage": "kotlin"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testConstantConditionInNestedIf",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "bdd4c1f46a1c594f",
+            "equalIndicator/v1": "bbd69e09858a6bbb246f833cfc839db1a88958fd9cdc8347279e3113de9f393c"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "hasFixes": true,
+            "tags": [
+              "kotlin"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}
