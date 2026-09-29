@@ -30,7 +30,6 @@ import com.jetbrains.python.psi.PyReferenceExpression
 import com.jetbrains.python.psi.PyTargetExpression
 import com.jetbrains.python.psi.impl.PyBuiltinCache
 import com.jetbrains.python.psi.types.PyAnyType
-import com.jetbrains.python.psi.types.PyCallableType
 import com.jetbrains.python.psi.types.PyCallableTypeImpl
 import com.jetbrains.python.psi.types.PyClassTypeImpl
 import com.jetbrains.python.psi.types.PyType
@@ -68,7 +67,7 @@ internal class PbPythonTypeProvider : PyTypeProviderBase() {
     type: PyType?,
     callee: PyExpression,
     context: TypeEvalContext,
-  ): Ref<PyCallableType?>? {
+  ): Ref<PyType?>? {
     val pbPythonType = type as? PbPythonAbstractType<*> ?: return null
     if (!pbPythonType.isCallable) return Ref.create(null)
 
