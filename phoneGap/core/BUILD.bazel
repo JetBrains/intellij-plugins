@@ -45,6 +45,8 @@ jvm_library(
         "@community//platform/util/jdom",
         "@community//platform/util:util-ui",
         "@community//platform/execution",
+        "@community//platform/consoleView",
+        "@community//platform/consoleView/impl",
     ],
 )
 
@@ -83,6 +85,8 @@ jvm_library(
         "@community//platform/util/jdom:jdom_test_lib",
         "@community//platform/util:util-ui_test_lib",
         "@community//platform/execution:execution_test_lib",
+        "@community//platform/consoleView:consoleView_test_lib",
+        "@community//platform/consoleView/impl:impl_test_lib",
     ],
 )
 ### auto-generated section `build intellij.phoneGap.core` end

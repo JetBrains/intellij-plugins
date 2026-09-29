@@ -64,6 +64,8 @@ jvm_library(
         "@community//libraries/commons/io",
         "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
         "@community//platform/execution",
+        "@community//platform/consoleView",
+        "@community//platform/consoleView/impl",
         "@community//platform/forms_rt:java-guiForms-rt",
     ],
 )
@@ -99,6 +101,8 @@ jvm_library(
         "@community//libraries/jediterm-ui:jediterm-ui_test_lib",
         "@community//libraries/commons/io:io_test_lib",
         "@community//platform/execution:execution_test_lib",
+        "@community//platform/consoleView:consoleView_test_lib",
+        "@community//platform/consoleView/impl:impl_test_lib",
         "@community//platform/forms_rt:java-guiForms-rt_test_lib",
     ],
 )

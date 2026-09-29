@@ -31,6 +31,7 @@ jvm_library(
         "@community//platform/buildView",
         "@community//platform/projectModel-api:projectModel",
         "@community//platform/execution",
+        "@community//platform/consoleView",
         "@community//platform/ide-core",
     ],
 )
@@ -57,6 +58,7 @@ jvm_library(
         "@community//platform/buildView:buildView_test_lib",
         "@community//platform/projectModel-api:projectModel_test_lib",
         "@community//platform/execution:execution_test_lib",
+        "@community//platform/consoleView:consoleView_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
     ],
 )
