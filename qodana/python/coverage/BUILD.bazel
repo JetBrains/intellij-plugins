@@ -38,16 +38,6 @@ jvm_provided_library(
 )
 
 jvm_provided_library(
-    name = "community_python_aliasProvider_provided",
-    lib = "@community//python/aliasProvider",
-)
-
-jvm_provided_library(
-    name = "community_python_community-plugin_provided",
-    lib = "@community//python/pluginCore:community-plugin",
-)
-
-jvm_provided_library(
     name = "community_plugins_coverage_provided",
     lib = "@community//plugins/coverage-common:coverage",
 )
@@ -83,8 +73,6 @@ jvm_library(
         ":community_platform_lang-impl_provided",
         ":python_provided",
         ":python_coverage_provided",
-        ":community_python_aliasProvider_provided",
-        ":community_python_community-plugin_provided",
         ":community_plugins_coverage_provided",
         ":community_plugins_coverage-common_coverage-agent_provided",
     ],
@@ -115,10 +103,6 @@ jvm_library(
         "//python:python_test_lib",
         "//python/coverage",
         "//python/coverage:coverage_test_lib",
-        "@community//python/aliasProvider",
-        "@community//python/aliasProvider:aliasProvider_test_lib",
-        "@community//python/pluginCore:community-plugin",
-        "@community//python/pluginCore:community-plugin_test_lib",
         "@community//plugins/coverage-common:coverage",
         "@community//plugins/coverage-common:coverage_test_lib",
         "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",

@@ -33,11 +33,6 @@ jvm_provided_library(
 )
 
 jvm_provided_library(
-    name = "goland_intellij-go_plugin_provided",
-    lib = "//goland/intellij-go/plugin",
-)
-
-jvm_provided_library(
     name = "goland_intellij-go_impl_provided",
     lib = "//goland/intellij-go/impl",
 )
@@ -45,11 +40,6 @@ jvm_provided_library(
 jvm_provided_library(
     name = "goland_intellij-go_go-coverage_provided",
     lib = "//goland/intellij-go/go-coverage",
-)
-
-jvm_provided_library(
-    name = "community_platform_util_jdom_provided",
-    lib = "@community//platform/util/jdom",
 )
 
 jvm_provided_library(
@@ -91,10 +81,8 @@ jvm_library(
         ":community_platform_lang-impl_provided",
         ":community_platform_core-impl_provided",
         ":contrib_qodana_provided",
-        ":goland_intellij-go_plugin_provided",
         ":goland_intellij-go_impl_provided",
         ":goland_intellij-go_go-coverage_provided",
-        ":community_platform_util_jdom_provided",
         ":community_plugins_coverage_provided",
         ":community_plugins_coverage-common_coverage-agent_provided",
     ],
@@ -126,14 +114,10 @@ jvm_library(
         "//contrib/qodana",
         "//contrib/qodana:qodana_test_lib",
         "//contrib/qodana/coverage:coverage_test_lib",
-        "//goland/intellij-go/plugin",
-        "//goland/intellij-go/plugin:plugin_test_lib",
         "//goland/intellij-go/impl",
         "//goland/intellij-go/impl:impl_test_lib",
         "//goland/intellij-go/go-coverage",
         "//goland/intellij-go/go-coverage:go-coverage_test_lib",
-        "@community//platform/util/jdom",
-        "@community//platform/util/jdom:jdom_test_lib",
         "@community//plugins/coverage-common:coverage",
         "@community//plugins/coverage-common:coverage_test_lib",
         "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",

@@ -16,11 +16,6 @@ jvm_provided_library(
     lib = "@community//libraries/kotlinc/kotlin-scripting-jvm:libraries-kotlinc-kotlin-scripting-jvm",
 )
 
-jvm_provided_library(
-    name = "community_libraries_kotlinc_libraries-kotlinc-kotlin-script-runtime_provided",
-    lib = "@community//libraries/kotlinc/kotlin-script-runtime:libraries-kotlinc-kotlin-script-runtime",
-)
-
 jvm_library(
     name = "bta",
     srcs = glob(
@@ -55,7 +50,6 @@ jvm_library(
         "@community//platform/progress/shared:ide-progress",
         ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-common_provided",
         ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-jvm_provided",
-        ":community_libraries_kotlinc_libraries-kotlinc-kotlin-script-runtime_provided",
     ],
 )
 
@@ -87,8 +81,6 @@ jvm_library(
         "@community//libraries/kotlinc/kotlin-scripting-common:libraries-kotlinc-kotlin-scripting-common_test_lib",
         "@community//libraries/kotlinc/kotlin-scripting-jvm:libraries-kotlinc-kotlin-scripting-jvm",
         "@community//libraries/kotlinc/kotlin-scripting-jvm:libraries-kotlinc-kotlin-scripting-jvm_test_lib",
-        "@community//libraries/kotlinc/kotlin-script-runtime:libraries-kotlinc-kotlin-script-runtime",
-        "@community//libraries/kotlinc/kotlin-script-runtime:libraries-kotlinc-kotlin-script-runtime_test_lib",
         "@community//platform/progress/shared:ide-progress_test_lib",
     ],
 )

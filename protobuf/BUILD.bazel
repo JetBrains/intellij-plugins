@@ -66,12 +66,6 @@ jvm_library(
         "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
         "@community//libraries/protobuf-java-util:protobuf-java-util_test_lib",
         "@community//platform/structure-view-impl:structureView_test_lib",
-        "//contrib/protobuf/protoeditor-jvm",
-        "//contrib/protobuf/protoeditor-jvm:protoeditor-jvm_test_lib",
-        "//contrib/protobuf/protoeditor-python",
-        "//contrib/protobuf/protoeditor-python:protoeditor-python_test_lib",
-        "//contrib/protobuf/protoeditor-go",
-        "//contrib/protobuf/protoeditor-go:protoeditor-go_test_lib",
     ],
 )
 ### auto-generated section `build intellij.protoeditor` end
