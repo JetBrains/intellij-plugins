@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config;
 
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
@@ -212,22 +213,31 @@ public class TfTypesResolvingTest extends LightPlatformTestCase {
 //    doTypeResolveTest("", "");
   }
 
-  private void doTypeResolveTest(@NotNull String text, @Nullable final String expected) {
-    text = "x=" + text;
-    final PsiFile psiFile = PsiFileFactory.getInstance(getProject()).createFileFromText("a.tf", TerraformFileType.INSTANCE, text);
-    assertEquals(TerraformLanguage.INSTANCE, psiFile.getLanguage());
-    PsiElement root = psiFile.getFirstChild();
-    assertNotNull(root);
-    assertInstanceOf(root, HCLProperty.class);
-    HCLExpression value = ((HCLProperty) root).getValue();
-    assertNotNull(value);
-    assertInstanceOf(value, BaseExpression.class);
-    HclType type = TypeCachedValueProvider.Companion.getType(value);
-    if (expected == null) {
-      assertNull(type);
-    } else {
-      assertNotNull("Expected: " + expected + ", got null", type);
-      assertEquals(expected, type.getPresentableText());
-    }
+  @Override
+  protected boolean runInDispatchThread() {
+    return false;
+  }
+
+  private void doTypeResolveTest(@NotNull String text, @Nullable String expected) {
+    final String fileText = "x=" + text;
+    ReadAction.computeBlocking(() -> {
+      final PsiFile psiFile = PsiFileFactory.getInstance(getProject()).createFileFromText("a.tf", TerraformFileType.INSTANCE, fileText);
+      assertEquals(TerraformLanguage.INSTANCE, psiFile.getLanguage());
+      PsiElement root = psiFile.getFirstChild();
+      assertNotNull(root);
+      assertInstanceOf(root, HCLProperty.class);
+      HCLExpression value = ((HCLProperty)root).getValue();
+      assertNotNull(value);
+      assertInstanceOf(value, BaseExpression.class);
+      HclType type = TypeCachedValueProvider.Companion.getType(value);
+      if (expected == null) {
+        assertNull(type);
+      }
+      else {
+        assertNotNull("Expected: " + expected + ", got null", type);
+        assertEquals(expected, type.getPresentableText());
+      }
+      return null;
+    });
   }
 }
