@@ -2,6 +2,7 @@ package org.angular2.lang.expr.service.kolar
 
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
+import com.intellij.lang.javascript.TypeScriptFileType
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationErrorFilter
 import com.intellij.lang.typescript.kolar.CodeMapping
@@ -50,7 +51,9 @@ internal class AngularKolarTranspiler(private val project: Project) : KolarTrans
     file.isInLocalFileSystem && file.fileType.let { it is HtmlFileType || it is SvgFileType }
 
   override fun isEnabled(file: VirtualFile): Boolean =
-    isAngularTypeScriptServiceEnabled(project, file)
+    file.isInLocalFileSystem
+    && file.fileType.let { it is HtmlFileType || it is TypeScriptFileType }
+    && isAngularTypeScriptServiceEnabled(project, file)
 
   override fun getFileInfo(file: VirtualFile): KolarFileInfo? =
     when {
