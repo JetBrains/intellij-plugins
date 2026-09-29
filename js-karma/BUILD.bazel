@@ -1,5 +1,4 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
@@ -7,7 +6,7 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 filegroup(
     name = "dev_dist_resources",
     srcs = glob(
-        ["resources/js_reporter/**"],
+        ["js_reporter/**"],
     ),
     visibility = ["//visibility:public"],
 )
@@ -23,31 +22,21 @@ dev_dist_plugin(
         "intellij.javascript.karma.coverage",
         "intellij.javascript.karma.debug",
     ],
+    file_prefixes = {
+        "js_reporter": "contrib/js-karma/js_reporter",
+    },
+    files = {
+        "js_reporter": "//contrib/js-karma:dev_dist_resources",
+    },
+    jars = {
+        "lib/karma.jar": ["intellij.karma"],
+    },
     main_module = "intellij.karma",
     mode_refused_content_modules = {
         "frontend": [
             "intellij.javascript.karma.coverage",
             "intellij.javascript.karma.debug",
         ],
-    },
-)
-
-dev_dist_complex_plugin(
-    artifact_inputs = {
-        "//contrib/js-karma:karma.jar": "intellij.karma",
-    },
-    descriptor = "//contrib/js-karma:intellij.karma_dev_descriptor",
-    execution_version = 2,
-    independent_artifacts = [
-        "//contrib/js-karma/coverage:coverage_content_module_jar",
-        "//contrib/js-karma/debug:debug_content_module_jar",
-    ],
-    main_module = "intellij.karma",
-    source_tree_prefixes = {
-        "module-resource:0:source": "contrib/js-karma/resources/js_reporter",
-    },
-    source_tree_targets = {
-        "module-resource:0:source": "//contrib/js-karma:dev_dist_resources",
     },
 )
 ### auto-generated section `dev intellij.karma` end
