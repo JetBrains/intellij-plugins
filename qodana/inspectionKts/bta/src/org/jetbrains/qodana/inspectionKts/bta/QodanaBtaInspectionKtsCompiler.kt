@@ -108,6 +108,8 @@ private suspend fun compileInspectionKtsFileViaBta(
 ): InspectionKtsFileStatus {
   waitWhenProjectTrusted(project)
 
+  LOG.debug("BTA compilation started: $file")
+
   val exceptionDuringAnalysisFlow = MutableStateFlow<Exception?>(null)
 
   val scriptText = getDocumentByNioPath(file)?.text ?: runInterruptible(IO) { file.readText() }
@@ -133,7 +135,10 @@ private suspend fun compileInspectionKtsFileViaBta(
         return@coroutineScope InspectionKtsFileStatus.Cancelled(file)
       }
     }
-    if (rawResult is InspectionKtsFileStatus.Cancelled) return rawResult
+    if (rawResult is InspectionKtsFileStatus.Cancelled) {
+      LOG.debug("BTA compilation cancelled: $file")
+      return rawResult
+    }
     yield()
     val outcome = rawResult as BtaCompiled
 
@@ -173,6 +178,7 @@ private suspend fun compileInspectionKtsFileViaBta(
   // `keepAlive` for as long as these inspections stay registered; the temp output dir is freed
   // only once that classloader is unreachable (see the Cleaner in `BtaCompiledScriptExecutor.execute`).
   val compiled = CompiledInspectionKtsInspections(dynamicInspectionData.inspections, dynamicInspectionData.userData, dynamicInspectionData.keepAlive)
+  LOG.debug("BTA compilation completed: $file")
   return InspectionKtsFileStatus.Compiled(compiled, exceptionDuringAnalysisFlow, errorLogger, scriptContentHash, isOutdated = false, file)
 }
 
