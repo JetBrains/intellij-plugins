@@ -1,8 +1,7 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.prisma` start
 filegroup(
@@ -15,22 +14,16 @@ filegroup(
 
 dev_dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
+    file_prefixes = {
+        "language-server": "contrib/prisma/gen-resources/language-server",
+    },
+    files = {
+        "language-server": "//contrib/prisma:dev_dist_resources",
+    },
+    jars = {
+        "lib/prisma.jar": ["intellij.prisma"],
+    },
     main_module = "intellij.prisma",
-)
-
-dev_dist_complex_plugin(
-    artifact_inputs = {
-        "//contrib/prisma:prisma.jar": "intellij.prisma",
-    },
-    descriptor = "//contrib/prisma:intellij.prisma_dev_descriptor",
-    execution_version = 2,
-    main_module = "intellij.prisma",
-    source_tree_prefixes = {
-        "module-resource:0:source": "contrib/prisma/gen-resources/language-server",
-    },
-    source_tree_targets = {
-        "module-resource:0:source": "//contrib/prisma:dev_dist_resources",
-    },
 )
 ### auto-generated section `dev intellij.prisma` end
 
@@ -44,14 +37,6 @@ create_kotlinc_options(
         "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
     ],
     x_context_parameters = True,
-)
-
-resourcegroup(
-    name = "prisma_resources",
-    srcs = glob(
-        ["gen-resources/**/*"],
-    ),
-    strip_prefix = "gen-resources",
 )
 
 jvm_library(
@@ -68,7 +53,6 @@ jvm_library(
     ),
     kotlinc_opts = ":custom_prisma",
     module_name = "intellij.prisma",
-    resource_jars = [":prisma_resources"],
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],

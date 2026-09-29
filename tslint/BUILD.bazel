@@ -1,7 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.tslint` start
 filegroup(
@@ -14,34 +13,20 @@ filegroup(
 
 dev_dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
+    file_prefixes = {
+        "js": "contrib/tslint/gen/js",
+    },
+    files = {
+        "js": "//contrib/tslint:dev_dist_resources",
+    },
+    jars = {
+        "lib/tslint.jar": ["intellij.tslint"],
+    },
     main_module = "intellij.tslint",
-)
-
-dev_dist_complex_plugin(
-    artifact_inputs = {
-        "//contrib/tslint:tslint.jar": "intellij.tslint",
-    },
-    descriptor = "//contrib/tslint:intellij.tslint_dev_descriptor",
-    execution_version = 2,
-    main_module = "intellij.tslint",
-    source_tree_prefixes = {
-        "module-resource:0:source": "contrib/tslint/gen/js",
-    },
-    source_tree_targets = {
-        "module-resource:0:source": "//contrib/tslint:dev_dist_resources",
-    },
 )
 ### auto-generated section `dev intellij.tslint` end
 
 ### auto-generated section `build intellij.tslint` start
-resourcegroup(
-    name = "tslint_resources",
-    srcs = glob(
-        ["gen/**/*"],
-    ),
-    strip_prefix = "gen",
-)
-
 jvm_library(
     name = "tslint",
     srcs = glob(
@@ -53,7 +38,6 @@ jvm_library(
         allow_empty = True,
     ),
     module_name = "intellij.tslint",
-    resource_jars = [":tslint_resources"],
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],

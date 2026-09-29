@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build:clean": "npm run clean && npm run build",
-    "clean": "rm -rf ../../gen-resources/vue-service",
-    "build": "ncc build src/index.ts -o ../../gen-resources/vue-service/node_modules/ws-typescript-vue-plugin -m --no-cache && cp -r ./package.json ../../gen-resources/vue-service/node_modules/ws-typescript-vue-plugin"
+    "clean": "rm -rf ../../vue-service",
+    "build": "ncc build src/index.ts -o ../../vue-service/node_modules/ws-typescript-vue-plugin -m --no-cache && cp -r ./package.json ../../vue-service/node_modules/ws-typescript-vue-plugin"
   }
 }

@@ -1,7 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.prettierJS` start
 filegroup(
@@ -16,38 +15,23 @@ dev_dist_plugin(
     content_modules = ["intellij.prettierJS.eslint"],
     descriptor = "resources/META-INF/plugin.xml",
     descriptor_modules = ["intellij.prettierJS.eslint"],
+    file_prefixes = {
+        "prettierLanguageService": "contrib/prettierJS/gen/prettierLanguageService",
+    },
+    files = {
+        "prettierLanguageService": "//contrib/prettierJS:dev_dist_resources",
+    },
+    jars = {
+        "lib/prettierJS.jar": ["intellij.prettierJS"],
+    },
     main_module = "intellij.prettierJS",
     mode_refused_content_modules = {
         "frontend": ["intellij.prettierJS.eslint"],
     },
 )
-
-dev_dist_complex_plugin(
-    artifact_inputs = {
-        "//contrib/prettierJS:prettierJS.jar": "intellij.prettierJS",
-    },
-    descriptor = "//contrib/prettierJS:intellij.prettierJS_dev_descriptor",
-    execution_version = 2,
-    independent_artifacts = ["//contrib/prettierJS/prettierJS-eslint:eslint_content_module_jar"],
-    main_module = "intellij.prettierJS",
-    source_tree_prefixes = {
-        "module-resource:0:source": "contrib/prettierJS/gen/prettierLanguageService",
-    },
-    source_tree_targets = {
-        "module-resource:0:source": "//contrib/prettierJS:dev_dist_resources",
-    },
-)
 ### auto-generated section `dev intellij.prettierJS` end
 
 ### auto-generated section `build intellij.prettierJS` start
-resourcegroup(
-    name = "prettierJS_resources",
-    srcs = glob(
-        ["gen/**/*"],
-    ),
-    strip_prefix = "gen",
-)
-
 jvm_library(
     name = "prettierJS",
     srcs = glob(
@@ -59,7 +43,6 @@ jvm_library(
         allow_empty = True,
     ),
     module_name = "intellij.prettierJS",
-    resource_jars = [":prettierJS_resources"],
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],

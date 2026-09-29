@@ -1,6 +1,9 @@
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.angular.backend` start
+content_module_jar(module = ":angular-backend")
+
 filegroup(
     name = "dev_dist_resources",
     srcs = glob(
@@ -14,14 +17,6 @@ filegroup(
 ### auto-generated section `dev intellij.angular.backend` end
 
 ### auto-generated section `build intellij.angular.backend` start
-resourcegroup(
-    name = "angular-backend_resources",
-    srcs = glob(
-        ["gen-resources/**/*"],
-    ),
-    strip_prefix = "gen-resources",
-)
-
 jvm_library(
     name = "angular-backend",
     srcs = glob(
@@ -35,7 +30,6 @@ jvm_library(
         allow_empty = True,
     ),
     module_name = "intellij.angular.backend",
-    resource_jars = [":angular-backend_resources"],
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],

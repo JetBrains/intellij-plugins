@@ -21,4 +21,4 @@ gradle-app.setting
 
 
 # Node modules
-resources/javascript/node_modules
+src-js/node_modules
