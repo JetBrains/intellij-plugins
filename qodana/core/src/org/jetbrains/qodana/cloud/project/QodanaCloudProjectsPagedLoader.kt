@@ -201,7 +201,7 @@ class QodanaCloudProjectsPagedLoader(
     return qodanaCloudResponse {
       val api = authorized.userApi().value()
 
-      val organizations = api.getOrganizations().value()
+      val organizations = api.getOrganizations().value().organizations
       coroutineScope {
         val teams = organizations.map { organizationResponse ->
           async {
