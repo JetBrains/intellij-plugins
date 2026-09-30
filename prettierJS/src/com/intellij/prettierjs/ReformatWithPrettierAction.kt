@@ -348,7 +348,7 @@ class ReformatWithPrettierAction : AnAction(), DumbAware {
 
         var offsetsToKeep: IntArray? = null
 
-        val editor = FileEditorManager.getInstance(project).getSelectedTextEditor()
+        val editor = FileEditorManager.getInstance(project).selectedTextEditor
         if (editor != null && !editor.isDisposed() && editor.virtualFile == currentVFile) {
           offsetsToKeep = intArrayOf(editor.getCaretModel().offset)
         }

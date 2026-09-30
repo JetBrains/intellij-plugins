@@ -82,7 +82,7 @@ class Angular2ComponentDeclarationNavigationTest : Angular2CodeInsightFixtureTes
     myFixture.moveToOffsetBySignature(location)
     val result = myFixture.testAction(action)
     assertEquals(actionLabel, result.text)
-    val focusedEditor = FileEditorManager.getInstance(myFixture.getProject()).getSelectedTextEditor()
+    val focusedEditor = FileEditorManager.getInstance(myFixture.getProject()).selectedTextEditor
     val file = PsiDocumentManager.getInstance(myFixture.getProject()).getPsiFile(focusedEditor!!.getDocument())
     assertEquals(targetFile, file!!.getName())
     if (elementText == null) {
