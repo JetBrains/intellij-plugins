@@ -60,7 +60,7 @@ public class HbStructureViewTest extends BasePlatformTestCase {
       "-" + ourTestFileName + "\n" +
       " -foo\n" +
       "  -bar\n" +
-      "   baz"
+      "   -baz"
     );
   }
 
@@ -72,7 +72,7 @@ public class HbStructureViewTest extends BasePlatformTestCase {
 
       "-" + ourTestFileName + "\n" +
       " -foo\n" +
-      "  bar"
+      "  -bar"
     );
   }
 
@@ -95,14 +95,14 @@ public class HbStructureViewTest extends BasePlatformTestCase {
         """,
 
       "-" + ourTestFileName + "\n" +
-      " block\n" +
+      " -block\n" +
       " -inverse\n" +
-      "  else\n" +
-      " mustache\n" +
-      " partial\n" +
-      " partialBlock\n" +
-      " @data\n" +
-      " unescaped"
+      "  -else\n" +
+      " -mustache\n" +
+      " -partial\n" +
+      " -partialBlock\n" +
+      " -@data\n" +
+      " -unescaped"
     );
   }
 }
