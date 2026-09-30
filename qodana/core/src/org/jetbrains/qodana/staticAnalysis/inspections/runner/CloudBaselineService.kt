@@ -12,6 +12,7 @@ import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.cloud.api.IjQDCloudClient
 import org.jetbrains.qodana.cloudclient.asSuccess
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -33,6 +34,47 @@ private val DOWNLOAD_TIMEOUT: Duration = Duration.ofMinutes(1)
 internal fun interface QodanaCloudBaselineSource {
   /** Writes the baseline of [toolName] to a temporary file. Gives null when Qodana Cloud keeps none. */
   fun fetchBaseline(toolName: String): Path?
+}
+
+/** The baseline of a run: its file, where it came from, and the file that this run must delete. */
+internal class ResolvedBaseline(
+  val path: String?,
+  val source: QodanaBaselineSource,
+  val temporaryFile: Path?,
+)
+
+/**
+ * Resolves the baseline of a headless run, and downloads it from Qodana Cloud when needed.
+ *
+ * qodana-cli sets `QODANA_BASELINE_SOURCE` once it has resolved the baseline, for all three
+ * outcomes. A run that sees any value takes that answer and never asks Qodana Cloud, so the inner
+ * CLI of a cdnet or clang image does not download the same baseline twice.
+ *
+ * A baseline file always wins, so the cloud is asked only when the command line gives none.
+ */
+internal suspend fun resolveBaseline(baselineFile: String?, frontendUrl: String?): ResolvedBaseline {
+  val resolvedByCli = qodanaEnv().QODANA_BASELINE_SOURCE.value?.takeIf { it.isNotEmpty() }
+  if (resolvedByCli != null && QodanaBaselineSource.entries.none { it.name == resolvedByCli }) {
+    // An unknown value still means that a CLI resolved the baseline, so this run must not ask again.
+    LOG.warn("qodana-cli reported an unknown baseline source '$resolvedByCli'")
+  }
+
+  if (baselineFile != null) {
+    val source = when (resolvedByCli) {
+      QodanaBaselineSource.CLOUD_BASELINE.name -> QodanaBaselineSource.CLOUD_BASELINE
+      else -> QodanaBaselineSource.LOCAL_BASELINE
+    }
+    return ResolvedBaseline(baselineFile, source, temporaryFile = null)
+  }
+
+  if (resolvedByCli != null) {
+    LOG.info("qodana-cli resolved the baseline of this run as $resolvedByCli")
+    return ResolvedBaseline(path = null, source = QodanaBaselineSource.NO_BASELINE, temporaryFile = null)
+  }
+
+  val downloaded = frontendUrl?.let { cloudBaseline(it) }
+    ?: return ResolvedBaseline(path = null, source = QodanaBaselineSource.NO_BASELINE, temporaryFile = null)
+  return ResolvedBaseline(downloaded.toString(), QodanaBaselineSource.CLOUD_BASELINE, downloaded)
 }
 
 /**

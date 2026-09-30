@@ -37,6 +37,7 @@ import org.jetbrains.qodana.publisher.PublishResult
 import org.jetbrains.qodana.publisher.schemas.UploadedReport
 import org.jetbrains.qodana.runActivityWithTiming
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.addQodanaAnalysisConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.copyConfigToDir
@@ -164,13 +165,13 @@ class QodanaInspectionApplication(
 
   /** Tells which baseline the analysis used, because the problems of the report depend on it. */
   private fun logUsedBaseline() {
-    // qodana-cli tells this itself when it downloaded the baseline, so a second line would repeat it.
-    if (qodanaEnv().QODANA_BASELINE_FROM_CLOUD.value.toBoolean()) return
+    // qodana-cli prints this itself once it has resolved the baseline, so a second line would repeat it.
+    if (!qodanaEnv().QODANA_BASELINE_SOURCE.value.isNullOrEmpty()) return
 
     val baseline = config.baseline
     val message = when {
       baseline == null -> QodanaBundle.message("baseline.used.none")
-      config.baselineFromCloud -> QodanaBundle.message("baseline.used.cloud")
+      config.baselineSource == QodanaBaselineSource.CLOUD_BASELINE -> QodanaBundle.message("baseline.used.cloud")
       else -> QodanaBundle.message("baseline.used.file", baseline)
     }
     reporter.reportMessage(1, message)

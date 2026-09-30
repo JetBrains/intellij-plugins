@@ -170,6 +170,8 @@ val Project.qodanaAnalysisConfig: QodanaConfig?
 val Application.qodanaAnalysisConfigForConfiguration: QodanaConfig?
   get() = getUserData(QODANA_CONFIG_KEY)
 
+enum class QodanaBaselineSource { LOCAL_BASELINE, CLOUD_BASELINE, NO_BASELINE }
+
 data class QodanaConfig(
   val projectPath: Path,
   val yamlFiles: QodanaYamlFiles,
@@ -177,7 +179,7 @@ data class QodanaConfig(
   val resultsStorage: Path,
   val baseline: String?,
   /** True when the analysis downloaded [baseline] from Qodana Cloud, false when the user gave a file. */
-  val baselineFromCloud: Boolean = false,
+  val baselineSource: QodanaBaselineSource = QodanaBaselineSource.NO_BASELINE,
   val profile: QodanaProfileConfig,
   val profileSource: String,
   val defaultProfileName: String,
@@ -233,7 +235,7 @@ data class QodanaConfig(
       runPromoInspections: Boolean? = yaml.runPromoInspections,
       script: QodanaScriptConfig = yaml.script,
       includeAbsent: Boolean = yaml.includeAbsent,
-      baselineFromCloud: Boolean = false,
+      baselineSource: QodanaBaselineSource = QodanaBaselineSource.NO_BASELINE,
       outputFormat: OutputFormat = getOutputFormat(),
       license: QodanaLicense = QodanaLicense(QodanaLicenseType.ULTIMATE_PLUS, false, null),
       onlyDirectory: Path? = yaml.onlyDirectory,
@@ -275,7 +277,7 @@ data class QodanaConfig(
         runPromoInspections = runPromoInspections,
         script = script,
         includeAbsent = includeAbsent,
-        baselineFromCloud = baselineFromCloud,
+        baselineSource = baselineSource,
         outputFormat = outputFormat,
         license = license,
         onlyDirectory = onlyDirectory,

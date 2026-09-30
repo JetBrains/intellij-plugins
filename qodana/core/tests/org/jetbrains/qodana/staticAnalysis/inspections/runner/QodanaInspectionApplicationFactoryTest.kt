@@ -4,6 +4,7 @@ import com.intellij.testFramework.HeavyPlatformTestCase
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileYamlConfig
@@ -69,6 +70,7 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
     assertEquals("/OUT_PATH", app.config.outPath.invariantSeparatorsPathString)
     assertEquals(Path.of("PROJECT_PATH/src"), app.config.onlyDirectory)
     assertEquals("/home/user/baseline/qodana.sarif.json", app.config.baseline)
+    assertEquals(QodanaBaselineSource.LOCAL_BASELINE, app.config.baselineSource)
     assertEquals(true, app.config.includeAbsent)
     assertTrue(app.config.disableSanityInspections)
     assertEquals(1000, app.config.failureConditions.severityThresholds.any)
@@ -122,6 +124,7 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
     assertEquals("/OUT_PATH", app.config.outPath.invariantSeparatorsPathString)
     assertEquals(Path.of("PROJECT_PATH/src"), app.config.onlyDirectory)
     assertEquals("/home/user/baseline/qodana.sarif.json", app.config.baseline)
+    assertEquals(QodanaBaselineSource.LOCAL_BASELINE, app.config.baselineSource)
   }
 
   @Test
