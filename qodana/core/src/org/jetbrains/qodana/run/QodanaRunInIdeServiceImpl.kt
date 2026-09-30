@@ -36,6 +36,7 @@ import org.jetbrains.qodana.cloud.currentQodanaCloudFrontendUrl
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.report.guid
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
@@ -175,7 +176,11 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
         yaml = runInIdeParameters.qodanaYamlConfig,
         yamlFiles = yamlFiles,
         baseline = baseline?.toString(),
-        baselineFromCloud = temporaryCloudBaselineFile != null
+        baselineSource = when {
+          temporaryCloudBaselineFile != null -> QodanaBaselineSource.CLOUD_BASELINE
+          baseline != null -> QodanaBaselineSource.LOCAL_BASELINE
+          else -> QodanaBaselineSource.NO_BASELINE
+        }
       )
 
       val analysisScope = QodanaAnalysisScope(GlobalSearchScope.projectScope(project), project)
