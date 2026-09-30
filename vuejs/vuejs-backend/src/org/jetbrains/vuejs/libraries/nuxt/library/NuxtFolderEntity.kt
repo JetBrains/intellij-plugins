@@ -3,11 +3,14 @@ package org.jetbrains.vuejs.libraries.nuxt.library
 
 import com.intellij.platform.workspace.storage.EntitySource
 import com.intellij.platform.workspace.storage.WorkspaceEntity
+import com.intellij.platform.workspace.storage.annotations.IndexVfu
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 
 internal interface NuxtFolderEntity : WorkspaceEntity {
 
+  @IndexVfu
   val nuxtFolderUrl: VirtualFileUrl
+  @IndexVfu
   val libraryFileUrls: List<VirtualFileUrl>
 
   object MyEntitySource : EntitySource

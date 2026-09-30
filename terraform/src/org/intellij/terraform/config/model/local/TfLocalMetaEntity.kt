@@ -3,6 +3,7 @@ package org.intellij.terraform.config.model.local
 
 import com.intellij.platform.workspace.storage.EntitySource
 import com.intellij.platform.workspace.storage.WorkspaceEntity
+import com.intellij.platform.workspace.storage.annotations.IndexVfu
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 
 interface TfLocalMetaEntity : WorkspaceEntity {
@@ -13,6 +14,7 @@ interface TfLocalMetaEntity : WorkspaceEntity {
 
   val jsonPath: String
 
+  @IndexVfu
   val lockFile: VirtualFileUrl
 
   val timeStamp: Long

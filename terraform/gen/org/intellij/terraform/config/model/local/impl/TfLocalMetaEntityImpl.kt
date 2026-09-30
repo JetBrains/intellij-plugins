@@ -125,7 +125,9 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
         getEntityData(true).lockFile = value
         changedProperty.add("lockFile")
         val _diff = diff
-        if (_diff != null) index(this, "lockFile", value)
+        if (_diff != null) {
+          index(this, "lockFile", value)
+        }
       }
 
     override fun getEntityClass(): Class<TfLocalMetaEntity> = TfLocalMetaEntity::class.java
