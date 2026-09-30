@@ -17,6 +17,7 @@ import com.intellij.util.application
 import com.intellij.util.io.createParentDirectories
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
@@ -24,6 +25,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.job
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.QodanaBundle
@@ -50,6 +52,7 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.absolute
+import kotlin.io.path.deleteIfExists
 import kotlin.io.path.exists
 import kotlin.time.Duration.Companion.minutes
 
@@ -60,18 +63,25 @@ private const val OPEN_IN_IDE_METADATA_JSON = "open-in-ide.json"
 class QodanaInspectionApplication(
   val config: QodanaConfig,
   val projectApi: QDCloudLinterProjectApi?, // null if no token
+  private val temporaryCloudBaselineFile: Path? = null,
 ) {
   private val reporter = QodanaMessageReporter.DEFAULT
 
   suspend fun startup() {
-    config.license = checkLicense()
+    try {
+      config.license = checkLicense()
 
-    if (!config.skipPreamble) {
-      printLicenseInfo(config.license)
-      printProductHeader()
-      printAppInfo()
+      if (!config.skipPreamble) {
+        printLicenseInfo(config.license)
+        printProductHeader()
+        printAppInfo()
+      }
+      run()
     }
-    run()
+    finally {
+      // The analysis and the report both read the baseline, so it is deleted only now.
+      temporaryCloudBaselineFile?.let { withContext(NonCancellable + StaticAnalysisDispatchers.IO) { it.deleteIfExists() } }
+    }
   }
 
   @VisibleForTesting

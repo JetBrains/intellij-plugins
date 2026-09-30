@@ -99,7 +99,7 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
     override val outputFuture: Deferred<QodanaInIdeOutput?> = _outputFuture
 
     /** The baseline that this run downloaded from Qodana Cloud, or null. */
-    private var cloudBaselineFile: Path? = null
+    private var temporaryCloudBaselineFile: Path? = null
 
     suspend fun launchQodana(): QodanaInIdeOutput? {
       val timeAnalysisStarted = System.currentTimeMillis()
@@ -123,7 +123,7 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
         throw e
       }
       finally {
-        cloudBaselineFile?.let { withContext(NonCancellable + QodanaDispatchers.IO) { it.deleteIfExists() } }
+        temporaryCloudBaselineFile?.let { withContext(NonCancellable + QodanaDispatchers.IO) { it.deleteIfExists() } }
         stateManager.changeState(this, NotRunningImpl())
       }
     }
@@ -166,7 +166,7 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
 
       val yamlFiles = runInIdeParameters.qodanaYamlFile?.let { QodanaYamlFiles.noConfigDir(it) } ?: QodanaYamlFiles.noFiles()
       val baseline = runInIdeParameters.qodanaBaseline
-                     ?: cloudBaseline(currentQodanaCloudFrontendUrl().toExternalForm())?.also { cloudBaselineFile = it }
+                     ?: cloudBaseline(currentQodanaCloudFrontendUrl().toExternalForm())?.also { temporaryCloudBaselineFile = it }
 
       val config = QodanaConfig.fromYaml(
         projectPath = projectPath,
@@ -175,7 +175,7 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
         yaml = runInIdeParameters.qodanaYamlConfig,
         yamlFiles = yamlFiles,
         baseline = baseline?.toString(),
-        baselineFromCloud = cloudBaselineFile != null
+        baselineFromCloud = temporaryCloudBaselineFile != null
       )
 
       val analysisScope = QodanaAnalysisScope(GlobalSearchScope.projectScope(project), project)

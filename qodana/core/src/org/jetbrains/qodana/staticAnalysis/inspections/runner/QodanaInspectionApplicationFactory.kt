@@ -195,7 +195,11 @@ class QodanaInspectionApplicationFactory {
     val baseline = downloaded?.toString() ?: qodanaConfig.baseline
     // qodana-cli sets QODANA_BASELINE_FROM_CLOUD when the file of --baseline is a baseline that it downloaded.
     val fromCloud = baseline != null && (downloaded != null || qodanaEnv().QODANA_BASELINE_FROM_CLOUD.value.toBoolean())
-    return QodanaInspectionApplication(qodanaConfig.copy(baseline = baseline, baselineFromCloud = fromCloud), projectApi)
+    return QodanaInspectionApplication(
+      qodanaConfig.copy(baseline = baseline, baselineFromCloud = fromCloud),
+      projectApi,
+      temporaryCloudBaselineFile = downloaded,
+    )
   }
 
   private fun determineScript(cli: CommandLine, config: QodanaYamlConfig): QodanaScriptConfig =

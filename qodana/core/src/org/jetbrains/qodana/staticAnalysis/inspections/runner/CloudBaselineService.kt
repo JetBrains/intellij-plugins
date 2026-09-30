@@ -7,7 +7,7 @@ import com.google.gson.stream.JsonWriter
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.net.PlatformHttpClient
-import kotlinx.coroutines.CancellationException
+import com.intellij.diagnostic.rethrowControlFlowException
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.cloud.api.IjQDCloudClient
 import org.jetbrains.qodana.cloudclient.asSuccess
@@ -90,17 +90,15 @@ internal fun httpBaseline(host: String, qodanaToken: String, toolName: String): 
 /** Downloads the baseline of Qodana Cloud into a temporary file and returns that file if any. */
 internal suspend fun downloadCloudBaseline(source: QodanaCloudBaselineSource): Path? {
   val productCode = qodanaProductCode()
-  try {
-    LOG.info("Fetching the baseline from Qodana Cloud for $productCode")
-    return runInterruptible(StaticAnalysisDispatchers.IO) { source.fetchBaseline(productCode) }
-  }
-  catch (e: CancellationException) {
-    throw e
+  LOG.info("Fetching the baseline from Qodana Cloud for $productCode")
+  return try {
+    runInterruptible(StaticAnalysisDispatchers.IO) { source.fetchBaseline(productCode) }
   }
   catch (e: Throwable) {
+    rethrowControlFlowException(e)
     // A cut body throws here rather than passing as a short baseline, which would un-baseline real problems.
     LOG.warn("Cannot use the baseline of Qodana Cloud", e)
-    return null
+    null
   }
 }
 
