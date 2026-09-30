@@ -48,19 +48,19 @@ public class CucumberStructureViewCucumberTest extends CodeInsightFixtureTestCas
       """
         -Feature: Git Cherry-Pick When Auto-Commit is deselected
          -Background
-          Given: disabled auto-commit in the settings
-          Given: new committed files file.txt, a.txt, conflict.txt with initial content
-          Given: branch feature
-          Given: commit f5027a3 on branch feature
+          -Given: disabled auto-commit in the settings
+          -Given: new committed files file.txt, a.txt, conflict.txt with initial content
+          -Given: branch feature
+          -Given: commit f5027a3 on branch feature
          -Scenario: Simple cherry-pick
-          When: I cherry-pick the commit f5027a3
-          Then: commit dialog should be shown
-          And: active changelist is 'fix #1 (cherry picked from commit f5027a3)'
+          -When: I cherry-pick the commit f5027a3
+          -Then: commit dialog should be shown
+          -And: active changelist is 'fix #1 (cherry picked from commit f5027a3)'
          -Scenario: Simple cherry-pick, agree to commit
-          When: I cherry-pick the commit f5027a3 and commit
-          Then: the last commit is
-          And: success notification is shown 'Cherry-pick successful'
-          And: no new changelists are created"""
+          -When: I cherry-pick the commit f5027a3 and commit
+          -Then: the last commit is
+          -And: success notification is shown 'Cherry-pick successful'
+          -And: no new changelists are created"""
     );
   }
 
@@ -87,16 +87,16 @@ public class CucumberStructureViewCucumberTest extends CodeInsightFixtureTestCas
         -Feature: test
          -Rule: test
           -Example: myExample
-           Given: my step one
-           And: my step two
-           When: 2 ninjas meet, they will fight
-           Then: one ninja dies (but not me)
-           And: there is one ninja less alive
+           -Given: my step one
+           -And: my step two
+           -When: 2 ninjas meet, they will fight
+           -Then: one ninja dies (but not me)
+           -And: there is one ninja less alive
           -Example: Only One -- One alive
-           Given: there is only 1 ninja alive
-           Then: he (or she) will live forever ;-)
+           -Given: there is only 1 ninja alive
+           -Then: he (or she) will live forever ;-)
          -Rule: There can be Two (in some cases)
-          Example: Two -- Dead and Reborn as Phoenix"""
+          -Example: Two -- Dead and Reborn as Phoenix"""
     );
   }
 
