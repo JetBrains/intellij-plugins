@@ -9,7 +9,7 @@ class MakefileStructureViewTest : BasePlatformTestCase() {
     myFixture.configureByFile("$basePath/$filename")
     myFixture.testStructureView {
       PlatformTestUtil.expandAll(it.tree)
-      PlatformTestUtil.assertTreeEqual(it.tree, "-simple.mk\n all\n hello\n world\n")
+      PlatformTestUtil.assertTreeEqual(it.tree, "-simple.mk\n -all\n -hello\n -world\n")
     }
   }
 
