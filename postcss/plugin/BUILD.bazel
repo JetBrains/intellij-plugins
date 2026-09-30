@@ -10,10 +10,6 @@ dev_dist_plugin(
         "intellij.postcss.paid",
     ],
     descriptor = "resources/META-INF/plugin.xml",
-    descriptor_modules = [
-        "intellij.postcss.copyright",
-        "intellij.postcss.paid",
-    ],
     jars = {
         "lib/postcss-plugin.jar": ["intellij.postcss.plugin"],
     },

@@ -11,11 +11,6 @@ dev_dist_plugin(
         "intellij.protoeditor.core",
     ],
     descriptor = "resources/META-INF/plugin.xml",
-    descriptor_modules = [
-        "intellij.protoeditor.go",
-        "intellij.protoeditor.jvm",
-        "intellij.protoeditor.python",
-    ],
     jars = {
         "lib/protoeditor.jar": [
             "intellij.protoeditor",

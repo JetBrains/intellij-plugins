@@ -16,17 +16,6 @@ dev_dist_plugin(
         "intellij.vuejs.webpack",
     ],
     descriptor = "resources/META-INF/plugin.xml",
-    descriptor_modules = [
-        "intellij.vuejs.backend",
-        "intellij.vuejs.common",
-        "intellij.vuejs.copyright",
-        "intellij.vuejs.debugger",
-        "intellij.vuejs.eslint",
-        "intellij.vuejs.free",
-        "intellij.vuejs.markdown",
-        "intellij.vuejs.prettier",
-        "intellij.vuejs.webpack",
-    ],
     file_prefixes = {
         "vue-language-tools": "contrib/vuejs/vuejs-backend/vue-language-tools",
         "vue-service": "contrib/vuejs/vuejs-backend/vue-service",

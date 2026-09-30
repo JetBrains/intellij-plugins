@@ -10,11 +10,6 @@ dev_dist_plugin(
         "intellij.angular.tslint",
     ],
     descriptor = "resources/META-INF/plugin.xml",
-    descriptor_modules = [
-        "intellij.angular.backend",
-        "intellij.angular.free",
-        "intellij.angular.tslint",
-    ],
     file_prefixes = {
         "angular-service": "contrib/Angular/angular-backend/gen-resources/angular-service",
         "ngCli": "contrib/Angular/angular-backend/gen-resources/ngCli",

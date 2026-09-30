@@ -10,7 +10,6 @@ dev_dist_plugin(
         "intellij.dts.pp",
     ],
     descriptor = "resources/META-INF/plugin.xml",
-    descriptor_modules = ["intellij.dts.cmake"],
     jars = {
         "lib/dts.jar": [
             "intellij.dts",

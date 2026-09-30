@@ -18,10 +18,6 @@ dev_dist_plugin(
         "intellij.javascript.karma.debug",
     ],
     descriptor = "resources/META-INF/plugin.xml",
-    descriptor_modules = [
-        "intellij.javascript.karma.coverage",
-        "intellij.javascript.karma.debug",
-    ],
     file_prefixes = {
         "js_reporter": "contrib/js-karma/js_reporter",
     },
