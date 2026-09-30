@@ -105,13 +105,13 @@ public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
     String expectedLines =
       """
         -ServiceRpc.proto
-         FooRequest
-         FooResponse
+         -FooRequest
+         -FooResponse
          -TestService
-          Foo
-          Bar
-         BarRequest
-         BarResponse
+          -Foo
+          -Bar
+         -BarRequest
+         -BarResponse
         """;
     testStructureView(expectedLines);
   }
