@@ -24,6 +24,8 @@ object VueCodeInformationSerializer :
       element("completion", CompletionInfo.serializer().descriptor, isOptional = true)
       element<Boolean>("semantic", isOptional = true)
       element<Boolean>("navigation", isOptional = true)
+      element<Boolean>("types", isOptional = true)
+      element<Boolean>("reverseTypes", isOptional = true)
     }
 
   override fun serialize(
@@ -39,6 +41,10 @@ object VueCodeInformationSerializer :
         encodeBooleanElement(descriptor, 2, true)
       if (value.navigation == NavigationInfo.Enabled)
         encodeBooleanElement(descriptor, 3, true)
+      if (value.types)
+        encodeBooleanElement(descriptor, 4, true)
+      if (value.reverseTypes)
+        encodeBooleanElement(descriptor, 5, true)
     }
   }
 
@@ -50,6 +56,8 @@ object VueCodeInformationSerializer :
       var completion: CompletionInfo? = null
       var semantic: SemanticInfo? = null
       var navigation: NavigationInfo? = null
+      var types = false
+      var reverseTypes = false
 
       while (true) {
         when (val index = decodeElementIndex(descriptor)) {
@@ -66,6 +74,8 @@ object VueCodeInformationSerializer :
             require(decodeBooleanElement(descriptor, index))
             navigation = NavigationInfo.Enabled
           }
+          4 -> types = decodeBooleanElement(descriptor, index)
+          5 -> reverseTypes = decodeBooleanElement(descriptor, index)
 
           CompositeDecoder.DECODE_DONE -> break
 
@@ -78,6 +88,8 @@ object VueCodeInformationSerializer :
         completion = completion,
         semantic = semantic,
         navigation = navigation,
+        types = types,
+        reverseTypes = reverseTypes,
       )
     }
 }
