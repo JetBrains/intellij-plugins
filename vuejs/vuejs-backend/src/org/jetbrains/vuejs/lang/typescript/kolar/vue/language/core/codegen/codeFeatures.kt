@@ -15,6 +15,7 @@ object codeFeatures {
     navigation = NavigationInfo.Enabled,
     structure = true,
     format = true,
+    types = true,
   )
 
   val all: VueCodeInformation = VueCodeInformation(
@@ -22,6 +23,7 @@ object codeFeatures {
     completion = CompletionInfo.Enabled,
     semantic = SemanticInfo.Enabled,
     navigation = NavigationInfo.Enabled,
+    types = true,
   )
 
   val importCompletionOnly: VueCodeInformation = VueCodeInformation(
