@@ -11,7 +11,10 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.qodana.inspectionKts.mcp.impl.generateInspectionKtsApiImpl
 import org.jetbrains.qodana.inspectionKts.mcp.impl.generateInspectionKtsExamplesImpl
 import org.jetbrains.qodana.inspectionKts.mcp.impl.generatePsiTreeImpl
+import org.jetbrains.qodana.inspectionKts.mcp.impl.compileInspectionKtsImpl
 import org.jetbrains.qodana.inspectionKts.mcp.impl.runInspectionKtsImpl
+import org.jetbrains.qodana.inspectionKts.mcp.impl.runInspectionKtsExamplesImpl
+import org.jetbrains.qodana.inspectionKts.mcp.impl.runInspectionKtsProjectImpl
 
 /**
  * MCP Toolset for InspectionKts-related tools.
@@ -91,7 +94,77 @@ class InspectionKtsMcpToolset : McpToolset {
     val project = currentCoroutineContext().project
     return runInspectionKtsImpl(project, inspectionKtsCode, contextPath, targetFileContent)
   }
+
+  @McpTool
+  @McpDescription("Compiles inspection.kts code and returns generic inspection metadata without executing it.")
+  suspend fun compile_inspection_kts(
+    @McpDescription("The inspection.kts script content to compile") inspectionKtsCode: String,
+  ): InspectionKtsCompileResult {
+    val project = currentCoroutineContext().project
+    return compileInspectionKtsImpl(project, inspectionKtsCode)
+  }
+
+  @McpTool
+  @McpDescription(
+    "Compiles inspection.kts code once and executes it on the target source file in each supplied test project."
+  )
+  suspend fun run_inspection_kts_examples(
+    @McpDescription("The inspection.kts script content to compile and execute") inspectionKtsCode: String,
+    @McpDescription("Generic test-project paths and the source file to inspect in each project")
+    examples: List<InspectionKtsExampleRequest>,
+  ): InspectionKtsBatchRunResult {
+    val project = currentCoroutineContext().project
+    return runInspectionKtsExamplesImpl(project, inspectionKtsCode, examples)
+  }
+
+  @McpTool
+  @McpDescription(
+    "Compiles inspection.kts code and executes it on every Java and Kotlin source file in the currently opened project."
+  )
+  suspend fun run_inspection_kts_project(
+    @McpDescription("The inspection.kts script content to compile and execute") inspectionKtsCode: String,
+  ): InspectionKtsProjectRunResult {
+    val project = currentCoroutineContext().project
+    return runInspectionKtsProjectImpl(project, inspectionKtsCode)
+  }
 }
+
+@Serializable
+data class InspectionKtsCompileResult(
+  val compilationSuccess: Boolean,
+  val compilationStatus: String? = null,
+  val compilationErrorDetails: String? = null,
+  val inspectionId: String? = null,
+  val inspectionName: String? = null,
+  val inspectionDescription: String? = null,
+)
+
+@Serializable
+data class InspectionKtsExampleRequest(
+  val id: String,
+  val projectPath: String,
+  val targetFilePath: String,
+)
+
+@Serializable
+data class InspectionKtsFileResult(
+  val id: String? = null,
+  val path: String,
+  val foundProblems: List<InspectionProblem> = emptyList(),
+  val executionError: String? = null,
+)
+
+@Serializable
+data class InspectionKtsBatchRunResult(
+  val compilation: InspectionKtsCompileResult,
+  val files: List<InspectionKtsFileResult> = emptyList(),
+)
+
+@Serializable
+data class InspectionKtsProjectRunResult(
+  val compilation: InspectionKtsCompileResult,
+  val files: List<InspectionKtsFileResult> = emptyList(),
+)
 
 @Serializable
 data class InspectionKtsRunResult(

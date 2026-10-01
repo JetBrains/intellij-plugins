@@ -78,7 +78,7 @@ package com.intellij.psi.util {
 package org.jetbrains.kotlin.analysis.api {
 
     // Interfaces
-    interface KaSession : KaLifetimeOwner, KaResolver, KaSymbolRelationProvider, KaDiagnosticProvider, KaScopeProvider, KaCompletionCandidateChecker, KaExpressionTypeProvider, KaTypeProvider, KaTypeInformationProvider, KaSymbolProvider, KaJavaInteroperabilityComponent, KaSymbolInformationProvider, KaTypeRelationChecker, KaExpressionInformationProvider, KaEvaluator, KaReferenceShortener, KaImportOptimizer, KaRenderer, KaVisibilityChecker, KaOriginalPsiProvider, KaTypeCreator, KaAnalysisScopeProvider, KaSignatureSubstitutor, KaResolveExtensionInfoProvider, KaCompilerPluginGeneratedDeclarationsProvider, KaCompilerFacility, KaSubstitutorProvider, KaDataFlowProvider, KaSourceProvider
+    interface KaSession : KaLifetimeOwner, KaResolver, KaSymbolRelationProvider, KaDiagnosticProvider, KaScopeProvider, KaCompletionCandidateChecker, KaExpressionTypeProvider, KaTypeProvider, KaTypeInformationProvider, KaSymbolProvider, KaJavaInteroperabilityComponent, KaSymbolInformationProvider, KaTypeRelationChecker, KaExpressionInformationProvider, KaEvaluator, KaReferenceShortener, KaImportOptimizer, KaRenderer, KaVisibilityChecker, KaOriginalPsiProvider, KaTypeCreator, KaAnalysisScopeProvi
 
 }
 
@@ -196,6 +196,8 @@ package org.jetbrains.kotlin.psi {
     class KtBinaryExpression : KtExpressionImpl, KtOperationExpression
     class KtBlockExpression : LazyParseablePsiElement, KtElement, KtExpression, KtStatementExpression
     class KtCallExpression : KtExpressionImpl, KtCallElement, KtReferenceExpression
+    class KtCatchClause : KtElementImpl
+    // KtCatchClause.catchBody has type KtExpression?. If block-specific APIs are needed, cast it with `as? KtBlockExpression` first.
     class KtClass : KtClassOrObject
     final class KtClassBody : KtElementImplStub, KtDeclarationContainer
     class KtClassOrObject : KtTypeParameterListOwnerStub, KtClassLikeDeclaration, KtDeclarationContainer, KtNamedDeclaration, KtPureClassOrObject
@@ -222,6 +224,7 @@ package org.jetbrains.kotlin.psi {
     class KtReturnExpression : KtExpressionWithLabel, KtStatementExpression
     class KtStringTemplateExpression : KtElementImplStub, ContributedReferenceHost, PsiLanguageInjectionHost, KtExpression
     final class KtTypeReference : KtModifierListOwnerStub, KtAnnotated, KtAnnotationsContainer
+    class KtTryExpression : KtExpressionImpl
     class KtUserType : KtElementImplStub, KtTypeElement
     class KtValueArgument : KtElementImplStub, ValueArgument
     class KtValueArgumentList : KtElementImplStub
