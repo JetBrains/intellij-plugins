@@ -5,8 +5,8 @@ import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.EditorInfo;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx;
-import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.codeInsight.daemon.impl.LineMarkersPass;
 import com.intellij.codeInsight.daemon.impl.TestDaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewPopupUpdateProcessor;
@@ -767,7 +767,8 @@ public abstract class JSDaemonAnalyzerTestCaseBase extends HeavyPlatformTestCase
     PsiFile psiFile = getFile();
     ActionUtil.underModalProgress(myProject, "", () -> {
       //line marker tooltips are called in BGT in production
-      data.checkLineMarkers(psiFile, DaemonCodeAnalyzerImpl.getLineMarkers(getDocument(psiFile), getProject()), text);
+      @NotNull Document document = getDocument(psiFile);
+      data.checkLineMarkers(psiFile, LineMarkersPass.getDisplayedLineMarkers(document, getProject()), text);
       return null;
     });
     data.checkResult(psiFile, infos, text);
