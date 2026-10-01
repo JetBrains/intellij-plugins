@@ -10,6 +10,7 @@ import com.intellij.psi.ElementDescriptionProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
+import com.intellij.refactoring.rename.DelegatingHeadlessRenamePsiElementProcessor;
 import com.intellij.refactoring.rename.RenameDialog;
 import com.intellij.refactoring.rename.RenameUtil;
 import com.intellij.usageView.UsageInfo;
@@ -23,7 +24,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Dennis.Ushakov
  */
-public final class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor {
+public final class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor
+  implements DelegatingHeadlessRenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
     return DirectiveUtil.getDirective(element) != null;

@@ -18,11 +18,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.refactoring.rename.DelegatingHeadlessRenamePsiElementProcessor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public final class ActionScriptQualifiedElementRenameProcessor extends JSDefaultRenameProcessor {
+public final class ActionScriptQualifiedElementRenameProcessor extends JSDefaultRenameProcessor
+  implements DelegatingHeadlessRenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
     VirtualFile vFile;

@@ -8,11 +8,13 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.psi.PsiElement;
+import com.intellij.refactoring.rename.DelegatingHeadlessRenamePsiElementProcessor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public final class ActionScriptPropertyFunctionRenameProcessor extends JSDefaultRenameProcessor {
+public final class ActionScriptPropertyFunctionRenameProcessor extends JSDefaultRenameProcessor
+  implements DelegatingHeadlessRenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
     return DialectDetector.isActionScript(element)

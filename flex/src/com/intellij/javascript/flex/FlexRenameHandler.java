@@ -13,6 +13,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
+import com.intellij.refactoring.rename.DelegatingHeadlessRenamePsiElementProcessor;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
@@ -25,7 +26,7 @@ import java.util.Map;
 /**
  * @author Maxim.Mossienko
  */
-public final class FlexRenameHandler extends RenamePsiElementProcessor {
+public final class FlexRenameHandler extends RenamePsiElementProcessor implements DelegatingHeadlessRenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(final @NotNull PsiElement element) {
     return (element instanceof JSFunction || element instanceof JSFile) &&
@@ -47,9 +48,21 @@ public final class FlexRenameHandler extends RenamePsiElementProcessor {
 
   @Override
   public PsiElement substituteElementToRename(final @NotNull PsiElement element, final Editor editor) {
+    return substituteElementToRename(element, editor, true);
+  }
+
+  @Override
+  public @Nullable PsiElement substituteElementToRenameHeadless(@NotNull PsiElement element) {
+    return substituteElementToRename(element, null, false);
+  }
+
+  /**
+   * @param askUser false takes the default answer, the super method, for a rename with no user
+   */
+  private PsiElement substituteElementToRename(@NotNull PsiElement element, @Nullable Editor editor, boolean askUser) {
     if (element instanceof JSFunction) {
       return JSSuperMemberUtil.checkSuperMember((JSFunction)element, RefactoringBundle.message("rename.title"),
-                                                RefactoringBundle.message("to.rename"));
+                                                RefactoringBundle.message("to.rename"), askUser);
     }
     return super.substituteElementToRename(element, editor);
   }

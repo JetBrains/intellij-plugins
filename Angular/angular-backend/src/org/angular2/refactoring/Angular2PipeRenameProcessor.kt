@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.listeners.RefactoringElementListener
+import com.intellij.refactoring.rename.DelegatingHeadlessRenamePsiElementProcessor
 import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenameUtil
 import com.intellij.usageView.UsageInfo
@@ -24,7 +25,7 @@ import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2EntitiesProvider.getPipe
 import org.angular2.lang.Angular2LangUtil
 
-class Angular2PipeRenameProcessor : JSDefaultRenameProcessor() {
+class Angular2PipeRenameProcessor : JSDefaultRenameProcessor(), DelegatingHeadlessRenamePsiElementProcessor {
   override fun canProcessElement(element: PsiElement): Boolean {
     return getPipe(element) != null
            && Angular2LangUtil.isAngular2Context(element)
