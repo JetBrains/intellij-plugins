@@ -1,6 +1,8 @@
 package org.jetbrains.vuejs.lang.typescript.kolar
 
 import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
+import com.intellij.lang.javascript.dialects.ECMA6LanguageDialect
+import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.typescript.kolar.KolarCodegenContext
 import com.intellij.lang.typescript.kolar.KolarFileInfo
@@ -51,11 +53,11 @@ class VueKolarTranspiler(
   ): Boolean =
     when (element.language) {
       // setup
-      // TypeScriptLanguageDialect,
-      // ECMA6LanguageDialect,
+      TypeScriptLanguageDialect,
+      ECMA6LanguageDialect,
 
       // interpolations
-      // VueTSLanguage,
+      VueTSLanguage,
       VueJSLanguage,
         -> true
 
