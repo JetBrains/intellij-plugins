@@ -44,7 +44,6 @@ class VueCompletionTest :
       "testComputedTypeTS",
       "testExternalSymbolsImport",
       "testScriptSetupGeneric",
-      "testStyleVBind",
       "testVueOutObjectLiteralTs",
     )
 
