@@ -18,7 +18,7 @@ internal class PbPythonGotoDeclarationHandler : GotoDeclarationHandler {
     offset: Int,
     editor: Editor?,
   ): Array<PsiElement>? {
-    if (sourceElement?.language != PythonLanguage.INSTANCE) return null
+    if (sourceElement == null || sourceElement.language != PythonLanguage.INSTANCE) return null
 
     val refExpr = sourceElement.parentOfType<PyReferenceExpression>() ?: return null
     val pyFile = refExpr.reference.resolve() as? PyFile ?: return null
