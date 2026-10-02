@@ -70,9 +70,11 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         "@community//platform/navbar/plugin",
+        "//ultimate/platform-ultimate/testFramework",
         "@community//platform/testRunner/plugin",
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/problemsView/plugin",
+        "@community//platform/vcs/plugin",
         "@community//xml/plugin",
     ],
 )
@@ -102,10 +104,12 @@ jvm_library(
         ":mdx-tests",
         "@community//platform/navbar/plugin:plugin_test_lib",
         "@community//platform/platform-impl:ide-impl_test_lib",
+        "//ultimate/platform-ultimate/testFramework:testFramework_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
         "@community//platform/testRunner/plugin:plugin_test_lib",
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//platform/problemsView/plugin:plugin_test_lib",
+        "@community//platform/vcs/plugin:plugin_test_lib",
         "@community//xml/plugin:plugin_test_lib",
     ],
     deps = [
