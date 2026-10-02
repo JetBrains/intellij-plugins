@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.application.options.ModuleDescriptionsComboBox;
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.ui.ClassBrowser;
 import com.intellij.execution.ui.CommonJavaParametersPanel;
 import com.intellij.execution.ui.ConfigurationModuleSelector;
@@ -38,8 +39,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.lang.reflect.Method;
-import java.util.ResourceBundle;
 
 public class CucumberJavaApplicationConfigurable extends SettingsEditor<CucumberJavaRunConfiguration> implements PanelWithAnchor {
   private final Project myProject;
@@ -76,7 +75,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
       myWholePanel = new JPanel();
       myWholePanel.setLayout(new GridLayoutManager(8, 1, new Insets(0, 0, 0, 0), -1, -1));
       myMainClass.setLabelLocation("West");
-      myMainClass.setText(this.$$$getMessageFromBundle$$$("messages/ExecutionBundle", "application.configuration.main.class.label"));
+      myMainClass.setText(ExecutionBundle.message("application.configuration.main.class.label"));
       myWholePanel.add(myMainClass, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL,
                                                         GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
                                                         GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null,
@@ -84,7 +83,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
       myGlue = new LabeledComponentNoThrow();
       myGlue.setComponentClass("com.intellij.ui.RawCommandLineEditor");
       myGlue.setLabelLocation("West");
-      myGlue.setText(this.$$$getMessageFromBundle$$$("messages/CucumberJavaBundle", "run.configuration.form.glue"));
+      myGlue.setText(CucumberJavaBundle.message("run.configuration.form.glue"));
       myWholePanel.add(myGlue, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL,
                                                    GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
                                                    GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -92,7 +91,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
       myFeatureOrFolder.setComponentClass("com.intellij.openapi.ui.TextFieldWithBrowseButton");
       myFeatureOrFolder.setLabelLocation("West");
       myFeatureOrFolder.setText(
-        this.$$$getMessageFromBundle$$$("messages/CucumberJavaBundle", "run.configuration.form.feature.or.folder.path"));
+        CucumberJavaBundle.message("run.configuration.form.feature.or.folder.path"));
       myWholePanel.add(myFeatureOrFolder, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL,
                                                               GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
                                                               GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -108,7 +107,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
       myModule.setComponentClass("com.intellij.application.options.ModuleDescriptionsComboBox");
       myModule.setLabelLocation("West");
       myModule.setText(
-        this.$$$getMessageFromBundle$$$("messages/ExecutionBundle", "application.configuration.use.classpath.and.jdk.of.module.label"));
+        ExecutionBundle.message("application.configuration.use.classpath.and.jdk.of.module.label"));
       myWholePanel.add(myModule, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL,
                                                      GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
                                                      GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -116,7 +115,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
       myShortenClasspathModeCombo.setComponentClass("com.intellij.application.options.ModulesComboBox");
       myShortenClasspathModeCombo.setLabelLocation("West");
       myShortenClasspathModeCombo.setText(
-        this.$$$getMessageFromBundle$$$("messages/ExecutionBundle", "application.configuration.shorten.command.line.label"));
+        ExecutionBundle.message("application.configuration.shorten.command.line.label"));
       myWholePanel.add(myShortenClasspathModeCombo,
                        new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL,
                                            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
@@ -148,25 +147,6 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     myJrePathEditor.setAnchor(myModule.getLabel());
     myShortenClasspathModeCombo.setAnchor(myModule.getLabel());
     myShortenClasspathModeCombo.setComponent(new ShortenCommandLineModeCombo(myProject, myJrePathEditor, moduleComponent));
-  }
-
-  private static Method $$$cachedGetBundleMethod$$$ = null;
-
-  /** @noinspection ALL */
-  private String $$$getMessageFromBundle$$$(String path, String key) {
-    ResourceBundle bundle;
-    try {
-      Class<?> thisClass = this.getClass();
-      if ($$$cachedGetBundleMethod$$$ == null) {
-        Class<?> dynamicBundleClass = thisClass.getClassLoader().loadClass("com.intellij.DynamicBundle");
-        $$$cachedGetBundleMethod$$$ = dynamicBundleClass.getMethod("getBundle", String.class, Class.class);
-      }
-      bundle = (ResourceBundle)$$$cachedGetBundleMethod$$$.invoke(null, path, thisClass);
-    }
-    catch (Exception e) {
-      bundle = ResourceBundle.getBundle(path);
-    }
-    return bundle.getString(key);
   }
 
   /** @noinspection ALL */
