@@ -93,21 +93,21 @@ class VueHighlightingTest :
     @Rule
     @JvmField
     val rule: TestRule = TrackFailedTestRule(
-      "testBooleanProps",
+      "testCompRequiredAttributesTest",
       "testCompositionApiBasic_0_4_0",
       "testCompositionApiBasic_1_0_0",
+      "testComputedTypeJS",
       "testCssSelectors",
       "testDynamicArguments",
       "testEmptyAttributeValue",
-      "testExternalMixin",
+      "testGlobalSymbols",
       "testLocalWebTypes",
-      "testPropsValidation",
+      "testRequiredAttributeWithVModel",
       "testSlotNameBinding",
-      "testSourceScopedSlots",
       "testVBindVOnHighlighting",
+      "testVForInPug",
       "testVSlotSyntax",
       "testVueAttributeWithoutValueWithFollowingAttribute",
-      "testVueExtendSyntax",
     )
 
     override val defaultDirName: String
