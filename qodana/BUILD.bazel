@@ -147,6 +147,7 @@ jvm_library(
     resource_strip_prefix = "core/resources",
     resources = glob(
         ["core/resources/**/*"],
+        exclude = ["core/resources/**/icon-robots.txt"],
     ),
     visibility = ["//visibility:public"],
     deps = [
