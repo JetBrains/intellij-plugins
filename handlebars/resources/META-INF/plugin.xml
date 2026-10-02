@@ -71,7 +71,10 @@ For WebStorm, you can check out this section in the <a href="https://www.jetbrai
                          implementationClass="com.dmarcotte.handlebars.editor.folding.HbFoldingBuilder"/>
     <typedHandler implementation="com.dmarcotte.handlebars.editor.actions.HbTypedHandler" order="before xmlSlash"/>
     <enterHandlerDelegate implementation="com.dmarcotte.handlebars.editor.actions.HbEnterHandler"/>
-    <projectConfigurable provider="com.dmarcotte.handlebars.pages.HbConfigurationProvider"/>
+    <projectConfigurable provider="com.dmarcotte.handlebars.pages.HbConfigurationProvider"
+                         id="editor.preferences.handlebarsOptions"
+                         bundle="messages.HbBundle"
+                         key="hb.pages.options.title"/>
     <codeFoldingOptionsProvider instance="com.dmarcotte.handlebars.config.HbFoldingOptionsProvider" id="Handlebars" order="after Android,after C++,after General,after Go,after ObjectiveC"/>
     <lang.psiStructureViewFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.structure.HbStructureViewFactory"/>
     <annotator language="Handlebars" implementationClass="com.dmarcotte.handlebars.inspections.HbBlockMismatchAnnotator"/>

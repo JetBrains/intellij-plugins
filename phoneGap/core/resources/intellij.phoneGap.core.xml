@@ -29,7 +29,9 @@
 
     <applicationService serviceImplementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings"/>
 
-    <projectConfigurable provider="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapConfigurationProvider"/>
+    <projectConfigurable provider="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapConfigurationProvider"
+                         bundle="messages.PhoneGapBundle"
+                         key="configurable.PhoneGapConfigurable.display.name"/>
     <stepsBeforeRunProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapAddPlatformBeforeRun"/>
     <backgroundPostStartupActivity implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity"/>
     <vfs.asyncListener implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapFileListener"/>

@@ -148,6 +148,7 @@
 
     <!-- Settings -->
     <projectConfigurable instance="com.intellij.protobuf.ide.settings.PbLanguageSettingsConfigurable" groupId="language"
+                         id="google.protobuf.language"
                          key="settings.project.display" bundle="messages.ProtobufIdeBundle">
       <configurable instance="com.intellij.protobuf.ide.settings.PbTextLanguageSettingsConfigurable"
                     key="prototext.settings.project.display" bundle="messages.ProtobufIdeBundle"/>
