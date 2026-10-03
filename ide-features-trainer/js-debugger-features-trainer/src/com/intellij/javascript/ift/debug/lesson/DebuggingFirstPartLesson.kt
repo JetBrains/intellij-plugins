@@ -6,7 +6,6 @@ import com.intellij.javascript.debugger.JSDebuggerBundle
 import com.intellij.javascript.ift.debug.JsDebugLessonsBundle
 import com.intellij.javascript.ift.debug.lesson.BeforeDebuggingLesson.Companion.jsDebuggerSample
 import com.intellij.javascript.ift.debug.lineContainsBreakpoint
-import com.intellij.javascript.ift.debug.setLanguageLevel
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.ui.UIBundle
 import com.intellij.ui.tabs.impl.SingleHeightTabs
@@ -24,7 +23,6 @@ class DebuggingFirstPartLesson
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        setLanguageLevel()
         prepareSample(jsDebuggerSample)
 
         highlightButtonById("Run")

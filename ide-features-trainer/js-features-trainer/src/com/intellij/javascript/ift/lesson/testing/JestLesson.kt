@@ -8,7 +8,6 @@ import com.intellij.execution.testframework.sm.SmRunnerBundle
 import com.intellij.icons.AllIcons
 import com.intellij.idea.ActionsBundle
 import com.intellij.javascript.ift.JsLessonsBundle
-import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.LogicalPosition
@@ -34,7 +33,6 @@ internal class JestLesson
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        setLanguageLevel()
         prepareSample(parseLessonSample("""
           // Copyright 2004-present Facebook. All Rights Reserved.
 

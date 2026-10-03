@@ -4,7 +4,6 @@ package com.intellij.javascript.ift.debug.lesson
 import com.intellij.icons.AllIcons
 import com.intellij.idea.ActionsBundle
 import com.intellij.javascript.ift.debug.JsDebugLessonsBundle
-import com.intellij.javascript.ift.debug.setLanguageLevel
 import com.intellij.xdebugger.XDebuggerBundle
 import training.dsl.LessonContext
 import training.dsl.LessonUtil.productName
@@ -18,8 +17,7 @@ class DebuggingSecondPartLesson
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        setLanguageLevel()
-        prepareSample(BeforeDebuggingLesson.jsDebuggerSample)
+      prepareSample(BeforeDebuggingLesson.jsDebuggerSample)
         task("StepInto") {
           text(JsDebugLessonsBundle.message("js.debugger.part.2.step.into.1",
                                             action("DebugClass"),

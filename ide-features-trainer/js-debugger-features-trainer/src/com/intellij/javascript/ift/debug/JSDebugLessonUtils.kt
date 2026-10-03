@@ -2,18 +2,8 @@
 package com.intellij.javascript.ift.debug
 
 import com.intellij.icons.AllIcons
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.settings.JSRootConfiguration
-import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.editor.impl.DocumentMarkupModel
-import training.dsl.LessonContext
 import training.dsl.TaskRuntimeContext
-
-internal fun LessonContext.setLanguageLevel() {
-  prepareRuntimeTask(ModalityState.nonModal()) {
-    JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
-  }
-}
 
 internal fun TaskRuntimeContext.lineContainsBreakpoint(line: Int): Boolean {
   val document = editor.document

@@ -5,7 +5,6 @@ import com.intellij.execution.ExecutionBundle
 import com.intellij.execution.RunManager
 import com.intellij.execution.impl.RunConfigurable
 import com.intellij.javascript.ift.debug.JsDebugLessonsBundle
-import com.intellij.javascript.ift.debug.setLanguageLevel
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.treeStructure.Tree
@@ -38,7 +37,6 @@ class BeforeDebuggingLesson
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        setLanguageLevel()
         prepareSample(jsDebuggerSample)
         task("RunClass") {
           text(JsDebugLessonsBundle.message("js.debugger.before.intro.1"))

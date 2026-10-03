@@ -2,7 +2,6 @@
 package com.intellij.javascript.ift.lesson.editor
 
 import com.intellij.javascript.ift.JsLessonsBundle
-import com.intellij.javascript.ift.lesson.setLanguageLevel
 import training.dsl.LessonContext
 import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
@@ -27,7 +26,6 @@ class BasicCompletionLesson
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        setLanguageLevel()
         prepareSample(sample)
 
         caret(136)

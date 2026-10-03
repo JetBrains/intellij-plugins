@@ -4,7 +4,6 @@ package com.intellij.javascript.ift.lesson.editor
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.idea.ActionsBundle
 import com.intellij.javascript.ift.JsLessonsBundle
-import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.ui.components.JBList
 import training.dsl.LessonContext
@@ -43,7 +42,6 @@ internal class RefactoringLesson
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        setLanguageLevel()
         prepareSample(sample)
         task("Refactorings.QuickListPopupAction") {
           val quickListPopup = ActionsBundle.message("group.RefactoringMenu.text").dropMnemonic() + " > " +
