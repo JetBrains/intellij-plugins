@@ -47,7 +47,7 @@ internal class MdxJsxBlockMarkerBlock(myConstraints: MarkdownConstraints,
   }
 
   override fun prepareForLine() {
-    suppressSubBlocks = false
+    suppressSubBlocks = jsxSession.isInJavaScript
   }
 
   override fun appendLine(candidateEndOffset: Int) {

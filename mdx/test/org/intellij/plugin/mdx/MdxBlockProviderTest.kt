@@ -76,6 +76,50 @@ class MdxBlockProviderTest {
   }
 
   @Test
+  fun nestedMultilineTemplateExpressionStaysOpaque() {
+    for (body in listOf("a\nb\nc", "<ProfileCard\n  name=\"Alice Dupont\"\n  isOnline={true}\n/>")) {
+      val expression = "{`$body`}"
+      val text = "<Exercise>\n<CodeBlock language=\"tsx\">$expression</CodeBlock>\n</Exercise>"
+      val nodes = parseMdxNodes(text)
+
+      assertTrue(nodes.any { it.type == MdxMarkdownLibElementTypes.MDX_EXPRESSION && it.text(text) == expression }, text)
+      assertEquals(2, nodes.count { it.type == MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT }, text)
+    }
+  }
+
+  @Test
+  fun markdownBlocksResumeAfterMultilineJavaScript() {
+    val expression = "{\n/*\n# hidden\n- hidden\n```js\nignored\n```\n*/\n1\n}"
+    for (opening in listOf("<B>$expression", "<B value=$expression>")) {
+      val text = "<A>\n$opening\n# after\n</B>\n</A>"
+      val nodes = parseMdxNodes(text)
+      val heading = nodes.single { it.type == MarkdownElementTypes.ATX_1 }
+
+      assertEquals("# after", heading.text(text), text)
+      assertTrue(nodes.none { it.type == MarkdownElementTypes.UNORDERED_LIST || it.type == MarkdownElementTypes.CODE_FENCE }, text)
+    }
+  }
+
+  @Test
+  fun expressionClosingLineStaysOpaque() {
+    val expression = "{`a\nb\nc`}"
+    val text = "<A>\n<B>$expression\n# after\n</B>\n</A>"
+    val nodes = parseMdxNodes(text)
+
+    assertTrue(nodes.any { it.type == MdxMarkdownLibElementTypes.MDX_EXPRESSION && it.text(text) == expression })
+    assertEquals("# after", nodes.single { it.type == MarkdownElementTypes.ATX_1 }.text(text))
+    assertTrue(nodes.none { it.type == MarkdownElementTypes.PARAGRAPH && it.text(text).startsWith("c") })
+  }
+
+  @Test
+  fun nestedMultilineExpressionPrefixesRemainParseable() {
+    val text = "<A>\n<B>{`a\nb\nc`}</B>\n</A>"
+    for (end in 1..text.length) {
+      parseMdxNodes(text.take(end))
+    }
+  }
+
+  @Test
   fun transientAutoCloseWithMixedNamesKeepsFlowRangesLaminar() {
     val text = "<Outer>\n<Item>\n<Data>\n<Item>\n<Leaf</Leaf>\n</Item>\n</Data>\n</Item>\n</Outer>"
 

@@ -200,6 +200,16 @@ class MdxHighlightTest : MdxTestBase() {
         )
     }
 
+  @Test
+  fun testNestedMultilineTemplateExpressionIsColoredAsJavaScript() {
+    val text = "<A>\n<B>{`a\nb\nc`}</B>\n</A>"
+    val tokens = editorHighlightingTokens(text)
+
+    assertEquals(text, tokens.joinToString("") { it.second })
+    assertTrue(keysAt(tokens, text.indexOf("\nb\n") + 1).any { it.contains("JS.STRING") })
+    assertNoPsiErrors()
+  }
+
     /**
      * Redesign target (WEB-78468): a block-level flow `{expression}` (`<div>{typeof window}</div>`)
      * must carry embedded-JS coloring in the editor highlighter — `typeof` a JS keyword, the braces
