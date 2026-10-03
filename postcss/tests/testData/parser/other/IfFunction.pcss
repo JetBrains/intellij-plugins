@@ -1,0 +1,31 @@
+/* PostCSS extends the CSS parser, so it accepts the CSS-style if() function. */
+div {
+  color: if(style(--scheme: dark): #eeeeee;);
+  padding: if(style(--size: "2xl"): 1em; else: 0.25em;);
+  background-image: if(
+    style(--scheme: ice): linear-gradient(#caf0f8, white, #caf0f8);
+    style(--scheme: fire): linear-gradient(#ffc971, white, #ffc971);
+    else: none;
+  );
+  border: 3px yellow if(style(--color: green): dashed; else: solid;);
+  background-color: if(not media(width < 500px): blue; else: red);
+  margin-top: if(supports(not selector(:buffering)): 1em;);
+  background-color: if(else: yellow);
+  background-image: if();
+  width: calc(if(
+    style(--scheme: wide): 70%;
+    else: 50%;
+  ) - 50px);
+  color: if(
+    style(--scheme: ice): if(media(prefers-color-scheme: dark): #caf0f8; else: #03045e;);
+    else: black
+  );
+
+  /* the comma form keeps the normal function grammar */
+  color: if(foo);
+
+  /* a PostCSS nested ruleset after an if() declaration */
+  & .nested {
+    color: if(media(print): black; else: white);
+  }
+}
