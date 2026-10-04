@@ -12,6 +12,42 @@ import org.junit.jupiter.api.Timeout
 @TestApplication
 class MdxBlockProviderTest {
   @Test
+  fun importAndExportDoNotInterruptParagraphs() {
+    val lines = listOf(
+      "import these helpers before you start.",
+      "export the virtual machine as an image.",
+      "import Component from './component'",
+      "export default Component",
+    )
+    for (line in lines) {
+      for (indent in 0..3) {
+        val text = "Some prose.\n${" ".repeat(indent)}$line"
+        val nodes = parseMdxNodes(text)
+        val paragraphs = nodes.filter { it.type == MarkdownElementTypes.PARAGRAPH }
+        assertEquals(listOf(text), paragraphs.map { it.text(text) }, text)
+        assertTrue(nodes.none { it.type == MdxMarkdownLibElementTypes.MDX_ESM_BLOCK }, text)
+      }
+    }
+  }
+
+  @Test
+  fun importAndExportStartBlocks() {
+    val lines = listOf(
+      "import these helpers before you start.",
+      "export the virtual machine as an image.",
+      "import Component from './component'",
+      "export default Component",
+    )
+    for (line in lines) {
+      for (prefix in listOf("", "Some prose.\n\n", "# Heading\n")) {
+        val text = prefix + line
+        val esm = parseMdxNodes(text).filter { it.type == MdxMarkdownLibElementTypes.MDX_ESM_BLOCK }
+        assertEquals(listOf(line), esm.map { it.text(text) }, text)
+      }
+    }
+  }
+
+  @Test
   fun listDedentsInsideJsxKeepSiblingItems() {
     for (indent in listOf("", "  ", "    ", "      ", "\t")) {
       for (prefix in listOf("", "> ")) {

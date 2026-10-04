@@ -265,6 +265,18 @@ class MdxHighlightTest : MdxTestBase() {
         )
     }
 
+  @Test
+  fun testImportAndExportInParagraphsAreNotColoredAsJavaScript() {
+    val text = "Some prose.\nimport these helpers before you start.\n\n" +
+               "Some more prose.\nexport the virtual machine as an image."
+    val tokens = editorHighlightingTokens(text)
+    myFixture.testHighlighting()
+    for (keyword in listOf("import", "export")) {
+      val keys = keysAt(tokens, text.indexOf(keyword))
+      assertFalse("The prose keyword '$keyword' must use Markdown colors: $keys.", keys.any { it.contains("JS.KEYWORD") })
+    }
+  }
+
     /**
      * Currently fails: an INLINE MDX text expression in prose must be colored as embedded JS, the same
      * as an identical block-level flow expression (mdxjs.com: `{...}` is a JS expression). WEB-78468.

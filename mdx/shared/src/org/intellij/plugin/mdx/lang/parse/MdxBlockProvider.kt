@@ -95,7 +95,10 @@ internal class MdxBlockProvider(private val ownership: MdxMarkdownOwnership) : M
   }
 
   override fun interruptsParagraph(pos: LookaheadText.Position, constraints: MarkdownConstraints): Boolean {
-    return findStart(pos, constraints) != null
+    return when (findStart(pos, constraints)?.kind) {
+      null, MdxBlockKind.ESM -> false
+      MdxBlockKind.JSX, MdxBlockKind.EXPRESSION -> true
+    }
   }
 
   private fun findStart(pos: LookaheadText.Position, constraints: MarkdownConstraints): StartInfo? {
