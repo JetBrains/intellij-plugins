@@ -18,6 +18,11 @@ dev_dist_complex_plugin(
         "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm": "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
     },
     main_module = "intellij.serial.monitor",
+    remainder_files = {
+        "lib/serial-monitor.jar": ["intellij.serial.monitor"],
+        "lib/jSerialComm-2.11.4.jar": [],
+    },
+    remainder_trees = ["bin"],
     resource_inputs = {
         "@dev_launch_jserialcomm//:files": "layout-source:resource-generator:0:0",
     },
