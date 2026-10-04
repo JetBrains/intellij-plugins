@@ -12,7 +12,6 @@ import com.intellij.util.ProcessingContext
 import com.intellij.util.Processor
 import com.jetbrains.python.PyNames
 import com.jetbrains.python.psi.AccessDirection
-import com.jetbrains.python.psi.PyCallSiteOwner
 import com.jetbrains.python.psi.PyElement
 import com.jetbrains.python.psi.PyExpression
 import com.jetbrains.python.psi.PyFile
@@ -104,7 +103,7 @@ internal abstract class PbPythonAbstractType<E : PbElement>(
   // --- PyCallableType implementation ---
   override fun isCallable(): Boolean = isDefinition
   override fun getReturnType(context: TypeEvalContext): PyType? = if (isDefinition) toInstance() else null
-  override fun getCallType(context: TypeEvalContext, callSite: PyCallSiteOwner): PyType? = getReturnType(context)
+  override fun getCallType(context: TypeEvalContext, callSite: PyElement): PyType? = getReturnType(context)
 
   // --- PyInstantiableType implementation  ---
   override fun isDefinition(): Boolean = isDefinitionFlag
