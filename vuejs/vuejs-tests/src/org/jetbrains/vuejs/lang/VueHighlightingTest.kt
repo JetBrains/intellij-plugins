@@ -86,7 +86,6 @@ class VueHighlightingTest :
 
   }
 
-  @Ignore
   class WithTsGoProxyTest :
     VueHighlightingTestBase(testMode = VueTestMode.TS_GO_PROXY) {
 
