@@ -72,7 +72,7 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
     <lang.braceMatcher language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileBraceMatcherProvider" />
     <codeBlockSupportHandler language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileCodeBlockSupportHandler"/>
     <gotoSymbolContributor implementation="com.jetbrains.lang.makefile.MakefileChooseByNameContributor"/>
-    <colorSettingsPage implementation="com.jetbrains.lang.makefile.MakefileColorSettingsPage"/>
+    <colorSettings implementation="com.jetbrains.lang.makefile.MakefileColorSettingsPage" displayName="Makefile"/>
     <completion.contributor language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileCompletionContributor"/>
     <configurationType implementation="com.jetbrains.lang.makefile.MakefileRunConfigurationType"/>
     <projectConfigurable groupId="build.tools" groupWeight="110" id="reference.settingsdialog.project.make"

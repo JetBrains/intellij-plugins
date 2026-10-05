@@ -116,8 +116,8 @@
     <annotator
       language="DTS"
       implementationClass="com.intellij.dts.highlighting.DtsSyntaxAnnotator"/>
-    <colorSettingsPage
-      implementation="com.intellij.dts.settings.DtsColorSettingsPage"/>
+    <colorSettings implementation="com.intellij.dts.settings.DtsColorSettingsPage"
+                   bundle="messages.DtsBundle" key="language.name"/>
     <highlightErrorFilter
       implementation="com.intellij.dts.lang.parser.DtsHighlightingErrorFilter"/>
     <annotator
