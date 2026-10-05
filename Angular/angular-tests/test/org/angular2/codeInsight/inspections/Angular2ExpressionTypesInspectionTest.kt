@@ -6,12 +6,14 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
 import org.angular2.codeInsight.deprecated.Angular2AttributesTest
 import org.junit.Test
 
 @TestTsNode
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expressionType") {
 
   @Throws(Exception::class)

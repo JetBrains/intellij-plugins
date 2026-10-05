@@ -11,12 +11,14 @@ import org.angular2.Angular2TestModule.NGRX_SIGNALS_20_1_0
 import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
 import org.junit.Test
 import java.io.File
 
-@TestTsNode
+//@TestTsNode
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2DocumentationTest : Angular2TestCase("documentation") {
 
   @Test
@@ -204,7 +206,8 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   }
 
   private fun CodeInsightTestFixture.calculateFileSuffix(): String {
-    if (serviceKind == TypeScriptServiceKind.TsGoProxy) {
+    if (serviceKind == TypeScriptServiceKind.TsGoProxy
+        || serviceKind == TypeScriptServiceKind.TsGoKotlin) {
       val expectedFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(file)
                            .virtualFile.nameWithoutExtension + ".expected.tsgo.html"
       if (File("$testDataPath/$expectedFile").exists())

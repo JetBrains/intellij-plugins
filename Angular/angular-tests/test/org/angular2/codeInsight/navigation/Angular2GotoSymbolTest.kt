@@ -9,11 +9,13 @@ import com.intellij.testFramework.TestIndexingModeSupporter.IndexingMode
 import org.angular2.Angular2TestCase
 import org.angular2.TestNoService
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.junit.Test
 import org.junit.runners.Parameterized
 
 @TestNoService
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2GotoSymbolTest : Angular2TestCase("navigation/symbol/") {
 
   companion object {

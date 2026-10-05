@@ -24,6 +24,7 @@ import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestModule.TS_LIB
 import org.angular2.Angular2TsConfigFile
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection
 import org.angular2.inspections.AngularDeferBlockOnTriggerInspection
@@ -53,6 +54,7 @@ import org.junit.Test
  */
 @TestTsNode
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template") {
 
   @Test

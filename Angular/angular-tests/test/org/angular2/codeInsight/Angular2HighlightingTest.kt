@@ -49,7 +49,9 @@ import org.angular2.Angular2TestModule.TS_LIB
 import org.angular2.Angular2TsConfigFile
 import org.angular2.Angular2TsExpectedConfigFiles
 import org.angular2.SkipTsGoProxy
+import org.angular2.SkipTsKotlin
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
 import org.junit.Test
@@ -58,6 +60,7 @@ import java.io.IOException
 
 @TestTsNode
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   @Test
@@ -557,6 +560,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   @Test
   @SkipTsGoProxy
+  @SkipTsKotlin
   fun testSignalStore() =
     checkHighlighting(ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0, extension = "ts",
                       checkSymbolNames = true)

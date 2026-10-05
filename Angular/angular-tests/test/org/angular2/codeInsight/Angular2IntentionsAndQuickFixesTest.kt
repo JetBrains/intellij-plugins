@@ -20,7 +20,9 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
 import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
 import org.angular2.SkipTsGoProxy
+import org.angular2.SkipTsKotlin
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
@@ -28,6 +30,7 @@ import org.junit.Test
 
 @TestTsNode
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuickFixes") {
 
   @Test
@@ -77,6 +80,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
 
   @Test
   @SkipTsGoProxy
+  @SkipTsKotlin
   fun testCreateObservablePropertyFromUsage() =
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            ANGULAR_CORE_16_2_8, ANGULAR_COMMON_16_2_8, RXJS_7_8_1, checkCodeCompletion = true, checkIntentionPreview = false)
@@ -264,6 +268,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
 
   @Test
   @SkipTsGoProxy
+  @SkipTsKotlin
   fun testChangeVisibilityToSharpPrivateInTemplate() = try {
     doTest(JavaScriptBundle.message("js.fix.change.member.access.to.sharp"),
            ANGULAR_CORE_18_2_1, checkIntentionPreview = false)
