@@ -84,7 +84,7 @@ To configure path mappings, open the <b>Settings / Preferences</b> dialog and se
     <lang.commenter language="CFML"
                     implementationClass="com.intellij.coldFusion.UI.editorActions.typedHandlers.CfmlCommenter"/>
 
-    <colorSettingsPage implementation="com.intellij.coldFusion.UI.highlighting.CfmlColorSettingPage"/>
+    <colorSettings implementation="com.intellij.coldFusion.UI.highlighting.CfmlColorSettingPage" displayName="CFML"/>
     <lang.fileViewProviderFactory language="CFML"
                                   implementationClass="com.intellij.coldFusion.model.files.CfmlFileViewProviderFactory"/>
     <lang.syntaxHighlighterFactory language="CFML"

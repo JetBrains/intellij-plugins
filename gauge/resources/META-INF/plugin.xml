@@ -98,8 +98,10 @@
                                    implementationClass="com.thoughtworks.gauge.highlight.SpecSyntaxHighlighterFactory"/>
     <lang.syntaxHighlighterFactory language="Concept"
                                    implementationClass="com.thoughtworks.gauge.highlight.ConceptSyntaxHighlighterFactory"/>
-    <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.SpecColorSettingsPage"/>
-    <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.ConceptColorSettingsPage"/>
+    <colorSettings implementation="com.thoughtworks.gauge.highlight.SpecColorSettingsPage"
+                   bundle="messages.GaugeBundle" key="gauge.specification"/>
+    <colorSettings implementation="com.thoughtworks.gauge.highlight.ConceptColorSettingsPage"
+                   bundle="messages.GaugeBundle" key="gauge.concept.colors"/>
     <annotator language="Specification" implementationClass="com.thoughtworks.gauge.annotator.StepAnnotator"/>
     <annotator language="Concept" implementationClass="com.thoughtworks.gauge.annotator.StepAnnotator"/>
     <annotator language="JAVA" implementationClass="com.thoughtworks.gauge.annotator.ParamAnnotator"/>
