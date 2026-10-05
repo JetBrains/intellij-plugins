@@ -2,6 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.sarif
 
 import com.intellij.codeInspection.ex.CodeQualityCategories
 import com.intellij.codeInspection.ex.InspectionMetaInformationService
+import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.codeInspection.ex.ToolsImpl
 import com.intellij.internal.statistic.eventLog.EventLogConfiguration
 import com.intellij.lang.LanguageUtil
@@ -281,7 +282,7 @@ suspend fun createRule(tools: ToolsImpl, taxonomyIndex: Int, taxonomyId: String)
         .withIdeaAndQodanaSeverities(ideaSeverity.name, sarifLevel)
         .withSuppressToolId(defaultToolWrapper.tool.suppressId)
         .addCWEId(defaultToolWrapper.tool.shortName)
-        .addCodeQualityCategory(defaultToolWrapper.tool.shortName)
+        .addCodeQualityCategory(defaultToolWrapper)
     )
 
   val reportingDescriptorRelationship = createTaxonomyReference(taxonomyIndex, taxonomyId)
@@ -323,9 +324,11 @@ internal suspend fun PropertyBag.addCWEId(inspectionId: String): PropertyBag {
   return this
 }
 
-internal suspend fun PropertyBag.addCodeQualityCategory(inspectionId: String): PropertyBag {
-  val metaInformation = service<InspectionMetaInformationService>().getState().inspections[inspectionId]
-  val codeQualityCategory = metaInformation?.codeQualityCategory ?: listOf(CodeQualityCategories.UNSPECIFIED.id)
+internal suspend fun PropertyBag.addCodeQualityCategory(toolWrapper: InspectionToolWrapper<*, *>): PropertyBag {
+  val codeQualityCategory = CodeQualityCategoryProvider.getCodeQualityCategory(toolWrapper)?.id ?: run {
+    val metaInformation = service<InspectionMetaInformationService>().getState().inspections[toolWrapper.tool.shortName]
+    metaInformation?.codeQualityCategory ?: CodeQualityCategories.UNSPECIFIED.id
+  }
   val allowedAspects = CodeQualityCategories.entries.map { it.id }
   this[INSPECTION_ASPECTS_PARAMETER] = if (codeQualityCategory in allowedAspects) codeQualityCategory else CodeQualityCategories.UNSPECIFIED.id
   return this
