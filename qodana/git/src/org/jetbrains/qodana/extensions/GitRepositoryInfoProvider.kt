@@ -2,7 +2,7 @@ package org.jetbrains.qodana.extensions
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import git4idea.remote.hosting.GitHostingUrlUtil
+import git4idea.remote.GitRemoteUrlUtil
 import git4idea.repo.GitRepositoryManager
 
 class GitRepositoryInfoProvider : RepositoryInfoProvider {
@@ -34,8 +34,8 @@ class GitRepositoryInfoProvider : RepositoryInfoProvider {
 }
 
 internal fun areSameRemoteUrls(first: String, second: String): Boolean {
-  val firstUri = GitHostingUrlUtil.getUriFromRemoteUrl(first) ?: return false
-  val secondUri = GitHostingUrlUtil.getUriFromRemoteUrl(second) ?: return false
+  val firstUri = GitRemoteUrlUtil.getUriFromRemoteUrl(first) ?: return false
+  val secondUri = GitRemoteUrlUtil.getUriFromRemoteUrl(second) ?: return false
 
   return firstUri.host.equals(secondUri.host, ignoreCase = true) &&
          firstUri.port == secondUri.port &&
