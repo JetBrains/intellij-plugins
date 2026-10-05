@@ -50,7 +50,8 @@
 
     <editorHighlighterProvider filetype="MDX"
                                implementationClass="org.intellij.plugin.mdx.highlighting.MdxEditorHighlighterProvider"/>
-    <colorSettingsPage implementation="org.intellij.plugin.mdx.highlighting.MdxColorSettingsPage"/>
+    <colorSettings implementation="org.intellij.plugin.mdx.highlighting.MdxColorSettingsPage"
+                   bundle="messages.MdxBundle" key="mdx.name"/>
     <enterHandlerDelegate implementation="org.intellij.plugin.mdx.editor.MdxEnterHandler" order="first"/>
     <typedHandler implementation="org.intellij.plugin.mdx.js.MdxTagClosingTypedHandler" order="after xmlGt, before js"/>
     <typedHandler implementation="org.intellij.plugin.mdx.js.MdxBraceTypedHandler"/>

@@ -270,7 +270,7 @@
     <lang.parserDefinition language="HCL" implementationClass="org.intellij.terraform.hcl.HCLParserDefinition"/>
 
     <lang.syntaxHighlighterFactory language="HCL" implementationClass="org.intellij.terraform.hcl.HCLSyntaxHighlighterFactory"/>
-    <colorSettingsPage implementation="org.intellij.terraform.hcl.HCLColorsPage"/>
+    <colorSettings implementation="org.intellij.terraform.hcl.HCLColorsPage" displayName="HCL"/>
 
     <!-- CodeInsight -->
     <completion.contributor language="HCL" implementationClass="org.intellij.terraform.config.codeinsight.TfConfigCompletionContributor"/>
@@ -334,7 +334,7 @@
     <lang.parserDefinition language="HIL" implementationClass="org.intellij.terraform.hil.HILParserDefinition"/>
 
     <lang.syntaxHighlighterFactory language="HIL" implementationClass="org.intellij.terraform.hil.HILSyntaxHighlighterFactory"/>
-    <colorSettingsPage implementation="org.intellij.terraform.hil.HILColorPage"/>
+    <colorSettings implementation="org.intellij.terraform.hil.HILColorPage" displayName="HashiCorp Interpolation Language"/>
 
     <!-- Annotators -->
     <annotator language="HIL" implementationClass="org.intellij.terraform.hil.codeinsight.HILVariableAnnotator"/>

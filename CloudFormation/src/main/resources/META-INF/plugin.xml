@@ -103,6 +103,7 @@
 
     <annotator language="yaml" implementationClass="com.intellij.aws.cloudformation.CloudFormationYamlAnnotator"/>
     <iconProvider implementation="com.intellij.aws.cloudformation.CloudFormationIconProvider"/>
-    <colorSettingsPage implementation="com.intellij.aws.cloudformation.CloudFormationColorSettingsPage"/>
+    <colorSettings implementation="com.intellij.aws.cloudformation.CloudFormationColorSettingsPage"
+                   displayName="AWS CloudFormation YAML"/>
   </extensions>
 </idea-plugin>

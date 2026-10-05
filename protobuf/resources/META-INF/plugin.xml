@@ -83,7 +83,8 @@
                                    implementationClass="com.intellij.protobuf.ide.highlighter.PbSyntaxHighlighterFactory"/>
     <annotator language="protobuf" implementationClass="com.intellij.protobuf.ide.highlighter.PbHighlightingAnnotator" order="FIRST"/>
     <annotator language="protobuf" implementationClass="com.intellij.protobuf.ide.highlighter.PbTextHighlightingAnnotator" order="FIRST"/>
-    <colorSettingsPage implementation="com.intellij.protobuf.ide.highlighter.PbColorSettingsPage"/>
+    <colorSettings implementation="com.intellij.protobuf.ide.highlighter.PbColorSettingsPage"
+                   bundle="messages.ProtobufIdeBundle" key="plugin.name"/>
 
     <!-- Error / warning annotations -->
     <annotator language="protobuf" implementationClass="com.intellij.protobuf.lang.annotation.PbAnnotator"/>
@@ -187,7 +188,8 @@
     <lang.syntaxHighlighterFactory language="prototext"
                                    implementationClass="com.intellij.protobuf.ide.highlighter.PbTextSyntaxHighlighterFactory"/>
     <annotator language="prototext" implementationClass="com.intellij.protobuf.ide.highlighter.PbTextHighlightingAnnotator"/>
-    <colorSettingsPage implementation="com.intellij.protobuf.ide.highlighter.PbTextColorSettingsPage"/>
+    <colorSettings implementation="com.intellij.protobuf.ide.highlighter.PbTextColorSettingsPage"
+                   bundle="messages.ProtobufIdeBundle" key="prototext.name"/>
 
     <!-- Error / warning annotations -->
     <annotator language="prototext" implementationClass="com.intellij.protobuf.lang.annotation.PbTextAnnotator"/>
