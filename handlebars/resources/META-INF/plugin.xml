@@ -62,7 +62,8 @@ For WebStorm, you can check out this section in the <a href="https://www.jetbrai
     <lang.parserDefinition language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbParseDefinition"/>
     <lang.ast.factory language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbAstFactory"/>
     <lang.formatter language="Handlebars" implementationClass="com.dmarcotte.handlebars.format.HbFormattingModelBuilder"/>
-    <colorSettingsPage implementation="com.dmarcotte.handlebars.pages.HbColorsPage"/>
+    <colorSettings implementation="com.dmarcotte.handlebars.pages.HbColorsPage"
+                   bundle="messages.HbBundle" key="filetype.hb.description"/>
     <lang.fileViewProviderFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.file.HbFileViewProviderFactory"/>
     <lang.commenter language="Handlebars" implementationClass="com.dmarcotte.handlebars.editor.comments.HbCommenter"/>
     <braceMatcher filetype="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.editor.braces.HbBraceMatcher"/>

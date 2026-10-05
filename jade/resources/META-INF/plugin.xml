@@ -81,7 +81,8 @@
     <lang.parserDefinition language="Jade" implementationClass="com.jetbrains.plugins.jade.JadeParserDefinition"/>
     <lang.fileViewProviderFactory language="Jade" implementationClass="com.jetbrains.plugins.jade.JadeFileViewProviderFactory"/>
     <lang.ast.factory language="Jade" implementationClass="com.jetbrains.plugins.jade.psi.JadeAstFactory"/>
-    <colorSettingsPage implementation="com.jetbrains.plugins.jade.highlighter.JadeColorsPage"/>
+    <colorSettings implementation="com.jetbrains.plugins.jade.highlighter.JadeColorsPage"
+                   bundle="messages.JadeBundle" key="color.settings.name"/>
     <quoteHandler fileType="Jade" className="com.jetbrains.plugins.jade.JadeQuoteHandler"/>
     <quoteHandler fileType="Pug" className="com.jetbrains.plugins.jade.JadeQuoteHandler"/>
     <lang.elementManipulator forClass="com.jetbrains.plugins.jade.psi.impl.JadeAttributeValueImpl"

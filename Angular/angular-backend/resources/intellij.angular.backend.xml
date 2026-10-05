@@ -377,7 +377,8 @@
     <typeDeclarationProvider implementation="org.angular2.editor.Angular2TypeDeclarationProvider" order="first"/>
     <lang.symbolTypeProvider implementation="org.angular2.editor.Angular2TypeDeclarationProvider"/>
     <html.attributeValueProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeValueProvider"/>
-    <colorSettingsPage implementation="org.angular2.lang.html.highlighting.Angular2ColorsAndFontsPage"/>
+    <colorSettings implementation="org.angular2.lang.html.highlighting.Angular2ColorsAndFontsPage"
+                   bundle="messages.Angular2Bundle" key="angular.configurable.name.angular.template"/>
     <xml.xmlSuppressionProvider implementation="org.angular2.inspections.Angular2HtmlSuppressionProvider" order="first"/>
     <html.embeddedContentSupport implementation="org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport"/>
     <copyPastePostProcessor implementation="org.angular2.codeInsight.imports.Angular2DeclarationsCopyPasteProcessor"/>

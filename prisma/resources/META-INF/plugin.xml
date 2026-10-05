@@ -76,7 +76,7 @@
         <!-- Syntax Highlighting -->
         <lang.syntaxHighlighter language="Prisma"
                                 implementationClass="org.intellij.prisma.ide.highlighting.PrismaSyntaxHighlighter"/>
-        <colorSettingsPage implementation="org.intellij.prisma.ide.highlighting.PrismaColorSettingsPage"/>
+        <colorSettings implementation="org.intellij.prisma.ide.highlighting.PrismaColorSettingsPage" displayName="Prisma"/>
         <annotator language="Prisma"
                    implementationClass="org.intellij.prisma.ide.highlighting.PrismaHighlightingAnnotator"/>
 
