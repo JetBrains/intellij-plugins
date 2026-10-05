@@ -10,7 +10,7 @@ interface CodeQualityCategoryProvider {
       ExtensionPointName.create("org.intellij.qodana.codeQualityCategoryProvider")
 
     fun getCodeQualityCategory(wrapper: InspectionToolWrapper<*, *>): CodeQualityCategories? {
-      return EP_NAME.extensionList.firstNotNullOfOrNull { it.getCodeQualityCategory(wrapper) }
+      return EP_NAME.computeSafeIfAny { it.getCodeQualityCategory(wrapper) }
     }
   }
 
