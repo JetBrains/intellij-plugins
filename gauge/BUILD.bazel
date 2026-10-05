@@ -279,8 +279,12 @@ jvm_library(
         "@community//platform/forms_rt:java-guiForms-rt_test_lib",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
-        "@community//libraries/junit4",
-        "@community//libraries/junit4:junit4_test_lib",
+        "@community//platform/core-impl",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/testFramework/junit5:junit5_test_lib",
+        "@community//libraries/junit6",
+        "@community//libraries/junit6:junit6_test_lib",
     ],
 )
 ### auto-generated section `build intellij.gauge.tests` end
