@@ -178,7 +178,6 @@ data class QodanaConfig(
   val outPath: Path,
   val resultsStorage: Path,
   val baseline: String?,
-  /** True when the analysis downloaded [baseline] from Qodana Cloud, false when the user gave a file. */
   val baselineSource: QodanaBaselineSource = QodanaBaselineSource.NO_BASELINE,
   val profile: QodanaProfileConfig,
   val profileSource: String,

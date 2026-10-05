@@ -30,11 +30,8 @@ import kotlin.io.path.deleteIfExists
 private val LOG = Logger.getInstance("org.jetbrains.qodana.staticAnalysis.inspections.runner.CloudBaselineService")
 private val DOWNLOAD_TIMEOUT: Duration = Duration.ofMinutes(1)
 
-/** Gives the cloud baseline if any. */
-internal fun interface QodanaCloudBaselineSource {
-  /** Writes the baseline of [toolName] to a temporary file. Gives null when Qodana Cloud keeps none. */
-  fun fetchBaseline(toolName: String): Path?
-}
+/** Writes the baseline of `toolName` to a temporary file. Gives null when Qodana Cloud keeps none. */
+internal typealias QodanaCloudBaselineSource = (toolName: String) -> Path?
 
 /** The baseline of a run: its file, where it came from, and the file that this run must delete. */
 internal class ResolvedBaseline(
@@ -101,7 +98,7 @@ private suspend fun cloudBaselineSource(frontendUrl: String, qodanaToken: String
     LOG.info("Qodana Cloud tells no host for its v1 linters API")
     return null
   }
-  return QodanaCloudBaselineSource { toolName -> httpBaseline(host, qodanaToken, toolName) }
+  return { toolName -> httpBaseline(host, qodanaToken, toolName) }
 }
 
 /** Reads the baseline of [toolName] from [host] and writes it to a temporary file. */
@@ -134,7 +131,7 @@ internal suspend fun downloadCloudBaseline(source: QodanaCloudBaselineSource): P
   val productCode = qodanaProductCode()
   LOG.info("Fetching the baseline from Qodana Cloud for $productCode")
   return try {
-    runInterruptible(StaticAnalysisDispatchers.IO) { source.fetchBaseline(productCode) }
+    runInterruptible(StaticAnalysisDispatchers.IO) { source(productCode) }
   }
   catch (e: Throwable) {
     rethrowControlFlowException(e)
