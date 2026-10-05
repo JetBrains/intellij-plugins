@@ -29,7 +29,7 @@
     <remote-repository>
       <option name="id" value="maven3" />
       <option name="name" value="maven3" />
-      <option name="url" value="https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/maven/ultimate-public" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="maven4" />
