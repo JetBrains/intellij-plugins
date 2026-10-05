@@ -293,8 +293,11 @@ public class OptionOccurrenceTracker {
   }
 
   private static PbMessageType getFieldType(PbField field) {
+    if (field == null) {
+      return null;
+    }
     PbTypeName typeName = field.getTypeName();
-    if (typeName == null) {
+    if (typeName == null || typeName.getBuiltInType() != null) {
       return null;
     }
     return PbPsiUtil.resolveRefToType(typeName.getEffectiveReference(), PbMessageType.class);
