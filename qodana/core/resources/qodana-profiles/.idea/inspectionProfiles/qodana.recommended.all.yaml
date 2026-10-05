@@ -165,6 +165,8 @@ inspections:
     severity: WARNING # It has default ERROR severity. It's understandable for unresolved references in javadocs for editor but not on CI.
   - inspection: KtorOpenAPIUpdate
     enabled: true # This inspection is long running and designed for Qodana
+  - inspection: JvmTaintAnalysis
+    enabled: true # It is disabled by default in the IDE, but Qodana must report taint problems
   - group: CoverageInspections
     enabled: true # Explicitly enable all coverage inspections by default
   - group: MetricsInspections
