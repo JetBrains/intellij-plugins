@@ -4,6 +4,7 @@ package com.intellij.lang.javascript.flex.flexunit;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.ide.projectView.actions.MarkRootsManager;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.javascript.flex.refactoring.FlexRefactoringUtil;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -13,7 +14,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSMemberSelectionPanel;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
-import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -295,7 +295,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
     }
 
     if (myTargetDirectory == null) {
-      myTargetDirectory = JSRefactoringUtil
+      myTargetDirectory = FlexRefactoringUtil
         .chooseOrCreateDirectoryForClass(myModule.getProject(), myModule, getTestClassPackageScope(myModule), getPackageName(),
                                          getTestClassName(), myExistingTestSourceRoot, ThreeState.YES);
     }

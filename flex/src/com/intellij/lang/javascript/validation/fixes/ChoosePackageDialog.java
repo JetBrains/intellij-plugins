@@ -1,11 +1,11 @@
 package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.ide.util.PlatformPackageUtil;
+import com.intellij.javascript.flex.refactoring.FlexRefactoringUtil;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
-import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.module.Module;
@@ -97,8 +97,8 @@ public class ChoosePackageDialog extends DialogWrapper {
     }
     myPackageCombo.updateRecents();
 
-    myTargetDirectory = JSRefactoringUtil.chooseOrCreateDirectoryForClass(myModule.getProject(), myModule, getPackageScope(), packageName,
-                                                                          null, myContextFile.getParent(), ThreeState.UNSURE);
+    myTargetDirectory = FlexRefactoringUtil.chooseOrCreateDirectoryForClass(myModule.getProject(), myModule, getPackageScope(), packageName,
+                                                                            null, myContextFile.getParent(), ThreeState.UNSURE);
     if (myTargetDirectory != null) {
       super.doOKAction();
     }

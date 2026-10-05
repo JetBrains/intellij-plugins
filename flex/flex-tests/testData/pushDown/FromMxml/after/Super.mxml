@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml">
-  <mx:Script><![CDATA[
-
-    var v2:String;
-
-      ]]></mx:Script>
-</mx:Box>

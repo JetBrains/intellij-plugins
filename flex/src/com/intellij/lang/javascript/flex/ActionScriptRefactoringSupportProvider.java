@@ -1,7 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
-import com.intellij.javascript.flex.refactoring.introduceConstant.FlexIntroduceConstantHandler;
 import com.intellij.lang.javascript.refactoring.JavascriptRefactoringSupportProvider;
 import com.intellij.lang.javascript.refactoring.extractMethod.ActionScriptExtractFunctionHandler;
 import com.intellij.lang.javascript.refactoring.introduceField.JSIntroduceFieldHandler;
@@ -31,8 +30,8 @@ public final class ActionScriptRefactoringSupportProvider extends JavascriptRefa
   }
 
   @Override
-  public RefactoringActionHandler getIntroduceConstantHandler() {
-    return new FlexIntroduceConstantHandler();
+  public @Nullable RefactoringActionHandler getIntroduceConstantHandler() {
+    return null;
   }
 
   @Override

@@ -1,8 +1,0 @@
-class A {
-    function xxx() {
-        var a = <selection>"XXX<caret>_YYY ZZZ"</selection>
-    }
-}
-
-class B {
-}

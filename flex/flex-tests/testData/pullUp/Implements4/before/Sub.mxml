@@ -1,7 +1,0 @@
-<?xml version="1.0" ?>
-<local:Base xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*" implements="IFoo">
-    <mx:Script><![CDATA[
-        public function abc() {
-        }
-        ]]></mx:Script>
-</local:Base>

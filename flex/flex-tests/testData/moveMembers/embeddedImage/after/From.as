@@ -1,7 +1,0 @@
-package {
-public class From {
-
-
-
-}
-}

@@ -2,7 +2,7 @@
 package com.intellij.lang.javascript.ui.newclass;
 
 import com.intellij.ide.util.PlatformPackageUtil;
-import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
+import com.intellij.javascript.flex.refactoring.FlexRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -127,8 +127,8 @@ public class WizardModel implements CreateClassParameters {
     }
     else {
       myTargetDirectory =
-        JSRefactoringUtil.chooseOrCreateDirectoryForClass(myContext.getProject(), myModule, scopeAndBaseDir.first, getPackageName(),
-                                                          getClassName(), scopeAndBaseDir.second, ThreeState.UNSURE);
+        FlexRefactoringUtil.chooseOrCreateDirectoryForClass(myContext.getProject(), myModule, scopeAndBaseDir.first, getPackageName(),
+                                                            getClassName(), scopeAndBaseDir.second, ThreeState.UNSURE);
       return myTargetDirectory != null;
     }
   }

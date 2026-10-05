@@ -1,5 +1,0 @@
-package {
-public interface To {
-  
-}
-}

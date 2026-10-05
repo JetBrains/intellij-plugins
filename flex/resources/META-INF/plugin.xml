@@ -130,9 +130,6 @@
     <renamePsiElementProcessor implementation="com.intellij.javascript.flex.FlexRenameHandler"/>
     <updateAddedFileProcessor implementation="com.intellij.javascript.flex.FlexUpdateAddedFileHandler"/>
     <moveFileHandler implementation="com.intellij.javascript.flex.FlexMoveFileHandler"/>
-    <refactoring.moveHandler implementation="com.intellij.javascript.flex.refactoring.moveClass.FlexMoveFileRefactoringHandler"
-                             order="before moveFileOrDir, before moveJavaFileOrDir"/>
-    <refactoring.moveHandler implementation="com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersHandler"/>
     <fileType name="SWF" implementationClass="com.intellij.javascript.flex.SwfFileType" fieldName="SWF_FILE_TYPE" extensions="swf"/>
     <fileType name="MXML" implementationClass="com.intellij.lang.javascript.flex.MxmlFileType" fieldName="MXML" extensions="fxg;mxml" language="Mxml"/>
     <lang.parserDefinition language="Mxml" implementationClass="com.intellij.javascript.flex.MxmlParserDefinition"/>
