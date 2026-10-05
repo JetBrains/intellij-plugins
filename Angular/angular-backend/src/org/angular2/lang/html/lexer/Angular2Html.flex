@@ -234,7 +234,14 @@ WHITE_SPACE_CHARS=[ \n\r\t\f\u2028\u2029\u0085]+
 
 TAG_NAME=({ALPHA}|"_"|":")({ALPHA}|{DIGIT}|"_"|":"|"."|"-")*
 /* see http://www.w3.org/TR/html5/syntax.html#syntax-attribute-name */
-ATTRIBUTE_NAME=([^ \n\r\t\f\"\'<>/=])+
+ATTRIBUTE_NAME_CHAR=[^ \n\r\t\f\"\'<>/=]
+/* Angular additionally accepts "/" within square brackets, e.g. [class.left-1/2] - see _consumeAttributeName()
+   in packages/compiler/src/ml_parser/lexer.ts. For better recovery from incomplete code, it is accepted only
+   if the brackets are balanced. */
+BRACKETED_ATTRIBUTE_NAME_CHAR=[^ \n\r\t\f\"\'<>=\[\]]
+BRACKETED_ATTRIBUTE_NAME_NESTED="[" {BRACKETED_ATTRIBUTE_NAME_CHAR}* "]"
+BRACKETED_ATTRIBUTE_NAME="[" ({BRACKETED_ATTRIBUTE_NAME_CHAR} | {BRACKETED_ATTRIBUTE_NAME_NESTED})* "]"
+ATTRIBUTE_NAME={ATTRIBUTE_NAME_CHAR}+ | {BRACKETED_ATTRIBUTE_NAME} {ATTRIBUTE_NAME_CHAR}*
 
 DTD_REF= "\"" [^\"]* "\"" | "'" [^']* "'"
 DOCTYPE= "<!" (D|d)(O|o)(C|c)(T|t)(Y|y)(P|p)(E|e)

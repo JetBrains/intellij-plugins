@@ -69,6 +69,23 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
     doTest("<a [src]=bla() (click)='event()'></a>")
   }
 
+  fun testBoundAttributesWithSlash() {
+    doTest("<div [class.left-1/2]=\"first\" [class.text-primary/80]='second' [attr.a/b]=third><img [src/set]/></div>")
+  }
+
+  fun testBoundAttributesIncomplete() {
+    doTest("""
+             <div [foo/>
+             <div [foo>
+             <div [foo/bar></div>
+             <div [foo/bar [baz]="a/b"></div>
+             <div [foo[bar/baz]></div>
+             <div [foo[bar>baz] [qux]="a"></div>
+             <div [foo]/bar="a"></div>
+             <div foo/bar]="a"></div>
+             """.trimIndent())
+  }
+
   fun testMultipleInterpolations() {
     doTest("{{test}} !=bbb {{foo() - bar()}}")
   }

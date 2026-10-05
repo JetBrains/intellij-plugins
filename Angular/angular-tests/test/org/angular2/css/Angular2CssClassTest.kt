@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.css
 
+import com.intellij.polySymbols.css.CssClassSymbol
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
 import com.intellij.polySymbols.testFramework.resolveReference
@@ -8,9 +9,12 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import org.angular2.Angular2CodeInsightFixtureTestCase
+import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestUtil
+import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
+import org.angular2.lang.html.psi.PropertyBindingType
 
 class Angular2CssClassTest : Angular2CodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
@@ -129,6 +133,19 @@ class Angular2CssClassTest : Angular2CodeInsightFixtureTestCase() {
     }
     myFixture.resolvePolySymbolReference(", b<caret>ar: true}\"")
     //Angular2TestUtil.assertUnresolvedReference(", f<caret>oo1: true}\"", myFixture, true, true)
+  }
+
+  fun testBoundClassWithSlash() {
+    myFixture.enableInspections(Angular2TemplateInspectionsProvider())
+    myFixture.configureByFiles("boundClassWithSlash.html", "boundClassWithSlash.ts", "boundClassWithSlash.css", "package.json")
+    myFixture.checkHighlighting()
+    val attribute = myFixture.file.findElementAt(myFixture.caretOffset)!!.parent as Angular2HtmlPropertyBinding
+    assertEquals("[class.left-1/2]", attribute.name)
+    assertEquals(PropertyBindingType.CLASS, attribute.bindingType)
+    assertEquals("left-1/2", attribute.propertyName)
+    val cssClass = myFixture.resolvePolySymbolReference("[class.left<caret>-1/2]")
+    assertEquals("left-1/2", cssClass.name)
+    assertInstanceOf(cssClass, CssClassSymbol::class.java)
   }
 
   fun testBoundClassCodeCompletion() {

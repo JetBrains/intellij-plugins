@@ -333,6 +333,13 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
                  """.trimIndent())
   }
 
+  fun testNgBoundAttributesWithSlash() {
+    doTestHtml("""
+                 <div [class.left-1/2]="first" [attr.a/b]=second></div>
+                 <div [class.left-1/></div>
+                 """.trimIndent())
+  }
+
   fun testEmptyLetAndRef() {
     doTestHtml("<ng-template let-/><div let-/><div #/><div ref-/>")
   }
