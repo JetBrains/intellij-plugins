@@ -102,7 +102,7 @@ class VueHighlightingTest :
       "testEmptyAttributeValue",
       "testGlobalSymbols",
       "testLocalWebTypes",
-      "testRequiredAttributeWithVModel",
+      "testRequiredAttributeWithVModel3",
       "testSlotNameBinding",
       "testVBindVOnHighlighting",
       "testVForInPug",
