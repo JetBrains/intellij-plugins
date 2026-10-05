@@ -2,17 +2,20 @@
 package org.intellij.errorProne;
 
 
-import com.intellij.testFramework.UsefulTestCase;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class ErrorProneJavaCompilingToolTest extends UsefulTestCase {
+
+public class ErrorProneJavaCompilingToolTest {
 
   private static final String COMPILER_PATH_PROPERTY = "idea.error.prone.compiler.path";
 
+  @Test
   public void testPreprocessorPath() {
     String prev = null;
     try {
@@ -27,10 +30,10 @@ public class ErrorProneJavaCompilingToolTest extends UsefulTestCase {
       System.getProperties().setProperty(COMPILER_PATH_PROPERTY, "/path/to/internal/libraries.jar");
       tool.preprocessOptions(options);
 
-      assertContainsOrdered(options,
-                            "-processorpath",
-                            "/path/to/internal/libraries.jar" + File.pathSeparator + "/path/to/some.jar",
-                            "-Xplugin:ErrorProne -Xep:CheckerName:LEVEL -Xep:AnotherChecker:LEVEL"
+      assertThat(options).containsSubsequence(
+        "-processorpath",
+        "/path/to/internal/libraries.jar" + File.pathSeparator + "/path/to/some.jar",
+        "-Xplugin:ErrorProne -Xep:CheckerName:LEVEL -Xep:AnotherChecker:LEVEL"
       );
     }
     finally {
