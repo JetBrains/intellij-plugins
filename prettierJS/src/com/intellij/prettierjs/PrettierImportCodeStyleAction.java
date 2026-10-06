@@ -7,12 +7,15 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread;
 import com.intellij.util.concurrency.annotations.RequiresReadLock;
 import org.jetbrains.annotations.NotNull;
@@ -65,13 +68,23 @@ public class PrettierImportCodeStyleAction extends AnAction implements DumbAware
     VirtualFile contextFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
     if (project == null || contextFile == null) return;
 
-    VirtualFile file = getFileWithPrettierConfiguration(project, contextFile);
+    ReadAction.nonBlocking(() -> findFileToImport(project, contextFile))
+      .expireWhen(() -> project.isDisposed() || !contextFile.isValid())
+      .finishOnUiThread(ModalityState.defaultModalityState(), psiFile -> {
+        if (psiFile != null) {
+          new PrettierCodeStyleImporter(false).importConfigFile(psiFile);
+        }
+      })
+      .submit(AppExecutorUtil.getAppExecutorService());
+  }
+
+  @RequiresBackgroundThread
+  @RequiresReadLock
+  private static @Nullable PsiFile findFileToImport(@NotNull Project project, @NotNull VirtualFile contextFile) {
+    var file = getFileWithPrettierConfiguration(project, contextFile);
     if (file == null && isPackageJsonWithDependencyOnPrettier(contextFile)) {
       file = contextFile;
     }
-    PsiFile psiFile = file != null ? PsiManager.getInstance(project).findFile(file) : null;
-    if (psiFile == null) return;
-
-    new PrettierCodeStyleImporter(false).importConfigFile(psiFile);
+    return file != null ? PsiManager.getInstance(project).findFile(file) : null;
   }
 }
