@@ -13,6 +13,7 @@ import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleTypeManager
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.roots.ModuleRootModificationUtil
@@ -36,25 +37,59 @@ import com.intellij.testFramework.replaceService
 import com.intellij.util.ui.EDT
 import java.io.IOException
 import java.nio.file.Files
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val IMPORT_ACTION_ID = PrettierImportCodeStyleAction.ACTION_ID
+private val WAIT_TIMEOUT_MS = TimeUnit.SECONDS.toMillis(30)
 
 /**
- * Checks that [PrettierImportCodeStyleAction] cancels its config lookup when the context file or the project goes away first.
- * The action looks up the config in a non-blocking read action, and a write action defers the start of that lookup.
- * Each test first shows that the deferred lookup imports the config when nothing goes away.
+ * Checks that [PrettierImportCodeStyleAction] cancels its pending config lookup in these cases:
+ * a new import starts, the context file goes away, or the project goes away.
+ * The action looks up the config in a non-blocking read action.
+ * In the tests of a deletion and a disposal, a write action defers the start of that lookup.
+ * Each of these tests first shows that the deferred lookup imports the config when nothing goes away.
  * The tests use static JSON configs, so the importer applies them without Node.js.
  */
 class PrettierImportCodeStyleActionCancellationTest : BasePlatformTestCase() {
   private val installedTabWidths = CopyOnWriteArrayList<Int>()
+  private val installFutures = ConcurrentHashMap<Int, CompletableFuture<Unit>>()
   private val notifications = CopyOnWriteArrayList<String>()
 
   override fun setUp() {
     super.setUp()
     ApplicationManager.getApplication().registerExtension(PrettierCodeStyleInstaller.EP_NAME, InstallRecorder(), testRootDisposable)
     recordNotifications(project)
+  }
+
+  fun testNewImportCancelsPendingImport() = withTempCodeStyleSettings(project) { settings ->
+    val configA = addConfig("a/.prettierrc.json", 3)
+    val configB = addConfig("b/.prettierrc.json", 5)
+    val probeA = probeLookups(configA)
+    val importA = updateImport(project, configA)
+    val importB = updateImport(project, configB)
+    val problems = recordLoggedProblems {
+      try {
+        probeA.startHolding()
+        assertTrue(PrettierJSTestUtil.performAction(IMPORT_ACTION_ID, importA).isPerformed)
+        waitFor(probeA.firstHeldLookup)
+        assertTrue(PrettierJSTestUtil.performAction(IMPORT_ACTION_ID, importB).isPerformed)
+        waitFor(installFuture(5))
+      }
+      finally {
+        probeA.release()
+      }
+      NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
+    }
+    assertEquals("tabWidth values in the order of import", listOf(5), installedTabWidths)
+    assertEquals(5, indentSize(settings))
+    assertEquals(1, notifications.size)
+    assertEmpty(problems)
   }
 
   fun testDeletedContextFileCancelsPendingImport() = withTempCodeStyleSettings(project) { settings ->
@@ -66,15 +101,15 @@ class PrettierImportCodeStyleActionCancellationTest : BasePlatformTestCase() {
     notifications.clear()
 
     val config = addConfig("c/.prettierrc.json", 6)
-    val lookups = countLookups(config)
+    val probe = probeLookups(config)
     val importEvent = updateImport(project, config)
     val indentBefore = indentSize(settings)
     val problems = recordLoggedProblems {
-      lookups.start()
+      probe.startCounting()
       performImportInsideWriteAction(importEvent) { config.delete(this) }
       NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
     }
-    assertEquals("lookups of the deleted file", 0, lookups.count)
+    assertEquals("lookups of the deleted file", 0, probe.lookups)
     assertEmpty(installedTabWidths)
     assertEmpty(notifications)
     assertEmpty(problems)
@@ -154,12 +189,18 @@ class PrettierImportCodeStyleActionCancellationTest : BasePlatformTestCase() {
     return event
   }
 
-  private fun countLookups(file: VirtualFile): LookupCounter {
-    val counter = LookupCounter(file)
-    project.replaceService(ProjectFileIndex::class.java, CountingProjectFileIndex(ProjectFileIndex.getInstance(project), counter),
+  private fun probeLookups(file: VirtualFile): LookupProbe {
+    val probe = LookupProbe(file)
+    project.replaceService(ProjectFileIndex::class.java, ProbingProjectFileIndex(ProjectFileIndex.getInstance(project), probe),
                            testRootDisposable)
-    return counter
+    return probe
   }
+
+  private fun installFuture(tabWidth: Int): CompletableFuture<Unit> {
+    return installFutures.computeIfAbsent(tabWidth) { CompletableFuture() }
+  }
+
+  private fun <T> waitFor(future: Future<T>): T = PlatformTestUtil.waitForFuture(future, WAIT_TIMEOUT_MS)
 
   private fun indentSize(settings: CodeStyleSettings): Int {
     return settings.getCommonSettings(JavascriptLanguage).indentOptions!!.INDENT_SIZE
@@ -202,6 +243,7 @@ class PrettierImportCodeStyleActionCancellationTest : BasePlatformTestCase() {
   private inner class InstallRecorder : PrettierCodeStyleInstaller {
     override fun install(project: Project, config: PrettierConfig, settings: CodeStyleSettings) {
       installedTabWidths.add(config.tabWidth)
+      installFuture(config.tabWidth).complete(Unit)
     }
 
     // The importer requires all installers to report an installed config, so this answer does not change the result.
@@ -209,35 +251,59 @@ class PrettierImportCodeStyleActionCancellationTest : BasePlatformTestCase() {
   }
 
   /**
-   * Counts the content checks of one file on background threads after [start].
+   * Observes the content checks of one file on background threads.
    * The lookup of the import action makes this check before any other access to the project model.
+   * After [startCounting], the probe counts the checks.
+   * After [startHolding], the probe parks each check until [release], and [firstHeldLookup] completes.
+   * The parked check polls for cancellation, so a write action or a cancelled lookup can still stop it.
    */
-  private class LookupCounter(private val file: VirtualFile) {
-    private val lookups = AtomicInteger()
+  private class LookupProbe(private val file: VirtualFile) {
+    val firstHeldLookup = CompletableFuture<Unit>()
+    private val lookupCount = AtomicInteger()
+    private val released = CountDownLatch(1)
 
     @Volatile
-    private var started = false
+    private var counting = false
 
-    val count: Int
-      get() = lookups.get()
+    @Volatile
+    private var holding = false
 
-    fun start() {
-      started = true
+    val lookups: Int
+      get() = lookupCount.get()
+
+    fun startCounting() {
+      counting = true
+    }
+
+    fun startHolding() {
+      holding = true
+    }
+
+    fun release() {
+      released.countDown()
     }
 
     fun onContentCheck(checkedFile: VirtualFile) {
-      if (started && checkedFile == file && !EDT.isCurrentThreadEdt()) {
-        lookups.incrementAndGet()
+      if (checkedFile != file || EDT.isCurrentThreadEdt()) return
+      if (counting) {
+        lookupCount.incrementAndGet()
+      }
+      if (!holding) return
+      firstHeldLookup.complete(Unit)
+      val deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(WAIT_TIMEOUT_MS)
+      while (!released.await(10, TimeUnit.MILLISECONDS)) {
+        ProgressManager.checkCanceled()
+        check(System.nanoTime() < deadline) { "The test did not release the lookup of $file" }
       }
     }
   }
 
-  private class CountingProjectFileIndex(
+  private class ProbingProjectFileIndex(
     private val delegate: ProjectFileIndex,
-    private val counter: LookupCounter,
+    private val probe: LookupProbe,
   ) : ProjectFileIndex by delegate {
     override fun isInContent(fileOrDir: VirtualFile): Boolean {
-      counter.onContentCheck(fileOrDir)
+      probe.onContentCheck(fileOrDir)
       return delegate.isInContent(fileOrDir)
     }
   }
