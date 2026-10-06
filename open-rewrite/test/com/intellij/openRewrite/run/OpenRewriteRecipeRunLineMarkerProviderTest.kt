@@ -5,9 +5,12 @@ import com.intellij.openRewrite.OpenRewriteLightHighlightingTestCase
 import com.intellij.openRewrite.RECIPE_FILE_NAME
 import com.intellij.testFramework.DumbModeTestUtils
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
 
 class OpenRewriteRecipeRunLineMarkerProviderTest : OpenRewriteLightHighlightingTestCase() {
-  fun testYamlRecipe() {
+  @Test
+  fun testYamlRecipe() = onEdt {
     myFixture.configureByText(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/recipe
       na<caret>me: com.my.Recipe
@@ -17,7 +20,8 @@ class OpenRewriteRecipeRunLineMarkerProviderTest : OpenRewriteLightHighlightingT
     assertNotNull(mark)
   }
 
-  fun testYamlRecipeImDumbMode() {
+  @Test
+  fun testYamlRecipeImDumbMode() = onEdt {
     myFixture.configureByText(RECIPE_FILE_NAME, """
         type: specs.openrewrite.org/v1beta/recipe
         na<caret>me: com.my.Recipe

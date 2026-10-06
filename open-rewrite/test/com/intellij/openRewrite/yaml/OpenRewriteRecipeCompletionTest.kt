@@ -5,9 +5,12 @@ import com.intellij.openRewrite.OPTION_CLASS_NAME
 import com.intellij.openRewrite.OpenRewriteLightHighlightingTestCase
 import com.intellij.openRewrite.RECIPE_CLASS_NAME
 import com.intellij.openRewrite.RECIPE_FILE_NAME
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class OpenRewriteRecipeCompletionTest : OpenRewriteLightHighlightingTestCase() {
-  fun testRecipeCompletion() {
+  @Test
+  fun testRecipeCompletion() = onEdt {
     myFixture.configureByText(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/recipe
       name: com.first
@@ -25,8 +28,8 @@ class OpenRewriteRecipeCompletionTest : OpenRewriteLightHighlightingTestCase() {
     """.trimIndent())
     myFixture.completeBasic()
     val lookupElementStrings = myFixture.lookupElementStrings
-    assertContainsElements(lookupElementStrings!!, "com.second", "com.third")
-    assertDoesntContain(lookupElementStrings, "com.first", "com.style")
+    assertTrue(lookupElementStrings!!.containsAll(listOf("com.second", "com.third")), lookupElementStrings.toString())
+    assertTrue(lookupElementStrings.intersect(setOf("com.first", "com.style")).isEmpty(), lookupElementStrings.toString())
     myFixture.finishLookup(Lookup.REPLACE_SELECT_CHAR)
     myFixture.checkResult("""
       type: specs.openrewrite.org/v1beta/recipe
@@ -45,7 +48,8 @@ class OpenRewriteRecipeCompletionTest : OpenRewriteLightHighlightingTestCase() {
     """.trimIndent())
   }
 
-  fun testRecipeWithRequredOptionCompletion() {
+  @Test
+  fun testRecipeWithRequredOptionCompletion() = onEdt {
     myFixture.addClass("""
       package com;
       
@@ -70,7 +74,8 @@ class OpenRewriteRecipeCompletionTest : OpenRewriteLightHighlightingTestCase() {
     """.trimIndent())
   }
 
-  fun testPreconditionCompletion() {
+  @Test
+  fun testPreconditionCompletion() = onEdt {
     myFixture.configureByText(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/recipe
       name: com.first
@@ -90,8 +95,8 @@ class OpenRewriteRecipeCompletionTest : OpenRewriteLightHighlightingTestCase() {
     """.trimIndent())
     myFixture.completeBasic()
     val lookupElementStrings = myFixture.lookupElementStrings
-    assertContainsElements(lookupElementStrings!!, "com.second", "com.third")
-    assertDoesntContain(lookupElementStrings, "com.first", "com.style")
+    assertTrue(lookupElementStrings!!.containsAll(listOf("com.second", "com.third")), lookupElementStrings.toString())
+    assertTrue(lookupElementStrings.intersect(setOf("com.first", "com.style")).isEmpty(), lookupElementStrings.toString())
     myFixture.finishLookup(Lookup.REPLACE_SELECT_CHAR)
     myFixture.checkResult("""
       type: specs.openrewrite.org/v1beta/recipe
@@ -112,7 +117,8 @@ class OpenRewriteRecipeCompletionTest : OpenRewriteLightHighlightingTestCase() {
     """.trimIndent())
   }
 
-  fun testStyleCompletion() {
+  @Test
+  fun testStyleCompletion() = onEdt {
     myFixture.configureByText(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/style
       name: com.first
@@ -130,8 +136,8 @@ class OpenRewriteRecipeCompletionTest : OpenRewriteLightHighlightingTestCase() {
     """.trimIndent())
     myFixture.completeBasic()
     val lookupElementStrings = myFixture.lookupElementStrings
-    assertContainsElements(lookupElementStrings!!, "com.second", "com.third")
-    assertDoesntContain(lookupElementStrings, "com.first", "com.recipe")
+    assertTrue(lookupElementStrings!!.containsAll(listOf("com.second", "com.third")), lookupElementStrings.toString())
+    assertTrue(lookupElementStrings.intersect(setOf("com.first", "com.recipe")).isEmpty(), lookupElementStrings.toString())
     myFixture.finishLookup(Lookup.REPLACE_SELECT_CHAR)
     myFixture.checkResult("""
       type: specs.openrewrite.org/v1beta/style
@@ -150,7 +156,8 @@ class OpenRewriteRecipeCompletionTest : OpenRewriteLightHighlightingTestCase() {
     """.trimIndent())
   }
 
-  fun testOptionCompletion() {
+  @Test
+  fun testOptionCompletion() = onEdt {
     myFixture.addClass("""
       package com;
       
@@ -177,7 +184,8 @@ class OpenRewriteRecipeCompletionTest : OpenRewriteLightHighlightingTestCase() {
     """.trimIndent())
   }
 
-  fun testOptionValueCompletion() {
+  @Test
+  fun testOptionValueCompletion() = onEdt {
     myFixture.addClass("""
       package com;
       
@@ -204,7 +212,8 @@ class OpenRewriteRecipeCompletionTest : OpenRewriteLightHighlightingTestCase() {
     """.trimIndent())
   }
 
-  fun testOptionBooleanValueCompletion() {
+  @Test
+  fun testOptionBooleanValueCompletion() = onEdt {
     myFixture.addClass("""
       package com;
       
