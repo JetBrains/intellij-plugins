@@ -23,8 +23,8 @@ import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
 import org.junit.Test
 
-//@TestTsNode
-//@TestTsGoProxy
+@TestTsNode
+@TestTsGoProxy
 @TestTsKotlin
 class Angular2CompletionTest : Angular2TestCase("completion") {
 
