@@ -5,11 +5,13 @@ import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.diagnostic.DefaultIdeaErrorLogger
 import com.intellij.diagnostic.VMOptions.MemoryKind
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.util.ExceptionUtil
 import kotlinx.coroutines.CancellationException
 import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.staticAnalysis.diogen.QodanaDiogenReporter
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.FileDescriptor
 import java.io.FileOutputStream
@@ -59,6 +61,7 @@ internal suspend fun runReportingTerminalFailure(
         reportOutOfMemory(memory)
       }
       else {
+        ignoringThrowables { service<QodanaDiogenReporter>().reportApplicationCrash(e) }
         // `warn`, never `error`: the platform logger rethrows control-flow exceptions, which would skip the exit
         // below. Both emissions run before either is answered for, so neither can cost the other.
         val consoleFailure = failureOf { reporter.reportError(consoleMessage(e, memory)) }
@@ -285,7 +288,7 @@ private fun prepareOutOfMemoryReport(sink: OutputStream, logger: Logger): (Memor
 }
 
 /** Not `runCatching`: its [Result.Failure] allocation can itself fail on the heap this exists to survive. */
-private inline fun <T> ignoringThrowables(action: () -> T): T? =
+internal inline fun <T> ignoringThrowables(action: () -> T): T? =
   try {
     action()
   }
