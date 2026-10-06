@@ -233,25 +233,21 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
               public void run(@NotNull ProgressIndicator indicator) {
                 indicator.setText(CucumberJavaBundle.message("cucumber.java.glue.calculation.glues.message", "-"));
                 indicator.setText2(CucumberJavaBundle.message("cucumber.java.glue.calculation.glues.template.message"));
-                Consumer<String> consumer = glue -> {
-                  if (CucumberJavaUtil.addGlue(glue, glues)) {
-                    String gluePresentation = null;
-                    if (glues.size() < 15) {
-                      gluePresentation = StringUtil.join(glues, " ");
-                      if (gluePresentation.length() > 30) {
-                        gluePresentation = null;
-                      }
+                glues.addAll(calculateGlues(myCucumberGlueProvider, calculated -> {
+                  String gluePresentation = null;
+                  if (calculated.size() < 15) {
+                    gluePresentation = StringUtil.join(calculated, " ");
+                    if (gluePresentation.length() > 30) {
+                      gluePresentation = null;
                     }
-                    if (gluePresentation == null) {
-                      gluePresentation = String.valueOf(glues.size());
-                    }
-
-                    String message = CucumberJavaBundle.message("cucumber.java.glue.calculation.glues.message", gluePresentation);
-                    indicator.setText(message);
                   }
-                };
+                  if (gluePresentation == null) {
+                    gluePresentation = String.valueOf(calculated.size());
+                  }
 
-                ReadAction.runBlocking(() -> myCucumberGlueProvider.calculateGlue(consumer));
+                  String message = CucumberJavaBundle.message("cucumber.java.glue.calculation.glues.message", gluePresentation);
+                  indicator.setText(message);
+                }));
               }
             };
             task.setCancelText(CucumberJavaBundle.message("cucumber.java.glue.calculation.stop.title"));
@@ -259,9 +255,7 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
             ProgressManager.getInstance().run(task);
           }
           else {
-            ReadAction.runBlocking(() -> myCucumberGlueProvider.calculateGlue(glue -> {
-              CucumberJavaUtil.addGlue(glue, glues);
-            }));
+            glues.addAll(calculateGlues(myCucumberGlueProvider, ignored -> {}));
           }
           getOptions().setGlue(StringUtil.join(glues, " "));
           myCucumberGlueProvider = null;
@@ -270,6 +264,25 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
     }
 
     return getOptions().getGlue();
+  }
+
+  /**
+   * Calculates the glues in a read action that a write action can cancel.
+   * After the cancellation, the calculation starts again with an empty set of glues.
+   *
+   * @param onGlueAdded called with the glues calculated so far, after each new glue
+   */
+  private static @NotNull Set<String> calculateGlues(@NotNull CucumberGlueProvider glueProvider,
+                                                     @NotNull Consumer<Set<String>> onGlueAdded) {
+    return ReadAction.nonBlocking(() -> {
+      Set<String> glues = new HashSet<>();
+      glueProvider.calculateGlue(glue -> {
+        if (CucumberJavaUtil.addGlue(glue, glues)) {
+          onGlueAdded.accept(glues);
+        }
+      });
+      return glues;
+    }).executeSynchronously();
   }
 
   public @Nullable String getPrecalculatedGlue() {

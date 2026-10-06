@@ -4,6 +4,7 @@ package org.jetbrains.plugins.cucumber.steps.reference;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -119,6 +120,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
 
     final List<PsiElement> resolvedElements = new ArrayList<>();
     for (final AbstractStepDefinition stepDefinition : stepDefinitions) {
+      ProgressManager.checkCanceled();
       if (stepDefinition.supportsStep(step)) {
         for (String stepVariant : stepVariants) {
           final PsiElement element = stepDefinition.getElement();
