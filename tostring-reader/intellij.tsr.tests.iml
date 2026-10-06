@@ -10,20 +10,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="intellij.platform.analysis" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.codeStyle" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.editor.ui" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.ide" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.ide.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.core.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.libraries.kotlinx.collections.immutable" scope="TEST" />
     <orderEntry type="module" module-name="intellij.tsr" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.tsr" />
 </module>
