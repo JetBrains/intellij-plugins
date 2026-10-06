@@ -134,8 +134,6 @@ jvm_library(
         "@community//platform/ide-core",
         "//contrib/open-rewrite:openRewrite-tests",
         "//contrib/open-rewrite:openRewrite-tests_test_lib",
-        "@community//libraries/junit4",
-        "@community//libraries/junit4:junit4_test_lib",
         "@community//platform/testFramework/junit5",
         "@community//platform/testFramework/junit5:junit5_test_lib",
         "@community//libraries/junit6",
