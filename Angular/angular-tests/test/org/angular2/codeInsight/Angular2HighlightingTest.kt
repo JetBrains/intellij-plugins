@@ -664,6 +664,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_21_2_0, extension = "ts")
 
   @Test
+  fun testImplicitAnyParameters() =
+    checkHighlighting(ANGULAR_CORE_21_2_0, extension = "ts")
+
+  @Test
   fun testRegexes_V20() =
     checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts")
 

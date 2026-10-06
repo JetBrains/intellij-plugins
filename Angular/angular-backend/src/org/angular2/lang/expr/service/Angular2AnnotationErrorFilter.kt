@@ -9,9 +9,11 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotatio
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
+import com.intellij.util.asSafely
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.ANIMATE_ENTER_ATTR
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.ANIMATE_LEAVE_ATTR
 import org.angular2.inspections.Angular2InspectionSuppressor.isUnderscoredLocalVariableIdentifierInAngularTemplate
+import org.angular2.lang.expr.Angular2Language
 import kotlin.math.max
 
 object Angular2AnnotationErrorFilter : TypeScriptAnnotationErrorFilter() {
@@ -31,7 +33,7 @@ object Angular2AnnotationErrorFilter : TypeScriptAnnotationErrorFilter() {
   private fun shouldIgnoreImplicitAnyTypeError(error: TypeScriptAnnotationRangeError, file: PsiFile): Boolean {
     val document = file.viewProvider.document ?: return false
     val elementInfo = getElementInfoInjectionAware(file, document, error) ?: return false
-    return isArrowFunctionParameter(document, elementInfo)
+    return isAngularTemplateArrowFunctionParameter(elementInfo)
   }
 
   private fun isTemplateReferenceVariable(document: Document, elementInfo: JSLanguageServiceUtil.PsiElementInfo) =
@@ -48,7 +50,12 @@ object Angular2AnnotationErrorFilter : TypeScriptAnnotationErrorFilter() {
       ?.let { it.substring(1, it.length - 1) }
       .let { it == ANIMATE_ENTER_ATTR || it == ANIMATE_LEAVE_ATTR }
 
-  private fun isArrowFunctionParameter(document: Document, elementInfo: JSLanguageServiceUtil.PsiElementInfo) =
-    elementInfo.element?.let { it.parent is JSParameter } == true
+  private fun isAngularTemplateArrowFunctionParameter(elementInfo: JSLanguageServiceUtil.PsiElementInfo) =
+    elementInfo.element
+      ?.parent
+      ?.asSafely<JSParameter>()
+      ?.takeIf { it.language.isKindOf(Angular2Language) }
+      ?.declaringFunction
+      ?.isArrowFunction == true
 
 }
