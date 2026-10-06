@@ -3,8 +3,12 @@ package org.jetbrains.qodana.staticAnalysis.inspections.starter
 
 import com.intellij.openapi.application.ModernApplicationStarter
 import com.intellij.openapi.application.ex.ApplicationManagerEx
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
+import org.jetbrains.qodana.staticAnalysis.diogen.QodanaDiogenReporter
+import org.jetbrains.qodana.staticAnalysis.diogen.isDataSharingAllowed
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionApplicationFactory
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.ignoringThrowables
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.runReportingTerminalFailure
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import kotlin.system.exitProcess
@@ -23,8 +27,14 @@ internal class QodanaApplicationStarter : ModernApplicationStarter() {
    * disposal fails), which on an exhausted heap is how a failed linter hangs instead of reporting.
    */
   override suspend fun start(args: List<String>) {
-    val exitCode = runReportingTerminalFailure(QodanaMessageReporter.DEFAULT) {
-      QodanaInspectionApplicationFactory().getApplication(args.subList(1, args.size)).startup()
+    service<QodanaDiogenReporter>().start(enabled = isDataSharingAllowed())
+    val exitCode = try {
+      runReportingTerminalFailure(QodanaMessageReporter.DEFAULT) {
+        QodanaInspectionApplicationFactory().getApplication(args.subList(1, args.size)).startup()
+      }
+    }
+    finally {
+      ignoringThrowables { service<QodanaDiogenReporter>().stop() }
     }
     if (exitCode == 0) ApplicationManagerEx.getApplicationEx().exit(true, true)
     else exitProcess(exitCode)

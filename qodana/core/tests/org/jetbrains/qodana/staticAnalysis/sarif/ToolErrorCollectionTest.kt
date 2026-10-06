@@ -5,11 +5,20 @@ import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInspection.GlobalInspectionContext
 import com.intellij.codeInspection.GlobalInspectionTool
 import com.intellij.codeInspection.GlobalSimpleInspectionTool
+import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemDescriptionsProcessor
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.diagnostic.PluginException
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.IdeaLoggingEvent
+import com.intellij.openapi.diagnostic.SubmittedReportInfo
+import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.IndexNotReadyException
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElementVisitor
@@ -17,14 +26,23 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiMethod
 import com.intellij.testFramework.LoggedErrorProcessor
 import com.intellij.testFramework.TestDataPath
+import com.intellij.testFramework.registerOrReplaceServiceInstance
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.model.Notification
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.qodana.staticAnalysis.diogen.QodanaDiogenReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.FULL_SARIF_REPORT_NAME
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.profile.SanityInspectionGroup
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.QodanaConfigureNotificationCollector
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector
+import org.jetbrains.qodana.staticAnalysis.sarif.notifications.ToolErrorInspectListener
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Test
@@ -119,6 +137,64 @@ class ToolErrorCollectionTest : QodanaRunnerTestCase() {
       .containsExactlyInAnyOrder("test-module/pack/Bar.java", "test-module/pack/Baz.java", "test-module/pack/Foo.java")
   }
 
+  @Test
+  fun `reports an enabled inspection failure to Diogen`() {
+    val diogen = mutableListOf<IdeaLoggingEvent>()
+    val failure = IllegalStateException("failed")
+    withDiogenReporter(true, diogen) {
+      ToolErrorInspectListener().inspectionFailed("ReplayingLocal", failure, null, project)
+    }
+
+    val event = diogen.single()
+    assertThat(event.message).isEqualTo("Inspection ReplayingLocal failed")
+    assertThat(event.throwable).isSameAs(failure)
+    assertThat(event.attachments).isEmpty()
+  }
+
+  @Test
+  fun `attributes a Diogen report to the plugin that threw`() {
+    val diogen = mutableListOf<IdeaLoggingEvent>()
+    val qodana = PluginId.getId("org.intellij.qodana")
+    withDiogenReporter(true, diogen) {
+      ToolErrorInspectListener().inspectionFailed("SampleInspection", PluginException("failed", qodana), null, project)
+    }
+
+    assertThat(diogen.single().problematicPluginInfo?.pluginId).isEqualTo(qodana)
+  }
+
+  @Test
+  fun `does not report inspection failures when Diogen is not enabled`() {
+    val diogen = mutableListOf<IdeaLoggingEvent>()
+    withDiogenReporter(false, diogen) {
+      ToolErrorInspectListener().inspectionFailed("SampleInspection", IllegalStateException("failed"), null, project)
+    }
+    assertThat(diogen).isEmpty()
+  }
+
+  @Test
+  fun `does not report ignored inspection failures to Diogen`() {
+    val diogen = mutableListOf<IdeaLoggingEvent>()
+    withDiogenReporter(true, diogen) {
+      val listener = ToolErrorInspectListener()
+      listener.inspectionFailed("SampleInspection", CancellationException(), null, project)
+      listener.inspectionFailed("SampleInspection", ProcessCanceledException(), null, project)
+      listener.inspectionFailed("SampleInspection", IndexNotReadyException.create(), null, project)
+    }
+    assertThat(diogen).isEmpty()
+  }
+
+  @Test
+  fun `does not report expected or memory inspection failures to Diogen`() {
+    val diogen = mutableListOf<IdeaLoggingEvent>()
+    withDiogenReporter(true, diogen) {
+      val listener = ToolErrorInspectListener()
+      listener.inspectionFailed("SampleInspection", InspectionApplicationException("invalid configuration"), null, project)
+      listener.inspectionFailed("SampleInspection", QodanaException("expected Qodana failure"), null, project)
+      listener.inspectionFailed("SampleInspection", RuntimeException(OutOfMemoryError("Java heap space")), null, project)
+    }
+    assertThat(diogen).isEmpty()
+  }
+
   private fun runTest(tool: InspectionProfileEntry) {
     runAnalysisWith(tool)
 
@@ -169,6 +245,25 @@ class ToolErrorCollectionTest : QodanaRunnerTestCase() {
       .runs.orEmpty()
       .flatMap { run -> run.invocations.orEmpty() }
       .flatMap { it.toolExecutionNotifications.orEmpty() }
+
+  private fun withDiogenReporter(enabled: Boolean, events: MutableList<IdeaLoggingEvent>, action: () -> Unit) {
+    val disposable = Disposer.newDisposable()
+    val scope = CoroutineScope(SupervisorJob())
+    Disposer.register(disposable) { scope.cancel() }
+    val service = QodanaDiogenReporter(scope) { event ->
+      events.add(event)
+      SubmittedReportInfo(SubmittedReportInfo.SubmissionStatus.NEW_ISSUE)
+    }
+    ApplicationManager.getApplication().registerOrReplaceServiceInstance(QodanaDiogenReporter::class.java, service, disposable)
+    service.start(enabled)
+    try {
+      action()
+    }
+    finally {
+      runBlocking { service.stop() }
+      Disposer.dispose(disposable)
+    }
+  }
 
   private val Notification.occurrenceCount: Int
     get() = (properties?.get(RuntimeNotificationCollector.OCCURRENCES_PROPERTY) as? Number)?.toInt() ?: 1
