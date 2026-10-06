@@ -5,8 +5,9 @@ import com.intellij.javascript.util.JSLogOnceService
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.lsp.restartTypeScriptServicesAsync
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.SerializablePersistentStateComponent
+import com.intellij.openapi.components.BaseState
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.SimplePersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros
@@ -15,7 +16,6 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.platform.lsp.api.LspClientManager
-import kotlinx.serialization.Serializable
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspIntegrationHybridModeProvider
 
@@ -25,16 +25,9 @@ import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspIntegrationHybridMo
   storages = [Storage(StoragePathMacros.WORKSPACE_FILE)],
 )
 class VueSettings(private val project: Project) :
-  SerializablePersistentStateComponent<VueSettings.State>(State()) {
+  SimplePersistentStateComponent<VueSettings.State>(State()) {
 
-  var serviceType: VueLSMode
-    get() = state.serviceType
-    set(value) {
-      if (value == state.serviceType)
-        return
-
-      updateState { state -> state.copy(serviceType = value) }
-    }
+  var serviceType: VueLSMode by state::serviceType
 
   val useTypesFromServer: Boolean
     get() {
@@ -55,13 +48,11 @@ class VueSettings(private val project: Project) :
       else -> null
     }
     set(value) {
-      if (value == useTypesFromServer) return
-      updateState { state ->
-        state.copy(
-          useServicePoweredTypesEnabledManually = value == true,
-          useServicePoweredTypesDisabledManually = value == false,
-        )
-      }
+      if (value == useTypesFromServer)
+        return
+
+      state.useServicePoweredTypesEnabledManually = value == true
+      state.useServicePoweredTypesDisabledManually = value == false
     }
 
   companion object {
@@ -69,22 +60,18 @@ class VueSettings(private val project: Project) :
     fun instance(project: Project): VueSettings = project.service()
   }
 
-  @Serializable
-  data class State(
-    val serviceType: VueLSMode = VueLSMode.AUTO,
-    val useServicePoweredTypesEnabledManually: Boolean = false,
-    val useServicePoweredTypesDisabledManually: Boolean = false,
-  )
+  class State : BaseState() {
+    var serviceType: VueLSMode by enum(VueLSMode.AUTO)
+    var useServicePoweredTypesEnabledManually: Boolean by property(false)
+    var useServicePoweredTypesDisabledManually: Boolean by property(false)
+  }
 }
 
-@Serializable
 enum class VueLSMode {
   AUTO,
   DISABLED,
 
   ;
-
-  fun isEnabled(): Boolean = this != DISABLED
 }
 
 /**
