@@ -70,6 +70,8 @@ public class PrettierImportCodeStyleAction extends AnAction implements DumbAware
 
     ReadAction.nonBlocking(() -> findFileToImport(project, contextFile))
       .expireWhen(() -> project.isDisposed() || !contextFile.isValid())
+      // A new import in the project cancels a pending one, so the import that the user started last wins.
+      .coalesceBy(PrettierImportCodeStyleAction.class, project)
       .finishOnUiThread(ModalityState.defaultModalityState(), psiFile -> {
         if (psiFile != null) {
           new PrettierCodeStyleImporter(false).importConfigFile(psiFile);
