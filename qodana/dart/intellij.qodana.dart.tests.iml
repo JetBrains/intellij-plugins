@@ -24,6 +24,7 @@
     <orderEntry type="module" module-name="intellij.qodana.dart" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.sarif" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.util" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.problemView.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />

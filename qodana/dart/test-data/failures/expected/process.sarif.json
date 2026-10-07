@@ -1,0 +1,33 @@
+{
+  "runs": [
+    {
+      "invocations": [
+        {
+          "toolExecutionNotifications": [
+            {
+              "locations": [],
+              "message": {
+                "text": "Inspection DartAnalyze failed"
+              },
+              "level": "error",
+              "exception": {
+                "message": "java.lang.IllegalStateException: Dart module '$PROJECT_DIR$/lib': Failed to run dart analyze: Unable to start Dart: \"quoted\" \\path\nsecond line\r\t\u0001\nCaused by: java.io.IOException: Unable to start Dart: \"quoted\" \\path\nsecond line\r\t\u0001\n"
+              },
+              "properties": {
+                "toolId": "DartAnalyze",
+                "exceptionClass": "java.lang.IllegalStateException",
+                "qodanaKind": "toolError"
+              }
+            }
+          ]
+        }
+      ],
+      "language": "en-US",
+      "results": [],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

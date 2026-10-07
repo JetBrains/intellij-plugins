@@ -1,0 +1,9 @@
+{
+  "files": [
+    {
+      "path": "lib/wanted.dart",
+      "added": [{ "firstLine": 1, "count": 1 }],
+      "deleted": []
+    }
+  ]
+}

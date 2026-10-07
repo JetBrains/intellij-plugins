@@ -40,7 +40,7 @@ internal open class DefaultScript(
   ) {
     val run = report.getOrCreateRun()
     runContext.runAnalysis(context = inspectionContext)
-    run.results = runContext.getResultsForInspectionGroup(inspectionContext)
+    inspectionContext.populateRunWithInspectionResults(run)
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
   }
 }

@@ -11,6 +11,7 @@
     <module name="intellij.platform.analysis.impl"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.eel.provider"/>
+    <module name="intellij.platform.indexing"/>
     <module name="intellij.platform.inspect"/>
     <module name="intellij.platform.lang.impl"/>
     <module name="intellij.qodana.sarif"/>
@@ -18,10 +19,7 @@
   <!-- endregion -->
   <resource-bundle>messages.QodanaDartBundle</resource-bundle>
   <extensions defaultExtensionNs="org.intellij.qodana">
-    <derivedInspectionProvider implementation="org.jetbrains.qodana.dart.DartAnalyzeDerivedInspectionProvider"/>
-    <sarifReportContributor implementation="org.jetbrains.qodana.dart.DartAnalyzeGlobalInspectionOutputConsumer"/>
-    <inspectionProfileProvider implementation="org.jetbrains.qodana.dart.DartInspectionProfileProvider"/>
-    <globalOutputConsumer implementation="org.jetbrains.qodana.dart.DartAnalyzeGlobalInspectionOutputConsumer"/>
+    <globalOutputConsumer implementation="org.jetbrains.qodana.dart.DartAnalyzeGlobalOutputConsumer"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <globalInspection language=""
@@ -34,7 +32,17 @@
                       groupBundle="messages.QodanaDartBundle"
                       enabledByDefault="true"
                       level="WARNING"
-                      presentation="org.jetbrains.qodana.dart.DartAnalyzeGlobalInspectionPresentation"
                       implementationClass="org.jetbrains.qodana.dart.DartAnalyzeGlobalInspection"/>
+    <globalInspection language=""
+                      hasStaticDescription="true"
+                      key="inspection.dart.sanity.name"
+                      bundle="messages.QodanaDartBundle"
+                      shortName="DartAnalyzeSanity"
+                      groupKey="inspection.dart.analyze.taxonomy.name"
+                      groupPathKey="inspection.dart.analyze.group.name"
+                      groupBundle="messages.QodanaDartBundle"
+                      enabledByDefault="false"
+                      level="ERROR"
+                      implementationClass="org.jetbrains.qodana.dart.DartAnalyzeSanityInspection"/>
   </extensions>
 </idea-plugin>

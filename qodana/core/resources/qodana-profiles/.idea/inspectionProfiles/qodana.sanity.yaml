@@ -11,6 +11,8 @@ groups:
       - "category:C_C++/Compiler Issues"
 
 inspections:
+  - inspection: DartAnalyzeSanity
+    enabled: true
   - inspection: QodanaJavaSanity
     enabled: true
   - inspection: QodanaKotlinSanity

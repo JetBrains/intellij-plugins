@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "diagnostics": [
+    {
+      "code": "unused_local_variable",
+      "severity": "WARNING",
+      "type": "STATIC_WARNING",
+      "location": {
+        "file": "main.dart",
+        "range": {
+          "start": {
+            "offset": 22,
+            "line": 2,
+            "column": 9
+          },
+          "end": {
+            "offset": 33,
+            "line": 2,
+            "column": 20
+          }
+        }
+      },
+      "problemMessage": "The value of the local variable 'firstUnused' isn't used.",
+      "correctionMessage": "Try removing the variable or using it."
+    },
+    {
+      "code": "unused_local_variable",
+      "severity": "WARNING",
+      "type": "STATIC_WARNING",
+      "location": {
+        "file": "main.dart",
+        "range": {
+          "start": {
+            "offset": 47,
+            "line": 3,
+            "column": 9
+          },
+          "end": {
+            "offset": 59,
+            "line": 3,
+            "column": 21
+          }
+        }
+      },
+      "problemMessage": "The value of the local variable 'secondUnused' isn't used.",
+      "correctionMessage": "Try removing the variable or using it."
+    },
+    {
+      "code": "undefined_identifier",
+      "severity": "ERROR",
+      "type": "COMPILE_TIME_ERROR",
+      "location": {
+        "file": "main.dart",
+        "range": {
+          "start": { "offset": 67, "line": 4, "column": 3 },
+          "end": { "offset": 74, "line": 4, "column": 10 }
+        }
+      },
+      "problemMessage": "Undefined name 'missing'.",
+      "correctionMessage": "Try correcting the name to one that is defined, or defining the name."
+    }
+  ]
+}

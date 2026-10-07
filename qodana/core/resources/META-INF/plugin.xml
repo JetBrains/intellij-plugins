@@ -438,9 +438,6 @@
     <extensionPoint name="dynamicInspectionsInitializer"
                     interface="org.jetbrains.qodana.util.DynamicInspectionInitializer"
                     dynamic="true"/>
-    <extensionPoint name="derivedInspectionProvider"
-                    interface="org.jetbrains.qodana.staticAnalysis.profile.DerivedInspectionProvider"
-                    dynamic="true"/>
     <extensionPoint name="customInspectionLicenseRule"
                     interface="org.jetbrains.qodana.license.CustomInspectionLicenseRule"
                     dynamic="true"/>

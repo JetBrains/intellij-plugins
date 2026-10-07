@@ -1,0 +1,192 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "dart_undefined_identifier",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "[undefined_identifier] Undefined name 'missing'. Try correcting the name to one that is defined, or defining the name.",
+            "markdown": "\\[undefined_identifier\\] Undefined name 'missing'. Try correcting the name to one that is defined, or defining the name."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "lib/main.dart",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 15,
+                  "charOffset": 14,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "missing"
+                  },
+                  "sourceLanguage": "TEXT"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 69,
+                  "snippet": {
+                    "text": "void main() { missing; var unused = 0; }\n\nFuture<void> info() async {"
+                  },
+                  "sourceLanguage": "TEXT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "reports a Dart diagnostic through SARIF",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "12db5f1427fd840c",
+            "equalIndicator/v1": "49133d2014bd466c1f6b7a63dec5c794d03edf3d08b278cd9f1688947c4c6d62"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
+            "tags": [
+              "TEXT"
+            ]
+          }
+        },
+        {
+          "ruleId": "dart_unused_local_variable",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "[unused_local_variable] The value of the local variable 'unused' isn't used. Try removing the variable or using it.",
+            "markdown": "\\[unused_local_variable\\] The value of the local variable 'unused' isn't used. Try removing the variable or using it."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "lib/main.dart",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 28,
+                  "charOffset": 27,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "unused"
+                  },
+                  "sourceLanguage": "TEXT"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 69,
+                  "snippet": {
+                    "text": "void main() { missing; var unused = 0; }\n\nFuture<void> info() async {"
+                  },
+                  "sourceLanguage": "TEXT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "reports a Dart diagnostic through SARIF",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "01903be648ec680f",
+            "equalIndicator/v1": "274bff000a562960081bcb1a5111822920e3783494c419b0120aeaca3f93272c"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "TEXT"
+            ]
+          }
+        },
+        {
+          "ruleId": "dart_await_only_futures",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "[await_only_futures] Uses 'await' on an instance of 'int', which is not a subtype of 'Future'. Try removing the 'await' or changing the expression.",
+            "markdown": "\\[await_only_futures\\] Uses 'await' on an instance of 'int', which is not a subtype of 'Future'. Try removing the 'await' or changing the expression."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "lib/main.dart",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 3,
+                  "charOffset": 72,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "await"
+                  },
+                  "sourceLanguage": "TEXT"
+                },
+                "contextRegion": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "charOffset": 41,
+                  "charLength": 42,
+                  "snippet": {
+                    "text": "\nFuture<void> info() async {\n  await 1;\n}\n"
+                  },
+                  "sourceLanguage": "TEXT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "reports a Dart diagnostic through SARIF",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "0b3727b7afea4171",
+            "equalIndicator/v1": "c7bac146b2bbbbf153e13ae199a542e3db21288d19c7fb59b53f1f115e4bb0c4"
+          },
+          "properties": {
+            "ideaSeverity": "INFORMATION",
+            "qodanaSeverity": "Info",
+            "problemType": "REGULAR",
+            "tags": [
+              "TEXT"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "runs": [
+    {
+      "invocations": [
+        {
+          "toolExecutionNotifications": [
+            {
+              "locations": [],
+              "message": {
+                "text": "Inspection DartAnalyze failed"
+              },
+              "level": "error",
+              "exception": {
+                "message": "java.lang.IllegalStateException: Dart module '$PROJECT_DIR$/lib': Failed to parse dart analyze JSON output: com.google.gson.stream.MalformedJsonException: Use JsonReader.setStrictness(Strictness.LENIENT) to accept malformed JSON at line 1 column 6 path $\nSee https://github.com/google/gson/blob/main/Troubleshooting.md#malformed-json\nCaused by: com.google.gson.JsonSyntaxException: com.google.gson.stream.MalformedJsonException: Use JsonReader.setStrictness(Strictness.LENIENT) to accept malformed JSON at line 1 column 6 path $\nSee https://github.com/google/gson/blob/main/Troubleshooting.md#malformed-json\nCaused by: com.google.gson.stream.MalformedJsonException: Use JsonReader.setStrictness(Strictness.LENIENT) to accept malformed JSON at line 1 column 6 path $\nSee https://github.com/google/gson/blob/main/Troubleshooting.md#malformed-json\n"
+              },
+              "properties": {
+                "toolId": "DartAnalyze",
+                "exceptionClass": "java.lang.IllegalStateException",
+                "qodanaKind": "toolError"
+              }
+            }
+          ]
+        }
+      ],
+      "language": "en-US",
+      "results": [],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

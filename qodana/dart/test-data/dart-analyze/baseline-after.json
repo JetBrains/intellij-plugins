@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "diagnostics": [
+    {
+      "code": "unused_local_variable",
+      "severity": "WARNING",
+      "type": "STATIC_WARNING",
+      "location": {
+        "file": "main.dart",
+        "range": {
+          "start": {
+            "offset": 22,
+            "line": 2,
+            "column": 9
+          },
+          "end": {
+            "offset": 33,
+            "line": 2,
+            "column": 20
+          }
+        }
+      },
+      "problemMessage": "The value of the local variable 'firstUnused' isn't used.",
+      "correctionMessage": "Try removing the variable or using it."
+    }
+  ]
+}

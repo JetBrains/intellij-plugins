@@ -2,32 +2,32 @@
   "version": 1,
   "diagnostics": [
     {
-      "code": "undefined_identifier",
-      "severity": "ERROR",
-      "type": "COMPILE_TIME_ERROR",
+      "code": "unused_local_variable",
+      "severity": "WARNING",
+      "type": "STATIC_WARNING",
       "location": {
-        "file": "lib/main.dart",
+        "file": "main.dart",
         "range": {
-          "start": { "offset": 30, "line": 2, "column": 3 },
-          "end": { "offset": 37, "line": 2, "column": 10 }
+          "start": { "offset": 20, "line": 2, "column": 7 },
+          "end": { "offset": 28, "line": 2, "column": 15 }
         }
       },
-      "problemMessage": "Undefined name 'missing'.",
-      "correctionMessage": "Try correcting the name to one that is defined, or defining the name."
+      "problemMessage": "The value of the local variable 'Bad_Name' isn't used.",
+      "correctionMessage": "Try removing the variable or using it."
     },
     {
-      "code": "await_only_futures",
+      "code": "non_constant_identifier_names",
       "severity": "INFO",
       "type": "LINT",
       "location": {
-        "file": "lib/main.dart",
+        "file": "main.dart",
         "range": {
-          "start": { "offset": 41, "line": 3, "column": 3 },
-          "end": { "offset": 46, "line": 3, "column": 8 }
+          "start": { "offset": 20, "line": 2, "column": 7 },
+          "end": { "offset": 28, "line": 2, "column": 15 }
         }
       },
-      "problemMessage": "Uses 'await' on an instance of 'int', which is not a subtype of 'Future'.",
-      "correctionMessage": "Try removing the 'await' or changing the expression."
+      "problemMessage": "The variable name 'Bad_Name' isn't a lowerCamelCase identifier.",
+      "correctionMessage": "Try changing the name to follow the lowerCamelCase style."
     }
   ]
 }

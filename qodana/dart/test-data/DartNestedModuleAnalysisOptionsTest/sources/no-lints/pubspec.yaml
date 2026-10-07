@@ -1,4 +1,0 @@
-name: no_lints
-
-environment:
-  sdk: ^3.4.0

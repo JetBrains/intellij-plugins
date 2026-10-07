@@ -1,7 +1,0 @@
-name: core_lints
-
-environment:
-  sdk: ^3.4.0
-
-dev_dependencies:
-  lints: ^6.1.0

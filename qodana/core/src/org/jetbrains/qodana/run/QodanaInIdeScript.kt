@@ -17,14 +17,13 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaCancellation
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.applyBaselineCalculation
 import org.jetbrains.qodana.staticAnalysis.sarif.SarifReportContributor
-import org.jetbrains.qodana.staticAnalysis.sarif.appendDerivedComponents
 import org.jetbrains.qodana.staticAnalysis.sarif.fillComponents
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.script.AnalysisKind
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScript
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptResult
 import org.jetbrains.qodana.staticAnalysis.script.appendRunDetails
-import org.jetbrains.qodana.staticAnalysis.script.getResultsForInspectionGroup
+import org.jetbrains.qodana.staticAnalysis.script.populateRunWithInspectionResults
 import org.jetbrains.qodana.staticAnalysis.script.runAnalysis
 import org.jetbrains.qodana.staticAnalysis.script.writeProfiles
 import org.jetbrains.qodana.staticAnalysis.script.writeProjectDescriptionAfterWork
@@ -48,9 +47,7 @@ class QodanaInIdeScript(private val runContext: QodanaRunContext) : QodanaScript
         runContext.runAnalysis(runContext.scope, inspectionContext, InspectionProgressIndicator(reporter), isOffline = false)
       }
       runContext.writeProjectDescriptionAfterWork()
-      val results = runContext.getResultsForInspectionGroup(inspectionContext)
-      run.results = results
-      appendDerivedComponents(run.tool, runContext.qodanaProfile, inspectionContext.profileState.registeredDerivedInspections)
+      inspectionContext.populateRunWithInspectionResults(run)
       applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
 
       SarifReportContributor.runContributors(run, runContext.project, runContext.config)

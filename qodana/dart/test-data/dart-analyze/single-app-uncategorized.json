@@ -6,7 +6,7 @@
       "severity": "ERROR",
       "type": "COMPILE_TIME_ERROR",
       "location": {
-        "file": "lib/main.dart",
+        "file": "main.dart",
         "range": {
           "start": { "offset": 16, "line": 2, "column": 3 },
           "end": { "offset": 29, "line": 2, "column": 16 }

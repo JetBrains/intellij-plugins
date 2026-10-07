@@ -21,7 +21,7 @@ import org.jetbrains.qodana.staticAnalysis.script.DefaultScript
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScript
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
 import org.jetbrains.qodana.staticAnalysis.script.UnvalidatedParameters
-import org.jetbrains.qodana.staticAnalysis.script.getResultsForInspectionGroup
+import org.jetbrains.qodana.staticAnalysis.script.populateRunWithInspectionResults
 import org.jetbrains.qodana.staticAnalysis.script.require
 import org.jetbrains.qodana.staticAnalysis.script.runAnalysis
 import org.jetbrains.qodana.util.QodanaMessageReporter
@@ -69,7 +69,7 @@ internal class ScopedScript(runContextFactory: ScopedRunContextFactory) :
   override suspend fun execute(report: SarifReport, runContext: QodanaRunContext, inspectionContext: QodanaGlobalInspectionContext) {
     val run = report.getOrCreateRun()
     runContext.runAnalysis(context = inspectionContext)
-    run.results = runContext.getResultsForInspectionGroup(inspectionContext)
+    inspectionContext.populateRunWithInspectionResults(run)
 
     // compare before and current, keeping only 'NEW' issues in current
     val baselineReport = getScopedBaselineReport(runContext)
