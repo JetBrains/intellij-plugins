@@ -13,14 +13,18 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaReportedFail
 @ApiStatus.Internal
 class PackageCheckerInspectListener : InspectListener {
   override fun inspectionFailed(toolId: String, throwable: Throwable, file: PsiFile?, project: Project) {
-    if (throwable is PackageCheckerHeadlessAnalysisException &&
-        QodanaRegistry.isPackageCheckerCancelOnFailureEnabled) {
+    if (throwable !is PackageCheckerHeadlessAnalysisException) return
+
+    val cancellationService = project.service<QodanaAnalysisCancellationService>()
+    if (QodanaRegistry.isPackageCheckerCancelOnFailureEnabled) {
       val reportedFailure = QodanaReportedFailureException.packageCheckerHeadlessFailure(
         throwable.message ?: throwable.toString(),
         throwable
       )
-      project.service<QodanaAnalysisCancellationService>()
-        .requestCancel(PACKAGE_CHECKER_QODANA_CANCELLATION_MESSAGE, reportedFailure)
+      cancellationService.requestCancel(PACKAGE_CHECKER_QODANA_CANCELLATION_MESSAGE, reportedFailure)
+    }
+    else {
+      cancellationService.logCancellationDisabledWarning()
     }
   }
 

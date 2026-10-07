@@ -27,9 +27,10 @@ class QodanaInIdeRunContextFactory(
 ) : QodanaRunContextFactory {
   override suspend fun openRunContext(scope: CoroutineScope): QodanaRunContext {
     project.addQodanaAnalysisConfig(config)
-    project.service<QodanaAnalysisCancellationService>().registerHook { message: String, cause: Throwable? ->
-      scope.cancelWithQodanaException(message, cause)
-    }
+    project.service<QodanaAnalysisCancellationService>().registerHook(
+      cancellation = { message: String, cause: Throwable? -> scope.cancelWithQodanaException(message, cause) },
+      logger = { reporter.reportMessage(1, it) },
+    )
     @Suppress("OPT_IN_USAGE")
     scope.awaitCancellationAndInvoke {
       project.service<QodanaAnalysisCancellationService>().removeHook()

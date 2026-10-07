@@ -2,9 +2,12 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.packageChecker.model.exceptions.AnalysisException
 import com.intellij.packageChecker.model.exceptions.PackageCheckerHeadlessAnalysisException
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.staticAnalysis.packageChecker.PackageCheckerInspectListener
 
 class QodanaAnalysisCancellationTest : BasePlatformTestCase() {
@@ -65,6 +68,29 @@ class QodanaAnalysisCancellationTest : BasePlatformTestCase() {
       PackageCheckerInspectListener().inspectionFailed("toolId", AnalysisException("failed"), null, project)
 
       assertTrue(cancellationRequests.isEmpty())
+    }
+    finally {
+      project.service<QodanaAnalysisCancellationService>().removeHook()
+    }
+  }
+
+  fun testPackageCheckerInspectListenerReportsWarningWhenCancellationIsDisabled() {
+    Registry.get(QodanaRegistry.PACKAGE_CHECKER_CANCEL_ON_FAILURE_KEY).setValue(false, testRootDisposable)
+    val cancellationRequests = mutableListOf<Pair<String, Throwable?>>()
+    val warnings = mutableListOf<String>()
+    val failure = PackageCheckerHeadlessAnalysisException("failed", Throwable("boom"))
+
+    project.service<QodanaAnalysisCancellationService>().registerHook(
+      cancellation = { message, cause -> cancellationRequests += message to cause },
+      logger = warnings::add,
+    )
+
+    try {
+      PackageCheckerInspectListener().inspectionFailed("toolId", failure, null, project)
+      PackageCheckerInspectListener().inspectionFailed("toolId", failure, null, project)
+
+      assertTrue(cancellationRequests.isEmpty())
+      assertEquals(listOf(QodanaBundle.message("warning.package.checker.failure")), warnings)
     }
     finally {
       project.service<QodanaAnalysisCancellationService>().removeHook()
