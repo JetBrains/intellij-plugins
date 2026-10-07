@@ -823,7 +823,7 @@ public final class FlexValue extends XValue {
     return Pair.create(type, additionalInfo);
   }
 
-  private static @Nullable JSClass findJSClass(final Project project, final @Nullable Module module, final String typeFromFlexValueResult) {
+  static @Nullable JSClass findJSClass(final Project project, final @Nullable Module module, final String typeFromFlexValueResult) {
     String type = getType(typeFromFlexValueResult);
     if (type != null) {
       if (isGenericVector(type)) {
