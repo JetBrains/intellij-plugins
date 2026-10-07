@@ -5,12 +5,16 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.modules.TestNpmPackage
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.prettierjs.PrettierConfiguration
 import com.intellij.testFramework.utils.ActionsOnSaveTestUtil
 import com.intellij.util.LineSeparator
+import java.nio.file.Files
 
 @TestNpmPackage(PRETTIER_3_8_1_TEST_PACKAGE_SPEC)
 class ReformatWithPrettierV3Test : ReformatWithPrettierGenericTest() {
@@ -337,6 +341,92 @@ class ReformatWithPrettierV3Test : ReformatWithPrettierGenericTest() {
     myFixture.checkResultByFile("$dirName/toReformat_after.js")
   }
 
+  fun testChangeConfigByDelete() = withInstallation {
+    val dirName = getTestName(true)
+    // Test data already copied by withInstallation
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("toReformat.js"))
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after.js")
+
+    // without the config file, Prettier uses its defaults
+    WriteAction.run<Throwable> { myFixture.findFileInTempDir(".prettierrc.json").delete(this) }
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after_1.js")
+  }
+
+  fun testChangePackageJsonConfig() = withInstallation {
+    val dirName = getTestName(true)
+    // Test data already copied by withInstallation
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("toReformat.js"))
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after.js")
+
+    // change singleQuote to false in the "prettier" property of package.json
+    val packageJson = myFixture.findFileInTempDir("package.json")
+    val text = VfsUtilCore.loadText(packageJson)
+    assertTrue(text.contains(""""singleQuote": true"""))
+    myFixture.saveText(packageJson, text.replace(""""singleQuote": true""", """"singleQuote": false"""))
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after_1.js")
+  }
+
+  fun testChangeEditorConfig() = withInstallation {
+    val dirName = getTestName(true)
+    // Test data already copied by withInstallation
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("toReformat.js"))
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after.js")
+
+    // change the indentation from 4 spaces to a tab
+    myFixture.saveText(myFixture.findFileInTempDir(".editorconfig"), "root = true\n\n[*]\nindent_style = tab\n")
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after_1.js")
+  }
+
+  fun testChangeConfigBySavingDocument() = withInstallation {
+    val dirName = getTestName(true)
+    // Test data already copied by withInstallation
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("toReformat.js"))
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after.js")
+
+    // the user changes the config in the editor and saves it
+    val configDocument = disableSingleQuoteInConfigDocument()
+    FileDocumentManager.getInstance().saveDocument(configDocument)
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after_1.js")
+  }
+
+  fun testChangeConfigInUnsavedDocument() = withInstallation {
+    val dirName = getTestName(true)
+    // Test data already copied by withInstallation
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("toReformat.js"))
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after.js")
+
+    // the user changes the config in the editor and does not save it
+    val configDocument = disableSingleQuoteInConfigDocument()
+    // the action saves the config before it gets a service, so the save must terminate the old service first
+    runReformatAction()
+    assertFalse(FileDocumentManager.getInstance().isDocumentUnsaved(configDocument))
+    myFixture.checkResultByFile("$dirName/toReformat_after_1.js")
+  }
+
+  fun testChangeConfigByRefresh() = withInstallation {
+    val dirName = getTestName(true)
+    // Test data already copied by withInstallation
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("toReformat.js"))
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after.js")
+
+    // another program changes the config file, and a refresh finds the change because the length changes
+    val config = myFixture.findFileInTempDir(".prettierrc.json")
+    Files.writeString(config.toNioPath(), """{"singleQuote": false}""")
+    VfsUtil.markDirtyAndRefresh(false, false, false, config)
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after_1.js")
+  }
+
   fun testIncompleteBlock() = withInstallation {
     val configuration = PrettierConfiguration.getInstance(project)
     val origRunOnReformat = configuration.state.runOnReformat
@@ -377,5 +467,13 @@ class ReformatWithPrettierV3Test : ReformatWithPrettierGenericTest() {
       ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(myFixture.project)
       myFixture.checkResultByFile("$dirName/toReformat_after.js")
     }
+  }
+
+  /** Sets `singleQuote` to `false` in the `.prettierrc.json` document and does not save it. */
+  private fun disableSingleQuoteInConfigDocument(): Document {
+    val document = FileDocumentManager.getInstance().getDocument(myFixture.findFileInTempDir(".prettierrc.json"))!!
+    WriteCommandAction.runWriteCommandAction(project) { document.setText("""{"singleQuote": false}""") }
+    assertTrue(FileDocumentManager.getInstance().isDocumentUnsaved(document))
+    return document
   }
 }

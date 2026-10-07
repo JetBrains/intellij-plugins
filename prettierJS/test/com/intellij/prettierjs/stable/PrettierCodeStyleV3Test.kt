@@ -8,6 +8,8 @@ import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.modules.TestNpmPackage
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.prettierjs.PrettierConfiguration
 import com.intellij.prettierjs.PrettierJSTestUtil
 import com.intellij.psi.codeStyle.CodeStyleSettings
@@ -290,6 +292,31 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
         }
       }
     }
+  }
+
+  fun testSettingsFollowSavedConfigChange() = withInstallation {
+    configurePrettierForCodeStyle {
+      assertEquals(3, indexJsIndentSizeWithoutEditor())
+
+      // the user changes the config in the editor and saves it
+      val document = FileDocumentManager.getInstance().getDocument(myFixture.findFileInTempDir(".prettierrc.json"))!!
+      WriteCommandAction.runWriteCommandAction(project) { document.setText("""{"tabWidth": 7}""") }
+      FileDocumentManager.getInstance().saveDocument(document)
+      // The save terminated the old service. Start the new service now, because the code style modifier waits only 500 ms for a result.
+      warmUpPrettierService(myFixture.findFileInTempDir("package.json"))
+
+      assertEquals(7, indexJsIndentSizeWithoutEditor())
+    }
+  }
+
+  /**
+   * Returns the indent size of `index.js` and does not open an editor.
+   * An open editor can compute the code style settings before the new service starts.
+   */
+  private fun indexJsIndentSizeWithoutEditor(): Int {
+    val psiFile = myFixture.findFileInTempDir("index.js").getPsiFile(project)
+    val settings = timeoutRunBlocking { CodeStyle.getSettings(psiFile) }
+    return settings.getCommonSettings(psiFile.language).indentOptions!!.INDENT_SIZE
   }
 
   private fun configurePrettierForCodeStyle(block: () -> Unit) {

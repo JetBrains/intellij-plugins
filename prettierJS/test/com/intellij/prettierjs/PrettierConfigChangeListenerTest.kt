@@ -2,6 +2,7 @@
 package com.intellij.prettierjs
 
 import com.intellij.javascript.nodejs.util.NodePackage
+import com.intellij.lang.javascript.linter.JsLinterManagerListener
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.WriteCommandAction
@@ -19,6 +20,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileCopyEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
@@ -32,6 +34,7 @@ import com.intellij.testFramework.LeakHunter
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.createTestOpenProjectOptions
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.util.FileContentUtilCore
 import java.io.InputStream
 import java.io.OutputStream
 import java.nio.file.Files
@@ -151,6 +154,54 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     Files.writeString(configPath, """{"semi": false}""")
     VfsUtil.markDirtyAndRefresh(false, false, false, config)
 
+    assertFalse(isCached(service))
+  }
+
+  fun testRefreshOfManyUnrelatedExternalChangesKeepsCachedService() {
+    val dir = createTempDirectory()
+    repeat(REFRESH_FILE_COUNT) { Files.writeString(dir.resolve("file$it.js"), "") }
+    val root = loadLocalDirectory(dir, REFRESH_FILE_COUNT)
+    val oldListener = subscribeOldListener()
+    val service = cacheService()
+    val stateChanges = countStateChanges()
+
+    // The refresh finds a content change, a deleted file, or a new file for each file.
+    repeat(REFRESH_FILE_COUNT) {
+      when (it % 3) {
+        0 -> Files.writeString(dir.resolve("file$it.js"), "let a = $it")
+        1 -> Files.delete(dir.resolve("file$it.js"))
+        else -> Files.writeString(dir.resolve("new$it.ts"), "")
+      }
+    }
+    VfsUtil.markDirtyAndRefresh(false, true, true, root)
+
+    assertTrue(oldListener.examinedEvents >= REFRESH_FILE_COUNT)
+    assertEquals(0, oldListener.reloads)
+    assertEquals(0, stateChanges.get())
+    assertTrue(isCached(service))
+  }
+
+  fun testRefreshOfSeveralExternalConfigChangesTerminatesServicesOneTime() {
+    val dir = createTempDirectory()
+    val names = listOf(".prettierrc.json", "package.json", ".editorconfig") + List(REFRESH_FILE_COUNT) { "file$it.js" }
+    for (name in names) {
+      Files.writeString(dir.resolve(name), "{}")
+    }
+    val root = loadLocalDirectory(dir, names.size)
+    val oldListener = subscribeOldListener()
+    val service = cacheService()
+    val stateChanges = countStateChanges()
+
+    // The new content has a different length, so the refresh finds each change.
+    for (name in names) {
+      Files.writeString(dir.resolve(name), """{"changed": true}""")
+    }
+    VfsUtil.markDirtyAndRefresh(false, true, true, root)
+
+    assertTrue(oldListener.examinedEvents >= names.size)
+    assertTrue(oldListener.reloads > 0)
+    // The change applier runs one time for the refresh, so the services terminate one time.
+    assertEquals(1, stateChanges.get())
     assertFalse(isCached(service))
   }
 
@@ -313,6 +364,42 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     assertTrue(isCached(service))
   }
 
+  /**
+   * Compares the listener with the old listener on real VFS operations.
+   * The new listener also examines the old name of a renamed file, so only a rename away from a config file name differs.
+   */
+  fun testListenerMatchesOldListenerExceptForRenameAwayFromConfigName() {
+    val oldListener = subscribeOldListener()
+    contextFile = createFile("index.js", "")
+    val mismatches = mutableListOf<String>()
+    var casesWithOldReload = 0
+
+    for ((index, case) in parityCases().withIndex()) {
+      val (dir, file) = WriteAction.compute<Pair<VirtualFile, VirtualFile?>, Throwable> {
+        val dir = root().createChildDirectory(this, "case$index")
+        dir.createChildDirectory(this, TARGET_DIRECTORY_NAME)
+        dir to prepare(case, dir)
+      }
+      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+      val service = PrettierLanguageService.getInstance(project, contextFile, FAKE_PACKAGE)
+      oldListener.reloads = 0
+
+      WriteAction.run<Throwable> { perform(case, dir, file) }
+
+      val oldReloaded = oldListener.reloads > 0
+      val newReloaded = !isCached(service)
+      if (oldReloaded) casesWithOldReload++
+      val asExpected = if (case.oldListenerMisses) !oldReloaded && newReloaded else newReloaded == oldReloaded
+      if (!asExpected) {
+        mismatches += "$case: old listener reloaded = $oldReloaded, new listener reloaded = $newReloaded"
+      }
+    }
+
+    assertEmpty(mismatches)
+    // Without a reload in the old listener, the comparison would prove nothing.
+    assertTrue(casesWithOldReload > 0)
+  }
+
   fun testCancelledPreparationKeepsCachedService() {
     val service = cacheService()
     val indicator = EmptyProgressIndicator()
@@ -369,7 +456,7 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     events: List<VFileEvent>,
     listener: AsyncFileListener = PrettierConfigChangeListener(PrettierLanguageServiceManager.getInstance(project)),
   ): AsyncFileListener.ChangeApplier? {
-    return ReadAction.compute<AsyncFileListener.ChangeApplier?, Throwable> { listener.prepareChange(events) }
+    return ReadAction.computeBlocking<AsyncFileListener.ChangeApplier?, Throwable> { listener.prepareChange(events) }
   }
 
   private fun applyChange(applier: AsyncFileListener.ChangeApplier) {
@@ -392,6 +479,75 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     val dir = FileUtil.createTempDirectory("prettier-config-change", null, false)
     Disposer.register(testRootDisposable) { FileUtil.delete(dir) }
     return dir.toPath()
+  }
+
+  /** Finds the local directory in the VFS and loads its children, so that a later refresh reports each change. */
+  private fun loadLocalDirectory(dir: Path, expectedChildCount: Int): VirtualFile {
+    VfsRootAccess.allowRootAccess(testRootDisposable, dir.toString())
+    val directory = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(dir)!!
+    assertEquals(expectedChildCount, directory.children.size)
+    return directory
+  }
+
+  private fun subscribeOldListener(): OldConfigChangeListener {
+    val listener = OldConfigChangeListener()
+    project.messageBus.connect(testRootDisposable).subscribe(VirtualFileManager.VFS_CHANGES, listener)
+    return listener
+  }
+
+  /**
+   * Counts the state changes of the service manager.
+   * Each call of [PrettierLanguageServiceManager.terminateServices] is one state change.
+   * A new service is also one, so a test does not create a service while it counts.
+   */
+  private fun countStateChanges(): AtomicInteger {
+    val count = AtomicInteger()
+    PrettierLanguageServiceManager.getInstance(project)
+      .addJsLinterManagerListener(JsLinterManagerListener { count.incrementAndGet() }, testRootDisposable)
+    return count
+  }
+
+  private fun parityCases(): List<ParityCase> = buildList {
+    for (name in RELOAD_FILE_NAMES + OTHER_FILE_NAMES) {
+      for (operation in ParityOperation.entries) {
+        add(ParityCase(name, isDirectory = false, operation))
+      }
+    }
+    for (name in PARITY_DIRECTORY_NAMES) {
+      for (operation in ParityOperation.entries.filter { it.appliesToDirectory }) {
+        add(ParityCase(name, isDirectory = true, operation))
+      }
+    }
+  }
+
+  /** Creates the file or the directory that [case] changes, or returns `null` if the case creates it. */
+  private fun prepare(case: ParityCase, dir: VirtualFile): VirtualFile? {
+    val existingName = when (case.operation) {
+      ParityOperation.CREATE -> return null
+      ParityOperation.RENAME_TO -> "draft"
+      ParityOperation.CHANGE, ParityOperation.DELETE, ParityOperation.RENAME_AWAY, ParityOperation.MOVE, ParityOperation.COPY,
+      ParityOperation.MAKE_READ_ONLY, ParityOperation.REPARSE -> case.name
+    }
+    return createChild(dir, existingName, case.isDirectory)
+  }
+
+  private fun perform(case: ParityCase, dir: VirtualFile, file: VirtualFile?) {
+    val target = dir.findChild(TARGET_DIRECTORY_NAME)!!
+    when (case.operation) {
+      ParityOperation.CREATE -> createChild(dir, case.name, case.isDirectory)
+      ParityOperation.CHANGE -> VfsUtil.saveText(file!!, "changed")
+      ParityOperation.DELETE -> file!!.delete(this)
+      ParityOperation.RENAME_AWAY -> file!!.rename(this, "${case.name}.bak")
+      ParityOperation.RENAME_TO -> file!!.rename(this, case.name)
+      ParityOperation.MOVE -> file!!.move(this, target)
+      ParityOperation.COPY -> file!!.copy(this, target, case.name)
+      ParityOperation.MAKE_READ_ONLY -> file!!.isWritable = false
+      ParityOperation.REPARSE -> FileContentUtilCore.reparseFiles(listOf(file!!))
+    }
+  }
+
+  private fun createChild(dir: VirtualFile, name: String, isDirectory: Boolean): VirtualFile {
+    return if (isDirectory) dir.createChildDirectory(this, name) else dir.createChildData(this, name)
   }
 
   private fun saveDocument(file: VirtualFile, text: String) {
@@ -436,6 +592,61 @@ private val CONFIG_FILE_NAMES = listOf(
 private val RELOAD_FILE_NAMES = CONFIG_FILE_NAMES + listOf("package.json", ".editorconfig")
 
 private val OTHER_FILE_NAMES = listOf("index.js", "tsconfig.json", "package-lock.json", ".prettierignore", "prettier.config.json")
+
+private val PARITY_DIRECTORY_NAMES = listOf(".prettierrc", ".editorconfig", "package.json", "src")
+
+private const val REFRESH_FILE_COUNT = 300
+
+private const val TARGET_DIRECTORY_NAME = "target"
+
+/**
+ * Repeats the event check of the listener that [PrettierConfigChangeListener] replaced.
+ * The old listener ran on EDT after the VFS applied the events.
+ * It read `event.file` and the file name, so it got the new name of a renamed file.
+ */
+private class OldConfigChangeListener : BulkFileListener {
+  /** The number of event batches that the old listener reloaded the services for. */
+  var reloads: Int = 0
+
+  var examinedEvents: Int = 0
+    private set
+
+  override fun after(events: List<VFileEvent>) {
+    examinedEvents += events.size
+    val needReload = events.any { ev ->
+      val file = ev.file ?: return@any false
+      val name = file.name
+      (ev is VFileContentChangeEvent || ev is VFileCreateEvent || ev is VFileDeleteEvent || ev is VFilePropertyChangeEvent) &&
+      (PrettierUtil.isConfigFileOrPackageJson(file) || name == PrettierUtil.EDITOR_CONFIG_FILE_NAME)
+    }
+    if (needReload) reloads++
+  }
+}
+
+/** A VFS operation for the comparison with the old listener. Each operation makes one batch of VFS events. */
+private enum class ParityOperation(val appliesToDirectory: Boolean) {
+  CREATE(true),
+  CHANGE(false),
+  DELETE(true),
+  RENAME_AWAY(true),
+  RENAME_TO(true),
+  MOVE(true),
+  COPY(false),
+  MAKE_READ_ONLY(false),
+  REPARSE(false),
+}
+
+private class ParityCase(val name: String, val isDirectory: Boolean, val operation: ParityOperation) {
+  /** `true` if only the new listener terminates the services, because it also examines the old name of a renamed file. */
+  val oldListenerMisses: Boolean
+    get() = when (operation) {
+      ParityOperation.RENAME_AWAY -> if (isDirectory) name in CONFIG_FILE_NAMES || name == ".editorconfig" else name in RELOAD_FILE_NAMES
+      ParityOperation.CREATE, ParityOperation.CHANGE, ParityOperation.DELETE, ParityOperation.RENAME_TO, ParityOperation.MOVE,
+      ParityOperation.COPY, ParityOperation.MAKE_READ_ONLY, ParityOperation.REPARSE -> false
+    }
+
+  override fun toString(): String = "$operation ${if (isDirectory) "directory" else "file"} $name"
+}
 
 /** A file outside the VFS. It counts the calls that need the VFS storage for a real file. */
 private class StubFile(
