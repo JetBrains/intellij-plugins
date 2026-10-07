@@ -64,6 +64,6 @@ class CMakePresetsTest : CppIntegrationTest() {
     if (yamlSuffix.isNotEmpty()) {
       (test2 / "qodana.yaml").appendText(yamlSuffix)
     }
-    check(analyze(test2))
+    check(analyze(test2) { launchName = "with-idea" })
   }
 }
