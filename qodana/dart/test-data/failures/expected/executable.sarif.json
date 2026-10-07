@@ -1,0 +1,33 @@
+{
+  "runs": [
+    {
+      "invocations": [
+        {
+          "toolExecutionNotifications": [
+            {
+              "locations": [],
+              "message": {
+                "text": "Inspection DartAnalyze failed"
+              },
+              "level": "error",
+              "exception": {
+                "message": "java.lang.IllegalStateException: Dart module '$PROJECT_DIR$/lib': QODANA_FLUTTER_PATH must point to the SDK bin directory.\n"
+              },
+              "properties": {
+                "toolId": "DartAnalyze",
+                "exceptionClass": "java.lang.IllegalStateException",
+                "qodanaKind": "toolError"
+              }
+            }
+          ]
+        }
+      ],
+      "language": "en-US",
+      "results": [],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

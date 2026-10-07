@@ -14,7 +14,7 @@ import kotlin.io.path.div
 
 abstract class DartIntegrationTest : IntegrationTest() {
   override val testDataPath: Path
-    get() = PathManager.getHomeDir() / "contrib/qodana/dart/test-data"
+    get() = PathManager.getHomeDir() / "contrib/qodana/dart/test-data/integration"
 
   override fun createTestContext(projectDir: Path): IDETestContext =
     Starter.newTestContainerExtended().newContext(

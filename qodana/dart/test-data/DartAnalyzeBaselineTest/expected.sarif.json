@@ -1,0 +1,135 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "dart_non_constant_identifier_names",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "[non_constant_identifier_names] The variable name 'Bad_Name' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+            "markdown": "\\[non_constant_identifier_names\\] The variable name 'Bad_Name' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "lib/main.dart",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 7,
+                  "charOffset": 20,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "Bad_Name"
+                  },
+                  "sourceLanguage": "TEXT"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 36,
+                  "snippet": {
+                    "text": "void main() {\n  var Bad_Name = 0;\n}\n"
+                  },
+                  "sourceLanguage": "TEXT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "keeps fingerprints stable on retrigger and separates diagnostics at the same location",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "3b5f4430defa1ca7",
+            "equalIndicator/v1": "d71c6cce70de715df774a7fec0c9b7be893172ef08e3e202074a18b418851bc2"
+          },
+          "properties": {
+            "ideaSeverity": "INFORMATION",
+            "qodanaSeverity": "Info",
+            "problemType": "REGULAR",
+            "tags": [
+              "TEXT"
+            ]
+          }
+        },
+        {
+          "ruleId": "dart_unused_local_variable",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "[unused_local_variable] The value of the local variable 'Bad_Name' isn't used. Try removing the variable or using it.",
+            "markdown": "\\[unused_local_variable\\] The value of the local variable 'Bad_Name' isn't used. Try removing the variable or using it."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "lib/main.dart",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 7,
+                  "charOffset": 20,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "Bad_Name"
+                  },
+                  "sourceLanguage": "TEXT"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 36,
+                  "snippet": {
+                    "text": "void main() {\n  var Bad_Name = 0;\n}\n"
+                  },
+                  "sourceLanguage": "TEXT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "keeps fingerprints stable on retrigger and separates diagnostics at the same location",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "be4bc9fcfa1a0718",
+            "equalIndicator/v1": "4ac0b00f2e6237caf8236e055340d8ea052f7190a26722de8001ece121194a89"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "TEXT"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

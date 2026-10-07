@@ -15,7 +15,6 @@ import com.intellij.openapi.wm.ex.ProgressIndicatorEx
 import com.intellij.profile.ProfileEx
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.createDirectories
-import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.job
@@ -33,6 +32,7 @@ import org.jetbrains.qodana.staticAnalysis.profile.GroupState
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.projectDescription.QodanaProjectDescriber
+import org.jetbrains.qodana.staticAnalysis.sarif.appendDerivedComponents
 import org.jetbrains.qodana.staticAnalysis.sarif.automationDetails
 import org.jetbrains.qodana.staticAnalysis.sarif.configProfile
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
@@ -98,13 +98,14 @@ suspend fun QodanaRunContext.runAnalysis(
   context.consumer.consumeGlobalOutput(inspectionsResults)
 }
 
-suspend fun QodanaRunContext.getResultsForInspectionGroup(
-  context: QodanaGlobalInspectionContext,
-  inspectionGroupState: GroupState = context.profileState.mainState,
-): List<Result> {
-  val consumer = context.consumer
+suspend fun QodanaGlobalInspectionContext.populateRunWithInspectionResults(
+  run: Run,
+  inspectionGroupState: GroupState = profileState.mainState,
+) {
   consumer.close()
-  return context.database.resultsFlowByGroup(inspectionGroupState.inspectionGroup.name).toList()
+  run.results = database.resultsFlowByGroup(inspectionGroupState.inspectionGroup.name).toList()
+  val inspectionIds = run.results.mapTo(HashSet()) { it.ruleId }
+  appendDerivedComponents(run.tool, profileState.registeredDerivedInspections.filter { it.id in inspectionIds })
 }
 
 suspend fun QodanaRunContext.writeProfiles(profile: QodanaProfile) {

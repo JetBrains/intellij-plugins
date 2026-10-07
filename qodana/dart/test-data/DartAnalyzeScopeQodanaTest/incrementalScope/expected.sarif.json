@@ -1,0 +1,78 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "dart_undefined_identifier",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "[undefined_identifier] Undefined name 'missing'. Try correcting the name to one that is defined, or defining the name.",
+            "markdown": "\\[undefined_identifier\\] Undefined name 'missing'. Try correcting the name to one that is defined, or defining the name."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "lib/wanted.dart",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 15,
+                  "charOffset": 14,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "missing"
+                  },
+                  "sourceLanguage": "TEXT"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "void main() { missing; }\n"
+                  },
+                  "sourceLanguage": "TEXT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "reports only changes limited by incremental scope",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "d6b36597c2f50df6",
+            "equalIndicator/v1": "ceab4f9e302adb6501a8522cf958b79e4601182c38b78078c4e3fa069553b8af"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
+            "tags": [
+              "TEXT"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "incremental"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

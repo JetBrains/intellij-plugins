@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.dart
 
+import com.intellij.diagnostic.rethrowControlFlowException
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.platform.eel.ExecuteProcessException
@@ -10,7 +11,6 @@ import com.intellij.platform.eel.provider.getEelDescriptor
 import com.intellij.platform.eel.provider.toEelApi
 import com.intellij.platform.eel.provider.utils.awaitProcessResult
 import com.intellij.platform.eel.spawnProcess
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
 import java.nio.file.Files
 import java.nio.file.Path
@@ -32,39 +32,63 @@ internal abstract class DartAnalyzeRunner(
   private val processExecutor: DartAnalyzeProcessExecutor,
   private val analysisExecutableName: String,
   private val executableEnv: String,
-  private val parseDiagnostics: (String) -> List<DartAnalyzeDiagnostic>,
+  private val parseProblems: (String) -> List<DartProblem>,
 ) {
-  suspend fun analyze(modulePath: Path): DartAnalyzeRunResult {
+  suspend fun checkSdk(contextPath: Path): DartAnalyzeRunResult.Failure? {
+    val executable = when (val result = resolveExecutable(analysisExecutableName, contextPath)) {
+      is DartExecutable.Available -> result.path
+      DartExecutable.Missing, is DartExecutable.Unusable -> return result.unavailable(analysisExecutableName, executableEnv)
+    }
+    val result = try {
+      processExecutor.execute(listOf(executable.toString(), "--version"), contextPath)
+    }
+    catch (e: Exception) {
+      rethrowControlFlowException(e)
+      LOG.warn("Failed to check $analysisExecutableName SDK", e)
+      return DartAnalyzeRunResult.Failure(QodanaDartBundle.message("dart.sanity.error.process", analysisExecutableName, e.message ?: e.javaClass.name))
+    }
+    if (result.exitCode == 0) return null
+    val output = result.standardError.ifBlank { result.standardOutput }.trim().take(1_000)
+    return DartAnalyzeRunResult.Failure(QodanaDartBundle.message("dart.sanity.error.exit", analysisExecutableName, result.exitCode, output))
+  }
+
+  suspend fun analyze(modulePath: Path): DartAnalyzeRunResult.Success {
     val executable = when (val result = resolveExecutable(analysisExecutableName, modulePath)) {
       is DartExecutable.Available -> result.path
-      else -> return result.unavailable(analysisExecutableName, executableEnv)
+      DartExecutable.Missing, is DartExecutable.Unusable -> analysisFailed(modulePath, result.toFailure(executableEnv).message)
     }
+    LOG.info("Running '${executable.toString().logValue()}' analyze --format=json . in '${modulePath.toString().logValue()}'")
     val analyzeResult = try {
       processExecutor.execute(
         listOf(executable.toString(), "analyze", "--format=json", "."),
         modulePath,
       )
     }
-    catch (e: CancellationException) {
-      throw e
+    catch (e: Exception) {
+      rethrowControlFlowException(e)
+      analysisFailed(modulePath, QodanaDartBundle.message("dart.analyze.error.process", analysisExecutableName,
+                                                       e.message ?: e.javaClass.name), e)
+    }
+    LOG.info("$analysisExecutableName analyze in '${modulePath.toString().logValue()}' finished with exit code ${analyzeResult.exitCode}; stdout: ${analyzeResult.standardOutput.logValue()}; stderr: ${analyzeResult.standardError.logValue()}")
+    val problems = try {
+      parseProblems(analyzeResult.standardOutput)
     }
     catch (e: Exception) {
-      return DartAnalyzeRunResult.Failure(QodanaDartBundle.message("dart.analyze.error.process", analysisExecutableName, e.message ?: e.javaClass.name))
+      rethrowControlFlowException(e)
+      analysisFailed(modulePath, QodanaDartBundle.message("dart.analyze.error.invalid.output", analysisExecutableName,
+                                                       e.message ?: e.javaClass.name), e)
     }
-    LOG.info("$analysisExecutableName analyze finished with exit code ${analyzeResult.exitCode}; stdout: ${analyzeResult.standardOutput.logValue()}; stderr: ${analyzeResult.standardError.logValue()}")
-    val diagnostics = try {
-      parseDiagnostics(analyzeResult.standardOutput)
-    }
-    catch (e: Exception) {
-      return DartAnalyzeRunResult.Failure(QodanaDartBundle.message("dart.analyze.error.invalid.output", analysisExecutableName, e.message ?: e.javaClass.name))
-    }
-    if (analyzeResult.exitCode != 0 && diagnostics.isEmpty()) {
-      LOG.warn("$analysisExecutableName analyze finished with exit code ${analyzeResult.exitCode}")
-      LOG.warn(analyzeResult.standardOutput)
+    if (analyzeResult.exitCode != 0 && problems.isEmpty()) {
       val output = analyzeResult.standardError.ifBlank { analyzeResult.standardOutput }.trim().take(1_000)
-      return DartAnalyzeRunResult.Failure(QodanaDartBundle.message("dart.analyze.error.exit", analysisExecutableName, analyzeResult.exitCode, output))
+      analysisFailed(modulePath, QodanaDartBundle.message("dart.analyze.error.exit", analysisExecutableName, analyzeResult.exitCode, output))
     }
-    return DartAnalyzeRunResult.Success(diagnostics)
+    return DartAnalyzeRunResult.Success(problems)
+  }
+
+  private fun analysisFailed(modulePath: Path, message: String, cause: Exception? = null): Nothing {
+    val failure = IllegalStateException(QodanaDartBundle.message("dart.analyze.error.module", modulePath.toString(), message), cause)
+    LOG.warn(failure.message?.logValue(), failure)
+    throw failure
   }
 
   private fun String.logValue(): String = replace("\n", "\\n").replace("\r", "\\r").take(LOG_OUTPUT_LIMIT)
@@ -84,11 +108,17 @@ internal fun Path.toQodanaLogPath(projectPath: Path): String = runCatching {
   absolutePath.takeIf { it.startsWith(absoluteProjectPath) }
     ?.let { absoluteProjectPath.relativize(it).toString().ifEmpty { "." } }
     ?: toString()
+}.onFailure { e ->
+  rethrowControlFlowException(e)
+  LOG.warn("Failed to format a project-relative path for logging", e)
 }.getOrElse { toString() }
 
 internal fun String.toQodanaLogPath(projectPath: Path): String = runCatching {
   val path = Path.of(this)
   if (path.isAbsolute) path.toQodanaLogPath(projectPath) else this
+}.onFailure { e ->
+  rethrowControlFlowException(e)
+  LOG.warn("Failed to parse an analyzed file path for logging", e)
 }.getOrElse { this }
 
 private val LOG = Logger.getInstance(DartAnalyzeRunner::class.java)
@@ -100,7 +130,12 @@ internal fun configuredExecutableResolver(
 ): DartExecutableResolver = DartExecutableResolver { executableName, isWindows ->
   val configuredPath = executablePath()?.takeIf(String::isNotBlank)
     ?: return@DartExecutableResolver pathExecutableResolver(executableName)?.let(DartExecutable::Available) ?: DartExecutable.Missing
-  val configuredPathValue = runCatching { Path.of(configuredPath) }.getOrNull() ?: return@DartExecutableResolver DartExecutable.Unusable(configuredPath)
+  val configuredPathValue = runCatching {
+    Path.of(configuredPath)
+  }.onFailure { e ->
+    rethrowControlFlowException(e)
+    LOG.warn("Failed to parse the configured $executableName executable path", e)
+  }.getOrNull() ?: return@DartExecutableResolver DartExecutable.Unusable(configuredPath)
   val executableNames = executableNames(executableName, isWindows)
   val executableCandidates = if (Files.isDirectory(configuredPathValue)) {
     executableNames.map(configuredPathValue::resolve)
@@ -132,7 +167,7 @@ internal class DartExecutableRunner(
   processExecutor,
   "dart",
   FLUTTER_PATH_ENV,
-  ::parseDartAnalyzeDiagnostics,
+  ::parseDartProblems,
 )
 
 private fun DartExecutable.toFailure(envName: String): DartAnalyzeRunResult.Failure = when (this) {
@@ -142,8 +177,8 @@ private fun DartExecutable.toFailure(envName: String): DartAnalyzeRunResult.Fail
 }
 
 internal sealed interface DartAnalyzeRunResult {
-  data class Success(val diagnostics: List<DartAnalyzeDiagnostic>) : DartAnalyzeRunResult
-  data class Failure(val message: String, val inspectionId: String = DART_ANALYZE_SHORT_NAME) : DartAnalyzeRunResult
+  data class Success(val problems: List<DartProblem>) : DartAnalyzeRunResult
+  data class Failure(val message: String) : DartAnalyzeRunResult
 }
 
 internal interface DartAnalyzeProcessExecutor {

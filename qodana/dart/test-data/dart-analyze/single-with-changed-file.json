@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "diagnostics": [
+    {
+      "code": "undefined_identifier",
+      "severity": "ERROR",
+      "type": "COMPILE_TIME_ERROR",
+      "location": {
+        "file": "main.dart",
+        "range": {
+          "start": {
+            "offset": 14,
+            "line": 1,
+            "column": 15
+          },
+          "end": {
+            "offset": 21,
+            "line": 1,
+            "column": 22
+          }
+        }
+      },
+      "problemMessage": "Undefined name 'missing'.",
+      "correctionMessage": "Try correcting the name to one that is defined, or defining the name."
+    },
+    {
+      "code": "unused_local_variable",
+      "severity": "WARNING",
+      "type": "STATIC_WARNING",
+      "location": {
+        "file": "main.dart",
+        "range": {
+          "start": {
+            "offset": 27,
+            "line": 1,
+            "column": 28
+          },
+          "end": {
+            "offset": 33,
+            "line": 1,
+            "column": 34
+          }
+        }
+      },
+      "problemMessage": "The value of the local variable 'unused' isn't used.",
+      "correctionMessage": "Try removing the variable or using it."
+    },
+    {
+      "code": "await_only_futures",
+      "severity": "INFO",
+      "type": "LINT",
+      "location": {
+        "file": "main.dart",
+        "range": {
+          "start": {
+            "offset": 72,
+            "line": 4,
+            "column": 3
+          },
+          "end": {
+            "offset": 77,
+            "line": 4,
+            "column": 8
+          }
+        }
+      },
+      "problemMessage": "Uses 'await' on an instance of 'int', which is not a subtype of 'Future'.",
+      "correctionMessage": "Try removing the 'await' or changing the expression."
+    },
+    {
+      "code": "undefined_identifier",
+      "severity": "ERROR",
+      "location": {
+        "file": "wanted.dart",
+        "range": {
+          "start": {
+            "offset": 14,
+            "line": 1,
+            "column": 15
+          },
+          "end": {
+            "offset": 21,
+            "line": 1,
+            "column": 22
+          }
+        }
+      },
+      "problemMessage": "Undefined name 'missing'.",
+      "correctionMessage": "Try correcting the name to one that is defined, or defining the name.",
+      "type": "COMPILE_TIME_ERROR"
+    }
+  ]
+}

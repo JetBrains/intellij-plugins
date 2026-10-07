@@ -17,7 +17,7 @@ class DartAnalysisTest : DartIntegrationTest() {
 
     assertTrue(result.ok, "Qodana failed with exit code ${result.exitCode}:\n${result.stdout}")
     assertTrue(result.ideaLog.contains("IDE: QDPOLY"), "QDPOLY startup marker is missing from idea.log")
-    assertNotNull(result.findIssue("await_only_futures", "lib/main.dart:2"))
-    assertEquals(listOf("await_only_futures"), result.results!!.mapNotNull { it.ruleId })
+    assertNotNull(result.findIssue("dart_await_only_futures", "lib/main.dart:2"))
+    assertEquals(listOf("dart_await_only_futures"), result.results!!.mapNotNull { it.ruleId })
   }
 }

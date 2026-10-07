@@ -1,4 +1,0 @@
-linter:
-  rules:
-    unnecessary_this: true
-    unnecessary_late: true

@@ -1,50 +1,43 @@
 package org.jetbrains.qodana.dart
 
 import com.intellij.analysis.AnalysisScope
-import com.intellij.codeHighlighting.HighlightDisplayLevel
+import com.intellij.codeInspection.CommonProblemDescriptor
+import com.intellij.codeInspection.DefaultInspectionToolResultExporter.INSPECTION_RESULTS_ID_ATTRIBUTE
+import com.intellij.codeInspection.DefaultInspectionToolResultExporter.INSPECTION_RESULTS_PROBLEM_CLASS_ELEMENT
+import com.intellij.codeInspection.ExportedInspectionsResultModifier
 import com.intellij.codeInspection.GlobalInspectionContext
 import com.intellij.codeInspection.GlobalInspectionTool
 import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptionsProcessor
+import com.intellij.codeInspection.ProblemDescriptorBase
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.util.InspectionMessage
 import com.intellij.codeInspection.ex.JobDescriptor
-import com.intellij.lang.annotation.ProblemGroup
+import com.intellij.codeInspection.reference.RefElement
+import com.intellij.codeInspection.reference.RefEntity
 import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.util.Processor
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolIssue
-import org.jetbrains.qodana.staticAnalysis.profile.DerivedInspection
-import org.jetbrains.qodana.staticAnalysis.profile.DerivedInspectionProvider
-import org.jetbrains.qodana.staticAnalysis.profile.DetectedProblemGroup
-import java.nio.file.Files
+import com.intellij.psi.search.FilenameIndex
+import com.intellij.psi.search.GlobalSearchScope
+import org.jdom.Element
 import java.nio.file.Path
 
-internal const val DART_ANALYZE_SHORT_NAME = "DartAnalyze"
+private const val DART_INSPECTION_ID_PREFIX = "dart_"
 
-class DartAnalyzeDerivedInspectionProvider : DerivedInspectionProvider {
-  override fun isApplicableTo(parentInspectionId: String): Boolean = parentInspectionId == DART_ANALYZE_SHORT_NAME
+internal fun dartInspectionId(inspectionCode: String): String = "$DART_INSPECTION_ID_PREFIX$inspectionCode"
 
-  override fun describeDerivedInspections(
-    project: com.intellij.openapi.project.Project?,
-    inspections: Collection<DetectedProblemGroup>,
-  ): List<DerivedInspection> = inspections.map { inspection ->
-      DerivedInspection(
-        inspection.problemGroupId,
-        DART_ANALYZE_SHORT_NAME,
-        QodanaDartBundle.message("inspection.dart.analyze.diagnostic.name", inspection.problemGroupId),
-        QodanaDartBundle.message("inspection.dart.analyze.diagnostic.description", inspection.problemGroupId),
-      )
-    }
-    .distinct()
-}
+/** Returns the inspection code for a derived inspection ID, or null for another ID. */
+internal fun dartInspectionCode(inspectionId: String): String? =
+  inspectionId.removePrefix(DART_INSPECTION_ID_PREFIX).takeIf { it != inspectionId }
 
 internal fun interface DartAnalyzeRunnerFactory {
   fun create(): DartAnalyzeRunner
@@ -53,7 +46,7 @@ internal fun interface DartAnalyzeRunnerFactory {
 internal open class DartAnalyzeGlobalInspection(
   private val runnerFactory: DartAnalyzeRunnerFactory = DartAnalyzeRunnerFactory { DartExecutableRunner() },
 ) : GlobalInspectionTool() {
-  override fun getShortName(): String = SHORT_NAME
+  private val problemsByReference = mutableMapOf<RefEntity, MutableList<DartProblem>>()
 
   override fun getDisplayName(): String = QodanaDartBundle.message("inspection.dart.analyze.name")
 
@@ -71,128 +64,148 @@ internal open class DartAnalyzeGlobalInspection(
     globalContext: GlobalInspectionContext,
     problemDescriptionsProcessor: ProblemDescriptionsProcessor,
   ) {
-    val qodanaContext = globalContext as? QodanaGlobalInspectionContext ?: return
-    if (!qodanaContext.containsDartFiles(scope)) {
+    val projectPath = Path.of(globalContext.project.basePath ?: return)
+    val analysisDirectory = scope.analysisDirectory()
+    if (analysisDirectory == null) {
       LOG.info("Skipping Dart analysis: no in-scope Dart files were found")
       return
     }
 
-    val analysisDirectory = qodanaContext.analysisDirectory()
+    val directoryPath: @NlsSafe String = analysisDirectory.toQodanaLogPath(projectPath)
+    val runner = runnerFactory.create()
+    val sdkFailure = runBlockingCancellable { runner.checkSdk(projectPath) }
+    if (sdkFailure != null) {
+      LOG.warn("Dart SDK check failed for '$directoryPath': ${sdkFailure.message}; other inspections will continue")
+      registerDartProblem(sdkFailure, projectPath, manager, globalContext, problemDescriptionsProcessor, sanityFailure = true)
+      return
+    }
     val job = JobDescriptor(QodanaDartBundle.message("inspection.dart.analyze.progress"))
     job.totalAmount = 1
 
-    LOG.info("Analyzing Dart project at '${analysisDirectory.toQodanaLogPath(qodanaContext.config.projectPath)}'")
-    when (val result = runBlockingCancellable { analyze(analysisDirectory) }) {
-      is DartAnalyzeRunResult.Success -> result.diagnostics.forEach { diagnostic ->
-        registerProblem(diagnostic, analysisDirectory, manager, globalContext, problemDescriptionsProcessor)
+    try {
+      LOG.info("Analyzing Dart project at '$directoryPath'")
+      val result = runBlockingCancellable { runner.analyze(analysisDirectory) }
+      result.problems.forEach { problem ->
+        collectProblem(problem, analysisDirectory, manager, globalContext, problemDescriptionsProcessor)
       }
-      is DartAnalyzeRunResult.Failure -> {
-        LOG.warn("Dart analysis failed for '${analysisDirectory.toQodanaLogPath(qodanaContext.config.projectPath)}': ${result.message}; other inspections will continue")
-        registerProblem(result, analysisDirectory, qodanaContext)
+      runReadActionBlocking {
+        super.runInspection(scope, manager, globalContext, problemDescriptionsProcessor)
       }
+      LOG.info("Finished analyzing Dart project at '$directoryPath'")
+      globalContext.incrementJobDoneAmount(job, directoryPath)
     }
-    LOG.info("Finished analyzing Dart project at '${analysisDirectory.toQodanaLogPath(qodanaContext.config.projectPath)}'")
-    val directoryPath: @NlsSafe String = analysisDirectory.toQodanaLogPath(qodanaContext.config.projectPath)
-    globalContext.incrementJobDoneAmount(job, directoryPath)
+    finally {
+      problemsByReference.clear()
+    }
   }
 
-  private suspend fun analyze(analysisDirectory: Path): DartAnalyzeRunResult = runnerFactory.create().analyze(analysisDirectory)
-
-  private fun registerProblem(
-    failure: DartAnalyzeRunResult.Failure,
-    analysisDirectory: Path,
-    qodanaContext: QodanaGlobalInspectionContext,
-  ) {
-    val directoryPath: @NlsSafe String = analysisDirectory.toQodanaLogPath(qodanaContext.config.projectPath)
-    val issue = ExternalToolIssue(
-      failure.inspectionId,
-      HighlightDisplayLevel.ERROR,
-      QodanaDartBundle.message("dart.analyze.error.module", directoryPath, failure.message),
-      module = directoryPath,
-    )
-    qodanaContext.consumer.consume(listOf(issue.toElement()), failure.inspectionId)
+  override fun checkElement(
+    refEntity: RefEntity,
+    scope: AnalysisScope,
+    manager: InspectionManager,
+    globalContext: GlobalInspectionContext,
+  ): Array<CommonProblemDescriptor>? {
+    val problems = problemsByReference[refEntity] ?: return null
+    val psiFile = (refEntity as? RefElement)?.psiElement as? PsiFile ?: return null
+    val document = PsiDocumentManager.getInstance(globalContext.project).getDocument(psiFile) ?: return null
+    return problems.mapNotNull { problem ->
+      val location = problem.location ?: return@mapNotNull null
+      DartProblemDescriptor(
+        psiFile,
+        location.rangeIn(document),
+        problem.description(),
+        problem.severity.toProblemHighlightType(),
+        problem.code,
+      )
+    }.toTypedArray()
   }
 
-  private fun registerProblem(
-    diagnostic: DartAnalyzeDiagnostic,
+  private fun collectProblem(
+    problem: DartProblem,
     projectPath: Path,
     manager: InspectionManager,
     globalContext: GlobalInspectionContext,
     problemDescriptionsProcessor: ProblemDescriptionsProcessor,
   ) {
-    val location = diagnostic.location
+    val location = problem.location
     val file = location?.file
     if (location == null || file == null) {
-      return registerProblem(
-        DartAnalyzeRunResult.Failure(diagnostic.description(), DART_ANALYZE_SHORT_NAME),
+      return registerDartProblem(
+        DartAnalyzeRunResult.Failure(problem.description()),
         projectPath,
-        globalContext as? QodanaGlobalInspectionContext ?: return,
+        manager,
+        globalContext,
+        problemDescriptionsProcessor,
       )
     }
     val path = Path.of(file).let { if (it.isAbsolute) it else projectPath.resolve(it) }
     val virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(path)
       ?: run {
-        LOG.warn("Unable to find Dart analyzer diagnostic file '${path.toQodanaLogPath(projectPath)}'")
+        LOG.warn("Unable to find analyzed file: '${path.toQodanaLogPath(projectPath)}'")
         return
       }
     runReadActionBlocking {
       val psiFile = PsiManager.getInstance(globalContext.project).findFile(virtualFile)
         ?: run {
-          LOG.warn("Unable to create PSI file for Dart analyzer diagnostic file '${path.toQodanaLogPath(projectPath)}'")
+          LOG.warn("Unable to create PSI for analyzed file: '${path.toQodanaLogPath(projectPath)}'")
           return@runReadActionBlocking
         }
-      val qodanaContext = globalContext as? QodanaGlobalInspectionContext ?: return@runReadActionBlocking
-      if (!qodanaContext.isFileInInspectionScope(DART_ANALYZE_SHORT_NAME, psiFile)) return@runReadActionBlocking
-      val descriptor = manager.createProblemDescriptor(
-        psiFile,
-        location.rangeIn(PsiDocumentManager.getInstance(globalContext.project).getDocument(psiFile) ?: return@runReadActionBlocking),
-        diagnostic.description(),
-        diagnostic.severity.toProblemHighlightType(),
-        false,
-      )
-      descriptor.setProblemGroup(ProblemGroup { diagnostic.code })
-      val reference = globalContext.refManager.getReference(psiFile)
-      problemDescriptionsProcessor.addProblemElement(reference, descriptor)
+      val reference = globalContext.refManager.getReference(psiFile) ?: return@runReadActionBlocking
+      problemsByReference.getOrPut(reference) { mutableListOf() }.add(problem)
     }
   }
 
   companion object {
-    const val SHORT_NAME: String = DART_ANALYZE_SHORT_NAME
-
     private val LOG = logger<DartAnalyzeGlobalInspection>()
   }
 }
 
-internal fun QodanaGlobalInspectionContext.containsDartFiles(scope: AnalysisScope): Boolean {
-  val psiManager = PsiManager.getInstance(project)
-  var foundDartFile = false
-  scope.accept(Processor { file ->
-    if (file.isDirectory || file.extension != "dart") return@Processor true
-    runReadActionBlocking {
-      val psiFile = psiManager.findFile(file) ?: return@runReadActionBlocking true
-      if (isFileInInspectionScope(DART_ANALYZE_SHORT_NAME, psiFile)) {
-        foundDartFile = true
-        false
-      }
-      else true
-    }
-  })
-  return foundDartFile
+/** Exports the problem under its derived inspection ID, for example `dart_unused_local_variable`. */
+private class DartProblemDescriptor(
+  psiFile: PsiFile,
+  range: TextRange,
+  description: @InspectionMessage String,
+  highlightType: ProblemHighlightType,
+  private val inspectionCode: String,
+) : ProblemDescriptorBase(psiFile, psiFile, description, LocalQuickFix.EMPTY_ARRAY, highlightType, false, range, true, false),
+    ExportedInspectionsResultModifier {
+  override fun modifyResult(element: Element) {
+    element.getChild(INSPECTION_RESULTS_PROBLEM_CLASS_ELEMENT)
+      .setAttribute(INSPECTION_RESULTS_ID_ATTRIBUTE, dartInspectionId(inspectionCode))
+  }
 }
 
-internal fun QodanaGlobalInspectionContext.analysisDirectory(): Path {
-  val onlyDirectory = config.onlyDirectory ?: return config.projectPath
-  val resolved = onlyDirectory.let { if (it.isAbsolute) it else config.projectPath.resolve(it) }
-  return resolved.takeIf(Files::isDirectory) ?: config.projectPath
+internal fun registerDartProblem(
+  failure: DartAnalyzeRunResult.Failure,
+  analysisDirectory: Path,
+  manager: InspectionManager,
+  globalContext: GlobalInspectionContext,
+  problemDescriptionsProcessor: ProblemDescriptionsProcessor,
+  sanityFailure: Boolean = false,
+) {
+  val directoryPath: @NlsSafe String = analysisDirectory.toQodanaLogPath(Path.of(globalContext.project.basePath ?: return))
+  runReadActionBlocking {
+    val virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(analysisDirectory) ?: return@runReadActionBlocking
+    val directory = PsiManager.getInstance(globalContext.project).findDirectory(virtualFile) ?: return@runReadActionBlocking
+    val reference = globalContext.refManager.getReference(directory) ?: return@runReadActionBlocking
+    val descriptor = manager.createProblemDescriptor(QodanaDartBundle.message("dart.analyze.error.module", directoryPath, failure.message))
+    problemDescriptionsProcessor.addProblemElement(reference, if (sanityFailure) DartSanityProblemDescriptor(descriptor) else descriptor)
+  }
 }
 
-private fun QodanaGlobalInspectionContext.isFileInInspectionScope(inspectionId: String, psiFile: PsiFile): Boolean {
-  val tools = effectiveProfile.getToolsOrNull(inspectionId, project) ?: return false
-  return tools.getEnabledTool(psiFile, true) != null
+internal fun AnalysisScope.containsDartFiles(): Boolean = runReadActionBlocking {
+  FilenameIndex.getAllFilesByExt(project, "dart", toSearchScope() as GlobalSearchScope).isNotEmpty()
+}
+
+internal fun AnalysisScope.analysisDirectory(): Path? = runReadActionBlocking {
+  val projectPath = Path.of(project.basePath ?: return@runReadActionBlocking null)
+  val files = FilenameIndex.getAllFilesByExt(project, "dart", toSearchScope() as GlobalSearchScope)
+    .filter { file -> projectPath.relativize(file.toNioPath()).parent?.none { it.toString().startsWith(".") } != false }
+  VfsUtil.getCommonAncestor(files.mapNotNull { it.parent })?.toNioPath()
 }
 
 @Suppress("HardCodedStringLiteral")
-private fun DartAnalyzeDiagnostic.description(): @InspectionMessage String = buildString {
+private fun DartProblem.description(): @InspectionMessage String = buildString {
   append('[').append(code).append("] ").append(message)
   correction?.takeIf(String::isNotBlank)?.let { append('\n').append(it) }
 }

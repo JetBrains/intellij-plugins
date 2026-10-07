@@ -31,7 +31,7 @@ import org.jetbrains.qodana.staticAnalysis.script.DefaultScript
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScript
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
 import org.jetbrains.qodana.staticAnalysis.script.UnvalidatedParameters
-import org.jetbrains.qodana.staticAnalysis.script.getResultsForInspectionGroup
+import org.jetbrains.qodana.staticAnalysis.script.populateRunWithInspectionResults
 import org.jetbrains.qodana.staticAnalysis.script.require
 import org.jetbrains.qodana.staticAnalysis.script.runAnalysis
 import org.jetbrains.qodana.util.QodanaMessageReporter
@@ -100,7 +100,7 @@ internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContext
   override suspend fun execute(report: SarifReport, runContext: QodanaRunContext, inspectionContext: QodanaGlobalInspectionContext) {
     val run = report.getOrCreateRun()
     runContext.runAnalysis(context = inspectionContext)
-    run.results = runContext.getResultsForInspectionGroup(inspectionContext)
+    inspectionContext.populateRunWithInspectionResults(run)
 
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
 
@@ -133,7 +133,7 @@ internal class ReverseScopedScriptOld(runContextFactory: ReverseScopedRunContext
 
     val reportOld = createSarifReport(listOf(runOld)) // we create "fake" report containing current (old) run for baseline purposes
     runContext.runAnalysis(context = inspectionContext)
-    runOld.results = runContext.getResultsForInspectionGroup(inspectionContext)
+    inspectionContext.populateRunWithInspectionResults(runOld)
     BaselineCalculation.compare(report, reportOld, Options(false, false, false, false))
 
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)

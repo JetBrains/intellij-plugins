@@ -12,7 +12,7 @@ class DartFlutterAnalysisTest : DartIntegrationTest() {
     val result = analyze(workdir)
 
     assertTrue(result.ok, "Qodana failed with exit code ${result.exitCode}:\n${result.stdout}")
-    assertNotNull(result.findIssue("avoid_print", "lib/main.dart:2"))
+    assertNotNull(result.findIssue("dart_avoid_print", "lib/main.dart:2"))
     assertTrue(result.stdout.contains("avoid_print"), "Qodana output does not name the Dart lint:\n${result.stdout}")
   }
 }

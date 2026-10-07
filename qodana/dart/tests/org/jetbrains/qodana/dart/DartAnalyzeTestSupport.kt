@@ -10,6 +10,7 @@ internal class RecordedDartAnalyzeProcessExecutor(
   override suspend fun execute(command: List<String>, workingDirectory: Path): DartAnalyzeProcessResult {
     val analysisDirectory = projectPath.toAbsolutePath().normalize().relativize(workingDirectory.toAbsolutePath().normalize()).portablePath()
     return when (command.getOrNull(1)) {
+      "--version" -> DartAnalyzeProcessResult(0, "Dart SDK version: recorded", "")
       "analyze" -> {
         val response = analyzeResponses[analysisDirectory] ?: error("No recorded Dart response for analysis directory '$analysisDirectory'")
         logResponse(analysisDirectory, "from fixture '${response.resourceName}'")
