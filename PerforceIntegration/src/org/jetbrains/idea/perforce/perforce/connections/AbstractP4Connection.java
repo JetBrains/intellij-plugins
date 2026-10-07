@@ -5,7 +5,6 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.ProcessNotCreatedException;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.ide.trustedProjects.TrustedProjects;
-import com.intellij.ide.welcomeScreen.WelcomeUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -142,7 +141,7 @@ public abstract class AbstractP4Connection implements P4Connection {
     ProgressManager.checkCanceled();
     Project project = perforceSettings.getProject();
 
-    if (!project.isDefault() && (!TrustedProjects.isProjectTrusted(project) || WelcomeUtils.isWelcomeProject(project))) {
+    if (!project.isDefault() && !TrustedProjects.isProjectTrusted(project)) {
       throw new IllegalStateException("Shouldn't be possible to run a P4 command in the safe mode");
     }
 
