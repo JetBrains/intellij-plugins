@@ -4,6 +4,7 @@ package com.intellij.prettierjs.stable
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.modules.TestNpmPackage
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -307,6 +308,33 @@ class ReformatWithPrettierV3Test : ReformatWithPrettierGenericTest() {
       """.trimIndent())
     runReformatAction()
     myFixture.checkResultByFile("$dirName/toReformat_after_1.js")
+  }
+
+  fun testChangeConfigByRename() = withInstallation {
+    val dirName = getTestName(true)
+    // Test data already copied by withInstallation
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("toReformat.js"))
+
+    // the file does not have a config file name yet, so Prettier uses its defaults
+    val config = myFixture.createFile("prettier.config.txt", """
+      const config = {
+        singleQuote: true,
+      }
+
+      export default config
+      """.trimIndent())
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after.js")
+
+    // the rename gives the file a config file name
+    WriteAction.run<Throwable> { config.rename(this, "prettier.config.mjs") }
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after_1.js")
+
+    // the rename removes the config file name
+    WriteAction.run<Throwable> { config.rename(this, "prettier.config.txt") }
+    runReformatAction()
+    myFixture.checkResultByFile("$dirName/toReformat_after.js")
   }
 
   fun testIncompleteBlock() = withInstallation {

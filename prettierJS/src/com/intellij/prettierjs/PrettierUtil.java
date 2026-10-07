@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.google.gson.Gson;
@@ -126,7 +126,11 @@ public final class PrettierUtil {
 
   @Contract("null -> false")
   public static boolean isConfigFile(@Nullable VirtualFile virtualFile) {
-    return virtualFile != null && CONFIG_FILE_NAMES.contains(virtualFile.getName());
+    return virtualFile != null && isConfigFileName(virtualFile.getName());
+  }
+
+  public static boolean isConfigFileName(@NotNull String fileName) {
+    return CONFIG_FILE_NAMES.contains(fileName);
   }
 
   public static @NotNull Collection<VirtualFile> lookupPossibleConfigFiles(@NotNull List<VirtualFile> from, @NotNull Project project) {
