@@ -364,7 +364,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       var hasViewContainerRef = false
       var isTemplateRefOptional = false
       list.forEach {
-        val typeText = it.getJSType(clazz)
+        val typeText = it.getJSType()
                          ?.let { type -> if (type is TypeScriptCompilerType || type is JSWidenType) type.substitute(clazz) else type }
                          ?.typeText
                        ?: return@forEach

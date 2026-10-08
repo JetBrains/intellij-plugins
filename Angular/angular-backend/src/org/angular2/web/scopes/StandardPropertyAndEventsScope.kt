@@ -190,7 +190,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
 
     @PolySymbol.Property(JSTypeProperty::class)
     val jsType: JSType?
-      get() = linkedElement?.getJSType(templateFile)
+      get() = linkedElement?.getJSType()
 
     override val kind: PolySymbolKind
       get() = JS_PROPERTIES
@@ -247,8 +247,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
 
     @PolySymbol.Property(JSTypeProperty::class)
     val jsType: JSType?
-      get() = Angular2TypeUtils.extractEventVariableType(mainSource?.getJSType(templateFile))
-              ?: mapSource?.getJSType(templateFile)
+      get() = Angular2TypeUtils.extractEventVariableType(mainSource?.getJSType())
+              ?: mapSource?.getJSType()
 
     override val priority: PolySymbol.Priority
       get() = PolySymbol.Priority.NORMAL

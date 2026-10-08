@@ -703,7 +703,7 @@ internal class BindingsTypeResolver private constructor(
       var templateRefType: JSType? = null
       for (ctor in cls.constructors) {
         for (param in ctor.parameterVariables) {
-          val paramType = param.getJSType(context)
+          val paramType = param.getJSType()
           if (paramType.let { it != null && it.typeText.startsWith("$TEMPLATE_REF<") }) {
             templateRefType = paramType
             break
