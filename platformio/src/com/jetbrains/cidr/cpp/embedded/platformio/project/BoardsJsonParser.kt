@@ -1,5 +1,6 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project
 
+import com.google.gson.stream.JsonToken
 import org.jetbrains.io.JsonReaderEx
 import java.util.Objects
 import java.util.SortedMap
@@ -39,6 +40,10 @@ object BoardsJsonParser {
             "rom" -> rom = readNumber(jsonReader) { if (it < 2096 * 1024) "ROM: ${it / 1024}K" else "ROM: ${it / 1024 / 1024}M" }
             "fcpu" -> fcpu = readNumber(jsonReader) { "${it / 1000000}MHz" }
             "frameworks" -> {
+              if (jsonReader.peek() == JsonToken.NULL) {
+                jsonReader.nextNull()
+                continue
+              }
               jsonReader.beginArray()
               while (jsonReader.hasNext()) {
                 val frameworkName = jsonReader.nextAsString()
