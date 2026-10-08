@@ -1,0 +1,90 @@
+package demo
+
+import demo.clash.enumcase.ClashingEnumOuterClass
+import demo.clash.field.NotClashingField
+import demo.clash.field.foo as fieldFoo
+import demo.clash.message.ClashingMessageOuterClass
+import demo.clash.message.clashingMessage
+import demo.clash.nested.ClashingNestedMessageOuterClass
+import demo.clash.nested.FooKt
+
+// EXPECT-NEXT: clashing_message.proto / ClashingMessage
+fun topLevelClashingMessageClass() {
+  val message = ClashingMessageOuterClass.Clashing<caret>Message.newBuilder().build()
+}
+
+// EXPECT-NEXT: clashing_message.proto / ClashingMessage.foo
+fun topLevelClashingMessageField() {
+  val message = ClashingMessageOuterClass.ClashingMessage.newBuilder()
+    .set<caret>Foo(1)
+    .build()
+}
+
+// EXPECT-NEXT: clashing_message.proto / ClashingMessage
+fun topLevelClashingMessageDslFactory() {
+  val message = clashing<caret>Message {
+    foo = 1
+  }
+}
+
+// EXPECT-NEXT: clashing_message.proto / ClashingMessage.foo
+fun topLevelClashingMessageDslField() {
+  val message = clashingMessage {
+    fo<caret>o = 1
+  }
+}
+
+// EXPECT-NEXT: clashing_nested_message.proto / Foo.Bar.ClashingNestedMessage
+fun nestedClashingMessageClass() {
+  val message = ClashingNestedMessageOuterClass.Foo.Bar.Clashing<caret>NestedMessage.newBuilder().build()
+}
+
+// EXPECT-NEXT: clashing_nested_message.proto / Foo.Bar.ClashingNestedMessage.foo
+fun nestedClashingMessageField() {
+  val message = ClashingNestedMessageOuterClass.Foo.Bar.ClashingNestedMessage.newBuilder()
+    .set<caret>Foo(1)
+    .build()
+}
+
+// EXPECT-NEXT: clashing_nested_message.proto / Foo.Bar.ClashingNestedMessage
+fun nestedClashingMessageDslFactory() {
+  val message = FooKt.BarKt.clashingNested<caret>Message {
+    foo = 1
+  }
+}
+
+// EXPECT-NEXT: clashing_nested_message.proto / Foo.Bar.ClashingNestedMessage.foo
+fun nestedClashingMessageDslField() {
+  val message = FooKt.BarKt.clashingNestedMessage {
+    fo<caret>o = 1
+  }
+}
+
+// EXPECT-NEXT: clashing_enum.proto / ClashingEnum
+fun clashingEnumClass() {
+  val value = ClashingEnumOuterClass.Clashing<caret>Enum.ONE
+}
+
+// EXPECT-NEXT: clashing_enum.proto / ONE
+fun clashingEnumValue() {
+  val value = ClashingEnumOuterClass.ClashingEnum.O<caret>NE
+}
+
+// EXPECT-NEXT: not_clashing_field.proto / Foo.NotClashingField
+fun notClashingJavaField(value: NotClashingField.Foo) {
+  println(value.getNotClashing<caret>Field())
+}
+
+// EXPECT-NEXT: not_clashing_field.proto / Foo
+fun notClashingDslFactory() {
+  val value = field<caret>Foo {
+    notClashingField = 1
+  }
+}
+
+// EXPECT-NEXT: not_clashing_field.proto / Foo.NotClashingField
+fun notClashingDslField() {
+  val value = fieldFoo {
+    notClashing<caret>Field = 1
+  }
+}

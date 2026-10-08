@@ -1,0 +1,36 @@
+package demo
+
+import demo.groups.GroupContainer
+import demo.groups.GroupContainerKt
+import demo.groups.copy
+import demo.groups.groupContainer
+import demo.groups.singleGroupFieldOrNull
+
+// EXPECT-NEXT: proto2_groups.proto / GroupContainer.SingleGroupField
+fun groupType(): GroupContainer.SingleGroup<caret>Field =
+  GroupContainer.SingleGroupField.newBuilder().build()
+
+// EXPECT-NEXT: proto2_groups.proto / GroupContainer.SingleGroupField
+fun groupFactory() = GroupContainerKt.singleGroup<caret>Field {}
+
+// EXPECT-NEXT: proto2_groups.proto / GroupContainer.SingleGroupField
+fun groupCopy(existing: GroupContainer.SingleGroupField) = existing.co<caret>py {}
+
+// EXPECT-NEXT: proto2_groups.proto / GroupContainer.singlegroupfield
+fun javaGroupAccessor(group: GroupContainer.SingleGroupField): GroupContainer =
+  GroupContainer.newBuilder().setSingleGroup<caret>Field(group).build()
+
+fun kotlinGroupDsl() = groupContainer {
+  // EXPECT-NEXT: proto2_groups.proto / GroupContainer.singlegroupfield
+  singleGroup<caret>Field = singleGroupField {
+    // EXPECT-NEXT: proto2_groups.proto / GroupContainer.SingleGroupField.in_group
+    inG<caret>roup = 1
+  }
+  // EXPECT-NEXT: proto2_groups.proto / GroupContainer.singlegroupfield
+  hasSingleGroup<caret>Field()
+  // EXPECT-NEXT: proto2_groups.proto / GroupContainer.singlegroupfield
+  clearSingleGroup<caret>Field()
+}
+
+// EXPECT-NEXT: proto2_groups.proto / GroupContainer.singlegroupfield
+fun groupOrNull(builder: GroupContainer.Builder) = builder.singleGroupFieldOrN<caret>ull

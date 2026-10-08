@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+package realistic;
+
+option java_package = "demo.realistic";
+option java_multiple_files = true;
+
+message RealisticUser {
+  optional string name = 1;
+  optional string when = 2;
+  repeated string aliases = 3;
+  map<string, int32> labels = 4;
+
+  oneof contact {
+    string email = 5;
+    int64 phone = 6;
+  }
+
+  optional Profile profile = 7;
+
+  extensions 100 to max;
+
+  message Profile {
+    optional string display_name = 1;
+  }
+}
+
+extend RealisticUser {
+  optional string nickname = 100;
+  repeated string badges = 101;
+}
