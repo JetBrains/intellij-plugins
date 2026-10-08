@@ -106,7 +106,11 @@ jvm_library(
     ),
     module_name = "intellij.qodana.php.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["//phpstorm/php:php-impl"],
+    runtime_deps = [
+        # do not sort,
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "//phpstorm/php:php-impl",
+    ],
 )
 
 jvm_library(
@@ -129,6 +133,7 @@ jvm_library(
         # do not sort,
         ":php-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
         "//phpstorm/php:php-impl_test_lib",
     ],
     deps = [

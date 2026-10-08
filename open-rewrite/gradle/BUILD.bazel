@@ -87,6 +87,11 @@ jvm_library(
     ),
     module_name = "intellij.openRewrite.gradle.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "//plugins/microservices/microservices-jvm:jvm",
+    ],
 )
 
 jvm_library(
@@ -110,6 +115,8 @@ jvm_library(
         ":openRewrite-gradle-tests",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "//plugins/microservices/microservices-jvm:jvm_test_lib",
     ],
     deps = [
         # do not sort,

@@ -197,6 +197,12 @@ jvm_library(
     ),
     module_name = "intellij.terraform.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/vcs/plugin",
+        "@community//plugins/grazie",
+    ],
 )
 
 jvm_library(
@@ -227,6 +233,9 @@ jvm_library(
         "@community//platform/ide-core-impl:ide-core-impl_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/vcs/plugin:plugin_test_lib",
+        "@community//plugins/grazie:grazie_test_lib",
     ],
     deps = [
         # do not sort,

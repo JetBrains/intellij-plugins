@@ -167,6 +167,15 @@ jvm_library(
     ),
     module_name = "intellij.gauge.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//aether-dependency-resolver/plugin",
+        "@community//plugins/coverage",
+        "@community//java/plugin",
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/testRunner/plugin",
+        "@community//xml/plugin",
+    ],
 )
 
 jvm_library(
@@ -195,6 +204,12 @@ jvm_library(
         "@community//platform/ide-core-impl:ide-core-impl_test_lib",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//aether-dependency-resolver/plugin:plugin_test_lib",
+        "@community//plugins/coverage:coverage_test_lib",
+        "@community//java/plugin:plugin_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/testRunner/plugin:plugin_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,

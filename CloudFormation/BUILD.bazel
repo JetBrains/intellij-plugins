@@ -92,6 +92,11 @@ jvm_library(
     ),
     module_name = "intellij.cloudFormation.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "@community//platform/structure-view-impl/plugin",
+    ],
 )
 
 jvm_library(
@@ -119,6 +124,8 @@ jvm_library(
         ":cloudFormation-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,

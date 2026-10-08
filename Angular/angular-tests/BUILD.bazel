@@ -55,6 +55,11 @@ jvm_library(
         "//plugins/css/common/psi",
         "//contrib/Angular/angular-backend",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "@community//platform/problemsView/plugin",
+        "@community//plugins/editorconfig:editorconfig-plugin",
+        "//contrib/jade",
+        "//plugins/JavaScriptLanguage/javascript-ultimate",
     ],
 )
 
@@ -83,6 +88,11 @@ jvm_library(
         ":angular-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "@community//platform/problemsView/plugin:plugin_test_lib",
+        "@community//plugins/editorconfig:editorconfig-plugin_test_lib",
+        "//contrib/jade:jade_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-ultimate:javascript-ultimate_test_lib",
     ],
     deps = [
         # do not sort,

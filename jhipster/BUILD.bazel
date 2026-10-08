@@ -103,6 +103,7 @@ jvm_library(
     ),
     module_name = "intellij.jhipster.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/structure-view-impl/plugin"],
 )
 
 jvm_library(
@@ -130,6 +131,7 @@ jvm_library(
         ":jhipster-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,

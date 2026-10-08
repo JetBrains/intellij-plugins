@@ -140,6 +140,12 @@ jvm_library(
     ),
     module_name = "intellij.handlebars.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//plugins/JavaScriptLanguage/plugin",
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "@community//platform/problemsView/plugin",
+    ],
 )
 
 jvm_library(
@@ -164,6 +170,9 @@ jvm_library(
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/ide-core-impl:ide-core-impl_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
+        "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "@community//platform/problemsView/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,

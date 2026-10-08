@@ -72,7 +72,13 @@ jvm_library(
     ),
     module_name = "intellij.terraform.copyright.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["//contrib/terraform/copyright"],
+    runtime_deps = [
+        # do not sort,
+        "//contrib/terraform/copyright",
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/vcs/plugin",
+        "@community//xml/plugin",
+    ],
 )
 
 jvm_library(
@@ -95,7 +101,13 @@ jvm_library(
         ["testResources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [":copyright-tests"],
+    runtime_deps = [
+        # do not sort,
+        ":copyright-tests",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/vcs/plugin:plugin_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
+    ],
     deps = [
         # do not sort,
         "@community//platform/core-api:core",

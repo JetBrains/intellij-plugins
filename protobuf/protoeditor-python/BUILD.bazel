@@ -98,6 +98,11 @@ jvm_library(
     ),
     module_name = "intellij.protoeditor.python.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "//contrib/protobuf:protoeditor",
+    ],
 )
 
 jvm_library(
@@ -116,7 +121,12 @@ jvm_library(
         "//contrib/protobuf/protoeditor-python:protoeditor-python_test_lib",
     ],
     visibility = ["//visibility:public"],
-    runtime_deps = [":protoeditor-python-tests"],
+    runtime_deps = [
+        # do not sort,
+        ":protoeditor-python-tests",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "//contrib/protobuf:protoeditor_test_lib",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",

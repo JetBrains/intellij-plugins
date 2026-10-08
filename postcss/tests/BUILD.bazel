@@ -11,6 +11,18 @@ jvm_library(
     module_name = "intellij.postcss.tests",
     visibility = ["//visibility:public"],
     exports = ["@community//xml/impl"],
+    runtime_deps = [
+        # do not sort,
+        "//contrib/postcss/plugin",
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "@community//xml/plugin",
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/structuralsearch/plugin",
+        "//plugins/css/copyright",
+        "@community//platform/todo/plugin",
+        "@community//xml/relaxng",
+        "//plugins/css/frontend",
+    ],
 )
 
 jvm_library(
@@ -40,6 +52,15 @@ jvm_library(
         ":tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
+        "//contrib/postcss/plugin:plugin_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/structuralsearch/plugin:plugin_test_lib",
+        "//plugins/css/copyright:copyright_test_lib",
+        "@community//platform/todo/plugin:plugin_test_lib",
+        "@community//xml/relaxng:relaxng_test_lib",
+        "//plugins/css/frontend:frontend_test_lib",
     ],
     deps = [
         # do not sort,

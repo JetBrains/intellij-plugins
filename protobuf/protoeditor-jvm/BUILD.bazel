@@ -87,6 +87,7 @@ jvm_library(
     ),
     module_name = "intellij.protoeditor.jvm.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["//contrib/protobuf:protoeditor"],
 )
 
 jvm_library(
@@ -109,6 +110,7 @@ jvm_library(
         # do not sort,
         ":protoeditor-jvm-tests",
         "@community//platform/ide-core:ide-core_test_lib",
+        "//contrib/protobuf:protoeditor_test_lib",
     ],
     deps = [
         # do not sort,

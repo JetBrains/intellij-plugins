@@ -91,6 +91,14 @@ jvm_library(
     ),
     module_name = "intellij.protoeditor.go.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "//contrib/protobuf:protoeditor",
+        "//plugins/http-client/http-client-grpc:httpClient-grpc",
+        "@community//platform/execution.serviceView/plugin",
+        "@community//platform/navbar/plugin",
+    ],
 )
 
 jvm_library(
@@ -113,6 +121,11 @@ jvm_library(
         # do not sort,
         ":protoeditor-go-tests",
         "@community//platform/ide-core-impl:ide-core-impl_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "//contrib/protobuf:protoeditor_test_lib",
+        "//plugins/http-client/http-client-grpc:httpClient-grpc_test_lib",
+        "@community//platform/execution.serviceView/plugin:plugin_test_lib",
+        "@community//platform/navbar/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,

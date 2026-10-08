@@ -102,6 +102,13 @@ jvm_library(
     ),
     module_name = "intellij.terraform.template.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/vcs/plugin",
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "@community//json",
+    ],
 )
 
 jvm_library(
@@ -129,6 +136,10 @@ jvm_library(
         # do not sort,
         ":template-tests",
         "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/vcs/plugin:plugin_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "@community//json:json_test_lib",
     ],
     deps = [
         # do not sort,

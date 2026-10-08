@@ -170,6 +170,17 @@ jvm_library(
     ),
     module_name = "intellij.openRewrite.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "@community//aether-dependency-resolver/plugin",
+        "@community//xml/plugin",
+        "//plugins/microservices/microservices-jvm:jvm",
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/testRunner/plugin",
+        "@community//platform/vcs/plugin",
+        "@community//plugins/properties/properties-common:properties",
+    ],
 )
 
 jvm_library(
@@ -196,6 +207,14 @@ jvm_library(
         "@community//platform/ide-core:ide-core_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
         "@community//platform/progress/shared:ide-progress_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "@community//aether-dependency-resolver/plugin:plugin_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
+        "//plugins/microservices/microservices-jvm:jvm_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/testRunner/plugin:plugin_test_lib",
+        "@community//platform/vcs/plugin:plugin_test_lib",
+        "@community//plugins/properties/properties-common:properties_test_lib",
     ],
     deps = [
         # do not sort,

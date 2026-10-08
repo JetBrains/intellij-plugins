@@ -171,7 +171,12 @@ jvm_library(
     ),
     module_name = "intellij.jade.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl"],
+    runtime_deps = [
+        # do not sort,
+        "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+        "@community//platform/problemsView/plugin",
+        "//plugins/css/codeinsight/actions",
+    ],
 )
 
 jvm_library(
@@ -200,6 +205,8 @@ jvm_library(
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/ide-core-impl:ide-core-impl_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/problemsView/plugin:plugin_test_lib",
+        "//plugins/css/codeinsight/actions:actions_test_lib",
     ],
     deps = [
         # do not sort,

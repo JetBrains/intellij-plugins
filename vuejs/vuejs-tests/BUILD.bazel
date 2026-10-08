@@ -32,6 +32,7 @@ jvm_library(
         "@community//spellchecker",
         "@community//platform/indexing-impl",
         "@community//platform/lsp",
+        "//contrib/jade/css",
     ],
 )
 
@@ -60,6 +61,7 @@ jvm_library(
         # do not sort,
         ":tests",
         "@community//platform/ide-core:ide-core_test_lib",
+        "//contrib/jade/css:css_test_lib",
     ],
     deps = [
         # do not sort,

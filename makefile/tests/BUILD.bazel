@@ -10,6 +10,7 @@ jvm_library(
     ),
     module_name = "intellij.makefile.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/structure-view-impl/plugin"],
 )
 
 jvm_library(
@@ -38,6 +39,7 @@ jvm_library(
         "@community//platform/ide-core-impl:ide-core-impl_test_lib",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,

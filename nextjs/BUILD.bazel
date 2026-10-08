@@ -114,7 +114,18 @@ jvm_library(
     ),
     module_name = "intellij.nextjs.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl"],
+    runtime_deps = [
+        # do not sort,
+        "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "@community//platform/structuralsearch/plugin",
+        "@community//platform/testRunner/plugin",
+        "@community//xml/plugin",
+        "@community//platform/problemsView/plugin",
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/vcs/plugin",
+        "//plugins/JavaScriptLanguage/javascript-ultimate",
+    ],
 )
 
 jvm_library(
@@ -142,6 +153,14 @@ jvm_library(
         ":nextjs-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "@community//platform/structuralsearch/plugin:plugin_test_lib",
+        "@community//platform/testRunner/plugin:plugin_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
+        "@community//platform/problemsView/plugin:plugin_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/vcs/plugin:plugin_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-ultimate:javascript-ultimate_test_lib",
     ],
     deps = [
         # do not sort,

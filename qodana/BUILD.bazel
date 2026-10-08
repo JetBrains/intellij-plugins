@@ -371,7 +371,12 @@ jvm_library(
     ),
     module_name = "intellij.qodana.core.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["@community//platform/problemsView/plugin"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/problemsView/plugin",
+        "//contrib/qodana/git",
+        "@community//plugins/git4idea:vcs-git",
+    ],
 )
 
 jvm_library(
@@ -408,6 +413,8 @@ jvm_library(
         "@community//platform/platform-impl/internal:internal_test_lib",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-impl/ui:ui_test_lib",
+        "//contrib/qodana/git:git_test_lib",
+        "@community//plugins/git4idea:vcs-git_test_lib",
     ],
     deps = [
         # do not sort,
