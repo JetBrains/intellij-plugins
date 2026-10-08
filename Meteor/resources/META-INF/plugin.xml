@@ -82,7 +82,7 @@
         key="settings.meteor.name"
         parentId="Settings.JavaScript"
         bundle="messages.MeteorBundle"
-        order="last, after settings.phonegap"
+        order="last"
     />
     <fileBasedIndex implementation="com.jetbrains.plugins.meteor.spacebars.templates.MeteorTemplateIndex"/>
 
