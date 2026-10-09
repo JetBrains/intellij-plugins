@@ -37,6 +37,7 @@ import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.inspections.quickfixes.AngularChangeModifierQuickFix
 import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2ElementVisitor
 import org.angular2.lang.html.Angular2HtmlLanguage
@@ -67,7 +68,7 @@ class AngularInaccessibleSymbolInspection : JSInspection() {
         }
 
         private fun checkReference(node: JSReferenceExpression) {
-          if (node.qualifier == null || node.qualifier is JSThisExpression) {
+          if ((node.qualifier == null || node.qualifier is JSThisExpression) && !isPrivateComponentMemberAccessAllowed(node)) {
             val resolved = node.resolve()
             val clazz = PsiTreeUtil.getContextOfType(resolved, TypeScriptClass::class.java)
             if (clazz != null && resolved is JSElement && !isAccessible(resolved, AccessType.PROTECTED)) {
@@ -136,6 +137,9 @@ fun getInputSourceElements(element: Angular2HtmlPropertyBinding): List<JSAttribu
     ?.filterIsInstance<JSAttributeListOwner>()
     ?.toList()
   ?: emptyList()
+
+fun isPrivateComponentMemberAccessAllowed(context: PsiElement): Boolean =
+  Angular2LangUtil.isAtLeastAngularVersion(context, Angular2LangUtil.AngularVersion.V_22_2)
 
 fun isAccessible(member: PsiElement?, minAccessType: AccessType): Boolean {
   if (member is JSAttributeListOwner && !(member is JSFunction && member.isConstructor)) {
