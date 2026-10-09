@@ -1,0 +1,43 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <left-1/2,CLASS>
+        XmlToken:XML_NAME('[class.left-1/2]')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('first')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <a/b,ATTRIBUTE>
+        XmlToken:XML_NAME('[attr.a/b]')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('second')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('[class.left-1')
+      XmlToken:XML_EMPTY_ELEMENT_END('/>')
+    PsiErrorElement:Closing tag matches nothing
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
