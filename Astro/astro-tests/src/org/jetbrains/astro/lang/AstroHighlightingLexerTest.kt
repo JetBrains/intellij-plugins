@@ -5,6 +5,5 @@ import org.jetbrains.astro.lang.lexer.AstroLexer
 
 class AstroHighlightingLexerTest : AstroLexerTest() {
   override fun createLexer(): Lexer = AstroLexer(null, true, false)
-  override fun getDirPath() = "lang/highlighting"
-
+  override fun getDirPath(): String = "lang/highlighting"
 }
