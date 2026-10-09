@@ -2,187 +2,187 @@
 package com.jetbrains.plugins.jade;
 
 import com.intellij.lexer.Lexer;
-import com.intellij.testFramework.LexerTestCase;
-import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
-import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.LexerTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.jetbrains.plugins.jade.js.JavaScriptInJadeLexer;
 import com.jetbrains.plugins.jade.lexer.JadeLexer;
 import com.jetbrains.plugins.jade.lexer.JadeSimpleInterpolationLexer;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
-public class JadeLexerTest extends LexerTestCase {
-  private IdeaProjectTestFixture myFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.LexerTestFixtureKt.lexerFixture;
 
-  @Override
-  protected @NotNull Lexer createLexer() {
-    return new JadeLexer(null, 2);
-  }
+// The application is needed for various XML extension points registration
+@TestApplication
+public class JadeLexerTest {
+  private final TestFixture<LexerTestFixture> lexer =
+    lexerFixture(JadeTestUtil.getBaseTestDataPath() + "/lexer", ".txt", false, () -> new JadeLexer(null, 2));
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    // needed for various XML extension points registration
-    myFixture = IdeaTestFixtureFactory.getFixtureFactory()
-      .createLightFixtureBuilder(LightProjectDescriptor.EMPTY_PROJECT_DESCRIPTOR, getTestName(false)).getFixture();
-    myFixture.setUp();
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      myFixture.tearDown();
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
-  }
-
-  @Override
-  protected @NotNull String getDirPath() {
-    return JadeTestUtil.getBaseTestDataPath() + "/lexer";
-  }
-
-  @Override
-  protected @NotNull String getPathToTestDataFile(@NotNull String extension) {
-    return getDirPath() + "/" + getTestName(true) + extension;
-  }
-
+  @Test
   public void testSimple() {
     defaultTest();
   }
 
+  @Test
   public void testText1() {
     defaultTest();
   }
 
+  @Test
   public void testAttributes() {
     defaultTest();
   }
 
+  @Test
   public void testAttributes2() {
     defaultTest();
   }
 
+  @Test
   public void testEs6StringAttributes() {
     defaultTest();
   }
 
+  @Test
   public void testInterp1() {
     defaultTest();
   }
 
+  @Test
   public void testInterp2() {
     defaultTest();
   }
 
+  @Test
   public void testInterp3() {
     defaultTest();
   }
 
+  @Test
   public void testBlocks() {
     defaultTest();
   }
 
+  @Test
   public void testScriptStyle1() {
     defaultTest();
   }
 
+  @Test
   public void testScript() {
     defaultTest();
   }
 
+  @Test
   public void testScriptEs6() {
     defaultTest();
   }
 
+  @Test
   public void testScriptStyleOneliner() {
     defaultTest();
   }
 
+  @Test
   public void testConditionals() {
     defaultTest();
   }
 
+  @Test
   public void testFilters() {
     defaultTest();
   }
 
+  @Test
   public void testBufferedOutput() {
     defaultTest();
   }
 
+  @Test
   public void testWhitespaceBeforeBlock() {
     defaultTest();
   }
 
   private void defaultTest() {
-    doFileTest("jade");
+    lexer.get().doFileTest("jade");
   }
 
+  @Test
   public void testScriptWithDot() {
     defaultTest();
   }
 
+  @Test
   public void testCase() {
     defaultTest();
   }
 
+  @Test
   public void testPlainExpressionLine() {
     defaultTest();
   }
 
+  @Test
   public void testEmbeddedHtmlPlainText() {
     defaultTest();
   }
 
+  @Test
   public void testVariousScripts() {
     defaultTest();
   }
 
+  @Test
   public void testExtendedKeywords() {
     defaultTest();
   }
 
+  @Test
   public void testMixins() {
     defaultTest();
   }
 
+  @Test
   public void testIfelseJade() {
     defaultTest();
   }
 
+  @Test
   public void testManyOnelinersJade() {
     defaultTest();
   }
 
+  @Test
   public void testWeb12957() {
     defaultTest();
   }
 
+  @Test
   public void testEa59204() {
     defaultTest();
   }
 
+  @Test
   public void testEa59518() {
     defaultTest();
   }
 
+  @Test
   public void testAngular2() {
     defaultTest();
   }
 
+  @Test
   public void testEscapedNewline() {
     defaultTest();
   }
 
+  @Test
   public void testAttributeWithConditional() {
     defaultTest();
   }
 
+  @Test
   public void testInterpStress() {
     final Lexer lexer = new JadeSimpleInterpolationLexer(new JavaScriptInJadeLexer());
     final String textToLex = "var abc = 'abc#{trava}cba'";
@@ -192,10 +192,5 @@ public class JadeLexerTest extends LexerTestCase {
         lexer.advance();
       }
     }
-  }
-
-  @Override
-  protected boolean shouldTrim() {
-    return false;
   }
 }

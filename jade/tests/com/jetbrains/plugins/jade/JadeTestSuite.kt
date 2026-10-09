@@ -3,21 +3,18 @@ package com.jetbrains.plugins.jade
 
 import com.jetbrains.plugins.jade.injectedScriptJs.JadeJsHighlightingTest
 import com.jetbrains.plugins.jade.injectedScriptJs.JadeJsIntroduceVariableTest
-import com.jetbrains.plugins.jade.injectedScriptJs.JadeMetaJsLexerTest
 import com.jetbrains.plugins.jade.parser.JadeParsingTest
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
-  JadeLexerTest::class,
   JadeParsingTest::class,
   JadeCompletionTest::class,
   JadeCopyPasteTest::class,
   JadeFindUsagesTest::class,
   JadeFoldingTest::class,
   JadeFormatterTest::class,
-  JadeHighlightingLexerTest::class,
   JadeHighlightingTest::class,
   JadeQuoteHandlerTest::class,
   JadeRenameTest::class,
@@ -26,6 +23,5 @@ import org.junit.runners.Suite
   JadeTypingTest::class,
   JadeJsHighlightingTest::class,
   JadeJsIntroduceVariableTest::class,
-  JadeMetaJsLexerTest::class,
 )
 class JadeTestSuite

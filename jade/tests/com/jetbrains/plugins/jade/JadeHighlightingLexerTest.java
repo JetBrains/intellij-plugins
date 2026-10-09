@@ -1,39 +1,25 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.plugins.jade;
 
-import com.intellij.testFramework.LexerTestCase;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.LexerTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.jetbrains.plugins.jade.lexer.JadeHighlightingLexer;
+import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.IOException;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.LexerTestFixtureKt.lexerFixture;
 
-public class JadeHighlightingLexerTest extends JadeBaseParsingTestCase {
+@TestApplication
+public class JadeHighlightingLexerTest {
+  private final TestFixture<LexerTestFixture> lexer =
+    lexerFixture(JadeTestUtil.getBaseTestDataPath() + "lexer", ".txt", true, false, () -> new JadeHighlightingLexer(null));
 
-  @Override
-  protected String getTestDataPath() {
-    return JadeTestUtil.getBaseTestDataPath() + "lexer";
-  }
-
-
+  @Test
   public void testSimpleHighlighting() {
     defaultTest();
   }
 
   private void defaultTest() {
-    String name = getTestName(true);
-
-    try {
-      String text = loadFile(name + "." + myFileExt);
-      final JadeHighlightingLexer lexer = new JadeHighlightingLexer(null);
-
-      final String lexedText = LexerTestCase.printTokens(text, 0, lexer);
-
-      assertSameLinesWithFile(myFullDataPath + File.separator + name + ".txt", lexedText);
-    }
-    catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    lexer.get().doFileTest("jade");
   }
-
-
 }
