@@ -6,6 +6,9 @@ import org.jetbrains.qodana.coverage.CoverageEngineType
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.BaseQodanaCoverageFileProvider
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageFileProvider
 import java.io.IOException
+import java.nio.ByteBuffer
+import java.nio.channels.SeekableByteChannel
+import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.useLines
@@ -34,7 +37,7 @@ private object GCovCoverageFileProvider : BaseQodanaCoverageFileProvider() {
   }
 
   override fun getCoverageFilesLocations(project: Project): List<Path> =
-    discover(project, names = listOf("*.gcov"), dirs = COVERAGE_DIRECTORIES)
+    discover(project, names = listOf("*.gcov"), dirs = GCOV_REPORT_DIRECTORIES)
 }
 
 private object LLVMCoverageFileProvider : BaseQodanaCoverageFileProvider() {
@@ -43,10 +46,10 @@ private object LLVMCoverageFileProvider : BaseQodanaCoverageFileProvider() {
 
   override fun isValidCoverageReport(file: Path): Boolean {
     return try {
-      Files.newBufferedReader(file).use { reader ->
-        val buffer = CharArray(LLVM_HEADER_SIZE)
-        val charsRead = reader.read(buffer)
-        charsRead > 0 && String(buffer, 0, charsRead).contains(LLVM_COVERAGE_TYPE)
+      Files.newByteChannel(file).use { channel ->
+        val reportSize = channel.size()
+        containsLlvmCoverageType(channel, 0) ||
+        reportSize > LLVM_REPORT_CHECK_SIZE && containsLlvmCoverageType(channel, reportSize - LLVM_REPORT_CHECK_SIZE)
       }
     }
     catch (e: IOException) {
@@ -56,11 +59,26 @@ private object LLVMCoverageFileProvider : BaseQodanaCoverageFileProvider() {
   }
 
   override fun getCoverageFilesLocations(project: Project): List<Path> =
-    discover(project, names = listOf("*.json"), dirs = COVERAGE_DIRECTORIES)
+    discover(project, names = listOf("*.json"), dirs = LLVM_REPORT_DIRECTORIES)
+}
+
+private fun containsLlvmCoverageType(channel: SeekableByteChannel, position: Long): Boolean {
+  channel.position(position)
+  val buffer = ByteBuffer.allocate(LLVM_REPORT_CHECK_SIZE)
+  while (buffer.hasRemaining()) {
+    if (channel.read(buffer) <= 0) break
+  }
+  buffer.flip()
+  return UTF_8.decode(buffer).contains(LLVM_COVERAGE_TYPE)
 }
 
 private val logger = logger<CppCoverageFileProvider>()
 private val GCOV_SOURCE_LINE = Regex("-:\\s*0:Source:.+")
 private const val LLVM_COVERAGE_TYPE = "llvm.coverage.json.export"
-private const val LLVM_HEADER_SIZE = 4096
-private val COVERAGE_DIRECTORIES = listOf(".", "coverage", ".coverage", "build", "build/**", "*/**")
+private const val LLVM_REPORT_CHECK_SIZE = 4096
+private val GCOV_REPORT_DIRECTORIES = listOf(
+  ".", "coverage", "build", "build/**", "*/coverage", "*/Testing/CoverageInfo", "reports/gcov",
+)
+private val LLVM_REPORT_DIRECTORIES = listOf(
+  ".", "coverage", "build", "build/**", "coverage-report", ".build/**/codecov",
+)
