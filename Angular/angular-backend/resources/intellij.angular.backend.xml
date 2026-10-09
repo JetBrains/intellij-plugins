@@ -236,6 +236,8 @@
     <gotoRelatedProvider implementation="org.angular2.navigation.Angular2GotoRelatedProvider"/>
     <typedHandler implementation="org.angular2.codeInsight.blocks.Angular2HtmlBlocksTypedHandler"/>
     <typedHandler implementation="org.angular2.editor.Angular2BracesInterpolationTypedHandler"/>
+    <typedHandler implementation="org.angular2.editor.Angular2InElementCommentTypedHandler" order="before xmlSlash"/>
+    <multiLangCommenter implementation="org.angular2.editor.Angular2InElementCommentProvider"/>
     <moveFileHandler implementation="org.angular2.refactoring.Angular2MoveFileHandler" order="first"/>
     <completion.htmlInTextCompletionPopupExtension
       implementation="org.angular2.codeInsight.blocks.Angular2HtmlBlocksInTextCompletionPopupExtension"/>
@@ -272,6 +274,8 @@
               language="Angular181Html"/>
     <fileType name="Angular20Html" implementationClass="org.angular2.lang.html.Angular20HtmlFileType" fieldName="INSTANCE"
               language="Angular20Html"/>
+    <fileType name="Angular22Html" implementationClass="org.angular2.lang.html.Angular22HtmlFileType" fieldName="INSTANCE"
+              language="Angular22Html"/>
     <langCodeStyleSettingsProvider implementation="org.angular2.options.Angular2HtmlCodeStyleSettingsProvider"/>
     <fileIndentOptionsProvider implementation="org.angular2.lang.html.psi.formatter.Angular2HtmlFileIndentOptionsProvider"
                                id="angular2html" order="before html"/>
@@ -287,9 +291,11 @@
     <lang.parserDefinition language="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlParserDefinition"/>
     <lang.parserDefinition language="Angular181Html" implementationClass="org.angular2.lang.html.Angular181HtmlParserDefinition"/>
     <lang.parserDefinition language="Angular20Html" implementationClass="org.angular2.lang.html.Angular20HtmlParserDefinition"/>
+    <lang.parserDefinition language="Angular22Html" implementationClass="org.angular2.lang.html.Angular22HtmlParserDefinition"/>
     <braceMatcher filetype="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <braceMatcher filetype="Angular181Html" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <braceMatcher filetype="Angular20Html" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
+    <braceMatcher filetype="Angular22Html" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <tree.CustomLanguageASTComparator language="Angular2Html"
                                       implementationClass="org.angular2.lang.expr.parser.Angular2HtmlASTComparator"/>
     <lang.syntaxHighlighterFactory language="Angular2Html"
@@ -300,6 +306,8 @@
                                    implementationClass="org.angular2.lang.html.Angular181HtmlSyntaxHighlighterFactory"/>
     <lang.syntaxHighlighterFactory language="Angular20Html"
                                    implementationClass="org.angular2.lang.html.Angular20HtmlSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="Angular22Html"
+                                   implementationClass="org.angular2.lang.html.Angular22HtmlSyntaxHighlighterFactory"/>
     <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2HtmlCompletionContributor"
                             id="Angular2HtmlCompletionContributor"/>
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
@@ -371,6 +379,8 @@
     <todoIndexer filetype="Angular181Html" implementationClass="org.angular2.lang.html.Angular181HtmlTodoIndexer"/>
     <idIndexer filetype="Angular20Html" implementationClass="org.angular2.lang.html.Angular20HtmlIdIndexer"/>
     <todoIndexer filetype="Angular20Html" implementationClass="org.angular2.lang.html.Angular20HtmlTodoIndexer"/>
+    <idIndexer filetype="Angular22Html" implementationClass="org.angular2.lang.html.Angular22HtmlIdIndexer"/>
+    <todoIndexer filetype="Angular22Html" implementationClass="org.angular2.lang.html.Angular22HtmlTodoIndexer"/>
     <lang.formatter language="Angular2Html" implementationClass="org.angular2.lang.html.psi.formatter.Angular2HtmlFormattingModelBuilder"/>
     <lang.foldingBuilder language="Angular2Html" implementationClass="org.angular2.editor.Angular2HtmlFoldingBuilder"/>
     <gotoDeclarationHandler implementation="org.angular2.editor.Angular2GotoDeclarationHandler" order="first"/>
@@ -418,6 +428,7 @@
     <lang.parserDefinition language="Angular17Svg" implementationClass="org.angular2.lang.svg.Angular17SvgParserDefinition"/>
     <lang.parserDefinition language="Angular181Svg" implementationClass="org.angular2.lang.svg.Angular181SvgParserDefinition"/>
     <lang.parserDefinition language="Angular20Svg" implementationClass="org.angular2.lang.svg.Angular20SvgParserDefinition"/>
+    <lang.parserDefinition language="Angular22Svg" implementationClass="org.angular2.lang.svg.Angular22SvgParserDefinition"/>
     <fileType name="Angular2Svg" implementationClass="org.angular2.lang.svg.Angular2SvgFileType" fieldName="INSTANCE"
               language="Angular2Svg"/>
     <fileType name="Angular17Svg" implementationClass="org.angular2.lang.svg.Angular17SvgFileType" fieldName="INSTANCE"
@@ -426,9 +437,12 @@
               language="Angular181Svg"/>
     <fileType name="Angular20Svg" implementationClass="org.angular2.lang.svg.Angular20SvgFileType" fieldName="INSTANCE"
               language="Angular20Svg"/>
+    <fileType name="Angular22Svg" implementationClass="org.angular2.lang.svg.Angular22SvgFileType" fieldName="INSTANCE"
+              language="Angular22Svg"/>
     <braceMatcher filetype="Angular17Svg" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <braceMatcher filetype="Angular181Svg" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <braceMatcher filetype="Angular20Svg" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
+    <braceMatcher filetype="Angular22Svg" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Svg"/>
 
     <!-- Angular 2 Expression Language contributions -->

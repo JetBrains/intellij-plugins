@@ -115,6 +115,11 @@ class Angular2HtmlFileHighlighter(
         put(token, XmlHighlighterColors.HTML_CODE, Angular2HtmlHighlighterColors.NG_BLOCK_BRACES)
       }
 
+      put(Angular2HtmlTokenTypes.IN_ELEMENT_LINE_COMMENT,
+          XmlHighlighterColors.HTML_CODE, XmlHighlighterColors.HTML_TAG, TypeScriptHighlighter.TS_LINE_COMMENT)
+      put(Angular2HtmlTokenTypes.IN_ELEMENT_BLOCK_COMMENT,
+          XmlHighlighterColors.HTML_CODE, XmlHighlighterColors.HTML_TAG, TypeScriptHighlighter.TS_BLOCK_COMMENT)
+
       put(Angular2HtmlTokenTypes.BLOCK_NAME, XmlHighlighterColors.HTML_CODE, Angular2HtmlHighlighterColors.NG_BLOCK_NAME)
       put(Angular2HtmlTokenTypes.BLOCK_SEMICOLON, XmlHighlighterColors.HTML_CODE, Angular2HtmlHighlighterColors.NG_EXPRESSION,
           TypeScriptHighlighter.TS_SEMICOLON)

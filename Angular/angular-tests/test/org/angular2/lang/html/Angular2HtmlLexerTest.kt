@@ -381,6 +381,51 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
     """)
   }
 
+  fun testInElementComments() {
+    doTest("""
+      <div
+        // comment 1
+        attr1="value1"
+        /* comment 2 */ [input]="value2" /*
+          comment 3
+        */
+        (output)="handler()" // comment 4
+      ></div>
+      <div attr// glued
+      ></div>
+      <div // swallows the tag end ></div>
+      <span></span>
+    """.trimIndent())
+  }
+
+  fun testInElementCommentInEndTag() {
+    doTest("""
+      <div></div // comment>
+      <span></span>
+    """.trimIndent())
+  }
+
+  fun testInElementCommentUnterminated() {
+    doTest("""
+      <div /* comment
+      <span></span>
+    """.trimIndent())
+  }
+
+  fun testInElementCommentsWithBracketedNames() {
+    doTest("""
+      <div
+        [class.left-1/2]="a"// comment 1
+        [class.[&>svg]:w-4]="b"/* comment 2 */
+        [class.a//b]="c"
+        [foo // comment 3
+        [bar /* comment 4 */
+      ></div>
+      <div></div [baz] // comment 5>
+      <span></span>
+    """.trimIndent())
+  }
+
   fun testPowerOperator() {
     doTest("""
       <div (click)='12 ** 2 ** 3'></div>

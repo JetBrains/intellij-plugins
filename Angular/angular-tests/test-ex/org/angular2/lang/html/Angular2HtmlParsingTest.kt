@@ -20,6 +20,7 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
 
     configureFromParserDefinition(
       when (templateSyntax) {
+        Angular2TemplateSyntax.V_22 -> Angular22HtmlParserDefinition()
         Angular2TemplateSyntax.V_20 -> Angular20HtmlParserDefinition()
         Angular2TemplateSyntax.V_18_1 -> Angular181HtmlParserDefinition()
         Angular2TemplateSyntax.V_17 -> Angular17HtmlParserDefinition()
@@ -451,6 +452,37 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
     doTestHtml("""
       <div (click)='void fun()'></div>
     """)
+  }
+
+  fun testInElementComments() {
+    doTestHtml("""
+      <div
+        // comment 1
+        attr1="value1"
+        /* comment 2 */ [input]="value2" /*
+          comment 3
+        */
+        (output)="handler()" // comment 4
+      ></div>
+      <div attr// glued
+      ></div>
+      <div // swallows the tag end ></div>
+      <span></span>
+    """.trimIndent())
+  }
+
+  fun testInElementCommentInEndTag() {
+    doTestHtml("""
+      <div></div // comment>
+      <span></span>
+    """.trimIndent())
+  }
+
+  fun testInElementCommentUnterminated() {
+    doTestHtml("""
+      <div /* comment
+      <span></span>
+    """.trimIndent())
   }
 
   fun testPowerOperator() {

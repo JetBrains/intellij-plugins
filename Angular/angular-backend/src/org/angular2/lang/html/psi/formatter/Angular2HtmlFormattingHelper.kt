@@ -107,7 +107,8 @@ internal object Angular2HtmlFormattingHelper {
     xmlFormattingPolicy: XmlFormattingPolicy,
     subBlocksProvider: () -> List<Block>,
   ): Spacing? =
-    getSpacingBetweenAngularBlockGroups(child1, child2, xmlFormattingPolicy)
+    getSpacingAroundInElementComments(child1, child2, xmlFormattingPolicy)
+    ?: getSpacingBetweenAngularBlockGroups(child1, child2, xmlFormattingPolicy)
     ?: getSpacingBetweenAngularBlocks(child1, child2)
     ?: getSpacingAroundLetBlocks(child1, child2, xmlFormattingPolicy)
     ?: getSpacingWithinAngularBlock(parent, child1, child2, xmlFormattingPolicy)
@@ -120,6 +121,24 @@ internal object Angular2HtmlFormattingHelper {
       }
       else -> null
     }
+
+  private fun getSpacingAroundInElementComments(
+    child1: Block?,
+    child2: Block,
+    xmlFormattingPolicy: XmlFormattingPolicy,
+  ): Spacing? {
+    val type1 = (child1 as? AbstractBlock)?.node?.elementType
+    val type2 = (child2 as? AbstractBlock)?.node?.elementType
+    return when {
+      // A line comment runs to the end of the line, so the next token must start on a new line.
+      type1 == Angular2HtmlTokenTypes.IN_ELEMENT_LINE_COMMENT ->
+        Spacing.createSpacing(0, 0, 1, true, xmlFormattingPolicy.keepBlankLines)
+      Angular2HtmlTokenTypes.IN_ELEMENT_COMMENTS.contains(type2)
+      || (type1 == Angular2HtmlTokenTypes.IN_ELEMENT_BLOCK_COMMENT && type2 != null && isAngular2AttributeElementType(type2)) ->
+        Spacing.createSpacing(1, 1, 0, xmlFormattingPolicy.shouldKeepLineBreaks, xmlFormattingPolicy.keepBlankLines)
+      else -> null
+    }
+  }
 
   private fun getSpacingBetweenAngularBlockGroups(
     child1: Block?,

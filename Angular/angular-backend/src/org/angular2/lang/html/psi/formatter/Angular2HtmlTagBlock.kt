@@ -15,6 +15,7 @@ import com.intellij.psi.formatter.xml.XmlFormattingPolicy
 import com.intellij.psi.formatter.xml.XmlTagBlock
 import com.intellij.psi.tree.IElementType
 import org.angular2.lang.html.Angular2HtmlLanguage
+import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 
 class Angular2HtmlTagBlock(node: ASTNode,
                            wrap: Wrap?,
@@ -49,6 +50,15 @@ class Angular2HtmlTagBlock(node: ASTNode,
   override fun useMyFormatter(myLanguage: Language, childLanguage: Language, childPsi: PsiElement): Boolean =
     childLanguage.isKindOf(Angular2HtmlLanguage)
     || super.useMyFormatter(myLanguage, childLanguage, childPsi)
+
+  /**
+   * An in-element comment stands in place of an attribute, so it takes the attribute alignment.
+   */
+  override fun chooseAlignment(child: ASTNode, attrAlignment: Alignment?, textAlignment: Alignment?): Alignment? =
+    if (Angular2HtmlTokenTypes.IN_ELEMENT_COMMENTS.contains(child.elementType) && myXmlFormattingPolicy.shouldAlignAttributes)
+      attrAlignment
+    else
+      super.chooseAlignment(child, attrAlignment, textAlignment)
 
   override fun isAttributeElementType(elementType: IElementType): Boolean =
     Angular2HtmlFormattingHelper.isAngular2AttributeElementType(elementType)

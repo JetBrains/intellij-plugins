@@ -123,6 +123,16 @@ class Angular2FormattingTest : Angular2TestCase("formatting") {
   fun testLetBlock() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_18_2_1, extension = "html")
 
   @Test
+  fun testInElementComments() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_22_0_8, extension = "html")
+
+  @Test
+  fun testInElementCommentsNoKeepLineBreaks() = doFormattingTest(Angular2TestModule.ANGULAR_CORE_22_0_8, extension = "html") {
+    val htmlSettings = getCustomSettings(HtmlCodeStyleSettings::class.java)
+    htmlSettings.HTML_ATTRIBUTE_WRAP = CommonCodeStyleSettings.DO_NOT_WRAP
+    htmlSettings.HTML_KEEP_LINE_BREAKS = false
+  }
+
+  @Test
   fun testEditorConfigWithInjection() = doFormattingTest(dir = true, editorConfigEnabled = true)
 
   @Test
