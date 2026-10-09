@@ -1,14 +1,17 @@
 package com.intellij.terraform.template
 
-import com.intellij.lexer.Lexer
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.lexerFixture
 import com.intellij.terraform.template.lexer.TerraformTemplateLexer
-import com.intellij.testFramework.LexerTestCase
+import com.intellij.testFramework.junit5.fixture.TestFixtures
+import org.junit.jupiter.api.Test
 
-internal class TftplLexerTest : LexerTestCase() {
+@TestFixtures
+internal class TftplLexerTest {
+  private val lexer by lexerFixture("unused") { TerraformTemplateLexer() }
 
-  override fun createLexer(): Lexer = TerraformTemplateLexer()
-  override fun getDirPath(): String = "unused"
+  private fun doTest(text: String, expected: String) = lexer.doTest(text, expected)
 
+  @Test
   fun testBrokenFor() {
     doTest(
       """
@@ -41,6 +44,7 @@ internal class TftplLexerTest : LexerTestCase() {
       """.trimIndent())
   }
 
+  @Test
   fun testInvalidCharactersBeforeForLoopPin() {
     doTest("""
       %{ %{ for a in }
@@ -67,6 +71,7 @@ internal class TftplLexerTest : LexerTestCase() {
 
   }
 
+  @Test
   fun testForLoop() {
     doTest("""
       %{ for a in }
@@ -90,6 +95,7 @@ internal class TftplLexerTest : LexerTestCase() {
     """.trimIndent())
   }
 
+  @Test
   fun testString() {
     doTest(
       """
@@ -100,6 +106,7 @@ internal class TftplLexerTest : LexerTestCase() {
       """.trimIndent())
   }
 
+  @Test
   fun testDollarTemplateSegment() {
     doTest("""
       %{ if variable > 3 }
@@ -132,6 +139,7 @@ internal class TftplLexerTest : LexerTestCase() {
     """.trimIndent())
   }
 
+  @Test
   fun testDetectProhibitedInterpolationInsideTemplateSegment() {
     doTest("%{ if \${a} }", """
       TEMPLATE_START ('%{')
@@ -146,6 +154,7 @@ internal class TftplLexerTest : LexerTestCase() {
     """.trimIndent())
   }
 
+  @Test
   fun testRealLife() {
     doTest("""
       {
@@ -218,6 +227,7 @@ internal class TftplLexerTest : LexerTestCase() {
       DATA_LANGUAGE_TOKEN_UNPARSED ('\n}')""".trimIndent())
   }
 
+  @Test
   fun testSkeleton() {
     doTest("%{} abc", """
       TEMPLATE_START ('%{')
@@ -226,6 +236,7 @@ internal class TftplLexerTest : LexerTestCase() {
     """.trimIndent())
   }
 
+  @Test
   fun testIfCondition() {
     doTest("%{ if method(a, b) } { true } %{ else } { false }",
            """
@@ -252,6 +263,7 @@ internal class TftplLexerTest : LexerTestCase() {
            """.trimIndent())
   }
 
+  @Test
   fun testJsonTemplate() {
     doTest(
       """
@@ -274,6 +286,7 @@ internal class TftplLexerTest : LexerTestCase() {
     )
   }
 
+  @Test
   fun testOpeningBraceInIlSegment() {
     doTest("%{ if {true} }",
            """
@@ -288,6 +301,7 @@ internal class TftplLexerTest : LexerTestCase() {
            """.trimIndent())
   }
 
+  @Test
   fun testIncorrectBracesInDataLanguage() {
     doTest("%{ if true } }}}} %{ else } }}{{{}",
            """
@@ -308,6 +322,7 @@ internal class TftplLexerTest : LexerTestCase() {
            """.trimIndent())
   }
 
+  @Test
   fun testCorrectBracesInDataLanguage() {
     doTest("%{ if true } { yes } %{ else } { no }",
            """
@@ -328,6 +343,7 @@ internal class TftplLexerTest : LexerTestCase() {
            """.trimIndent())
   }
 
+  @Test
   fun testExampleWithDataLanguage() {
     doTest("hello %{ if a.b.c } 1.3 world %{ else } intellij  2.2 %{ endif } rulezzz",
            """
@@ -360,6 +376,7 @@ internal class TftplLexerTest : LexerTestCase() {
     )
   }
 
+  @Test
   fun testSimpleExamples() {
     doTest("%{ if a.b.c } 1.3 %{ else } 2.2 %{ endif }",
            """
