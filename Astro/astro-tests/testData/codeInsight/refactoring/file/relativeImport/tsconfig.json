@@ -1,0 +1,11 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "jsxImportSource": "solid-js",
+    "jsx": "preserve",
+    "lib": ["ESNext", "dom"],
+    "types": ["node", "vite/client"],
+    "typeRoots": ["node_modules/@types"]
+  }
+}

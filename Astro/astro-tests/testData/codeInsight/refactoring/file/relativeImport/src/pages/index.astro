@@ -1,0 +1,8 @@
+---
+import Hello from "../components/Hello.astro";
+import { items } from "../components/animals.js";
+---
+<Hello/>
+<ul>
+  {items.map((item) => <li>{item}</li>)}
+</ul>

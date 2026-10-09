@@ -6,6 +6,7 @@ import org.jetbrains.astro.codeInsight.AstroCompletionTest
 import org.jetbrains.astro.codeInsight.AstroCompletionTypingTest
 import org.jetbrains.astro.codeInsight.AstroCopyPasteTest
 import org.jetbrains.astro.codeInsight.AstroDocumentationTest
+import org.jetbrains.astro.codeInsight.AstroFileRefactoringTest
 import org.jetbrains.astro.codeInsight.AstroFindUsagesTest
 import org.jetbrains.astro.codeInsight.AstroFormattingTest
 import org.jetbrains.astro.codeInsight.AstroGotoDeclarationTest
@@ -37,6 +38,7 @@ import org.junit.runners.Suite
   AstroGotoDeclarationTest::class,
   AstroFindUsagesTest::class,
   AstroRenameTest::class,
+  AstroFileRefactoringTest::class,
   AstroQuickFixHighlightingTest::class,
   AstroCompletionTypingTest::class,
   AstroServiceHighlightingTest::class,

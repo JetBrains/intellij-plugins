@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "strict": true,
+    "paths": {
+      "@components/*": ["./src/components/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.vue"]
+}
