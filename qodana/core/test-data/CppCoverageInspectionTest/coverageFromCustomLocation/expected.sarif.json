@@ -1,0 +1,85 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "CppCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'main.cpp' coverage is below the threshold 50%",
+            "markdown": "File `main.cpp` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.cpp",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "int increment(int value) {"
+                  },
+                  "sourceLanguage": "TEXT"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 48,
+                  "snippet": {
+                    "text": "int increment(int value) {\n  return value + 1;\n}"
+                  },
+                  "sourceLanguage": "TEXT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "0e86daca0c809698",
+            "equalIndicator/v1": "c0011ca8683de80a4284afe0241155d252fbb697b85b526fc279e345decb4c79"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "TEXT"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 33,
+          "totalLines": 6,
+          "totalCoveredLines": 2
+        }
+      }
+    }
+  ]
+}

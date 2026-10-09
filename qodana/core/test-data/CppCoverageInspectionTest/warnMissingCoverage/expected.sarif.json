@@ -1,0 +1,199 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "CppCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'main.cpp' coverage is below the threshold 50%",
+            "markdown": "File `main.cpp` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.cpp",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "int increment(int value) {"
+                  },
+                  "sourceLanguage": "TEXT"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 48,
+                  "snippet": {
+                    "text": "int increment(int value) {\n  return value + 1;\n}"
+                  },
+                  "sourceLanguage": "TEXT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "0e86daca0c809698",
+            "equalIndicator/v1": "c0011ca8683de80a4284afe0241155d252fbb697b85b526fc279e345decb4c79"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "TEXT"
+            ]
+          }
+        },
+        {
+          "ruleId": "CppCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'not_covered.cpp' coverage is below the threshold 50%",
+            "markdown": "File `not_covered.cpp` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "not_covered.cpp",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 19,
+                  "snippet": {
+                    "text": "int not_covered() {"
+                  },
+                  "sourceLanguage": "TEXT"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 33,
+                  "snippet": {
+                    "text": "int not_covered() {\n  return 0;\n}"
+                  },
+                  "sourceLanguage": "TEXT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "41652df3996a7694",
+            "equalIndicator/v1": "a7f733364a7c8adecd3884051221e27d235835868349c3c0bd74ff2d505098e4"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "TEXT"
+            ]
+          }
+        },
+        {
+          "ruleId": "CppCoverageInspection",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "File 'not_reported.cpp' coverage is below the threshold 50%",
+            "markdown": "File `not_reported.cpp` coverage is below the threshold 50%"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "not_reported.cpp",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 20,
+                  "snippet": {
+                    "text": "int not_reported() {"
+                  },
+                  "sourceLanguage": "TEXT"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 34,
+                  "snippet": {
+                    "text": "int not_reported() {\n  return 0;\n}"
+                  },
+                  "sourceLanguage": "TEXT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coverage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "f5809c6f0724a170",
+            "equalIndicator/v1": "706acbf6fe1b2356a8d5c3a2f7b41cd5cb4339ef2a3b245b06eca4c7c5c2072c"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "TEXT"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "coverage": {
+          "totalCoverage": 14,
+          "totalLines": 14,
+          "totalCoveredLines": 2
+        }
+      }
+    }
+  ]
+}
