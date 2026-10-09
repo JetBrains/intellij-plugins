@@ -180,6 +180,51 @@ import org.jetbrains.annotations.NotNull;
     }
   }
 
+  /**
+   * Consumes an attribute name, which starts with "[". The same as in Angular,
+   * every character except a new line is accepted within the square brackets,
+   * e.g. [class.left-1/2] or [class.[&>svg]:w-4].
+   * See _consumeAttributeName() in packages/compiler/src/ml_parser/lexer.ts.
+   * If the brackets are not balanced before a new line, the name ends
+   * at the last balanced position, which gives better recovery from incomplete code.
+   */
+  private void consumeBracketedAttributeName() {
+    int openBrackets = 1;
+    int balancedEnd = -1;
+    int pos = zzMarkedPos;
+    while (pos < zzEndRead) {
+      char ch = zzBuffer.charAt(pos);
+      if (ch == '[') {
+        openBrackets++;
+      }
+      else if (ch == ']') {
+        openBrackets--;
+      }
+      if (openBrackets <= 0 ? isAttributeNameEnd(ch) : ch == '\n' || ch == '\r') {
+        break;
+      }
+      pos++;
+      if (openBrackets <= 0) {
+        balancedEnd = pos;
+      }
+    }
+    if (openBrackets <= 0) {
+      zzMarkedPos = pos;
+      return;
+    }
+    if (balancedEnd > 0) {
+      zzMarkedPos = balancedEnd;
+    }
+    while (zzMarkedPos < zzEndRead && !isAttributeNameEnd(zzBuffer.charAt(zzMarkedPos))) {
+      zzMarkedPos++;
+    }
+  }
+
+  private static boolean isAttributeNameEnd(char ch) {
+    return ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t' || ch == '\f'
+           || ch == '"' || ch == '\'' || ch == '<' || ch == '>' || ch == '/' || ch == '=';
+  }
+
 %}
 
 %class _Angular2HtmlLexer
@@ -234,14 +279,8 @@ WHITE_SPACE_CHARS=[ \n\r\t\f\u2028\u2029\u0085]+
 
 TAG_NAME=({ALPHA}|"_"|":")({ALPHA}|{DIGIT}|"_"|":"|"."|"-")*
 /* see http://www.w3.org/TR/html5/syntax.html#syntax-attribute-name */
-ATTRIBUTE_NAME_CHAR=[^ \n\r\t\f\"\'<>/=]
-/* Angular additionally accepts "/" within square brackets, e.g. [class.left-1/2] - see _consumeAttributeName()
-   in packages/compiler/src/ml_parser/lexer.ts. For better recovery from incomplete code, it is accepted only
-   if the brackets are balanced. */
-BRACKETED_ATTRIBUTE_NAME_CHAR=[^ \n\r\t\f\"\'<>=\[\]]
-BRACKETED_ATTRIBUTE_NAME_NESTED="[" {BRACKETED_ATTRIBUTE_NAME_CHAR}* "]"
-BRACKETED_ATTRIBUTE_NAME="[" ({BRACKETED_ATTRIBUTE_NAME_CHAR} | {BRACKETED_ATTRIBUTE_NAME_NESTED})* "]"
-ATTRIBUTE_NAME={ATTRIBUTE_NAME_CHAR}+ | {BRACKETED_ATTRIBUTE_NAME} {ATTRIBUTE_NAME_CHAR}*
+/* An attribute name, which starts with "[", is consumed by consumeBracketedAttributeName() */
+ATTRIBUTE_NAME=[^ \n\r\t\f\"\'<>/=\[][^ \n\r\t\f\"\'<>/=]*
 
 DTD_REF= "\"" [^\"]* "\"" | "'" [^']* "'"
 DOCTYPE= "<!" (D|d)(O|o)(C|c)(T|t)(Y|y)(P|p)(E|e)
@@ -331,6 +370,7 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 <BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES, TAG_CHARACTERS> "/>" { yybegin(YYINITIAL); return XmlTokenType.XML_EMPTY_ELEMENT_END; }
 <BEFORE_TAG_ATTRIBUTES> {WHITE_SPACE_CHARS} { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_WHITE_SPACE;}
 <TAG_ATTRIBUTES> {ATTRIBUTE_NAME} { return XmlTokenType.XML_NAME; }
+<TAG_ATTRIBUTES> "[" { consumeBracketedAttributeName(); return XmlTokenType.XML_NAME; }
 <TAG_ATTRIBUTES> "=" { yybegin(ATTRIBUTE_VALUE_START); return XmlTokenType.XML_EQ; }
 <BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES, START_TAG_NAME, END_TAG_NAME> [^] { yybegin(YYINITIAL); yypushback(1); break; }
 

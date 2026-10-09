@@ -86,6 +86,22 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
              """.trimIndent())
   }
 
+  fun testBoundAttributesWithNestedBrackets() {
+    doTest("""
+             <div [class.[&>svg]:w-4]="a" [class.bg-[url('/a.png')]]="b" [class.content-['a_b']]='c'></div>
+             <div [class.[&_[data-x=a]]:p-2]="d" [a/b][c/d]="e" [a b]="f"></div>
+             """.trimIndent())
+  }
+
+  fun testBoundAttributesWithNestedBracketsIncomplete() {
+    doTest("""
+             <div [a/b]x[c/d>
+             <div [foo
+               bar]="a"></div>
+             <div [a]]/x="b"></div>
+             """.trimIndent())
+  }
+
   fun testMultipleInterpolations() {
     doTest("{{test}} !=bbb {{foo() - bar()}}")
   }
