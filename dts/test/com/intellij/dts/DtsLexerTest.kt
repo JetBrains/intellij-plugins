@@ -1,23 +1,32 @@
 package com.intellij.dts
 
 import com.intellij.dts.lang.lexer.DtsParserLexerAdapter
-import com.intellij.lexer.Lexer
-import com.intellij.testFramework.LexerTestCase
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.lexerFixture
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.junit5.fixture.TestFixtures
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
+import kotlin.io.path.Path
+import kotlin.io.path.readText
 
-class DtsLexerTest : LexerTestCase() {
-  override fun createLexer(): Lexer = DtsParserLexerAdapter()
+@TestFixtures
+class DtsLexerTest {
+  private val lexer by lexerFixture("$DTS_TEST_DATA_PATH/lexer", checkRestart = false) { DtsParserLexerAdapter() }
 
-  override fun getDirPath(): String = "$DTS_TEST_DATA_PATH/lexer"
+  private lateinit var testFilePath: String
 
-  override fun getPathToTestDataFile(extension: String): String {
-    return "$dirPath/${getTestName(false)}$extension"
+  @BeforeEach
+  fun setUp(testInfo: TestInfo) {
+    testFilePath = "$DTS_TEST_DATA_PATH/lexer/${testInfo.testMethod.get().name.removePrefix("test")}"
   }
 
-  fun testCompilerDirectiveAfterWaitingValue() = doTest()
+  @Test
+  fun testCompilerDirectiveAfterWaitingValue(): Unit = doTest()
 
-  private fun doTest() = doFileTest("dtsi")
-
-  override fun checkCorrectRestart(text: String) {
-    // NOOP. Fails test if enabled
+  private fun doTest() {
+    val text = StringUtil.convertLineSeparators(Path("$testFilePath.dtsi").readText().trim { it <= ' ' })
+    PlatformTestUtil.assertSameLinesWithFile("$testFilePath.txt", lexer.printTokens(text, 0))
   }
 }
