@@ -340,6 +340,13 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
                  """.trimIndent())
   }
 
+  fun testNgBoundAttributesWithNestedBrackets() {
+    doTestHtml("""
+                 <div [class.[&>svg]:w-4]="first" [class.bg-[url('/a.png')]]="second"></div>
+                 <div [class.[&>svg]:w-4="third"></div>
+                 """.trimIndent())
+  }
+
   fun testEmptyLetAndRef() {
     doTestHtml("<ng-template let-/><div let-/><div #/><div ref-/>")
   }

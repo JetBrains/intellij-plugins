@@ -13,7 +13,7 @@ class Angular2HtmlLanguageStubDefinition : LanguageStubDefinition {
     get() = DefaultStubBuilder()
 
   companion object {
-    private const val STUB_VERSION: Int = 6
+    private const val STUB_VERSION: Int = 7
     private const val HTML_STUB_VERSION: Int = 2
 
     val angular2HtmlStubVersion: Int

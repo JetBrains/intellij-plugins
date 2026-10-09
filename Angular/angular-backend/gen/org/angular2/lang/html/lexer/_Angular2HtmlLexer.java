@@ -319,23 +319,22 @@ public class _Angular2HtmlLexer implements FlexLexer {
     "\12\0\1\1\24\0\1\2\1\0\1\3\1\4\3\5"+
     "\1\6\1\3\1\7\1\10\3\7\1\11\2\7\4\12"+
     "\1\13\1\14\2\15\1\16\1\17\1\15\1\20\1\15"+
-    "\1\21\1\22\1\23\1\22\1\10\1\24\1\25\1\26"+
-    "\1\24\1\10\1\27\1\30\1\27\2\31\1\1\1\32"+
-    "\1\7\3\33\3\34\1\12\1\34\1\35\1\36\1\37"+
-    "\1\40\2\41\1\42\1\43\4\42\1\5\2\44\2\45"+
-    "\1\46\2\45\1\47\2\50\1\7\2\51\1\52\1\53"+
-    "\1\54\1\55\4\43\1\56\1\57\1\60\1\61\2\43"+
-    "\1\62\1\63\1\64\1\63\1\65\3\66\1\67\1\2"+
-    "\1\70\1\2\1\71\1\72\7\0\1\73\1\74\1\75"+
-    "\1\76\1\0\1\77\5\0\1\73\1\100\1\0\1\22"+
-    "\1\24\2\0\1\101\1\102\1\103\1\0\1\104\3\43"+
-    "\1\0\6\2\2\0\1\105\7\0\1\106\3\0\1\107"+
-    "\1\0\1\110\1\0\7\2\1\111\2\0\1\112\1\0"+
-    "\1\22\1\0\1\113\1\7\2\2\3\0\1\114\2\0"+
-    "\1\115";
+    "\1\21\1\22\1\23\1\24\1\10\1\25\1\26\1\27"+
+    "\1\25\1\10\1\30\1\31\1\30\2\32\1\1\1\33"+
+    "\1\7\3\34\3\35\1\12\1\35\1\36\1\37\1\40"+
+    "\1\41\2\42\1\43\1\44\4\43\1\5\2\45\2\46"+
+    "\1\47\2\46\1\50\2\51\1\7\2\52\1\53\1\54"+
+    "\1\55\1\56\4\44\1\57\1\60\1\61\1\62\2\44"+
+    "\1\63\1\64\1\65\1\64\1\66\3\67\1\70\1\2"+
+    "\1\71\1\2\1\72\1\73\7\0\1\74\1\75\1\76"+
+    "\1\77\1\0\1\100\5\0\1\74\1\101\1\25\2\0"+
+    "\1\102\1\103\1\104\1\0\1\105\3\44\1\0\6\2"+
+    "\2\0\1\106\7\0\1\107\3\0\1\110\1\0\1\111"+
+    "\7\2\1\112\2\0\1\113\1\0\1\22\1\0\1\114"+
+    "\1\7\2\2\3\0\1\115\2\0\1\116";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[224];
+    int [] result = new int[221];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -368,29 +367,29 @@ public class _Angular2HtmlLexer implements FlexLexer {
     "\0\u07fe\0\u0972\0\u09b0\0\u087a\0\u09ee\0\u07fe\0\u0a2c\0\u0a6a"+
     "\0\u07fe\0\u087a\0\u0aa8\0\u0ae6\0\u07fe\0\u07fe\0\u07fe\0\u087a"+
     "\0\u0b24\0\u07fe\0\u0b62\0\u0ba0\0\u0bde\0\u07fe\0\u0c1c\0\u07fe"+
-    "\0\u0c5a\0\u0c98\0\u0cd6\0\u07fe\0\u07fe\0\u0d14\0\u0d52\0\u07fe"+
-    "\0\u07fe\0\u087a\0\u07fe\0\u087a\0\u0d90\0\u07fe\0\u0dce\0\u07fe"+
-    "\0\u087a\0\u0bde\0\u07fe\0\u087a\0\u0e0c\0\u0e4a\0\u0e88\0\u07fe"+
-    "\0\u07fe\0\u07fe\0\u07fe\0\u07fe\0\u087a\0\u07fe\0\u0ec6\0\u087a"+
-    "\0\u0f04\0\u08b8\0\u0f42\0\u0f80\0\u07fe\0\u087a\0\u07fe\0\u087a"+
-    "\0\u07fe\0\u0f04\0\u0f42\0\u07fe\0\u07fe\0\u087a\0\u0fbe\0\u07fe"+
-    "\0\u087a\0\u07fe\0\u07fe\0\u07fe\0\u07fe\0\u07fe\0\u0ffc\0\u087a"+
-    "\0\u103a\0\u07fe\0\u07fe\0\u07fe\0\u07fe\0\u1078\0\u10b6\0\u07fe"+
-    "\0\u07fe\0\u10f4\0\u087a\0\u1132\0\u07fe\0\u1170\0\u087a\0\u07fe"+
-    "\0\u11ae\0\u07fe\0\u11ec\0\u07fe\0\u07fe\0\u122a\0\u1268\0\u12a6"+
-    "\0\u12e4\0\u1322\0\u1360\0\u139e\0\u13dc\0\u141a\0\u07fe\0\u07fe"+
-    "\0\u09b0\0\u07fe\0\u09ee\0\u1458\0\u1496\0\u14d4\0\u1512\0\u07fe"+
-    "\0\u07fe\0\u1550\0\u158e\0\u15cc\0\u160a\0\u1648\0\u07fe\0\u07fe"+
-    "\0\u07fe\0\u0fbe\0\u0fbe\0\u1686\0\u16c4\0\u1702\0\u1170\0\u1740"+
-    "\0\u177e\0\u17bc\0\u17fa\0\u1838\0\u1876\0\u18b4\0\u18f2\0\u07fe"+
-    "\0\u1930\0\u196e\0\u19ac\0\u19ea\0\u1a28\0\u1a66\0\u1aa4\0\u1ae2"+
-    "\0\u1b20\0\u1b5e\0\u1b9c\0\u07fe\0\u1bda\0\u07fe\0\u1c18\0\u1c56"+
-    "\0\u1c94\0\u1cd2\0\u1d10\0\u1d4e\0\u1d8c\0\u1dca\0\u07fe\0\u1e08"+
-    "\0\u1e46\0\u07fe\0\u1e84\0\u07fe\0\u1ec2\0\u07fe\0\u1f00\0\u1f3e"+
-    "\0\u1f7c\0\u1fba\0\u1ff8\0\u2036\0\u07fe\0\u2074\0\u20b2\0\u07fe";
+    "\0\u07fe\0\u0c5a\0\u0c98\0\u07fe\0\u07fe\0\u0cd6\0\u0d14\0\u07fe"+
+    "\0\u07fe\0\u087a\0\u07fe\0\u087a\0\u0d52\0\u07fe\0\u0d90\0\u07fe"+
+    "\0\u087a\0\u0bde\0\u07fe\0\u087a\0\u0dce\0\u0e0c\0\u0e4a\0\u07fe"+
+    "\0\u07fe\0\u07fe\0\u07fe\0\u07fe\0\u087a\0\u07fe\0\u0e88\0\u087a"+
+    "\0\u0ec6\0\u08b8\0\u0f04\0\u0f42\0\u07fe\0\u087a\0\u07fe\0\u087a"+
+    "\0\u07fe\0\u0ec6\0\u0f04\0\u07fe\0\u07fe\0\u087a\0\u0f80\0\u07fe"+
+    "\0\u087a\0\u07fe\0\u07fe\0\u07fe\0\u07fe\0\u07fe\0\u0fbe\0\u087a"+
+    "\0\u0ffc\0\u07fe\0\u07fe\0\u07fe\0\u07fe\0\u103a\0\u1078\0\u07fe"+
+    "\0\u07fe\0\u10b6\0\u087a\0\u10f4\0\u07fe\0\u1132\0\u087a\0\u07fe"+
+    "\0\u1170\0\u07fe\0\u11ae\0\u07fe\0\u07fe\0\u11ec\0\u122a\0\u1268"+
+    "\0\u12a6\0\u12e4\0\u1322\0\u1360\0\u139e\0\u13dc\0\u07fe\0\u07fe"+
+    "\0\u09b0\0\u07fe\0\u09ee\0\u141a\0\u1458\0\u1496\0\u14d4\0\u07fe"+
+    "\0\u07fe\0\u1512\0\u1550\0\u158e\0\u07fe\0\u07fe\0\u07fe\0\u0f80"+
+    "\0\u0f80\0\u15cc\0\u160a\0\u1648\0\u1132\0\u1686\0\u16c4\0\u1702"+
+    "\0\u1740\0\u177e\0\u17bc\0\u17fa\0\u1838\0\u07fe\0\u1876\0\u18b4"+
+    "\0\u18f2\0\u1930\0\u196e\0\u19ac\0\u19ea\0\u1a28\0\u1a66\0\u1aa4"+
+    "\0\u1ae2\0\u07fe\0\u1b20\0\u07fe\0\u1b5e\0\u1b9c\0\u1bda\0\u1c18"+
+    "\0\u1c56\0\u1c94\0\u1cd2\0\u07fe\0\u1d10\0\u1d4e\0\u07fe\0\u1d8c"+
+    "\0\u07fe\0\u1dca\0\u07fe\0\u1e08\0\u1e46\0\u1e84\0\u1ec2\0\u1f00"+
+    "\0\u1f3e\0\u07fe\0\u1f7c\0\u1fba\0\u07fe";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[224];
+    int [] result = new int[221];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -466,103 +465,96 @@ public class _Angular2HtmlLexer implements FlexLexer {
     "\3\0\1\71\1\0\14\71\4\0\1\71\17\0\1\240"+
     "\57\0\2\74\71\0\1\74\26\0\1\241\50\0\1\77"+
     "\2\0\2\77\1\0\3\77\1\0\5\77\1\0\3\77"+
-    "\3\0\50\77\1\101\2\0\2\101\1\0\3\101\1\0"+
-    "\5\101\1\242\3\101\3\0\22\101\1\243\1\101\1\77"+
-    "\23\101\1\77\2\52\2\77\1\0\3\77\1\0\5\77"+
+    "\3\0\51\77\2\52\2\77\1\0\3\77\1\0\5\77"+
     "\1\0\3\77\3\0\46\77\1\102\1\77\1\103\2\0"+
-    "\14\103\1\244\5\103\1\0\51\103\2\0\14\103\1\244"+
-    "\5\103\1\241\51\103\2\52\14\103\1\244\5\103\1\0"+
-    "\46\103\1\107\1\103\25\115\1\0\1\245\74\115\1\116"+
-    "\50\115\15\0\1\246\61\0\2\126\1\0\1\126\3\0"+
+    "\14\103\1\242\5\103\1\0\51\103\2\0\14\103\1\242"+
+    "\5\103\1\241\51\103\2\52\14\103\1\242\5\103\1\0"+
+    "\46\103\1\107\1\103\25\115\1\0\1\243\74\115\1\116"+
+    "\50\115\15\0\1\244\61\0\2\126\1\0\1\126\3\0"+
     "\1\126\1\0\2\126\2\0\1\126\1\0\1\126\7\0"+
     "\20\126\5\0\14\126\1\0\1\126\1\0\2\126\25\0"+
-    "\1\247\51\0\2\137\71\0\1\137\20\0\1\250\56\0"+
-    "\76\251\6\0\1\44\70\0\1\252\16\0\1\253\7\0"+
-    "\20\253\3\0\1\253\1\0\14\253\5\0\5\167\1\166"+
-    "\43\167\1\254\24\167\11\171\1\166\37\171\1\255\24\171"+
-    "\76\166\51\177\1\256\2\177\1\166\21\177\1\0\2\202"+
+    "\1\245\51\0\2\137\71\0\1\137\20\0\1\246\56\0"+
+    "\76\247\6\0\1\44\70\0\1\250\16\0\1\251\7\0"+
+    "\20\251\3\0\1\251\1\0\14\251\5\0\5\167\1\166"+
+    "\43\167\1\252\24\167\11\171\1\166\37\171\1\253\24\171"+
+    "\76\166\51\177\1\254\2\177\1\166\21\177\1\0\2\202"+
     "\71\0\1\202\10\0\1\204\10\0\1\204\7\0\20\204"+
-    "\3\0\1\204\1\0\14\204\6\0\3\257\20\0\1\210"+
+    "\3\0\1\204\1\0\14\204\6\0\3\255\20\0\1\210"+
     "\51\0\5\211\1\0\3\211\1\0\10\211\1\0\60\211"+
-    "\1\0\1\260\2\211\1\0\7\211\1\261\1\0\5\211"+
-    "\20\261\3\211\1\261\1\211\1\262\1\261\2\263\1\261"+
-    "\1\264\2\261\1\265\3\261\4\211\1\261\20\0\1\266"+
-    "\25\0\1\267\44\0\2\217\1\0\2\217\1\270\5\0"+
+    "\1\0\1\256\2\211\1\0\7\211\1\257\1\0\5\211"+
+    "\20\257\3\211\1\257\1\211\1\260\1\257\2\261\1\257"+
+    "\1\262\2\257\1\263\3\257\4\211\1\257\20\0\1\264"+
+    "\25\0\1\265\44\0\2\217\1\0\2\217\1\266\5\0"+
     "\20\217\3\0\1\217\1\0\14\217\4\0\1\217\15\0"+
-    "\2\217\1\0\2\217\1\270\5\0\20\217\3\0\1\217"+
-    "\1\0\4\217\1\271\2\217\1\272\4\217\4\0\1\217"+
-    "\15\0\2\217\1\0\2\217\1\270\5\0\20\217\3\0"+
-    "\1\217\1\0\12\217\1\273\1\217\4\0\1\217\15\0"+
-    "\2\217\1\0\2\217\1\270\5\0\20\217\3\0\1\217"+
-    "\1\0\1\217\1\274\12\217\4\0\1\217\15\0\2\217"+
-    "\1\0\2\217\1\270\5\0\20\217\3\0\1\217\1\0"+
-    "\13\217\1\275\4\0\1\217\15\0\1\276\15\0\1\277"+
-    "\63\0\1\300\6\0\20\300\3\0\1\300\1\0\14\300"+
-    "\4\0\1\300\15\0\2\226\1\0\2\226\6\0\20\226"+
-    "\3\0\1\226\1\0\14\226\4\0\1\226\41\0\1\301"+
-    "\17\0\1\301\45\0\1\302\24\0\1\302\23\0\1\303"+
-    "\20\0\1\304\65\0\1\305\32\0\1\306\25\0\1\242"+
-    "\2\0\2\242\1\0\3\242\1\0\11\242\3\0\22\242"+
-    "\1\307\1\242\1\77\23\242\1\243\2\0\2\243\1\0"+
-    "\3\243\1\0\5\243\1\307\3\243\3\0\22\243\1\77"+
-    "\1\243\1\101\23\243\17\103\1\244\5\103\1\0\50\103"+
-    "\25\115\1\0\50\115\25\0\1\304\50\0\76\167\76\171"+
-    "\76\177\5\211\1\0\3\211\1\0\6\211\1\310\1\211"+
-    "\1\0\23\211\1\311\34\211\1\0\3\211\1\0\3\211"+
-    "\2\261\1\211\2\261\1\270\5\211\20\261\3\211\1\261"+
-    "\1\211\14\261\4\211\1\261\5\211\1\0\3\211\1\0"+
-    "\3\211\2\261\1\211\2\261\1\270\5\211\20\261\3\211"+
-    "\1\261\1\211\4\261\1\312\2\261\1\313\4\261\4\211"+
-    "\1\261\5\211\1\0\3\211\1\0\3\211\2\261\1\211"+
-    "\2\261\1\270\5\211\20\261\3\211\1\261\1\211\12\261"+
-    "\1\314\1\261\4\211\1\261\5\211\1\0\3\211\1\0"+
-    "\3\211\2\261\1\211\2\261\1\270\5\211\20\261\3\211"+
-    "\1\261\1\211\1\261\1\315\12\261\4\211\1\261\5\211"+
-    "\1\0\3\211\1\0\3\211\2\261\1\211\2\261\1\270"+
-    "\5\211\20\261\3\211\1\261\1\211\13\261\1\316\4\211"+
-    "\1\261\20\0\1\266\1\0\1\317\73\0\1\320\7\0"+
-    "\5\320\20\0\2\320\34\0\2\217\1\0\2\217\1\270"+
-    "\5\0\20\217\3\0\1\217\1\0\7\217\1\273\4\217"+
-    "\4\0\1\217\15\0\2\217\1\0\2\217\1\270\5\0"+
-    "\20\217\3\0\1\217\1\0\6\217\1\321\5\217\4\0"+
-    "\1\217\15\0\2\217\1\0\2\217\1\317\5\0\20\217"+
-    "\3\0\1\217\1\0\14\217\4\0\1\217\15\0\2\217"+
-    "\1\0\2\217\1\270\5\0\20\217\3\0\1\217\1\0"+
-    "\11\217\1\271\2\217\4\0\1\217\15\0\2\217\1\0"+
-    "\2\217\1\270\5\0\20\217\3\0\1\217\1\0\6\217"+
-    "\1\221\5\217\4\0\1\217\15\0\1\322\122\0\1\323"+
-    "\20\0\1\323\27\0\2\300\1\0\2\300\6\0\20\300"+
-    "\3\0\1\300\1\0\14\300\4\0\1\300\40\0\1\324"+
-    "\17\0\1\324\55\0\1\325\17\0\1\325\42\0\1\326"+
-    "\65\0\1\327\60\0\1\307\2\0\2\307\1\0\3\307"+
-    "\1\0\11\307\3\0\22\307\1\0\1\307\1\242\23\307"+
-    "\5\211\1\0\3\211\1\0\6\211\1\310\1\211\1\317"+
-    "\60\211\1\0\3\211\1\0\6\211\1\330\1\211\1\0"+
-    "\5\211\5\330\20\211\2\330\24\211\1\0\3\211\1\0"+
-    "\3\211\2\261\1\211\2\261\1\270\5\211\20\261\3\211"+
-    "\1\261\1\211\7\261\1\314\4\261\4\211\1\261\5\211"+
-    "\1\0\3\211\1\0\3\211\2\261\1\211\2\261\1\270"+
-    "\5\211\20\261\3\211\1\261\1\211\6\261\1\331\5\261"+
-    "\4\211\1\261\5\211\1\0\3\211\1\0\3\211\2\261"+
-    "\1\211\2\261\1\317\5\211\20\261\3\211\1\261\1\211"+
-    "\14\261\4\211\1\261\5\211\1\0\3\211\1\0\3\211"+
-    "\2\261\1\211\2\261\1\270\5\211\20\261\3\211\1\261"+
-    "\1\211\11\261\1\312\2\261\4\211\1\261\5\211\1\0"+
-    "\3\211\1\0\3\211\2\261\1\211\2\261\1\270\5\211"+
-    "\20\261\3\211\1\261\1\211\6\261\1\263\5\261\4\211"+
-    "\1\261\20\0\1\320\1\0\1\317\5\0\5\320\20\0"+
-    "\2\320\34\0\2\217\1\0\2\217\1\270\5\0\20\217"+
-    "\3\0\1\217\1\0\11\217\1\273\2\217\4\0\1\217"+
-    "\32\0\1\332\102\0\1\333\53\0\1\303\7\0\1\304"+
-    "\50\0\5\211\1\0\3\211\1\0\6\211\1\330\1\211"+
-    "\1\317\5\211\5\330\20\211\2\330\24\211\1\0\3\211"+
-    "\1\0\3\211\2\261\1\211\2\261\1\270\5\211\20\261"+
-    "\3\211\1\261\1\211\11\261\1\314\2\261\4\211\1\261"+
-    "\44\0\1\334\22\0\1\334\40\0\1\335\112\0\1\336"+
-    "\71\0\1\337\20\0\1\337\45\0\1\340\41\0";
+    "\2\217\1\0\2\217\1\266\5\0\20\217\3\0\1\217"+
+    "\1\0\4\217\1\267\2\217\1\270\4\217\4\0\1\217"+
+    "\15\0\2\217\1\0\2\217\1\266\5\0\20\217\3\0"+
+    "\1\217\1\0\12\217\1\271\1\217\4\0\1\217\15\0"+
+    "\2\217\1\0\2\217\1\266\5\0\20\217\3\0\1\217"+
+    "\1\0\1\217\1\272\12\217\4\0\1\217\15\0\2\217"+
+    "\1\0\2\217\1\266\5\0\20\217\3\0\1\217\1\0"+
+    "\13\217\1\273\4\0\1\217\15\0\1\274\15\0\1\275"+
+    "\63\0\1\276\6\0\20\276\3\0\1\276\1\0\14\276"+
+    "\4\0\1\276\15\0\2\226\1\0\2\226\6\0\20\226"+
+    "\3\0\1\226\1\0\14\226\4\0\1\226\41\0\1\277"+
+    "\17\0\1\277\45\0\1\300\24\0\1\300\23\0\1\301"+
+    "\20\0\1\302\65\0\1\303\32\0\1\304\25\0\17\103"+
+    "\1\242\5\103\1\0\50\103\25\115\1\0\50\115\25\0"+
+    "\1\302\50\0\76\167\76\171\76\177\5\211\1\0\3\211"+
+    "\1\0\6\211\1\305\1\211\1\0\23\211\1\306\34\211"+
+    "\1\0\3\211\1\0\3\211\2\257\1\211\2\257\1\266"+
+    "\5\211\20\257\3\211\1\257\1\211\14\257\4\211\1\257"+
+    "\5\211\1\0\3\211\1\0\3\211\2\257\1\211\2\257"+
+    "\1\266\5\211\20\257\3\211\1\257\1\211\4\257\1\307"+
+    "\2\257\1\310\4\257\4\211\1\257\5\211\1\0\3\211"+
+    "\1\0\3\211\2\257\1\211\2\257\1\266\5\211\20\257"+
+    "\3\211\1\257\1\211\12\257\1\311\1\257\4\211\1\257"+
+    "\5\211\1\0\3\211\1\0\3\211\2\257\1\211\2\257"+
+    "\1\266\5\211\20\257\3\211\1\257\1\211\1\257\1\312"+
+    "\12\257\4\211\1\257\5\211\1\0\3\211\1\0\3\211"+
+    "\2\257\1\211\2\257\1\266\5\211\20\257\3\211\1\257"+
+    "\1\211\13\257\1\313\4\211\1\257\20\0\1\264\1\0"+
+    "\1\314\73\0\1\315\7\0\5\315\20\0\2\315\34\0"+
+    "\2\217\1\0\2\217\1\266\5\0\20\217\3\0\1\217"+
+    "\1\0\7\217\1\271\4\217\4\0\1\217\15\0\2\217"+
+    "\1\0\2\217\1\266\5\0\20\217\3\0\1\217\1\0"+
+    "\6\217\1\316\5\217\4\0\1\217\15\0\2\217\1\0"+
+    "\2\217\1\314\5\0\20\217\3\0\1\217\1\0\14\217"+
+    "\4\0\1\217\15\0\2\217\1\0\2\217\1\266\5\0"+
+    "\20\217\3\0\1\217\1\0\11\217\1\267\2\217\4\0"+
+    "\1\217\15\0\2\217\1\0\2\217\1\266\5\0\20\217"+
+    "\3\0\1\217\1\0\6\217\1\221\5\217\4\0\1\217"+
+    "\15\0\1\317\122\0\1\320\20\0\1\320\27\0\2\276"+
+    "\1\0\2\276\6\0\20\276\3\0\1\276\1\0\14\276"+
+    "\4\0\1\276\40\0\1\321\17\0\1\321\55\0\1\322"+
+    "\17\0\1\322\42\0\1\323\65\0\1\324\60\0\5\211"+
+    "\1\0\3\211\1\0\6\211\1\305\1\211\1\314\60\211"+
+    "\1\0\3\211\1\0\6\211\1\325\1\211\1\0\5\211"+
+    "\5\325\20\211\2\325\24\211\1\0\3\211\1\0\3\211"+
+    "\2\257\1\211\2\257\1\266\5\211\20\257\3\211\1\257"+
+    "\1\211\7\257\1\311\4\257\4\211\1\257\5\211\1\0"+
+    "\3\211\1\0\3\211\2\257\1\211\2\257\1\266\5\211"+
+    "\20\257\3\211\1\257\1\211\6\257\1\326\5\257\4\211"+
+    "\1\257\5\211\1\0\3\211\1\0\3\211\2\257\1\211"+
+    "\2\257\1\314\5\211\20\257\3\211\1\257\1\211\14\257"+
+    "\4\211\1\257\5\211\1\0\3\211\1\0\3\211\2\257"+
+    "\1\211\2\257\1\266\5\211\20\257\3\211\1\257\1\211"+
+    "\11\257\1\307\2\257\4\211\1\257\5\211\1\0\3\211"+
+    "\1\0\3\211\2\257\1\211\2\257\1\266\5\211\20\257"+
+    "\3\211\1\257\1\211\6\257\1\261\5\257\4\211\1\257"+
+    "\20\0\1\315\1\0\1\314\5\0\5\315\20\0\2\315"+
+    "\34\0\2\217\1\0\2\217\1\266\5\0\20\217\3\0"+
+    "\1\217\1\0\11\217\1\271\2\217\4\0\1\217\32\0"+
+    "\1\327\102\0\1\330\53\0\1\301\7\0\1\302\50\0"+
+    "\5\211\1\0\3\211\1\0\6\211\1\325\1\211\1\314"+
+    "\5\211\5\325\20\211\2\325\24\211\1\0\3\211\1\0"+
+    "\3\211\2\257\1\211\2\257\1\266\5\211\20\257\3\211"+
+    "\1\257\1\211\11\257\1\311\2\257\4\211\1\257\44\0"+
+    "\1\331\22\0\1\331\40\0\1\332\112\0\1\333\71\0"+
+    "\1\334\20\0\1\334\45\0\1\335\41\0";
 
   private static int [] zzUnpacktrans() {
-    int [] result = new int[8432];
+    int [] result = new int[8184];
     int offset = 0;
     offset = zzUnpacktrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -602,20 +594,20 @@ public class _Angular2HtmlLexer implements FlexLexer {
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
     "\12\0\1\1\24\0\1\1\1\0\1\11\1\1\1\11"+
     "\4\1\1\11\4\1\1\11\2\1\1\11\3\1\3\11"+
-    "\2\1\1\11\3\1\1\11\1\1\1\11\3\1\2\11"+
+    "\2\1\1\11\3\1\1\11\1\1\2\11\2\1\2\11"+
     "\2\1\2\11\1\1\1\11\2\1\1\11\1\1\1\11"+
     "\2\1\1\11\4\1\5\11\1\1\1\11\6\1\1\11"+
     "\1\1\1\11\1\1\1\11\2\1\2\11\2\1\1\11"+
     "\1\1\5\11\3\1\4\11\2\1\2\11\3\1\1\11"+
     "\2\1\1\11\1\1\1\11\1\1\2\11\7\0\2\1"+
-    "\2\11\1\0\1\11\5\0\2\11\1\0\2\1\2\0"+
-    "\3\11\1\0\4\1\1\0\6\1\2\0\1\11\7\0"+
-    "\1\1\3\0\1\11\1\0\1\11\1\0\7\1\1\11"+
-    "\2\0\1\11\1\0\1\11\1\0\1\11\3\1\3\0"+
-    "\1\11\2\0\1\11";
+    "\2\11\1\0\1\11\5\0\2\11\1\1\2\0\3\11"+
+    "\1\0\4\1\1\0\6\1\2\0\1\11\7\0\1\1"+
+    "\3\0\1\11\1\0\1\11\7\1\1\11\2\0\1\11"+
+    "\1\0\1\11\1\0\1\11\3\1\3\0\1\11\2\0"+
+    "\1\11";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[224];
+    int [] result = new int[221];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -845,6 +837,51 @@ public class _Angular2HtmlLexer implements FlexLexer {
         zzMarkedPos++;
       }
     }
+  }
+
+  /**
+   * Consumes an attribute name, which starts with "[". The same as in Angular,
+   * every character except a new line is accepted within the square brackets,
+   * e.g. [class.left-1/2] or [class.[&>svg]:w-4].
+   * See _consumeAttributeName() in packages/compiler/src/ml_parser/lexer.ts.
+   * If the brackets are not balanced before a new line, the name ends
+   * at the last balanced position, which gives better recovery from incomplete code.
+   */
+  private void consumeBracketedAttributeName() {
+    int openBrackets = 1;
+    int balancedEnd = -1;
+    int pos = zzMarkedPos;
+    while (pos < zzEndRead) {
+      char ch = zzBuffer.charAt(pos);
+      if (ch == '[') {
+        openBrackets++;
+      }
+      else if (ch == ']') {
+        openBrackets--;
+      }
+      if (openBrackets <= 0 ? isAttributeNameEnd(ch) : ch == '\n' || ch == '\r') {
+        break;
+      }
+      pos++;
+      if (openBrackets <= 0) {
+        balancedEnd = pos;
+      }
+    }
+    if (openBrackets <= 0) {
+      zzMarkedPos = pos;
+      return;
+    }
+    if (balancedEnd > 0) {
+      zzMarkedPos = balancedEnd;
+    }
+    while (zzMarkedPos < zzEndRead && !isAttributeNameEnd(zzBuffer.charAt(zzMarkedPos))) {
+      zzMarkedPos++;
+    }
+  }
+
+  private static boolean isAttributeNameEnd(char ch) {
+    return ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t' || ch == '\f'
+           || ch == '"' || ch == '\'' || ch == '<' || ch == '>' || ch == '/' || ch == '=';
   }
 
 
@@ -1092,12 +1129,12 @@ public class _Angular2HtmlLexer implements FlexLexer {
     if (parameterStart < zzMarkedPos)
        return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, blockName, parameterIndex);
             }  // fall though
-            case 225: break;
+            case 222: break;
             case LET_VALUE: {
               yybegin(YYINITIAL);
     return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, "let", 0);
             }  // fall though
-            case 226: break;
+            case 223: break;
             default:
         return null;
         }
@@ -1108,12 +1145,12 @@ public class _Angular2HtmlLexer implements FlexLexer {
             { return XmlTokenType.XML_PI_TARGET;
             }
           // fall through
-          case 78: break;
+          case 79: break;
           case 2:
             { // consume
             }
           // fall through
-          case 79: break;
+          case 80: break;
           case 3:
             { if (tryConsumeInterpolationBoundary(interpolationStart)) {
     if (inBuffer(interpolationEnd, 1)) {
@@ -1140,17 +1177,17 @@ public class _Angular2HtmlLexer implements FlexLexer {
   return XmlTokenType.XML_DATA_CHARACTERS;
             }
           // fall through
-          case 80: break;
+          case 81: break;
           case 4:
             { return XmlTokenType.XML_REAL_WHITE_SPACE;
             }
           // fall through
-          case 81: break;
+          case 82: break;
           case 5:
             { return XmlTokenType.XML_DATA_CHARACTERS;
             }
           // fall through
-          case 82: break;
+          case 83: break;
           case 6:
             { if (enableBlockSyntax) {
     blockName = "";
@@ -1160,27 +1197,27 @@ public class _Angular2HtmlLexer implements FlexLexer {
   }
             }
           // fall through
-          case 83: break;
+          case 84: break;
           case 7:
             { return XmlTokenType.XML_BAD_CHARACTER;
             }
           // fall through
-          case 84: break;
+          case 85: break;
           case 8:
             { return XmlTokenType.XML_WHITE_SPACE;
             }
           // fall through
-          case 85: break;
+          case 86: break;
           case 9:
             { yybegin(YYINITIAL); return XmlTokenType.XML_DOCTYPE_END;
             }
           // fall through
-          case 86: break;
+          case 87: break;
           case 10:
             { return XmlTokenType.XML_COMMENT_CHARACTERS;
             }
           // fall through
-          case 87: break;
+          case 88: break;
           case 11:
             { // according to HTML spec (http://www.w3.org/html/wg/drafts/html/master/syntax.html#comments)
   // comments should start with <!-- and end with -->. The comment <!--> is not valid, but should terminate
@@ -1194,63 +1231,68 @@ public class _Angular2HtmlLexer implements FlexLexer {
   return XmlTokenType.XML_COMMENT_CHARACTERS;
             }
           // fall through
-          case 88: break;
+          case 89: break;
           case 12:
             { yybegin(C_COMMENT_START); return XmlTokenType.XML_CONDITIONAL_COMMENT_START;
             }
           // fall through
-          case 89: break;
+          case 90: break;
           case 13:
             { yybegin(YYINITIAL); yypushback(1); break;
             }
           // fall through
-          case 90: break;
+          case 91: break;
           case 14:
             { yybegin(BEFORE_TAG_ATTRIBUTES); return XmlTokenType.XML_NAME;
             }
           // fall through
-          case 91: break;
+          case 92: break;
           case 15:
             { return XmlTokenType.XML_START_TAG_START;
             }
           // fall through
-          case 92: break;
+          case 93: break;
           case 16:
             { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_WHITE_SPACE;
             }
           // fall through
-          case 93: break;
+          case 94: break;
           case 17:
             { yybegin(YYINITIAL); return XmlTokenType.XML_TAG_END;
             }
           // fall through
-          case 94: break;
+          case 95: break;
           case 18:
             { return XmlTokenType.XML_NAME;
             }
           // fall through
-          case 95: break;
+          case 96: break;
           case 19:
             { yybegin(ATTRIBUTE_VALUE_START); return XmlTokenType.XML_EQ;
             }
           // fall through
-          case 96: break;
-          case 20:
-            { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
-            }
-          // fall through
           case 97: break;
-          case 21:
-            { yybegin(ATTRIBUTE_VALUE_DQ); return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER;
+          case 20:
+            { consumeBracketedAttributeName(); return XmlTokenType.XML_NAME;
             }
           // fall through
           case 98: break;
-          case 22:
-            { yybegin(ATTRIBUTE_VALUE_SQ); return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER;
+          case 21:
+            { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
             }
           // fall through
           case 99: break;
+          case 22:
+            { yybegin(ATTRIBUTE_VALUE_DQ); return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER;
+            }
+          // fall through
+          case 100: break;
           case 23:
+            { yybegin(ATTRIBUTE_VALUE_SQ); return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER;
+            }
+          // fall through
+          case 101: break;
+          case 24:
             { if (yystate() == ATTRIBUTE_VALUE_DQ
       && tryConsumeInterpolationBoundary(interpolationStart)) {
     if (inBuffer(interpolationEnd, 1)) {
@@ -1263,13 +1305,13 @@ public class _Angular2HtmlLexer implements FlexLexer {
   return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
             }
           // fall through
-          case 100: break;
-          case 24:
+          case 102: break;
+          case 25:
             { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER;
             }
           // fall through
-          case 101: break;
-          case 25:
+          case 103: break;
+          case 26:
             { if (yystate() == ATTRIBUTE_VALUE_SQ
             && tryConsumeInterpolationBoundary(interpolationStart)) {
     if (inBuffer(interpolationEnd, 1)) {
@@ -1282,65 +1324,65 @@ public class _Angular2HtmlLexer implements FlexLexer {
   return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
             }
           // fall through
-          case 102: break;
-          case 26:
+          case 104: break;
+          case 27:
             { yybegin(YYINITIAL); return XmlTokenType.XML_PI_END;
             }
           // fall through
-          case 103: break;
-          case 27:
+          case 105: break;
+          case 28:
             { return XmlTokenType.XML_TAG_CHARACTERS;
             }
           // fall through
-          case 104: break;
-          case 28:
+          case 106: break;
+          case 29:
             { yybegin(COMMENT); return XmlTokenType.XML_COMMENT_CHARACTERS;
             }
           // fall through
-          case 105: break;
-          case 29:
+          case 107: break;
+          case 30:
             { yybegin(COMMENT); return XmlTokenType.XML_CONDITIONAL_COMMENT_END;
             }
           // fall through
-          case 106: break;
-          case 30:
+          case 108: break;
+          case 31:
             { return XmlTokenType.XML_COMMA;
             }
           // fall through
-          case 107: break;
-          case 31:
+          case 109: break;
+          case 32:
             { expansionFormNestingLevel++;
   yybegin(YYINITIAL);
   return Angular2HtmlTokenTypes.EXPANSION_FORM_CASE_START;
             }
           // fall through
-          case 108: break;
-          case 32:
+          case 110: break;
+          case 33:
             { yybegin(YYINITIAL);
   return Angular2HtmlTokenTypes.EXPANSION_FORM_END;
             }
           // fall through
-          case 109: break;
-          case 33:
+          case 111: break;
+          case 34:
             { expansionFormNestingLevel--;
   yypushback(1);
   yybegin(EXPANSION_FORM_CONTENT);
             }
           // fall through
-          case 110: break;
-          case 34:
+          case 112: break;
+          case 35:
             { if (processInterpolationChar(INTERPOLATION_END)) {
     return Angular2EmbeddedExprTokenType.createInterpolationExpr(templateSyntax);
   }
             }
           // fall through
-          case 111: break;
-          case 35:
+          case 113: break;
+          case 36:
             { 
             }
           // fall through
-          case 112: break;
-          case 36:
+          case 114: break;
+          case 37:
             { yybegin(YYINITIAL);
   if (tryConsumeInterpolationBoundary(interpolationEnd)) {
     return Angular2HtmlTokenTypes.INTERPOLATION_END;
@@ -1348,27 +1390,27 @@ public class _Angular2HtmlLexer implements FlexLexer {
   return XmlTokenType.XML_BAD_CHARACTER;
             }
           // fall through
-          case 113: break;
-          case 37:
+          case 115: break;
+          case 38:
             { if (processInterpolationChar(yystate() == INTERPOLATION_DQ ? INTERPOLATION_END_DQ : INTERPOLATION_END_SQ)) {
     return Angular2EmbeddedExprTokenType.createInterpolationExpr(templateSyntax);
   }
             }
           // fall through
-          case 114: break;
-          case 38:
+          case 116: break;
+          case 39:
             { rollbackInterpolation();
   yybegin(UNTERMINATED_INTERPOLATION_SQ);
             }
           // fall through
-          case 115: break;
-          case 39:
+          case 117: break;
+          case 40:
             { rollbackInterpolation();
   yybegin(UNTERMINATED_INTERPOLATION_DQ);
             }
           // fall through
-          case 116: break;
-          case 40:
+          case 118: break;
+          case 41:
             { yybegin(yystate() == INTERPOLATION_END_DQ ? ATTRIBUTE_VALUE_DQ : ATTRIBUTE_VALUE_SQ);
   if (tryConsumeInterpolationBoundary(interpolationEnd)) {
     return Angular2HtmlTokenTypes.INTERPOLATION_END;
@@ -1376,14 +1418,14 @@ public class _Angular2HtmlLexer implements FlexLexer {
   return XmlTokenType.XML_BAD_CHARACTER;
             }
           // fall through
-          case 117: break;
-          case 41:
+          case 119: break;
+          case 42:
             { yypushback(1);
     yybegin(YYINITIAL);
             }
           // fall through
-          case 118: break;
-          case 42:
+          case 120: break;
+          case 43:
             { yybegin(BLOCK_PARAMETER);
       blockParenLevel = 1;
       parameterIndex = 0;
@@ -1391,14 +1433,14 @@ public class _Angular2HtmlLexer implements FlexLexer {
       return Angular2HtmlTokenTypes.BLOCK_PARAMETERS_START;
             }
           // fall through
-          case 119: break;
-          case 43:
+          case 121: break;
+          case 44:
             { yybegin(BLOCK_START);
       return Angular2HtmlTokenTypes.BLOCK_PARAMETERS_END;
             }
           // fall through
-          case 120: break;
-          case 44:
+          case 122: break;
+          case 45:
             { if (blockName.equals("default never")) {
       yybegin(YYINITIAL);
       return Angular2HtmlTokenTypes.BLOCK_SEMICOLON;
@@ -1407,19 +1449,19 @@ public class _Angular2HtmlLexer implements FlexLexer {
     yybegin(YYINITIAL);
             }
           // fall through
-          case 121: break;
-          case 45:
+          case 123: break;
+          case 46:
             { yybegin(YYINITIAL);
     return Angular2HtmlTokenTypes.BLOCK_START;
             }
           // fall through
-          case 122: break;
-          case 46:
+          case 124: break;
+          case 47:
             { blockParenLevel++;
             }
           // fall through
-          case 123: break;
-          case 47:
+          case 125: break;
+          case 48:
             { if (--blockParenLevel <= 0) {
        yypushback(1);
        yybegin(BLOCK_PARAMETERS_END);
@@ -1428,8 +1470,8 @@ public class _Angular2HtmlLexer implements FlexLexer {
      }
             }
           // fall through
-          case 124: break;
-          case 48:
+          case 126: break;
+          case 49:
             { yypushback(1);
       blockParenLevel = 1;
       yybegin(BLOCK_PARAMETER_END);
@@ -1439,8 +1481,8 @@ public class _Angular2HtmlLexer implements FlexLexer {
          parameterIndex++;
             }
           // fall through
-          case 125: break;
-          case 49:
+          case 127: break;
+          case 50:
             { // Angular 2 expression cannot contain an `@` character
        yypushback(1);
        yybegin(YYINITIAL);
@@ -1448,86 +1490,86 @@ public class _Angular2HtmlLexer implements FlexLexer {
           return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, blockName, parameterIndex);
             }
           // fall through
-          case 126: break;
-          case 50:
+          case 128: break;
+          case 51:
             { parameterStart = zzMarkedPos;
     yybegin(BLOCK_PARAMETER);
     return Angular2HtmlTokenTypes.BLOCK_SEMICOLON;
             }
           // fall through
-          case 127: break;
-          case 51:
+          case 129: break;
+          case 52:
             { yybegin(YYINITIAL);
     yypushback(1);
             }
           // fall through
-          case 128: break;
-          case 52:
+          case 130: break;
+          case 53:
             { yybegin(LET_NAME);
     return XmlTokenType.XML_WHITE_SPACE;
             }
           // fall through
-          case 129: break;
-          case 53:
+          case 131: break;
+          case 54:
             { yybegin(LET_EQ);
             }
           // fall through
-          case 130: break;
-          case 54:
+          case 132: break;
+          case 55:
             { yybegin(YYINITIAL);
     yypushback(1);
     return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, "let", 0);
             }
           // fall through
-          case 131: break;
-          case 55:
+          case 133: break;
+          case 56:
             { // tab-space, nbsp
     yybegin(LET_VALUE);
             }
           // fall through
-          case 132: break;
-          case 56:
+          case 134: break;
+          case 57:
             { consumeLetString();
             }
           // fall through
-          case 133: break;
-          case 57:
+          case 135: break;
+          case 58:
             { yybegin(LET_VALUE_END);
     yypushback(1);
     return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, "let", 0);
             }
           // fall through
-          case 134: break;
-          case 58:
+          case 136: break;
+          case 59:
             { yybegin(YYINITIAL);
     return Angular2HtmlTokenTypes.BLOCK_SEMICOLON;
             }
           // fall through
-          case 135: break;
-          case 59:
+          case 137: break;
+          case 60:
             { if (!tryRollbackInterpolation()) {
     return XmlTokenType.XML_END_TAG_START;
   }
             }
           // fall through
-          case 136: break;
-          case 60:
+          case 138: break;
+          case 61:
             { if (!tryRollbackInterpolation()) {
     yybegin(START_TAG_NAME);
     yypushback(yylength());
   }
             }
           // fall through
-          case 137: break;
-          case 61:
+          case 139: break;
+          case 62:
             { if (!tryRollbackInterpolation()) {
     yybegin(PROCESSING_INSTRUCTION);
     return XmlTokenType.XML_PI_START;
   }
             }
           // fall through
-          case 138: break;
-          case 62:
+          case 140: break;
+          case 63:
             { if (enableLetSyntax && inBuffer("let", 0)) {
     zzMarkedPos += 2;
     yybegin(LET_WHITESPACE);
@@ -1540,95 +1582,95 @@ public class _Angular2HtmlLexer implements FlexLexer {
   }
             }
           // fall through
-          case 139: break;
-          case 63:
+          case 141: break;
+          case 64:
             { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
             }
           // fall through
-          case 140: break;
-          case 64:
+          case 142: break;
+          case 65:
             { yybegin(YYINITIAL); return XmlTokenType.XML_EMPTY_ELEMENT_END;
             }
           // fall through
-          case 141: break;
-          case 65:
+          case 143: break;
+          case 66:
             { yybegin(COMMENT); return XmlTokenType.XML_CONDITIONAL_COMMENT_START_END;
             }
           // fall through
-          case 142: break;
-          case 66:
+          case 144: break;
+          case 67:
             { if (interpolationQuote == null) {
     // comment start
     inInterpolationComment = true;
   }
             }
           // fall through
-          case 143: break;
-          case 67:
+          case 145: break;
+          case 68:
             { // consume escaped char
             }
           // fall through
-          case 144: break;
-          case 68:
+          case 146: break;
+          case 69:
             { blockName = Angular2HtmlBlockUtils.INSTANCE.toCanonicalBlockName(yytext().toString());
   yybegin(BLOCK_PARAMETERS_START);
   return Angular2HtmlTokenTypes.BLOCK_NAME;
             }
           // fall through
-          case 145: break;
-          case 69:
+          case 147: break;
+          case 70:
             { if (!isWithinInterpolation()) return XmlTokenType.XML_ENTITY_REF_TOKEN; else processInterpolationEntity();
             }
           // fall through
-          case 146: break;
-          case 70:
+          case 148: break;
+          case 71:
             { if (!tryRollbackInterpolation()) {
     yybegin(END_TAG_NAME); yypushback(yylength());
   }
             }
           // fall through
-          case 147: break;
-          case 71:
+          case 149: break;
+          case 72:
             { yybegin(YYINITIAL); return XmlTokenType.XML_COMMENT_END;
             }
           // fall through
-          case 148: break;
-          case 72:
+          case 150: break;
+          case 73:
             { yybegin(C_COMMENT_END); return XmlTokenType.XML_CONDITIONAL_COMMENT_END_START;
             }
           // fall through
-          case 149: break;
-          case 73:
+          case 151: break;
+          case 74:
             { if (!isWithinInterpolation()) return XmlTokenType.XML_CHAR_ENTITY_REF; else processInterpolationEntity();
             }
           // fall through
-          case 150: break;
-          case 74:
+          case 152: break;
+          case 75:
             { if (!tryRollbackInterpolation()) {
     yybegin(COMMENT);
     return XmlTokenType.XML_COMMENT_START;
   }
             }
           // fall through
-          case 151: break;
-          case 75:
+          case 153: break;
+          case 76:
             { yybegin(YYINITIAL); return XmlTokenType.XML_BAD_CHARACTER;
             }
           // fall through
-          case 152: break;
-          case 76:
+          case 154: break;
+          case 77:
             { return XmlTokenType.XML_DOCTYPE_PUBLIC;
             }
           // fall through
-          case 153: break;
-          case 77:
+          case 155: break;
+          case 78:
             { if (!tryRollbackInterpolation()) {
     yybegin(DOC_TYPE);
     return XmlTokenType.XML_DOCTYPE_START;
   }
             }
           // fall through
-          case 154: break;
+          case 156: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }
