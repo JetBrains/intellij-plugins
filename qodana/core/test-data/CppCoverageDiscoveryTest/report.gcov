@@ -1,0 +1,12 @@
+        -:    0:Source:__SOURCE_PATH__
+    #####:    1:int increment(int value) {
+    #####:    2:  return value + 1;
+        -:    3:}
+        -:    4:
+    #####:    5:int decrement(int value) {
+    #####:    6:  return value - 1;
+        -:    7:}
+        -:    8:
+        1:    9:int main() {
+        1:   10:  return increment(decrement(1));
+        -:   11:}
