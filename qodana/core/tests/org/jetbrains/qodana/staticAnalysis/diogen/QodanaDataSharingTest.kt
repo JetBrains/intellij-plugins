@@ -19,18 +19,18 @@ class QodanaDataSharingTest : QodanaPluginLightTestBase() {
 
   override fun tearDown() {
     super.tearDown()
-    System.clearProperty(DATA_SHARING_ALLOWED_PROPERTY)
+    System.clearProperty(ORGANIZATION_ALLOWS_ERROR_REPORTING_PROPERTY)
   }
 
   fun `test property wins and makes no request`() {
-    System.setProperty(DATA_SHARING_ALLOWED_PROPERTY, "true")
+    System.setProperty(ORGANIZATION_ALLOWS_ERROR_REPORTING_PROPERTY, "true")
 
     assertThat(isAllowed()).isTrue()
     assertThat(mockQDCloudHttpClient.requestsCount).isZero()
   }
 
   fun `test explicit false property makes no request`() {
-    System.setProperty(DATA_SHARING_ALLOWED_PROPERTY, "false")
+    System.setProperty(ORGANIZATION_ALLOWS_ERROR_REPORTING_PROPERTY, "false")
 
     assertThat(isAllowed()).isFalse()
     assertThat(mockQDCloudHttpClient.requestsCount).isZero()
@@ -44,9 +44,15 @@ class QodanaDataSharingTest : QodanaPluginLightTestBase() {
   }
 
   fun `test api true`() {
-    respondLicense("""{"licenseKey": "k", "dataSharingAllowed": true}""")
+    respondLicense("""{"licenseKey": "k", "organizationAllowsErrorReporting": true}""")
 
     assertThat(isAllowed()).isTrue()
+  }
+
+  fun `test old field gives false`() {
+    respondLicense("""{"licenseKey": "k", "dataSharingAllowed": true}""")
+
+    assertThat(isAllowed()).isFalse()
   }
 
   fun `test missing field gives false`() {
@@ -69,7 +75,7 @@ class QodanaDataSharingTest : QodanaPluginLightTestBase() {
     assertThat(isAllowed()).isFalse()
   }
 
-  private fun isAllowed(): Boolean = runBlocking { isDataSharingAllowed() }
+  private fun isAllowed(): Boolean = runBlocking { isOrganizationAllowingErrorReporting() }
 
   private fun withToken(token: String) {
     addQodanaEnvMock(testRootDisposable, object : QodanaEnvEmpty() {
