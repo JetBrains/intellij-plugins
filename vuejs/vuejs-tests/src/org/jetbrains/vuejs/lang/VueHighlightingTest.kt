@@ -139,6 +139,8 @@ abstract class VueHighlightingWithPluginTestBase(
     super.setUp()
 
     disableTypeScriptServiceWarnings()
+    // The Vue plugin modes load the tree of other files
+    disableAstLoadingFilter()
   }
 
   override fun adjustConfigurators(
