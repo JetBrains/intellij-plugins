@@ -1,125 +1,145 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.frameworks.jboss.drools;
 
-import com.intellij.lexer.Lexer;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.LexerTestFixture;
 import com.intellij.plugins.drools.lang.lexer.DroolsLexer;
-import com.intellij.testFramework.LexerTestCase;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import com.intellij.testFramework.junit5.fixture.TestFixtures;
+import org.junit.jupiter.api.Test;
 
-public class DroolsLexerTest extends LexerTestCase {
-  @Override
-  protected @NotNull Lexer createLexer() {
-    return new DroolsLexer();
-  }
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.LexerTestFixtureKt.lexerFixture;
 
-  @Override
-  protected @NotNull String getDirPath() {
-    return "contrib/drools/tests/testData/lexer/";
-  }
+@TestFixtures
+public class DroolsLexerTest {
+  private final TestFixture<LexerTestFixture> lexer = lexerFixture("contrib/drools/tests/testData/lexer/", () -> new DroolsLexer());
 
+  @Test
   public void testSingleComments() {
-    doTest("// single comment \n // single comment2");
+    lexer.get().doTest("// single comment \n // single comment2");
   }
+
+  @Test
   public void testDeclare() {
-    doTest("declare KeyEvent @role(event) @expires(0s) end");
+    lexer.get().doTest("declare KeyEvent @role(event) @expires(0s) end");
   }
 
+  @Test
   public void testDeclare2() {
-    doTest("declare KeyEvent @role(event) end");
+    lexer.get().doTest("declare KeyEvent @role(event) end");
   }
 
+  @Test
   public void testDeclare3() {
-    doTest("declare KeyEvent @role( event = 1) end");
+    lexer.get().doTest("declare KeyEvent @role( event = 1) end");
   }
 
+  @Test
   public void testMultilineComments() {
-    doTest("/* first \n second */");
+    lexer.get().doTest("/* first \n second */");
   }
 
+  @Test
   public void testStringLiteral() {
-    doTest("\"abc \"");
+    lexer.get().doTest("\"abc \"");
   }
 
+  @Test
   public void testPackageStatement() {
-    doTest("package aaa.bbb.ccc;");
+    lexer.get().doTest("package aaa.bbb.ccc;");
   }
 
+  @Test
   public void testPackageStatement2() {
-    doTest("package or.and.foo;");
+    lexer.get().doTest("package or.and.foo;");
   }
 
+  @Test
   public void testImportStatement() {
-    doTest("import org.drools.examples.fibonacci.FibonacciExample.Fibonacci;");
+    lexer.get().doTest("import org.drools.examples.fibonacci.FibonacciExample.Fibonacci;");
   }
 
+  @Test
   public void testSimpleRule() {
-    doTest("rule Recurse\n when \n  true \n  then\n end");
+    lexer.get().doTest("rule Recurse\n when \n  true \n  then\n end");
   }
 
+  @Test
   public void testSimpleRule2() {
-    doTest("rule \"Recurse\"\n when \n  true \n  then\n end");
+    lexer.get().doTest("rule \"Recurse\"\n when \n  true \n  then\n end");
   }
 
+  @Test
   public void testSimpleRule3() {
-    doTest("""
+    lexer.get().doTest("""
              rule Calculate
              then
                  int value = 1;
              end""");
   }
 
+  @Test
   public void testSimpleRule4() {
-    doTest("""
+    lexer.get().doTest("""
              global org.drools.games.adventures.Counter counter
 
              dialect "mvel\"""");
   }
 
+  @Test
   public void testInsertLogical() {
-    doTest("rule A then insertLogical(new Foo()) end");
+    lexer.get().doTest("rule A then insertLogical(new Foo()) end");
   }
 
+  @Test
   public void testChunkBlock1() {
-    doTest("duration (aaa+11) rule aa");
+    lexer.get().doTest("duration (aaa+11) rule aa");
   }
 
+  @Test
   public void testChunkBlock2() {
-    doTest("""
+    lexer.get().doTest("""
              rule "Gold Priority"
                  duration 1000
                  when
              """);
   }
 
+  @Test
   public void testChunkBlock3() {
-    doTest("duration ()");
+    lexer.get().doTest("duration ()");
   }
 
+  @Test
   public void testChunkBlock4() {
-    doTest("duration (((aaa+11)))");
+    lexer.get().doTest("duration (((aaa+11)))");
   }
 
+  @Test
   public void testChunkBlock5() {
-    doTest("duration ( rule aaa");
+    lexer.get().doTest("duration ( rule aaa");
   }
 
+  @Test
   public void testFunctionBlock() {
-    doTest("""
+    lexer.get().doTest("""
              function void sendEscalationEmail( Customer customer, Ticket ticket ) {
                  System.out.println( "Email : " + ticket );
              }""");
   }
 
+  @Test
   public void testFunctionBlock2() {
-    doTest("function void sendEscalationEmail() { {}{ { {} } } }");
+    lexer.get().doTest("function void sendEscalationEmail() { {}{ { {} } } }");
   }
 
+  @Test
   public void testFunctionBlock3() {
-    doTest("function void sendEscalationEmail() { rule aaa then end");
+    lexer.get().doTest("function void sendEscalationEmail() { rule aaa then end");
   }
 
+  @Test
   public void testStatements1() {
-    doTest("""
+    lexer.get().doTest("""
              then
                      aaa
                      modify( m ) { m+1 }
@@ -127,8 +147,9 @@ public class DroolsLexerTest extends LexerTestCase {
              end""");
   }
 
+  @Test
   public void testStatements2() {
-    doTest("""
+    lexer.get().doTest("""
              then
                      aaa
                      modify( m ) { m+1 }
@@ -138,8 +159,9 @@ public class DroolsLexerTest extends LexerTestCase {
              end""");
   }
 
+  @Test
   public void testStatements3() {
-    doTest("""
+    lexer.get().doTest("""
              then
                      update( m==2 ) ;        java_statement 1;
                      retract( aaa != bbb )
@@ -149,8 +171,9 @@ public class DroolsLexerTest extends LexerTestCase {
              end""");
   }
 
+  @Test
   public void testStatements4() {
-    doTest("""
+    lexer.get().doTest("""
              then
                      java_statement 0;
                      update( (m==2) ) ;        java_statement 1;
@@ -161,31 +184,37 @@ public class DroolsLexerTest extends LexerTestCase {
              end""");
   }
 
+  @Test
   public void testStatements5() {
-    doTest("""
+    lexer.get().doTest("""
              then
                      aaa
                      modify( m ) { m+1         bbb
              end""");
   }
+
+  @Test
   public void testIncorrectModify() {
-    doTest("rule a then modify end");
+    lexer.get().doTest("rule a then modify end");
   }
 
+  @Test
   public void testStatements6() {
-    doTest("""
+    lexer.get().doTest("""
              then
                      aaa
                      modify( m ) { m+1         bbb
              en""");
   }
 
+  @Test
   public void testStatements7() {
-    doTest("then  modify( $edgIntellijIdeaRulezzz ){}");
+    lexer.get().doTest("then  modify( $edgIntellijIdeaRulezzz ){}");
   }
 
+  @Test
   public void testStatements8() {
-    doTest("""
+    lexer.get().doTest("""
              then
                      java_statement 0;
                      update( (m==2) ) ;        java_statement 1;
@@ -197,8 +226,9 @@ public class DroolsLexerTest extends LexerTestCase {
              end""");
   }
 
+  @Test
   public void testDeprecatedComments() {
-    doTest("""
+    lexer.get().doTest("""
              then
                      java_statement 0;
                      #update( (m==2) ) ;        update( (m==2) ) ;        java_statement 1;
@@ -210,20 +240,27 @@ public class DroolsLexerTest extends LexerTestCase {
                      #java_statement 3;
              end""");
   }
+
+  @Test
   public void testDeprecatedComments2() {
-    doTest("""
+    lexer.get().doTest("""
              then
                      #update( (m==2) ) ;        #java_statement 3;
              end""");
   }
+
+  @Test
   public void testDeprecatedComments3() {
-    doTest("then\n #update( (m==2)");
-  }
-  public void testIncomleteFunction() {
-    doTest("function void foo(){");
+    lexer.get().doTest("then\n #update( (m==2)");
   }
 
+  @Test
+  public void testIncomleteFunction() {
+    lexer.get().doTest("function void foo(){");
+  }
+
+  @Test
   public void testSimpleFunction() {
-    doTest("function void foo(){}");
+    lexer.get().doTest("function void foo(){}");
   }
 }
