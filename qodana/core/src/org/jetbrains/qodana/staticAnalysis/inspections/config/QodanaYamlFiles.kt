@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.config
 
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
@@ -19,11 +19,11 @@ data class QodanaYamlFiles(
 
     fun fromConfigDir(configDirectory: Path): QodanaYamlFiles {
       if (!configDirectory.exists()) {
-        throw QodanaException("Config directory '${configDirectory}' must exist exist")
+        throw QodanaConfigurationException("Config directory '${configDirectory}' must exist")
       }
 
       if (!configDirectory.isDirectory()) {
-        throw QodanaException("Config directory '${configDirectory}' must be a directory")
+        throw QodanaConfigurationException("Config directory '${configDirectory}' must be a directory")
       }
 
       return QodanaYamlFiles(
@@ -57,14 +57,14 @@ private fun Path.existingOrNull() = takeIf { it.exists() }
 
 private fun Path.validate() {
   if (!this.exists()) {
-    throw QodanaException("Configuration file '${this}' doesn't exist")
+    throw QodanaConfigurationException("Configuration file '${this}' doesn't exist")
   }
 
   if (!this.isRegularFile()) {
-    throw QodanaException("Configuration file '${this}' must be regular file")
+    throw QodanaConfigurationException("Configuration file '${this}' must be regular file")
   }
 
   if (!this.isReadable()) {
-    throw QodanaException("Qodana doesn't have enough privileges to read configuration file '${this}'")
+    throw QodanaConfigurationException("Qodana doesn't have enough privileges to read configuration file '${this}'")
   }
 }

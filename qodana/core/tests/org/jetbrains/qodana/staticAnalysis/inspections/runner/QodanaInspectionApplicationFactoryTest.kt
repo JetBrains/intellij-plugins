@@ -4,8 +4,8 @@ import com.intellij.testFramework.HeavyPlatformTestCase
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileYamlConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
@@ -194,7 +194,7 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
       "/OUT_PATH",
     )
 
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       QodanaInspectionApplicationFactory().buildApplication(args)
     }
     // TODO: Use a better command line argument parser.
@@ -215,7 +215,7 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
       "/OUT_PATH",
     )
 
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       QodanaInspectionApplicationFactory().buildApplication(args)
     }
     assertEquals("Arguments should contain only PROJECT_PATH and RESULTS_PATH. " +
@@ -231,7 +231,7 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
       "/OUT_PATH",
     )
 
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       QodanaInspectionApplicationFactory().buildApplication(args)
     }
     assertEquals("Can't find script implementation for 'local-changes' value", e.message)
@@ -240,7 +240,7 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
   @Test
   fun `changes options do not select a script`(): Unit = runBlocking {
     for (option in listOf("--changes", "-c", "-changes")) {
-      assertThrows<QodanaException> {
+      assertThrows<QodanaConfigurationException> {
         QodanaInspectionApplicationFactory().buildApplication(listOf(option, "PROJECT_PATH/", "/OUT_PATH"))
       }
     }
@@ -255,7 +255,32 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
       "/OUT_PATH",
     )
 
-    assertThrows<QodanaException> { QodanaInspectionApplicationFactory().buildApplication(args)}
+    assertThrows<QodanaConfigurationException> { QodanaInspectionApplicationFactory().buildApplication(args) }
+  }
+
+  @Test
+  fun `non-existent project path is a configuration error`(): Unit = runBlocking {
+    assertThrows<QodanaConfigurationException> {
+      QodanaInspectionApplicationFactory().buildApplication(listOf("NO_SUCH_PROJECT_PATH/", "/OUT_PATH"))
+    }
+  }
+
+  @Test
+  fun `non-numeric fail threshold is a configuration error`(): Unit = runBlocking {
+    assertThrows<QodanaConfigurationException> {
+      QodanaInspectionApplicationFactory().buildApplication(listOf("--fail-threshold", "abc", "PROJECT_PATH/", "/OUT_PATH"))
+    }
+  }
+
+  @Test
+  fun `malformed qodana yaml is a configuration error`(): Unit = runBlocking {
+    val yamlPath = Paths.get(project.basePath!!).resolve("malformed.qodana.yaml")
+    yamlPath.parent.createDirectories()
+    yamlPath.writeText("profile: [unclosed")
+
+    assertThrows<QodanaConfigurationException> {
+      QodanaInspectionApplicationFactory().buildApplication(listOf("--config", "malformed.qodana.yaml", "${project.basePath}", "/OUT_PATH"))
+    }
   }
 
   @Test

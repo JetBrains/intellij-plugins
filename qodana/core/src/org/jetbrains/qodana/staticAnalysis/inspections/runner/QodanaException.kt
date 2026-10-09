@@ -10,6 +10,15 @@ open class QodanaException : RuntimeException {
   constructor(message: String) : super(message)
 }
 
+/**
+ * Qodana could not configure itself or prepare the project for analysis,
+ * caused by faulty user-provided configuration or environment.
+ */
+class QodanaConfigurationException : QodanaException {
+  constructor(message: String, cause: Throwable) : super(message, cause)
+  constructor(message: String) : super(message)
+}
+
 class QodanaCancellationException(message: String) : CancellationException(message)
 
 class QodanaReportedFailureException(

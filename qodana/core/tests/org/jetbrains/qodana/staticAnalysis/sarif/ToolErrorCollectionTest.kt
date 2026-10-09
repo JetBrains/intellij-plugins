@@ -5,7 +5,6 @@ import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInspection.GlobalInspectionContext
 import com.intellij.codeInspection.GlobalInspectionTool
 import com.intellij.codeInspection.GlobalSimpleInspectionTool
-import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.codeInspection.LocalInspectionTool
@@ -38,6 +37,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.qodana.staticAnalysis.diogen.QodanaDiogenReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.FULL_SARIF_REPORT_NAME
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.profile.SanityInspectionGroup
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.QodanaConfigureNotificationCollector
@@ -188,11 +188,21 @@ class ToolErrorCollectionTest : QodanaRunnerTestCase() {
     val diogen = mutableListOf<IdeaLoggingEvent>()
     withDiogenReporter(true, diogen) {
       val listener = ToolErrorInspectListener()
-      listener.inspectionFailed("SampleInspection", InspectionApplicationException("invalid configuration"), null, project)
-      listener.inspectionFailed("SampleInspection", QodanaException("expected Qodana failure"), null, project)
+      listener.inspectionFailed("SampleInspection", QodanaConfigurationException("invalid configuration"), null, project)
       listener.inspectionFailed("SampleInspection", RuntimeException(OutOfMemoryError("Java heap space")), null, project)
     }
     assertThat(diogen).isEmpty()
+  }
+
+  @Test
+  fun `reports an internal Qodana inspection failure to Diogen`() {
+    val diogen = mutableListOf<IdeaLoggingEvent>()
+    val failure = QodanaException("internal Qodana failure")
+    withDiogenReporter(true, diogen) {
+      ToolErrorInspectListener().inspectionFailed("SampleInspection", failure, null, project)
+    }
+
+    assertThat(diogen.single().throwable).isSameAs(failure)
   }
 
   private fun runTest(tool: InspectionProfileEntry) {

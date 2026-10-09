@@ -86,9 +86,9 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
 
     try {
       buildScript(cliArgs, testProject, listOf("empty.xml" to emptyXML), this)
-      fail("Test should fail with NumberFormatException for not int fail-threshold")
+      fail("Test should fail with QodanaConfigurationException for not int fail-threshold")
     }
-    catch (ignored: NumberFormatException) {
+    catch (ignored: QodanaConfigurationException) {
     }
   }
 
@@ -112,7 +112,7 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
       "$testProjectPath",
       "$testProjectPath/out")
 
-    assertThrows(QodanaException::class.java,
+    assertThrows(QodanaConfigurationException::class.java,
                  "Script 'local-changes' does not exist") {
       runTest { buildScript(cliArgs, project, projectFiles, this) }
     }

@@ -2,7 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.script
 
 import com.jetbrains.qodana.sarif.model.SarifReport
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.applyBaselineCalculation
@@ -16,7 +16,7 @@ class DefaultScriptFactory : QodanaScriptFactory {
   override val scriptName: String get() = DEFAULT_SCRIPT_NAME
 
   override fun parseParameters(parameters: String): Map<String, String> {
-    if (parameters != "") throw QodanaException("The 'default' script does not take parameters")
+    if (parameters != "") throw QodanaConfigurationException("The 'default' script does not take parameters")
     return emptyMap()
   }
 

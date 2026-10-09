@@ -5,7 +5,7 @@ import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.project.Project
 import com.intellij.util.PlatformUtils
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 
 internal class QodanaValidateGoSdk : QodanaWorkflowExtension {
@@ -15,6 +15,6 @@ internal class QodanaValidateGoSdk : QodanaWorkflowExtension {
     val sdk = service.getSdk(null)
     if (sdk.isValid) return
 
-    throw QodanaException("Go SDK is not found")
+    throw QodanaConfigurationException("Go SDK is not found")
   }
 }

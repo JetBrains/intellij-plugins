@@ -19,7 +19,7 @@ internal fun getOutputFormat(): OutputFormat {
   }
   catch (e: IllegalArgumentException) {
     val validValues = OutputFormat.values().joinToString { "'$it'" }
-    throw QodanaException("Invalid format '$formatName' in system property '$QODANA_FORMAT'. Valid values are $validValues.")
+    throw QodanaConfigurationException("Invalid format '$formatName' in system property '$QODANA_FORMAT'. Valid values are $validValues.")
   }
 }
 

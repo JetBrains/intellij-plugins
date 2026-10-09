@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.jvm.java.migrate
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.script.UnvalidatedParameters
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
@@ -11,7 +11,7 @@ class MigrateClassesScriptFactoryTest {
 
   @Test
   fun `parse empty parameters should fail`() {
-    val ex = assertThrows<QodanaException> { subject.parseParameters("") }
+    val ex = assertThrows<QodanaConfigurationException> { subject.parseParameters("") }
     assertThat(ex).hasMessage(
       "CLI parameter for migrate-classes must be passed as '--script migrate-classes:%migrationName%'. " +
       "For example '--script migrate-classes:Java EE to Jakarta EE'."

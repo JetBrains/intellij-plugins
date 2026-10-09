@@ -4,6 +4,8 @@ import com.intellij.codeInsight.daemon.impl.HighlightVisitorBasedInspection
 import org.jetbrains.qodana.license.QodanaLicenseType
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
+import org.junit.Assert
 import org.junit.Test
 
 class QodanaSingleInspectionProfileTest : QodanaTestCase() {
@@ -16,6 +18,15 @@ class QodanaSingleInspectionProfileTest : QodanaTestCase() {
     assertEquals(1, tools.size)
     assertEquals("unused", tools[0].shortName)
     assertEquals(1, tools[0].tools.size)
+  }
+
+  @Test
+  fun `unknown inspection id is a configuration error`() {
+    val e = Assert.assertThrows(QodanaConfigurationException::class.java) {
+      QodanaInspectionProfileProvider.runProviders("qodana.single:NoSuchInspectionId", project)
+    }
+
+    assertEquals("Unknown inspection id 'NoSuchInspectionId' in qodana.single profile", e.message)
   }
 
   @Test

@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.runTaskAndLogTime
@@ -34,7 +34,7 @@ internal class MigrateClassesScriptFactory : QodanaScriptFactory {
   override val scriptName: String get() = SCRIPT_NAME
 
   override fun parseParameters(parameters: String): Map<String, String> {
-    if (parameters.isBlank()) throw QodanaException(
+    if (parameters.isBlank()) throw QodanaConfigurationException(
       "CLI parameter for ${SCRIPT_NAME} must be passed as '--script ${SCRIPT_NAME}:%migrationName%'. " +
       "For example '--script ${SCRIPT_NAME}:Java EE to Jakarta EE'."
     )

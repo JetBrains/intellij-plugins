@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.resolveVirtualFile
 import java.nio.file.Path
 
@@ -48,7 +48,7 @@ internal suspend fun parseChangedFiles(path: Path): ChangedFiles {
         Json.decodeFromStream<ChangedFiles>(it)
       }
       catch (e: Exception) {
-        throw QodanaException("Failed to parse changed files list", e)
+        throw QodanaConfigurationException("Failed to parse changed files list", e)
       }
     }
   }

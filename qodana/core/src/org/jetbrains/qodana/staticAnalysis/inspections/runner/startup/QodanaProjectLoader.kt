@@ -44,6 +44,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.runActivityWithTiming
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsCollector.QodanaActivityKind
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
@@ -92,13 +93,13 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
       )
     }
     if (vfsProject == null) {
-      throw QodanaException(InspectionsBundle.message("inspection.application.file.cannot.be.found", config.projectPath))
+      throw QodanaConfigurationException(InspectionsBundle.message("inspection.application.file.cannot.be.found", config.projectPath))
     }
   }
 
   private suspend fun openProjectManually(config: QodanaConfig): Project {
     val options = buildOpenProjectTask(config, isManualOpen = true)
-    val project = ProjectManagerEx.getInstanceEx().openProjectAsync(config.projectPath, options) ?: throw QodanaException(
+    val project = ProjectManagerEx.getInstanceEx().openProjectAsync(config.projectPath, options) ?: throw QodanaConfigurationException(
       InspectionsBundle.message("inspection.application.unable.open.project")
     )
     doConfigure(project)
@@ -112,7 +113,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
     val project = ProjectUtil.openOrImportAsync(
       file = config.projectPath,
       options = buildOpenProjectTask(config, isManualOpen = false)
-    ) ?: throw QodanaException(InspectionsBundle.message("inspection.application.unable.open.project"))
+    ) ?: throw QodanaConfigurationException(InspectionsBundle.message("inspection.application.unable.open.project"))
 
     doConfigure(project)
     if (isOpenedByPlatformProcessor(project) && !project.isProjectImportsProhibited()) {
@@ -255,7 +256,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
           )
         )
 
-      override fun cannotWriteToFiles(readonlyFiles: List<Path>) = throw QodanaException(
+      override fun cannotWriteToFiles(readonlyFiles: List<Path>) = throw QodanaConfigurationException(
         InspectionsBundle.message(
           "inspection.application.cannot.convert.the.project.the.following.files.are.read.only.0",
           readonlyFiles.joinToString(separator = ";")
@@ -268,7 +269,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
           InspectionsBundle.message("inspection.application.project.has.older.format.and.will.be.converted")
         )
 
-      override fun error(message: String) = throw QodanaException(
+      override fun error(message: String) = throw QodanaConfigurationException(
         InspectionsBundle.message("inspection.application.cannot.convert.project.0", message)
       )
     }

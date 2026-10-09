@@ -1,7 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.diagnostic.DefaultIdeaErrorLogger
 import com.intellij.diagnostic.VMOptions.MemoryKind
 import com.intellij.openapi.application.PathManager
@@ -65,7 +64,7 @@ internal suspend fun runReportingTerminalFailure(
         // `warn`, never `error`: the platform logger rethrows control-flow exceptions, which would skip the exit
         // below. Both emissions run before either is answered for, so neither can cost the other.
         val consoleFailure = failureOf { reporter.reportError(consoleMessage(e, memory)) }
-        val logFailure = failureOf { logRecord(e, memory)?.let { (message, thrown) -> logger.warn(message, thrown) } }
+        val logFailure = failureOf { logRecord(e, memory).let { (message, thrown) -> logger.warn(message, thrown) } }
         (consoleFailure ?: logFailure)?.let { throw it }
       }
     }
@@ -214,13 +213,10 @@ internal fun cancellationThrowableToReport(throwable: Throwable): Throwable? {
 
 // Phrasing ==========
 
-/**
- * What the operator is told about [e], or null to hand the reporter a null — which prints `null`, a pre-existing wart
- * this does not fix.
- */
+/** What the operator is told about [e]. */
 internal fun consoleMessage(e: Throwable, memory: MemoryVerdict): String? = when (e) {
-  // Invalid arguments or a malformed qodana.yaml: a message authored for the operator, contracted to carry no trace.
-  is InspectionApplicationException -> e.message
+  // A wrong Qodana or project configuration: a message authored for the operator, with no "abnormally" and no trace.
+  is QodanaConfigurationException -> e.message
   // QodanaCancellationException, ProcessCanceledException, IndicatorCancellationException — all CancellationException.
   is CancellationException -> {
     // A bare ProcessCanceledException has no message, and rendering it would name its class at the operator.
@@ -233,19 +229,20 @@ internal fun consoleMessage(e: Throwable, memory: MemoryVerdict): String? = when
 }
 
 /**
- * The `idea.log` record for [e], or null to log nothing — which only an [InspectionApplicationException] asks for.
+ * The `idea.log` record for [e]. A [QodanaConfigurationException] can come from deep in a run
+ * (a build system, an SDK), so it keeps its cause and trace here, though the console shows only its message.
  *
  * The throwable is withheld only when [memory] is a soft limit: that is the shape where the heap genuinely may be
  * gone, and formatting a trace from the whole graph needs the heap that may already be gone. A
  * [MemoryVerdict.HARD_LIMIT] leaves the heap intact — the array was too large, or the code cache or compressed
  * class space ran out — so its trace is exactly what makes the internal-error branch's bug report actionable, and it
- * is attached. The [Pair] allocates, and that is accepted: every branch that returns one builds a message anyway, and
- * the soft-limit route never gets here.
+ * is attached. The [Pair] allocates, and that is accepted: every branch builds a message anyway, and the soft-limit
+ * route never gets here.
  */
-internal fun logRecord(e: Throwable, memory: MemoryVerdict): Pair<String, Throwable?>? {
+internal fun logRecord(e: Throwable, memory: MemoryVerdict): Pair<String, Throwable?> {
   val loggable = if (memory.isSoftLimit) null else e
   return when (e) {
-    is InspectionApplicationException -> null
+    is QodanaConfigurationException -> "Qodana configuration error" to loggable
     is CancellationException -> {
       val toReport = cancellationThrowableToReport(e) ?: e
       val reason = toReport.message ?: QodanaBundle.message("cli.run.cancelled")

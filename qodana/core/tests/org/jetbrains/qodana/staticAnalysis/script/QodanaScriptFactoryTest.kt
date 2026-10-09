@@ -2,7 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.script
 
 import com.intellij.testFramework.HeavyPlatformTestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.runner.RunWith
@@ -20,7 +20,7 @@ class QodanaScriptFactoryTest : HeavyPlatformTestCase() {
 
   @Test
   fun `parseParameters default with missing parameters`() {
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       QodanaScriptFactory.parseConfigFromArgument("default:")
     }
     assertEquals("Script parameters in '--script default:' must not be empty", e.message)
@@ -28,7 +28,7 @@ class QodanaScriptFactoryTest : HeavyPlatformTestCase() {
 
   @Test
   fun `parseParameters default with some parameters`() {
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       QodanaScriptFactory.parseConfigFromArgument("default:parameters")
     }
     assertEquals("The 'default' script does not take parameters", e.message)

@@ -1,10 +1,10 @@
 package org.jetbrains.qodana.staticAnalysis.profile;
 
-import com.intellij.codeInspection.InspectionApplicationException;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +34,7 @@ public interface QodanaInspectionProfileProvider {
                try {
                  return provider.provideProfile(profileName, project);
                }
-               catch (InspectionApplicationException e) {
+               catch (QodanaConfigurationException e) {
                  return null;
                }
              }

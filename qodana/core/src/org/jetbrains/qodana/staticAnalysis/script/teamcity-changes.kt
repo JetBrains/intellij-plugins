@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunIncrementalContext.Companion.asIncremental
@@ -43,19 +43,19 @@ class TeamCityChangesScriptFactory : QodanaScriptFactory {
   private fun parseChangesFile(changesPath: String, config: QodanaConfig): List<TeamcityChangesRecord> {
     val path = Paths.get(changesPath)
     val effectivePath = if (path.isAbsolute) path else config.projectPath.resolve(path)
-    if (!effectivePath.exists()) throw QodanaException(
+    if (!effectivePath.exists()) throw QodanaConfigurationException(
       QodanaBundle.message("teamcity.changes.file.is.absent", effectivePath.absolutePathString()))
     return effectivePath.readLines().map { parseLine(it) }
   }
 
   private fun parseLine(line: String): TeamcityChangesRecord {
     val split = line.split(":")
-    if (split.size != 3) throw QodanaException(QodanaBundle.message("wrong.teamcity.changes.file.line.format", line))
+    if (split.size != 3) throw QodanaConfigurationException(QodanaBundle.message("wrong.teamcity.changes.file.line.format", line))
     val status = try {
       TeamcityChangeStatus.valueOf(split[1])
     }
     catch (ignored: IllegalArgumentException) {
-      throw QodanaException(QodanaBundle.message("wrong.teamcity.changes.file.line.format", line))
+      throw QodanaConfigurationException(QodanaBundle.message("wrong.teamcity.changes.file.line.format", line))
     }
     return TeamcityChangesRecord(split[0], status, split[2])
   }

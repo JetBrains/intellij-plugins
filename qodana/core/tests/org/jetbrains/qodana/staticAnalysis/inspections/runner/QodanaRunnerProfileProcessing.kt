@@ -144,8 +144,8 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
       assertDoesNotThrow { loadProfileByName("qodana.application") }
       assertDoesNotThrow { loadProfileByName("qodana.project") }
 
-      assertThrows(QodanaException::class.java) { loadProfileByName("default") }
-      assertThrows(QodanaException::class.java) { loadProfileByName("ProjectDefault") }
+      assertThrows(QodanaConfigurationException::class.java) { loadProfileByName("default") }
+      assertThrows(QodanaConfigurationException::class.java) { loadProfileByName("ProjectDefault") }
 
       assertDoesNotThrow { loadProfileByName("qodana.sanity") }
       assertDoesNotThrow { loadProfileByName("qodana.recommended") }

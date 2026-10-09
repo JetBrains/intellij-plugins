@@ -1,7 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.openapi.progress.ProcessCanceledException
 import kotlinx.coroutines.CancellationException
 import org.jetbrains.qodana.QodanaBundle
@@ -18,7 +17,7 @@ import org.junit.Test
 class QodanaTerminalErrorTest {
   private fun shown(e: Throwable): String? = consoleMessage(e, memoryVerdict(e))
 
-  private fun logged(e: Throwable): Pair<String, Throwable?> = logRecord(e, memoryVerdict(e))!!
+  private fun logged(e: Throwable): Pair<String, Throwable?> = logRecord(e, memoryVerdict(e))
 
   @Test
   fun `a cancellation is reported as-is`() {
@@ -32,12 +31,12 @@ class QodanaTerminalErrorTest {
   }
 
   @Test
-  fun `an argument or config error is reported as itself, not as a Qodana bug`() {
-    val e = InspectionApplicationException("Directory 'nope' does not exist")
+  fun `a configuration error is reported as itself, not as a Qodana bug, and keeps its trace in the log`() {
+    val e = QodanaConfigurationException("Directory 'nope' does not exist")
 
     assertEquals("Directory 'nope' does not exist", shown(e))
-    // The one shape that logs nothing: there is no fault to record.
-    assertNull(logRecord(e, memoryVerdict(e)))
+    // The console shows only the message. The log keeps the cause and the trace, because the error can come from deep in a run.
+    assertEquals(e, logged(e).second)
   }
 
   @Test
