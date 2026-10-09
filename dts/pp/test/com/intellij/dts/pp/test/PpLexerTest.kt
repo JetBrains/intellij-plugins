@@ -1,37 +1,56 @@
 package com.intellij.dts.pp.test
 
 import com.intellij.dts.pp.test.impl.TestParserLexerAdapter
-import com.intellij.lexer.Lexer
-import com.intellij.testFramework.LexerTestCase
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.lexerFixture
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.junit5.fixture.TestFixtures
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
+import kotlin.io.path.Path
+import kotlin.io.path.readText
 
-class PpLexerTest : LexerTestCase() {
-  override fun createLexer(): Lexer = TestParserLexerAdapter()
+@TestFixtures
+class PpLexerTest {
+  private val lexer by lexerFixture("$PP_TEST_DATA_PATH/lexer", checkRestart = false) { TestParserLexerAdapter() }
 
-  override fun getDirPath(): String = "$PP_TEST_DATA_PATH/lexer"
+  private lateinit var testFilePath: String
 
-  override fun getPathToTestDataFile(extension: String): String = "$dirPath/${getPpTestName()}$extension"
+  @BeforeEach
+  fun setUp(testInfo: TestInfo) {
+    testFilePath = "$PP_TEST_DATA_PATH/lexer/${getPpTestName(testInfo.testMethod.get().name)}"
+  }
 
-  fun `test header q name`() = doTest()
+  @Test
+  fun `test header q name`(): Unit = doTest()
 
-  fun `test header h name`() = doTest()
+  @Test
+  fun `test header h name`(): Unit = doTest()
 
-  fun `test integer literals`() = doTest()
+  @Test
+  fun `test integer literals`(): Unit = doTest()
 
-  fun `test char literals`() = doTest()
+  @Test
+  fun `test char literals`(): Unit = doTest()
 
-  fun `test char escapes`() = doTest()
+  @Test
+  fun `test char escapes`(): Unit = doTest()
 
-  fun `test float literals`() = doTest()
+  @Test
+  fun `test float literals`(): Unit = doTest()
 
-  fun `test string literals`() = doTest()
+  @Test
+  fun `test string literals`(): Unit = doTest()
 
-  fun `test operator punctuator`() = doTest()
+  @Test
+  fun `test operator punctuator`(): Unit = doTest()
 
-  fun `test restore state`() = doTest()
+  @Test
+  fun `test restore state`(): Unit = doTest()
 
-  private fun doTest() = doFileTest("test")
-
-  override fun checkCorrectRestart(text: String) {
-    // NOOP. Fails test if enabled
+  private fun doTest() {
+    val text = StringUtil.convertLineSeparators(Path("$testFilePath.test").readText().trim { it <= ' ' })
+    PlatformTestUtil.assertSameLinesWithFile("$testFilePath.txt", lexer.printTokens(text, 0))
   }
 }

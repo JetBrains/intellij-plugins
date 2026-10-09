@@ -8,8 +8,10 @@ import java.util.Locale
 val PP_TEST_ROOT_PATH: String = PathManager.getHomePath() + "/contrib/dts/pp"
 val PP_TEST_DATA_PATH: String = PathManager.getHomePath() + "/contrib/dts/pp/testData"
 
-fun UsefulTestCase.getPpTestName(): String {
-  return PlatformTestUtil.getTestName(name, false)
+fun UsefulTestCase.getPpTestName(): String = getPpTestName(name)
+
+fun getPpTestName(methodName: String): String {
+  return PlatformTestUtil.getTestName(methodName, false)
     .replace(Regex("[#@_.,-]+"), " ")
     .toPascalCase()
 }
