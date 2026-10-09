@@ -1,13 +1,23 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lsp.api.LspClient
+import com.intellij.platform.lsp.api.LspClientManager
+import com.intellij.platform.lsp.api.LspClientManagerListener
 import com.intellij.polySymbols.testFramework.LookupElementInfo
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
+import com.intellij.polySymbols.testFramework.noAutoComplete
+import com.intellij.tailwind.lsp.TailwindLspIntegrationProvider
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
@@ -22,6 +32,7 @@ import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
 import org.junit.Test
+import java.util.concurrent.atomic.AtomicBoolean
 
 @TestTsNode
 @TestTsGoProxy
@@ -415,11 +426,10 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(ANGULAR_CORE_19_2_0, extension = "ts", checkDocumentation = true, dir = true)
 
   @Test
-  @SkipTsKotlin
   fun testTailwindInNgClass() =
     doConfiguredTest(ANGULAR_CORE_19_2_0, Angular2TestModule.TAILWINDCSS_4_1_7, extension = "ts", dir = true,
                      configureFileName = "src/tailwindInNgClass.ts") {
-      waitUntilFileOpenedByLspServer(getProject(), getFile().getVirtualFile())
+      waitUntilTailwindLspServerProvidesCompletion()
       checkLookupItems(renderTypeText = true)
     }
 
@@ -489,6 +499,46 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   @Test
   fun testIonicLifecycleHooks() =
     doLookupTest(ANGULAR_CORE_21_2_0, IONIC_ANGULAR_8_4_3, renderTailText = true)
+
+  /**
+   * The Tailwind LSP server ignores a `didOpen` notification that comes while the server initializes its projects.
+   * The project of the file then stays disabled, and the server returns no completion items.
+   * This happens when another LSP server, such as TS Go, starts at the same time.
+   * If the completion is empty, restart the Tailwind LSP server to send `didOpen` again.
+   */
+  private fun CodeInsightTestFixture.waitUntilTailwindLspServerProvidesCompletion() {
+    val hostFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(file).virtualFile
+    waitUntilFileOpenedByTailwindLspServer(hostFile, sendEventsForExistingClients = true)
+    repeat(2) {
+      val lookupElements = noAutoComplete { completeBasic() }
+      LookupManager.hideActiveLookup(project)
+      if (!lookupElements.isNullOrEmpty()) return
+      waitUntilFileOpenedByTailwindLspServer(hostFile, sendEventsForExistingClients = false) {
+        LspClientManager.getInstance(project).stopAndRestartClientsIfNeeded(TailwindLspIntegrationProvider::class.java)
+      }
+    }
+  }
+
+  private fun CodeInsightTestFixture.waitUntilFileOpenedByTailwindLspServer(
+    hostFile: VirtualFile,
+    sendEventsForExistingClients: Boolean,
+    action: () -> Unit = {},
+  ) {
+    val disposable = Disposer.newDisposable()
+    try {
+      val fileOpened = AtomicBoolean()
+      LspClientManager.getInstance(project).addListener(object : LspClientManagerListener {
+        override fun fileOpened(lspClient: LspClient, file: VirtualFile) {
+          if (lspClient.providerClass == TailwindLspIntegrationProvider::class.java && file == hostFile) fileOpened.set(true)
+        }
+      }, disposable, sendEventsForExistingClients)
+      action()
+      PlatformTestUtil.waitWithEventsDispatching("Tailwind LSP server did not open the file in 5 seconds", { fileOpened.get() }, 5)
+    }
+    finally {
+      Disposer.dispose(disposable)
+    }
+  }
 
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
