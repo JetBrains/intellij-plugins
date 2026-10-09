@@ -199,8 +199,6 @@ jvm_library(
         "@community//libraries/junit4:junit4_test_lib",
         "@community//libraries/junit6",
         "@community//libraries/junit6:junit6_test_lib",
-        "@community//platform/xdebugger-api:debugger",
-        "@community//platform/xdebugger-api:debugger_test_lib",
     ],
 )
 ### auto-generated section `build intellij.flex.tests` end

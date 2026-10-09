@@ -1,11 +1,7 @@
-// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtilRt;
@@ -20,9 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +24,6 @@ public class FlexSuspendContext extends XSuspendContext {
   private final FlexExecutionStack myFlexExecutionStack;
   private static final Pattern STACK_FRAMES_DELIMITER = Pattern.compile(".(\\r?\\n)#\\d+ ");
   private static final String AT_MARKER = "at ";
-  private static final String THIS_MARKER = "this = [";
 
   public FlexSuspendContext(final FlexStackFrame topFrame) {
     myFlexExecutionStack = new FlexExecutionStack(topFrame);
@@ -138,8 +131,7 @@ public class FlexSuspendContext extends XSuspendContext {
     final int line = fileNameAndIndexAndLine.line;
 
     if (!StringUtil.isEmpty(fileName)) {
-      file = ReadAction.compute(() -> flexDebugProcess.findFileByNameOrId(
-        fileName, getPackageFromFrameText(flexDebugProcess.getSession().getProject(), flexDebugProcess.getModule(), frameText), fileId));
+      file = ReadAction.compute(() -> flexDebugProcess.findFileByNameOrId(fileName, getPackageFromFrameText(frameText), fileId));
 
       if (file == null) {
         // todo find position in decompiled code
@@ -155,75 +147,28 @@ public class FlexSuspendContext extends XSuspendContext {
                                   : new FlexStackFrame(flexDebugProcess, fileName, line);
   }
 
-  /**
-   * Returns the package of the class that declares the method of the frame, or {@code null} if the frame has no {@code this} value.
-   * For an inherited method, fdb gives the runtime class of {@code this}, so the method class can be its superclass.
-   * If no superclass has the name of the method class, the package of the runtime class is returned.
-   */
-  static @Nullable String getPackageFromFrameText(final Project project, final @Nullable Module module, final String frameText) {
+  private static String getPackageFromFrameText(final String frameText) {
     // #2   this = [Object 106360769, class='fr.kikko.lab::ShineMP3Encoder'].EventDispatcher/dispatchEvent(_arg1=[Object 246336977, class='flash.events::ProgressEvent']) at <null>:0
+    String packageName = null;
+
     int startIndex = frameText.indexOf(' ');
     while (startIndex != -1 && frameText.length() > startIndex && frameText.charAt(startIndex) == ' ') {
       startIndex++;
     }
 
-    if (startIndex <= 0 || !frameText.startsWith(THIS_MARKER, startIndex)) return null;
+    if (startIndex > 0 && frameText.substring(startIndex).startsWith("this = [")) {
+      final int classMarkerIndex = frameText.indexOf(FlexStackFrame.CLASS_MARKER, startIndex);
+      final int packageEndIndex = frameText.indexOf("::", classMarkerIndex + FlexStackFrame.CLASS_MARKER.length());
+      final int classEndIndex = frameText.indexOf("']", classMarkerIndex + FlexStackFrame.CLASS_MARKER.length());
 
-    final int classMarkerIndex = frameText.indexOf(FlexStackFrame.CLASS_MARKER, startIndex);
-    final int classStartIndex = classMarkerIndex + FlexStackFrame.CLASS_MARKER.length();
-    final int classEndIndex = classMarkerIndex > 0 ? frameText.indexOf("']", classStartIndex) : -1;
-    if (classEndIndex == -1) return "";
-
-    final String thisClass = frameText.substring(classStartIndex, classEndIndex);
-    final String thisPackage = getPackageName(thisClass);
-    final String methodClass = getMethodClass(frameText, classEndIndex + "']".length());
-    if (methodClass.isEmpty() || getShortName(methodClass).equals(getShortName(thisClass))) return thisPackage;
-
-    if (methodClass.contains("::")) return getPackageName(methodClass);
-
-    if (DumbService.isDumb(project)) return thisPackage;
-
-    final JSClass thisJSClass = FlexValue.findJSClass(project, module, thisClass);
-    final JSClass methodJSClass = thisJSClass == null ? null : findSuperClass(thisJSClass, getShortName(methodClass), new HashSet<>());
-    final String qName = methodJSClass == null ? null : methodJSClass.getQualifiedName();
-    return qName == null ? thisPackage : StringUtil.getPackageName(qName);
-  }
-
-  /**
-   * @return the class part of {@code Class/method(...)} or {@code Class(...)} that follows {@code this = [...].}
-   */
-  private static String getMethodClass(final String frameText, final int thisEndIndex) {
-    if (!frameText.startsWith(".", thisEndIndex)) return "";
-
-    final int methodStartIndex = thisEndIndex + 1;
-    int methodEndIndex = frameText.length();
-    for (char c : new char[]{'/', '(', ' '}) {
-      final int index = frameText.indexOf(c, methodStartIndex);
-      if (index != -1) methodEndIndex = Math.min(methodEndIndex, index);
+      if (classMarkerIndex > 0 && packageEndIndex > classMarkerIndex && packageEndIndex < classEndIndex) {
+        packageName = frameText.substring(classMarkerIndex + FlexStackFrame.CLASS_MARKER.length(), packageEndIndex);
+      }
+      else {
+        packageName = "";
+      }
     }
-    return frameText.substring(methodStartIndex, methodEndIndex);
-  }
-
-  private static String getPackageName(final String fdbClassName) {
-    final int index = fdbClassName.indexOf("::");
-    return index == -1 ? "" : fdbClassName.substring(0, index);
-  }
-
-  private static String getShortName(final String fdbClassName) {
-    final int index = fdbClassName.indexOf("::");
-    // fdb adds '$' to the class name in a static context
-    return StringUtil.trimEnd(index == -1 ? fdbClassName : fdbClassName.substring(index + "::".length()), "$");
-  }
-
-  private static @Nullable JSClass findSuperClass(final JSClass jsClass, final String name, final Set<JSClass> visited) {
-    for (JSClass superClass : jsClass.getSuperClasses()) {
-      if (!visited.add(superClass)) continue;
-      if (name.equals(superClass.getName())) return superClass;
-
-      final JSClass result = findSuperClass(superClass, name, visited);
-      if (result != null) return result;
-    }
-    return null;
+    return packageName;
   }
 
   static String[] splitStackFrames(String s) {
