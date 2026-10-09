@@ -26,7 +26,7 @@ import java.time.Duration
 import java.time.Instant
 
 object UsageCollector : CounterUsagesCollector() {
-  private val GROUP = QodanaEventLogGroup("qodana.usage", 16)
+  private val GROUP = QodanaEventLogGroup("qodana.usage", 17)
 
   override fun getGroup() = GROUP.eventLogGroup
 
@@ -57,7 +57,9 @@ object UsageCollector : CounterUsagesCollector() {
     "space" to "jetbrains-space",
   )
 
-  private val systemField = EventFields.String("system", knownSystems)
+  private const val UNDEFINED_SYSTEM = "undefined"
+
+  private val systemField = EventFields.String("system", knownSystems + UNDEFINED_SYSTEM)
   private val versionField = EventFields.StringValidatedByInlineRegexp("version", "(?x) \\d+ (?:\\.\\d+)* (?:_EAP)?")
   private val buildField = EventFields.StringValidatedByRegexpReference("build", "integer")
 
@@ -164,6 +166,7 @@ object UsageCollector : CounterUsagesCollector() {
   internal data class Environment(val system: String, val version: String?, val build: String?)
 
   internal fun splitEnv(env: String): Environment {
+    if (env.isBlank()) return Environment(UNDEFINED_SYSTEM, null, null)
     val regex = """(?x)
         ([\w-]+)                          # system
         (?: : (\d+ (?:\.\d+)* (?:_EAP)?)  # optional version; keep in sync with versionField
@@ -191,7 +194,9 @@ object UsageCollector : CounterUsagesCollector() {
 
   @JvmStatic
   fun logEnv(qodanaEnv: String?) {
-    val env = splitEnv(qodanaEnv ?: "other")
+    val env = splitEnv(qodanaEnv ?: "")
+    Logger.getInstance(UsageCollector::class.java)
+      .info("QODANA_ENV='$qodanaEnv' reported to FUS as system=${env.system}, version=${env.version}, build=${env.build}")
     val args = mutableListOf<EventPair<*>>()
     args += systemField with env.system
     if (env.version != null)
