@@ -14,8 +14,10 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceIns
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.Angular2TsConfigFile
 import org.angular2.TestNoService
 import org.angular2.TestTsGoProxy
+import org.angular2.inspections.AngularInaccessibleSymbolInspection
 import org.angular2.inspections.AngularUncalledSignalLengthPropertyAccessInspection
 import org.angular2.lang.Angular2Bundle
 import org.junit.Test
@@ -58,6 +60,12 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
       JSTestUtils.setInspectionHighlightLevel(project, canBeStaticInspection, HighlightDisplayLevel.WARNING, testRootDisposable)
       enableInspections(canBeStaticInspection)
     }
+
+  @Test
+  fun testInaccessibleSymbolPrivateAllowed() =
+    doHighlightingTest(Angular2TestModule.ANGULAR_CORE_22_2_2, Angular2TestModule.TS_LIB,
+                       configurators = listOf(Angular2TsConfigFile()),
+                       inspections = listOf(AngularInaccessibleSymbolInspection::class.java))
 
   @Test
   fun testUnterminated() =

@@ -4,3 +4,4 @@
 /build
 /out
 /angular-backend/gen-resources/angular-service/node_modules/ws-typescript-angular-plugin/index.js.map
+!node_modules
