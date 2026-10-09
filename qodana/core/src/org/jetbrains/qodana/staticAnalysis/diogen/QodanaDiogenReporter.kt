@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.staticAnalysis.diogen
 
-import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.diagnostic.ITNReporter
 import com.intellij.diagnostic.toProblematicPluginInfo
 import com.intellij.ide.plugins.PluginManagerCore
@@ -22,7 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withTimeoutOrNull
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.memoryVerdict
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
@@ -87,10 +86,7 @@ internal class QodanaDiogenReporter @JvmOverloads constructor(
   private fun report(message: String, throwable: Throwable) {
     if (!acceptsReports ||
         throwable is CancellationException ||
-        //Configuration exception
-        throwable is InspectionApplicationException ||
-        //QD-16380 Can be configuration, can be something more critical - no direct contract
-        throwable is QodanaException ||
+        throwable is QodanaConfigurationException ||
         memoryVerdict(throwable).holdsAnyMemoryError) {
       return
     }

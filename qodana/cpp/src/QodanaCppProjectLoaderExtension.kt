@@ -12,7 +12,7 @@ import com.jetbrains.cidr.meson.wizard.MesonProjectOpenProcessor
 import org.jdom.Element
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicReference
@@ -69,13 +69,13 @@ fun selectProcessor(config: QodanaConfig, processors: List<ProjectOpenProcessor>
     )
 
     val projectPath = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(config.projectPath)
-    if (projectPath == null) throw QodanaException("Project path '${config.projectPath}' was not found")
+    if (projectPath == null) throw QodanaConfigurationException("Project path '${config.projectPath}' was not found")
 
     val requestedBuildSystem = config.cpp?.buildSystem
     if (requestedBuildSystem != null) {
         log.debug("Build system specified in qodana.yaml: '$requestedBuildSystem'")
         val requestedProcessor = supportedProcessors.getOrElse(requestedBuildSystem.lowercase()) {
-            throw QodanaException("Specified build system '$requestedBuildSystem' is not supported by Qodana")
+            throw QodanaConfigurationException("Specified build system '$requestedBuildSystem' is not supported by Qodana")
         }
 
         try {
@@ -84,7 +84,7 @@ fun selectProcessor(config: QodanaConfig, processors: List<ProjectOpenProcessor>
                 println("Build system: ${it.name} (specified in qodana.yaml)")
             }
         } catch (_: NoSuchElementException) {
-            throw QodanaException("Specified build system '$requestedBuildSystem' was not detected in the project")
+            throw QodanaConfigurationException("Specified build system '$requestedBuildSystem' was not detected in the project")
         }
     }
     log.debugValues(
@@ -103,7 +103,7 @@ fun selectProcessor(config: QodanaConfig, processors: List<ProjectOpenProcessor>
             println("Build system: ${it.name} (auto-detected)")
         }
     } catch (_: NoSuchElementException) {
-        throw QodanaException("No build systems were detected in '${config.projectPath}'")
+        throw QodanaConfigurationException("No build systems were detected in '${config.projectPath}'")
     }
 }
 

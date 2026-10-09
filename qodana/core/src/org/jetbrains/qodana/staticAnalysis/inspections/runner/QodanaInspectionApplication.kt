@@ -278,7 +278,7 @@ class QodanaInspectionApplication(
 
     for (pluginId in plugins) {
       if (!PluginManager.isPluginInstalled(pluginId)) {
-        throw QodanaException("Required plugin '$pluginId' is not installed")
+        throw QodanaConfigurationException("Required plugin '$pluginId' is not installed")
       }
     }
   }

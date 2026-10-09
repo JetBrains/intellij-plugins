@@ -4,7 +4,7 @@ import com.intellij.refactoring.migration.MigrationMapEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.qodana.jvm.java.migrate.MigrateClassesTestUtils.mapping
 import org.jetbrains.qodana.jvm.java.migrate.MigrateClassesTestUtils.paramMap
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.script.UnvalidatedParameters
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -74,7 +74,7 @@ class MigrationParametersTest {
   }
 
   private inline fun assertFailsWith(message: String, f: () -> Unit) {
-    val e = assertThrows<QodanaException>(f)
+    val e = assertThrows<QodanaConfigurationException>(f)
     assertThat(e).hasMessage(message)
   }
 

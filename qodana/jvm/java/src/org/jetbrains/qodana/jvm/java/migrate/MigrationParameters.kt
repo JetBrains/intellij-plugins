@@ -4,7 +4,7 @@ import com.intellij.refactoring.migration.MigrationManager
 import com.intellij.refactoring.migration.MigrationMap
 import com.intellij.refactoring.migration.MigrationMapEntry
 import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.script.UnvalidatedParameters
 import org.jetbrains.qodana.staticAnalysis.script.optional
 
@@ -13,7 +13,7 @@ data class MigrationParameters(
   val mappings: List<MigrationMapEntry>
 ) {
   companion object {
-    private fun fail(reason: String): Nothing = throw QodanaException(reason)
+    private fun fail(reason: String): Nothing = throw QodanaConfigurationException(reason)
     private fun <T> Map<String, T>.req(key: String) =
       get(key) ?: fail("Missing required mapping property '$key'")
 

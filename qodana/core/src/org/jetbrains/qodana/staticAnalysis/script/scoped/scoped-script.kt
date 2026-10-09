@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
@@ -40,7 +41,7 @@ internal class ScopedScriptFactory : QodanaScriptFactory {
 
   override fun parseParameters(parameters: String): Map<String, String> =
     if (parameters.isBlank()) {
-      throw QodanaException("Cannot start $scriptName script without scope file")
+      throw QodanaConfigurationException("Cannot start $scriptName script without scope file")
     }
     else {
       mapOf(SCOPE_ARG to parameters)
@@ -56,7 +57,7 @@ internal class ScopedScriptFactory : QodanaScriptFactory {
       val p = Path(parameters.require<String>(SCOPE_ARG))
       if (p.isAbsolute) p else config.projectPath.resolve(p)
     }
-    if (path.notExists()) throw QodanaException("Scope file $path does not exist")
+    if (path.notExists()) throw QodanaConfigurationException("Scope file $path does not exist")
 
     val runContextFactory = ScopedRunContextFactory(contextFactory, path, config)
     return ScopedScript(runContextFactory)

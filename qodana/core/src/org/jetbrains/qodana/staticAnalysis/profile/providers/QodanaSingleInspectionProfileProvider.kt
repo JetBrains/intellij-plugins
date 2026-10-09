@@ -1,7 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis.profile.providers
 
-import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.openapi.project.Project
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManager
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider
@@ -16,7 +16,7 @@ class QodanaSingleInspectionProfileProvider : QodanaInspectionProfileProvider {
 
     val inspectionProfile = QodanaInspectionProfile.newWithDisabledTools(profileName, QodanaInspectionProfileManager.getInstance(project))
     val tools = inspectionProfile.getToolsOrNull(inspectionId, project)
-                ?: throw InspectionApplicationException("Unknown inspection id '$inspectionId' in qodana.single profile")
+                ?: throw QodanaConfigurationException("Unknown inspection id '$inspectionId' in qodana.single profile")
 
     tools.isEnabled = true
     tools.defaultState.isEnabled = true

@@ -10,6 +10,7 @@ import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionProfileLoader
 import org.jetbrains.qodana.staticAnalysis.profile.QODANA_BASE_PROFILE_NAME
@@ -45,7 +46,7 @@ private suspend fun loadBaseProfile(
     //load from config
     val (name, path) = config.profile.base
     var profile = profileLoader.tryLoadProfileByNameOrPath(name, path, config.profileSource) {
-      throw QodanaException(it)
+      throw QodanaConfigurationException(it)
     }
     if (profile != null) return@runInterruptible LoadedProfile(profile, name, path)
 

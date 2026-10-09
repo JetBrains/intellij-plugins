@@ -1,12 +1,12 @@
 package org.jetbrains.qodana.staticAnalysis.script
 
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
 /** The parameters of a [QodanaScript], for validating required and unknown parameters. */
 class UnvalidatedParameters(private val scriptName: String, parameters: Map<String, Any>) {
-  private fun fail(message: String): Nothing = throw QodanaException("Script '$scriptName' $message")
+  private fun fail(message: String): Nothing = throw QodanaConfigurationException("Script '$scriptName' $message")
 
   private val remaining = parameters.toMutableMap()
 
@@ -33,7 +33,7 @@ class UnvalidatedParameters(private val scriptName: String, parameters: Map<Stri
 
     val parameters = if (remaining.size == 1) "parameter" else "parameters"
     val unknown = remaining.keys.joinToString()
-    throw QodanaException("Script '$scriptName' cannot handle $parameters '$unknown'")
+    throw QodanaConfigurationException("Script '$scriptName' cannot handle $parameters '$unknown'")
   }
 }
 

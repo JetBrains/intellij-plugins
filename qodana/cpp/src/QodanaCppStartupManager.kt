@@ -1,20 +1,20 @@
 package org.jetbrains.qodana.cpp
 
 import com.intellij.clion.radler.core.projectmodel.RadProjectModelHost
+import com.intellij.diagnostic.rethrowControlFlowException
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.project.configuration.HeadlessLogging
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.diagnostic.rethrowControlFlowException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManagerListener
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.configuration.HeadlessLogging
 import com.intellij.openapi.project.waitForSmartMode
 import com.intellij.openapi.rd.createNestedDisposable
 import com.intellij.openapi.rd.util.lifetime
@@ -29,11 +29,11 @@ import com.jetbrains.rd.platform.util.TimeoutTracker
 import com.jetbrains.rd.util.lifetime.Lifetime
 import com.jetbrains.rd.util.threading.coroutines.nextNotNullValue
 import com.jetbrains.rd.util.threading.coroutines.nextTrueValue
-import com.jetbrains.rider.protocol.IProtocolHostWithBackend
-import com.jetbrains.rider.protocol.protocolHostIfExists
 import com.jetbrains.rider.model.projectModelTasks
 import com.jetbrains.rider.model.radProjectModel
 import com.jetbrains.rider.projectView.solution
+import com.jetbrains.rider.protocol.IProtocolHostWithBackend
+import com.jetbrains.rider.protocol.protocolHostIfExists
 import com.jetbrains.rider.services.RiderProjectModelWaiter
 import com.jetbrains.rider.solutionAnalysis.SolutionAnalysisHost
 import kotlinx.coroutines.CancellationException
@@ -50,6 +50,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaTimeoutException
 import java.util.concurrent.locks.ReentrantLock
@@ -202,7 +203,7 @@ class QodanaCppStartupManager(private val project: Project, private val coroutin
   }
 
   /**
-   * Reports a build system configuration failure with a user-facing message and throws [QodanaException].
+   * Reports a build system configuration failure with a user-facing message and throws [QodanaConfigurationException].
    *
    * @param workspaceComponentName the @State name of the failed CIDR workspace (e.g.
    *   "MakefileWorkspace"). Defaults to [selectedWorkspaceComponentName]; callers that capture
@@ -236,7 +237,7 @@ class QodanaCppStartupManager(private val project: Project, private val coroutin
       "Could not auto-detect the build system: $reason"
     }
     HeadlessLogging.logFatalError(message)
-    throw QodanaException(message)
+    throw QodanaConfigurationException(message)
   }
 
   /** Prints CMake output to stdout for user visibility. This is informational only — it does not

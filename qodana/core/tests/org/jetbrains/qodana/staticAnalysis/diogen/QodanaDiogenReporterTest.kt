@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.staticAnalysis.diogen
 
-import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent
 import com.intellij.openapi.diagnostic.SubmittedReportInfo
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -11,7 +10,9 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaCancellationException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaTimeoutException
 import org.jetbrains.qodana.staticAnalysis.testFramework.QODANA_LOG_CATEGORY
 import org.jetbrains.qodana.staticAnalysis.testFramework.logRecordsFrom
 import org.junit.Test
@@ -100,10 +101,9 @@ class QodanaDiogenReporterTest {
       successfulSubmission()
     }
     val expected = listOf(
-      InspectionApplicationException("invalid configuration"),
+      QodanaConfigurationException("invalid configuration"),
       ProcessCanceledException(),
       QodanaCancellationException("cancelled"),
-      QodanaException("expected Qodana failure"),
       OutOfMemoryError("Java heap space"),
       RuntimeException(OutOfMemoryError("Java heap space")),
     )
@@ -114,6 +114,26 @@ class QodanaDiogenReporterTest {
     reporter.stop()
 
     assertThat(reports).isEmpty()
+  }
+
+  @Test
+  fun `sends internal Qodana failures`() = runTest {
+    val reports = mutableListOf<IdeaLoggingEvent>()
+    val reporter = QodanaDiogenReporter(this, dispatcher = null) { event ->
+      reports += event
+      successfulSubmission()
+    }
+    val internal = listOf(
+      QodanaException("internal Qodana failure"),
+      QodanaTimeoutException("timeout"),
+    )
+
+    reporter.start(enabled = true)
+    internal.forEach(reporter::reportApplicationCrash)
+    runCurrent()
+    reporter.stop()
+
+    assertThat(reports.map { it.throwable }).containsExactlyElementsOf(internal)
   }
 
   @Test

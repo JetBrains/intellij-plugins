@@ -2,7 +2,7 @@ package org.jetbrains.qodana.php
 
 import com.jetbrains.php.config.PhpLanguageLevel
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.script.buildScript
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
@@ -25,7 +25,7 @@ class PhpMigrationScriptFactoryTest : QodanaTestCase() {
   fun `parseParameters empty`() {
     val factory = PhpMigrationScriptFactory()
 
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       factory.parseParameters("")
     }
     assertEquals("CLI parameter for php-migration must be passed as '--script php-migration:%fromVersion%-to-%toVersion%'. " +
@@ -37,7 +37,7 @@ class PhpMigrationScriptFactoryTest : QodanaTestCase() {
   fun `parseParameters missing separator`() {
     val factory = PhpMigrationScriptFactory()
 
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       factory.parseParameters("8.0")
     }
     assertEquals("CLI parameter for php-migration must be passed as '--script php-migration:%fromVersion%-to-%toVersion%'. " +
@@ -49,7 +49,7 @@ class PhpMigrationScriptFactoryTest : QodanaTestCase() {
   fun `parseParameters too many versions`() {
     val factory = PhpMigrationScriptFactory()
 
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       factory.parseParameters("5.6-to-7.4-to-8.0")
     }
     assertEquals("CLI parameter for php-migration must be passed as '--script php-migration:%fromVersion%-to-%toVersion%'. " +
@@ -61,7 +61,7 @@ class PhpMigrationScriptFactoryTest : QodanaTestCase() {
   fun `parseParameters empty fromVersion`() {
     val factory = PhpMigrationScriptFactory()
 
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       factory.parseParameters("-to-7.4")
     }
     assertEquals("CLI parameter for php-migration must be passed as '--script php-migration:%fromVersion%-to-%toVersion%'. " +
@@ -73,7 +73,7 @@ class PhpMigrationScriptFactoryTest : QodanaTestCase() {
   fun `parseParameters empty toVersion`() {
     val factory = PhpMigrationScriptFactory()
 
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       factory.parseParameters("5.6-to-")
     }
     assertEquals("CLI parameter for php-migration must be passed as '--script php-migration:%fromVersion%-to-%toVersion%'. " +
@@ -83,7 +83,7 @@ class PhpMigrationScriptFactoryTest : QodanaTestCase() {
 
   @Test
   fun `createScript empty parameters`() = runTest {
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       buildScript("php-migration")
     }
     assertEquals("Script 'php-migration' requires parameter 'fromLevel'", e.message)
@@ -96,7 +96,7 @@ class PhpMigrationScriptFactoryTest : QodanaTestCase() {
 
   @Test
   fun `createScript too many parameters`() = runTest {
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       buildScript("php-migration", "fromLevel" to "7.4", "toLevel" to "8.0", "unknown" to "")
     }
     assertEquals("Script 'php-migration' cannot handle parameter 'unknown'", e.message)
@@ -104,7 +104,7 @@ class PhpMigrationScriptFactoryTest : QodanaTestCase() {
 
   @Test
   fun `createScript unknown PHP version 3_0`() = runTest {
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       buildScript("php-migration", "fromLevel" to "3.0", "toLevel" to "8.0")
     }
     assertEquals(
@@ -126,7 +126,7 @@ class PhpMigrationScriptFactoryTest : QodanaTestCase() {
     assertEquals(PhpLanguageLevel.PHP560.versionString, "5.6.0")
     assertEquals(PhpLanguageLevel.PHP560.presentableName, "5.6")
 
-    val e = assertThrows<QodanaException> {
+    val e = assertThrows<QodanaConfigurationException> {
       buildScript("php-migration", "fromLevel" to "5.6", "toLevel" to "8.0")
     }
     assertEquals("Unknown PHP language level '5.6', " +

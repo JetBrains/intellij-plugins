@@ -10,7 +10,7 @@ import com.jetbrains.cidr.project.workspace.CidrWorkspaceState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 
 /**
  * Qodana-specific post-workspace validation and CMake preset selection.
@@ -31,7 +31,7 @@ class QodanaCppHeadlessStartupExtension {
             val workspaceStates = wsManager.workspaces.entries.joinToString(", ") { (ws, state) ->
                 "${ws.javaClass.simpleName}=$state"
             }
-            throw QodanaException(
+          throw QodanaConfigurationException(
                 "Failed to load project: all build system workspaces failed to load. " +
                         "Workspace states: [$workspaceStates]. " +
                         "Check that your project's build files are valid and that all required tools are installed."
@@ -47,14 +47,14 @@ class QodanaCppHeadlessStartupExtension {
             }
 
             if (cmakeWorkspaceState == CidrWorkspaceState.NotLoaded) {
-                throw QodanaException("Cannot select CMake preset: error while loading CMake workspace")
+              throw QodanaConfigurationException("Cannot select CMake preset: error while loading CMake workspace")
             }
 
             // A single requested profile should have been enabled by this point in QodanaCppCMakeEnabledProfileInitializer, unless
             // the project was launched with existing settings in .idea, in which case the profile initializer will not be triggered.
             val allProfiles = cmakeWorkspace.settings.profiles
             if (allProfiles.none { it.name == requestedCMakeProfile }) {
-                throw QodanaException("Cannot select CMake preset: preset \"$requestedCMakeProfile\" was not found")
+              throw QodanaConfigurationException("Cannot select CMake preset: preset \"$requestedCMakeProfile\" was not found")
             }
 
             val enabledProfiles = cmakeWorkspace.settings.activeProfiles

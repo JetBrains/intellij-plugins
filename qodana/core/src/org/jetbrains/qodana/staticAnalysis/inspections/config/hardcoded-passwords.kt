@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.config
 
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import java.util.regex.PatternSyntaxException
 
 data class HardcodedPasswordsConfig(
@@ -53,7 +53,7 @@ data class HardcodedPasswords(
 
     private fun parseNameAndValueFromConfig(entry: HardcodedPasswordsConfig.NameAndValue, section: String): NameAndValue {
       if (entry.name == null || entry.value == null) {
-        throw QodanaException("hardcodedPasswords $section.$entry pattern does not specify \"name\" and \"value\"")
+        throw QodanaConfigurationException("hardcodedPasswords $section.$entry pattern does not specify \"name\" and \"value\"")
       }
       return NameAndValue(parseRegex(entry.name), parseRegex(entry.value))
     }
@@ -63,7 +63,7 @@ data class HardcodedPasswords(
         Regex(regexString)
       }
       catch (e : PatternSyntaxException) {
-        throw QodanaException("Rule $regexString is invalid regular expression, ${e.message}")
+        throw QodanaConfigurationException("Rule $regexString is invalid regular expression, ${e.message}")
       }
     }
   }

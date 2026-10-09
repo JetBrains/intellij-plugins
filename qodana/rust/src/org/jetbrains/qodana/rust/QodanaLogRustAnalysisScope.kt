@@ -4,7 +4,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.ConsoleLog
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 import org.rust.cargo.project.model.CargoProject
 import org.rust.cargo.project.model.cargoProjects
@@ -15,7 +15,7 @@ class QodanaLogRustAnalysisScope : QodanaWorkflowExtension {
   override suspend fun afterConfiguration(config: QodanaConfig, project: Project) {
     val cargoProjects = project.cargoProjects
     if (!cargoProjects.hasAtLeastOneValidProject) {
-      throw QodanaException("No Cargo projects were loaded. Check that the project has a valid Cargo.toml.")
+      throw QodanaConfigurationException("No Cargo projects were loaded. Check that the project has a valid Cargo.toml.")
     }
 
     val failedProjects = cargoProjects.allProjects.filter { it.mergedStatus !is CargoProject.UpdateStatus.UpToDate }

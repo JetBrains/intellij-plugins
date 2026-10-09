@@ -30,7 +30,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.ExcludeScopeModifi
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.GitIgnoreExcludeScopeModifier
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.GlobalExcludeScopeModifier
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaScopeModifier
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.getOutputFormat
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
@@ -143,7 +143,7 @@ enum class FixesStrategy(val stageName: String) {
         return FixesStrategy.valueOf(value.uppercase(Locale.getDefault()))
       }
       catch (e: IllegalArgumentException) {
-        throw QodanaException("Unknown value '$value' for fixesStrategy configuration parameter")
+        throw QodanaConfigurationException("Unknown value '$value' for fixesStrategy configuration parameter")
       }
     }
   }
@@ -260,7 +260,7 @@ data class QodanaConfig(
       val jvm = QodanaJvmConfig(yaml.projectJDK)
       val dependencyAnalysis = DependencyAnalysisConfig.fromYamlConfig(yaml)
 
-      if (yaml.version != "1.0") throw QodanaException("Property \"version\" in qodana.yaml must be \"1.0\", not \"${yaml.version}\"")
+      if (yaml.version != "1.0") throw QodanaConfigurationException("Property \"version\" in qodana.yaml must be \"1.0\", not \"${yaml.version}\"")
       val isCommandLineProfile = profileNameFromCli.isNotBlank() || profilePathFromCli.isNotBlank()
       return QodanaConfig(
         projectPath = projectPath,
@@ -301,9 +301,9 @@ data class QodanaConfig(
 
   init {
     // Allow non-absolute paths for windows tests, where temp://src is treatet as not absolute
-    if (!application.isUnitTestMode && !projectPath.isAbsolute) throw QodanaException("Project path \"$projectPath\" must be absolute")
+    if (!application.isUnitTestMode && !projectPath.isAbsolute) throw QodanaConfigurationException("Project path \"$projectPath\" must be absolute")
     if (failOnErrorNotification && maxRuntimeNotifications < 1) {
-      throw QodanaException("Cannot enable 'failOnErrorNotification' when 'maxRuntimeNotifications' is less than 1")
+      throw QodanaConfigurationException("Cannot enable 'failOnErrorNotification' when 'maxRuntimeNotifications' is less than 1")
     }
   }
 
