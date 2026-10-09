@@ -64,7 +64,8 @@ open class Angular2HtmlLexer(
     if (!isHighlighting) return tokenType
     val state = state
     // we need to convert attribute names according to their function
-    if (tokenType === XmlTokenType.XML_NAME && state and BASE_STATE_MASK == _Angular2HtmlLexer.TAG_ATTRIBUTES) {
+    if (tokenType === XmlTokenType.XML_NAME
+        && (state and BASE_STATE_MASK).let { it == _Angular2HtmlLexer.TAG_ATTRIBUTES || it == _Angular2HtmlLexer.END_TAG_ATTRIBUTES }) {
       val info = Angular2AttributeNameParser.parse(tokenText)
       if (info.type != Angular2AttributeType.REGULAR
           && Angular2HtmlEmbeddedContentSupport.Holder.NG_EL_ATTRIBUTES.contains(info.type)) {

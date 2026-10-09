@@ -10,12 +10,17 @@ import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IFileElementType
+import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.asSafely
 import org.angular2.lang.html.Angular2HtmlFile
 import org.angular2.lang.html.Angular2TemplateLanguageBase
 import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.lexer.Angular2HtmlLexer
+import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorElementType
+
+private val COMMENT_TOKENS: TokenSet = TokenSet.orSet(XmlTokenType.COMMENTS, Angular2HtmlTokenTypes.IN_ELEMENT_COMMENTS)
 
 abstract class Angular2TemplateParserDefinitionBase(
   language: Angular2TemplateLanguageBase,
@@ -34,6 +39,10 @@ abstract class Angular2TemplateParserDefinitionBase(
 
   override fun getFileNodeType(): IFileElementType {
     return if (svg) syntax.fileElementTypeSvg else syntax.fileElementTypeHtml
+  }
+
+  override fun getCommentTokens(): TokenSet {
+    return COMMENT_TOKENS
   }
 
   override fun createFile(viewProvider: FileViewProvider): PsiFile {

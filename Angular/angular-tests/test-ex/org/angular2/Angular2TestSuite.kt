@@ -75,6 +75,7 @@ import org.angular2.lang.expr.Angular2ParserTest
 import org.angular2.lang.html.Angular17HtmlParsingTest
 import org.angular2.lang.html.Angular181HtmlParsingTest
 import org.angular2.lang.html.Angular20HtmlParsingTest
+import org.angular2.lang.html.Angular22HtmlParsingTest
 import org.angular2.lang.html.Angular2HtmlLexerSpecTest
 import org.angular2.lang.html.Angular2HtmlParsingTest
 import org.angular2.lang.html.Angular2SemanticHighlightingTest
@@ -96,6 +97,7 @@ import org.junit.runners.Suite
   Angular17HtmlParsingTest::class,
   Angular181HtmlParsingTest::class,
   Angular20HtmlParsingTest::class,
+  Angular22HtmlParsingTest::class,
   Angular2SemanticHighlightingTest::class,
   Angular2DirectiveSimpleSelectorSpecTest::class,
   Angular2TemplateTranspilerTest::class,

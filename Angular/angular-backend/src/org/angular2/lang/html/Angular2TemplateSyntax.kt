@@ -16,6 +16,8 @@ import org.angular2.lang.svg.Angular181SvgFileElementType
 import org.angular2.lang.svg.Angular181SvgLanguage
 import org.angular2.lang.svg.Angular20SvgFileElementType
 import org.angular2.lang.svg.Angular20SvgLanguage
+import org.angular2.lang.svg.Angular22SvgFileElementType
+import org.angular2.lang.svg.Angular22SvgLanguage
 import org.angular2.lang.svg.Angular2SvgFileElementType
 import org.angular2.lang.svg.Angular2SvgLanguage
 
@@ -30,6 +32,7 @@ enum class Angular2TemplateSyntax(
   val enableBlockSyntax: Boolean = false,
   val enableLetSyntax: Boolean = false,
   val enableVoidKeyword: Boolean = false,
+  val enableInElementComments: Boolean = false,
 ) {
   V_2(
     Angular2HtmlLanguage, Angular2HtmlFileElementType,
@@ -56,6 +59,11 @@ enum class Angular2TemplateSyntax(
     Angular20SvgLanguage, Angular20SvgFileElementType,
     Angular20Language, Angular20FileElementType,
     true, true, true, true),
+  V_22(
+    Angular22HtmlLanguage, Angular22HtmlFileElementType,
+    Angular22SvgLanguage, Angular22SvgFileElementType,
+    Angular20Language, Angular20FileElementType,
+    true, true, true, true, true),
   ;
 
   val version: String = name.filter { it.isDigit() }

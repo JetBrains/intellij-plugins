@@ -22,12 +22,14 @@ import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.html.Angular17HtmlFileType
 import org.angular2.lang.html.Angular181HtmlFileType
 import org.angular2.lang.html.Angular20HtmlFileType
+import org.angular2.lang.html.Angular22HtmlFileType
 import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.lang.html.Angular2HtmlFileType
 import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.svg.Angular17SvgFileType
 import org.angular2.lang.svg.Angular181SvgFileType
 import org.angular2.lang.svg.Angular20SvgFileType
+import org.angular2.lang.svg.Angular22SvgFileType
 import org.angular2.lang.svg.Angular2SvgFileType
 import org.angular2.web.Angular2AttributeNameCodeCompletionFilter
 import org.angular2.web.NG_DIRECTIVE_IN_OUTS
@@ -48,12 +50,14 @@ class Angular2Framework : WebFramework() {
         Angular2TemplateSyntax.V_17 -> Angular17HtmlFileType
         Angular2TemplateSyntax.V_18_1 -> Angular181HtmlFileType
         Angular2TemplateSyntax.V_20 -> Angular20HtmlFileType
+        Angular2TemplateSyntax.V_22 -> Angular22HtmlFileType
       }
       SourceFileKind.SVG -> when (Angular2LangUtil.getTemplateSyntax(project, context)) {
         Angular2TemplateSyntax.V_2, Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS -> Angular2SvgFileType
         Angular2TemplateSyntax.V_17 -> Angular17SvgFileType
         Angular2TemplateSyntax.V_18_1 -> Angular181SvgFileType
         Angular2TemplateSyntax.V_20 -> Angular20SvgFileType
+        Angular2TemplateSyntax.V_22 -> Angular22SvgFileType
       }
       else -> null
     }
