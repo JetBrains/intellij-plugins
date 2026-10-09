@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../community/platform/polySymbols/web-types-gen/resources/web-types.json",
+  "$schema": "../../../../community/platform/polySymbols/web/web-types-gen/resources/web-types.json",
   "name": "@angular/core",
   "framework": "angular",
   "version": "22.0.0-next.1",
