@@ -13,7 +13,6 @@ open class Angular2HtmlIndexerTest : Angular2HtmlHighlightingLexerTest() {
                                    Angular2HtmlLexer(true, templateSyntax, null))
   }
 
-  override fun getDirPath(): String {
-    return Angular2TestUtil.getLexerTestDirPath() + "html/index"
-  }
+  override val dirPath: String
+    get() = Angular2TestUtil.getLexerTestDirPath() + "html/index"
 }

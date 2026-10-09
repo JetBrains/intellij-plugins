@@ -68,28 +68,14 @@ import org.angular2.css.Angular2CssHighlightingTest
 import org.angular2.css.Angular2CssInspectionsTest
 import org.angular2.css.Angular2CssRenameTest
 import org.angular2.css.Angular2CssUsageHighlightingTest
-import org.angular2.lang.expr.Angular20LexerTest
 import org.angular2.lang.expr.Angular20ParserTest
 import org.angular2.lang.expr.Angular2LexerSpecTest
-import org.angular2.lang.expr.Angular2LexerTest
 import org.angular2.lang.expr.Angular2ParserSpecTest
 import org.angular2.lang.expr.Angular2ParserTest
-import org.angular2.lang.html.Angular17HtmlHighlightingLexerTest
-import org.angular2.lang.html.Angular17HtmlIndexerTest
-import org.angular2.lang.html.Angular17HtmlLexerTest
 import org.angular2.lang.html.Angular17HtmlParsingTest
-import org.angular2.lang.html.Angular181HtmlHighlightingLexerTest
-import org.angular2.lang.html.Angular181HtmlIndexerTest
-import org.angular2.lang.html.Angular181HtmlLexerTest
 import org.angular2.lang.html.Angular181HtmlParsingTest
-import org.angular2.lang.html.Angular20HtmlHighlightingLexerTest
-import org.angular2.lang.html.Angular20HtmlIndexerTest
-import org.angular2.lang.html.Angular20HtmlLexerTest
 import org.angular2.lang.html.Angular20HtmlParsingTest
-import org.angular2.lang.html.Angular2HtmlHighlightingLexerTest
-import org.angular2.lang.html.Angular2HtmlIndexerTest
 import org.angular2.lang.html.Angular2HtmlLexerSpecTest
-import org.angular2.lang.html.Angular2HtmlLexerTest
 import org.angular2.lang.html.Angular2HtmlParsingTest
 import org.angular2.lang.html.Angular2SemanticHighlightingTest
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelectorSpecTest
@@ -102,24 +88,10 @@ import org.junit.runners.Suite
 @Suite.SuiteClasses(
   Angular2BlueprintListTest::class,
   Angular2LexerSpecTest::class,
-  Angular2LexerTest::class,
-  Angular20LexerTest::class,
   Angular2ParserSpecTest::class,
   Angular2ParserTest::class,
   Angular20ParserTest::class,
   Angular2HtmlLexerSpecTest::class,
-  Angular2HtmlLexerTest::class,
-  Angular2HtmlHighlightingLexerTest::class,
-  Angular2HtmlIndexerTest::class,
-  Angular17HtmlLexerTest::class,
-  Angular17HtmlHighlightingLexerTest::class,
-  Angular17HtmlIndexerTest::class,
-  Angular181HtmlLexerTest::class,
-  Angular181HtmlHighlightingLexerTest::class,
-  Angular181HtmlIndexerTest::class,
-  Angular20HtmlLexerTest::class,
-  Angular20HtmlHighlightingLexerTest::class,
-  Angular20HtmlIndexerTest::class,
   Angular2HtmlParsingTest::class,
   Angular17HtmlParsingTest::class,
   Angular181HtmlParsingTest::class,
