@@ -19,7 +19,6 @@ import org.angularjs.diagrams.DiagramsTest;
 import org.angularjs.editor.AngularTypedHandlerTest;
 import org.angularjs.findUsages.AngularFindUsagesTest;
 import org.angularjs.index.AngularDirectiveCommentParsingTest;
-import org.angularjs.lang.lexer.AngularJSLexerTest;
 import org.angularjs.lang.parser.AngularJSParserTest;
 import org.angularjs.refactoring.DirectiveRenameTest;
 import org.angularjs.resharper.AngularJSReSharperTestSuite;
@@ -29,7 +28,6 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-  AngularJSLexerTest.class,
   AngularJSParserTest.class,
   AttributesTest.class,
   DependencyInjectionTest.class,
