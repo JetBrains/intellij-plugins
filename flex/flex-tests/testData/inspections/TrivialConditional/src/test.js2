@@ -1,0 +1,4 @@
+function myfunction():Boolean
+{
+    return ((position.y < numRows - 1) ? true : false);
+}

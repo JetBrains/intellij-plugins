@@ -81,5 +81,12 @@
     <orderEntry type="module" module-name="intellij.platform.testIntegration.ui" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.duplicates" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.duplicates.analysis" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.duplicates.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.duplicatesDetector" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.duplicatesDetector.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.duplicatesDetection" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.todo" scope="TEST" />
   </component>
 </module>
