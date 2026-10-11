@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.javascript.psi.JSFile
-import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
@@ -20,9 +19,8 @@ internal val VUEJS_FILE: IFileElementType = JSFileElementType.create(VueJSLangua
 
 class VueJSParserDefinition : JavascriptParserDefinition() {
   object Util {
-    fun createLexer(project: Project?): Lexer {
-      val configured = JSRootConfiguration.getInstance(project!!).languageLevel.dialect.optionHolder
-      return JSFlexAdapter(if (configured.isECMA6) DialectOptionHolder.JS_WITHOUT_JSX else configured)
+    fun createLexer(): Lexer {
+      return JSFlexAdapter(DialectOptionHolder.JS_WITHOUT_JSX)
     }
   }
 
@@ -37,7 +35,7 @@ class VueJSParserDefinition : JavascriptParserDefinition() {
   }
 
   override fun createLexer(project: Project?): Lexer {
-    return Util.createLexer(project)
+    return Util.createLexer()
   }
 
   override fun getFileNodeType(): IFileElementType {

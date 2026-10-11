@@ -90,7 +90,6 @@ private class VueAttributeEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlAt
 }
 
 internal class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedContentProvider(lexer) {
-  private val languageLevel get() = (lexer as VueLexer).languageLevel
   private val langMode get() = (lexer as VueLexer).langMode
   private val htmlCompatMode get() = (lexer as VueLexer).htmlCompatMode
   private val project get() = (lexer as VueLexer).project
@@ -171,10 +170,7 @@ internal class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbe
   }
 
   private fun findEmbedmentInfo(language: String?): HtmlEmbedmentInfo = when (language) {
-    null -> {
-      HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(languageLevel.dialect)
-    }
-    "js" -> { // fast path + special case for VueParserTest
+    null, "js" -> { // fast path + special case for VueParserTest
       HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavaScriptSupportLoader.ECMA_SCRIPT_6)
     }
     "ts" -> { // fast path + special case for VueParserTest
@@ -202,7 +198,7 @@ internal class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbe
       HTML_EMBEDDED_CONTENT -> object : HtmlEmbedmentInfo {
         override fun getElementType(): IElementType = VueElementTypes.VUE_EMBEDDED_CONTENT
         override fun createHighlightingLexer(): Lexer =
-          VueLexer(languageLevel, project, interpolationConfig, htmlCompatMode, true, langMode)
+          VueLexer(project, interpolationConfig, htmlCompatMode, true, langMode)
       }
       null -> HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
       else -> object : HtmlEmbedmentInfo {

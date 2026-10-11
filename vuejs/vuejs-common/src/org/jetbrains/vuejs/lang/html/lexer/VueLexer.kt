@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.lang.html.lexer
 
 import com.intellij.html.embedding.HtmlEmbeddedContentProvider
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lexer.FlexAdapter
 import com.intellij.lexer.HtmlLexer
 import com.intellij.lexer.HtmlScriptStyleEmbeddedContentProvider
@@ -16,7 +15,6 @@ import com.intellij.psi.xml.XmlTokenType
 import org.jetbrains.vuejs.lang.LangMode
 
 class VueLexer(
-    val languageLevel: JSLanguageLevel,
     val project: Project?,
     val interpolationConfig: Pair<String, String>?,
     val htmlCompatMode: Boolean,
