@@ -39,6 +39,7 @@ import org.angular2.lang.expr.service.isAngularTypeScriptServiceEnabled
 import org.angular2.lang.expr.service.repositionInlayHint
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
+import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.findDirectiveFile
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile
 import org.angular2.lang.expr.service.translateNamesInErrors
 import org.angular2.lang.html.Angular2HtmlDialect
@@ -121,8 +122,7 @@ private class AngularAssociatedHtmlFile(
 ) : AngularFileInfo(project, file), KolarAssociatedFile {
   override fun getTargetFile(): VirtualFile? =
     PsiManager.getInstance(project).findFile(file)
-      ?.let { getTranspiledDirectiveAndTopLevelSourceFile(it) }
-      ?.first
+      ?.let { findDirectiveFile(it) }
       ?.originalFile
       ?.virtualFile
 }
