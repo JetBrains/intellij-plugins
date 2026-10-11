@@ -60,6 +60,7 @@ jvm_library(
         "@community//plugins/editorconfig:editorconfig-plugin",
         "//contrib/jade",
         "//plugins/JavaScriptLanguage/javascript-ultimate",
+        "@community//idea/customization/plugin",
     ],
 )
 
@@ -93,6 +94,7 @@ jvm_library(
         "@community//plugins/editorconfig:editorconfig-plugin_test_lib",
         "//contrib/jade:jade_test_lib",
         "//plugins/JavaScriptLanguage/javascript-ultimate:javascript-ultimate_test_lib",
+        "@community//idea/customization/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,

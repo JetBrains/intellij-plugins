@@ -33,6 +33,7 @@ jvm_library(
         "@community//platform/indexing-impl",
         "@community//platform/lsp",
         "//contrib/jade/css",
+        "@community//idea/customization/plugin",
     ],
 )
 
@@ -62,6 +63,7 @@ jvm_library(
         ":tests",
         "@community//platform/ide-core:ide-core_test_lib",
         "//contrib/jade/css:css_test_lib",
+        "@community//idea/customization/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,
