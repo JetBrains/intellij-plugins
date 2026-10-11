@@ -128,6 +128,7 @@
     <orderEntry type="module" module-name="intellij.editorconfig.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.jade" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.javascript.ultimate" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.idea.customization.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
   </component>
 </module>
