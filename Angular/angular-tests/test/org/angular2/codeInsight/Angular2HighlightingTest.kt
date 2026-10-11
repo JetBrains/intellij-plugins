@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.idea.IJIgnore
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -566,6 +567,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
 
   @Test
+  @IJIgnore(issue = "IJI-3451")
   fun testCssCustomPropertyExternalTemplate() =
     checkHighlighting(ANGULAR_CORE_19_2_0, dir = true, configureFileName = "test.css")
 

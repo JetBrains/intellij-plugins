@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.idea.IJIgnore
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.ide.IdeBundle
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
@@ -120,6 +121,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
   }
 
   @Test
+  @IJIgnore(issue = "IJI-3451")
   fun testQualifiedFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
@@ -144,6 +146,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
   }
 
   @Test
+  @IJIgnore(issue = "IJI-3451")
   fun testQualifiedMethodCreation() {
     doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
