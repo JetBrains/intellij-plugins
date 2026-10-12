@@ -47,14 +47,14 @@ class SetupTeamcityDslViewModel(
   private val scope: CoroutineScope,
   private val projectVcsDataProvider: ProjectVcsDataProvider,
 ) : SetupCIViewModel {
+  private val configFiletype: FileType = getFileTypeByFilename("settings.kts")
+
   val configEditorDeferred: Deferred<Editor> = createEditorDeferred()
 
   override val finishProviderFlow: Flow<SetupCIFinishProvider?> = flowOf {}
 
   private val isBannerVisibleStateFlow = MutableStateFlow(true)
   val bannerContentProviderFlow: Flow<BannerContentProvider?> = isBannerVisibleStateFlow.map { if (it) createBannerContentProvider() else null }
-
-  private val configFiletype: FileType = getFileTypeByFilename("settings.kts")
 
   override fun unselected() {
     if (!configEditorDeferred.isCompleted) return
@@ -105,7 +105,6 @@ class SetupTeamcityDslViewModel(
     val stringToFilterOut = UUID.randomUUID().toString()
     val baselineText = getSarifBaseline(project)?.let { "additionalQodanaArguments = \"--baseline $it\"" } ?: stringToFilterOut
 
-    @Suppress("UnnecessaryVariable")
     @Language("kotlin")
     val dslText = """
       import jetbrains.buildServer.configs.kotlin.*

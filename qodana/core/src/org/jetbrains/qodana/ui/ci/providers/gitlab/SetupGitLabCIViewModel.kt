@@ -27,7 +27,16 @@ class SetupGitLabCIViewModel(
   scope: CoroutineScope,
   private val projectVcsDataProvider: ProjectVcsDataProvider,
 ) : SetupCIViewModel {
-  val baseSetupCIViewModel = BaseSetupCIViewModel(
+  private val HEADER_TEXT = """
+      #-------------------------------------------------------------------------------#
+      #        Discover additional configuration options in our documentation         #
+      #              https://www.jetbrains.com/help/qodana/gitlab.html                #
+      #-------------------------------------------------------------------------------#
+
+
+    """.trimIndent()
+
+  val baseSetupCIViewModel: BaseSetupCIViewModel = BaseSetupCIViewModel(
     projectNioPath, project, GITLAB_CI_FILE, scope,
     BaseSetupCIViewModel.Actions(
       ::createBannerContentProvider, ::spawnAddedConfigurationNotification,
@@ -40,15 +49,6 @@ class SetupGitLabCIViewModel(
   override fun unselected() {
     baseSetupCIViewModel.unselected()
   }
-
-  private val HEADER_TEXT = """
-      #-------------------------------------------------------------------------------#
-      #        Discover additional configuration options in our documentation         #
-      #              https://www.jetbrains.com/help/qodana/gitlab.html                #
-      #-------------------------------------------------------------------------------#
-      
-      
-    """.trimIndent()
 
   private fun spawnAddedConfigurationNotification() {
     QodanaNotifications.General.notification(
