@@ -10,32 +10,46 @@ import com.intellij.codeInspection.QuickFix
 import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.codeInspection.ex.QuickFixWrapper
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.testFramework.InspectionFixtureTestCase
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightModuleFixture
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.assertEqualsToFile
 import com.intellij.testFramework.createGlobalContextForTool
 import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.runInEdtAndWait
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
 import java.io.File
 
-abstract class TfInspectionFixtureTestCase : InspectionFixtureTestCase() {
-  override fun doTest(testDir: String, tool: LocalInspectionTool) {
+abstract class TfInspectionFixtureTestCase {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  protected val myFixture by codeInsightModuleFixture(projectFixture)
+
+  protected abstract val basePath: String
+
+  protected fun doTest(testDir: String, tool: LocalInspectionTool) {
     val toolWrapper = LocalInspectionToolWrapper(tool)
     val sourceDir = myFixture.copyDirectoryToProject(File(testDir, "src").path, "")
-    val psiDirectory = myFixture.psiManager.findDirectory(sourceDir)!!
-    assertNotNull(psiDirectory)
-    val scope = AnalysisScope(psiDirectory)
+    val scope = ReadAction.computeBlocking<AnalysisScope, RuntimeException> {
+      val psiDirectory = myFixture.psiManager.findDirectory(sourceDir)!!
+      AnalysisScope(psiDirectory)
+    }
     scope.invalidate()
-    val globalContext = createGlobalContextForTool(scope, project, listOf<InspectionToolWrapper<*, *>>(toolWrapper))
-    InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
-    InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, File(basePath, testDir).path)
+    runInEdtAndWait {
+      val globalContext = createGlobalContextForTool(scope, myFixture.project, listOf<InspectionToolWrapper<*, *>>(toolWrapper))
+      InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
+      InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, File(basePath, testDir).path)
 
-    checkQuickFixes(globalContext, toolWrapper, sourceDir, testDir)
+      checkQuickFixes(globalContext, toolWrapper, sourceDir, testDir)
+    }
   }
 
   private fun checkQuickFixes(
@@ -75,8 +89,8 @@ abstract class TfInspectionFixtureTestCase : InspectionFixtureTestCase() {
                              fixInfo + newText)
 
           if (newText != origText) {
-            UndoManager.getInstance(project).undo(TextEditorProvider.getInstance().getTextEditor(editor))
-            PsiDocumentManager.getInstance(project).commitAllDocuments()
+            UndoManager.getInstance(myFixture.project).undo(TextEditorProvider.getInstance().getTextEditor(myFixture.editor))
+            PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
           }
         }
       }
@@ -85,7 +99,7 @@ abstract class TfInspectionFixtureTestCase : InspectionFixtureTestCase() {
 
   private fun rerunInspectionOnFile(toolWrapper: LocalInspectionToolWrapper): Array<out CommonProblemDescriptor> {
     val scope = AnalysisScope(myFixture.file)
-    val context = createGlobalContextForTool(scope, project, listOf(toolWrapper))
+    val context = createGlobalContextForTool(scope, myFixture.project, listOf(toolWrapper))
     InspectionTestUtil.runTool(toolWrapper, scope, context)
     val presentation = context.getPresentation(toolWrapper)
     presentation.updateContent()
