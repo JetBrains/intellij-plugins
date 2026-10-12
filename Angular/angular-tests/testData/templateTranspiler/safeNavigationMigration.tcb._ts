@@ -1,0 +1,14 @@
+/* Angular type checking code */
+
+/* TCB for safeNavigationMigration.ts */
+
+function _tcb1(this: AppComponent) {
+var _t1 = document.createElement("i");
+"" + (((((this.data)?.icon)?.toString?.())));
+var _t2 = document.createElement("i");
+((((this.data)?.check?.())));
+var _t3 = document.createElement("button");
+_t3.addEventListener("click", ($event): any => {
+this.save(((this.data)?.icon));
+});
+}

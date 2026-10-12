@@ -2,6 +2,8 @@
 package org.angular2.codeInsight
 
 import com.intellij.lang.javascript.ecmascript6.TypeScriptTypeEvaluator
+import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
+import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
@@ -10,6 +12,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.psi.types.JSUnknownType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
+import org.angular2.codeInsight.template.isSafeNavigationMigrationCall
 import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 
@@ -24,6 +27,14 @@ class Angular2TypeEvaluator(context: JSEvaluateContext) : TypeScriptTypeEvaluato
     }
     super.addTypeFromResolveResult(referenceName, resolveResult)
     return true
+  }
+
+  override fun evaluateCallExpressionTypes(callExpression: JSCallExpression) {
+    if (isSafeNavigationMigrationCall(callExpression)) {
+      addType(JSCodeBasedTypeFactory.getPsiBasedType(callExpression.arguments[0], myContext))
+      return
+    }
+    super.evaluateCallExpressionTypes(callExpression)
   }
 
   override fun doAddType(type: JSType) {

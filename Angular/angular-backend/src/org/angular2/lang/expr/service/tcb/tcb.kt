@@ -52,6 +52,7 @@ import org.angular2.codeInsight.config.Angular2TypeCheckingConfig.ControlFlowPre
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_CONTEXT_GUARD
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_GUARD_PREFIX
 import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider
+import org.angular2.codeInsight.template.isSafeNavigationMigrationCall
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveSelector
@@ -2469,9 +2470,16 @@ private open class TcbExpressionTranslator(
       result
     }
 
+    if (isSafeNavigationMigrationCall(node)) {
+      result.withSourceSpan(node.textRange, supportTypes = true) {
+        result.append("(")
+        translate(node.arguments[0])
+        result.append(")")
+      }
+    }
     // Resolve the special `$any(expr)` syntax to insert a cast in the argument to type `any`.
     // `$any(expr)` -> `expr as any`
-    if (methodExpression
+    else if (methodExpression
           ?.asSafely<JSReferenceExpression>()
           ?.takeIf { it.qualifier == null && it.referenceName == "\$any" } != null
         && node.argumentSize == 1) {
@@ -2578,9 +2586,24 @@ private open class TcbExpressionTranslator(
     }
   }
 
+  /**
+   * Angular 22+ emits safe navigation as native optional chaining in strict mode.
+   * This narrows nullable types and keeps TypeScript diagnostics on the whole expression.
+   */
+  private fun isNativeSafeNavigation(node: PsiElement): Boolean =
+    Angular2LangUtil.isAtLeastAngularVersion(node, AngularVersion.V_22)
+
   private fun emitSafeAccess(node: PsiElement, qualifier: JSExpression, referenceName: PsiElement?) {
     result.withSourceSpan(node.textRange, supportTypes = true) {
-      if (tcb.env.config.strictSafeNavigationTypes) {
+      if (tcb.env.config.strictSafeNavigationTypes && isNativeSafeNavigation(node)) {
+        // "a?.b" becomes (a)?.b
+        append("(")
+        qualifier.accept(this@TcbExpressionTranslator)
+        append(")?.")
+        referenceName?.accept(this@TcbExpressionTranslator)
+        ?: append("_error_")
+      }
+      else if (tcb.env.config.strictSafeNavigationTypes) {
         // Basically, the return here is either the type of the complete expression with a null-safe
         // property read, or `undefined`. So a ternary is used to create an "or" type:
         // "a?.b" becomes (0 as any ? a!.b : undefined)
@@ -2620,7 +2643,15 @@ private open class TcbExpressionTranslator(
 
   private fun emitMethodSafeAccess(node: JSCallExpression, methodExpression: JSExpression) {
     result.withSourceSpan(node.textRange, supportTypes = true) {
-      if (tcb.env.config.strictSafeNavigationTypes) {
+      if (tcb.env.config.strictSafeNavigationTypes && isNativeSafeNavigation(node)) {
+        // "a?.b()" becomes ((a)?.b?.())
+        append("(")
+        methodExpression.accept(this@TcbExpressionTranslator)
+        append("?.")
+        node.argumentList?.accept(this@TcbExpressionTranslator) ?: run { append("()") }
+        append(")")
+      }
+      else if (tcb.env.config.strictSafeNavigationTypes) {
         // Basically, the return here is either the type of the complete expression with a null-safe
         // property read, or `undefined`. So a ternary is used to create an "or" type:
         // "a?.b" becomes (0 as any ? a!.b : undefined)

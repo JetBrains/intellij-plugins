@@ -61,6 +61,11 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
   )
 
   @Test
+  fun testSafeNavigationMigration() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_22_0_8,
+  )
+
+  @Test
   fun testModelSignals() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
   )

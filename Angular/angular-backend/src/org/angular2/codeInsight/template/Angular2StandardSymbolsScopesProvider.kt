@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.template
 
+import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSReferenceExpression
@@ -15,6 +16,9 @@ import com.intellij.psi.ResolveResult
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
+import com.intellij.util.asSafely
+import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.Angular2LangUtil.AngularVersion
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlEvent
@@ -25,7 +29,10 @@ import java.util.function.Consumer
 
 internal class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesProvider() {
   override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<Angular2TemplateScope> {
-    val result = SmartList<Angular2TemplateScope>(Angular2AnyScope(element.containingFile))
+    val result = SmartList<Angular2TemplateScope>(Angular2MagicFunctionScope(`$ANY`, element.containingFile))
+    if (Angular2LangUtil.isAtLeastAngularVersion(element, AngularVersion.V_22)) {
+      result.add(Angular2MagicFunctionScope(`$SAFE_NAVIGATION_MIGRATION`, element.containingFile))
+    }
     if (hostElement != null) {
       var attribute = hostElement
       while (attribute != null
@@ -63,23 +70,20 @@ internal class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesPro
 
   override fun isImplicitReferenceExpression(expression: JSReferenceExpression): Boolean {
     val value = expression.text
-    return `$ANY` == value || `$EVENT` == value
+    return `$ANY` == value || `$EVENT` == value || `$SAFE_NAVIGATION_MIGRATION` == value
   }
 
-  private class Angular2AnyScope(context: PsiElement) : Angular2TemplateScope(null) {
+  private class Angular2MagicFunctionScope(name: String, context: PsiElement) : Angular2TemplateScope(null) {
 
-    private val `$any`: JSImplicitElement
-
-    init {
-      `$any` = JSImplicitElementImpl.Builder(`$ANY`, context)
+    private val function: JSImplicitElement =
+      JSImplicitElementImpl.Builder(name, context)
         .setJSType(JSAnyType.get(context))
         .setParameters(listOf(JSImplicitParameterStructure("arg", "*", false, false, true)))
         .setType(JSImplicitElement.Type.Function)
         .toImplicitElement()
-    }
 
     override fun resolve(consumer: Consumer<in ResolveResult>) {
-      consumer.accept(JSResolveResult(`$any`))
+      consumer.accept(JSResolveResult(function))
     }
   }
 
@@ -162,5 +166,15 @@ internal class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesPro
 
     @NonNls
     const val `$EVENT`: String = "\$event"
+
+    @NonNls
+    const val `$SAFE_NAVIGATION_MIGRATION`: String = "\$safeNavigationMigration"
   }
 }
+
+internal fun isSafeNavigationMigrationCall(call: JSCallExpression): Boolean =
+  call.argumentSize == 1
+  && call.methodExpression
+    ?.asSafely<JSReferenceExpression>()
+    ?.takeIf { it.qualifier == null && it.referenceName == Angular2StandardSymbolsScopesProvider.`$SAFE_NAVIGATION_MIGRATION` } != null
+  && Angular2LangUtil.isAtLeastAngularVersion(call, AngularVersion.V_22)
