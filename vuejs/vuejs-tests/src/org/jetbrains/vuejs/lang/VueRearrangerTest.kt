@@ -4,18 +4,24 @@ package org.jetbrains.vuejs.lang
 import com.intellij.application.options.CodeStyle
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.css.rearranger.CssRearranger
-import com.intellij.psi.codeStyle.arrangement.AbstractRearrangerTest
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
+import com.intellij.psi.codeStyle.arrangement.RearrangerTestUtil
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementSettings
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.junit.jupiter.api.Test
 
-class VueRearrangerTest : AbstractRearrangerTest() {
-  override fun setUp() {
-    super.setUp()
-    fileType = VueFileType
-    language = VueLanguage
+@TestApplication
+class VueRearrangerTest {
+  companion object {
+    private val projectFixture = codeInsightProjectFixture()
   }
 
+  private val myFixture by codeInsightFixture(projectFixture)
+
+  @Test
   fun testTypescript() {
     doTestWithDefaultSettings(
       """<script lang="ts">
@@ -55,6 +61,7 @@ class VueRearrangerTest : AbstractRearrangerTest() {
 </script>""")
   }
 
+  @Test
   fun testES6() {
     doTestWithDefaultSettings(
       """<script>
@@ -86,6 +93,7 @@ class VueRearrangerTest : AbstractRearrangerTest() {
 """)
   }
 
+  @Test
   fun testWithMultipleTagsAndAttributes() {
     CodeStyle.getSettings(myFixture.project)
       .getCommonSettings(CSSLanguage.INSTANCE)
@@ -153,6 +161,7 @@ class VueRearrangerTest : AbstractRearrangerTest() {
 </body>""")
   }
 
+  @Test
   fun testDefaultVueAttributesSorting() {
     doTestWithDefaultSettings(
       """
@@ -251,6 +260,6 @@ class VueRearrangerTest : AbstractRearrangerTest() {
   }
 
   private fun doTestWithDefaultSettings(before: String, expected: String) {
-    doTestWithSettings(before, expected, null, null)
+    RearrangerTestUtil.doTestWithSettings(myFixture, VueFileType, VueLanguage, before, expected, null, null)
   }
 }

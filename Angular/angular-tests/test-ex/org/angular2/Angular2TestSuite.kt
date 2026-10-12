@@ -19,7 +19,6 @@ import org.angular2.codeInsight.Angular2LiveTemplateTest
 import org.angular2.codeInsight.Angular2ModelStructureTest
 import org.angular2.codeInsight.Angular2ParameterHintsTest
 import org.angular2.codeInsight.Angular2ParameterInfoTest
-import org.angular2.codeInsight.Angular2RearrangerTest
 import org.angular2.codeInsight.Angular2ServiceInlayHintsTest
 import org.angular2.codeInsight.Angular2StructureViewTest
 import org.angular2.codeInsight.Angular2TemplateTranspilerTest
@@ -141,7 +140,6 @@ import org.junit.runners.Suite
   Angular2GotoRelatedTest::class,
   Angular2GotoDeclarationTest::class,
   Angular2TscGotoDeclarationTest::class,
-  Angular2RearrangerTest::class,
   Angular2JumpToSourceTest::class,
   Angular2CssClassTest::class,
   Angular2CssCompletionTest::class,

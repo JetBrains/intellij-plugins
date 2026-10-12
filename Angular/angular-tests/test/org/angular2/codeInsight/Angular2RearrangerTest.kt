@@ -1,19 +1,23 @@
 package org.angular2.codeInsight
 
-import com.intellij.psi.codeStyle.arrangement.AbstractRearrangerTest
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
+import com.intellij.psi.codeStyle.arrangement.RearrangerTestUtil
+import com.intellij.testFramework.junit5.TestApplication
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.lang.expr.Angular20Language
 import org.angular2.lang.html.Angular20HtmlFileType
+import org.junit.jupiter.api.Test
 
-class Angular2RearrangerTest : AbstractRearrangerTest() {
+@TestApplication
+class Angular2RearrangerTest {
 
-  override fun setUp() {
-    super.setUp()
-    fileType = Angular20HtmlFileType
-    language = Angular20Language
-  }
+  private val projectFixture = codeInsightProjectFixture()
 
+  private val myFixture by codeInsightFixture(projectFixture)
+
+  @Test
   fun testAttributesSortingWithinBlock() {
     doTestWithDefaultSettings(
       """
@@ -42,6 +46,6 @@ class Angular2RearrangerTest : AbstractRearrangerTest() {
 
   private fun doTestWithDefaultSettings(before: String, expected: String) {
     myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_20_1_4)
-    doTestWithSettings(before.trimIndent(), expected.trimIndent(), null, null)
+    RearrangerTestUtil.doTestWithSettings(myFixture, Angular20HtmlFileType, Angular20Language, before.trimIndent(), expected.trimIndent(), null, null)
   }
 }

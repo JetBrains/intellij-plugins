@@ -4,45 +4,78 @@ package com.intellij.flex.codeInsight;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.lang.actionscript.arrangement.ActionScriptRearranger;
 import com.intellij.lang.javascript.ActionScriptFileType;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.psi.codeStyle.arrangement.AbstractRearrangerTest;
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import com.intellij.psi.codeStyle.arrangement.RearrangerTestUtil;
 import com.intellij.psi.codeStyle.arrangement.group.ArrangementGroupingRule;
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.TestDisposable;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-public class ActionScriptRearrangerTest extends AbstractRearrangerTest {
-  @Override
-  protected void setUp() throws Exception {
-    fileType = ActionScriptFileType.INSTANCE;
-    language = FlexSupportLoader.ECMA_SCRIPT_L4;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightFixture;
+import static com.intellij.psi.codeStyle.arrangement.RearrangerTestUtil.group;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.moduleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
 
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
-    super.setUp();
+@TestApplication
+public class ActionScriptRearrangerTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
 
-    var sdk = FlexTestUtils.getSdk(new JSTestUtils.TestDescriptor(this), myFixture.getProjectDisposable());
+  private final TestFixture<Path> pathFixture = tempPathFixture();
+  private final TestFixture<Module> moduleFixture = moduleFixture(projectFixture, pathFixture, true);
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightFixture(projectFixture, pathFixture);
 
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      var model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
+  @BeforeEach
+  void setUp(@TestDisposable Disposable disposable, TestInfo testInfo) {
+    FlexTestUtils.allowFlexVfsRootsFor(disposable, "");
+
+    String testName = testInfo.getTestMethod().orElseThrow().getName();
+    String sdkVersion = FlexTestUtils.testMethodHasOption(getClass(), testName, FlexTestOption.WithGumboSdk) ? "4.0.0" : "3.4.0";
+    var sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToMockFlex(getClass(), testName), sdkVersion, disposable);
+
+    WriteAction.runAndWait(() -> {
+      var model = ModuleRootManager.getInstance(moduleFixture.get()).getModifiableModel();
       model.setSdk(sdk);
       model.commit();
     });
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    //noinspection SuperTearDownInFinally
-    super.tearDown();
+  @AfterEach
+  void tearDown() throws IllegalAccessException {
     clearDeclaredFields();
+  }
+
+  private @NotNull CommonCodeStyleSettings getCommonSettings() {
+    return RearrangerTestUtil.getCommonSettings(projectFixture.get(), FlexSupportLoader.ECMA_SCRIPT_L4);
+  }
+
+  private void doTest(@NotNull Map<String, ?> args) {
+    RearrangerTestUtil.doTest(codeInsightFixture.get(), ActionScriptFileType.INSTANCE, FlexSupportLoader.ECMA_SCRIPT_L4, args);
   }
 
   static void clearDeclaredFields() throws IllegalAccessException {
@@ -59,6 +92,7 @@ public class ActionScriptRearrangerTest extends AbstractRearrangerTest {
   }
 
   @FlexTestOptions(FlexTestOption.WithGumboSdk)
+  @Test
   public void testComplex() {
 
     getCommonSettings().BLANK_LINES_AROUND_METHOD = 0;
@@ -272,6 +306,7 @@ public class Test {
   }
 
   @FlexTestOptions(FlexTestOption.WithGumboSdk)
+  @Test
   public void testGroupPropertyFieldWithGetterSetter() {
 
     getCommonSettings().BLANK_LINES_AROUND_METHOD = 0;

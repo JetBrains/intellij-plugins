@@ -35,7 +35,6 @@ import org.junit.runners.Suite
   VueIntentionsTest::class,
   VueInjectionTest::class,
   VueFormatterTest::class,
-  VueRearrangerTest::class,
   VueExternalFilesLinkingTest::class,
   VueExtractComponentTest::class,
   VueDocumentationTest::class,

@@ -1,7 +1,6 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex;
 
-import com.intellij.flex.codeInsight.ActionScriptRearrangerTest;
 import com.intellij.flex.codeInsight.ActionScriptStatementMoverTest;
 import com.intellij.flex.codeInsight.FlexDocumentationTest;
 import com.intellij.flex.codeInsight.FlexFindUsagesTest;
@@ -60,7 +59,6 @@ public final class FlexTestSuite {
     final TestSuite testSuite = new TestSuite(FlexTestSuite.class.getSimpleName());
 
     // com.intellij.flex.codeInsight.*
-    testSuite.addTestSuite(ActionScriptRearrangerTest.class);
     testSuite.addTestSuite(ActionScriptStatementMoverTest.class);
     testSuite.addTestSuite(FlexDocumentationTest.class);
     testSuite.addTestSuite(FlexFindUsagesTest.class);
