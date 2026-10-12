@@ -3,13 +3,17 @@ package org.jetbrains.astro.codeInsight
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.formatter.HtmlFormatterTest
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.astro.lang.AstroFileType
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class AstroHtmlFormatterTest : HtmlFormatterTest() {
   override fun getFileType(fileName: String): FileType {
     return AstroFileType
   }
 
+  @Test
   override fun testWeb18909() {
     // replace '{' with '[', otherwise we have JSX expressions
     doTextTest("""
@@ -42,18 +46,22 @@ class AstroHtmlFormatterTest : HtmlFormatterTest() {
                  """.trimIndent())
   }
 
+  @Test
   override fun test1() {
     // ignore - doctype formatting
   }
 
+  @Test
   override fun test2() {
     // ignore - doctype formatting
   }
 
+  @Test
   override fun test3() {
     // ignore - doctype formatting
   }
 
+  @Test
   override fun test4() {
     // ignore - doctype formatting
   }

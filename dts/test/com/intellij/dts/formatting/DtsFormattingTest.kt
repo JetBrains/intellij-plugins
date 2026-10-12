@@ -1,17 +1,37 @@
 package com.intellij.dts.formatting
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.dts.DTS_TEST_DATA_PATH
 import com.intellij.dts.lang.DtsFileType
 import com.intellij.dts.lang.DtsLanguage
 import com.intellij.dts.settings.DtsCodeStyleSettings
-import com.intellij.psi.formatter.FormatterTestCase
+import com.intellij.openapi.project.Project
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightModuleFixture
+import com.intellij.psi.formatter.FormatterTestUtil
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
+import java.io.File
 
-abstract class DtsFormattingTest : FormatterTestCase() {
-  override fun getTestDataPath() = "$DTS_TEST_DATA_PATH/formatting"
+abstract class DtsFormattingTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
 
-  override fun getFileExtension() = "dtsi"
+  private val myFixture by codeInsightModuleFixture(projectFixture)
 
-  override fun getTestName(lowercaseFirstLetter: Boolean): String = super.getTestName(false)
+  private val project: Project get() = myFixture.project
+
+  private lateinit var testName: String
+
+  protected abstract fun getBasePath(): String
+
+  @BeforeEach
+  fun setUp(testInfo: TestInfo) {
+    FormatterTestUtil.assertNoProjectCodeStyle(project)
+    testName = PlatformTestUtil.getTestName(testInfo.testMethod.get().name, false)
+  }
 
   protected fun doFormattingTest(
     keepLineBreaks: Boolean = false,
@@ -22,6 +42,8 @@ abstract class DtsFormattingTest : FormatterTestCase() {
     maxBlankLinesBetweenNodes: Int = 1,
     minBlankLinesBetweenNodes: Int = 1
   ) {
+    val settings = CodeStyle.getSettings(project)
+
     val indent = settings.getIndentOptions(DtsFileType)
     indent.USE_TAB_CHARACTER = false
 
@@ -36,6 +58,6 @@ abstract class DtsFormattingTest : FormatterTestCase() {
     custom.MAX_BLANK_LINES_BETWEEN_NODES = maxBlankLinesBetweenNodes
     custom.MIN_BLANK_LINES_BETWEEN_NODES = minBlankLinesBetweenNodes
 
-    doTest()
+    FormatterTestUtil.doTest(project, "$DTS_TEST_DATA_PATH/formatting" + File.separatorChar + getBasePath(), "dtsi", testName)
   }
 }

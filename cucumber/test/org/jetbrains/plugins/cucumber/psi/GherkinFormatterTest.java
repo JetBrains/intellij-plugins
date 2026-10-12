@@ -1,10 +1,35 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.psi;
 
-import com.intellij.psi.formatter.FormatterTestCase;
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.formatter.FormatterTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
 
-public class GherkinFormatterTest extends FormatterTestCase {
+@TestApplication
+public class GherkinFormatterTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
+
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private Project project;
+
+  @BeforeEach
+  void setUp() {
+    project = codeInsightFixture.get().getProject();
+    FormatterTestUtil.assertNoProjectCodeStyle(project);
+  }
+
+  @Test
   public void testComments() {
     doTextTest("""
                  Feature: test
@@ -23,6 +48,7 @@ public class GherkinFormatterTest extends FormatterTestCase {
                      Then test2""");
   }
 
+  @Test
   public void testPystring() {
     doTextTest(
       """
@@ -53,6 +79,7 @@ public class GherkinFormatterTest extends FormatterTestCase {
     );
   }
 
+  @Test
   public void testReadonlyBlock() {
     doTextTest(
       """
@@ -71,6 +98,7 @@ public class GherkinFormatterTest extends FormatterTestCase {
     );
   }
 
+  @Test
   public void testSimple() {
     doTextTest(
       """
@@ -103,6 +131,7 @@ public class GherkinFormatterTest extends FormatterTestCase {
     );
   }
 
+  @Test
   public void testStepTableArg() {
     doTextTest(
       """
@@ -141,6 +170,7 @@ public class GherkinFormatterTest extends FormatterTestCase {
     );
   }
 
+  @Test
   public void testTable() {
     doTextTest(
       """
@@ -181,6 +211,7 @@ public class GherkinFormatterTest extends FormatterTestCase {
     );
   }
 
+  @Test
   public void testExamplesWithTag() {
     doTextTest(
       """
@@ -198,6 +229,7 @@ public class GherkinFormatterTest extends FormatterTestCase {
   }
 
   // Test for IDEA-278652
+  @Test
   public void testTagsForScenarioOutline() {
     doTextTest("""
                  Feature: Withdraw money (table-based)
@@ -221,6 +253,7 @@ public class GherkinFormatterTest extends FormatterTestCase {
                  """);
   }
 
+  @Test
   public void testTagsForScenario() {
     doTextTest("""
                  Feature: Withdraw money
@@ -266,17 +299,11 @@ public class GherkinFormatterTest extends FormatterTestCase {
                  """);
   }
 
-  protected void doTextTest(String text) {
+  private void doTextTest(String text) {
     doTextTest(text, text);
   }
 
-  @Override
-  protected String getBasePath() {
-    return "";
-  }
-
-  @Override
-  protected String getFileExtension() {
-    return GherkinFileType.INSTANCE.getDefaultExtension();
+  private void doTextTest(String text, String textAfter) {
+    FormatterTestUtil.doTextTest(project, GherkinFileType.INSTANCE.getDefaultExtension(), text, textAfter);
   }
 }
