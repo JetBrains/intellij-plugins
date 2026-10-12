@@ -3,6 +3,8 @@ package org.angular2.cli.actions
 
 import com.intellij.CommonBundle
 import com.intellij.icons.AllIcons
+import com.intellij.ide.trustedProjects.TrustedProjects
+import com.intellij.ide.trustedProjects.TrustedProjectsDialog
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
@@ -69,6 +71,9 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     if (cliVersion == null) {
       AngularCliUtil.notifyAngularCliNotInstalled(project, cli, Angular2Bundle.message("angular.action.ng-generate.cant-generate-code"))
+      return
+    }
+    if (!TrustedProjectsDialog.confirmLoadingUntrustedProject(project)) {
       return
     }
 
@@ -220,6 +225,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
   }
 
   private fun runGenerator(project: Project, schematic: Schematic, arguments: Array<String>, cli: VirtualFile, workingDir: VirtualFile?) {
+    if (!TrustedProjects.isProjectTrusted(project)) return
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: return
 
     val modules: MutableList<CompletionModuleInfo> = mutableListOf()
