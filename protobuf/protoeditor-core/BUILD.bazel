@@ -128,6 +128,7 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin",
         "@community//plugins/grazie",
         "@community//platform/vcs/plugin",
+        "@community//xml/plugin",
     ],
 )
 
@@ -157,6 +158,7 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//plugins/grazie:grazie_test_lib",
         "@community//platform/vcs/plugin:plugin_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,

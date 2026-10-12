@@ -176,6 +176,8 @@ jvm_library(
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
         "@community//platform/problemsView/plugin",
         "//plugins/css/codeinsight/actions",
+        "//plugins/ultimate-plugin",
+        "//plugins/JavaScriptLanguage/plugin",
     ],
 )
 
@@ -207,6 +209,8 @@ jvm_library(
         "@community//platform/ide-core:ide-core_test_lib",
         "@community//platform/problemsView/plugin:plugin_test_lib",
         "//plugins/css/codeinsight/actions:actions_test_lib",
+        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+        "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,

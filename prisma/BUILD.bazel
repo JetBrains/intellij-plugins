@@ -185,6 +185,7 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/problemsView/plugin",
         "@community//platform/vcs/plugin",
+        "//plugins/ultimate-plugin",
         "@community//xml/plugin",
     ],
 )
@@ -219,6 +220,7 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//platform/problemsView/plugin:plugin_test_lib",
         "@community//platform/vcs/plugin:plugin_test_lib",
+        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
         "@community//xml/plugin:plugin_test_lib",
     ],
     deps = [

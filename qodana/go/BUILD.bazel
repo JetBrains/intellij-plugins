@@ -146,6 +146,7 @@ jvm_library(
     ),
     module_name = "intellij.qodana.go.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["//plugins/ultimate-plugin"],
 )
 
 jvm_library(
@@ -168,6 +169,7 @@ jvm_library(
         # do not sort,
         ":go-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
+        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
     ],
     deps = [

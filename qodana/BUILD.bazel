@@ -379,6 +379,7 @@ jvm_library(
         "@community//plugins/git4idea:vcs-git",
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "//duplicatedetector:duplicatesDetector",
+        "//plugins/ultimate-plugin",
     ],
 )
 
@@ -420,6 +421,7 @@ jvm_library(
         "@community//plugins/git4idea:vcs-git_test_lib",
         "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
         "//duplicatedetector:duplicatesDetector_test_lib",
+        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
     ],
     deps = [
         # do not sort,

@@ -22,6 +22,9 @@ jvm_library(
         "@community//platform/todo/plugin",
         "@community//xml/relaxng",
         "//plugins/css/frontend",
+        "//plugins/ultimate-plugin",
+        "@community//platform/structure-view-impl/frontend",
+        "@community//platform/structure-view-impl/backend",
     ],
 )
 
@@ -61,6 +64,9 @@ jvm_library(
         "@community//platform/todo/plugin:plugin_test_lib",
         "@community//xml/relaxng:relaxng_test_lib",
         "//plugins/css/frontend:frontend_test_lib",
+        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+        "@community//platform/structure-view-impl/frontend:frontend_test_lib",
+        "@community//platform/structure-view-impl/backend:backend_test_lib",
     ],
     deps = [
         # do not sort,

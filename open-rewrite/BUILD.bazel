@@ -180,6 +180,7 @@ jvm_library(
         "@community//platform/testRunner/plugin",
         "@community//platform/vcs/plugin",
         "@community//plugins/properties/properties-common:properties",
+        "//plugins/ultimate-plugin",
     ],
 )
 
@@ -215,6 +216,7 @@ jvm_library(
         "@community//platform/testRunner/plugin:plugin_test_lib",
         "@community//platform/vcs/plugin:plugin_test_lib",
         "@community//plugins/properties/properties-common:properties_test_lib",
+        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
     ],
     deps = [
         # do not sort,

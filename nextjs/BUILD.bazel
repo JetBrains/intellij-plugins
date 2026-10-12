@@ -127,6 +127,9 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/vcs/plugin",
         "//plugins/JavaScriptLanguage/javascript-ultimate",
+        "//plugins/JavaScriptLanguage/plugin",
+        "//plugins/ultimate-plugin",
+        "@community//plugins/htmltools:html-tools",
     ],
 )
 
@@ -163,6 +166,9 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//platform/vcs/plugin:plugin_test_lib",
         "//plugins/JavaScriptLanguage/javascript-ultimate:javascript-ultimate_test_lib",
+        "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
+        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+        "@community//plugins/htmltools:html-tools_test_lib",
     ],
     deps = [
         # do not sort,

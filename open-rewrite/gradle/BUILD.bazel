@@ -91,6 +91,7 @@ jvm_library(
         # do not sort,
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "//plugins/microservices/microservices-jvm:jvm",
+        "//plugins/ultimate-plugin",
     ],
 )
 
@@ -117,6 +118,7 @@ jvm_library(
         "@community//platform/ide-core:ide-core_test_lib",
         "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
         "//plugins/microservices/microservices-jvm:jvm_test_lib",
+        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
     ],
     deps = [
         # do not sort,

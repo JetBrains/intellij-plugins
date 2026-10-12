@@ -78,6 +78,7 @@ jvm_library(
     ),
     module_name = "intellij.qodana.inspectionKts.js.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["//plugins/ultimate-plugin"],
 )
 
 jvm_library(
@@ -96,7 +97,11 @@ jvm_library(
         "//contrib/qodana/inspectionKts/js:js_test_lib",
     ],
     visibility = ["//visibility:public"],
-    runtime_deps = [":qodana-inspectionKts-js-tests"],
+    runtime_deps = [
+        # do not sort,
+        ":qodana-inspectionKts-js-tests",
+        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",

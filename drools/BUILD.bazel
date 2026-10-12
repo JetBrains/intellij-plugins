@@ -124,6 +124,7 @@ jvm_library(
         "@community//xml/plugin",
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/testRunner/plugin",
+        "//plugins/ultimate-plugin",
     ],
 )
 
@@ -153,6 +154,7 @@ jvm_library(
         "@community//xml/plugin:plugin_test_lib",
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//platform/testRunner/plugin:plugin_test_lib",
+        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
     ],
     deps = [
         # do not sort,

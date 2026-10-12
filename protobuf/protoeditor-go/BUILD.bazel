@@ -98,6 +98,11 @@ jvm_library(
         "//plugins/http-client/http-client-grpc:httpClient-grpc",
         "@community//platform/execution.serviceView/plugin",
         "@community//platform/navbar/plugin",
+        "//plugins/ultimate-plugin",
+        "@community//xml/plugin",
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/testRunner/plugin",
+        "//plugins/uml/impl",
     ],
 )
 
@@ -126,6 +131,11 @@ jvm_library(
         "//plugins/http-client/http-client-grpc:httpClient-grpc_test_lib",
         "@community//platform/execution.serviceView/plugin:plugin_test_lib",
         "@community//platform/navbar/plugin:plugin_test_lib",
+        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/testRunner/plugin:plugin_test_lib",
+        "//plugins/uml/impl:impl_test_lib",
     ],
     deps = [
         # do not sort,
