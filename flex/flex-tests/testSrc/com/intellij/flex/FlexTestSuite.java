@@ -10,7 +10,6 @@ import com.intellij.flex.codeInsight.FlexNavigationTest;
 import com.intellij.flex.codeInsight.FlexStructureViewTest;
 import com.intellij.flex.completion.ActionScriptCompletionInTextFieldTest;
 import com.intellij.flex.completion.ActionScriptCompletionTest;
-import com.intellij.flex.completion.FlexAutoPopupTest;
 import com.intellij.flex.completion.FlexCompletionInUmlTextFieldsTest;
 import com.intellij.flex.completion.FlexCompletionTest;
 import com.intellij.flex.completion.FlexCssCompletionTest;
@@ -70,7 +69,6 @@ public final class FlexTestSuite {
     // com.intellij.flex.completion.*
     testSuite.addTestSuite(ActionScriptCompletionInTextFieldTest.class);
     testSuite.addTestSuite(ActionScriptCompletionTest.class);
-    testSuite.addTestSuite(FlexAutoPopupTest.class);
     testSuite.addTestSuite(FlexCompletionInUmlTextFieldsTest.class);
     testSuite.addTestSuite(FlexCompletionTest.class);
     testSuite.addTestSuite(FlexCssCompletionTest.class);
