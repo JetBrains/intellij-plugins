@@ -4,6 +4,6 @@ import {PublicComponent} from "@vue-component-lib";
 
 <template>
   <div>
-    <PublicComponent msg=""
+    <PublicComponent msg=""></PublicComponent>
   </div>
 </template>
