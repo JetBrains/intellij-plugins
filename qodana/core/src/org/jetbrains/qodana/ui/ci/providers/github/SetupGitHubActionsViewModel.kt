@@ -71,6 +71,10 @@ class SetupGitHubActionsViewModel(
   private val scope: CoroutineScope,
   private val projectVcsDataProvider: ProjectVcsDataProvider,
 ) : SetupCIViewModel {
+  private val configFileType: FileType = getFileTypeByFilename(DEFAULT_GITHUB_WORKFLOW_FILENAME)
+
+  private val defaultQodanaGithubWorkflowBuilder = DefaultQodanaGithubWorkflowBuilder(projectVcsDataProvider, project)
+
   private val _configStringPathStateFlow = MutableStateFlow("")
   val configStringPathStateFlow: StateFlow<String> = _configStringPathStateFlow.asStateFlow()
 
@@ -82,10 +86,6 @@ class SetupGitHubActionsViewModel(
   val bannerContentProviderFlow: Flow<BannerContentProvider?> = isBannerVisibleStateFlow.map { if (it) createBannerContentProvider() else null }
 
   override val finishProviderFlow: Flow<SetupCIFinishProvider?> = createFinishProviderFlow()
-
-  private val configFileType: FileType = getFileTypeByFilename(DEFAULT_GITHUB_WORKFLOW_FILENAME)
-
-  private val defaultQodanaGithubWorkflowBuilder = DefaultQodanaGithubWorkflowBuilder(projectVcsDataProvider, project)
 
   init {
     scope.launch(QodanaDispatchers.Default) {

@@ -34,7 +34,16 @@ class SetupAzurePipelinesViewModel(
   val scope: CoroutineScope,
   private val projectVcsDataProvider: ProjectVcsDataProvider,
 ) : SetupCIViewModel {
-  val baseSetupCIViewModel = BaseSetupCIViewModel(
+  private val HEADER_TEXT = """
+      #-------------------------------------------------------------------------------#
+      #        Discover additional configuration options in our documentation         #
+      #       https://www.jetbrains.com/help/qodana/qodana-azure-pipelines.html       #
+      #-------------------------------------------------------------------------------#
+
+
+    """.trimIndent()
+
+  val baseSetupCIViewModel: BaseSetupCIViewModel = BaseSetupCIViewModel(
     projectNioPath, project, AZURE_PIPELINES_FILE, scope,
     BaseSetupCIViewModel.Actions(
       ::createBannerContentProvider, ::spawnAddedConfigurationNotification,
@@ -47,15 +56,6 @@ class SetupAzurePipelinesViewModel(
   override fun unselected() {
     baseSetupCIViewModel.unselected()
   }
-
-  private val HEADER_TEXT = """
-      #-------------------------------------------------------------------------------#
-      #        Discover additional configuration options in our documentation         #
-      #       https://www.jetbrains.com/help/qodana/qodana-azure-pipelines.html       #
-      #-------------------------------------------------------------------------------#
-      
-      
-    """.trimIndent()
 
   private fun spawnAddedConfigurationNotification() {
     QodanaNotifications.General.notification(

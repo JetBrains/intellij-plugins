@@ -56,9 +56,11 @@ class BaseSetupCIViewModel(
   private val actions: Actions,
   private val disableHighlighting: Boolean = false
 ) {
+  private val configFiletype: FileType = getFileTypeByFilename(configFileName)
+
   val configEditorStateFlow: StateFlow<CIConfigEditorState?> = createConfigEditorStateFlow()
 
-  val isBannerVisibleStateFlow = MutableStateFlow(true)
+  val isBannerVisibleStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
   val bannerContentProviderFlow: Flow<BannerContentProvider?> =
     isBannerVisibleStateFlow.map { if (it) actions.createBannerContentProvider() else null }
 
@@ -72,8 +74,6 @@ class BaseSetupCIViewModel(
         finishProviderSpawningNotification
       }
   }
-
-  private val configFiletype: FileType = getFileTypeByFilename(configFileName)
 
   fun unselected() {
     val editor = configEditorStateFlow.value?.editor ?: return
