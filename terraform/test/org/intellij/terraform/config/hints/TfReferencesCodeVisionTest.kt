@@ -3,14 +3,26 @@ package org.intellij.terraform.config.hints
 
 import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.util.Disposer
-import com.intellij.testFramework.utils.codeVision.CodeVisionTestCase
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightModuleFixture
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.utils.codeVision.CodeVisionTestUtil
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-internal class TfReferencesCodeVisionTest : CodeVisionTestCase() {
+@TestApplication
+internal class TfReferencesCodeVisionTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val myFixture by codeInsightModuleFixture(projectFixture)
 
   private val usagesLimit = 4
 
-  override fun setUp() {
-    super.setUp()
+  @BeforeEach
+  fun setUp() {
+    CodeVisionTestUtil.setUp(myFixture)
     setUpAdvancedSettings()
   }
 
@@ -130,23 +142,27 @@ internal class TfReferencesCodeVisionTest : CodeVisionTestCase() {
     }
   """.trimIndent()
 
-  fun testTfHintsForVariousBlocks() = testUsageHints(variousBlocksExample, "main.tf")
+  @Test
+  fun testTfHintsForVariousBlocks(): Unit = testUsageHints(variousBlocksExample, "main.tf")
 
-  fun testTfCodeVisionLimit() = testUsageHints(codeVisionLimitExample, "main.tf")
+  @Test
+  fun testTfCodeVisionLimit(): Unit = testUsageHints(codeVisionLimitExample, "main.tf")
 
-  fun testTofuHintsForVariousBlocks() = testUsageHints(variousBlocksExample, "main.tofu")
+  @Test
+  fun testTofuHintsForVariousBlocks(): Unit = testUsageHints(variousBlocksExample, "main.tofu")
 
-  fun testTofuCodeVisionLimit() = testUsageHints(codeVisionLimitExample, "main.tofu")
+  @Test
+  fun testTofuCodeVisionLimit(): Unit = testUsageHints(codeVisionLimitExample, "main.tofu")
 
   private fun testUsageHints(text: String, fileName: String) {
-    testProviders(text, fileName, TfReferencesCodeVisionProvider().groupId)
+    CodeVisionTestUtil.testProviders(myFixture, text, fileName, TfReferencesCodeVisionProvider().groupId)
   }
 
   private fun setUpAdvancedSettings() {
     val prevValue = AdvancedSettings.getInt(TF_USAGES_LIMIT_ID)
     AdvancedSettings.setInt(TF_USAGES_LIMIT_ID, usagesLimit)
 
-    Disposer.register(testRootDisposable) {
+    Disposer.register(myFixture.testRootDisposable) {
       AdvancedSettings.setInt(TF_USAGES_LIMIT_ID, prevValue)
     }
   }

@@ -1,13 +1,31 @@
 package org.intellij.terraform.config.hints
 
 import com.intellij.codeInsight.hints.VcsCodeVisionProvider
-import com.intellij.testFramework.utils.codeVision.CodeVisionTestCase
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightModuleFixture
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.utils.codeVision.CodeVisionTestUtil
+import com.intellij.testFramework.utils.codeVision.CodeVisionTestUtil.AUTHOR_HINT
 import org.intellij.terraform.stack.component.TF_COMPONENT_EXTENSION
 import org.intellij.terraform.stack.deployment.TF_DEPLOY_EXTENSION
 import org.intellij.terraform.terragrunt.TERRAGRUNT_MAIN_FILE
 import org.intellij.terraform.terragrunt.TERRAGRUNT_STACK_FILE
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-internal class TfVcsCodeVisionTest : CodeVisionTestCase() {
+@TestApplication
+internal class TfVcsCodeVisionTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val myFixture by codeInsightModuleFixture(projectFixture)
+
+  @BeforeEach
+  fun setUp() {
+    CodeVisionTestUtil.setUp(myFixture)
+  }
+
   private val simpleExample = """
     terraform {/*<# [$AUTHOR_HINT] #>*/
       required_providers {
@@ -23,10 +41,13 @@ internal class TfVcsCodeVisionTest : CodeVisionTestCase() {
     }
   """.trimIndent()
 
-  fun testTfAuthorInlayHints() = testAuthorHints(simpleExample, "main.tf")
+  @Test
+  fun testTfAuthorInlayHints(): Unit = testAuthorHints(simpleExample, "main.tf")
 
-  fun testTofuAuthorInlayHints() = testAuthorHints(simpleExample, "main.tofu")
+  @Test
+  fun testTofuAuthorInlayHints(): Unit = testAuthorHints(simpleExample, "main.tofu")
 
+  @Test
   fun testTerragruntAuthorInlayHints() {
     testAuthorHints("""
       terraform {/*<# [$AUTHOR_HINT] #>*/
@@ -49,6 +70,7 @@ internal class TfVcsCodeVisionTest : CodeVisionTestCase() {
     """.trimIndent(), "test.$TERRAGRUNT_STACK_FILE")
   }
 
+  @Test
   fun testTfStackAuthorInlayHints() {
     testAuthorHints("""
       required_providers {/*<# [$AUTHOR_HINT] #>*/
@@ -69,6 +91,6 @@ internal class TfVcsCodeVisionTest : CodeVisionTestCase() {
   }
 
   private fun testAuthorHints(text: String, fileName: String) {
-    testProviders(text, fileName, VcsCodeVisionProvider().groupId)
+    CodeVisionTestUtil.testProviders(myFixture, text, fileName, VcsCodeVisionProvider().groupId)
   }
 }
