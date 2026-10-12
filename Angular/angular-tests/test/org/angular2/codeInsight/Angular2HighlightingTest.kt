@@ -704,6 +704,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testImplicitUsages() =
     checkHighlighting(ANGULAR_CORE_21_0_9, NGRX_EFFECTS_21_0_1, RXJS_7_8_1, extension = "ts")
 
+  @Test
+  fun testNpmAliasedPackage() =
+    checkHighlighting(ANGULAR_CORE_21_2_0, dir = true, configureFileName = "app.html")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
