@@ -73,17 +73,17 @@ public class PbTextAnnotator implements Annotator {
       return;
     }
 
-    // Additional annotations are only performed if this text message is bound to a schema.
-    if (!fullAnnotation(element)) {
-      return;
-    }
-
     // Fast check: this annotator only handles specific element types.
     if (!(element instanceof PbTextField
         || element instanceof PbTextFieldName
         || element instanceof PbTextSymbolPath
         || element instanceof PbTextExtensionName
         || element instanceof PbTextDomain)) {
+      return;
+    }
+
+    // Additional annotations are only performed if this text message is bound to a schema.
+    if (!fullAnnotation(element)) {
       return;
     }
 
@@ -117,11 +117,6 @@ public class PbTextAnnotator implements Annotator {
           @Override
           public void visitDomain(@NotNull PbTextDomain domain) {
             annotateDomain(domain, holder);
-          }
-
-          @Override
-          public void visitStringPart(@NotNull PbTextStringPart part) {
-            SharedAnnotations.annotateStringPart(part, holder, getInvalidEscapeAttributes(part));
           }
         });
   }
@@ -204,10 +199,11 @@ public class PbTextAnnotator implements Annotator {
     PbTextFieldName name = field.getFieldName();
 
     BuiltInType type = name.getDeclaredBuiltInType();
+    PbNamedTypeElement namedType = null;
     if (type != null) {
       annotateBuiltInValue(field, type, holder);
     } else {
-      PbNamedTypeElement namedType = name.getDeclaredNamedType();
+      namedType = name.getDeclaredNamedType();
       if (namedType instanceof PbMessageType) {
         annotateMessageValue(field, holder);
       } else if (namedType instanceof PbEnumDefinition) {
@@ -229,7 +225,7 @@ public class PbTextAnnotator implements Annotator {
       //
       // The grammar permits value list fields without a colon since it does not have the field type
       // context.
-      if (!(name.getDeclaredNamedType() instanceof PbMessageType)) {
+      if (!(namedType instanceof PbMessageType)) {
         PsiElement next = name.getNextSibling();
         if (next == null || !":".equals(next.getText())) {
           TextRange range = TextRange.from(name.getTextOffset() + name.getTextLength(), 1);
@@ -317,27 +313,24 @@ public class PbTextAnnotator implements Annotator {
 
   private static void annotateFieldName(
       @NotNull PbTextFieldName name, @NotNull AnnotationHolder holder) {
+    PbField declaredField = name.getDeclaredField();
     // Check whether this is an extension field. If so, annotateExtensionName will handle
     // the annotations.
-    if (name.getExtensionName() == null) {
+    if (name.getExtensionName() == null && declaredField == null) {
       // This is a normal field name.
       PsiElement identifier = name.getNameIdentifier();
-      switch (SharedAnnotations.getReferenceState(name.getEffectiveReference())) {
-        case VALID, NULL -> { }
-        default -> {
-          TextRange range = identifier != null ? identifier.getTextRange() : name.getTextRange();
-          String symbolName = identifier != null ? identifier.getText() : name.getText();
-          holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.field", symbolName))
-            .range(range)
-            .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
-            .create();
-        }
-      }
+      TextRange range = identifier != null ? identifier.getTextRange() : name.getTextRange();
+      String symbolName = identifier != null ? identifier.getText() : name.getText();
+      holder
+          .newAnnotation(
+              HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.field", symbolName))
+          .range(range)
+          .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+          .create();
     }
 
     // Generate occurrence annotations if we're not already generating an invalid value list usage
     // error.
-    PbField declaredField = name.getDeclaredField();
     PbTextField field = PsiTreeUtil.getParentOfType(name, PbTextField.class);
     if (!isIncorrectValueListUsage(field, declaredField)) {
       annotateOptionOccurrences(name, holder);

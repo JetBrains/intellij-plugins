@@ -22,6 +22,7 @@ import com.intellij.protobuf.lang.psi.PbNamedTypeElement;
 import com.intellij.protobuf.lang.psi.PbTextExtensionName;
 import com.intellij.protobuf.lang.psi.PbTextFieldName;
 import com.intellij.protobuf.lang.psi.PbTypeName;
+import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.protobuf.lang.resolve.PbTextFieldNameReference;
 import com.intellij.protobuf.lang.util.BuiltInType;
 import com.intellij.psi.PsiElement;
@@ -59,38 +60,23 @@ abstract class PbTextFieldNameMixin extends PbTextElementBase implements PbTextF
 
   @Override
   public @Nullable PbNamedTypeElement getDeclaredNamedType() {
-    return CachedValuesManager.getCachedValue(
-        this,
-        () ->
-            Result.create(
-                computeDeclaredNamedType(), PbCompositeModificationTracker.byElement(this)));
-  }
-
-  private @Nullable PbNamedTypeElement computeDeclaredNamedType() {
-    PsiReference ref = null;
     PbTextExtensionName extensionName = getExtensionName();
     if (extensionName != null && extensionName.isAnyTypeUrl()) {
       // This is an any type. The extension name itself refers to the declared type.
-      ref = extensionName.getEffectiveReference();
-    } else {
-      // This is an extension field name. The declared type is the field's type.
-      PbField field = getDeclaredField();
-      if (field != null) {
-        PbTypeName typeName = field.getTypeName();
-        if (typeName != null && typeName.getBuiltInType() == null) {
-          ref = typeName.getEffectiveReference();
-        }
-      }
+      return CachedValuesManager.getCachedValue(
+          this,
+          () ->
+              Result.create(
+                  PbPsiUtil.resolveRefToType(
+                      extensionName.getEffectiveReference(), PbNamedTypeElement.class),
+                  PbCompositeModificationTracker.byElement(this)));
     }
-
-    if (ref == null) {
+    PbField field = getDeclaredField();
+    if (field == null) {
       return null;
     }
-    PsiElement refElement = ref.resolve();
-    if (!(refElement instanceof PbNamedTypeElement)) {
-      return null;
-    }
-    return (PbNamedTypeElement) refElement;
+    PbTypeName typeName = field.getTypeName();
+    return typeName != null ? typeName.getDeclaredNamedType() : null;
   }
 
   @Override

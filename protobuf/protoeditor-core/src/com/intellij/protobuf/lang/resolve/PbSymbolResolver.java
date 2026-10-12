@@ -17,17 +17,10 @@ package com.intellij.protobuf.lang.resolve;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Key;
-import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.protobuf.lang.psi.PbSymbolOwner;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider.Result;
-import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.QualifiedName;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,37 +31,22 @@ import java.util.stream.Collectors;
 /** Utilities for finding PbSymbol elements using protobuf's scoping and resolution rules. */
 public class PbSymbolResolver {
 
-  private static final Key<CachedValue<PbSymbolResolver>> FILE_RESOLVER_KEY =
-      Key.create("PROTO_FILE_SYMBOL_RESOLVER");
-  private static final Key<CachedValue<PbSymbolResolver>> FILE_EXPORTS_RESOLVER_KEY =
-      Key.create("PROTO_FILE_EXPORTS_SYMBOL_RESOLVER");
+  private static final PbSymbolResolver EMPTY = new PbSymbolResolver(Collections.emptyMap());
 
-  private final Multimap<QualifiedName, PbSymbol> symbols;
+  private final Map<QualifiedName, Collection<PbSymbol>> symbols;
 
-  private PbSymbolResolver(Multimap<QualifiedName, PbSymbol> symbols) {
+  private PbSymbolResolver(Map<QualifiedName, Collection<PbSymbol>> symbols) {
     this.symbols = symbols;
   }
 
   /** Returns a PbSymbolResolver that can resolve symbols in the given file and its imports. */
   public static PbSymbolResolver forFile(PbFile file) {
-    return CachedValuesManager.getCachedValue(
-        file,
-        FILE_RESOLVER_KEY,
-        () ->
-            Result.create(
-                new PbSymbolResolver(file.getFullQualifiedSymbols()),
-                PbCompositeModificationTracker.byElement(file)));
+    return new PbSymbolResolver(file.getFullQualifiedSymbolMap());
   }
 
   /** Returns a PbSymbolResolver that can resolve symbols exported by the given file. */
   public static PbSymbolResolver forFileExports(PbFile file) {
-    return CachedValuesManager.getCachedValue(
-        file,
-        FILE_EXPORTS_RESOLVER_KEY,
-        () ->
-            Result.create(
-                new PbSymbolResolver(file.getExportedQualifiedSymbols()),
-                PbCompositeModificationTracker.byElement(file)));
+    return new PbSymbolResolver(file.getExportedQualifiedSymbolMap());
   }
 
   /** Returns a PbSymbolResolver that can resolve symbols exported by the given files. */
@@ -81,14 +59,14 @@ public class PbSymbolResolver {
     }
     ImmutableSetMultimap.Builder<QualifiedName, PbSymbol> builder = ImmutableSetMultimap.builder();
     for (PbFile file : files) {
-      builder.putAll(file.getExportedQualifiedSymbols());
+      file.getExportedQualifiedSymbolMap().forEach(builder::putAll);
     }
-    return new PbSymbolResolver(builder.build());
+    return new PbSymbolResolver(builder.build().asMap());
   }
 
   /** Returns an empty PbSymbolResolver. */
   public static PbSymbolResolver empty() {
-    return new PbSymbolResolver(ImmutableMultimap.of());
+    return EMPTY;
   }
 
   public List<PbResolveResult> resolveRelativeName(
@@ -142,12 +120,14 @@ public class PbSymbolResolver {
   }
 
   public List<PbResolveResult> resolveName(QualifiedName name, Condition<PbSymbol> condition) {
-    return symbols
-      .get(name)
-      .stream()
-      .filter(condition::value)
-      .map(PbResolveResult::create)
-      .collect(Collectors.toList());
+    Collection<PbSymbol> matches = symbols.get(name);
+    if (matches == null || matches.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return matches.stream()
+        .filter(condition::value)
+        .map(PbResolveResult::create)
+        .collect(Collectors.toList());
   }
 
   public ImmutableMultimap<String, PbSymbol> findChildren(
@@ -176,25 +156,21 @@ public class PbSymbolResolver {
   }
 
   private ImmutableMultimap<String, PbSymbol> findTopLevelSymbols(Condition<PbSymbol> condition) {
-    // First, filter the symbols map to the collection of top-level symbols matching the given
-    // predicate.
-    Multimap<QualifiedName, PbSymbol> filtered =
-      Multimaps.filterEntries(
-        symbols,
-        e -> e.getKey().getComponentCount() == 1 && condition.value(e.getValue()));
-
-    // Next, convert the map into a Multimap<String, PbSymbol>
     ImmutableMultimap.Builder<String, PbSymbol> builder = ImmutableMultimap.builder();
-    for (Map.Entry<QualifiedName, Collection<PbSymbol>> entry : filtered.asMap().entrySet()) {
+    for (Map.Entry<QualifiedName, Collection<PbSymbol>> entry : symbols.entrySet()) {
       QualifiedName name = entry.getKey();
-      if (name == null) {
+      if (name == null || name.getComponentCount() != 1) {
         continue;
       }
       String first = name.getFirstComponent();
       if (first == null) {
         continue;
       }
-      builder.putAll(first, entry.getValue());
+      for (PbSymbol symbol : entry.getValue()) {
+        if (condition.value(symbol)) {
+          builder.put(first, symbol);
+        }
+      }
     }
     return builder.build();
   }

@@ -25,7 +25,6 @@ import com.intellij.protobuf.lang.psi.PbAggregateValue;
 import com.intellij.protobuf.lang.psi.PbField;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbMessageType;
-import com.intellij.protobuf.lang.psi.PbNamedTypeElement;
 import com.intellij.protobuf.lang.psi.PbOneofDefinition;
 import com.intellij.protobuf.lang.psi.PbOptionExpression;
 import com.intellij.protobuf.lang.psi.PbOptionName;
@@ -292,15 +291,15 @@ public class OptionOccurrenceTracker {
     return PbPsiUtil.resolveRefToType(name.getEffectiveReference(), PbField.class);
   }
 
-  private static PbMessageType getFieldType(PbField field) {
+  private static @Nullable PbMessageType getFieldType(@Nullable PbField field) {
     if (field == null) {
       return null;
     }
     PbTypeName typeName = field.getTypeName();
-    if (typeName == null || typeName.getBuiltInType() != null) {
+    if (typeName == null) {
       return null;
     }
-    return PbPsiUtil.resolveRefToType(typeName.getEffectiveReference(), PbMessageType.class);
+    return typeName.getDeclaredNamedType() instanceof PbMessageType messageType ? messageType : null;
   }
 
   /**
@@ -430,13 +429,7 @@ public class OptionOccurrenceTracker {
       if (registeredFields.containsKey(field) && !field.isRepeated()) {
         // We always return true for message fields, since they might be used as a namespace rather
         // than a type.
-        PbTypeName typeName = field.getTypeName();
-        if (typeName == null) {
-          return false;
-        }
-        PbNamedTypeElement namedTypeElement =
-            PbPsiUtil.resolveRefToType(typeName.getEffectiveReference(), PbNamedTypeElement.class);
-        return namedTypeElement instanceof PbMessageType;
+        return getFieldType(field) != null;
       }
       return true;
     }
