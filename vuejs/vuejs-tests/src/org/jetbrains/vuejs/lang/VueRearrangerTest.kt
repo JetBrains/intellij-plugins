@@ -4,11 +4,11 @@ package org.jetbrains.vuejs.lang
 import com.intellij.application.options.CodeStyle
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.css.rearranger.CssRearranger
-import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
-import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightModuleFixture
 import com.intellij.psi.codeStyle.arrangement.RearrangerTestUtil
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementSettings
 import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.junit.jupiter.api.Test
@@ -16,10 +16,10 @@ import org.junit.jupiter.api.Test
 @TestApplication
 class VueRearrangerTest {
   companion object {
-    private val projectFixture = codeInsightProjectFixture()
+    private val projectFixture = projectFixture(openAfterCreation = true)
   }
 
-  private val myFixture by codeInsightFixture(projectFixture)
+  private val myFixture by codeInsightModuleFixture(projectFixture)
 
   @Test
   fun testTypescript() {
