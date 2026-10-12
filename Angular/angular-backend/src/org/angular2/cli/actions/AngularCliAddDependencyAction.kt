@@ -10,6 +10,8 @@ import com.intellij.execution.filters.Filter
 import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.icons.AllIcons
+import com.intellij.ide.trustedProjects.TrustedProjects
+import com.intellij.ide.trustedProjects.TrustedProjectsDialog
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.PackageJsonData
@@ -87,6 +89,9 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
     if (!AngularCliUtil.hasAngularCLIPackageInstalled(cli)) {
       AngularCliUtil.notifyAngularCliNotInstalled(
         project, cli, Angular2Bundle.message("angular.action.ng-add.cant-add-new-dependency"))
+      return
+    }
+    if (!TrustedProjectsDialog.confirmLoadingUntrustedProject(project)) {
       return
     }
 
@@ -288,6 +293,9 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
                                                                                                                                TIMEOUT)
         ApplicationManager.getApplication().invokeLater(
           {
+            if (!TrustedProjectsDialog.confirmLoadingUntrustedProject(project)) {
+              return@invokeLater
+            }
             if (proposeLatestVersion) {
               @Suppress("DialogTitleCapitalization")
               when (Messages.showDialog(
@@ -311,7 +319,7 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
       project: Project, cli: VirtualFile,
       packageSpec: String, proposeLatestVersionIfNeeded: Boolean,
     ) {
-      if (project.isDisposed) {
+      if (project.isDisposed || !TrustedProjects.isProjectTrusted(project)) {
         return
       }
       val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: return

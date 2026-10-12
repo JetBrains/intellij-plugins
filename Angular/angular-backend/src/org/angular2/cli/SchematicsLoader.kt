@@ -3,6 +3,7 @@ package org.angular2.cli
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.idea.AppMode
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
@@ -25,6 +26,10 @@ private var myLogErrors: ThreadLocal<Boolean> = ThreadLocal.withInitial { true }
 private val LOG: Logger = Logger.getInstance("#org.angular2.cli.SchematicsLoader")
 
 fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean, logErrors: Boolean): List<Schematic> {
+  if (!project.isDefault && !TrustedProjects.isProjectTrusted(project)) {
+    LOG.info("Cannot load schematics in untrusted project")
+    return emptyList()
+  }
   myLogErrors.set(logErrors)
   val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: return emptyList()
   val configurator: NodeCommandLineConfigurator
