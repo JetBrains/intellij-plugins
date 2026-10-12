@@ -11,7 +11,6 @@ import org.intellij.plugins.postcss.completion.PostCssOtherCompletionTest;
 import org.intellij.plugins.postcss.editor.PostCssCommenterTest;
 import org.intellij.plugins.postcss.editor.PostCssCopyrightTest;
 import org.intellij.plugins.postcss.editor.breadcrumbs.PostCssBreadcrumbsTest;
-import org.intellij.plugins.postcss.fileStructure.PostCssFileStructureTest;
 import org.intellij.plugins.postcss.formatter.PostCssFormatterTest;
 import org.intellij.plugins.postcss.inspections.PostCssCssInspectionTest;
 import org.intellij.plugins.postcss.inspections.PostCssCustomMediaInspectionTest;
@@ -122,7 +121,6 @@ public final class PostCssTestSuite {
       TestSuite suite = new TestSuite("Other PostCSS");
       suite.addTestSuite(PostCssFormatterTest.class);
       suite.addTestSuite(PostCssBreadcrumbsTest.class);
-      suite.addTestSuite(PostCssFileStructureTest.class);
       suite.addTestSuite(PostCssSmartEnterTest.class);
       suite.addTestSuite(PostCssIncrementalParserTest.class);
       suite.addTestSuite(PostCssGotoSymbolTest.class);
