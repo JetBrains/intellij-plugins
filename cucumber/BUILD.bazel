@@ -205,6 +205,8 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/testFramework/structureView",
+        "@community//platform/testFramework/structureView:structureView_test_lib",
         "@community//platform/testFramework/junit5",
         "@community//platform/testFramework/junit5:junit5_test_lib",
         "@community//platform/testFramework/junit5/codeInsight",

@@ -18,6 +18,7 @@ package com.intellij.protobuf.ide.views;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
 
+import com.intellij.testFramework.StructureViewComponentTestUtil;
 import javax.swing.JTree;
 
 
@@ -30,7 +31,7 @@ public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
   }
 
   private void testStructureView(String expectedLines) {
-    myFixture.testStructureView(it -> {
+    StructureViewComponentTestUtil.testStructureView(myFixture, it -> {
       JTree tree = it.getTree();
       PlatformTestUtil.waitWhileBusy(tree);
       PlatformTestUtil.expandAll(tree);

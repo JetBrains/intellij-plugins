@@ -102,6 +102,8 @@ jvm_library(
         "@community//xml/impl:impl_test_lib",
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/testFramework/structureView",
+        "@community//platform/testFramework/structureView:structureView_test_lib",
         "//plugins/css/plugin",
         "//plugins/css/plugin:plugin_test_lib",
         "@community//platform/core-ui",
