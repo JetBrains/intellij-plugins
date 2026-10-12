@@ -10,7 +10,6 @@ import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderEx
 import com.intellij.platform.util.coroutines.childScope
-import com.jetbrains.qodana.sarif.model.Result
 import kotlinx.coroutines.CoroutineScope
 import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.problemDescriptors.MetricCodeDescriptor
@@ -19,7 +18,6 @@ import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile.QodanaProfileSt
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintSignals
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.areStructuralFingerprintsEnabled
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiSignalExtractor
-import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 import java.nio.file.Path
 
 class QodanaProblemConsumer(
@@ -60,21 +58,7 @@ class QodanaProblemConsumer(
       structuralFingerprintSignals
     )
 
-    val metadata = userData?.getUserData(DerivedInspectionMetadata.KEY)
-    val reportedProblem = if (metadata != null) {
-      profileState.registerDerivedInspection(metadata.inspection)
-      object : Problem by problem {
-        override suspend fun getSarif(macroManager: PathMacroManager, database: QodanaToolResultDatabase): Result =
-          problem.getSarif(macroManager, database).apply {
-            getOrAssignProperties().putAll(metadata.properties)
-            ruleId = metadata.inspection.id
-          }
-      }
-    }
-    else {
-      problem
-    }
-    consume(listOf(reportedProblem), toolWrapper.shortName)
+    consume(listOf(problem), toolWrapper.shortName)
   }
 
   private fun getStructuralSignals(descriptor: CommonProblemDescriptor): StructuralFingerprintSignals? {
