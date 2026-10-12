@@ -111,6 +111,32 @@ open class AngularJsonBuildOptionsBase {
   @JsonProperty("styles")
   @JsonDeserialize(using = StringOrObjectWithInputDeserializer::class)
   val styles: List<String>? = null
+
+  @JsonProperty("assets")
+  @JsonDeserialize(using = AssetPatternsDeserializer::class)
+  val assets: List<AngularJsonAssetPattern>? = null
+}
+
+/**
+ * An entry of the `assets` build option. The entry is a path string or an object with a glob.
+ */
+sealed interface AngularJsonAssetPattern
+
+class AngularJsonAssetPath(val path: String) : AngularJsonAssetPattern
+
+class AngularJsonAssetGlob : AngularJsonAssetPattern {
+  @JsonProperty("glob")
+  val glob: String? = null
+
+  @JsonProperty("input")
+  val input: String? = null
+
+  @JsonProperty("output")
+  val output: String? = null
+
+  @JsonProperty("ignore")
+  @JsonDeserialize(using = StringOrStringArrayDeserializer::class)
+  val ignore: List<String> = emptyList()
 }
 
 class AngularJsonBuildOptions : AngularJsonBuildOptionsBase()
@@ -201,6 +227,24 @@ private class StringOrObjectWithInputDeserializer : JsonDeserializer<List<String
       deserializationContext.handleUnexpectedToken(List::class.java, jsonParser)
     }
     return files
+  }
+}
+
+private class AssetPatternsDeserializer : JsonDeserializer<List<AngularJsonAssetPattern>>() {
+  override fun deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): List<AngularJsonAssetPattern> {
+    if (jsonParser.currentToken() !== JsonToken.START_ARRAY) {
+      jsonParser.skipChildren()
+      return emptyList()
+    }
+    val patterns = mutableListOf<AngularJsonAssetPattern>()
+    while (jsonParser.nextToken() !== JsonToken.END_ARRAY) {
+      when (jsonParser.currentToken()) {
+        JsonToken.VALUE_STRING -> patterns.add(AngularJsonAssetPath(jsonParser.valueAsString))
+        JsonToken.START_OBJECT -> patterns.add(deserializationContext.readValue(jsonParser, AngularJsonAssetGlob::class.java))
+        else -> jsonParser.skipChildren()
+      }
+    }
+    return patterns
   }
 }
 

@@ -481,7 +481,7 @@
     <css.inclusionContext implementation="org.angular2.css.Angular2CssInclusionContext"/>
     <css.embeddedCssProvider implementation="org.angular2.codeInsight.Angular2EmbeddedCssProvider"/>
     <css.classOrIdUsagesProvider implementation="org.angular2.css.findUsages.Angular2CssClassOrIdUsagesProvider"/>
-    <psi.fileReferenceHelper order="before JsCss" implementation="org.angular2.css.refs.Angular2CssFileReferenceHelper" />
+    <psi.fileReferenceHelper order="first, before JsCss" implementation="org.angular2.css.refs.Angular2CssFileReferenceHelper" />
 
     <!-- Angular2 metadata JSON contributions -->
     <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes" externalIdPrefix="NG-META:"/>

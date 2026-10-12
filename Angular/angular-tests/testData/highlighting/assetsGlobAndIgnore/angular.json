@@ -1,0 +1,31 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "projects": {
+    "app": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/app",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "assets": [
+              {
+                "glob": "**/*.svg",
+                "input": "src/icons",
+                "output": "icons",
+                "ignore": [
+                  "**/*.draft.svg"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

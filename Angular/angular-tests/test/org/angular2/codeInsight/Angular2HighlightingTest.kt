@@ -1,6 +1,9 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.idea.IJIgnore
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -705,6 +708,44 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testImplicitUsages() =
     checkHighlighting(ANGULAR_CORE_21_0_9, NGRX_EFFECTS_21_0_1, RXJS_7_8_1, extension = "ts")
 
+  // WEB-59564
+  @Test
+  fun testAssetsObjectForm() =
+    checkAssetsHighlighting(configureFileName = "src/app/app.component.html")
+
+  // WEB-59564
+  @Test
+  fun testAssetsObjectFormInlineTemplate() =
+    checkAssetsHighlighting(dirName = "assetsObjectForm", configureFileName = "src/app/inline.component.ts")
+
+  // WEB-59564
+  @Test
+  fun testAssetsObjectFormIndexHtml() =
+    checkAssetsHighlighting(dirName = "assetsObjectForm", configureFileName = "src/index.html")
+
+  // WEB-67434
+  @Test
+  fun testAssetsPublicFolder() =
+    checkAssetsHighlighting(ANGULAR_CORE_18_2_1, configureFileName = "src/app/app.component.html")
+
+  // WEB-73273
+  @Test
+  fun testAssetsPublicFolderIndexHtml() =
+    checkAssetsHighlighting(ANGULAR_CORE_18_2_1, dirName = "assetsPublicFolder", configureFileName = "src/index.html")
+
+  // WEB-44964
+  @Test
+  fun testAssetsStringForm() =
+    checkAssetsHighlighting(configureFileName = "src/app/app.component.html")
+
+  @Test
+  fun testAssetsGlobAndIgnore() =
+    checkAssetsHighlighting(configureFileName = "src/app/app.component.html")
+
+  @Test
+  fun testAssetsMultiProject() =
+    checkAssetsHighlighting(configureFileName = "projects/app/src/app/app.component.html")
+
   @Test
   fun testInjectedServicePropertyUsage() =
     checkHighlighting(ANGULAR_CORE_22_2_2, dir = true, configureFileName = "my.service.ts", strictTemplates = true)
@@ -718,9 +759,22 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
   }
 
+  private fun checkAssetsHighlighting(
+    vararg modules: Angular2TestModule,
+    dirName: String = defaultDirName,
+    configureFileName: String,
+  ) = checkHighlighting(
+    *modules,
+    dir = true,
+    dirName = dirName,
+    configureFileName = configureFileName,
+    inspections = listOf(HtmlUnknownTargetInspection::class.java),
+  )
+
   private fun checkHighlighting(
     vararg modules: Angular2TestModule,
     dir: Boolean = false,
+    dirName: String = defaultDirName,
     checkInjections: Boolean = false,
     strictTemplates: Boolean = false,
     extension: String = "html",
@@ -730,13 +784,16 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkWarnings: Boolean = true,
     checkWeakWarnings: Boolean = true,
     configurators: List<PolySymbolsTestConfigurator> = listOf(Angular2TsConfigFile(strictTemplates = strictTemplates)),
+    inspections: Collection<Class<out LocalInspectionTool>> = emptyList(),
   ) {
     doHighlightingTest(
       *modules,
       dir = dir,
+      dirName = dirName,
       extension = extension,
       configureFileName = configureFileName,
       configurators = configurators,
+      inspections = inspections,
       checkInjections = checkInjections,
       checkSymbolNames = checkSymbolNames,
       checkInformation = checkInformation,
