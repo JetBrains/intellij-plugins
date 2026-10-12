@@ -124,10 +124,10 @@ When changing a diagnostic scenario:
 Prefer assertions about final SARIF behavior over internal registration or execution details.
 Cover scope filtering, disabled inspections, SDK failures, diagnostic severity, derived rule IDs, and parent metadata on definitions.
 
-Real SDK integration tests are under `org.jetbrains.qodana.dart.integration` and use the QDPOLY launcher.
+Real SDK integration tests are in `intellij.qodana.dart.integration.tests` under `integration-tests/` and use the QDPOLY launcher.
 They belong to the `QODANA_DART_INTEGRATION` test group and do not use the recorded mock runner.
 Run them with an available SDK and prepared fixture dependencies when changing the launcher or SDK integration:
 
 ```sh
-./tests.cmd --module intellij.qodana.dart.tests --test 'org.jetbrains.qodana.dart.integration.*'
+./tests.cmd --module intellij.qodana.dart.integration.tests --test 'org.jetbrains.qodana.dart.integration.*'
 ```
