@@ -38,6 +38,11 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile) {
 
   abstract fun resolveFile(filePath: String?): VirtualFile?
 
+  /**
+   * The `assets` of the build target, or `null` if the configuration does not define them.
+   */
+  open val assets: List<AngularAssetPattern>? get() = null
+
   fun proximity(context: VirtualFile): Int {
     val rootDir = rootDir ?: return -1
     val sourceDir = sourceDir ?: rootDir
@@ -123,6 +128,14 @@ open class AngularProjectImpl(override val name: String,
     }
   }
 
+  override val assets: List<AngularAssetPattern>?
+    get() = ngProject.targets?.build?.options?.assets?.let { patterns ->
+      // The Angular CLI uses `<root>/src` when `sourceRoot` is not set.
+      val sourceRoot = ngProject.sourceRoot?.takeIf { it.isNotEmpty() }
+                       ?: ((ngProject.rootPath ?: "") + "/src")
+      normalizeAssetPatterns(patterns, angularCliFolder, sourceRoot)
+    }
+
   override fun getTsLintConfigurations(project: Project): List<AngularLintConfiguration> =
     ngProject.targets?.lint?.let { lint ->
       val result = mutableListOf<AngularLintConfiguration>()
@@ -194,4 +207,10 @@ internal class AngularLegacyProjectImpl(private val angularJson: AngularJson,
       ?: rootDir.findFileByRelativePath(it)
     }
   }
+
+  // In `.angular-cli.json`, the asset paths are relative to the app `root`.
+  override val assets: List<AngularAssetPattern>?
+    get() = app.assets?.let { patterns ->
+      sourceDir?.let { normalizeAssetPatterns(patterns, it, "") }
+    }
 }

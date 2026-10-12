@@ -2,12 +2,13 @@
 package org.angular2.css.refs
 
 import com.intellij.javascript.library.JSLibraryVersions
+import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
-import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.frameworks.modules.langs.TildeFileSystemItemCompletion
 import com.intellij.lang.javascript.frameworks.modules.langs.getSyntheticResolveContext
 import com.intellij.lang.javascript.frameworks.modules.resolver.JSDefaultFileReferenceContext
 import com.intellij.lang.javascript.frameworks.modules.resolver.JSParsedPathElement
+import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -24,6 +25,7 @@ import com.intellij.util.Processor
 import org.angular2.cli.config.AngularConfigProvider
 import org.angular2.cli.config.AngularProject
 import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.html.Angular2HtmlDialect
 
 class Angular2CssFileReferenceHelper : FileReferenceHelper() {
 
@@ -41,16 +43,25 @@ class Angular2CssFileReferenceHelper : FileReferenceHelper() {
     processor: Processor<in PsiFileSystemItem>,
   ): Boolean {
     val element = parameters.element
+    val angularProject = AngularConfigProvider.findAngularProject(element.project, hostFile)
+    if (angularProject == null) return true
+
+    if (isTemplateElement(element)) {
+      val assetsRoot = createAssetsRoot(angularProject, element.project)
+      if (assetsRoot != null) {
+        processor.process(assetsRoot)
+        // The browser resolves a template URL against the base URL, so only the build output is a valid context.
+        return false
+      }
+    }
+
     // In a JS or TS host file, handle only the references from the injected inline styles
     if (getPsiFileSystemItem(element.project, hostFile) is JSFile && element.containingFile !is StylesheetFile) return true
 
     val pathString = parameters.pathString
     val hasTilde = pathString.startsWith("~")
 
-    val angularProject = AngularConfigProvider.findAngularProject(element.project, hostFile)
-    if (angularProject == null) return true
-
-    angularProject.sourceDir?.let { element.manager.findDirectory(it) }?.let { processor.process(it)}
+    angularProject.sourceDir?.let { element.manager.findDirectory(it) }?.let { processor.process(it) }
 
     if (!JSFileReferencesUtil.isRelative(pathString)) {
       hostFile.parent?.let {
@@ -71,8 +82,13 @@ class Angular2CssFileReferenceHelper : FileReferenceHelper() {
 
   override fun getRoots(module: Module, hostFile: VirtualFile): Collection<PsiFileSystemItem> {
     val project = module.project
-    return AngularConfigProvider.findAngularProject(project, hostFile)
-             ?.sourceDir
+    val angularProject = AngularConfigProvider.findAngularProject(project, hostFile)
+                         ?: return emptyList()
+    val psiFile = getPsiFileSystemItem(project, hostFile)
+    if (psiFile !is StylesheetFile) {
+      createAssetsRoot(angularProject, project)?.let { return listOf(it) }
+    }
+    return angularProject.sourceDir
              ?.let { PsiManager.getInstance(project).findDirectory(it) }
              ?.let { listOf(it) }
            ?: emptyList()
@@ -132,3 +148,13 @@ private fun getOverrideContextFiles(angularProject: AngularProject, element: Psi
   }
   return result
 }
+
+/**
+ * @return `true` for a file reference in an Angular template, but not in a stylesheet of the template
+ */
+private fun isTemplateElement(element: PsiElement): Boolean =
+  !element.language.isKindOf(CSSLanguage.INSTANCE)
+  && element.containingFile?.language is Angular2HtmlDialect
+
+private fun createAssetsRoot(angularProject: AngularProject, project: Project): PsiFileSystemItem? =
+  angularProject.assets?.let { Angular2AssetsDirectory(project, it) }
