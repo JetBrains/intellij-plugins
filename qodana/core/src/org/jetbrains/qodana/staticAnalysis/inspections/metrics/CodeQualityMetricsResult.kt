@@ -38,5 +38,11 @@ enum class CodeQualityMetrics(val prop: String, @Nls val title: String, @Nls val
     QodanaBundle.message("cli.metrics.dfa.consistency.title"),
     QodanaBundle.message("cli.metrics.dfa.consistency.consistency"),
     printable = false
+  ),
+  DFA_COMPLEXITY_SUMMARY(
+    "dfaComplexitySummary",
+    QodanaBundle.message("cli.metrics.dfa.complexity.summary.title"),
+    QodanaBundle.message("cli.metrics.dfa.complexity.summary.complexity"),
+    printable = false
   )
 }
