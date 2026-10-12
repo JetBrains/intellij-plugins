@@ -3,6 +3,8 @@ package org.angular2.refactoring.extractComponent
 
 import com.intellij.execution.process.CapturingAnsiEscapesAwareProcessHandler
 import com.intellij.ide.actions.CreateFileAction
+import com.intellij.ide.trustedProjects.TrustedProjects
+import com.intellij.ide.trustedProjects.TrustedProjectsDialog
 import com.intellij.idea.AppMode
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeCommandLineUtil
@@ -55,6 +57,9 @@ interface Angular2CliComponentGenerator {
 
 class Angular2CliComponentGeneratorImpl(val project: Project) : Angular2CliComponentGenerator {
   override suspend fun showDialog(): Array<String>? {
+    if (!TrustedProjectsDialog.confirmLoadingUntrustedProjectAsync(project)) {
+      return null
+    }
     var result: Array<String>? = null
     withContext(Dispatchers.EDT) {
       val str = Messages.showInputDialog(project, Angular2Bundle.message("angular.refactor.extractComponent.dialog.name"),
@@ -170,6 +175,9 @@ class Angular2CliComponentGeneratorImpl(val project: Project) : Angular2CliCompo
    * Based on NpmPackageProjectGenerator#generate
    */
   private fun executeNode(node: NodeJsInterpreter, workingDir: VirtualFile, arguments: Array<String>): String {
+    if (!TrustedProjects.isProjectTrusted(project)) {
+      throw Exception("Cannot run Angular CLI in untrusted project")
+    }
     val configurator = NodeCommandLineConfigurator.find(node)
 
     val parameters: MutableList<String> = ArrayList()
