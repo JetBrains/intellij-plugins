@@ -268,6 +268,12 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testBlockSwitchNg21_1() = checkHighlighting(ANGULAR_CORE_21_1_3, extension = "ts")
 
   @Test
+  fun testSafeNavigationMigration() = checkHighlighting(ANGULAR_CORE_22_0_8, strictTemplates = true, extension = "ts")
+
+  @Test
+  fun testSafeNavigationMigrationNg21() = checkHighlighting(ANGULAR_CORE_21_2_0, strictTemplates = true, extension = "ts")
+
+  @Test
   fun testInterpolationStrictMode() = checkHighlighting(ANGULAR_CORE_16_2_8, strictTemplates = true, extension = "ts")
 
   @Test
