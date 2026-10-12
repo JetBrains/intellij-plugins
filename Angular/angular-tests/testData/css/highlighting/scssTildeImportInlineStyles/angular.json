@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "projects": {
+    "app": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "architect": {
+        "build": {
+          "options": {
+            "inlineStyleLanguage": "scss"
+          }
+        }
+      }
+    }
+  }
+}
