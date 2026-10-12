@@ -30,10 +30,6 @@
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.tools.ide.starter" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.tools.ide.starter.product.idea.ultimate" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.qodana.testsFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.ide.starter.extended" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana.dart" />
 </module>
