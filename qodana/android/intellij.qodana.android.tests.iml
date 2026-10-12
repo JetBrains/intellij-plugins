@@ -18,8 +18,6 @@
     <orderEntry type="module" module-name="intellij.qodana.sarif" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.core.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.android.common" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.android.lint.common" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.android.adt.testutils" scope="TEST" />
     <orderEntry type="module" module-name="intellij.android.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.kotlin.plugin.community.main" scope="RUNTIME" />
   </component>
