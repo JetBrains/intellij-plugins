@@ -3,11 +3,8 @@ package org.jetbrains.vuejs.lang.typescript.kolar
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.util.gist.GistManager
-import com.intellij.util.gist.VirtualFileGist
+import com.intellij.util.gist.PsiFileGist
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
 import kotlinx.serialization.json.Json
@@ -24,37 +21,26 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.u
 import java.io.DataInput
 import java.io.DataOutput
 
-private const val TRANSPILED_FILE_GIST_VERSION: Int = 4
+private const val TRANSPILED_FILE_GIST_VERSION: Int = 5
 
 @Service(Service.Level.APP)
 class VueTranspiledFileBuilder {
   private val plugin: VueLanguagePlugin =
     VueTsxPlugin(VueCompilerOptions())
 
-  private val transpiledFileGist: VirtualFileGist<TranspiledFile> =
-    GistManager.getInstance().newVirtualFileGist(
+  private val transpiledFileGist: PsiFileGist<TranspiledFile> =
+    GistManager.getInstance().newPsiFileGist(
       "vue-transpiled-file",
       TRANSPILED_FILE_GIST_VERSION,
       TranspiledFileExternalizer,
-      ::getTranspiledFileInternal,
-    )
+    ) { file ->
+      (file as? VueFile)?.let { getTranspiledFileInternal(it) }
+    }
 
   fun getTranspiledFile(
-    project: Project,
-    file: VirtualFile,
+    file: VueFile,
   ): TranspiledFile? =
-    transpiledFileGist.getFileData(project, file)
-
-  private fun getTranspiledFileInternal(
-    project: Project?,
-    file: VirtualFile,
-  ): TranspiledFile? {
-    project ?: return null
-
-    return file.findPsiFile(project)
-      ?.let { it as VueFile }
-      ?.let { getTranspiledFileInternal(it) }
-  }
+    transpiledFileGist.getFileData(file)
 
   private fun getTranspiledFileInternal(
     file: VueFile,

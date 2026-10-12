@@ -42,7 +42,6 @@ class VueCompletionTest :
       "testCastedObjectProps",
       "testComputedTypeJS",
       "testComputedTypeTS",
-      "testExternalSymbolsImport",
       "testScriptSetupGeneric",
       "testVueOutObjectLiteralTs",
     )
