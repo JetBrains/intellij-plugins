@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
@@ -30,14 +29,12 @@ import org.junit.jupiter.api.TestInfo;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
 import static com.intellij.psi.codeStyle.arrangement.RearrangerTestUtil.group;
-import static com.intellij.testFramework.junit5.fixture.FixturesKt.moduleFixture;
 import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
 import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
 
@@ -46,9 +43,7 @@ public class ActionScriptRearrangerTest {
   @SuppressWarnings("deprecation")
   private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
 
-  private final TestFixture<Path> pathFixture = tempPathFixture();
-  private final TestFixture<Module> moduleFixture = moduleFixture(projectFixture, pathFixture, true);
-  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightFixture(projectFixture, pathFixture);
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
 
   @BeforeEach
   void setUp(@TestDisposable Disposable disposable, TestInfo testInfo) {
@@ -59,7 +54,7 @@ public class ActionScriptRearrangerTest {
     var sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToMockFlex(getClass(), testName), sdkVersion, disposable);
 
     WriteAction.runAndWait(() -> {
-      var model = ModuleRootManager.getInstance(moduleFixture.get()).getModifiableModel();
+      var model = ModuleRootManager.getInstance(codeInsightFixture.get().getModule()).getModifiableModel();
       model.setSdk(sdk);
       model.commit();
     });

@@ -8,7 +8,6 @@ import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
@@ -23,11 +22,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
-import java.nio.file.Path;
-
-import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
 import static com.intellij.testFramework.EdtTestUtil.runInEdtAndWait;
-import static com.intellij.testFramework.junit5.fixture.FixturesKt.moduleFixture;
 import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
 import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,9 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FlexAutoPopupTest {
   @SuppressWarnings("deprecation")
   private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
-  private final TestFixture<Path> pathFixture = tempPathFixture();
-  private final TestFixture<Module> moduleFixture = moduleFixture(projectFixture, pathFixture, true, FlexModuleType.MODULE_TYPE_ID);
-  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightFixture(projectFixture, pathFixture);
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture, FlexModuleType.MODULE_TYPE_ID);
   private CodeInsightTestFixture myFixture;
 
   private <E extends Throwable> void runTest(@NotNull ThrowableRunnable<E> runnable) throws E {
@@ -58,7 +52,7 @@ public class FlexAutoPopupTest {
     myFixture = codeInsightFixture.get();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
     String testName = PlatformTestUtil.getTestName(testInfo.getTestMethod().orElseThrow().getName(), false);
-    runInEdtAndWait((ThrowableRunnable<Throwable>)() -> FlexTestUtils.setupFlexSdk(moduleFixture.get(), testName, FlexAutoPopupTest.class, myFixture.getTestRootDisposable()));
+    runInEdtAndWait((ThrowableRunnable<Throwable>)() -> FlexTestUtils.setupFlexSdk(myFixture.getModule(), testName, FlexAutoPopupTest.class, myFixture.getTestRootDisposable()));
     CodeInsightSettings.getInstance().setSelectAutopopupSuggestionsByChars(true);
   }
 
