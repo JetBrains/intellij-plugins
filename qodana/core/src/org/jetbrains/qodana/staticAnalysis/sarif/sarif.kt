@@ -260,7 +260,7 @@ suspend fun fillComponents(tool: Tool, qodanaProfile: QodanaProfile) {
 }
 
 internal fun appendDerivedComponents(tool: Tool, inspections: Collection<DerivedInspection>) {
-  val components = listOfNotNull(tool.driver) + tool.extensions
+  val components = listOfNotNull(tool.driver) + tool.extensions.orEmpty()
   inspections.forEach { inspection ->
     if (components.any { component -> component.rules.orEmpty().any { it.id == inspection.id } }) return@forEach
     val component = components.firstOrNull { component ->
